@@ -380,6 +380,62 @@ abstract class backup_helper {
     public static function get_inforef_itemnames() {
         return array('user', 'grouping', 'group', 'role', 'file', 'scale', 'outcome', 'grade_item', 'question_category');
     }
+
+    /**
+     * Print the course reuse dropdown.
+     *
+     * @param string $current The current course reuse option where the header is modified
+     */
+    public static function print_coursereuse_selector(string $current):void {
+        global $OUTPUT, $PAGE;
+
+        if ($coursereusenode = $PAGE->settingsnav->find('coursereuse', \navigation_node::TYPE_CONTAINER)) {
+
+            $menuarray = \core\navigation\views\secondary::create_menu_element([$coursereusenode]);
+            if (empty($menuarray)) {
+                return;
+            }
+
+            $coursereuse = get_string('coursereuse');
+            $activeurl = '';
+            if (isset($menuarray[0])) {
+                // Remove the "Course reuse" entry.
+                $result = array_search($coursereuse, $menuarray[0][$coursereuse]);
+                unset($menuarray[0][$coursereuse][$result]);
+
+                // Find the active node.
+                foreach ($menuarray[0] as $key => $value) {
+                    $check = array_search($current, $value);
+                    if ($check !== false) {
+                        $activeurl = $check;
+                    }
+                }
+            } else {
+                $result = array_search($coursereuse, $menuarray);
+                unset($menuarray[$result]);
+
+                $check = array_search(get_string($current), $menuarray);
+                if ($check !== false) {
+                    $activeurl = $check;
+                }
+
+            }
+
+            $selectmenu = new \core\output\select_menu('coursereusetype', $menuarray, $activeurl);
+            $selectmenu->set_label(get_string('coursereusenavigationmenu'), ['class' => 'sr-only']);
+            $options = \html_writer::tag(
+                'div',
+                $OUTPUT->render_from_template('core/tertiary_navigation_selector', $selectmenu->export_for_template($OUTPUT)),
+                ['class' => 'row pb-3']
+            );
+            echo \html_writer::tag(
+                'div',
+                $options,
+                ['class' => 'tertiary-navigation full-width-bottom-border ml-0', 'id' => 'tertiary-navigation']);
+        } else {
+            echo $OUTPUT->heading($current, 2, 'mb-3');
+        }
+    }
 }
 
 /*

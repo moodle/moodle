@@ -71,7 +71,6 @@ $string['automatedstorage'] = 'Automated backup storage';
 $string['automatedstoragehelp'] = 'Choose the location where you want backups to be stored when they are automatically created.';
 $string['backupactivity'] = 'Backup activity: {$a}';
 $string['backupautoactivitiesdescription'] = 'Sets the default for including activities in a backup. For the recycle bin to work, this setting must be enabled.';
-$string['backupcourse'] = 'Backup course: {$a}';
 $string['backupcoursedetails'] = 'Course details';
 $string['backupcoursesection'] = 'Section: {$a}';
 $string['backupcoursesections'] = 'Course sections';
@@ -170,8 +169,7 @@ $string['confirmcancelno'] = 'Do not cancel';
 $string['confirmnewcoursecontinue'] = 'New course warning';
 $string['confirmnewcoursecontinuequestion'] = 'A temporary (hidden) course will be created by the course restoration process. To abort restoration click cancel. Do not close the browser while restoring.';
 $string['copiesinprogress'] = 'This course has copies in progress. <a href="{$a}">View in progress copies.</a>';
-$string['copycoursedesc'] = 'This course will be duplicated and put into the selected course category.';
-$string['copycourseheading'] = 'Copy a course';
+$string['copycoursedesc'] = 'Create a copy of this course in any course category.';
 $string['copycoursetitle'] = 'Copy course: {$a}';
 $string['copydest'] = 'Destination';
 $string['copyingcourse'] = 'Course copying in progress';
@@ -421,3 +419,7 @@ $string['userinfo'] = 'Userinfo';
 $string['module'] = 'Module';
 $string['morecoursesearchresults'] = 'More than {$a} courses found, showing first {$a} results';
 $string['recyclebin_desc'] = 'Note that these settings will also be used for the recycle bin.';
+
+// Deprecated since Moodle 4.4.
+$string['copycourseheading'] = 'Copy a course';
+$string['backupcourse'] = 'Backup course: {$a}';

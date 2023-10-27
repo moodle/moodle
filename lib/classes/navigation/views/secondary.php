@@ -425,18 +425,6 @@ class secondary extends view {
             }
         }
 
-        // Move some nodes into a 'course reuse' node.
-        $overflownode = $this->get_course_overflow_nodes($rootnode);
-        if (!is_null($overflownode)) {
-            $actionnode = $this->get_first_action_for_node($overflownode);
-            if ($actionnode) {
-                // All additional nodes will be available under the 'Course reuse' page.
-                $text = get_string('coursereuse');
-                $rootnode->add($text, $actionnode->action, navigation_node::TYPE_COURSE, null, 'coursereuse',
-                    new \pix_icon('t/edit', $text));
-            }
-        }
-
         // Add the respective first node, provided there are other nodes included.
         if (!empty($nodekeys = $rootnode->children->get_key_list())) {
             $rootnode->add_node(
