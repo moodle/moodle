@@ -54,6 +54,8 @@ class file_storage implements H5PFileStorage {
     public const CSS_FILEAREA = 'css';
     /** The icon filename */
     public const ICON_FILENAME = 'icon.svg';
+    /** The custom CSS filename */
+    private const CUSTOM_CSS_FILENAME = 'custom_h5p.css';
 
     /**
      * @var \context $context Currently we use the system context everywhere.
@@ -878,5 +880,105 @@ class file_storage implements H5PFileStorage {
         }
 
         $this->fs->create_file_from_pathname($record, $sourcefile);
+    }
+
+    /**
+     * Generate H5P custom styles if any.
+     */
+    public static function generate_custom_styles(): void {
+        $record = self::get_custom_styles_file_record();
+        $cssfile = self::get_custom_styles_file($record);
+        if ($cssfile) {
+            // The CSS file needs to be updated, so delete and recreate it
+            // if there is CSS in the 'h5pcustomcss' setting.
+            $cssfile->delete();
+        }
+
+        $css = get_config('core_h5p', 'h5pcustomcss');
+        if (!empty($css)) {
+            $fs = get_file_storage();
+            $fs->create_file_from_string($record, $css);
+        }
+    }
+
+    /**
+     * Get H5P custom styles if any.
+     *
+     * @throws \moodle_exception If the CSS setting is empty but there is a file to serve
+     * or there is no file but the CSS setting is not empty.
+     * @return array|null If there is CSS then an array with the keys 'cssurl'
+     * and 'cssversion' is returned otherwise null.  'cssurl' is a link to the
+     * generated 'custom_h5p.css' file and 'cssversion' the md5 hash of its contents.
+     */
+    public static function get_custom_styles(): ?array {
+        $record = self::get_custom_styles_file_record();
+
+        $css = get_config('core_h5p', 'h5pcustomcss');
+        if (self::get_custom_styles_file($record)) {
+            if (empty($css)) {
+                // The custom CSS file exists and yet the setting 'h5pcustomcss' is empty.
+                // This prevents an invalid content hash.
+                throw new \moodle_exception(
+                    'The H5P \'h5pcustomcss\' setting is empty and yet the custom CSS file \''.
+                    $record['filename'].
+                    '\' exists.',
+                    'core_h5p'
+                );
+            }
+            // File exists, so generate the url and version hash.
+            $cssurl = \moodle_url::make_pluginfile_url(
+                $record['contextid'],
+                $record['component'],
+                $record['filearea'],
+                null,
+                $record['filepath'],
+                $record['filename']
+            );
+            return ['cssurl' => $cssurl, 'cssversion' => md5($css)];
+        } else if (!empty($css)) {
+            // The custom CSS file does not exist and yet should do.
+            throw new \moodle_exception(
+                'The H5P custom CSS file \''.
+                $record['filename'].
+                '\' does not exist and yet there is CSS in the \'h5pcustomcss\' setting.',
+                'core_h5p'
+            );
+        }
+        return null;
+    }
+
+    /**
+     * Get H5P custom styles file record.
+     *
+     * @return array File record for the CSS custom styles.
+     */
+    private static function get_custom_styles_file_record(): array {
+        return [
+            'contextid' => \context_system::instance()->id,
+            'component' => self::COMPONENT,
+            'filearea' => self::CSS_FILEAREA,
+            'itemid' => 0,
+            'filepath' => '/',
+            'filename' => self::CUSTOM_CSS_FILENAME,
+        ];
+    }
+
+    /**
+     * Get H5P custom styles file.
+     *
+     * @param array $record The H5P custom styles file record.
+     *
+     * @return stored_file|bool stored_file instance if exists, false if not.
+     */
+    private static function get_custom_styles_file($record): stored_file|bool {
+        $fs = get_file_storage();
+        return $fs->get_file(
+            $record['contextid'],
+            $record['component'],
+            $record['filearea'],
+            $record['itemid'],
+            $record['filepath'],
+            $record['filename']
+        );
     }
 }

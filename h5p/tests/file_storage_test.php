@@ -848,4 +848,115 @@ class file_storage_test extends \advanced_testcase {
         $this->assertFalse($this->h5p_fs_fs->file_exists($this->h5p_fs_context->id, file_storage::COMPONENT,
             file_storage::CONTENT_FILEAREA, $h5pcontentid, $filepath, $filename));
     }
+
+    /**
+     * Test H5P custom styles generation.
+     *
+     * @covers ::generate_custom_styles
+     */
+    public function test_generate_custom_styles(): void {
+        \set_config('h5pcustomcss', '.debug { color: #fab; }', 'core_h5p');
+        $h5pfsrc = new \ReflectionClass(file_storage::class);
+        $customcssfilename = $h5pfsrc->getConstant('CUSTOM_CSS_FILENAME');
+
+        // Test 'h5pcustomcss' with data.
+        file_storage::generate_custom_styles();
+
+        $this->assertTrue($this->h5p_fs_fs->file_exists(
+            \context_system::instance()->id,
+            file_storage::COMPONENT,
+            file_storage::CSS_FILEAREA,
+            0,
+            '/',
+            $customcssfilename)
+        );
+
+        $cssfile = $this->h5p_fs_fs->get_file(
+            \context_system::instance()->id,
+            file_storage::COMPONENT,
+            file_storage::CSS_FILEAREA,
+            0,
+            '/',
+            $customcssfilename
+        );
+        $this->assertInstanceOf('stored_file', $cssfile);
+
+        $csscontents = $cssfile->get_content();
+        $this->assertEquals($csscontents, '.debug { color: #fab; }');
+
+        // Test 'h5pcustomcss' without data.
+        \set_config('h5pcustomcss', '', 'core_h5p');
+        file_storage::generate_custom_styles();
+        $this->assertFalse($this->h5p_fs_fs->file_exists(
+            \context_system::instance()->id,
+            file_storage::COMPONENT,
+            file_storage::CSS_FILEAREA,
+            0,
+            '/',
+            $customcssfilename)
+        );
+    }
+
+    /**
+     * Test H5P custom styles retrieval.
+     *
+     * @covers ::get_custom_styles
+     */
+    public function test_get_custom_styles(): void {
+        global $CFG;
+        $css = '.debug { color: #fab; }';
+        $cssurl = $CFG->wwwroot . '/pluginfile.php/1/core_h5p/css/custom_h5p.css';
+        \set_config('h5pcustomcss', $css, 'core_h5p');
+        $h5pfsrc = new \ReflectionClass(file_storage::class);
+        $customcssfilename = $h5pfsrc->getConstant('CUSTOM_CSS_FILENAME');
+
+        // Normal operation without data.
+        \set_config('h5pcustomcss', '', 'core_h5p');
+        file_storage::generate_custom_styles();
+        $style = file_storage::get_custom_styles();
+        $this->assertNull($style);
+
+        // Normal operation with data.
+        \set_config('h5pcustomcss', $css, 'core_h5p');
+        file_storage::generate_custom_styles();
+        $style = file_storage::get_custom_styles();
+
+        $this->assertNotEmpty($style);
+        $this->assertEquals($style['cssurl']->out(), $cssurl);
+        $this->assertEquals($style['cssversion'], md5($css));
+
+        // No CSS set when there is a file.
+        \set_config('h5pcustomcss', '', 'core_h5p');
+        try {
+            $style = file_storage::get_custom_styles();
+            $this->fail('moodle_exception for when there is no CSS and yet there is a file, was not thrown');
+        } catch (\moodle_exception $me) {
+            $this->assertEquals(
+                'The H5P \'h5pcustomcss\' setting is empty and yet the custom CSS file \''.$customcssfilename.'\' exists.',
+                $me->errorcode
+            );
+        }
+        \set_config('h5pcustomcss', $css, 'core_h5p'); // Reset for next assertion.
+
+        // No CSS file when there is CSS.
+        $cssfile = $this->h5p_fs_fs->get_file(
+            \context_system::instance()->id,
+            file_storage::COMPONENT,
+            file_storage::CSS_FILEAREA,
+            0,
+            '/',
+            $customcssfilename
+        );
+        $cssfile->delete();
+        try {
+            $style = file_storage::get_custom_styles();
+            $this->fail('moodle_exception for when there is CSS and yet there is a file, was not thrown');
+        } catch (\moodle_exception $me) {
+            $this->assertEquals(
+                'The H5P custom CSS file \''.$customcssfilename.
+                '\' does not exist and yet there is CSS in the \'h5pcustomcss\' setting.',
+                $me->errorcode
+            );
+        }
+    }
 }
