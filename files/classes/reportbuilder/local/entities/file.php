@@ -20,9 +20,11 @@ namespace core_files\reportbuilder\local\entities;
 
 use context;
 use context_helper;
+use core_collator;
+use core_filetypes;
+use html_writer;
 use lang_string;
 use license_manager;
-use html_writer;
 use stdClass;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\helpers\format;
@@ -154,6 +156,36 @@ class file extends base {
                 }
 
                 return get_mimetype_description($fileinfo->mimetype);
+            });
+
+        // Icon.
+        $columns[] = (new column(
+            'icon',
+            new lang_string('icon'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_field("{$filesalias}.mimetype")
+            ->add_field("CASE WHEN {$filesalias}.filename = '.' THEN 1 ELSE 0 END", 'directory')
+            ->set_disabled_aggregation_all()
+            ->add_callback(static function($mimetype, stdClass $fileinfo): string {
+                global $CFG, $OUTPUT;
+                require_once("{$CFG->libdir}/filelib.php");
+
+                if ($fileinfo->mimetype === null && !$fileinfo->directory) {
+                    return '';
+                }
+
+                if ($fileinfo->directory) {
+                    $icon = file_folder_icon();
+                    $description = get_string('directory');
+                } else {
+                    $icon = file_file_icon($fileinfo);
+                    $description = get_mimetype_description($fileinfo->mimetype);
+                }
+
+                return $OUTPUT->pix_icon($icon, $description, 'moodle', ['class' => 'iconsize-medium']);
             });
 
         // Author.
@@ -347,6 +379,27 @@ class file extends base {
                 number::GREATER_THAN,
                 number::RANGE,
             ]);
+
+        // Type.
+        $filters[] = (new filter(
+            select::class,
+            'type',
+            new lang_string('type', 'core_repository'),
+            $this->get_entity_name(),
+            "{$filesalias}.mimetype"
+        ))
+            ->add_joins($this->get_joins())
+            ->set_options_callback(static function(): array {
+                $mimetypenames = array_column(core_filetypes::get_types(), 'type');
+
+                // Convert the names into a map of name => description.
+                $mimetypes = array_combine($mimetypenames, array_map(static function(string $mimetype): string {
+                    return get_mimetype_description($mimetype);
+                }, $mimetypenames));
+
+                core_collator::asort($mimetypes);
+                return $mimetypes;
+            });
 
         // License (consider null = 'unknown/license not specified' for filtering purposes).
         $filters[] = (new filter(
