@@ -227,6 +227,8 @@ function resource_get_coursemodule_info($coursemodule) {
     if (count($files) >= 1) {
         $mainfile = reset($files);
         $resource->mainfile = $mainfile->get_filename();
+        $info->icon = file_file_icon($mainfile);
+        $info->customdata['filtericon'] = true;
     }
 
     $display = resource_get_final_display_type($resource);
