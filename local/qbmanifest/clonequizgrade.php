@@ -13,6 +13,12 @@ require_once($CFG->dirroot . '/enrol/externallib.php');
 // http://qubits.localhost.com/local/qbmanifest/clonequizgrade.php?cshortname=DPL06&cohortid=ajyalmbz
 // Example http://qubits.localhost.com/local/qbmanifest/clonequizgrade.php?cshortname=DCL03&cohortid=bfsajman
 
+require_login();
+
+if(!is_siteadmin()){
+    throw new \moodle_exception('accessdenied');
+}
+
 $ref_csname = required_param('cshortname', PARAM_ALPHANUMEXT);
 $cohort_idnumber = required_param('cohortid', PARAM_ALPHANUMEXT);
 

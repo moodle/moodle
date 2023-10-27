@@ -10,6 +10,12 @@ require_once($CFG->dirroot.'/cohort/lib.php');
 //$cohort_idnumber = 'bfsajman';
 // Example http://qubits.localhost.com/local/qbmanifest/cloneenrolusers-bulk.php?cohortid=bfsajman
 
+require_login();
+
+if(!is_siteadmin()){
+    throw new \moodle_exception('accessdenied');
+}
+
 $farr = array(
     "DCL01" => "/books-json/digichamps/dcl01.json",
     "DCL02" => "/books-json/digichamps/dcl02.json",

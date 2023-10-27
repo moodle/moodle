@@ -13,6 +13,12 @@ require_once($CFG->dirroot . '/enrol/externallib.php');
 // http://qubits.localhost.com/local/qbmanifest/clonefilegrade.php?cshortname=DPL06&cohortid=ajyalmbz
 // Example http://qubits.localhost.com/local/qbmanifest/clonefilegrade.php?cshortname=DCL03&cohortid=bfsajman
 
+require_login();
+
+if(!is_siteadmin()){
+    throw new \moodle_exception('accessdenied');
+}
+
 $farr = array(
     "DCL01" => "/books-json/digichamps/dcl01.json",
     "DCL02" => "/books-json/digichamps/dcl02.json",

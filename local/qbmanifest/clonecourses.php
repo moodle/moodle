@@ -8,6 +8,12 @@ global $CFG, $DB, $USER, $OUTPUT;
 // Example http://qubits.localhost.com/local/qbmanifest/clonecourses.php?cshortname=DCL03&cohortid=bfsajman
 // Deprecated this param &mfile=/books-json/digichamps/dcl03.json
 
+require_login();
+
+if(!is_siteadmin()){
+    throw new \moodle_exception('accessdenied');
+}
+
 $farr = array(
     "DCL01" => "/books-json/digichamps/dcl01.json",
     "DCL02" => "/books-json/digichamps/dcl02.json",

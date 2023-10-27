@@ -10,6 +10,12 @@ require_once($CFG->dirroot.'/cohort/lib.php');
 //$cohort_idnumber = 'bfsajman';
 // Example http://qubits.localhost.com/local/qbmanifest/cloneenrolusers.php?cshortname=DCL03&cohortid=bfsajman
 
+require_login();
+
+if(!is_siteadmin()){
+    throw new \moodle_exception('accessdenied');
+}
+
 $ref_csname = required_param('cshortname', PARAM_ALPHANUMEXT);
 $cohort_idnumber = required_param('cohortid', PARAM_ALPHANUMEXT);
 
