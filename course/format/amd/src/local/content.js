@@ -235,6 +235,8 @@ export default class Component extends BaseComponent {
             {watch: `transaction:start`, handler: this._startProcessing},
             {watch: `course.sectionlist:updated`, handler: this._refreshCourseSectionlist},
             {watch: `section.cmlist:updated`, handler: this._refreshSectionCmlist},
+            // Section visibility.
+            {watch: `section.visible:updated`, handler: this._reloadSection},
             // Reindex sections and cms.
             {watch: `state:updated`, handler: this._indexContents},
         ];
@@ -522,12 +524,12 @@ export default class Component extends BaseComponent {
         if (debouncedReload) {
             return debouncedReload;
         }
-        const pendingReload = new Pending(pendingKey);
         const reload = () => {
+            const pendingReload = new Pending(pendingKey);
             this.debouncedReloads.delete(pendingKey);
             const cmitem = this.getElement(this.selectors.CM, cmId);
             if (!cmitem) {
-                return;
+                return pendingReload.resolve();
             }
             const promise = Fragment.loadFragment(
                 'core_courseformat',
@@ -540,15 +542,43 @@ export default class Component extends BaseComponent {
                 }
             );
             promise.then((html, js) => {
+                // Other state change can reload the CM or the section before this one.
+                if (!document.contains(cmitem)) {
+                    pendingReload.resolve();
+                    return false;
+                }
                 Templates.replaceNode(cmitem, html, js);
                 this._indexContents();
                 pendingReload.resolve();
-                return;
-            }).catch();
+                return true;
+            }).catch(() => {
+                pendingReload.resolve();
+            });
+            return pendingReload;
         };
-        debouncedReload = debounce(reload, 200);
+        debouncedReload = debounce(
+            reload,
+            200,
+            {
+                cancel: true, pending: true
+            }
+        );
         this.debouncedReloads.set(pendingKey, debouncedReload);
         return debouncedReload;
+    }
+
+    /**
+     * Cancel the active reload CM debounced function, if any.
+     * @param {Number} cmId
+     */
+    _cancelDebouncedReloadCm(cmId) {
+        const pendingKey = `courseformat/content:reloadCm_${cmId}`;
+        const debouncedReload = this.debouncedReloads.get(pendingKey);
+        if (!debouncedReload) {
+            return;
+        }
+        debouncedReload.cancel();
+        this.debouncedReloads.delete(pendingKey);
     }
 
     /**
@@ -564,6 +594,10 @@ export default class Component extends BaseComponent {
         const pendingReload = new Pending(`courseformat/content:reloadSection_${element.id}`);
         const sectionitem = this.getElement(this.selectors.SECTION, element.id);
         if (sectionitem) {
+            // Cancel any pending reload because the section will reload cms too.
+            for (const cmId of element.cmlist) {
+                this._cancelDebouncedReloadCm(cmId);
+            }
             const promise = Fragment.loadFragment(
                 'core_courseformat',
                 'section',
@@ -578,8 +612,9 @@ export default class Component extends BaseComponent {
                 Templates.replaceNode(sectionitem, html, js);
                 this._indexContents();
                 pendingReload.resolve();
-                return;
-            }).catch();
+            }).catch(() => {
+                pendingReload.resolve();
+            });
         }
     }
 
