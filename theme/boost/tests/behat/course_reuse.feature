@@ -34,7 +34,7 @@ Feature: Course reuse navigation
     Examples:
       | adminpage     | content                                                           |
       |   Backup      | Backup settings                                                   |
-      |   Restore     | Import a backup file                                              |
+      |   Restore     | Upload a backup file                                              |
       |   Import      | Find a course to import data from:                                |
       |   Reset       | Delete all user data and reset this course to its original state  |
 
