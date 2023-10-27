@@ -41,6 +41,11 @@ final class util_test extends route_testcase {
      * Test getting the path for a callable.
      */
     public function test_get_path_for_callable(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $CFG->routerconfigured = true;
         self::load_fixture('core', 'router/route_on_class.php');
 
         $this->add_route_to_route_loader(

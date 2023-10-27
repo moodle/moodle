@@ -17,7 +17,6 @@
 namespace core\router;
 
 use moodle_url;
-use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -33,17 +32,6 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 trait route_controller {
     /**
-     * Constructor for Route Controllers.
-     *
-     * @param ContainerInterface $container
-     */
-    public function __construct(
-        /** @var ContainerInterface The DI Container */
-        protected ContainerInterface $container,
-    ) {
-    }
-
-    /**
      * Generate a Page Not Found result.
      *
      * @param ServerRequestInterface $request
@@ -51,7 +39,7 @@ trait route_controller {
      * @return ResponseInterface
      * @throws \Slim\Exception\HttpNotFoundException
      */
-    protected function page_not_found(
+    public static function page_not_found(
         ServerRequestInterface $request,
         ResponseInterface $response,
     ): ResponseInterface {
@@ -65,7 +53,7 @@ trait route_controller {
      * @param string|moodle_url $url
      * @return ResponseInterface
      */
-    protected function redirect(
+    public static function redirect(
         ResponseInterface $response,
         string|moodle_url $url,
     ): ResponseInterface {
@@ -85,7 +73,7 @@ trait route_controller {
      * @param null|array $excludeparams A list of any parameters to remove the URI during the redirect
      * @return ResponseInterface
      */
-    protected function redirect_to_callable(
+    public static function redirect_to_callable(
         ServerRequestInterface $request,
         ResponseInterface $response,
         array|callable|string $callable,
@@ -111,7 +99,7 @@ trait route_controller {
         // Remove any params.
         $url->remove_params($excludeparams);
 
-        return $this->redirect($response, $url);
+        return self::redirect($response, $url);
     }
 
     /**

@@ -31,11 +31,13 @@ abstract class abstract_route_loader {
      *
      * @param string $namespace The namespace to get the routes for
      * @param callable $componentpathcallback A callback to get the component path for a class
+     * @param null|callable $filtercallback A callback to use to filter routes before they are added
      * @return array[]
      */
     protected function get_all_routes_in_namespace(
         string $namespace,
         callable $componentpathcallback,
+        ?callable $filtercallback = null,
     ): array {
         $routes = [];
 
@@ -43,6 +45,9 @@ abstract class abstract_route_loader {
         $classes = \core_component::get_component_classes_in_namespace(namespace: $namespace);
         foreach (array_keys($classes) as $classname) {
             $classinfo = new \ReflectionClass($classname);
+            if ($filtercallback && !$filtercallback($classname)) {
+                continue;
+            }
             $component = \core_component::get_component_from_classname($classname);
             $componentpath = $componentpathcallback($component);
 
@@ -135,7 +140,7 @@ abstract class abstract_route_loader {
     ): ?route {
         // Fetch the route attribute from the method.
         // Each method can only have a single route attribute.
-        $routeattributes = $methodinfo->getAttributes(route::class);
+        $routeattributes = $methodinfo->getAttributes(route::class, \ReflectionAttribute::IS_INSTANCEOF);
         if (empty($routeattributes)) {
             return null;
         }
@@ -166,19 +171,7 @@ abstract class abstract_route_loader {
     protected function normalise_component_path(
         string $component,
     ): string {
-        if ($component === 'core') {
-            return $component;
-        }
-        [$type, $subsystem] = \core_component::normalize_component($component);
-        if ($type === 'core') {
-            $component = $subsystem;
-        }
-
-        if ($component === null) {
-            $component = '';
-        }
-
-        return $component;
+        return util::normalise_component_path($component);
     }
 
     /**

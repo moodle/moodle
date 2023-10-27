@@ -4372,7 +4372,10 @@ EOD;
                 // We only add a list to the full settings menu if we didn't include every node in the short menu.
                 if ($skipped) {
                     $text = get_string('morenavigationlinks');
-                    $url = new moodle_url('/course/admin.php', ['courseid' => $this->page->course->id]);
+                    $url = \core\router\util::get_path_for_callable(
+                        [\core_course\route\controller\course_management::class, 'administer_course'],
+                        ['course' => $this->page->course->id],
+                    );
                     $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
                     $menu->add_secondary_action($link);
                 }
@@ -4386,7 +4389,10 @@ EOD;
                 // We only add a list to the full settings menu if we didn't include every node in the short menu.
                 if ($skipped) {
                     $text = get_string('morenavigationlinks');
-                    $url = new moodle_url('/course/admin.php', ['courseid' => $this->page->course->id]);
+                    $url = \core\router\util::get_path_for_callable(
+                        [\core_course\route\controller\course_management::class, 'administer_course'],
+                        ['course' => $this->page->course->id],
+                    );
                     $link = new action_link($url, $text, null, null, new pix_icon('t/edit', $text));
                     $menu->add_secondary_action($link);
                 }

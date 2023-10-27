@@ -117,6 +117,12 @@ class route {
         /** @var bool Whether to abort after configuration */
         public readonly bool $abortafterconfig = false,
 
+        /** @var null|array Whether to require login or not */
+        public readonly ?require_login $requirelogin = null,
+
+        /** @var string[] The list of scopes required to access this page */
+        public readonly ?array $scopes = null,
+
         // Note. We do not make use of these extras.
         // These allow us to add additional arguments in future versions, whilst allowing plugins to use this version.
         ...$extra,

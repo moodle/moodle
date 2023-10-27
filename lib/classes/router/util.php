@@ -227,4 +227,28 @@ class util {
 
         return $methodroute;
     }
+
+    /**
+     * Normalise the component for use as part of the path.
+     *
+     * If the component is a subsystem, the `core_` prefix will be removed.
+     * If the component is 'core', it will be kept.
+     * All other components will use their frankenstyle name.
+     *
+     * @param string $component
+     * @return string
+     */
+    public static function normalise_component_path(
+        string $component,
+    ): string {
+        if ($component === 'core') {
+            return $component;
+        }
+        [$type, $subsystem] = \core\component::normalize_component($component);
+        if ($type === 'core') {
+            return str_replace('core_', '', $subsystem);
+        }
+
+        return $component ?? '';
+    }
 }
