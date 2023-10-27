@@ -189,7 +189,9 @@ M.assn = {
 <script type="text/javascript" src="{{scratch_aurl}}/chunks/gui.js"></script>
 {{#js}}
 require(['jquery'], function($) {
-   $('.index_app_2mqDO').appendTo('#topofscroll');
+   setTimeout(function () {
+   $('.index_app_2mqDO').prependTo('#page-content');
+   }, 4000); 
 });
 {{/js}}
 

@@ -79,7 +79,7 @@ assignment submission for \'<i>{$a->qbassignment}</i>\'.</p>
 <p>You can see it appended to your <a href="{$a->url}">assignment submission</a>.</p>';
 $string['qbassignmentmailsmall'] = '{$a->grader} has posted some feedback on your
 assignment submission for \'{$a->qbassignment}\' You can see it appended to your submission';
-$string['qbassignmentname'] = 'assignment name';
+$string['qbassignmentname'] = 'Assignment name';
 $string['qbassignmentplugins'] = 'assignment plugins';
 $string['qbassignmentsperpage'] = 'assignments per page';
 $string['qbassignsubmission'] = 'Submission plugin';
