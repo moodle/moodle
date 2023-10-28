@@ -16,7 +16,7 @@
 /**
  * @package   mod_pdfannotator
  * @copyright 2018 RWTH Aachen (see README.md)
- * @authors   Ahmad Obeid, Anna Heynkes
+ * @author    Ahmad Obeid, Anna Heynkes
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require('../../config.php');
@@ -52,7 +52,7 @@ $context = context_module::instance($cm->id);
 require_capability('mod/pdfannotator:view', $context);
 
 // Apply filters, e.g. multilang.
-$pdfannotator->name = format_text($pdfannotator->name, FORMAT_MOODLE, ['para' => false]);
+$pdfannotator->name = format_text($pdfannotator->name, FORMAT_MOODLE, ['para' => false, 'filter' => true]);
 
 // Completion and trigger events.
 pdfannotator_view($pdfannotator, $course, $cm, $context);
@@ -76,12 +76,15 @@ $PAGE->set_heading($course->fullname);
 
 // Display course name, navigation bar at the very top and "Dashboard->...->..." bar.
 echo $OUTPUT->header();
+
 // Render the activity information.
-$modinfo = get_fast_modinfo($course);
-$cminfo = $modinfo->get_cm($cm->id);
-$completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
-$activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);
-echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+if ($CFG->version < 2022041900) { 
+    $modinfo = get_fast_modinfo($course);
+    $cminfo = $modinfo->get_cm($cm->id);
+    $completiondetails = \core_completion\cm_completion_details::get_instance($cminfo, $USER->id);
+    $activitydates = \core\activity_dates::get_dates_for_module($cminfo, $USER->id);    
+    echo $OUTPUT->activity_information($cminfo, $completiondetails, $activitydates);
+}
 
 require_once($CFG->dirroot . '/mod/pdfannotator/controller.php');
 

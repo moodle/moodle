@@ -27,7 +27,7 @@
  *
  * @package   mod_pdfannotator
  * @copyright 2018 RWTH Aachen (see README.md)
- * @authors   Rabea de Groot, Anna Heynkes, Friederike Schwager
+ * @author    Rabea de Groot, Anna Heynkes, Friederike Schwager
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -151,7 +151,8 @@ if ($action === 'create') {
             $data['height'] = $annotation['height'];
             break;
         case 'drawing':
-            $studentdrawingsallowed = $DB->get_field('pdfannotator', 'use_studentdrawing', ['id' => $documentid], $strictness = MUST_EXIST);
+            $studentdrawingsallowed = $DB->get_field('pdfannotator', 'use_studentdrawing', ['id' => $documentid],
+                $strictness = MUST_EXIST);
             $alwaysdrawingallowed = has_capability('mod/pdfannotator:usedrawing', $context);
             if ($studentdrawingsallowed != 1 && !$alwaysdrawingallowed) {
                 echo json_encode(['status' => 'error', 'reason' => get_string('studentdrawingforbidden', 'pdfannotator')]);
@@ -174,7 +175,8 @@ if ($action === 'create') {
             $data['rectangles'] = $annotation['rectangles'];
             break;
         case 'textbox':
-            $studenttextboxesallowed = $DB->get_field('pdfannotator', 'use_studenttextbox', array('id' => $documentid), $strictness = MUST_EXIST);
+            $studenttextboxesallowed = $DB->get_field('pdfannotator', 'use_studenttextbox', array('id' => $documentid),
+                $strictness = MUST_EXIST);
             $alwaystextboxallowed = has_capability('mod/pdfannotator:usetextbox', $context);
             if ($studenttextboxesallowed != 1 && !$alwaystextboxallowed) {
                 echo json_encode(['status' => 'error', 'reason' => get_string('studenttextboxforbidden', 'pdfannotator')]);
@@ -335,12 +337,14 @@ if ($action === 'addComment') {
 
     // Get the comment data.
     $content = required_param('content', PARAM_RAW);
+    $regex = "/?time=[0-9]*/";
+    $extracted_content = str_replace($regex, "", $content);
+
     $visibility = required_param('visibility', PARAM_ALPHA);
     $isquestion = required_param('isquestion', PARAM_INT);
 
     // Insert the comment into the mdl_pdfannotator_comments table and get its record id.
-    $comment = pdfannotator_comment::create($documentid, $annotationid, $content, $visibility, $isquestion, $cm, $context);
-    $commentid = $comment->uuid;
+    $comment = pdfannotator_comment::create($documentid, $annotationid, $extracted_content, $visibility, $isquestion, $cm, $context);
 
     // If successful, create a comment array and return it as json.
     if ($comment) {
@@ -350,12 +354,9 @@ if ($action === 'addComment') {
 
         echo json_encode($data);
     } else {
-        if ($commentid == -1) {
-            echo json_encode(['status' => '-1']);
-        } else {
-            echo json_encode(['status' => 'error']);
-        }
+        echo json_encode(['status' => '-1']);
     }
+
 }
 
 /* * ******************************* Retrieve information about a specific annotation from db ******************************* */
@@ -386,30 +387,12 @@ if ($action === 'getComments') {
 
     $comments = pdfannotator_comment::read($documentid, $annotationid, $context);
 
- //   require_once($CFG->dirroot . '/mod/pdfannotator/classes/output/comment.php');
-    
     $myrenderer = $PAGE->get_renderer('mod_pdfannotator');
     $templatable = new comment($comments, $cm, $context);
 
     $data = $templatable->export_for_template($myrenderer);
 
     echo json_encode($data);
-}
-
-/* * ********************************* Retrieve content of a specific comment from db ********************************* */
-
-if ($action === 'getCommentContent') {
-    global $DB;
-    $commentid = required_param('commentId', PARAM_INT);
-
-    $content = $DB->get_field('pdfannotator_comments', 'content', ['id' => $commentid]);
-
-    $comment = $DB->get_record('pdfannotator_comments', ['id' => $commentid]);
-    if (pdfannotator_can_see_comment($comment, $context)) {
-        echo json_encode($comment->content);
-    } else {
-        echo json_encode("false");
-    }
 }
 
 /* * ****************************************** Hide a comment for participants ****************************************** */
@@ -453,8 +436,10 @@ if ($action === 'editComment') {
 
     $commentid = required_param('commentId', PARAM_INT);
     $content = required_param('content', PARAM_RAW);
- 
-    $data = pdfannotator_comment::update($commentid, $content, $editanypost);
+    $regex = "/?time=[0-9]*/";
+    $extracted_content = str_replace($regex, "", $content);
+
+    $data = pdfannotator_comment::update($commentid, $extracted_content, $editanypost, $context);
     echo json_encode($data);
 }
 
@@ -497,7 +482,8 @@ if ($action === 'subscribeQuestion') {
         $thiscourse = $pdfannotator->course;
         $cmid = get_coursemodule_from_instance('pdfannotator', $thisannotator, $thiscourse, false, MUST_EXIST)->id;
 
-        $urlparams = array('action' => 'overviewanswers', 'id' => $cmid, 'page' => 0, 'itemsperpage' => $itemsperpage, 'answerfilter' => 0);
+        $urlparams = array('action' => 'overviewanswers', 'id' => $cmid, 'page' => 0, 'itemsperpage' => $itemsperpage,
+            'answerfilter' => 0);
         $url = new moodle_url($CFG->wwwroot . '/mod/pdfannotator/view.php', $urlparams);
         redirect($url->out());
         return;
@@ -537,13 +523,14 @@ if ($action === 'unsubscribeQuestion') {
     }
 
     if ($subscriptionid) {
-        echo json_encode(['status' => 'success', 'annotationid' => $annotationid, 'subscriptionid' => $subscriptionid, 'annotatorid' => $annotatorid]);
+        echo json_encode(['status' => 'success', 'annotationid' => $annotationid, 'subscriptionid' => $subscriptionid,
+            'annotatorid' => $annotatorid]);
     } else {
         echo json_encode(['status' => 'error']);
     }
 }
 
-/* * ****************************************** Mark a question as closed or an answer as correct ****************************************** */
+/* * ****************************************** Mark a question as closed or an answer as correct ******************************* */
 
 if ($action === 'markSolved') {
     global $DB;
@@ -628,6 +615,7 @@ if ($action === 'getCommentsToPrint') {
         foreach ($conversations as $conversation) {
             $post = new stdClass();
             $post->answeredquestion = pdfannotator_handle_latex($context, $conversation->answeredquestion);
+            $post->answeredquestion = pdfannotator_extract_images($post->answeredquestion, $conversation->id, $context);
             $post->page = $conversation->page;
             $post->annotationtypeid = $conversation->annotationtypeid;
             $post->author = $conversation->author;
@@ -638,6 +626,7 @@ if ($action === 'getCommentsToPrint') {
             foreach ($conversation->answers as $ca) {
                 $answer = new stdClass();
                 $answer->answer = pdfannotator_handle_latex($context, $ca->answer);
+                $answer->answer = pdfannotator_extract_images($answer->answer, $ca->id, $context);
                 $answer->author = $ca->author;
                 $answer->timemodified = $ca->timemodified;
                 $post->answers[$answercount] = $answer;
@@ -653,7 +642,6 @@ if ($action === 'getCommentsToPrint') {
         $newdata = $templatable->export_for_template($myrenderer);// Viewcontroller takes model's data and arranges it for display.
 
         echo json_encode(['status' => 'success', 'pdfannotatorid' => $documentid, 'newdata' => $newdata]);
-
     }
 
 }

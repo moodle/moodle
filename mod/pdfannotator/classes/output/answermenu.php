@@ -37,7 +37,6 @@ class answermenu implements \renderable, \templatable {
 
     /**
      * Constructor of renderable for dropdown menu in answerstable.
-     * @global type $CFG
      * @param int $annotationid Id of the annotation the answer belongs to
      * @param bool $issubscribed Is the user subscribed to the question?
      * @param int $cmid Course module id

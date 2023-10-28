@@ -22,7 +22,6 @@
 /**
  * Function initialises the pdfannotator_annotationtypes table with its 6 standard records.
  *
- * @global type $DB
  */
 defined('MOODLE_INTERNAL') || die();
 

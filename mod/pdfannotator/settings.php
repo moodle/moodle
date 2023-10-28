@@ -30,7 +30,8 @@ if ($ADMIN->fulltree) {
             get_string('global_setting_useprint', 'pdfannotator'), get_string('global_setting_useprint_desc', 'pdfannotator'), 0));
 
     $settings->add(new admin_setting_configcheckbox('mod_pdfannotator/useprintcomments',
-            get_string('global_setting_useprint_comments', 'pdfannotator'), get_string('global_setting_useprint_comments_desc', 'pdfannotator'), 0));
+            get_string('global_setting_useprint_comments', 'pdfannotator'),
+        get_string('global_setting_useprint_comments_desc', 'pdfannotator'), 0));
 
     $settings->add(new admin_setting_configcheckbox('mod_pdfannotator/use_studenttextbox',
             get_string('global_setting_use_studenttextbox', 'pdfannotator'),
@@ -48,10 +49,42 @@ if ($ADMIN->fulltree) {
             get_string('global_setting_use_protected_comments', 'pdfannotator'),
             get_string('global_setting_use_protected_comments_desc', 'pdfannotator'), 0));
 
-    //Define what API to use for converting latex formulas into png.
+    // Define what API to use for converting latex formulas into png.
     $options = array();
     $options[LATEX_TO_PNG_MOODLE] = get_string("global_setting_latexusemoodle", "pdfannotator");
     $options[LATEX_TO_PNG_GOOGLE_API] = get_string("global_setting_latexusegoogle", "pdfannotator");
-    $settings->add(new admin_setting_configselect('mod_pdfannotator/latexapi', get_string('global_setting_latexapisetting', 'pdfannotator'),
+    $settings->add(new admin_setting_configselect('mod_pdfannotator/latexapi', get_string('global_setting_latexapisetting',
+        'pdfannotator'),
         get_string('global_setting_latexapisetting_desc', 'pdfannotator'), LATEX_TO_PNG_MOODLE, $options));
+    
+    $name = new lang_string('global_setting_attobuttons', 'pdfannotator');
+    $desc = new lang_string('global_setting_attobuttons_desc', 'pdfannotator');
+    $default = 'collapse = collapse
+style1 = bold, italic, underline
+list = unorderedlist, orderedlist
+insert = link
+other = html
+style2 = strike, subscript, superscript
+font = fontfamily, fontsize
+indent = indent, align
+extra = equation, matrix, chemistry, charmap
+undo = undo, image
+screen = fullscreen';
+    $setting = new admin_setting_configtextarea('mod_pdfannotator/attobuttons', $name, $desc, $default);
+    $settings->add($setting);
+
+    if (isset($CFG->maxbytes)) {
+
+        $name = new lang_string('maximumfilesize', 'pdfannotator');
+        $description = new lang_string('configmaxbytes', 'pdfannotator');
+    
+        $maxbytes = get_config('pdfannotator', 'maxbytes');
+        $element = new admin_setting_configselect('mod_pdfannotator/maxbytes',
+                                                  $name,
+                                                  $description,
+                                                  $CFG->maxbytes,
+                                                  get_max_upload_sizes($CFG->maxbytes, 0, 0, $maxbytes));
+        $settings->add($element);
+    }
+
 }

@@ -17,7 +17,7 @@
 /**
  * @package   mod_pdfannotator
  * @copyright 2018 RWTH Aachen (see README.md)
- * @authors   Rabea de Groot and Anna Heynkes
+ * @author    Rabea de Groot and Anna Heynkes
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
@@ -93,13 +93,14 @@ class mod_pdfannotator_renderer extends plugin_renderer_base {
      * Construct a tab header.
      *
      * @param moodle_url $baseurl
-     * @param string $namekey
      * @param string $what
+     * @param string $namekey
      * @param string $subpage
      * @param string $nameargs
      * @return tabobject
      */
-    private function pdfannotator_create_tab(moodle_url $baseurl, $namekey = null, $action, $pdfannotatorname = null, $nameargs = null) {
+    private function pdfannotator_create_tab(moodle_url $baseurl, $action, $namekey = null, $pdfannotatorname = null,
+        $nameargs = null) {
         $taburl = new moodle_url($baseurl, array('action' => $action));
         $tabname = get_string($namekey, 'pdfannotator', $nameargs);
         if ($pdfannotatorname) {
@@ -113,19 +114,19 @@ class mod_pdfannotator_renderer extends plugin_renderer_base {
      * Render the tab header hierarchy.
      *
      * @param moodle_url $baseurl
-     * @param type $selected
      * @param type $pdfannotatorname
      * @param type $context
+     * @param type $selected
      * @param type $inactive
      * @return type
      */
-    public function pdfannotator_render_tabs(moodle_url $baseurl, $selected = null, $pdfannotatorname, $context, $inactive = null) {
+    public function pdfannotator_render_tabs(moodle_url $baseurl, $pdfannotatorname, $context, $selected = null, $inactive = null) {
 
         $overviewtab = $this->pdfannotator_create_tab($baseurl, 'overview', 'overview');
 
         $level1 = array(
             $overviewtab,
-            $this->pdfannotator_create_tab($baseurl, 'document', 'view', $pdfannotatorname),
+            $this->pdfannotator_create_tab($baseurl, 'view', 'document', $pdfannotatorname),
             $this->pdfannotator_create_tab($baseurl, 'statistic', 'statistic'),
         );
         return $this->tabtree($level1, $selected, $inactive);

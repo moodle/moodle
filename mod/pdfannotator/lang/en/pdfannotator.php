@@ -17,7 +17,7 @@
 /**
  * @package   mod_pdfannotator
  * @copyright 2018 RWTH Aachen (see README.md)
- * @authors   Rabea de Groot, Anna Heynkes, Friederike Schwager
+ * @author    Rabea de Groot, Anna Heynkes, Friederike Schwager
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
@@ -52,9 +52,11 @@ $string['average'] = 'average';
 $string['average_answers'] = 'Average answers';
 $string['average_help'] = 'Only users who wrote at least one comment are included in the calculation of the average (arithmetic mean)';
 $string['average_questions'] = 'Average questions';
+
 $string['by'] = 'by';
 $string['by_other_users'] = 'by other users';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
+
 $string['cancelButton'] = 'Cancel';
 $string['chart_title'] = 'Questions and answers in the annotators in this course';
 $string['clicktoopen2'] = 'Click {$a} link to view the file.';
@@ -63,10 +65,12 @@ $string['colorPicker'] = 'Pick a color';
 $string['comment'] = 'Comment';
 $string['commentDeleted'] = 'Comment has been deleted';
 $string['comments'] = 'Comments';
+$string['configmaxbytes'] = 'Maximum file size';
 $string['correct'] = 'correct';
 $string['count'] = 'count';
 $string['createAnnotation'] = 'Create Annotation';
 $string['currentPage'] = 'current page number';
+
 $string['day'] = 'day';
 $string['days'] = 'days';
 $string['decision:overlappingAnnotation'] = 'You clicked an area, in which is more than one annotation. Decide which one you wanted to click.';
@@ -86,46 +90,54 @@ $string['didyouknow'] = 'Did you know?';
 $string['dnduploadpdfannotator'] = 'Create file for PDF Annotation';
 $string['document'] = 'Document';
 $string['drawing'] = 'Draw in the document with the pen.';
+
 $string['edit'] = 'Edit';
 $string['editAnnotation'] = 'The annotation will be moved. <br>This might change the context of the question.';
 $string['editAnnotationTitle'] = 'Are you sure?';
 $string['editButton'] = 'Save';
 $string['editedComment'] = 'last edited';
 $string['editNotAllowed'] = 'Panning not allowed!';
-$string['emptypdf'] = 'There are no comemnts in this annotator at present.';
+$string['emptypdf'] = 'There are no comments in this annotator at present.';
 $string['enterText'] = 'Enter text';
 $string['entity_helptitle'] = 'Help for';
 $string['error:addAnnotation'] = 'An error has occurred while adding an annotation.';
-$string['error:addComment'] = 'An error has occured while adding the comment.';
-$string['error:closequestion'] = 'An error has occured while closing/opening the question.';
-$string['error:deleteAnnotation'] = 'An error has occured while deleting an annotation.';
+$string['error:addComment'] = 'An error has occurred while adding the comment.';
+$string['error:closequestion'] = 'An error has occurred while closing/opening the question.';
+$string['error:deleteAnnotation'] = 'An error has occurred while deleting an annotation.';
 $string['error:editAnnotation'] = 'An error has occurred while editing an annotation.';
-$string['error:editcomment'] = 'An error has occured while trying to edit a comment.';
-$string['error:forwardquestion'] = 'An error has occured while forwarding the question.';
-$string['error:forwardquestionnorecipient'] = 'An error has occured while forwarding the question.: No person in this course has the capability to receive forwarded questions.';
-$string['error:getAllQuestions'] = 'An error has occured while getting the questions of this document.';
-$string['error:getAnnotation'] = 'An error has occured while getting the annotation.';
-$string['error:getAnnotations'] = 'An error has occured while getting all annotations.';
-$string['error:getComments'] = 'An error has occured while getting the comments.';
-$string['error:getQuestions'] = 'An error has occured while getting the questions for this page.';
-$string['error:hideComment'] = "An error has occured while trying to hide the comment from participants' view.";
+$string['error:editcomment'] = 'An error has occurred while trying to edit a comment.';
+$string['error:findimage'] = 'An error occurred while trying to find image {$a}.';
+$string['error:forwardquestion'] = 'An error has occurred while forwarding the question.';
+$string['error:forwardquestionnorecipient'] = 'An error has occurerd while forwarding the question.: No person in this course has the capability to receive forwarded questions.';
+$string['error:getAllQuestions'] = 'An error has occurred while getting the questions of this document.';
+$string['error:getAnnotation'] = 'An error has occurred while getting the annotation.';
+$string['error:getAnnotations'] = 'An error has occurred while getting all annotations.';
+$string['error:getComments'] = 'An error has occurred while getting the comments.';
+$string['error:getimageheight'] = 'An error has occurred while getting image height of {$a}.';
+$string['error:getimagewidth'] = 'An error has occurred while getting image width of {$a}.';
+$string['error:getQuestions'] = 'An error has occurred while getting the questions for this page.';
+$string['error:hideComment'] = "An error has occurred while trying to hide the comment from participants' view.";
 $string['error:markasread'] = 'The item could not be marked as read.';
 $string['error:markasunread'] = 'The item could not be marked as unread.';
-$string['error:markcorrectanswer'] = 'An error has occured while marking the answer as correct.';
+$string['error:markcorrectanswer'] = 'An error has occurred while marking the answer as correct.';
+$string['error:maximalsizeoffile'] = 'Your file {$a->filename}, because it exceeds {$a->filesize} as the maximum size of files. You can attach file(s) with at most {$a->maxfilesize} to a single comment.';
 $string['error:missingAnnotationtype'] = 'Annotationtype does not exists. Possibly the entry in table pdfannotator_annotationtypes is missing.';
 $string['error:openingPDF'] = 'An error occurred while opening the PDF file.';
-$string['error:openprintview'] = 'An error has occured while trying to open the pdf in Acrobat Reader.';
-$string['error:printcomments'] = 'An error has occured while trying to open the comments in a pdf.';
-$string['error:printlatex'] = 'An error has occured while trying to add a LaTeX formula to the pdf.';
-$string['error:redisplayComment'] = 'An error has occured while redisplaying the comment.';
-$string['error:renderPage'] = 'An error has occured while rendering the page.';
-$string['error:reportComment'] = 'An error has occured while saving the report.';
-$string['error:subscribe'] = 'An error has occured while subscribing to the question.';
-$string['error:unsubscribe'] = 'An error has occured while unsubscribing to the question.';
+$string['error:openprintview'] = 'An error has occurred while trying to open the pdf in Acrobat Reader.';
+$string['error:printcomments'] = 'An error has occurred while trying to open the comments in a pdf.';
+$string['error:printcommentsdata'] = 'Error with data from server.';
+$string['error:printlatex'] = 'An error has occurred while trying to add a LaTeX formula to the pdf.';
+$string['error:redisplayComment'] = 'An error has occurred while redisplaying the comment.';
+$string['error:renderPage'] = 'An error has occurred while rendering the page.';
+$string['error:reportComment'] = 'An error has occurred while saving the report.';
+$string['error:subscribe'] = 'An error has occurred while subscribing to the question.';
+$string['error:unsubscribe'] = 'An error has occurred while unsubscribing to the question.';
+$string['error:unsupportedextension'] = 'The extension of submitted data is not supported. Please select other extension.';
 $string['error:redihideCommentsplayComment'] = 'An error occurred while re-inserting the comment for attendees.';
-$string['error:voteComment'] = 'An error has occured while saving the vote.';
+$string['error:voteComment'] = 'An error has occurred while saving the vote.';
 $string['error'] = 'Error!';
 $string['eventreport_added'] = 'A comment was reported';
+
 $string['filenotfound'] = 'File not found, sorry.';
 $string['forward'] = 'Forward';
 $string['forwardedquestionhtml'] = '{$a->sender} forwarded the following question to you: <br /> <br />
@@ -144,8 +156,11 @@ $string['forwardedquestiontext'] = '{$a->sender} forwarded the following questio
         The question is available at: {$a->urltoquestion}';
 $string['fullscreen'] = 'Fullscreen';
 $string['fullscreenBack'] = 'Exit Fullscreen';
+
 $string['global_setting_anonymous'] = 'Allow anonymous posting?';
 $string['global_setting_anonymous_desc'] = 'With this option you allow your user to post comments anonymously. This option activates anonymous posting globally';
+$string['global_setting_attobuttons'] = 'Atto editor toolbar config';
+$string['global_setting_attobuttons_desc'] = 'The list of plugins and the order they are displayed can be configured here. The configuration consists of groups (one per line) followed by the ordered list of plugins for that group. The group is separated from the plugins with an equals sign and the plugins are separated with commas. The group names must be unique and should indicate what the buttons have in common. Button and group names should not be repeated and may only contain alphanumeric characters.';
 $string['global_setting_latexapisetting'] = 'LaTeX to PNG API';
 $string['global_setting_latexapisetting_desc'] = 'API for converting Latex to PNG for PDF Downloads.<br>
         Note: If you use the Google Chart API, Google will get all formulas in the document if someone chooses to use LaTeX<br>
@@ -169,19 +184,23 @@ $string['global_setting_useprint_document'] = 'Allow saving/printing document?';
 $string['global_setting_useprint_document_desc'] = 'Allow participants to save and print the pdf document';
 $string['global_setting_usevotes'] = 'Allow liking of comments?';
 $string['global_setting_usevotes_desc'] = 'With this option users can like / vote for posts other than their own.';
+
 $string['hiddenComment'] = 'hidden comment';
 $string['hiddenforparticipants'] = 'Hidden from students';
 $string['hideAnnotations'] = 'Hide Annotations';
 $string['highlight'] = 'Highlight text and add a comment.';
 $string['hour'] = 'hour';
 $string['hours'] = 'hours';
+
 $string['in_course'] = 'in this course';
 $string['in_document'] = 'in this document';
 $string['infonocomments'] = "This document contains no comments at present.";
 $string['iscorrecthelpicon'] = 'Correct';
 $string['iscorrecthelpicon_help'] = 'When a teacher or manager has marked an answer as correct, a green check mark appears next to it.';
 $string['itemsperpage'] = 'Items per page';
+
 $string['justnow'] = 'just now';
+
 $string['lastanswered'] = 'Last Answer';
 $string['lastedited'] = 'last edited';
 $string['legacyfiles'] = 'Migration of old course file';
@@ -197,19 +216,22 @@ $string['likeOwnComment'] = 'own comment';
 $string['likeQuestion'] = 'interesting question';
 $string['likeQuestionForbidden'] = 'already marked as helpful';
 $string['loading'] = 'Loading!';
+
 $string['markasread'] = 'Mark as read';
 $string['markasunread'] = 'Mark as unread';
 $string['markCorrect'] = 'Mark as correct';
 $string['markhidden'] = 'Hide';
 $string['markSolved'] = 'Close question';
 $string['markUnsolved'] = 'Reopen question';
+$string['maximumfilesize'] = 'Maximum file size';
+$string['maximumfilesize_help'] = 'Files uploaded by users may be up to this size.';
 $string['me'] = 'me';
 $string['messageforwardform'] = 'Your message to the recipient/s';
 $string['messageprovider:forwardedquestion'] = 'When a question was forwarded to you';
 $string['messageprovider:newanswer'] = 'When a question you subscribed to was answered';
 $string['messageprovider:newquestion'] = 'When a new question was asked';
 $string['messageprovider:newreport'] = 'When a comment was reported';
-$string['min2Chars'] = 'A question or comment with less than two characters is not allowed.';
+$string['min0Chars'] = 'An empty question or comment is not allowed.';
 $string['minute'] = 'minute';
 $string['minutes'] = 'minutes';
 $string['missingAnnotation'] = 'The corresponding annotation could not be found!';
@@ -229,6 +251,7 @@ $string['mypublicanswers'] = 'My public answers';
 $string['mypublicquestions'] = 'My public questions';
 $string['myquestion'] = 'Question';
 $string['myquestions'] = 'My questions';
+
 $string['newanswerhtml'] = 'Your subscribed question "{$a->question}" was answered by {$a->answeruser} with the comment: <br /> <br /> "{$a->content}"<br /><br />
 The answer is <a href="{$a->urltoanswer}">here</a> available.';
 $string['newanswertext'] = 'Your subscribed question "{$a->question}" was answered by {$a->answeruser} with the comment:
@@ -262,6 +285,7 @@ $string['notificationsubject:newanswer'] = 'New answer to subscribed question in
 $string['notificationsubject:newquestion'] = 'New question in {$a}';
 $string['notificationsubject:newreport'] = 'A comment was reported in {$a}';
 $string['nounreadreports'] = 'There are no unread reports in this course at present.';
+
 $string['on'] = 'on';
 $string['onlyDeleteOwnAnnotations'] = ", because it belongs to another user.";
 $string['onlyDeleteUncommentedPosts'] = ", because the other users comments would be deleted as well.";
@@ -271,6 +295,7 @@ $string['overviewactioncolumn'] = 'Manage';
 $string['ownpoststab'] = 'My posts';
 $string['ownpoststabicon'] = 'My posts';
 $string['ownpoststabicon_help'] = 'This page displays all comments that you posted in this course.';
+
 $string['page'] = 'page';
 $string['pdfannotator:addinstance'] = 'add instance';
 $string['pdfannotator:administrateuserinput'] = 'Administrate comments';
@@ -308,6 +333,7 @@ $string['pdfannotator'] = 'Document';
 $string['pdfannotatorcolumn'] = 'Document';
 $string['pdfannotatorcontent'] = 'Files and subfolders';
 $string['pdfannotatorname'] = 'PDF Annotation Tool';
+$string['pdfannotatorpost'] = 'Comments and questions';
 $string['pdfButton'] = 'Document';
 $string['pluginadministration'] = 'PDF Annotation administration';
 $string['pluginname'] = 'PDF Annotation';
@@ -344,6 +370,7 @@ $string['protected_questions'] = 'Private questions';
 $string['publicanswers'] = 'Public answers';
 $string['public_comments'] = 'Public comments';
 $string['publicquestions'] = 'Public questions';
+
 $string['question'] = 'Question';
 $string['questionsimgtitle'] = "Show all questions on this page";
 $string['questionSolved'] = 'Questions is closed. However, you can still create new comments.';
@@ -351,6 +378,7 @@ $string['questionstab'] = 'Questions';
 $string['questionstabicon'] = 'Questions';
 $string['questionstabicon_help'] = 'This page displays all unsolved questions that were asked in this course. You can also choose to see all or all solved questions in this course.';
 $string['questionstitle'] = 'Questions on page';
+
 $string['read'] = 'Read';
 $string['reason'] = 'Explanation';
 $string['recievenewquestionnotifications'] = 'Notify about new questions';
@@ -377,6 +405,7 @@ $string['reportstab'] = 'Reported comments';
 $string['reportstabicon'] = 'Reported comments';
 $string['reportstabicon_help'] = 'This page displays comments that were reported as inappropriate in this course. You can choose to see only unread/read* reports or all reports.<br>* Any manager of this course can mark a report as read.';
 $string['reportwassentoff'] = 'The comment has been reported.';
+
 $string['search'] = 'Search';
 $string['searchresults'] = 'Search results';
 $string['second'] = 'second';
@@ -439,10 +468,12 @@ $string['successfullyUnsubscribedPlural'] = 'Your subscribtion was cancelled. Al
 $string['successfullyUnsubscribedSingular'] = 'Your subscribtion to the question was cancelled and the only answer removed from this table.';
 $string['successfullyUnsubscribedTwo'] = 'Your subscribtion was cancelled. Both answers to the question were removed from this table.';
 $string['sumPages'] = 'Number of pages';
+
 $string['text'] = 'Add a text in the document.';
 $string['titleforreportcommentform'] = 'Report comment';
 $string['titleforwardform'] = 'Forward question';
 $string['toreport'] = 'Report';
+
 $string['unseenreports'] = 'unread only';
 $string['unsolvedquestionstitle'] = 'Unsolved Questions';
 $string['unsolvedquestionstitle_help'] = 'All unsolved questions in this course are listed.';
@@ -458,17 +489,21 @@ $string['use_private_comments'] = "Allow participants to write personal notes?";
 $string['use_protected_comments'] = "Allow participants to write private comments?";
 $string['useprint_document'] = "Give participants access to the PDF?";
 $string['usevotes'] = "Allow users to like comments.";
+
 $string['view'] = 'Document';
 $string['votes'] = 'Likes';
 $string['voteshelpicon'] = 'Likes';
 $string['voteshelpicon_help'] = 'This column tells you how many other people take an interest in the question.';
 $string['voteshelpicontwo'] = 'Likes';
 $string['voteshelpicontwo_help'] = 'This column tells you how often your posts were <em>liked</em>.';
+
 $string['week'] = 'week';
 $string['weeks'] = 'weeks';
+
 $string['year'] = 'year';
 $string['years'] = 'years';
 $string['yesButton'] = 'Yes';
+
 $string['zoom'] = 'zoom';
 $string['zoomin'] = 'zoom in';
 $string['zoomout'] = 'zoom out';

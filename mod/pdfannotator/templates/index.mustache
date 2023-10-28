@@ -16,7 +16,7 @@
 
                 {{#usestudenttextbox}}
                     <span class="toolbaritem">
-                        <button class="text" type="button" title="{{# str }} text, pdfannotator {{/ str }}" data-tooltype="text">{{# pix }}text_color_picker,pdfannotator, {{# str }} text, pdfannotator {{/ str }} {{/ pix}}</button>
+                        <button class="pdfannotator_text text" type="button" title="{{# str }} text, pdfannotator {{/ str }}" data-tooltype="text">{{# pix }}text_color_picker,pdfannotator, {{# str }} text, pdfannotator {{/ str }} {{/ pix}}</button>
                         <select class="text-size"></select>
                         <div class="text-color"></div>
                     </span>
@@ -124,14 +124,12 @@
                         </button>
                     </form>                    
                 </div>
-            <div class="comment-list">
+            <div class="pdfannotator-comment-list">
                 <div class="comment-list-container">
 
                 </div>
                 <form id="comment-list-form" class="comment-list-form" style="display:none;">
-
-                    <textarea id="myarea" placeholder="{{# str }} addAComment, pdfannotator {{/ str }}" cols="40" rows="3"></textarea>                 
-
+                    <div class="editor-loader-placeholder-add"></div>
                     <div id="anonymousDiv" class="row-fluid row">
                         <input type="checkbox" name="visibility" value="anonymous" id="anonymousCheckbox" class="pdfannotator-radio" style="width:auto;"><label id="anonymousLabel" for="anonymousCheckbox">{{# str }} sendAnonymous, pdfannotator {{/ str }}</label>
                     </div>
@@ -148,8 +146,8 @@
                     </div>
                     {{/ useprotectedcomments }}
                                        
-                    <input id="commentSubmit" class="owner btn btn-primary mb-1" type="submit" value="{{# str }} answerButton, pdfannotator {{/ str }}">
-                    <input id="commentCancel" class="owner btn btn-secondary" type="reset" value="{{# str }} cancelButton, pdfannotator {{/ str }}" >
+                    <input id="commentSubmit" name="commentSubmit" class="owner btn btn-primary mb-1" type="submit" value="{{# str }} answerButton, pdfannotator {{/ str }}">
+                    <input id="commentCancel" name="commentCancel" class="owner btn btn-secondary" type="reset" value="{{# str }} cancelButton, pdfannotator {{/ str }}" >
                 </form>
             </div>
 

@@ -16,10 +16,20 @@
 /**
  * @package   mod_pdfannotator
  * @copyright 2018 RWTH Aachen (see README.md)
- * @authors   Ahmad Obeid, Rabea de Groot, Anna Heynkes
+ * @author    Ahmad Obeid, Rabea de Groot, Anna Heynkes
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 defined('MOODLE_INTERNAL') || die;
+
+require_once($CFG->dirroot . '/mod/pdfannotator/locallib.php');
+
+// Ugly hack to make 3.11 and 4.0 work seamlessly.
+if (!defined('FEATURE_MOD_PURPOSE')) {
+    define('FEATURE_MOD_PURPOSE', 'mod_purpose');
+}
+if (!defined('MOD_PURPOSE_COMMUNICATION')) {
+    define('MOD_PURPOSE_COMMUNICATION', 'communication');
+}
 
 /**
  * List of features supported in pdfannotator module
@@ -28,14 +38,34 @@ defined('MOODLE_INTERNAL') || die;
  */
 function pdfannotator_supports($feature) {
     switch($feature) {
-        case FEATURE_GROUPS:                  return true;
-        case FEATURE_GROUPINGS:               return true;
-        case FEATURE_MOD_INTRO:               return true;
-        case FEATURE_COMPLETION_TRACKS_VIEWS: return true;
-        case FEATURE_BACKUP_MOODLE2:          return true;
-        case FEATURE_SHOW_DESCRIPTION:        return true;
-
-        default: return null;
+        case FEATURE_GROUPS:
+            return true;
+        case FEATURE_GROUPINGS:
+            return true;
+        case FEATURE_MOD_INTRO:
+            return true;
+        case FEATURE_COMPLETION_TRACKS_VIEWS:
+            return true;
+        case FEATURE_COMPLETION_HAS_RULES:
+            return false;
+        case FEATURE_GRADE_HAS_GRADE:
+            return false;
+        case FEATURE_GRADE_OUTCOMES:
+            return false;
+        case FEATURE_BACKUP_MOODLE2:
+            return true;
+        case FEATURE_SHOW_DESCRIPTION:
+            return true;
+        case FEATURE_ADVANCED_GRADING:
+            return false;
+        case FEATURE_PLAGIARISM:
+            return false;
+        case FEATURE_COMMENT:
+            return false;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_COMMUNICATION;
+        default:
+            return null;
     }
 }
 /**
@@ -217,7 +247,7 @@ function pdfannotator_delete_instance($id) {
  * "extra" information that may be needed when printing
  * this activity in a course listing.
  *
- * See {@link get_array_of_activities()} in course/lib.php
+ * See {@see get_array_of_activities()} in course/lib.php
  *
  * @param stdClass $coursemodule
  * @return cached_cm_info info
@@ -230,7 +260,8 @@ function pdfannotator_get_coursemodule_info($coursemodule) {
 
     $context = context_module::instance($coursemodule->id);
 
-    if (!$pdfannotator = $DB->get_record('pdfannotator', array('id' => $coursemodule->instance), 'id, name, course, timemodified, timecreated, intro, introformat')) {
+    if (!$pdfannotator = $DB->get_record('pdfannotator', array('id' => $coursemodule->instance), 'id, name, course,
+        timemodified, timecreated, intro, introformat')) {
         return null;
     }
 
@@ -282,6 +313,7 @@ function pdfannotator_cm_info_view(cm_info $cm) {
 function pdfannotator_get_file_areas($course, $cm, $context) {
     $areas = array();
     $areas['content'] = get_string('pdfannotatorcontent', 'pdfannotator');
+    $areas['post'] = get_string('pdfannotatorpost', 'pdfannotator');
     return $areas;
 }
 
@@ -360,47 +392,75 @@ function pdfannotator_pluginfile($course, $cm, $context, $filearea, $args, $forc
         return false;
     }
 
-    if ($filearea !== 'content') {
+    if ($filearea !== 'content' && $filearea !== 'post') {
         // Intro is handled automatically in pluginfile.php.
         return false;
     }
-
-    array_shift($args); // Ignore revision - designed to prevent caching problems only.
-
     $fs = get_file_storage();
-    $relativepath = implode('/', $args);
-    $fullpath = rtrim("/$context->id/mod_pdfannotator/$filearea/0/$relativepath", '/');
-    do {
-        if (!$file = $fs->get_file_by_hash(sha1($fullpath))) {
-            if ($fs->get_file_by_hash(sha1("$fullpath/."))) {
-                if ($file = $fs->get_file_by_hash(sha1("$fullpath/index.htm"))) {
-                    break;
+    if ($filearea === 'content') {
+        array_shift($args); // Ignore revision - designed to prevent caching problems only.
+        $relativepath = implode('/', $args);
+        $fullpath = rtrim("/$context->id/mod_pdfannotator/$filearea/0/$relativepath", '/');
+        do {
+            if (!$file = $fs->get_file_by_hash(sha1($fullpath))) {
+                if ($fs->get_file_by_hash(sha1("$fullpath/."))) {
+                    if ($file = $fs->get_file_by_hash(sha1("$fullpath/index.htm"))) {
+                        break;
+                    }
+                    if ($file = $fs->get_file_by_hash(sha1("$fullpath/index.html"))) {
+                        break;
+                    }
+                    if ($file = $fs->get_file_by_hash(sha1("$fullpath/Default.htm"))) {
+                        break;
+                    }
                 }
-                if ($file = $fs->get_file_by_hash(sha1("$fullpath/index.html"))) {
-                    break;
+                $pdfannotator = $DB->get_record('pdfannotator', array('id' => $cm->instance), 'id, legacyfiles', MUST_EXIST);
+                if ($pdfannotator->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
+                    return false;
                 }
-                if ($file = $fs->get_file_by_hash(sha1("$fullpath/Default.htm"))) {
-                    break;
+                if (!$file = resourcelib_try_file_migration('/' . $relativepath, $cm->id, $cm->course, 'mod_pdfannotator', 'content', 0)) {
+                    return false;
                 }
+                // File migrate - update flag.
+                $pdfannotator->legacyfileslast = time();
+                $DB->update_record('pdfannotator', $pdfannotator);
             }
-            $pdfannotator = $DB->get_record('pdfannotator', array('id' => $cm->instance), 'id, legacyfiles', MUST_EXIST);
-            if ($pdfannotator->legacyfiles != RESOURCELIB_LEGACYFILES_ACTIVE) {
-                return false;
-            }
-            if (!$file = resourcelib_try_file_migration('/' . $relativepath, $cm->id, $cm->course, 'mod_pdfannotator', 'content', 0)) {
-                return false;
-            }
-            // File migrate - update flag.
-            $pdfannotator->legacyfileslast = time();
-            $DB->update_record('pdfannotator', $pdfannotator);
-        }
-    } while (false);
+        } while (false);
+    
+        // Should we apply filters?
+        // $mimetype = $file->get_mimetype();
+        $filter = 0;
+        // Finally send the file.
+        send_stored_file($file, null, $filter, $forcedownload, $options);
+    }
 
-    // Should we apply filters?
-    // $mimetype = $file->get_mimetype();
-    $filter = 0;
-    // Finally send the file.
-    send_stored_file($file, null, $filter, $forcedownload, $options);
+    if ($filearea === 'post') {
+        $commentid = 0;
+        foreach ($args as $param) {
+            if (filter_var($param, FILTER_VALIDATE_INT) && $DB->record_exists('pdfannotator_comments', ['id' => $param])) {
+                $commentid = $param;
+                break;
+            }
+        }
+        array_shift($args);
+        $relativepath = implode('/', $args);
+        $fullpath = rtrim("/$context->id/mod_pdfannotator/$filearea/$commentid/$relativepath", '/');
+        if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+            //Annotations from other documents might have another contextid.
+            $pdfid = $DB->get_record('pdfannotator_comments', ['id' => $commentid], 'pdfannotatorid');
+            if ($pdfid) {
+                $pdfannotator = $DB->get_record('pdfannotator', ['id' => $pdfid->pdfannotatorid], '*', MUST_EXIST);
+                $cm = get_coursemodule_from_instance('pdfannotator', $pdfid->pdfannotatorid, $pdfannotator->course, false, MUST_EXIST);
+                $context2 = context_module::instance($cm->id);
+                $fullpath = rtrim("/$context2->id/mod_pdfannotator/$filearea/$commentid/$relativepath", '/');
+                if (!$file = $fs->get_file_by_hash(sha1($fullpath)) or $file->is_directory()) {
+                    return false;
+                }
+                send_stored_file($file, null, 0, true, $options);
+            }
+        }
+        send_stored_file($file, null, 0, true, $options);
+    }
 }
 
 /**
@@ -555,10 +615,15 @@ function mod_pdfannotator_core_calendar_provide_event_action(calendar_event $eve
  * Returns all annotations comments since a given time in specified annotator.
  *
  * @todo Document this functions args
- * @global object
- * @global object
- * @global object
- * @global object
+ * @param $activities
+ * @param $index
+ * @param $timestart
+ * @param $courseid
+ * @param $cmid
+ * @param int $userid
+ * @param int $groupid
+ * @throws dml_exception
+ * @throws moodle_exception
  */
 function pdfannotator_get_recent_mod_activity(&$activities, &$index, $timestart, $courseid, $cmid, $userid = 0, $groupid = 0) {
     global $CFG, $COURSE, $USER, $DB;
@@ -601,7 +666,7 @@ function pdfannotator_get_recent_mod_activity(&$activities, &$index, $timestart,
     $printposts = array();
     $context = context_course::instance($courseid);
     foreach ($posts as $post) {
-        if(!pdfannotator_can_see_comment($post, $context)) {
+        if (!pdfannotator_can_see_comment($post, $context)) {
             continue;
         }
         $printposts[] = $post;
@@ -718,4 +783,49 @@ function pdfannotator_print_recent_mod_activity($activity, $courseid, $detail, $
     $output .= html_writer::end_tag('table');
 
     echo $output;
+}
+
+/**
+ * Initialize the editor for editing a comment.
+ * @param type $args
+ * @return string
+ */
+function mod_pdfannotator_output_fragment_open_edit_comment_editor($args) {
+    global $DB;
+
+    $context = context_module::instance($args['cmid']);
+
+    $data = pdfannotator_data_preprocessing($context, 'editarea' . $args['uuid'], 0);
+    $comment = $DB->get_record('pdfannotator_comments', ['id' => $args['uuid']]);
+    $displaycontent = pdfannotator_file_prepare_draft_area($data['draftItemId'], $context->id, 'mod_pdfannotator', 'post',
+    $args['uuid'], pdfannotator_get_editor_options($context), $comment->content);
+
+    /* $params = ['draftitemid' => $data['draftItemId'], 'editorformat' => $data['editorFormat'], $args['action'], 'targetId' => 'editor-editcomment-inputs-' . $args['uuid'], $args['uuid']];
+    $PAGE->requires->js_init_call('loadEditorInputFields', $params); */
+
+    // Input fields.
+    $out = '';
+    $out .= html_writer::empty_tag('input', ['type' => 'hidden', 'class' => 'pdfannotator_' . $args['action'] . 'comment' . '_editoritemid', 'name' => 'input_value_editor', 'value' => $data['draftItemId']]);
+    $out .= html_writer::empty_tag('input', ['type' => 'hidden', 'class' => 'pdfannotator_' . $args['action'] . 'comment' . '_editorformat', 'name' => 'input_value_editor', 'value' => $data['editorFormat']]);
+    $out .= 'displaycontent:' . $displaycontent;
+    
+    return $out;
+}
+
+/**
+ * Initialize the editor for adding a comment.
+ * @param type $args
+ * @return string
+ */
+function mod_pdfannotator_output_fragment_open_add_comment_editor($args) {
+    $context = context_module::instance($args['cmid']);
+
+    $data = pdfannotator_data_preprocessing($context, 'id_pdfannotator_content', 0);
+    $text = file_prepare_draft_area($data['draftItemId'], $context->id, 'mod_pdfannotator', 'post', 0, pdfannotator_get_editor_options($context));
+    
+    $out = '';
+    $out = html_writer::empty_tag('input', ['type' => 'hidden', 'class' => 'pdfannotator_' . $args['action'] . 'comment' . '_editoritemid', 'name' => 'input_value_editor', 'value' => $data['draftItemId']]);
+    $out .= html_writer::empty_tag('input', ['type' => 'hidden', 'class' => 'pdfannotator_' . $args['action'] . 'comment' . '_editorformat', 'name' => 'input_value_editor', 'value' => $data['editorFormat']]);
+
+    return $out;
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/pdfannotator/db" VERSION="20181017" COMMENT="XMLDB file for Moodle mod/pdfannotator"
+<XMLDB PATH="mod/pdfannotator/db" VERSION="20221101" COMMENT="XMLDB file for Moodle mod/pdfannotator"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -48,9 +48,7 @@
         <FIELD NAME="isquestion" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="When the user creates an annotation, the comment he has to write is a question. So this column has to be true, otherwise false."/>
         <FIELD NAME="isdeleted" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="ishidden" TYPE="int" LENGTH="2" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Hidden comments can be seen by managers but not participants."/>
-        <FIELD NAME="solved" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="saves the userid of the user who marked the comment
-question: marked as solved
-answer: marked as correct answer"/>
+        <FIELD NAME="solved" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="saves the userid of the user who marked the comment question: marked as solved answer: marked as correct answer"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -42,8 +42,6 @@ class statistics implements \renderable, \templatable {
 
     /**
      * Constructor of renderable for statistics tab.
-     * @global type $USER
-     * @global type $PAGE
      * @param int $annotatorid Id of the annotator
      * @param int $courseid ID of the course
      * @param object $capabilities Some of the capabilities the user has-

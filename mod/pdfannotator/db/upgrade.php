@@ -17,7 +17,7 @@
 /**
  * @package   mod_pdfannotator
  * @copyright 2018 RWTH Aachen (see README.md)
- * @authors   Rabea de Groot, Anna Heynkes, Friederike Schwager
+ * @author   Rabea de Groot, Anna Heynkes, Friederike Schwager
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  */
@@ -188,7 +188,8 @@ function xmldb_pdfannotator_upgrade($oldversion) {
 
         // Define field use_studentdrawing to be added to pdfannotator.
         $table = new xmldb_table('pdfannotator');
-        $field = new xmldb_field('use_studentdrawing', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'use_studenttextbox');
+        $field = new xmldb_field('use_studentdrawing', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0',
+            'use_studenttextbox');
 
         // Conditionally launch add field use_studentdrawing.
         if (!$dbman->field_exists($table, $field)) {
@@ -342,7 +343,8 @@ function xmldb_pdfannotator_upgrade($oldversion) {
 
         // Define key annotationtypeid (foreign) to be added to pdfannotator_annotations.
         $table = new xmldb_table('pdfannotator_annotations');
-        $key = new xmldb_key('annotationtypeid', XMLDB_KEY_FOREIGN, array('annotationtypeid'), 'pdfannotator_annotationtypes', array('id'));
+        $key = new xmldb_key('annotationtypeid', XMLDB_KEY_FOREIGN, array('annotationtypeid'), 'pdfannotator_annotationtypes',
+            array('id'));
 
         // Launch add key annotationtypeid.
         $dbman->add_key($table, $key);
@@ -579,7 +581,8 @@ function xmldb_pdfannotator_upgrade($oldversion) {
 
         // Define field useprivatecomments to be added to pdfannotator.
         $table = new xmldb_table('pdfannotator');
-        $field = new xmldb_field('useprivatecomments', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'use_studentdrawing');
+        $field = new xmldb_field('useprivatecomments', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0',
+            'use_studentdrawing');
 
         // Conditionally launch add field useprivatecomments.
         if (!$dbman->field_exists($table, $field)) {
@@ -588,7 +591,8 @@ function xmldb_pdfannotator_upgrade($oldversion) {
 
          // Define field useprotectedcomments to be added to pdfannotator.
          $table = new xmldb_table('pdfannotator');
-         $field = new xmldb_field('useprotectedcomments', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'useprivatecomments');
+         $field = new xmldb_field('useprotectedcomments', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0',
+             'useprivatecomments');
 
          // Conditionally launch add field useprotectedcomments.
         if (!$dbman->field_exists($table, $field)) {
@@ -597,6 +601,47 @@ function xmldb_pdfannotator_upgrade($oldversion) {
 
         // Pdfannotator savepoint reached.
         upgrade_mod_savepoint(true, 2021032201, 'pdfannotator');
+    }
+
+    if ($oldversion < 2022102606) {
+
+        // Define table pdfannotator_embeddedfiles to be created.
+        $table = new xmldb_table('pdfannotator_embeddedfiles');
+
+        // Adding fields to table pdfannotator_embeddedfiles.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('fileid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('commentid', XMLDB_TYPE_INTEGER, '20', null, XMLDB_NOTNULL, null, null);
+
+        // Adding keys to table pdfannotator_embeddedfiles.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('fileid', XMLDB_KEY_FOREIGN, ['fileid'], 'files', ['id']);
+        $table->add_key('commentid', XMLDB_KEY_FOREIGN, ['commentid'], 'comments', ['id']);
+
+        // Adding indexes to table pdfannotator_embeddedfiles.
+        $table->add_index('idandcomment', XMLDB_INDEX_NOTUNIQUE, ['id', 'commentid']);
+
+        // Conditionally launch create table for pdfannotator_embeddedfiles.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Pdfannotator savepoint reached.
+        upgrade_mod_savepoint(true, 2022102606, 'pdfannotator');
+    }
+
+    if ($oldversion < 2022110200) {
+
+        // Define table pdfannotator_embeddedfiles to be dropped.
+        $table = new xmldb_table('pdfannotator_embeddedfiles');
+
+        // Conditionally launch drop table for pdfannotator_embeddedfiles.
+        if ($dbman->table_exists($table)) {
+            $dbman->drop_table($table);
+        }
+
+        // Pdfannotator savepoint reached.
+        upgrade_mod_savepoint(true, 2022110200, 'pdfannotator');
     }
 
     return true;

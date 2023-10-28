@@ -1,10 +1,10 @@
-{{# comments }}
+{{#comments }}
     <div class="{{ wrapperClass }} {{dimmed}}" id="comment_{{ uuid }}">
 
         <div class="wrappervotessolved">
             <div class="solved">{{#solvedicon}} <i class="{{classes}}" title="{{title}}"></i> {{/solvedicon}}</div>
             <button class="comment-like-a btn-link" title="{{ voteBtn }}" alt="{{ voteBtn }}">
-                <i class="icon fa fa-chevron-up fa-lg" title="{{ voteBtn }}" alt="{{ voteBtn }}"></i>
+                <i class="icon fa fa-thumbs-up fa-fw" title="{{ voteBtn }}" alt="{{ voteBtn }}"></i>
             </button>
             {{^ isdeleted }} {{# usevotes }}
                 <div class="countVotes" title="{{ voteTitle }}"> {{{ votes }}} </div>
@@ -52,17 +52,17 @@
             </div>
            
             <div class="chat-message-text">
-                <div id="chatmessage{{ uuid }}">{{{ content }}}</div>
+                <div id="chatmessage{{ uuid }}">{{{ displaycontent }}}</div>
                 
                 {{#displayhidden}}<span id="taghidden{{uuid}}" class="tag tag-info">{{# str }} hiddenforparticipants, pdfannotator {{/ str }}</span>{{/displayhidden}}
-            
+
                 <form id="edit{{ uuid }}" class="edit-comment-form" style="display:none;">
-                    <textarea id="editarea{{ uuid }}" placeholder="" cols="40" rows="3"></textarea>                  
+                    <div class="editor-loader-placeholder-edit-{{ uuid }}"></div>
                     <input id="commentSubmit" class="owner btn btn-primary mb-1" type="submit" value="{{# str }} editButton, pdfannotator {{/ str }}">
                     <input id="commentCancel" class="owner btn btn-secondary mb-1" type="reset" value="{{# str }} cancelButton, pdfannotator {{/ str }}" >
                 </form>
-            
-            </div>            
+         
+            </div>
                 {{^ isdeleted }}
                     <em class="edited">
                         {{# edited }}

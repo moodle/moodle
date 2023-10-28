@@ -16,7 +16,7 @@
 /**
  * @package   mod_pdfannotator
  * @copyright 2018 RWTH Aachen (see README.md)
- * @authors   Rabea de Groot, Anna Heynkes, Friederike Schwager
+ * @author    Rabea de Groot, Anna Heynkes, Friederike Schwager
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -36,6 +36,11 @@ define('LATEX_TO_PNG_GOOGLE_API', 1);
 
 
 /**
- * Prefix needed for encode64 imaged
+ * Prefix needed for encode64 images
  */
 define('IMAGE_PREFIX', 'data:image/png;base64,');
+
+/**
+ * Editor unlimited files variable
+ */
+define('PDFANNOTATOR_EDITOR_UNLIMITED_FILES', -1);

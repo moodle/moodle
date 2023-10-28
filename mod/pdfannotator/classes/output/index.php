@@ -31,6 +31,7 @@
 
 namespace mod_pdfannotator\output;
 
+use moodle_url;
 use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
@@ -46,9 +47,6 @@ class index implements \renderable, \templatable { // Class should be placed els
     private $useprotectedcomments;
 
     public function __construct($pdfannotator, $capabilities, $file) {
-
-        global $CFG, $USER;
-
         $this->usestudenttextbox = ($pdfannotator->use_studenttextbox || $capabilities->usetextbox);
         $this->usestudentdrawing = ($pdfannotator->use_studentdrawing || $capabilities->usedrawing);
         $this->useprint = ($pdfannotator->useprint || $capabilities->useprint);
@@ -56,14 +54,9 @@ class index implements \renderable, \templatable { // Class should be placed els
         $this->useprivatecomments = $pdfannotator->useprivatecomments;
         $this->useprotectedcomments = $pdfannotator->useprotectedcomments;
 
-        $contextid = $file->get_contextid();
-        $component = $file->get_component();
-        $filearea = $file->get_filearea();
-        $itemid = $file->get_itemid();
-        $filename = $file->get_filename();
-
-        $this->printurl = "$CFG->wwwroot/pluginfile.php/$contextid/$component/$filearea/$itemid/$filename?forcedownload=1";
-
+        $this->printurl = moodle_url::make_pluginfile_url(
+            $file->get_contextid(), $file->get_component(), $file->get_filearea(),
+            $file->get_itemid(), $file->get_filepath(), $file->get_filename(), true)->out(false);
     }
 
     public function export_for_template(\renderer_base $output) {

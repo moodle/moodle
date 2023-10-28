@@ -36,7 +36,6 @@ class reportmenu implements \renderable, \templatable {
 
     /**
      * Constructor of renderable for dropdown menu in reportstable.
-     * @global type $CFG
      * @param object $report Report object
      * @param int $cmid Course module id
      * @param int $currentpage Page of the table on overviewpage

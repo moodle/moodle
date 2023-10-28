@@ -65,10 +65,12 @@ class mod_pdfannotator_mod_form extends moodleform_mod {
         $filemanageroptions['maxfiles'] = 1; // Upload only one file.
         $filemanageroptions['mainfile'] = true;
 
-        $mform->addElement('filemanager', 'files', get_string('setting_fileupload', 'pdfannotator'), null, $filemanageroptions); // Params: 1. type of the element, 2. (html) elementname, 3. label.
+        $mform->addElement('filemanager', 'files', get_string('setting_fileupload', 'pdfannotator'), null,
+            $filemanageroptions); // Params: 1. type of the element, 2. (html) elementname, 3. label.
         $mform->addHelpButton('files', 'setting_fileupload', 'pdfannotator');
 
-        $mform->addElement('advcheckbox', 'usevotes', get_string('setting_usevotes', 'pdfannotator'), get_string('usevotes', 'pdfannotator'), null, array(0, 1));
+        $mform->addElement('advcheckbox', 'usevotes', get_string('setting_usevotes', 'pdfannotator'),
+            get_string('usevotes', 'pdfannotator'), null, array(0, 1));
         $mform->setType('usevotes', PARAM_BOOL);
         $mform->setDefault('usevotes', $config->usevotes);
         $mform->addHelpButton('usevotes', 'setting_usevotes', 'pdfannotator');
@@ -86,22 +88,26 @@ class mod_pdfannotator_mod_form extends moodleform_mod {
         $mform->addHelpButton('use_studentdrawing', 'setting_use_studentdrawing', 'pdfannotator');
 
         // XXX second checkbox or change to select.
-        $mform->addElement('advcheckbox', 'useprint', get_string('setting_useprint_document', 'pdfannotator'), get_string('useprint', 'pdfannotator'), null, array(0, 1));
+        $mform->addElement('advcheckbox', 'useprint', get_string('setting_useprint_document', 'pdfannotator'),
+            get_string('useprint', 'pdfannotator'), null, array(0, 1));
         $mform->setType('useprint', PARAM_BOOL);
         $mform->setDefault('useprint', $config->useprint);
         $mform->addHelpButton('useprint', 'setting_useprint_document', 'pdfannotator');
 
-        $mform->addElement('advcheckbox', 'useprintcomments', get_string('setting_useprint_comments', 'pdfannotator'), get_string('useprint_comments', 'pdfannotator'), null, array(0, 1));
+        $mform->addElement('advcheckbox', 'useprintcomments', get_string('setting_useprint_comments', 'pdfannotator'),
+            get_string('useprint_comments', 'pdfannotator'), null, array(0, 1));
         $mform->setType('useprintcomments', PARAM_BOOL);
         $mform->setDefault('useprintcomments', $config->useprintcomments);
         $mform->addHelpButton('useprintcomments', 'setting_useprint_comments', 'pdfannotator');
 
-        $mform->addElement('advcheckbox', 'useprivatecomments', get_string('setting_use_private_comments', 'pdfannotator'), get_string('use_private_comments', 'pdfannotator'), null, array(0, 1));
+        $mform->addElement('advcheckbox', 'useprivatecomments', get_string('setting_use_private_comments', 'pdfannotator'),
+            get_string('use_private_comments', 'pdfannotator'), null, array(0, 1));
         $mform->setType('useprivatecomments', PARAM_BOOL);
         $mform->setDefault('useprivatecomments', $config->use_private_comments);
         $mform->addHelpButton('useprivatecomments', 'setting_use_private_comments', 'pdfannotator');
 
-        $mform->addElement('advcheckbox', 'useprotectedcomments', get_string('setting_use_protected_comments', 'pdfannotator'), get_string('use_protected_comments', 'pdfannotator'), null, array(0, 1));
+        $mform->addElement('advcheckbox', 'useprotectedcomments', get_string('setting_use_protected_comments', 'pdfannotator'),
+            get_string('use_protected_comments', 'pdfannotator'), null, array(0, 1));
         $mform->setType('useprotectedcomments', PARAM_BOOL);
         $mform->setDefault('useprotectedcomments', $config->use_protected_comments);
         $mform->addHelpButton('useprotectedcomments', 'setting_use_protected_comments', 'pdfannotator');

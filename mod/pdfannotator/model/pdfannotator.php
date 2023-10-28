@@ -56,7 +56,6 @@ class pdfannotator_instance {
      * This method returns an array containing one pdfannotator_instance object
      * for each annotator in the specified course.
      *
-     * @global type $DB
      * @param type $courseid
      * @param type $beginwith optional parameter that specifies the (current) pdfannotator that should come first in the list
      * @return \pdfannotator_instance: array of pdfannotator_instance objects
@@ -150,6 +149,7 @@ class pdfannotator_instance {
 
             $question->answeredquestion = html_entity_decode($question->answeredquestion);
             $question->timemodified = pdfannotator_get_user_datetime($question->timemodified);
+            $question->answeredquestion = pdfannotator_get_relativelink($question->answeredquestion, $question->id, $context);
             if ($question->visibility === 'anonymous') {
                 $question->author = get_string('anonymous', 'pdfannotator');
             } else {
@@ -166,6 +166,7 @@ class pdfannotator_instance {
             }
 
             foreach ($answers as $answer) {
+                $answer->answer = pdfannotator_get_relativelink($answer->answer, $answer->id, $context);
                 $answer->answer = html_entity_decode($answer->answer);
                 $answer->timemodified = pdfannotator_get_user_datetime($answer->timemodified);
                 if ($answer->visibility === 'anonymous') {

@@ -11,21 +11,21 @@
     <library>
         <location>shared/pdf.js</location>
         <name>pdf.js</name>
-        <version></version>
+        <version>2.14.34</version>
         <license>Apache</license>
         <licenseversion>2.0</licenseversion>
     </library>
     <library>
         <location>shared/pdf.worker.js</location>
         <name>pdf.worker.js</name>
-        <version></version>
+        <version>2.14.34</version>
         <license>Apache</license>
         <licenseversion>2.0</licenseversion>
     </library>
     <library>
-        <location>shared/pdf_viewer.js</location>
+        <location>amd/src/pdf_viewer.js</location>
         <name>pdf_viewer.js</name>
-        <version></version>
+        <version>2.14.34</version>
         <license>Apache</license>
         <licenseversion>2.0</licenseversion>
     </library>
@@ -39,7 +39,7 @@
     <library>
         <location>amd/src/jspdf.js</location>
         <name>jsPDF</name>
-        <version>1.4.1</version>
+        <version>2.5.1</version>
         <license>MIT</license>
         <licenseversion></licenseversion>
     </library>
