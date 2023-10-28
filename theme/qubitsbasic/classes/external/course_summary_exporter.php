@@ -66,6 +66,15 @@ class course_summary_exporter extends \core\external\exporter {
         }
         $progress = floor($progress ?? 0);
         $coursecategory = \core_course_category::get($this->data->category, MUST_EXIST, true);
+
+        if (str_contains($this->data->shortname, 'DPL')) {
+            $cname = 'DigiPro';
+        } elseif (str_contains($this->data->shortname, 'DCL')) {
+            $cname =  'DigiChamps';
+        }else {
+            $cname = $coursecategory->name;
+        }
+
         return array(
             'fullnamedisplay' => get_course_display_name_for_list($this->data),
             'viewurl' => (new moodle_url('/course/view.php', array('id' => $this->data->id)))->out(false),
@@ -75,7 +84,7 @@ class course_summary_exporter extends \core\external\exporter {
             'isfavourite' => $this->related['isfavourite'],
             'hidden' => boolval(get_user_preferences('block_myoverview_hidden_course_' . $this->data->id, 0)),
             'showshortname' => $CFG->courselistshortnames ? true : false,
-            'coursecategory' => $coursecategory->name
+            'coursecategory' => $cname
         );
     }
 

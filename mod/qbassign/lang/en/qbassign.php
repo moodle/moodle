@@ -79,7 +79,7 @@ assignment submission for \'<i>{$a->qbassignment}</i>\'.</p>
 <p>You can see it appended to your <a href="{$a->url}">assignment submission</a>.</p>';
 $string['qbassignmentmailsmall'] = '{$a->grader} has posted some feedback on your
 assignment submission for \'{$a->qbassignment}\' You can see it appended to your submission';
-$string['qbassignmentname'] = 'assignment name';
+$string['qbassignmentname'] = 'Assignment name';
 $string['qbassignmentplugins'] = 'assignment plugins';
 $string['qbassignmentsperpage'] = 'assignments per page';
 $string['qbassignsubmission'] = 'Submission plugin';
@@ -367,7 +367,7 @@ $string['maxgrade'] = 'Maximum Grade';
 $string['maxperpage'] = 'Maximum assignments per page';
 $string['maxperpage_help'] = 'The maximum number of assignments a grader can show in the assignment grading page. This setting is useful in preventing timeouts for courses with a large number of participants.';
 $string['messageprovider:qbassign_notification'] = 'assignment notifications';
-$string['modulename'] = 'assignment';
+$string['modulename'] = 'Assignment';
 $string['modulename_help'] = 'The assignment activity module enables a teacher to communicate tasks, collect work and provide grades and feedback.
 
 Students can submit any digital content (files), such as word-processed documents, spreadsheets, images, or audio and video clips. Alternatively, or in addition, the assignment may require students to type text directly into the text editor. An assignment can also be used to remind students of \'real-world\' assignments they need to complete offline, such as art work, and thus not require any digital content. Students can submit work individually or as a member of a group.

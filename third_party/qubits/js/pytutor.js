@@ -3,7 +3,17 @@ var SVG_ARROW_HEIGHT = 10; // must match height of SVG_ARROW_POLYGON
 
 var curVisualizerID = 1; // global to uniquely identify each ExecutionVisualizer instance
 
+var inputCode;
+var setTrackBlock;
+var setOutput;
+var rawInputLst;
+
+
 function ExecutionVisualizer(domRootID, dat, params) {
+  inputCode = params.inputCode;
+  setTrackBlock = params.setTrackBlock;
+  setOutput = params.setOutput;
+  rawInputLst = params.rawInputLst;
   this.curInputCode =dat.code.main_code; // kill trailing spaces
   this.curTrace = dat.trace;
   this.sourceFiles = dat.code;
@@ -79,7 +89,7 @@ function ExecutionVisualizer(domRootID, dat, params) {
   this.tabularView = this.params.tabularView == true;
   this.showAllFrameLabels = this.params.showAllFrameLabels == true;
 
-  this.executeCodeWithRawInputFunc = this.params.executeCodeWithRawInputFunc;
+  this.executeCodeWithRawInputFunc = this.params.executeCodeWithRawInputFunc = true;
 
   // cool, we can create a separate jsPlumb instance for each visualization:
   this.jsPlumbInstance = jsPlumb.getInstance({
@@ -727,14 +737,46 @@ ExecutionVisualizer.prototype.render = function () {
   ruiDiv.find("#userInputPromptStr").html(myViz.userInputPromptStr);
   ruiDiv.find("#raw_input_submit_btn").click(function () {
     var userInput = ruiDiv.find("#raw_input_textbox").val();
+    rawInputLst.push(userInput);
+    execute_python_tutor_code(inputCode, rawInputLst);
     // advance instruction count by 1 to get to the NEXT instruction
-    myViz.executeCodeWithRawInputFunc(userInput, myViz.curInstr + 1);
+    // return userInput;
+    // myViz.executeCodeWithRawInputFunc(userInput, myViz.curInstr + 1);
   });
 
   this.updateOutput();
 
   this.hasRendered = true;
 };
+
+const execute_python_tutor_code = async (inputCode, rawInputLst) => {
+  try {
+    let pyodide = await loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.21.3/full/",
+    });
+    await pyodide.loadPackage("micropip");
+    const micropip = pyodide.pyimport("micropip");
+    await micropip.install(
+      "https://cdn.jsdelivr.net/gh/qubits-platform/pytutor@1.1/dist/pytutor-1.0.0-py3-none-any.whl"
+    );
+    let result = await pyodide.runPythonAsync(`import json
+from pytutor import generate_trace
+code = """
+${inputCode}
+"""
+trace = generate_trace.run(code, "[${rawInputLst}]")
+trace_dict = json.loads(trace)
+json.dumps(trace_dict, indent=2)
+`);
+    if (result) {
+      setOutput("");
+      setTrackBlock(JSON.parse(result));
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 
 ExecutionVisualizer.prototype.showVizHeaderViewMode = function () {
   var titleVal = this.domRoot.find("#vizTitleEditor").val().trim();

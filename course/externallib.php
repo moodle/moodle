@@ -4375,7 +4375,16 @@ class core_course_external extends external_api {
         $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
 
         $contentitems = $contentitemservice->get_content_items_for_user_in_course($USER, $course);
-        return ['content_items' => $contentitems];
+
+        $customActivities = array();
+        $removeActivities = array('assign','book','choice','data','lti','glossary','h5pactivity','imscp','qubitspage','scorm','survey','label','wiki','workshop');
+        foreach($contentitems as $k=>$v){
+
+            if(!in_array($v->name,$removeActivities))
+            $customActivities[] = $v;
+        }
+
+        return ['content_items' => !is_siteadmin() ? $customActivities : $contentitems];
     }
 
     /**

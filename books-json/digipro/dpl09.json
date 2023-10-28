@@ -222,34 +222,6 @@
                 "type": "page"
               },
               {
-                "title": "1.2 - Setting Up Python",
-                "uid": "DPL09-TP1-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=03-DP-L9-Unit1-Sprint1.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.3 - Objects,Variables,And Operations",
-                "uid": "DPL09-TP1-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=04-DP-L9-Unit1-Sprint1.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.4 - String Formatting",
-                "uid": "DPL09-TP1-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=05-DP-L9-Unit1-Sprint1.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.5 - Exercise",
-                "uid": "DPL09-TP1-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=06-DP-L9-Unit1-Exercise - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DPL09-TP1-CHDRN7",
                 "fname": "DPL09-TP1-CHDRN7.json",
                 "type": "assignment"
@@ -263,6 +235,13 @@
                 "uid": "DPL09-TP1-CHDRN9",
                 "fname": "DPL09-TP1-CHDRN9.json",
                 "type": "assignment"
+              },
+              {
+                "title": "1.2 - Setting Up Python",
+                "uid": "DPL09-TP1-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=03-DP-L9-Unit1-Sprint1.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP1-CHDRN10",
@@ -280,6 +259,13 @@
                 "type": "assignment"
               },
               {
+                "title": "1.3 - Objects,Variables,And Operations",
+                "uid": "DPL09-TP1-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=04-DP-L9-Unit1-Sprint1.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL09-TP1-CHDRN13",
                 "fname": "DPL09-TP1-CHDRN13.json",
                 "type": "assignment"
@@ -295,9 +281,11 @@
                 "type": "assignment"
               },
               {
-                "uid": "DPL09-U01-CHDRN1",
-                "fname": "DPL09-U01-CHDRN1.json",
-                "type": "quiz"
+                "title": "1.4 - String Formatting",
+                "uid": "DPL09-TP1-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=05-DP-L9-Unit1-Sprint1.4 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP1-CHDRN16",
@@ -318,6 +306,11 @@
                 "uid": "DPL09-TP1-CHDRN19",
                 "fname": "DPL09-TP1-CHDRN19.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DPL09-U01-CHDRN1",
+                "fname": "DPL09-U01-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -343,28 +336,7 @@
                 "type": "page"
               },
               {
-                "title": "2.2 - Loops In Python",
-                "uid": "DPL09-TP2-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=09-DP-L9-Unit2-Sprint2.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "2.3 - Nested Loops In Python",
-                "uid": "DPL09-TP2-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=10-DP-L9-Unit2-Sprint2.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "2.4 - Exercise",
-                "uid": "DPL09-TP2-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=11-DP-L9-Unit2-Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL09-TP2-CHDRN6",
+                "uid": "DPL09-TP2-CHDRN600",
                 "fname": "DPL09-TP2-CHDRN6.json",
                 "type": "assignment"
               },
@@ -377,6 +349,13 @@
                 "uid": "DPL09-TP2-CHDRN8",
                 "fname": "DPL09-TP2-CHDRN8.json",
                 "type": "assignment"
+              },
+              {
+                "title": "2.2 - Loops In Python",
+                "uid": "DPL09-TP2-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=09-DP-L9-Unit2-Sprint2.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP2-CHDRN9",
@@ -392,6 +371,13 @@
                 "uid": "DPL09-TP2-CHDRN11",
                 "fname": "DPL09-TP2-CHDRN11.json",
                 "type": "assignment"
+              },
+              {
+                "title": "2.3 - Nested Loops In Python",
+                "uid": "DPL09-TP2-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=10-DP-L9-Unit2-Sprint2.3 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP2-CHDRN12",
@@ -437,28 +423,7 @@
                 "type": "page"
               },
               {
-                "title": "3.2 - Tuples In Python",
-                "uid": "DPL09-TP3-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=14-DP_L9_Unit3_Sprint3.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "3.3 - Dictionary",
-                "uid": "DPL09-TP3-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=15-DP_L9_Unit3_Sprint3.3 - Google Docs",
-                "type": "page"
-              }, 
-              {
-                "title": "3.4 - Exercise",
-                "uid": "DPL09-TP3-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=16-DP_L9_Unit3_Exercise - Google Docsoogle Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL09-TP3-CHDRN6",
+                "uid": "DPL09-TP3-CHDRN600",
                 "fname": "DPL09-TP3-CHDRN6.json",
                 "type": "assignment"
               },
@@ -471,6 +436,13 @@
                 "uid": "DPL09-TP3-CHDRN8",
                 "fname": "DPL09-TP3-CHDRN8.json",
                 "type": "assignment"
+              },
+              {
+                "title": "3.2 - Tuples In Python",
+                "uid": "DPL09-TP3-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=14-DP_L9_Unit3_Sprint3.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP3-CHDRN9",
@@ -486,6 +458,13 @@
                 "uid": "DPL09-TP3-CHDRN11",
                 "fname": "DPL09-TP3-CHDRN11.json",
                 "type": "assignment"
+              },
+              {
+                "title": "3.3 - Dictionary",
+                "uid": "DPL09-TP3-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=15-DP_L9_Unit3_Sprint3.3 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP3-CHDRN12",
@@ -531,42 +510,9 @@
                 "type": "page"
               },
               {
-                "title": "4.2 - Scope Of Variables",
-                "uid": "DPL09-TP4-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=19-DP_L9_U4_Sprint4.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "4.3 - Packages And Libraries",
-                "uid": "DPL09-TP4-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=20-DP_L9_U4_Sprint4.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "4.4 - Handling Files",
-                "uid": "DPL09-TP4-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=21-DP_L9_U4_Sprint4.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "4.5 - Exercise",
-                "uid": "DPL09-TP4-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=22-DPL9_Unit4_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL09-TP4-CHDRN7",
+                "uid": "DPL09-TP4-CHDRN700",
                 "fname": "DPL09-TP4-CHDRN7.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DPL09-U04-CHDRN1",
-                "fname": "DPL09-U04-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DPL09-TP4-CHDRN8",
@@ -577,6 +523,13 @@
                 "uid": "DPL09-TP4-CHDRN9",
                 "fname": "DPL09-TP4-CHDRN9.json",
                 "type": "assignment"
+              },
+              {
+                "title": "4.2 - Scope Of Variables",
+                "uid": "DPL09-TP4-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=19-DP_L9_U4_Sprint4.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP4-CHDRN10",
@@ -594,6 +547,13 @@
                 "type": "assignment"
               },
               {
+                "title": "4.3 - Packages And Libraries",
+                "uid": "DPL09-TP4-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=20-DP_L9_U4_Sprint4.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL09-TP4-CHDRN13",
                 "fname": "DPL09-TP4-CHDRN13.json",
                 "type": "assignment"
@@ -609,6 +569,13 @@
                 "type": "assignment"
               },
               {
+                "title": "4.4 - Handling Files",
+                "uid": "DPL09-TP4-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=21-DP_L9_U4_Sprint4.4 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL09-TP4-CHDRN16",
                 "fname": "DPL09-TP4-CHDRN16.json",
                 "type": "assignment"
@@ -622,6 +589,11 @@
                 "uid": "DPL09-TP4-CHDRN18",
                 "fname": "DPL09-TP4-CHDRN18.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DPL09-U04-CHDRN1",
+                "fname": "DPL09-U04-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -647,42 +619,9 @@
                 "type": "page"
               },
               {
-                "title": "5.2 - Binary Search",
-                "uid": "DPL09-TP5-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=25-DPL9-Unit5-Sprint5.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "5.3 - Banking Assistance Program",
-                "uid": "DPL09-TP5-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=26-DPL9_Unit5_Sprint5.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "5.4 - Exercise",
-                "uid": "DPL09-TP5-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=27-DPL9_Unit5_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "5.5 - Food Calorie Management Project",
-                "uid": "DPL09-TP5-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=28-Capstone_ Daily Calorie Intake - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL09-TP5-CHDRN7",
+                "uid": "DPL09-TP5-CHDRN700",
                 "fname": "DPL09-TP5-CHDRN7.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DPL09-U05-CHDRN1",
-                "fname": "DPL09-U05-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DPL09-TP5-CHDRN8",
@@ -695,6 +634,13 @@
                 "type": "assignment"
               },
               {
+                "title": "5.2 - Binary Search",
+                "uid": "DPL09-TP5-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=25-DPL9-Unit5-Sprint5.2 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL09-TP5-CHDRN10",
                 "fname": "DPL09-TP5-CHDRN10.json",
                 "type": "assignment"
@@ -705,10 +651,39 @@
                 "type": "assignment"
               },
               {
+                "title": "5.3 - Banking Assistance Program",
+                "uid": "DPL09-TP5-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=26-DPL9_Unit5_Sprint5.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL09-TP5-CHDRN12",
                 "fname": "DPL09-TP5-CHDRN12.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DPL09-U05-CHDRN1",
+                "fname": "DPL09-U05-CHDRN1.json",
+                "type": "quiz"
               }
+            ],
+            "teacheronly": "no"
+          },
+          {
+            "route": "book/DPL09/DPL09-TP8-000.mdx",
+            "title": "Capstone Project - Food Calorie Management Project",
+            "type": "topic",
+            "uid": "DPL09-TP8-000",
+            "children": [
+              {
+                "title": "Capstone Project - Food Calorie Management Project",
+                "uid": "DPL09-TP8-CHDRN1",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=28-Capstone_ Daily Calorie Intake - Google Docs",
+                "type": "page"
+              }
+              
             ],
             "teacheronly": "no"
           },
@@ -733,41 +708,9 @@
                 "type": "page"
               },
               {
-                "title": "6.2 - Dataframe",
-                "uid": "DPL09-TP6-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=31-DP_L9_Unit6_Sprint6.2 - Google Docs",
-                "type": "page"
-              }, {
-                "title": "6.3 - Exploring Data From A File",
-                "uid": "DPL09-TP6-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=32-DP_L9_Unit6_Sprint6.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "6.4 - Manipulating Data",
-                "uid": "DPL09-TP6-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=33-DP_L9_Unit6_Sprint6.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "6.5 - Exercise",
-                "uid": "DPL09-TP6-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=34-DP-L9-Unit6-Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL09-TP6-CHDRN7",
+                "uid": "DPL09-TP6-CHDRN700",
                 "fname": "DPL09-TP6-CHDRN7.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DPL09-U06-CHDRN1",
-                "fname": "DPL09-U06-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DPL09-TP6-CHDRN8",
@@ -778,6 +721,13 @@
                 "uid": "DPL09-TP6-CHDRN9",
                 "fname": "DPL09-TP6-CHDRN9.json",
                 "type": "assignment"
+              },
+              {
+                "title": "6.2 - Dataframe",
+                "uid": "DPL09-TP6-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=31-DP_L9_Unit6_Sprint6.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP6-CHDRN10",
@@ -793,6 +743,13 @@
                 "uid": "DPL09-TP6-CHDRN12",
                 "fname": "DPL09-TP6-CHDRN12.json",
                 "type": "assignment"
+              }, 
+              {
+                "title": "6.3 - Exploring Data From A File",
+                "uid": "DPL09-TP6-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=32-DP_L9_Unit6_Sprint6.3 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP6-CHDRN13",
@@ -810,6 +767,13 @@
                 "type": "assignment"
               },
               {
+                "title": "6.4 - Manipulating Data",
+                "uid": "DPL09-TP6-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=33-DP_L9_Unit6_Sprint6.4 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL09-TP6-CHDRN16",
                 "fname": "DPL09-TP6-CHDRN16.json",
                 "type": "assignment"
@@ -823,6 +787,11 @@
                 "uid": "DPL09-TP6-CHDRN18",
                 "fname": "DPL09-TP6-CHDRN18.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DPL09-U06-CHDRN1",
+                "fname": "DPL09-U06-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -848,41 +817,9 @@
                 "type": "page"
               },
               {
-                "title": "7.2 - Time Series Object",
-                "uid": "DPL09-TP7-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=37-DP-L9-Unit7-Sprint7.2 - Google Docs",
-                "type": "page"
-              }, {
-                "title": "7.3 - Forecasting",
-                "uid": "DPL09-TP7-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=38-DP-L9-Unit7-Sprint7.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "6.4 - Manipulating Data",
-                "uid": "DPL09-TP7-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=33-DP_L9_Unit6_Sprint6.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "7.5 - Exercise",
-                "uid": "DPL09-TP7-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiPro&Level=Level9&pdf=39-DP_L9_Unit7_Exercise - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DPL09-TP7-CHDRN7",
+                "uid": "DPL09-TP7-CHDRN700",
                 "fname": "DPL09-TP7-CHDRN7.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DPL09-U07-CHDRN1",
-                "fname": "DPL09-U07-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DPL09-TP7-CHDRN8",
@@ -893,6 +830,13 @@
                 "uid": "DPL09-TP7-CHDRN9",
                 "fname": "DPL09-TP7-CHDRN9.json",
                 "type": "assignment"
+              },
+              {
+                "title": "7.2 - Time Series Object",
+                "uid": "DPL09-TP7-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=37-DP-L9-Unit7-Sprint7.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DPL09-TP7-CHDRN10",
@@ -910,6 +854,13 @@
                 "type": "assignment"
               },
               {
+                "title": "7.3 - Forecasting",
+                "uid": "DPL09-TP7-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiPro&Level=Level9&pdf=38-DP-L9-Unit7-Sprint7.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DPL09-TP7-CHDRN13",
                 "fname": "DPL09-TP7-CHDRN13.json",
                 "type": "assignment"
@@ -923,6 +874,11 @@
                 "uid": "DPL09-TP7-CHDRN15",
                 "fname": "DPL09-TP7-CHDRN15.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DPL09-U07-CHDRN1",
+                "fname": "DPL09-U07-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"

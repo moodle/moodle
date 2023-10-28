@@ -1459,6 +1459,7 @@ class qbassign_grading_table extends table_sql implements renderable {
             $urlparams = array('id' => $this->qbassignment->get_course_module()->id,
                                                      'sid' => $item->id,
                                                      'gid' => $item->id,
+                                                     'userid' => $item->userid,
                                                      'plugin' => $plugin->get_type(),
                                                      'action' => 'viewplugin' . $plugin->get_subtype(),
                                                      'returnaction' => $returnaction,
@@ -1467,7 +1468,9 @@ class qbassign_grading_table extends table_sql implements renderable {
             $link = $this->output->action_link($url, $icon);
             $separator = $this->output->spacer(array(), true);
         }
-
+        if(is_array($summary)) 
+        return '<a href="'.$url.'"  class="btn btn-primary d-flex justify-content-center" target="_blank">View</a>' . $separator . $summary[0];
+        else
         return $link . $separator . $summary;
     }
 

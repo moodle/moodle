@@ -180,27 +180,6 @@
               "type": "page"
             },
             {
-              "title": "1.2 - Loop The Movements",
-              "uid": "DPL06-TP1-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U1_S2",
-              "type": "page"
-            },
-            {
-              "title": "1.3 - Customize with Variables",
-              "uid": "DPL06-TP1-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U1_S3",
-              "type": "page"
-            },
-            {
-              "title": "1.4 - Random Turns",
-              "uid": "DPL06-TP1-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U1_S4",
-              "type": "page"
-            },
-            {
               "uid": "DPL06-TP1-CHDRN6",
               "fname": "DPL06-TP1-CHDRN6.json",
               "type": "assignment"
@@ -214,6 +193,13 @@
               "uid": "DPL06-TP1-CHDRN8",
               "fname": "DPL06-TP1-CHDRN8.json",
               "type": "assignment"
+            },
+            {
+              "title": "1.2 - Loop The Movements",
+              "uid": "DPL06-TP1-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U1_S2",
+              "type": "page"
             },
             {
               "uid": "DPL06-TP1-CHDRN9",
@@ -231,6 +217,13 @@
               "type": "assignment"
             },
             {
+              "title": "1.3 - Customize with Variables",
+              "uid": "DPL06-TP1-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U1_S3",
+              "type": "page"
+            },
+            {
               "uid": "DPL06-TP1-CHDRN12",
               "fname": "DPL06-TP1-CHDRN12.json",
               "type": "assignment"
@@ -239,6 +232,13 @@
               "uid": "DPL06-TP1-CHDRN13",
               "fname": "DPL06-TP1-CHDRN13.json",
               "type": "assignment"
+            },
+            {
+              "title": "1.4 - Random Turns",
+              "uid": "DPL06-TP1-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U1_S4",
+              "type": "page"
             },
             {
               "uid": "DPL06-U1-CHDRN1",
@@ -269,28 +269,7 @@
               "type": "page"
             },
             {
-              "title": "2.2 - Clones",
-              "uid": "DPL06-TP2-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U2_S2",
-              "type": "page"
-            },
-            {
-              "title": "2.3 - Nested Loops",
-              "uid": "DPL06-TP2-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U2_S3",
-              "type": "page"
-            },
-            {
-              "title": "2.4 - Logical Operator",
-              "uid": "DPL06-TP2-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U2_S4",
-              "type": "page"
-            },
-            {
-              "uid": "DPL06-TP2-CHDRN6",
+              "uid": "DPL06-TP2-CHDRN600",
               "fname": "DPL06-TP2-CHDRN6.json",
               "type": "assignment"
             },
@@ -298,6 +277,13 @@
               "uid": "DPL06-TP2-CHDRN7",
               "fname": "DPL06-TP2-CHDRN7.json",
               "type": "assignment"
+            },
+            {
+              "title": "2.2 - Clones",
+              "uid": "DPL06-TP2-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U2_S2",
+              "type": "page"
             },
             {
               "uid": "DPL06-TP2-CHDRN8",
@@ -310,6 +296,13 @@
               "type": "assignment"
             },
             {
+              "title": "2.3 - Nested Loops",
+              "uid": "DPL06-TP2-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U2_S3",
+              "type": "page"
+            },
+            {
               "uid": "DPL06-TP2-CHDRN10",
               "fname": "DPL06-TP2-CHDRN10.json",
               "type": "assignment"
@@ -318,6 +311,13 @@
               "uid": "DPL06-TP2-CHDRN11",
               "fname": "DPL06-TP2-CHDRN11.json",
               "type": "assignment"
+            },
+            {
+              "title": "2.4 - Logical Operator",
+              "uid": "DPL06-TP2-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U2_S4",
+              "type": "page"
             },
             {
               "uid": "DPL06-TP2-CHDRN12",
@@ -363,42 +363,7 @@
               "type": "page"
             },
             {
-              "title": "3.2 - Nested Conditions",
-              "uid": "DPL06-TP3-CHDRN8",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U03_S02",
-              "type": "page"
-            },
-            {
-              "title": "3.3 - Switching Backdrops",
-              "uid": "DPL06-TP3-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_S2",
-              "type": "page"
-            },
-            {
-              "title": "3.4 - Timer",
-              "uid": "DPL06-TP3-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_S3",
-              "type": "page"
-            },
-            {
-              "title": "3.5 - My Blocks",
-              "uid": "DPL06-TP3-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_S4",
-              "type": "page"
-            },
-            {
-              "title": "Capstone Project - Create a Fruit Ninja Game in ScratchThe Music",
-              "uid": "DPL06-TP3-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_Capstone project",
-              "type": "page"
-            },
-            {
-              "uid": "DPL06-TP3-CHDRN7",
+              "uid": "DPL06-TP3-CHDRN700",
               "fname": "DPL06-TP3-CHDRN7.json",
               "type": "assignment"
             },
@@ -413,6 +378,13 @@
               "type": "assignment"
             },
             {
+              "title": "3.2 - Nested Conditions",
+              "uid": "DPL06-TP3-CHDRN8",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U03_S02",
+              "type": "page"
+            },
+            {
               "uid": "DPL06-TP3-CHDRN9",
               "fname": "DPL06-TP3-CHDRN9.json",
               "type": "assignment"
@@ -421,6 +393,13 @@
               "uid": "DPL06-TP3-CHDRN10",
               "fname": "DPL06-TP3-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "title": "3.3 - Switching Backdrops",
+              "uid": "DPL06-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_S2",
+              "type": "page"
             },
             {
               "uid": "DPL06-TP3-CHDRN11",
@@ -433,6 +412,13 @@
               "type": "assignment"
             },
             {
+              "title": "3.4 - Timer",
+              "uid": "DPL06-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_S3",
+              "type": "page"
+            },
+            {
               "uid": "DPL06-TP3-CHDRN13",
               "fname": "DPL06-TP3-CHDRN13.json",
               "type": "assignment"
@@ -443,9 +429,32 @@
               "type": "assignment"
             },
             {
+              "title": "3.5 - My Blocks",
+              "uid": "DPL06-TP3-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_S4",
+              "type": "page"
+            },
+            {
               "uid": "DPL06-U3-CHDRN1",
               "fname": "DPL06-U3-CHDRN1.json",
               "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL06/DPL06-TP6-000.mdx",
+          "title": "Capstone Project - Create a Fruit Ninja Game in ScratchThe Music",
+          "type": "topic",
+          "uid": "DPL06-TP6-000",
+          "children": [
+            {
+              "title": "Capstone Project - Create a Fruit Ninja Game in ScratchThe Music",
+              "uid": "DPL06-TP6-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U3_Capstone project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"
@@ -471,40 +480,21 @@
               "type": "page"
             },
             {
-              "title": "4.2 - Develop and Analyze a ChatBot",
-              "uid": "DPL06-TP4-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U4_S2",
-              "type": "page"
-            },
-            {
-              "title": "4.3 - AI ChatBotS",
-              "uid": "DPL06-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U4_S3",
-              "type": "page"
-            },
-            {
-              "title": "Capstone Project - Create an AI-Based ChatBot for your school",
-              "uid": "DPL06-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U4_Capstone project",
-              "type": "page"
-            },
-            {
-              "uid": "DPL06-TP4-CHDRN6",
+              "uid": "DPL06-TP4-CHDRN600",
               "fname": "DPL06-TP4-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DPL06-U4-CHDRN1",
-              "fname": "DPL06-U4-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DPL06-TP4-CHDRN7",
               "fname": "DPL06-TP4-CHDRN7.json",
               "type": "assignment"
+            },
+            {
+              "title": "4.2 - Develop and Analyze a ChatBot",
+              "uid": "DPL06-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U4_S2",
+              "type": "page"
             },
             {
               "uid": "DPL06-TP4-CHDRN8",
@@ -522,6 +512,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.3 - AI ChatBotS",
+              "uid": "DPL06-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U4_S3",
+              "type": "page"
+            },
+            {
               "uid": "DPL06-TP4-CHDRN11",
               "fname": "DPL06-TP4-CHDRN11.json",
               "type": "assignment"
@@ -535,6 +532,27 @@
               "uid": "DPL06-TP4-CHDRN13",
               "fname": "DPL06-TP4-CHDRN13.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DPL06-U4-CHDRN1",
+              "fname": "DPL06-U4-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL06/DPL06-TP7-000.mdx",
+          "title": "Capstone Project - Create an AI-Based ChatBot for your school",
+          "type": "topic",
+          "uid": "DPL06-TP7-000",
+          "children": [
+            {
+              "title": "Capstone Project - Create an AI-Based ChatBot for your school",
+              "uid": "DPL06-TP7-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U4_Capstone project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"
@@ -560,35 +578,9 @@
               "type": "page"
             },
             {
-              "title": "5.2 - Whack a Beaver!",
-              "uid": "DPL06-TP5-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U5_S2",
-              "type": "page"
-            },
-            {
-              "title": "5.3 - Loops and Variables",
-              "uid": "DPL06-TP5-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U5_S3",
-              "type": "page"
-            },
-            {
-              "title": "Capstone Project - Stop Global Warming",
-              "uid": "DPL06-TP5-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U5_Capstone project",
-              "type": "page"
-            },
-            {
-              "uid": "DPL06-TP5-CHDRN6",
+              "uid": "DPL06-TP5-CHDRN600",
               "fname": "DPL06-TP5-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DPL06-U5-CHDRN1",
-              "fname": "DPL06-U5-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DPL06-TP5-CHDRN7",
@@ -599,6 +591,13 @@
               "uid": "DPL06-TP5-CHDRN8",
               "fname": "DPL06-TP5-CHDRN8.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.2 - Whack a Beaver!",
+              "uid": "DPL06-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U5_S2",
+              "type": "page"
             },
             {
               "uid": "DPL06-TP5-CHDRN9",
@@ -616,6 +615,13 @@
               "type": "assignment"
             },
             {
+              "title": "5.3 - Loops and Variables",
+              "uid": "DPL06-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U5_S3",
+              "type": "page"
+            },
+            {
               "uid": "DPL06-TP5-CHDRN12",
               "fname": "DPL06-TP5-CHDRN12.json",
               "type": "assignment"
@@ -629,6 +635,27 @@
               "uid": "DPL06-TP5-CHDRN14",
               "fname": "DPL06-TP5-CHDRN14.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DPL06-U5-CHDRN1",
+              "fname": "DPL06-U5-CHDRN1.json",
+              "type": "quiz"
+            }
+          ],
+          "teacheronly": "no"
+        },
+        {
+          "route": "book/DPL06/DPL06-TP8-000.mdx",
+          "title": "Capstone Project - Stop Global Warming",
+          "type": "topic",
+          "uid": "DPL06-TP8-000",
+          "children": [
+            {
+              "title": "Capstone Project - Stop Global Warming",
+              "uid": "DPL06-TP8-CHDRN1",
+              "description": "",
+              "route": "/pdf?course=DigiPro&Level=Level6&pdf=DPL06_U5_Capstone project",
+              "type": "page"
             }
           ],
           "teacheronly": "no"

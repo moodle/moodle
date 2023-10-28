@@ -292,34 +292,6 @@
                 "type": "page"
               },
               {
-                "title": "1.2 - Variables And Assignments",
-                "uid": "DCL12-TP1-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=03-DCL12_Unit1_Sprint1.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.3 - Mathematical Expressions",
-                "uid": "DCL12-TP1-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=04-DCL12_Unit1_Sprint1.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.4 - Strings",
-                "uid": "DCL12-TP1-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=05-DCL12_Unit1_Sprint1.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "1.5 - Boolean Expressions",
-                "uid": "DCL12-TP1-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=06-DCL12_Unit1_Sprint1.5 - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DCL12-TP1-CHDRN7",
                 "fname": "DCL12-TP1-CHDRN7.json",
                 "type": "assignment"
@@ -333,6 +305,13 @@
                 "uid": "DCL12-TP1-CHDRN9",
                 "fname": "DCL12-TP1-CHDRN9.json",
                 "type": "assignment"
+              },
+              {
+                "title": "1.2 - Variables And Assignments",
+                "uid": "DCL12-TP1-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=03-DCL12_Unit1_Sprint1.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP1-CHDRN10",
@@ -350,6 +329,13 @@
                 "type": "assignment"
               },
               {
+                "title": "1.3 - Mathematical Expressions",
+                "uid": "DCL12-TP1-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=04-DCL12_Unit1_Sprint1.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP1-CHDRN13",
                 "fname": "DCL12-TP1-CHDRN13.json",
                 "type": "assignment"
@@ -365,6 +351,13 @@
                 "type": "assignment"
               },
               {
+                "title": "1.4 - Strings",
+                "uid": "DCL12-TP1-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=05-DCL12_Unit1_Sprint1.4 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP1-CHDRN16",
                 "fname": "DCL12-TP1-CHDRN16.json",
                 "type": "assignment"
@@ -378,6 +371,13 @@
                 "uid": "DCL12-TP1-CHDRN18",
                 "fname": "DCL12-TP1-CHDRN18.json",
                 "type": "assignment"
+              },
+              {
+                "title": "1.5 - Boolean Expressions",
+                "uid": "DCL12-TP1-CHDRN6",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=06-DCL12_Unit1_Sprint1.5 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP1-CHDRN19",
@@ -427,20 +427,6 @@
                 "type": "page"
               },
               {
-                "title": "2.2 - Nested Conditionals",
-                "uid": "DCL12-TP2-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=10-DCL12_Unit2_Sprint2.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "2.3 - Iteration",
-                "uid": "DCL12-TP2-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=11-DCL12_Unit2_Sprint2.3 - Google Docs",
-                "type": "page"
-              },
-              {
                 "uid": "DCL12-TP2-CHDRN5",
                 "fname": "DCL12-TP2-CHDRN5.json",
                 "type": "assignment"
@@ -456,6 +442,13 @@
                 "type": "assignment"
               },
               {
+                "title": "2.2 - Nested Conditionals",
+                "uid": "DCL12-TP2-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=10-DCL12_Unit2_Sprint2.2 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP2-CHDRN8",
                 "fname": "DCL12-TP2-CHDRN8.json",
                 "type": "assignment"
@@ -469,6 +462,13 @@
                 "uid": "DCL12-TP2-CHDRN10",
                 "fname": "DCL12-TP2-CHDRN10.json",
                 "type": "assignment"
+              },
+              {
+                "title": "2.3 - Iteration",
+                "uid": "DCL12-TP2-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=11-DCL12_Unit2_Sprint2.3 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP2-CHDRN11",
@@ -514,21 +514,9 @@
                 "type": "page"
               },
               {
-                "title": "3.2 - Data Abstraction",
-                "uid": "DCL12-TP3-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=15 DCL12_Unit3_Sprint3.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DCL12-TP3-CHDRN4",
+                "uid": "DCL12-TP3-CHDRN400",
                 "fname": "DCL12-TP3-CHDRN4.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DCL12-U03-CHDRN1",
-                "fname": "DCL12-U03-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DCL12-TP3-CHDRN5",
@@ -539,6 +527,13 @@
                 "uid": "DCL12-TP3-CHDRN6",
                 "fname": "DCL12-TP3-CHDRN6.json",
                 "type": "assignment"
+              },
+              {
+                "title": "3.2 - Data Abstraction",
+                "uid": "DCL12-TP3-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=15 DCL12_Unit3_Sprint3.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP3-CHDRN7",
@@ -554,6 +549,11 @@
                 "uid": "DCL12-TP3-CHDRN9",
                 "fname": "DCL12-TP3-CHDRN9.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DCL12-U03-CHDRN1",
+                "fname": "DCL12-U03-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -579,35 +579,9 @@
                 "type": "page"
               },
               {
-                "title": "4.2 - Developing Procedures",
-                "uid": "DCL12-TP4-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=19 DCL12_Unit4_Sprint4.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "4.3 - Libraries",
-                "uid": "DCL12-TP4-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=20 DCL12_Unit4_Sprint4.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "4.4 - Random Values",
-                "uid": "DCL12-TP4-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=21 DCL12_Unit4_Sprint4.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DCL12-TP4-CHDRN6",
+                "uid": "DCL12-TP4-CHDRN600",
                 "fname": "DCL12-TP4-CHDRN6.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DCL12-U04-CHDRN1",
-                "fname": "DCL12-U04-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DCL12-TP4-CHDRN7",
@@ -618,6 +592,13 @@
                 "uid": "DCL12-TP4-CHDRN8",
                 "fname": "DCL12-TP4-CHDRN8.json",
                 "type": "assignment"
+              },
+              {
+                "title": "4.2 - Developing Procedures",
+                "uid": "DCL12-TP4-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=19 DCL12_Unit4_Sprint4.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP4-CHDRN9",
@@ -635,6 +616,13 @@
                 "type": "assignment"
               },
               {
+                "title": "4.3 - Libraries",
+                "uid": "DCL12-TP4-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=20 DCL12_Unit4_Sprint4.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP4-CHDRN12",
                 "fname": "DCL12-TP4-CHDRN12.json",
                 "type": "assignment"
@@ -650,6 +638,13 @@
                 "type": "assignment"
               },
               {
+                "title": "4.4 - Random Values",
+                "uid": "DCL12-TP4-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=21 DCL12_Unit4_Sprint4.4 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP4-CHDRN15",
                 "fname": "DCL12-TP4-CHDRN15.json",
                 "type": "assignment"
@@ -663,6 +658,11 @@
                 "uid": "DCL12-TP4-CHDRN17",
                 "fname": "DCL12-TP4-CHDRN17.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DCL12-U04-CHDRN1",
+                "fname": "DCL12-U04-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -688,42 +688,9 @@
                 "type": "page"
               },
               {
-                "title": "5.2 - Binary Search",
-                "uid": "DCL12-TP5-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=25 DC-L12-Unit5-Sprint5.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "5.3 - Algorithmic Efficiency",
-                "uid": "DCL12-TP5-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=26 DC-L12-Unit5-Sprint5.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "5.4 - Undecidable Problems",
-                "uid": "DCL12-TP5-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=27 DC-L12-Unit5-Sprint5.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "5.5 - Simulations",
-                "uid": "DCL12-TP5-CHDRN6",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=28 DC-L12-Unit5-Sprint5.5 - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DCL12-TP5-CHDRN7",
+                "uid": "DCL12-TP5-CHDRN700",
                 "fname": "DCL12-TP5-CHDRN7.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DCL12-U05-CHDRN1",
-                "fname": "DCL12-U05-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DCL12-TP5-CHDRN8",
@@ -734,6 +701,13 @@
                 "uid": "DCL12-TP5-CHDRN9",
                 "fname": "DCL12-TP5-CHDRN9.json",
                 "type": "assignment"
+              },
+              {
+                "title": "5.2 - Binary Search",
+                "uid": "DCL12-TP5-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=25 DC-L12-Unit5-Sprint5.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP5-CHDRN10",
@@ -751,6 +725,13 @@
                 "type": "assignment"
               },
               {
+                "title": "5.3 - Algorithmic Efficiency",
+                "uid": "DCL12-TP5-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=26 DC-L12-Unit5-Sprint5.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP5-CHDRN13",
                 "fname": "DCL12-TP5-CHDRN13.json",
                 "type": "assignment"
@@ -764,6 +745,13 @@
                 "uid": "DCL12-TP5-CHDRN15",
                 "fname": "DCL12-TP5-CHDRN15.json",
                 "type": "assignment"
+              },
+              {
+                "title": "5.4 - Undecidable Problems",
+                "uid": "DCL12-TP5-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=27 DC-L12-Unit5-Sprint5.4 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP5-CHDRN16",
@@ -781,6 +769,13 @@
                 "type": "assignment"
               },
               {
+                "title": "5.5 - Simulations",
+                "uid": "DCL12-TP5-CHDRN6",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=28 DC-L12-Unit5-Sprint5.5 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP5-CHDRN19",
                 "fname": "DCL12-TP5-CHDRN19.json",
                 "type": "assignment"
@@ -794,6 +789,11 @@
                 "uid": "DCL12-TP5-CHDRN21",
                 "fname": "DCL12-TP5-CHDRN21.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DCL12-U05-CHDRN1",
+                "fname": "DCL12-U05-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -819,28 +819,9 @@
                 "type": "page"
               },
               {
-                "title": "6.2 - Extracting Information From Data",
-                "uid": "DCL12-TP6-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=32 DCL12_Unit6_Sprint6.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "6.3 - Using Progarms With Data",
-                "uid": "DCL12-TP6-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=33 DCL12_Unit6_Sprint6.3 - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DCL12-TP6-CHDRN5",
+                "uid": "DCL12-TP6-CHDRN500",
                 "fname": "DCL12-TP6-CHDRN5.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DCL12-U06-CHDRN1",
-                "fname": "DCL12-U06-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DCL12-TP6-CHDRN6",
@@ -851,6 +832,13 @@
                 "uid": "DCL12-TP6-CHDRN7",
                 "fname": "DCL12-TP6-CHDRN7.json",
                 "type": "assignment"
+              },
+              {
+                "title": "6.2 - Extracting Information From Data",
+                "uid": "DCL12-TP6-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=32 DCL12_Unit6_Sprint6.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP6-CHDRN8",
@@ -868,6 +856,13 @@
                 "type": "assignment"
               },
               {
+                "title": "6.3 - Using Progarms With Data",
+                "uid": "DCL12-TP6-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=33 DCL12_Unit6_Sprint6.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP6-CHDRN11",
                 "fname": "DCL12-TP6-CHDRN11.json",
                 "type": "assignment"
@@ -881,6 +876,11 @@
                 "uid": "DCL12-TP6-CHDRN13",
                 "fname": "DCL12-TP6-CHDRN13.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DCL12-U06-CHDRN1",
+                "fname": "DCL12-U06-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -906,35 +906,9 @@
                 "type": "page"
               },
               {
-                "title": "7.2 - Program Function And Purpose",
-                "uid": "DCL12-TP7-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=37 DC_L12_Unit7_Sprint7.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "7.3 - Program Design And Development",
-                "uid": "DCL12-TP7-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=38 DC_L12_Unit7_Sprint7.3 - Google Docs",
-                "type": "page"
-              },    
-              {
-                "title": "7.4 - Identifying And Correcting Errors",
-                "uid": "DCL12-TP7-CHDRN5",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=39 DC_L12_Unit7_Sprint7.4 - Google Docs",
-                "type": "page"
-              },
-              {
-                "uid": "DCL12-TP7-CHDRN6",
+                "uid": "DCL12-TP7-CHDRN600",
                 "fname": "DCL12-TP7-CHDRN6.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DCL12-U07-CHDRN1",
-                "fname": "DCL12-U07-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DCL12-TP7-CHDRN7",
@@ -945,6 +919,13 @@
                 "uid": "DCL12-TP7-CHDRN8",
                 "fname": "DCL12-TP7-CHDRN8.json",
                 "type": "assignment"
+              },
+              {
+                "title": "7.2 - Program Function And Purpose",
+                "uid": "DCL12-TP7-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=37 DC_L12_Unit7_Sprint7.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP7-CHDRN9",
@@ -962,6 +943,13 @@
                 "type": "assignment"
               },
               {
+                "title": "7.3 - Program Design And Development",
+                "uid": "DCL12-TP7-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=38 DC_L12_Unit7_Sprint7.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP7-CHDRN12",
                 "fname": "DCL12-TP7-CHDRN12.json",
                 "type": "assignment"
@@ -975,6 +963,13 @@
                 "uid": "DCL12-TP7-CHDRN14",
                 "fname": "DCL12-TP7-CHDRN14.json",
                 "type": "assignment"
+              },    
+              {
+                "title": "7.4 - Identifying And Correcting Errors",
+                "uid": "DCL12-TP7-CHDRN5",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=39 DC_L12_Unit7_Sprint7.4 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP7-CHDRN15",
@@ -990,6 +985,11 @@
                 "uid": "DCL12-TP7-CHDRN17",
                 "fname": "DCL12-TP7-CHDRN17.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DCL12-U07-CHDRN1",
+                "fname": "DCL12-U07-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -1013,30 +1013,11 @@
                 "description": "",
                 "route": "/pdf?course=DigiChamps&Level=Level12&pdf=42 DCL12_U8_Sprint8.1 - Google Docs",
                 "type": "page"
-              },
-              {
-                "title": "8.2 - Fault Tolerance",
-                "uid": "DCL12-TP8-CHDRN3",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=43 DCL12_U8_Sprint8.2 - Google Docs",
-                "type": "page"
-              },
-              {
-                "title": "8.3 - Parallel And Distributed Computing",
-                "uid": "DCL12-TP8-CHDRN4",
-                "description": "",
-                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=44 DCL12_U8_Sprint8.3 - Google Docs",
-                "type": "page"
               },    
               {
-                "uid": "DCL12-TP8-CHDRN5",
+                "uid": "DCL12-TP8-CHDRN500",
                 "fname": "DCL12-TP8-CHDRN5.json",
                 "type": "assignment"
-              },
-              {
-                "uid": "DCL12-U08-CHDRN1",
-                "fname": "DCL12-U08-CHDRN1.json",
-                "type": "quiz"
               },
               {
                 "uid": "DCL12-TP8-CHDRN6",
@@ -1047,6 +1028,13 @@
                 "uid": "DCL12-TP8-CHDRN7",
                 "fname": "DCL12-TP8-CHDRN7.json",
                 "type": "assignment"
+              },
+              {
+                "title": "8.2 - Fault Tolerance",
+                "uid": "DCL12-TP8-CHDRN3",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=43 DCL12_U8_Sprint8.2 - Google Docs",
+                "type": "page"
               },
               {
                 "uid": "DCL12-TP8-CHDRN8",
@@ -1064,6 +1052,13 @@
                 "type": "assignment"
               },
               {
+                "title": "8.3 - Parallel And Distributed Computing",
+                "uid": "DCL12-TP8-CHDRN4",
+                "description": "",
+                "route": "/pdf?course=DigiChamps&Level=Level12&pdf=44 DCL12_U8_Sprint8.3 - Google Docs",
+                "type": "page"
+              },
+              {
                 "uid": "DCL12-TP8-CHDRN11",
                 "fname": "DCL12-TP8-CHDRN11.json",
                 "type": "assignment"
@@ -1077,6 +1072,11 @@
                 "uid": "DCL12-TP8-CHDRN13",
                 "fname": "DCL12-TP8-CHDRN13.json",
                 "type": "assignment"
+              },
+              {
+                "uid": "DCL12-U08-CHDRN1",
+                "fname": "DCL12-U08-CHDRN1.json",
+                "type": "quiz"
               }
             ],
             "teacheronly": "no"
@@ -1100,6 +1100,21 @@
                 "description": "",
                 "route": "/pdf?course=DigiChamps&Level=Level12&pdf=47 DC_L12-Unit9-Sprint9.1 - Google Docs",
                 "type": "page"
+              },      
+              {
+                "uid": "DCL12-TP9-CHDRN1100",
+                "fname": "DCL12-TP9-CHDRN11.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN12",
+                "fname": "DCL12-TP9-CHDRN12.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN13",
+                "fname": "DCL12-TP9-CHDRN13.json",
+                "type": "assignment"
               },
               {
                 "title": "9.2 - Digital Divide",
@@ -1109,11 +1124,41 @@
                 "type": "page"
               },
               {
+                "uid": "DCL12-TP9-CHDRN14",
+                "fname": "DCL12-TP9-CHDRN14.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN15",
+                "fname": "DCL12-TP9-CHDRN15.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN16",
+                "fname": "DCL12-TP9-CHDRN16.json",
+                "type": "assignment"
+              },
+              {
                 "title": "9.3 - Computing BIAS",
                 "uid": "DCL12-TP9-CHDRN4",
                 "description": "",
                 "route": "/pdf?course=DigiChamps&Level=Level12&pdf=49 DC_L12-Unit9-Sprint9.3 - Google Docs",
                 "type": "page"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN17",
+                "fname": "DCL12-TP9-CHDRN17.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN18",
+                "fname": "DCL12-TP9-CHDRN18.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN19",
+                "fname": "DCL12-TP9-CHDRN19.json",
+                "type": "assignment"
               }, 
               {
                 "title": "9.4 - Crowdsourcing",
@@ -1121,6 +1166,21 @@
                 "description": "",
                 "route": "/pdf?course=DigiChamps&Level=Level12&pdf=50 DC_L12-Unit9-Sprint9.4 - Google Docs",
                 "type": "page"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN20",
+                "fname": "DCL12-TP9-CHDRN20.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN21",
+                "fname": "DCL12-TP9-CHDRN21.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN22",
+                "fname": "DCL12-TP9-CHDRN22.json",
+                "type": "assignment"
               },   
               {
                 "title": "9.5 - Legal And Ethical",
@@ -1128,6 +1188,21 @@
                 "description": "",
                 "route": "/pdf?course=DigiChamps&Level=Level12&pdf=51 DC_L12-Unit9-Sprint9.5 - Google Docs",
                 "type": "page"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN23",
+                "fname": "DCL12-TP9-CHDRN23.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN24",
+                "fname": "DCL12-TP9-CHDRN24.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN25",
+                "fname": "DCL12-TP9-CHDRN25.json",
+                "type": "assignment"
               },   
               {
                 "title": "9.6 - Safe Computing",
@@ -1135,6 +1210,21 @@
                 "description": "",
                 "route": "/pdf?course=DigiChamps&Level=Level12&pdf=52 DC_L12-Unit9-Sprint9.6 - Google Docs",
                 "type": "page"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN26",
+                "fname": "DCL12-TP9-CHDRN26.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN27",
+                "fname": "DCL12-TP9-CHDRN27.json",
+                "type": "assignment"
+              },
+              {
+                "uid": "DCL12-TP9-CHDRN28",
+                "fname": "DCL12-TP9-CHDRN28.json",
+                "type": "assignment"
               },   
               {
                 "title": "Exam format",
@@ -1156,101 +1246,11 @@
                 "description": "",
                 "route": "/pdf?course=DigiChamps&Level=Level12&pdf=56_Glossary - Google Docs",
                 "type": "page"
-              },      
-              {
-                "uid": "DCL12-TP9-CHDRN11",
-                "fname": "DCL12-TP9-CHDRN11.json",
-                "type": "assignment"
               },
               {
                 "uid": "DCL12-U09-CHDRN1",
                 "fname": "DCL12-U09-CHDRN1.json",
                 "type": "quiz"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN12",
-                "fname": "DCL12-TP9-CHDRN12.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN13",
-                "fname": "DCL12-TP9-CHDRN13.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN14",
-                "fname": "DCL12-TP9-CHDRN14.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN15",
-                "fname": "DCL12-TP9-CHDRN15.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN16",
-                "fname": "DCL12-TP9-CHDRN16.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN17",
-                "fname": "DCL12-TP9-CHDRN17.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN18",
-                "fname": "DCL12-TP9-CHDRN18.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN19",
-                "fname": "DCL12-TP9-CHDRN19.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN20",
-                "fname": "DCL12-TP9-CHDRN20.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN21",
-                "fname": "DCL12-TP9-CHDRN21.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN22",
-                "fname": "DCL12-TP9-CHDRN22.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN23",
-                "fname": "DCL12-TP9-CHDRN23.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN24",
-                "fname": "DCL12-TP9-CHDRN24.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN25",
-                "fname": "DCL12-TP9-CHDRN25.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN26",
-                "fname": "DCL12-TP9-CHDRN26.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN27",
-                "fname": "DCL12-TP9-CHDRN27.json",
-                "type": "assignment"
-              },
-              {
-                "uid": "DCL12-TP9-CHDRN28",
-                "fname": "DCL12-TP9-CHDRN28.json",
-                "type": "assignment"
               }
             ],
             "teacheronly": "no"

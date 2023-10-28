@@ -16,7 +16,7 @@ echo $OUTPUT->header();
 	},
 	"page": "/CloudIDE",
 	"query": {},
-	"buildId": "iLLJ41TGYwZnM0_woJzO_",
+	"buildId": "Uax2aoFve0fGjmf5qSMjb",
 	"nextExport": true,
 	"autoExport": true,
 	"isFallback": false,
@@ -36,7 +36,7 @@ echo $OUTPUT->header();
 	  "language": "<?php echo $elanguage; ?>"
 	},
 
-		"buildId": "iLLJ41TGYwZnM0_woJzO_",
+		"buildId": "Uax2aoFve0fGjmf5qSMjb",
 		"isFallback": false,
 		"gsp": true,
 		"scriptLoader": []

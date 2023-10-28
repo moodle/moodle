@@ -84,30 +84,8 @@ $regionmainsettingsmenu = $buildregionmainsettings ? $OUTPUT->region_main_settin
 
 $header = $PAGE->activityheader;
 $headercontent = $header->export_for_template($renderer);
-$path_params = parse_url($PAGE->url, PHP_URL_PATH);
-$is_showreact = false;
-$muid = '';
-if($path_params == "/mod/qbassign/view.php"){
-    global $DB;
-    $course_user_roles = enrol_get_course_users_roles($COURSE->id);
-    $student_id = 5;
-    $module_id = required_param('id', PARAM_INT);
-    foreach($course_user_roles as $k => $cu_role){
-        $cur_role_obj = current($cu_role);
-        if($cur_role_obj->roleid == $student_id && $cur_role_obj->userid == $USER->id && !is_siteadmin()){
-            $is_showreact = true;
-            $qbinstnce = $DB->get_record_sql("
-            SELECT qa.uid as uid
-            FROM {course_modules} cm
-            JOIN {qbassign} qa ON cm.instance = qa.id
-            WHERE cm.id = :moduleid ", [
-                'moduleid' => $module_id
-            ]);
-            $muid = ($qbinstnce->uid) ? $qbinstnce->uid : '';
-        }
-    }
-}
 
+$tmplpath = 'theme_qubitsbasic/incourse';
 $templatecontext = [
     'sitename' => format_string($SITE->shortname, true, ['context' => context_course::instance(SITEID), "escape" => false]),
     'output' => $OUTPUT,
@@ -128,9 +106,76 @@ $templatecontext = [
     'overflow' => $overflow,
     'headercontent' => $headercontent,
     'addblockbutton' => $addblockbutton,
-    'iscourseandmoddtlpage' => true,
-    'is_showreact' => $is_showreact,
-    'muid' => $muid
+    'iscourseandmoddtlpage' => true
 ];
 
-echo $OUTPUT->render_from_template('theme_qubitsbasic/incourse', $templatecontext);
+$path_params = parse_url($PAGE->url, PHP_URL_PATH);
+$is_showreact = false;
+$muid = '';
+$is_scratch = false;
+$is_student = false;
+$is_teacher = false;
+$userid = optional_param('userid', 0, PARAM_INT);
+$action = optional_param('action', '', PARAM_TEXT);
+if($path_params == "/mod/qbassign/view.php"){
+    global $DB;
+    $course_user_roles = enrol_get_course_users_roles($COURSE->id);
+    $student_id = 5;
+    $teacher_id = 3;
+    $qbteacher_id = 9;
+    $module_id = required_param('id', PARAM_INT);
+    $cuserroles = array();
+    foreach($course_user_roles as $k => $cu_role){
+        $cur_role_obj = current($cu_role);
+        if($cur_role_obj->roleid == $student_id)
+            $cuserroles['stu-'.$cur_role_obj->userid] = $cur_role_obj->userid;
+        if($cur_role_obj->roleid == $teacher_id || $cur_role_obj->roleid == $qbteacher_id)
+            $cuserroles['tea-'.$cur_role_obj->userid] = $cur_role_obj->userid;
+    }
+
+    $qbinstnce = $DB->get_record_sql("
+        SELECT qa.uid as uid, qa.id
+        FROM {course_modules} cm
+        JOIN {qbassign} qa ON cm.instance = qa.id
+        WHERE cm.id = :moduleid ", [
+            'moduleid' => $module_id
+    ]);
+    $muid = ($qbinstnce->uid) ? $qbinstnce->uid : '';
+    $qb_config_data = $DB->get_record("qbassign_plugin_config", [
+        'plugin' => "scratch",
+        'qbassignment' => $qbinstnce->id,
+        'name' => "enabled",
+        'value' => "1"
+    ]);
+
+    //echo "<pre>"; print_r($qb_config_data); exit;
+
+    if(isset($cuserroles['stu-'.$USER->id])){
+        $tmplpath = 'theme_qubitsbasic/incourse-assign-student';
+        if($qb_config_data){
+            $tmplpath = 'theme_qubitsbasic/incourse-assign-scratch-student';
+            $templatecontext["scratch_aurl"] = $CFG->wwwroot.'/third_party/scratch/assn';
+        }
+    }
+
+    if(isset($cuserroles['tea-'.$USER->id]) || is_siteadmin()){
+        $templatecontext["is_showreact"] = false;
+        $templatecontext["is_scratch"] = false;
+        $tmplpath = 'theme_qubitsbasic/incourse-assign-teacher';
+        if($action=="grader" || $action=="viewpluginqbassignsubmission"){
+            $templatecontext["is_showreact"] = true;  
+        }
+        if($qb_config_data){
+            $templatecontext["is_scratch"] = true;
+            $tmplpath = 'theme_qubitsbasic/incourse-assign-scratch-teacher';
+            $templatecontext["scratch_aurl"] = $CFG->wwwroot.'/third_party/scratch/assntr';
+        }
+     }
+
+    $templatecontext["userid"] = $userid;
+    $templatecontext["muid"] = $muid;
+
+
+}
+
+echo $OUTPUT->render_from_template($tmplpath, $templatecontext);

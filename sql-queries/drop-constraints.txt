@@ -1,0 +1,8 @@
+Drop Constraints for cloning
+
+DROP CONSTRAINT "pqbs_file_pat_uix";
+DROP CONSTRAINT "pqbs_quizatte_uni_uix";
+
+
+DROP INDEX "pqbs_file_pat_uix";
+DROP INDEX "pqbs_quizatte_uni_uix";

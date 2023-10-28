@@ -2,8 +2,329 @@
   "classes": [
     {
       "qubitscourses": [
-        "DPL03",
-        "DCL03"
+          "DPL01dnsbarsha",
+          "DCL01dnsbarsha"
+        ],
+        "qubitsgrade": "G1",
+        "qubitssection": "D",
+        "qubitscohort": "dnsbarsha",
+        "qubitsgroup": [
+          "dnsbarshaG1DDPL01",
+          "dnsbarshaG1DDCL01"
+        ],
+      "sourcedId": "109510",
+      "status": "active",
+      "dateLastModified": "2023-10-13T08:09:55.000Z",
+      "title": "Design & Technology (1D)",
+      "classCode": "",
+      "classType": "scheduled",
+      "location": "",
+      "grades": [
+          "01"
+      ],
+      "subjects": [],
+      "course": {
+          "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+          "sourcedId": "1_95",
+          "type": "course"
+      },
+      "school": {
+          "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+          "sourcedId": "1",
+          "type": "org"
+      },
+      "terms": [
+          {
+              "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+              "sourcedId": "2024",
+              "type": "academicSession"
+          }
+      ],
+      "subjectCodes": [],
+      "periods": [
+          "1"
+      ],
+      "resources": []
+  },{
+    "qubitscourses": [
+        "DPL01dnsbarsha",
+        "DCL01dnsbarsha"
+      ],
+      "qubitsgrade": "G1",
+      "qubitssection": "A",
+      "qubitscohort": "dnsbarsha",
+      "qubitsgroup": [
+        "dnsbarshaG1ADPL01",
+        "dnsbarshaG1ADCL01"
+      ],
+    "sourcedId": "109511",
+    "status": "active",
+    "dateLastModified": "2023-10-13T08:09:55.000Z",
+    "title": "Design & Technology (1A)",
+    "classCode": "",
+    "classType": "scheduled",
+    "location": "",
+    "grades": [
+        "01"
+    ],
+    "subjects": [],
+    "course": {
+        "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+        "sourcedId": "1_95",
+        "type": "course"
+    },
+    "school": {
+        "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+        "sourcedId": "1",
+        "type": "org"
+    },
+    "terms": [
+        {
+            "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+            "sourcedId": "2024",
+            "type": "academicSession"
+        }
+    ],
+    "subjectCodes": [],
+    "periods": [
+        "1"
+    ],
+    "resources": []
+},
+{
+  "qubitscourses": [
+      "DPL01dnsbarsha",
+      "DCL01dnsbarsha"
+    ],
+    "qubitsgrade": "G1",
+    "qubitssection": "C",
+    "qubitscohort": "dnsbarsha",
+    "qubitsgroup": [
+      "dnsbarshaG1CDPL01",
+      "dnsbarshaG1CDCL01"
+    ],
+  "sourcedId": "10959",
+  "status": "active",
+  "dateLastModified": "2023-10-13T08:09:55.000Z",
+  "title": "Design & Technology (1C)",
+  "classCode": "",
+  "classType": "scheduled",
+  "location": "",
+  "grades": [
+      "01"
+  ],
+  "subjects": [],
+  "course": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+      "sourcedId": "1_95",
+      "type": "course"
+  },
+  "school": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+      "sourcedId": "1",
+      "type": "org"
+  },
+  "terms": [
+      {
+          "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+          "sourcedId": "2024",
+          "type": "academicSession"
+      }
+  ],
+  "subjectCodes": [],
+  "periods": [
+      "1"
+  ],
+  "resources": []
+},
+{
+  "qubitscourses": [
+      "DPL01dnsbarsha",
+      "DCL01dnsbarsha"
+    ],
+    "qubitsgrade": "G1",
+    "qubitssection": "E",
+    "qubitscohort": "dnsbarsha",
+    "qubitsgroup": [
+      "dnsbarshaG1EDPL01",
+      "dnsbarshaG1EDCL01"
+    ],
+  "sourcedId": "109592",
+  "status": "active",
+  "dateLastModified": "2023-10-13T08:09:55.000Z",
+  "title": "Design & Technology (1E)",
+  "classCode": "",
+  "classType": "scheduled",
+  "location": "",
+  "grades": [
+      "01"
+  ],
+  "subjects": [],
+  "course": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+      "sourcedId": "1_95",
+      "type": "course"
+  },
+  "school": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+      "sourcedId": "1",
+      "type": "org"
+  },
+  "terms": [
+      {
+          "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+          "sourcedId": "2024",
+          "type": "academicSession"
+      }
+  ],
+  "subjectCodes": [],
+  "periods": [
+      "1"
+  ],
+  "resources": []
+},
+{
+  "qubitscourses": [
+      "DPL01dnsbarsha",
+      "DCL01dnsbarsha"
+    ],
+    "qubitsgrade": "G1",
+    "qubitssection": "F",
+    "qubitscohort": "dnsbarsha",
+    "qubitsgroup": [
+      "dnsbarshaG1FDPL01",
+      "dnsbarshaG1FDCL01"
+    ],
+  "sourcedId": "109593",
+  "status": "active",
+  "dateLastModified": "2023-10-13T08:09:55.000Z",
+  "title": "Design & Technology (1F)",
+  "classCode": "",
+  "classType": "scheduled",
+  "location": "",
+  "grades": [
+      "01"
+  ],
+  "subjects": [],
+  "course": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+      "sourcedId": "1_95",
+      "type": "course"
+  },
+  "school": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+      "sourcedId": "1",
+      "type": "org"
+  },
+  "terms": [
+      {
+          "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+          "sourcedId": "2024",
+          "type": "academicSession"
+      }
+  ],
+  "subjectCodes": [],
+  "periods": [
+      "1"
+  ],
+  "resources": []
+},
+{
+  "qubitscourses": [
+      "DPL01dnsbarsha",
+      "DCL01dnsbarsha"
+    ],
+    "qubitsgrade": "G1",
+    "qubitssection": "G",
+    "qubitscohort": "dnsbarsha",
+    "qubitsgroup": [
+      "dnsbarshaG1GDPL01",
+      "dnsbarshaG1GDCL01"
+    ],
+  "sourcedId": "109594",
+  "status": "active",
+  "dateLastModified": "2023-10-13T08:09:55.000Z",
+  "title": "Design & Technology (1G)",
+  "classCode": "",
+  "classType": "scheduled",
+  "location": "",
+  "grades": [
+      "01"
+  ],
+  "subjects": [],
+  "course": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+      "sourcedId": "1_95",
+      "type": "course"
+  },
+  "school": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+      "sourcedId": "1",
+      "type": "org"
+  },
+  "terms": [
+      {
+          "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+          "sourcedId": "2024",
+          "type": "academicSession"
+      }
+  ],
+  "subjectCodes": [],
+  "periods": [
+      "1"
+  ],
+  "resources": []
+},
+{
+  "qubitscourses": [
+      "DPL01dnsbarsha",
+      "DCL01dnsbarsha"
+    ],
+    "qubitsgrade": "G1",
+    "qubitssection": "B",
+    "qubitscohort": "dnsbarsha",
+    "qubitsgroup": [
+      "dnsbarshaG1BDPL01",
+      "dnsbarshaG1BDCL01"
+    ],
+  "sourcedId": "109512",
+  "status": "active",
+  "dateLastModified": "2023-10-13T08:09:55.000Z",
+  "title": "Design & Technology (1B)",
+  "classCode": "",
+  "classType": "scheduled",
+  "location": "",
+  "grades": [
+      "01"
+  ],
+  "subjects": [],
+  "course": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/courses/1_95",
+      "sourcedId": "1_95",
+      "type": "course"
+  },
+  "school": {
+      "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/orgs/1",
+      "sourcedId": "1",
+      "type": "org"
+  },
+  "terms": [
+      {
+          "href": "https://dubainationalschool-ab-v2.rosterserver.com/ims/oneroster/v1p1/academicSessions/2024",
+          "sourcedId": "2024",
+          "type": "academicSession"
+      }
+  ],
+  "subjectCodes": [],
+  "periods": [
+      "1"
+  ],
+  "resources": []
+},
+    {
+      "qubitscourses": [
+        "DPL03dnsbarsha",
+        "DCL03dnsbarsha"
       ],
       "qubitsgrade": "G3",
       "qubitssection": "E",
@@ -48,8 +369,8 @@
     },
     {
       "qubitscourses": [
-        "DPL03",
-        "DCL03"
+        "DPL03dnsbarsha",
+        "DCL03dnsbarsha"
       ],
       "qubitsgrade": "G3",
       "qubitssection": "F",
@@ -94,8 +415,8 @@
     },
     {
       "qubitscourses": [
-        "DPL03",
-        "DCL03"
+        "DPL03dnsbarsha",
+        "DCL03dnsbarsha"
       ],
       "qubitsgrade": "G3",
       "qubitssection": "G",
@@ -140,8 +461,8 @@
     },
     {
       "qubitscourses": [
-        "DPL04",
-        "DCL04"
+        "DPL04dnsbarsha",
+        "DCL04dnsbarsha"
       ],
       "qubitsgrade": "G4",
       "qubitssection": "E",
@@ -186,8 +507,8 @@
     },
     {
       "qubitscourses": [
-        "DPL04",
-        "DCL04"
+        "DPL04dnsbarsha",
+        "DCL04dnsbarsha"
       ],
       "qubitsgrade": "G4",
       "qubitssection": "F",
@@ -232,8 +553,8 @@
     },
     {
       "qubitscourses": [
-        "DPL04",
-        "DCL04"
+        "DPL04dnsbarsha",
+        "DCL04dnsbarsha"
       ],
       "qubitsgrade": "G4",
       "qubitssection": "G",
@@ -278,8 +599,8 @@
     },
     {
       "qubitscourses": [
-        "DPL04",
-        "DCL04"
+        "DPL04dnsbarsha",
+        "DCL04dnsbarsha"
       ],
       "qubitsgrade": "G4",
       "qubitssection": "H",
@@ -324,8 +645,8 @@
     },
     {
       "qubitscourses": [
-        "DPL04",
-        "DCL04"
+        "DPL04dnsbarsha",
+        "DCL04dnsbarsha"
       ],
       "qubitsgrade": "G4",
       "qubitssection": "J",
@@ -370,8 +691,8 @@
     },
     {
       "qubitscourses": [
-        "DPL05",
-        "DCL05"
+        "DPL05dnsbarsha",
+        "DCL05dnsbarsha"
       ],
       "qubitsgrade": "G5",
       "qubitssection": "E",
@@ -416,8 +737,8 @@
     },
     {
       "qubitscourses": [
-        "DPL05",
-        "DCL05"
+        "DPL05dnsbarsha",
+        "DCL05dnsbarsha"
       ],
       "qubitsgrade": "G5",
       "qubitssection": "F",
@@ -462,8 +783,8 @@
     },
     {
       "qubitscourses": [
-        "DPL05",
-        "DCL05"
+        "DPL05dnsbarsha",
+        "DCL05dnsbarsha"
       ],
       "qubitsgrade": "G5",
       "qubitssection": "G",
@@ -508,8 +829,8 @@
     },
     {
       "qubitscourses": [
-        "DPL05",
-        "DCL05"
+        "DPL05dnsbarsha",
+        "DCL05dnsbarsha"
       ],
       "qubitsgrade": "G5",
       "qubitssection": "H",
@@ -554,8 +875,8 @@
     },
     {
       "qubitscourses": [
-        "DPL06",
-        "DCL06"
+        "DPL06dnsbarsha",
+        "DCL06dnsbarsha"
       ],
       "qubitsgrade": "G6",
       "qubitssection": "E",
@@ -600,8 +921,8 @@
     },
     {
       "qubitscourses": [
-        "DPL06",
-        "DCL06"
+        "DPL06dnsbarsha",
+        "DCL06dnsbarsha"
       ],
       "qubitsgrade": "G6",
       "qubitssection": "F",
@@ -646,8 +967,8 @@
     },
     {
       "qubitscourses": [
-        "DPL06",
-        "DCL06"
+        "DPL06dnsbarsha",
+        "DCL06dnsbarsha"
       ],
       "qubitsgrade": "G6",
       "qubitssection": "G",
@@ -692,8 +1013,8 @@
     },
     {
       "qubitscourses": [
-        "DPL06",
-        "DCL06"
+        "DPL06dnsbarsha",
+        "DCL06dnsbarsha"
       ],
       "qubitsgrade": "G6",
       "qubitssection": "H",
@@ -738,8 +1059,8 @@
     },
     {
       "qubitscourses": [
-        "DPL06",
-        "DCL06"
+        "DPL06dnsbarsha",
+        "DCL06dnsbarsha"
       ],
       "qubitsgrade": "G6",
       "qubitssection": "I",
@@ -784,8 +1105,8 @@
     },
     {
       "qubitscourses": [
-        "DPL07",
-        "DCL07"
+        "DPL07dnsbarsha",
+        "DCL07dnsbarsha"
       ],
       "qubitsgrade": "G7",
       "qubitssection": "E",
@@ -830,8 +1151,8 @@
     },
     {
       "qubitscourses": [
-        "DPL07",
-        "DCL07"
+        "DPL07dnsbarsha",
+        "DCL07dnsbarsha"
       ],
       "qubitsgrade": "G7",
       "qubitssection": "F",
@@ -876,8 +1197,8 @@
     },
     {
       "qubitscourses": [
-        "DPL07",
-        "DCL07"
+        "DPL07dnsbarsha",
+        "DCL07dnsbarsha"
       ],
       "qubitsgrade": "G7",
       "qubitssection": "G",
@@ -922,8 +1243,8 @@
     },
     {
       "qubitscourses": [
-        "DPL07",
-        "DCL07"
+        "DPL07dnsbarsha",
+        "DCL07dnsbarsha"
       ],
       "qubitsgrade": "G7",
       "qubitssection": "H",
@@ -968,8 +1289,8 @@
     },
     {
       "qubitscourses": [
-        "DPL02",
-        "DCL02"
+        "DPL02dnsbarsha",
+        "DCL02dnsbarsha"
       ],
       "qubitsgrade": "G2",
       "qubitssection": "A",
@@ -1014,8 +1335,8 @@
     },
     {
       "qubitscourses": [
-        "DPL08",
-        "DCL08"
+        "DPL08dnsbarsha",
+        "DCL08dnsbarsha"
       ],
       "qubitsgrade": "G8",
       "qubitssection": "E",
@@ -1060,8 +1381,8 @@
     },
     {
       "qubitscourses": [
-        "DPL08",
-        "DCL08"
+        "DPL08dnsbarsha",
+        "DCL08dnsbarsha"
       ],
       "qubitsgrade": "G8",
       "qubitssection": "F",
@@ -1106,8 +1427,8 @@
     },
     {
       "qubitscourses": [
-        "DPL08",
-        "DCL08"
+        "DPL08dnsbarsha",
+        "DCL08dnsbarsha"
       ],
       "qubitsgrade": "G8",
       "qubitssection": "G",
@@ -1152,8 +1473,8 @@
     },
     {
       "qubitscourses": [
-        "DPL08",
-        "DCL08"
+        "DPL08dnsbarsha",
+        "DCL08dnsbarsha"
       ],
       "qubitsgrade": "G8",
       "qubitssection": "H",
@@ -1198,8 +1519,8 @@
     },
     {
       "qubitscourses": [
-        "DPL02",
-        "DCL02"
+        "DPL02dnsbarsha",
+        "DCL02dnsbarsha"
       ],
       "qubitsgrade": "G2",
       "qubitssection": "B",
@@ -1244,8 +1565,8 @@
     },
     {
       "qubitscourses": [
-        "DPL02",
-        "DCL02"
+        "DPL02dnsbarsha",
+        "DCL02dnsbarsha"
       ],
       "qubitsgrade": "G2",
       "qubitssection": "C",
@@ -1290,8 +1611,8 @@
     },
     {
       "qubitscourses": [
-        "DPL02",
-        "DCL02"
+        "DPL02dnsbarsha",
+        "DCL02dnsbarsha"
       ],
       "qubitsgrade": "G2",
       "qubitssection": "D",
@@ -1888,8 +2209,8 @@
     },
     {
       "qubitscourses": [
-        "DPL06",
-        "DCL06"
+        "DPL06dnsbarsha",
+        "DCL06dnsbarsha"
       ],
       "qubitsgrade": "G6",
       "qubitssection": "A",
@@ -1934,8 +2255,8 @@
     },
     {
       "qubitscourses": [
-        "DPL06",
-        "DCL06"
+        "DPL06dnsbarsha",
+        "DCL06dnsbarsha"
       ],
       "qubitsgrade": "G6",
       "qubitssection": "B",
@@ -1980,8 +2301,8 @@
     },
     {
       "qubitscourses": [
-        "DPL06",
-        "DCL06"
+        "DPL06dnsbarsha",
+        "DCL06dnsbarsha"
       ],
       "qubitsgrade": "G6",
       "qubitssection": "C",
@@ -2026,8 +2347,8 @@
     },
     {
       "qubitscourses": [
-        "DPL06",
-        "DCL06"
+        "DPL06dnsbarsha",
+        "DCL06dnsbarsha"
       ],
       "qubitsgrade": "G6",
       "qubitssection": "D",
@@ -2072,8 +2393,8 @@
     },
     {
       "qubitscourses": [
-        "DPL07",
-        "DCL07"
+        "DPL07dnsbarsha",
+        "DCL07dnsbarsha"
       ],
       "qubitsgrade": "G7",
       "qubitssection": "A",
@@ -2118,8 +2439,8 @@
     },
     {
       "qubitscourses": [
-        "DPL07",
-        "DCL07"
+        "DPL07dnsbarsha",
+        "DCL07dnsbarsha"
       ],
       "qubitsgrade": "G7",
       "qubitssection": "B",
@@ -2164,8 +2485,8 @@
     },
     {
       "qubitscourses": [
-        "DPL07",
-        "DCL07"
+        "DPL07dnsbarsha",
+        "DCL07dnsbarsha"
       ],
       "qubitsgrade": "G7",
       "qubitssection": "C",
@@ -2210,8 +2531,8 @@
     },
     {
       "qubitscourses": [
-        "DPL07",
-        "DCL07"
+        "DPL07dnsbarsha",
+        "DCL07dnsbarsha"
       ],
       "qubitsgrade": "G7",
       "qubitssection": "D",
@@ -2256,8 +2577,8 @@
     },
     {
       "qubitscourses": [
-        "DPL08",
-        "DCL08"
+        "DPL08dnsbarsha",
+        "DCL08dnsbarsha"
       ],
       "qubitsgrade": "G8",
       "qubitssection": "A",
@@ -2302,8 +2623,8 @@
     },
     {
       "qubitscourses": [
-        "DPL08",
-        "DCL08"
+        "DPL08dnsbarsha",
+        "DCL08dnsbarsha"
       ],
       "qubitsgrade": "G8",
       "qubitssection": "B",
@@ -2348,8 +2669,8 @@
     },
     {
       "qubitscourses": [
-        "DPL08",
-        "DCL08"
+        "DPL08dnsbarsha",
+        "DCL08dnsbarsha"
       ],
       "qubitsgrade": "G8",
       "qubitssection": "C",
@@ -2394,8 +2715,8 @@
     },
     {
       "qubitscourses": [
-        "DPL08",
-        "DCL08"
+        "DPL08dnsbarsha",
+        "DCL08dnsbarsha"
       ],
       "qubitsgrade": "G8",
       "qubitssection": "D",
@@ -2440,8 +2761,8 @@
     },
     {
       "qubitscourses": [
-        "DPL02",
-        "DCL02"
+        "DPL02dnsbarsha",
+        "DCL02dnsbarsha"
       ],
       "qubitsgrade": "G2",
       "qubitssection": "E",
@@ -2486,8 +2807,8 @@
     },
     {
       "qubitscourses": [
-        "DPL02",
-        "DCL02"
+        "DPL02dnsbarsha",
+        "DCL02dnsbarsha"
       ],
       "qubitsgrade": "G2",
       "qubitssection": "F",
@@ -2532,8 +2853,8 @@
     },
     {
       "qubitscourses": [
-        "DPL02",
-        "DCL02"
+        "DPL02dnsbarsha",
+        "DCL02dnsbarsha"
       ],
       "qubitsgrade": "G2",
       "qubitssection": "G",

@@ -187,11 +187,6 @@
               "type": "page"
             },
             {
-              "uid": "DCL07-TP1-CHDRN5",
-              "fname": "DCL07-TP1-CHDRN5.json",
-              "type": "assignment"
-            },
-            {
               "uid": "DCL07-U01-CHDRN1",
               "fname": "DCL07-U01-CHDRN1.json",
               "type": "quiz"
@@ -219,20 +214,6 @@
               "type": "page"
             },
             {
-              "title": "2.2 - Layouts And Images In Web Pages",
-              "uid": "DCL07-TP2-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U02_S02",
-              "type": "page"
-            },
-            {
-              "title": "2.3 - Image Carousel And Navigation",
-              "uid": "DCL07-TP2-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U02_S03",
-              "type": "page"
-            },
-            {
               "uid": "DCL07-TP2-CHDRN5",
               "fname": "DCL07-TP2-CHDRN5.json",
               "type": "assignment"
@@ -253,6 +234,13 @@
               "type": "assignment"
             },
             {
+              "title": "2.2 - Layouts And Images In Web Pages",
+              "uid": "DCL07-TP2-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U02_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL07-TP2-CHDRN9",
               "fname": "DCL07-TP2-CHDRN9.json",
               "type": "assignment"
@@ -266,6 +254,13 @@
               "uid": "DCL07-TP2-CHDRN11",
               "fname": "DCL07-TP2-CHDRN11.json",
               "type": "assignment"
+            },
+            {
+              "title": "2.3 - Image Carousel And Navigation",
+              "uid": "DCL07-TP2-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U02_S03",
+              "type": "page"
             },
             {
               "uid": "DCL07-TP2-CHDRN12",
@@ -311,21 +306,9 @@
               "type": "page"
             },
             {
-              "title": "3.2 - Share And Publish The Website",
-              "uid": "DCL07-TP3-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U03_S02",
-              "type": "page"
-            },
-            {
-              "uid": "DCL07-TP3-CHDRN4",
+              "uid": "DCL07-TP3-CHDRN400",
               "fname": "DCL07-TP3-CHDRN4.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL07-U03-CHDRN1",
-              "fname": "DCL07-U03-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL07-TP3-CHDRN5",
@@ -338,6 +321,13 @@
               "type": "assignment"
             },
             {
+              "title": "3.2 - Share And Publish The Website",
+              "uid": "DCL07-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U03_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL07-TP3-CHDRN7",
               "fname": "DCL07-TP3-CHDRN7.json",
               "type": "assignment"
@@ -346,6 +336,11 @@
               "uid": "DCL07-TP3-CHDRN8",
               "fname": "DCL07-TP3-CHDRN8.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL07-U03-CHDRN1",
+              "fname": "DCL07-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -371,28 +366,9 @@
               "type": "page"
             },
             {
-              "title": "4.2 - Slide Management",
-              "uid": "DCL07-TP4-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U04_S02",
-              "type": "page"
-            },
-            {
-              "title": "4.3 - Special Tools And Slide Design",
-              "uid": "DCL07-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U04_S03",
-              "type": "page"
-            },
-            {
-              "uid": "DCL07-TP4-CHDRN5",
+              "uid": "DCL07-TP4-CHDRN500",
               "fname": "DCL07-TP4-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL07-U04-CHDRN1",
-              "fname": "DCL07-U04-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL07-TP4-CHDRN6",
@@ -405,6 +381,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.2 - Slide Management",
+              "uid": "DCL07-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U04_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL07-TP4-CHDRN8",
               "fname": "DCL07-TP4-CHDRN8.json",
               "type": "assignment"
@@ -413,6 +396,13 @@
               "uid": "DCL07-TP4-CHDRN9",
               "fname": "DCL07-TP4-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "title": "4.3 - Special Tools And Slide Design",
+              "uid": "DCL07-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U04_S03",
+              "type": "page"
             },
             {
               "uid": "DCL07-TP4-CHDRN10",
@@ -428,6 +418,11 @@
               "uid": "DCL07-TP4-CHDRN12",
               "fname": "DCL07-TP4-CHDRN12.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL07-U04-CHDRN1",
+              "fname": "DCL07-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -453,33 +448,21 @@
               "type": "page"
             },
             {
-              "title": "5.2 - Adding Images And Watermark",
-              "uid": "DCL07-TP5-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U05_S02",
-              "type": "page"
-            },
-            {
-              "title": "5.3 -References",
-              "uid": "DCL07-TP5-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL07_U05_S03",
-              "type": "page"
-            },
-            {
-              "uid": "DCL07-TP5-CHDRN5",
+              "uid": "DCL07-TP5-CHDRN500",
               "fname": "DCL07-TP5-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL07-U05-CHDRN1",
-              "fname": "DCL07-U05-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL07-TP5-CHDRN6",
               "fname": "DCL07-TP5-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.2 - Adding Images And Watermark",
+              "uid": "DCL07-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U05_S02",
+              "type": "page"
             },
             {
               "uid": "DCL07-TP5-CHDRN7",
@@ -497,6 +480,13 @@
               "type": "assignment"
             },
             {
+              "title": "5.3 -References",
+              "uid": "DCL07-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL07_U05_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL07-TP5-CHDRN10",
               "fname": "DCL07-TP5-CHDRN10.json",
               "type": "assignment"
@@ -510,6 +500,11 @@
               "uid": "DCL07-TP5-CHDRN12",
               "fname": "DCL07-TP5-CHDRN12.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL07-U05-CHDRN1",
+              "fname": "DCL07-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -535,35 +530,9 @@
               "type": "page"
             },
             {
-              "title": "6.2 - Working With Data",
-              "uid": "DCL07-TP6-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S02",
-              "type": "page"
-            },
-            {
-              "title": "6.3 - Data Cleaning",
-              "uid": "DCL07-TP6-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S03",
-              "type": "page"
-            },
-             {
-              "title": "6.4 - Computational Models",
-              "uid": "DCL07-TP6-CHDRN6",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S04",
-              "type": "page"
-            },
-            {
-              "uid": "DCL07-TP6-CHDRN5",
+              "uid": "DCL07-TP6-CHDRN500",
               "fname": "DCL07-TP6-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL07-U06-CHDRN1",
-              "fname": "DCL07-U06-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL07-TP6-CHDRN6",
@@ -576,6 +545,13 @@
               "type": "assignment"
             },
             {
+              "title": "6.2 - Working With Data",
+              "uid": "DCL07-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL07-TP6-CHDRN8",
               "fname": "DCL07-TP6-CHDRN8.json",
               "type": "assignment"
@@ -584,6 +560,13 @@
               "uid": "DCL07-TP6-CHDRN9",
               "fname": "DCL07-TP6-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "title": "6.3 - Data Cleaning",
+              "uid": "DCL07-TP6-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S03",
+              "type": "page"
             },
             {
               "uid": "DCL07-TP6-CHDRN10",
@@ -596,6 +579,13 @@
               "type": "assignment"
             },
             {
+             "title": "6.4 - Computational Models",
+             "uid": "DCL07-TP6-CHDRN6",
+             "description": "",
+             "route": "/pdf?course=DigiChamps&Level=Level7&pdf=DCL07_U06_S04",
+             "type": "page"
+           },
+            {
               "uid": "DCL07-TP6-CHDRN12",
               "fname": "DCL07-TP6-CHDRN12.json",
               "type": "assignment"
@@ -604,6 +594,11 @@
               "uid": "DCL07-TP6-CHDRN13",
               "fname": "DCL07-TP6-CHDRN13.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL07-U06-CHDRN1",
+              "fname": "DCL07-U06-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"

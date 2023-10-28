@@ -95,7 +95,7 @@
                   "type": "page"
                 },
                 {
-                  "title": "Sprint 5.3 SmartArt Process",
+                  "title": "Sprint 4.3 SmartArt Process",
                   "uid": "DCL03-TP0-CHDRN12",
                   "description": "",
                   "route": "/pdf?course=DigiChamps&Level=Level3&unit=Unit4&pdf=V2_DC L3 Sprint 4.3",
@@ -180,11 +180,6 @@
               "type": "page"
             },
             {
-              "uid": "DCL03-TP1-CHDRN4",
-              "fname": "DCL03-TP1-CHDRN4.json",
-              "type": "assignment"
-            },
-            {
               "uid": "DCL03-U01-CHDRN1",
               "fname": "DCL03-U01-CHDRN1.json",
               "type": "quiz"
@@ -218,11 +213,6 @@
               "description": "",
               "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U02_S02",
               "type": "page"
-            },
-            {
-              "uid": "DCL03-TP2-CHDRN4",
-              "fname": "DCL03-TP2-CHDRN4.json",
-              "type": "assignment"
             },
             {
               "uid": "DCL03-U02-CHDRN1",
@@ -260,28 +250,9 @@
               "type": "page"
             },
             {
-              "title": "3.3 - Views In TinkerCAD",
-              "uid": "DCL03-TP3-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U03_S03",
-              "type": "page"
-            },
-            {
-              "title": "3.4 - Basic Control",
-              "uid": "DCL03-TP3-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U03_S04",
-              "type": "page"
-            },
-            {
-              "uid": "DCL03-TP3-CHDRN6",
+              "uid": "DCL03-TP3-CHDRN600",
               "fname": "DCL03-TP3-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL03-U03-CHDRN1",
-              "fname": "DCL03-U03-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL03-TP3-CHDRN7",
@@ -292,6 +263,13 @@
               "uid": "DCL03-TP3-CHDRN8",
               "fname": "DCL03-TP3-CHDRN8.json",
               "type": "assignment"
+            },
+            {
+              "title": "3.3 - Views In TinkerCAD",
+              "uid": "DCL03-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U03_S03",
+              "type": "page"
             },
             {
               "uid": "DCL03-TP3-CHDRN9",
@@ -307,6 +285,13 @@
               "uid": "DCL03-TP3-CHDRN11",
               "fname": "DCL03-TP3-CHDRN11.json",
               "type": "assignment"
+            },
+            {
+              "title": "3.4 - Basic Control",
+              "uid": "DCL03-TP3-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U03_S04",
+              "type": "page"
             },
             {
               "uid": "DCL03-TP3-CHDRN12",
@@ -327,6 +312,11 @@
               "uid": "DCL03-TP3-CHDRN15",
               "fname": "DCL03-TP3-CHDRN15.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL03-U03-CHDRN1",
+              "fname": "DCL03-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -352,28 +342,9 @@
               "type": "page"
             },
             {
-              "title": "4.2 - SmartArt To Text And Vice Versa",
-              "uid": "DCL03-TP4-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U04_S02",
-              "type": "page"
-            },
-            {
-              "title": "4.3 - SmartArt Process",
-              "uid": "DCL03-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U04_S03",
-              "type": "page"
-            },
-            {
-              "uid": "DCL03-TP4-CHDRN5",
+              "uid": "DCL03-TP4-CHDRN500",
               "fname": "DCL03-TP4-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL03-U04-CHDRN1",
-              "fname": "DCL03-U04-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL03-TP4-CHDRN6",
@@ -386,6 +357,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.2 - SmartArt To Text And Vice Versa",
+              "uid": "DCL03-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U04_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL03-TP4-CHDRN8",
               "fname": "DCL03-TP4-CHDRN8.json",
               "type": "assignment"
@@ -394,6 +372,13 @@
               "uid": "DCL03-TP4-CHDRN9",
               "fname": "DCL03-TP4-CHDRN9.json",
               "type": "assignment"
+            },
+            {
+              "title": "4.3 - SmartArt Process",
+              "uid": "DCL03-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U04_S03",
+              "type": "page"
             },
             {
               "uid": "DCL03-TP4-CHDRN10",
@@ -409,6 +394,11 @@
               "uid": "DCL03-TP4-CHDRN12",
               "fname": "DCL03-TP4-CHDRN12.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL03-U04-CHDRN1",
+              "fname": "DCL03-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -434,35 +424,9 @@
               "type": "page"
             },
             {
-              "title": "5.2 - Numbered Lists",
-              "uid": "DCL03-TP5-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S02",
-              "type": "page"
-            },
-            {
-              "title": "5.3 - Icons And Styles",
-              "uid": "DCL03-TP5-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S03",
-              "type": "page"
-            },
-            {
-              "title": "5.4 - 3D Models And SmartArt",
-              "uid": "DCL03-TP5-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S04",
-              "type": "page"
-            },
-            {
-              "uid": "DCL03-TP5-CHDRN6",
+              "uid": "DCL03-TP5-CHDRN600",
               "fname": "DCL03-TP5-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL03-U05-CHDRN1",
-              "fname": "DCL03-U05-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL03-TP5-CHDRN7",
@@ -473,6 +437,13 @@
               "uid": "DCL03-TP5-CHDRN8",
               "fname": "DCL03-TP5-CHDRN8.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.2 - Numbered Lists",
+              "uid": "DCL03-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S02",
+              "type": "page"
             },
             {
               "uid": "DCL03-TP5-CHDRN9",
@@ -490,6 +461,13 @@
               "type": "assignment"
             },
             {
+              "title": "5.3 - Icons And Styles",
+              "uid": "DCL03-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL03-TP5-CHDRN12",
               "fname": "DCL03-TP5-CHDRN12.json",
               "type": "assignment"
@@ -505,6 +483,13 @@
               "type": "assignment"
             },
             {
+              "title": "5.4 - 3D Models And SmartArt",
+              "uid": "DCL03-TP5-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U05_S04",
+              "type": "page"
+            },
+            {
               "uid": "DCL03-TP5-CHDRN15",
               "fname": "DCL03-TP5-CHDRN15.json",
               "type": "assignment"
@@ -518,6 +503,11 @@
               "uid": "DCL03-TP5-CHDRN17",
               "fname": "DCL03-TP5-CHDRN17.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL03-U05-CHDRN1",
+              "fname": "DCL03-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -543,28 +533,9 @@
               "type": "page"
             },
             {
-              "title": "6.2 - Data Says Something",
-              "uid": "DCL03-TP6-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U06_S02",
-              "type": "page"
-            },
-            {
-              "title": "6.3 - Are These Related?",
-              "uid": "DCL03-TP6-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U06_S03",
-              "type": "page"
-            },
-            {
-              "uid": "DCL03-TP6-CHDRN5",
+              "uid": "DCL03-TP6-CHDRN500",
               "fname": "DCL03-TP6-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL03-U06-CHDRN1",
-              "fname": "DCL03-U06-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL03-TP6-CHDRN6",
@@ -577,6 +548,13 @@
               "type": "assignment"
             },
             {
+              "title": "6.2 - Data Says Something",
+              "uid": "DCL03-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U06_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL03-TP6-CHDRN8",
               "fname": "DCL03-TP6-CHDRN8.json",
               "type": "assignment"
@@ -587,6 +565,13 @@
               "type": "assignment"
             },
             {
+              "title": "6.3 - Are These Related?",
+              "uid": "DCL03-TP6-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level3&pdf=DCL03_U06_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL03-TP6-CHDRN10",
               "fname": "DCL03-TP6-CHDRN10.json",
               "type": "assignment"
@@ -595,6 +580,11 @@
               "uid": "DCL03-TP6-CHDRN11",
               "fname": "DCL03-TP6-CHDRN11.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL03-U06-CHDRN1",
+              "fname": "DCL03-U06-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"

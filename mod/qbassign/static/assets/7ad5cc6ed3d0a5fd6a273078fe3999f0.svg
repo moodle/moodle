@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="52px" viewBox="0 0 52 52" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 51.1 (57501) - http://www.bohemiancoding.com/sketch -->
+    <title>Bluetooth</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <circle id="path-1" cx="22" cy="22" r="22"></circle>
+        <filter x="-13.6%" y="-13.6%" width="127.3%" height="127.3%" filterUnits="objectBoundingBox" id="filter-2">
+            <feMorphology radius="2" operator="dilate" in="SourceAlpha" result="shadowSpreadOuter1"></feMorphology>
+            <feOffset dx="0" dy="0" in="shadowSpreadOuter1" result="shadowOffsetOuter1"></feOffset>
+            <feColorMatrix values="0 0 0 0 0.298039216   0 0 0 0 0.592156863   0 0 0 0 1  0 0 0 0.25 0" type="matrix" in="shadowOffsetOuter1"></feColorMatrix>
+        </filter>
+    </defs>
+    <g id="R1_Extension" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="No-Comms-with-Scratch-Link-or-Bluetooth" transform="translate(-506.000000, -345.000000)">
+            <g id="No-connection-v2" transform="translate(-2.000000, 0.000000)">
+                <g id="Modal" transform="translate(407.000000, 187.000000)">
+                    <g id="Bluetooth" transform="translate(52.000000, 162.000000)">
+                        <g transform="translate(53.000000, 0.000000)">
+                            <g id="Oval-8">
+                                <use fill="black" fill-opacity="1" filter="url(#filter-2)" xlink:href="#path-1"></use>
+                                <use fill="#4C97FF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                            </g>
+                            <path d="M22.0099629,25.4173518 L25.5137501,28.189863 L22.0099629,30.9935753 L22.0099629,25.4173518 Z M22.0099629,13.6867091 L25.4986371,16.4743334 L22.0099629,19.2317315 L22.0099629,13.6867091 Z M20.3645918,9.17668603 C19.6289281,9.26931433 19.0790085,9.89821172 19.0848588,10.6397256 L19.0848588,19.3536109 L17.0738497,17.7691795 C16.7667137,17.518108 16.3708496,17.4030539 15.9769356,17.4493681 C15.173507,17.5337086 14.5904362,18.2527967 14.6747767,19.0562253 C14.7167032,19.4584271 14.9234106,19.8255277 15.2456596,20.0697739 L18.109824,22.3245416 L15.2456596,24.5944225 C14.6104244,25.0994904 14.5046332,26.0238234 15.0097012,26.658571 C15.5142816,27.2942936 16.4386145,27.3995973 17.0738497,26.8950169 L19.0848588,25.2954724 L19.0848588,34.0400713 C19.0848588,34.8478875 19.739107,35.5031109 20.5469233,35.5031109 C20.8794101,35.5035984 21.2021466,35.3904943 21.4615059,35.182812 L28.7742662,29.3326037 C29.4095014,28.8338734 29.5196803,27.9139282 29.02095,27.278693 C28.9487974,27.1870398 28.8659195,27.1041618 28.7742662,27.0320093 L22.8324047,22.3396547 L28.7742662,17.6321871 C29.4051137,17.1280941 29.5079799,16.2071738 29.0038869,15.5763264 C28.936122,15.4914984 28.8590943,15.4144706 28.7742662,15.3467057 L21.4615059,9.49649742 C21.1543699,9.2459135 20.7585058,9.13037188 20.3645918,9.17668603 Z" id="Fill-1" fill="#FFFFFF"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

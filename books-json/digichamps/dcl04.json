@@ -187,11 +187,6 @@
               "type": "page"
             },
             {
-              "uid": "DCL04-TP1-CHDRN4",
-              "fname": "DCL04-TP1-CHDRN4.json",
-              "type": "assignment"
-            },
-            {
               "uid": "DCL04-U01-CHDRN1",
               "fname": "DCL04-U01-CHDRN1.json",
               "type": "quiz"
@@ -241,11 +236,6 @@
               "type": "page"
             },
             {
-              "uid": "DCL04-TP2-CHDRN6",
-              "fname": "DCL04-TP2-CHDRN6.json",
-              "type": "assignment"
-            },
-            {
               "uid": "DCL04-U02-CHDRN1",
               "fname": "DCL04-U02-CHDRN1.json",
               "type": "quiz"
@@ -274,35 +264,9 @@
               "type": "page"
             },
             {
-              "title": "3.2 - Align",
-              "uid": "DCL04-TP3-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S02",
-              "type": "page"
-            },
-            {
-              "title": "3.3 - Ruler And 3D Text Tool",
-              "uid": "DCL04-TP3-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S03",
-              "type": "page"
-            },
-            {
-              "title": "3.4 - 3D Printing",
-              "uid": "DCL04-TP3-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S04",
-              "type": "page"
-            },
-            {
-              "uid": "DCL04-TP3-CHDRN6",
+              "uid": "DCL04-TP3-CHDRN600",
               "fname": "DCL04-TP3-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL04-U03-CHDRN1",
-              "fname": "DCL04-U03-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL04-TP3-CHDRN7",
@@ -315,6 +279,13 @@
               "type": "assignment"
             },
             {
+              "title": "3.2 - Align",
+              "uid": "DCL04-TP3-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL04-TP3-CHDRN9",
               "fname": "DCL04-TP3-CHDRN9.json",
               "type": "assignment"
@@ -323,6 +294,13 @@
               "uid": "DCL04-TP3-CHDRN10",
               "fname": "DCL04-TP3-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "title": "3.3 - Ruler And 3D Text Tool",
+              "uid": "DCL04-TP3-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S03",
+              "type": "page"
             },
             {
               "uid": "DCL04-TP3-CHDRN11",
@@ -340,6 +318,13 @@
               "type": "assignment"
             },
             {
+              "title": "3.4 - 3D Printing",
+              "uid": "DCL04-TP3-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U03_S04",
+              "type": "page"
+            },
+            {
               "uid": "DCL04-TP3-CHDRN14",
               "fname": "DCL04-TP3-CHDRN14.json",
               "type": "assignment"
@@ -353,6 +338,11 @@
               "uid": "DCL04-TP3-CHDRN16",
               "fname": "DCL04-TP3-CHDRN16.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL04-U03-CHDRN1",
+              "fname": "DCL04-U03-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -378,35 +368,9 @@
               "type": "page"
             },
             {
-              "title": "4.2 - Duplicate Slides",
-              "uid": "DCL04-TP4-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S02",
-              "type": "page"
-            },
-            {
-              "title": "4.3 - Shape Format",
-              "uid": "DCL04-TP4-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S03",
-              "type": "page"
-            },
-            {
-              "title": "4.4 - Adding Effects To Shapes",
-              "uid": "DCL04-TP4-CHDRN5",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S04",
-              "type": "page"
-            },
-            {
-              "uid": "DCL04-TP4-CHDRN6",
+              "uid": "DCL04-TP4-CHDRN600",
               "fname": "DCL04-TP4-CHDRN6.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL04-U04-CHDRN1",
-              "fname": "DCL04-U04-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL04-TP4-CHDRN7",
@@ -419,6 +383,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.2 - Duplicate Slides",
+              "uid": "DCL04-TP4-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S02",
+              "type": "page"
+            },
+            {
               "uid": "DCL04-TP4-CHDRN9",
               "fname": "DCL04-TP4-CHDRN9.json",
               "type": "assignment"
@@ -429,6 +400,13 @@
               "type": "assignment"
             },
             {
+              "title": "4.3 - Shape Format",
+              "uid": "DCL04-TP4-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL04-TP4-CHDRN11",
               "fname": "DCL04-TP4-CHDRN11.json",
               "type": "assignment"
@@ -437,6 +415,13 @@
               "uid": "DCL04-TP4-CHDRN12",
               "fname": "DCL04-TP4-CHDRN12.json",
               "type": "assignment"
+            },
+            {
+              "title": "4.4 - Adding Effects To Shapes",
+              "uid": "DCL04-TP4-CHDRN5",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U04_S04",
+              "type": "page"
             },
             {
               "uid": "DCL04-TP4-CHDRN13",
@@ -452,6 +437,11 @@
               "uid": "DCL04-TP4-CHDRN15",
               "fname": "DCL04-TP4-CHDRN15.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL04-U04-CHDRN1",
+              "fname": "DCL04-U04-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -477,28 +467,9 @@
               "type": "page"
             },
             {
-              "title": "5.2 - Borders And Line Spacing",
-              "uid": "DCL04-TP5-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U05_S02",
-              "type": "page"
-            },
-            {
-              "title": "5.3 - Templates And Orientation",
-              "uid": "DCL04-TP5-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U05_S03",
-              "type": "page"
-            },
-            {
-              "uid": "DCL04-TP5-CHDRN5",
+              "uid": "DCL04-TP5-CHDRN500",
               "fname": "DCL04-TP5-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL04-U05-CHDRN1",
-              "fname": "DCL04-U05-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL04-TP5-CHDRN6",
@@ -509,6 +480,13 @@
               "uid": "DCL04-TP5-CHDRN7",
               "fname": "DCL04-TP5-CHDRN7.json",
               "type": "assignment"
+            },
+            {
+              "title": "5.2 - Borders And Line Spacing",
+              "uid": "DCL04-TP5-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U05_S02",
+              "type": "page"
             },
             {
               "uid": "DCL04-TP5-CHDRN8",
@@ -526,6 +504,13 @@
               "type": "assignment"
             },
             {
+              "title": "5.3 - Templates And Orientation",
+              "uid": "DCL04-TP5-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U05_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL04-TP5-CHDRN11",
               "fname": "DCL04-TP5-CHDRN11.json",
               "type": "assignment"
@@ -534,6 +519,11 @@
               "uid": "DCL04-TP5-CHDRN12",
               "fname": "DCL04-TP5-CHDRN12.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL04-U05-CHDRN1",
+              "fname": "DCL04-U05-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"
@@ -559,33 +549,21 @@
               "type": "page"
             },
             {
-              "title": "6.2 - Prediction From Data",
-              "uid": "DCL04-TP6-CHDRN3",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U06_S02",
-              "type": "page"
-            },
-            {
-              "title": "6.3 - Data Insight",
-              "uid": "DCL04-TP6-CHDRN4",
-              "description": "",
-              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U06_S03",
-              "type": "page"
-            },
-            {
-              "uid": "DCL04-TP6-CHDRN5",
+              "uid": "DCL04-TP6-CHDRN500",
               "fname": "DCL04-TP6-CHDRN5.json",
               "type": "assignment"
-            },
-            {
-              "uid": "DCL04-U06-CHDRN1",
-              "fname": "DCL04-U06-CHDRN1.json",
-              "type": "quiz"
             },
             {
               "uid": "DCL04-TP6-CHDRN6",
               "fname": "DCL04-TP6-CHDRN6.json",
               "type": "assignment"
+            },
+            {
+              "title": "6.2 - Prediction From Data",
+              "uid": "DCL04-TP6-CHDRN3",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U06_S02",
+              "type": "page"
             },
             {
               "uid": "DCL04-TP6-CHDRN7",
@@ -598,6 +576,13 @@
               "type": "assignment"
             },
             {
+              "title": "6.3 - Data Insight",
+              "uid": "DCL04-TP6-CHDRN4",
+              "description": "",
+              "route": "/pdf?course=DigiChamps&Level=Level4&pdf=DCL04_U06_S03",
+              "type": "page"
+            },
+            {
               "uid": "DCL04-TP6-CHDRN9",
               "fname": "DCL04-TP6-CHDRN9.json",
               "type": "assignment"
@@ -606,6 +591,11 @@
               "uid": "DCL04-TP6-CHDRN10",
               "fname": "DCL04-TP6-CHDRN10.json",
               "type": "assignment"
+            },
+            {
+              "uid": "DCL04-U06-CHDRN1",
+              "fname": "DCL04-U06-CHDRN1.json",
+              "type": "quiz"
             }
           ],
           "teacheronly": "no"

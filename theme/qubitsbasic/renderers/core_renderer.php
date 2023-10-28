@@ -38,11 +38,13 @@ class theme_qubitsbasic_core_renderer extends theme_boost\output\core_renderer {
             $course_customdata = $mform->get_custom_fields_data_by_cid($mycourse->id);
             $level = isset($course_customdata["level"]) ? $course_customdata["level"] : "1";
 
+            $subject = substr($mycourse->idnumber, 0,3) ;
+           
             $myenrolcourses[] = array(
                 "name" => $mycourse->fullname,
                 "id" => $mycourse->id,
-                "categoryname" => $categoryName,
-                "level" => "Level ".$level,
+                "categoryname" => strtolower($subject) == 'dcl' ? 'DigiChamps' : 'DigiPro',// $categoryName,
+                "level" => "Level ".$level.' - '.$categoryName,
                 "url" => $CFG->wwwroot.'/course/view.php?id='.$mycourse->id
             );
         }
