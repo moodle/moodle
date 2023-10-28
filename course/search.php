@@ -86,10 +86,10 @@ if (!empty($search)) {
 
 if (empty($searchcriteria)) {
     // no search criteria specified, print page with just search form
-    $PAGE->set_title("$site->fullname : $strsearch");
+    $PAGE->set_title($strsearch);
 } else {
     // this is search results page
-    $PAGE->set_title("$site->fullname : $strsearchresults");
+    $PAGE->set_title($strsearchresults);
     // Link to manage search results should be visible if user have system or category level capability
     if ((can_edit_in_category() || !empty($usercatlist))) {
         $aurl = new moodle_url('/course/management.php', $searchcriteria);

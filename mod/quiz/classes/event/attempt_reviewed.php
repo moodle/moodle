@@ -65,7 +65,7 @@ class attempt_reviewed extends \core\event\base {
      * @return string
      */
     public function get_description() {
-        return "The user with id '$this->userid' has had their attempt with id '$this->objectid' reviewed by the user " .
+        return "The user with id '$this->userid' has reviewed quiz attempt with id '$this->objectid' by user ".
             "with id '$this->relateduserid' for the quiz with course module id '$this->contextinstanceid'.";
     }
 

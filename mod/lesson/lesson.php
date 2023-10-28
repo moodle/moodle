@@ -81,7 +81,8 @@ switch ($action) {
         $title = $DB->get_field("lesson_pages", "title", array("id" => $pageid));
 
         echo $lessonoutput->header($lesson, $cm, '', false, null, get_string('moving', 'lesson', format_String($title)));
-        echo $OUTPUT->heading(get_string("moving", "lesson", format_string($title)), 3);
+        $headinglevel = $PAGE->activityheader->get_heading_level();
+        echo $OUTPUT->heading(get_string("moving", "lesson", format_string($title)), $headinglevel);
 
         $params = array ("lessonid" => $lesson->id, "prevpageid" => 0);
         if (!$page = $DB->get_record_select("lesson_pages", "lessonid = :lessonid AND prevpageid = :prevpageid", $params)) {

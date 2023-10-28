@@ -82,6 +82,7 @@ class behat_workshopallocation_manual extends behat_base {
     /**
      * Manually allocates multiple reviewers in workshop.
      *
+     * @When /^I allocate submissions in workshop "(?P<workshop_name_string>(?:[^"]|\\")*)" as:$/
      * @When /^I allocate submissions in workshop "(?P<workshop_name_string>(?:[^"]|\\")*)" as:"$/
      * @param string $workshopname
      * @param TableNode $table should have one column with title 'Reviewer' and another with title 'Participant' (or 'Reviewee')

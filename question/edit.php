@@ -38,6 +38,7 @@ if ($PAGE->course->id == $SITE->id) {
     $PAGE->set_primary_active_tab('home');
 }
 
+$thispageurl->param('deleteall', 1);
 $questionbank = new core_question\local\bank\view($contexts, $thispageurl, $COURSE, $cm);
 
 $context = $contexts->lowest();

@@ -44,7 +44,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $output .= $this->heading(get_string('copyrightnotice'));
         $output .= $this->box($copyrightnotice, 'copyrightnotice');
         $output .= html_writer::empty_tag('br');
-        $output .= $this->confirm(get_string('doyouagree'), $continue, "http://docs.moodle.org/dev/License");
+        $output .= $this->confirm(get_string('doyouagree'), $continue, "https://moodledev.io/general/license");
         $output .= $this->footer();
 
         return $output;
@@ -746,10 +746,10 @@ class core_admin_renderer extends plugin_renderer_base {
         //////////////////////////////////////////////////////////////////////////////////////////////////
         ////  IT IS ILLEGAL AND A VIOLATION OF THE GPL TO HIDE, REMOVE OR MODIFY THIS COPYRIGHT NOTICE ///
         $copyrighttext = '<a href="http://moodle.org/">Moodle</a> '.
-                         '<a href="http://docs.moodle.org/dev/Releases" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
+                         '<a href="https://moodledev.io/general/releases" title="'.$CFG->version.'">'.$CFG->release.'</a><br />'.
                          'Copyright &copy; 1999 onwards, Martin Dougiamas<br />'.
                          'and <a href="http://moodle.org/dev">many other contributors</a>.<br />'.
-                         '<a href="http://docs.moodle.org/dev/License">GNU Public License</a>';
+                         '<a href="https://moodledev.io/general/license">GNU Public License</a>';
         //////////////////////////////////////////////////////////////////////////////////////////////////
 
         return $this->box($copyrighttext, 'copyright');
@@ -898,7 +898,8 @@ class core_admin_renderer extends plugin_renderer_base {
         $url = "https://campaign.moodle.org/current/lms/{$lang}/install/";
         $params = [
             'url' => $url,
-            'iframeid' => 'campaign-content'
+            'iframeid' => 'campaign-content',
+            'title' => get_string('campaign', 'admin'),
         ];
 
         return $this->render_from_template('core/external_content_banner', $params);
@@ -919,7 +920,8 @@ class core_admin_renderer extends plugin_renderer_base {
         $url = "https://campaign.moodle.org/current/lms/{$lang}/servicesandsupport/";
         $params = [
             'url' => $url,
-            'iframeid' => 'services-support-content'
+            'iframeid' => 'services-support-content',
+            'title' => get_string('supportandservices', 'admin'),
         ];
 
         return $this->render_from_template('core/external_content_banner', $params);
@@ -991,7 +993,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @return string HTML to output.
      */
     protected function release_notes_link() {
-        $releasenoteslink = get_string('releasenoteslink', 'admin', 'http://docs.moodle.org/dev/Releases');
+        $releasenoteslink = get_string('releasenoteslink', 'admin', 'https://moodledev.io/general/releases');
         $releasenoteslink = str_replace('target="_blank"', 'onclick="this.target=\'_blank\'"', $releasenoteslink); // extremely ugly validation hack
         return $this->box($releasenoteslink, 'generalbox alert alert-info');
     }

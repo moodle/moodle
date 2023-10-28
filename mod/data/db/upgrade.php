@@ -45,5 +45,21 @@ function xmldb_data_upgrade($oldversion) {
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022112801) {
+        // Clean orphan data_records.
+        $sql = "SELECT d.id FROM {data} d
+            LEFT JOIN {data_fields} f ON d.id = f.dataid
+            WHERE f.id IS NULL";
+        $emptydatas = $DB->get_records_sql($sql);
+        if (!empty($emptydatas)) {
+            $dataids = array_keys($emptydatas);
+            list($datainsql, $dataparams) = $DB->get_in_or_equal($dataids, SQL_PARAMS_NAMED, 'data');
+            $DB->delete_records_select('data_records', "dataid $datainsql", $dataparams);
+        }
+
+        // Data savepoint reached.
+        upgrade_mod_savepoint(true, 2022112801, 'data');
+    }
+
     return true;
 }

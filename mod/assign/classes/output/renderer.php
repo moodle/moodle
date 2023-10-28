@@ -1120,7 +1120,7 @@ class renderer extends \plugin_renderer_base {
      */
     public function render_assign_grading_table(\assign_grading_table $table) {
         $o = '';
-        $o .= $this->output->box_start('boxaligncenter gradingtable');
+        $o .= $this->output->box_start('boxaligncenter gradingtable position-relative');
 
         $this->page->requires->js_init_call('M.mod_assign.init_grading_table', array());
         $this->page->requires->string_for_js('nousersselected', 'assign');
@@ -1304,13 +1304,16 @@ class renderer extends \plugin_renderer_base {
         $submission = $status->teamsubmission ? $status->teamsubmission : $status->submission;
         $submissionstarted = $submission && property_exists($submission, 'timestarted') && $submission->timestarted;
         $timelimitenabled = get_config('assign', 'enabletimelimit') && $status->timelimit > 0 && $submissionstarted;
-        $duedatereached = $status->duedate > 0 && $status->duedate - $time <= 0;
+        // Define $duedate as latest between due date and extension - which is a possibility...
+        $extensionduedate = intval($status->extensionduedate);
+        $duedate = !empty($extensionduedate) ? max($status->duedate, $extensionduedate) : $status->duedate;
+        $duedatereached = $duedate > 0 && $duedate - $time <= 0;
         $timelimitenabledbeforeduedate = $timelimitenabled && !$duedatereached;
 
         // There is a submission, display the relevant early/late message.
         if ($submission && $submission->status == ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
             $latecalculation = $submission->timemodified - ($timelimitenabledbeforeduedate ? $submission->timestarted : 0);
-            $latethreshold = $timelimitenabledbeforeduedate ? $status->timelimit : $status->duedate;
+            $latethreshold = $timelimitenabledbeforeduedate ? $status->timelimit : $duedate;
             $earlystring = $timelimitenabledbeforeduedate ? 'submittedundertime' : 'submittedearly';
             $latestring = $timelimitenabledbeforeduedate ? 'submittedovertime' : 'submittedlate';
             $ontime = $latecalculation <= $latethreshold;
@@ -1330,7 +1333,7 @@ class renderer extends \plugin_renderer_base {
                 get_string(
                     $status->submissionsenabled ? 'overdue' : 'duedatereached',
                     'assign',
-                    format_time($time - $status->duedate)
+                    format_time($time - $duedate)
                 ),
                 'overdue'
             ];
@@ -1345,7 +1348,7 @@ class renderer extends \plugin_renderer_base {
         }
 
         // Assignment is not overdue, and no submission has been made. Just display the due date.
-        return [get_string('paramtimeremaining', 'assign', format_time($status->duedate - $time)), 'timeremaining'];
+        return [get_string('paramtimeremaining', 'assign', format_time($duedate - $time)), 'timeremaining'];
     }
 
     /**

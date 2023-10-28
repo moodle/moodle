@@ -62,30 +62,31 @@ class assignfeedback_file_import_zip_form extends moodleform implements renderab
 
         $mform->addElement('header', 'uploadzip', get_string('confirmuploadzip', 'assignfeedback_file'));
 
-        $currentgroup = groups_get_activity_group($assignment->get_course_module(), true);
-        $allusers = $assignment->list_participants($currentgroup, false);
-        $participants = array();
-        foreach ($allusers as $user) {
-            $participants[$assignment->get_uniqueid_for_user($user->id)] = $user;
-        }
+        $participants = $importer->get_participant_mapping($assignment);
 
         $fs = get_file_storage();
 
         $updates = array();
         foreach ($files as $unzippedfile) {
-            $user = null;
+            $users = null;
             $plugin = null;
             $filename = '';
 
-            if ($importer->is_valid_filename_for_import($assignment, $unzippedfile, $participants, $user, $plugin, $filename)) {
-                if ($importer->is_file_modified($assignment, $user, $plugin, $filename, $unzippedfile)) {
+            if ($importer->is_valid_filename_for_import($assignment, $unzippedfile, $participants, $users, $plugin, $filename)) {
+                if ($importer->is_file_modified($assignment, $users, $plugin, $filename, $unzippedfile)) {
                     // Get a string we can show to identify this user.
-                    $userdesc = fullname($user, has_capability('moodle/site:viewfullnames', $assignment->get_context()));
-                    $path = pathinfo($filename);
-                    if ($assignment->is_blind_marking()) {
-                        $userdesc = get_string('hiddenuser', 'assign') .
+                    $userdescs = [];
+                    foreach ($users as $user) {
+                        if ($assignment->is_blind_marking()) {
+                            $userdescs[] = get_string('hiddenuser', 'assign') .
                                     $assignment->get_uniqueid_for_user($user->id);
+                        } else {
+                            $userdescs[] = fullname($user, has_capability('moodle/site:viewfullnames', $assignment->get_context()));
+                        }
                     }
+                    $userdesc = join(", ", $userdescs);
+
+                    $path = pathinfo($filename);
                     $grade = $assignment->get_user_grade($user->id, false);
 
                     $exists = false;

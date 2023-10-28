@@ -21,3 +21,15 @@
 .tox.tox-tinymce .tox-toolbar__group {
     padding-right: 0;
 }
+
+/* Prevent navbar obscuring modal content (ignores fullscreen). */
+.tox.tox-tinymce:not(.tox-fullscreen) + .tox .tox-dialog-wrap {
+    padding-top: var(--navbar-height);
+}
+
+/* Modify Tiny's max-height calculation here to factor in navbar height on small viewports (ignores fullscreen). */
+@media only screen and (max-width: 767px) {
+    body:not(.tox-force-desktop) .tox.tox-tinymce:not(.tox-fullscreen) + .tox .tox-dialog-wrap .tox-dialog {
+        max-height: calc((100vh - 8px * 2) - var(--navbar-height)) !important; /* stylelint-disable-line declaration-no-important */
+    }
+}

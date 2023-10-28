@@ -554,7 +554,18 @@ $cache = '.var_export($cache, true).';
         $types = array();
         $subplugins = array();
         if (file_exists("$ownerdir/db/subplugins.json")) {
-            $subplugins = (array) json_decode(file_get_contents("$ownerdir/db/subplugins.json"))->plugintypes;
+            $subplugins = [];
+            $subpluginsjson = json_decode(file_get_contents("$ownerdir/db/subplugins.json"));
+            if (json_last_error() === JSON_ERROR_NONE) {
+                if (!empty($subpluginsjson->plugintypes)) {
+                    $subplugins = (array) $subpluginsjson->plugintypes;
+                } else {
+                    error_log("No plugintypes defined in $ownerdir/db/subplugins.json");
+                }
+            } else {
+                $jsonerror = json_last_error_msg();
+                error_log("$ownerdir/db/subplugins.json is invalid ($jsonerror)");
+            }
         } else if (file_exists("$ownerdir/db/subplugins.php")) {
             error_log('Use of subplugins.php has been deprecated. ' .
                 "Please update your '$ownerdir' plugin to provide a subplugins.json file instead.");
@@ -1281,5 +1292,23 @@ $cache = '.var_export($cache, true).';
             $componentnames[] = 'core_' . $subsystemname;
         }
         return $componentnames;
+    }
+
+    /**
+     * Checks for the presence of monologo icons within a plugin.
+     *
+     * Only checks monologo icons in PNG and SVG formats as they are
+     * formats that can have transparent background.
+     *
+     * @param string $plugintype The plugin type.
+     * @param string $pluginname The plugin name.
+     * @return bool True if the plugin has a monologo icon
+     */
+    public static function has_monologo_icon(string $plugintype, string $pluginname): bool {
+        $plugindir = core_component::get_plugin_directory($plugintype, $pluginname);
+        if ($plugindir === null) {
+            return false;
+        }
+        return file_exists("$plugindir/pix/monologo.svg") || file_exists("$plugindir/pix/monologo.png");
     }
 }

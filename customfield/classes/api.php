@@ -254,7 +254,7 @@ class api {
                                     $category->get_formatted_name(),
                                     $category->get('name'),
                                     get_string('editcategoryname', 'core_customfield'),
-                                    get_string('newvaluefor', 'core_form', format_string($category->get('name')))
+                                    get_string('newvaluefor', 'core_form', $category->get_formatted_name())
         );
     }
 

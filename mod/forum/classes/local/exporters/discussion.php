@@ -174,7 +174,7 @@ class discussion extends exporter {
             // or if it's been deleted and the discussion record hasn't been updated.
             if ($group) {
                 $groupdata = [
-                    'name' => $group->name,
+                    'name' => format_string($group->name, true, ['context' => $this->related['context']]),
                     'urls' => [],
                 ];
 

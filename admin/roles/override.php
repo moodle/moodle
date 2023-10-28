@@ -90,6 +90,7 @@ $title = get_string('overridepermissionsforrole', 'core_role', $a);
 $currenttab = 'permissions';
 
 $PAGE->set_title($title);
+$PAGE->activityheader->disable();
 $PAGE->navbar->add($straction);
 switch ($context->contextlevel) {
     case CONTEXT_SYSTEM:

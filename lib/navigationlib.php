@@ -575,11 +575,20 @@ class navigation_node implements renderable {
 
     /**
      * Sets the title for this node and forces Moodle to utilise it.
-     * @param string $title
+     *
+     * Note that this method is named identically to the public "title" property of the class, which unfortunately confuses
+     * our Mustache renderer, because it will see the method and try and call it without any arguments (hence must be nullable)
+     * before trying to access the public property
+     *
+     * @param string|null $title
+     * @return string
      */
-    public function title($title) {
-        $this->title = $title;
-        $this->forcetitle = true;
+    public function title(?string $title = null): string {
+        if ($title !== null) {
+            $this->title = $title;
+            $this->forcetitle = true;
+        }
+        return (string) $this->title;
     }
 
     /**
@@ -1645,8 +1654,7 @@ class global_navigation extends navigation_node {
             $this->search_for_active_node();
         }
 
-        // If the user is not logged in modify the navigation structure as detailed
-        // in {@link http://docs.moodle.org/dev/Navigation_2.0_structure}
+        // If the user is not logged in modify the navigation structure.
         if (!isloggedin()) {
             $activities = clone($this->rootnodes['site']->children);
             $this->rootnodes['site']->remove();
@@ -3638,6 +3646,7 @@ class navbar extends navigation_node {
         } else if ($this->hasitems !== false) {
             return true;
         }
+        $outcome = false;
         if (count($this->children) > 0 || count($this->prependchildren) > 0) {
             // There have been manually added items - there are definitely items.
             $outcome = true;

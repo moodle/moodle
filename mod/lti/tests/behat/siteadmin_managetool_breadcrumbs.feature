@@ -1,4 +1,4 @@
-@mod @mod_lti @javascript
+@mod @mod_lti
 Feature: Verify the breadcrumbs in manage tools site administration pages
   Whenever I navigate to manage tools page in site administration
   As an admin

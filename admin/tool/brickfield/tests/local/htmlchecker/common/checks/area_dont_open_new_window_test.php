@@ -87,6 +87,19 @@ EOD;
     </html>
 EOD;
 
+    /** @var string Html pass 4 */
+    private $htmlpass4 = <<<EOD
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN""http://www.w3.org/TR/REC-html40/loose.dtd">
+    <html lang="en">
+    <head>
+    <title>A link can indicate that it will open in a new window</title>
+    </head>
+    <body>
+    <area target="_blank" alt="(opens in a new window)"></area>
+    </body>
+    </html>
+EOD;
+
     /**
      * Test Area tags opening new window without warning
      */
@@ -101,6 +114,9 @@ EOD;
         $this->assertEmpty($results);
 
         $results = $this->get_checker_results($this->htmlpass3);
+        $this->assertEmpty($results);
+
+        $results = $this->get_checker_results($this->htmlpass4);
         $this->assertEmpty($results);
     }
 }

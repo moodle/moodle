@@ -96,18 +96,14 @@ function core_admin_pluginfile($course, $cm, $context, $filearea, $args, $forced
             send_file_not_found();
         }
 
-        // No need for resizing, but if the file should be cached we save it so we can serve it fast next time.
-        if (empty($maxwidth) && empty($maxheight)) {
+        // Check whether width/height are specified, and we can resize the image (some types such as ICO cannot be resized).
+        if (($maxwidth === 0 && $maxheight === 0) ||
+                !$filedata = $file->resize_image($maxwidth, $maxheight)) {
+
             if ($lifetime) {
                 file_safe_save_content($file->get_content(), $candidate);
             }
             send_stored_file($file, $lifetime, 0, false, $options);
-        }
-
-        // Proceed with the resizing.
-        $filedata = $file->resize_image($maxwidth, $maxheight);
-        if (!$filedata) {
-            send_file_not_found();
         }
 
         // If we don't want to cached the file, serve now and quit.

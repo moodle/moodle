@@ -10,8 +10,8 @@
   display: inline-block;
   width: $spinner-width;
   height: $spinner-height;
-  vertical-align: text-bottom;
-  border: $spinner-border-width solid currentColor;
+  vertical-align: $spinner-vertical-align;
+  border: $spinner-border-width solid currentcolor;
   border-right-color: transparent;
   // stylelint-disable-next-line property-disallowed-list
   border-radius: 50%;
@@ -42,8 +42,8 @@
   display: inline-block;
   width: $spinner-width;
   height: $spinner-height;
-  vertical-align: text-bottom;
-  background-color: currentColor;
+  vertical-align: $spinner-vertical-align;
+  background-color: currentcolor;
   // stylelint-disable-next-line property-disallowed-list
   border-radius: 50%;
   opacity: 0;

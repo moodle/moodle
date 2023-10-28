@@ -6,7 +6,7 @@ Feature: Test the ability to start a meeting
 
   Background:
     Given a BigBlueButton mock server is configured
-    And I enable "bigbluebuttonbn" "mod" plugin
+    And I accept dpa and enable bigbluebuttonbn plugin
 
   Scenario Outline: Users should be able to join a session depending on the Wait for moderator to join setting
     Given the following course exists:

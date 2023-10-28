@@ -43,3 +43,15 @@ Feature: Use the qbank plugin manager page for question history
     And the "History" action should not exist for the "First question" question in the question bank
     And I click on "#qbank-history-close" "css_element"
     And the "History" action should exist for the "First question" question in the question bank
+
+  @javascript
+  Scenario: Delete question from the history using Edit question menu
+    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
+    And I choose "History" action for "First question" in the question bank
+    When I choose "Delete" action for "First question" in the question bank
+    And I press "Delete"
+    And I should not see "First question"
+    Then I should see "All versions of this question have been deleted."
+    And I click on "Continue" "button"
+    And I should see "Question bank"
+    And I should not see "First question"

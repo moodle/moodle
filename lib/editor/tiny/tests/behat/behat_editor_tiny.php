@@ -24,12 +24,12 @@
  */
 
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
-use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\DriverException;
 use Behat\Mink\Exception\ExpectationException;
 
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 require_once(__DIR__ . '/../../../../behat/behat_base.php');
+require_once(__DIR__ . '/editor_tiny_helpers.php');
 
 /**
  * TinyMCE custom behat step definitions.
@@ -39,81 +39,7 @@ require_once(__DIR__ . '/../../../../behat/behat_base.php');
  * @copyright  2022 Andrew Lyons <andrew@nicols.co.uk>
  */
 class behat_editor_tiny extends behat_base implements \core_behat\settable_editor {
-    /**
-     * Execute some JavaScript for a particular Editor instance.
-     *
-     * The editor instance is available on the 'instnace' variable.
-     *
-     * @param string $editorid The ID of the editor
-     * @param string $code The code to execute
-     */
-    protected function execute_javascript_for_editor(string $editorid, string $code): void {
-        $js = <<<EOF
-        require(['editor_tiny/editor'], (editor) => {
-            const instance = editor.getInstanceForElementId('${editorid}');
-            {$code}
-        });
-        EOF;
-
-        $this->execute_script($js);
-    }
-
-    /**
-     * Resolve some JavaScript for a particular Editor instance.
-     *
-     * The editor instance is available on the 'instnace' variable.
-     * The code should return a value by passing it to the `resolve` function.
-     *
-     * @param string $editorid The ID of the editor
-     * @param string $code The code to evaluate
-     * @return string|null|array
-     */
-    protected function evaluate_javascript_for_editor(string $editorid, string $code) {
-        $js = <<<EOF
-        return new Promise((resolve, reject) => {
-            require(['editor_tiny/editor'], (editor) => {
-                const instance = editor.getInstanceForElementId('${editorid}');
-                if (!instance) {
-                    reject("Instance '${editorid}' not found");
-                }
-
-                {$code}
-            });
-        });
-        EOF;
-
-        return $this->evaluate_script($js);
-    }
-
-    /**
-     * Set the value for the editor.
-     *
-     * Note: This function is called by the behat_form_editor class.
-     * It is called regardless of the current default editor as editor selection is a user preference.
-     * Therefore it must fail gracefully and only set a value if the editor instance was found on the page.
-     *
-     * @param string $editorid
-     * @param string $value
-     */
-    public function set_editor_value(string $editorid, string $value): void {
-        if (!$this->running_javascript()) {
-            return;
-        }
-
-        $this->execute_javascript_for_editor($editorid, <<<EOF
-            instance.setContent('${value}');
-            instance.undoManager.add();
-            EOF);
-    }
-
-    /**
-     * Store the current value of the editor, if it is a Tiny editor, to the textarea.
-     *
-     * @param string $editorid The ID of the editor.
-     */
-    public function store_current_value(string $editorid): void {
-        $this->execute_javascript_for_editor($editorid, "instance?.save();");
-    }
+    use editor_tiny_helpers;
 
     /**
      * Set Tiny as default editor before executing Tiny tests.
@@ -142,98 +68,6 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
         $this->require_javascript();
 
         $this->execute('behat_general::the_default_editor_is_set_to', ['tiny']);
-    }
-
-    /**
-     * Ensure that the editor_tiny tag is in use.
-     *
-     * This function should be used for any step defined in this file.
-     *
-     * @throws DriverException Thrown if the editor_tiny tag is not specified for this file
-     */
-    protected function require_tiny_tags(): void {
-        // Ensure that this step only runs in TinyMCE tags.
-        if (!$this->has_tag('editor_tiny')) {
-            throw new DriverException(
-                'TinyMCE tests using this step must have the @editor_tiny tag on either the scenario or feature.'
-            );
-        }
-    }
-
-    /**
-     * Get the Mink NodeElement of the <textarea> for the specified locator.
-     *
-     * Moodle mostly referes to the textarea, rather than the editor itself and interactions are translated to the
-     * Editor using the TinyMCE API.
-     *
-     * @param string $locator A Moodle field locator
-     * @return NodeElement The element found by the find_field function
-     */
-    protected function get_textarea_for_locator(string $locator): NodeElement {
-        return $this->find_field($locator);
-    }
-
-    /**
-     * Get the Mink NodeElement of the container for the specified locator.
-     *
-     * This is the top-most HTML element for the editor found by TinyMCE.getContainer().
-     *
-     * @param string $locator A Moodle field locator
-     * @return NodeElement The Mink NodeElement representing the container.
-     */
-    protected function get_editor_container_for_locator(string $locator): NodeElement {
-        $textarea = $this->get_textarea_for_locator($locator);
-        $editorid = $textarea->getAttribute('id');
-
-        $targetid = uniqid();
-        $js = <<<EOF
-            const container = instance.getContainer();
-            if (!container.id) {
-                container.id = '${targetid}';
-            }
-            resolve(container.id);
-        EOF;
-        $containerid = $this->evaluate_javascript_for_editor($editorid, $js);
-
-        return $this->find('css', "#{$containerid}");
-    }
-
-    /**
-     * Get the name of the iframe relating to the editor.
-     *
-     * If no name is found, then add one.
-     *
-     * If the editor it not found, then throw an exception.
-     *
-     * @param string $locator The name of the editor
-     * @return string The name of the iframe
-     */
-    protected function get_editor_iframe_name(string $locator): string {
-        return $this->get_editor_iframe_name_for_element($this->get_textarea_for_locator($locator));
-    }
-
-    /**
-     * Get the name of the iframe relating to the editor.
-     *
-     * If no name is found, then add one.
-     *
-     * If the editor it not found, then throw an exception.
-
-     * @param NodeElement $editor The editor element
-     * @return string The name of the iframe
-     */
-    protected function get_editor_iframe_name_for_element(NodeElement $editor): string {
-        $editorid = $editor->getAttribute('id');
-
-        // Ensure that a name is set on the iframe relating to the editorid.
-        $js = <<<EOF
-            if (!instance.iframeElement.name) {
-                instance.iframeElement.name = '${editorid}';
-            }
-            resolve(instance.iframeElement.name);
-        EOF;
-
-        return $this->evaluate_javascript_for_editor($editorid, $js);
     }
 
     /**
@@ -376,26 +210,6 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
     }
 
     /**
-     * Normalise the fixture file path relative to the dirroot.
-     *
-     * @param string $filepath
-     * @return string
-     */
-    protected function normalise_fixture_filepath(string $filepath): string {
-        global $CFG;
-
-        $filepath = str_replace('/', DIRECTORY_SEPARATOR, $filepath);
-        if (!is_readable($filepath)) {
-            $filepath = $CFG->dirroot . DIRECTORY_SEPARATOR . $filepath;
-            if (!is_readable($filepath)) {
-                throw new ExpectationException('The file to be uploaded does not exist.', $this->getSession());
-            }
-        }
-
-        return $filepath;
-    }
-
-    /**
      * Select in the editor.
      *
      * @param string $locator
@@ -460,5 +274,22 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
         if ($button->getAttribute(('aria-pressed')) === 'false') {
             $this->execute('behat_general::i_click_on', [$button, 'NodeElement']);
         }
+    }
+
+    /**
+     * Switch to the TinyMCE iframe using a selector.
+     *
+     * @param string $editorlocator
+     *
+     * @When /^I switch to the "(?P<editorlocator_string>(?:[^"]|\\")*)" TinyMCE editor iframe$/
+     */
+    public function switch_to_tiny_iframe(string $editorlocator): void {
+        $this->require_tiny_tags();
+
+        // Get the iframe name for this editor.
+        $iframename = $this->get_editor_iframe_name($editorlocator);
+
+        // Switch to it.
+        $this->execute('behat_general::switch_to_iframe', [$iframename]);
     }
 }

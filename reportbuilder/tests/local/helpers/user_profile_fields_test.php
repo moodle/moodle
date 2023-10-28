@@ -81,38 +81,54 @@ class user_profile_fields_test extends core_reportbuilder_testcase {
     public function test_get_columns(): void {
         $this->resetAfterTest();
 
+        $userentity = new user();
+        $useralias = $userentity->get_table_alias('user');
+
+        // Get pre-existing user profile fields.
+        $initialuserprofilefields = new user_profile_fields("$useralias.id", $userentity->get_entity_name());
+        $initialcolumns = $initialuserprofilefields->get_columns();
+        $initialcolumntitles = array_map(static function(column $column): string {
+            return $column->get_title();
+        }, $initialcolumns);
+        $initialcolumntypes = array_map(static function(column $column): int {
+            return $column->get_type();
+        }, $initialcolumns);
+
+        // Add new custom profile fields.
         $userprofilefields = $this->generate_userprofilefields();
         $columns = $userprofilefields->get_columns();
 
-        $this->assertCount(6, $columns);
+        // Columns count should be equal to start + 6.
+        $this->assertCount(count($initialcolumns) + 6, $columns);
         $this->assertContainsOnlyInstancesOf(column::class, $columns);
 
         // Assert column titles.
         $columntitles = array_map(static function(column $column): string {
             return $column->get_title();
         }, $columns);
-        $this->assertEquals([
+        $expectedcolumntitles = array_merge($initialcolumntitles, [
             'Checkbox field',
             'Date field',
             'Menu field',
             'MSN ID',
             'Text field',
             'Textarea field',
-        ], $columntitles);
+        ]);
+        $this->assertEquals($expectedcolumntitles, $columntitles);
 
         // Assert column types.
         $columntypes = array_map(static function(column $column): int {
             return $column->get_type();
         }, $columns);
-        $this->assertEquals([
+        $expectedcolumntypes = array_merge($initialcolumntypes, [
             column::TYPE_BOOLEAN,
             column::TYPE_TIMESTAMP,
             column::TYPE_TEXT,
             column::TYPE_TEXT,
             column::TYPE_TEXT,
             column::TYPE_LONGTEXT,
-        ], $columntypes);
-
+        ]);
+        $this->assertEquals($expectedcolumntypes, $columntypes);
     }
 
     /**
@@ -151,24 +167,37 @@ class user_profile_fields_test extends core_reportbuilder_testcase {
     public function test_get_filters(): void {
         $this->resetAfterTest();
 
+        $userentity = new user();
+        $useralias = $userentity->get_table_alias('user');
+
+        // Get pre-existing user profile fields.
+        $initialuserprofilefields = new user_profile_fields("$useralias.id", $userentity->get_entity_name());
+        $initialfilters = $initialuserprofilefields->get_filters();
+        $initialfilterheaders = array_map(static function(filter $filter): string {
+            return $filter->get_header();
+        }, $initialfilters);
+
+        // Add new custom profile fields.
         $userprofilefields = $this->generate_userprofilefields();
         $filters = $userprofilefields->get_filters();
 
-        $this->assertCount(6, $filters);
+        // Filters count should be equal to start + 6.
+        $this->assertCount(count($initialfilters) + 6, $filters);
         $this->assertContainsOnlyInstancesOf(filter::class, $filters);
 
         // Assert filter headers.
         $filterheaders = array_map(static function(filter $filter): string {
             return $filter->get_header();
         }, $filters);
-        $this->assertEquals([
+        $expectedfilterheaders = array_merge($initialfilterheaders, [
             'Checkbox field',
             'Date field',
             'Menu field',
             'MSN ID',
             'Text field',
             'Textarea field',
-        ], $filterheaders);
+        ]);
+        $this->assertEquals($expectedfilterheaders, $filterheaders);
     }
 
     /**
@@ -320,5 +349,32 @@ class user_profile_fields_test extends core_reportbuilder_testcase {
 
         $this->assertCount(1, $content);
         $this->assertEquals($expectmatchuser, reset($content[0]));
+    }
+
+    /**
+     * Stress test user datasource using profile fields
+     *
+     * In order to execute this test PHPUNIT_LONGTEST should be defined as true in phpunit.xml or directly in config.php
+     */
+    public function test_stress_datasource(): void {
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
+        $this->resetAfterTest();
+
+        $userprofilefields = $this->generate_userprofilefields();
+        $user = $this->getDataGenerator()->create_user([
+            'profile_field_checkbox' => true,
+            'profile_field_datetime' => '2021-12-09',
+            'profile_field_menu' => 'Dog',
+            'profile_field_Social' => '12345',
+            'profile_field_text' => 'Hello',
+            'profile_field_textarea' => 'Goodbye',
+        ]);
+
+        $this->datasource_stress_test_columns(users::class);
+        $this->datasource_stress_test_columns_aggregation(users::class);
+        $this->datasource_stress_test_conditions(users::class, 'user:idnumber');
     }
 }

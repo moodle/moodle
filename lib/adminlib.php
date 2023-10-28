@@ -366,8 +366,8 @@ function drop_plugin_tables($name, $file, $feedback=true) {
     global $CFG, $DB;
 
     // first try normal delete
-    if (file_exists($file) and $DB->get_manager()->delete_tables_from_xmldb_file($file)) {
-        return true;
+    if (file_exists($file)) {
+        $DB->get_manager()->delete_tables_from_xmldb_file($file);
     }
 
     // then try to find all tables that start with name and are not in any xml file
@@ -1816,7 +1816,7 @@ abstract class admin_setting {
         global $CFG;
 
         if (empty($this->plugin)) {
-            if (array_key_exists($this->name, $CFG->config_php_settings)) {
+            if ($this->is_forceable() && array_key_exists($this->name, $CFG->config_php_settings)) {
                 return true;
             }
         } else {
@@ -2159,6 +2159,18 @@ abstract class admin_setting {
      */
     public function has_custom_form_control(): bool {
         return $this->customcontrol;
+    }
+
+    /**
+     * Whether the setting can be overridden in config.php.
+     *
+     * Returning true will allow the setting to be defined and overridden in config.php.
+     * Returning false will prevent the config setting from being overridden even when it gets defined in config.php.
+     *
+     * @return bool
+     */
+    public function is_forceable(): bool {
+        return true;
     }
 }
 
@@ -4050,13 +4062,13 @@ class admin_setting_configduration extends admin_setting {
         $context = (object) [
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
-            'value' => $data['v'],
+            'value' => $data['v'] ?? '',
             'readonly' => $this->is_readonly(),
             'options' => array_map(function($unit) use ($units, $data, $defaultunit) {
                 return [
                     'value' => $unit,
                     'name' => $units[$unit],
-                    'selected' => ($data['v'] == 0 && $unit == $defaultunit) || $unit == $data['u']
+                    'selected' => isset($data) && (($data['v'] == 0 && $unit == $defaultunit) || $unit == $data['u'])
                 ];
             }, array_keys($units))
         ];
@@ -4545,6 +4557,15 @@ class admin_setting_sitesetselect extends admin_setting_configselect {
         return '';
 
     }
+
+    /**
+     * admin_setting_sitesetselect is not meant to be overridden in config.php.
+     *
+     * @return bool
+     */
+    public function is_forceable(): bool {
+        return false;
+    }
 }
 
 
@@ -4755,6 +4776,15 @@ class admin_setting_sitesetcheckbox extends admin_setting_configcheckbox {
 
         return '';
     }
+
+    /**
+     * admin_setting_sitesetcheckbox is not meant to be overridden in config.php.
+     *
+     * @return bool
+     */
+    public function is_forceable(): bool {
+        return false;
+    }
 }
 
 /**
@@ -4837,6 +4867,15 @@ class admin_setting_sitesettext extends admin_setting_configtext {
 
         return '';
     }
+
+    /**
+     * admin_setting_sitesettext is not meant to be overridden in config.php.
+     *
+     * @return bool
+     */
+    public function is_forceable(): bool {
+        return false;
+    }
 }
 
 
@@ -4911,6 +4950,15 @@ class admin_setting_special_frontpagedesc extends admin_setting_confightmleditor
         core_courseformat\base::reset_course_cache($SITE->id);
 
         return '';
+    }
+
+    /**
+     * admin_setting_special_frontpagedesc is not meant to be overridden in config.php.
+     *
+     * @return bool
+     */
+    public function is_forceable(): bool {
+        return false;
     }
 }
 
@@ -8769,8 +8817,6 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
         $USER->editing = $adminediting;
     }
 
-    $visiblepathtosection = array_reverse($extpage->visiblepath);
-
     if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
         if ($PAGE->user_is_editing()) {
             $caption = get_string('blockseditoff');
@@ -8782,7 +8828,7 @@ function admin_externalpage_setup($section, $extrabutton = '', array $extraurlpa
         $PAGE->set_button($OUTPUT->single_button($url, $caption, 'get'));
     }
 
-    $PAGE->set_title("$SITE->shortname: " . implode(": ", $visiblepathtosection));
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $extpage->visiblepath));
     $PAGE->set_heading($SITE->fullname);
 
     if ($hassiteconfig && empty($options['nosearch'])) {
@@ -8868,6 +8914,10 @@ function admin_apply_default_settings($node=null, $unconditional=true, $admindef
 
     } else if ($node instanceof admin_settingpage) {
         foreach ($node->settings as $setting) {
+            if ($setting->nosave) {
+                // Not a real setting, must be a heading or description.
+                continue;
+            }
             if (!$unconditional && !is_null($setting->get_setting())) {
                 // Do not override existing defaults.
                 continue;
@@ -9162,7 +9212,7 @@ function format_admin_setting($setting, $title='', $form='', $description='', $l
     $context->warning = $warning;
     $context->override = '';
     if (empty($setting->plugin)) {
-        if (array_key_exists($setting->name, $CFG->config_php_settings)) {
+        if ($setting->is_forceable() && array_key_exists($setting->name, $CFG->config_php_settings)) {
             $context->override = get_string('configoverride', 'admin');
         }
     } else {

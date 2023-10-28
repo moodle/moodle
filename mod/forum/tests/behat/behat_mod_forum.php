@@ -250,6 +250,11 @@ class behat_mod_forum extends behat_base {
                 $cm = get_coursemodule_from_instance('forum', $replyinfo['forum']);
             }
 
+            // Get the user id of the user to whom the reply is private.
+            if (!empty($replyinfo['privatereplyto'])) {
+                $replyinfo['privatereplyto'] = $this->get_user_id($replyinfo['privatereplyto']);
+            }
+
             // Create the reply post.
             $reply = $forumgenerator->create_post($replyinfo);
 

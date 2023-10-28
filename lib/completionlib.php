@@ -928,7 +928,9 @@ class completion_info {
         $DB->delete_records_select('course_modules_completion',
                 'coursemoduleid IN (SELECT id FROM {course_modules} WHERE course=?)',
                 array($this->course_id));
-
+        $DB->delete_records_select('course_modules_viewed',
+            'coursemoduleid IN (SELECT id FROM {course_modules} WHERE course=?)',
+            [$this->course_id]);
         // Wipe course completion data too.
         $this->delete_course_completion_data();
     }

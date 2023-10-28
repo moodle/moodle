@@ -195,7 +195,8 @@ class sync_grades extends scheduled_task {
                         continue;
                     }
 
-                    if ($response['status'] == 200) {
+                    $successresponses = [200, 201, 202, 204];
+                    if (in_array($response['status'], $successresponses)) {
                         $user->set_lastgrade(grade_floatval($grade));
                         $syncedusergrades[$user->get_id()] = $user;
                         mtrace("Success - The grade '$floatgrade' $mtracecontent was sent.");
@@ -231,7 +232,7 @@ class sync_grades extends scheduled_task {
                                 JOIN {enrol} e
                                   ON (e.id = t.enrolid)
                                 JOIN {course} c
-                                  ON {c.id} = e.courseid
+                                  ON (c.id = e.courseid)
                                WHERE t.id = :resourceid";
             $coursename = $DB->get_field_sql($coursenamesql, ['resourceid' => $resource->id]);
             $resourcename = format_string($coursename, true, ['context' => $context->id]);

@@ -125,29 +125,38 @@ class backpack extends external_backpack {
      * Validates form data
      */
     public function validation($data, $files) {
-        global $CFG;
-
-        $errors = parent::validation($data, $files);
         if (badges_open_badges_backpack_api() == OPEN_BADGES_V2P1) {
+            return [];
+        }
+
+        // We don't need to verify the email address if we're clearing a pending email verification attempt.
+        if (isset($data['revertbutton'])) {
+            return [];
+        }
+
+        $errors = [];
+        // Email and password can't be blank.
+        if (empty($data['backpackemail'])) {
+            $errors['backpackemail'] = get_string('backpackemail_required', 'badges');
+        }
+        if (empty($data['password'])) {
+            $errors['password'] = get_string('password_required', 'badges');
+        }
+        if (!empty($errors)) {
             return $errors;
         }
-        // We don't need to verify the email address if we're clearing a pending email verification attempt.
-        if (!isset($data['revertbutton'])) {
-            $check = new stdClass();
-            $check->email = $data['backpackemail'];
-            $check->password = $data['password'];
-            $sitebackpack = badges_get_site_backpack($data['externalbackpackid']);
-            $bp = new \core_badges\backpack_api($sitebackpack, $check);
 
-            $result = $bp->authenticate();
-            if ($result === false || !empty($result->error)) {
-                $errors['backpackemail'] = get_string('backpackconnectionunexpectedresult', 'badges');
-                $msg = $bp->get_authentication_error();
-                if (!empty($msg)) {
-                    $errors['backpackemail'] .= '<br/><br/>';
-                    $errors['backpackemail'] .= get_string('backpackconnectionunexpectedmessage', 'badges', $msg);
-                }
-            }
+        // Check the given credentials (email and password) are valid for this backpack.
+        $check = new stdClass();
+        $check->email = $data['backpackemail'];
+        $check->password = $data['password'];
+        $sitebackpack = badges_get_site_backpack($data['externalbackpackid']);
+        $bp = new \core_badges\backpack_api($sitebackpack, $check);
+
+        $result = $bp->authenticate();
+        if ($result === false || !empty($result->error)) {
+            $msg = $bp->get_authentication_error();
+            $errors['backpackemail'] = get_string('backpackconnectionunexpectedresult', 'badges', $msg);
         }
         return $errors;
     }

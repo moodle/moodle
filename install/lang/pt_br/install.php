@@ -73,7 +73,7 @@ $string['pathssubdataroot'] = '<p>Um diretório em que Moodle armazenará todo o
 <p>Este diretório deve ser legível e gravável pelo usuário do servidor web (geralmente "www-data \',\' nobody \', ou\' apache\'). </p>
 <p>Não deve ser diretamente acessível através da web. </p>
 <p>Se o diretório não existir atualmente, o processo de instalação tentará criá-lo. </p>';
-$string['pathssubdirroot'] = '<p>Caminho completo do diretório para instalação do Moddle.</p>';
+$string['pathssubdirroot'] = '<p>Caminho completo do diretório para instalação do Moodle.</p>';
 $string['pathssubwwwroot'] = '<p>O endereço completo em que Moodle pode ser acessado ou seja, o endereço que os usuários vão digitar na barra de endereços do seu navegador para acessar Moodle. </p>
 <p>Não é possível acessar Moodle usando múltiplos endereços. Se o seu site é acessível através de múltiplos endereços, em seguida, escolher o mais fácil e configurar um redirecionamento permanente para cada um dos outros endereços. </p>
 <p>Se o seu site é acessível tanto a partir da Internet e, a partir de uma rede interna (às vezes chamado de Intranet), em seguida, use o endereço público aqui. </p>

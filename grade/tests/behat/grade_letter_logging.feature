@@ -8,9 +8,7 @@ Feature: We can view the logs for any changes to grade letters.
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1 | 0 |
-    And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Course grade settings" in the course gradebook
+    And I am on the "Course 1" "grades > course grade settings" page logged in as "admin"
     And I set the following fields to these values:
       | Grade display type | Letter |
     And I press "Save changes"

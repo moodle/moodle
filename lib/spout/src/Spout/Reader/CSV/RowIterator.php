@@ -84,8 +84,7 @@ class RowIterator implements IteratorInterface
      *
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function rewind()
+    public function rewind() : void
     {
         $this->rewindAndSkipBom();
 
@@ -115,8 +114,7 @@ class RowIterator implements IteratorInterface
      *
      * @return bool
      */
-    #[\ReturnTypeWillChange]
-    public function valid()
+    public function valid() : bool
     {
         return ($this->filePointer && !$this->hasReachedEndOfFile);
     }
@@ -128,8 +126,7 @@ class RowIterator implements IteratorInterface
      * @throws \Box\Spout\Common\Exception\EncodingConversionException If unable to convert data to UTF-8
      * @return void
      */
-    #[\ReturnTypeWillChange]
-    public function next()
+    public function next() : void
     {
         $this->hasReachedEndOfFile = $this->globalFunctionsHelper->feof($this->filePointer);
 
@@ -149,8 +146,8 @@ class RowIterator implements IteratorInterface
         } while ($this->shouldReadNextRow($rowData));
 
         if ($rowData !== false) {
-            // str_replace will replace NULL values by empty strings
-            $rowDataBufferAsArray = \str_replace(null, null, $rowData);
+            // array_map will replace NULL values by empty strings
+            $rowDataBufferAsArray = array_map(function ($value) { return (string) $value; }, $rowData);
             $this->rowBuffer = $this->entityFactory->createRowFromArray($rowDataBufferAsArray);
             $this->numReadRows++;
         } else {
@@ -227,8 +224,7 @@ class RowIterator implements IteratorInterface
      *
      * @return Row|null
      */
-    #[\ReturnTypeWillChange]
-    public function current()
+    public function current() : ?Row
     {
         return $this->rowBuffer;
     }
@@ -239,8 +235,7 @@ class RowIterator implements IteratorInterface
      *
      * @return int
      */
-    #[\ReturnTypeWillChange]
-    public function key()
+    public function key() : int
     {
         return $this->numReadRows;
     }
@@ -250,7 +245,7 @@ class RowIterator implements IteratorInterface
      *
      * @return void
      */
-    public function end()
+    public function end() : void
     {
         // do nothing
     }

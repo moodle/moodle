@@ -192,6 +192,10 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
             $mform->addHelpButton('defaults[enablecompletion]', 'enablecompletion', 'completion');
         }
 
+        $mform->addElement('selectyesno', 'defaults[showactivitydates]', get_string('showactivitydates'));
+        $mform->addHelpButton('defaults[showactivitydates]', 'showactivitydates');
+        $mform->setDefault('defaults[showactivitydates]', $courseconfig->showactivitydates);
+
         // Add custom fields to the form.
         $handler = \core_course\customfield\course_handler::create();
         $handler->instance_form_definition($mform, 0, 'defaultvaluescustomfieldcategory', 'tool_uploadcourse');

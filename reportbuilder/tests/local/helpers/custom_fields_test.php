@@ -65,6 +65,9 @@ class custom_fields_test extends core_reportbuilder_testcase {
             ['categoryid' => $category->get('id'), 'type' => 'text', 'name' => 'Text', 'shortname' => 'text']);
 
         $generator->create_field(
+            ['categoryid' => $category->get('id'), 'type' => 'textarea', 'name' => 'Textarea', 'shortname' => 'textarea']);
+
+        $generator->create_field(
             ['categoryid' => $category->get('id'), 'type' => 'checkbox', 'name' => 'Checkbox', 'shortname' => 'checkbox']);
 
         $generator->create_field(
@@ -91,12 +94,13 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $customfields = $this->generate_customfields();
         $columns = $customfields->get_columns();
 
-        $this->assertCount(4, $columns);
+        $this->assertCount(5, $columns);
         $this->assertContainsOnlyInstancesOf(column::class, $columns);
 
-        [$column0, $column1, $column2, $column3] = $columns;
-        $this->assertEqualsCanonicalizing(['Text', 'Checkbox', 'Date', 'Select'],
-            [$column0->get_title(), $column1->get_title(), $column2->get_title(), $column3->get_title()]);
+        [$column0, $column1, $column2, $column3, $column4] = $columns;
+        $this->assertEqualsCanonicalizing(['Text', 'Textarea', 'Checkbox', 'Date', 'Select'], [
+            $column0->get_title(), $column1->get_title(), $column2->get_title(), $column3->get_title(), $column4->get_title()
+        ]);
 
         $this->assertEquals(column::TYPE_TEXT, $column0->get_type());
         $this->assertEquals('course', $column0->get_entity_name());
@@ -144,12 +148,13 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $customfields = $this->generate_customfields();
         $filters = $customfields->get_filters();
 
-        $this->assertCount(4, $filters);
+        $this->assertCount(5, $filters);
         $this->assertContainsOnlyInstancesOf(filter::class, $filters);
 
-        [$filter0, $filter1, $filter2, $filter3] = $filters;
-        $this->assertEqualsCanonicalizing(['Text', 'Checkbox', 'Date', 'Select'],
-            [$filter0->get_header(), $filter1->get_header(), $filter2->get_header(), $filter3->get_header()]);
+        [$filter0, $filter1, $filter2, $filter3, $filter4] = $filters;
+        $this->assertEqualsCanonicalizing(['Text', 'Textarea', 'Checkbox', 'Date', 'Select'], [
+            $filter0->get_header(), $filter1->get_header(), $filter2->get_header(), $filter3->get_header(), $filter4->get_header()
+        ]);
     }
 
     /**
@@ -162,6 +167,7 @@ class custom_fields_test extends core_reportbuilder_testcase {
 
         $course = $this->getDataGenerator()->create_course(['customfields' => [
             ['shortname' => 'text', 'value' => 'Hello'],
+            ['shortname' => 'textarea_editor', 'value' => ['text' => 'Goodbye', 'format' => FORMAT_MOODLE]],
             ['shortname' => 'checkbox', 'value' => true],
             ['shortname' => 'date', 'value' => 1669852800],
             ['shortname' => 'select', 'value' => 2],
@@ -174,6 +180,7 @@ class custom_fields_test extends core_reportbuilder_testcase {
         // Add user profile field columns to the report.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_text']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_textarea']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_checkbox']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_date']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_select']);
@@ -183,6 +190,7 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $this->assertEquals([
             $course->fullname,
             'Hello',
+            '<div class="text_to_html">Goodbye</div>',
             'Yes',
             userdate(1669852800),
             'Dog'
@@ -203,6 +211,14 @@ class custom_fields_test extends core_reportbuilder_testcase {
             'Filter by text custom field (no match)' => ['course:customfield_text', [
                 'course:customfield_text_operator' => text::IS_EQUAL_TO,
                 'course:customfield_text_value' => 'Goodbye',
+            ], false],
+            'Filter by textarea custom field' => ['course:customfield_textarea', [
+                'course:customfield_textarea_operator' => text::IS_EQUAL_TO,
+                'course:customfield_textarea_value' => 'Goodbye',
+            ], true],
+            'Filter by textarea custom field (no match)' => ['course:customfield_textarea', [
+                'course:customfield_textarea_operator' => text::IS_EQUAL_TO,
+                'course:customfield_textarea_value' => 'Hello',
             ], false],
             'Filter by checkbox custom field' => ['course:customfield_checkbox', [
                 'course:customfield_checkbox_operator' => boolean_select::CHECKED,
@@ -245,6 +261,7 @@ class custom_fields_test extends core_reportbuilder_testcase {
 
         $course = $this->getDataGenerator()->create_course(['customfields' => [
             ['shortname' => 'text', 'value' => 'Hello'],
+            ['shortname' => 'textarea_editor', 'value' => ['text' => 'Goodbye', 'format' => FORMAT_MOODLE]],
             ['shortname' => 'checkbox', 'value' => true],
             ['shortname' => 'date', 'value' => 1669852800],
             ['shortname' => 'select', 'value' => 2],
@@ -267,6 +284,32 @@ class custom_fields_test extends core_reportbuilder_testcase {
         } else {
             $this->assertEmpty($content);
         }
+    }
+
+    /**
+     * Stress test course datasource using custom fields
+     *
+     * In order to execute this test PHPUNIT_LONGTEST should be defined as true in phpunit.xml or directly in config.php
+     */
+    public function test_stress_datasource(): void {
+        if (!PHPUNIT_LONGTEST) {
+            $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
+        }
+
+        $this->resetAfterTest();
+
+        $this->generate_customfields();
+        $course = $this->getDataGenerator()->create_course(['customfields' => [
+            ['shortname' => 'text', 'value' => 'Hello'],
+            ['shortname' => 'textarea_editor', 'value' => ['text' => 'Goodbye', 'format' => FORMAT_MOODLE]],
+            ['shortname' => 'checkbox', 'value' => true],
+            ['shortname' => 'date', 'value' => 1669852800],
+            ['shortname' => 'select', 'value' => 2],
+        ]]);
+
+        $this->datasource_stress_test_columns(courses::class);
+        $this->datasource_stress_test_columns_aggregation(courses::class);
+        $this->datasource_stress_test_conditions(courses::class, 'course:idnumber');
     }
 }
 

@@ -127,18 +127,13 @@ class enrol_manual_plugin extends enrol_plugin {
      */
     public function add_default_instance($course) {
         $expirynotify = $this->get_config('expirynotify', 0);
-        if ($expirynotify == 2) {
-            $expirynotify = 1;
-            $notifyall = 1;
-        } else {
-            $notifyall = 0;
-        }
+
         $fields = array(
             'status'          => $this->get_config('status'),
             'roleid'          => $this->get_config('roleid', 0),
             'enrolperiod'     => $this->get_config('enrolperiod', 0),
             'expirynotify'    => $expirynotify,
-            'notifyall'       => $notifyall,
+            'notifyall'       => $expirynotify == 2 ? 1 : 0,
             'expirythreshold' => $this->get_config('expirythreshold', 86400),
         );
         return $this->add_instance($course, $fields);
@@ -178,6 +173,9 @@ class enrol_manual_plugin extends enrol_plugin {
                 }
             }
         }
+
+        $data->notifyall = $data->expirynotify == 2 ? 1 : 0;
+
         return parent::update_instance($instance, $data);
     }
 

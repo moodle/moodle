@@ -364,6 +364,44 @@ class externallib_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test update_categories method for moving categories
+     */
+    public function test_update_categories_moving() {
+        $this->resetAfterTest();
+
+        // Create data.
+        $categorya  = self::getDataGenerator()->create_category([
+            'name' => 'CAT_A',
+        ]);
+        $categoryasub = self::getDataGenerator()->create_category([
+            'name' => 'SUBCAT_A',
+            'parent' => $categorya->id
+        ]);
+        $categoryb  = self::getDataGenerator()->create_category([
+            'name' => 'CAT_B',
+        ]);
+
+        // Create a new test user.
+        $testuser = self::getDataGenerator()->create_user();
+        $this->setUser($testuser);
+
+        // Set the capability for CAT_A only.
+        $contextcata = context_coursecat::instance($categorya->id);
+        $roleid = $this->assignUserCapability('moodle/category:manage', $contextcata->id);
+
+        // Then we move SUBCAT_A parent: CAT_A => CAT_B.
+        $categories = [
+            [
+                'id' => $categoryasub->id,
+                'parent' => $categoryb->id
+            ]
+        ];
+
+        $this->expectException('required_capability_exception');
+        core_course_external::update_categories($categories);
+    }
+
+    /**
      * Test create_courses numsections
      */
     public function test_create_course_numsections() {
@@ -2725,13 +2763,19 @@ class externallib_test extends externallib_advanced_testcase {
         // Expect to receive all the fields.
         $this->assertCount(41, $result['courses'][0]);
         // Check default values for course format topics.
-        $this->assertCount(2, $result['courses'][0]['courseformatoptions']);
+        $this->assertCount(3, $result['courses'][0]['courseformatoptions']);
         foreach ($result['courses'][0]['courseformatoptions'] as $option) {
-            if ($option['name'] == 'hiddensections') {
-                $this->assertEquals(1, $option['value']);
-            } else {
-                $this->assertEquals('coursedisplay', $option['name']);
-                $this->assertEquals(0, $option['value']);
+            switch ($option['name']) {
+                case 'hiddensections':
+                    $this->assertEquals(1, $option['value']);
+                    break;
+                case 'coursedisplay':
+                    $this->assertEquals(0, $option['value']);
+                    break;
+                case 'indentation':
+                    $this->assertEquals(1, $option['value']);
+                    break;
+                default:
             }
         }
 

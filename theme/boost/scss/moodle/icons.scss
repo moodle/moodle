@@ -137,6 +137,7 @@ $iconsizes: map-merge((
     .activityicon,
     .icon {
         margin: 0;
+        font-size: 24px;
         height: 24px;
         width: 24px;
     }
@@ -151,7 +152,9 @@ $iconsizes: map-merge((
         background-color: $value;
         .activityicon,
         .icon {
-            filter: brightness(0) invert(1);
+            &:not(.nofilter) {
+                filter: brightness(0) invert(1);
+            }
         }
     }
 }

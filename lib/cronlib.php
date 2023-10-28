@@ -248,6 +248,10 @@ function cron_run_inner_scheduled_task(\core\task\task_base $task) {
     $predbqueries = null;
     $predbqueries = $DB->perf_get_queries();
     $pretime = microtime(1);
+
+    // Ensure that we have a clean session with the correct cron user.
+    cron_setup_user();
+
     try {
         get_mailer('buffer');
         cron_prepare_core_renderer();
@@ -346,6 +350,10 @@ function cron_run_inner_adhoc_task(\core\task\adhoc_task $task) {
         }
 
         cron_setup_user($user);
+    } else {
+        // No user specified, ensure that we have a clean session with the correct cron user.
+        cron_setup_user();
+
     }
 
     try {

@@ -16,6 +16,7 @@
 
 namespace core_question;
 
+use core_question\local\bank\question_version_status;
 use question_bank;
 
 /**
@@ -89,7 +90,7 @@ class version_test extends \advanced_testcase {
         $this->assertEquals($questionversion->questionbankentryid, $questiondefinition->questionbankentryid);
 
         // If a question is updated, a new version should be created.
-        $this->qgenerator->update_question($question, null, ['name' => 'This is a new version']);
+        $question = $this->qgenerator->update_question($question, null, ['name' => 'This is a new version']);
         $newquestiondefinition = question_bank::load_question($question->id);
         // The version should be 2.
         $this->assertEquals('2', $newquestiondefinition->version);
@@ -112,7 +113,7 @@ class version_test extends \advanced_testcase {
         $questionfirstversionid = $question->id;
 
         // Create a new version and try to remove it.
-        $this->qgenerator->update_question($question, null, ['name' => 'This is a new version']);
+        $question = $this->qgenerator->update_question($question, null, ['name' => 'This is a new version']);
 
         // The new version and bank entry record should exist.
         $sql = "SELECT q.id, qv.id AS versionid, qv.questionbankentryid
@@ -158,12 +159,14 @@ class version_test extends \advanced_testcase {
      * @covers ::question_delete_question
      */
     public function test_delete_question_in_use() {
+        global $DB;
+
         $qcategory = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
         $question = $this->qgenerator->create_question('shortanswer', null, ['category' => $qcategory->id]);
         $questionfirstversionid = $question->id;
 
         // Create a new version and try to remove it after adding it to a quiz.
-        $this->qgenerator->update_question($question, null, ['name' => 'This is a new version']);
+        $question = $this->qgenerator->update_question($question, null, ['name' => 'This is a new version']);
 
         // Add it to the quiz.
         quiz_add_quiz_question($question->id, $this->quiz);
@@ -173,11 +176,13 @@ class version_test extends \advanced_testcase {
         // Try to delete old version.
         question_delete_question($questionfirstversionid);
 
-        // The questions should exist even after trying to remove it.
-        $questionversion1 = question_bank::load_question($question->id);
-        $questionversion2 = question_bank::load_question($questionfirstversionid);
-        $this->assertEquals($questionversion1->id, $question->id);
-        $this->assertEquals($questionversion2->id, $questionfirstversionid);
+        // The used question version should exist even after trying to remove it, but now hidden.
+        $questionversion2 = question_bank::load_question($question->id);
+        $this->assertEquals($question->id, $questionversion2->id);
+        $this->assertEquals(question_version_status::QUESTION_STATUS_HIDDEN, $questionversion2->status);
+
+        // The unused version should be completely gone.
+        $this->assertFalse($DB->record_exists('question', ['id' => $questionfirstversionid]));
     }
 
     /**
@@ -233,10 +238,10 @@ class version_test extends \advanced_testcase {
         $questionid1 = $question->id;
 
         // Create a new version and try to remove it after adding it to a quiz.
-        $this->qgenerator->update_question($question, null, ['idnumber' => 'id2']);
+        $question = $this->qgenerator->update_question($question, null, ['idnumber' => 'id2']);
         $questionid2 = $question->id;
         // Change the id number and get the question object.
-        $this->qgenerator->update_question($question, null, ['idnumber' => 'id3']);
+        $question = $this->qgenerator->update_question($question, null, ['idnumber' => 'id3']);
         $questionid3 = $question->id;
 
         // The new version and bank entry record should exist.
@@ -270,10 +275,10 @@ class version_test extends \advanced_testcase {
         $questionid1 = $question->id;
 
         // Create a new version.
-        $this->qgenerator->update_question($question, null, ['idnumber' => 'id2']);
+        $question = $this->qgenerator->update_question($question, null, ['idnumber' => 'id2']);
         $questionid2 = $question->id;
         // Change the id number and get the question object.
-        $this->qgenerator->update_question($question, null, ['idnumber' => 'id3']);
+        $question = $this->qgenerator->update_question($question, null, ['idnumber' => 'id3']);
         $questionid3 = $question->id;
 
         $questiondefinition = question_bank::get_all_versions_of_question($question->id);
@@ -282,5 +287,37 @@ class version_test extends \advanced_testcase {
         $this->assertEquals(array_slice($questiondefinition, 0, 1)[0]->questionid, $questionid3);
         $this->assertEquals(array_slice($questiondefinition, 1, 1)[0]->questionid, $questionid2);
         $this->assertEquals(array_slice($questiondefinition, 2, 1)[0]->questionid, $questionid1);
+    }
+
+    /**
+     * Test that all the versions of questions are available from the method.
+     *
+     * @covers ::get_all_versions_of_questions
+     */
+    public function test_get_all_versions_of_questions() {
+        global $DB;
+
+        $questionversions = [];
+        $qcategory = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
+        $question = $this->qgenerator->create_question('shortanswer', null,
+            [
+                'category' => $qcategory->id,
+                'idnumber' => 'id1'
+            ]);
+        $questionversions[1] = $question->id;
+
+        // Create a new version.
+        $question = $this->qgenerator->update_question($question, null, ['idnumber' => 'id2']);
+        $questionversions[2] = $question->id;
+        // Change the id number and get the question object.
+        $question = $this->qgenerator->update_question($question, null, ['idnumber' => 'id3']);
+        $questionversions[3] = $question->id;
+
+        $questionbankentryid = $DB->get_record('question_versions', ['questionid' => $question->id], 'questionbankentryid');
+
+        $questionversionsofquestions = question_bank::get_all_versions_of_questions([$question->id]);
+        $questionbankentryids = array_keys($questionversionsofquestions)[0];
+        $this->assertEquals($questionbankentryid->questionbankentryid, $questionbankentryids);
+        $this->assertEquals($questionversions, $questionversionsofquestions[$questionbankentryids]);
     }
 }

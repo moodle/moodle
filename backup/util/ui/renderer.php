@@ -619,10 +619,10 @@ class core_backup_renderer extends plugin_renderer_base {
      * @return string
      */
     public function render_backup_files_viewer(backup_files_viewer $viewer) {
-        global $CFG;
+
         $files = $viewer->files;
 
-        $async = async_helper::is_async_enabled();
+        $async = \async_helper::is_async_enabled();
 
         $tablehead = array(
                 get_string('filename', 'backup'),
@@ -638,16 +638,21 @@ class core_backup_renderer extends plugin_renderer_base {
         $table->attributes['class'] = 'backup-files-table generaltable';
         $table->head = $tablehead;
         $table->width = '100%';
-        $table->data = array();
+        $table->data = [];
 
         // First add in progress asynchronous backups.
         // Only if asynchronous backups are enabled.
-        // Also only render async status in correct area. Courese OR activity (not both).
-        if ($async
-                && (($viewer->filearea == 'course' && $viewer->currentcontext->contextlevel == CONTEXT_COURSE)
-                || ($viewer->filearea == 'activity' && $viewer->currentcontext->contextlevel == CONTEXT_MODULE))
-                ) {
-                    $table->data = \async_helper::get_async_backups($this, $viewer->currentcontext->instanceid);
+        if ($async) {
+            $tabledata = [];
+            $backups = \async_helper::get_async_backups($viewer->filearea, $viewer->filecontext->instanceid);
+            // For each backup get, new item name, time restore created and progress.
+            foreach ($backups as $backup) {
+                $status = $this->get_status_display($backup->status, $backup->backupid);
+                $timecreated = $backup->timecreated;
+                $tablerow = [$backup->filename, userdate($timecreated), '-', '-', '-', $status];
+                $tabledata[] = $tablerow;
+            }
+            $table->data = $tabledata;
         }
 
         // Add completed backups.
@@ -786,6 +791,10 @@ class core_backup_renderer extends plugin_renderer_base {
             'extraclasses' => 'rcs-search mb-3 w-25',
             'inputname' => restore_course_search::$VAR_SEARCH,
             'searchstring' => get_string('searchcourses'),
+            'buttonattributes' => [
+                (object) ['key' => 'name', 'value' => 'searchcourses'],
+                (object) ['key' => 'value', 'value' => 1],
+            ],
             'query' => $component->get_search(),
         ];
         $output .= $this->output->render_from_template('core/search_input', $data);
@@ -955,6 +964,10 @@ class core_backup_renderer extends plugin_renderer_base {
             'extraclasses' => 'rcs-search mb-3 w-25',
             'inputname' => restore_category_search::$VAR_SEARCH,
             'searchstring' => get_string('searchcoursecategories'),
+            'buttonattributes' => [
+                (object) ['key' => 'name', 'value' => 'searchcourses'],
+                (object) ['key' => 'value', 'value' => 1],
+            ],
             'query' => $component->get_search(),
         ];
         $output .= $this->output->render_from_template('core/search_input', $data);

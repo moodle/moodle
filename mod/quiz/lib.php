@@ -1432,25 +1432,15 @@ function quiz_get_post_actions() {
 }
 
 /**
+ * Standard callback used by questions_in_use.
+ *
  * @param array $questionids of question ids.
  * @return bool whether any of these questions are used by any instance of this module.
  */
 function quiz_questions_in_use($questionids) {
-    global $DB;
-    list($test, $params) = $DB->get_in_or_equal($questionids);
-    $params['component'] = 'mod_quiz';
-    $params['questionarea'] = 'slot';
-    $sql = "SELECT qs.id
-              FROM {quiz_slots} qs
-              JOIN {question_references} qr ON qr.itemid = qs.id
-              JOIN {question_bank_entries} qbe ON qbe.id = qr.questionbankentryid
-              JOIN {question_versions} qv ON qv.questionbankentryid = qbe.id
-             WHERE qv.questionid $test
-               AND qr.component = ?
-               AND qr.questionarea = ?";
-    return $DB->record_exists_sql($sql, $params) || question_engine::questions_in_use(
-            $questionids, new qubaid_join('{quiz_attempts} quiza',
-            'quiza.uniqueid', 'quiza.preview = 0'));
+    return question_engine::questions_in_use($questionids,
+            new qubaid_join('{quiz_attempts} quiza', 'quiza.uniqueid',
+                'quiza.preview = 0'));
 }
 
 /**
@@ -2493,12 +2483,12 @@ function quiz_delete_references($quizid): void {
  * This enables quiz statistics to be shown in statistics columns in the database.
  *
  * @param context $context return the statistics related to this context (which will be a quiz context).
- * @return all_calculated_for_qubaid_condition|null The statistics for this quiz, if any, else null.
+ * @return all_calculated_for_qubaid_condition|null The statistics for this quiz, if available, else null.
  */
 function mod_quiz_calculate_question_stats(context $context): ?all_calculated_for_qubaid_condition {
     global $CFG;
     require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
     $cm = get_coursemodule_from_id('quiz', $context->instanceid);
     $report = new quiz_statistics_report();
-    return $report->calculate_questions_stats_for_question_bank($cm->instance);
+    return $report->calculate_questions_stats_for_question_bank($cm->instance, false, false);
 }

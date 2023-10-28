@@ -60,13 +60,13 @@ defined('MOODLE_INTERNAL') || die();
  *     // Explanation of the update step, linking to issue in the Tracker if necessary
  *     upgrade_set_timeout(XX); // Optional for big tasks
  *     // Code to execute goes here, usually the XMLDB Editor will
- *     // help you here. See {@link http://docs.moodle.org/dev/XMLDB_editor}.
+ *     // help you here. See {@link https://moodledev.io/general/development/tools/xmldb}.
  *     upgrade_main_savepoint(true, XXXXXXXXXX.XX);
  * }
  *
  * All plugins within Moodle (modules, blocks, reports...) support the existence of
  * their own upgrade.php file, using the "Frankenstyle" component name as
- * defined at {@link http://docs.moodle.org/dev/Frankenstyle}, for example:
+ * defined at {@link https://moodledev.io/general/development/policies/codingstyle/frankenstyle}, for example:
  *     - {@link xmldb_page_upgrade($oldversion)}. (modules don't require the plugintype ("mod_") to be used.
  *     - {@link xmldb_auth_manual_upgrade($oldversion)}.
  *     - {@link xmldb_workshopform_accumulative_upgrade($oldversion)}.
@@ -78,8 +78,8 @@ defined('MOODLE_INTERNAL') || die();
  * about what can be used within it.
  *
  * For more information, take a look to the documentation available:
- *     - Data definition API: {@link http://docs.moodle.org/dev/Data_definition_API}
- *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *     - Data definition API: {@link https://moodledev.io/docs/apis/core/dml/ddl}
+ *     - Upgrade API: {@link https://moodledev.io/docs/guides/upgrade}
  *
  * @param int $oldversion
  * @return bool always true
@@ -3049,6 +3049,66 @@ privatefiles,moodle|/user/files.php';
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2022112800.03);
+    }
+
+    if ($oldversion < 2022112803.03) {
+        // Add public key field to user_devices table.
+        $table = new xmldb_table('user_devices');
+        $field = new xmldb_field('publickey', XMLDB_TYPE_TEXT, null, null, null, null, null, 'uuid');
+
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022112803.03);
+    }
+
+    if ($oldversion < 2022112804.09) {
+        // Upgrade yaml mime type for existing yaml and yml files.
+        $filetypes = [
+            '%.yaml' => 'application/yaml',
+            '%.yml' => 'application/yaml,'
+        ];
+
+        $select = $DB->sql_like('filename', '?', false);
+        foreach ($filetypes as $extension => $mimetype) {
+            $DB->set_field_select(
+                'files',
+                'mimetype',
+                $mimetype,
+                $select,
+                [$extension]
+            );
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022112804.09);
+    }
+
+    if ($oldversion < 2022112805.03) {
+
+        // The previous default configuration had a typo, check for its presence and correct if necessary.
+        $sensiblesettings = get_config('adminpresets', 'sensiblesettings');
+        if (strpos($sensiblesettings, 'smtppass@none') !== false) {
+            $newsensiblesettings = str_replace('smtppass@none', 'smtppass@@none', $sensiblesettings);
+            set_config('sensiblesettings', $newsensiblesettings, 'adminpresets');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022112805.03);
+    }
+
+    if ($oldversion < 2022112805.11) {
+        upgrade_core_licenses();
+        upgrade_main_savepoint(true, 2022112805.11);
+    }
+
+    if ($oldversion < 2022112805.14) {
+        // Delete datakey with datavalue -1.
+        $DB->delete_records('messageinbound_datakeys', ['datavalue' => '-1']);
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2022112805.14);
     }
 
     return true;

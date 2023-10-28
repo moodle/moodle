@@ -22,13 +22,11 @@ Feature: Blogs can be set to be only visible by the author.
     And I set the following fields to these values:
       | Blog visibility | Users can only see their own blog |
     And I press "Save changes"
-    And I log out
 
   Scenario: A student can not see another student's blog entries.
-    Given I log in as "testuser"
-    And I am on "Course 1" course homepage
+    Given I am on the "Course 1" course page logged in as testuser
     And I navigate to course participants
-    And I follow "Test2 User2"
+    When I follow "Test2 User2"
     And I should see "Miscellaneous"
     Then I should not see "Blog entries"
     And I follow "Profile" in the user menu

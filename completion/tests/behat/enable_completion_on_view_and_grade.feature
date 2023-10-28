@@ -23,7 +23,6 @@ Feature: Students will be marked as completed and pass/fail
       | course                              | C1                      |
       | idnumber                            | a1                      |
       | name                                | Test assignment name    |
-      | intro                               | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1                       |
       | assignsubmission_file_enabled       | 0                       |
       | completion                          | 2                       |
@@ -31,61 +30,43 @@ Feature: Students will be marked as completed and pass/fail
       | completionusegrade                  | 1                       |
       | gradepass                           | 50                      |
       | completionpassgrade                 | 1                       |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as teacher1
     And "Student First" user has not completed "Test assignment name" activity
-    And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student2
-    And I log out
     And I am on the "Test assignment name" "assign activity" page logged in as student1
-    And I log out
 
   Scenario: Confirm completion (incomplete/pass/fail) are set correctly
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
-    And I give the grade "21" to the user "Student First" for the grade item "Test assignment name"
-    And I give the grade "50" to the user "Student Second" for the grade item "Test assignment name"
-    And I give the grade "30" to the user "Student Third" for the grade item "Test assignment name"
-    And I press "Save changes"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
-    And the "View" completion condition of "Test assignment name" is displayed as "done"
+    Given the following "grade grades" exist:
+      | gradeitem            | user     | grade |
+      | Test assignment name | student1 | 21.00 |
+      | Test assignment name | student2 | 50.00 |
+      | Test assignment name | student3 | 30.00 |
+    When I am on "Course 1" course homepage
+    Then the "View" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "failed"
-    And I log out
-    And I log in as "student2"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student2
     And the "View" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "done"
-    And I log out
-    And I log in as "student3"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as student3
     And the "View" completion condition of "Test assignment name" is displayed as "todo"
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "failed"
 
   @javascript
   Scenario: Keep current view completion condition when the teacher does the action 'Unlock completion settings'.
-    Given I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "View > Grader report" in the course gradebook
-    And I turn editing mode on
-    And I give the grade "21" to the user "Student First" for the grade item "Test assignment name"
-    And I give the grade "50" to the user "Student Second" for the grade item "Test assignment name"
-    And I press "Save changes"
-    And I am on the "Test assignment name" "assign activity" page logged in as teacher1
-    And I navigate to "Settings" in current page administration
+    Given the following "grade grades" exist:
+      | gradeitem            | user     | grade |
+      | Test assignment name | student1 | 21.00 |
+      | Test assignment name | student2 | 50.00 |
+    And I am on the "Test assignment name" "assign activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I press "Unlock completion settings"
     And I expand all fieldsets
     And I should see "Completion options unlocked"
     And I click on "Save and display" "button"
-    And I log out
     When I am on the "Course 1" course page logged in as student1
     Then the "View" completion condition of "Test assignment name" is displayed as "done"
-    And I log out
-    When I am on the "Course 1" course page logged in as student2
-    Then the "View" completion condition of "Test assignment name" is displayed as "done"
+    And I am on the "Course 1" course page logged in as student2
+    And the "View" completion condition of "Test assignment name" is displayed as "done"

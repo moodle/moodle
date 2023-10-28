@@ -861,4 +861,19 @@ class component_test extends advanced_testcase {
         $this->assertContains('tool_usertours', $componentnames);
         $this->assertContains('core_favourites', $componentnames);
     }
+
+    /**
+     * Test for monologo icons check in plugins.
+     *
+     * @covers core_component::has_monologo_icon
+     * @return void
+     */
+    public function test_has_monologo_icon(): void {
+        // The Forum activity plugin has monologo icons.
+        $this->assertTrue(core_component::has_monologo_icon('mod', 'forum'));
+        // The core H5P subsystem doesn't have monologo icons.
+        $this->assertFalse(core_component::has_monologo_icon('core', 'h5p'));
+        // The function will return false for a non-existent component.
+        $this->assertFalse(core_component::has_monologo_icon('randomcomponent', 'h5p'));
+    }
 }

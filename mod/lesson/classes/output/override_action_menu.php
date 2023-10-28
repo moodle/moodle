@@ -69,7 +69,10 @@ class override_action_menu implements templatable, renderable {
             $userlink->out(false) => get_string('useroverrides', 'mod_lesson'),
             $grouplink->out(false) => get_string('groupoverrides', 'mod_lesson'),
         ];
-        return new \url_select($menu, $this->currenturl->out(false), null, 'mod_lesson_override_select');
+        $selectmenu = new \url_select($menu, $this->currenturl->out(false), null, 'mod_lesson_override_select');
+        $selectmenu->label = get_string('manageoverrides', 'mod_lesson');
+        $selectmenu->labelattributes = ['class' => 'sr-only'];
+        return $selectmenu;
     }
 
     /**
@@ -79,6 +82,8 @@ class override_action_menu implements templatable, renderable {
      * @return array Said data.
      */
     public function export_for_template(\renderer_base $output): array {
+        global $PAGE;
+
         $type = $this->currenturl->get_param('mode');
         if ($type == 'user') {
             $text = get_string('addnewuseroverride', 'mod_lesson');
@@ -100,6 +105,7 @@ class override_action_menu implements templatable, renderable {
             ];
         }
         $data['heading'] = get_string($type == 'user' ? 'useroverrides' : 'groupoverrides', 'mod_lesson');
+        $data['headinglevel'] = $PAGE->activityheader->get_heading_level();
         return $data;
     }
 }

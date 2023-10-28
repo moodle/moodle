@@ -923,22 +923,22 @@ class search_test extends \advanced_testcase {
 
         $data1record1id = $DB->insert_record('data_records', $record);
 
-        $filerecord = array(
-                'contextid' => \context_module::instance($data1->cmid)->id,
-                'component' => 'mod_data',
-                'filearea'  => 'content',
-                'itemid'    => $data1record1id,
-                'filepath'  => '/',
-                'filename'  => 'myfile1.txt'
-        );
-
-        $data1record1file = $fs->create_file_from_string($filerecord, 'Some contents 1');
-
         $record = new \stdClass;
         $record->fieldid = $data1filefieldid;
         $record->recordid = $data1record1id;
         $record->content = 'myfile1.txt';
-        $DB->insert_record('data_content', $record);
+        $data1contentfileid1 = $DB->insert_record('data_content', $record);
+
+        $filerecord = [
+            'contextid' => \context_module::instance($data1->cmid)->id,
+            'component' => 'mod_data',
+            'filearea'  => 'content',
+            'itemid'    => $data1contentfileid1,
+            'filepath'  => '/',
+            'filename'  => 'myfile1.txt'
+        ];
+
+        $data1record1file = $fs->create_file_from_string($filerecord, 'Some contents 1');
 
         $record = new \stdClass;
         $record->fieldid = $data1textfieldid;
@@ -960,15 +960,15 @@ class search_test extends \advanced_testcase {
         $record->groupid = 0;
         $data1record2id = $DB->insert_record('data_records', $record);
 
-        $filerecord['itemid'] = $data1record2id;
-        $filerecord['filename'] = 'myfile2.txt';
-        $data1record2file = $fs->create_file_from_string($filerecord, 'Some contents 2');
-
         $record = new \stdClass;
         $record->fieldid = $data1filefieldid;
         $record->recordid = $data1record2id;
         $record->content = 'myfile2.txt';
-        $DB->insert_record('data_content', $record);
+        $data1contentfileid2 = $DB->insert_record('data_content', $record);
+
+        $filerecord['itemid'] = $data1contentfileid2;
+        $filerecord['filename'] = 'myfile2.txt';
+        $data1record2file = $fs->create_file_from_string($filerecord, 'Some contents 2');
 
         $record = new \stdClass;
         $record->fieldid = $data1textfieldid;

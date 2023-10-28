@@ -50,7 +50,7 @@ if (!is_null($storedsecret)) {
         // Make sure we have all the required information before trying to save the connection.
         $backpackuid = $bp->authenticate();
         if (empty($backpackuid) || !empty($backpackuid->error)) {
-            redirect(new moodle_url($redirect), get_string('backpackconnectionunexpectedresult', 'badges'),
+            redirect(new moodle_url($redirect), get_string('backpackconnectionunexpectedresult', 'badges', $backpackuid->error),
                 null, \core\output\notification::NOTIFY_ERROR);
         }
 

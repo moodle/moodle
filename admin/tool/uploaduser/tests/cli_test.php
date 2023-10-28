@@ -143,7 +143,8 @@ class cli_test extends \advanced_testcase {
         // Created users have data in the profile fields.
         $user1 = \core_user::get_user_by_username('reznort');
         $profilefields1 = profile_user_record($user1->id);
-        $this->assertEquals((object)['superfield' => 'Loves cats'], $profilefields1);
+        $this->assertObjectHasAttribute('superfield', $profilefields1);
+        $this->assertEquals('Loves cats', $profilefields1->superfield);
     }
 
     /**

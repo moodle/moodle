@@ -18,6 +18,7 @@ namespace qbank_statistics;
 
 use core_question\statistics\questions\all_calculated_for_qubaid_condition;
 use quiz;
+use quiz_statistics\tests\statistics_helper;
 use question_engine;
 use quiz_attempt;
 
@@ -225,6 +226,11 @@ class helper_test extends \advanced_testcase {
         foreach ($quiz2attempts as $attempt) {
             $this->submit_quiz($quiz2, $attempt);
         }
+
+        // Calculate the statistics.
+        $this->expectOutputRegex('~.*Calculations completed.*~');
+        statistics_helper::run_pending_recalculation_tasks();
+
         return [$quiz1, $quiz2, $questions];
     }
 

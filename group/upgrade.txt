@@ -1,6 +1,13 @@
 This files describes API changes in /group/*,
 information provided here is intended especially for developers.
 
+=== 4.1.4 ===
+* The following external methods now return group names correctly formatted:
+  - `core_group_get_groups`
+  - `core_group_get_course_groups`
+  - `core_group_get_course_user_groups`
+  - `core_group_get_activity_allowed_groups`
+
 === 3.11 ===
 
 * The groups do not support 'hidepicture' any more, and so the column 'hidepicture'

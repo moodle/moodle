@@ -62,3 +62,24 @@ Feature: Autocomplete functionality in forms
     And I click on "Course 1" "autocomplete_selection"
     And the "Single select will be enabled if the control is blank" "field" should be enabled
     And the "Single select will be disabled if the control is blank" "field" should be disabled
+
+  @javascript
+  Scenario: Single-select autocomplete can be cleared after being set and suggestion list reloaded
+    Given the following "users" exist:
+      | username | firstname | lastname |
+      | user1    | Jane      | Jones    |
+      | user2    | Sam       | Smith    |
+      | user3    | Mark      | Davis    |
+    And I log in as "admin"
+
+    When I navigate to "Server > Web services > Manage tokens" in site administration
+    And I press "Create token"
+    And I open the autocomplete suggestions list
+    And I click on "Jane Jones" item in the autocomplete list
+    Then "Jane Jones" "autocomplete_selection" should exist
+    # Only reload de sugestion list
+    And I open the autocomplete suggestions list
+    # Remove selection
+    And I click on "Jane Jones" "autocomplete_selection"
+    And "Jane Jones" "autocomplete_selection" should not exist
+    And I should see "No selection" in the ".form-autocomplete-selection" "css_element"

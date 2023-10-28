@@ -96,19 +96,20 @@ class published_resource_repository {
                             $resource->supportsgrades = false;
                             $resource->grademax = null;
 
-                            // Only activities with GRADE_TYPE_VALUE are valid.
+                            // Only activities having a single grade item of GRADE_TYPE_VALUE are eligible for declarative binding.
                             if (plugin_supports('mod', $mod->modname, FEATURE_GRADE_HAS_GRADE)) {
-                                $gradeitem = \grade_item::fetch([
-                                    'courseid' => $resource->courseid,
-                                    'itemtype' => 'mod',
-                                    'itemmodule' => $mod->modname,
-                                    'iteminstance' => $mod->instance
-                                ]);
-                                if ($gradeitem && $gradeitem->gradetype == GRADE_TYPE_VALUE) {
-                                    $gradinginfo = grade_get_grades($resource->courseid, 'mod', $mod->modname,
-                                        $mod->instance);
-                                    $resource->supportsgrades = true;
-                                    $resource->grademax = (int) $gradinginfo->items[0]->grademax;
+                                $gradinginfo = grade_get_grades($resource->courseid, 'mod', $mod->modname, $mod->instance);
+                                if (count($gradinginfo->items) == 1) {
+                                    $gradeitem = \grade_item::fetch([
+                                        'courseid' => $resource->courseid,
+                                        'itemtype' => 'mod',
+                                        'itemmodule' => $mod->modname,
+                                        'iteminstance' => $mod->instance
+                                    ]);
+                                    if ($gradeitem && $gradeitem->gradetype == GRADE_TYPE_VALUE) {
+                                        $resource->supportsgrades = true;
+                                        $resource->grademax = (int)$gradinginfo->items[0]->grademax;
+                                    }
                                 }
                             }
                             $availableresources[] = $resource;

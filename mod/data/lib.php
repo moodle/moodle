@@ -326,6 +326,8 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         global $DB;
 
         if (!empty($this->field->id)) {
+            $manager = manager::create_from_instance($this->data);
+
             // Get the field before we delete it.
             $field = $DB->get_record('data_fields', array('id' => $this->field->id));
 
@@ -341,6 +343,11 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
                     'dataid' => $this->data->id
                  )
             ));
+
+            if (!$manager->has_fields() && $manager->has_records()) {
+                $DB->delete_records('data_records', ['dataid' => $this->data->id]);
+            }
+
             $event->add_record_snapshot('data_fields', $field);
             $event->trigger();
         }

@@ -21,7 +21,7 @@ namespace core_reportbuilder\external;
 use renderer_base;
 use core\external\exporter;
 use core_reportbuilder\datasource;
-use core_reportbuilder\local\models\filter;
+use core_reportbuilder\local\report\filter;
 use core_reportbuilder\output\filter_heading_editable;
 
 /**
@@ -101,10 +101,10 @@ class custom_report_filters_exporter extends exporter {
         /** @var datasource $report */
         $report = $this->related['report'];
 
-        // Current filters added to the report.
-        $filters = filter::get_filter_records($report->get_report_persistent()->get('id'), 'filterorder');
+        // Current filter instances contained in the report.
+        $filters = $report->get_active_filters();
         $filteridentifiers = array_map(static function(filter $filter): string {
-            return $filter->get('uniqueidentifier');
+            return $filter->get_unique_identifier();
         }, $filters);
 
         $availablefilters = $activefilters = [];
@@ -133,22 +133,19 @@ class custom_report_filters_exporter extends exporter {
 
         // Populate active filters.
         $filterinstances = $report->get_filter_instances();
-        foreach ($filters as $filter) {
-            $filterinstance = $filterinstances[$filter->get('uniqueidentifier')] ?? null;
-            if ($filterinstance === null) {
-                continue;
-            }
+        foreach ($filterinstances as $filterinstance) {
+            $persistent = $filterinstance->get_filter_persistent();
 
             $entityname = $filterinstance->get_entity_name();
             $displayvalue = $filterinstance->get_header();
-            $editable = new filter_heading_editable(0, $filter);
+            $editable = new filter_heading_editable(0, $persistent);
 
             $activefilters[] = [
-                'id' => $filter->get('id'),
+                'id' => $persistent->get('id'),
                 'entityname' => $report->get_entity_title($entityname)->out(),
                 'heading' => $displayvalue,
                 'headingeditable' => $editable->render($output),
-                'sortorder' => $filter->get('filterorder'),
+                'sortorder' => $persistent->get('filterorder'),
                 'movetitle' => get_string('movefilter', 'core_reportbuilder', $displayvalue),
             ];
         }

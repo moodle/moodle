@@ -81,7 +81,6 @@ if ($ADMIN->fulltree) {
     $setting->set_updatedcallback('theme_reset_all_caches');
     $page->add($setting);
 
-    // Variable $body-color.
     // We use an empty default value because the default colour should come from the preset.
     $name = 'theme_boost/brandcolor';
     $title = get_string('brandcolor', 'theme_boost');

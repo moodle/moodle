@@ -14,7 +14,6 @@ Feature: A teacher or admin when changes the subscription mode should land in th
     And the following "activity" exists:
       | course   | C1                             |
       | activity | forum                          |
-      | intro    | Test forum description         |
       | name     | Test forum name                |
 
   Scenario: A teacher views subscriptions tab and changes the subscriptions mode to forced mode and lands in subscription tab

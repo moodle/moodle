@@ -770,8 +770,8 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
             break;
         }
         foreach ($plugins as $plugin) {
-            if (is_a($plugin, 'grade_plugin_info')) {
-                if ($active_plugin == $plugin->id) {
+            if (is_a($plugin, grade_plugin_info::class)) {
+                if ($plugin_type === $active_type && $active_plugin == $plugin->id) {
                     $plugin_info['strings']['active_plugin_str'] = $plugin->string;
                 }
             }
@@ -779,6 +779,37 @@ function grade_get_plugin_info($courseid, $active_type, $active_plugin) {
     }
 
     return $plugin_info;
+}
+
+/**
+ * Load a valid list of gradable users in a course.
+ *
+ * @param int $courseid The course ID.
+ * @param int|null $groupid The group ID (optional).
+ * @return array $users A list of enrolled gradable users.
+ */
+function get_gradable_users(int $courseid, ?int $groupid = null): array {
+    global $CFG;
+
+    $context = context_course::instance($courseid);
+    // Create a graded_users_iterator because it will properly check the groups etc.
+    $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+    $onlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol) ||
+        !has_capability('moodle/course:viewsuspendedusers', $context);
+
+    $course = get_course($courseid);
+    $gui = new graded_users_iterator($course, null, $groupid);
+    $gui->require_active_enrolment($onlyactiveenrol);
+    $gui->init();
+
+    // Flatten the users.
+    $users = [];
+    while ($user = $gui->next_user()) {
+        $users[$user->user->id] = $user->user;
+    }
+    $gui->close();
+
+    return $users;
 }
 
 /**
@@ -849,7 +880,7 @@ class grade_plugin_info {
  * @param string|null $headerhelpidentifier The help string identifier if required.
  * @param string|null $headerhelpcomponent The component for the help string.
  * @param stdClass|null $user The user object for use with the user context header.
- * @param actionbar|null $actionbar The actions bar which will be displayed on the page if $shownavigation is set
+ * @param action_bar|null $actionbar The actions bar which will be displayed on the page if $shownavigation is set
  *                                  to true. If $actionbar is not explicitly defined, the general action bar
  *                                  (\core_grades\output\general_action_bar) will be used by default.
  * @param boolean $showtitle If set to false just show course full name as a title.
@@ -858,7 +889,7 @@ class grade_plugin_info {
 function print_grade_page_head(int $courseid, string $active_type, ?string $active_plugin = null, $heading = false,
        bool $return = false, $buttons = false, bool $shownavigation = true, ?string $headerhelpidentifier = null,
        ?string $headerhelpcomponent = null, ?stdClass $user = null, ?action_bar $actionbar = null, $showtitle = true) {
-    global $CFG, $OUTPUT, $PAGE;
+    global $CFG, $OUTPUT, $PAGE, $USER;
 
     // Put a warning on all gradebook pages if the course has modules currently scheduled for background deletion.
     require_once($CFG->dirroot . '/course/lib.php');
@@ -891,7 +922,19 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
     } else {
         $PAGE->set_pagelayout('admin');
     }
-    $PAGE->set_title(get_string('grades') . ': ' . $stractive_type);
+    $coursecontext = context_course::instance($courseid);
+    // Title will be constituted by information starting from the unique identifying information for the page.
+    if (in_array($active_type, ['report', 'settings'])) {
+        $uniquetitle = $stractive_plugin;
+    } else {
+        $uniquetitle = $stractive_type . ': ' . $stractive_plugin;
+    }
+    $titlecomponents = [
+        $uniquetitle,
+        get_string('grades'),
+        $coursecontext->get_context_name(false),
+    ];
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titlecomponents));
     $PAGE->set_heading($title);
     $PAGE->set_secondary_active_tab('grades');
 
@@ -939,15 +982,16 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
 
     $output = '';
     // Add a help dialogue box if provided.
-    if (isset($headerhelpidentifier)) {
+    if (isset($headerhelpidentifier) && !empty($heading)) {
         $output = $OUTPUT->heading_with_help($heading, $headerhelpidentifier, $headerhelpcomponent);
-    } else {
-        if (isset($user)) {
-            $renderer = $PAGE->get_renderer('core_grades');
-            $output = $OUTPUT->heading($renderer->user_heading($user, $courseid));
-        } else {
-            $output = $OUTPUT->heading($heading);
-        }
+    } else if (isset($user)) {
+        $renderer = $PAGE->get_renderer('core_grades');
+        // If the user is viewing their own grade report, no need to show the "Message"
+        // and "Add to contact" buttons in the user heading.
+        $showuserbuttons = $user->id != $USER->id;
+        $output = $renderer->user_heading($user, $courseid, $showuserbuttons);
+    } else if (!empty($heading)) {
+        $output = $OUTPUT->heading($heading);
     }
 
     if ($return) {
@@ -956,8 +1000,7 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         echo $output;
     }
 
-    $returnval .= print_natural_aggregation_upgrade_notice($courseid, context_course::instance($courseid), $PAGE->url,
-        $return);
+    $returnval .= print_natural_aggregation_upgrade_notice($courseid, $coursecontext, $PAGE->url, $return);
 
     if ($return) {
         return $returnval;
@@ -1728,8 +1771,8 @@ class grade_structure {
 
         if ($menuitems) {
             $menu = new action_menu($menuitems);
-            $icon = $OUTPUT->pix_icon('i/dropdown', get_string('actions'));
-            $extraclasses = 'btn btn-icon icon-size-2 bg-secondary d-flex align-items-center justify-content-center';
+            $icon = $OUTPUT->pix_icon('i/moremenu', get_string('actions'));
+            $extraclasses = 'btn btn-link btn-icon icon-size-3 d-flex align-items-center justify-content-center';
             $menu->set_menu_trigger($icon, $extraclasses);
             $menu->set_menu_left();
 

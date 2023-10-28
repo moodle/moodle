@@ -39,7 +39,7 @@
     data-course-id="{{{id}}}">
     <a href="{{viewurl}}" tabindex="-1">
         <div class="card-img dashboard-card-img" style='background-image: url("{{{courseimage}}}");'>
-            <span class="sr-only">{{#str}}aria:courseimage, core_course{{/str}}</span>
+            <span class="sr-only">{{fullname}}</span>
         </div>
     </a>
     <div class="card-body pr-1 course-info-container" id="course-info-container-{{id}}-{{uniqid}}">
@@ -53,14 +53,13 @@
                         <div>
                             {{{shortname}}}
                         </div>
-                        {{$divider}}{{/divider}}
                     </div>
                 {{/showshortname}}
                 <a href="{{viewurl}}" class="aalink coursename mr-2 mb-1">
                     {{> core_course/favouriteicon }}
                     <span class="sr-only">
-                            {{#str}}aria:coursename, core_course{{/str}}
-                        </span>
+                        {{#str}}aria:coursename, core_course{{/str}}
+                    </span>
                     {{$coursename}}{{/coursename}}
                 </a>
                 <div class="text-muted muted d-flex flex-wrap">

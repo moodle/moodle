@@ -31,6 +31,9 @@ Feature: Teachers can override the grade for any question
     And the following "blocks" exist:
       | blockname     | contextlevel | reference | pagetypepattern | defaultregion |
       | private_files | System       | 1         | my-index        | side-post     |
+    And the following "user private files" exist:
+      | user     | filepath                                | filename        |
+      | teacher1 | mod/quiz/tests/fixtures/moodle_logo.jpg | moodle_logo.jpg |
     And I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
     And I press "Attempt quiz"
     And I follow "Finish attempt ..."
@@ -56,32 +59,24 @@ Feature: Teachers can override the grade for any question
     And I switch to "commentquestion" window
     And I should see "Teacher 1" in the "Manually graded 10 with comment: " "table_row"
 
-  # This scenario has Atto-specific steps. See MDL-75913 for further details.
-  @javascript @_switch_window @_file_upload @_bug_phantomjs @editor_atto
+  @javascript @_switch_window @_file_upload @_bug_phantomjs @editor_tiny
   Scenario: Comment on a response to an essay question attempt.
     When I log in as "teacher1"
-    And I follow "Manage private files"
-    And I upload "mod/quiz/tests/fixtures/moodle_logo.jpg" file to "Files" filemanager
-    And I click on "Save changes" "button"
     And I am on the "Quiz 1 > student1 > Attempt 1" "mod_quiz > Attempt review" page
     And I follow "Make comment or override mark"
     And I switch to "commentquestion" window
     And I set the field "Comment" to "Administrator's comment"
-    # Atto needs focus to add image, select empty p tag to do so.
-    And I select the text in the "Comment" Atto editor
-    And I click on "Insert or edit image" "button" in the "[data-fieldtype=editor]" "css_element"
-    And I click on "Browse repositories..." "button"
+    And I select the "p" element in position "0" of the "Comment" TinyMCE editor
+    And I click on the "Image" button for the "Comment" TinyMCE editor
+    And I click on "Browse repositories..." "button" in the "Image properties" "dialogue"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle_logo.jpg" "link"
     And I click on "Select this file" "button"
     And I set the field "Describe this image for someone who cannot see it" to "It's the logo"
-    And I click on "Save image" "button"
-    # Editor is not inserting the html for the image correctly
-    # when running under behat so line below manually inserts it.
-    And I set the field "Comment" to "<img src=\"@@PLUGINFILE@@/moodle_logo.jpg\" alt=\"It's the logo\" width=\"48\" height=\"48\" class=\"img-fluid atto_image_button_text-bottom\"><!-- File hash: a8e3ffba4ab315b3fb9187ebbf122fe9 -->"
+    And I click on "Save image" "button" in the "Image properties" "dialogue"
     And I press "Save" and switch to main window
     And I switch to the main window
-    And I should see "Commented: [It's the logo]" in the ".history table" "css_element"
-    And "img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist in the ".comment" "css_element"
+    Then I should see "Commented: [It's the logo]" in the ".history table" "css_element"
+    And "//img[contains(@src, 'moodle_logo.jpg')]" "xpath_element" should exist in the ".comment" "css_element"
     # This time is same as time the window is open. So wait for it to close before proceeding.
     And I wait "2" seconds

@@ -15,65 +15,37 @@ Feature: Forum posts can be replied to in private
       | fullname | shortname | category |
       | Science 101 | C1 | 0 |
     And the following "activities" exist:
-      | activity   | name                   | intro                   | course  | idnumber  |
-      | forum      | Study discussions      | Test forum description  | C1      | forum     |
+      | activity   | name                   | course  | idnumber  |
+      | forum      | Study discussions      | C1      | forum     |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | teacher2 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And I log in as "student1"
-    And I am on "Science 101" course homepage
-    And I add a new discussion to "Study discussions" forum with:
-      | Subject | Answers to the homework                        |
-      | Message | Here are the answers to last night's homework. |
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Science 101" course homepage
-    And I reply "Answers to the homework" post from "Study discussions" forum with:
-      | Message         | How about you and I have a meeting after class about plagiarism? |
-      | Reply privately | 1                                                                |
+    And the following "mod_forum > discussions" exist:
+      | user     | forum  | name                    | message                                        |
+      | student1 | forum  | Answers to the homework | Here are the answers to last night's homework. |
+    And the following forum replies exist in course "Science 101":
+      | user     | forum             | discussion              | message                                                        | privatereplyto |
+      | teacher1 | Study discussions | Answers to the homework |How about you and I have a meeting after class about plagiarism?| student1       |
 
   Scenario: As a teacher I can see my own response
-    Given I follow "Study discussions"
-    And I follow "Answers to the homework"
+    Given I am on the "Study discussions" "forum activity" page logged in as teacher1
+    When I follow "Answers to the homework"
     Then I should see "How about you and I have a meeting after class about plagiarism?"
 
   Scenario: As a fellow teacher I can see the other teacher's response
-    Given I log out
-    And I log in as "teacher2"
-    And I am on "Science 101" course homepage
-    And I follow "Study discussions"
+    Given I am on the "Study discussions" "forum activity" page logged in as teacher2
     When I follow "Answers to the homework"
     Then I should see "How about you and I have a meeting after class about plagiarism?"
 
-  Scenario: As the intended recipient I can see private response to me
-    Given I log out
-    And I log in as "student1"
-    And I am on "Science 101" course homepage
-    And I follow "Study discussions"
+  Scenario: As the intended recipient I can see my own response
+    Given I am on the "Study discussions" "forum activity" page logged in as student1
     When I follow "Answers to the homework"
     Then I should see "How about you and I have a meeting after class about plagiarism?"
 
-  Scenario: As a non-privileged user I cannot see private response to others
-    Given I log out
-    And I log in as "student2"
-    And I am on "Science 101" course homepage
-    And I follow "Study discussions"
+  Scenario: As a non-privileged user I cannot see my own response
+    Given I am on the "Study discussions" "forum activity" page logged in as student2
     When I follow "Answers to the homework"
     Then I should not see "How about you and I have a meeting after class about plagiarism?"
-
-  Scenario: As privileged user that can post but not read private replies I can see my own private reply
-    Given I log out
-    And the following "permission overrides" exist:
-      | capability                   | permission | role          | contextlevel | reference |
-      | mod/forum:postprivatereply   | Allow      | student       | System       |           |
-      | mod/forum:readprivatereplies | Prohibit   | student       | System       |           |
-    And I log in as "student2"
-    And I am on "Science 101" course homepage
-    When I reply "Answers to the homework" post from "Study discussions" forum with:
-      | Message         | Not yet. |
-      | Reply privately | 1        |
-    Then I should see "Not yet."
-    And I should not see "How about you and I have a meeting after class about plagiarism?"

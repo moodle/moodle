@@ -350,8 +350,8 @@ class post {
      */
     public static function add_message_counts(\stdClass $record) : void {
         if (!empty($record->message)) {
-            $record->wordcount = count_words($record->message);
-            $record->charcount = count_letters($record->message);
+            $record->wordcount = count_words($record->message, $record->messageformat);
+            $record->charcount = count_letters($record->message, $record->messageformat);
         }
     }
 }

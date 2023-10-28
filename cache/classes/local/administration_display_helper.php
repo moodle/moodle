@@ -30,8 +30,8 @@
 
 namespace core_cache\local;
 
-defined('MOODLE_INTERNAL') || die();
 use cache_store, cache_factory, cache_config_writer, cache_helper;
+use core\output\notification;
 
 /**
  * A cache helper for administration tasks
@@ -505,9 +505,8 @@ class administration_display_helper extends \core_cache\administration_helper {
      * Performs the deletestore action.
      *
      * @param string $action the action calling to this function.
-     * @return void
      */
-    public function action_deletestore(string $action) {
+    public function action_deletestore(string $action): void {
         global $OUTPUT, $PAGE, $SITE;
         $notifysuccess = true;
         $storeinstancesummaries = $this->get_store_instance_summaries();
@@ -517,10 +516,10 @@ class administration_display_helper extends \core_cache\administration_helper {
 
         if (!array_key_exists($store, $storeinstancesummaries)) {
             $notifysuccess = false;
-            $notifications[] = array(get_string('invalidstore', 'cache'), false);
+            $notification = get_string('invalidstore', 'cache');
         } else if ($storeinstancesummaries[$store]['mappings'] > 0) {
             $notifysuccess = false;
-            $notifications[] = array(get_string('deletestorehasmappings', 'cache'), false);
+            $notification = get_string('deletestorehasmappings', 'cache');
         }
 
         if ($notifysuccess) {
@@ -544,6 +543,8 @@ class administration_display_helper extends \core_cache\administration_helper {
                 $writer->delete_store_instance($store);
                 redirect($PAGE->url, get_string('deletestoresuccess', 'cache'), 5);
             }
+        } else {
+            redirect($PAGE->url, $notification, null, notification::NOTIFY_ERROR);
         }
     }
 
@@ -731,9 +732,8 @@ class administration_display_helper extends \core_cache\administration_helper {
      * Performs the delete lock action.
      *
      * @param string $action the action calling this function.
-     * @return void
      */
-    public function action_deletelock(string $action) {
+    public function action_deletelock(string $action): void {
         global $OUTPUT, $PAGE, $SITE;
         $notifysuccess = true;
         $locks = $this->get_lock_summaries();
@@ -742,10 +742,10 @@ class administration_display_helper extends \core_cache\administration_helper {
         $confirm = optional_param('confirm', false, PARAM_BOOL);
         if (!array_key_exists($lock, $locks)) {
             $notifysuccess = false;
-            $notifications[] = array(get_string('invalidlock', 'cache'), false);
+            $notification = get_string('invalidlock', 'cache');
         } else if ($locks[$lock]['uses'] > 0) {
             $notifysuccess = false;
-            $notifications[] = array(get_string('deletelockhasuses', 'cache'), false);
+            $notification = get_string('deletelockhasuses', 'cache');
         }
         if ($notifysuccess) {
             if (!$confirm) {
@@ -768,6 +768,8 @@ class administration_display_helper extends \core_cache\administration_helper {
                 $writer->delete_lock_instance($lock);
                 redirect($PAGE->url, get_string('deletelocksuccess', 'cache'), 5);
             }
+        } else {
+            redirect($PAGE->url, $notification, null, notification::NOTIFY_ERROR);
         }
     }
 

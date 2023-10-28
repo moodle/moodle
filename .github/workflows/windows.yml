@@ -1,0 +1,144 @@
+name: Windows Testing
+
+on:
+  workflow_dispatch
+env:
+  php: 8.1
+
+jobs:
+  Grunt:
+    runs-on: windows-latest
+
+    steps:
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Checking out code
+        uses: actions/checkout@v3
+
+      - name: Configuring node & npm
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Installing node stuff
+        run: npm ci
+
+      - name: Running grunt
+        run: npx grunt
+
+      - name: Looking for uncommitted changes
+        # Add all files to the git index and then run diff --cached to see all changes.
+        # This ensures that we get the status of all files, including new files.
+        # We ignore npm-shrinkwrap.json to make the tasks immune to npm changes.
+        run: |
+          git add .
+          git reset -- npm-shrinkwrap.json
+          git diff --cached --exit-code
+
+  PHPUnit:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            php: 8.1
+            # Ideally we should use mysql/mariadb, but they are 4x slower without tweaks and configuration
+            # so let's run only postgres (1.5h vs 6h) only, If some day we want to improve the mysql runs,
+            # this is the place to enable them.
+            # db: mysqli
+            db: pgsql
+            extensions: exif, fileinfo, gd, intl, pgsql, mysql, redis, soap, sodium
+          - os: windows-latest
+            php: 8.0
+            db: pgsql
+            extensions: exif, fileinfo, gd, intl, pgsql, mysql, redis, soap, sodium
+
+    steps:
+      - name: Setting up DB mysql
+        if: ${{ matrix.db == 'mysqli' }}
+        uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: 8.0
+          user: test
+          password: test
+
+      - name: Creating DB mysql
+        if: ${{ matrix.db == 'mysqli' }}
+        run: mysql --host 127.0.0.1 -utest -ptest -e 'CREATE DATABASE IF NOT EXISTS test COLLATE = utf8mb4_bin;';
+
+      - name: Setting up DB pgsql
+        if: ${{ matrix.db == 'pgsql' }}
+        run: |
+          # TODO: Remove these conf. modifications when php74 or php80 are lowest.
+          # Change to old md5 auth, because php73 does not support it.
+          # #password_encryption = scram-sha-256
+          (Get-Content "$env:PGDATA\postgresql.conf"). `
+              replace('#password_encryption = scram-sha-256', 'password_encryption = md5') | `
+              Set-Content "$env:PGDATA\postgresql.conf"
+          (Get-Content "$env:PGDATA\pg_hba.conf"). `
+              replace('scram-sha-256', 'md5') | `
+              Set-Content "$env:PGDATA\pg_hba.conf"
+          $pgService = Get-Service -Name postgresql*
+          Set-Service -InputObject $pgService -Status running -StartupType automatic
+          Start-Process -FilePath "$env:PGBIN\pg_isready" -Wait -PassThru
+          & $env:PGBIN\psql --command="CREATE USER test PASSWORD 'test'" --command="\du"
+
+      - name: Creating DB pgsql
+        if: ${{ matrix.db == 'pgsql' }}
+        run: |
+          & $env:PGBIN\createdb --owner=test test
+          $env:PGPASSWORD = 'test'
+          & $env:PGBIN\psql --username=test --host=localhost --list test
+
+      - name: Configuring git vars
+        uses: rlespinasse/github-slug-action@v4
+
+      - name: Setting up PHP ${{ matrix.php }}
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: ${{ matrix.extensions }}
+          ini-values: max_input_vars=5000
+          coverage: none
+
+      - name: Set git to use LF
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
+        uses: actions/checkout@v3
+
+      # Needs to be done after php is available, git configured and Moodle checkout has happened.
+      - name: Setting up moodle-exttests service
+        run: |
+          git clone https://github.com/moodlehq/moodle-exttests.git
+          nssm install php-built-in C:\tools\php\php.exe -S localhost:8080 -t D:\a\moodle\moodle\moodle-exttests
+          nssm start php-built-in
+
+      - name: Setting up redis service
+        run: |
+          choco install redis-64 --version 3.0.503 --no-progress
+          nssm install redis redis-server
+          nssm start redis
+
+      - name: Setting up PHPUnit
+        env:
+          dbtype: ${{ matrix.db }}
+        shell: bash
+        run: |
+          echo "pathtophp=$(which php)" >> $GITHUB_ENV # Inject installed pathtophp to env. The template config needs it.
+          cp .github/workflows/config-template.php config.php
+          mkdir ../moodledata
+          php admin/tool/phpunit/cli/init.php --no-composer-self-update
+
+      - name: Running PHPUnit tests
+        env:
+          dbtype: ${{ matrix.db }}
+          phpunit_options: ${{ secrets.phpunit_options }}
+        run: vendor/bin/phpunit $phpunit_options

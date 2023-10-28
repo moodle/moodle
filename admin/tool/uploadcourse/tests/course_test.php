@@ -425,6 +425,7 @@ class course_test extends \advanced_testcase {
             'groupmode' => '2',
             'groupmodeforce' => '1',
             'enablecompletion' => '1',
+            'showactivitydates' => '1',
             'tags' => 'Cat, Dog',
 
             'role_teacher' => 'Knight',
@@ -478,6 +479,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals($data['groupmode'], $course->groupmode);
         $this->assertEquals($data['groupmodeforce'], $course->groupmodeforce);
         $this->assertEquals($data['enablecompletion'], $course->enablecompletion);
+        $this->assertEquals($data['showactivitydates'], $course->showactivitydates);
         $this->assertEquals($data['tags'], join(', ', \core_tag_tag::get_item_tags_array('core', 'course', $course->id)));
 
         // Roles.
@@ -530,6 +532,7 @@ class course_test extends \advanced_testcase {
             'groupmode' => '1',
             'groupmodeforce' => '0',
             'enablecompletion' => '0',
+            'showactivitydates' => '0',
 
             'role_teacher' => 'Teacher',
             'role_manager' => 'Manager',
@@ -583,6 +586,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals($data['groupmode'], $course->groupmode);
         $this->assertEquals($data['groupmodeforce'], $course->groupmodeforce);
         $this->assertEquals($data['enablecompletion'], $course->enablecompletion);
+        $this->assertEquals($data['showactivitydates'], $course->showactivitydates);
 
         // Roles.
         $roleids = array();
@@ -644,6 +648,7 @@ class course_test extends \advanced_testcase {
             'groupmode' => '2',
             'groupmodeforce' => '1',
             'enablecompletion' => '1',
+            'showactivitydates' => '1',
         );
 
         $this->assertFalse($DB->record_exists('course', array('shortname' => 'c1')));
@@ -673,6 +678,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals($defaultdata['groupmode'], $course->groupmode);
         $this->assertEquals($defaultdata['groupmodeforce'], $course->groupmodeforce);
         $this->assertEquals($defaultdata['enablecompletion'], $course->enablecompletion);
+        $this->assertEquals($defaultdata['showactivitydates'], $course->showactivitydates);
 
         // Update.
         $cat = $this->getDataGenerator()->create_category();
@@ -701,6 +707,7 @@ class course_test extends \advanced_testcase {
             'groupmode' => '1',
             'groupmodeforce' => '0',
             'enablecompletion' => '0',
+            'showactivitydates' => '0',
         );
 
         $this->assertTrue($DB->record_exists('course', array('shortname' => 'c1')));
@@ -730,6 +737,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals($defaultdata['groupmode'], $course->groupmode);
         $this->assertEquals($defaultdata['groupmodeforce'], $course->groupmodeforce);
         $this->assertEquals($defaultdata['enablecompletion'], $course->enablecompletion);
+        $this->assertEquals($defaultdata['showactivitydates'], $course->showactivitydates);
     }
 
     public function test_rename() {

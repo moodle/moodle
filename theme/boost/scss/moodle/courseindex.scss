@@ -135,6 +135,10 @@ $courseindex-item-current: $primary !default;
                 color: $danger;
             }
         }
+
+        &.indented {
+            margin-left: map-get($spacers, 3);
+        }
     }
 
     // The full section collapsable.

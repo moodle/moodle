@@ -2035,6 +2035,7 @@ class core_plugin_manager {
                 'h5p',
                 'media',
                 'recordrtc',
+                'link'
             ],
 
             'tinymce' => array(

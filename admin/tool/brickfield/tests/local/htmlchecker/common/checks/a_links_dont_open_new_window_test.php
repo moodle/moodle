@@ -87,6 +87,19 @@ EOD;
     </html>
 EOD;
 
+    /** @var string Html pass 4 */
+    private $htmlpass4 = <<<EOD
+    <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN""http://www.w3.org/TR/REC-html40/loose.dtd">
+    <html lang="en">
+    <head>
+    <title>A link can indicate that it will open in a new window</title>
+    </head>
+    <body>
+    <a href="www.youtube.com" target="_blank">This is youtube (opens in a new window)</a>
+    </body>
+    </html>
+EOD;
+
     /**
      * Test for links opening a new tab or window
      */
@@ -101,6 +114,9 @@ EOD;
         $this->assertEmpty($results);
 
         $results = $this->get_checker_results($this->htmlpass3);
+        $this->assertEmpty($results);
+
+        $results = $this->get_checker_results($this->htmlpass4);
         $this->assertEmpty($results);
     }
 }

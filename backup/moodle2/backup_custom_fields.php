@@ -93,6 +93,8 @@ class base64_encode_final_element extends backup_final_element {
      * @param string $value Original value coming from backup step source, usually db.
      */
     public function set_value($value) {
+        // Avoid null being passed to base64_encode.
+        $value = $value ?? '';
         parent::set_value(base64_encode($value));
     }
 }

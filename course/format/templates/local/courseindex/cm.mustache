@@ -28,15 +28,17 @@
         "isactive": 1,
         "uniqid": "0",
         "accessvisible": 1,
-        "hascmrestrictions": 0
+        "hascmrestrictions": 0,
+        "indent": 1
     }
 }}
 <li class="courseindex-item
         {{#isactive}}active{{/isactive}}
         {{#hascmrestrictions}}restrictions{{/hascmrestrictions}}
         {{^accessvisible}}dimmed{{/accessvisible}}
-        {{#url}} d-flex {{/url}} {{^url}} d-flex-noedit {{/url}}"
-    id="{{uniqid}}-course-index-cm-{{id}}"
+        {{#url}} d-flex {{/url}} {{^url}} d-flex-noedit {{/url}}
+        {{#indent}} indented {{/indent}}"
+    id="course-index-cm-{{id}}"
     data-for="cm"
     data-id="{{id}}"
     role="treeitem"
@@ -66,6 +68,6 @@
 </li>
 {{#js}}
 require(['core_courseformat/local/courseindex/cm'], function(component) {
-    component.init('{{uniqid}}-course-index-cm-{{id}}');
+    component.init('course-index-cm-{{id}}');
 });
 {{/js}}

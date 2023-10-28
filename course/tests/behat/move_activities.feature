@@ -14,13 +14,10 @@ Feature: Activities can be moved between sections
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And the following "activity" exists:
-      | activity | forum                  |
-      | course   | C1                     |
-      | idnumber | 00001                  |
-      | name     | Test forum name        |
-      | intro    | Test forum description |
-      | section  | 1                      |
+    And the following "activities" exist:
+      | activity | name               | course | idnumber  | section |
+      | forum    | Test forum name    | C1     | 00001     | 1       |
+      | forum    | Second forum name  | C1     | 00002     | 1       |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
 
@@ -40,13 +37,6 @@ Feature: Activities can be moved between sections
 
   Scenario: Move activities in a course section with Javascript disabled using paged mode
     Given I navigate to "Settings" in current page administration
-    And the following "activity" exists:
-      | activity    | forum                    |
-      | course      | C1                       |
-      | idnumber    | 00002                    |
-      | name        | Second forum name        |
-      | intro       | Second forum description |
-      | section     | 1                        |
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"

@@ -1431,22 +1431,22 @@ class qformat_xml extends qformat_default {
 
                 foreach ($question->options->answers as $answer) {
                     $percent = 100 * $answer->fraction;
-                    $expout .= "<answer fraction=\"{$percent}\">\n";
+                    $expout .= "    <answer fraction=\"{$percent}\">\n";
                     // The "<text/>" tags are an added feature, old files won't have them.
-                    $expout .= "    <text>{$answer->answer}</text>\n";
-                    $expout .= "    <tolerance>{$answer->tolerance}</tolerance>\n";
-                    $expout .= "    <tolerancetype>{$answer->tolerancetype}</tolerancetype>\n";
-                    $expout .= "    <correctanswerformat>" .
+                    $expout .= $this->writetext($answer->answer, 3);
+                    $expout .= "      <tolerance>{$answer->tolerance}</tolerance>\n";
+                    $expout .= "      <tolerancetype>{$answer->tolerancetype}</tolerancetype>\n";
+                    $expout .= "      <correctanswerformat>" .
                             $answer->correctanswerformat . "</correctanswerformat>\n";
-                    $expout .= "    <correctanswerlength>" .
+                    $expout .= "      <correctanswerlength>" .
                             $answer->correctanswerlength . "</correctanswerlength>\n";
-                    $expout .= "    <feedback {$this->format($answer->feedbackformat)}>\n";
+                    $expout .= "      <feedback {$this->format($answer->feedbackformat)}>\n";
                     $files = $fs->get_area_files($contextid, $component,
                             'instruction', $question->id);
-                    $expout .= $this->writetext($answer->feedback);
+                    $expout .= $this->writetext($answer->feedback, 4);
                     $expout .= $this->write_files($answer->feedbackfiles);
-                    $expout .= "    </feedback>\n";
-                    $expout .= "</answer>\n";
+                    $expout .= "      </feedback>\n";
+                    $expout .= "    </answer>\n";
                 }
                 if (isset($question->options->unitgradingtype)) {
                     $expout .= "    <unitgradingtype>" .

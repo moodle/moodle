@@ -196,17 +196,36 @@ class analysis_for_question {
     }
 
     /**
+     * Save the analysis to the DB, first cleaning up any old ones.
+     *
      * @param \qubaid_condition $qubaids    which question usages have been analysed.
      * @param string            $whichtries which tries have been analysed?
      * @param int               $questionid which question.
+     * @param int|null          $calculationtime time when the analysis was done. (Defaults to time()).
      */
-    public function cache($qubaids, $whichtries, $questionid) {
+    public function cache($qubaids, $whichtries, $questionid, $calculationtime = null) {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+
+        $DB->delete_records_select('question_response_count',
+            'analysisid IN (
+                SELECT id
+                  FROM {question_response_analysis}
+                 WHERE hashcode= ? AND whichtries = ? AND questionid = ?
+                )', [$qubaids->get_hash_code(), $whichtries, $questionid]);
+
+        $DB->delete_records('question_response_analysis',
+                ['hashcode' => $qubaids->get_hash_code(), 'whichtries' => $whichtries, 'questionid' => $questionid]);
+
         foreach ($this->get_variant_nos() as $variantno) {
             foreach ($this->get_subpart_ids($variantno) as $subpartid) {
                 $analysisforsubpart = $this->get_analysis_for_subpart($variantno, $subpartid);
-                $analysisforsubpart->cache($qubaids, $whichtries, $questionid, $variantno, $subpartid);
+                $analysisforsubpart->cache($qubaids, $whichtries, $questionid, $variantno, $subpartid, $calculationtime);
             }
         }
+
+        $transaction->allow_commit();
     }
 
     /**

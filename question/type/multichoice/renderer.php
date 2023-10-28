@@ -149,11 +149,13 @@ abstract class qtype_multichoice_renderer_base extends qtype_with_combined_feedb
         $result .= html_writer::tag('div', $question->format_questiontext($qa),
                 array('class' => 'qtext'));
 
-        $questionnumber = $options->add_question_identifier_to_label($this->prompt(), true, true);
         $result .= html_writer::start_tag('fieldset', array('class' => 'ablock no-overflow visual-scroll-x'));
-        $legendclass = 'sr-only';
         if ($question->showstandardinstruction == 1) {
             $legendclass = '';
+            $questionnumber = $options->add_question_identifier_to_label($this->prompt(), true, true);
+        } else {
+            $questionnumber = $options->add_question_identifier_to_label(get_string('answer'), true, true);
+            $legendclass = 'sr-only';
         }
         $legendattrs = [
             'class' => 'prompt h6 font-weight-normal ' . $legendclass,

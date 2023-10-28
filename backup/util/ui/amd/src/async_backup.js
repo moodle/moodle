@@ -100,7 +100,8 @@ define(['jquery', 'core/ajax', 'core/str', 'core/notification', 'core/templates'
             methodname: 'core_backup_get_async_backup_links_backup',
             args: {
                 'filename': filename,
-                'contextid': contextid
+                'contextid': contextid,
+                'backupid': backupid
             },
         }])[0].done(function(response) {
             // We have the data now update the UI.

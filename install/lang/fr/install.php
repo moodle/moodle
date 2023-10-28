@@ -64,7 +64,7 @@ $string['pathserrcreatedataroot'] = 'Le dossier de données ({$a->dataroot}) ne 
 $string['pathshead'] = 'Confirmer les chemins d\'accès';
 $string['pathsrodataroot'] = 'Le dossier de données n\'est pas atteignable en écriture.';
 $string['pathsroparentdataroot'] = 'Le dossier parent ({$a->parent}) n\'est pas atteignable en écriture. Le dossier de données ({$a->dataroot}) ne peut pas être créé par le programme d\'installation.';
-$string['pathssubadmindir'] = 'Quelques rares hébergeurs utilisent « /admin » comme URL spéciale pour l\'accès à un tableau de bord ou d\'autres fonctionnalités. Malheureusement ceci entre en conflit avec l\'emplacement standard des pages d\'administration de Moodle. Vous pouvez corriger ceci en renommant le dossier admin de votre installation Moodle et en plaçant le nouveau nom choisi dans ce champ. Par exemple, <em>moodleadmin</em>. Ceci modifiera tous les liens de l\'administration de Moodle.';
+$string['pathssubadmindir'] = 'Quelques rares hébergeurs utilisent « /admin » comme URL spéciale pour l\'accès à un tableau de bord ou d\'autres fonctionnalités. Malheureusement ceci entre en conflit avec l\'emplacement standard des pages d\'administration de Moodle. On peut corriger ceci en renommant le dossier admin de l\'installation Moodle et en plaçant le nouveau nom choisi dans ce champ. Par exemple, <em>moodleadmin</em>. Ceci modifiera tous les liens de l\'administration de Moodle.';
 $string['pathssubdataroot'] = '<p>Un dossier dans lequel Moodle stockera tous les fichiers qui seront déposés par les utilisateurs.</p>
 <p>Ce dossier doit être atteignable en lecture et en écriture par l\'utilisateur système du serveur web (habituellement nommé « www-data », « nobody » ou encore « apache »).</p>
 <p>Il ne doit pas pouvoir être atteint directement via le web.</p>
@@ -86,6 +86,6 @@ $string['welcomep20'] = 'Vous voyez cette page, car vous avez installé Moodle c
 $string['welcomep30'] = 'Cette version de <b>{$a->installername}</b> comprend des logiciels qui créent un environnement dans lequel <b>Moodle</b> va fonctionner, à savoir :';
 $string['welcomep40'] = 'Ce paquet contient également <b>Moodle {$a->moodlerelease} ({$a->moodleversion})</b>.';
 $string['welcomep50'] = 'L\'utilisation de tous les logiciels de ce paquetage est soumis à l\'acceptation de leurs licences respectives. Le paquetage complet <strong>{$a->installername}</strong> est un <a href="https://www.opensource.org/docs/definition_plain.html">logiciel libre</a>. Il est distribué sous licence <a href="https://www.gnu.org/copyleft/gpl.html">GPL</a>.';
-$string['welcomep60'] = 'Les pages suivantes vous aideront pas à pas à configurer et mettre en place <strong>Moodle</strong> sur votre ordinateur. Il vous sera possible d\'accepter les réglages par défaut ou, facultativement, de les adapter à vos propres besoins.';
+$string['welcomep60'] = 'Les pages suivantes vous aideront pas à pas à configurer et installer <strong>Moodle</strong> sur votre ordinateur. Il vous sera possible d\'accepter les réglages par défaut ou, facultativement, de les adapter à vos propres besoins.';
 $string['welcomep70'] = 'Cliquer sur le bouton « Suivant » ci-dessous pour continuer l\'installation de <b>Moodle</b>.';
 $string['wwwroot'] = 'Adresse web';

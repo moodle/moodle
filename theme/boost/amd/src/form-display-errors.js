@@ -60,7 +60,7 @@ define(['jquery', 'core_form/events'], function($, FormEvent) {
                 const feedbackIndex = describedByIds.indexOf(feedbackId);
 
                 // Sometimes (atto) we have a hidden textarea backed by a real contenteditable div.
-                if (($(element).prop("tagName") == 'TEXTAREA') && parent.find('[contenteditable]')) {
+                if (($(element).prop("tagName") == 'TEXTAREA') && parent.find('[contenteditable]').length > 0) {
                     element = parent.find('[contenteditable]');
                 }
                 if (msg !== '') {

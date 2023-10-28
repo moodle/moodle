@@ -53,6 +53,12 @@ if ($tool->status != ENROL_INSTANCE_ENABLED) {
     exit();
 }
 
+// Check if the enrolment instance has been upgraded to a newer LTI version.
+if ($tool->ltiversion != 'LTI-1p0/LTI-2p0') {
+    throw new \moodle_exception('enrolltiversionincorrect', 'enrol_lti');
+    exit();
+}
+
 $consumerkey = required_param('oauth_consumer_key', PARAM_TEXT);
 $ltiversion = optional_param('lti_version', null, PARAM_TEXT);
 $messagetype = required_param('lti_message_type', PARAM_TEXT);

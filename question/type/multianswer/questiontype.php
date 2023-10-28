@@ -314,11 +314,18 @@ class qtype_multianswer extends question_type {
         $fractionsum = 0;
         $fractionmax = 0;
         foreach ($questiondata->options->questions as $key => $subqdata) {
+            if ($subqdata->qtype == 'subquestion_replacement') {
+                continue;
+            }
             $fractionmax += $subqdata->defaultmark;
             $fractionsum += question_bank::get_qtype(
                     $subqdata->qtype)->get_random_guess_score($subqdata);
         }
-        return $fractionsum / $fractionmax;
+        if ($fractionmax > question_utils::MARK_TOLERANCE) {
+            return $fractionsum / $fractionmax;
+        } else {
+            return null;
+        }
     }
 
     public function move_files($questionid, $oldcontextid, $newcontextid) {

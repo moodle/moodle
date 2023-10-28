@@ -229,12 +229,19 @@ Feature: Award badges
 
   @javascript
   Scenario: Award badge on course completion
-    Given I log in as "teacher1"
+    Given the following "activity" exists:
+      | activity       | chat          |
+      | course         | C1            |
+      | name           | Music history |
+      | section        | 1             |
+      | completion     | 2             |
+      | completionview | 1             |
+    And I log in as "teacher1"
     And I am on "Course 1" course homepage
     And I navigate to "Course completion" in current page administration
     And I set the field "id_overall_aggregation" to "2"
     And I click on "Condition: Activity completion" "link"
-    And I set the field "Assignment - Test assignment name" to "1"
+    And I set the field "Chat - Music history" to "1"
     And I press "Save changes"
     And I am on "Course 1" course homepage
     And I navigate to "Badges > Add a new badge" in current page administration
@@ -253,8 +260,7 @@ Feature: Award badges
     And I follow "Profile" in the user menu
     And I click on "Course 1" "link" in the "region-main" "region"
     Then I should not see "badges"
-    And I am on "Course 1" course homepage
-    And I toggle the manual completion state of "Test assignment name"
+    When I am on the "Music history" "chat activity" page
     And I log out
     # Completion cron won't mark the whole course completed unless the
     # individual criteria was marked completed more than a second ago. So
@@ -265,6 +271,7 @@ Feature: Award badges
     # The student should now see their badge.
     And I log in as "student1"
     And I follow "Profile" in the user menu
+    And I click on "Course 1" "link" in the "region-main" "region"
     Then I should see "Course Badge"
 
   @javascript

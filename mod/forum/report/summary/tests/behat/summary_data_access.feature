@@ -19,8 +19,8 @@ Feature: Report relevant content availability
       | student1 | C1     | student        |
       | student2 | C1     | student        |
     And the following "activities" exist:
-      | activity | name   | description | course | idnumber |
-      | forum    | forum1 | C1 forum    | C1     | forum1   |
+      | activity | name   | course | idnumber |
+      | forum    | forum1 | C1     | forum1   |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message   | attachments | inlineattachments |
       | teacher1 | forum1 | discussion1 | message 1 |             |                   |

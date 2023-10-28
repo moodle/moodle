@@ -23,9 +23,9 @@
  * install or upgrade operation. All plugins support this.
  *
  * For more information, take a look to the documentation available:
- *     - Webservices API: {@link http://docs.moodle.org/dev/Web_services_API}
- *     - External API: {@link http://docs.moodle.org/dev/External_functions_API}
- *     - Upgrade API: {@link http://docs.moodle.org/dev/Upgrade_API}
+ *     - Webservices API: {@link https://moodledev.io/docs/apis/subsystems/external/writing-a-service}
+ *     - External API: {@link https://moodledev.io/docs/apis/subsystems/external/functions}
+ *     - Upgrade API: {@link https://moodledev.io/docs/guides/upgrade}
  *
  * @package    core_webservice
  * @category   webservice
@@ -1718,6 +1718,12 @@ $functions = array(
         'methodname' => 'add_user_device',
         'classpath' => 'user/externallib.php',
         'description' => 'Store mobile user devices information for PUSH Notifications.',
+        'type' => 'write',
+        'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
+    ),
+    'core_user_update_user_device_public_key' => array(
+        'classname' => '\core_user\external\update_user_device_public_key',
+        'description' => 'Store mobile user public key.',
         'type' => 'write',
         'services' => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),

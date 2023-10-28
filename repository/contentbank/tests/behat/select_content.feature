@@ -24,13 +24,13 @@ Feature: Select content bank files using the content bank files repository
       | contextlevel | reference | contenttype     | user  | contentname             | filepath                                    |
       | Course       | mscC1     | contenttype_h5p | admin | filltheblanks.h5p       | /h5p/tests/fixtures/filltheblanks.h5p       |
       | Course       | mscC2     | contenttype_h5p | admin | find-the-words.h5p      | /h5p/tests/fixtures/find-the-words.h5p      |
-      | Course       | subcat1C1 | contenttype_h5p | admin | greeting-card-887.h5p   | /h5p/tests/fixtures/greeting-card-887.h5p   |
+      | Course       | subcat1C1 | contenttype_h5p | admin | greeting-card.h5p       | /h5p/tests/fixtures/greeting-card.h5p       |
       | Category     | CAT1      | contenttype_h5p | admin | ipsums.h5p              | /h5p/tests/fixtures/ipsums.h5p              |
       | Category     | SUBCAT1   | contenttype_h5p | admin | multiple-choice-2-6.h5p | /h5p/tests/fixtures/multiple-choice-2-6.h5p |
       | System       |           | contenttype_h5p | admin | filltheblanks.h5p       | /h5p/tests/fixtures/filltheblanks.h5p       |
     And the following "activities" exist:
       | activity | name       | intro      | introformat | course | idnumber |
-      | forum    | Forum      | ForumDesc  | 1           | mscC1  | forum1   |
+      | forum    | Forum      |            | 1           | mscC1  | forum1   |
       | folder   | Folder     | FolderDesc | 1           | mscC1  | folder1  |
     And the following "course enrolments" exist:
       | user     | course | role           |
@@ -76,7 +76,7 @@ Feature: Select content bank files using the content bank files repository
     And I click on "SubCategory1Course1" "folder" in repository content area
     And I should see "System > Category1 > SubCategory1 > SubCategory1Course1" breadcrumb navigation in repository
     And I should see "1" elements in repository content area
-    And I should see "greeting-card-887.h5p" "file" in repository content area
+    And I should see "greeting-card.h5p" "file" in repository content area
 
   Scenario: Admin can select and re-use content bank files using the content bank repository
     Given I am on the Folder "Folder activity" page logged in as admin
@@ -128,20 +128,18 @@ Feature: Select content bank files using the content bank files repository
     Then I should see "1" elements in "Files" filemanager
     And I should see "filltheblanks.h5p" in the ".fp-content .fp-file" "css_element"
 
-  # This scenario has Atto-specific steps. See MDL-75913 for further details.
-  @editor_atto
   Scenario: Non-editing teacher can not see the content bank repository
     Given I am on the Forum "Forum activity" page logged in as teacher2
     And I click on "Add discussion topic" "link"
-    And I click on "Link" "button"
-    When I click on "Browse repositories..." "button"
+    And I click on "Advanced" "button"
+    When I click on "Add..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"
 
   Scenario: Student can not see the content bank repository
     Given I am on the Forum "Forum activity" page logged in as student
     And I click on "Add discussion topic" "link"
-    And I click on "Link" "button"
-    When I click on "Browse repositories..." "button"
+    And I click on "Advanced" "button"
+    When I click on "Add..." "button"
     Then I should not see "Content bank" in the ".fp-repo-area" "css_element"
 
   Scenario: Both content name and file name are shown when a content is selected

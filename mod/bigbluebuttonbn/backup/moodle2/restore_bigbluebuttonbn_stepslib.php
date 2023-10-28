@@ -57,6 +57,11 @@ class restore_bigbluebuttonbn_activity_structure_step extends restore_activity_s
         $data = (object) $data;
         $data->course = $this->get_courseid();
         $data->timemodified = $this->apply_date_offset($data->timemodified);
+        // Check if we are in backup::MODE_IMPORT (we set a new meetingid) or backup::MODE_GENERAL (we keep the same meetingid).
+        if ($this->get_task()->get_info()->mode == backup::MODE_IMPORT || empty($data->meetingid)) {
+            // We are in backup::MODE_IMPORT, we need to renew the meetingid.
+            $data->meetingid = \mod_bigbluebuttonbn\meeting::get_unique_meetingid_seed();
+        }
         // Insert the bigbluebuttonbn record.
         $newitemid = $DB->insert_record('bigbluebuttonbn', $data);
         // Immediately after inserting "activity" record, call this.

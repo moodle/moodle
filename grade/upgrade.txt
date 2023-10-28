@@ -1,6 +1,10 @@
 This file describes API changes in /grade/* ;
 Information provided here is intended especially for developers.
 
+=== 4.1.6 ===
+* The grade `itemname` property contained in the return structure of the following external methods is now PARAM_CLEANHTML:
+  - `gradereport_user_get_grade_items`
+
 === 4.1 ===
 * The $importactiveurl parameter in the constructor of the core_grades\output\import_action_bar class has been deprecated and is not used anymore.
 * The $exportactiveurl parameter in the constructor of the core_grades\output\export_action_bar class has been deprecated and is not used anymore.

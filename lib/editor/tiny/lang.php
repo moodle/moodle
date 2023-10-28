@@ -50,6 +50,9 @@ class lang {
     /** @var bool Whether Moodle is fully loaded or not */
     protected $fullyloaded = false;
 
+    /** @var string The complete path to the candidate file */
+    protected $candidatefile;
+
     /**
      * Constructor to load and serve the langfile.
      */
@@ -74,14 +77,15 @@ class lang {
             }
 
             [$rev, $lang] = explode('/', $slashargument, 2);
-            $rev  = min_clean_param($rev, 'RAW');
+            $rev  = min_clean_param($rev, 'INT');
             $lang = min_clean_param($lang, 'SAFEDIR');
         } else {
-            $rev  = min_optional_param('rev', 0, 'RAW');
+            $rev  = min_optional_param('rev', 0, 'INT');
             $lang = min_optional_param('lang', 'standard', 'SAFEDIR');
         }
 
-        $this->lang = $lang;
+        // Retrieve the correct language by converting to Moodle's language code format.
+        $this->lang = str_replace('-', '_', $lang);
         $this->rev = $rev;
         $this->candidatefile = "{$CFG->localcachedir}/editor_tiny/{$this->rev}/lang/{$this->lang}/lang.json";
     }
@@ -91,7 +95,8 @@ class lang {
      */
     protected function serve_file(): void {
         // Attempt to send the cached langpack.
-        if ($this->rev > 0) {
+        // We only cache the file if the rev is valid.
+        if (min_is_revision_valid_and_current($this->rev)) {
             if ($this->is_candidate_file_available()) {
                 // The send_cached_file_if_available function will exit if successful.
                 // In theory the file could become unavailable after checking that the file exists.

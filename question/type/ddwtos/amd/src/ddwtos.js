@@ -363,10 +363,21 @@ define([
      * @param {jQuery} drop the place to put it.
      */
     DragDropToTextQuestion.prototype.sendDragToDrop = function(drag, drop) {
+        // Send drag home if there is no place in drop.
+        if (this.getPlace(drop) === null) {
+            this.sendDragHome(drag);
+            return;
+        }
+
         // Is there already a drag in this drop? if so, evict it.
         var oldDrag = this.getCurrentDragInPlace(this.getPlace(drop));
         if (oldDrag.length !== 0) {
             var currentPlace = this.getClassnameNumericSuffix(oldDrag, 'inplace');
+            // When infinite group and there is already a drag in a drop, reject the exact clone in the same drop.
+            if (this.hasDropSameDrag(currentPlace, drop, oldDrag, drag)) {
+                this.sendDragHome(drag);
+                return;
+            }
             var hiddenDrop = this.getDrop(oldDrag, currentPlace);
             hiddenDrop.addClass('active');
             oldDrag.addClass('beingdragged');
@@ -391,6 +402,25 @@ define([
             drag.attr('tabindex', 0);
             this.animateTo(drag, drop);
         }
+    };
+
+    /**
+     * When infinite group and there is already a drag in a drop, reject the exact clone in the same drop.
+     *
+     * @param {int} currentPlace  the position of the current drop.
+     * @param {jQuery} drop the drop containing a drag.
+     * @param {jQuery} oldDrag the drag already placed in drop.
+     * @param {jQuery} drag the new drag which is exactly the same (clone) as oldDrag .
+     * @returns {boolean}
+     */
+    DragDropToTextQuestion.prototype.hasDropSameDrag = function(currentPlace, drop, oldDrag, drag) {
+        if (drag.hasClass('infinite')) {
+            return drop.hasClass('place' + currentPlace) &&
+                this.getGroup(drag) === this.getGroup(drop) &&
+                this.getChoice(drag) === this.getChoice(oldDrag) &&
+                this.getGroup(drag) === this.getGroup(oldDrag);
+        }
+        return false;
     };
 
     /**
@@ -663,7 +693,7 @@ define([
      */
     DragDropToTextQuestion.prototype.getClassnameNumericSuffix = function(node, prefix) {
         var classes = node.attr('class');
-        if (classes !== '') {
+        if (classes !== undefined && classes !== '') {
             var classesArr = classes.split(' ');
             for (var index = 0; index < classesArr.length; index++) {
                 var patt1 = new RegExp('^' + prefix + '([0-9])+$');

@@ -8,11 +8,9 @@ Feature: Verify that the day and month names are displayed using UTF-8
     Given remote langimport tests are enabled
 
   Scenario Outline: View the calendar for December 2012 with correct UTF-8
-    Given I log in as "admin"
-    And I navigate to "Language > Language packs" in site administration
-    And I set the field "Available language packs" to "<lang>"
-    And I press "Install selected language pack(s)"
-    And I should see "Language pack '<lang>' was successfully installed"
+    Given the following "language pack" exists:
+      | language | <lang> |
+    And I log in as "admin"
     And I follow "Preferences" in the user menu
     And I follow "Preferred language"
     And I set the field "Preferred language" to "<lang>"

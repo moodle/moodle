@@ -1254,18 +1254,16 @@ EOF;
         $this->assertTrue(in_array("User-Agent: $moodlebot", $curl->header));
 
         // Finally, test it via exttests, to ensure the agent is sent properly.
-        // Matching.
         $testurl = $this->getExternalTestFileUrl('/test_agent.php');
         $extcurl = new \curl();
+
+        // Matching (assert we don't receive an error, and get back the content "OK").
         $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'AnotherUserAgent/1.2'));
-        $response = $extcurl->getResponse();
-        $this->assertSame('200 OK', reset($response));
         $this->assertSame(0, $extcurl->get_errno());
         $this->assertSame('OK', $contents);
-        // Not matching.
+
+        // Not matching (assert we don't receive an error, and get back empty content - not "OK").
         $contents = $extcurl->get($testurl, array(), array('CURLOPT_USERAGENT' => 'NonMatchingUserAgent/1.2'));
-        $response = $extcurl->getResponse();
-        $this->assertSame('200 OK', reset($response));
         $this->assertSame(0, $extcurl->get_errno());
         $this->assertSame('', $contents);
     }
@@ -1725,25 +1723,30 @@ EOF;
         $filerecord['filename'] = 'file 3.png';
         self::create_draft_file($filerecord);
 
+        $filerecord['filename'] = 'file4.png';
+        self::create_draft_file($filerecord);
+
         // Confirm the user drafts area lists 3 files.
         $fs = get_file_storage();
         $usercontext = \context_user::instance($USER->id);
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'itemid', 0);
-        $this->assertCount(3, $draftfiles);
+        $this->assertCount(4, $draftfiles);
 
         // Now, spoof some editor text content, referencing 2 of the files; one requiring name encoding, one not.
         $editor = [
             'itemid' => $draftitemid,
-            'text' => '
-                <img src="'.$CFG->wwwroot.'/draftfile.php/'.$usercontext->id.'/user/draft/'.$draftitemid.'/file%203.png" alt="">
-                <img src="'.$CFG->wwwroot.'/draftfile.php/'.$usercontext->id.'/user/draft/'.$draftitemid.'/file1.png" alt="">'
+            'text' => "
+                <img src=\"{$CFG->wwwroot}/draftfile.php/{$usercontext->id}/user/draft/{$draftitemid}/file%203.png\" alt=\"\">
+                <img src=\"{$CFG->wwwroot}/draftfile.php/{$usercontext->id}/user/draft/{$draftitemid}/file1.png\" alt=\"\">
+                <span>{$CFG->wwwroot}/draftfile.php/{$usercontext->id}/user/draft/{$draftitemid}/file4.png</span>"
         ];
 
         // Run the remove orphaned drafts function and confirm that only the referenced files remain in the user drafts.
-        $expected = ['file1.png', 'file 3.png']; // The drafts we expect will not be removed (are referenced in the online text).
+        // The drafts we expect will not be removed (are referenced in the online text).
+        $expected = ['file1.png', 'file 3.png', 'file4.png'];
         file_remove_editor_orphaned_files($editor);
         $draftfiles = $fs->get_area_files($usercontext->id, 'user', 'draft', $draftitemid, 'itemid', 0);
-        $this->assertCount(2, $draftfiles);
+        $this->assertCount(3, $draftfiles);
         foreach ($draftfiles as $file) {
             $this->assertContains($file->get_filename(), $expected);
         }
@@ -1900,6 +1903,121 @@ EOF;
         // The bucket leaks at a constant rate. It doesn't matter if it is filled as the result of bursting or not.
         sleep(ceil(1 / $leak));
         $this->assertFalse(file_is_draft_areas_limit_reached($user->id));
+    }
+
+    /**
+     * Test text cleaning when preparing text editor data.
+     *
+     * @covers ::file_prepare_standard_editor
+     */
+    public function test_file_prepare_standard_editor_clean_text() {
+        $text = "lala <object>xx</object>";
+
+        $syscontext = \context_system::instance();
+
+        $object = new \stdClass();
+        $object->some = $text;
+        $object->someformat = FORMAT_PLAIN;
+
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+
+        $object = new \stdClass();
+        $object->some = $text;
+        $object->someformat = FORMAT_MARKDOWN;
+
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+
+        $object = new \stdClass();
+        $object->some = $text;
+        $object->someformat = FORMAT_MOODLE;
+
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false]);
+        $this->assertSame('lala xx', $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame('lala xx', $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+
+        $object = new \stdClass();
+        $object->some = $text;
+        $object->someformat = FORMAT_HTML;
+
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false]);
+        $this->assertSame('lala xx', $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true]);
+        $this->assertSame($text, $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => false, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame('lala xx', $result->some);
+        $result = file_prepare_standard_editor(clone($object), 'some',
+            ['noclean' => true, 'context' => $syscontext], $syscontext, 'core', 'some', 1);
+        $this->assertSame($text, $result->some);
+    }
+
+    /**
+     * Tests for file_get_typegroup to check that both arrays, and string values are accepted.
+     *
+     * @dataProvider file_get_typegroup_provider
+     * @param string|array $group
+     * @param string $expected
+     */
+    public function test_file_get_typegroup(
+        $group,
+        string $expected
+    ): void {
+        $result = file_get_typegroup('type', $group);
+        $this->assertContains($expected, $result);
+    }
+
+    public static function file_get_typegroup_provider(): array {
+        return [
+            'Array of values' => [
+                ['.html', '.htm'],
+                'text/html',
+            ],
+            'String of comma-separated values' => [
+                '.html, .htm',
+                'text/html',
+            ],
+            'String of colon-separated values' => [
+                '.html : .htm',
+                'text/html',
+            ],
+            'String of semi-colon-separated values' => [
+                '.html ; .htm',
+                'text/html',
+            ],
+        ];
     }
 }
 

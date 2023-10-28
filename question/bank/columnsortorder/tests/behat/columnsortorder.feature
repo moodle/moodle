@@ -79,3 +79,14 @@ Feature: An plugin column can be reordered and displayed in the question bank vi
     And I click on "Column sort order" "link"
     Then I should not see "Currently disabled question bank plugins:"
     And I should see "checkboxcustomcolumn"
+
+  Scenario: Reordering with disabled columns
+    When I log in as "admin"
+    And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
+    And I click on "Disable" "link" in the "Question statistics" "table_row"
+    And I click on "Enable" "link" in the "Question statistics" "table_row"
+    And I click on "Disable" "link" in the "Question statistics" "table_row"
+    And I am on the "Course 1" "core_question > course question bank" page
+    Then I should see "Question bank"
+    And "Create a new question" "button" should exist
+    # Really, we are just checking the question bank displayed without errors.

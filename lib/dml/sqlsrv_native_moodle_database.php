@@ -208,21 +208,28 @@ class sqlsrv_native_moodle_database extends moodle_database {
 
         $this->store_settings($dbhost, $dbuser, $dbpass, $dbname, $prefix, $dboptions);
 
+        $options = [
+            'UID' => $this->dbuser,
+            'PWD' => $this->dbpass,
+            'Database' => $this->dbname,
+            'CharacterSet' => 'UTF-8',
+            'MultipleActiveResultSets' => true,
+            'ConnectionPooling' => !empty($this->dboptions['dbpersist']),
+            'ReturnDatesAsStrings' => true,
+        ];
+
         $dbhost = $this->dbhost;
         if (!empty($dboptions['dbport'])) {
             $dbhost .= ',' . $dboptions['dbport'];
         }
 
-        $this->sqlsrv = sqlsrv_connect($dbhost, array
-         (
-          'UID' => $this->dbuser,
-          'PWD' => $this->dbpass,
-          'Database' => $this->dbname,
-          'CharacterSet' => 'UTF-8',
-          'MultipleActiveResultSets' => true,
-          'ConnectionPooling' => !empty($this->dboptions['dbpersist']),
-          'ReturnDatesAsStrings' => true,
-         ));
+        // The sqlsrv_connect() has a lot of connection options to be used.
+        // Users can add any supported options with the 'extrainfo' key in the dboptions.
+        if (isset($this->dboptions['extrainfo'])) {
+            $options = array_merge($options, $this->dboptions['extrainfo']);
+        }
+
+        $this->sqlsrv = sqlsrv_connect($dbhost, $options);
 
         if ($this->sqlsrv === false) {
             $this->sqlsrv = null;
@@ -1310,6 +1317,16 @@ class sqlsrv_native_moodle_database extends moodle_database {
         return true;
     }
 
+    /**
+     * Return SQL for casting to char of given field/expression
+     *
+     * @param string $field Table field or SQL expression to be cast
+     * @return string
+     */
+    public function sql_cast_to_char(string $field): string {
+        return "CAST({$field} AS NVARCHAR(MAX))";
+    }
+
 
     public function sql_cast_char2int($fieldname, $text = false) {
         if (!$text) {
@@ -1433,7 +1450,7 @@ class sqlsrv_native_moodle_database extends moodle_database {
         $arr = func_get_args();
 
         foreach ($arr as $key => $ele) {
-            $arr[$key] = ' CAST('.$ele.' AS NVARCHAR(255)) ';
+            $arr[$key] = $this->sql_cast_to_char($ele);
         }
         $s = implode(' + ', $arr);
 

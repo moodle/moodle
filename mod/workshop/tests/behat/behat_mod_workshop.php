@@ -64,6 +64,7 @@ class behat_mod_workshop extends behat_base {
     /**
      * Adds or edits a student workshop submission.
      *
+     * @When /^I add a submission in workshop "(?P<workshop_name_string>(?:[^"]|\\")*)" as:$/
      * @When /^I add a submission in workshop "(?P<workshop_name_string>(?:[^"]|\\")*)" as:"$/
      * @param string $workshopname
      * @param TableNode $table data to fill the submission form with, must contain 'Title'
@@ -85,6 +86,7 @@ class behat_mod_workshop extends behat_base {
     /**
      * Sets the workshop assessment form.
      *
+     * @When /^I edit assessment form in workshop "(?P<workshop_name_string>(?:[^"]|\\")*)" as:$/
      * @When /^I edit assessment form in workshop "(?P<workshop_name_string>(?:[^"]|\\")*)" as:"$/
      * @param string $workshopname
      * @param TableNode $table data to fill the submission form with, must contain 'Title'
@@ -103,6 +105,7 @@ class behat_mod_workshop extends behat_base {
     /**
      * Peer-assesses a workshop submission.
      *
+     * @When /^I assess submission "(?P<submission_string>(?:[^"]|\\")*)" in workshop "(?P<workshop_name_string>(?:[^"]|\\")*)" as:$/
      * @When /^I assess submission "(?P<submission_string>(?:[^"]|\\")*)" in workshop "(?P<workshop_name_string>(?:[^"]|\\")*)" as:"$/
      * @param string $submission
      * @param string $workshopname

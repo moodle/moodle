@@ -205,6 +205,120 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Check label name with different content inserted in the label intro.
+     *
+     * @param string $labelcontent
+     * @param string $labelformat
+     * @param string $expectedlabelname
+     * @return void
+     * @covers       \get_label_name
+     * @dataProvider label_get_name_data_provider
+     */
+    public function test_label_get_label_name(string $labelcontent, string $labelformat, string $expectedlabelname): void {
+        $course = $this->getDataGenerator()->create_course();
+        // When creating the module, get_label_name is called and fills label->name.
+        $label = $this->getDataGenerator()->create_module('label', [
+                'course' => $course->id,
+                'intro' => $labelcontent,
+                'introformat' => $labelformat
+            ]
+        );
+        $this->assertEquals($expectedlabelname, $label->name);
+    }
+
+    /**
+     * Dataprovider for test_label_get_label_name
+     *
+     * @return array
+     */
+    public function label_get_name_data_provider(): array {
+        return [
+            'simple' => [
+                'content' => '<p>Simple textual content<p>',
+                'format' => FORMAT_HTML,
+                'expected' => 'Simple textual content'
+            ],
+            'empty' => [
+                'content' => '',
+                'format' => FORMAT_HTML,
+                'expected' => 'Test label 1'
+            ],
+            'withaudiocontent' => [
+                'content' => '<p>Test with audio</p>
+<p>&nbsp; &nbsp;<audio controls="controls">
+<source src="@@PLUGINFILE@@/moodle-hit-song.mp3">
+@@PLUGINFILE@@/moodle-hit-song.mp3
+</audio>&nbsp;</p>',
+                'format' => FORMAT_HTML,
+                'expected' => 'Test with audio'
+            ],
+            'withvideo' => [
+                'content' => '<p>Test video</p>
+<p>&nbsp;<video controls="controls">
+        <source src="https://www.youtube.com/watch?v=xxxyy">
+    https://www.youtube.com/watch?v=xxxyy
+</video>&nbsp;</p>',
+                'format' => FORMAT_HTML,
+                'expected' => 'Test video https://www.youtube.com/watch?v=xxxyy'
+            ],
+            'with video trimming' => [
+                'content' => '<p>Test with video to be trimmed</p>
+<p>&nbsp;<video controls="controls">
+        <source src="https://www.youtube.com/watch?v=xxxyy">
+    https://www.youtube.com/watch?v=xxxyy
+</video>&nbsp;</p>',
+                'format' => FORMAT_HTML,
+                'expected' => 'Test with video to be trimmed https://www.youtube....'
+            ],
+            'with plain text' => [
+                'content' => 'Content with @@PLUGINFILE@@/moodle-hit-song.mp3 nothing',
+                'format' => FORMAT_HTML,
+                'expected' => 'Content with nothing'
+            ],
+            'with several spaces' => [
+                'content' => "Content with @@PLUGINFILE@@/moodle-hit-song.mp3 \r &nbsp; several spaces",
+                'format' => FORMAT_HTML,
+                'expected' => 'Content with several spaces'
+            ],
+            'empty spaces' => [
+                'content' => ' &nbsp; ',
+                'format' => FORMAT_HTML,
+                'expected' => 'Text and media area'
+            ],
+            'only html' => [
+                'content' => '<audio controls="controls"><source src=""></audio>',
+                'format' => FORMAT_HTML,
+                'expected' => 'Text and media area'
+            ],
+            'markdown' => [
+                'content' => "##Simple Title\n simple markdown format",
+                'format' => FORMAT_MARKDOWN,
+                'expected' => 'Simple Title simple markdown format'
+            ],
+            'markdown with pluginfile' => [
+                'content' => "##Simple Title\n simple markdown format @@PLUGINFILE@@/moodle-hit-song.mp3",
+                'format' => FORMAT_MARKDOWN,
+                'expected' => 'Simple Title simple markdown format'
+            ],
+            'plain text' => [
+                'content' => "Simple plain text @@PLUGINFILE@@/moodle-hit-song.mp3",
+                'format' => FORMAT_PLAIN,
+                'expected' => 'Simple plain text'
+            ],
+            'moodle format text' => [
+                'content' => "Simple plain text @@PLUGINFILE@@/moodle-hit-song.mp3",
+                'format' => FORMAT_MOODLE,
+                'expected' => 'Simple plain text'
+            ],
+            'html format text' => [
+                'content' => "<h1>Simple plain title</h1><p> with plain text</p> @@PLUGINFILE@@/moodle-hit-song.mp3",
+                'format' => FORMAT_HTML,
+                'expected' => 'Simple plain title with plain text'
+            ],
+        ];
+    }
+
+    /**
      * Creates an action event.
      *
      * @param int $courseid The course id.

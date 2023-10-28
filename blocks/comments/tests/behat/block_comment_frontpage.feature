@@ -8,10 +8,11 @@ Feature: Enable Block comments on the frontpage and view comments
     Given the following "users" exist:
       | username | firstname | lastname | email | idnumber |
       | teacher1 | Teacher | 1 | teacher1@example.com | T1 |
+    And the following "blocks" exist:
+      | blockname | contextlevel | reference | pagetypepattern | defaultregion |
+      | comments  | System       | 1         | site-index      | side-pre      |
     And I log in as "admin"
     And I am on site homepage
-    And I turn editing mode on
-    And I add the "Comments" block
     And I follow "Show comments"
     And I add "I'm a comment from admin" comment to comments block
     And I log out

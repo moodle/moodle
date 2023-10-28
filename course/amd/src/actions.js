@@ -60,7 +60,7 @@ define(
         // Meanwhile, we filter the migrated actions.
         const componentActions = [
             'moveSection', 'moveCm', 'addSection', 'deleteSection', 'sectionHide', 'sectionShow',
-            'cmHide', 'cmShow', 'cmStealth',
+            'cmHide', 'cmShow', 'cmStealth', 'cmMoveRight', 'cmMoveLeft',
         ];
 
         // The course reactive instance.
@@ -82,6 +82,7 @@ define(
             TOGGLE: '.toggle-display,.dropdown-toggle',
             SECTIONLI: 'li.section',
             SECTIONACTIONMENU: '.section_action_menu',
+            SECTIONITEM: '[data-for="section_title"]',
             ADDSECTIONS: '.changenumsections [data-add-sections]',
             SECTIONBADGES: '[data-region="sectionbadges"]',
         };
@@ -981,7 +982,7 @@ define(
 
                 // The section and activity names are edited using inplace editable.
                 // The "update" jQuery event must be captured in order to update the course state.
-                $('body').on('updated', `${SELECTOR.SECTIONLI} [data-inplaceeditable]`, function(e) {
+                $('body').on('updated', `${SELECTOR.SECTIONLI} ${SELECTOR.SECTIONITEM} [data-inplaceeditable]`, function(e) {
                     if (e.ajaxreturn && e.ajaxreturn.itemid) {
                         const state = courseeditor.state;
                         const section = state.section.get(e.ajaxreturn.itemid);

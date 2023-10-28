@@ -156,6 +156,12 @@ class behat_core_generator extends behat_generator_base {
                 'datagenerator' => 'role',
                 'required' => ['shortname'],
             ],
+            'role capabilities' => [
+                'singular' => 'role capability',
+                'datagenerator' => 'role_capability',
+                'required' => ['role'],
+                'switchids' => ['role' => 'roleid'],
+            ],
             'grade categories' => [
                 'singular' => 'grade category',
                 'datagenerator' => 'grade_category',
@@ -280,6 +286,12 @@ class behat_core_generator extends behat_generator_base {
                 'datagenerator' => 'contentbank_content',
                 'required' => array('contextlevel', 'reference', 'contenttype', 'user', 'contentname'),
                 'switchids' => array('user' => 'userid')
+            ],
+            'user private files' => [
+                'singular' => 'user private file',
+                'datagenerator' => 'user_private_files',
+                'required' => ['user', 'filepath', 'filename'],
+                'switchids' => ['user' => 'userid']
             ],
             'badge external backpacks' => [
                 'singular' => 'badge external backpack',
@@ -601,6 +613,16 @@ class behat_core_generator extends behat_generator_base {
 
         if (!isset($data['status'])) {
             $data['status'] = null;
+        } else {
+            $status = strtolower($data['status']);
+            switch ($status) {
+                case 'active':
+                    $data['status'] = ENROL_USER_ACTIVE;
+                    break;
+                case 'suspended':
+                    $data['status'] = ENROL_USER_SUSPENDED;
+                    break;
+            }
         }
 
         // If the provided course shortname is the site shortname we consider it a system role assign.
@@ -722,6 +744,23 @@ class behat_core_generator extends behat_generator_base {
         }
 
         $this->datagenerator->create_role($data);
+    }
+
+    /**
+     * Assign capabilities to a role.
+     *
+     * @param array $data
+     */
+    protected function process_role_capability($data): void {
+        // We require the user to fill the role shortname.
+        if (empty($data['roleid'])) {
+            throw new Exception('\'role capability\' requires the field \'roleid\' to be specified');
+        }
+
+        $roleid = $data['roleid'];
+        unset($data['roleid']);
+
+        $this->datagenerator->create_role_capability($roleid, $data, \context_system::instance());
     }
 
     /**
@@ -1029,6 +1068,34 @@ class behat_core_generator extends behat_generator_base {
         } else {
             throw new Exception('The specified "' . $data['contenttype'] . '" contenttype does not exist');
         }
+    }
+
+    /**
+     * Create content in the given user's private files.
+     *
+     * @param array $data
+     * @return void
+     */
+    protected function process_user_private_files(array $data) {
+        global $CFG;
+
+        $userid = $data['userid'];
+        $fs = get_file_storage();
+        $filepath = "{$CFG->dirroot}/{$data['filepath']}";
+
+        if (!file_exists($filepath)) {
+            throw new coding_exception("File '{$filepath}' does not exist");
+        }
+        $filerecord = [
+            'userid' => $userid,
+            'contextid' => context_user::instance($userid)->id,
+            'component' => 'user',
+            'filearea' => 'private',
+            'itemid' => 0,
+            'filepath'  => '/',
+            'filename'  => basename($filepath),
+        ];
+        $fs->create_file_from_pathname($filerecord, $filepath);
     }
 
     /**

@@ -14,13 +14,10 @@ Feature: Enable Block Badges on the frontpage and view awarded badges
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "admin"
-    And I am on site homepage
-    And I turn editing mode on
-    And I add the "Latest badges" block
-    And I log out
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
+    And the following "blocks" exist:
+      | blockname | contextlevel | reference | pagetypepattern | defaultregion |
+      | badges    | System       | 1         | site-index      | side-pre      |
+    And I am on the "Course 1" course page logged in as teacher1
     # Issue badge 1 of 2
     And I navigate to "Badges > Add a new badge" in current page administration
     And I set the following fields to these values:
@@ -37,7 +34,5 @@ Feature: Enable Block Badges on the frontpage and view awarded badges
     And I press "Award badge"
     And I set the field "potentialrecipients[]" to "Teacher 1 (teacher1@example.com)"
     And I press "Award badge"
-    And I log out
-    When I log in as "teacher1"
-    And I am on site homepage
+    When I am on site homepage
     Then I should see "Badge 1" in the "Latest badges" "block"

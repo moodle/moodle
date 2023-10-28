@@ -563,3 +563,24 @@ function cli_execute_parallel($cmds, $cwd = null, $delay = 0) {
     }
     return $processes;
 }
+
+/**
+ * Get command flags for an option/value combination
+ *
+ * @param string $option
+ * @param string|bool|null $value
+ * @return string
+ */
+function behat_get_command_flags(string $option, $value): string {
+    $commandoptions = '';
+    if (is_bool($value)) {
+        if ($value) {
+            return " --{$option}";
+        } else {
+            return " --no-{$option}";
+        }
+    } else if ($value !== null) {
+        return " --$option=\"$value\"";
+    }
+    return '';
+}

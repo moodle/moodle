@@ -573,7 +573,7 @@ class acceptances_table extends \table_sql {
         if ($row->timemodified) {
             if ($this->is_downloading()) {
                 // Use timestamp format readable for both machines and humans.
-                return date_format_string($row->timemodified, '%Y-%m-%d %H:%M:%S %Z');
+                return date_format_string((int) $row->timemodified, '%Y-%m-%d %H:%M:%S %Z');
             } else {
                 // Use localised calendar format.
                 return userdate($row->timemodified, get_string('strftimedatetime'));

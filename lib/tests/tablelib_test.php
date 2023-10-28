@@ -67,17 +67,21 @@ class tablelib_test extends \advanced_testcase {
     /**
      * Create a table with properties as passed in params, add data and output html.
      *
-     * @param string[] $columns
-     * @param string[] $headers
-     * @param bool     $sortable
-     * @param bool     $collapsible
-     * @param string[] $suppress
-     * @param string[] $nosorting
-     * @param (array|object)[] $data
-     * @param int      $pagesize
+     * @param string[] $columns The columns of the table.
+     * @param string[] $headers The header of the table.
+     * @param bool $sortable Sorting of the table.
+     * @param bool $collapsible Is table collapsible.
+     * @param string[] $suppress Suppress columns.
+     * @param string[] $nosorting No sorting.
+     * @param (array|object)[] $data The data of the table.
+     * @param int $pagesize Page size of the table
+     * @param string $caption Caption of the table.
+     * @param array $captionattribute The attribute of the caption.
      */
-    protected function run_table_test($columns, $headers, $sortable, $collapsible, $suppress, $nosorting, $data, $pagesize) {
-        $table = $this->create_and_setup_table($columns, $headers, $sortable, $collapsible, $suppress, $nosorting);
+    protected function run_table_test($columns, $headers, $sortable, $collapsible, $suppress, $nosorting, $data,
+        $pagesize, $caption = '', $captionattribute = []) {
+        $table = $this->create_and_setup_table($columns, $headers, $sortable, $collapsible, $suppress, $nosorting,
+            $caption, $captionattribute);
         $table->pagesize($pagesize, count($data));
         foreach ($data as $row) {
             $table->add_data_keyed($row);
@@ -88,15 +92,18 @@ class tablelib_test extends \advanced_testcase {
     /**
      * Create a table with properties as passed in params.
      *
-     * @param string[] $columns
-     * @param string[] $headers
-     * @param bool $sortable
-     * @param bool $collapsible
-     * @param string[] $suppress
-     * @param string[] $nosorting
+     * @param string[] $columns The columns of the table.
+     * @param string[] $headers The header of the table.
+     * @param bool $sortable Sorting of the table.
+     * @param bool $collapsible Is table collapsible.
+     * @param string[] $suppress Suppress columns.
+     * @param string[] $nosorting No sorting.
+     * @param string $caption Caption of the table.
+     * @param array $captionattribute The attribute of the caption.
      * @return flexible_table
      */
-    protected function create_and_setup_table($columns, $headers, $sortable, $collapsible, $suppress, $nosorting) {
+    protected function create_and_setup_table($columns, $headers, $sortable, $collapsible, $suppress, $nosorting,
+        $caption = '', $captionattribute = '') {
         $table = new flexible_table('tablelib_test');
 
         $table->define_columns($columns);
@@ -111,6 +118,9 @@ class tablelib_test extends \advanced_testcase {
 
         foreach ($nosorting as $column) {
             $table->no_sorting($column);
+        }
+        if ($caption) {
+            $table->set_caption($caption, $captionattribute);
         }
 
         $table->setup();
@@ -782,6 +792,41 @@ class tablelib_test extends \advanced_testcase {
             ['A', 'Z', 'Z'],
             ['Z', 'A', 'A'],
         ];
+    }
+
+    /**
+     * Data test for set and render caption for table.
+     *
+     * @covers ::set_caption_for_table
+     * @covers ::render_caption_for_table
+     */
+    public function test_set_and_render_caption_for_table(): void {
+        $data = $this->generate_data(10, 2);
+        $columns = $this->generate_columns(2);
+        $headers = $this->generate_headers(2);
+        $caption = 'Caption for table';
+        $captionattribute = ['class' => 'inline'];
+        $this->run_table_test(
+            $columns,
+            $headers,
+            // Sortable.
+            true,
+            // Collapsible.
+            false,
+            // Suppress columns.
+            [],
+            // No sorting.
+            [],
+            // Data.
+            $data,
+            // Page size.
+            10,
+            // Caption for table.
+            $caption,
+            // Caption attribute.
+            $captionattribute,
+        );
+        $this->expectOutputRegex('/' . '<caption class="inline">' . $caption . '<\/caption>' . '/');
     }
 
 }

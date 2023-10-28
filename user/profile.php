@@ -42,7 +42,9 @@ $userid         = optional_param('id', 0, PARAM_INT);
 $edit           = optional_param('edit', null, PARAM_BOOL);    // Turn editing on and off.
 $reset          = optional_param('reset', null, PARAM_BOOL);
 
-$PAGE->set_url('/user/profile.php', array('id' => $userid));
+// Even if the user didn't supply a userid, we treat page URL as if they did; this is needed so navigation works correctly.
+$userid = $userid ?: $USER->id;
+$PAGE->set_url('/user/profile.php', ['id' => $userid]);
 
 if (!empty($CFG->forceloginforprofiles)) {
     require_login();
@@ -59,7 +61,6 @@ if (!empty($CFG->forceloginforprofiles)) {
     require_login();
 }
 
-$userid = $userid ? $userid : $USER->id;       // Owner of the page.
 if ((!$user = $DB->get_record('user', array('id' => $userid))) || ($user->deleted)) {
     $PAGE->set_context(context_system::instance());
     echo $OUTPUT->header();
@@ -80,7 +81,7 @@ if (!user_can_view_profile($user, null, $context)) {
     // Course managers can be browsed at site level. If not forceloginforprofiles, allow access (bug #4366).
     $struser = get_string('user');
     $PAGE->set_context(context_system::instance());
-    $PAGE->set_title("$SITE->shortname: $struser");  // Do not leak the name.
+    $PAGE->set_title($struser);  // Do not leak the name.
     $PAGE->set_heading($struser);
     $PAGE->set_pagelayout('mypublic');
     $PAGE->add_body_class('limitedwidth');
@@ -220,6 +221,7 @@ if ($user->description && !isset($hiddenfields['description'])) {
     echo '</div>';
 }
 
+echo $OUTPUT->heading(get_string('userprofile', 'core_user'), 2, 'sr-only');
 echo $OUTPUT->custom_block_region('content');
 
 // Render custom blocks.

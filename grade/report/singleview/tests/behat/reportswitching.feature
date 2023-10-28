@@ -15,11 +15,9 @@ Feature: Given we land on the index page, select what type of report we wish to 
     And the following "activities" exist:
       | activity | course | idnumber | name                |
       | assign   | C1     | a1       | Test assignment one |
-    And I am on the "Course 1" "Course" page logged in as "teacher1"
-    And I change window size to "large"
 
   Scenario: I switch between the two report types within singleview
-    Given I navigate to "View > Single view" in the course gradebook
+    Given I am on the "Course 1" "grades > Single view > View" page logged in as "teacher1"
     And I click on "Grade items" "link" in the ".page-toggler" "css_element"
     And ".search-widget[data-searchtype='user']" "css_element" should not exist
     And ".search-widget[data-searchtype='grade']" "css_element" should exist

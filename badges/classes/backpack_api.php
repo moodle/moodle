@@ -639,6 +639,8 @@ class backpack_api {
         $DB->delete_records('badge_external', array('backpackid' => $backpackid));
         $DB->delete_records('badge_backpack', array('userid' => $userid));
         $badgescache->delete($userid);
+        $this->clear_system_user_session();
+
         return true;
     }
 

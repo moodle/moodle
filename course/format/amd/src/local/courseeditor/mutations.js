@@ -283,6 +283,24 @@ export default class {
     }
 
     /**
+     * Move cms to the right: indent = 1.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmMoveRight(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_moveright', cmIds);
+    }
+
+    /**
+     * Move cms to the left: indent = 0.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmMoveLeft(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_moveleft', cmIds);
+    }
+
+    /**
      * Lock or unlock course modules.
      *
      * @param {StateManager} stateManager the current state manager

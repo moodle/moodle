@@ -135,6 +135,11 @@ class curl_security_helper_test extends \advanced_testcase {
             // Test when DNS resolution fails.
             [[], "http://example.com", "127.0.0.1", "", true],
 
+            // Test ensures that the default value of getremoteaddr() 0.0.0.0 will check against the provided blocked list.
+            [$simpledns, "http://0.0.0.0/x.png", "0.0.0.0", "", true],
+            // Test set using IPV4 with integer format.
+            [$simpledns, "http://2852039166/x.png", "169.254.169.254", "", true],
+
             // Test some freaky deaky Unicode domains. Should be blocked always.
             [$simpledns, "http://169。254。169。254/", "127.0.0.1", "", true],
             [$simpledns, "http://169。254。169。254/", "1.2.3.4", "", true],

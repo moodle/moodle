@@ -33,10 +33,10 @@ $string['admindirname'] = 'Ylläpitohakemisto';
 $string['availablelangs'] = 'Saatavilla olevat kielipaketit';
 $string['chooselanguagehead'] = 'Valitse kieli';
 $string['chooselanguagesub'] = 'Valitse kieli asennusohjelmaa varten. Tätä kieltä käytetään sivuston oletuskielenä, jonka voi vaihtaa tarpeen mukaan. Myöhemmin voit myös lisätä käyttöön muitakin kieliä.';
-$string['clialreadyconfigured'] = 'Tiedosto config.php on jo olemassa, käytä admin/cli/install_database.php -tiedostoa jos haluat asentaa tämän sivuston.';
-$string['clialreadyinstalled'] = 'Tiedosto config.php on jo olemassa, ole hyvä ja käytä admin/cli/upgrade.php:ta jos haluat päivittää sivustosi';
+$string['clialreadyconfigured'] = 'Konfiguraatiotiedosto config.php on jo olemassa. Käytä admin/cli/install_database.php -tiedostoa, jos haluat asentaa Moodlen tälle sivustolle.';
+$string['clialreadyinstalled'] = 'Konfiguraatiotiedosto config.php on jo olemassa. Käytä admin/cli/upgrade.php-tiedostoa, jos haluat päivittää Moodlen tälle sivustolle.';
 $string['cliinstallheader'] = 'Moodlen {$a} komentoriviasennusohjelma';
-$string['clitablesexist'] = 'Tietokantataulut on jo luotu, cli-asennusta ei voida jatkaa.';
+$string['clitablesexist'] = 'Tietokantataulut on jo luotu, CLI-asennusta ei voida jatkaa.';
 $string['databasehost'] = 'Tietokannan isäntä';
 $string['databasename'] = 'Tietokannan nimi';
 $string['databasetypehead'] = 'Valitse tietokannan ajuri';
@@ -71,18 +71,22 @@ $string['pathsrodataroot'] = 'Dataroot-hakemisto ei ole kirjoitettavissa.';
 $string['pathsroparentdataroot'] = 'Ylähakemisto ({$a->parent}) ei ole kirjoitettavissa. Asennusohjelma ei voi luoda datahakemistoa ({$a->dataroot}).';
 $string['pathssubadmindir'] = 'Jotkut sivustot käyttävät /admin URL-osoitetta hallintapaneelille tai vastaavalle. Tämä on valitettavasti ristiriidassa Moodlen normaalin admin-sivun sijainnin kanssa.
 Voit korjata tämän nimeämällä asennuksesi admin-hakemiston uudelleen, antamalla uuden nimen tähän. Esimerkiksi: <em>moodleadmin</em>. Tämä korjaa admin-linkit Moodlessa.';
-$string['pathssubdataroot'] = 'Tarvitset paikan, jonne Moodle voi tallentaa ladatut tiedostot. Tämän hakemiston pitäisi olla luettavissa ja kirjoitettavissa web-palvelimen käyttäjän taholta (yleensä "nobody" tai "apache"), mutta se ei saa olla käytettävissä suoraan web:in kautta. Jos hakemistoa ei ole, asennusohjelma yrittää luoda sen.';
-$string['pathssubdirroot'] = 'Koko hakemistopolku Moodle-asennukseen.';
-$string['pathssubwwwroot'] = 'Moodlen koko verkko-osoite.
-Moodleen ei ole mahdollista päästä käyttäen useita osoitteita.
-Jos sivustollasi on useita julkisisa osoitteita, sinun täytyy asettaa pysyvät ohjaukset kaikkiin niistä lukuunottamatta tätä.
-Jos sivustollesi on pääsy sekä Intranetistä että Internetistä, käytä tässä julkista osoitetta ja aseta DNS niin, että myös Intranet-käyttäjät voivat käyttää julkista osoitetta.
-Jos osoite ei ole oikea, muuta URL-osoitetta selaimessasi aloittaaksesi asennuksen uudelleen eri arvolla.';
+$string['pathssubdataroot'] = '<p>Hakemisto, johon Moodle tallentaa kaiken käyttäjien lataaman sisällön.</p>
+<p>Tämän hakemiston tulee olla verkkopalvelimen käyttäjän luettavissa ja kirjoitettavissa (yleensä "www-data", "nobody" tai "apache").</p>
+<p>Se ei saa olla suoraan käytettävissä verkon kautta.</p>
+<p>Jos hakemistoa ei tällä hetkellä ole, asennusprosessi yrittää luoda sen.</p>';
+$string['pathssubdirroot'] = '<p>Koko hakemistopolku Moodle-asennuskoodin sisältävään hakemistoon.</p>';
+$string['pathssubwwwroot'] = '<p>Moodlen täydellinen verkko-osoite, eli osoite, jonka käyttäjät kirjoittavat selaimensa osoitepalkkiin päästäkseen Moodleen.</p>
+<p>Moodleen ei ole mahdollista päästä käyttäen useita osoitteita. Jos sivustollesi pääsee useiden osoitteiden kautta, valitse helpoin ja määritä pysyvä uudelleenohjaus muille osoitteille.</p>
+<p>Jos sivustosi on käytettävissä sekä Internetistä että sisäisestä verkosta (intranetistä), käytä tässä julkista osoitetta.</p>
+<p>Jos nykyinen osoite ei ole oikea, vaihda verkko-osoite selaimesi osoitepalkissa ja aloita asennus uudelleen.</p>';
 $string['pathsunsecuredataroot'] = 'Dataroot-sijainti on turvallinen';
 $string['pathswrongadmindir'] = 'Admin-hakemistoa ei ole';
 $string['phpextension'] = '{$a} PHP-lisäosa';
 $string['phpversion'] = 'PHP versio';
-$string['phpversionhelp'] = '<p>Moodle vaatii vähintään PHP-version 4.3.0 tai 5.1.0 (5.0.x sisältää monia tunnettuja ongelmia).</p> <p>Käytössäsi on versio {$a}</p> <p>Sinun pitää päivittää PHP tai siirtää palvelimelle jossa on uudempi PHP.<br /> (Jos käytössäsi on 5.0.x voit myös päivittää alaspäin 4.4.x -versioon)</p>';
+$string['phpversionhelp'] = '<p>Moodle vaatii PHP-version vähintään 5.6.5 tai 7.1 (7.0.x:ssä on joitain rajoituksia).</p>
+<p>Käytät tällä hetkellä versiota {$a}.</p>
+<p>Sinun on päivitettävä PHP tai siirryttävä palvelimelle, jossa on uudempi PHP-versio.</p>';
 $string['welcomep10'] = '{$a->installername} ({$a->installerversion})';
 $string['welcomep20'] = 'Näet tämän sivun koska olet onnistuneesti asentanut ja käynnistänyt <strong>{$a->packname} {$a->packversion}</strong> paketin tietokoneellasi.
 Onnittelut!';

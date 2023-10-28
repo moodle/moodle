@@ -24,8 +24,8 @@ use advanced_testcase;
  * @package   mod_bigbluebuttonbn
  * @copyright 2019 onwards, Blindside Networks Inc
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_bigbluebuttonbn\task\send_notification
- * @covers \mod_bigbluebuttonbn\task\send_notification
+ * @coversDefaultClass \mod_bigbluebuttonbn\task\base_send_notification
+ * @covers \mod_bigbluebuttonbn\task\base_send_notification
  * @covers \mod_bigbluebuttonbn\task\send_recording_ready_notification
  */
 class send_recording_ready_notification_test extends advanced_testcase {

@@ -180,5 +180,5 @@ $string['XOF'] = 'CFA Franc BCEAO';
 $string['XPF'] = 'CFP Franc';
 $string['YER'] = 'Yemeni Rial';
 $string['ZAR'] = 'South African Rand';
-$string['ZMK'] = 'Zambian Kwacha';
+$string['ZMW'] = 'Zambian Kwacha';
 $string['ZWL'] = 'Zimbabwe Dollar';

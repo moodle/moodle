@@ -57,12 +57,9 @@ Feature: Automatic deletion of groups and groupings
 
   @javascript @skip_chrome_zerosize
   Scenario: Delete groups and groupings with and without ID numbers without the 'moodle/course:changeidnumber' capability
-    Given I log out
-    And I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
-     | moodle/course:changeidnumber | Prevent |
-    And I log out
-    And I log in as "teacher1"
+    Given the following "role capability" exists:
+      | role                         | editingteacher |
+      | moodle/course:changeidnumber | prevent        |
     And I am on the "Course 1" "groups" page
     When I set the field "groups" to "Group (with ID) (0)"
     Then the "Delete selected group" "button" should be disabled

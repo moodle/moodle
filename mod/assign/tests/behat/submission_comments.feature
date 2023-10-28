@@ -12,7 +12,7 @@ Feature: In an assignment, students can comment in their submissions
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
-      | student2 | Student | 1 | student2@example.com |
+      | student2 | Student | 2 | student2@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -49,13 +49,9 @@ Feature: In an assignment, students can comment in their submissions
     Given the following "activities" exist:
       | activity  | course  | name                  | assignsubmission_onlinetext_enabled  |
       | assign    | C1      | Test assignment name  | 1                                    |
-    And I am on the "Test assignment name" Activity page logged in as student1
-    And I press "Add submission"
-    And I set the following fields to these values:
-      | Online text | I'm the student submission |
-    And I press "Save changes"
-    And I log out
-
+    And the following "mod_assign > submissions" exist:
+      | assign                | user      | onlinetext              |
+      | Test assignment name  | student1  | student one submission  |
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I follow "View all submissions"
     And I click on "Grade" "link" in the "Student 1" "table_row"

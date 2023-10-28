@@ -249,5 +249,20 @@ function xmldb_h5pactivity_upgrade($oldversion) {
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2022112801) {
+
+        // Remove any orphaned attempt/result records (pointing to non-existing activities).
+        $DB->delete_records_select('h5pactivity_attempts', 'NOT EXISTS (
+            SELECT 1 FROM {h5pactivity} h5p WHERE h5p.id = {h5pactivity_attempts}.h5pactivityid
+        )');
+
+        $DB->delete_records_select('h5pactivity_attempts_results', 'NOT EXISTS (
+            SELECT 1 FROM {h5pactivity_attempts} attempt WHERE attempt.id = {h5pactivity_attempts_results}.attemptid
+        )');
+
+        // H5pactivity savepoint reached.
+        upgrade_mod_savepoint(true, 2022112801, 'h5pactivity');
+    }
+
     return true;
 }

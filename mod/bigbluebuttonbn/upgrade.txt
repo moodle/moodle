@@ -1,5 +1,9 @@
 This files describes API changes in the bigbluebuttonbn code.
 
+=== 4.1.3 ===
+* Add a new parameter for mod_bigbluebuttonbn\recording::sync_pending_recordings_from_server so sync only 'dismissed' recordings
+  (This was fixed in 4.2, 4.1.3 and 4.0.8).
+
 === 4.1 ===
 * External function mod_bigbluebuttonbn\external\meeting_info now return the list of the instance features and whether they are
   enabled or not.

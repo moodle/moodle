@@ -426,6 +426,12 @@ class htmlpurifier_test extends \basic_testcase {
                 '<video %1$s>Did not work <a href="http://example.com/prettygood.mp4">click here to download</a></video>',
                 '<div class="text_to_html"><video %1$s>Did not work <a href="http://example.com/prettygood.mp4">' .
                 'click here to download</a></video></div>'
+            ]) + $generatetestcases('Video inside an inline tag', $videoattrs + ['src="http://example.com/prettygood.mp4'], [
+                '<em><video %1$s>Oh, that\'s pretty bad 😦</video></em>',
+                '<div class="text_to_html"><em><video %1$s>Oh, that\'s pretty bad 😦</video></em></div>'
+            ]) + $generatetestcases('Video inside a block tag', $videoattrs + ['src="http://example.com/prettygood.mp4'], [
+                '<p><video %1$s>Oh, that\'s pretty bad 😦</video></p>',
+                '<div class="text_to_html"><p><video %1$s>Oh, that\'s pretty bad 😦</video></p></div>'
             ]) + $generatetestcases('Source tag without video or audio', $videoattrs, [
                 'some text <source src="http://example.com/getup.wav" type="audio/wav"> the end',
                 '<div class="text_to_html">some text  the end</div>'

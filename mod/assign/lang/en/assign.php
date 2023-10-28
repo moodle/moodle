@@ -175,6 +175,7 @@ $string['submissionempty'] = 'Nothing was submitted';
 $string['submissionmodified'] = 'You have existing submission data. Please leave this page and try again.';
 $string['submissionmodifiedgroup'] = 'The submission has been modified by somebody else. Please leave this page and try again.';
 $string['duedatereached'] = 'The due date for this assignment has now passed';
+$string['duedateaftersubmissionvalidation'] = 'Due date must be after the allow submissions from date.';
 $string['duedatevalidation'] = 'Due date cannot be earlier than the allow submissions from date.';
 $string['editattemptfeedback'] = 'Edit the grade and feedback for attempt number {$a}.';
 $string['editonline'] = 'Edit online';

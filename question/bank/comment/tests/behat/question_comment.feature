@@ -74,13 +74,11 @@ Feature: A Teacher can comment in a question
 
   @javascript
   Scenario: Teacher with comment permissions for their own questions but not others questions
-    Given I log in as "admin"
-    And I set the following system permissions of "Teacher" role:
-      | capability                  | permission |
-      | moodle/question:commentmine | Allow      |
-      | moodle/question:commentall  | Prevent    |
-    And I log out
-    Given I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
+    Given the following "role capability" exists:
+      | role                        | editingteacher |
+      | moodle/question:commentmine | allow          |
+      | moodle/question:commentall  | prevent        |
+    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "teacher1"
     And I set the field "Select a category" to "Test questions"
     And I choose "Preview" action for "First question" in the question bank
     Then I should not see "Save comment"

@@ -313,39 +313,82 @@ class async_helper  {
      * Get markup for in progress async backups,
      * to use in backup table UI.
      *
-     * @param \core_backup_renderer $renderer The backup renderer object.
+     * @param string $filearea The filearea to get backup data for.
      * @param integer $instanceid The context id to get backup data for.
      * @return array $tabledata the rows of table data.
      */
-    public static function get_async_backups($renderer, $instanceid) {
+    public static function get_async_backups($filearea, $instanceid) {
         global $DB;
 
-        $tabledata = array();
+        $backups = [];
 
-        // Get relevant backup ids based on context instance id.
-        $select = 'itemid = :itemid AND execution = :execution AND status < :status1 AND status > :status2 ' .
+        $table = 'backup_controllers';
+        $select = 'execution = :execution AND status < :status1 AND status > :status2 ' .
             'AND operation = :operation';
         $params = [
-            'itemid' => $instanceid,
             'execution' => backup::EXECUTION_DELAYED,
             'status1' => backup::STATUS_FINISHED_ERR,
             'status2' => backup::STATUS_NEED_PRECHECK,
             'operation' => 'backup',
         ];
+        $sort = 'timecreated DESC';
+        $fields = 'id, backupid, status, timecreated';
 
-        $backups = $DB->get_records_select('backup_controllers', $select, $params, 'timecreated DESC', 'id, backupid, timecreated');
-        foreach ($backups as $backup) {
-            $bc = \backup_controller::load_controller($backup->backupid);  // Get the backup controller.
-            $filename = $bc->get_plan()->get_setting('filename')->get_value();
-            $timecreated = $backup->timecreated;
-            $status = $renderer->get_status_display($bc->get_status(), $bc->get_backupid());
-            $bc->destroy();
+        if ($filearea == 'backup') {
+            // Get relevant backup ids based on user id.
+            $params['userid'] = $instanceid;
+            $select = 'userid = :userid AND ' . $select;
+            $records = $DB->get_records_select($table, $select, $params, $sort, $fields);
+            foreach ($records as $record) {
+                $bc = \backup_controller::load_controller($record->backupid);
 
-            $tablerow = array($filename, userdate($timecreated), '-', '-', '-', $status);
-            $tabledata[] = $tablerow;
+                // Get useful info to render async status in correct area.
+                list($hasusers, $isannon) = self::get_userdata_backup_settings($bc);
+                // Backup has users and is not anonymised -> don't show it in users backup file area.
+                if ($hasusers && !$isannon) {
+                    continue;
+                }
+
+                $record->filename = $bc->get_plan()->get_setting('filename')->get_value();
+                $bc->destroy();
+                array_push($backups, $record);
+            }
+        } else {
+            if ($filearea == 'course' || $filearea == 'activity') {
+                // Get relevant backup ids based on context instance id.
+                $params['itemid'] = $instanceid;
+                $select = 'itemid = :itemid AND ' . $select;
+                $records = $DB->get_records_select($table, $select, $params, $sort, $fields);
+                foreach ($records as $record) {
+                    $bc = \backup_controller::load_controller($record->backupid);
+
+                    // Get useful info to render async status in correct area.
+                    list($hasusers, $isannon) = self::get_userdata_backup_settings($bc);
+                    // Backup has no user or is anonymised -> don't show it in course/activity backup file area.
+                    if (!$hasusers || $isannon) {
+                        continue;
+                    }
+
+                    $record->filename = $bc->get_plan()->get_setting('filename')->get_value();
+                    $bc->destroy();
+                    array_push($backups, $record);
+                }
+            }
         }
 
-        return $tabledata;
+        return $backups;
+    }
+
+    /**
+     * Get the user data settings for backups.
+     *
+     * @param \backup_controller $backupcontroller The backup controller object.
+     * @return array Array of user data settings.
+     */
+    public static function get_userdata_backup_settings(\backup_controller $backupcontroller): array {
+        $hasusers = (bool)$backupcontroller->get_plan()->get_setting('users')->get_value(); // Backup has users.
+        $isannon = (bool)$backupcontroller->get_plan()->get_setting('anonymize')->get_value(); // Backup is anonymised.
+        return [$hasusers, $isannon];
     }
 
     /**

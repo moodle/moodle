@@ -225,9 +225,13 @@ class calculated {
             $toinsert->standarderror = null;
         }
 
+        // Delete older statistics before we save the new ones.
+        $transaction = $DB->start_delegated_transaction();
+        $DB->delete_records('quiz_statistics', ['hashcode' => $qubaids->get_hash_code()]);
+
         // Store the data.
         $DB->insert_record('quiz_statistics', $toinsert);
-
+        $transaction->allow_commit();
     }
 
     /**

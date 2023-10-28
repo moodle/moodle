@@ -1,7 +1,7 @@
 This files describes API changes in /repository/ repository system,
 information provided here is intended especially for developers. Full
 details of the repository API are available on Moodle docs:
-http://docs.moodle.org/dev/Repository_API
+https://moodledev.io/docs/apis/plugintypes/repository
 
 === 4.0 ===
 * The repository_boxnet has been completely removed.
@@ -123,4 +123,4 @@ The skydrive repository is deprecated - please migrate to the newer onedrive rep
   infromation about the source of a file.
 
 * The API was extended to allow repositories can now support external references, please
-  see http://docs.moodle.org/dev/Repository_API for further details.
+  see https://moodledev.io/docs/apis/plugintypes/repository for further details.

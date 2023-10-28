@@ -1,6 +1,10 @@
 This files describes API changes in /customfield/*,
 Information provided here is intended especially for developers.
 
+=== 4.1.5 ===
+* Field categories are now consistently of type `PARAM_TEXT`, ensure instance `get_formatted_name()` helper is used
+  during output
+
 === 3.11 ===
 * Methods \core_customfield\handler::get_field_config_form() and \core_customfield\handler::setup_edit_page() are no
   longer used. Components that define custom fields areas do not need to implement them. Field edit form opens in

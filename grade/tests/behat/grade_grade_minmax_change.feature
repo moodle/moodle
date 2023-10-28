@@ -19,9 +19,7 @@ Feature: We can change the maximum and minimum number of points for manual items
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
+    And I am on the "Course 1" "grades > gradebook setup" page logged in as "teacher1"
     And I press "Add grade item"
     And I set the following fields to these values:
       | Item name | Manual item 1 |
@@ -34,8 +32,7 @@ Feature: We can change the maximum and minimum number of points for manual items
     And I press "Save changes"
 
   Scenario: Change maximum number of points on a graded item.
-    And I am on "Course 1" course homepage
-    And I navigate to "View > Grader report" in the course gradebook
+    Given I am on the "Course 1" "grades > Grader report > View" page
     And I turn editing mode on
     And I give the grade "10.00" to the user "Student 1" for the grade item "Manual item 1"
     And I give the grade "8.00" to the user "Student 2" for the grade item "Manual item 1"

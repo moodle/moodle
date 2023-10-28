@@ -49,7 +49,7 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
      * timezone => int|float|string (optional) timezone modifier used for edge case only.
      *      If not specified, then date is caclulated based on current user timezone.
      *      Note: dst will be calculated for string timezones only
-     *      {@link http://docs.moodle.org/dev/Time_API#Timezone}
+     *      {@link https://moodledev.io/docs/apis/subsystems/time#timezone}
      * optional => if true, show a checkbox beside the date to turn it on (or off)
      * @var array
      */
@@ -127,6 +127,11 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
         if (right_to_left()) {
             $dateformat = array_reverse($dateformat);
         }
+        // If optional we add a checkbox which the user can use to turn if on.
+        if ($this->_options['optional']) {
+            $this->_elements[] = $this->createFormElement('checkbox', 'enabled', null,
+                get_string('enable'), $this->getAttributes(), true);
+        }
         foreach ($dateformat as $key => $value) {
             // E_STRICT creating elements without forms is nasty because it internally uses $this
             $this->_elements[] = $this->createFormElement('select', $key, get_string($key, 'form'), $value, $this->getAttributes(), true);
@@ -136,10 +141,6 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
             $image = $OUTPUT->pix_icon('i/calendar', get_string('calendar', 'calendar'), 'moodle');
             $this->_elements[] = $this->createFormElement('link', 'calendar',
                     null, '#', $image);
-        }
-        // If optional we add a checkbox which the user can use to turn if on
-        if ($this->_options['optional']) {
-            $this->_elements[] = $this->createFormElement('checkbox', 'enabled', null, get_string('enable'), $this->getAttributes(), true);
         }
         foreach ($this->_elements as $element){
             if (method_exists($element, 'setHiddenLabel')){

@@ -31,9 +31,10 @@ require_once($CFG->dirroot . '/question/type/multichoice/edit_multichoice_form.p
 /**
  * Unit tests for the multiple choice question definition class.
  *
- * @package    qtype_multichoice
- * @copyright  2009 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_multichoice
+ * @copyright 2009 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \qtype_multichoice
  */
 class question_type_test extends \advanced_testcase {
     protected $qtype;
@@ -70,6 +71,12 @@ class question_type_test extends \advanced_testcase {
     public function test_get_random_guess_score() {
         $q = $this->get_test_question_data();
         $this->assertEquals(0.5, $this->qtype->get_random_guess_score($q));
+    }
+
+    public function test_get_random_guess_score_broken_question() {
+        $q = $this->get_test_question_data();
+        $q->options->answers = [];
+        $this->assertNull($this->qtype->get_random_guess_score($q));
     }
 
     public function test_get_random_guess_score_multi() {

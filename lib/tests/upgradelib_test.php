@@ -910,7 +910,16 @@ class upgradelib_test extends advanced_testcase {
 
         upgrade_core_licenses();
 
-        $expectedshortnames = ['allrightsreserved', 'cc', 'cc-nc', 'cc-nc-nd', 'cc-nc-sa', 'cc-nd', 'cc-sa', 'public'];
+        $expectedshortnames = [
+            'allrightsreserved',
+            'cc-4.0',
+            'cc-nc-4.0',
+            'cc-nc-nd-4.0',
+            'cc-nc-sa-4.0',
+            'cc-nd-4.0',
+            'cc-sa-4.0',
+            'public',
+        ];
         $licenses = $DB->get_records('license');
 
         foreach ($licenses as $license) {
@@ -1352,6 +1361,29 @@ class upgradelib_test extends advanced_testcase {
         $this->assertInstanceOf(environment_results::class, check_xmlrpc_usage($result));
         $this->assertEquals('xmlrpc_webservice_usage', $result->getInfo());
         $this->assertFalse($result->getStatus());
+    }
+
+    /**
+     * Test the check_mod_assignment check if mod_assignment is still used.
+     *
+     * @covers ::check_mod_assignment
+     * @return void
+     */
+    public function test_check_mod_assignment_is_used(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $result = new environment_results('custom_checks');
+
+        if ($DB->get_manager()->table_exists('assignment')) {
+            $DB->insert_record('assignment', (object)['name' => 'test_assign', 'intro' => 'test_assign_intro']);
+
+            $this->assertNotNull(check_mod_assignment($result));
+            $this->assertEquals('Assignment 2.2 is in use', $result->getInfo());
+            $this->assertFalse($result->getStatus());
+        } else {
+            $this->assertTrue($result->getStatus());
+        }
     }
 
     /**

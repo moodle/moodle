@@ -533,7 +533,7 @@ class provider implements
             $sessiondata = (object) array_map(function($record) {
                 return [
                     'state' => $record->state,
-                    'sessdata' => base64_decode($record->sessdata),
+                    'sessdata' => ($record->sessdata !== null) ? base64_decode($record->sessdata) : '',
                     'timecreated' => transform::datetime($record->timecreated),
                     'timemodified' => transform::datetime($record->timemodified),
                     'firstip' => $record->firstip,

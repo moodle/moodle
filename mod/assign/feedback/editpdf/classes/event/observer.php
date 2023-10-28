@@ -51,6 +51,14 @@ class observer {
      * @param \mod_assign\event\base $event The submission created/updated event.
      */
     protected static function queue_conversion($event) {
+        $assign = $event->get_assign();
+        $plugin = $assign->get_feedback_plugin_by_type('editpdf');
+
+        if (!$plugin->is_visible() || !$plugin->is_enabled()) {
+            // The plugin is not enabled on this assignment instance, so nothing should be queued.
+            return;
+        }
+
         $data = [
             'submissionid' => $event->other['submissionid'],
             'submissionattempt' => $event->other['submissionattempt'],

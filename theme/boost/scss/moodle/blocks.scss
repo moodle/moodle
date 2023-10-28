@@ -32,7 +32,7 @@ $blocks-column-width: 360px !default;
     float: right;
 }
 
-$blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
+$blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width * 0.5 );
 
 /* We put an absolutely positioned div in a relatively positioned div so it takes up no space */
 @include media-breakpoint-up(sm) {
@@ -53,8 +53,8 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width / 2 );
         width: 4rem;
         height: 2rem;
         background-color: $body-bg;
-        margin-left: $card-spacer-x / 2;
-        margin-bottom: $card-spacer-x / 2;
+        margin-left: $card-spacer-x * 0.5;
+        margin-bottom: $card-spacer-x * 0.5;
         border-bottom-left-radius: 0.5rem;
         float: right;
     }

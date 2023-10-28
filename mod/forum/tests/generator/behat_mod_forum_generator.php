@@ -47,19 +47,13 @@ class behat_mod_forum_generator extends behat_generator_base {
     }
 
     /**
-     * Get the forum id using an activity idnumber.
+     * Get the forum id using an activity idnumber or name.
      *
-     * @param string $idnumber
+     * @param string $idnumberorname The forum activity idnumber or name.
      * @return int The forum id
      */
-    protected function get_forum_id(string $idnumber): int {
-        global $DB;
-
-        if (!$id = $DB->get_field('course_modules', 'instance', ['idnumber' => $idnumber])) {
-            throw new Exception('The specified activity with idnumber "' . $idnumber . '" could not be found.');
-        }
-
-        return $id;
+    protected function get_forum_id(string $idnumberorname): int {
+        return $this->get_cm_by_activity_name('forum', $idnumberorname)->instance;
     }
 
     /**

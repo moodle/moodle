@@ -9,8 +9,8 @@ Feature: Override permissions on a context
       | username  | firstname | lastname | email          |
       | teacher1  | Teacher   | 1        | t1@example.com |
     And the following "courses" exist:
-      | fullname  | shortname |
-      | Course 1  | C1        |
+      | fullname  | shortname | enablecompletion |
+      | Course 1  | C1        | 1                |
     And the following "course enrolments" exist:
       | user      | course | role           |
       | teacher1  | C1     | editingteacher |
@@ -46,3 +46,24 @@ Feature: Override permissions on a context
     And I click on "Prohibit" "icon" in the "mod/forum:addnews" "table_row"
     And I press "Student"
     Then "Add announcementsmod/forum:addnews" row "Prohibited" column of "permissions" table should contain "Student"
+
+  Scenario: Dates, completion and description are not shown in permission and override pages
+    Given the following "activity" exists:
+      | course     | C1                        |
+      | activity   | feedback                  |
+      | name       | Test Feedback             |
+      | intro      | Test feedback description |
+      | completion | 1                         |
+      | timeopen   | ##1 Jan 2040 08:00##      |
+    And I am on the "Test Feedback" "feedback activity" page logged in as teacher1
+    And I should see "Test feedback description"
+    And "Mark as done" "button" should exist
+    And I should see "1 January 2040"
+    When I am on the "Test Feedback" "feedback activity permissions" page
+    Then I should not see "Test feedback description"
+    And "Mark as done" "button" should not exist
+    And I should not see "1 January 2040"
+    And I set the field "Advanced role override" to "Student"
+    And I should not see "Test feedback description"
+    And "Mark as done" "button" should not exist
+    And I should not see "1 January 2040"

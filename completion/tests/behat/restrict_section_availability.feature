@@ -16,15 +16,10 @@ Feature: Restrict sections availability through completion or grade conditions
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
-    And the following "activity" exists:
-      | activity                            | assign                                                               |
-      | course                              | C1                                                                   |
-      | section                             | 1                                                                    |
-      | name                                | Grade assignment                                                     |
-      | intro                               | Grade this assignment to revoke restriction on restricted assignment |
-      | assignsubmission_onlinetext_enabled | 1                                                                    |
-      | assignsubmission_file_enabled       | 0                                                                    |
-      | submissiondrafts                    | 0                                                                    |
+    And the following "activities" exist:
+      | activity | course | section | name             | intro                                                                             | assignsubmission_onlinetext_enabled | assignsubmission_file_enabled | submissiondrafts | content            |
+      | assign   | C1     | 1       | Grade assignment | Grade this assignment to revoke restriction on restricted assignment              | 1                                   | 0                             | 0                |                    |
+      | page     | C1     | 2       | Test page name   | Restricted section page resource, till grades in Grade assignment is at least 20% |                                     |                               |                  | Test page contents |
 
   @javascript
   Scenario: Show section greyed-out to student when completion condition is not satisfied
@@ -37,10 +32,6 @@ Feature: Restrict sections availability through completion or grade conditions
     And the following "activities" exist:
       | activity | course | section | intro      | completion | idnumber |
       | label    | C1     | 1       | Test label | 1          | 1        |
-    And I add a "Page" to section "2" and I fill the form with:
-      | Name | Test page name |
-      | Description | Test page description |
-      | Page content | Test page contents |
     When I edit the section "2"
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
@@ -49,9 +40,7 @@ Feature: Restrict sections availability through completion or grade conditions
       | cm | Test label |
       | Required completion status | must be marked complete |
     And I press "Save changes"
-    And I log out
-    And I log in as "student1"
-    And I am on "Course 1" course homepage
+    And I am on the "Course 1" course page logged in as "student1"
     Then I should see "Not available unless: The activity Test label is marked complete"
     And I should not see "Test page name"
     And I toggle the manual completion state of "Test label"
@@ -62,10 +51,6 @@ Feature: Restrict sections availability through completion or grade conditions
   Scenario: Show section greyed-out to student when grade condition is not satisfied
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Page" to section "2" and I fill the form with:
-      | Name | Test page name |
-      | Description | Restricted section page resource, till grades in Grade assignment is at least 20% |
-      | Page content | Test page contents |
     And I edit the section "2"
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
@@ -75,9 +60,7 @@ Feature: Restrict sections availability through completion or grade conditions
       | min    | 1                |
       | minval | 20               |
     And I press "Save changes"
-    And I log out
-    When I log in as "student1"
-    And I am on "Course 1" course homepage
+    When I am on the "Course 1" course page logged in as "student1"
     Then I should see "Not available unless: You achieve higher than a certain score in Grade assignment"
     And "Test page name" activity should be hidden
     And I am on the "Grade assignment" "assign activity" page
@@ -94,7 +77,6 @@ Feature: Restrict sections availability through completion or grade conditions
       | Grade | 21 |
     And I press "Save changes"
     And I follow "Edit settings"
-    And I log out
     And I am on the "Course 1" Course page logged in as student1
     And "Test page name" activity should be visible
     And I should not see "Not available unless: You achieve higher than a certain score in Grade assignment"

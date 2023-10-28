@@ -103,10 +103,11 @@ class helper {
      * @param question_preview_options $options the options in use
      * @param context $context context for the question preview
      * @param moodle_url $returnurl url of the page to return to
+     * @param int|null $restartversion version of the question to use when next restarting the preview.
      * @return moodle_url
      */
     public static function question_preview_action_url($questionid, $qubaid,
-            question_preview_options $options, $context, $returnurl = null): moodle_url {
+            question_preview_options $options, $context, $returnurl = null, $restartversion = null): moodle_url {
         $params = [
                 'id' => $questionid,
                 'previewid' => $qubaid,
@@ -118,6 +119,9 @@ class helper {
         }
         if ($returnurl !== null) {
             $params['returnurl'] = $returnurl;
+        }
+        if ($restartversion !== null) {
+            $params['restartversion'] = $restartversion;
         }
         $params = array_merge($params, $options->get_url_params());
         return new moodle_url('/question/bank/previewquestion/preview.php', $params);
@@ -158,10 +162,11 @@ class helper {
      * @param object $displayoptions display options for the question in preview
      * @param object $context context of the question for preview
      * @param moodle_url $returnurl url of the page to return to
-     * @param int|null $version version of the question in preview
+     * @param int|null $restartversion version of the question to use when next restarting the preview.
+     * @return void
      */
     public static function restart_preview($previewid, $questionid, $displayoptions, $context,
-        $returnurl = null, $version = null): void {
+        $returnurl = null, $restartversion = null): void {
         global $DB;
 
         if ($previewid) {
@@ -170,7 +175,8 @@ class helper {
             $transaction->allow_commit();
         }
         redirect(self::question_preview_url($questionid, $displayoptions->behaviour,
-                $displayoptions->maxmark, $displayoptions, $displayoptions->variant, $context, $returnurl, $version));
+                $displayoptions->maxmark, $displayoptions, $displayoptions->variant,
+                $context, $returnurl, $restartversion));
     }
 
     /**
@@ -185,17 +191,17 @@ class helper {
      * @param object $context context to run the preview in (affects things like
      *      filter settings, theme, lang, etc.) Defaults to $PAGE->context
      * @param moodle_url $returnurl url of the page to return to
-     * @param int $version version of the question
+     * @param int $restartversion The version of the question to use when restarting the preview.
      * @return moodle_url the URL
      */
     public static function question_preview_url($questionid, $preferredbehaviour = null,
             $maxmark = null, $displayoptions = null, $variant = null, $context = null, $returnurl = null,
-            $version = null): moodle_url {
+            $restartversion = null): moodle_url {
 
         $params = ['id' => $questionid];
 
-        if (!is_null($version)) {
-            $params['id'] = $version;
+        if (!is_null($restartversion)) {
+            $params['restartversion'] = $restartversion;
         }
         if (is_null($context)) {
             global $PAGE;
@@ -256,13 +262,12 @@ class helper {
      * @return array
      */
     public static function get_preview_extra_elements(question_definition $question, int $courseid): array {
-        $plugintype = 'qbank';
-        $functionname = 'preview_display';
-        $extrahtml = [];
+        $plugins = get_plugin_list_with_function('qbank', 'preview_display');
+
         $comment = '';
-        $plugins = get_plugin_list_with_function($plugintype, $functionname);
+        $extrahtml = [];
         foreach ($plugins as $componentname => $plugin) {
-            $pluginhtml = component_callback($componentname, $functionname, [$question, $courseid]);
+            $pluginhtml = component_callback($componentname, 'preview_display', [$question, $courseid]);
             if ($componentname === 'qbank_comment') {
                 $comment = $pluginhtml;
                 continue;
@@ -305,12 +310,30 @@ class helper {
         $questionids = [];
         $sql = 'SELECT version, questionid
                   FROM {question_versions}
-                 WHERE questionbankentryid = ?';
+                 WHERE questionbankentryid = ?
+              ORDER BY version';
 
         $versions = $DB->get_records_sql($sql, [$questionbankentryid]);
         foreach ($versions as $key => $version) {
             $questionids[$version->questionid] = $key;
         }
         return $questionids;
+    }
+
+    /**
+     * Return the question ID from the array of id => version that corresponds to the requested version.
+     *
+     * If the requested version is question_preview_options::ALWAYS_LATEST, this will return the latest version.
+     *
+     * @param array $versions
+     * @param int $restartversion
+     * @return ?int
+     */
+    public static function get_restart_id(array $versions, int $restartversion): ?int {
+        if ($restartversion === question_preview_options::ALWAYS_LATEST) {
+            return array_key_last($versions);
+        } else {
+            return array_search($restartversion, $versions) ?: null;
+        }
     }
 }

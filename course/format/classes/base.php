@@ -371,7 +371,7 @@ abstract class base {
      * This method ensures that 3rd party course format plugins that still use 'numsections' continue to
      * work but at the same time we no longer expect formats to have 'numsections' property.
      *
-     * @return int
+     * @return int The last section number, or -1 if sections are entirely missing
      */
     public function get_last_section_number() {
         $course = $this->get_course();
@@ -380,6 +380,12 @@ abstract class base {
         }
         $modinfo = get_fast_modinfo($course);
         $sections = $modinfo->get_section_info_all();
+
+        // Sections seem to be missing entirely. Avoid subsequent errors and return early.
+        if (count($sections) === 0) {
+            return -1;
+        }
+
         return (int)max(array_keys($sections));
     }
 
@@ -455,14 +461,6 @@ abstract class base {
 
     /**
      * Returns true if this course format uses activity indentation.
-     *
-     * Indentation is not supported by core formats anymore and may be deprecated in the future.
-     * This method will keep a default return "true" for legacy reasons but new formats should override
-     * it with a return false to prevent future deprecations.
-     *
-     * A message in a bottle: if indentation is finally deprecated, both behat steps i_indent_right_activity
-     * and i_indent_left_activity should be removed as well. Right now no core behat uses them but indentation
-     * is not officially deprecated so they are still available for the contrib formats.
      *
      * @return bool if the course format uses indentation.
      */

@@ -21,10 +21,10 @@ Feature: Post date columns data available
       | student2 | C1     | student        |
       | teacher1 | C2     | editingteacher |
     And the following "activities" exist:
-      | activity | name   | description     | course | idnumber   |
-      | forum    | forum1 | C1 first forum  | C1     | forum1C1   |
-      | forum    | forum2 | C1 second forum | C1     | forum2C1   |
-      | forum    | forum1 | C2 first forum  | C2     | forum1C2   |
+      | activity | name   | course | idnumber   |
+      | forum    | forum1 | C1     | forum1C1   |
+      | forum    | forum2 | C1     | forum2C1   |
+      | forum    | forum1 | C2     | forum1C2   |
     And the following forum discussions exist in course "Course 1":
       | user     | forum  | name        | message         | created                 |
       | teacher1 | forum1 | discussion1 | t1 earliest     | ##2018-01-02 09:00:00## |

@@ -53,6 +53,7 @@ $string['cutpastemozilla'] = 'Unfortunately, you cannot currently use normal key
 $string['delete'] = 'Delete';
 $string['editors'] = 'Text editors';
 $string['editorsettings'] = 'Manage editors';
+$string['editorxformat'] = '{$a} format';
 $string['enterurlfirst'] = 'You have to enter an URL first';
 $string['filebrowser'] = 'File Browser';
 $string['findwhat'] = 'Find';

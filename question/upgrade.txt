@@ -1,8 +1,33 @@
 This files describes API changes for code that uses the question API.
 
+=== 4.1.4 ===
+
+1) The core_question_generator::update_question has been changed so that it no longer modifies the $question
+   object that was passed in. Instead, the update question is returned (which was already the case).
+   If you were relying on the old behavioru in your tests, you will need a change like
+       $questiongenerator->update_question($question, ...);
+   to
+       $question = $questiongenerator->update_question($question, ...);
+   Also, the $question object returned now has fields questionbankentryid, versionid, version and status.
+
+2) question_stats_cleanup_task has been removed. It is no longer required. Instead,
+   older statistics are deleted whenever a new set are calculated for a particular quiz.
+
+3) In the past, the methods get_last_calculated_time() and get_cached() of \core_question\statistics\responses\analyser
+   and \core_question\statistics\questions\all_calculated_for_qubaid_condition
+   only returned the pre-computed statistics if they were computed less than 15 minutes ago. Now, they will
+   always return any computed statistics that exist. The constants TIME_TO_CACHE in those classes
+   will be deprecated in Moodle 4.3.
+
+4) The cache() methods of classes analysis_for_question, analysis_for_subpart, analysis_for_class
+   and analysis_for_actual_response now take an optional $calculationtime, which is used the time
+   stored in the database. If not given, time() is used.
+
+
 === 4.1 ===
 
 1) get_bulk_action_key() in core_question\local\bank\bulk_action_base class is deprecated and renamed to get_key().
+
 
 === 4.0.5 ===
 

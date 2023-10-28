@@ -65,8 +65,10 @@ const registerListenerEvents = (contentBank) => {
                 });
 
                 const heading = fileArea.querySelector(selectors.elements.heading);
-                heading.removeAttribute('role');
-                heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.removeAttribute('role'));
+                if (heading) {
+                    heading.removeAttribute('role');
+                    heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.removeAttribute('role'));
+                }
             }
             viewGrid.classList.add('active');
             viewList.classList.remove('active');
@@ -87,8 +89,10 @@ const registerListenerEvents = (contentBank) => {
                 });
 
                 const heading = fileArea.querySelector(selectors.elements.heading);
-                heading.setAttribute('role', 'row');
-                heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.setAttribute('role', 'columnheader'));
+                if (heading) {
+                    heading.setAttribute('role', 'row');
+                    heading.querySelectorAll(selectors.elements.cell).forEach(cell => cell.setAttribute('role', 'columnheader'));
+                }
             }
             viewList.classList.add('active');
             viewGrid.classList.remove('active');

@@ -14,20 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for (some of) mod/h5pactivity/lib.php.
- *
- * @package    mod_h5pactivity
- * @copyright  2021 Ilya Tregubov <ilya@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 
+namespace mod_h5pactivity;
+
+use advanced_testcase;
 use mod_h5pactivity\local\manager;
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/mod/h5pactivity/lib.php');
 
 /**
  * Unit tests for (some of) mod/h5pactivity/lib.php.
@@ -38,7 +29,17 @@ require_once($CFG->dirroot . '/mod/h5pactivity/lib.php');
 class lib_test extends advanced_testcase {
 
     /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once("{$CFG->dirroot}/mod/h5pactivity/lib.php");
+    }
+
+    /**
      * Test that assign_print_recent_activity shows ungraded submitted assignments.
+     *
+     * @covers ::h5pactivity_print_recent_activity
      */
     public function test_print_recent_activity() {
         $this->resetAfterTest();
@@ -64,6 +65,8 @@ class lib_test extends advanced_testcase {
 
     /**
      * Test that h5pactivity_print_recent_activity does not display any warnings when a custom fullname has been configured.
+     *
+     * @covers ::h5pactivity_print_recent_activity
      */
     public function test_print_recent_activity_fullname() {
         $this->resetAfterTest();
@@ -93,6 +96,8 @@ class lib_test extends advanced_testcase {
 
     /**
      * Test that h5pactivity_get_recent_mod_activity fetches the h5pactivity correctly.
+     *
+     * @covers ::h5pactivity_get_recent_mod_activity
      */
     public function test_h5pactivity_get_recent_mod_activity() {
         $this->resetAfterTest();
@@ -131,6 +136,8 @@ class lib_test extends advanced_testcase {
 
     /**
      * Test that h5pactivity_get_recent_mod_activity fetches activity correctly.
+     *
+     * @covers ::h5pactivity_fetch_recent_activity
      */
     public function test_h5pactivity_fetch_recent_activity() {
         global $DB;

@@ -39,7 +39,7 @@ require_once($CFG->dirroot.'/cache/locallib.php');
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class cache_disabled extends cache {
+class cache_disabled extends cache implements cache_loader_with_locking {
 
     /**
      * Constructs the cache.
@@ -204,20 +204,30 @@ class cache_disabled extends cache {
     /**
      * Pretend that we got a lock to avoid errors.
      *
-     * @param string $key
+     * @param int|string $key
      * @return bool
      */
-    public function acquire_lock(string $key) : bool {
+    public function acquire_lock($key) : bool {
         return true;
     }
 
     /**
      * Pretend that we released a lock to avoid errors.
      *
-     * @param string $key
-     * @return void
+     * @param int|string $key
+     * @return bool
      */
-    public function release_lock(string $key) : bool {
+    public function release_lock($key) : bool {
+        return true;
+    }
+
+    /**
+     * Pretend that we have a lock to avoid errors.
+     *
+     * @param int|string $key
+     * @return bool
+     */
+    public function check_lock_state($key) : bool {
         return true;
     }
 }

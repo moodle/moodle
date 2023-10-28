@@ -32,7 +32,7 @@ module.exports = grunt => {
                 }
             },
             options: {
-                implementation: require('node-sass'),
+                implementation: require('sass'),
                 includePaths: ["theme/boost/scss/", "theme/classic/scss/"]
             }
         },

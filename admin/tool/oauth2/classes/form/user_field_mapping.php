@@ -60,7 +60,7 @@ class user_field_mapping extends persistent {
 
         // Internal.
         $choices = $userfieldmapping->get_internalfield_list();
-        $mform->addElement('select', 'internalfield', get_string('userfieldinternalfield', 'tool_oauth2'), $choices);
+        $mform->addElement('selectgroups', 'internalfield', get_string('userfieldinternalfield', 'tool_oauth2'), $choices);
         $mform->addHelpButton('internalfield', 'userfieldinternalfield', 'tool_oauth2');
 
         $mform->addElement('hidden', 'action', 'edit');

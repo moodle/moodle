@@ -19,6 +19,9 @@ LTI-Tool-Provider-Library-PHP repo has been archived so it doesn't accept pull r
 * MDL-71920: Migrated from curl_exec and friends to use our Moodle curl wrapper,
 so we can better handle site security settings
 
+This local change has been made without the accompanying pull request as the upstream library is archived:
+* $FULLME is used as the URL for OAuth, to fix reverse proxy support (see MDL-64152)
+
 It is recommended by upstream to install depdencies via composer - but the composer installation is bundled
 with an autoloader so it's better to do it manually.
 
