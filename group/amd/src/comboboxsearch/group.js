@@ -53,6 +53,24 @@ export default class GroupSearch extends search_combobox {
             searchValueElement.value = '';
         });
 
+        this.$component.on('hide.bs.dropdown', () => {
+            this.searchInput.removeAttribute('aria-activedescendant');
+
+            const listbox = document.querySelector(`#${this.searchInput.getAttribute('aria-controls')}[role="listbox"]`);
+            listbox.querySelectorAll('.active[role="option"]').forEach(option => {
+                option.classList.remove('active');
+            });
+            listbox.scrollTop = 0;
+
+            // Use setTimeout to make sure the following code is executed after the click event is handled.
+            setTimeout(() => {
+                if (this.searchInput.value !== '') {
+                    this.searchInput.value = '';
+                    this.searchInput.dispatchEvent(new Event('input', {bubbles: true}));
+                }
+            });
+        });
+
         this.renderDefault().catch(Notification.exception);
     }
 
