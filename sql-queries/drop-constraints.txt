@@ -6,3 +6,8 @@ DROP CONSTRAINT "pqbs_quizatte_uni_uix";
 
 DROP INDEX "pqbs_file_pat_uix";
 DROP INDEX "pqbs_quizatte_uni_uix";
+
+
+UPDATE "pqbs_course_sections" SET
+"availability" = '{"op":"&","c":[{"type":"role","id":3}],"showc":[true]}'
+WHERE "name" = 'Teacher Resources' 

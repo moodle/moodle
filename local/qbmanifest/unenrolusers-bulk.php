@@ -46,7 +46,6 @@ $farr = array(
 $cohort_idnumber = required_param('cohortid', PARAM_ALPHANUMEXT);
 $farr1 = $farr;
 unset($farr1["DJL01"]);
-unset($farr1["DPL12"]);
 
 foreach($farr1 as $fak1 => $fav1)
 {
