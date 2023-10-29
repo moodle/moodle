@@ -1033,7 +1033,12 @@
                 "uid": "DPL12-TP7-CHDRN10",
                 "fname": "DPL12-TP7-CHDRN10.json",
                 "type": "assignment"
-              }
+              },
+             {
+               "uid": "DPL12-U07-CHDRN1",
+               "fname": "DPL12-U07-CHDRN1.json",
+               "type": "quiz"
+             }
             ],
             "teacheronly": "no"
           },
