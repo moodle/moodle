@@ -20,6 +20,8 @@
     The user selector trigger element.
 
     Context variables required for this template:
+    * name - The name of the input element representing the user search combobox.
+    * value - The value of the input element representing the user search combobox.
     * currentvalue - If the user has already searched, set the value to that.
     * courseid - The course ID.
     * group - The group ID.
@@ -27,6 +29,8 @@
 
     Example context (json):
     {
+        "name": "input-1",
+        "value": "0",
         "currentvalue": "bar",
         "courseid": 2,
         "group": 25,
@@ -68,4 +72,4 @@
         {{/additionalattributes}}
     {{/ core/search_input_auto }}
 {{/currentvalue}}
-<input type="hidden" name="search" id="user-input-{{uniqid}}"/>
+<input type="hidden" name="{{name}}" value="{{value}}" id="user-input-{{uniqid}}"/>

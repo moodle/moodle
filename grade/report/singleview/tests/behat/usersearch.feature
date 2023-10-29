@@ -104,7 +104,7 @@ Feature: Within the singleview report, a teacher can search for users.
     Given I click on "Turtle" in the "user" search widget
     And I wait until the page is ready
     # The search input remains in the field on reload this is in keeping with other search implementations.
-    When the field "Search users" matches value "Turtle"
+    When the field "Search users" matches value "Turtle Manatee"
     # The users get preloaded for accessibility reasons.
     And "Turtle Manatee" "option_role" should exist
     # Test if we can then further retain the turtle result set and further filter from there.

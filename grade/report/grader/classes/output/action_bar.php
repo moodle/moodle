@@ -32,6 +32,9 @@ class action_bar extends \core_grades\output\action_bar {
     /** @var string $usersearch The content that the current user is looking for. */
     protected string $usersearch = '';
 
+    /** @var int $userid The ID of the user that the current user is looking for. */
+    protected int $userid = 0;
+
     /**
      * The class constructor.
      *
@@ -40,7 +43,13 @@ class action_bar extends \core_grades\output\action_bar {
     public function __construct(\context_course $context) {
         parent::__construct($context);
 
+        $this->userid = optional_param('gpr_userid', 0, PARAM_INT);
         $this->usersearch = optional_param('gpr_search', '', PARAM_NOTAGS);
+
+        if ($this->userid) {
+            $user = \core_user::get_user($this->userid);
+            $this->usersearch = fullname($user);
+        }
     }
 
     /**
@@ -108,6 +117,11 @@ class action_bar extends \core_grades\output\action_bar {
                 'courseid' => $courseid,
                 'resetlink' => $resetlink->out(false),
                 'group' => 0,
+                'name' => 'usersearch',
+                'value' => json_encode([
+                    'userid' => $this->userid,
+                    'search' => $this->usersearch,
+                ]),
             ]);
             $searchdropdown = new comboboxsearch(
                 true,

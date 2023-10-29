@@ -107,8 +107,7 @@ Feature: Within the User report, a teacher can search for users.
     And "Student 1" "heading" should exist
     And "Turtle Manatee" "heading" should exist
     And "Teacher 1" "heading" should not exist
-    And I click on "Clear" "link" in the ".user-search" "css_element"
-    And I wait until the page is ready
+    And "Clear" "link" should not exist in the ".user-search" "css_element"
     And "Dummy User" "heading" should exist
     And "User Example" "heading" should exist
     And "User Test" "heading" should exist
@@ -122,12 +121,12 @@ Feature: Within the User report, a teacher can search for users.
     And I should see "No results for \"a\""
 
   Scenario: A teacher can quickly tell that a search is active on the current table
-    Given I click on "Turtle" in the "user" search widget
-    # The search input remains in the field on reload this is in keeping with other search implementations.
-    When the field "Search users" matches value "Turtle"
+    When I click on "Turtle" in the "user" search widget
+    # The search input should contain the name of the user we have selected, so that it is clear that the result pertains to a specific user.
+    Then the field "Search users" matches value "Turtle Manatee"
     And I wait until "View all results (5)" "link" does not exist
     # Test if we can then further retain the turtle result set and further filter from there.
-    Then I set the field "Search users" to "Turtle plagiarism"
+    And I set the field "Search users" to "Turtle plagiarism"
     And I wait until "Turtle Manatee" "list_item" does not exist
     And I should see "No results for \"Turtle plagiarism\""
 

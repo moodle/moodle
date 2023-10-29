@@ -156,11 +156,11 @@ Feature: Within the grader report, test that we can search for users
       | Dummy User         |
 
   Scenario: A teacher can quickly tell that a search is active on the current table
-    Given I click on "Turtle" in the "user" search widget
-    # The search input remains in the field on reload this is in keeping with other search implementations.
-    When the field "Search users" matches value "Turtle"
+    When I click on "Turtle" in the "user" search widget
+    # The search input should contain the name of the user we have selected, so that it is clear that the result pertains to a specific user.
+    Then the field "Search users" matches value "Turtle Manatee"
     # Test if we can then further retain the turtle result set and further filter from there.
-    Then I set the field "Search users" to "Turtle plagiarism"
+    And I set the field "Search users" to "Turtle plagiarism"
     And "Turtle Manatee" "list_item" should not be visible
     And I should see "No results for \"Turtle plagiarism\""
 
@@ -370,7 +370,7 @@ Feature: Within the grader report, test that we can search for users
     And I give the grade "80.00" to the user "Student test32" for the grade item "Test assignment one"
     And I press "Save changes"
     And I wait until the page is ready
-    Then the field "Search users" matches value "test32"
+    Then the field "Search users" matches value "Student test32"
     And the following should exist in the "user-grades" table:
       | -1-                   |
       | Student test32        |
@@ -380,7 +380,7 @@ Feature: Within the grader report, test that we can search for users
     And I give the grade "70.00" to the user "Student test31" for the grade item "Test assignment one"
     And I press "Save changes"
     And I wait until the page is ready
-    Then the field "Search users" matches value "test3"
+    Then the field "Search users" matches value "Student test31"
     And the following should exist in the "user-grades" table:
       | -1-                   |
       | Student test31        |

@@ -46,12 +46,22 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
      */
     public function users_selector(object $course, ?int $userid = null, ?int $groupid = null): string {
         $resetlink = new moodle_url('/grade/report/singleview/index.php', ['id' => $course->id, 'group' => $groupid ?? 0]);
+        $submitteduserid = optional_param('userid', '', PARAM_INT);
+
+        if ($submitteduserid) {
+            $user = core_user::get_user($submitteduserid);
+            $currentvalue = fullname($user);
+        } else {
+            $currentvalue = '';
+        }
+
         $data = [
-            'currentvalue' => optional_param('searchvalue', '', PARAM_NOTAGS),
+            'currentvalue' => $currentvalue,
             'courseid' => $course->id,
             'group' => $groupid ?? 0,
             'resetlink' => $resetlink->out(false),
-            'userid' => $userid ?? 0
+            'name' => 'userid',
+            'value' => $submitteduserid ?? '',
         ];
         $dropdown = new comboboxsearch(
             true,
