@@ -211,7 +211,8 @@ const dropdownFix = () => {
 
         // We need to focus on the menu trigger.
         const trigger = e.target.querySelector('[data-toggle="dropdown"]');
-        const focused = document.activeElement != document.body ? document.activeElement : null;
+        // If it's a click event, then no element is focused because the clicked element is inside a closed dropdown.
+        const focused = e.clickEvent?.target || (document.activeElement !== document.body ? document.activeElement : null);
         if (trigger && focused && e.target.contains(focused)) {
             shiftFocus(trigger, () => {
                 if (document.activeElement === document.body) {
@@ -348,7 +349,6 @@ const comboboxFix = () => {
             const listbox = option.closest('[role="listbox"]');
             const combobox = document.querySelector(`[role="combobox"][aria-controls="${listbox.id}"]`);
             if (combobox) {
-                combobox.focus();
                 selectOption(combobox, option);
             }
         }
