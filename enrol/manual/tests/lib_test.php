@@ -761,4 +761,32 @@ class lib_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test the behaviour of find_instance().
+     *
+     * @covers ::find_instance
+     */
+    public function test_find_instance() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $cat = $this->getDataGenerator()->create_category();
+        // When we create a course, a manual enrolment instance is also created.
+        $course = $this->getDataGenerator()->create_course(['category' => $cat->id, 'shortname' => 'ANON']);
+
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        $manualplugin = enrol_get_plugin('manual');
+
+        $expected = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'manual']);
+
+        // Let's try to add second instance - only 1 manual instance is possible.
+        $instanceid2 = $manualplugin->add_instance($course, ['roleid' => $teacherrole->id]);
+        $this->assertNull($instanceid2);
+
+        $enrolmentdata = [];
+        $actual = $manualplugin->find_instance($enrolmentdata, $course->id);
+        $this->assertEquals($expected->id, $actual->id);
+    }
+
 }

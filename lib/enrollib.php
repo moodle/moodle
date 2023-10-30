@@ -3510,4 +3510,17 @@ abstract class enrol_plugin {
         return null;
     }
 
+    /**
+     * Finds matching instances for a given course.
+     *
+     * @param array $enrolmentdata enrolment data.
+     * @param int $courseid Course ID.
+     * @return stdClass|null Matching instance
+     */
+    public function find_instance(array $enrolmentdata, int $courseid) : ?stdClass {
+
+        // By default, we assume we can't uniquely identify an instance so better not update any.
+        // Plugins can override this if they can uniquely identify an instance.
+        return null;
+    }
 }

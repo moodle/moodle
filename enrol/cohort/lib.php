@@ -550,20 +550,37 @@ class enrol_cohort_plugin extends enrol_plugin {
             }
         }
 
-        if (!isset($enrolmentdata['cohortname'])) {
-            $errors['missingmandatoryfields'] =
-                new lang_string('missingmandatoryfields', 'tool_uploadcourse',
-                    'cohortname');
+        if (!isset($enrolmentdata['cohortidnumber'])) {
+            $missingmandatoryfields = 'cohortidnumber';
         } else {
-            $cohortname = $enrolmentdata['cohortname'];
-            // Cohort name is not unique.
-            $cohortid = $DB->get_field('cohort', 'MIN(id)', ['name' => $cohortname]);
+            $cohortidnumber = $enrolmentdata['cohortidnumber'];
+            // Cohort idnumber is unique.
+            $cohortid = $DB->get_field('cohort', 'id', ['idnumber' => $cohortidnumber]);
 
             if (!$cohortid) {
                 $errors['unknowncohort'] =
-                    new lang_string('unknowncohort', 'cohort', $cohortname);
+                    new lang_string('unknowncohort', 'cohort', $cohortidnumber);
             }
         }
+
+        if (!isset($enrolmentdata['role'])) {
+            // We require role since we need it to identify enrol instance.
+            if (isset($missingmandatoryfields)) {
+                $missingmandatoryfields .= ', role';
+            } else {
+                $missingmandatoryfields = 'role';
+            }
+            $errors['missingmandatoryfields'] =
+                new lang_string('missingmandatoryfields', 'tool_uploadcourse',
+                    $missingmandatoryfields);
+        } else {
+            $roleid = $DB->get_field('role', 'id', ['shortname' => $enrolmentdata['role']]);
+            if (!$roleid) {
+                $errors['unknownrole'] =
+                    new lang_string('unknownrole', 'error', s($enrolmentdata['role']));
+            }
+        }
+
         return $errors;
     }
 
@@ -577,9 +594,11 @@ class enrol_cohort_plugin extends enrol_plugin {
     public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid) : array {
         global $DB;
 
-        // Cohort name is not unique.
-        $enrolmentdata['customint1'] =
-            $DB->get_field('cohort', 'MIN(id)', ['name' => $enrolmentdata['cohortname']]);
+        if (isset($enrolmentdata['cohortidnumber'])) {
+            // Cohort idnumber is unique.
+            $enrolmentdata['customint1'] =
+                $DB->get_field('cohort', 'id', ['idnumber' => $enrolmentdata['cohortidnumber']]);
+        }
 
         if (isset($enrolmentdata['addtogroup'])) {
             if ($enrolmentdata['addtogroup'] == COHORT_NOGROUP) {
@@ -602,10 +621,12 @@ class enrol_cohort_plugin extends enrol_plugin {
      */
     public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null) : ?lang_string {
         $error = null;
-        $cohortid = $enrolmentdata['customint1'];
-        $coursecontext = \context_course::instance($courseid);
-        if (!cohort_get_cohort($cohortid, $coursecontext)) {
-            $error = new lang_string('contextcohortnotallowed', 'cohort', $enrolmentdata['cohortname']);
+        if (isset($enrolmentdata['customint1'])) {
+            $cohortid = $enrolmentdata['customint1'];
+            $coursecontext = \context_course::instance($courseid);
+            if (!cohort_get_cohort($cohortid, $coursecontext)) {
+                $error = new lang_string('contextcohortnotallowed', 'cohort', $enrolmentdata['cohortidnumber']);
+            }
         }
         return $error;
     }
@@ -633,6 +654,33 @@ class enrol_cohort_plugin extends enrol_plugin {
      */
     public function is_csv_upload_supported(): bool {
         return true;
+    }
+
+    /**
+     * Finds matching instances for a given course.
+     *
+     * @param array $enrolmentdata enrolment data.
+     * @param int $courseid Course ID.
+     * @return stdClass|null Matching instance
+     */
+    public function find_instance(array $enrolmentdata, int $courseid) : ?stdClass {
+        global $DB;
+        $instances = enrol_get_instances($courseid, false);
+
+        $instance = null;
+        if (isset($enrolmentdata['cohortidnumber']) && isset($enrolmentdata['role'])) {
+            $cohortid = $DB->get_field('cohort', 'id', ['idnumber' => $enrolmentdata['cohortidnumber']]);
+            $roleid = $DB->get_field('role', 'id', ['shortname' => $enrolmentdata['role']]);
+            if ($cohortid && $roleid) {
+                foreach ($instances as $i) {
+                    if ($i->enrol == 'cohort' && $i->customint1 == $cohortid && $i->roleid == $roleid) {
+                        $instance = $i;
+                        break;
+                    }
+                }
+            }
+        }
+        return $instance;
     }
 }
 

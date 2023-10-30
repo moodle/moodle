@@ -961,4 +961,32 @@ class self_test extends \advanced_testcase {
         // Self enrol has 2 enrol actions -- edit and unenrol.
         $this->assertCount(2, $actions);
     }
+
+    /**
+     * Test the behaviour of find_instance().
+     *
+     * @covers ::find_instance
+     */
+    public function test_find_instance() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $cat = $this->getDataGenerator()->create_category();
+        // When we create a course, a self enrolment instance is also created.
+        $course = $this->getDataGenerator()->create_course(['category' => $cat->id, 'shortname' => 'ANON']);
+
+        $teacherrole = $DB->get_record('role', ['shortname' => 'teacher']);
+        $selfplugin = enrol_get_plugin('self');
+
+        $instanceid1 = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'self']);
+
+        // Let's add a second instance.
+        $instanceid2 = $selfplugin->add_instance($course, ['roleid' => $teacherrole->id]);
+
+        $enrolmentdata = [];
+        // The first instance should be returned - due to sorting in enrol_get_instances().
+        $actual = $selfplugin->find_instance($enrolmentdata, $course->id);
+        $this->assertEquals($instanceid1->id, $actual->id);
+    }
+
 }
