@@ -124,7 +124,6 @@ class comboboxsearch implements renderable, templatable {
      */
     public function export_for_template(renderer_base $output): array {
         return [
-            'rtl' => right_to_left(),
             'renderlater' => $this->renderlater,
             'buttoncontent' => $this->buttoncontent ,
             'dropdowncontent' => $this->dropdowncontent,

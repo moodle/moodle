@@ -19,7 +19,6 @@
     Context variables required for this template:
     * name - The name of the input element representing the combobox.
     * value - The value of the input element representing the combobox.
-    * rtl - Is this dropdown being used in a RTL case? if so, we need to ensure it drops down in the right place.
     * renderlater - This determines if we show a placeholder whilst fetching content to replace within the placeholder region
     * buttoncontent - The string to be shown to users to trigger the dropdown
     * usebutton - If we want to use a button to trigger the dropdown, or just the dropdown itself
@@ -33,7 +32,6 @@
     {
         "name": "input-1",
         "value": "0",
-        "rtl": false,
         "renderlater": false,
         "usebutton": true,
         "buttoncontent": "Example dropdown button",
@@ -66,7 +64,7 @@
 
     {{^usebutton}}{{{buttoncontent}}}{{/usebutton}}
 
-    <div class="{{#dropdownclasses}}{{.}}{{/dropdownclasses}} dropdown-menu {{#rtl}}dropdown-menu-right{{/rtl}}"
+    <div class="{{#dropdownclasses}}{{.}}{{/dropdownclasses}} dropdown-menu"
         id="dialog-{{instance}}-{{uniqid}}"
         {{#usebutton}}
             role="dialog"
