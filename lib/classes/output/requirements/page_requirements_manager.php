@@ -298,7 +298,7 @@ class page_requirements_manager {
      * @return array List of safe config values that are available to javascript.
      */
     public function get_config_for_javascript(moodle_page $page, renderer_base $renderer) {
-        global $CFG;
+        global $CFG, $USER;
 
         if (empty($this->M_cfg)) {
             $iconsystem = \core\output\icon_system::instance();
@@ -336,6 +336,7 @@ class page_requirements_manager {
                 'langrev'               => get_string_manager()->get_revision(),
                 'templaterev'           => $this->get_templaterev(),
                 'siteId'                => (int) SITEID,
+                'userId'                => (int) $USER->id,
             ];
             if ($CFG->debugdeveloper) {
                 $this->M_cfg['developerdebug'] = true;
