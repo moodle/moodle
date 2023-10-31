@@ -8182,18 +8182,7 @@ function plugin_callback($type, $name, $feature, $action, $params = null, $defau
  * @return mixed
  */
 function component_callback($component, $function, array $params = array(), $default = null, bool $migratedtohook = false) {
-
     $functionname = component_callback_exists($component, $function);
-
-    if ($params && (array_keys($params) !== range(0, count($params) - 1))) {
-        // PHP 8 allows to have associative arrays in the call_user_func_array() parameters but
-        // PHP 7 does not. Using associative arrays can result in different behavior in different PHP versions.
-        // See https://php.watch/versions/8.0/named-parameters#named-params-call_user_func_array
-        // This check can be removed when minimum PHP version for Moodle is raised to 8.
-        debugging('Parameters array can not be an associative array while Moodle supports both PHP 7 and PHP 8.',
-            DEBUG_DEVELOPER);
-        $params = array_values($params);
-    }
 
     if ($functionname) {
         if ($migratedtohook) {
