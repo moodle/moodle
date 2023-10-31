@@ -645,12 +645,36 @@ All rights reserved.</copyright>
     <repository>https://github.com/php-fig/http-message</repository>
   </library>
   <library>
+    <location>psr/http-server-handler</location>
+    <name>psr/http-server-handler</name>
+    <description>Common interface for HTTP server-side request handler</description>
+    <version>1.0.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/http-server-handler</repository>
+  </library>
+  <library>
+    <location>psr/http-server-middleware</location>
+    <name>psr/http-server-middleware</name>
+    <description>Common interface for HTTP server-side middleware</description>
+    <version>1.0.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/http-server-middleware</repository>
+  </library>
+  <library>
     <location>psr/event-dispatcher</location>
     <name>event-dispatcher</name>
     <description>Provides interfaces that descirbe an event dispatching mechanism.</description>
     <version>1.0.0</version>
     <license>MIT</license>
     <repository>https://github.com/php-fig/event-dispatcher</repository>
+  </library>
+  <library>
+    <location>psr/log</location>
+    <name>log</name>
+    <description>Common interface for logging libraries</description>
+    <version>3.0.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/log</repository>
   </library>
   <library>
     <location>phpxmlrpc</location>
