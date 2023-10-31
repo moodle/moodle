@@ -37,6 +37,7 @@ Feature: In a report, admin can see configuration changes
     And I should not see "<excluded>" in the "reportbuilder-table" "table"
     Examples:
       | field     | search              | plugin | setting             | value  | excluded            |
+      | Plugin    | folder              | folder | maxsizetodownload   | 2048   | quiz                |
       | Setting   | initialnumfeedbacks | quiz   | initialnumfeedbacks | 5      | maxsizetodownload   |
       | Setting   | maxsizetodownload   | folder | maxsizetodownload   | 2048   | initialnumfeedbacks |
       | New value | Perth               | core   | defaultcity         | Perth  | maxsizetodownload   |
