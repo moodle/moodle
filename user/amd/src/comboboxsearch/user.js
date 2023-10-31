@@ -212,6 +212,16 @@ export default class UserSearch extends search_combobox {
     keyHandler(e) {
         // Switch the key presses to handle keyboard nav.
         switch (e.key) {
+            case 'ArrowUp':
+            case 'ArrowDown':
+                if (
+                    this.getSearchTerm() !== ''
+                    && !this.searchDropdown.classList.contains('show')
+                    && e.target.contains(this.combobox)
+                ) {
+                    this.renderAndShow();
+                }
+                break;
             case 'Enter':
             case ' ':
                 if (e.target.closest(this.selectors.resetPageButton)) {
