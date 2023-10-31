@@ -124,6 +124,9 @@ class core_component {
         'Kevinrob\\GuzzleCache' => 'lib/guzzlehttp/kevinrob/guzzlecache/src',
         'Aws' => 'lib/aws-sdk/src',
         'JmesPath' => 'lib/jmespath/src',
+        'Laravel\\SerializableClosure' => 'lib/laravel/serializable-closure/src',
+        'DI' => 'lib/php-di/php-di/src',
+        'Invoker' => 'lib/php-di/invoker/src',
     ];
 
     /**

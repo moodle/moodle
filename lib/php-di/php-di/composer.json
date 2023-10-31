@@ -1,0 +1,45 @@
+{
+    "name": "php-di/php-di",
+    "type": "library",
+    "description": "The dependency injection container for humans",
+    "keywords": ["di", "dependency injection", "container", "ioc", "psr-11", "psr11", "container-interop"],
+    "homepage": "https://php-di.org/",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "DI\\": "src/"
+        },
+        "files": [
+            "src/functions.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DI\\Test\\IntegrationTest\\": "tests/IntegrationTest/",
+            "DI\\Test\\UnitTest\\": "tests/UnitTest/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "format-code": "php-cs-fixer fix --allow-risky=yes"
+    },
+    "require": {
+        "php": ">=8.0",
+        "psr/container": "^1.1 || ^2.0",
+        "php-di/invoker": "^2.0",
+        "laravel/serializable-closure": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5",
+        "mnapoli/phpunit-easymock": "^1.3",
+        "friendsofphp/proxy-manager-lts": "^1",
+        "friendsofphp/php-cs-fixer": "^3",
+        "vimeo/psalm": "^4.6"
+    },
+    "provide": {
+        "psr/container-implementation": "^1.0"
+    },
+    "suggest": {
+        "friendsofphp/proxy-manager-lts": "Install it if you want to use lazy injection (version ^1)"
+    }
+}
