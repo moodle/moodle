@@ -779,8 +779,8 @@ EOF;
         if (!config::get('importrecordings_enabled')) {
             return false;
         }
-        if ($this->can_manage_recordings()) {
-            return true;
+        if (!$this->can_manage_recordings()) {
+            return false;
         }
 
         return $this->is_feature_enabled('importrecordings');
