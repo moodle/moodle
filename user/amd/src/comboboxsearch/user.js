@@ -111,14 +111,7 @@ export default class UserSearch extends search_combobox {
         this.setMatchedResults(await this.filterDataset(await this.getDataset()));
         this.filterMatchDataset();
 
-        const {html, js} = await renderForPromise('core_user/comboboxsearch/resultset', {
-            users: this.getMatchedResults().slice(0, 5),
-            hasresults: this.getMatchedResults().length > 0,
-            matches: this.getMatchedResults().length,
-            searchterm: this.getSearchTerm(),
-            selectall: this.selectAllResultsLink(),
-        });
-        replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+        await this.renderDropdown();
     }
 
     /**
@@ -137,13 +130,17 @@ export default class UserSearch extends search_combobox {
      * @returns {Array} The users that match the given criteria.
      */
     async filterDataset(filterableData) {
-        const stringMap = await this.getStringMap();
-        return filterableData.filter((user) => Object.keys(user).some((key) => {
-            if (user[key] === "" || user[key] === null || !stringMap.get(key)) {
-                return false;
-            }
-            return user[key].toString().toLowerCase().includes(this.getPreppedSearchTerm());
-        }));
+        if (this.getPreppedSearchTerm()) {
+            const stringMap = await this.getStringMap();
+            return filterableData.filter((user) => Object.keys(user).some((key) => {
+                if (user[key] === "" || user[key] === null || !stringMap.get(key)) {
+                    return false;
+                }
+                return user[key].toString().toLowerCase().includes(this.getPreppedSearchTerm());
+            }));
+        } else {
+            return [];
+        }
     }
 
     /**
