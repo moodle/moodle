@@ -910,6 +910,63 @@ class behat_navigation extends behat_base {
     }
 
     /**
+     * Opens a new tab with given name on the same URL as current page and switches to it.
+     *
+     * @param string $name Tab name that can be used for switching later (no whitespace)
+     * @When /^I open a tab named "(?<name>[^"]*)" on the current page$/
+     */
+    public function i_open_a_tab_on_the_current_page(string $name): void {
+        $this->open_tab($name, 'location.href');
+    }
+
+    /**
+     * Opens a new tab with given name on specified page, and switches to it.
+     *
+     * @param string $name Tab name that can be used for switching later (no whitespace)
+     * @param string $page Page name
+     * @When /^I open a tab named "(?<name>[^"]*)" on the "(?<page>[^"]*)" page$/
+     */
+    public function i_open_a_tab_on_the_page(string $name, string $page): void {
+        if ($page === 'current') {
+            $jstarget = 'location.href';
+        } else {
+            $jstarget = '"' . addslashes_js($this->resolve_page_helper($page)->out(false)) . '"';
+        }
+        $this->open_tab($name, $jstarget);
+    }
+
+    /**
+     * Opens a new tab with given name (on specified page), and switches to it.
+     *
+     * @param string $name Tab name that can be used for switching later (no whitespace)
+     * @param string $identifier Page identifier
+     * @param string $page Page type
+     * @When /^I open a tab named "(?<name>[^"]*)" on the "(?<identifier>[^"]*)" "(?<page>[^"]*)" page$/
+     */
+    public function i_open_a_tab_on_the_page_instance(string $name, string $identifier, string $page): void {
+        $this->open_tab($name, '"' . addslashes_js(
+            $this->resolve_page_instance_helper($identifier, $page)->out(false)) . '"');
+    }
+
+    /**
+     * Opens a new tab at the given target URL.
+     *
+     * @param string $name Name for tab
+     * @param string $jstarget Target in JavaScript syntax, i.e. if a string, must be quoted
+     */
+    protected function open_tab(string $name, string $jstarget): void {
+        // Tab names aren't allowed spaces, and our JavaScript below doesn't do any escaping.
+        if (clean_param($name, PARAM_ALPHANUMEXT) !== $name) {
+            throw new Exception('Tab name may not contain whitespace or special characters: "' . $name . '"');
+        }
+
+        // Normally you can't open a tab unless in response to a user action, but presumably Behat
+        // is exempt from this restriction, because it works to just open it directly.
+        $this->execute_script('window.open(' . $jstarget . ', "' . $name . '");');
+        $this->execute('behat_general::switch_to_window', [$name]);
+    }
+
+    /**
      * Opens the course homepage. (Consider using 'I am on the "shortname" "Course" page' step instead.)
      *
      * @Given /^I am on "(?P<coursefullname_string>(?:[^"]|\\")*)" course homepage$/
