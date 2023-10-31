@@ -431,16 +431,18 @@ class grade_item extends grade_object {
     public function delete($source=null) {
         global $DB;
 
-        $transaction = $DB->start_delegated_transaction();
-        $this->delete_all_grades($source);
-        $success = parent::delete($source);
-        $transaction->allow_commit();
-
-        if ($success) {
-            $event = \core\event\grade_item_deleted::create_from_grade_item($this);
-            $event->trigger();
+        try {
+            $transaction = $DB->start_delegated_transaction();
+            $this->delete_all_grades($source);
+            $success = parent::delete($source);
+            if ($success) {
+                $event = \core\event\grade_item_deleted::create_from_grade_item($this);
+                $event->trigger();
+            }
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
         }
-
         return $success;
     }
 
@@ -453,27 +455,30 @@ class grade_item extends grade_object {
     public function delete_all_grades($source=null) {
         global $DB;
 
-        $transaction = $DB->start_delegated_transaction();
+        try {
+            $transaction = $DB->start_delegated_transaction();
 
-        if (!$this->is_course_item()) {
-            $this->force_regrading();
-        }
-
-        if ($grades = grade_grade::fetch_all(array('itemid'=>$this->id))) {
-            foreach ($grades as $grade) {
-                $grade->delete($source);
+            if (!$this->is_course_item()) {
+                $this->force_regrading();
             }
+
+            if ($grades = grade_grade::fetch_all(['itemid' => $this->id])) {
+                foreach ($grades as $grade) {
+                    $grade->delete($source);
+                }
+            }
+
+            // Delete all the historical files.
+            // We only support feedback files for modules atm.
+            if ($this->is_external_item()) {
+                $fs = new file_storage();
+                $fs->delete_area_files($this->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
+            }
+
+            $transaction->allow_commit();
+        } catch (Exception $e) {
+            $transaction->rollback($e);
         }
-
-        // Delete all the historical files.
-        // We only support feedback files for modules atm.
-        if ($this->is_external_item()) {
-            $fs = new file_storage();
-            $fs->delete_area_files($this->get_context()->id, GRADE_FILE_COMPONENT, GRADE_HISTORY_FEEDBACK_FILEAREA);
-        }
-
-        $transaction->allow_commit();
-
         return true;
     }
 
