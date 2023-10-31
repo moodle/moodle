@@ -1354,6 +1354,7 @@ $string['supportemailsubject'] = 'Site support request - {$a}';
 $string['supportavailability'] = 'Support availability';
 $string['supportname'] = 'Support name';
 $string['supportpage'] = 'Contact site support link';
+$string['swaggerui'] = 'Moodle REST API UI (SwaggerUI)';
 $string['suspenduser'] = 'Suspend user account';
 $string['switchlang'] = 'Switch lang directory';
 $string['systempaths'] = 'System paths';

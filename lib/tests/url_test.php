@@ -669,4 +669,21 @@ final class url_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test that URL routed paths are generated correctly depending on the value of $CFG->routerconfigured.
+     */
+    public function test_routed_path(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $CFG->routerconfigured = false;
+        $url = url::routed_path('/example');
+        $this->assertSame('/r.php/example', $url->out_as_local_url(false));
+
+        $CFG->routerconfigured = true;
+        $url = url::routed_path('/example');
+        $this->assertSame('/example', $url->out_as_local_url(false));
+    }
 }
