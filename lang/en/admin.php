@@ -382,7 +382,6 @@ $string['configsitemailcharset'] = 'This setting specifies the default charset f
 $string['configsitemaxcategorydepth'] = 'Maximum category depth';
 $string['configsitemaxcategorydepthhelp'] = 'This specifies the maximum depth of child categories expanded when displaying categories or combo list. Deeper level categories will appear as links and user can expand them with AJAX request.';
 $string['configslasharguments'] = '\'Slash arguments\' (using <em>PATH_INFO</em>) is required for SCORM packages and multiple-file resources to display correctly. If your web server doesn\'t support \'slash arguments\' and you are unable to configure it, this setting can be disabled, though it will result in things not working.<br />Note: The use of \'slash arguments\' will be required in future versions of Moodle.';
-$string['configsmartpix'] = 'With this on, icons are served through a PHP script that searches the current theme, then all parent themes, then the Moodle /pix folder. This reduces the need to duplicate image files within themes, but has a slight performance cost.';
 $string['configsmtpauthtype'] = 'This sets the authentication type to use on SMTP server.';
 $string['configsmtpoauthservice'] = 'Select the OAuth 2 service that is configured to talk to the SMTP server. If the service doesn\'t exist yet, you will need to create it. Note that you need to set the SMTP Auth Type to XOAUTH2.';
 $string['configsmtphosts'] = 'Give the full name of one or more local SMTP servers that Moodle should use to send mail (eg \'mail.a.com\' or \'mail.a.com;mail.b.com\'). To specify a non-default port (i.e other than port 25), you can use the [server]:[port] syntax (eg \'mail.a.com:587\'). For secure connections, port 465 is usually used with SSL, port 587 is usually used with TLS, specify security protocol below if required. If you leave this field blank, Moodle will use the PHP default method of sending mail.';
@@ -1315,7 +1314,6 @@ $string['sixtyfourbitsrequired'] = 'It has been detected that your site is not u
 $string['sixtyfourbitswarning'] = 'It has been detected that your site is not using a 64-bit PHP version. It is recommended that you upgrade your site to ensure future compatibility.';
 $string['slasharguments'] = 'Use slash arguments';
 $string['slashargumentswarning'] = 'It is recommended that the use of slash arguments is enabled. In future it will be required. For more details, see the documentation <a href="https://docs.moodle.org/en/admin/environment/slasharguments">Using slash arguments</a>.';
-$string['smartpix'] = 'Smart pix search';
 $string['smtp'] = 'SMTP';
 $string['smtpauthtype'] = 'SMTP Auth Type';
 $string['smtpdetail'] = 'Simple Mail Transfer Protocol (SMTP) settings for sending email.';
