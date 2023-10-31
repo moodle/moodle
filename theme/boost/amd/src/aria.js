@@ -378,9 +378,9 @@ const comboboxFix = () => {
         }
 
         if (combobox.hasAttribute('value')) {
-            combobox.value = option.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+            combobox.value = option.dataset.shortText || option.textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
         } else {
-            combobox.textContent = option.textContent;
+            combobox.textContent = option.dataset.shortText || option.textContent;
         }
 
         if (combobox.dataset.inputElement) {

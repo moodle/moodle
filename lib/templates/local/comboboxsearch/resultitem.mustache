@@ -27,7 +27,7 @@
         "name": "Foo bar"
     }
 }}
-<li id="result-{{id}}" class="w-100 dropdown-item d-flex px-0 align-items-center" role="option" data-value="{{id}}" aria-label="{{$arialabel}}{{#str}}viewresults, core, {{name}}{{/str}}{{/arialabel}}">
+<li id="result-{{id}}" class="w-100 dropdown-item d-flex px-0 align-items-center" role="option" data-short-text="{{$shorttext}}{{/shorttext}}" data-value="{{id}}" aria-label="{{$arialabel}}{{#str}}viewresults, core, {{name}}{{/str}}{{/arialabel}}">
     {{$content}}
         <span class="d-block w-100 px-2 text-truncate">
             {{name}}
