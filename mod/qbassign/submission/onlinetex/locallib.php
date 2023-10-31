@@ -384,7 +384,7 @@ class qbassign_submission_onlinetex extends qbassign_submission_plugin {
             // The actual submission text.
             $onlinetex = trim($onlinetexsubmission->onlinetex);
             // The shortened version of the submission text.
-            $shorttext = shorten_text($onlinetex, 140);
+            $shorttext = shorten_text($onlinetex, 20);
 
             $plagiarismlinks = '';
 
@@ -401,9 +401,9 @@ class qbassign_submission_onlinetex extends qbassign_submission_plugin {
             if ($onlinetex != $shorttext) {
                 $wordcount = get_string('numwords', 'qbassignsubmission_onlinetex', count_words($onlinetex));
 
-                return $plagiarismlinks . $wordcount . $text;
+                return array($plagiarismlinks . $wordcount . $shorttext,1);
             } else {
-                return $plagiarismlinks . $text . "<div>Additional Comments :<br/>".$expln."</div>";
+                return array($plagiarismlinks . $shorttext . "<div>Additional Comments :<br/>".$expln."</div>",1);
             }
         }
         return '';
