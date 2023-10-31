@@ -452,7 +452,7 @@ class component {
         $keyclasses = [
             \core\exception\moodle_exception::class,
             \core\output\bootstrap_renderer::class,
-            \core_filters\filter_manager::class,
+            \core\router::class,
         ];
         foreach ($keyclasses as $classname) {
             if (!array_key_exists($classname, $cache['classmap'])) {

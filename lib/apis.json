@@ -234,6 +234,16 @@
         "allowedlevel2": true,
         "allowedspread": true
     },
+    "route": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
+    "router": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
     "rss": {
         "component": "core_rss",
         "allowedlevel2": false,

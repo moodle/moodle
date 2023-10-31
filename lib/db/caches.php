@@ -618,4 +618,11 @@ $definitions = array(
         'simpledata' => true,
         'staticacceleration' => true,
     ],
+
+    'routes' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'canuselocalstore' => true,
+    ],
 );

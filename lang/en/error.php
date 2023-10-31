@@ -390,6 +390,7 @@ $string['invalidxmlfile'] = '"{$a}" is not a valid XML file';
 $string['iplookupfailed'] = 'Cannot find geo information about this IP address {$a}';
 $string['iplookupprivate'] = 'Cannot display lookup of private IP address';
 $string['ipmismatch'] = 'Client IP address mismatch';
+$string['itemnotfound'] = 'No {$a->itemtype} was found with an identifier of \'{$a->identifier}\'';
 $string['listcantmovedown'] = 'Failed to move item down, as it is the last of its peers.';
 $string['listcantmoveleft'] = 'Failed to move item left, as it has no parent';
 $string['listcantmoveright'] = 'Failed to move item right, as there is no peer to make it a child of. Move it below another peer and then you can move it right.';

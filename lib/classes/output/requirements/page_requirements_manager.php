@@ -315,6 +315,7 @@ class page_requirements_manager {
 
             $this->M_cfg = [
                 'wwwroot'               => $CFG->wwwroot,
+                'apibase'               => $this->get_api_base(),
                 'homeurl'               => $page->navigation->action,
                 'sesskey'               => sesskey(),
                 'sessiontimeout'        => $CFG->sessiontimeout,
@@ -344,6 +345,29 @@ class page_requirements_manager {
             }
         }
         return $this->M_cfg;
+    }
+
+    /**
+     * Return the base URL for the API.
+     *
+     * If the router has been fully configured on the web server then we can use the shortened route, otherwise the r.php.
+     *
+     * @return string
+     */
+    protected function get_api_base(): string {
+        global $CFG;
+
+        if (!empty($CFG->router_configured)) {
+            return sprintf(
+                "%s/api/",
+                $CFG->wwwroot,
+            );
+        }
+
+        return sprintf(
+            "%s/r.php/api/",
+            $CFG->wwwroot,
+        );
     }
 
     /**

@@ -184,6 +184,37 @@ class user {
     }
 
     /**
+     * Return User object based on their idnumber.
+     *
+     * @param string $idnumber The idnumber of the user searched.
+     * @param string $fields A comma separated list of user fields to be returned, support and noreply user.
+     * @param null|int $mnethostid The id of the remote host.
+     * @param int $strictness IGNORE_MISSING means compatible mode, false returned if user not found, debug message if more found;
+     *                        IGNORE_MULTIPLE means return first user, ignore multiple user records found(not recommended);
+     *                        MUST_EXIST means throw an exception if no user record or multiple records found.
+     * @return stdClass|bool user record if found, else false.
+     */
+    public static function get_user_by_idnumber(
+        string $idnumber,
+        string $fields = '*',
+        ?int $mnethostid = null,
+        int $strictness = IGNORE_MISSING,
+    ): stdClass|bool {
+        global $DB, $CFG;
+
+        // Because we use the username as the search criteria, we must also restrict our search based on mnet host.
+        if (empty($mnethostid)) {
+            // If empty, we restrict to local users.
+            $mnethostid = $CFG->mnet_localhost_id;
+        }
+
+        return $DB->get_record('user', [
+            'idnumber' => $idnumber,
+            'mnethostid' => $mnethostid,
+        ], $fields, $strictness);
+    }
+
+    /**
      * Searches for users by name, possibly within a specified context, with current user's access.
      *
      * Deciding which users to search is complicated because it relies on user permissions;
