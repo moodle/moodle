@@ -793,4 +793,19 @@ All rights reserved.</copyright>
       <license>MIT</license>
       <repository>https://github.com/php-di/invoker</repository>
   </library>
+  <library>
+      <location>slim</location>
+      <name>Slim Framework</name>
+      <version>4.13.0</version>
+      <license>MIT</license>
+      <repository>https://github.com/slimphp/Slim</repository>
+  </library>
+  <library>
+      <location>nikic/fast-route</location>
+      <name>FastRoute</name>
+      <version>1.3.0</version>
+      <license>BSD</license>
+      <licenseversion>3-Clause</licenseversion>
+      <repository>https://github.com/nikic/FastRoute</repository>
+  </library>
 </libraries>
