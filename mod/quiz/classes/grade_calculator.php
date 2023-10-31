@@ -91,6 +91,11 @@ class grade_calculator {
             // we will get a divide by zero error.
             self::update_quiz_maximum_grade(0);
         }
+
+        $callbackclasses = \core_component::get_plugin_list_with_class('quiz', 'quiz_structure_modified');
+        foreach ($callbackclasses as $callbackclass) {
+            component_class_callback($callbackclass, 'callback', [$quiz->id]);
+        }
     }
 
     /**
