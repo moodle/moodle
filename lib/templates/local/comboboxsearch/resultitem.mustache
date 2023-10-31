@@ -21,13 +21,24 @@
     * name - Result item human readable name.
     * link - The link used to redirect upon self to show only this specific result item.
 
+    The shorttext pragma can be used to provide a short text for the result item.
+    This is especially useful when the result item content contains html tags.
+
     Example context (json):
     {
         "id": 2,
         "name": "Foo bar"
     }
 }}
-<li id="result-{{id}}" class="w-100 dropdown-item d-flex px-0 align-items-center" role="option" data-short-text="{{$shorttext}}{{/shorttext}}" data-value="{{id}}" aria-label="{{$arialabel}}{{#str}}viewresults, core, {{name}}{{/str}}{{/arialabel}}">
+<li
+    id="result-{{id}}"
+    class="w-100 dropdown-item d-flex px-0 align-items-center"
+    role="option"
+    {{! aria.js would use the data-short-text attribute if it is provided. }}
+    data-short-text="{{$shorttext}}{{/shorttext}}"
+    data-value="{{id}}"
+    aria-label="{{$arialabel}}{{name}}{{/arialabel}}"
+>
     {{$content}}
         <span class="d-block w-100 px-2 text-truncate">
             {{name}}
