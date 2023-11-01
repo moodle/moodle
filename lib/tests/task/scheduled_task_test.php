@@ -165,6 +165,153 @@ class scheduled_task_test extends \advanced_testcase {
         $this->assertEquals(1, date('j', $nexttime));
     }
 
+    /**
+     * Data provider for get_next_scheduled_time_detail.
+     *
+     * Note all times in here are in default Australia/Perth time zone.
+     *
+     * @return array[] Function parameters for each run
+     */
+    public static function get_next_scheduled_time_detail_provider(): array {
+        return [
+            // Every minute = next minute.
+            ['2023-11-01 15:15', '*', '*', '*', '*', '*', '2023-11-01 15:16'],
+            // Specified minute (coming up) = same hour, that minute.
+            ['2023-11-01 15:15', '18', '*', '*', '*', '*', '2023-11-01 15:18'],
+            // Specified minute (passed) = next hour, that minute.
+            ['2023-11-01 15:15', '11', '*', '*', '*', '*', '2023-11-01 16:11'],
+            // Range of minutes = same hour, next matching value.
+            ['2023-11-01 15:15', '*/15', '*', '*', '*', '*', '2023-11-01 15:30'],
+            // Specified hour, any minute = first minute that hour.
+            ['2023-11-01 15:15', '*', '20', '*', '*', '*', '2023-11-01 20:00'],
+            // Specified hour, specified minute = that time.
+            ['2023-11-01 15:15', '13', '20', '*', '*', '*', '2023-11-01 20:13'],
+            // Any minute, range of hours = next hour in range, 00:00.
+            ['2023-11-01 15:15', '*', '*/6', '*', '*', '*', '2023-11-01 18:00'],
+            // Specified minute, range of hours = next hour where minute not passed, that minute.
+            ['2023-11-01 18:15', '10', '*/6', '*', '*', '*', '2023-11-02 00:10'],
+            // Specified day, any hour/minute.
+            ['2023-11-01 15:15', '*', '*', '3', '*', '*', '2023-11-03 00:00'],
+            // Specified day (next month), any hour/minute.
+            ['2023-11-05 15:15', '*', '*', '3', '*', '*', '2023-12-03 00:00'],
+            // Specified day, specified hour.
+            ['2023-11-01 15:15', '*', '17', '3', '*', '*', '2023-11-03 17:00'],
+            // Specified day, specified minute.
+            ['2023-11-01 15:15', '17', '*', '3', '*', '*', '2023-11-03 00:17'],
+            // 30th of every month, February.
+            ['2023-01-31 15:15', '15', '10', '30', '*', '*', '2023-03-30 10:15'],
+            // Friday, any time. 2023-11-01 is a Wednesday, so it will run in 2 days.
+            ['2023-11-01 15:15', '*', '*', '*', '5', '*', '2023-11-03 00:00'],
+            // Friday, any time (but it's already Friday).
+            ['2023-11-03 15:15', '*', '*', '*', '5', '*', '2023-11-03 15:16'],
+            // Sunday (week rollover).
+            ['2023-11-01 15:15', '*', '*', '*', '0', '*', '2023-11-05 00:00'],
+            // Specified days and day of week (days come first).
+            ['2023-11-01 15:15', '*', '*', '2,4,6', '5', '*', '2023-11-02 00:00'],
+            // Specified days and day of week (day of week comes first).
+            ['2023-11-01 15:15', '*', '*', '4,6,8', '5', '*', '2023-11-03 00:00'],
+            // Specified months.
+            ['2023-11-01 15:15', '*', '*', '*', '*', '6,8,10,12', '2023-12-01 00:00'],
+            // Specified months (crossing year).
+            ['2023-11-01 15:15', '*', '*', '*', '*', '6,8,10', '2024-06-01 00:00'],
+            // Specified months and day of week (i.e. first Sunday in December).
+            ['2023-11-01 15:15', '*', '*', '*', '0', '6,8,10,12', '2023-12-03 00:00'],
+            // It's already December, but the next Friday is not until next month.
+            ['2023-12-30 15:15', '*', '*', '*', '5', '6,8,10,12', '2024-06-07 00:00'],
+            // Around end of year.
+            ['2023-12-31 23:00', '10', '3', '*', '*', '*', '2024-01-01 03:10'],
+            // Some impossible requirements...
+            ['2023-12-31 23:00', '*', '*', '30', '*', '2', scheduled_task::NEVER_RUN_TIME],
+            ['2023-12-31 23:00', '*', '*', '31', '*', '9,4,6,11', scheduled_task::NEVER_RUN_TIME],
+            // Normal years and leap years.
+            ['2021-01-01 23:00', '*', '*', '28', '*', '2', '2021-02-28 00:00'],
+            ['2021-01-01 23:00', '*', '*', '29', '*', '2', '2024-02-29 00:00'],
+            // Missing leap year over century. Longest possible gap between runs.
+            ['2096-03-01 00:00', '59', '23', '29', '*', '2', '2104-02-29 23:59'],
+        ];
+    }
+
+    /**
+     * Tests get_next_scheduled_time using a large number of example scenarios.
+     *
+     * @param string $now Current time (strtotime format)
+     * @param string $minute Minute restriction list for task
+     * @param string $hour Hour restriction list for task
+     * @param string $day Day restriction list for task
+     * @param string $dayofweek Day of week restriction list for task
+     * @param string $month Month restriction list for task
+     * @param string|int $expected Expected run time (strtotime format or time int)
+     * @dataProvider get_next_scheduled_time_detail_provider
+     * @covers ::get_next_scheduled_time
+     */
+    public function test_get_next_scheduled_time_detail(string $now, string $minute, string $hour,
+            string $day, string $dayofweek, string $month, string|int $expected): void {
+        // Create test task with specified times.
+        $task = new scheduled_test_task();
+        $task->set_minute($minute);
+        $task->set_hour($hour);
+        $task->set_day($day);
+        $task->set_day_of_week($dayofweek);
+        $task->set_month($month);
+
+        // Check function results.
+        $nowtime = strtotime($now);
+        if (is_int($expected)) {
+            $expectedtime = $expected;
+        } else {
+            $expectedtime = strtotime($expected);
+        }
+        $actualtime = $task->get_next_scheduled_time($nowtime);
+        $this->assertEquals($expectedtime, $actualtime, 'Expected ' . $expected . ', actual ' . date('Y-m-d H:i', $actualtime));
+    }
+
+    /**
+     * Tests get_next_scheduled_time around DST changes, with regard to the continuity of frequent
+     * tasks.
+     *
+     * We want frequent tasks to keep progressing as normal and not randomly stop for an hour, or
+     * suddenly decide they need to happen in the past.
+     *
+     * @covers ::get_next_scheduled_time
+     */
+    public function test_get_next_scheduled_time_dst_continuity(): void {
+        $this->resetAfterTest();
+        $this->setTimezone('Europe/London');
+
+        // Test task is set to run every 20 minutes (:00, :20, :40).
+        $task = new scheduled_test_task();
+        $task->set_minute('*/20');
+
+        // DST change forwards. Check times in GMT to ensure it progresses as normal.
+        $before = strtotime('2023-03-26 00:59 GMT');
+        $this->assertEquals(strtotime('2023-03-26 00:59 Europe/London'), $before);
+        $one = $task->get_next_scheduled_time($before);
+        $this->assertEquals(strtotime('2023-03-26 01:00 GMT'), $one);
+        $this->assertEquals(strtotime('2023-03-26 02:00 Europe/London'), $one);
+        $two = $task->get_next_scheduled_time($one);
+        $this->assertEquals(strtotime('2023-03-26 01:20 GMT'), $two);
+        $three = $task->get_next_scheduled_time($two);
+        $this->assertEquals(strtotime('2023-03-26 01:40 GMT'), $three);
+        $four = $task->get_next_scheduled_time($three);
+        $this->assertEquals(strtotime('2023-03-26 02:00 GMT'), $four);
+
+        // DST change backwards.
+        $before = strtotime('2023-10-29 00:59 GMT');
+        // The 'before' time is 01:59 Europe/London, but we won't explicitly test that because
+        // there are two 01:59s so it might fail depending on implementation.
+        $one = $task->get_next_scheduled_time($before);
+        $this->assertEquals(strtotime('2023-10-29 01:00 GMT'), $one);
+        // We cannot compare against the Eerope/London time (01:00) because there are two 01:00s.
+        $two = $task->get_next_scheduled_time($one);
+        $this->assertEquals(strtotime('2023-10-29 01:20 GMT'), $two);
+        $three = $task->get_next_scheduled_time($two);
+        $this->assertEquals(strtotime('2023-10-29 01:40 GMT'), $three);
+        $four = $task->get_next_scheduled_time($three);
+        $this->assertEquals(strtotime('2023-10-29 02:00 GMT'), $four);
+        // This time is now unambiguous in Europe/London.
+        $this->assertEquals(strtotime('2023-10-29 02:00 Europe/London'), $four);
+    }
+
     public function test_timezones() {
         global $CFG, $USER;
 
