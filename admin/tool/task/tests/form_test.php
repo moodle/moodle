@@ -236,6 +236,8 @@ class form_test extends \advanced_testcase {
         $checker->set_day_of_week('6');
         $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('7');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('8');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('20');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
@@ -247,7 +249,7 @@ class form_test extends \advanced_testcase {
         $checker->set_day_of_week('*/6');
         $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('*/7');
-        $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('*/13');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('*/35');
@@ -271,6 +273,8 @@ class form_test extends \advanced_testcase {
         $checker->set_day_of_week('65-2');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
         $checker->set_day_of_week('3-7');
+        $this->assertTrue($checker->is_valid($checker::FIELD_DAYOFWEEK));
+        $checker->set_day_of_week('3-8');
         $this->assertFalse($checker->is_valid($checker::FIELD_DAYOFWEEK));
     }
 }
