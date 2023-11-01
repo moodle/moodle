@@ -986,7 +986,8 @@ class qbassign_grading_table extends table_sql implements renderable {
         if (!$this->is_downloading() && $this->hasgrade) {
             $urlparams = array('id' => $this->qbassignment->get_course_module()->id,
                                'rownum' => 0,
-                               'action' => 'grader');
+                               'action' => 'grader',
+                               'uid'=>$this->qbassignment->get_instance()->uid);
 
             if ($this->qbassignment->is_blind_marking()) {
                 if (empty($row->recordid)) {
