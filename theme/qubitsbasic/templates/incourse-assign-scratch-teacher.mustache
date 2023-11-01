@@ -160,6 +160,7 @@
                         {{/overflow}}
                             {{#is_showreact}}
                             <div id="__next"></div>
+                            <div id="reactcontent"></div>
                             <div class="d-none">{{{ output.main_content }}}</div>
                             {{{ output.activity_navigation }}}
                             {{{ output.course_content_footer }}}
@@ -201,8 +202,8 @@ M.assn = {
 <script type="text/javascript" src="{{scratch_aurl}}/chunks/gui.js"></script>
 {{#js}}
 require(['jquery'], function($) {
-   setTimeout(function () {
-   $('.index_app_2mqDO').prependTo('#page-content');
+setTimeout(function () {
+   $('.index_app_2mqDO').appendTo('#reactcontent');
    }, 4000); 
 });
 {{/js}}
