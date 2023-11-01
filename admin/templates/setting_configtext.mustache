@@ -27,6 +27,8 @@
     * forceltr - always display as ltr
     * attributes - list of additional attributes containing name, value
     * readonly - bool
+    * data - list of arbitrary data attributes
+    * maxcharacter - maximum character
 
     Example context (json):
     {
@@ -36,12 +38,19 @@
         "size": "21",
         "forceltr": false,
         "readonly": false,
-        "attributes": [ { "name": "readonly", "value": "readonly" } ]
+        "attributes": [ { "name": "readonly", "value": "readonly" } ],
+        "data": [ { "key": "validation_max_length", "value": "10" } ],
+        "maxcharacter": false
     }
 }}
 {{!
     Setting configtext.
 }}
 <div class="form-text defaultsnext">
-    <input type="text" name="{{name}}" value="{{value}}" size="{{size}}" id="{{id}}" class="form-control {{#forceltr}}text-ltr{{/forceltr}}" {{#readonly}}disabled{{/readonly}}>
+    <input type="text" name="{{name}}" value="{{value}}" size="{{size}}" id="{{id}}" class="form-control {{#forceltr}}text-ltr{{/forceltr}}" {{#readonly}}disabled{{/readonly}} {{#data}} data-{{key}}={{#quote}}{{{value}}}{{/quote}}{{/data}}>
+    {{#data}}
+        {{#maxcharacter}}
+            <div class="form-defaultinfo text-muted d-block">{{#str}} maxcharacter, admin, {{value}} {{/str}}</div>
+        {{/maxcharacter}}
+    {{/data}}
 </div>
