@@ -1086,7 +1086,11 @@ class renderer extends \plugin_renderer_base {
                 $link .= $this->output->spacer(array('width'=>15));
             }
 
+            if(is_array($summary))
+            $o .= $link . $summary[0];
+            else
             $o .= $link . $summary;
+            
             $o .= $this->output->box_end();
             if ($showviewlink) {
                 $o .= $this->output->box_start('boxaligncenter hidefull full_' . $classsuffix);

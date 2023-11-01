@@ -359,9 +359,9 @@ class qbassign_submission_scratch extends qbassign_submission_plugin {
             if ($scratch != $shorttext) {
                 $wordcount = get_string('numwords', 'qbassignsubmission_scratch', count_words($scratch));
 
-                return $plagiarismlinks . $wordcount . $text;
+                return array($plagiarismlinks,1);
             } else {
-                return $plagiarismlinks . $text . "<div>Additional Comments :<br/>".$expln."</div>";
+                return array($plagiarismlinks  . "<div>Additional Comments :<br/>".$expln."</div>",1);
             }
         }
         return '';
