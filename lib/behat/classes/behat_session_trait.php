@@ -1017,6 +1017,10 @@ EOF;
      * @see Moodle\BehatExtension\Tester\MoodleStepTester
      */
     public function look_for_deprecated_styles() {
+        if (!behat_config_manager::get_behat_run_config_value('scss-deprecations')) {
+            return;
+        }
+
         if (!$this->running_javascript()) {
             return;
         }

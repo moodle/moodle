@@ -53,6 +53,7 @@ list($options, $unrecognized) = cli_get_params(
         'optimize-runs' => '',
         'add-core-features-to-theme' => false,
         'axe'         => true,
+        'scss-deprecations' => false,
     ),
     array(
         'h' => 'help',
@@ -73,13 +74,14 @@ Usage:
   php util_single_run.php [--install|--drop|--enable|--disable|--diag|--updatesteps|--help]
 
 Options:
---install        Installs the test environment for acceptance tests
---drop           Drops the database tables and the dataroot contents
---enable         Enables test environment and updates tests list
---disable        Disables test environment
---diag           Get behat test environment status code
---updatesteps    Update feature step file.
---no-axe         Disable axe accessibility tests.
+--install           Installs the test environment for acceptance tests
+--drop              Drops the database tables and the dataroot contents
+--enable            Enables test environment and updates tests list
+--disable           Disables test environment
+--diag              Get behat test environment status code
+--updatesteps       Update feature step file.
+--no-axe            Disable axe accessibility tests.
+--scss-deprecations Enable SCSS deprecation checks.
 
 -o, --optimize-runs Split features with specified tags in all parallel runs.
 -a, --add-core-features-to-theme Add all core features to specified theme's
@@ -188,6 +190,9 @@ if ($options['install']) {
 
     // Configure axe according to option.
     behat_config_manager::set_behat_run_config_value('axe', $options['axe']);
+
+    // Define whether to run Behat with SCSS deprecation checks.
+    behat_config_manager::set_behat_run_config_value('scss-deprecations', $options['scss-deprecations']);
 
     // Enable test mode.
     $timestart = microtime(true);

@@ -512,10 +512,12 @@ class behat_util extends testing_util {
         $siteinfo = parent::get_site_info();
 
         $accessibility = empty(behat_config_manager::get_behat_run_config_value('axe')) ? 'No' : 'Yes';
+        $scssdeprecations = empty(behat_config_manager::get_behat_run_config_value('scss-deprecations')) ? 'No' : 'Yes';
 
         $siteinfo .= <<<EOF
 Run optional tests:
 - Accessibility: {$accessibility}
+- SCSS deprecations: {$scssdeprecations}
 
 EOF;
 
