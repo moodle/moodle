@@ -82,7 +82,7 @@ class tool_task_renderer extends plugin_renderer_base {
                 );
                 $classcell = new html_table_cell($classcontent);
                 $classcell->header = true;
-                $classcell->class = "task-class-summary text-ltr";
+                $classcell->attributes['class'] = "task-class-summary text-ltr";
 
                 $duecontent = $stats['due'];
                 if ($canruntasks && ($stats['due'] > 0 || $stats['failed'] > 0)) {
