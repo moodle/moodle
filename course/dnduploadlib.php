@@ -495,6 +495,8 @@ class dndupload_ajax_processor {
             throw new moodle_exception('errornouploadrepo', 'moodle');
         }
         $repo = reset($repo); // Get the first (and only) upload repo.
+        // Pre-emptively purge the navigation cache so the upload repo can close the session.
+        navigation_cache::destroy_volatile_caches();
         $details = $repo->process_upload(null, $maxbytes, $types, '/', $draftitemid);
         if (empty($this->displayname)) {
             $this->displayname = $this->display_name_from_file($details['file']);
