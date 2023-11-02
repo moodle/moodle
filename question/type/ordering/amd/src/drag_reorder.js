@@ -29,8 +29,8 @@
  */
 define([
     'jquery',
-    require.specified('core/dragdrop') ? 'core/dragdrop' : 'qtype_ordering/dragdrop',
-    require.specified('core/key_codes') ? 'core/key_codes' : 'qtype_ordering/key_codes'
+    'core/dragdrop',
+    'core/key_codes'
 ], function(
     $,
     drag,
