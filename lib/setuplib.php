@@ -344,6 +344,67 @@ class file_serving_exception extends moodle_exception {
 }
 
 /**
+ * Get the Whoops! handler.
+ *
+ * @return \Whoops\Run|null
+ */
+function get_whoops(): ?\Whoops\Run {
+    global $CFG;
+
+    if (CLI_SCRIPT || AJAX_SCRIPT) {
+        return null;
+    }
+
+    if (defined('PHPUNIT_TEST') && PHPUNIT_TEST) {
+        return null;
+    }
+
+    if (defined('BEHAT_TEST') && BEHAT_TEST) {
+        return null;
+    }
+
+    if (!$CFG->debugdisplay) {
+        return null;
+    }
+
+    if (!$CFG->debug_developer_use_pretty_exceptions) {
+        return null;
+    }
+
+    $composerautoload = "{$CFG->dirroot}/vendor/autoload.php";
+    if (file_exists($composerautoload)) {
+        require_once($composerautoload);
+    }
+
+    if (!class_exists(\Whoops\Run::class)) {
+        return null;
+    }
+
+    // We have Whoops available, use it.
+    $whoops = new \Whoops\Run();
+
+    // Append a custom handler to add some more information to the frames.
+    $whoops->appendHandler(function ($exception, $inspector, $run) {
+        // Moodle exceptions often have a link to the Moodle docs pages for them.
+        // Add that to the first frame in the stack.
+        $info = get_exception_info($exception);
+        if ($info->moreinfourl) {
+            $collection = $inspector->getFrames();
+            $collection[0]->addComment("{$info->moreinfourl}", 'More info');
+        }
+    });
+
+    // Add the Pretty page handler. It's the bee's knees.
+    $handler = new \Whoops\Handler\PrettyPageHandler();
+    if (isset($CFG->debug_developer_editor)) {
+        $handler->setEditor($CFG->debug_developer_editor ?: null);
+    }
+    $whoops->appendHandler($handler);
+
+    return $whoops;
+}
+
+/**
  * Default exception handler.
  *
  * @param Exception $ex
@@ -365,6 +426,11 @@ function default_exception_handler($ex) {
     // If we already tried to send the header remove it, the content length
     // should be either empty or the length of the error page.
     @header_remove('Content-Length');
+
+    if ($whoops = get_whoops()) {
+        // If whoops is available we will use it. The get_whoops() function checks whether all conditions are met.
+        $whoops->handleException($ex);
+    }
 
     if (is_early_init($info->backtrace)) {
         echo bootstrap_renderer::early_error($info->message, $info->moreinfourl, $info->link, $info->backtrace, $info->debuginfo, $info->errorcode);
@@ -422,6 +488,10 @@ function default_exception_handler($ex) {
  * @return bool false means use default error handler
  */
 function default_error_handler($errno, $errstr, $errfile, $errline) {
+    if ($whoops = get_whoops()) {
+        // If whoops is available we will use it. The get_whoops() function checks whether all conditions are met.
+        $whoops->handleError($errno, $errstr, $errfile, $errline);
+    }
     if ($errno == 4096) {
         //fatal catchable error
         throw new coding_exception('PHP catchable fatal error', $errstr);
