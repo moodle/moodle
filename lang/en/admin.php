@@ -870,6 +870,7 @@ sites. If this is not what you wanted then you should make sure you are updating
 from a STABLE branch of the Moodle code. See Moodle Docs for more details.';
 $string['maxbytes'] = 'Maximum uploaded file size';
 $string['maxconsecutiveidentchars'] = 'Consecutive identical characters';
+$string['maxcharacter'] = '{$a} character maximum';
 $string['maxsizeperdownloadcoursefile'] = 'Maximum size per file';
 $string['maxsizeperdownloadcoursefile_desc'] = 'The maximum size of each file when downloading course content. Files exceeding this size will be omitted from the download.';
 $string['maxeditingtime'] = 'Maximum time to edit posts';
