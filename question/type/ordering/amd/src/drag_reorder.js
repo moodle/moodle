@@ -32,7 +32,7 @@ import keys from 'core/key_codes';
 
 export default class DragReorder {
 
-    config = null; // Config object.
+    config = {reorderStart: 'undefined', reorderEnd: 'undefined'}; // Config object with some basic definitions.
     dragStart = null; // Information about when and where the drag started.
     originalOrder = null; // Array of ids.
     itemDragging = null; // Item being moved by dragging (jQuery object).
@@ -93,17 +93,15 @@ export default class DragReorder {
      *      // This callback will only be called in the new order is actually different from the old order.
      *      reorderDone: function($list, $item, newOrder) { ... }
      *
-     *      // Function that is alwasy called when a re-order ends (optional, can be not set)
-     *      // whether or not the order has changed. Useful if you need to undo changes made
+     *      // Function that is always called when a re-order ends (optional, can be not set)
+     *      // whether the order has changed. Useful if you need to undo changes made
      *      // in reorderStart, since reorderDone is only called if the new order is different
      *      // from the original order.
      *      reorderEnd: function($list, $item) { ... }
      *  }
      *
-     * There is a subtlety ( === hack?) that you can use. If you have items in your list that do not
-     * have a drag handle, they they are considered to be placeholders in otherwise empty containers.
-     * See how block_userlinks does it, if this seems like it might be useful. nameGetter should return
-     * the container name for these items.
+     * There is a subtlety, If you have items in your list that do not have a drag handle,
+     * they are considered to be placeholders in otherwise empty containers.
      *
      * @param {Object} config As above.
      */
@@ -114,29 +112,35 @@ export default class DragReorder {
         this.config.itemInPage = this.combineSelectors(config.list, config.item);
 
         // AJAX for section drag and click-to-move.
-        $(this.config.list).on('mousedown touchstart', config.item, function(event) {
-            var details = drag.prepare(event);
+        $(this.config.list).on('mousedown touchstart', config.item, e => {
+            const details = drag.prepare(e);
             if (details.start) {
-                this.startDrag(event, details);
+                this.startDrag(e, details);
             }
-        }.bind(this));
+        });
 
-        $(this.config.list).on('keydown', config.item, function(event) {
-            this.itemMoving = $(event.currentTarget).closest(config.itemInPage);
+        $(this.config.list).on('keydown', config.item, e => {
+            this.itemMoving = $(e.currentTarget).closest(config.itemInPage);
             this.originalOrder = this.getCurrentOrder();
-            this.itemMovedByKeyboard(event, this.itemMoving);
-            var newOrder = this.getCurrentOrder();
+            this.itemMovedByKeyboard(e, this.itemMoving);
+            const newOrder = this.getCurrentOrder();
             if (!this.arrayEquals(this.originalOrder, newOrder)) {
                 // Order has changed, call the callback.
                 this.config.reorderDone(this.itemMoving.closest(this.config.list), this.itemMoving, newOrder);
             }
-        }.bind(this));
+        });
 
         // Make the items tabbable.
         $(this.config.itemInPage).attr('tabindex', '0');
     }
 
-    startDrag(event, details) {
+    /**
+     * Start dragging.
+     *
+     * @param {jQuery} e The jQuery event which is either mousedown or touchstart.
+     * @param {Object} details Object with start (boolean flag) and x, y (only if flag true) values
+     */
+    startDrag(e, details) {
         this.orderList = $(this.config.list);
 
         this.dragStart = {
@@ -145,7 +149,7 @@ export default class DragReorder {
             y: details.y
         };
 
-        this.itemDragging = $(event.currentTarget).closest(this.config.itemInPage);
+        this.itemDragging = $(e.currentTarget).closest(this.config.itemInPage);
 
         if (typeof this.config.reorderStart !== 'undefined') {
             this.config.reorderStart(this.itemDragging.closest(this.config.list), this.itemDragging);
@@ -165,33 +169,30 @@ export default class DragReorder {
         this.updateProxy();
 
         // Start drag.
-        drag.start(event, this.proxy, this.dragMove.bind(this), this.dragEnd.bind(this));
+        drag.start(e, this.proxy, this.dragMove.bind(this), this.dragEnd.bind(this));
     }
 
+    /**
+     * Move the proxy to the current mouse position.
+     */
     dragMove() {
-        var list = this.itemDragging.closest(this.config.list);
-        var closestItem = null;
-        var closestDistance = null;
-        list.find(this.config.item).each(function(index, element) {
-            var distance = this.distanceBetweenElements(element, this.proxy);
+        const list = this.itemDragging.closest(this.config.list);
+        let closestItem = null;
+        let closestDistance = null;
+        list.find(this.config.item).each((index, element) => {
+            const distance = this.distanceBetweenElements(element, this.proxy);
             if (closestItem === null || distance < closestDistance) {
                 closestItem = $(element);
                 closestDistance = distance;
             }
-        }.bind(this));
+        });
 
         if (closestItem[0] === this.itemDragging[0]) {
             return;
         }
-        var offsetValue = 0;
+
         // Set offset depending on if item is being dragged downwards/upwards.
-        if (this.midY(this.proxy) < this.midY(closestItem)) {
-            offsetValue = 20;
-            window.console.log("For midY(proxy) < midY(closestItem) offset is: " + offsetValue);
-        } else {
-            offsetValue = -20;
-            window.console.log("For midY(proxy) < midY(closestItem) offset is: " + offsetValue);
-        }
+        const offsetValue = this.midY(this.proxy) < this.midY(closestItem) ? 20 : -20;
         if (this.midY(this.proxy) + offsetValue < this.midY(closestItem)) {
             this.itemDragging.insertBefore(closestItem);
         } else {
@@ -204,10 +205,10 @@ export default class DragReorder {
      * Update proxy's position.
      */
     updateProxy() {
-        var list = this.itemDragging.closest('ol, ul');
-        var items = list.find('li');
-        var count = items.length;
-        for (var i = 0; i < count; ++i) {
+        const list = this.itemDragging.closest('ol, ul');
+        const items = list.find('li');
+        const count = items.length;
+        for (let i = 0; i < count; ++i) {
             if (this.itemDragging[0] === items[i]) {
                 this.proxy.find('li').attr('value', i + 1);
                 break;
@@ -216,29 +217,36 @@ export default class DragReorder {
     }
 
     /**
-     * It outer and inner are two CSS selectors, which may contain commas,
-     * then combine them safely. So combineSelectors('a, b', 'c, d')
+     * Our outer and inner are two CSS selectors, which may contain commas.
+     * We want to combine them safely. So for instance combineSelectors('a, b', 'c, d')
      * gives 'a c, a d, b c, b d'.
-     * @param {Selector} outer
-     * @param {Selector} inner
-     * @returns {string}
+     *
+     * @param {String} outer The selector for the outer element.
+     * @param {String} inner The selector for the inner element.
+     * @returns {String} The combined selector used to listen to the list item.
      */
     combineSelectors(outer, inner) {
-        var combined = [];
-        outer.split(',').forEach(function(firstSelector) {
-            inner.split(',').forEach(function(secondSelector) {
+        let combined = [];
+        outer.split(',').forEach(firstSelector => {
+            inner.split(',').forEach(secondSelector => {
                 combined.push(firstSelector.trim() + ' ' + secondSelector.trim());
             });
         });
         return combined.join(', ');
     }
 
+    /**
+     * End dragging.
+     *
+     * @param {number} x X co-ordinate
+     * @param {number} y Y co-ordinate
+     */
     dragEnd(x, y) {
         if (typeof this.config.reorderEnd !== 'undefined') {
             this.config.reorderEnd(this.itemDragging.closest(this.config.list), this.itemDragging);
         }
 
-        var newOrder = this.getCurrentOrder();
+        const newOrder = this.getCurrentOrder();
         if (!this.arrayEquals(this.originalOrder, newOrder)) {
             // Order has changed, call the callback.
             this.config.reorderDone(this.itemDragging.closest(this.config.list), this.itemDragging, newOrder);
@@ -258,10 +266,11 @@ export default class DragReorder {
     /**
      * Items can be moved and placed using certain keys.
      * Tab for tabbing though and choose the item to be moved
-     * space, arrow-right arrow-down for moving current element forewards.
+     * space, arrow-right arrow-down for moving current element forwards.
      * arrow-right arrow-down for moving the current element backwards.
-     * @param {Object} e the event
-     * @param {jQuery} current the current moving item
+     *
+     * @param {Event} e The keyboard event.
+     * @param {jQuery} current An object representing the current moving item and the previous item we just moved past.
      */
     itemMovedByKeyboard(e, current) {
         switch (e.keyCode) {
@@ -270,9 +279,8 @@ export default class DragReorder {
             case keys.arrowDown:
                 e.preventDefault();
                 e.stopPropagation();
-                var next = current.next();
-                if (next.length) {
-                    next.insertBefore(current);
+                if (current.next().length) {
+                    current.next().insertBefore(current);
                 }
                 break;
 
@@ -280,9 +288,8 @@ export default class DragReorder {
             case keys.arrowUp:
                 e.preventDefault();
                 e.stopPropagation();
-                var prev = current.prev();
-                if (prev.length) {
-                    prev.insertAfter(current);
+                if (current.prev().length) {
+                    current.prev().insertAfter(current);
                 }
                 break;
         }
@@ -290,57 +297,58 @@ export default class DragReorder {
 
     /**
      * Get the x-position of the middle of the DOM node represented by the given jQuery object.
-     * @param {jQuery} jQuery wrapping a DOM node.
+     *
+     * @param {jQuery} node jQuery wrapping a DOM node.
      * @returns {number} Number the x-coordinate of the middle (left plus half outerWidth).
      */
-    midX(jQuery) {
-        return jQuery.offset().left + jQuery.outerWidth() / 2;
+    midX(node) {
+        return node.offset().left + node.outerWidth() / 2;
     }
 
     /**
      * Get the y-position of the middle of the DOM node represented by the given jQuery object.
-     * @param {jQuery} jQuery wrapping a DOM node.
+     *
+     * @param {jQuery} node jQuery wrapped DOM node.
      * @returns {number} Number the y-coordinate of the middle (top plus half outerHeight).
      */
-    midY(jQuery) {
-        return jQuery.offset().top + jQuery.outerHeight() / 2;
+    midY(node) {
+        return node.offset().top + node.outerHeight() / 2;
     }
 
     /**
      * Calculate the distance between the centres of two elements.
-     * @param {Selector|Element|jQuery} element1 selector, element or jQuery.
-     * @param {Selector|Element|jQuery} element2 selector, element or jQuery.
+     *
+     * @param {HTMLLIElement} element1 DOM node of a list item.
+     * @param {HTMLLIElement} element2 DOM node of a list item.
      * @return {number} number the distance in pixels.
      */
     distanceBetweenElements(element1, element2) {
-        var e1 = $(element1);
-        var e2 = $(element2);
-        var dx = this.midX(e1) - this.midX(e2);
-        var dy = this.midY(e1) - this.midY(e2);
+        const [e1, e2] = [$(element1), $(element2)];
+        const [dx, dy] = [this.midX(e1) - this.midX(e2), this.midY(e1) - this.midY(e2)];
         return Math.sqrt(dx * dx + dy * dy);
     }
 
     /**
      * Get the current order of the list containing itemDragging.
+     *
      * @returns {Array} Array of strings, the id of each element in order.
      */
     getCurrentOrder() {
         return (this.itemDragging || this.itemMoving).closest(this.config.list).find(this.config.item).map(
-            function(index, item) {
+            (index, item) => {
                 return this.config.idGetter(item);
-            }.bind(this)).get();
+            }).get();
     }
 
     /**
-     * Compare two arrays, which just contain simple values like ints or strings,
-     * to see if they are equal.
+     * Compare two arrays which contain primitive types to see if they are equal.
      * @param {Array} a1 first array.
      * @param {Array} a2 second array.
      * @return {Boolean} boolean true if they both contain the same elements in the same order, else false.
      */
     arrayEquals(a1, a2) {
         return a1.length === a2.length &&
-            a1.every(function(v, i) {
+            a1.every((v, i) => {
                 return v === a2[i];
             });
     }
@@ -359,13 +367,13 @@ export default class DragReorder {
                 '<ul class="%%LIST_CLASS_NAME%%"><li class="%%ITEM_CLASS_NAME%% item-moving">' +
                 '%%ITEM_HTML%%</li></ul></div>',
             itemMovingClass: "current-drop",
-            idGetter: function(item) {
+            idGetter: item => {
                 return $(item).attr('id');
             },
-            nameGetter: function(item) {
+            nameGetter: item => {
                 return $(item).text;
             },
-            reorderDone: function(list, item, newOrder) {
+            reorderDone: (list, item, newOrder) => {
                 $('input#' + responseid)[0].value = newOrder.join(',');
             }
         });
