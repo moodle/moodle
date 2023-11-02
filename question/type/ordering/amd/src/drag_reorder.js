@@ -24,19 +24,13 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-/**
- * @module qtype_ordering/drag_reorder
- */
-define([
-    'jquery',
-    'core/dragdrop',
-    'core/key_codes'
-], function(
-    $,
-    drag,
-    keys
-) {
+'use strict';
 
+import $ from 'jquery';
+import drag from 'core/dragdrop';
+import keys from 'core/key_codes';
+
+export default class DragReorder {
     /**
      * Constructor.
      *
@@ -104,7 +98,7 @@ define([
      *
      * @param {Object} config As above.
      */
-    return function(config) {
+    constructor(config) {
         var dragStart = null, // Information about when and where the drag started.
             originalOrder = null, // Array of ids.
             itemDragging = null, // Item being moved by dragging (jQuery object).
@@ -169,7 +163,7 @@ define([
                 offsetValue = -20;
                 window.console.log("For midY(proxy) < midY(closestItem) offset is: " + offsetValue);
             }
-           if (midY(proxy) + offsetValue < midY(closestItem)) {
+            if (midY(proxy) + offsetValue < midY(closestItem)) {
                 itemDragging.insertBefore(closestItem);
             } else {
                 itemDragging.insertAfter(closestItem);
@@ -304,9 +298,9 @@ define([
          */
         var getCurrentOrder = function() {
             return (itemDragging || itemMoving).closest(config.list).find(config.item).map(
-                    function(index, item) {
-                        return config.idGetter(item);
-                    }).get();
+                function(index, item) {
+                    return config.idGetter(item);
+                }).get();
         };
 
         /**
@@ -345,5 +339,37 @@ define([
 
         // Make the items tabbable.
         $(config.itemInPage).attr('tabindex', '0');
-    };
-});
+    }
+
+    /**
+     * Initialise one ordering question.
+     *
+     * @param {String} sortableid id of ul for this question.
+     * @param {String} responseid id of hidden field for this question.
+     */
+    static init(sortableid, responseid) {
+        new DragReorder({
+            list: 'ul#' + sortableid,
+            item: 'li.sortableitem',
+            proxyHtml: '<div class="que ordering dragproxy">' +
+                '<ul class="%%LIST_CLASS_NAME%%"><li class="%%ITEM_CLASS_NAME%% item-moving">' +
+                '%%ITEM_HTML%%</li></ul></div>',
+            itemMovingClass: "current-drop",
+            idGetter: function(item) {
+                return $(item).attr('id');
+            },
+            nameGetter: function(item) {
+                return $(item).text;
+            },
+            reorderStart: function() {
+                // Do nothing.
+            },
+            reorderEnd: function() {
+                // Do nothing.
+            },
+            reorderDone: function(list, item, newOrder) {
+                $('input#' + responseid)[0].value = newOrder.join(',');
+            }
+        });
+    }
+}

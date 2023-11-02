@@ -104,7 +104,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
         } else {
             $sortableitem = 'sortableitem';
             $params = array($sortableid, $responseid);
-            $this->page->requires->js_call_amd('qtype_ordering/reorder', 'init', $params);
+            $this->page->requires->js_call_amd('qtype_ordering/drag_reorder', 'init', $params);
         }
 
         $result .= html_writer::tag('div', $question->format_questiontext($qa), array('class' => 'qtext'));
