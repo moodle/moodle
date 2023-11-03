@@ -74,4 +74,17 @@ class grade_report_summary extends grade_report {
     public function process_data($data) {
     }
 
+    /**
+     * To check if we only need to include active enrolments.
+     *
+     * @return bool
+     */
+    public function show_only_active(): bool {
+
+        // Limit to users with an active enrolment.
+        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+        $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+        return $showonlyactiveenrol ||
+            !has_capability('moodle/course:viewsuspendedusers', $this->context);
+    }
 }

@@ -25,11 +25,10 @@
 namespace core_grades;
 
 use assign;
-use block_globalsearch\globalsearch_test;
 use cm_info;
 use grade_item;
 use grade_plugin_return;
-use grade_report_summary;
+use grade_report_grader;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -291,7 +290,7 @@ class lib_test extends \advanced_testcase {
         $gpr1 = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course1,
             ]
         );
@@ -299,13 +298,13 @@ class lib_test extends \advanced_testcase {
         $gpr2 = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course2,
             ]
         );
 
-        $report1 = new grade_report_summary($course1->id, $gpr1, $context1);
-        $report2 = new grade_report_summary($course2->id, $gpr2, $context2);
+        $report1 = new grade_report_grader($course1->id, $gpr1, $context1);
+        $report2 = new grade_report_grader($course2->id, $gpr2, $context2);
 
         $ungradedcounts = [];
         $ungradedcounts[$course1->id] = $report1->ungraded_counts(false);
@@ -420,12 +419,12 @@ class lib_test extends \advanced_testcase {
         $gpr = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course,
             ]
         );
 
-        $report = new grade_report_summary($course->id, $gpr, $context);
+        $report = new grade_report_grader($course->id, $gpr, $context);
 
         $ungradedcounts = $report->ungraded_counts(false, $hidden);
 
@@ -541,7 +540,7 @@ class lib_test extends \advanced_testcase {
         $gpr1 = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course,
                 'groupid' => $group1->id,
             ]
@@ -550,14 +549,14 @@ class lib_test extends \advanced_testcase {
         $gpr2 = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course,
                 'groupid' => $group2->id,
             ]
         );
 
-        $report1 = new grade_report_summary($course->id, $gpr1, $context);
-        $report2 = new grade_report_summary($course->id, $gpr2, $context);
+        $report1 = new grade_report_grader($course->id, $gpr1, $context);
+        $report2 = new grade_report_grader($course->id, $gpr2, $context);
 
         $ungradedcounts = [];
         $ungradedcounts[$group1->id] = $report1->ungraded_counts(true);
@@ -692,12 +691,12 @@ class lib_test extends \advanced_testcase {
         $gpr = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course,
             ]
         );
 
-        $report = new grade_report_summary($course->id, $gpr, $context);
+        $report = new grade_report_grader($course->id, $gpr, $context);
 
         $showonlyactiveenrol = $report->show_only_active();
         $ungradedcounts = $report->ungraded_counts(false, false, $showonlyactiveenrol);
@@ -853,12 +852,12 @@ class lib_test extends \advanced_testcase {
         $gpr = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course,
             ]
         );
 
-        $report = new grade_report_summary($course->id, $gpr, $context);
+        $report = new grade_report_grader($course->id, $gpr, $context);
 
         $ungradedcounts = $report->ungraded_counts(false);
         $ungradedcounts['report']['meanselection'] = $meanselection;
@@ -939,24 +938,24 @@ class lib_test extends \advanced_testcase {
         $gpr = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course1,
             ]
         );
 
-        $report1 = new grade_report_summary($course1->id, $gpr, $context);
+        $report1 = new grade_report_grader($course1->id, $gpr, $context);
 
         $context = \context_course::instance($course2->id);
 
         $gpr = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course2,
             ]
         );
 
-        $report2 = new grade_report_summary($course2->id, $gpr, $context);
+        $report2 = new grade_report_grader($course2->id, $gpr, $context);
 
         $gradeitems1 = $report1->item_types();
         $gradeitems2 = $report2->item_types();
