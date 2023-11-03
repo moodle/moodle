@@ -1470,7 +1470,12 @@ class qbassign_grading_table extends table_sql implements renderable {
             $separator = $this->output->spacer(array(), true);
         }
         if(is_array($summary)) 
-        return '<a href="'.$url.'"  class="btn btn-primary d-flex justify-content-center" target="_blank">View</a>' . $separator . $summary[0];
+        {
+            if($summary[0] != '')
+            return '<a href="'.$url.'"  class="btn btn-primary d-flex justify-content-center" target="_blank">View</a>' . $separator . $summary[0];
+            else
+            return '';
+        }        
         else
         return $link . $separator . $summary;
     }

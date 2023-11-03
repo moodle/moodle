@@ -355,13 +355,19 @@ class qbassign_submission_scratch extends qbassign_submission_plugin {
                     'course' => $this->qbassignment->get_course()->id,
                     'qbassignment' => $submission->qbassignment));
             }
+
+            $checkstatus = $DB->get_record('qbassign_submission', array('id' => $submission->id));
+
+            if(!empty($checkstatus) and $checkstatus->status != 'submitted')
+            return array('',1);
+
             // We compare the actual text submission and the shortened version. If they are not equal, we show the word count.
             if ($scratch != $shorttext) {
                 $wordcount = get_string('numwords', 'qbassignsubmission_scratch', count_words($scratch));
 
-                return array($plagiarismlinks,1);
+                return array($plagiarismlinks.' ',1);
             } else {
-                return array($plagiarismlinks  . "<div>Additional Comments :<br/>".$expln."</div>",1);
+                return array($plagiarismlinks."<div>Additional Comments :<br/>".$expln."</div>",1);
             }
         }
         return '';
