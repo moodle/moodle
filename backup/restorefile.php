@@ -160,12 +160,16 @@ if ($context->contextlevel == CONTEXT_MODULE) {
     $renderer = $PAGE->get_renderer('core', 'backup');
     echo $renderer->backup_files_viewer($treeview_options);
     echo $OUTPUT->container_end();
+    // Update the course context with the proper value, because $context contains the module context.
+    $coursecontext = \context_course::instance($course->id);
+} else {
+    $coursecontext = $context;
 }
 
 echo $OUTPUT->heading_with_help(get_string('choosefilefromcoursebackup', 'backup'), 'choosefilefromcoursebackup', 'backup');
 echo $OUTPUT->container_start();
 $treeview_options = array();
-$treeview_options['filecontext'] = $context;
+$treeview_options['filecontext'] = $coursecontext;
 $treeview_options['currentcontext'] = $context;
 $treeview_options['component']   = 'backup';
 $treeview_options['context']     = $context;
