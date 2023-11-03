@@ -1,0 +1,50 @@
+/*@font-face {*/
+/*    font-family: 'Cobalt_reports_opensans';*/
+/*    src: url([[font:block_reportdashboard|OpenSans-Bold.eot]]) format('embedded-opentype'),*/
+/*         url([[font:block_reportdashboard|OpenSans-Bold.woff]]) format('woff'),*/
+/*         url([[font:block_reportdashboard|OpenSans-Bold.ttf]]) format('truetype');*/
+/*    font-weight: bold;*/
+/*    font-style: normal;*/
+/*	*/
+/*    font-family: 'Cobalt_reports_opensans';*/
+/*    src: url([[font:block_reportdashboard|OpenSans-Regular.eot]]) format('embedded-opentype'),*/
+/*         url([[font:block_reportdashboard|OpenSans-Regular.woff]]) format('woff'),*/
+/*         url([[font:block_reportdashboard|OpenSans-Regular.ttf]]) format('truetype');*/
+/*    font-weight: normal;*/
+/*    font-style: normal;*/
+/*}*/
+@font-face {
+    font-family: 'Cobalt_reports_opensans';
+    src: url('./Open_sans/OpenSans-Bold.eot') format('embedded-opentype'),
+         url('./Open_sans/OpenSans-Bold.woff') format('woff'),
+         url('./Open_sans/OpenSans-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+	
+    font-family: 'Cobalt_reports_opensans';
+    src: url('./Open_sans/OpenSans-Regular.eot') format('embedded-opentype'),
+         url('./Open_sans/OpenSans-Regular.woff') format('woff'),
+         url('./Open_sans/OpenSans-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body.path-blocks-reportdashboard,
+body.path-blocks-reporttiles,
+body.path-blocks-learnerscript{font-family: 'Cobalt_reports_opensans';}
+body.path-blocks-reportdashboard input,
+body.path-blocks-reportdashboard button,
+body.path-blocks-reportdashboard select,
+body.path-blocks-reportdashboard textarea,
+
+body.path-blocks-reporttiles input,
+body.path-blocks-reporttiles button,
+body.path-blocks-reporttiles select,
+body.path-blocks-reporttiles textarea,
+
+body.path-blocks-learnerscript input,
+body.path-blocks-learnerscript button,
+body.path-blocks-learnerscript select,
+body.path-blocks-learnerscript textarea{
+    font-family: 'Cobalt_reports_opensans';
+}

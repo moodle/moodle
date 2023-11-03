@@ -1,0 +1,170 @@
+<div id="dashboard-header">
+<!-- <div id="dashboard-header {{reportdashoardclass}}"> -->
+    {{# configuredinstances }}
+<!--     <div id="reportbox_shadow">
+        <div id="segmented-button">
+            <input type="radio" name="duration" value="week" id="seg-Week">
+            <label for="seg-Week" class="week">{{#str}}week{{/str}}</label>
+            <input type="radio" name="duration" value="month" id="seg-Month">
+            <label for="seg-Month">{{#str}}month{{/str}}</label>
+            <input type="radio" name="duration" value="year" id="seg-Year">
+            <label for="seg-Year">{{#str}}year, block_reportdashboard{{/str}}</label>
+            <input type="radio" name="duration" value="custom" id="seg-Custom">
+            <label for="seg-Custom">{{#str}}custom, block_reportdashboard{{/str}}</label>
+            <input type="radio" name="duration" value="clear" id="seg-Clear" checked="true">
+            <label for="seg-Clear">{{#str}}all, block_reportdashboard{{/str}}</label>
+        </div>
+        <span class="flatpickr">
+        <input type="text" name="customduration" value="" style="display: none;"
+                id="customrange" placeholder="Start Date - End Date">
+        </span>
+    </div> -->
+    {{# coursedashboard }}
+        {{# courselist.0 }}
+        <span class="coursefilter">
+            <label>{{#str}}course{{/str}}</label>
+            <select name="filter_courses" class = "dashboardcourses" id = "dashboardcourses" data-select2-ajax="1" data-action = "filtercourses" data-role="{{dashboardrole}}">
+                {{# courselist }}
+                    <option value = "{{id}}">{{fullname}}</option>
+                {{/ courselist }}
+            </select>
+        </span>
+        {{/ courselist.0 }}
+    {{/ coursedashboard }}
+    {{/ configuredinstances }}
+    <span id="widgetaction">
+        <span class='pull-right' >
+        <span class='left_buttons'>
+            {{# issiteadmin }}
+                {{# reportwidgetstatus }}
+                    <span class="dropdown nav-item pull-right">
+                        <a class="dropdown-toggle htitle" id="addwidgets{{reportinstance}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="tooltiptext tooltip-top">{{#str}}addwidgettile, block_reportdashboard{{/str}}</span>
+                            <img src='{{config.wwwroot}}/blocks/learnerscript/pix/addwidget.png' id='addwidgets' class='addblocks-to-dashboard' >
+                        </a>
+                        <ul class="menu dropdown-menu  dropdown-menu-right dropdown-content" area-labelledby="addwidgets{{reportinstance}}">
+                            {{# reportdashboardstatus }}
+                                <li role="presentation">
+                                    <a class="dropdown-item menu-action" onclick = '(function(e){ require("block_reportdashboard/reportdashboard").addblocks_to_dashboard() })(event)'>{{#str}}addwidgets, block_reportdashboard{{/str}}</a>
+                                </li>
+                            {{/ reportdashboardstatus }}
+                            {{# reporttilestatus }}
+                                <li role="presentation">
+                                    <a class="dropdown-item menu-action" onclick = '(function(e){ require("block_reportdashboard/reportdashboard").addtiles_to_dashboard() })(event)'>{{#str}}addtiles, block_reportdashboard{{/str}}</a>
+                                </li>
+                            {{/ reporttilestatus }}
+                        </ul>
+                    </span>
+                {{/ reportwidgetstatus }}
+            {{/ issiteadmin}}
+            <span class="dropdown nav-item pull-right">
+                <a class="dropdown-toggle htitle" id="switchdashboard{{reportinstance}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="tooltiptext tooltip-top">{{#str}}switchdashboard, block_reportdashboard{{/str}}</span>
+                    <img src={{config.wwwroot}}/blocks/learnerscript/pix/switchdashboard.png id='addwidgets' class='addblocks-to-dashboard'>
+                </a>
+                <ul  class="menu dropdown-menu  dropdown-menu-right dropdown-content" area-labelledby="switchdashboard{{reportinstance}}">
+                                {{#get_dashboardname}}
+                    <!-- <a href='{{config.wwwroot}}/blocks/reportdashboard/dashboard.php?dashboardurl={{name}}'>{{name}}</a> -->
+        <li class="dashboardinstances">
+            {{#editingon}}
+            <span class="edit_delete_icons">
+                <span class="inplaceeditable inplaceeditable-text" data-inplaceeditable="1" data-component="block_reportdashboard" data-itemtype="dashboardname" data-prevoiusdashboardname='{{name}}' data-pagetypepattern='{{pagetypepattern}}' data-value='{{name}}' data-editlabel="New name for Dashboard" data-type="text" data-options="" data-roleshortname= '{{dashboardrole}}'>
+                {{#default}}
+                    <img src={{config.wwwroot}}/pix/i/delete.png id="deleteimg" title="Delete" alt="delete" data-name ='{{name}}' onclick = "(function(e){ require('block_reportdashboard/reportdashboard').Deletedashboard({instance:'{{name}}',random:{{random}} }) }) (event)" />
+                    <img src={{config.wwwroot}}/pix/i/edit.png id="editimg" title="Edit title"  title="Edit title" aria-label="Edit title" onclick = '(function(e){ require("block_reportdashboard/reportdashboard").updatedashboard("{{name}}","{{dashboardrole}}") })(event)'>
+                    {{/default}}
+                
+                <a href='{{config.wwwroot}}/blocks/reportdashboard/dashboard.php?dashboardurl={{name}}&role={{dashboardrole}}&contextlevel={{dashboardcontextlevel}}'><span class="instancename">{{name}}<span class="accesshide "> Forum</span></span></a>
+                </span>
+            </span>
+            </span>
+                    <div class="instance_popup {{name}}" style="display:none;" id="dashboard_delete_popup_{{random}}" >{{#str}}dashboarddelete, block_reportdashboard{{/str}}
+                        <div id="confirm_butns">
+                            <span class="knowmore cpointer"><a id="yesbutton" href ='{{config.wwwroot}}/blocks/reportdashboard/dashboard.php?delete={{name}}&role={{dashboardrole}}&dashboardurl={{dashboardurl}}&contextlevel={{dashboardcontextlevel}}&sesskey={{sesskey}}' class="btn btn-default yes_button" >{{#str}}yes{{/str}}</a></span>
+                            <span class="knowmore cpointer"><a id="nobutton" onclick=" (function(e){ require(['jquery','jqueryui'], function($) { $('#dashboard_delete_popup_{{random}}').dialog('close'); }) }) (event);" class="btn btn-default" >{{#str}}no{{/str}}</a></span>
+                        </div>
+                    </div>
+            {{/editingon}}
+            {{^editingon}}
+              <a href='{{config.wwwroot}}/blocks/reportdashboard/dashboard.php?dashboardurl={{name}}&role={{dashboardrole}}&contextlevel={{dashboardcontextlevel}}'><span class="instancename">{{name}}<span class="accesshide "> Forum</span></span></a>
+            {{/editingon}}
+        </li>
+            {{/get_dashboardname}}
+                </ul>
+            </span>
+    </span>
+    <span class="right_buttons">
+    {{#issiteadmin}}
+        <a class= 'htitle' href="{{config.wwwroot}}/blocks/learnerscript/editreport.php"
+           target="_blank">
+            <span class="tooltiptext tooltip-top">{{#str}}addreport, block_learnerscript{{/str}}</span>
+            <img src={{config.wwwroot}}/blocks/learnerscript/pix/addreport.png id='addreport' class="addblocks-to-dashboard">
+        </a>
+        <span class ='span_adddashboard htitle'onclick = '(function(e){ require("block_reportdashboard/reportdashboard").addnewdashboard() })(event)'>
+        <span class="tooltiptext tooltip-top">{{#str}}addnewdashboard, block_reportdashboard{{/str}}</span>
+            <img src={{config.wwwroot}}/blocks/learnerscript/pix/adddashboard.png id='adddashboard' class='addblocks-to-dashboard'>
+        </span>
+    {{/issiteadmin}}
+    {{^issiteadmin}}
+        {{^managerrole}}
+            <a class= 'htitle' href="{{config.wwwroot}}/blocks/learnerscript/reports.php?role={{role}}&contextlevel={{contextlevel}}"
+               target="_blank">
+                <span class="tooltiptext tooltip-top">{{#str}}reports, block_learnerscript{{/str}}</span>
+                <img src={{config.wwwroot}}/blocks/learnerscript/pix/managereport.png id='addreport' class="addblocks-to-dashboard">
+            </a>
+        {{/managerrole}}
+    {{/issiteadmin}}
+    {{#issiteadmin}}
+        <a class= 'htitle' href="{{config.wwwroot}}/blocks/learnerscript/managereport.php"
+           target="_blank">
+            <span class="tooltiptext tooltip-top">{{#str}}managereports, block_learnerscript{{/str}}</span>
+            <img src={{config.wwwroot}}/blocks/learnerscript/pix/managereport.png id='addreport' class="addblocks-to-dashboard">
+        </a>
+    {{/issiteadmin}}
+    {{#managerrole}}
+        {{^issiteadmin}}
+            <a class= 'htitle' href="{{config.wwwroot}}/blocks/learnerscript/managereport.php"
+               target="_blank">
+                <span class="tooltiptext tooltip-top">{{#str}}managereports, block_learnerscript{{/str}}</span>
+                <img src={{config.wwwroot}}/blocks/learnerscript/pix/managereport.png id='addreport' class="addblocks-to-dashboard">
+            </a>
+        {{/issiteadmin}}
+    {{/managerrole}}
+    {{> block_reportdashboard/switchrole }}
+    </span>
+    </span>
+    <div id='internalbsm' style="display: none;">
+    <div id='innerwrapper'>
+    <div class='sidenav'>
+        <ul id="dashboards_menu" >
+        </ul>
+    </div>
+</div>
+</div>
+</div>
+{{^ configuredinstances }}
+<div class="alert alert-info">{{# str }} nolsinstance, block_learnerscript {{/ str }}</div>
+{{/ configuredinstances }}
+<div class="newreport_dashboard" style="display:none;">
+    <form action="{{config.wwwroot}}/blocks/reportdashboard/dashboard.php" id="createdashbaord_form">
+        <div class="form-group row fitem has-danger" >
+            <div class="col-md-3">
+                <label class="col-form-label d-inline " for="id_lastname">
+                    {{# str }} dashboardname, block_reportdashboard {{/ str }}
+                </label>
+            </div>
+            <div class="col-md-9 form-inline felement" data-fieldtype="text" >
+                <input type="hidden" name="role" value="{{dashboardrole}}" />
+                <input type="hidden" name="contextlevel" value="{{dashboardcontextlevel}}" />
+                <input type="text" class="form-control form-control-danger" name="dashboardurl" id="id_dashboard" placeholder="Maximum 16 Characters" value="" size="20" maxlength="16">
+                <div class="form-control-feedback" id="id_error_dashboard" style="display: none;">{{# str}} dashboard_name, block_reportdashboard {{/ str}}</div>
+                <div class="form-control-feedback" id="id_error_dashboard_nospaces" style="display: none;">{{# str}} dashboardnospaces, block_reportdashboard {{/ str}}</div>
+            </div>
+        </div>
+        <div class="form-group row fitem dashboard_submit" >
+            <div class="col-md-9 form-inline felement" data-fieldtype="submit" >
+                <input type="submit" class="btn btn-primary" id="id_submitbutton" value="Save Changes">
+             </div>
+        </div>
+    </form>
+</div>

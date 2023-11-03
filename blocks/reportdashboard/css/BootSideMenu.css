@@ -1,0 +1,165 @@
+.bootsidemenu {
+    z-index: 9999;
+    position: fixed;
+    top: -1px;
+    bottom: -1px;
+    padding: 0;
+    background-color: #fff;
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .15);
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+}
+div#innerwrapper {
+    padding: 15px;
+}
+.path-course-view .block_reporttiles div.tiles_information{
+      margin:0;
+}
+.bootsidemenu > .menu-wrapper {
+    padding: 5px;
+    position: absolute;
+    bottom: 0;
+    top: 0;
+    width: 100%;
+    overflow: auto;
+}
+
+.bootsidemenu > .row {
+    margin: 0;
+}
+
+.bootsidemenu {
+    /*width: auto;*/
+      min-width: unset;
+}
+
+.bootsidemenu.bootsidemenu-left {
+    left: 0;
+    right: auto;/*20px;*/
+}
+
+.bootsidemenu.bootsidemenu-right {
+    right: 0;
+    left: auto;/*20px;*/
+}
+
+
+.toggler {
+    -webkit-background-clip: padding-box;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, .15);
+    width: 130px;
+    height: 29px;
+    position: absolute;
+    top: 47%;
+    cursor: pointer;
+    background-color: #fff;
+    text-align: center;
+}
+
+.bootsidemenu-left > .toggler {
+    right: -81px;
+    transform: rotate(270deg);
+    background: #CCC;
+}
+
+.bootsidemenu-left > .toggler > span {
+    margin: 15px 2px;
+}
+
+.bootsidemenu-right > .toggler {
+      left: -80px;
+      transform: rotate(270deg);
+      background: #FFF;
+}
+
+.bootsidemenu-right > .toggler > span {
+    margin: 15px 2px;
+}
+
+/*Native BootStrap Hack*/
+.bootsidemenu .list-group-item:last-child, .bootsidemenu .list-group-item:first-child {
+    border-radius: 0;
+}
+
+.bootsidemenu .list-group {
+    margin-bottom: 0;
+}
+
+.bootsidemenu .list-group-item {
+    border: 1px solid #DDD;
+    border-left: 0;
+    border-right: 0;
+    margin-bottom: 0;
+    margin-top: -1px;
+}
+
+.list-group .collapse a {
+    padding-left: 25px;
+}
+
+.list-group-item .glyphicon {
+    margin-right: 5px;
+}
+
+
+/*==========  Media queries for test ==========*/
+
+/* Custom, iPhone Retina */
+@media only screen and (min-width : 320px) {
+
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (min-width : 480px) {
+
+}
+
+/* Small Devices, Tablets */
+@media only screen and (min-width : 768px) {
+
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (min-width : 992px) {
+
+}
+
+/* Large Devices, Wide Screens */
+@media only screen and (min-width : 1200px) {
+
+}
+
+
+/*==========  Non-Mobile First Method  ==========*/
+
+/* Large Devices, Wide Screens */
+@media only screen and (max-width : 1200px) {
+
+}
+
+/* Medium Devices, Desktops */
+@media only screen and (max-width : 992px) {
+
+}
+
+/* Small Devices, Tablets */
+@media only screen and (max-width : 768px) {
+    .bootsidemenu {
+        min-width: 200px;
+    }
+}
+
+/* Extra Small Devices, Phones */
+@media only screen and (max-width : 480px) {
+    .bootsidemenu {
+        min-width: 90%;
+    }
+}
+
+/* Custom, iPhone Retina */
+@media only screen and (max-width : 320px) {
+
+}

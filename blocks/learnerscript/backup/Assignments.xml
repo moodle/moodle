@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<report version="2021051704.1"><visible><![CDATA[1]]></visible>
+<name><![CDATA[Assignments]]></name>
+<summary><![CDATA[<p><strong>Total:</strong>&nbsp;The total number of assignments created from the all courses on your system, within a timeline.</p><p><strong>Active:&nbsp;</strong>The number of assignments available (active/inactive status) from all the courses for learners, within a timeline.</p>]]></summary>
+<type><![CDATA[statistics]]></type>
+<components><![CDATA[YToyOntzOjk6ImN1c3RvbXNxbCI7YToxOntzOjY6ImNvbmZpZyI7Tzo4OiJzdGRDbGFzcyI6MTE6e3M6NDoibmFtZSI7czoxMToiQXNzaWdubWVudHMiO3M6NDoidHlwZSI7czoxMDoic3RhdGlzdGljcyI7czo4OiJxdWVyeXNxbCI7czo4MzY6IlNFTEVDVCtDT1VOVCUyOGNtLmlkJTI5K0FTKyUyMlRvdGFsJTIyJTJDJTBEJTBBJTI4U0VMRUNUK0NPVU5UJTI4Y20uaWQlMjkrRlJPTStwcmVmaXhfY291cnNlX21vZHVsZXMrQVMrY20rKyslMEQlMEErKytKT0lOK3ByZWZpeF9jb3Vyc2UrQVMrYytPTitjLmlkJTNEY20uY291cnNlJTBEJTBBKysrSk9JTitwcmVmaXhfbW9kdWxlcytBUyttK09OK20uaWQrJTNEK2NtLm1vZHVsZSsrJTBEJTBBKysrV0hFUkUrY20udmlzaWJsZSslM0QxK0FORCtjLnZpc2libGUrJTNEKzErQU5EK2RlbGV0aW9uaW5wcm9ncmVzcyslM0QwK0FORCttLm5hbWUlM0QlMjdhc3NpZ24lMjcrKyUyNSUyNUZJTFRFUl9DT1VSU0VTJTNBYy5pZCUyNSUyNStBTkQrY20uYWRkZWQrQkVUV0VFTislMjUlMjVMU19TVEFSVERBVEUlMjUlMjUrQU5EKyUyNSUyNUxTX0VORERBVEUlMjUlMjUlMjkrQVMrJTIyQWN0aXZlJTIyJTBEJTBBRlJPTStwcmVmaXhfY291cnNlX21vZHVsZXMrQVMrY20rJTBEJTBBSk9JTitwcmVmaXhfYXNzaWduK0FTK2ErT04rYS5pZCslM0QrY20uaW5zdGFuY2UlMEQlMEFKT0lOK3ByZWZpeF9tb2R1bGVzK0FTK20rT04rbS5pZCslM0QrY20ubW9kdWxlJTBEJTBBSk9JTitwcmVmaXhfY291cnNlK0FTK2MrT04rYy5pZCUzRGNtLmNvdXJzZStXSEVSRStjbS5kZWxldGlvbmlucHJvZ3Jlc3MrJTNEMCtBTkQrK2MudmlzaWJsZSslM0QrMSUwRCUwQUFORCttLm5hbWUrJTNEKyUyN2Fzc2lnbiUyNyslMjUlMjVGSUxURVJfQ09VUlNFUyUzQWMuaWQlMjUlMjUrQU5EK2NtLmFkZGVkK0JFVFdFRU4rJTI1JTI1TFNfU1RBUlREQVRFJTI1JTI1K0FORCslMjUlMjVMU19FTkREQVRFJTI1JTI1IjtzOjExOiJkZXNjcmlwdGlvbiI7YToyOntzOjQ6InRleHQiO3M6MzQ0OiIlM0NwJTNFJTNDc3Ryb25nJTNFVG90YWwlM0ElM0MlMkZzdHJvbmclM0UlMjZuYnNwJTNCVGhlK3RvdGFsK251bWJlcitvZithc3NpZ25tZW50cytjcmVhdGVkK2Zyb20rdGhlK2FsbCtjb3Vyc2VzK29uK3lvdXIrc3lzdGVtJTJDK3dpdGhpbithK3RpbWVsaW5lLiUzQyUyRnAlM0UlM0NwJTNFJTNDc3Ryb25nJTNFQWN0aXZlJTNBJTI2bmJzcCUzQiUzQyUyRnN0cm9uZyUzRVRoZStudW1iZXIrb2YrYXNzaWdubWVudHMrYXZhaWxhYmxlKyUyOGFjdGl2ZSUyRmluYWN0aXZlK3N0YXR1cyUyOStmcm9tK2FsbCt0aGUrY291cnNlcytmb3IrbGVhcm5lcnMlMkMrd2l0aGluK2ErdGltZWxpbmUuJTNDJTJGcCUzRSI7czo2OiJmb3JtYXQiO3M6MToiMSI7fXM6NjoiZ2xvYmFsIjtzOjE6IjEiO3M6MjoiaWQiO2k6MTA3O3M6ODoiY291cnNlaWQiO2k6MTtzOjM1OiJtZm9ybV9pc2V4cGFuZGVkX2lkX2FkdmFuY2Vkb3B0aW9ucyI7aTowO3M6MTI6InN1Ym1pdGJ1dHRvbiI7czo0OiJOZXh0IjtzOjEyOiJkaXNhYmxldGFibGUiO2k6MDtzOjc6InN1bW1hcnkiO3M6MzQ0OiIlM0NwJTNFJTNDc3Ryb25nJTNFVG90YWwlM0ElM0MlMkZzdHJvbmclM0UlMjZuYnNwJTNCVGhlK3RvdGFsK251bWJlcitvZithc3NpZ25tZW50cytjcmVhdGVkK2Zyb20rdGhlK2FsbCtjb3Vyc2VzK29uK3lvdXIrc3lzdGVtJTJDK3dpdGhpbithK3RpbWVsaW5lLiUzQyUyRnAlM0UlM0NwJTNFJTNDc3Ryb25nJTNFQWN0aXZlJTNBJTI2bmJzcCUzQiUzQyUyRnN0cm9uZyUzRVRoZStudW1iZXIrb2YrYXNzaWdubWVudHMrYXZhaWxhYmxlKyUyOGFjdGl2ZSUyRmluYWN0aXZlK3N0YXR1cyUyOStmcm9tK2FsbCt0aGUrY291cnNlcytmb3IrbGVhcm5lcnMlMkMrd2l0aGluK2ErdGltZWxpbmUuJTNDJTJGcCUzRSI7fX1zOjExOiJwZXJtaXNzaW9ucyI7YToyOntzOjY6ImNvbmZpZyI7Tzo4OiJzdGRDbGFzcyI6MTp7czoxMzoiY29uZGl0aW9uZXhwciI7czowOiIiO31zOjg6ImVsZW1lbnRzIjthOjA6e319fQ==]]></components>
+<export><![CDATA[]]></export>
+<global><![CDATA[1]]></global>
+<lastexecutiontime><![CDATA[12]]></lastexecutiontime>
+<disabletable><![CDATA[0]]></disabletable>
+<instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[1]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard]]></pagetypepattern>
+<subpagepattern><![CDATA[Course]]></subpagepattern>
+<defaultregion><![CDATA[center-second]]></defaultregion>
+<defaultweight><![CDATA[-2]]></defaultweight>
+<timecreated><![CDATA[1648610600]]></timecreated>
+<timemodified><![CDATA[1648611391]]></timemodified>
+<title><![CDATA[Assignments Overview]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[171705126]]></logo>
+<tilescolourpicker><![CDATA[FFFFFF]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<reportduration><![CDATA[year]]></reportduration>
+<tilescolour><![CDATA[000000]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position></report>

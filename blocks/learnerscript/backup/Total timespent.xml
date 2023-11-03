@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<report version="2021051704.1"><visible><![CDATA[1]]></visible>
+<name><![CDATA[Total timespent]]></name>
+<summary><![CDATA[<p>The amount of time-spent on the LMS by learners &amp; teachers. For the admin, the time-spent will be displayed as ‘ZERO’.</p>]]></summary>
+<type><![CDATA[statistics]]></type>
+<components><![CDATA[YToyOntzOjk6ImN1c3RvbXNxbCI7YToxOntzOjY6ImNvbmZpZyI7Tzo4OiJzdGRDbGFzcyI6MTE6e3M6NDoibmFtZSI7czoxNToiVG90YWwrdGltZXNwZW50IjtzOjQ6InR5cGUiO3M6MTA6InN0YXRpc3RpY3MiO3M6ODoicXVlcnlzcWwiO3M6NDQ1OiJTRUxFQ1QrQ0FTRStXSEVOK1NVTSUyOGJsYy50aW1lc3BlbnQlMjkrSVMrTlVMTCtUSEVOKyUyNzAlMjcrRUxTRStTVU0lMjhibGMudGltZXNwZW50JTI5K0VORCsrQVMrJTIyVGltZXNwZW50JTIyJTBEJTBBRlJPTStwcmVmaXhfYmxvY2tfbHNfY291cnNldGltZXN0YXRzK2JsYyUwRCUwQUpPSU4rcHJlZml4X3JvbGVfYXNzaWdubWVudHMrQVMrcmErT04rcmEudXNlcmlkKyUzRCtibGMudXNlcmlkJTBEJTBBSk9JTitwcmVmaXhfcm9sZStyK09OK3IuaWQrJTNEK3JhLnJvbGVpZCslMEQlMEFXSEVSRStibGMudXNlcmlkKyUzRCslMjUlMjVVU0VSSUQlMjUlMjUrJTI1JTI1REFTSEJPQVJEUk9MRSUzQXIuc2hvcnRuYW1lJTI1JTI1KyUwRCUwQUFORCtibGMudGltZW1vZGlmaWVkK0JFVFdFRU4rJTI1JTI1TFNfU1RBUlREQVRFJTI1JTI1K0FORCslMjUlMjVMU19FTkREQVRFJTI1JTI1IjtzOjExOiJkZXNjcmlwdGlvbiI7YToyOntzOjQ6InRleHQiO3M6MTYxOiIlM0NwJTNFVGhlK2Ftb3VudCtvZit0aW1lLXNwZW50K29uK3RoZStMTVMrYnkrbGVhcm5lcnMrJTI2YW1wJTNCK3RlYWNoZXJzLitGb3IrdGhlK2FkbWluJTJDK3RoZSt0aW1lLXNwZW50K3dpbGwrYmUrZGlzcGxheWVkK2FzKyVFMiU4MCU5OFpFUk8lRTIlODAlOTkuJTNDJTJGcCUzRSI7czo2OiJmb3JtYXQiO3M6MToiMSI7fXM6NjoiZ2xvYmFsIjtzOjE6IjEiO3M6MjoiaWQiO2k6MTc4O3M6ODoiY291cnNlaWQiO2k6MTtzOjM1OiJtZm9ybV9pc2V4cGFuZGVkX2lkX2FkdmFuY2Vkb3B0aW9ucyI7aTowO3M6MTI6InN1Ym1pdGJ1dHRvbiI7czo0OiJOZXh0IjtzOjEyOiJkaXNhYmxldGFibGUiO2k6MDtzOjc6InN1bW1hcnkiO3M6MTYxOiIlM0NwJTNFVGhlK2Ftb3VudCtvZit0aW1lLXNwZW50K29uK3RoZStMTVMrYnkrbGVhcm5lcnMrJTI2YW1wJTNCK3RlYWNoZXJzLitGb3IrdGhlK2FkbWluJTJDK3RoZSt0aW1lLXNwZW50K3dpbGwrYmUrZGlzcGxheWVkK2FzKyVFMiU4MCU5OFpFUk8lRTIlODAlOTkuJTNDJTJGcCUzRSI7fX1zOjExOiJwZXJtaXNzaW9ucyI7YToyOntzOjY6ImNvbmZpZyI7Tzo4OiJzdGRDbGFzcyI6Mzp7czoxMzoiY29uZGl0aW9uZXhwciI7czoxNDoiJTI4YzErb3IrYzIlMjkiO3M6MTQ6ImNvbmRpdGlvbmV4cHIxIjtzOjA6IiI7czoxNDoiY29uZGl0aW9uZXhwcjIiO3M6MTQ6IiUyOGMxK29yK2MyJTI5Ijt9czo4OiJlbGVtZW50cyI7YToyOntpOjA7YTo1OntzOjI6ImlkIjtzOjE1OiJhbUd4NG9FUkFxUG9ZQnoiO3M6ODoiZm9ybWRhdGEiO086ODoic3RkQ2xhc3MiOjM6e3M6MTI6ImNvbnRleHRsZXZlbCI7czoyOiI1MCI7czoxMjoic3VibWl0YnV0dG9uIjtzOjM6IkFkZCI7czo2OiJyb2xlaWQiO3M6MToiNSI7fXM6MTA6InBsdWdpbm5hbWUiO3M6MTI6InJvbGVpbmNvdXJzZSI7czoxNDoicGx1Z2luZnVsbG5hbWUiO3M6MzE6IlVzZXIrd2l0aCt0aGUrc2VsZWN0ZWQrcm9sZSUyRnMiO3M6Nzoic3VtbWFyeSI7czoyMzoic3R1ZGVudCthdCtDb3Vyc2UrbGV2ZWwiO31pOjE7YTo1OntzOjI6ImlkIjtzOjE1OiJBR2JiQ0JsTEpxa0RZcUwiO3M6ODoiZm9ybWRhdGEiO086ODoic3RkQ2xhc3MiOjM6e3M6MTI6ImNvbnRleHRsZXZlbCI7czoyOiI1MCI7czoxMjoic3VibWl0YnV0dG9uIjtzOjM6IkFkZCI7czo2OiJyb2xlaWQiO3M6MToiMyI7fXM6MTA6InBsdWdpbm5hbWUiO3M6MTI6InJvbGVpbmNvdXJzZSI7czoxNDoicGx1Z2luZnVsbG5hbWUiO3M6MzE6IlVzZXIrd2l0aCt0aGUrc2VsZWN0ZWQrcm9sZSUyRnMiO3M6Nzoic3VtbWFyeSI7czozMDoiZWRpdGluZ3RlYWNoZXIrYXQrQ291cnNlK2xldmVsIjt9fX19]]></components>
+<export><![CDATA[]]></export>
+<global><![CDATA[1]]></global>
+<lastexecutiontime><![CDATA[1]]></lastexecutiontime>
+<disabletable><![CDATA[0]]></disabletable>
+<instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-student]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[side-db-third]]></defaultregion>
+<defaultweight><![CDATA[-1]]></defaultweight>
+<timecreated><![CDATA[1646364264]]></timecreated>
+<timemodified><![CDATA[1646364264]]></timemodified>
+<title><![CDATA[Total Timespent]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[843631745]]></logo>
+<tilescolourpicker><![CDATA[C1403D]]></tilescolourpicker>
+<tileformat><![CDATA[border]]></tileformat>
+<tilescolour><![CDATA[000000]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position></report>

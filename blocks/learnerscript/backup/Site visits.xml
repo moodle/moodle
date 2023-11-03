@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<report version="2021051704.1"><visible><![CDATA[1]]></visible>
+<name><![CDATA[Site visits]]></name>
+<summary><![CDATA[<p>The number of site views by students &amp; teachers on the LMS.</p>]]></summary>
+<type><![CDATA[statistics]]></type>
+<components><![CDATA[YToyOntzOjk6ImN1c3RvbXNxbCI7YToxOntzOjY6ImNvbmZpZyI7Tzo4OiJzdGRDbGFzcyI6MTE6e3M6NDoibmFtZSI7czoxMToiU2l0ZSt2aXNpdHMiO3M6NDoidHlwZSI7czoxMDoic3RhdGlzdGljcyI7czo4OiJxdWVyeXNxbCI7czo0Nzg6IlNFTEVDVCtDT1VOVCUyOERJU1RJTkNUK2xzbC5pZCUyOStBUyslMjJTaXRlK3Zpc2l0cyUyMisrKysrKysrKysrKysrKysrKysrKysrKysrKysrKyslMEQlMEFGUk9NK3ByZWZpeF9sb2dzdG9yZV9zdGFuZGFyZF9sb2crQVMrbHNsKyUwRCUwQUpPSU4rcHJlZml4X3JvbGVfYXNzaWdubWVudHMrQVMrcmErT04rcmEudXNlcmlkKyUzRCtsc2wudXNlcmlkKyUwRCUwQUpPSU4rcHJlZml4X3JvbGUrcitPTityLmlkKyUzRCtyYS5yb2xlaWQrJTBEJTBBV0hFUkUrcmEudXNlcmlkKyUzRCslMjUlMjVVU0VSSUQlMjUlMjUrQU5EK2xzbC5jcnVkKyUzRCslMjdyJTI3KytBTkQrbHNsLmFjdGlvbislM0QrJTI3bG9nZ2VkaW4lMjcrJTI1JTI1REFTSEJPQVJEUk9MRSUzQXIuc2hvcnRuYW1lJTI1JTI1KyUwRCUwQUFORCtsc2wudGltZWNyZWF0ZWQrQkVUV0VFTislMjUlMjVMU19TVEFSVERBVEUlMjUlMjUrQU5EKyUyNSUyNUxTX0VORERBVEUlMjUlMjUiO3M6MTE6ImRlc2NyaXB0aW9uIjthOjI6e3M6NDoidGV4dCI7czo4NDoiJTNDcCUzRVRoZStudW1iZXIrb2Yrc2l0ZSt2aWV3cytieStzdHVkZW50cyslMjZhbXAlM0IrdGVhY2hlcnMrb24rdGhlK0xNUy4lM0MlMkZwJTNFIjtzOjY6ImZvcm1hdCI7czoxOiIxIjt9czo2OiJnbG9iYWwiO3M6MToiMSI7czoyOiJpZCI7aToxNzE7czo4OiJjb3Vyc2VpZCI7aToxO3M6MzU6Im1mb3JtX2lzZXhwYW5kZWRfaWRfYWR2YW5jZWRvcHRpb25zIjtpOjA7czoxMjoic3VibWl0YnV0dG9uIjtzOjQ6Ik5leHQiO3M6MTI6ImRpc2FibGV0YWJsZSI7aTowO3M6Nzoic3VtbWFyeSI7czo4NDoiJTNDcCUzRVRoZStudW1iZXIrb2Yrc2l0ZSt2aWV3cytieStzdHVkZW50cyslMjZhbXAlM0IrdGVhY2hlcnMrb24rdGhlK0xNUy4lM0MlMkZwJTNFIjt9fXM6MTE6InBlcm1pc3Npb25zIjthOjI6e3M6NjoiY29uZmlnIjtPOjg6InN0ZENsYXNzIjozOntzOjEzOiJjb25kaXRpb25leHByIjtzOjE0OiIlMjhjMStvcitjMiUyOSI7czoxNDoiY29uZGl0aW9uZXhwcjEiO3M6MDoiIjtzOjE0OiJjb25kaXRpb25leHByMiI7czoxNDoiJTI4YzErb3IrYzIlMjkiO31zOjg6ImVsZW1lbnRzIjthOjI6e2k6MDthOjU6e3M6MjoiaWQiO3M6MTU6IllhcEN4NmNBdkdYNmxHdyI7czo4OiJmb3JtZGF0YSI7Tzo4OiJzdGRDbGFzcyI6Mzp7czoxMjoiY29udGV4dGxldmVsIjtzOjI6IjUwIjtzOjEyOiJzdWJtaXRidXR0b24iO3M6MzoiQWRkIjtzOjY6InJvbGVpZCI7czoxOiI1Ijt9czoxMDoicGx1Z2lubmFtZSI7czoxMjoicm9sZWluY291cnNlIjtzOjE0OiJwbHVnaW5mdWxsbmFtZSI7czozMToiVXNlcit3aXRoK3RoZStzZWxlY3RlZCtyb2xlJTJGcyI7czo3OiJzdW1tYXJ5IjtzOjIzOiJzdHVkZW50K2F0K0NvdXJzZStsZXZlbCI7fWk6MTthOjU6e3M6MjoiaWQiO3M6MTU6InR6amF0UjFrU1VmMmVQbSI7czo4OiJmb3JtZGF0YSI7Tzo4OiJzdGRDbGFzcyI6Mzp7czoxMjoiY29udGV4dGxldmVsIjtzOjI6IjUwIjtzOjEyOiJzdWJtaXRidXR0b24iO3M6MzoiQWRkIjtzOjY6InJvbGVpZCI7czoxOiIzIjt9czoxMDoicGx1Z2lubmFtZSI7czoxMjoicm9sZWluY291cnNlIjtzOjE0OiJwbHVnaW5mdWxsbmFtZSI7czozMToiVXNlcit3aXRoK3RoZStzZWxlY3RlZCtyb2xlJTJGcyI7czo3OiJzdW1tYXJ5IjtzOjMwOiJlZGl0aW5ndGVhY2hlcithdCtDb3Vyc2UrbGV2ZWwiO319fX0=]]></components>
+<export><![CDATA[]]></export>
+<global><![CDATA[1]]></global>
+<lastexecutiontime><![CDATA[1]]></lastexecutiontime>
+<disabletable><![CDATA[0]]></disabletable>
+<instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-student]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[side-db-second]]></defaultregion>
+<defaultweight><![CDATA[0]]></defaultweight>
+<timecreated><![CDATA[1646364260]]></timecreated>
+<timemodified><![CDATA[1646364260]]></timemodified>
+<title><![CDATA[Site visits]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[546176381]]></logo>
+<tilescolourpicker><![CDATA[03353E]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<tilescolour><![CDATA[FFFFFF]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position><instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-editingteacher]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[reportdb-second]]></defaultregion>
+<defaultweight><![CDATA[0]]></defaultweight>
+<timecreated><![CDATA[1646364260]]></timecreated>
+<timemodified><![CDATA[1646364260]]></timemodified>
+<title><![CDATA[Site visits]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[268430029]]></logo>
+<tilescolourpicker><![CDATA[03353E]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<tilescolour><![CDATA[FFFFFF]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position><instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-editingteacher_50]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[reportdb-second]]></defaultregion>
+<defaultweight><![CDATA[0]]></defaultweight>
+<timecreated><![CDATA[1646364260]]></timecreated>
+<timemodified><![CDATA[1646364260]]></timemodified>
+<title><![CDATA[Site visits]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[306771395]]></logo>
+<tilescolourpicker><![CDATA[03353E]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<tilescolour><![CDATA[FFFFFF]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position></report>

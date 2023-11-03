@@ -1,0 +1,44 @@
+<div class="dashboard_reporttile_container {{tile_with_link}}" {{colorformat}}>
+    {{#instanceurlcheck}}
+        <a href={{instanceurlcheck}} />
+    {{/instanceurlcheck}}
+        <div class="dashboard_tiles {{reporttileclass}}" {{styletilescolour}}>
+            <span>
+                <div class="reporttile_title" title="{{configtitle}}">{{config_title_fullname}}
+                </div>
+                <div class='tiles_information row' data-reportid='{{reportid}}' data-instanceid='{{instanceid}}' data-reporttype='{{reporttype}}'>
+                    
+                    
+                    <div class="col-md-7 p-0">
+                    {{#tableformat}}
+                    <table width='100%'>
+                        <tr>
+                            <div id="reportloading_{{instanceid}}">
+                                <img src={{loading}} alt="loading" title="loading" />
+                            </div>
+                        </tr>
+                    </table>
+                    {{/tableformat}}
+                    </div>
+                    {{^tableformat}}
+                    <div id='plotreportcontainer{{instanceid}}' class='report_dashboard_container' data-reportid={{reportid}}
+                        data-reporttype='{{reporttype}}' data-blockinstance={{instanceid}} data-chartcolor={{stylecolorpicker}}> </div>
+                    {{/tableformat}}
+                    <div class="col-md-5 p-0">
+                    {{#tableformat}} 
+                        <span class="dashboard_tiles_img"><img src="{{tilelogo}}" /></span> 
+                    {{/tableformat}}
+                    </div>
+                </div>
+                <em class="ml-2 pull-left">{{reportduration}}</em>
+                <img src='{{helpimg}}' class="pull-right" id='helpimg' title='help with {{config_title_fullname}}' alt='help' 
+                    onclick = '(function(e){ require("block_learnerscript/report").block_statistics_help({{reportid}}) })(event)'>
+            </span>
+        </div>
+    {{#instanceurlcheck}}
+        </a>
+    {{/instanceurlcheck}}
+    <input type='hidden' name='ls_fstartdate' id='ls_fstartdate{{instanceid}}' value='{{startduration}}' />
+    <input type='hidden' name='ls_fenddate' id='ls_fenddate{{instanceid}}' value='{{endduration}}' />
+</div>
+

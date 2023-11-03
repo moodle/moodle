@@ -1,0 +1,197 @@
+<div class="simpleDemo" ng-app="learnerscript" ng-controller="Reportdesign" ng-cloak>
+    <input type="hidden" id="ls_reportid" value={{reportid}} />
+    <input type="hidden" id="ls_reportparams" value={{params}} />
+    <div class="panel panel-info">
+        <div class="learnerscript_actionbuttons">
+            {{# enableconditions}}
+            <button ng-if="conditions.elements" class="btn dropdown-toggle btn-primary" ng-click="showDialog($event)" id="unique">
+                {{# str }} conditions, block_learnerscript {{/ str }}
+            </button>
+            {{/ enableconditions}}
+            </span>
+            <button ng-click="save()" class="pull-right btn btn-primary"> {{# str }} save, block_learnerscript {{/ str }} </button>
+            {{#reporttype}}
+                <button ng-click="preview($event)" class="pull-right btn btn-primary"> {{# str }} preview, block_learnerscript {{/ str }} </button>
+            {{/reporttype}}
+            <div class="spinner" ng-show="loading"><img src="{{{loading}}}" alt="loading" title="loading" /> </div>
+        </div>
+        <div class="ls_components">
+        <div ng-if="list.label=='Available Columns' || list.label=='Selected Columns' || list.label=='Filters' || list.label=='Calculations' || list.label=='Ordering'" class="width-default panel-body" ng-class="[(list.widthclass), (key)]" ng-repeat="(key,list) in lists">
+            <div class="panel_body_container">
+                <h4 class="panel-title learnerscriptcolumn_header"><% list.label %>
+                  <span ng-init="collapseicon = 'minus'"
+                        ng-click="collapseicon = (collapseicon == 'minus') ? 'plus' : 'minus'">
+                    <i class="ls_column_switch fa fa-<% collapseicon %>-circle" aria-hidden="true"></i>
+                  </span>
+                  </h4>
+                <ul dnd-list dnd-drop="callback({targetList: list.elements, targetIndex: index})" dnd-allowed-types="list.allowedTypes" dnd-disable-if="list.dnd" ng-show="collapseicon == 'minus'">
+                    <li ng-if="!list.elements.length || list.elements.length == false">
+                        <div class="alert alert-info"> {{# str }} nodataavailable, block_learnerscript {{/ str }} </div>
+                    </li>
+                    <li ng-repeat="column in list.elements track by $index" ng-class="{'selected': models.selected === column}" ng-switch="key">
+                        <div class="pull-left design_cnt" ng-class="{'ls-calc_header': list.label=='Calculations'}">
+                            <span ng-if="column.type">
+                            <i ng-if="['calculations', 'filters', 'ordering'].indexOf(key) == -1" dnd-draggable="column" dnd-type="column.type" dnd-moved="list.elements.splice($index, 1)" dnd-effect-allowed="<% list.effect %>" dnd-selected="models.selected = column" dnd-callback="onDrop(list.elements, $index, targetList,targetIndex, column.type)" class = "icon fa fa-bars fa-fw" aria-hidden = "true" style = "cursor:move;"></i>
+                        </span>
+                            <span class="ls-colname" ng-if="!column.type && list.label == 'Available Columns'">
+                            <% column.formdata.columnname %></span>
+                            <span class="ls-colname" ng-if="column.type && list.label != 'Ordering'"><% column.formdata.column %></span>
+                            <span class="ls-colname" ng-if="column.type && list.label == 'Ordering'"><% column.pluginfullname %></span>
+                            <span class="ls-colname" ng-if="!column.formdata.column && list.label != 'Ordering'"><% column.pluginfullname %></span>
+                        </div>
+                        <dnd-nodrag class="pull-right">
+                            <div class="reportcolumn_header" ng-switch-when="columns">
+                                <div class="pull-right">
+                                    <span class="reportcolumnactions">
+                                        <span ng-if="!list.dnd" ng-click="list.elements.splice($index,1);checkAvailability(column)">
+                                            <button class="btn reportcolumnaction_trash" title="Delete">
+                                                <i class="icon fa fa-trash fa-fw "
+                                                    aria-hidden="true" aria-label="Delete"></i>
+                                            </button>
+                                        </span>
+                                        {{#reporttype}}
+                                        <span class="reportcolumnaction_textalign dropdown txt_borders" ng-class='{open: open}' ng-controller="alignment">
+                                            <button class="btn dropdown-toggle" data-toggle="dropdown" ng-click='open=!open'>
+                                                <i class="<% column.formdata.align %> ? fa fa-align-<% column.formdata.align %> : fa fa-text-width" aria-hidden="true"></i>
+                                            </button>
+                                            <ul id="align_menu" class="dropdown-menu">
+                                                <li role="presentation" ng-repeat="(key, value) in aligns"
+                                                    ng-click="setChoiceIndex(column.formdata, value.name, 'align');
+                                                    $parent.open =!$parent.open " title="<% value.name %>" >
+                                                    <i class="fa fa-align-<% value.name %>" aria-hidden="true"></i>
+                                                </li>
+                                            </ul>
+                                        </span>
+                                        <span class="reportcolumnaction_textwrap dropdown" ng-class='{open: open}' ng-controller="setwrap">
+                                            <button class="btn dropdown-toggle"
+                                                data-toggle="dropdown"
+                                                ng-click='open=!open'
+                                                >
+                                            <img ng-src="pix/<% column.formdata.wrap == 'wrap' ?  column.formdata.wrap : 'nowrap' %>.png"  />
+                                            </button>
+                                            <ul id="wrap_menu" class="dropdown-menu">
+                                                <li ng-repeat="choice in wraping"
+                                                        ng-click="setChoiceIndex(column.formdata, choice, 'wrap');
+                                                        $parent.open =!$parent.open">
+                                                   <img ng-src="pix/<% choice %>.png" />
+                                                </li>
+                                            </ul>
+                                        </span>
+                                        {{/reporttype}}
+                                    </span>
+                                    {{#reporttype}}    
+                                    <span class="pull-right reportcolumnaction_columnsize">
+                                        <input type="number" placeholder="Width" ng-model="column.formdata.size" ng-model="column.formdata.width" min="0" class="reportcolumnsize form-control input-sm pull-right">
+                                    </span>
+                                    {{/reporttype}}
+                                </div>
+                                <!-- <span class="reportcolumn_columnname"> -->
+                                    <input type="hidden" ng-model="column.pluginname">
+                                    <input type="text" ng-model="column.formdata.columname" class="reportcolumnname background-<% list.label %> form-control input-sm">
+                                <!-- </span> -->
+                            </div>
+                            <span ng-switch-when="filters">
+                                                <label class="switch">
+                                                    <input type="checkbox" ng-model="column.formdata.value">
+                                                    <span class="slider round"></span>
+                            </label>
+                            </span>
+                            <label class="switch" ng-switch-when="availablecolumns">
+                                <span ng-if="column.type">
+                                                    <input type="checkbox"
+                                                           ng-model="column.formdata.value"
+                                                           ng-change="updateSelectColumns(column,$index);">
+
+                                                      <span class="slider round"></span>
+                                </span>
+                                <span ng-if="!column.type">
+                                                     <button class="btn btn-primary"
+                                                        ng-click="advancedColumns($event, column.formdata.column);"
+                                                        class="btn btn-sm">{{# str }} adv ,block_learnerscript {{/str}}</button>
+                                                    </span>
+                            </label>
+                            <br /><span class="available_columns_detail" ng-if="column.formdata.heading" ng-switch-when="availablecolumns"><span><b>{{# str }} columntype, block_learnerscript {{/str}} </b><i ng-bind="column.pluginfullname"></i></span></span>
+                        </dnd-nodrag>
+                        <span ng-if="list.label == 'Calculations'">
+                            <select class="ls-select_calc form-control"
+                                    ng-model="list.calcpluginname[$index]"
+                                    ng-options="x for (x, y) in list.calcoptions"
+                                    ng-change="updateCalculations(column, list.calcpluginname[$index], $index)">
+                                <option value="">{{# str }} selectcalc ,block_learnerscript {{/str}}</option>
+                            </select>
+                            <span class="pull-right" ng-if="list.label=='Calculations'" ng-click="list.elements.splice($index,1);list.calcpluginname.splice($index,1)">
+                              <button class="btn reportcolumnaction_trash" title="Delete">
+                                <i class="icon fa fa-trash fa-fw "
+                                 aria-hidden="true" title="Delete" aria-label="Delete"></i>
+                              </button>
+                            </span>
+                        </span>
+                        <span class="ls-ordering_container" ng-if="list.label == 'Ordering'">
+                            <select class="ls-ordering_select form-control"
+                                    ng-model="column.formdata.column"
+                                    ng-options="ordcol for ordcol in column.orderingcolumn" >
+                                    <option value="">{{# str }} selectordering ,block_learnerscript {{/str}}</option>
+                            </select>
+                            <button ng-init="column.formdata.direction=(column.formdata.direction)? column.formdata.direction : 'asc';" ng-click="column.formdata.direction=(column.formdata.direction == 'asc') ? 'desc' : 'asc';"
+                            ng-if="column.formdata.column" class="ls-ordering_type">
+                                <i class="fa fa-sort-amount-<% column.formdata.direction %>" aria-hidden="true"></i>
+                                <% column.formdata.direction | uppercase %>
+                            </button>
+                        </span>
+                    </li>
+                </ul>
+
+                <!-- <div class="clearfix"></div> -->
+                <div ng-if="list.label=='Selected Columns'" class="smart_table_container"
+                        title="{{# str }} preview, block_learnerscript {{/ str }}" style="display: none">
+                    <div class="alert alert-info" ng-if="!list.elements.length"> {{# str }} nodataavailable, block_learnerscript {{/ str }} </div>
+                    <table ng-if="list.label=='Selected Columns' && list.elements.length" st-table="reportdata"
+                            class="table generaltable">
+                        <thead>
+                            <tr>
+                                <th ng-repeat="column in list.elements track by $index" style="text-align:<% column.formdata.align %>" width="<% column.formdata.size %>%" ng-bind="column.formdata.columname"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="row in reportTable track by $index">
+                                <td ng-repeat="column in list.elements track by $index" style="text-align:<% column.formdata.align %>; word-break: <% column.formdata.wrap == 'wrap' ? 'break-all' : 'normal' %>" width="<% column.formdata.size %>"
+                                    data-id="<%  column.formdata.wrap %>">
+                                    <span ng-bind-html="trustAsHtml(''+row[column.formdata.column]+'')"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="pull-right report_exports width-3" ng-if="exports.length" >
+            <h4 class="panel-title learnerscriptcolumn_header ng-binding">
+                {{# str }} enable_exports, block_learnerscript {{/ str }}
+                <span ng-init="collapseicon = 'minus'"
+                    ng-click="collapseicon = (collapseicon == 'minus') ? 'plus' : 'minus'">
+                    <i class="ls_column_switch fa fa-<% collapseicon %>-circle" aria-hidden="true"></i>
+                </span>
+            </h4>
+            <ul class="enable_exports"  ng-show="collapseicon == 'minus'">
+                <li ng-repeat="column in exports track by $index">
+                    <span class="ls-design_export_options" ng-click="exportoptions(column.name, $index)" ng-modal="column.name"
+                        ng-class="<% column.value %> ? '<% column.name %> exportopt' : '<% column.name %> intro'" ></span>
+                </li>
+            </ul>
+        </div>
+        </div>
+        <div view-source="simple"></div>
+    </div>
+    {{# debugdisplay}}
+    <div class="width-default">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{# str }} generatedmodel, block_learnerscript {{/ str }}</h3>
+            </div>
+            <div class="panel-body">
+                <pre class="code"><% modelAsJson %></pre>
+            </div>
+        </div>
+    </div>
+    {{/ debugdisplay}}
+</div>

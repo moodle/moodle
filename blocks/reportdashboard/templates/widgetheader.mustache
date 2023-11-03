@@ -1,0 +1,114 @@
+<h4 class='reportdashboard_report_heading' title="{{reporttitle}}">{{reportnameheading}}
+{{# helpimgsql}}
+<img src='{{helpimg}}' id='helpimg' title='help with {{reportnameheading}}' alt='help' onclick = '(function(e){ require("block_learnerscript/report").block_statistics_help({{reportid}}) })(event)'>
+{{/ helpimgsql}}
+</h4>
+{{# report_option_innerstatus }}
+<span class="dropdown nav-item pull-right">
+<a class="dropdown-toggle htitle" id="report_option_inner{{instanceid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="tooltiptext tooltip-top">{{# str}}menu, block_reportdashboard{{/ str}}</span>
+    <i class="icon fa fa-ellipsis-v fa-fw dropdown pull-right"></i></a>
+<ul area-labelledby="report_option_inner{{instanceid}}" class="dropdown-menu dropdown-menu-right dropdown-content">
+    {{# designreportcap }}
+            <div id='delete_dialog{{reportinstance}}' style='display:none;'>
+                <p>{{# str}}deleteconfimation, block_reportdashboard, {{reportname}}{{/ str}}</p>
+				<div class='widgetdel'>
+					<a href="{{config.wwwroot}}/blocks/reportdashboard/dashboard.php?role={{dashboardrole}}&contextlevel={{dashboardcontextlevel}}&dashboardurl={{dashboardurl}}&reportid={{reportid}}&delete=1&sesskey={{sesskey}}&blockinstanceid={{instanceid}}&deletereport=0" class="btn btn-default">
+						{{# str}}widget, block_reportdashboard{{/ str}}
+					</a>
+					<a href="javascript:void(0);" onclick=" (function(e){ require(['jquery','jqueryui'], function($) { $('#delete_dialog{{reportinstance}}').dialog('close'); }) }) (event);" class="btn btn-default">
+						{{# str}}cancel{{/str}}
+					</a>
+				</div>
+            </div>
+    {{/ designreportcap }}
+    {{#action}}
+        <li class="report_schedule dropdown-item menu-action" onclick='(function(e){ require(["block_reportdashboard/reportdashboard","jqueryui"],function(reportdashboard){reportdashboard.{{method}}({reportid: {{reportid}},instanceid:{{instanceid}}}); e.preventDefault();
+                            e.stopImmediatePropagation(); e.stopPropagation(); })})(event)'>
+            <span class ="report_action_icons dropbtn widgetheader custom_{{ title }}">{{ title }}</span>
+        </li>
+    {{/ action}}
+</ul>
+</span>
+{{/ report_option_innerstatus }}
+
+<span class="dropdown nav-item pull-right">
+    <a class="dropdown-toggle htitle" id="datefilter{{reportinstance}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="tooltiptext tooltip-top">{{#str}}timeline, block_learnerscript{{/str}}</span>
+        <i class="icon fa fa-clock-o"></i>
+    </a>
+    <ul id="datefilter-area{{instanceid}}" area-labelledby="datefilter{{instanceid}}"
+        class="sgnbtn pull-left datefilter_{{reportinstance}} dropdown-menu dropdown-menu-right dropdown-content" >
+       {{# durations}}
+            <li data-duration="{{key}}" id="seg-{{key}}" id='reporttype{{instanceid}}'  
+            class="dropdown-item menu-action durationfilter" data-reportid={{reportid}} 
+            data-reporttype={{reportcontenttype}} data-blockinstance={{instanceid}} >{{value}}</li>
+       {{/ durations}}
+    </ul>
+    <span class="flatpickr">
+        <input type="text" name="customduration{{instanceid}}" value="" style="display: none;"
+                id="customrange{{instanceid}}" placeholder="Start Date - End Date">
+    </span>
+</span>
+
+{{#reportcontenttypeslist}}
+<span class="dropdown nav-item pull-right">
+    <a class="dropdown-toggle htitle" id="reportcontenttypes{{instanceid}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="tooltiptext tooltip-top">{{#str}}report, block_learnerscript{{/str}}</span>
+        <i class="icon fa fa-th-large fa-fw"></i>
+    </a>
+    <ul id="reportcontenttypes-area{{instanceid}}" area-labelledby="reportcontenttypes{{instanceid}}"
+        class="dropdown-menu dropdown-menu-right dropdown-content">
+        {{#reportcontenttypes}}
+            <li id='reporttype{{instanceid}}' class="reportcontenttype"  class="dropdown-item menu-action" 
+                data-reportid={{reportid}} data-reporttype={{key}} data-blockinstance={{instanceid}}> {{ value }}</li>
+        {{/reportcontenttypes}}
+
+    </ul>
+</span>
+{{/reportcontenttypeslist}}
+{{#editactions}}
+{{#is_siteadmin}}
+	<span class="dropdown nav-item pull-right">
+		<a class="dropdown-toggle htitle" id="edit_menu{{reportinstance}}" data-toggle="dropdown"
+		aria-haspopup="true" aria-expanded="false">
+		<span class="tooltiptext tooltip-top">{{# str}}actions{{/ str}}</span>
+		<i class="icon fa fa-edit fa-fw"></i></a>
+		<ul class="menu dropdown-menu  dropdown-menu-right dropdown-content" area-labelledby="edit_menu{{reportinstance}}">
+		        <li role="presentation"><a href="{{config.wwwroot}}/blocks/learnerscript/editreport.php?id={{reportid}}" class="dropdown-item menu-action">{{# str}}edit{{/ str}}</a></li>
+		        <li role="presentation"><a href="{{config.wwwroot}}/blocks/learnerscript/design.php?id={{reportid}}" class="dropdown-item menu-action">{{# str}}design, block_reportdashboard{{/ str}}</a></li>
+		        <li role="presentation"><a href="javascript:void(0);" id="roledeleteconfirm"
+		                    onclick='(function(e){ require(["block_reportdashboard/reportdashboard"],function(reportdashboard){
+                                reportdashboard.DeleteWidget({reportid:{{reportid}},instanceid:{{instanceid}} })
+                            }) })(event)' class="dropdown-item menu-action">
+		                {{# str}}delete{{/ str}}
+		        </a></li>
+		        <li role="presentation"><a href="{{{hideactionurl}}}" class="dropdown-item menu-action">{{showhide}}</a></li>
+		</ul>
+	</span>
+{{/is_siteadmin}}
+{{/editactions}}
+{{# exports.0}}
+<span class="dropdown nav-item pull-right">
+   <a class="dropdown-toggle htitle" id="exportoptions{{reportinstance}}" data-toggle="dropdown"
+    aria-haspopup="true" aria-expanded="false">
+        <span class="tooltiptext tooltip-top">{{# str}}download{{/ str}}</span>
+    <i class="icon fa fa-download fa-fw"></i></a>
+    <ul class="menu dropdown-menu  dropdown-menu-right dropdown-content download_menu{{reportinstance}}" area-labelledby="exportoptions{{reportinstance}}">
+    {{# exports}}
+        <li role="presentation">
+            <a href={{config.wwwroot}}/blocks/learnerscript/viewreport.php?id={{reportid}}&download=1&format={{.}}{{exportparams}}
+            target="_blank" class="dropdown-item menu-action">
+                    <img src={{config.wwwroot}}/blocks/learnerscript/export/{{.}}/pix.gif alt={{.}} role="menuitem" tabindex="-1" target="_blank"/><span class="export_format_name">{{.}}</span>
+                </a>
+        </li>
+    {{/ exports}}
+</ul>
+</span>
+{{/ exports.0}}
+   
+<input type='hidden' name='ls_fstartdate' id='ls_fstartdate{{instanceid}}' value='{{startduration}}' />
+<input type='hidden' name='ls_fenddate' id='ls_fenddate{{instanceid}}' value='{{endduration}}' />
+<!-- <input type='hidden' name='filter_courses' id='ls_courseid' class = 'report_courses'  value='" . $dashboardcourseid . "' /> -->
+<div class="loader"></div>
+  

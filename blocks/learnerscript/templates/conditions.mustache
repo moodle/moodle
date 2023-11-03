@@ -1,0 +1,105 @@
+<md-dialog aria-label="List dialog" class="flex">
+    <md-toolbar class="learnerscriptcolumn_header">
+        <div class="md-toolbar-tools">
+            <span flex>Configure Plot</span>
+            <md-button class="btn" ng-click="closeDialog()" title="Close">
+                <i class="icon fa fa-window-close " aria-hidden="true" aria-label="Close" ></i>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <form ng-submit="addCondition()" name="selectedcolumnsform">
+        <div class="ls-selectedcolumns-form-container lst">
+                <h5>Chart Name</h5>
+                    <div class="inputcnd"><input type='text' placeholder="Enter selectedcolumns" ng-model="configureplot.formdata.chartname" 
+                                            class="form-control pull-left"/>
+                        <i class="pull-left"></b></i>
+                    </div>
+            </div>
+            <div class="ls-selectedcolumns-form-container">
+                <md-input-container>
+                    <h5>Columns drop down</h5>
+                    <md-select
+                            ng-model="configureplot.formdata.yaxis"
+                             multiple
+                            placeholder="SELECT Columns"
+                            >
+                         <md-option
+                                ng-repeat="column in columns.elements"
+                                dnd-callback="onSelect(column.id)"
+                                value="<% column.id %>:<%column.formdata.columname %>"><% column.formdata.columname %>
+                            </md-option>
+                          
+                    </md-select>
+                </md-input-container>
+            </div>
+            <!-- Possible Columns -->
+            <div class="ls-selectedcolumns-form-container">
+                <h5>Possible selectedcolumns</h5>
+                <div>
+                    <table class="generaltable col-sm-8">
+                        <tr ng-repeat="fields in configureplot.formdata.yaxis track by $index">
+                            <td> C<% $index + 1 %> </td>
+                            <td><b><% fields.split(':')[1] %></td>
+                            <td>
+                                <span >
+                                    <select class="form-control"
+                                            ng-model="configureplot.formdata.yaxis[$index].name"
+                                            ng-options="symbol for symbol in conditionssymbols "
+                                            ng-init="conditions.finalelements[fields]= conditions.finalelements[fields] ? conditions.finalelements[fields] : conditions.conditionssymbols[0]"
+                                            name="conditions" required
+                                            >
+                                    </select>
+                                </span>
+                                <span ng-if="conditions.elements[fields.split(':')[0]].form == false && conditions.elements[fields.split(':')[0]].allowedops == false">
+                                    -
+                                </span>
+                            </td>
+                            <td>
+                                <span ng-if="configureplot.formdata.yaxis.name[fields.split(':')[0]].form == false && conditions.elements[fields.split(':')[0]].allowedops == false">
+                                    -
+                                </span>
+                                <span ng-if="configureplot.formdata.yaxis.name[fields.split(':')[0]].form == true && conditions.elements[fields.split(':')[0]].allowedops == true">
+                                    <span ng-if="
+                                            configureplot.formdata.yaxis.operator  == '>' ||
+                                            configureplot.formdata.yaxis.operator  == '<' ||
+                                            configureplot.formdata.yaxis.operator  == '>=' ||
+                                            configureplot.formdata.yaxis.operator  == '<='
+                                            ">
+                                        <input type="number" ng-model="configureplot.formdata.yaxis.name[fields]"
+                                        class="form-control" placeholder="Value"
+                                        ng-value="<% configureplot.formdata.yaxis.name[fields] %>" required />
+                                        <md-tooltip md-direction="top" >Numerics Only</md-tooltip>
+                                    </span>
+                                    <span ng-if="
+                                            configureplot.formdata.yaxis.operator == '<>' ||
+                                            configureplot.formdata.yaxis.operator == '=' ||
+                                            configureplot.formdata.yaxis.operator == 'NOT LIKE' ||
+                                            configureplot.formdata.yaxis.operator == 'LIKE % %' ||
+                                            configureplot.formdata.yaxis.operator == 'LIKE' ||
+                                            configureplot.formdata.yaxis.operator == null
+                                            ">
+                                        <input type="text" ng-model="configureplot.formdata.yaxis.value"
+                                        class="form-control" placeholder="Value" required/>
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="ls-selectedcolumns-form-container lst">
+                <h5>selectedcolumns</h5>
+                    <div class="inputcnd"><input type='text' placeholder="Enter selectedcolumns" ng-model="selectedcolumns.finalelements['sqlcondition']" class="form-control pull-left"/>
+                        <i class="pull-left">Enter the values like <b>C1 and (C2 OR C3)</b></i>
+                    </div>
+            </div>
+            <md-dialog-content>
+                <div class="ls-selectedcolumns-form-container text-center">
+                    <input type="submit" value="Submit" class="btn" />
+                </div>
+            </md-dialog-content>
+        </form>
+        <% configureplot %>
+    </md-dialog-content>
+</md-dialog>
