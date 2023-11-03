@@ -4113,8 +4113,10 @@ function delete_user(stdClass $user) {
                 instancetype: 'coursecommunication',
                 instanceid: $course->id,
             );
-            $communication->get_room_user_provider()->remove_members_from_room([$user->id]);
-            $communication->delete_instance_user_mapping([$user->id]);
+            if ($communication !== null) {
+                $communication->get_room_user_provider()->remove_members_from_room([$user->id]);
+                $communication->delete_instance_user_mapping([$user->id]);
+            }
         }
     }
 
