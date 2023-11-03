@@ -149,6 +149,13 @@ M.mod_quiz.timer = {
     updateEndTime: function(timeleft) {
         var newtimeleft = new Date().getTime() + timeleft * 1000;
 
+        // Timer might not have been initialized yet. We initialize it with
+        // preview = 0, because it's better to take a preview for a real quiz
+        // than to take a real quiz for a preview.
+        if (M.mod_quiz.timer.Y === null) {
+            M.mod_quiz.timer.init(window.Y, timeleft, 0);
+        }
+
         // Only update if change is greater than the threshold, so the
         // time doesn't bounce around unnecessarily.
         if (Math.abs(newtimeleft - M.mod_quiz.timer.endtime) > M.mod_quiz.timer.threshold) {
