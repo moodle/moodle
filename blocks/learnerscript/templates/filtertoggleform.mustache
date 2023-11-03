@@ -1,0 +1,39 @@
+
+<div id="reportbox_shadow" class="reportboxshadowdiv pull-left">
+	<div class="filterdataform">
+		<div class="sub_filterdataform">
+			<div id="sgnbtntransition" class="sgnbtn pull-left datefilter">
+				<div id="segmented-button" class="segmentbtn pull-left">
+					<input type="radio" name="duration" value="week" id="seg-Week">
+					<label for="seg-Week" class="week">{{#str}} week {{/str}}</label>
+					<input type="radio" name="duration" value="month" id="seg-Month">
+					<label for="seg-Month">{{#str}} month {{/str}}</label>
+					<input type="radio" name="duration" value="year" id="seg-Year">
+					<label for="seg-Year">{{#str}} year, block_learnerscript {{/str}}</label>
+					<input type="radio" name="duration" value="custom" id="seg-Custom">
+					<label for="seg-Custom">{{#str}} custom, block_learnerscript {{/str}}</label>
+					<input type="radio" name="duration" value="clear" id="seg-Clear" checked="true">
+					<label for="seg-Clear">{{#str}} all, block_learnerscript {{/str}}</label>
+				</div>
+				<span class="flatpickr pull-left">
+					<input type="text" name="customduration" value="" id="customrange" style="display: none;"
+						placeholder="Start Date - End Date" />
+				</span>
+			</div>
+			{{# filterform }}
+				<div id="reportcustom_filters" class="reportcustomfilters">
+					{{{ filterform }}}
+				</div>
+			{{/ filterform }}
+		</div>
+		<span class="pull-right filter_buttons">
+        {{{ plottabscontent }}}
+			<span class="pull-right dateicon reportfilters"  onclick='(function(e){ require("block_learnerscript/helper").ViewReportFilters({activefilter: "datefilter", inactivefilter: "reportcustomfilters" }); })(event)' >
+				<i class="fa fa-calendar" title={{# str }} calendar, block_learnerscript {{/ str }} aria-hidden="true"></i>
+			</span>
+			{{# filterform }}
+				<span class="pull-right filtericon reportfilters" title={{# str }} filter, block_learnerscript {{/ str }} onclick='(function(e){ require("block_learnerscript/helper").ViewReportFilters({activefilter: "reportcustomfilters", inactivefilter: "datefilter" }); })(event)' ></span>
+			{{/ filterform }}
+		</span>
+	</div>
+</div>

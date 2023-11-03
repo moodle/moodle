@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<report version="2021051704.1"><visible><![CDATA[1]]></visible>
+<name><![CDATA[My quizzes]]></name>
+<summary><![CDATA[<p><strong>Quizzes:</strong>&nbsp;The number of quizzes available for you from the courses you enrolled to as a student, within a timeline.</p><p><strong>Completions:</strong>&nbsp;The number of quizzes you completed as a student from the courses you enrolled to, within a timeline.</p>]]></summary>
+<type><![CDATA[statistics]]></type>
+<components><![CDATA[YToyOntzOjk6ImN1c3RvbXNxbCI7YToxOntzOjY6ImNvbmZpZyI7Tzo4OiJzdGRDbGFzcyI6MTE6e3M6NDoibmFtZSI7czoxMDoiTXkrcXVpenplcyI7czo0OiJ0eXBlIjtzOjEwOiJzdGF0aXN0aWNzIjtzOjg6InF1ZXJ5c3FsIjtzOjI0NDk6IlNFTEVDVCtESVNUSU5DVCUyOFNFTEVDVCtDT1VOVCUyOGNtLmlkJTI5KyslMEQlMEErKytGUk9NK3ByZWZpeF9jb3Vyc2VfbW9kdWxlcytBUytjbSUwRCUwQSsrKysrKysrKytKT0lOK3ByZWZpeF9jb3Vyc2UrQVMrYytPTitjLmlkJTNEY20uY291cnNlKyUwRCUwQSsrKysrKysrKytKT0lOK3ByZWZpeF9lbnJvbCtBUytlK09OK2UuY291cnNlaWQrJTNEK2MuaWQrQU5EK2Uuc3RhdHVzKyUzRCswJTBEJTBBKysrKysrKysrK0pPSU4rcHJlZml4X3VzZXJfZW5yb2xtZW50cytBUyt1ZStPTit1ZS5lbnJvbGlkKyUzRCtlLmlkK0FORCt1ZS5zdGF0dXMrJTNEMCUwRCUwQSsrKysrKysrKytKT0lOK3ByZWZpeF91c2VyK0FTK3UrT24rdWUudXNlcmlkKyUzRCt1LmlkJTBEJTBBKysrSk9JTitwcmVmaXhfcm9sZV9hc3NpZ25tZW50cytyYStPTit1LmlkKyUzRCtyYS51c2VyaWQlMEQlMEErKytKT0lOK3ByZWZpeF9yb2xlK3IrT04rci5pZCslM0QrcmEucm9sZWlkJTBEJTBBKysrSk9JTitwcmVmaXhfY29udGV4dCtjeHQrT04rY3h0LmlkKyUzRCtyYS5jb250ZXh0aWQrQU5EK2MuaWQrJTNEK2N4dC5pbnN0YW5jZWlkJTBEJTBBKysrSk9JTitwcmVmaXhfbW9kdWxlcysrQVMrbStPTittLmlkKyUzRGNtLm1vZHVsZSUwRCUwQSsrK1dIRVJFKyttLm5hbWUlM0QlMjdxdWl6JTI3KytBTkQrY20uZGVsZXRpb25pbnByb2dyZXNzKyUzRDArQU5EK2NtLnZpc2libGUrJTNEMStBTkQrYy52aXNpYmxlKyUzRCsxK0FORCt1LmRlbGV0ZWQrJTNEKzArQU5EK3JhLnVzZXJpZCslM0QrdS5pZCsrKysrKysrKysrKysrKysrKysrKysrKysrKyUwRCUwQUFORCtyYS5jb250ZXh0aWQrJTNEK2N4dC5pZCUwRCUwQUFORCtjeHQuY29udGV4dGxldmVsKyUzRDUwJTBEJTBBQU5EK2N4dC5pbnN0YW5jZWlkKyUzRCtjLmlkJTBEJTBBQU5EKytyLnNob3J0bmFtZSslM0QrJTI3c3R1ZGVudCUyNytBTkQrdS5pZCslM0QrJTI1JTI1VVNFUklEJTI1JTI1K0FORCt1LmNvbmZpcm1lZCslM0QrMSslMjUlMjVGSUxURVJfQ09VUlNFUyUzQWMuaWQlMjUlMjUrQU5EK3JhLnRpbWVtb2RpZmllZCtCRVRXRUVOKyUyNSUyNUxTX1NUQVJUREFURSUyNSUyNStBTkQrJTI1JTI1TFNfRU5EREFURSUyNSUyNSUyOStBUytRdWl6cyUyQyUyOFNFTEVDVCtDT1VOVCUyOGNtbS5pZCUyOSsrJTBEJTBBKysrRlJPTStwcmVmaXhfY291cnNlX21vZHVsZXNfY29tcGxldGlvbitBUytjbW0rJTBEJTBBKysrSk9JTitwcmVmaXhfY291cnNlX21vZHVsZXMrQVMrY20rK09OK2NtbS5jb3Vyc2Vtb2R1bGVpZCslM0RjbS5pZCslMEQlMEErKytKT0lOK3ByZWZpeF9jb3Vyc2UrQVMrYytPTitjLmlkJTNEY20uY291cnNlKyUwRCUwQSsrK0pPSU4rcHJlZml4X2Vucm9sK0FTK2UrT04rZS5jb3Vyc2VpZCslM0QrYy5pZCtBTkQrZS5zdGF0dXMrJTNEKzAlMEQlMEErKytKT0lOK3ByZWZpeF91c2VyX2Vucm9sbWVudHMrQVMrdWUrT04rdWUuZW5yb2xpZCslM0QrZS5pZCtBTkQrdWUuc3RhdHVzKyUzRDAlMEQlMEErKytKT0lOK3ByZWZpeF91c2VyK0FTK3UrT04rdS5pZCslM0QrY21tLnVzZXJpZCtBTkQrdWUudXNlcmlkKyUzRCt1LmlkJTBEJTBBKysrSk9JTitwcmVmaXhfcm9sZV9hc3NpZ25tZW50cytyYStPTit1LmlkKyUzRCtyYS51c2VyaWQlMEQlMEErKytKT0lOK3ByZWZpeF9yb2xlK3IrT04rci5pZCslM0QrcmEucm9sZWlkJTBEJTBBKysrSk9JTitwcmVmaXhfY29udGV4dCtjeHQrT04rY3h0LmlkKyUzRCtyYS5jb250ZXh0aWQrQU5EK2MuaWQrJTNEK2N4dC5pbnN0YW5jZWlkJTBEJTBBKysrSk9JTitwcmVmaXhfbW9kdWxlcysrQVMrbStPTittLmlkKyUzRGNtLm1vZHVsZSslMEQlMEErKytXSEVSRStjbW0uY29tcGxldGlvbnN0YXRlKyUyMSUzRCswK0FORCttLm5hbWUlM0QlMjdxdWl6JTI3KytBTkQrY20uZGVsZXRpb25pbnByb2dyZXNzKyUzRDArQU5EK2NtLnZpc2libGUrJTNEMStBTkQrYy52aXNpYmxlKyUzRCsxK0FORCt1LmRlbGV0ZWQrJTNEKzArQU5EK3JhLnVzZXJpZCslM0QrdS5pZCsrKysrKysrKysrKysrKysrKysrKysrKysrKyUwRCUwQUFORCtyYS5jb250ZXh0aWQrJTNEK2N4dC5pZCUwRCUwQUFORCtjeHQuY29udGV4dGxldmVsKyUzRDUwJTBEJTBBQU5EK2N4dC5pbnN0YW5jZWlkKyUzRCtjLmlkJTBEJTBBQU5EKytyLnNob3J0bmFtZSslM0QrJTI3c3R1ZGVudCUyNytBTkQrdS5pZCslM0QrJTI1JTI1VVNFUklEJTI1JTI1K0FORCt1LmNvbmZpcm1lZCslM0QrMSslMjUlMjVGSUxURVJfQ09VUlNFUyUzQWMuaWQlMjUlMjUrQU5EK2NtbS50aW1lbW9kaWZpZWQrQkVUV0VFTislMjUlMjVMU19TVEFSVERBVEUlMjUlMjUrQU5EKyUyNSUyNUxTX0VORERBVEUlMjUlMjUlMjkrK0FTK0NvbXBsZXRpb25zKysrKysrKysrKysrKysrKysrKysrJTBEJTBBRlJPTSsrcHJlZml4X3VzZXIrdSUwRCUwQVdIRVJFK3UuaWQrJTNEKyUyNSUyNVVTRVJJRCUyNSUyNSslMEQlMEEiO3M6MTE6ImRlc2NyaXB0aW9uIjthOjI6e3M6NDoidGV4dCI7czozNDI6IiUzQ3AlM0UlM0NzdHJvbmclM0VRdWl6emVzJTNBJTNDJTJGc3Ryb25nJTNFJTI2bmJzcCUzQlRoZStudW1iZXIrb2YrcXVpenplcythdmFpbGFibGUrZm9yK3lvdStmcm9tK3RoZStjb3Vyc2VzK3lvdStlbnJvbGxlZCt0bythcythK3N0dWRlbnQlMkMrd2l0aGluK2ErdGltZWxpbmUuJTNDJTJGcCUzRSUzQ3AlM0UlM0NzdHJvbmclM0VDb21wbGV0aW9ucyUzQSUzQyUyRnN0cm9uZyUzRSUyNm5ic3AlM0JUaGUrbnVtYmVyK29mK3F1aXp6ZXMreW91K2NvbXBsZXRlZCthcythK3N0dWRlbnQrZnJvbSt0aGUrY291cnNlcyt5b3UrZW5yb2xsZWQrdG8lMkMrd2l0aGluK2ErdGltZWxpbmUuJTNDJTJGcCUzRSI7czo2OiJmb3JtYXQiO3M6MToiMSI7fXM6NjoiZ2xvYmFsIjtzOjE6IjEiO3M6MjoiaWQiO2k6MTU2O3M6ODoiY291cnNlaWQiO2k6MTtzOjM1OiJtZm9ybV9pc2V4cGFuZGVkX2lkX2FkdmFuY2Vkb3B0aW9ucyI7aTowO3M6MTI6InN1Ym1pdGJ1dHRvbiI7czo0OiJOZXh0IjtzOjEyOiJkaXNhYmxldGFibGUiO2k6MDtzOjc6InN1bW1hcnkiO3M6MzQyOiIlM0NwJTNFJTNDc3Ryb25nJTNFUXVpenplcyUzQSUzQyUyRnN0cm9uZyUzRSUyNm5ic3AlM0JUaGUrbnVtYmVyK29mK3F1aXp6ZXMrYXZhaWxhYmxlK2Zvcit5b3UrZnJvbSt0aGUrY291cnNlcyt5b3UrZW5yb2xsZWQrdG8rYXMrYStzdHVkZW50JTJDK3dpdGhpbithK3RpbWVsaW5lLiUzQyUyRnAlM0UlM0NwJTNFJTNDc3Ryb25nJTNFQ29tcGxldGlvbnMlM0ElM0MlMkZzdHJvbmclM0UlMjZuYnNwJTNCVGhlK251bWJlcitvZitxdWl6emVzK3lvdStjb21wbGV0ZWQrYXMrYStzdHVkZW50K2Zyb20rdGhlK2NvdXJzZXMreW91K2Vucm9sbGVkK3RvJTJDK3dpdGhpbithK3RpbWVsaW5lLiUzQyUyRnAlM0UiO319czoxMToicGVybWlzc2lvbnMiO2E6Mjp7czo2OiJjb25maWciO086ODoic3RkQ2xhc3MiOjM6e3M6MTM6ImNvbmRpdGlvbmV4cHIiO3M6ODoiJTI4YzElMjkiO3M6MTQ6ImNvbmRpdGlvbmV4cHIxIjtzOjA6IiI7czoxNDoiY29uZGl0aW9uZXhwcjIiO3M6ODoiJTI4YzElMjkiO31zOjg6ImVsZW1lbnRzIjthOjE6e2k6MDthOjU6e3M6MjoiaWQiO3M6MTU6InVHOFJlQVUwNkZRTExLZiI7czo4OiJmb3JtZGF0YSI7Tzo4OiJzdGRDbGFzcyI6Mzp7czoxMjoiY29udGV4dGxldmVsIjtzOjI6IjUwIjtzOjEyOiJzdWJtaXRidXR0b24iO3M6MzoiQWRkIjtzOjY6InJvbGVpZCI7czoxOiI1Ijt9czoxMDoicGx1Z2lubmFtZSI7czoxMjoicm9sZWluY291cnNlIjtzOjE0OiJwbHVnaW5mdWxsbmFtZSI7czozMToiVXNlcit3aXRoK3RoZStzZWxlY3RlZCtyb2xlJTJGcyI7czo3OiJzdW1tYXJ5IjtzOjIzOiJzdHVkZW50K2F0K0NvdXJzZStsZXZlbCI7fX19fQ==]]></components>
+<export><![CDATA[]]></export>
+<global><![CDATA[1]]></global>
+<lastexecutiontime><![CDATA[12]]></lastexecutiontime>
+<disabletable><![CDATA[0]]></disabletable>
+<instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-student]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[side-db-third]]></defaultregion>
+<defaultweight><![CDATA[10]]></defaultweight>
+<timecreated><![CDATA[1646364251]]></timecreated>
+<timemodified><![CDATA[1646364251]]></timemodified>
+<title><![CDATA[My Quizzes]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[220776873]]></logo>
+<tilescolourpicker><![CDATA[12445F]]></tilescolourpicker>
+<tileformat><![CDATA[border]]></tileformat>
+<tilescolour><![CDATA[000000]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"><contextid><![CDATA[1]]></contextid>
+<pagetype><![CDATA[blocks-reportdashboard-dashboard-student]]></pagetype>
+<subpage><![CDATA[Dashboard]]></subpage>
+<visible><![CDATA[1]]></visible>
+<region><![CDATA[reports-db-one]]></region>
+<weight><![CDATA[-1]]></weight>
+</position><instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-student_50]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[reports-db-one]]></defaultregion>
+<defaultweight><![CDATA[0]]></defaultweight>
+<timecreated><![CDATA[1646364251]]></timecreated>
+<timemodified><![CDATA[1646364251]]></timemodified>
+<title><![CDATA[My quizzes]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[758130444]]></logo>
+<tilescolourpicker><![CDATA[12445F]]></tilescolourpicker>
+<tileformat><![CDATA[border]]></tileformat>
+<tilescolour><![CDATA[000000]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position></report>

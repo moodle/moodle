@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<report version="2021051704.1"><visible><![CDATA[1]]></visible>
+<name><![CDATA[Users]]></name>
+<summary><![CDATA[<p><strong>Learners:</strong>&nbsp;The number of learners who has started learning at least one course. (User who is already a learner is not considered as a new learner here, within the time duration)</p><p><strong>Instructor:</strong>&nbsp;The number of instructors who has started teaching at least one course. (User, who is already an instructor is not considered as a new instructor here, within the time duration).</p>]]></summary>
+<type><![CDATA[statistics]]></type>
+<components><![CDATA[YToxOntzOjk6ImN1c3RvbXNxbCI7YToxOntzOjY6ImNvbmZpZyI7Tzo4OiJzdGRDbGFzcyI6MTE6e3M6NDoibmFtZSI7czo1OiJVc2VycyI7czo0OiJ0eXBlIjtzOjEwOiJzdGF0aXN0aWNzIjtzOjg6InF1ZXJ5c3FsIjtzOjc4MjoiU0VMRUNUKyUyOFNFTEVDVCtDT1VOVCUyOERJU1RJTkNUK2xyYS51c2VyaWQlMjkrRlJPTStwcmVmaXhfY291cnNlK0FTK2MlMEQlMEFMRUZUK0pPSU4rcHJlZml4X2NvbnRleHQrQVMrY3R4K09OK2MuaWQrJTNEK2N0eC5pbnN0YW5jZWlkJTBEJTBBSk9JTitwcmVmaXhfcm9sZV9hc3NpZ25tZW50cysrQVMrbHJhK09OK2xyYS5jb250ZXh0aWQrJTNEK2N0eC5pZCUwRCUwQUpPSU4rcHJlZml4X3JvbGUrQVMrcitPTityLmlkKyUzRCtscmEucm9sZWlkJTBEJTBBK1dIRVJFKytyLnNob3J0bmFtZSUzRCUyN3N0dWRlbnQlMjcrQU5EK2xyYS50aW1lbW9kaWZpZWQrQkVUV0VFTislMjUlMjVMU19TVEFSVERBVEUlMjUlMjUrQU5EKyUyNSUyNUxTX0VORERBVEUlMjUlMjUrJTI5K0FTK2xlYXJuZXJzJTJDK0NPVU5UJTI4RElTVElOQ1QrdHJhLnVzZXJpZCUyOStBUytpbnN0cnVjdG9ycyUwRCUwQUZST00rcHJlZml4X2NvdXJzZStBUytjJTBEJTBBTEVGVCtKT0lOK3ByZWZpeF9jb250ZXh0K0FTK2N0eCtPTitjLmlkKyUzRCtjdHguaW5zdGFuY2VpZCUwRCUwQUpPSU4rcHJlZml4X3JvbGVfYXNzaWdubWVudHMrK0FTK3RyYStPTit0cmEuY29udGV4dGlkKyUzRCtjdHguaWQlMEQlMEFKT0lOK3ByZWZpeF9yb2xlK0FTK3IrT04rdHJhLnJvbGVpZCslM0Qrci5pZCUwRCUwQVdIRVJFK3Iuc2hvcnRuYW1lJTNEJTI3ZWRpdGluZ3RlYWNoZXIlMjcrQU5EK3RyYS50aW1lbW9kaWZpZWQrQkVUV0VFTislMjUlMjVMU19TVEFSVERBVEUlMjUlMjUrQU5EKyUyNSUyNUxTX0VORERBVEUlMjUlMjUiO3M6MTE6ImRlc2NyaXB0aW9uIjthOjI6e3M6NDoidGV4dCI7czo0OTA6IiUzQ3AlM0UlM0NzdHJvbmclM0VMZWFybmVycyUzQSUzQyUyRnN0cm9uZyUzRSUyNm5ic3AlM0JUaGUrbnVtYmVyK29mK2xlYXJuZXJzK3dobytoYXMrc3RhcnRlZCtsZWFybmluZythdCtsZWFzdCtvbmUrY291cnNlLislMjhVc2VyK3dobytpcythbHJlYWR5K2ErbGVhcm5lcitpcytub3QrY29uc2lkZXJlZCthcythK25ldytsZWFybmVyK2hlcmUlMkMrd2l0aGluK3RoZSt0aW1lK2R1cmF0aW9uJTI5JTNDJTJGcCUzRSUzQ3AlM0UlM0NzdHJvbmclM0VJbnN0cnVjdG9yJTNBJTNDJTJGc3Ryb25nJTNFJTI2bmJzcCUzQlRoZStudW1iZXIrb2YraW5zdHJ1Y3RvcnMrd2hvK2hhcytzdGFydGVkK3RlYWNoaW5nK2F0K2xlYXN0K29uZStjb3Vyc2UuKyUyOFVzZXIlMkMrd2hvK2lzK2FscmVhZHkrYW4raW5zdHJ1Y3Rvcitpcytub3QrY29uc2lkZXJlZCthcythK25ldytpbnN0cnVjdG9yK2hlcmUlMkMrd2l0aGluK3RoZSt0aW1lK2R1cmF0aW9uJTI5LiUzQyUyRnAlM0UiO3M6NjoiZm9ybWF0IjtzOjE6IjEiO31zOjY6Imdsb2JhbCI7czoxOiIxIjtzOjI6ImlkIjtpOjE5MjtzOjg6ImNvdXJzZWlkIjtpOjE7czozNToibWZvcm1faXNleHBhbmRlZF9pZF9hZHZhbmNlZG9wdGlvbnMiO2k6MDtzOjEyOiJzdWJtaXRidXR0b24iO3M6NDoiTmV4dCI7czoxMjoiZGlzYWJsZXRhYmxlIjtpOjA7czo3OiJzdW1tYXJ5IjtzOjQ5MDoiJTNDcCUzRSUzQ3N0cm9uZyUzRUxlYXJuZXJzJTNBJTNDJTJGc3Ryb25nJTNFJTI2bmJzcCUzQlRoZStudW1iZXIrb2YrbGVhcm5lcnMrd2hvK2hhcytzdGFydGVkK2xlYXJuaW5nK2F0K2xlYXN0K29uZStjb3Vyc2UuKyUyOFVzZXIrd2hvK2lzK2FscmVhZHkrYStsZWFybmVyK2lzK25vdCtjb25zaWRlcmVkK2FzK2ErbmV3K2xlYXJuZXIraGVyZSUyQyt3aXRoaW4rdGhlK3RpbWUrZHVyYXRpb24lMjklM0MlMkZwJTNFJTNDcCUzRSUzQ3N0cm9uZyUzRUluc3RydWN0b3IlM0ElM0MlMkZzdHJvbmclM0UlMjZuYnNwJTNCVGhlK251bWJlcitvZitpbnN0cnVjdG9ycyt3aG8raGFzK3N0YXJ0ZWQrdGVhY2hpbmcrYXQrbGVhc3Qrb25lK2NvdXJzZS4rJTI4VXNlciUyQyt3aG8raXMrYWxyZWFkeSthbitpbnN0cnVjdG9yK2lzK25vdCtjb25zaWRlcmVkK2FzK2ErbmV3K2luc3RydWN0b3IraGVyZSUyQyt3aXRoaW4rdGhlK3RpbWUrZHVyYXRpb24lMjkuJTNDJTJGcCUzRSI7fX19]]></components>
+<export><![CDATA[]]></export>
+<global><![CDATA[1]]></global>
+<lastexecutiontime><![CDATA[1]]></lastexecutiontime>
+<disabletable><![CDATA[0]]></disabletable>
+<instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[1]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[side-db-first]]></defaultregion>
+<defaultweight><![CDATA[10]]></defaultweight>
+<timecreated><![CDATA[1648610747]]></timecreated>
+<timemodified><![CDATA[1648611114]]></timemodified>
+<title><![CDATA[Users]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[910125389]]></logo>
+<tilescolourpicker><![CDATA[FFFFFF]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<reportduration><![CDATA[year]]></reportduration>
+<tilescolour><![CDATA[000000]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"><contextid><![CDATA[1]]></contextid>
+<pagetype><![CDATA[blocks-reportdashboard-dashboard]]></pagetype>
+<subpage><![CDATA[Dashboard]]></subpage>
+<visible><![CDATA[1]]></visible>
+<region><![CDATA[center-second]]></region>
+<weight><![CDATA[-1]]></weight>
+</position></report>

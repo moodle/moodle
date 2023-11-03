@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/learnerscript/db" VERSION="20180103" COMMENT="XMLDB file for Moodle blocks/learnerscript"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <TABLE NAME="block_learnerscript" COMMENT="block_learnerscript table retrofitted from MySQL">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="ownerid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="visible" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="summary" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="type" TYPE="char" LENGTH="128" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="components" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="export" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="global" TYPE="int" LENGTH="4" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="lastexecutiontime" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="Time this report took to run last time it was executed, in milliseconds."/>
+                <FIELD NAME="disabletable" TYPE="int" LENGTH="4" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="block_ls_schedule" COMMENT="block_configurablereports_schedule table retrofitted from MySQL">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="reportid" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="exporttofilesystem" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="exportformat" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="frequency" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="schedule" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="nextschedule" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="roleid" TYPE="int" LENGTH="9" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="sendinguserid" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="contextlevel" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="block_devicels" COMMENT="To track device information in learnerscript">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="accessip" TYPE="char" LENGTH="155" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="country" TYPE="char" LENGTH="155" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="countrycode" TYPE="char" LENGTH="155" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="region" TYPE="char" LENGTH="155" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="regionname" TYPE="char" LENGTH="155" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="city" TYPE="char" LENGTH="155" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="browser" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="browserparent" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="platform" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="browserversion" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="devicetype" TYPE="char" LENGTH="155" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="pointingmethod" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="ismobiledevice" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="istablet" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS>
+        </TABLE>
+        <TABLE NAME="block_ls_coursetimestats" COMMENT="block_ls_coursetimestats table which stores the time in each page">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timespent" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS> 
+            <INDEXES>
+                <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+                <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+                <INDEX NAME="timespent" UNIQUE="false" FIELDS="timespent"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="block_ls_modtimestats" COMMENT="block_ls_modtimestats table which stores the time in each page">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="instanceid" TYPE="int" LENGTH="11" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="activityid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timespent" TYPE="int" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            </KEYS> 
+            <INDEXES>
+                <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+                <INDEX NAME="courseid" UNIQUE="false" FIELDS="courseid"/>
+                <INDEX NAME="timespent" UNIQUE="false" FIELDS="timespent"/>
+                <INDEX NAME="activityid" UNIQUE="false" FIELDS="activityid"/>
+                <INDEX NAME="instanceid" UNIQUE="false" FIELDS="timespent"/>
+            </INDEXES>
+        </TABLE>
+  </TABLES>
+</XMLDB>

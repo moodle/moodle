@@ -1,0 +1,26 @@
+<div id="reportcontainer{{reportinstance}}">
+    <div id="printablediv">
+        <div id="map_{{reportinstance}}" class="map_report_container">
+            <div id="reportloading_{{reportinstance}}" style="display:none;">
+                <img src={{loading}} alt="loading" title="loading" />
+            </div>
+            <table  width={{width}} summary='{{summary}}' cellpadding={{cellpadding}} cellspacing={{cellspacing}} class={{class}} boxalign{{align}} id=reporttable_{{reportinstance}}>
+                <thead class="table_{{reporttype}}">
+                    {{# tablehead}}
+                    <th style="vertical-align:middle;white-space:normal;{{align}} {{size}} {{wrap}}" class="header c{{key}}" scope="col">
+                    {{heading}}</th>
+                    {{/ tablehead}}
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+{{# debugsql}}
+<hr>
+	<div id='debug' style='direction:ltr;text-align:left;'>
+		{{reportsql}}
+	</div>
+</hr>
+{{/ debugsql}}
+{{> block_learnerscript/exportoptions }}

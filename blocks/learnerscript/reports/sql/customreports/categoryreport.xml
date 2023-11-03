@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<report version="2011040111">
+    <visible><![CDATA[1]]></visible>
+    <name><![CDATA[category report]]></name>
+    <summary><![CDATA[]]></summary>
+    <type><![CDATA[categories]]></type>
+    <pagination><![CDATA[0]]></pagination>
+    <components><![CDATA[YToyOntzOjc6ImNvbHVtbnMiO2E6MTp7czo4OiJlbGVtZW50cyI7YToyOntpOjA7YTo1OntzOjI6ImlkIjtzOjE1OiI3SER3UjJKRnBxS3BieW8iO3M6ODoiZm9ybWRhdGEiO086Njoib2JqZWN0Ijo2OntzOjY6ImNvbHVtbiI7czo0OiJuYW1lIjtzOjk6ImNvbHVtbmFtZSI7czo0OiJuYW1lIjtzOjU6ImFsaWduIjtzOjY6ImNlbnRlciI7czo0OiJzaXplIjtzOjA6IiI7czo0OiJ3cmFwIjtzOjA6IiI7czoxMjoic3VibWl0YnV0dG9uIjtzOjM6IkFkZCI7fXM6MTA6InBsdWdpbm5hbWUiO3M6MTM6ImNhdGVnb3J5ZmllbGQiO3M6MTQ6InBsdWdpbmZ1bGxuYW1lIjtzOjE0OiJDYXRlZ29yeStmaWVsZCI7czo3OiJzdW1tYXJ5IjtzOjQ6Im5hbWUiO31pOjE7YTo1OntzOjI6ImlkIjtzOjE1OiJ4TUI1cmVkSWhkOU52WEYiO3M6ODoiZm9ybWRhdGEiO086Njoib2JqZWN0Ijo2OntzOjY6ImNvbHVtbiI7czoxMToiY291cnNlY291bnQiO3M6OToiY29sdW1uYW1lIjtzOjE3OiJOdW1iZXIrb2YrY291cnNlcyI7czo1OiJhbGlnbiI7czo2OiJjZW50ZXIiO3M6NDoic2l6ZSI7czowOiIiO3M6NDoid3JhcCI7czowOiIiO3M6MTI6InN1Ym1pdGJ1dHRvbiI7czozOiJBZGQiO31zOjEwOiJwbHVnaW5uYW1lIjtzOjEzOiJjYXRlZ29yeWZpZWxkIjtzOjE0OiJwbHVnaW5mdWxsbmFtZSI7czoxNDoiQ2F0ZWdvcnkrZmllbGQiO3M6Nzoic3VtbWFyeSI7czoxNzoiTnVtYmVyK29mK2NvdXJzZXMiO319fXM6NDoicGxvdCI7YToxOntzOjg6ImVsZW1lbnRzIjthOjE6e2k6MDthOjU6e3M6MjoiaWQiO3M6MTU6ImR3ZHJUcHhmSFF0c0NsdCI7czo4OiJmb3JtZGF0YSI7Tzo2OiJvYmplY3QiOjg6e3M6OToiY2hhcnRuYW1lIjtzOjE2OiJDYXRlZ29yeStDb3Vyc2VzIjtzOjg6ImFyZWFuYW1lIjtzOjE6IjAiO3M6OToiYXJlYXZhbHVlIjtzOjE6IjEiO3M6MTE6InNlcmllc2xhYmVsIjtzOjE3OiJOdW1iZXIrb2YrY291cnNlcyI7czoxMDoic2hvd2xlZ2VuZCI7czoxOiIxIjtzOjEwOiJkYXRhbGFiZWxzIjtzOjE6IjAiO3M6MTA6InBlcmNlbnRhZ2UiO3M6MToiMCI7czoxMjoic3VibWl0YnV0dG9uIjtzOjM6IkFkZCI7fXM6MTA6InBsdWdpbm5hbWUiO3M6MzoicGllIjtzOjE0OiJwbHVnaW5mdWxsbmFtZSI7czozOiJQaWUiO3M6Nzoic3VtbWFyeSI7czoxMToiQStwaWUrZ3JhcGgiO319fX0=]]></components>
+    <export><![CDATA[csv,ods,pdf,xls,]]></export>
+    <jsordering><![CDATA[0]]></jsordering>
+    <global><![CDATA[1]]></global>
+    <lastexecutiontime><![CDATA[]]></lastexecutiontime>
+    <cron><![CDATA[0]]></cron>
+</report>

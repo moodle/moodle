@@ -1,0 +1,113 @@
+<md-dialog aria-label="List dialog" class="flex">
+    <md-toolbar class="learnerscriptcolumn_header">
+        <div class="md-toolbar-tools">
+            <span flex>Conditions</span>
+            <md-button class="btn" ng-click="closeDialog()" title="Close">
+                <i class="icon fa fa-window-close " aria-hidden="true" aria-label="Close" ></i>
+            </md-button>
+        </div>
+    </md-toolbar>
+    <md-dialog-content>
+        <form ng-submit="addCondition()" name="conditionsform">
+            <!-- Condition Dropdown -->
+            <div class="ls-conditions-form-container">
+                <md-input-container>
+                    <h5>List of tables</h5>
+                    <md-select  ng-model="conditions.finalelements['elements']"
+                                ng-change="resetConditions(conditions.finalelements['elements'], conditions.finalelements['selectedfields'])"
+                                multiple placeholder="SELECT TABLES">
+                        <md-option ng-repeat="(elementkey, elementvalue) in conditions.elements" value="<% elementvalue.pluginname %>"><% elementvalue.pluginfullname %></md-option>
+                    </md-select>
+                </md-input-container>
+            </div>
+            <!-- Columns Dropdown -->
+            <div class="ls-conditions-form-container">
+                <md-input-container>
+                    <h5>Columns drop down</h5>
+                    <md-select
+                            ng-model="conditions.finalelements['selectedfields']" multiple
+                            placeholder="SELECT Columns"
+                            >
+                        <md-optgroup ng-repeat="column in conditions.finalelements['elements']" label="<% conditions.elements[column].pluginfullname | uppercase %>" >
+                            <md-option
+                                ng-if="conditions.elements[column].form" ng-repeat="(fkey, fieldval) in conditions.elements[column].plugincolumns"
+                                value="<% column %>:<% fkey %>"><% fieldval %>
+                            </md-option>
+                            <md-option
+                            ng-if="conditions.elements[column].form == false"
+                                value="<% conditions.elements[column].pluginname %>:<% conditions.elements[column].pluginname %>">
+                                <% conditions.elements[column].pluginname %>
+                            </md-option>
+                        </md-optgroup>
+                    </md-select>
+                </md-input-container>
+            </div>
+            <!-- Possible Columns -->
+            <div class="ls-conditions-form-container">
+                <h5>Possible Conditions</h5>
+                <div>
+                    <table class="generaltable col-sm-8">
+                        <tr ng-repeat="fields in conditions.finalelements['selectedfields'] track by $index">
+                            <td> C<% $index + 1 %> </td>
+                            <td><b><% fields.split(':')[0] %> :</b> <% conditions.elements[fields.split(':')[0]].plugincolumns[fields.split(':')[1]] %></td>
+                            <td>
+                                <span ng-if="conditions.elements[fields.split(':')[0]].form && conditions.elements[fields.split(':')[0]].allowedops">
+                                    <select class="form-control"
+                                            ng-model="conditions.finalelements['selectedcondition'][fields]"
+                                            ng-options="symbol for symbol in conditions.conditionssymbols "
+                                            ng-init="conditions.finalelements['selectedcondition'][fields]= conditions.finalelements['selectedcondition'][fields] ? conditions.finalelements['selectedcondition'][fields] : conditions.conditionssymbols[0]"
+                                            name="conditionsymbol" required
+                                            >
+                                    </select>
+                                </span>
+                                <span ng-if="conditions.elements[fields.split(':')[0]].form == false && conditions.elements[fields.split(':')[0]].allowedops == false">
+                                    -
+                                </span>
+                            </td>
+                            <td>
+                                <span ng-if="conditions.elements[fields.split(':')[0]].form == false && conditions.elements[fields.split(':')[0]].allowedops == false">
+                                    -
+                                </span>
+                                <span ng-if="conditions.elements[fields.split(':')[0]].form == true && conditions.elements[fields.split(':')[0]].allowedops == true">
+                                    <span ng-if="
+                                            conditions.finalelements['selectedcondition'][fields] == '>' ||
+                                            conditions.finalelements['selectedcondition'][fields] == '<' ||
+                                            conditions.finalelements['selectedcondition'][fields] == '>=' ||
+                                            conditions.finalelements['selectedcondition'][fields] == '<='
+                                            ">
+                                        <input type="number" ng-model="conditions.finalelements['selectedvalue'][fields]"
+                                        class="form-control" placeholder="Value"
+                                        ng-value="<% conditions.finalelements['selectedvalue'][fields] %>" required />
+                                        <md-tooltip md-direction="top" >Numerics Only</md-tooltip>
+                                    </span>
+                                    <span ng-if="
+                                            conditions.finalelements['selectedcondition'][fields] == '<>' ||
+                                            conditions.finalelements['selectedcondition'][fields] == '=' ||
+                                            conditions.finalelements['selectedcondition'][fields] == 'NOT LIKE' ||
+                                            conditions.finalelements['selectedcondition'][fields] == 'LIKE % %' ||
+                                            conditions.finalelements['selectedcondition'][fields] == 'LIKE' ||
+                                            conditions.finalelements['selectedcondition'][fields] == null
+                                            ">
+                                        <input type="text" ng-model="conditions.finalelements['selectedvalue'][fields]"
+                                        class="form-control" placeholder="Value" required/>
+                                    </span>
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="ls-conditions-form-container lst">
+                <h5>Conditions</h5>
+                    <div class="inputcnd"><input type='text' placeholder="Enter Conditions" ng-model="conditions.finalelements['sqlcondition']" class="form-control pull-left"/>
+                        <i class="pull-left">Enter the values like <b>C1 and (C2 OR C3)</b></i>
+                    </div>
+            </div>
+            <md-dialog-content>
+                <div class="ls-conditions-form-container text-center">
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </div>
+            </md-dialog-content>
+        </form>
+    </md-dialog-content>
+</md-dialog>

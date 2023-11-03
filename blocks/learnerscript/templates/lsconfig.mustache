@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_learnerscript/lsconfig
+
+    Admin file setting template.
+
+    Context variables required for this template:
+    * name - form element name
+    * id - element id
+    * size - size of the field
+    * readonly - Make the field readonly
+    * value - value
+    * showvalidity - Show a green check if the path is readable
+    * valid - True if the path is readable
+
+    Example context (json):
+    {
+        "name": "test",
+        "value": "/my-super-secret-path/file",
+        "id": "test0",
+        "readonly": true,
+        "showvalidity": true,
+        "valid": false
+    }
+}}
+
+<div>
+    <center class='lsoverviewimageslider'>
+        {{# slideshowimages }}
+            <div class="mySlides">
+                <div>
+                    <img class="lsoverviewimages"
+                        src="{{.}}" />
+                </div>
+            </div>
+        {{/ slideshowimages }}
+        {{# configurestatus }}
+        <div id="progressbar"></div>
+        <div>
+            <center style="display:none;" id="reportdashboardnav">
+                {{# importstatus }}
+                    <a href="{{ redirecturl }}" >
+                        <button>{{# str}} continue {{/ str}}</button>
+                    </a>
+                {{/ importstatus }}
+            </center>
+        </div>
+        {{/ configurestatus }}
+        {{^ configurestatus }}
+        <div class='alert alert-info'>{{# str }} lsreportsconfigdone, block_learnerscript{{/ str }}
+            <a href='{{ redirecturl }}' >{{# str }} clickhere, block_learnerscript {{/ str}}</a> {{# str}} continue {{/ str}}
+        </div>
+        {{/ configurestatus }}
+    </center>
+</div>

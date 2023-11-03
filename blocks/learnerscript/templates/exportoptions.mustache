@@ -1,0 +1,23 @@
+{{# exports.0}}
+<div class='export_options' id='export_options{{reportid}}' style='display:none;'>
+    <span class="dropdown nav-item" id="download_dropdwn">
+        <a class="dropdown-toggle htitle" id="exportoptions{{reportid}}" data-toggle="dropdown"
+        aria-haspopup="true" aria-expanded="false">
+            <img src="{{download_icon}}" alt ="{{# str}} download, block_learnerscript {{/ str}}"
+                    title="{{# str}}download, block_learnerscript{{/ str}}"
+                    class="report_action_icons dropbtn"
+                    >
+        </a>
+        <ul class="menu dropdown-menu dropdown-menu-left dropdown-content download_menu{{reportid}}" area-labelledby="exportoptions{{reportid}}">
+        {{# exports}}
+        <li role="presentation">
+            <a href="{{config.wwwroot}}/blocks/learnerscript/viewreport.php?id={{reportid}}&download=1&format={{.}}{{exportparams}}"
+            target="_blank" class="dropdown-item menu-action">
+                    <img src="{{config.wwwroot}}/blocks/learnerscript/export/{{.}}/pix.gif" alt="{{.}}" role="menuitem" tabindex="-1" target="_blank" /><span class="export_format_name">{{.}}</span>
+            </a>
+        </li>
+        {{/ exports}}
+        </ul>
+    </span>
+</div>
+{{/ exports.0}}

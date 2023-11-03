@@ -1,0 +1,30 @@
+<div id="fitem_id_{{column.name}}" class="form-group row fitem">
+    <div class="col-md-3">
+        <span class="float-sm-right text-nowrap">
+        </span>
+
+    </div>
+    <div class="col-md-9 form-inline felement" data-fieldtype="select">
+    <span class="col-md-4">
+        <label class="col-form-label d-inline " for="id_calcs">
+            {{column.name}}
+        </label>
+    </span>
+    <span class="col-md-8">
+        <select class="custom-select" name="{{column.name}}" id="id_{{column.name}}" {{#column.disabled}}disabled{{/column.disabled}}>
+            <option value="">--SELECT--</option>
+            {{#column.conditionsymbols}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{value}}</option>
+            {{/column.conditionsymbols}}
+        </select>
+            <input type="text" class="form-control disablecondition" name="{{column.name}}_value" id="id_{{column.name}}_value" value="{{column.value}}" size="" 
+         aria-invalid="true" {{#column.disabled}}disabled{{/column.disabled}}><span class="disableplotc">
+         {{#column.disabled}}
+            <i class="fa fa-eye-slash" aria-hidden="true"  title="{{#str}}enable{{/str}}"></i></span>
+         {{/column.disabled}}
+        {{^column.disabled}}
+            <i class="fa fa-eye" aria-hidden="true" title="{{#str}}disable{{/str}}"></i></span>
+         {{/column.disabled}}
+    </span>
+    </div>
+</div>

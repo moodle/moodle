@@ -1,0 +1,67 @@
+<div class='user_courses' id='usersdata{{reportid}}'>
+    <form class='assignform mform' method='post' name='form_name'>
+        <div class='form-group' style='margin-bottom:5%;'>
+            <div id='fitem_id_selectrole{{reportid}}' class='fitem required fitem_fselect'>
+                <div class='fitemtitle'>
+                    <label for='id_selectrole{{reportid}}'>{{# str}} role {{/ str}}<span class='req'> <img src={{reqimage}} /> </span> </label>
+                </div>
+                <div class='felement fselect' data-fieldtype='select'>
+                    <select id='id_selectrole{{reportid}}' data-id={{reportid}} data-class='rolereq' class='selectrole{{reportid}}' data-element='role' data-placeholder='Select a Role.' name='role' >
+                        {{# roles_list}}
+                        <option id='slectedroles' value={{key}} {{selected}}>{{value}}</option>
+                        {{/ roles_list}}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div>
+            <input type='hidden' name='sesskey' value=" . sesskey() . " />
+            <input type='hidden' name='reportid' class='reportid' value={{reportid}} />
+            <div id='sch_role_users' summary='' class='sch_role_users generaltable' cellspacing='0'>
+                <div class='manage_usersdiv'>
+                    <div id='existingcell'>
+                        <p>
+                            <label for='removeselect'>{{# str}} extusers, core_role {{/ str}}</label>
+                        </p>
+                        <div class='userselector' id='removeselect_wrapper'>
+                            <select name='removeselect[]' id='removeselect{{reportid}}' class='removeselect' multiple='multiple' size='20' class='form-control no-overflow'>
+                                {{# selectedusers }}
+                                <option value={{key}} selected>{{value}}</option>
+                                {{/ selectedusers}}
+                            </select>
+                        </div>
+                    </div>
+						<div class="add-remove-controls">
+							<span class="sub-add-remove-controls">
+							<span id='addcontrols'>
+								<button type='button' class='btn btn-secondary font-11 pull-right' id='add' class='selectschusers'
+										onclick='(function(e){ $("#addselect{{reportid}}").find("option:selected").remove().appendTo("#removeselect{{reportid}}").attr("selected", "selected"); })(event)' > << Add  {{# pix }} add {{/ pix}}</button>
+							</span>
+							<span id='removecontrols'>
+								<button type='button' class='btn btn-secondary font-11 pull-right' id='remove' class='selectschusers'
+										onclick='(function(e){ $("#removeselect{{reportid}}").find("option:selected").remove().appendTo("#addselect{{reportid}}").attr("selected", "selected"); })(event)'>{{# str}} remove {{/ str}} >></button>
+							</span>
+						</div>
+                        <div id='potentialcell'>
+                            <p>
+                                <label for='addselect'>{{# str}} potusers, core_role {{/ str }}</label>
+                            </p>
+                            <div class='userselector' id='addselect_wrapper'>
+                                <select name='addselect[]' id='addselect{{reportid}}' class='addselect' multiple='multiple' size='20' class='form-control no-overflow'>
+                                </select>
+                                <div class='form-inline pos-r'>
+                                    <input type='text' class='searchusers' placeholder='Search' name='addselect_searchtext'
+                                    onkeyup='(function(e){ require("block_learnerscript/schedule").getroleusers({reportid:{{reportid}}, type:"add", scheduleid:{{scheduleid}}}) })(event)' id='addselect_searchtext' size='15' value='' class='form-control'>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <div class="add_selected_users_container">
+                <button type='button' class='btn-lg' id='btn_save{{reportid}}'
+                		onclick='(function(e){ require("block_learnerscript/schedule").bulkmanageschusers({reportid: {{reportid}}, reportinstance: {{reportinstance}}}) })(event)'>{{# str}} addusers, block_learnerscript {{/ str}}</button>
+            </div>
+    </form>
+    </div>
+    <div class='usersperminet' id='latestusers{{reportid}}' style='display:none;width:1000px;'>
+    </div>

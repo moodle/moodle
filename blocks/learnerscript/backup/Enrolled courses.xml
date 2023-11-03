@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<report version="2021051704.1"><visible><![CDATA[1]]></visible>
+<name><![CDATA[Enrolled courses]]></name>
+<summary><![CDATA[<p>The number of courses enrolled to by a student/teacher.</p>]]></summary>
+<type><![CDATA[statistics]]></type>
+<components><![CDATA[YToyOntzOjk6ImN1c3RvbXNxbCI7YToxOntzOjY6ImNvbmZpZyI7Tzo4OiJzdGRDbGFzcyI6MTE6e3M6NDoibmFtZSI7czoxNjoiRW5yb2xsZWQrY291cnNlcyI7czo0OiJ0eXBlIjtzOjEwOiJzdGF0aXN0aWNzIjtzOjg6InF1ZXJ5c3FsIjtzOjY5NzoiU0VMRUNUK0NPVU5UJTI4RElTVElOQ1QrYy5pZCUyOStBUyslMjJFbnJvbGxlZCtjb3Vyc2VzJTIyJTBEJTBBRlJPTStwcmVmaXhfcm9sZV9hc3NpZ25tZW50cytBUytybCUwRCUwQUpPSU4rcHJlZml4X2NvbnRleHQrQVMrY3h0K09OK2N4dC5pZCslM0QrcmwuY29udGV4dGlkJTBEJTBBSk9JTitwcmVmaXhfdXNlcitBUyt1K09OK3UuaWQlM0RybC51c2VyaWQlMEQlMEFKT0lOK3ByZWZpeF91c2VyX2Vucm9sbWVudHMrQVMrdWUrT04rK3VlLnVzZXJpZCUzRHUuaWQlMEQlMEFKT0lOK3ByZWZpeF9lbnJvbCtBUytlbitPTit1ZS5lbnJvbGlkKyUzRCtlbi5pZCUwRCUwQUpPSU4rcHJlZml4X2NvdXJzZStBUytjK09OK2MuaWQlM0Rlbi5jb3Vyc2VpZCslMEQlMEFKT0lOK3ByZWZpeF9yb2xlK3IrT04rci5pZCslM0Qrcmwucm9sZWlkJTBEJTBBV0hFUkUrdWUudXNlcmlkJTNEdS5pZCtBTkQrcmwudXNlcmlkJTNFMitBTkQrYy52aXNpYmxlKyUzRCsxK0FORCtjLmlkKyUzRCtjeHQuaW5zdGFuY2VpZCslMjUlMjVEQVNIQk9BUkRST0xFJTNBci5zaG9ydG5hbWUlMjUlMjUlMEQlMEFBTkQrY3h0LmNvbnRleHRsZXZlbCslM0Q1MCtBTkQrcmwudXNlcmlkKyUzRCslMjUlMjVVU0VSSUQlMjUlMjUrQU5EK3JsLnRpbWVtb2RpZmllZCtCRVRXRUVOKyUyNSUyNUxTX1NUQVJUREFURSUyNSUyNStBTkQrJTI1JTI1TFNfRU5EREFURSUyNSUyNSI7czoxMToiZGVzY3JpcHRpb24iO2E6Mjp7czo0OiJ0ZXh0IjtzOjc0OiIlM0NwJTNFVGhlK251bWJlcitvZitjb3Vyc2VzK2Vucm9sbGVkK3RvK2J5K2Erc3R1ZGVudCUyRnRlYWNoZXIuJTNDJTJGcCUzRSI7czo2OiJmb3JtYXQiO3M6MToiMSI7fXM6NjoiZ2xvYmFsIjtzOjE6IjEiO3M6MjoiaWQiO2k6MTI4O3M6ODoiY291cnNlaWQiO2k6MTtzOjM1OiJtZm9ybV9pc2V4cGFuZGVkX2lkX2FkdmFuY2Vkb3B0aW9ucyI7aTowO3M6MTI6InN1Ym1pdGJ1dHRvbiI7czo0OiJOZXh0IjtzOjEyOiJkaXNhYmxldGFibGUiO2k6MDtzOjc6InN1bW1hcnkiO3M6NzQ6IiUzQ3AlM0VUaGUrbnVtYmVyK29mK2NvdXJzZXMrZW5yb2xsZWQrdG8rYnkrYStzdHVkZW50JTJGdGVhY2hlci4lM0MlMkZwJTNFIjt9fXM6MTE6InBlcm1pc3Npb25zIjthOjI6e3M6NjoiY29uZmlnIjtPOjg6InN0ZENsYXNzIjozOntzOjEzOiJjb25kaXRpb25leHByIjtzOjE0OiIlMjhjMStvcitjMiUyOSI7czoxNDoiY29uZGl0aW9uZXhwcjEiO3M6MDoiIjtzOjE0OiJjb25kaXRpb25leHByMiI7czoxNDoiJTI4YzErb3IrYzIlMjkiO31zOjg6ImVsZW1lbnRzIjthOjI6e2k6MDthOjU6e3M6MjoiaWQiO3M6MTU6ImtzaUNBanB5bVA2WjRkNyI7czo4OiJmb3JtZGF0YSI7Tzo4OiJzdGRDbGFzcyI6Mzp7czoxMjoiY29udGV4dGxldmVsIjtzOjI6IjUwIjtzOjEyOiJzdWJtaXRidXR0b24iO3M6MzoiQWRkIjtzOjY6InJvbGVpZCI7czoxOiI1Ijt9czoxMDoicGx1Z2lubmFtZSI7czoxMjoicm9sZWluY291cnNlIjtzOjE0OiJwbHVnaW5mdWxsbmFtZSI7czozMToiVXNlcit3aXRoK3RoZStzZWxlY3RlZCtyb2xlJTJGcyI7czo3OiJzdW1tYXJ5IjtzOjIzOiJzdHVkZW50K2F0K0NvdXJzZStsZXZlbCI7fWk6MTthOjU6e3M6MjoiaWQiO3M6MTU6ImRMcmg4WGFyc283NnVZdiI7czo4OiJmb3JtZGF0YSI7Tzo4OiJzdGRDbGFzcyI6Mzp7czoxMjoiY29udGV4dGxldmVsIjtzOjI6IjUwIjtzOjEyOiJzdWJtaXRidXR0b24iO3M6MzoiQWRkIjtzOjY6InJvbGVpZCI7czoxOiIzIjt9czoxMDoicGx1Z2lubmFtZSI7czoxMjoicm9sZWluY291cnNlIjtzOjE0OiJwbHVnaW5mdWxsbmFtZSI7czozMToiVXNlcit3aXRoK3RoZStzZWxlY3RlZCtyb2xlJTJGcyI7czo3OiJzdW1tYXJ5IjtzOjMwOiJlZGl0aW5ndGVhY2hlcithdCtDb3Vyc2UrbGV2ZWwiO319fX0=]]></components>
+<export><![CDATA[]]></export>
+<global><![CDATA[1]]></global>
+<lastexecutiontime><![CDATA[1]]></lastexecutiontime>
+<disabletable><![CDATA[0]]></disabletable>
+<instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-student]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[side-db-first]]></defaultregion>
+<defaultweight><![CDATA[0]]></defaultweight>
+<timecreated><![CDATA[1646364233]]></timecreated>
+<timemodified><![CDATA[1646364233]]></timemodified>
+<title><![CDATA[Enrolled courses]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[960641212]]></logo>
+<tilescolourpicker><![CDATA[04060F]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<tilescolour><![CDATA[FFFFFF]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position><instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-editingteacher]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[reportdb-one]]></defaultregion>
+<defaultweight><![CDATA[0]]></defaultweight>
+<timecreated><![CDATA[1646364233]]></timecreated>
+<timemodified><![CDATA[1646364233]]></timemodified>
+<title><![CDATA[Enrolled courses]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[106038123]]></logo>
+<tilescolourpicker><![CDATA[04060F]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<tilescolour><![CDATA[FFFFFF]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position><instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-editingteacher_50]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[reportdb-one]]></defaultregion>
+<defaultweight><![CDATA[0]]></defaultweight>
+<timecreated><![CDATA[1646364233]]></timecreated>
+<timemodified><![CDATA[1646364233]]></timemodified>
+<title><![CDATA[Enrolled courses]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[397959028]]></logo>
+<tilescolourpicker><![CDATA[04060F]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<tilescolour><![CDATA[FFFFFF]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position></report>

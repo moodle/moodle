@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<report version="2021051704.1"><visible><![CDATA[1]]></visible>
+<name><![CDATA[Average time spent on LMS]]></name>
+<summary><![CDATA[<p>The average time-spent on the system by students/teachers since the time of LearnerScript installation. The average time-spent on LMS by the admin will have ‘Zero’.</p>]]></summary>
+<type><![CDATA[statistics]]></type>
+<components><![CDATA[YToyOntzOjk6ImN1c3RvbXNxbCI7YToxOntzOjY6ImNvbmZpZyI7Tzo4OiJzdGRDbGFzcyI6MTE6e3M6NDoibmFtZSI7czoyNToiQXZlcmFnZSt0aW1lK3NwZW50K29uK0xNUyI7czo0OiJ0eXBlIjtzOjEwOiJzdGF0aXN0aWNzIjtzOjg6InF1ZXJ5c3FsIjtzOjQ2MDoiU0VMRUNUK0NBU0UrV0hFTitBVkclMjhibGMudGltZXNwZW50JTI5K0lTK05VTEwrVEhFTislMjcwJTI3K0VMU0UrUk9VTkQlMjhBVkclMjhibGMudGltZXNwZW50JTI5JTJDKzIlMjkrRU5EK0FTKyUyMlRpbWVzcGVudCUyMiUwRCUwQUZST00rcHJlZml4X2Jsb2NrX2xzX2NvdXJzZXRpbWVzdGF0cytibGMlMEQlMEFKT0lOK3ByZWZpeF9yb2xlX2Fzc2lnbm1lbnRzK0FTK3JhK09OK3JhLnVzZXJpZCslM0QrYmxjLnVzZXJpZCUwRCUwQUpPSU4rcHJlZml4X3JvbGUrcitPTityLmlkKyUzRCtyYS5yb2xlaWQrJTBEJTBBV0hFUkUrYmxjLnVzZXJpZCslM0QrJTI1JTI1VVNFUklEJTI1JTI1KyUyNSUyNURBU0hCT0FSRFJPTEUlM0FyLnNob3J0bmFtZSUyNSUyNSslMEQlMEFBTkQrYmxjLnRpbWVtb2RpZmllZCtCRVRXRUVOKyUyNSUyNUxTX1NUQVJUREFURSUyNSUyNStBTkQrJTI1JTI1TFNfRU5EREFURSUyNSUyNSI7czoxMToiZGVzY3JpcHRpb24iO2E6Mjp7czo0OiJ0ZXh0IjtzOjE5OToiJTNDcCUzRVRoZSthdmVyYWdlK3RpbWUtc3BlbnQrb24rdGhlK3N5c3RlbStieStzdHVkZW50cyUyRnRlYWNoZXJzK3NpbmNlK3RoZSt0aW1lK29mK0xlYXJuZXJTY3JpcHQraW5zdGFsbGF0aW9uLitUaGUrYXZlcmFnZSt0aW1lLXNwZW50K29uK0xNUytieSt0aGUrYWRtaW4rd2lsbCtoYXZlKyVFMiU4MCU5OFplcm8lRTIlODAlOTkuJTNDJTJGcCUzRSI7czo2OiJmb3JtYXQiO3M6MToiMSI7fXM6NjoiZ2xvYmFsIjtzOjE6IjEiO3M6MjoiaWQiO2k6MjA0O3M6ODoiY291cnNlaWQiO2k6MTtzOjM1OiJtZm9ybV9pc2V4cGFuZGVkX2lkX2FkdmFuY2Vkb3B0aW9ucyI7aTowO3M6MTI6InN1Ym1pdGJ1dHRvbiI7czo0OiJOZXh0IjtzOjEyOiJkaXNhYmxldGFibGUiO2k6MDtzOjc6InN1bW1hcnkiO3M6MTk5OiIlM0NwJTNFVGhlK2F2ZXJhZ2UrdGltZS1zcGVudCtvbit0aGUrc3lzdGVtK2J5K3N0dWRlbnRzJTJGdGVhY2hlcnMrc2luY2UrdGhlK3RpbWUrb2YrTGVhcm5lclNjcmlwdCtpbnN0YWxsYXRpb24uK1RoZSthdmVyYWdlK3RpbWUtc3BlbnQrb24rTE1TK2J5K3RoZSthZG1pbit3aWxsK2hhdmUrJUUyJTgwJTk4WmVybyVFMiU4MCU5OS4lM0MlMkZwJTNFIjt9fXM6MTE6InBlcm1pc3Npb25zIjthOjI6e3M6NjoiY29uZmlnIjtPOjg6InN0ZENsYXNzIjozOntzOjEzOiJjb25kaXRpb25leHByIjtzOjE0OiIlMjhjMStvcitjMiUyOSI7czoxNDoiY29uZGl0aW9uZXhwcjEiO3M6MDoiIjtzOjE0OiJjb25kaXRpb25leHByMiI7czoxNDoiJTI4YzErb3IrYzIlMjkiO31zOjg6ImVsZW1lbnRzIjthOjI6e2k6MDthOjU6e3M6MjoiaWQiO3M6MTU6InNUSFo4UTNVU1ZGUENtYyI7czo4OiJmb3JtZGF0YSI7Tzo4OiJzdGRDbGFzcyI6Mzp7czoxMjoiY29udGV4dGxldmVsIjtzOjI6IjUwIjtzOjEyOiJzdWJtaXRidXR0b24iO3M6MzoiQWRkIjtzOjY6InJvbGVpZCI7czoxOiI1Ijt9czoxMDoicGx1Z2lubmFtZSI7czoxMjoicm9sZWluY291cnNlIjtzOjE0OiJwbHVnaW5mdWxsbmFtZSI7czozMToiVXNlcit3aXRoK3RoZStzZWxlY3RlZCtyb2xlJTJGcyI7czo3OiJzdW1tYXJ5IjtzOjIzOiJzdHVkZW50K2F0K0NvdXJzZStsZXZlbCI7fWk6MTthOjU6e3M6MjoiaWQiO3M6MTU6IjkzbDV0WEtadkFNNFphcyI7czo4OiJmb3JtZGF0YSI7Tzo4OiJzdGRDbGFzcyI6Mzp7czoxMjoiY29udGV4dGxldmVsIjtzOjI6IjUwIjtzOjEyOiJzdWJtaXRidXR0b24iO3M6MzoiQWRkIjtzOjY6InJvbGVpZCI7czoxOiIzIjt9czoxMDoicGx1Z2lubmFtZSI7czoxMjoicm9sZWluY291cnNlIjtzOjE0OiJwbHVnaW5mdWxsbmFtZSI7czozMToiVXNlcit3aXRoK3RoZStzZWxlY3RlZCtyb2xlJTJGcyI7czo3OiJzdW1tYXJ5IjtzOjMwOiJlZGl0aW5ndGVhY2hlcithdCtDb3Vyc2UrbGV2ZWwiO319fX0=]]></components>
+<export><![CDATA[]]></export>
+<global><![CDATA[1]]></global>
+<lastexecutiontime><![CDATA[1]]></lastexecutiontime>
+<disabletable><![CDATA[0]]></disabletable>
+<instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-student]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[side-db-third]]></defaultregion>
+<defaultweight><![CDATA[-2]]></defaultweight>
+<timecreated><![CDATA[1646364221]]></timecreated>
+<timemodified><![CDATA[1646364221]]></timemodified>
+<title><![CDATA[Average timespent]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[47878179]]></logo>
+<tilescolourpicker><![CDATA[C1403D]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<tilescolour><![CDATA[FFFFFF]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"><contextid><![CDATA[1]]></contextid>
+<pagetype><![CDATA[blocks-reportdashboard-dashboard-student]]></pagetype>
+<subpage><![CDATA[Dashboard]]></subpage>
+<visible><![CDATA[1]]></visible>
+<region><![CDATA[side-db-third]]></region>
+<weight><![CDATA[-2]]></weight>
+</position><instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-editingteacher]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[reportdb-third]]></defaultregion>
+<defaultweight><![CDATA[0]]></defaultweight>
+<timecreated><![CDATA[1646364221]]></timecreated>
+<timemodified><![CDATA[1646364221]]></timemodified>
+<title><![CDATA[Average timespent]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[721934929]]></logo>
+<tilescolourpicker><![CDATA[C1403D]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<tilescolour><![CDATA[FFFFFF]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position><instance version="2021051704.1"><blockname><![CDATA[reporttiles]]></blockname>
+<parentcontextid><![CDATA[1]]></parentcontextid>
+<showinsubcontexts><![CDATA[0]]></showinsubcontexts>
+<requiredbytheme><![CDATA[0]]></requiredbytheme>
+<pagetypepattern><![CDATA[blocks-reportdashboard-dashboard-editingteacher_50]]></pagetypepattern>
+<subpagepattern><![CDATA[Dashboard]]></subpagepattern>
+<defaultregion><![CDATA[reportdb-third]]></defaultregion>
+<defaultweight><![CDATA[0]]></defaultweight>
+<timecreated><![CDATA[1646364221]]></timecreated>
+<timemodified><![CDATA[1646364221]]></timemodified>
+<title><![CDATA[Average time spent on LMS]]></title>
+<reportcontenttype><![CDATA[]]></reportcontenttype>
+<reporttype><![CDATA[table]]></reporttype>
+<logo><![CDATA[603205782]]></logo>
+<tilescolourpicker><![CDATA[C1403D]]></tilescolourpicker>
+<tileformat><![CDATA[fill]]></tileformat>
+<tilescolour><![CDATA[FFFFFF]]></tilescolour>
+<url><![CDATA[]]></url>
+</instance><position version="2021051704.1"></position></report>

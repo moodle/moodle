@@ -1,0 +1,67 @@
+<div class="plotdata">
+    <div class="ls-plotdata_container">
+        <span id='custom_view' class='editreport ls {{viewreport}}'><a data-toggle="tooltip" data-placement="bottom" title={{# str }} viewreport, block_learnerscript {{/ str }}
+                href="{{config.wwwroot}}/blocks/learnerscript/viewreport.php?{{params}}">
+            {{# str }} viewreport, block_learnerscript {{/ str }}</a>
+        </span>
+        <span id='custom_design' class='editreport ls {{design}}'><a data-toggle="tooltip" data-placement="bottom" title={{# str }} design, block_learnerscript {{/ str }}
+                href="{{config.wwwroot}}/blocks/learnerscript/design.php?{{params}}">
+             {{# str }} design, block_learnerscript {{/ str }}</a>
+        </span>
+        {{# permissionsavailable}}
+        <span id='custom_permissions' class='editreport ls {{permissions}}'><a data-toggle="tooltip" data-placement="bottom" title={{# str }} permissions, block_learnerscript {{/ str }}
+                href="{{config.wwwroot}}/blocks/learnerscript/editcomp.php?comp=permissions&{{params}}">
+                {{# str }} permissions, block_learnerscript {{/ str }} </a>
+        </span>
+        {{/ permissionsavailable}}
+        <span id='custom_edit' class='editreport ls {{editicon}}'><a data-toggle="tooltip" data-placement="bottom" title={{# str }} edit, core {{/ str }}
+                href="{{config.wwwroot}}/blocks/learnerscript/editreport.php?{{params}}">
+                {{# str }} edit, core {{/ str }} </a>
+        </span>
+        {{# enableschedule }}
+        <span id='custom_schedule' class='editreport ls {{schreportform}}'><a data-toggle="tooltip" data-placement="bottom" title={{# str }} schedule, block_learnerscript {{/ str }}
+                href="{{config.wwwroot}}/blocks/learnerscript/components/scheduler/schedule.php?{{params}}">
+                {{# str }} schedule, block_learnerscript {{/ str }}</a>
+        </span>
+        {{/ enableschedule }}
+        {{#plots.0}}
+        <div class="dropdown addgraph-inline">
+        <!--     <button class='dropbtn' onclick='(function(e){ require("block_learnerscript/helper").dropdown("align_menu") })(event)'>
+                Add Graph</button> -->
+               <span id='custom_graph' class='editreport ls {{addgraphs}}'>
+                <a class="dropdown-toggle htitle " id="addgraphs{{reportid}}" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">{{# str}} addgraph, block_learnerscript {{/ str}}</a>
+
+            <ul  class="menu dropdown-menu dropdown-menu-left dropdown-content" area-labelledby="addgraphs{{reportid}}" id="align_menu">
+            	{{#plots}}
+                <li role='presentation'
+                	onclick='(function(e){ require("block_learnerscript/helper").PlotForm({
+                        reportid:{{reportid}}, action:"plotforms", component: "plot",
+                        pname: "{{shortname}}", title: "{{fullname}}", type: "add"}) })(event)'
+
+                	title='{{fullname}}' class='plotgraphoptions'>
+                	<span class='ls {{shortname}} addgraph_content'></span>
+					<span class='plotgraphoptions_name'>{{fullname}}</span>
+                </li>
+                {{/plots}}
+            </ul>
+            </span>
+        </div>
+        {{/plots.0}}
+        
+        {{# searchenable}}
+        <span id='custom_jumpto' class='editreport ls {{searchreport}}'>
+
+            {{# str}} jumpto, block_learnerscript {{/ str}} <select name="reportsearch" value="" id="reportsearch" placeholder="Search Report" data-select2=1>
+            {{# reports }}
+                <option value={{id}}>{{name}}</option>
+            {{/ reports}}
+            }
+            }
+            </select>
+
+        </span>
+        {{/ searchenable}}
+
+    </div>
+</div>

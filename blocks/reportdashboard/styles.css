@@ -1,0 +1,3634 @@
+.block_reportdashboard.block,
+.block.block_reportdashboard .content {
+    float: left;
+    width: 100%;
+    box-sizing: border-box;
+}
+/*for generic configuration appearance*/
+.report_header_skew .report_header_skew_content .dataTables_length select.form-control:not([size]):not([multiple]) {
+    height: 30px;
+}
+aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label,
+aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter {
+    float: right;
+}
+aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew,
+aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+    margin-left: 0px;
+    padding: 0px;
+}
+aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length label select,
+aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length label select {
+    max-width: 100%;
+    min-width: 100%;
+    margin: 0px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+}
+.width-container.reports-act-graphs .block.block_reportdashboard .plotreport_dashboard_container .alert.alert-warning {
+    position: absolute;
+    /*width: 98%;*/
+    left: 1%;
+    right: 1%;
+    top: 162px;
+    margin-bottom: 0;
+}
+aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter input[type="search"],
+aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter input[type="search"] {
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+    margin: 0px;
+}
+aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length label,
+aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length label {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .dataTables_wrapper table,
+aside#block-region-side-post .block_reportdashboard .report_dashboard_container .dataTables_wrapper table {
+    border: 1px solid #ddd;
+}
+aside#block-region-side-pre .block_reportdashboard table thead tr th,
+aside#block-region-side-post .block_reportdashboard table thead tr th {
+    border: none;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-tabs{
+    margin-top:0;
+}
+body.reportdashboard.path-blocks-reportdashboard #middle-blocks{
+    padding-top:1px;
+}
+body.reportdashboard.path-blocks-reportdashboard #middle-blocks #title {
+    width:auto;
+}
+body.reportdashboard.path-blocks-reportdashboard #db-one {
+    width:auto;
+}
+body.reportdashboard.path-blocks-reportdashboard #db-one,
+body.reportdashboard.path-blocks-reportdashboard #db-two,
+body.reportdashboard.path-blocks-reportdashboard #db-three,
+body.reportdashboard.path-blocks-reportdashboard #db-four,
+body.reportdashboard.path-blocks-reportdashboard #db-five,
+body.reportdashboard.path-blocks-reportdashboard #db-six{
+    min-height: 30px;
+}
+body.reportdashboard.path-blocks-reportdashboard #db-one h2,
+body.reportdashboard.path-blocks-reportdashboard #db-two h2,
+body.reportdashboard.path-blocks-reportdashboard #db-three h2,
+body.reportdashboard.path-blocks-reportdashboard #db-four h2{
+    color:#2898D5;
+    line-height: 20px;
+    font-size:14px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-widget-header{font-weight: normal;}
+body.reportdashboard.path-blocks-reportdashboard #fulldb {
+    width:100% !important;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-widget-content{
+    /*border:none;*/
+    background: #fff;
+    padding: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .report_dashboard_container table .ui-widget-content td img.icon {
+    padding-left: 3px;
+    float: left;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-tabs .ui-tabs-panel{
+    padding:1em 0;
+}
+body.reportdashboard.path-blocks-reportdashboard #academic_status_tabs {
+    overflow: auto;
+}
+body.reportdashboard.path-blocks-reportdashboard #region-pre .block .header .title h2,
+body.reportdashboard.path-blocks-reportdashboard .block h3.main,
+body.reportdashboard.path-blocks-reportdashboard #region-post .block .header .title h2,
+body.reportdashboard.path-blocks-reportdashboard .block h3.main{
+    background-color: #0d71b3;
+}
+body.reportdashboard.path-blocks-reportdashboard .course_title h2{
+    font-size:14px;
+    color:#0066ab;
+    background-color: #ffffff !important;
+}
+body.reportdashboard.path-blocks-reportdashboard #db-one .block,
+body.reportdashboard.path-blocks-reportdashboard #db-two .block,
+body.reportdashboard.path-blocks-reportdashboard #db-three .block,
+body.reportdashboard.path-blocks-reportdashboard #db-four .block,
+body.reportdashboard.path-blocks-reportdashboard #db-five .block,
+body.reportdashboard.path-blocks-reportdashboard #db-six .block{
+    border-radius:0px !important;
+    overflow: auto;
+}
+body.reportdashboard.path-blocks-reportdashboard #notify-boxes {
+    margin: 0;
+    padding-top: 145px;
+    background-repeat: no-repeat;
+    background-size: 100% 98% !important;
+}
+body.reportdashboard.path-blocks-reportdashboard .span2.notifybox {
+    width:14% !important;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.reportdashboard #block-region-reports-one {
+    margin:0;
+    margin-top:20px;
+}
+.reportdashboard #block-region-reports-two {
+    /*margin-left: 6.5% !important;*/
+    margin-top:20px;
+}
+.reportdashboard .block{
+    padding:0;
+}
+.reportdashboard .block.block_reporttiles .content,
+.reportdashboard .block.block_reportdashboard .content{
+    padding:0;
+    min-height: 25px;
+}
+.reportdashboard #block-region-reports-one .header,.reportdashboard #block-region-reports-two .header{
+    background:#e4e4e4;
+    padding:14px;
+}
+.reportdashboard .moodle-actionmenu[data-enhanced].show .menu.align-tr-br{
+    width: 250px;
+}
+.block_reportdashboard .dropdown-menu .dropdown-item {
+    cursor: pointer;
+    /*border-bottom: 1px solid #ebebeb;*/ /*for report dashboard blocks edit icon content*/
+    padding: 5px 10px;
+}
+.reportdashboard #block-region-reports-one .header h2,.reportdashboard #block-region-reports-two .header h2{
+    color: #000;
+    font-weight: normal;
+    font-size: 12px;
+    padding: 15px 15px;
+    display: inline;
+}
+.reportdashboard #block-region-reports-one .block .header .commands,.reportdashboard #block-region-reports-two .block .header .commands{
+    clear: none;
+    float: right;
+    display: inline;
+    padding:0;
+}
+.reportdashboard #block-region-reports-one .menureport,.reportdashboard #block-region-reports-two .menureport{
+    float: right;
+    margin: 5px;
+}
+#box0,#box1,#box2,#box3,#box4,#box5{
+    color: #FFF;
+    font-size: 30px;
+    border-radius: 2px;
+    font-weight: bold;
+    padding-top:15px;
+    min-height: 115px;
+    border-bottom: 3px solid rgba(8, 8, 8, 0.29);
+}
+body.reportdashboard.path-blocks-reportdashboard #notifylabel{
+    font-size:13px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+#box0{
+    background: #189dd7;
+    margin-left: 15px;
+}
+@font-face {
+    font-family: 'Glyphicons Halflings';
+    src: url([[font:block_reportdashboard|glyphicons-halflings-regular.eot]]);
+    src: url([[font:block_reportdashboard|glyphicons-halflings-regular.eot]]) format('embedded-opentype'),
+         url([[font:block_reportdashboard|glyphicons-halflings-regular.woff]]) format('woff'),
+         url([[font:block_reportdashboard|glyphicons-halflings-regular.woff2]]) format('woff2'),
+         url([[font:block_reportdashboard|glyphicons-halflings-regular.ttf]]) format('truetype'),
+         url([[font:block_reportdashboard|glyphicons-halflings-regular.svg]]) format('svg');
+    /*src: url('./../blocks/reportdashboard/fonts/glyphicons-halflings-regular.eot');
+    src: url('./../blocks/reportdashboard/fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'),
+        url('./../blocks/reportdashboard/fonts/glyphicons-halflings-regular.woff2') format('woff2'),
+        url('./../blocks/reportdashboard/fonts/glyphicons-halflings-regular.woff') format('woff'),
+        url('./../blocks/reportdashboard/fonts/glyphicons-halflings-regular.ttf') format('truetype'),
+        url('./../blocks/reportdashboard/fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');*/
+}
+
+body.reportdashboard div.course:before {
+    content: "\E032";
+}
+body.reportdashboard div.category:before {
+    content: "\E032";
+}
+body.reportdashboard div.instructors:before {
+    content:"\e008";
+}
+body.reportdashboard div.students:before {
+    content:"\e008";
+}
+body.reportdashboard div.activities:before {
+    content:"\e089";
+}
+body.reportdashboard div.cactivities:before {
+    content:"\e141";
+}
+body.reportdashboard div.enrolled:before{
+    content:"\270f";
+}
+body.reportdashboard.path-blocks-reportdashboard #notifylabel:before {
+    font-family: 'Glyphicons Halflings';
+    font-size: 17px;
+    font-weight: normal;
+    display: block;
+    color: yellow;
+    margin-bottom: 10px;
+}
+body.reportdashboard #box1{
+    background: #3c5a96;
+}
+body.reportdashboard #box2{
+    background: #da4b3e;
+}
+body.reportdashboard #box3{
+    background: #c8202c;
+}
+body.reportdashboard #box4{
+    background: #ea4c89;
+}
+body.reportdashboard #box5{
+    background: #3f9938;
+}
+#block-region-reports-one h4,
+#block-region-reports-two h4{
+    font-size: 17px;
+    font-weight: 500;
+    padding-left: 10px;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportdashboard_right{
+    float: right;
+    background-color: #dddbdb;
+    color: #000;
+    font-size: 12px;
+    line-height: 20px;
+    padding: 0px 15px;
+    border: 1px solid #e3e3e3;
+    border-top: 0px solid;
+    margin-top: 10px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+}
+.block_reportdashboard.block select.menureport_edit{
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #eee;
+    color: #555;
+    padding: 2px 5px;
+    height: 30px !important;
+    line-height: 30px !important;
+    max-height: 30px;
+    float: right;
+    max-width: 150px;
+    background-image: none;
+    border: 1px solid #aaa;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+}
+.block_reportdashboard.block select.menureport_edit > option{background-color: #fff;color: #333;}
+body.reportdashboard.path-blocks-reportdashboard #report_option .report_option_inner a.dropdown-toggle:after{border: none;margin: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar button{background-color: #fff !important;box-shadow: none !important;-webkit-box-shadow: none !important;-moz-box-shadow: none !important;outline: none;border: none;background: none;float: right;width: 20px;height: 20px;padding: 0px;position: relative;margin: 0px 0px 0px;}
+body.reportdashboard.path-blocks-reportdashboard > .ui-dialog .ui-dialog-titlebar button{/*margin: 3px 0px 0px;*/border-radius:4px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar button .ui-icon-closethick{
+    /*top: 2px;margin: 0px;left: 2px;*/ /*commented for moove theme close alignment*/
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar img.dialog_title_icon,
+.ui-dialog.sendreportemail-popup .ui-dialog-titlebar img.dialog_title_icon,
+.ui-dialog.schedule-popup .ui-dialog-titlebar img.dialog_title_icon,
+.ui-dialog.reportfilter-popup .ui-dialog-titlebar img.dialog_title_icon {margin-right: 10px;max-width: 35px;max-height: 31px;background: #6699b5;}
+body.reportdashboard.path-blocks-reportdashboard div#dashboard-header{width: 99%; margin: 0px 0px 10px 0;display: inline-block;}
+body.reportdashboard.path-blocks-reportdashboard .singlebutton div input[type='submit']{margin-top: 0px;}
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons{float: right;display: inline-flex;align-items: center;}
+body.reportdashboard.path-blocks-reportdashboard span.left_buttons{float: left;}
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content .row{margin: 10px 0px;}
+body.path-blocks-reportdashboard span#widgetaction button,
+body.path-blocks-reportdashboard span.right_buttons .singlebutton input[type="submit"]{
+    /*background: #ddd !important;*/
+    /*border: 1px solid #aaa;*/
+    padding: 5px;
+    float: left;
+    /*border-radius: 4px;*/
+    /*-webkit-border-radius: 4px;*/
+    /*-moz-border-radius: 4px;*/
+    /*box-shadow: none;*/
+    /*-webkit-box-shadow: none;*/
+    /*-moz-box-shadow: none;*/
+    line-height: 18px;
+    /*color: #333 !important;*/
+    /*font-weight: inherit;*/
+    font-size: 13px;
+    margin: 2px;
+    /*text-shadow: none;*/
+    /*-moz-text-shadow: none;*/
+}
+.bootsidemenu > .menu-wrapper {
+    left: -10px;
+}
+aside.width-3 .sendreportemail #fitem_id_format .col-md-3, aside.width-3 .sendreportemail #fitem_id_format .col-md-9 {
+    max-width: 100%;
+    min-width: 100%;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:first-child {
+    background-color: #e0e1e3;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-widget select {
+    margin-top: 10px;
+}
+
+body.reportdashboard.path-blocks-reportdashboard #region-main .card.card-block {
+    overflow-x: visible; /*code added for titles display of boost theme dashboard add widget add report switch role */
+}
+body.reportdashboard.path-blocks-reportdashboard #region-main>.card {
+    background: transparent;
+    border: none;
+    overflow-x: visible;
+}
+@media(max-width: 1024px){
+    body.reportdashboard.path-blocks-reportdashboard span.left_buttons{/*width: 100%;*/margin: 0px 0px 10px;}
+    body.reportdashboard.path-blocks-reportdashboard span.left_buttons button.addblocks-to-dashboard{float: left;}
+    body.reportdashboard.path-blocks-reportdashboard span.left_buttons button.tailspopup{float: left;}
+    body.reportdashboard.path-blocks-reportdashboard span.right_buttons{/*width: 100%;*/margin: 0px 0px 0px;}
+    body.reportdashboard.path-blocks-reportdashboard span.right_buttons .singlebutton{float: left;}
+    body.reportdashboard.path-blocks-reportdashboard span.right_buttons .dropdown .singlebutton div{margin-left: 0px;}
+}
+body.reportdashboard.path-blocks-reportdashboard .span9.lnt_report_dashboard{
+    margin: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .span9.lnt_report_dashboard .coustom_reports{
+    width :100%;
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    min-height: 50px;
+    text-align: center;
+    font-size: 24px;
+    padding: 20px 0;
+    color: #FFF;
+    padding-left: 10px;
+    padding-right: 25%;
+    background-size: 50px;
+    background-position: 96%;
+    background-repeat: no-repeat;
+    min-height: 70px;
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox > div {
+    border-right: 1px solid;
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox-main{
+    margin-left: 0 !important;
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox-main .span9 {
+    margin-bottom: 24px;
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox p.main{
+    font-size: 18px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    margin-bottom: 5px;
+    text-align: left;
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox p.sub{
+    font-size: 11px;
+    margin-top: -5px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-align: left;
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox1 {
+    background-color: #5CB85C;
+    border: 1px solid #5CB85C;
+    background-image: url([[pix:block_reportdashboard|studying-zone]]);
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox2 {
+    background-color: #5BC0DE;
+    border: 1px solid #5BC0DE;
+    background-image: url([[pix:block_reportdashboard|school]]);
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox3 {
+    background-color: #D9534F;
+    border: 1px solid #D9534F;
+    background-image: url([[pix:block_reportdashboard|studying-zone]]);
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox4{
+    background-color: #F0AD4E;
+    border: 1px solid #F0AD4E;
+    background-image: url([[pix:block_reportdashboard|school]]);
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox5 {
+    background-color: #574B5A;
+    border: 1px solid #574B5A;
+    background-image: url([[pix:block_reportdashboard|timetable-outline]]);
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox6 {
+    background-color: #F0AD4E;
+    border: 1px solid #F0AD4E;
+    background-image: url([[pix:block_reportdashboard|work-timetable]]);
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox7 {
+    background-color: #D9534F;
+    border: 1px solid #D9534F;
+    background-image: url([[pix:block_reportdashboard|copy-content]]);
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox8{
+    background-color: #1684DD;
+    border: 1px solid #1684DD;
+    background-image: url([[pix:block_reportdashboard|ppt-file]]);
+}
+body.reportdashboard.path-blocks-reportdashboard .homebox-right{
+    padding: 7px;
+}
+body.reportdashboard.path-blocks-reportdashboard h4.onlineusers {
+    color: #FF5722;
+    text-shadow: none;
+    font-weight: normal;
+    border-bottom: 1px solid;
+    margin: 0;
+    padding-bottom: 5px;
+}
+body.reportdashboard.path-blocks-reportdashboard .label{
+    /*font-size:22.5px;
+    fill:#ffffff;*/
+    text-anchor:middle;
+    alignment-baseline:middle;
+}
+body.reportdashboard.path-blocks-reportdashboard .face{
+    stroke:#c8c8c8;
+    stroke-width:2;
+}
+body.reportdashboard.path-blocks-reportdashboard .minorTicks{
+    stroke-width:2;
+    stroke:white;
+}
+body.reportdashboard.path-blocks-reportdashboard .majorTicks{
+    stroke:white;
+    stroke-width:3;
+}
+body.reportdashboard.path-blocks-reportdashboard .green text{
+    font-size:12px;
+}
+body.reportdashboard.path-blocks-reportdashboard .green .majorTicks{
+    stroke-width:1;
+}
+body.reportdashboard.path-blocks-reportdashboard .green .minorTicks{
+    stroke-width: 0.5;
+}
+body.reportdashboard.path-blocks-reportdashboard .red .label{
+    fill:rgb(26,12,37);
+}
+body.reportdashboard.path-blocks-reportdashboard .red .majorTicks,.red .minorTicks{
+    stroke:rgb(26,12,37);
+}
+body.reportdashboard.path-blocks-reportdashboard .blue line{
+    stroke-width:6;
+    stroke-linecap:round;
+}
+body.reportdashboard.path-blocks-reportdashboard span#download_dropdwn.dropdown{
+    cursor: pointer;
+    text-align: center;
+}
+body.reportdashboard.path-blocks-reportdashboard .dropdown-menu > li > a{
+    padding: 1px 0px;
+    color: #333;
+    display: block;
+    text-align: left;
+}
+body.reportdashboard.path-blocks-reportdashboard .dropdown-menu > li > a.disabled {
+    font-style: normal;
+}
+body.reportdashboard.path-blocks-reportdashboard .dropdown-menu > li > a img {
+    margin-right: 5px;
+}
+body.reportdashboard.path-blocks-reportdashboard .dropdown-menu > li > a span {
+    text-transform: capitalize;
+}
+body.reportdashboard.path-blocks-reportdashboard .dropdown-menu > li > a:hover {
+    background-color: transparent;
+    background-image: none;
+}
+body.reportdashboard.path-blocks-reportdashboard #download_dropdwn .dropdown-menu > li > a{
+    padding: 5px 20px;
+}
+.report_option_inner ul.dropdown-content{margin: 0px;list-style: none;}
+.report_option_inner ul.dropdown-content li a{
+
+}
+body.reportdashboard.path-blocks-reportdashboard div.fitemtitle,
+.ui-dialog.sendreportemail-popup div.fitemtitle, .ui-dialog.schedule-popup div.fitemtitle {
+    text-align: left !important;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets{background-color: #eff0f2;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content form.mform,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content form.mform {
+    overflow-x: auto;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets #fgroup_id_selectreporttext div.fitemtitle{display: none;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .mform .dashboard_widgets fieldset.hidden{margin: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets div#fgroup_id_selectreporttext .felement,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets > .row.fitem:first-child .col-md-9.felement{background-color: #6c6e70;color: #fff;padding: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets div#fgroup_id_selectreporttext .felement b{font-weight: bold;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog div#fgroup_id_selectreporttext{font-size: 15px;margin: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog div#fgroup_id_selectreporttext ~ .fitem.fitem_fgroup{font-size: 14px;padding: 0;margin: 0px 1%;float: left;width: 98%;-webkit-border-radius: 6px;-moz-border-radius: 6px;border-radius: 6px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog div#fgroup_id_selectreporttext ~ .fitem.fitem_fgroup:nth-child(odd){background-color: #c4c4c4;}
+
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets{background-color: #f3f3f3;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets #fgroup_id_selectreporttext div.fitemtitle{display: none;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .mform .dashboard_widgets fieldset.hidden{margin: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets div#fgroup_id_selectreporttext .felement{background-color: #6c6e70;color: #fff;padding: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets div#fgroup_id_selectreporttext .felement b{font-weight: bold;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .dashboard_widgets #fitem_id_submitbutton{border-top: none;background: transparent;margin: 0px;padding: 19px 20px 20px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .dashboard_widgets #fitem_id_submitbutton input[type='submit']{margin: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .report_dashboard_container table .ui-widget-content thead>tr,
+body.reportdashboard.path-blocks-reportdashboard.path-blocks .ui-dialog .ui-widget-content table thead>tr {
+    background-color: #eff0f2;
+    color: #333;
+}
+body.reportdashboard.path-blocks-reportdashboard table.dataTable thead > tr > th,
+body.path-blocks-learnerscript table.dataTable thead > tr > th {
+    font-weight: normal;
+}
+/* css by anusha on 07/04/2017*/
+.customdashboard .singlebutton {
+    float: right;
+}
+body.reportdashboard.path-blocks-reportdashboard input#reportsearch{
+    float: left;
+    width: 40%;
+    margin-bottom: 0px;
+    padding: 14px;
+}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction{
+    float: right;
+    width: 100%;
+    margin: 24px 0px 10px;
+}
+body.dir-rtl.reportdashboard.path-blocks-reportdashboard span#widgetaction {float: right;}
+body.reportdashboard.path-blocks-reportdashboard .select2-container,
+.ui-dialog.sendreportemail-popup .select2-container {width: 180px !important;max-width: 180px;min-width: 180px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog select.export_row{width: 180px;max-width: 180px;min-width: 180px;}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction span.select2.select2-container{width: 500px !important;max-width: 500px;}
+body.reportdashboard.path-blocks-reportdashboard #block-region-side-db-first {
+    /*margin-left: 0px;*/
+}
+body.reportdashboard.path-blocks-reportdashboard #block-region-side-db-three {
+    /*margin-left: 0px;*/ /*commented by Raghuvaran on 17-07-18*/
+}
+body.reportdashboard.path-blocks-reportdashboard select#select_report {
+    width: 45%;
+    float: left;
+    max-height: 34px;
+}
+body.reportdashboard.path-blocks-reportdashboard .lsdatefilter {
+    float: left;
+    width: 100%;
+    display: block;
+}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction .select2-container--default .select2-selection--multiple .select2-selection__rendered{
+    background-image: url([[pix:block_reportdashboard|search]]);
+    background-repeat: no-repeat;
+    background-size: 30px;
+    height: 30px;
+    line-height: 32px;
+    background-position: right;
+    display: block;
+}
+body.reportdashboard.path-blocks-reportdashboard .select2-container .select2-search--inline .select2-search__field{
+    margin: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .customdashboard{
+    float: right;
+}
+body.reportdashboard.path-blocks-reportdashboard  span#download_dropdwn1.dropdown,
+body.reportdashboard.path-blocks-reportdashboard  span.report_schedule,
+body.reportdashboard.path-blocks-reportdashboard  span.report_email{
+    cursor: pointer;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-title,
+.ui-dialog.sendreportemail-popup .ui-dialog-title, .ui-dialog.schedule-popup .ui-dialog-title, .ui-dialog.reportfilter-popup .ui-dialog-title {
+    width: 88% !important;
+}
+/*by anusha on 17/04/2017*/
+body.reportdashboard.path-blocks-reportdashboard .dialog_fixed{
+    position: fixed !important;
+}
+body.reportdashboard.path-blocks-reportdashboard .block{
+    float: left;
+    width: 100%;
+    border: 0px solid #e2e2e2;
+    background: #fff;
+}
+body.dir-rtl.reportdashboard.path-blocks-reportdashboard .block {
+    float: left;
+}
+body.reportdashboard.path-blocks-reportdashboard .singlebutton div{
+   margin-right: 9px;
+}
+body.reportdashboard.path-blocks-reportdashboard .addblocks-to-dashboard{
+    /*margin-right: 5px;*/
+}
+/*by shivani on 17/04/2017*/
+body.reportdashboard.path-blocks-reportdashboard div.fdescription.required,
+.ui-dialog.sendreportemail-popup div.fdescription.required, .ui-dialog.schedule-popup div.fdescription.required,
+ body div.fdescription.required {
+    margin: 0px;
+    font-size: 12px;
+    text-align: center; /*for adaptable theme*/
+    width: 100%; /*for adaptable theme*/
+}
+/*for adaptable theme display: block by default in adaptable*/
+body #region-main .generaltable {
+    display: table;
+}
+/*for adaptable theme changed display: table for adaptable*/
+body.reportdashboard.path-blocks-reportdashboard div.fdescription.required img{max-width: 10px;}
+/*by shivani on 18/04/2017*/
+body.reportdashboard.path-blocks-reportdashboard ul#edit_menu.dropdown-menu:before {
+    position: absolute;
+    top: -7px;
+    left: 9px;
+    display: inline-block;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #ccc;
+    border-left: 7px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.3);
+    content: '';
+}
+body.reportdashboard.path-blocks-reportdashboard ul#edit_menu.dropdown-menu:after {
+    position: absolute;
+    top: -6px;
+    left: 10px;
+    display: inline-block;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #ffffff;
+    border-left: 6px solid transparent;
+    content: '';
+}
+body.reportdashboard.path-blocks-reportdashboard ul#download_menu.dropdown-menu:before {
+    position: absolute;
+    top: -7px;
+    left: 27px;
+    display: inline-block;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid #ccc;
+    border-left: 7px solid transparent;
+    border-bottom-color: rgba(0, 0, 0, 0.3);
+    content: '';
+}
+body.reportdashboard.path-blocks-reportdashboard ul#download_menu.dropdown-menu:after {
+    position: absolute;
+    top: -6px;
+    left: 28px;
+    display: inline-block;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #ffffff;
+    border-left: 6px solid transparent;
+    content: '';
+}
+/* css added by Shivani on 27-04-17 */
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog div.fitemtitle,
+.ui-dialog.sendreportemail-popup .mform .fitem div.fitemtitle, .ui-dialog.schedule-popup .mform .fitem div.fitemtitle {
+    width: 120px;
+    float: left;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .fitemtitle + .felement,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .mform .fitem .felement.fsubmit,
+.ui-dialog.sendreportemail-popup .fitemtitle + .felement, .ui-dialog.schedule-popup .fitemtitle + .felement,
+.ui-dialog.sendreportemail-popup .mform .fitem .felement.fsubmit, .ui-dialog.schedule-popup .mform .fitem .felement.fsubmit {
+    margin-left: 125px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist .mform .fitem .felement.fsubmit,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist .mform .fitem .felement.fsubmit{margin: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .fitem.fitem_fgroup .fitemtitle + .felement{margin-left: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog #fgroup_id_buttonar .felement {
+    width: 100%;
+    text-align: center;
+    margin: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard div.bulkupload{float: left;width: 100%;text-align: right;margin-bottom: 10px;}
+body.reportdashboard.path-blocks-reportdashboard div.bulkupload + form.mform {float: left;width: 100%;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog div.report_filter_form_container fieldset.collapsible legend{background: #414141;float: left;width: 100%;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog div.report_filter_form_container fieldset.collapsible legend a.fheader{background-image: url([[pix:block_reportdashboard|form_expanded]]);background-position: 95%;background-size: 25px;color: #fff;margin-left: 0px;float: left;padding: 0px 0px 0px 10px;width: 100%;outline: none;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog div.report_filter_form_container fieldset.collapsible.collapsed legend a.fheader{background-image: url([[pix:block_reportdashboard|form_collapsed]]);}
+.ui-dialog-content.ui-widget-content #fitem_id_users_data span.select2.select2-container.select2-container--default {
+    width: 130px !important;
+}
+/************css by sreekanth *********************/
+/*add widgets popup form alignments start*/
+body.reportdashboard.path-blocks-reportdashboard .dashboard_widgets .felement{
+    width: 100%;
+    margin: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets input#id_submitbutton{float: right;margin: 6px 0px;}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets > .row.fitem .col-md-9.felement > span{
+    /*padding: 10px 5px 10px 0px;margin: 0px;*/ /*commented for boost theme*/
+}
+/*rare condition for this css for add tiles popup start here*/
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .col-md-9.felement label.fitem.static_listofreports{width: 10%;float: left;text-align: center;line-height: 50px;min-height: 30px;margin: 15px 0 0px;padding: 0px;}
+/*rare condition for this css for add tiles popup end here*/
+
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_checkbox,
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_checkbox,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child {
+    float: left;
+    width: 10%;
+    text-align: center;
+    line-height: 30px; /*50px*/
+    margin: 0px 0px;
+    min-height: 20px;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child input[type="checkbox"]{margin: 0px;vertical-align: bottom;}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets  .fitem .felement label.static_listofreports input[type="checkbox"]{float: left;}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_reportname,
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widgetreport_name{
+    float: left;
+    width: 50%;
+    text-align: left;
+    margin: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span {
+    padding: 10px 5px 10px 0px;
+    margin: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widgetreport_name{line-height: 30px;margin: 10px 0px;}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_reporttype,
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-reporttype,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_reporttype,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-reporttype {
+    float: left;
+    width: 20%;
+    text-align: center;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-reporttype,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-reporttype {max-width: 120px;margin-left: 15px;margin-bottom: 10px;margin-top: 10px;}
+/*body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-reporttype, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {margin-top: 10px;margin-bottom: 10px;}*/
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-reporttype .custom-select, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght .custom-select {margin-top: 0;}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_position,
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-wieght,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {
+    float: right;
+    width: 12%;
+    text-align: left;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-wieght,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {max-width: 65px;min-width: 65px;margin-right: 10px;margin-bottom: 10px;margin-top: 10px;}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets div.fitemtitle{display: none;}
+/*add widgets popup form alignments end*/
+
+/*add titles popup form alignments start*/
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span{padding: 10px 1% 10px 0px;margin: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_checkbox,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child{
+    float: left;
+    width: 10%;
+    text-align: center;
+    min-height: 20px;
+    margin: 10px 0px 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets input#id_submitbutton{float: right;margin: 10px 0px;}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets  .fitem .felement label.static_listofreports input[type="checkbox"]{float: left;}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child{    float: left;line-height: 30px;margin: 0px 0px;min-height: 20px;}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_reportname,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .titlereport_name{
+    float: left;
+    width: 50%;
+    text-align: left;
+}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .titlereport_name{line-height: 30px;margin: 10px 0;}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght{
+    /*float: left;*/
+    /*width: 32%;*/
+    /*text-align: left;*/
+}
+/*body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght{max-width: 65px;min-width: 65px;margin-left: 10px;margin-bottom: 10px;margin-top: 10px;}*/
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets div.fitemtitle,
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets div.fitemtitle {display: none;}
+/*add tiles popup form alignments end*/
+
+body.reportdashboard.path-blocks-reportdashboard .dashboard_widgets .fitem_fsubmit {
+    text-align: right;
+}
+body.reportdashboard.path-blocks-reportdashboard,
+body.reportdashboard.path-blocks-reportdashboard #region-main,
+body.reportdashboard.path-blocks-reportdashboard div[role="main"]{
+    /*background: #f5f5f5 !important;*/
+}
+body.reportdashboard.path-blocks-reportdashboard .width-container{
+    /*float: left;*/
+    width: 100%;
+    margin: 0px;
+    /*background: #f5f5f5;*/
+}
+.width-container::after {
+    display: table;
+    clear: both;
+    content: "";
+}
+body.reportdashboard.path-blocks-reportdashboard #region-main .mform:not(.unresponsive) .femptylabel .felement.fbutton {
+    padding-top: 0px; /*for essential theme dashboard report filter popup*/
+}
+body.reportdashboard.path-blocks-reportdashboard #report_option{
+    text-align: right;
+    background-color: #fff;/*#f5f5f5;*/
+    padding: 9px 10px;
+    float: right;
+    margin: 0px 0px 0px 20px;
+    border: 1px solid #e2e2e2;
+    border-top: 0px;
+    -webkit-transform: skewX(10deg);
+    -moz-transform: skewX(10deg);
+    -ms-transform: skewX(10deg);
+    -o-transform: skewX(10deg);
+    transform: skewX(10deg);
+    position: relative;
+    z-index: 100;
+}
+body.reportdashboard.path-blocks-reportdashboard #report_option .report_option_inner{
+    -webkit-transform: skewX(-10deg);
+    -moz-transform: skewX(-10deg);
+    -ms-transform: skewX(-10deg);
+    -o-transform: skewX(-10deg);
+    transform: skewX(-10deg);
+}
+body.reportdashboard.path-blocks-reportdashboard #report_option .report_option_inner > span{
+    margin: 0px 0px 0px 5px;
+    float: left;
+    cursor: pointer;
+    background: #6699b5;
+}
+body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_length,
+body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_filter,
+body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_info{
+    /*display: none;*/
+}
+body.reportdashboard.path-blocks-reportdashboard .block.block_reportdashboard .content {
+    float: left;
+    width: 100%;
+}
+body.reportdashboard.path-blocks-reportdashboard .block.block_reportdashboard .content .report_dashboard_container {
+    width: 99%;
+    margin-left: .5%;
+}
+body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_info,
+body.path-blocks-learnerscript .dataTables_info, .block_reportdashboard.block .dataTables_info {
+    /*margin: 5px 10px 5px 10px;*/
+    font-size: 14px; /*wrote for learnerscript popup dataTables_info*/
+}
+body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_paginate>ul.pagination,
+body.path-blocks-learnerscript .dataTables_paginate>ul.pagination {
+    margin: 0px 0;
+}
+body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_paginate,
+body.path-blocks-learnerscript .dataTables_paginate {
+    /*margin: 5px 10px 5px 10px;*/
+    float: right;
+    padding-top: 0.755em;
+}
+body.reportdashboard .dataTables_wrapper .co_report_footer,
+body.path-blocks-learnerscript .dataTables_wrapper .co_report_footer {
+    width: 100%;
+}
+body.reportdashboard.path-blocks-reportdashboard .singlebutton{
+    float: right;
+}
+body.reportdashboard.path-blocks-reportdashboard .dropdown-toggle .singlebutton{
+    float: left;
+}
+/* css added by Shivani on 04-05-17 */
+.block_reportdashboard .report_dashboard_container{margin: 0px;float: left;width: 100%;overflow: auto;}
+.block_reportdashboard ul#edit_menu.dropdown-menu{
+    min-width: 0px;
+    box-shadow: 0px 0px 3px 0px #333;
+    -webkit-box-shadow: 0px 0px 3px 0px #333;
+    -moz-box-shadow: 0px 0px 3px 0px #333;
+}
+body.reportdashboard.path-blocks-reportdashboard ul#download_menu.dropdown-menu{
+    min-width: 100px;
+}
+body.reportdashboard.path-blocks-reportdashboard ul#download_menu.dropdown-menu li img {margin-right: 5px;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar,
+.ui-dialog.sendreportemail-popup .ui-dialog-titlebar, .ui-dialog.schedule-popup .ui-dialog-titlebar, .ui-dialog.reportfilter-popup .ui-dialog-titlebar {
+    background: transparent !important; /*!important added for lambda */
+    border: none;
+    /*border-bottom: 2px solid #333;*/
+    border-radius: 4px 4px 0px 0px;
+    /*padding: 10px;*/
+    color: #3F3F3F !important;
+    background-image: none !important; /*!important added for lambda */
+    border-bottom: 2px solid #6d6e71;
+}
+body.path-blocks-learnerscript .ui-widget.ui-widget-content {
+    border-radius: 4px 4px 0 0;
+    padding: 0px;
+}
+body.path-blocks-learnerscript .ui-dialog .ui-dialog-titlebar,
+body.path-blocks-learnerscript .modal-container .modal .modal-header {
+    background: transparent;
+    border: none;
+    color: #3F3F3F;
+    border-radius: 4px 4px 0 0;
+    background-image: none !important;
+    border-bottom: 2px solid #6d6e71;
+}
+body.path-blocks-learnerscript .modal-container .modal{
+    border-radius: 4px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -o-border-radius: 4px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets > .fitem,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets > .fitem{margin: 5px 0px;padding: 0px;}
+body.path-blocks-reportdashboard .select2-dropdown{z-index: 1002 !important;}
+body.path-blocks-reportdashboard .ui-dialog{z-index: 1000 !important;border-radius: 4px;-webkit-border-radius: 4px;-moz-border-radius: 4px;/*-webkit-box-shadow: 0px 0px 5px 3px #aaa;-moz-box-shadow: 0px 0px 5px 3px #aaa;box-shadow: 0px 0px 5px 3px #aaa;*/}
+body.path-blocks-reportdashboard > .ui-dialog{z-index: 1002 !important;}
+body.path-blocks-reportdashboard .ui-widget-overlay{z-index: 999 !important;}
+body.path-blocks-reportdashboard > .ui-widget-overlay{z-index: 1001 !important;}
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content{overflow: auto;padding: .2em;}
+.block_reportdashboard .highcharts-container .highcharts-contextmenu{top: 25px !important;}
+.block_reportdashboard .highcharts-container .highcharts-contextmenu > div{border-radius: 12px;padding: 10px 0px !important;}
+.block_reportdashboard .highcharts-container .highcharts-contextmenu > div > div{padding: 5px 10px !important;}
+.block_reportdashboard .highcharts-container .highcharts-contextmenu > div > hr{border-top: 1px solid #ccc;margin: 0px;}
+.block_reportdashboard .highcharts-container .highcharts-contextmenu:before {
+    content: '';
+    display: inline-block;
+    border-left: 10px solid transparent;
+    border-right: 0px solid transparent;
+    border-bottom: 23px solid #a0a0a0;
+    position: absolute;
+    top: 1px;
+    right: 40px;
+}
+/*.ui-widget{
+        font-family: 'Roboto', sans-serif !important;
+}*/
+.block_reportdashboard .map_report_container {
+    float: left;
+    width: 100%;
+    overflow: visible; /*hidden changed to visible due to nested ui dialogs visible in block_reportdashboard block*/
+}
+/*code added for popup unique styles*/
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content,
+body.path-blocks-learnerscript .ui-dialog .ui-dialog-content {
+    padding: 1em 1.5em;
+    font-size: 14px;
+}
+/*for visible pdf xls dropdown in learnerscript page pop up*/
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-content .dataTables_wrapper .co_report_header,
+body.path-blocks-learnerscript .ui-dialog .ui-dialog-content .dataTables_wrapper .co_report_header {
+    z-index: 1;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar .ui-button .ui-icon,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar button .ui-icon {
+    background-image: url([[pix:block_reportdashboard|ui-icons_888888_256x240]]);
+    /*jira 2891 starts */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -8px;
+    margin-left: -8px;
+    background-position: -96px -128px;
+    width: 16px;
+    height: 16px;
+    /*jira 2891 ends */
+}
+/*code for boost theme add widgets pop up*/
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-reporttype .custom-select, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-wieght .custom-select {
+    margin-top: 0px;
+}
+/*code for boost theme add widgets pop up ends here*/
+/*code added for addwidgets popup for clean theme*/
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child input[type="checkbox"],
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child input[type="checkbox"] {
+    margin: 19px 0px;
+}
+/*code added for addwidgets popup for clean theme ends here*/
+body.path-blocks-reportdashboard .sidenav a .fa {
+    color: #fff;
+}
+/*code added for Add Widgets and Add Tiles pop up for Boost, Academi and Moove themes*/
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .form-group:first-child .col-md-9.felement>span {
+    padding: 10px 1% 10px 0;
+    margin: 0;
+}
+.block_reportdashboard .reportdashboard_report_heading{text-align: left;padding-left: 10px;font-size: 17px;font-weight: normal; color: #000;border-bottom: none;padding-bottom: 0px;margin-top: 0;margin-bottom: 0;float: left;width: auto;box-sizing: border-box;}
+/*custom classes for Standard screen viewports --starts here*/
+.width-default{width: 100%;padding: 0px 10px;float: left;min-height: 5px;margin-bottom: 15px;box-sizing: border-box;}
+.dir-rtl .width-default {float: left;}
+.dir-ltr .width-12, .dir-rtl .width-12 {width: 100%;padding: 0px;margin: 0px;}
+.dir-ltr .width-10, .dir-rtl .width-10 {width: 81.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+.dir-ltr .width-9, .dir-rtl .width-9 {width: 72.99%;padding: 0px;margin: 0px 1% 0px 1%;}
+.dir-ltr .width-8, .dir-rtl .width-8 {width: 64.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+.dir-ltr .width-7, .dir-rtl .width-7 {width: 56.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+.dir-ltr .width-6, .dir-rtl .width-6 {width: 49%;padding: 0px;margin: 0px 1% 0px 0;}
+.dir-ltr .width-5, .dir-rtl .width-5 {width: 39.66%;padding: 0px;margin: 0px 1% 0px 1%;}
+.dir-ltr .width-4, .dir-rtl .width-4 {width: 31.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+.dir-ltr .width-3, .dir-rtl .width-3 {width: 24%;padding: 0px;margin: 0px 1% 0px 0;}
+.dir-ltr .width-2, .dir-rtl .width-2 {width: 14.66%;padding: 0px;margin: 0px 1% 0px 1%;}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .sendmessage form textarea {
+    width: 100%;
+    max-width: 100%;
+    border: 1px solid rgb(169, 169, 169); /*for mozilla*/
+}
+@media (min-width: 1600px){
+    .dir-ltr .width-12, .dir-rtl .width-12 {width: 100%;padding: 0px;margin: 0px;}
+    .dir-ltr .width-10, .dir-rtl .width-10 {width: 81.33%;padding: 0;margin: 0 1% 0 1%;}
+    .dir-ltr .width-9, .dir-rtl .width-9 {width: 72.99%;padding: 0;margin: 0 1% 0 1%;}
+    .dir-ltr .width-8, .dir-rtl .width-8 {width: 64.33%;padding: 0;margin: 0 1% 0 1%;}
+    .dir-ltr .width-7, .dir-rtl .width-7 {width: 56.33%;padding: 0;margin: 0 1% 0 1%;}
+    .dir-ltr .width-6, .dir-rtl .width-6 {width: 49%;padding: 0px;margin: 0px 1% 0px 0;}
+    .dir-ltr .width-5, .dir-rtl .width-5 {width: 39.66%;padding: 0;margin: 0 1% 0 1%;}
+    .dir-ltr .width-4, .dir-rtl .width-4 {width: 31.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-3, .dir-rtl .width-3 {width: 24%;padding: 0px;margin: 0px 1% 0px 0;}
+    .dir-ltr .width-2, .dir-rtl .width-2 {width: 14.66%;padding: 0px;margin: 0px 1% 0px 1%;}
+}
+@media (min-width: 992px) and (max-width: 1599px){
+    .dir-ltr .width-12, .dir-rtl .width-12 {width: 100%;padding: 0px;margin: 0px;}
+    .dir-ltr .width-10, .dir-rtl .width-10 {width: 81.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-9, .dir-rtl .width-9 {width: 72.99%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-8, .dir-rtl .width-8 {width: 64.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-7, .dir-rtl .width-7 {width: 56.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-6, .dir-rtl .width-6 {width: 49%;padding: 0px;margin: 0px 1% 0px 0;}
+    .dir-ltr .width-5, .dir-rtl .width-5 {width: 39.66%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-4, .dir-rtl .width-4 {width: 31.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-3, .dir-rtl .width-3 {width: 24%;padding: 0px;margin: 0px 1% 0px 0;}
+    .dir-ltr .width-2, .dir-rtl .width-2 {width: 14.66%;padding: 0px;margin: 0px 1% 0px 1%;}
+}
+@media (min-width: 768px) and (max-width: 991px){
+    .dir-ltr .width-12, .dir-rtl .width-12 {width: 100%;padding: 0px;margin: 0px;}
+    .dir-ltr .width-10, .dir-rtl .width-10 {width: 81.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-9, .dir-rtl .width-9 {width: 72.99%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-8, .dir-rtl .width-8 {width: 64.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-7, .dir-rtl .width-7 {width: 56.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-6, .dir-rtl .width-6 {width: 49%;padding: 0px;margin: 0px 1% 0px 0;}
+    .dir-ltr .width-5, .dir-rtl .width-5 {width: 39.66%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-4, .dir-rtl .width-4 {width: 31.33%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-3, .dir-rtl .width-3 {width: 24%;padding: 0px;margin: 0px 1% 0px 0;}
+    .dir-ltr .width-2, .dir-rtl .width-2 {width: 14.66%;padding: 0px;margin: 0px 1% 0px 1%;}
+
+    body.reportdashboard.path-blocks-reportdashboard span#widgetaction span.select2.select2-container{width: 300px !important;max-width: 300px;}
+    body.reportdashboard.path-blocks-reportdashboard #nav-notification-popover-container .popover-region-container,
+    body.reportdashboard.path-blocks-reportdashboard #nav-message-popover-container .popover-region-container {
+        right: 0px; /*for adaptable*/
+        left: inherit; /*for adaptable*/
+    }
+}
+@media(max-width: 1100px) and (min-width: 768px){
+    body.reportdashboard.path-blocks-reportdashboard.editing #region-main aside.width-6 .dataTables_wrapper .co_report_header .dataTables_filter {
+        min-width: 58%;
+        width: 58%;
+        margin: 0;
+    }
+    body.reportdashboard.path-blocks-reportdashboard.editing #region-main aside.width-6 .dataTables_wrapper .co_report_header .report_header_skew {
+        min-width: 38%;
+        width: 38%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard.editing #region-main aside.width-6 .dataTables_wrapper .co_report_header .report_header_skew select {
+        min-width: 100%;
+        width: 94px;
+    }
+}
+@media(max-width: 840px) and (min-width: 768px){
+    body.reportdashboard.path-blocks-reportdashboard.editing #report_option .report_option_inner>span {
+        margin: 0px 0px 0px 2px;
+    }
+    /*added for more theme*/
+    body.reportdashboard.path-blocks-reportdashboard.editing #region-main {
+        padding-left: 0px;
+        padding-right: 0px;
+        border: none;
+        box-shadow: none;
+    }
+    /*end more theme */
+}
+@media (max-width: 767px) {
+    body.reportdashboard.path-blocks-reportdashboard #licenceresult #sgnbtntransition,
+    body.reportdashboard.path-blocks-reportdashboard #licenceresult #reportbox_shadow .reportcustomfilters {
+        display: none;
+    }
+    body.path-blocks-reportdashboard #licenceresult #sgnbtntransition.show,
+    body.reportdashboard.path-blocks-reportdashboard #licenceresult #reportbox_shadow .reportcustomfilters.show {
+        display: block;
+    }
+
+body.reportdashboard.path-blocks-reportdashboard #licenceresult #sgnbtntransition {
+    transition: 0.8s ease-in-out;
+    -webkit-transition: 0.8s ease-in-out;
+    -o-transition: 0.8s ease-in-out;
+    position: relative;
+    /*top: -40px;*/
+    -webkit-transform: translateX(-270%);
+    -moz-transform: translateX(-270%);
+    -ms-transform: translateX(-270%);
+    -o-transform: translateX(-270%);
+    transform: translateX(-270%);
+}
+body.reportdashboard.path-blocks-reportdashboard #licenceresult #sgnbtntransition.show {
+    transition: 0.8s ease-in-out;
+    -webkit-transition: 0.8s ease-in-out;
+    -o-transition: 0.8s ease-in-out;
+    -webkit-transform: translateX(0%);
+    -moz-transform: translateX(0%);
+    -ms-transform: translateX(0%);
+    -o-transform: translateX(0%);
+    transform: translateX(0%);
+    box-shadow: 0px 2px 5px 2px #ccc;
+}
+
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span {
+        padding: 0px;
+        margin: 0px;
+        width: auto;
+        float: left;
+        min-width: 185px;
+        text-align: center;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.dashboard_checkbox,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.dashboard_checkbox {
+        display: none;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets {
+        min-width: 593px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets {
+        min-width: 593px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-widget-content.reportslist {
+        overflow-x: auto;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widgetreport_name,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .titlereport_name {
+        margin: 5px 0%;
+        float: left;
+        width: auto;
+        min-width: 197px;
+        text-align: left;
+        max-width: 197px;
+        word-break: break-all;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.dashboard_reportname,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.dashboard_reportname {
+        min-width: 210px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position {
+        min-width: 170px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.widget_reporttype,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.widget_reporttype{
+        min-width: 190px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.widget_position,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.widget_position {
+        text-align: left;
+        min-width: 175px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child {
+        line-height: 28px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child input {
+        vertical-align: bottom;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-wieght,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {
+        margin-left: 4% !important;
+    }
+    /*code written for moove theme*/
+    #page.container-fluid>.row {
+        margin-left: 0;
+        margin-right: 0px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard span#widgetaction {
+        margin-top: 5px;
+    }
+    /*added for more theme*/
+    body.reportdashboard.path-blocks-reportdashboard #region-main,
+    body.path-blocks-learnerscript #region-main {
+        padding-left: 0px;
+        padding-right: 0px;
+        border: none;
+        box-shadow: none;
+    }
+    /*end more theme */
+    body.reportdashboard.path-blocks-reportdashboard #page #page-content #region-main {
+        background-color: transparent; /*for essential theme*/
+        border: none; /*for essential theme*/
+    }
+}
+@media (min-width: 667px) and (max-width: 767px){
+    .dir-ltr .width-12, .dir-rtl .width-12 {width: 98%;padding: 0px;margin: 0px 1%;}
+    .dir-ltr .width-10, .dir-rtl .width-10 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-9, .dir-rtl .width-9 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-8, .dir-rtl .width-8 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-7, .dir-rtl .width-7 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-6, .dir-rtl .width-6 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-5, .dir-rtl .width-5 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-4, .dir-rtl .width-4 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-3, .dir-rtl .width-3 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-2, .dir-rtl .width-2 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+
+    /*add widgets and add tiles popup form alignments starts*/
+    body.reportdashboard.path-blocks-reportdashboard .ui-widget-content{max-width: 600px;}
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_checkbox/*,
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child*/{width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_reportname/*, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widgetreport_name*/ {width: 98%;text-align: left;padding: 0px !important; margin: 5px 1%;}
+    /*body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_reporttype,*/ body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-reporttype {
+        /*width: 98%;*/text-align: left;padding: 0px !important;margin: 5px 0%; /*commented for Boost theme*/
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_position, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-wieght {float: left;/*width: 98%;*/text-align: left;padding: 0px !important;margin: 5px 1%;}
+
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_checkbox,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child{width: 98%;text-align: left;padding: 0px !important;margin: 5px 1% !important;}
+    /*body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_reportname, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .titlereport_name {width: 98%;text-align: left;padding: 0px !important; margin: 5px 1% !important;} */
+    /*body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position,*/ body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {float: left;width: 98%;text-align: left;padding: 0px !important;margin: 10px 1% !important;}
+    /*add widgets and add tiles popup form alignments ends*/
+    body.reportdashboard.path-blocks-reportdashboard span#widgetaction span.select2.select2-container{width: 200px !important;max-width: 200px;}
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .widget_position {
+        padding-left: 11px;
+    }
+}
+@media (min-width: 425px) and (max-width: 666px){
+    .dir-ltr .width-12, .dir-rtl .width-12 {width: 98%;padding: 0px;margin: 0px 1%;}
+    .dir-ltr .width-10, .dir-rtl .width-10 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-9, .dir-rtl .width-9 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-8, .dir-rtl .width-8 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-7, .dir-rtl .width-7 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-6, .dir-rtl .width-6 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-5, .dir-rtl .width-5 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-4, .dir-rtl .width-4 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-3, .dir-rtl .width-3 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-2, .dir-rtl .width-2 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+
+    /*add widgets and add tiles popup form alignments starts*/
+    body.reportdashboard.path-blocks-reportdashboard .ui-widget-content{max-width: 400px;}
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_checkbox/*,
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child*/{width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_reportname,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_reportname {width: 98%;text-align: left;padding: 0px !important; margin: 5px 1%;}
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_reporttype, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-reporttype,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_reporttype, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-reporttype {width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_position, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-wieght,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {float: left;width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}
+
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_checkbox,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child{/*width: 98%;text-align: left;padding: 0px !important;margin: 5px 1% !important;*/}
+    /*body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_reportname, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .titlereport_name {width: 98%;text-align: left;padding: 0px !important; margin: 5px 1% !important;}*/
+    /*add widgets and add tiles popup form alignments ends*/
+    body.reportdashboard.path-blocks-reportdashboard span#widgetaction span.select2.select2-container{width: 300px !important;max-width: 300px;}
+    /*added by Raghuvaran*/
+    body.reportdashboard.path-blocks-reportdashboard .ui-widget-content.ui-front.ui-draggable.ui-resizable,
+    body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard.block.no-header .ui-widget.ui-widget-content,
+     .ui-dialog.sendreportemail-popup, .ui-dialog.schedule-popup, .ui-dialog.reportfilter-popup {
+        width: 80% !important;
+        left: 10% !important;
+    }
+}
+@media (min-width: 321px) and (max-width: 424px){
+    .dir-ltr .width-12, .dir-rtl .width-12 {width: 98%;padding: 0px;margin: 0px 1%;}
+    .dir-ltr .width-10, .dir-rtl .width-10 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-9, .dir-rtl .width-9 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-8, .dir-rtl .width-8 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-7, .dir-rtl .width-7 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-6, .dir-rtl .width-6 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-5, .dir-rtl .width-5 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-4, .dir-rtl .width-4 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-3, .dir-rtl .width-3 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-2, .dir-rtl .width-2 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+
+    /*add widgets and add tiles popup form alignments starts*/
+    /*body.reportdashboard.path-blocks-reportdashboard .ui-widget-content{max-width: 300px;}*/
+    /*body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_checkbox,*/
+    /*body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child{width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}*/
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_reportname/*, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widgetreport_name*/ {width: 98%;text-align: left;padding: 0px !important; margin: 5px 1%;}
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_reporttype, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-reporttype {width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-reporttype {
+        margin: 5px 1%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_position, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-wieght,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {float: left;width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}
+
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_checkbox,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child{width: 98%;text-align: left;padding: 0px !important;margin: 5px 1% !important;}
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_reportname, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .titlereport_name {/*width: 98%;*/text-align: left;/*padding: 0px !important;*/ /*margin: 5px 1% !important;*/}
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {float: left;/*width: 98%;*/text-align: left;padding: 0px !important;/*margin: 10px 1% !important;*/}
+    /*add widgets and add tiles popup form alignments ends*/
+
+    body.reportdashboard.path-blocks-reportdashboard span#widgetaction span.select2.select2-container{width: 100% !important;max-width: inherit;margin: 10px 0px;}
+}
+@media (max-width: 320px){
+    .dir-ltr .width-12, .dir-rtl .width-12 {width: 98%;padding: 0px;margin: 0px 1%;}
+    .dir-ltr .width-10, .dir-rtl .width-10 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-9, .dir-rtl .width-9 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-8, .dir-rtl .width-8 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-7, .dir-rtl .width-7 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-6, .dir-rtl .width-6 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-5, .dir-rtl .width-5 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-4, .dir-rtl .width-4 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-3, .dir-rtl .width-3 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+    .dir-ltr .width-2, .dir-rtl .width-2 {width: 98%;padding: 0px;margin: 0px 1% 0px 1%;}
+
+    /*add widgets and add tiles popup form alignments starts*/
+    body.reportdashboard.path-blocks-reportdashboard .ui-widget-content{max-width: 300px;}
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_checkbox/*,
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child*/{width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}
+    /*body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .dashboard_reportname,*/ /*body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widgetreport_name {width: 98%;text-align: left;padding: 0px !important; margin: 5px 1%;}*/
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_reporttype, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-reporttype {width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widget_position, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-wieght,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {float: left;width: 98%;text-align: left;padding: 0px !important;margin: 5px 1%;}
+
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_checkbox,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child{width: 98%;text-align: left;padding: 0px !important;margin: 5px 1% !important;}
+    /*body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .dashboard_reportname, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .titlereport_name {width: 98%;text-align: left;padding: 0px !important; margin: 5px 1% !important;}*/
+    /*body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {float: left;width: 98%;text-align: left;padding: 0px !important;margin: 5px 1% !important;}*/
+    /*add widgets and add tiles popup form alignments ends*/
+
+    body.reportdashboard.path-blocks-reportdashboard span#widgetaction span.select2.select2-container{width: 100% !important;max-width: inherit;margin: 10px 0px;}
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-wieght {margin-left: 3px;}
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .select-reporttype {
+        margin: 5px 1%;
+    }
+}
+
+/*custom classes for Standard screen viewports --ends here*/
+body.path-blocks-reportdashboard ul#switchrole_menu{padding: 0px;margin: 0px;list-style: none;right: 0px;top: 100%;z-index:101;}
+body.path-blocks-reportdashboard  span#download_dropdwn1 ul.dropdown-content{
+    margin: 0px;
+    list-style: none;
+    text-align: left;
+    min-width: inherit;
+    top: 32px;
+}
+body.path-blocks-reportdashboard ul.dropdown-content {
+    padding: 0px;
+}
+body.path-blocks-reportdashboard ul#switchrole_menu, body.path-blocks-reportdashboard ul.dropdown-content {
+    border: 1px solid #ebebeb;
+    margin-top: 1px;
+    top: 100%;
+    min-width: 235px;
+}
+body.path-blocks-reportdashboard ul#switchrole_menu li,body.path-blocks-reportdashboard ul.dropdown-content li{
+    border-bottom: 1px solid #ebebeb;
+    padding: 5px 10px;
+    /*background: #fff;*/
+    list-style: none;
+}
+body.path-blocks-reportdashboard ul#switchrole_menu li a, body.path-blocks-reportdashboard ul.dropdown-content li a {
+    padding: 0px;
+    color: #333;
+}
+body.path-blocks-reportdashboard ul#switchrole_menu li a:hover, body.path-blocks-reportdashboard ul.dropdown-content li a:hover {
+    text-decoration: none;
+    color: #333;
+}
+body.path-blocks-reportdashboard ul#switchrole_menu li:hover,body.path-blocks-reportdashboard ul.dropdown-content li:hover {
+    /*background: #eee;*/
+}
+body.reportdashboard.path-blocks-reportdashboard #switchrole_dropdwn a.dropdown-toggle {
+    text-decoration: none;
+    color: #333;
+    padding: 4px 12px;
+    text-shadow: 0 1px 1px rgba(255,255,255,.75);
+    background-color: #f5f5f5;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.2),0 1px 2px rgba(0,0,0,.05);
+    vertical-align: middle;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    border-bottom-color: #b3b3b3;
+    border-radius: 4px;
+}
+/*css for other themes starts here*/
+body.reportdashboard.path-blocks-reportdashboard .block .card-block{padding: 0px 0rem;}
+body.reportdashboard.path-blocks-reportdashboard #region-main > .card{background: transparent;border: none;}
+/*css for other themes ends here*/
+body.reportdashboard.path-blocks-reportdashboard .block{
+    position: relative;
+}
+body.path-blocks .block .ui-widget-overlay{position:absolute !important;}
+.block.block_reportdashboard .reportdashboard_header {
+    float: left;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 10px 0;
+    padding-right: 5px;
+}
+/*background: #0d3c56;*/ /* For browsers that do not support gradients */
+/*background: linear-gradient(to right, #0d3c56, #35779b);*/ /* Standard syntax */
+/*background: -webkit-linear-gradient(left, #0d3c56, #35779b);*/ /* For Safari 5.1 to 6.0 */
+/*background: -o-linear-gradient(left, #0d3c56, #35779b);*/ /* For Opera 11.1 to 12.0 */
+/*background: -moz-linear-gradient(left, #0d3c56, #35779b);*/ /* For Firefox 3.6 to 15 */
+
+/*jira issue 754*/
+body.reportdashboard.path-blocks-reportdashboard .select2-container--classic .select2-selection--multiple .select2-selection__rendered {
+    padding: 0 2%;
+    white-space: inherit;
+    width: 100%;
+    box-sizing: border-box;
+}
+/*jira issue 754*/
+body.reportdashboard.path-blocks-reportdashboard .select2-container--classic .select2-selection--multiple .select2-selection__choice {
+    width: 100%;
+    box-sizing: border-box;
+}
+body.path-blocks.jsenabled.docked-region-side-pre #region-main,
+body.path-blocks.empty-region-side-post #region-main-box{
+    width: 100%;
+}
+body.editing.path-blocks.jsenabled.docked-region-side-pre #region-main,
+body.editing.path-blocks.empty-region-side-post #region-main-box{
+    width: inherit;
+}
+
+.block_reportdashboard table thead tr{background-color: #eff0f2;}
+.block_reportdashboard table thead tr th{/*border: 1px solid #989697;*/ border: none; }
+.block_reportdashboard table tbody tr:nth-of-type(odd){background-color: #fff;}
+.block_reportdashboard table tbody tr{background-color: #fff;}
+.block_reportdashboard .generaltable > tbody > tr:hover{background-color: #fff;}
+
+/*pagination related css*/
+/*body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button,
+.block_reportdashboard.block .dataTables_wrapper .dataTables_paginate .paginate_button{padding: 1px 3px;color: #000 !important;border: 1px solid #434343;margin-left: 5px;background: #fff;font-size: 12px;line-height: 13px;float: left;cursor: pointer;}
+body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button > a,
+.block_reportdashboard.block .dataTables_wrapper .dataTables_paginate .paginate_button > a {padding: 1px 3px;color: #000 !important;background: transparent;font-size: 12px;line-height: 12px;float: left;cursor: pointer;outline: none;}*/
+body.reportdashboard.path-blocks div.dataTables_paginate .paginate_button + .ellipsis {float: left;margin-left: 5px;padding: 0px;cursor: pointer;}
+/*body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button.disabled > a,
+.block_reportdashboard.block .dataTables_wrapper .dataTables_paginate .paginate_button.disabled > a {cursor:not-allowed;color: #aaa !important;}*/
+/*body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button.active,
+body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button.active > a{color: #333 !important;background: #e5e5e5;}*/
+/*body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button:hover{background: #e5e5e5 !important;background-color: #e5e5e5;border: 1px solid #aaa;color: #333 !important;}*/
+/*body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button.current{background: #e5e5e5 !important;background-color: #e5e5e5;border: 1px solid #aaa;color: #333 !important;cursor: default;}
+body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button.next,
+.block_reportdashboard.block .dataTables_wrapper .dataTables_paginate .paginate_button.next,
+.block_reportdashboard.block .dataTables_wrapper .dataTables_paginate .paginate_button.previous {border: none;}*/
+
+/*css related to tables*/
+body.path-blocks-reportdashboard div[role="main"] .dataTables_wrapper table.dataTable > thead > tr{background-color: #eff0f2;color: #333;border: none !important;}
+body.path-blocks-reportdashboard table.dataTable{border-bottom: none;display: table;}
+body.path-blocks-reportdashboard table.dataTable thead > tr > th{border: none;}
+body.path-blocks-reportdashboard table.dataTable tbody > tr:first-child > td{border-top: none;}
+body.path-blocks-reportdashboard table.dataTable tbody > tr > td{border: none;border-bottom: 1px solid #e2dede;/*background-color: #fff;*/border-right: 1px solid #ececec;}
+body.path-blocks-reportdashboard table.dataTable tbody > tr > td:last-child{border-right: none;}
+/*body.path-blocks-reportdashboard table.dataTable tbody>tr:nth-child(even)>td{background: #EAEAEA;}*/
+/*body.path-blocks-reportdashboard table.dataTable tbody>tr:nth-child(odd)>td{background: #ffffff;}*/
+
+/*css for specific to boost theme*/
+body.path-blocks-reportdashboard .ui-dialog .dashboard_widgets label.fitem.listofreports.checkbox_name{float: left;
+    width: 10%;
+    text-align: center;
+    line-height: 30px;
+    padding: 0px;
+    margin: 10px 0;
+}
+body.path-blocks-reportdashboard #segmented-button{
+    float: left;
+    margin-right: 10px;
+}
+body.path-blocks-reportdashboard #loading {
+   width: 100%;
+   height: 100%;
+   top: 0;
+   left: 0;
+   position: fixed;
+   display: block;
+   opacity: 0.7;
+   background-color: #fff;
+   z-index: 99;
+   text-align: center;
+}
+body.path-blocks-reportdashboard #loading-image {
+  position: absolute;
+  top: 100px;
+  left: 240px;
+  z-index: 100;
+}
+body.path-blocks-reportdashboard .loader {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: url([[pix:block_learnerscript|loading]]) 50% 50% no-repeat rgb(249,249,249);
+    opacity: .5;
+}
+body.path-blocks-reportdashboard .flatpickr{margin-left: 15px;float: right;}
+body.path-blocks-reportdashboard #reportbox_shadow{float: left;padding: 10px;background: #FFF;}
+body.dir-rtl.path-blocks-reportdashboard #reportbox_shadow {float: left;}
+body.path-blocks-reportdashboard .flatpickr input{padding: 2px 5px; width: 200px;}
+#report_option .export_options ul.dropdown-content{padding: 0px;min-width: 85px;text-align: left;top: 32px;}
+#report_option .export_options ul.dropdown-content img{margin-right: 5px;}
+body.reportdashboard.path-blocks-reportdashboard #widgetaction img{background: #d7d9de;
+    border-radius: 17px;
+    padding: 3px;
+    cursor: pointer;
+    box-sizing: border-box;
+    width: 36px;
+    height: 36px;
+}
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+/* Safari and Chrome */
+body.path-blocks-reportdashboard.editing .block .header .moodle-actionmenu.block-control-actions.commands .menubar img{height: 16px;}
+
+/* Safari only override */
+::i-block-chrome,body.path-blocks-reportdashboard.editing .block .header .moodle-actionmenu.block-control-actions.commands .menubar img{height: 11px;}
+}
+/* Safari 7.1+ */
+_::-webkit-full-page-media, _:future, :root body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger .col-md-9 {
+    flex-basis: 60%;
+}
+_::-webkit-full-page-media, _:future, :root #id_dashboard::placeholder {
+    font-size: 13px;
+}
+_::-webkit-full-page-media, _:future, :root #id_dashboard {
+    min-width: 196px;
+}
+
+.block_reportdashboard.block .header .moodle-actionmenu[data-enhanced].show{white-space: normal;}
+/*css for theme essential*/
+body.floatingsubmit.path-blocks-reportdashboard form table#form td.submit,
+body.floatingsubmit.path-blocks-reportdashboard form .form-buttons,
+body.floatingsubmit.path-blocks-reportdashboard form .path-admin .buttons,
+body.floatingsubmit.path-blocks-reportdashboard form #fitem_id_submitbutton,
+body.floatingsubmit.path-blocks-reportdashboard form .fp-content-center form + div,
+body.floatingsubmit.path-blocks-reportdashboard form div.backup-section + form,
+body.floatingsubmit.path-blocks-reportdashboard form #fgroup_id_buttonar{
+    position: static !important;left: inherit;bottom: inherit;
+}
+body.path-blocks-reportdashboard .block .header .moodle-actionmenu[data-enhanced].show .menu{z-index: 1000;}
+#block-region-side-db-first .block.block_reportdashboard .reportdashboard_header,
+#block-region-side-db-second .block.block_reportdashboard .reportdashboard_header,
+#block-region-side-db-third .block.block_reportdashboard .reportdashboard_header,
+#block-region-side-db-four .block.block_reportdashboard .reportdashboard_header/*,
+#block-region-center-second .block.block_reportdashboard .reportdashboard_header*/{
+    background: transparent;
+}
+#block-region-side-db-first  .block_reportdashboard.block select.menureport_edit,
+#block-region-side-db-second  .block_reportdashboard.block select.menureport_edit,
+#block-region-side-db-third  .block_reportdashboard.block select.menureport_edit,
+#block-region-side-db-four  .block_reportdashboard.block select.menureport_edit,
+#block-region-center-second  .block_reportdashboard.block select.menureport_edit{
+    display: none;
+}
+#block-region-side-db-first .plotreport_dashboard_container,
+#block-region-side-db-second  .plotreport_dashboard_container,
+#block-region-side-db-third  .plotreport_dashboard_container,
+#block-region-side-db-four  .plotreport_dashboard_container,
+#block-region-center-second .plotreport_dashboard_container {
+    height: 250px;
+}
+#block-region-side-db-first #report_option,
+#block-region-side-db-second  #report_option,
+#block-region-side-db-third  #report_option,
+#block-region-side-db-four  #report_option,
+#block-region-center-second  #report_option{
+    display: none;
+}
+#block-region-side-db-first  .block_reportdashboard .reportdashboard_report_heading,
+#block-region-side-db-second  .block_reportdashboard .reportdashboard_report_heading,
+#block-region-side-db-third  .block_reportdashboard .reportdashboard_report_heading,
+#block-region-side-db-four  .block_reportdashboard .reportdashboard_report_heading,
+#block-region-center-second .block_reportdashboard .reportdashboard_report_heading{
+    color: #000; /*inherit*/
+    /*background: #EAEAEA;*/
+    padding: 5px;
+    margin:0;
+    /*width: inherit;*/
+}
+#createdashbaord_form .dashboard_submit {text-align: center;}
+body.path-blocks-reportdashboard .sidenav {
+    width: 160px;
+    height: 100%;
+    position: absolute;
+    z-index: 1;
+    left: 0;
+    background: #3b3939;
+    overflow-x: hidden;
+    padding: 8px 0;
+}
+
+body.path-blocks-reportdashboard .sidenav a {
+    /*padding: 6px 8px 6px 16px;*/
+    text-decoration: none;
+    font-size: 14px;
+    color: #FFF;
+    display: block;
+}
+
+
+/*body.path-blocks-reportdashboard .main {
+    margin-left: 140px;  Same width as the sidebar + left position in px 
+    font-size: 28px; /* Increased text to enable scrolling */
+  /* padding: 0px 10px;
+}*/
+
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+body.path-blocks-reportdashboard ul#dashboards_menu li{
+    border-bottom: 1px solid #CCC;
+}
+body.path-blocks-reportdashboard ul#dashboards_menu li.dashboardinstances:nth-child(odd) {
+    line-height:15px;
+    word-wrap: break-word;
+    list-style-type: none;
+    padding: 12px 15px 12px 19px;
+    border-radius: 2px 1px 1px 2px;
+}
+body.path-blocks-reportdashboard ul#dashboards_menu li.dashboardinstances:nth-child(odd) a{
+    color: #FFF;
+}
+body.path-blocks-reportdashboard ul#dashboards_menu li.dashboardinstances:nth-child(even) {
+    line-height:15px;
+    word-wrap: break-word;
+    list-style-type: none;
+    padding: 12px 15px 12px 19px;
+    border-radius: 2px 1px 1px 2px;
+}
+/*body.path-blocks-reportdashboard .alert.alert-info{
+    width: 84%;
+    float: right;
+}*/
+ul#dashboards_menu{
+    margin:0;
+}
+body.path-blocks-reportdashboard #deleteimg{
+    cursor: pointer;
+    float: right;
+    margin-right: -15px
+}
+body.path-blocks-reportdashboard #confirm_butns,
+body.reportdashboard .ui-widget-content .widgetdel {
+    margin-top: 28px;
+    text-align: center;
+}
+body.path-blocks-reportdashboard #action_buttons{
+    float: right;
+}
+body.path-blocks-reportdashboard .quickeditlink{
+    /*margin-top: -25px;*/
+    float: right;
+}
+
+body.path-blocks-reportdashboard table.generaltable .ui-dialog .ui-dialog-content .dataTables_filter {
+    width: auto;
+}
+body.path-blocks-reportdashboard table.generaltable .ui-dialog .ui-dialog-content .dataTables_filter label {
+    width: 100%;
+    float: right;
+}
+body.path-blocks-reportdashboard table.generaltable .ui-dialog .ui-dialog-content .dataTables_filter label>input[type="search"] {
+    width: 100%;
+    float: right;
+    margin: 0;
+}
+body.reportdashboard.path-blocks-reportdashboard .filterform #fitem_id_filter_clear .felement.fbutton {
+    padding-top: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog #fgroup_id_buttonar>.felement.fgroup {
+    /*display: inline-flex;*/ /*for clean theme view page*/
+    /*width: 100%;*/ /*for clean theme view page*/
+    /*added three css for clean theme view page*/
+    width: 100%;
+    margin: auto;
+    text-align: center;
+}
+/*code added by Raghuvaran on 29-Jan-2018*/
+body.path-blocks-reportdashboard ul#dashboards_menu li.dashboardinstances .instancename {color: #fff;}
+body.reportdashboard.path-blocks-reportdashboard .block .ui-widget-content input[type="button"], body.reportdashboard.path-blocks-reportdashboard .block .ui-widget-content input#id_filter_apply {
+    margin-bottom: 0px;
+}
+@media(max-width: 979px){
+    /*wrote for adaptable theme*/
+    body.reportdashboard.path-blocks-reportdashboard .popover-region .popover-region-container {
+        left: inherit;
+        right: 0;
+    }
+    /*for adaptable theme*/
+    .outercont .reportdashboard_header .htitle .icon {
+        height: inherit;
+        width: inherit;
+    }
+    .pagelayout-course .outercont section#region-main, .pagelayout-course .outercont aside#block-region-side-post, .pagelayout-course .outercont aside#block-region-side-pre {
+        width: 100%;
+        margin: auto auto 10px auto;
+        padding: 0;
+    }
+    /*for adaptable theme ends here*/
+}
+@media(max-width: 860px){
+    body.path-blocks-reportdashboard.safari {
+        background-size: 100% 100%;
+    }
+}
+@media(min-width: 768px) and (max-width: 1023px) {
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label>input[type="search"] {
+        min-width: 100%;
+        margin: auto;
+        width: 100%;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .dataTables_filter {
+        float: left;
+        width: 100%;
+        min-width: 100%;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .dataTables_length {
+        width: 100%;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .dataTables_length label {
+        width: 100%;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .dataTables_length label select {
+        width: 100%;
+    }
+}
+/*for user message popup*/
+@media(width: 768px) {
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar {
+        width: 100%;
+        /*display: inline-flex;*/
+        box-sizing: border-box;
+    }
+    body.reportdashboard.path-blocks-reportdashboard #report_option {
+        margin: -1px 6px 0 10px;
+    }
+    body.path-blocks-reportdashboard table.generaltable .ui-dialog .ui-dialog-content .dataTables_filter {
+        margin-left: 0px;
+    }
+}
+@media(max-width: 768px){
+    body.path-blocks-reportdashboard #segmented-button .slider-label {
+        width: 50px;
+    }
+    body.path-blocks-reportdashboard .sidenav {
+        min-width: 194px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard #block-region-side-db-first .block.block_reporttiles .reporttile_title,
+    body.reportdashboard.path-blocks-reportdashboard #block-region-side-db-second .block.block_reporttiles .reporttile_title,
+    body.reportdashboard.path-blocks-reportdashboard #block-region-side-db-third .block.block_reporttiles .reporttile_title {
+        width: 100%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard #nav-notification-popover-container .popover-region-container,
+    body.reportdashboard.path-blocks-reportdashboard #nav-message-popover-container .popover-region-container {
+        right: 0px; /*for adaptable*/
+        left: inherit; /*for adaptable*/
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label {
+        margin-top: 0px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard aside.width-6 {
+        width: 100%;
+        margin: 0 0 0 0;
+    }
+}
+@media(max-width: 767px){
+    /*body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .widgetreport_name,*/
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .titlereport_name {
+        /*width: 87%;*/
+        /*margin-top: 0em;*/ /*for clean theme popup*/
+        /*line-height: 26px;*/
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets  .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child {
+        width: 7%;
+        float: left;
+        min-width: 16px;
+        line-height: 26px;
+        /*margin-top: 0;*/
+        margin: 0px 0px 0px 1% !important;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child input[type="checkbox"],
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .fitem.fitem_fgroup > fieldset.felement.fgroup > span:first-child input[type="checkbox"] {
+        margin: 14px 0px; /*for clean theme pop up*/
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.dashboard_reportname, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.widget_reporttype, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.widget_position,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.dashboard_reportname, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.widget_reporttype,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets #fgroup_id_selectreporttext .felement.fgroup > span.widget_position {
+        margin: 10px 0px;
+    }
+    /*code for Boost theme*/
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group .felement>span.dashboard_reportname, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group .felement>span.widget_reporttype, body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group .felement>span.widget_position,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .dashboard_reportname, body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .widget_reporttype,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .widget_position {
+        margin: 10px 0px;
+        text-align: center;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group .felement>span.dashboard_reportname {
+        min-width: 210px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group .felement>span.widget_reporttype {
+        min-width: 190px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group .felement>span.widget_position,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .form-group .felement>span.widget_position {
+        min-width: 175px;
+        text-align: left;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group .felement>span.dashboard_checkbox,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .form-group .felement>span.dashboard_checkbox {
+        display: none;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets>.row.fitem:first-child .col-md-9.felement {
+        float: left;
+        display: inline-flex;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .form-group .felement>span.dashboard_checkbox {
+        float: left;
+        width: 7%;
+        min-width: 16px;
+        line-height: 26px;
+    }
+    /*code for ends Boost theme*/
+    body.path-blocks-learnerscript .filepicker-container {
+        padding-top: 67px;
+        font-size: 12px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group:first-child .col-md-9.felement>span,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .form-group:first-child .col-md-9.felement>span {
+        padding: 0px;
+        margin: 10px 0px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets>.row.fitem:first-child .col-md-9.felement {
+        float: left;
+        display: inline-flex;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .select-reporttype .custom-select {
+        width: 100%;
+    }
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        float: left;
+    }
+    .dir-rtl aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        float: left;
+    }
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_length label,
+    aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_length label {
+        margin-top: 5px;
+        margin-bottom: 5px;
+        float: left;
+    }
+    .dir-rtl aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_length label,
+    .dir-rtl aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_length label {
+        float: left;
+    }
+    body.path-course aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length label,
+    body.path-course aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length label {
+        margin-top: 0px;
+    }
+}
+@media(max-width: 667px){
+    body.reportdashboard.path-blocks-reportdashboard .reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .dashboard_reportname,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .dashboard_reportname {
+        min-width: 220px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .widget_reporttype,
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .widget_reporttype {
+        min-width: 200px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets>.row.fitem:first-child .col-md-9.felement {
+        padding: 0px;
+    }
+}
+@media(max-width: 480px){
+    body.path-blocks-reportdashboard .sidenav {
+        width: 100%;
+    }
+    body.path-blocks-reportdashboard .bootsidemenu-left > .toggler {
+        height: 25px;
+        line-height: 31px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard span.right_buttons {
+        /*width: 100%;*/
+        margin: 2px 0px 0px;
+    }
+    body.path-blocks-reportdashboard .dataTables_wrapper .report_header_skew,
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        width: 40%;
+    }
+    body.path-blocks-reportdashboard .dataTables_wrapper .report_header_skew .report_header_skew_content .dataTables_length label select {
+        width: 99%;
+        max-width: 100%;
+        min-width: 99%;
+    }
+    .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+    body.path-blocks-reportdashboard table.generaltable .ui-dialog .ui-dialog-content .dataTables_filter,
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+    aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter {
+        text-align: right;
+        width: 60%;
+        float: right;
+        margin-top: 0px;
+        margin: 0; /*for lambda 29*/
+    }
+
+    .dir-rtl .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+    body.path-blocks-reportdashboard.dir-rtl  table.generaltable .ui-dialog .ui-dialog-content .dataTables_filter,
+    .dir-rtl aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+    .dir-rtl aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter {
+        float: left;
+    }
+
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew,
+    aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+    aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        width: auto;
+    }
+    /*for lambda 29*/
+    .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_length,
+    body.path-blocks-reportdashboard table.generaltable .ui-dialog .ui-dialog-content .dataTables_length {
+        width: 100%;
+    }
+    .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label>input[type="search"] {
+        width: 100%;
+        margin-left: 0em;
+    }
+    /*wrote for adaptable theme*/
+    body.path-blocks-reportdashboard #page-header #sitetitle {
+        font-size: 2rem;
+        width: 100%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets > .row.fitem .col-md-9.felement > span {
+        margin: 10px 0%;
+    }
+    /*code added for report dashboard page download edit etc icons*/
+    .block_reportdashboard .reportdashboard_report_heading {
+        width: 100%;
+    }
+    aside#block-region-side-pre .block.block_reportdashboard .reportdashboard_header .reportdashboard_report_heading,
+    aside.span3 .block.block_reportdashboard .reportdashboard_header .reportdashboard_report_heading,
+    aside.col-md-3 .block.block_reportdashboard .reportdashboard_header .reportdashboard_report_heading {
+        width: 100%;
+        float: left;
+    }
+    body.reportdashboard.path-blocks-reportdashboard #switchdashboard+ul.dropdown-content,
+    body.reportdashboard.path-blocks-reportdashboard span#widgetaction #addwidgets+ul.dropdown-content {
+        left: 0px;
+        min-width: 171px;
+    }
+}
+@media(max-width: 425px){
+    body.reportdashboard.path-blocks-reportdashboard .block .ui-widget-content .select2.select2-container {
+        margin-bottom: 2px;
+        margin-right: 2px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-widget-content.ui-front.ui-draggable.ui-resizable,
+    body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard.block.no-header .ui-widget.ui-widget-content,
+    body.reportdashboard.path-blocks-reportdashboard .ui-widget-content.ui-front.ui-resizable,
+    .ui-dialog.sendreportemail-popup, .ui-dialog.schedule-popup, .ui-dialog.reportfilter-popup {
+        width: 90% !important;
+        left: 5% !important; /*for clean theme add widgets and add tiles pop up*/
+        max-width: inherit;
+    }
+    .bootsidemenu > .menu-wrapper {
+        left: -10px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard span.left_buttons,
+    body.reportdashboard.path-blocks-reportdashboard span.right_buttons {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    /*code added for moove theme*/
+    body.path-blocks-learnerscript footer#page-footer+.ui-dialog {
+        z-index: 1000 !important;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_paginate {
+        width: 100%;
+        margin: 5px auto;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_paginate .pagination {
+        float: right;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_paginate .paginate_button {
+        padding: 1px 3px;
+        margin-left: 3px
+    }
+    body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .dataTables_paginate .paginate_button>a {
+        font-size: 12px;
+    }
+    body.path-blocks-reportdashboard section#region-main {
+        padding: 19px 0px; /*added for more moove theme*/
+    }
+    body.reportdashboard.path-blocks-reportdashboard #region-main>.card>.card-body {
+        padding: 0px;
+    }
+    body #dock {
+        width: 36px;
+    }
+}
+@media(max-width: 375px){
+    body.path-blocks-reportdashboard #reportbox_shadow {
+        float: none;
+        overflow: auto;
+    }
+    body.path-blocks-reportdashboard #segmented-button {
+        float: none;
+        margin: 0px auto 20px;
+    }
+    body.path-blocks-reportdashboard #segmented-button .slider-label {
+        width: 40px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard #report_option {
+        padding: 9px 10px;
+        float: left;
+        margin: -1px 0px 0px 5px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard div#dashboard-header {
+        margin: 0px 0px 10px 0px;
+    }
+    #widgetaction #switchdashboard.htitle:hover .tooltiptext, #widgetaction #addwidgets.htitle:hover .tooltiptext {
+        left: 0%;
+    }
+    #widgetaction #switchdashboard.htitle:hover .tooltiptext::after, #widgetaction #addwidgets.htitle:hover .tooltiptext::after {
+        right: 83%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard #switchdashboard+ul.dropdown-content,
+    body.reportdashboard.path-blocks-reportdashboard span#widgetaction #addwidgets+ul.dropdown-content {
+        left: 0px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard.block.no-header .ui-widget.ui-widget-content #printablediv table.generaltable.dataTable {
+        min-width: 240px; /* userprofile pop up */
+    }
+    body.reportdashboard.path-blocks-reportdashboard div#dashboard-header span#widgetaction .dropdown-toggle,
+    body.reportdashboard.path-blocks-reportdashboard div#dashboard-header span#widgetaction .htitle {
+        margin-right: 2px; /*for essential theme*/
+    }
+    body.reportdashboard.path-blocks-reportdashboard.has_dock {
+        padding-left: 20px;
+    }
+    body.path-blocks-reportdashboard .flatpickr-calendar.animate.open {
+        right: 4px !important;
+    }
+    body.path-blocks-learnerscript #page.container-fluid,
+    body.reportdashboard.path-blocks-reportdashboard #page.container-fluid{
+        padding: 0 10px !important;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .dataTables_length label select {
+        width: 90px;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter {
+        width: 90px;
+    }
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        width: 100%;
+    }
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter input[type="search"] {
+        width: 100%;
+        margin-left: 0px;
+    }
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length label {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
+    body.path-course aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew,
+    body.path-course aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        width: auto;
+    }
+}
+@media(width: 320px){
+    body.path-blocks-reportdashboard #reportbox_shadow {
+        padding: 10px 1%;
+        width: 99%;
+        margin: auto;
+        overflow-x: auto;
+    }
+    body.path-blocks-reportdashboard #segmented-button .slider-label {
+        font-size: 12px;
+        margin-left: 7px;
+        width: 11px;
+    }
+    .bootsidemenu.bootsidemenu-right #reportbox_shadow {
+        width: 100%;
+        min-width: 290px;
+    }
+    .bootsidemenu.bootsidemenu-right #reportbox_shadow .slider-label {
+        width: 50px;
+        font-size: 12px;
+        margin-left: -6px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard #report_option {
+        padding: 9px 11px;
+    }
+    body.path-blocks-learnerscript #region-main div[role="main"] .plotdata .ls-plotdata_container .editreport {
+        padding: 8px 1px 7px 0px; /*for essential theme*/
+        font-size: 12px; /*for essential theme*/
+    }
+    body.path-blocks-reportdashboard #segmented-button {
+        /*width: 99% !important;*/
+    }
+    header #page-header div.titlearea {
+        width: calc(100% - 52px); /*for essential theme*/
+    }
+}
+/*background: #0d3c56;*/ /* For browsers that do not support gradients */
+/*background: linear-gradient(to right, #0d3c56, #35779b);*/ /* Standard syntax */
+/*background: -webkit-linear-gradient(left, #0d3c56, #35779b);*/ /* For Safari 5.1 to 6.0 */
+/*background: -o-linear-gradient(left, #0d3c56, #35779b);*/ /* For Opera 11.1 to 12.0 */
+/*background: -moz-linear-gradient(left, #0d3c56, #35779b);*/ /* For Firefox 3.6 to 15 */
+
+body.reportdashboard.path-blocks-reportdashboard .dataTables_wrapper .co_report_header .dataTables_filter{float: left;}
+body.reportdashboard.path-blocks-reportdashboard .dataTables_wrapper .co_report_header .dataTables_filter > label{margin: 0px;}
+body.reportdashboard.path-blocks-reportdashboard .dataTables_wrapper .co_report_header input{
+    background: transparent;
+    /*margin: 10px 30px 10px 50px;*/
+    margin: 10px;
+    border: 1px solid #ebebeb;
+    color: #333;
+    box-shadow: none;
+    border-radius: 8px;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    min-width: 230px;
+    max-width: 230px;
+    height: 30px;
+    max-height: 30px;
+    line-height: 15px;
+    font-size: 15px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+/*pagination related css*/
+body.path-blocks-reportdashboard .dataTables_paginate{
+    margin: 5px 10px 5px 10px;
+    float: right;
+}
+/*body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button{padding: 1px 4px;color: #000 !important;border: 1px solid #434343;margin-left: 5px;background: #fff;font-size: 13px;line-height: 13px;float: left;cursor: pointer;}
+body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button > a{padding: 1px 4px;color: #000 !important;background: #fff;font-size: 13px;line-height: 13px;float: left;cursor: pointer;outline: none;}
+body.path-blocks-reportdashboard div.dataTables_paginate .paginate_button + .ellipsis {float: left;margin-left: 5px;padding: 0px;cursor: pointer;}
+body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button.disabled > a{cursor:not-allowed;color: #aaa !important;}*/
+/*body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button.active,
+body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button.active > a{color: #333 !important;background: #e5e5e5;}*/
+/*body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button:hover{background: #e5e5e5 !important;background-color: #e5e5e5;border: 1px solid #aaa;color: #333 !important;}*/
+/*body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button.current{background: #e5e5e5 !important;background-color: #e5e5e5;border: 1px solid #aaa;color: #333 !important;cursor: default;}
+body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button.previous,
+body.path-blocks-reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button.next{border: none;}*/
+
+/*css related to tables*/
+/*body.path-blocks div[role="main"] .dataTables_wrapper table.dataTable > thead > tr{background-color: #eff0f2;color: #333;border: none !important;}*/
+body.reportdashboard.path-blocks-reportdashboard.path-blocks .generaltable.dataTable{width: 99% !important;border-bottom: none;display: table;    margin: auto;border-left: none;border-right: none;}
+
+/*body.path-blocks-reportdashboard table.dataTable{border-bottom: none;}
+body.path-blocks-reportdashboard table.dataTable thead > tr > th{border: none;}
+body.path-blocks-reportdashboard table.dataTable tbody > tr:first-child > td{border-top: none;}
+body.path-blocks-reportdashboard table.dataTable tbody > tr > td{border: none;border-bottom: 1px solid #e2dede;background-color: #fff;border-right: 1px solid #ececec;font-size: 14px;}
+body.path-blocks-reportdashboard table.dataTable tbody > tr > td:last-child{border-right: none;}*/
+/*body.path-blocks-reportdashboard table.dataTable tbody>tr:nth-child(even)>td{background: #fbfbfb;}*/
+/*body.path-blocks-reportdashboard table.dataTable tbody>tr:nth-child(odd)>td{background: #ffffff;color: inherit;}*/
+
+body.path-blocks-reportdashboard .dataTables_wrapper .report_header_skew{
+    text-align: left;
+    /*background-color: #f5f5f5;*/
+    /*padding: 5px 20px;*/
+    float: left;
+    margin: 5px 0px;
+    height: 30px;
+    max-height: 40px;
+    /*border: 1px solid #e2e2e2;*/
+    border-top: 0;
+    /*-webkit-transform: skewX(10deg);*/
+    /*-moz-transform: skewX(10deg);*/
+    /*-ms-transform: skewX(10deg);*/
+    /*-o-transform: skewX(10deg);*/
+    /*transform: skewX(10deg);*/
+    box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+}
+body.path-blocks-reportdashboard .dataTables_wrapper .report_header_skew .report_header_skew_content{
+    /*-webkit-transform: skewX(-10deg);*/
+    /*-moz-transform: skewX(-10deg);*/
+    /*-ms-transform: skewX(-10deg);*/
+    /*-o-transform: skewX(-10deg);*/
+    /*transform: skewX(-10deg);*/
+    float: left;
+}
+body.path-blocks-reportdashboard .dataTables_wrapper .report_header_skew .report_header_skew_content .dataTables_length select{
+    margin: 0px;
+    width: 110px;
+    max-width: 110px;
+    min-width: 110px;
+    height: 30px !important;
+    line-height: 30px !important;
+    font-size: 13px !important;
+    background-color: #eee;
+    color: #555;
+    padding: 2px 5px;
+    float: left;
+    background-image: none;
+    border: 1px solid #aaa;
+    -webkit-appearance: menulist;
+    -moz-appearance: menulist;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+body#page-blocks-reportdashboard .dataTables_wrapper .co_report_header{
+    float: left;
+    width: 100%;
+    position: relative; /*jira 483*/
+    z-index: 1; /*jira 483*/
+}
+.block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label>input[type="search"] {
+    height: 30px; /*20 to 30 for boost theme*/
+    padding: 4px 6px;
+    box-sizing: border-box;
+}
+body.path-blocks-reportdashboard table.generaltable .ui-dialog .ui-dialog-content table.generaltable tbody td.dt-body-left>a {
+    float: left;
+}
+body.path-blocks-reportdashboard table.generaltable .ui-dialog .ui-dialog-content table.generaltable tbody td.dt-body-left sup#communicate {
+    float: right;
+    margin-top: 3px;
+}
+
+body table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child:before {
+    background-color: #808080;
+    /*box-shadow: 0 0 3px #444;*/
+}
+body table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td:first-child:before, table.dataTable.dtr-inline.collapsed>tbody>tr.parent>th:first-child:before {
+    background-color: #808080;
+}
+body.reportdashboard.path-blocks-reportdashboard .block table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child #communicate>img.icon {
+    padding-right: 0px;
+    margin-top: 3px;
+}
+.bootsidemenu.bootsidemenu-left {
+    z-index: 15001;
+}
+/*due to nested ui dialogs visible in block_reportdashboard block*/
+body.reportdashboard.path-blocks-reportdashboard .block_reportdashboard .report_dashboard_container table .ui-widget-content {
+    top: 10px !important;
+    border: 1px solid #d3d3d3;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar-close,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar-close:hover,
+body.path-blocks-learnerscript .ui-dialog .ui-dialog-titlebar-close,
+body.path-blocks-learnerscript .ui-dialog .ui-dialog-titlebar-close:hover {
+    background: none;
+    border: none;
+    box-shadow: none;
+}
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger {
+    display: inline-flex;
+}
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger .col-md-3 {
+    /*margin-right: 15px;*/
+}
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger .col-md-3>label {
+    color: #3F3F3F;
+    vertical-align: -webkit-baseline-middle;
+    vertical-align: -moz-middle-with-baseline;
+}
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger #id_error_dashboard,
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger #id_error_dashboard_nospaces {
+    color: red;
+}
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger #id_error_dashboard {
+    white-space: nowrap;
+}
+/*code added for report dashboard course summary block report filter pop up*/
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .filterform .fitemtitle+.felement .select2-container:nth-child(odd) {
+    /*width: 49% !important;*/
+    /*min-width: 49%;*/
+    /*margin-right: 1%;*/
+    /*margin-bottom: 3px;*/
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .filterform .fitemtitle+.felement .select2-container:nth-child(even) {
+    /*width: 49% !important;*/
+    /*min-width: 49%;*/
+    /*margin-left: 1%;*/
+    /*margin-bottom: 3px;*/
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .filterform #fitem_id_filter_clear, body.reportdashboard.path-blocks-reportdashboard .ui-dialog .filterform #fitem_id_filter_apply {
+    /*float: right;*/ /*commented for report filter adaptable clean themes*/
+    margin: auto;
+    margin-bottom: 10px;
+}
+body table.dataTable>tbody>tr.child span.dtr-title {
+    min-width: 150px;
+}
+/*added for jira 679 issue*/
+body.reportdashboard.path-blocks-reportdashboard table.dataTable>tbody>tr.child ul.dtr-details {
+    width: 100%;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-widget select,
+body.path-blocks-learnerscript .ui-widget select,
+body .ui-widget input, body .ui-widget textarea, body .ui-widget button {
+    font-size: 14px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:nth-child(odd):not(:first-child),
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:nth-child(odd):not(:first-child) {
+    background-color: #c4c4c4;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group:first-child .col-md-9.felement>span {
+    padding: 10px 5px 10px 0;
+    margin: 0;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group .felement label.fitem.listofreports.checkbox_name {
+    margin: 13px 0;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row {
+    margin: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets>.row.fitem:first-child .col-md-9.felement {
+    background-color: #6c6e70;
+    color: #fff;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:last-child {
+    background-color: transparent !important;
+}
+#widgetaction a:hover {
+    cursor: pointer;
+    text-decoration: none;
+}
+a:hover {
+    cursor: pointer;
+}
+@media(max-width: 767px){
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .form-group:first-child .col-md-9.felement>span {
+        padding: 0;
+        margin: 10px 0;
+    }
+    /*Academi, Boost and Moove theme moodle form css starts here*/
+    body.path-blocks-learnerscript #page.container-fluid,
+    body.reportdashboard.path-blocks-reportdashboard #page.container-fluid {
+        padding: 0 20px;
+    }
+    body#page-blocks-reportdashboard-dashboard #region-main span#maincontent {
+        background-color: transparent; /*for essential theme*/
+        height: 0px;
+    }
+}
+.block_reportdashboard div#fitem_id_submitbutton{
+    padding: 10px 2px 1px;
+    margin-top: 10px;
+    margin-bottom: 8px;
+}
+
+/*Academi, Boost and Moove theme moodle form css starts here*/
+body.reportdashboard.path-blocks-reportdashboard .mform .fitem {
+    margin-bottom: 10px;
+    clear: both;
+}
+.mform .fitem .felement input, .mform .fitem .felement select, .mform .fitem .felement textarea {
+    /*margin-bottom: 10px;*/
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form #fitem_id_showlegend .felement.fadvcheckbox>span input#id_showlegend {
+    margin-top: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline {
+    display: inline-flex;
+    width: 100%;
+    min-width: 100%;
+    flex-wrap: nowrap;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets>.form-group>.col-md-3 {
+    display: none;
+}
+body.path-blocks-reportdashboard #segmented-button .slider-label {
+    font-size: 14px;
+    white-space: nowrap;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .custom-select,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .custom-select {
+    width: 100%;
+}
+body.path-blocks-reportdashboard .block.block_reporttiles .card-block .dashboard_reporttile_container {
+    padding-bottom: 0px !important;
+}
+body.path-blocks-reportdashboard .block.block_reporttiles .card-block .dashboard_reporttile_container .dashboard_tiles {
+    width: 100%;
+    min-height: 95px;
+}
+body.path-blocks-reportdashboard .block.block_reporttiles .card-block .card-text.content {
+    background-color: transparent;
+    border-top: none;
+}
+/*code for message icon pop up*/
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog.ui-widget.ui-widget-content {
+    min-width: 220px;
+}
+@media(min-width: 1200px){
+    body.reportdashboard.path-blocks-reportdashboard .mform .fitem div.fitemtitle {
+        /*width: 245px;*/
+    }
+    body.reportdashboard.path-blocks-reportdashboard .mform .fitem .felement {
+        /*margin-left: 265px;*/
+    }
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline span.dashboard_checkbox {
+        width: 10%;
+    }
+    /*code written for Mozilla by Raghuvaran*/
+    @-moz-document url-prefix() {
+        body.path-blocks-reportdashboard .block_reportdashboard .dataTables_wrapper {
+            width: 99%;
+            margin: auto;
+        }
+    }
+    body.reportdashboard.path-blocks-reportdashboard #region-main .card.card-block {
+        padding: 1.25rem 0rem;
+    }
+    body.reportdashboard.path-blocks-reportdashboard #region-main>.card>.card-body {
+        padding: 1.25rem 0rem;
+    }
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+    aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter {
+        width: 58%;
+    }
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew,
+    aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        float: left;
+        width: 40%;
+    }
+}
+@media(max-width: 1024px){
+    .pagelayout-course .reportdashboard_header .reportdashboard_report_heading{
+        margin-top: 0px;
+    }
+}
+@media(min-width: 1024px){
+    aside.width-default.width-3 .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter {
+        width: 55%;
+    }
+    aside.width-default.width-3 .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        width: 44%;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .report_header_skew {
+        width: 39%;
+        margin-right: 1%;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .dataTables_length,
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .dataTables_length select.form-control,
+    .pagelayout-course aside#block-region-side-post .block_reportdashboard .dataTables_length,
+    .pagelayout-course aside#block-region-side-post .block_reportdashboard .dataTables_length select.form-control {
+        width: 100%;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .dataTables_filter {
+        width: 60%;
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label {
+        /*margin-top: 0px;*/
+    }
+    .pagelayout-course aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label>input[type="search"],
+    .pagelayout-course aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label>input[type="search"] {
+        max-width: 95%;
+        min-width: 95%;
+        width: 95%;
+    }
+    body.reportdashboard .width-3,
+    body.reportdashboard .width-container.reports-act-graphs .width-4,
+    body.reportdashboard .width-container .width-6,
+    body.reportdashboard .width-container .width-12 {
+        margin: 0px 0.5%;
+    }
+    body.reportdashboard .width-container .width-12 {
+        width: 99%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard div#dashboard-header {
+        width: 99%;
+        margin: 20px 0.5% 10px 0.5%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .block {
+        margin-bottom: 12px !important;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .width-9 {
+        width: 73.99%;
+        margin: 0px 0.5% 0px 0.5%;
+    }
+}
+@media(min-width: 768px) and (max-width: 1023px){
+    aside.width-default.width-3 .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter {
+        width: 100%;
+    }
+    aside.width-default.width-3 .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        width: 98%;
+        margin-left: 2%;
+    }
+}
+@media(min-width: 768px){
+    aside.width-default.width-3 .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label>input[type="search"] {
+        width: 98%;
+        margin: auto;
+    }
+    aside.width-default.width-3 .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length>label>select {
+        width: 100%;
+        min-width: 100%;
+    }
+    aside.width-default.width-3 #report_option .report_option_inner>span {
+        margin: 0 0 2px 4px;
+    }
+    aside.width-default.width-3 #report_option .report_option_inner {
+        display: inline-block;
+        vertical-align: bottom;
+    }
+    aside.width-default.width-3 #report_option {
+        margin: -1px 10px 0 7px;
+    }
+    /*dock css added here*/
+    body.path-blocks-reportdashboard.has_dock #page {
+        padding-left: 20px;
+    }
+    body.path-blocks-reportdashboard.has_dock #dock .dockedtitle {
+        width: 26px;
+    }
+    /*dock css ends here*/
+    /*css added for adaptable theme*/
+    body.path-blocks-reportdashboard .container.outercont {
+        width: 100%;
+        padding-left: 20px;
+        padding-right: 20px;
+        box-sizing: border-box;
+    }
+    /*css ends for adaptable theme*/
+    aside#block-region-side-pre .block.block_reportdashboard .reportdashboard_header .reportdashboard_report_heading,
+    aside.span3 .block.block_reportdashboard .reportdashboard_header .reportdashboard_report_heading,
+    aside.col-md-3 .block.block_reportdashboard .reportdashboard_header .reportdashboard_report_heading {
+        width: 100%;
+        float: left;
+    }
+    .width-container.reports-act-graphs .width-4.ml0 {
+        margin-left: 0px;
+    }
+    .width-container.reports-act-graphs .width-4 {
+        width: 32.33%;
+        margin: 0 0% 0 1%;
+        /*max-height: 350px;*/
+    }
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .col-md-9.felement label.fitem.static_listofreports {
+        width: 7%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .width-container aside#block-region-side-db-first .block .dashboard_reporttile_container,
+    body.reportdashboard.path-blocks-reportdashboard .width-container aside#block-region-side-db-second .block .dashboard_reporttile_container,
+    body.reportdashboard.path-blocks-reportdashboard .width-container aside#block-region-side-db-third .block .dashboard_reporttile_container, body.reportdashboard.path-blocks-reportdashboard .width-container aside#block-region-side-db-four .block .dashboard_reporttile_container {
+        min-height: 100px;
+    }
+    #fitem_id_yaxis+#yaxis1 {
+        margin-left: 1.5rem;
+    }
+}
+@media(min-width: 768px) and (max-width: 1199px){
+    body .block_reporttiles span.reporttile_title {
+        width: 100%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline span.dashboard_checkbox {
+        width: 10%;
+    }
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter,
+    aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew {
+        width: 100%;
+    }
+}
+@media(min-width: 768px) and (max-width: 980px){
+    body .block_reporttiles span.reporttile_title {
+        font-size: 14px;
+    }
+    body.reportdashboard.path-blocks-reportdashboard span#widgetaction {
+        margin-top: 5px;
+    }
+    .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter {
+        max-width: 170px;
+    }
+    .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter>label>input[type="search"] {
+        width: 100%;
+        margin: auto;
+    }
+    body.reportdashboard.path-blocks-reportdashboard #report_option {
+        margin: -1px 6px 0 10px;
+    }
+}
+@media(max-width: 640px) {
+    .block_reportdashboard .report_dashboard_container .co_report_header .dataTables_filter {
+        margin-top: 0px;
+        float: right;
+    }
+}
+img.iconsmall {
+    margin: 0;
+    padding: .3em;
+    height: 12px;
+    vertical-align: middle;
+    width: 12px;
+    box-sizing: content-box;
+}
+/*Academi, Boost and Moove theme moodle form css end here*/
+.ui-widget .ui-widget.ui-button {
+    float: right;
+}
+.ui-widget .ui-widget.ui-button,
+.ui-widget .ui-widget.ui-button:hover {
+    background-image: none;
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+.ui-dialog-titlebar img.dialog_title_icon {
+    margin-right: 10px;
+    max-width: 25px;
+    max-height: 21px;
+}
+body.path-course .ui-widget.ui-widget-content .select2-container--default .select2-search--inline .select2-search__field {
+    width: 100%;
+}
+body.path-course .ui-widget.ui-widget-content .select2-container {
+    width: 100% !important;
+    max-width: 180px;
+}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .col-md-9.form-inline .select-wieght {
+    /*margin-top: 0px !important;*/ /*added for boost add tiles pop up*/
+}
+
+/*added for boost theme add widgets add tiles pop up*/
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .col-md-9.felement label.fitem.static_listofreports {
+    margin: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist .dashboard_widgets .col-md-9.felement label.fitem.static_listofreports input[type=checkbox] {
+    margin: 19px 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .custom-select,
+body.reportdashboard.path-blocks-reportdashboard .statistics_reportslist.ui-dialog-content .dashboard_widgets .form-group.fitem.row .felement.col-md-9.form-inline .custom-select {
+    line-height: 21px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .dashboard_widgets #fitem_id_submitbutton,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:last-child,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:last-child {
+    position: absolute !important; /*!important for essential theme*/
+    right: 0;
+    bottom: 0;
+    padding-top: 5px;
+    padding-bottom: 7px;
+    left: 0;
+    background-color: rgba(234, 234, 234, 0.5) !important; /*for boost*/
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist,
+body.path-blocks-reportdashboard .ui-dialog .statistics_reportslist,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist {
+    padding-bottom: 3.9em;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:last-child .col-md-9.form-inline.felement,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:last-child .col-md-9.form-inline.felement {
+    display: inline-block;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:last-child .col-md-9.form-inline.felement input#id_submitbutton,
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist.ui-dialog-content .dashboard_widgets>.row.form-group.fitem:last-child .col-md-9.form-inline.felement input#id_submitbutton {
+    margin-right: 1.5em;
+}
+/*added for boost theme add widgets add tiles pop up ends here*/
+span.ls.reportedit {
+    background-position: 0 -396px;
+}
+span.ls.widgetheader {
+    width: 35px;
+    height: 31px;
+    float: left;
+}
+span.ls.widgetheader.edit_icn {
+    background-position: 0 -1533px;
+}
+span.ls.widgetheader.custom_Schedule {
+    background-position: 0 -1574px;
+}
+span.ls.widgetheader.custom_Send.Emails {
+    background-position: 0 -669px;
+}
+span.ls.widgetheader.custom_Filters {
+    background-position: 0 -1054px;
+}
+span.download.dropbtn.ls.widgetheader {
+    background-position: 0 -546px;
+}
+.ls.icon.sendsms {
+    width: 22px;
+    height: 16px;
+    float: right;
+    background-position: 7px -848px;
+    margin-right: 0;
+    max-width: 16px; /*for essential when picture not available*/
+    max-height: 16px; /*for essential when picture not available*/
+    overflow: hidden; /*for essential when picture not available*/
+}
+.block_reportdashboard .dropdown-toggle::after{
+    display: none;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-tooltip .arrow {
+    width: 70px;
+    height: 16px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -35px;
+    bottom: -16px;
+  }
+body.reportdashboard.path-blocks-reportdashboard .ui-tooltip, .arrow:after {
+    background: #E3E3E3;
+}
+body.reportdashboard.path-blocks-reportdashboard .arrow:after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: -20px;
+    width: 25px;
+    height: 25px;
+    box-shadow: none;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-widget{
+    font-size: 13px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-widget-shadow{
+    -webkit-box-shadow: -8px -8px 8px #aaa;
+    box-shadow: -2px -2px 2px #aaa;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-widget-content {
+    /*background: #f0f0f0;*/
+    padding: 5px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-widget.ui-widget-content,
+.ui-dialog.sendreportemail-popup, .ui-dialog.schedule-popup, .ui-dialog.reportfilter-popup {
+    border: 1px solid #d3d3d3;
+}
+/*sonar css added by Raghuvaran*/
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction .dropdown-toggle,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons>a,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons .span_adddashboard,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons #switchrole_dropdwn{
+    border: 0;
+    border-radius: 50%;
+    display: inline-block;
+    color: #fff;
+    outline: none;
+    position: relative;
+}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction .dropdown-toggle::before,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons>a::before,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons .span_adddashboard::before,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons #switchrole_dropdwn::before {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    top: 0;
+    left: 0;
+}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction .right_buttons .dropdown-content li.active {
+    background-color: #52b5f1;
+}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction .right_buttons .dropdown-content li.active a {
+    background-color: transparent;
+    background-image: none;
+    color: #fff;
+}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction .dropdown-toggle:hover::before,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons>a:hover::before,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons .span_adddashboard:hover::before,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons #switchrole_dropdwn:hover::before {
+    animation: moon-effect 1s ease-in-out .1s infinite;
+     -webkit-animation: moon-effect 1s ease-in-out .1s infinite;
+     -o-animation: moon-effect 1s ease-in-out .1s infinite;
+}
+@keyframes moon-effect {
+  0% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 0.5;
+    box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    -moz-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+	-webkit-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    -o-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+  }
+  100% {
+    box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    -moz-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec; 
+    -webkit-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    -o-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+/* Safari 4.0 - 8.0 */
+@-webkit-keyframes moon-effect {
+  0% {
+    opacity: 0.3;
+  }
+  40% {
+    opacity: 0.5;
+    box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    -moz-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+	-webkit-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    -o-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    
+  }
+  100% {
+    box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    -moz-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec; 
+    -webkit-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    -o-box-shadow: 0 0 0 5px #d1e2ec, 0 0 10px 10px #d1e2ec, 0 0 0 10px #d1e2ec;
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+   body.path-blocks-reportdashboard #reportbox_shadow .sgnbtn{
+        display: none;
+    }
+    body.path-blocks-reportdashboard #reportbox_shadow .sgnbtn.show {
+        display: block;
+    }
+
+body.path-blocks-reportdashboard #reportbox_shadow .sgnbtn {
+    transition: 0.8s ease-in-out;
+    -webkit-transition: 0.8s ease-in-out;
+    -o-transition: 0.8s ease-in-out;
+    position: relative;
+    /*top: -40px;*/
+    -webkit-transform: translateX(-270%);
+    -moz-transform: translateX(-270%);
+    -ms-transform: translateX(-270%);
+    -o-transform: translateX(-270%);
+    transform: translateX(-270%);
+}
+body.path-blocks-reportdashboard #reportbox_shadow .sgnbtn.show {
+    transition: 0.8s ease-in-out;
+    -webkit-transition: 0.8s ease-in-out;
+    -o-transition: 0.8s ease-in-out;
+    -webkit-transform: translateX(0%);
+    -moz-transform: translateX(0%);
+    -ms-transform: translateX(0%);
+    -o-transform: translateX(0%);
+    transform: translateX(0%);
+    box-shadow: 0px 2px 5px 2px #ccc;
+}
+body.path-blocks-reportdashboard #reportbox_shadow span.dateicon,body.path-blocks-reportdashboard #reportbox_shadow span.graphicon>a.htitle {
+    float: right;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    background-color: #1e8487;
+    z-index: 1;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    margin-left: 5px;
+}
+body.path-blocks-reportdashboard #reportbox_shadow  {
+    background-color: #dddbdb;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+body.path-blocks-reportdashboard #reportbox_shadow span.dateicon>i.fa {
+    vertical-align: -webkit-baseline-middle;
+    vertical-align: -moz-middle-with-baseline;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    font-size: 16px;
+    vertical-align: middle;
+    line-height: 35px;
+    display: inline-block;
+}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction .dropdown-toggle, body.reportdashboard.path-blocks-reportdashboard span.right_buttons>a,
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons .span_adddashboard {
+    margin-right: 4px;
+    cursor: pointer;
+    margin-left: 4px;
+}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction #switchrole {
+    margin-right: 0;
+}
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons #switchrole_dropdwn {
+    cursor: pointer;
+}
+body.reportdashboard.path-blocks-reportdashboard .plotreport_dashboard_container {
+    width: 100%;
+    float: right;
+    overflow: auto;
+}
+#widgetaction .htitle,
+.reportdashboard_header .htitle{
+    position: relative;
+    display: inline-block;
+}
+.tooltip-top {
+    bottom: 125%;
+    right: 3px;
+}
+#widgetaction .htitle .tooltiptext,
+.reportdashboard_header .htitle .tooltiptext {
+    display: none;
+    position: absolute;
+    /*width: 120px;*/
+    background-color: #555;
+    color: #fff;
+    text-align: center;
+    padding: 5px 0;
+    border-radius: 6px;
+    /*z-index: 1;*/
+    /*opacity: 0;*/
+    /*transition: opacity .6s;*/
+}
+#widgetaction .htitle .tooltip-top::after,
+.reportdashboard_header .htitle .tooltip-top::after{
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 10%;
+    /*margin-left: 5px;*/
+    border-width: 7px;
+    border-style: solid;
+    border-color: #555 transparent transparent transparent;
+}
+#widgetaction .htitle:hover .tooltiptext,
+.reportdashboard_header .htitle:hover .tooltiptext{
+    display: block;
+    opacity: 1;
+    min-width: 140px;
+}
+body.reportdashboard.path-blocks-reportdashboard #essentialnavbar {
+    z-index: 100; /*for essential theme*/
+}
+/*body.reportdashboard.path-blocks-reportdashboard.drawer-open-left {
+    margin-left: 0px; 
+}*/
+body.reportdashboard.path-blocks-reportdashboard.drawer-open-right {
+    margin-right: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog .ui-dialog-titlebar button {
+    float: right;
+}
+body.reportdashboard.path-blocks-reportdashboard #widgetaction .htitle:hover .tooltiptext {
+    z-index: 100; /*for essential theme*/
+}
+body.reportdashboard.path-blocks-reportdashboard span.dashboard_tiles_img img {
+    width: 100%;
+    height: 100%;
+    /*opacity: 0.6;*/
+}
+body.path-blocks-reportdashboard .block_reporttiles div.tiles_information table tr td {
+    font-size: 14px;
+}
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons .htitle {
+    /*max-width: 41px;*/
+    max-width: 36px;
+}
+aside#block-region-side-pre .block.block_reportdashboard .reportdashboard_header span.dropdown ul li img,
+aside.span3 .block.block_reportdashboard .reportdashboard_header span.dropdown ul li img,
+aside.col-md-3 .block.block_reportdashboard .reportdashboard_header span.dropdown ul li img {
+    margin-right: 5px;
+}
+aside#block-region-side-pre .block.block_reportdashboard .reportdashboard_header span.dropdown ul li .export_format_name,
+aside.span3 .block.block_reportdashboard .reportdashboard_header span.dropdown ul li .export_format_name,
+aside.col-md-3 .block.block_reportdashboard .reportdashboard_header span.dropdown ul li .export_format_name {
+    text-transform: capitalize;
+}
+.pagelayout-course aside#block-region-side-pre .block_reportdashboard {
+    float: left;
+    width: 100%;
+    box-sizing: border-box;
+}
+.pagelayout-course aside#block-region-side-pre .block_reportdashboard .ui-dialog div.fitemtitle {
+    width: 120px;
+    float: left;
+    text-align: left;
+}
+.pagelayout-course aside#block-region-side-pre .block_reportdashboard .ui-dialog .fitemtitle + .felement,
+.pagelayout-course aside#block-region-side-pre .block_reportdashboard .ui-dialog .mform .fitem .felement.fsubmit {
+    margin-left: 125px;
+}
+.pagelayout-course aside#block-region-side-pre .block_reportdashboard .ui-widget.ui-widget-content {
+    z-index: 102 !important;
+}
+.pagelayout-course #block-region-side-pre aside.block {
+    clear: both; /*code added for boost theme*/
+}
+body.path-blocks-reportdashboard ul.menu.dropdown-menu li.dashboardinstances a {
+    max-width: 105px;
+}
+body.path-blocks-reportdashboard ul.menu.dropdown-menu li.dashboardinstances span.instancename {
+    word-break: break-all;
+}
+body.path-blocks-reportdashboard ul.menu.dropdown-menu li.dashboardinstances #deleteimg ,
+body.path-blocks-reportdashboard ul.menu.dropdown-menu li.dashboardinstances #editimg {
+    background-color: transparent;
+    margin: auto;
+    width: 14px;
+    height: 14px;
+    float: right;
+    box-sizing: content-box;
+}
+body.path-blocks-reportdashboard ul.menu.dropdown-menu li.dashboardinstances a i.fa {
+    margin-right: 0px;
+}
+body.path-blocks-reportdashboard .block.block_reportdashboard .highcharts-container .highcharts-title {
+    font-size: 15px !important;
+}
+.pagelayout-course aside#block-region-side-pre .block_reportdashboard table {
+    border: 1px solid #ddd;
+}
+.pagelayout-course aside#block-region-side-pre .block_reportdashboard table tr th {
+    border: none;
+}
+body.path-blocks-learnerscript .modal-container .modal .modal-header h3 {
+    text-align: left;
+    font-weight: bold;
+}
+body .highcharts-root text.highcharts-credits {
+    display: none;
+}
+aside#block-region-side-pre .block {
+    clear: both; /*for all themes sidepre region blocks overlaping*/
+}
+aside#block-region-first-maindb .block.block_reportdashboard .plotreport_dashboard_container {
+  /*  height: 200px;
+    overflow: hidden;*/
+}
+aside#block-region-first-maindb .block.block_reportdashboard .plotreport_dashboard_container:empty,
+body .plotreport_dashboard_container:empty {
+    display: none;
+}
+#block-region-side-pre aside.block.block_reporttiles .open>.dropdown-menu .dropdown-item,
+#block-region-side-pre aside.block.block_reportdashboard .open>.dropdown-menu .dropdown-item,
+#block-region-side-post aside.block.block_reporttiles .open>.dropdown-menu .dropdown-item,
+#block-region-side-post aside.block.block_reportdashboard .open>.dropdown-menu .dropdown-item {
+    white-space: normal; /*jira 1045 issue*/
+}
+aside#block-region-side-pre .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length label select,
+aside#block-region-side-post .block_reportdashboard .report_dashboard_container .co_report_header .report_header_skew .dataTables_length label select {
+    padding: 6px 4px;
+    width: 100%;
+    height: 30px;
+    box-sizing: border-box;
+}
+/*jira 1046 issue*/
+.path-course-view .ui-dialog.sendsmsdialog {
+    z-index: 1000 !important;
+    /*right: 10px !important;
+    left: inherit !important;*/
+    min-width: 220px;
+}
+/*jira 1046 issue ends */
+/*code added for academi theme*/
+body .block.block_reportdashboard table.generaltable > thead > tr,
+body .block.block_reportdashboard table.dataTable > thead > tr,
+body .block.block_reportdashboard table > thead > tr {
+    /*background-color: #eff0f2;*/
+}
+body .block.block_reportdashboard table.generaltable > thead > tr th,
+body .block.block_reportdashboard table.dataTable > thead > tr th,
+body .block.block_reportdashboard table > thead > tr  th {
+    /*color: #58595b;*/
+    /*background-color: transparent;*/
+}
+/*code ends here*/
+body.path-course .plotreport_dashboard_container {
+    width: 100%;
+    float: left;
+    overflow: auto;
+}
+body .mform .fdescription.required {
+    width: 100%;
+    margin: 0px;
+}
+body.reportdashboard.path-blocks-reportdashboard .container.outercont .block {
+    background-color: #fff !important; /*for adaptable theme below 768px blocks bgcolor*/
+}
+body.path-blocks-learnerscript .outercont .cmp_overflow+form#mform1, body.path-blocks-learnerscript .outercont fieldset#id_importreport+fieldset.hidden {
+    clear: both; /*code for adaptable theme */
+}
+body.path-blocks-reportdashboard #region-main {
+    background-color: transparent;
+    box-shadow: none;
+    border: none;
+}
+.has-danger input#id_dashboard {
+    border-color: inherit;
+    background-image: none;
+}
+/*code written for IE browser by Raghuvaran*/
+@media screen and (min-width:0\0) {
+
+    body.path-blocks-reportdashboard #reportbox_shadow .sgnbtn{
+        display: none;
+    }
+    body.path-blocks-reportdashboard #reportbox_shadow .sgnbtn.show {
+        display: block;
+    }
+
+body.path-blocks-reportdashboard #reportbox_shadow .sgnbtn {
+    transition: 0.8s ease-in-out;
+    -webkit-transition: 0.8s ease-in-out;
+    -o-transition: 0.8s ease-in-out;
+    position: relative;
+    /*top: -40px;*/
+    -webkit-transform: translateX(-270%);
+    -moz-transform: translateX(-270%);
+    -ms-transform: translateX(-270%);
+    -o-transform: translateX(-270%);
+    transform: translateX(-270%);
+}
+body.path-blocks-reportdashboard #reportbox_shadow .sgnbtn.show {
+    transition: 0.8s ease-in-out;
+    -webkit-transition: 0.8s ease-in-out;
+    -o-transition: 0.8s ease-in-out;
+    -webkit-transform: translateX(0%);
+    -moz-transform: translateX(0%);
+    -ms-transform: translateX(0%);
+    -o-transform: translateX(0%);
+    transform: translateX(0%);
+    box-shadow: 0px 2px 5px 2px #ccc;
+}
+
+    body.path-blocks-reportdashboard .block_reportdashboard .dataTables_wrapper {
+        width: 99%;
+        margin-left: .5%;
+    }
+    body.path-course .block_reportdashboard .dataTables_wrapper {
+        width: 99%;
+        /*margin-left: .5%;*/
+    }
+    /*body.path-blocks.reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button > a,
+    .block.block_reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button > a {
+        padding-top: 1px;
+        line-height: 13px;
+    }*/
+    
+    body.reportdashboard.path-blocks-reportdashboard .reportslist .dashboard_widgets .select-reporttype span[data-fieldtype="select"] {
+        display: inline-block;
+        width: 100%;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist,
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist {
+        padding-bottom: 2.9em;
+        margin-bottom: 3em;
+    }
+}
+/*code written for Mozilla by Raghuvaran*/
+@-moz-document url-prefix() {
+    body.reportdashboard.path-blocks .dataTables_wrapper .dataTables_paginate .paginate_button > a,
+    .block_reportdashboard.block .dataTables_wrapper .dataTables_paginate .paginate_button > a {
+        /*line-height: 13px;*/
+    }
+    body.path-course .block_reportdashboard .dataTables_wrapper {
+        width: 99%;
+        margin-left: .5%;
+    }
+    #widgetaction .htitle .tooltiptext, .reportdashboard_header .htitle .tooltiptext {
+        padding: 5px 2px;
+        white-space: nowrap;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog.schreportform .fitem.fitem_fgroup .fitemtitle + .felement {
+        float: left;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist, body.path-blocks-reportdashboard .ui-dialog .statistics_reportslist, body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist {
+        margin-bottom: 2.9rem;
+    }
+    body.reportdashboard.path-blocks-reportdashboard .instance_popup #confirm_butns {
+        margin-top: 16px;
+    }
+}
+/*code written for EDGE browser by Raghuvaran*/
+@supports (-ms-ime-align:auto) {
+    body.path-blocks-reportdashboard .block_reportdashboard .dataTables_wrapper {
+        width: 99%;
+        margin-left: .5%;
+    }
+    body.path-course .block_reportdashboard .dataTables_wrapper {
+        width: 99%;
+        /*margin-left: .5%;*/
+    }
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .reportslist,
+    body.reportdashboard.path-blocks-reportdashboard .ui-dialog .statistics_reportslist {
+        padding-bottom: 2.9em;
+        margin-bottom: 3em;
+    }
+}
+/*code written for IE9 browser by Raghuvaran*/
+@media screen and (min-width:0) and (min-resolution: .001dpcm) { 
+    body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger .col-md-3 {float:left;}
+}
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger .col-md-3 {
+    float:left;
+    padding-right: 0px;
+    margin-right: 0px;
+    width: 130px;
+    min-width: 130px;
+    white-space: nowrap;
+}
+body.path-blocks-reportdashboard .ui-dialog .ui-dialog-content form#createdashbaord_form .form-group.row.fitem.has-danger .col-md-9 {
+    width: calc(100% - 130px);
+    width: -webkit-calc(100% - 130px);
+    width: -moz-calc(100% - 130px);
+    width: -o-calc(100% - 130px);
+    max-width: calc(100% - 130px);
+    max-width: -webkit-calc(100% - 130px);
+    max-width: -moz-calc(100% - 130px);
+    max-width: -o-calc(100% - 130px);
+}
+.block_reportdashboard .ui-dialog #fitem_id_submitbutton .felement, .block_reportdashboard .ui-dialog #fgroup_id_buttonar .felement {
+    display: inline-table; /*for essential theme submit buttons*/
+}
+body.reportdashboard .schreportform.ui-dialog .row.fitem, body.reportdashboard .sendreportemail.ui-dialog .row.fitem, body.reportdashboard .reportfilter-popup.ui-dialog .row.fitem {
+    margin: 5px 0px;
+}
+body.reportdashboard .reportfilter-popup.ui-dialog .row.fitem {
+    width: auto;
+    max-width: 190px;
+    margin-right: 5px;
+}
+body.reportdashboard .reportfilter-popup.ui-dialog .row.fitem .col-md-3 {
+    display: none;
+}
+body.reportdashboard .reportfilter-popup.ui-dialog .row.fitem .col-md-9 {
+    width: auto;
+    padding-right: 0px;
+    display: block;
+    max-width: 100%;
+    padding: 0;
+    margin: 0 10px 5px 0px!important;
+}
+body.reportdashboard.path-blocks-reportdashboard .block .block-controls.header {
+    padding-right: 6px;
+}
+.block_reportdashboard .title .block_action:empty {
+    display: none;
+}
+#widgetaction .htitle .tooltiptext {
+    padding: 5px 2px;
+    white-space: nowrap;
+}
+body.reportdashboard.path-blocks-reportdashboard .ui-dialog.schreportform .fitem.fitem_fgroup .fitemtitle+.felement {
+    width: inherit;
+    /*float: left;*/
+}
+body.path-blocks-reportdashboard .flatpickr-month {
+    height: 32px;
+}
+.block_reportdashboard .co_report_header {
+    width: 100%;
+}
+.block_reportdashboard.mb-3 .content.mt-3 {
+    margin: 0px !important;
+}
+.block_reportdashboard.card .card-body {
+    padding: 0px !important;
+}
+body.reportdashboard.path-blocks-reportdashboard .width-container aside:empty {
+    display: none;
+}
+body.editing.reportdashboard.path-blocks-reportdashboard .width-container aside:empty{
+    display: block;
+    position: relative;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+    min-height: 22px;
+    margin:50px 0;
+    border: 1px dotted #CCC;
+}
+/*body.editing.reportdashboard.path-blocks-reportdashboard .width-container aside:empty::after {
+    content: "Drop Here";
+    position: absolute;
+    top: 0px;
+    width: 100%;
+    text-align: center;
+    border: 1px dotted #CCC;
+    font-size: 12px;
+    color: #bbb;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -o-box-sizing: border-box;
+}*/
+aside#block-region-side-pre .block.block_reportdashboard .dropdown-menu, aside#block-region-side-post .block.block_reportdashboard .dropdown-menu {
+    min-width: 200px;
+    margin-top: 0px;
+}
+.path-blocks-reportdashboard .viewschuserstable select.form-control:not([size]):not([multiple]) {
+    margin-top: 0px;
+}
+.path-blocks-reportdashboard .viewschuserstable #scheduledusers_wrapper .row {
+    margin: 7px 0px;
+}
+body.reportdashboard #region-main {
+    overflow-x: inherit;
+}
+body.reportdashboard span.coursefilter {
+    padding: 5px;
+    background: #d7d9de;
+    float: right;
+    margin-left: 5px;
+}
+body.dir-rtl.reportdashboard span.coursefilter {float: right;}
+body.reportdashboard span.coursefilter label {
+    display: inline-block;
+}
+body.reportdashboard .ui-dialog.ui-widget.sendreportemail form#sendemail .form-group .col-md-3 {
+    min-width: 134px; /*jira 2923*/
+}
+body.reportdashboard.path-blocks-reportdashboard span.right_buttons ul.dropdown-menu.dropdown-menu-right {
+    left: inherit; /*jira 3045*/
+    right: 0;
+}
+
+/*body.reportdashboard.path-blocks-reportdashboard .select-categories .select2-container {
+    width: 80% !important;
+    max-width: 80%;
+    min-width: inherit;
+}*/
+body.reportdashboard.path-blocks-reportdashboard .select-categories>label {
+    display: block;
+    margin-bottom: 1rem;
+}
+.newreport_dashboard #id_dashboard {
+    padding: .375rem .75rem;
+    box-sizing: border-box;
+    font-weight: normal;
+}
+.sendreportemail.ui-dialog .row.fitem .col-md-3 {
+    min-width: 130px;
+}
+.dir-rtl.reportdashboard .width-9 .plotreport_dashboard_container g.highcharts-axis-labels text {
+    text-anchor: start;
+    transform: translate(0px, 0px);
+}
+.dir-rtl.reportdashboard .width-3 .plotreport_dashboard_container g.highcharts-axis-labels text {
+    text-anchor: middle;
+    transform: translate(0px, 0px);
+}
+.dir-rtl.reportdashboard .plotreport_dashboard_container g.highcharts-legend-item text {
+    text-anchor: end;
+}
+.dir-rtl.reportdashboard .plotreport_dashboard_container g.highcharts-data-label {
+    text-anchor: end;
+}
+/* Style by Kamesh */
+body.reportdashboard{
+    background-color: #f3f6f8;
+}
+
+body.reportdashboard .card:not(.block_reporttiles),body.reportdashboard .block_reporttiles .dashboard_reporttile_container{
+    box-shadow: 0 1px 6px rgb(0 0 0 / 4%), 0px 0px 7px 0px rgb(0 0 0 / 7%);
+    border-radius: 8px;
+    border: 1px solid #eee;
+
+}
+body.reportdashboard .card.block_reporttiles{
+    background-color: transparent !important;
+}
+body.reportdashboard .card:not(.block_reporttiles) .card-body{
+    padding: 12px !important;
+}
+body.reportdashboard .block_reporttiles .dashboard_tiles{
+    padding: 1em;
+}
+body.reportdashboard .block_reporttiles .dashboard_reporttile_container{
+    border-radius: 8px;   
+}
+body.reportdashboard .block_reportdashboard .reportdashboard_report_heading, body.reportdashboard .block_reporttiles .reporttile_title{
+    font-size: 18px;
+    font-weight: 500;
+    border-left: 3px solid #000;
+    padding: 0;
+    padding-left: 10px;
+}
+body.reportdashboard .block_reportdashboard .dataTables_info{
+    display: none;
+
+}
+body.reportdashboard .block_reportdashboard .dataTables_paginate{
+    display: flex;
+    align-items: center;
+    float: none;
+    justify-content: center;
+}
+body.reportdashboard .block_reportdashboard .dataTables_paginate li.paginate_button.active{
+    background-color: #0294a5;
+}
+body.reportdashboard .block_reportdashboard .dataTables_paginate li.paginate_button.active a{
+    color: #fff;
+}
+body.reportdashboard .block_reportdashboard  .dataTable th,body.reportdashboard .block_reportdashboard  .dataTable td {
+border:0.5px solid #eee;
+}
+body.reportdashboard .block_reportdashboard .dataTables_wrapper table.dataTable>thead>tr{
+    background-color: #f1f5f9;
+}
+body.reportdashboard .block_reporttiles .tiles_information table td{
+    display: flex;
+    flex-direction: column;
+    padding-right: 35px;
+    white-space: nowrap;
+}
+body.reportdashboard .block_reporttiles .tiles_information table td:first-child{
+    padding-left: 15px;
+}
+body.reportdashboard .block_reporttiles .tiles_information table td b{
+    font-size: 18px;
+}
+body.reportdashboard .block_reporttiles .tiles_information table tr{
+    display: flex;
+    justify-content: start;
+    
+}
+/*body.reportdashboard .block_reporttiles .dashboard_tiles_img{
+    position: absolute;
+    right: 14px;
+}*/
+body.reportdashboard .flatpickr{
+    margin-left: 0px;
+}
+body.reportdashboard .flatpickr input{
+    margin-left: 8px;
+}
+body.reportdashboard  .fa.pull-right {
+    margin-left: 0;
+}
+body.reportdashboard .block_reporttiles .dashboard_tiles em{
+    font-style: normal;
+}
+body.reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button a{
+    color: #000;
+    text-decoration: none;
+}
+body.reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #0294a5;
+    border: none;
+}
+body.reportdashboard .dataTables_wrapper .dataTables_paginate .paginate_button:hover a{
+    color: #fff;
+    text-decoration: none;
+}
+
+body.reportdashboard .ui-dialog-content.ui-widget-content .report_header_skew{
+    margin: 0px 10px;
+}
+body.reportdashboard .ui-dialog-content.ui-widget-content .co_report_header{
+    margin-bottom: 10px;
+}
+.dialogplot {
+    min-height: 400px !important;    
+}
+/*css by kiran*/
+#block-region-center-second .dashboard_reporttile_container .dashboard_tiles {
+    background: #fff;
+}
+#page-blocks-reportdashboard-dashboard .block_reporttiles div.tiles_information table tr{
+    display: block;
+}
+#page-blocks-reportdashboard-dashboard .block_reporttiles div.tiles_information table tr td:nth-child(2){
+    padding-left: 15px;
+}
+.dashboard_reporttile_container img#helpimg {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+#page-blocks-reportdashboard-dashboard .left_buttons .dropdown-toggle{
+    padding: 0.4rem 0.4rem;
+}
+
+#page-blocks-reportdashboard-dashboard .dashboard_tiles {
+    width: 100%;
+}
+#page-blocks-reportdashboard-dashboard .block_reporttiles   .tiles_information table tr{
+    display: block;
+}
+#page-blocks-reportdashboard-dashboard  .block_reporttiles  .tiles_information table td{
+    display: block;
+}
+#page-blocks-reportdashboard-dashboard .block_reporttiles  .tiles_information{
+    align-items: center;
+    float: inherit;
+    margin: 0px;
+}
+#page-blocks-reportdashboard-dashboard .dashboard_tiles.lambda_reporttiles {
+    width: 90%;
+}
+#page-blocks-reportdashboard-dashboard .dashboard_reporttile_container .dashboard_tiles.lambda_reporttiles img#helpimg{
+    position: static;
+}
+#page-blocks-reportdashboard-dashboard .block_reporttiles .dashboard_tiles.lambda_reporttiles .tiles_information{
+    display: flex;
+    justify-content: space-between;
+}
+#page-my-index .block_reporttiles .dashboard_tiles.lambda_reporttiles {
+    width: 90%;
+}
+#page-my-index .dashboard_reporttile_container .dashboard_tiles.lambda_reporttiles img#helpimg{
+    position: static;
+}
+#page-my-index .block_reporttiles .dashboard_tiles.lambda_reporttiles div.tiles_information{
+    display: flex;
+    justify-content: space-between;
+}
+#page-my-index .block_reporttiles .dashboard_tiles.lambda_reporttiles .tiles_information table {
+    width: 100%!important;
+}
+#page-my-index .block_reporttiles .dashboard_tiles.lambda_reporttiles .tiles_information tr {
+    display: flex;
+    flex-direction: column;
+}
+#page-my-index .block_reporttiles .dashboard_tiles.lambda_reporttiles span.dashboard_tiles_img > img {
+    width: 100% !important;
+    height: inherit !important;
+}
+#page-blocks-reportdashboard-dashboard table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child:before,
+#page-blocks-reportdashboard-dashboard table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child:before{
+    position: static;
+    margin-right: 5px;
+ }
+ #page-blocks-reportdashboard-dashboard table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child,
+ #page-blocks-reportdashboard-dashboard table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child {
+    display: flex;
+    align-items: center;
+}
+#page-blocks-reportdashboard-dashboard table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>td:first-child a,
+#page-blocks-reportdashboard-dashboard table.dataTable.dtr-inline.collapsed>tbody>tr[role="row"]>th:first-child a{
+    margin-left: 6px;
+}
+body.reportdashboard.path-blocks-reportdashboard span#widgetaction .dropdown-toggle {
+    padding: 0px;
+}
+body#page-my-index .fcontainer .fitem .checkbox input[type=checkbox]{
+    margin-top: 6px;
+}
+#page-blocks-reportdashboard-dashboard table.dataTable thead .sorting:after {
+    margin-top: 3px;
+    font-size: 12px;
+    right: 6px;
+}
+#page-blocks-reportdashboard-dashboard table.dataTable thead .sorting:before {
+    font-size: 12px;
+    right: 6px;
+}
+.reportdashboard #widgetaction {
+position: absolute;
+top: -20px;
+right: 2rem;
+}
+.reportdashboard #licenceresult .alert {
+margin-top: 2rem;
+}
+#page-blocks-reportdashboard-dashboard #widgetaction {
+width: inherit;
+margin: inherit;
+position: inherit;
+}
+#page-blocks-reportdashboard-dashboard #dashboard-header {
+width: 100%;
+}
+/*media css*/
+
+/*@media (min-width: 767px) and (max-width: 1024px){*/
+@media (max-width: 1270px){
+    #page-blocks-reportdashboard-dashboard .block_reporttiles  .tiles_information{
+        flex-direction: column;
+    }
+    #page-blocks-reportdashboard-dashboard .block_reporttiles  .tiles_information div:first-child{
+        display: flex;
+        justify-content: center;
+        flex: 0 0 100%;
+        min-width: 100%;
+    }
+
+
+}
+@media (max-width: 768px){
+    #page-blocks-reportdashboard-dashboard .block_reporttiles  .tiles_information{
+        text-align: center;
+    }
+    #page-blocks-reportdashboard-dashboard .block_reporttiles  .tiles_information div{
+        display: flex;
+        justify-content: center;
+    }
+}

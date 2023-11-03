@@ -1,0 +1,18 @@
+<li class='ls-plotgraphs_listitem' data-cid='{{chartid}}'>
+    <a href="javascript:void(0);" class='ls-plotgraph_link cpointer' id='{{chartid}}'
+        onclick ='(function(e){ require("block_learnerscript/reportwidget").
+        CreateDashboardwidget({reportid:{{reportid}}, reporttype: "{{chartid}}" }); })(event)' title="{{chartname}}">
+        <span class="ls-plotgraphs-chartname">
+            <span class='ls {{pluginname}}'></span><span id="lschartname{{chartid}}">{{chartname}}</span></span>
+    </a>
+    {{# issiteadmin}}
+        <span class="ls-plotgraphs-chart_options">
+            <img src="{{editicon}}" title="Edit" class="ls-plotreport_editicon cpointer" onclick = "(function(e){ require('block_learnerscript/helper').PlotForm({reportid:{{reportid}},
+             action:'plotforms', component: 'plot', title: '{{title}}', pname: '{{pluginname}}',
+             cid: '{{chartid}}', type:'edit'}) })(event)" />
+            <img src="{{deleteicon}}" title="Delete" class="ls-plotreport_deleteicon delete_plot cpointer" onclick = '(function(e){ require("block_learnerscript/helper").deleteConfirm({action:"deletecomponenet", reportid:{{reportid}}, comp:"plot",
+            pname:"{{pluginname}}", cid: "{{chartid}}", delete: 1 }); })(event)'
+            data-action="{{config.wwwroot}}/blocks/learnerscript/viewreport.php?id={{reportid}}&pname={{pluginname}}&comp=plot&cid={{chartid}}" />
+        </span>
+    {{/ issiteadmin}}
+</li>

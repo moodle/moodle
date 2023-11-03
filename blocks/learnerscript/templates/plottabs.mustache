@@ -1,0 +1,36 @@
+<!-- <div id="report_plottabs" {{# enableplots }} style="display: none;" {{/ enableplots }}>
+	{{# multiplot }}
+	<ul class="ls-plotgraphs_list" data-reportid="{{reportid}}">
+	    {{# plottabs }}
+			{{> block_learnerscript/tabs }}
+	    {{/ plottabs }}
+	</ul>
+	{{/ multiplot }}
+	{{^ multiplot }}
+		{{# plottabs}}
+			{{# issiteadmin }}
+				<span class="ls-plotgraphs-chart_options">
+					<img src='{{editicon}}' title="Edit" class="ls-plotreport_editicon cpointer" onclick = "(function(e){ require('block_learnerscript/helper').PlotForm({reportid:{{reportid}}, action:'plotforms',
+					component: 'plot', pname: '{{pluginname}}', cid: '{{chartid}}', type:'edit'}) })(event)" />
+					<img src='{{deleteicon}}' title="Delete" class="ls-plotreport_deleteicon delete_plot cpointer"
+					onclick = '(function(e){ require("block_learnerscript/helper").deleteConfirm({action:"deletecomponenet", reportid:{{reportid}}, comp: "plot", pname: "{{pluginname}}", cid: "{{chartid}}", delete: 1 }); })(event)'
+					data-action="{{config.wwwroot}}/blocks/learnerscript/viewreport.php?id={{reportid}}&pname={{pluginname}}&comp=plot&cid={{chartid}}" />
+				</span>
+			{{/ issiteadmin }}
+		{{/ plottabs }}
+	{{/ multiplot }}
+</div> -->
+
+        <span class="dropdown viewgraph-inline viewgraphs pull-right float-right" id="report_plottabs">
+               <span id='custom_graph' class='graphicon {{addgraphs}}'>
+                <a class="dropdown-toggle htitle" title={{# str }} graph, block_learnerscript {{/ str }} id="viewgraphs{{reportid}}" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false"><i class="fa fa-area-chart custom"></i></a>
+                {{# multiplot }}
+                    <ul  class="menu dropdown-menu dropdown-menu-left dropdown-content" area-labelledby="viewgraphs{{reportid}}" id="align_menu">
+                    {{# plottabs }}
+                        {{> block_learnerscript/tabs }}
+                    {{/ plottabs }}
+                    </ul>
+                {{/ multiplot }}
+            </span>
+        </span>
