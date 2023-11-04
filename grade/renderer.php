@@ -98,6 +98,7 @@ class core_grades_renderer extends plugin_renderer_base {
             'groupsearchdropdown overflow-auto',
             null,
             true,
+            $label,
             'group',
             $activegroup
         );

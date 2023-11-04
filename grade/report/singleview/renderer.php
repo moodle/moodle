@@ -112,6 +112,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
             'gradesearchdropdown overflow-auto',
             null,
             true,
+            get_string('selectagrade', 'gradereport_singleview'),
             'itemid',
             $gradeitemid
         );

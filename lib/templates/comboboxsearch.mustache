@@ -17,6 +17,7 @@
     Combobox search selector dropdown.
 
     Context variables required for this template:
+    * label - The label for the the combobox.
     * name - The name of the input element representing the combobox.
     * value - The value of the input element representing the combobox.
     * renderlater - This determines if we show a placeholder whilst fetching content to replace within the placeholder region
@@ -30,6 +31,7 @@
 
     Example context (json):
     {
+        "label": "Example searchable combobox",
         "name": "input-1",
         "value": "0",
         "renderlater": false,
@@ -55,7 +57,7 @@
              aria-haspopup="dialog"
              aria-controls="dialog-{{instance}}-{{uniqid}}"
              class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle keep-open d-flex text-left align-items-center p-0 font-weight-bold"
-             aria-label="{{#cleanstr}} aria-toggledropdown, core {{/cleanstr}}"
+             aria-label="{{label}}"
              data-input-element="input-{{instance}}-{{uniqid}}">
             {{{buttoncontent}}}
         </div>
@@ -69,7 +71,7 @@
         {{#usebutton}}
             role="dialog"
             aria-modal="true"
-            aria-label="{{#cleanstr}} aria-comboboxsearchdialogue, core {{/cleanstr}}"
+            aria-label="{{label}}"
         {{/usebutton}}
     >
         <div class="w-100 p-3" data-region="placeholder">

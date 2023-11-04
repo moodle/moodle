@@ -54,6 +54,9 @@ class comboboxsearch implements renderable, templatable {
     /** @var boolean $usesbutton Whether to provide a A11y button. */
     protected $usesbutton;
 
+    /** @var null|string $label The label of the combobox. */
+    protected $label;
+
     /** @var null|string $name The name of the input element representing the combobox. */
     protected $name;
 
@@ -71,6 +74,7 @@ class comboboxsearch implements renderable, templatable {
      * @param ?string $dropdownclasses Any special classes that may be needed.
      * @param ?string $buttonheader If the button item in the tertiary nav needs an extra top header for context.
      * @param ?bool $usebutton If we want the mustache to add the button roles for us or do we have another aria role node?
+     * @param ?string $label The label of the combobox.
      * @param ?string $name The name of the input element representing the combobox.
      * @param ?string $value The value of the input element representing the combobox.
      * @throws moodle_exception If the implementor incorrectly call this module.
@@ -84,6 +88,7 @@ class comboboxsearch implements renderable, templatable {
         ?string $dropdownclasses = null,
         ?string $buttonheader = null,
         ?bool $usebutton = true,
+        ?string $label = null,
         ?string $name = null,
         ?string $value = null
     ) {
@@ -94,6 +99,13 @@ class comboboxsearch implements renderable, templatable {
                 'core',
                 '', null,
                 'Dropdown content must be set to render later.'
+            );
+        }
+
+        if ($usebutton && !$label) {
+            debugging(
+                    'You have requested to use the button but have not provided a label for the combobox.',
+                    DEBUG_DEVELOPER
             );
         }
 
@@ -112,6 +124,7 @@ class comboboxsearch implements renderable, templatable {
         $this->dropdownclasses = $dropdownclasses;
         $this->buttonheader = $buttonheader;
         $this->usesbutton = $usebutton;
+        $this->label = $label;
         $this->name = $name;
         $this->value = $value;
     }
@@ -133,6 +146,7 @@ class comboboxsearch implements renderable, templatable {
             'buttonheader' => $this->buttonheader,
             'usebutton' => $this->usesbutton,
             'instance' => rand(), // Template uniqid is per render out so sometimes these conflict.
+            'label' => $this->label,
             'name' => $this->name,
             'value' => $this->value,
         ];

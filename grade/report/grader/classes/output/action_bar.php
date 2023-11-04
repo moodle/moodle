@@ -102,6 +102,7 @@ class action_bar extends \core_grades\output\action_bar {
                 'initialsdropdown',
                 $initialscontent->buttonheader,
                 true,
+                get_string('filterbyname', 'core_grades'),
                 'nameinitials',
                 json_encode([
                     'first' => $firstnameinitial,
@@ -147,6 +148,7 @@ class action_bar extends \core_grades\output\action_bar {
                 'collapsecolumndropdown p-3 flex-column ' . $collapsemenudirection,
                 null,
                 true,
+                get_string('aria:dropdowncolumns', 'gradereport_grader'),
                 'collapsedcolumns'
             );
             $data['collapsedcolumns'] = [
