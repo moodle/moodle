@@ -820,7 +820,8 @@ function scorm_reset_gradebook($courseid, $type='') {
  * @return array status array
  */
 function scorm_reset_userdata($data) {
-    global $DB;
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/mod/scorm/locallib.php');
 
     $componentstr = get_string('modulenameplural', 'scorm');
     $status = [];
