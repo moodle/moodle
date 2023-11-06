@@ -151,7 +151,7 @@ class user extends tablelike implements selectable_items {
             get_string('assessmentname', 'gradereport_singleview'),
             '', // For filter icon.
             get_string('gradecategory', 'grades'),
-            get_string('grade', 'grades'),
+            get_string('gradenoun'),
             get_string('range', 'grades'),
             get_string('feedback', 'grades'),
             get_string('override', 'gradereport_singleview'),

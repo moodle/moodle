@@ -384,7 +384,7 @@ class user extends grade_report {
 
         if ($this->showgrade) {
             $this->tablecolumns[] = 'grade';
-            $this->tableheaders[] = get_string('grade', 'grades');
+            $this->tableheaders[] = get_string('gradenoun');
         }
 
         if ($this->showrange) {

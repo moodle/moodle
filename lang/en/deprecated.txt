@@ -110,3 +110,4 @@ passwordsenttext,core
 passwordrecovery,core
 passwordconfirmchange,core
 passwordnohelp,core
+grade,core_grades

@@ -5,3 +5,4 @@ bystudentlastname,quiz_grading
 gradingattemptwithidnumber,quiz_grading
 orderattempts,quiz_grading
 randomly,quiz_grading
+grade,quiz_grading

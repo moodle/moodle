@@ -282,7 +282,7 @@ abstract class attempts_report extends report_base {
     protected function add_grade_columns($quiz, $usercanseegrades, &$columns, &$headers, $includefeedback = true) {
         if ($usercanseegrades) {
             $columns[] = 'sumgrades';
-            $headers[] = get_string('grade', 'quiz') . '/' .
+            $headers[] = get_string('gradenoun') . '/' .
                     quiz_format_grade($quiz, $quiz->grade);
         }
 

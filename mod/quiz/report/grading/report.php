@@ -320,14 +320,15 @@ class quiz_grading_report extends report_base {
      *
      * @param stdClass $counts counts of different types of attempt for this slot.
      * @param string $type the type of count to format.
-     * @param string $gradestring get_string identifier for the grading link text, if required.
+     * @param string $string get_string identifier for the grading link text, if required.
+     * @param string $component get_string component identifier for the grading link text, if required.
      * @return string HTML.
      */
-    protected function format_count_for_table($counts, $type, $gradestring) {
+    protected function format_count_for_table($counts, $type, $string, $component) {
         $result = $counts->$type;
         if ($counts->$type > 0) {
             $gradeurl = $this->grade_question_url($counts->slot, $counts->questionid, $type);
-            $result .= $this->renderer->render_grade_link($counts, $type, $gradestring, $gradeurl);
+            $result .= $this->renderer->render_grade_link($counts, $type, $string, $component, $gradeurl);
         }
         return $result;
     }
@@ -388,15 +389,15 @@ class quiz_grading_report extends report_base {
 
             $row[] = format_string($counts->name);
 
-            $row[] = $this->format_count_for_table($counts, 'needsgrading', 'grade');
+            $row[] = $this->format_count_for_table($counts, 'needsgrading', 'gradeverb', 'moodle');
 
-            $row[] = $this->format_count_for_table($counts, 'manuallygraded', 'updategrade');
+            $row[] = $this->format_count_for_table($counts, 'manuallygraded', 'updategrade', 'quiz_grading');
 
             if ($includeauto) {
-                $row[] = $this->format_count_for_table($counts, 'autograded', 'updategrade');
+                $row[] = $this->format_count_for_table($counts, 'autograded', 'updategrade', 'quiz_grading');
             }
 
-            $row[] = $this->format_count_for_table($counts, 'all', 'gradeall');
+            $row[] = $this->format_count_for_table($counts, 'all', 'gradeall', 'quiz_grading');
 
             $data[] = $row;
         }

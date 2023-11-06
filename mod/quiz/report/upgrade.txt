@@ -2,6 +2,16 @@ This files describes API changes for quiz report plugins.
 
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_reports
 
+=== 4.4 ===
+
+* The function quiz_grading_report::format_count_for_table now requires a string identifier and
+  a component identifier so that it is possible to address strings outside of
+  quiz/report/grading/lang/en/quiz_grading.php.
+
+* The function quiz_grading_renderer::render_grade_link now requires a string identifier and
+  a component identifier so that it is possible to address strings outside of
+  quiz/report/grading/lang/en/quiz_grading.php.
+
 === 4.2 ===
 
 * There was an ill-advised, never documented, API change in quiz_report_get_significant_questions

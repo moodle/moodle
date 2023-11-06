@@ -247,7 +247,6 @@ $string['fractionsnomax'] = 'One of the answers should be 100%, so that it is<br
 $string['full'] = 'Expanded';
 $string['general'] = 'General';
 $string['gotoendoflesson'] = 'Go to the end of the lesson';
-$string['grade'] = 'Grade';
 $string['gradebetterthan'] = 'Grade better than (&#37;)';
 $string['gradebetterthanerror'] = 'Earn a grade better than {$a} percent';
 $string['graded'] = 'Graded';
@@ -614,3 +613,6 @@ $string['youshouldview'] = 'You should answer at least: {$a}';
 
 // Deprecated since 4.3.
 $string['completiontimespent'] = 'Student must do this activity at least for';
+
+// Deprecated since Moodle 4.4.
+$string['grade'] = 'Grade';
