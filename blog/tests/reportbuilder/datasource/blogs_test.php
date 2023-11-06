@@ -158,7 +158,7 @@ class blogs_test extends core_reportbuilder_testcase {
 
         $this->assertStringContainsString('Horses', $body);
         $this->assertStringContainsString('hello.txt', $attachment);
-        $this->assertEquals('Yourself (draft)', $publishstate);
+        $this->assertEquals('Draft', $publishstate);
         $this->assertEquals(userdate($blog->lastmodified), $timemodified);
         $this->assertEquals('horse', $tags);
         $this->assertEquals("5\xc2\xa0bytes", $filesize);
