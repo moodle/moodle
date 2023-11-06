@@ -6,6 +6,7 @@ Information provided here is intended especially for developers.
 * New methods `get_identity_[columns|filters]` in user entity, for retrieving all user identity field report elements
 * Entity table aliases are now auto-generated, hence usage of the `get_default_table_aliases` method is now deprecated. Instead,
   entities should implement the `get_default_tables` method to define the tables they use
+* New method `get_table_aliases` in base entity class, for retrieving all table aliases in a single call
 * The database helper `generate_alias[es]` and `generate_param_name[s]` methods now accept an optional `$suffix` argument for
   appending additional string to the generated value
 * New report filter types:

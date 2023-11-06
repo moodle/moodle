@@ -205,7 +205,7 @@ abstract class base {
      */
     final public function get_table_alias(string $tablename): string {
         $tablenames = $this->get_default_tables();
-        if (array_search($tablename, $tablenames) === false) {
+        if (!in_array($tablename, $tablenames)) {
             throw new coding_exception('Invalid table name', $tablename);
         }
 
@@ -215,6 +215,17 @@ abstract class base {
         }
 
         return $this->tablealiases[$tablename];
+    }
+
+    /**
+     * Returns aliases used in the queries for all tables
+     *
+     * @return string[]
+     */
+    final public function get_table_aliases(): array {
+        $tablenames = $this->get_default_tables();
+
+        return array_combine($tablenames, array_map([$this, 'get_table_alias'], $tablenames));
     }
 
     /**

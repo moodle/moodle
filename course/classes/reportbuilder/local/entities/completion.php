@@ -91,11 +91,13 @@ class completion extends base {
      * @return column[]
      */
     protected function get_all_columns(): array {
-        $coursecompletion = $this->get_table_alias('course_completion');
-        $course = $this->get_table_alias('course');
-        $grade = $this->get_table_alias('grade_grades');
-        $gradeitem = $this->get_table_alias('grade_items');
-        $user = $this->get_table_alias('user');
+        [
+            'course_completion' => $coursecompletion,
+            'course' => $course,
+            'grade_grades' => $grade,
+            'grade_items' => $gradeitem,
+            'user' => $user,
+        ] = $this->get_table_aliases();
 
         // Completed column.
         $columns[] = (new column(
