@@ -910,6 +910,13 @@ class framework implements H5PFrameworkInterface {
             $params->title = $content['title'];
             $content['params'] = json_encode($params);
         }
+        // Add metadata to 'params'.
+        if (!empty($content['metadata'])) {
+            $params = json_decode($content['params']);
+            $params->metadata = $content['metadata'];
+            $content['params'] = json_encode($params);
+        }
+
         $data = [
             'jsoncontent' => $content['params'],
             'displayoptions' => $content['disable'],
