@@ -195,43 +195,13 @@ class moodlelib_test extends \advanced_testcase {
         unset($_GET['username']);
         $this->assertSame('default_user', optional_param('username', 'default_user', PARAM_RAW));
 
-        // Make sure exception is triggered when some params are missing, hide error notices here - new in 2.2.
-        $_POST['username'] = 'post_user';
-        try {
-            optional_param('username', 'default_user', null);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
-        try {
-            @optional_param('username', 'default_user');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            @optional_param('username');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            optional_param('', 'default_user', PARAM_RAW);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
-
         // Make sure warning is displayed if array submitted - TODO: throw exception in Moodle 2.3.
         $_POST['username'] = array('a'=>'a');
-        $this->assertSame($_POST['username'], optional_param('username', 'default_user', PARAM_RAW));
-        $this->assertDebuggingCalled();
+        try {
+            optional_param('username', 'default_user', PARAM_RAW);
+            $this->fail('coding_exception expected');
+        } catch (\coding_exception $e) {
+        }
     }
 
     public function test_optional_param_array() {
@@ -246,39 +216,6 @@ class moodlelib_test extends \advanced_testcase {
 
         unset($_GET['username']);
         $this->assertSame(array('a'=>'default_user'), optional_param_array('username', array('a'=>'default_user'), PARAM_RAW));
-
-        // Make sure exception is triggered when some params are missing, hide error notices here - new in 2.2.
-        $_POST['username'] = array('a'=>'post_user');
-        try {
-            optional_param_array('username', array('a'=>'default_user'), null);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
-        try {
-            @optional_param_array('username', array('a'=>'default_user'));
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            @optional_param_array('username');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            optional_param_array('', array('a'=>'default_user'), PARAM_RAW);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
 
         // Do not allow nested arrays.
         try {
@@ -316,34 +253,19 @@ class moodlelib_test extends \advanced_testcase {
             $this->assertInstanceOf('moodle_exception', $ex);
         }
 
-        // Make sure exception is triggered when some params are missing, hide error notices here - new in 2.2.
-        $_POST['username'] = 'post_user';
-        try {
-            @required_param('username');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            required_param('username', '');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
         try {
             required_param('', PARAM_RAW);
             $this->fail('coding_exception expected');
         } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
         }
 
         // Make sure warning is displayed if array submitted - TODO: throw exception in Moodle 2.3.
         $_POST['username'] = array('a'=>'a');
-        $this->assertSame($_POST['username'], required_param('username', PARAM_RAW));
-        $this->assertDebuggingCalled();
+        try {
+            required_param('username', PARAM_RAW);
+            $this->fail('coding_exception expected');
+        } catch (\coding_exception $e) {
+        }
     }
 
     public function test_required_param_array() {
@@ -355,30 +277,6 @@ class moodlelib_test extends \advanced_testcase {
 
         unset($_POST['username']);
         $this->assertSame($_GET['username'], required_param_array('username', PARAM_RAW));
-
-        // Make sure exception is triggered when some params are missing, hide error notices here - new in 2.2.
-        $_POST['username'] = array('a'=>'post_user');
-        try {
-            required_param_array('username', null);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
-        try {
-            @required_param_array('username');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            required_param_array('', PARAM_RAW);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
 
         // Do not allow nested arrays.
         try {
@@ -432,15 +330,6 @@ class moodlelib_test extends \advanced_testcase {
         } catch (\moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
         }
-        try {
-            @clean_param('x');
-            $this->fail('moodle_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('moodle_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
     }
 
     /**
@@ -458,15 +347,6 @@ class moodlelib_test extends \advanced_testcase {
             $this->fail('moodle_exception expected');
         } catch (\moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
-        }
-        try {
-            @clean_param_array(array('x'));
-            $this->fail('moodle_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('moodle_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
         }
 
         try {
@@ -681,7 +561,6 @@ class moodlelib_test extends \advanced_testcase {
      * @covers \clean_param
      */
     public function test_clean_param_text() {
-        $this->assertSame(PARAM_TEXT, PARAM_MULTILANG);
         // Standard.
         $this->assertSame('xx<lang lang="en">aa</lang><lang lang="yy">pp</lang>', clean_param('xx<lang lang="en">aa</lang><lang lang="yy">pp</lang>', PARAM_TEXT));
         $this->assertSame('<span lang="en" class="multilang">aa</span><span lang="xy" class="multilang">bb</span>', clean_param('<span lang="en" class="multilang">aa</span><span lang="xy" class="multilang">bb</span>', PARAM_TEXT));

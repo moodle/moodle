@@ -18,6 +18,8 @@ namespace core;
 
 use coding_exception;
 use core_text;
+use invalid_parameter_exception;
+use moodle_exception;
 
 /**
  * Parameter validation helpers for Moodle.
@@ -352,10 +354,230 @@ enum param: string {
 
         $methodname = "clean_param_value_{$this->value}";
         if (!method_exists(self::class, $methodname)) {
-            throw new coding_exception("Method not found for cleaning {$type}");
+            throw new coding_exception("Method not found for cleaning {$this->value}");
         }
 
         return $this->{$methodname}($value);
+    }
+
+    /**
+     * Returns a value for the named variable, taken from request arguments.
+     *
+     * This function should be used to initialise all required values
+     * in a script that are based on parameters.  Usually it will be
+     * used like this:
+     *    $id = param::INT->required_param('id');
+     *
+     *
+     * @param string $paramname the name of the page parameter we want
+     * @return mixed
+     * @throws moodle_exception
+     */
+    public function required_param(string $paramname): mixed {
+        return $this->clean($this->get_request_parameter($paramname, true));
+    }
+
+    /**
+     * Returns a particular array value for the named variable, taken from request arguments.
+     * If the parameter doesn't exist then an error is thrown because we require this variable.
+     *
+     * This function should be used to initialise all required values
+     * in a script that are based on parameters.  Usually it will be
+     * used like this:
+     *    $ids = required_param_array('ids', PARAM_INT);
+     *
+     * Note: arrays of arrays are not supported, only alphanumeric keys with _ and - are supported
+     *
+     * @param string $paramname the name of the page parameter we want
+     * @return array
+     * @throws moodle_exception
+     */
+    public function required_param_array(string $paramname): array {
+        $param = $this->get_request_parameter($paramname, true);
+
+        if (!is_array($param)) {
+            throw new \moodle_exception('missingparam', '', '', $paramname);
+        }
+
+        $result = [];
+        foreach ($param as $key => $value) {
+            if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
+                debugging(
+                    "Invalid key name in required_param_array() detected: {$key}, parameter: {$paramname}",
+                );
+                continue;
+            }
+            $result[$key] = $this->clean($value);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns a particular value for the named variable from the request arguments,
+     * otherwise returning a given default.
+     *
+     * This function should be used to initialise all optional values
+     * in a script that are based on parameters.  Usually it will be
+     * used like this:
+     *    $name = param::TEXT->optional_param('name', 'Fred');
+     *
+     * @param string $paramname the name of the page parameter we want
+     * @param mixed  $default the default value to return if nothing is found
+     * @return mixed
+     */
+    public function optional_param(string $paramname, mixed $default): mixed {
+        $param = $this->get_request_parameter($paramname, false);
+        if ($param === null) {
+            return $default;
+        }
+
+        return $this->clean($param);
+    }
+
+    /**
+     * Returns a particular array value for the named variable from the request arguments,
+     * otherwise returning a given default.
+     *
+     * This function should be used to initialise all optional values
+     * in a script that are based on parameters.  Usually it will be
+     * used like this:
+     *    $ids = param::INT->optional_param_arrayt('id', array());
+     *
+     * Note: arrays of arrays are not supported, only alphanumeric keys with _ and - are supported.
+     *
+     * @param string $paramname the name of the page parameter we want
+     * @param mixed $default the default value to return if nothing is found
+     * @return array
+     */
+    public function optional_param_array(string $paramname, mixed $default): mixed {
+        $param = $this->get_request_parameter($paramname, false);
+        if ($param === null) {
+            return $default;
+        }
+
+        if (!is_array($param)) {
+            debugging(
+                "optional_param_array() only expects array parameters: {$paramname}",
+            );
+            return $default;
+        }
+
+        $result = [];
+        foreach ($param as $key => $value) {
+            if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
+                debugging(
+                    "Invalid key name in optional_param_array() detected: {$key}, parameter: {$paramname}",
+                );
+                continue;
+            }
+            $result[$key] = $this->clean($value);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Returns a particular value for the named variable, taken from the POST, or GET params.
+     *
+     * Parameters are fetched from POST first, then GET.
+     *
+     * @param string $paramname
+     * @param bool $require
+     * @return mixed
+     * @throws moodle_exception If the parameter was not found and the value is required
+     */
+    private function get_request_parameter(
+        string $paramname,
+        bool $require,
+    ): mixed {
+        if (isset($_POST[$paramname])) {
+            return $_POST[$paramname];
+        } else if (isset($_GET[$paramname])) {
+            return $_GET[$paramname];
+        } else if ($require) {
+            throw new \moodle_exception('missingparam', '', '', $paramname);
+        }
+
+        return null;
+    }
+
+    /**
+     * Strict validation of parameter values, the values are only converted
+     * to requested PHP type. Internally it is using clean_param, the values
+     * before and after cleaning must be equal - otherwise
+     * an invalid_parameter_exception is thrown.
+     * Objects and classes are not accepted.
+     *
+     * @param mixed $param
+     * @param bool $allownull are nulls valid value?
+     * @param string $debuginfo optional debug information
+     * @return mixed the $param value converted to PHP type
+     * @throws invalid_parameter_exception if $param is not of given type
+     */
+    public function validate_param(
+        mixed $param,
+        bool $allownull = NULL_NOT_ALLOWED,
+        string $debuginfo = '',
+    ): mixed {
+        if (is_null($param)) {
+            if ($allownull == NULL_ALLOWED) {
+                return null;
+            } else {
+                throw new invalid_parameter_exception($debuginfo);
+            }
+        }
+        if (is_array($param) or is_object($param)) {
+            throw new invalid_parameter_exception($debuginfo);
+        }
+
+        $cleaned = $this->clean($param);
+
+        if ($this->canonical() === self::FLOAT) {
+            // Do not detect precision loss here.
+            if (is_float($param) or is_int($param)) {
+                // These always fit.
+            } else if (!is_numeric($param) or !preg_match('/^[\+-]?[0-9]*\.?[0-9]*(e[-+]?[0-9]+)?$/i', (string)$param)) {
+                throw new invalid_parameter_exception($debuginfo);
+            }
+        } else if ((string) $param !== (string) $cleaned) {
+            // Conversion to string is usually lossless.
+            throw new invalid_parameter_exception($debuginfo);
+        }
+
+        return $cleaned;
+    }
+
+    /**
+     * Makes sure array contains only the allowed types, this function does not validate array key names!
+     *
+     * <code>
+     * $options = param::INT->clean_param_array($options);
+     * </code>
+     *
+     * @param array|null $param the variable array we are cleaning
+     * @param bool $recursive clean recursive arrays
+     * @return array
+     * @throws coding_exception
+     */
+    public function clean_param_array(
+        ?array $param,
+        bool $recursive = false,
+    ) {
+        // Convert null to empty array.
+        $param = (array) $param;
+        foreach ($param as $key => $value) {
+            if (is_array($value)) {
+                if ($recursive) {
+                    $param[$key] = $this->clean_param_array($value, true);
+                } else {
+                    throw new coding_exception('clean_param_array can not process multidimensional arrays when $recursive is false.');
+                }
+            } else {
+                $param[$key] = $this->clean($value);
+            }
+        }
+        return $param;
     }
 
     /**

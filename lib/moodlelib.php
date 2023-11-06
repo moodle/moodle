@@ -612,25 +612,7 @@ define('MAX_PASSWORD_CHARACTERS', 128);
  * @throws coding_exception
  */
 function required_param($parname, $type) {
-    if (func_num_args() != 2 or empty($parname) or empty($type)) {
-        throw new coding_exception('required_param() requires $parname and $type to be specified (parameter: '.$parname.')');
-    }
-    // POST has precedence.
-    if (isset($_POST[$parname])) {
-        $param = $_POST[$parname];
-    } else if (isset($_GET[$parname])) {
-        $param = $_GET[$parname];
-    } else {
-        throw new \moodle_exception('missingparam', '', '', $parname);
-    }
-
-    if (is_array($param)) {
-        debugging('Invalid array parameter detected in required_param(): '.$parname);
-        // TODO: switch to fatal error in Moodle 2.3.
-        return required_param_array($parname, $type);
-    }
-
-    return clean_param($param, $type);
+    return \core\param::from_type($type)->required_param($parname);
 }
 
 /**
@@ -651,31 +633,7 @@ function required_param($parname, $type) {
  * @throws coding_exception
  */
 function required_param_array($parname, $type) {
-    if (func_num_args() != 2 or empty($parname) or empty($type)) {
-        throw new coding_exception('required_param_array() requires $parname and $type to be specified (parameter: '.$parname.')');
-    }
-    // POST has precedence.
-    if (isset($_POST[$parname])) {
-        $param = $_POST[$parname];
-    } else if (isset($_GET[$parname])) {
-        $param = $_GET[$parname];
-    } else {
-        throw new \moodle_exception('missingparam', '', '', $parname);
-    }
-    if (!is_array($param)) {
-        throw new \moodle_exception('missingparam', '', '', $parname);
-    }
-
-    $result = array();
-    foreach ($param as $key => $value) {
-        if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
-            debugging('Invalid key name in required_param_array() detected: '.$key.', parameter: '.$parname);
-            continue;
-        }
-        $result[$key] = clean_param($value, $type);
-    }
-
-    return $result;
+    return \core\param::from_type($type)->required_param_array($parname);
 }
 
 /**
@@ -696,26 +654,10 @@ function required_param_array($parname, $type) {
  * @throws coding_exception
  */
 function optional_param($parname, $default, $type) {
-    if (func_num_args() != 3 or empty($parname) or empty($type)) {
-        throw new coding_exception('optional_param requires $parname, $default + $type to be specified (parameter: '.$parname.')');
-    }
-
-    // POST has precedence.
-    if (isset($_POST[$parname])) {
-        $param = $_POST[$parname];
-    } else if (isset($_GET[$parname])) {
-        $param = $_GET[$parname];
-    } else {
-        return $default;
-    }
-
-    if (is_array($param)) {
-        debugging('Invalid array parameter detected in required_param(): '.$parname);
-        // TODO: switch to $default in Moodle 2.3.
-        return optional_param_array($parname, $default, $type);
-    }
-
-    return clean_param($param, $type);
+    return \core\param::from_type($type)->optional_param(
+        paramname: $parname,
+        default: $default,
+    );
 }
 
 /**
@@ -736,33 +678,10 @@ function optional_param($parname, $default, $type) {
  * @throws coding_exception
  */
 function optional_param_array($parname, $default, $type) {
-    if (func_num_args() != 3 or empty($parname) or empty($type)) {
-        throw new coding_exception('optional_param_array requires $parname, $default + $type to be specified (parameter: '.$parname.')');
-    }
-
-    // POST has precedence.
-    if (isset($_POST[$parname])) {
-        $param = $_POST[$parname];
-    } else if (isset($_GET[$parname])) {
-        $param = $_GET[$parname];
-    } else {
-        return $default;
-    }
-    if (!is_array($param)) {
-        debugging('optional_param_array() expects array parameters only: '.$parname);
-        return $default;
-    }
-
-    $result = array();
-    foreach ($param as $key => $value) {
-        if (!preg_match('/^[a-z0-9_-]+$/i', $key)) {
-            debugging('Invalid key name in optional_param_array() detected: '.$key.', parameter: '.$parname);
-            continue;
-        }
-        $result[$key] = clean_param($value, $type);
-    }
-
-    return $result;
+    return \core\param::from_type($type)->optional_param_array(
+        paramname: $parname,
+        default: $default,
+    );
 }
 
 /**
@@ -779,33 +698,12 @@ function optional_param_array($parname, $default, $type) {
  * @return mixed the $param value converted to PHP type
  * @throws invalid_parameter_exception if $param is not of given type
  */
-function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='') {
-    if (is_null($param)) {
-        if ($allownull == NULL_ALLOWED) {
-            return null;
-        } else {
-            throw new invalid_parameter_exception($debuginfo);
-        }
-    }
-    if (is_array($param) or is_object($param)) {
-        throw new invalid_parameter_exception($debuginfo);
-    }
-
-    $cleaned = clean_param($param, $type);
-
-    if ($type == PARAM_FLOAT) {
-        // Do not detect precision loss here.
-        if (is_float($param) or is_int($param)) {
-            // These always fit.
-        } else if (!is_numeric($param) or !preg_match('/^[\+-]?[0-9]*\.?[0-9]*(e[-+]?[0-9]+)?$/i', (string)$param)) {
-            throw new invalid_parameter_exception($debuginfo);
-        }
-    } else if ((string)$param !== (string)$cleaned) {
-        // Conversion to string is usually lossless.
-        throw new invalid_parameter_exception($debuginfo);
-    }
-
-    return $cleaned;
+function validate_param($param, $type, $allownull = NULL_NOT_ALLOWED, $debuginfo = '') {
+    return \core\param::from_type($type)->validate_param(
+        param: $param,
+        allownull: $allownull,
+        debuginfo: $debuginfo,
+    );
 }
 
 /**
@@ -822,20 +720,10 @@ function validate_param($param, $type, $allownull=NULL_NOT_ALLOWED, $debuginfo='
  * @throws coding_exception
  */
 function clean_param_array(?array $param, $type, $recursive = false) {
-    // Convert null to empty array.
-    $param = (array)$param;
-    foreach ($param as $key => $value) {
-        if (is_array($value)) {
-            if ($recursive) {
-                $param[$key] = clean_param_array($value, $type, true);
-            } else {
-                throw new coding_exception('clean_param_array can not process multidimensional arrays when $recursive is false.');
-            }
-        } else {
-            $param[$key] = clean_param($value, $type);
-        }
-    }
-    return $param;
+    return \core\param::from_type($type)->clean_param_array(
+        param: $param,
+        recursive: $recursive,
+    );
 }
 
 /**
