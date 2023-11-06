@@ -71,47 +71,51 @@ define('HOURMINS', 60);
 // Parameter constants - every call to optional_param(), required_param()
 // or clean_param() should have a specified type of parameter.
 
+// We currently include \core\param manually here to avoid broken upgrades.
+// This may change after the next LTS release as LTS releases require the previous LTS release.
+require_once(__DIR__ . '/classes/param.php');
+
 /**
  * PARAM_ALPHA - contains only English ascii letters [a-zA-Z].
  */
-define('PARAM_ALPHA',    'alpha');
+define('PARAM_ALPHA', \core\param::ALPHA->value);
 
 /**
  * PARAM_ALPHAEXT the same contents as PARAM_ALPHA (English ascii letters [a-zA-Z]) plus the chars in quotes: "_-" allowed
  * NOTE: originally this allowed "/" too, please use PARAM_SAFEPATH if "/" needed
  */
-define('PARAM_ALPHAEXT', 'alphaext');
+define('PARAM_ALPHAEXT', \core\param::ALPHAEXT->value);
 
 /**
  * PARAM_ALPHANUM - expected numbers 0-9 and English ascii letters [a-zA-Z] only.
  */
-define('PARAM_ALPHANUM', 'alphanum');
+define('PARAM_ALPHANUM', \core\param::ALPHANUM->value);
 
 /**
  * PARAM_ALPHANUMEXT - expected numbers 0-9, letters (English ascii letters [a-zA-Z]) and _- only.
  */
-define('PARAM_ALPHANUMEXT', 'alphanumext');
+define('PARAM_ALPHANUMEXT', \core\param::ALPHANUMEXT->value);
 
 /**
  * PARAM_AUTH - actually checks to make sure the string is a valid auth plugin
  */
-define('PARAM_AUTH',  'auth');
+define('PARAM_AUTH', \core\param::AUTH->value);
 
 /**
  * PARAM_BASE64 - Base 64 encoded format
  */
-define('PARAM_BASE64',   'base64');
+define('PARAM_BASE64', \core\param::BASE64->value);
 
 /**
  * PARAM_BOOL - converts input into 0 or 1, use for switches in forms and urls.
  */
-define('PARAM_BOOL',     'bool');
+define('PARAM_BOOL', \core\param::BOOL->value);
 
 /**
  * PARAM_CAPABILITY - A capability name, like 'moodle/role:manage'. Actually
  * checked against the list of capabilities in the database.
  */
-define('PARAM_CAPABILITY',   'capability');
+define('PARAM_CAPABILITY', \core\param::CAPABILITY->value);
 
 /**
  * PARAM_CLEANHTML - cleans submitted HTML code. Note that you almost never want
@@ -120,17 +124,17 @@ define('PARAM_CAPABILITY',   'capability');
  * using format_text on output. This is for the rare cases when you want to
  * sanitise the HTML on input. This cleaning may also fix xhtml strictness.
  */
-define('PARAM_CLEANHTML', 'cleanhtml');
+define('PARAM_CLEANHTML', \core\param::CLEANHTML->value);
 
 /**
  * PARAM_EMAIL - an email address following the RFC
  */
-define('PARAM_EMAIL',   'email');
+define('PARAM_EMAIL', \core\param::EMAIL->value);
 
 /**
  * PARAM_FILE - safe file name, all dangerous chars are stripped, protects against XSS, SQL injections and directory traversals
  */
-define('PARAM_FILE',   'file');
+define('PARAM_FILE', \core\param::FILE->value);
 
 /**
  * PARAM_FLOAT - a real/floating point number.
@@ -139,71 +143,71 @@ define('PARAM_FILE',   'file');
  * It does not work for languages that use , as a decimal separator.
  * Use PARAM_LOCALISEDFLOAT instead.
  */
-define('PARAM_FLOAT',  'float');
+define('PARAM_FLOAT', \core\param::FLOAT->value);
 
 /**
  * PARAM_LOCALISEDFLOAT - a localised real/floating point number.
  * This is preferred over PARAM_FLOAT for numbers typed in by the user.
  * Cleans localised numbers to computer readable numbers; false for invalid numbers.
  */
-define('PARAM_LOCALISEDFLOAT',  'localisedfloat');
+define('PARAM_LOCALISEDFLOAT', \core\param::LOCALISEDFLOAT->value);
 
 /**
  * PARAM_HOST - expected fully qualified domain name (FQDN) or an IPv4 dotted quad (IP address)
  */
-define('PARAM_HOST',     'host');
+define('PARAM_HOST', \core\param::HOST->value);
 
 /**
  * PARAM_INT - integers only, use when expecting only numbers.
  */
-define('PARAM_INT',      'int');
+define('PARAM_INT', \core\param::INT->value);
 
 /**
  * PARAM_LANG - checks to see if the string is a valid installed language in the current site.
  */
-define('PARAM_LANG',  'lang');
+define('PARAM_LANG', \core\param::LANG->value);
 
 /**
  * PARAM_LOCALURL - expected properly formatted URL as well as one that refers to the local server itself. (NOT orthogonal to the
  * others! Implies PARAM_URL!)
  */
-define('PARAM_LOCALURL', 'localurl');
+define('PARAM_LOCALURL', \core\param::LOCALURL->value);
 
 /**
  * PARAM_NOTAGS - all html tags are stripped from the text. Do not abuse this type.
  */
-define('PARAM_NOTAGS',   'notags');
+define('PARAM_NOTAGS', \core\param::NOTAGS->value);
 
 /**
  * PARAM_PATH - safe relative path name, all dangerous chars are stripped, protects against XSS, SQL injections and directory
  * traversals note: the leading slash is not removed, window drive letter is not allowed
  */
-define('PARAM_PATH',     'path');
+define('PARAM_PATH', \core\param::PATH->value);
 
 /**
  * PARAM_PEM - Privacy Enhanced Mail format
  */
-define('PARAM_PEM',      'pem');
+define('PARAM_PEM', \core\param::PEM->value);
 
 /**
  * PARAM_PERMISSION - A permission, one of CAP_INHERIT, CAP_ALLOW, CAP_PREVENT or CAP_PROHIBIT.
  */
-define('PARAM_PERMISSION',   'permission');
+define('PARAM_PERMISSION', \core\param::PERMISSION->value);
 
 /**
  * PARAM_RAW specifies a parameter that is not cleaned/processed in any way except the discarding of the invalid utf-8 characters
  */
-define('PARAM_RAW', 'raw');
+define('PARAM_RAW', \core\param::RAW->value);
 
 /**
  * PARAM_RAW_TRIMMED like PARAM_RAW but leading and trailing whitespace is stripped.
  */
-define('PARAM_RAW_TRIMMED', 'raw_trimmed');
+define('PARAM_RAW_TRIMMED', \core\param::RAW_TRIMMED->value);
 
 /**
  * PARAM_SAFEDIR - safe directory name, suitable for include() and require()
  */
-define('PARAM_SAFEDIR',  'safedir');
+define('PARAM_SAFEDIR', \core\param::SAFEDIR->value);
 
 /**
  * PARAM_SAFEPATH - several PARAM_SAFEDIR joined by "/", suitable for include() and require(), plugin paths
@@ -211,49 +215,49 @@ define('PARAM_SAFEDIR',  'safedir');
  *
  * This is NOT intended to be used for absolute paths or any user uploaded files.
  */
-define('PARAM_SAFEPATH',  'safepath');
+define('PARAM_SAFEPATH', \core\param::SAFEPATH->value);
 
 /**
  * PARAM_SEQUENCE - expects a sequence of numbers like 8 to 1,5,6,4,6,8,9.  Numbers and comma only.
  */
-define('PARAM_SEQUENCE',  'sequence');
+define('PARAM_SEQUENCE', \core\param::SEQUENCE->value);
 
 /**
  * PARAM_TAG - one tag (interests, blogs, etc.) - mostly international characters and space, <> not supported
  */
-define('PARAM_TAG',   'tag');
+define('PARAM_TAG', \core\param::TAG->value);
 
 /**
  * PARAM_TAGLIST - list of tags separated by commas (interests, blogs, etc.)
  */
-define('PARAM_TAGLIST',   'taglist');
+define('PARAM_TAGLIST', \core\param::TAGLIST->value);
 
 /**
  * PARAM_TEXT - general plain text compatible with multilang filter, no other html tags. Please note '<', or '>' are allowed here.
  */
-define('PARAM_TEXT',  'text');
+define('PARAM_TEXT', \core\param::TEXT->value);
 
 /**
  * PARAM_THEME - Checks to see if the string is a valid theme name in the current site
  */
-define('PARAM_THEME',  'theme');
+define('PARAM_THEME', \core\param::THEME->value);
 
 /**
  * PARAM_URL - expected properly formatted URL. Please note that domain part is required, http://localhost/ is not accepted but
  * http://localhost.localdomain/ is ok.
  */
-define('PARAM_URL',      'url');
+define('PARAM_URL', \core\param::URL->value);
 
 /**
  * PARAM_USERNAME - Clean username to only contains allowed characters. This is to be used ONLY when manually creating user
  * accounts, do NOT use when syncing with external systems!!
  */
-define('PARAM_USERNAME',    'username');
+define('PARAM_USERNAME', \core\param::USERNAME->value);
 
 /**
  * PARAM_STRINGID - used to check if the given string is valid string identifier for get_string()
  */
-define('PARAM_STRINGID',    'stringid');
+define('PARAM_STRINGID', \core\param::STRINGID->value);
 
 // DEPRECATED PARAM TYPES OR ALIASES - DO NOT USE FOR NEW CODE.
 /**
@@ -261,51 +265,51 @@ define('PARAM_STRINGID',    'stringid');
  * It was one of the first types, that is why it is abused so much ;-)
  * @deprecated since 2.0
  */
-define('PARAM_CLEAN',    'clean');
+define('PARAM_CLEAN', \core\param::CLEAN->value);
 
 /**
  * PARAM_INTEGER - deprecated alias for PARAM_INT
  * @deprecated since 2.0
  */
-define('PARAM_INTEGER',  'int');
+define('PARAM_INTEGER', \core\param::INT->value);
 
 /**
  * PARAM_NUMBER - deprecated alias of PARAM_FLOAT
  * @deprecated since 2.0
  */
-define('PARAM_NUMBER',  'float');
+define('PARAM_NUMBER', \core\param::FLOAT->value);
 
 /**
  * PARAM_ACTION - deprecated alias for PARAM_ALPHANUMEXT, use for various actions in forms and urls
  * NOTE: originally alias for PARAM_APLHA
  * @deprecated since 2.0
  */
-define('PARAM_ACTION',   'alphanumext');
+define('PARAM_ACTION', \core\param::ALPHANUMEXT->value);
 
 /**
  * PARAM_FORMAT - deprecated alias for PARAM_ALPHANUMEXT, use for names of plugins, formats, etc.
  * NOTE: originally alias for PARAM_APLHA
  * @deprecated since 2.0
  */
-define('PARAM_FORMAT',   'alphanumext');
+define('PARAM_FORMAT', \core\param::ALPHANUMEXT->value);
 
 /**
  * PARAM_MULTILANG - deprecated alias of PARAM_TEXT.
  * @deprecated since 2.0
  */
-define('PARAM_MULTILANG',  'text');
+define('PARAM_MULTILANG', \core\param::TEXT->value);
 
 /**
  * PARAM_TIMEZONE - expected timezone. Timezone can be int +-(0-13) or float +-(0.5-12.5) or
  * string separated by '/' and can have '-' &/ '_' (eg. America/North_Dakota/New_Salem
  * America/Port-au-Prince)
  */
-define('PARAM_TIMEZONE', 'timezone');
+define('PARAM_TIMEZONE', \core\param::TIMEZONE->value);
 
 /**
  * PARAM_CLEANFILE - deprecated alias of PARAM_FILE; originally was removing regional chars too
  */
-define('PARAM_CLEANFILE', 'file');
+define('PARAM_CLEANFILE', \core\param::CLEANFILE->value);
 
 /**
  * PARAM_COMPONENT is used for full component names (aka frankenstyle) such as 'mod_forum', 'core_rating', 'auth_ldap'.
@@ -313,21 +317,21 @@ define('PARAM_CLEANFILE', 'file');
  * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
  * NOTE: numbers and underscores are strongly discouraged in plugin names!
  */
-define('PARAM_COMPONENT', 'component');
+define('PARAM_COMPONENT', \core\param::COMPONENT->value);
 
 /**
  * PARAM_AREA is a name of area used when addressing files, comments, ratings, etc.
  * It is usually used together with context id and component.
  * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
  */
-define('PARAM_AREA', 'area');
+define('PARAM_AREA', \core\param::AREA->value);
 
 /**
  * PARAM_PLUGIN is used for plugin names such as 'forum', 'glossary', 'ldap', 'paypal', 'completionstatus'.
  * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
  * NOTE: numbers and underscores are strongly discouraged in plugin names! Underscores are forbidden in module names.
  */
-define('PARAM_PLUGIN', 'plugin');
+define('PARAM_PLUGIN', \core\param::PLUGIN->value);
 
 
 // Web Services.
@@ -849,447 +853,7 @@ function clean_param_array(?array $param, $type, $recursive = false) {
  * @throws coding_exception
  */
 function clean_param($param, $type) {
-    global $CFG;
-
-    if (is_array($param)) {
-        throw new coding_exception('clean_param() can not process arrays, please use clean_param_array() instead.');
-    } else if (is_object($param)) {
-        if (method_exists($param, '__toString')) {
-            $param = $param->__toString();
-        } else {
-            throw new coding_exception('clean_param() can not process objects, please use clean_param_array() instead.');
-        }
-    }
-
-    switch ($type) {
-        case PARAM_RAW:
-            // No cleaning at all.
-            $param = fix_utf8($param);
-            return $param;
-
-        case PARAM_RAW_TRIMMED:
-            // No cleaning, but strip leading and trailing whitespace.
-            $param = (string)fix_utf8($param);
-            return trim($param);
-
-        case PARAM_CLEAN:
-            // General HTML cleaning, try to use more specific type if possible this is deprecated!
-            // Please use more specific type instead.
-            if (is_numeric($param)) {
-                return $param;
-            }
-            $param = fix_utf8($param);
-            // Sweep for scripts, etc.
-            return clean_text($param);
-
-        case PARAM_CLEANHTML:
-            // Clean html fragment.
-            $param = (string)fix_utf8($param);
-            // Sweep for scripts, etc.
-            $param = clean_text($param, FORMAT_HTML);
-            return trim($param);
-
-        case PARAM_INT:
-            // Convert to integer.
-            return (int)$param;
-
-        case PARAM_FLOAT:
-            // Convert to float.
-            return (float)$param;
-
-        case PARAM_LOCALISEDFLOAT:
-            // Convert to float.
-            return unformat_float($param, true);
-
-        case PARAM_ALPHA:
-            // Remove everything not `a-z`.
-            return preg_replace('/[^a-zA-Z]/i', '', (string)$param);
-
-        case PARAM_ALPHAEXT:
-            // Remove everything not `a-zA-Z_-` (originally allowed "/" too).
-            return preg_replace('/[^a-zA-Z_-]/i', '', (string)$param);
-
-        case PARAM_ALPHANUM:
-            // Remove everything not `a-zA-Z0-9`.
-            return preg_replace('/[^A-Za-z0-9]/i', '', (string)$param);
-
-        case PARAM_ALPHANUMEXT:
-            // Remove everything not `a-zA-Z0-9_-`.
-            return preg_replace('/[^A-Za-z0-9_-]/i', '', (string)$param);
-
-        case PARAM_SEQUENCE:
-            // Remove everything not `0-9,`.
-            return preg_replace('/[^0-9,]/i', '', (string)$param);
-
-        case PARAM_BOOL:
-            // Convert to 1 or 0.
-            $tempstr = strtolower((string)$param);
-            if ($tempstr === 'on' or $tempstr === 'yes' or $tempstr === 'true') {
-                $param = 1;
-            } else if ($tempstr === 'off' or $tempstr === 'no'  or $tempstr === 'false') {
-                $param = 0;
-            } else {
-                $param = empty($param) ? 0 : 1;
-            }
-            return $param;
-
-        case PARAM_NOTAGS:
-            // Strip all tags.
-            $param = fix_utf8($param);
-            return strip_tags((string)$param);
-
-        case PARAM_TEXT:
-            // Leave only tags needed for multilang.
-            $param = fix_utf8($param);
-            // If the multilang syntax is not correct we strip all tags because it would break xhtml strict which is required
-            // for accessibility standards please note this cleaning does not strip unbalanced '>' for BC compatibility reasons.
-            do {
-                if (strpos((string)$param, '</lang>') !== false) {
-                    // Old and future mutilang syntax.
-                    $param = strip_tags($param, '<lang>');
-                    if (!preg_match_all('/<.*>/suU', $param, $matches)) {
-                        break;
-                    }
-                    $open = false;
-                    foreach ($matches[0] as $match) {
-                        if ($match === '</lang>') {
-                            if ($open) {
-                                $open = false;
-                                continue;
-                            } else {
-                                break 2;
-                            }
-                        }
-                        if (!preg_match('/^<lang lang="[a-zA-Z0-9_-]+"\s*>$/u', $match)) {
-                            break 2;
-                        } else {
-                            $open = true;
-                        }
-                    }
-                    if ($open) {
-                        break;
-                    }
-                    return $param;
-
-                } else if (strpos((string)$param, '</span>') !== false) {
-                    // Current problematic multilang syntax.
-                    $param = strip_tags($param, '<span>');
-                    if (!preg_match_all('/<.*>/suU', $param, $matches)) {
-                        break;
-                    }
-                    $open = false;
-                    foreach ($matches[0] as $match) {
-                        if ($match === '</span>') {
-                            if ($open) {
-                                $open = false;
-                                continue;
-                            } else {
-                                break 2;
-                            }
-                        }
-                        if (!preg_match('/^<span(\s+lang="[a-zA-Z0-9_-]+"|\s+class="multilang"){2}\s*>$/u', $match)) {
-                            break 2;
-                        } else {
-                            $open = true;
-                        }
-                    }
-                    if ($open) {
-                        break;
-                    }
-                    return $param;
-                }
-            } while (false);
-            // Easy, just strip all tags, if we ever want to fix orphaned '&' we have to do that in format_string().
-            return strip_tags((string)$param);
-
-        case PARAM_COMPONENT:
-            // We do not want any guessing here, either the name is correct or not
-            // please note only normalised component names are accepted.
-            $param = (string)$param;
-            if (!preg_match('/^[a-z][a-z0-9]*(_[a-z][a-z0-9_]*)?[a-z0-9]+$/', $param)) {
-                return '';
-            }
-            if (strpos($param, '__') !== false) {
-                return '';
-            }
-            if (strpos($param, 'mod_') === 0) {
-                // Module names must not contain underscores because we need to differentiate them from invalid plugin types.
-                if (substr_count($param, '_') != 1) {
-                    return '';
-                }
-            }
-            return $param;
-
-        case PARAM_PLUGIN:
-        case PARAM_AREA:
-            // We do not want any guessing here, either the name is correct or not.
-            if (!is_valid_plugin_name($param)) {
-                return '';
-            }
-            return $param;
-
-        case PARAM_SAFEDIR:
-            // Remove everything not a-zA-Z0-9_- .
-            return preg_replace('/[^a-zA-Z0-9_-]/i', '', (string)$param);
-
-        case PARAM_SAFEPATH:
-            // Remove everything not a-zA-Z0-9/_- .
-            return preg_replace('/[^a-zA-Z0-9\/_-]/i', '', (string)$param);
-
-        case PARAM_FILE:
-            // Strip all suspicious characters from filename.
-            $param = (string)fix_utf8($param);
-            $param = preg_replace('~[[:cntrl:]]|[&<>"`\|\':\\\\/]~u', '', $param);
-            if ($param === '.' || $param === '..') {
-                $param = '';
-            }
-            return $param;
-
-        case PARAM_PATH:
-            // Strip all suspicious characters from file path.
-            $param = (string)fix_utf8($param);
-            $param = str_replace('\\', '/', $param);
-
-            // Explode the path and clean each element using the PARAM_FILE rules.
-            $breadcrumb = explode('/', $param);
-            foreach ($breadcrumb as $key => $crumb) {
-                if ($crumb === '.' && $key === 0) {
-                    // Special condition to allow for relative current path such as ./currentdirfile.txt.
-                } else {
-                    $crumb = clean_param($crumb, PARAM_FILE);
-                }
-                $breadcrumb[$key] = $crumb;
-            }
-            $param = implode('/', $breadcrumb);
-
-            // Remove multiple current path (./././) and multiple slashes (///).
-            $param = preg_replace('~//+~', '/', $param);
-            $param = preg_replace('~/(\./)+~', '/', $param);
-            return $param;
-
-        case PARAM_HOST:
-            // Allow FQDN or IPv4 dotted quad.
-            $param = preg_replace('/[^\.\d\w-]/', '', (string)$param );
-            // Match ipv4 dotted quad.
-            if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/', $param, $match)) {
-                // Confirm values are ok.
-                if ( $match[0] > 255
-                     || $match[1] > 255
-                     || $match[3] > 255
-                     || $match[4] > 255 ) {
-                    // Hmmm, what kind of dotted quad is this?
-                    $param = '';
-                }
-            } else if ( preg_match('/^[\w\d\.-]+$/', $param) // Dots, hyphens, numbers.
-                       && !preg_match('/^[\.-]/',  $param) // No leading dots/hyphens.
-                       && !preg_match('/[\.-]$/',  $param) // No trailing dots/hyphens.
-                       ) {
-                // All is ok - $param is respected.
-            } else {
-                // All is not ok...
-                $param='';
-            }
-            return $param;
-
-        case PARAM_URL:
-            // Allow safe urls.
-            $param = (string)fix_utf8($param);
-            include_once($CFG->dirroot . '/lib/validateurlsyntax.php');
-            if (!empty($param) && validateUrlSyntax($param, 's?H?S?F?E-u-P-a?I?p?f?q?r?')) {
-                // All is ok, param is respected.
-            } else {
-                // Not really ok.
-                $param ='';
-            }
-            return $param;
-
-        case PARAM_LOCALURL:
-            // Allow http absolute, root relative and relative URLs within wwwroot.
-            $param = clean_param($param, PARAM_URL);
-            if (!empty($param)) {
-
-                if ($param === $CFG->wwwroot) {
-                    // Exact match;
-                } else if (preg_match(':^/:', $param)) {
-                    // Root-relative, ok!
-                } else if (preg_match('/^' . preg_quote($CFG->wwwroot . '/', '/') . '/i', $param)) {
-                    // Absolute, and matches our wwwroot.
-                } else {
-
-                    // Relative - let's make sure there are no tricks.
-                    if (validateUrlSyntax('/' . $param, 's-u-P-a-p-f+q?r?') && !preg_match('/javascript:/i', $param)) {
-                        // Looks ok.
-                    } else {
-                        $param = '';
-                    }
-                }
-            }
-            return $param;
-
-        case PARAM_PEM:
-            $param = trim((string)$param);
-            // PEM formatted strings may contain letters/numbers and the symbols:
-            //   forward slash: /
-            //   plus sign:     +
-            //   equal sign:    =
-            //   , surrounded by BEGIN and END CERTIFICATE prefix and suffixes.
-            if (preg_match('/^-----BEGIN CERTIFICATE-----([\s\w\/\+=]+)-----END CERTIFICATE-----$/', trim($param), $matches)) {
-                list($wholething, $body) = $matches;
-                unset($wholething, $matches);
-                $b64 = clean_param($body, PARAM_BASE64);
-                if (!empty($b64)) {
-                    return "-----BEGIN CERTIFICATE-----\n$b64\n-----END CERTIFICATE-----\n";
-                } else {
-                    return '';
-                }
-            }
-            return '';
-
-        case PARAM_BASE64:
-            if (!empty($param)) {
-                // PEM formatted strings may contain letters/numbers and the symbols
-                //   forward slash: /
-                //   plus sign:     +
-                //   equal sign:    =.
-                if (0 >= preg_match('/^([\s\w\/\+=]+)$/', trim($param))) {
-                    return '';
-                }
-                $lines = preg_split('/[\s]+/', $param, -1, PREG_SPLIT_NO_EMPTY);
-                // Each line of base64 encoded data must be 64 characters in length, except for the last line which may be less
-                // than (or equal to) 64 characters long.
-                for ($i=0, $j=count($lines); $i < $j; $i++) {
-                    if ($i + 1 == $j) {
-                        if (64 < strlen($lines[$i])) {
-                            return '';
-                        }
-                        continue;
-                    }
-
-                    if (64 != strlen($lines[$i])) {
-                        return '';
-                    }
-                }
-                return implode("\n", $lines);
-            } else {
-                return '';
-            }
-
-        case PARAM_TAG:
-            $param = (string)fix_utf8($param);
-            // Please note it is not safe to use the tag name directly anywhere,
-            // it must be processed with s(), urlencode() before embedding anywhere.
-            // Remove some nasties.
-            $param = preg_replace('~[[:cntrl:]]|[<>`]~u', '', $param);
-            // Convert many whitespace chars into one.
-            $param = preg_replace('/\s+/u', ' ', $param);
-            $param = core_text::substr(trim($param), 0, TAG_MAX_LENGTH);
-            return $param;
-
-        case PARAM_TAGLIST:
-            $param = (string)fix_utf8($param);
-            $tags = explode(',', $param);
-            $result = array();
-            foreach ($tags as $tag) {
-                $res = clean_param($tag, PARAM_TAG);
-                if ($res !== '') {
-                    $result[] = $res;
-                }
-            }
-            if ($result) {
-                return implode(',', $result);
-            } else {
-                return '';
-            }
-
-        case PARAM_CAPABILITY:
-            if (get_capability_info($param)) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        case PARAM_PERMISSION:
-            $param = (int)$param;
-            if (in_array($param, array(CAP_INHERIT, CAP_ALLOW, CAP_PREVENT, CAP_PROHIBIT))) {
-                return $param;
-            } else {
-                return CAP_INHERIT;
-            }
-
-        case PARAM_AUTH:
-            $param = clean_param($param, PARAM_PLUGIN);
-            if (empty($param)) {
-                return '';
-            } else if (exists_auth_plugin($param)) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        case PARAM_LANG:
-            $param = clean_param($param, PARAM_SAFEDIR);
-            if (get_string_manager()->translation_exists($param)) {
-                return $param;
-            } else {
-                // Specified language is not installed or param malformed.
-                return '';
-            }
-
-        case PARAM_THEME:
-            $param = clean_param($param, PARAM_PLUGIN);
-            if (empty($param)) {
-                return '';
-            } else if (file_exists("$CFG->dirroot/theme/$param/config.php")) {
-                return $param;
-            } else if (!empty($CFG->themedir) and file_exists("$CFG->themedir/$param/config.php")) {
-                return $param;
-            } else {
-                // Specified theme is not installed.
-                return '';
-            }
-
-        case PARAM_USERNAME:
-            $param = (string)fix_utf8($param);
-            $param = trim($param);
-            // Convert uppercase to lowercase MDL-16919.
-            $param = core_text::strtolower($param);
-            if (empty($CFG->extendedusernamechars)) {
-                $param = str_replace(" " , "", $param);
-                // Regular expression, eliminate all chars EXCEPT:
-                // alphanum, dash (-), underscore (_), at sign (@) and period (.) characters.
-                $param = preg_replace('/[^-\.@_a-z0-9]/', '', $param);
-            }
-            return $param;
-
-        case PARAM_EMAIL:
-            $param = fix_utf8($param);
-            if (validate_email($param ?? '')) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        case PARAM_STRINGID:
-            if (preg_match('|^[a-zA-Z][a-zA-Z0-9\.:/_-]*$|', (string)$param)) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        case PARAM_TIMEZONE:
-            // Can be int, float(with .5 or .0) or string seperated by '/' and can have '-_'.
-            $param = (string)fix_utf8($param);
-            $timezonepattern = '/^(([+-]?(0?[0-9](\.[5|0])?|1[0-3](\.0)?|1[0-2]\.5))|(99)|[[:alnum:]]+(\/?[[:alpha:]_-])+)$/';
-            if (preg_match($timezonepattern, $param)) {
-                return $param;
-            } else {
-                return '';
-            }
-
-        default:
-            // Doh! throw error, switched parameters in optional_param or another serious problem.
-            throw new \moodle_exception("unknownparamtype", '', '', $type);
-    }
+    return \core\param::from_type($type)->clean($param);
 }
 
 /**

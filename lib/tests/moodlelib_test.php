@@ -404,6 +404,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertDebuggingCalled();
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param() {
         // Forbid objects and arrays.
         try {
@@ -439,6 +443,10 @@ class moodlelib_test extends \advanced_testcase {
         }
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_array() {
         $this->assertSame(array(), clean_param_array(null, PARAM_RAW));
         $this->assertSame(array('a', 'b'), clean_param_array(array('a', 'b'), PARAM_RAW));
@@ -471,6 +479,10 @@ class moodlelib_test extends \advanced_testcase {
         // Test recursive.
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_raw() {
         $this->assertSame(
             '#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)',
@@ -478,11 +490,19 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame(null, clean_param(null, PARAM_RAW));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_trim() {
         $this->assertSame('Frog toad', clean_param("   Frog toad   \r\n  ", PARAM_RAW_TRIMMED));
         $this->assertSame('', clean_param(null, PARAM_RAW_TRIMMED));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_clean() {
         // PARAM_CLEAN is an ugly hack, do not use in new code (skodak),
         // instead use more specific type, or submit sothing that can be verified properly.
@@ -491,26 +511,46 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_CLEANHTML));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_alpha() {
         $this->assertSame('DSFMOSDJ', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_ALPHA));
         $this->assertSame('', clean_param(null, PARAM_ALPHA));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_alphanum() {
         $this->assertSame('978942897DSFMOSDJ', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_ALPHANUM));
         $this->assertSame('', clean_param(null, PARAM_ALPHANUM));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_alphaext() {
         $this->assertSame('DSFMOSDJ', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_ALPHAEXT));
         $this->assertSame('', clean_param(null, PARAM_ALPHAEXT));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_sequence() {
         $this->assertSame(',9789,42897', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_SEQUENCE));
         $this->assertSame('', clean_param(null, PARAM_SEQUENCE));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_component() {
         // Please note the cleaning of component names is very strict, no guessing here.
         $this->assertSame('mod_forum', clean_param('mod_forum', PARAM_COMPONENT));
@@ -540,6 +580,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_COMPONENT));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_localisedfloat() {
 
         $this->assertSame(0.5, clean_param('0.5', PARAM_LOCALISEDFLOAT));
@@ -589,6 +633,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertFalse(is_valid_plugin_name('xx_'));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_plugin() {
         // Please note the cleaning of plugin names is very strict, no guessing here.
         $this->assertSame('forum', clean_param('forum', PARAM_PLUGIN));
@@ -607,6 +655,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_PLUGIN));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_area() {
         // Please note the cleaning of area names is very strict, no guessing here.
         $this->assertSame('something', clean_param('something', PARAM_AREA));
@@ -624,6 +676,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_AREA));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_text() {
         $this->assertSame(PARAM_TEXT, PARAM_MULTILANG);
         // Standard.
@@ -646,6 +702,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_TEXT));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_url() {
         // Test PARAM_URL and PARAM_LOCALURL a bit.
         // Valid URLs.
@@ -672,6 +732,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_URL));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_localurl() {
         global $CFG;
 
@@ -715,6 +779,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_LOCALURL));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_file() {
         $this->assertSame('correctfile.txt', clean_param('correctfile.txt', PARAM_FILE));
         $this->assertSame('badfile.txt', clean_param('b\'a<d`\\/fi:l>e.t"x|t', PARAM_FILE));
@@ -747,6 +815,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('~myfile.txt', clean_param('~/myfile.txt', PARAM_FILE));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_path() {
         $this->assertSame('correctfile.txt', clean_param('correctfile.txt', PARAM_PATH));
         $this->assertSame('bad/file.txt', clean_param('b\'a<d`\\/fi:l>e.t"x|t', PARAM_PATH));
@@ -768,12 +840,20 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_PATH));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_safepath() {
         $this->assertSame('folder/file', clean_param('folder/file', PARAM_SAFEPATH));
         $this->assertSame('folder//file', clean_param('folder/../file', PARAM_SAFEPATH));
         $this->assertSame('', clean_param(null, PARAM_SAFEPATH));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_username() {
         global $CFG;
         $currentstatus =  $CFG->extendedusernamechars;
@@ -809,6 +889,10 @@ class moodlelib_test extends \advanced_testcase {
         $CFG->extendedusernamechars = $currentstatus;
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_stringid() {
         // Test string identifiers validation.
         // Valid strings.
@@ -826,6 +910,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_STRINGID));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_timezone() {
         // Test timezone validation.
         $testvalues = array (
@@ -869,6 +957,10 @@ class moodlelib_test extends \advanced_testcase {
         }
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_null_argument() {
         $this->assertEquals(0, clean_param(null, PARAM_INT));
         $this->assertEquals(0, clean_param(null, PARAM_FLOAT));
