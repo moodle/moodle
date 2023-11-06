@@ -121,9 +121,16 @@
     echo $OUTPUT->heading(format_string($survey->name));
 
 /// Check to see if groups are being used in this survey
-    if ($groupmode = groups_get_activity_groupmode($cm)) {   // Groups are being used
+    $groupmode = groups_get_activity_groupmode($cm);
+    if ($groupmode != NOGROUPS) {
         $menuaction = $action == "student" ? "students" : $action;
+
+        // Get the current activity group, confirm user can access.
         $currentgroup = groups_get_activity_group($cm, true);
+        if ($currentgroup === 0 && $groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
+            throw new moodle_exception('notingroup');
+        }
+
         groups_print_activity_menu($cm, $CFG->wwwroot . "/mod/survey/report.php?id=$cm->id&amp;action=$menuaction&amp;qid=$qid");
     } else {
         $currentgroup = 0;
@@ -378,8 +385,9 @@
         break;
 
       case "student":
-         if (!$user = $DB->get_record("user", array("id"=>$student))) {
-             print_error('invaliduserid');
+         $user = core_user::get_user($student, '*', MUST_EXIST);
+         if ($currentgroup && !array_key_exists($user->id, $users)) {
+             throw new moodle_exception('usernotavailable', 'error');
          }
 
          echo $OUTPUT->heading(get_string("analysisof", "survey", fullname($user)), 3);
