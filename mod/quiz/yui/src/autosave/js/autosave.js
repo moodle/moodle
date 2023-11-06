@@ -272,7 +272,12 @@ M.mod_quiz.autosave = {
             window.tinyMCE.on('AddEditor', function(event) {
                 event.editor.on('Change Undo Redo keydown', startSaveTimer);
             });
-        }
+            // One or more editors might already have been added, so we have to attach
+            // the event handlers to these as well.
+            window.tinyMCE.get().forEach(function(editor) {
+                editor.on('Change Undo Redo keydown', startSaveTimer);
+            });
+         }
     },
 
     /**
