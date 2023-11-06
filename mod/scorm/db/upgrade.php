@@ -171,5 +171,40 @@ function xmldb_scorm_upgrade($oldversion) {
     // Automatically generated Moodle v4.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2023100901) {
+        // MDL-76697 - fix up any possible activity completion states since the upgrade to 2023042403.
+        // Get timestamp of when this site updated to version 2023042403.
+        $upgraded = $DB->get_field_sql("SELECT min(timemodified)
+                                          FROM {upgrade_log}
+                                         WHERE plugin = 'mod_scorm' AND version = '2023042403'");
+        if (empty($upgraded)) {
+            // The code causing this regression landed upstream 28 Jul 2023, if a site has done a fresh install since then,
+            // the upgrade step won't exist - set it to 20th July so we don't end up dealing with too many attempts.
+            $upgraded = 1689811200; // 20 July 2023 12AM
+        }
+        // Don't bother triggering this next step if the upgrade completed within the last hour.
+        if (time() - HOURSECS > $upgraded) {
+            // Get all attempts that have occurred since the upgrade.
+            $sql = "SELECT DISTINCT s.*, sa.userid
+                      FROM {scorm} s
+                      JOIN {scorm_attempt} sa ON sa.scormid = s.id
+                      JOIN {scorm_scoes_value} sv on sv.attemptid = sa.id
+                      WHERE sv.timemodified > ?";
+            $scorms = $DB->get_recordset_sql($sql, [$upgraded]);
+            foreach ($scorms as $scorm) {
+                // Run an ad-hoc task to update the grades.
+                $task = new \mod_scorm\task\update_grades();
+                $task->set_custom_data([
+                    'scormid' => $scorm->id,
+                    'userid' => $scorm->userid,
+                ]);
+                \core\task\manager::queue_adhoc_task($task, true);
+            }
+            $scorms->close();
+        }
+
+        // Scorm savepoint reached.
+        upgrade_mod_savepoint(true, 2023100901, 'scorm');
+    }
     return true;
 }

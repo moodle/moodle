@@ -559,28 +559,27 @@ function scorm_insert_track($userid, $scormid, $scoid, $attemptornumber, $elemen
 
     // Trigger updating grades based on a given set of SCORM CMI elements.
     $scorm = false;
-    if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw')) ||
-        (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
-         && in_array($track->value, array('completed', 'passed')))) {
+    if (in_array($element, ['cmi.core.score.raw', 'cmi.score.raw']) ||
+        (in_array($element, ['cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'])
+         && in_array($value, ['completed', 'passed']))) {
         $scorm = $DB->get_record('scorm', array('id' => $scormid));
         include_once($CFG->dirroot.'/mod/scorm/lib.php');
         scorm_update_grades($scorm, $userid);
     }
 
     // Trigger CMI element events.
-    if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw')) ||
-        (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
-        && in_array($track->value, array('completed', 'failed', 'passed')))) {
+    if (in_array($element, ['cmi.core.score.raw', 'cmi.score.raw']) ||
+        (in_array($element, ['cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'])
+        && in_array($value, ['completed', 'failed', 'passed']))) {
         if (!$scorm) {
             $scorm = $DB->get_record('scorm', array('id' => $scormid));
         }
         $cm = get_coursemodule_from_instance('scorm', $scormid);
-        $data = array(
-            'other' => array('attemptid' => $attempt->id, 'cmielement' => $element, 'cmivalue' => $track->value),
-            'objectid' => $scorm->id,
-            'context' => context_module::instance($cm->id),
-            'relateduserid' => $userid
-        );
+        $data = ['other' => ['attemptid' => $attempt->id, 'cmielement' => $element, 'cmivalue' => $value],
+                 'objectid' => $scorm->id,
+                 'context' => context_module::instance($cm->id),
+                 'relateduserid' => $userid,
+                ];
         if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw'))) {
             // Create score submitted event.
             $event = \mod_scorm\event\scoreraw_submitted::create($data);
@@ -590,9 +589,10 @@ function scorm_insert_track($userid, $scormid, $scoid, $attemptornumber, $elemen
         }
         // Fix the missing track keys when the SCORM track record already exists, see $trackdata in datamodel.php.
         // There, for performances reasons, columns are limited to: element, id, value, timemodified.
-        // Missing fields are: scoid, attempt.
+        // Missing fields are: scoid, attemptid, elementid.
         $track->scoid = $scoid;
-        $track->attempt = $attempt->id;
+        $track->attemptid = $attempt->id;
+        $track->elementid = scorm_get_elementid($element);
         $track->id = $id;
         // Trigger submitted event.
         $event->add_record_snapshot('scorm_scoes_value', $track);
