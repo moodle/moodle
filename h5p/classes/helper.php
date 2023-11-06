@@ -66,6 +66,32 @@ class helper {
             if (!empty($h5pvalidator->h5pC->mainJsonData['title'])) {
                 $content['title'] = $h5pvalidator->h5pC->mainJsonData['title'];
             }
+
+            // If exists, add the metadata from 'h5p.json' to avoid loosing this information.
+            $data = $h5pvalidator->h5pC->mainJsonData;
+            if (!empty($data)) {
+                // The metadata fields are defined in 'joubel/core/h5p-metadata.class.php'.
+                $metadatafields = [
+                    'title',
+                    'a11yTitle',
+                    'changes',
+                    'authors',
+                    'source',
+                    'license',
+                    'licenseVersion',
+                    'licenseExtras',
+                    'authorComments',
+                    'yearFrom',
+                    'yearTo',
+                    'defaultLanguage',
+                ];
+                $content['metadata'] = array_reduce($metadatafields, function ($array, $field) use ($data) {
+                    if (array_key_exists($field, $data)) {
+                        $array[$field] = $data[$field];
+                    }
+                    return $array;
+                }, []);
+            }
             $h5pstorage->savePackage($content, null, $skipcontent, $options);
 
             return $h5pstorage->contentId;
