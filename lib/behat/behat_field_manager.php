@@ -159,13 +159,12 @@ class behat_field_manager {
                 case 'password':
                 case 'email':
                 case 'file':
+                case 'number':
                     return 'text';
                 case 'checkbox':
                     return 'checkbox';
-                    break;
                 case 'radio':
                     return 'radio';
-                    break;
                 default:
                     // Here we return false because all text-based
                     // fields should be included in the first switch case.
