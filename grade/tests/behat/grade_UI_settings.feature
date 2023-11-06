@@ -35,9 +35,9 @@ Feature: Site settings can be used to hide parts of the gradebook UI
 
   @javascript
   Scenario: Disable category overriding
-    And "tr .course input[type='text']" "css_element" should exist
-    Then I navigate to "Grades > Grade category settings" in site administration
+    Given "Student 1 Course total" "field" should exist
+    And I navigate to "Grades > Grade category settings" in site administration
     And I set the field "Allow category grades to be manually overridden" to "0"
     And I press "Save changes"
-    And I am on the "Course 1" "grades > Grader report > View" page
-    And "tr .course input[type='text']" "css_element" should not exist
+    When I am on the "Course 1" "grades > Grader report > View" page
+    Then "Student 1 Course total" "field" should not exist

@@ -766,8 +766,6 @@ class grade_report_grader extends grade_report {
 
         $rows = [];
         $this->rowcount = 0;
-        $numusers = count($this->users);
-        $gradetabindex = 1;
         $strgrade = \grade_helper::get_lang_string('gradenoun');
         $this->get_sort_arrows();
 
@@ -784,14 +782,11 @@ class grade_report_grader extends grade_report {
 
         // Preload scale objects for items with a scaleid and initialize tab indices.
         $scaleslist = [];
-        $tabindices = [];
 
         foreach ($this->gtree->get_items() as $itemid => $item) {
             if (!empty($item->scaleid)) {
                 $scaleslist[] = $item->scaleid;
             }
-            $tabindices[$item->id]['grade'] = $gradetabindex;
-            $gradetabindex += $numusers * 2;
         }
 
         $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'gradereport_grader', 'scales');
@@ -1056,7 +1051,6 @@ class grade_report_grader extends grade_report {
                                 $nogradestr = \grade_helper::get_lang_string('nooutcome', 'grades');
                             }
                             $attributes = [
-                                'tabindex' => $tabindices[$item->id]['grade'],
                                 'id' => 'grade_' . $userid . '_' . $item->id
                             ];
                             $gradelabel = $fullname . ' ' . $item->get_name(true);
@@ -1088,6 +1082,18 @@ class grade_report_grader extends grade_report {
                         // Value type.
                         if ($quickgrading and $grade->is_editable()) {
                             $context->iseditable = true;
+
+                            // Set this input field with type="number" if the decimal separator for current language is set to
+                            // a period. Other decimal separators may not be recognised by browsers yet which may cause issues
+                            // when entering grades.
+                            $decsep = get_string('decsep', 'core_langconfig');
+                            $context->isnumeric = $decsep === '.';
+                            // If we're rendering this as a number field, set min/max attributes, if applicable.
+                            if ($context->isnumeric) {
+                                $context->minvalue = $item->grademin ?? null;
+                                $context->maxvalue = $item->grademax ?? null;
+                            }
+
                             $value = format_float($gradeval, $decimalpoints);
                             $gradelabel = $fullname . ' ' . $item->get_name(true);
 
@@ -1096,7 +1102,6 @@ class grade_report_grader extends grade_report {
                             $context->value = $value;
                             $context->label = get_string('useractivitygrade', 'gradereport_grader', $gradelabel);
                             $context->title = $strgrade;
-                            $context->tabindex = $tabindices[$item->id]['grade'];
                             $context->extraclasses = 'form-control';
                             if ($context->statusicons) {
                                 $context->extraclasses .= ' statusicons';
