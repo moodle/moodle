@@ -130,8 +130,7 @@ class audience {
         }
 
         // Get all sql audiences.
-        $prefix = database::generate_param_name() . '_';
-        [$select, $params] = $DB->get_in_or_equal($allowedreports, SQL_PARAMS_NAMED, $prefix);
+        [$select, $params] = $DB->get_in_or_equal($allowedreports, SQL_PARAMS_NAMED, database::generate_param_name('_'));
         $sql = "{$reporttablealias}.id {$select}";
 
         return [$sql, $params];
@@ -182,15 +181,21 @@ class audience {
 
         // If user can't view all reports, limit the returned list to those reports they can see.
         if (!has_capability('moodle/reportbuilder:editall', $context, $userid)) {
-            $reports = self::user_reports_list($userid);
 
-            [$paramprefix, $paramuserid] = database::generate_param_names(2);
-            [$reportselect, $params] = $DB->get_in_or_equal($reports, SQL_PARAMS_NAMED, "{$paramprefix}_", true, null);
+            // Select all reports accessible to the user based on audience.
+            [$reportselect, $params] = $DB->get_in_or_equal(
+                self::user_reports_list($userid),
+                SQL_PARAMS_NAMED,
+                database::generate_param_name('_'),
+                true,
+                null,
+            );
 
             $where = "{$reporttablealias}.id {$reportselect}";
 
             // User can also see any reports that they can edit.
             if (has_capability('moodle/reportbuilder:edit', $context, $userid)) {
+                $paramuserid = database::generate_param_name();
                 $where = "({$reporttablealias}.usercreated = :{$paramuserid} OR {$where})";
                 $params[$paramuserid] = $userid ?? $USER->id;
             }
