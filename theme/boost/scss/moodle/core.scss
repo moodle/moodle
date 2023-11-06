@@ -2895,6 +2895,18 @@ $scrollbar-track: lighten($primary, 40%);
     }
 }
 
+// Add top/bottom shadow to scrolling area.
+@mixin scroll-shadow($background-colour: $white, $shadow-colour: $black, $shadow-size: 1rem) {
+    background:
+        linear-gradient($background-colour 30%, rgba($background-colour, 0)) center top,
+        linear-gradient(rgba($background-colour, 0), $background-colour 70%) center bottom,
+        radial-gradient(farthest-side at 50% 0, rgba($shadow-colour, 0.2), rgba($shadow-colour, 0)) center top,
+        radial-gradient(farthest-side at 50% 100%, rgba($shadow-colour, 0.2), rgba($shadow-colour, 0)) center bottom;
+    background-repeat: no-repeat;
+    background-size: 100% $shadow-size, 100% $shadow-size, 100% calc(#{$shadow-size} / 2), 100% calc(#{$shadow-size} / 2);
+    background-attachment: local, local, scroll, scroll;
+}
+
 // Generic dropzones and dragging styles.
 
 body.dragging {

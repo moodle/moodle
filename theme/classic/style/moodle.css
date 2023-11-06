@@ -37718,7 +37718,7 @@ div.editor_atto_toolbar button .icon {
 
 .reportbuilder-wrapper .filters-dropdown {
   width: 27rem;
-  padding: 0;
+  padding: 0 0 4rem 0;
   z-index: 1050;
   overflow: hidden;
 }
@@ -37729,10 +37729,15 @@ div.editor_atto_toolbar button .icon {
 }
 
 .reportbuilder-filters-sidebar {
-  max-height: calc(100vh - 50px - 1rem);
+  max-height: 30rem;
   overflow-y: auto;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   scrollbar-width: thin;
   scrollbar-color: #6a737b #fff;
+  background: linear-gradient(#fff 30%, rgba(255, 255, 255, 0)) center top, linear-gradient(rgba(255, 255, 255, 0), #fff 70%) center bottom, radial-gradient(farthest-side at 50% 0, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center top, radial-gradient(farthest-side at 50% 100%, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)) center bottom;
+  background-repeat: no-repeat;
+  background-size: 100% 1rem, 100% 1rem, 100% calc(1rem / 2), 100% calc(1rem / 2);
+  background-attachment: local, local, scroll, scroll;
 }
 .reportbuilder-filters-sidebar::-webkit-scrollbar {
   width: 12px;
@@ -37748,20 +37753,22 @@ div.editor_atto_toolbar button .icon {
 .reportbuilder-filters-sidebar::-webkit-scrollbar-thumb:hover {
   background-color: #495057;
 }
-.reportbuilder-filters-sidebar .filter .filter-header {
-  font-size: 1.171875rem;
+.reportbuilder-filters-sidebar .filter:not(:nth-last-child(2)) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 }
-.reportbuilder-filters-sidebar .filter .filter-header .filter-name {
-  font-size: 0.9375rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-right: 1rem;
-}
-.reportbuilder-filters-sidebar .filter .filter-header .filter-name:hover {
+.reportbuilder-filters-sidebar .filter .filter-name:hover {
   white-space: normal;
   text-overflow: clip;
   word-break: break-all;
+}
+.reportbuilder-filters-sidebar .form-group[data-groupname=buttonar] {
+  position: absolute;
+  bottom: 0;
+  height: 4rem;
+  align-items: center;
+}
+.reportbuilder-filters-sidebar .form-group[data-groupname=buttonar] .col-form-label {
+  display: none !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .reportbuilder-filters-wrapper .mform.full-width-labels .fdate_selector,
