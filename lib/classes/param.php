@@ -21,6 +21,8 @@ use core_text;
 use invalid_parameter_exception;
 use moodle_exception;
 
+// phpcs:disable Generic.CodeAnalysis.EmptyStatement.DetectedIf
+
 /**
  * Parameter validation helpers for Moodle.
  *
@@ -527,7 +529,7 @@ enum param: string {
                 throw new invalid_parameter_exception($debuginfo);
             }
         }
-        if (is_array($param) or is_object($param)) {
+        if (is_array($param) || is_object($param)) {
             throw new invalid_parameter_exception($debuginfo);
         }
 
@@ -535,9 +537,9 @@ enum param: string {
 
         if ($this->canonical() === self::FLOAT) {
             // Do not detect precision loss here.
-            if (is_float($param) or is_int($param)) {
+            if (is_float($param) || is_int($param)) {
                 // These always fit.
-            } else if (!is_numeric($param) or !preg_match('/^[\+-]?[0-9]*\.?[0-9]*(e[-+]?[0-9]+)?$/i', (string)$param)) {
+            } else if (!is_numeric($param) || !preg_match('/^[\+-]?[0-9]*\.?[0-9]*(e[-+]?[0-9]+)?$/i', (string)$param)) {
                 throw new invalid_parameter_exception($debuginfo);
             }
         } else if ((string) $param !== (string) $cleaned) {
