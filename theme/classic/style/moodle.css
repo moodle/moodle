@@ -37970,6 +37970,14 @@ div.editor_atto_toolbar button .icon {
   width: 100%;
 }
 
+@keyframes sortable-list-drag-color-reset {
+  from {
+    background-color: #a2cff8;
+  }
+  to {
+    background-color: inherit;
+  }
+}
 .reportbuilder-sortable-list li.sortable-list-current-position,
 .reportbuilder-table th.sortable-list-current-position,
 .reportbuilder-conditions-list .condition.sortable-list-current-position {
@@ -37980,6 +37988,11 @@ div.editor_atto_toolbar button .icon {
 .reportbuilder-conditions-list .condition.sortable-list-is-dragged {
   background-color: #fff;
   opacity: 0.85;
+}
+.reportbuilder-sortable-list li.sortable-list-is-dropped,
+.reportbuilder-table th.sortable-list-is-dropped,
+.reportbuilder-conditions-list .condition.sortable-list-is-dropped {
+  animation: sortable-list-drag-color-reset 1s ease;
 }
 
 .reportbuilder-toggle-card .card-header {

@@ -262,15 +262,29 @@ $rb-right-sidebar-width: 350px !default;
 
 // Drag&drop styles
 
+$rb-sortable-list-drag-color: lighten($primary, 40%);
+
+@keyframes sortable-list-drag-color-reset {
+    from {
+        background-color: $rb-sortable-list-drag-color;
+    }
+    to {
+        background-color: inherit;
+    }
+}
+
 .reportbuilder-sortable-list li,
 .reportbuilder-table th,
 .reportbuilder-conditions-list .condition {
     &.sortable-list-current-position {
-        background-color: lighten($primary, 40%);
+        background-color: $rb-sortable-list-drag-color;
     }
     &.sortable-list-is-dragged {
         background-color: $white;
         opacity: 0.85;
+    }
+    &.sortable-list-is-dropped {
+        animation: sortable-list-drag-color-reset 1s ease;
     }
 }
 

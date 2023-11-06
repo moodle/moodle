@@ -162,8 +162,10 @@ export const init = initialized => {
                 targetFilterPosition--;
             }
 
-            reorderFilter(reportElement.dataset.reportId, filterId, targetFilterPosition)
-                .then(data => reloadSettingsFiltersRegion(reportElement, data))
+            // Re-order filter, giving drop event transition time to finish.
+            const reorderPromise = reorderFilter(reportElement.dataset.reportId, filterId, targetFilterPosition);
+            Promise.all([reorderPromise, new Promise(resolve => setTimeout(resolve, 1000))])
+                .then(([data]) => reloadSettingsFiltersRegion(reportElement, data))
                 .then(() => getString('filtermoved', 'core_reportbuilder', info.element.data('filterName')))
                 .then(addToast)
                 .then(() => pendingPromise.resolve())
