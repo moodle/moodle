@@ -87,8 +87,25 @@ if (!async_helper::is_async_pending($id, 'course', 'backup')) {
     $message = "{$strdeletecoursecheck}<br /><br />{$coursefullname} ({$courseshortname})";
 
     $continueurl = new moodle_url('/course/delete.php', array('id' => $course->id, 'delete' => md5($course->timemodified)));
-    $continuebutton = new single_button($continueurl, get_string('delete'), 'post');
+    $continuebutton = new single_button(
+        $continueurl,
+        get_string('delete'), 'post', false, ['data-action' => 'delete']
+    );
     echo $OUTPUT->confirm($message, $continuebutton, $categoryurl);
+    // In the following script, we need to use setTimeout as disabling the
+    // button in the event listener script prevent the click to be taken into account.
+    $jsscript = <<<EOF
+const button = document.querySelector('button[data-action="delete"]');
+if (button) {
+    button.addEventListener('click', () => {
+        setTimeout(() => {
+            button.disabled = true;
+        }, 0);
+    });
+}
+EOF;
+    $PAGE->requires->js_amd_inline($jsscript);
+
 } else {
     // Async backup is pending, don't let user delete course.
     echo $OUTPUT->notification(get_string('pendingasyncerror', 'backup'), 'error');
