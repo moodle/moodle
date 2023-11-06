@@ -31,4 +31,5 @@
     }
 }}
 <label for="{{id}}" class="accesshide">{{{label}}}</label>
-<input id="{{id}}" name="{{name}}" type="text" value="{{value}}" title="{{title}}" class="{{extraclasses}}" tabindex="{{tabindex}}">
+<input id="{{id}}" name="{{name}}" type="{{#isnumeric}}number{{/isnumeric}}{{^isnumeric}}text{{/isnumeric}}" value="{{value}}" title="{{title}}" class="{{extraclasses}}" {{!
+    }} {{#minvalue}}min="{{.}}" {{/minvalue}} {{#maxvalue}}max="{{.}}" {{/maxvalue}} {{#isnumeric}}step="any"{{/isnumeric}}>
