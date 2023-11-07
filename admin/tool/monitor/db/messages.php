@@ -27,6 +27,10 @@ defined('MOODLE_INTERNAL') || die();
 $messageproviders = array (
     // Notify a user that a rule has happened.
     'notification' => array (
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
         'capability'  => 'tool/monitor:subscribe'
     )
 );

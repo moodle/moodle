@@ -25,7 +25,11 @@
 $messageproviders = array (
 
     // Ordinary assignment submissions.
-    'assign_notification' => array(
-    )
+    'assign_notification' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 
 );

@@ -9,6 +9,9 @@ Feature: Manage assignment submission web notifications
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
+    And the following "user preferences" exist:
+      | user      | preference                                                | value |
+      | teacher1  | message_provider_mod_assign_assign_notification_enabled   | none  |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |

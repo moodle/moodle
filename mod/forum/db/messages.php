@@ -26,12 +26,18 @@
 $messageproviders = array (
     // Ordinary single forum posts.
     'posts' => array(
-        'defaults' => array(
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
-        ),
+        ],
     ),
 
     // Forum digest messages.
-    'digests' => array(
-    ),
+    'digests' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 );
