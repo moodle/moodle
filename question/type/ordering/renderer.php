@@ -347,45 +347,11 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
      */
-    public function correct_response(question_attempt $qa) {
-        global $DB;
+    public function correct_response(question_attempt $qa): string {
+        $correctresponse = new \qtype_ordering\output\correct_response($qa);
 
-        $output = '';
-
-        $showcorrect = false;
-        $question = $qa->get_question();
-        if (empty($question->correctresponse)) {
-            $output .= html_writer::tag('p', get_string('noresponsedetails', 'qtype_ordering'));
-        } else {
-            if ($step = $qa->get_last_step()) {
-                switch ($step->get_state()) {
-                    case 'gradedright':
-                        $showcorrect = false;
-                        break;
-                    case 'gradedpartial':
-                        $showcorrect = true;
-                        break;
-                    case 'gradedwrong':
-                        $showcorrect = true;
-                        break;
-                }
-            }
-        }
-        if ($showcorrect) {
-            $sortableitem = $question->get_ordering_layoutclass();
-            $output .= html_writer::tag('p', get_string('correctorder', 'qtype_ordering'));
-            $output .= html_writer::start_tag('ol', array('class' => 'correctorder ' . $sortableitem));
-            $correctresponse = $question->correctresponse;
-            foreach ($correctresponse as $position => $answerid) {
-                $answer = $question->answers[$answerid];
-                $answertext = $question->format_text($answer->answer, $answer->answerformat,
-                                                     $qa, 'question', 'answer', $answerid);
-                $output .= html_writer::tag('li', $answertext, array('class' => $sortableitem));
-            }
-            $output .= html_writer::end_tag('ol');
-        }
-
-        return $output;
+        return $this->output->render_from_template('qtype_ordering/correct_response',
+            $correctresponse->export_for_template($this->output));
     }
 
     // Custom methods.
