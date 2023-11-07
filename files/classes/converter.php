@@ -165,7 +165,7 @@ class converter {
      */
     protected function get_next_converter($converters, $currentconverter = null) {
         if ($currentconverter) {
-            $keys = array_keys($converters, $currentconverter);
+            $keys = moodle_array_keys_filter($converters, $currentconverter);
             $key = $keys[0];
             if (isset($converters[$key + 1])) {
                 return $converters[$key + 1];

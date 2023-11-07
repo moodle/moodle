@@ -183,7 +183,7 @@ class workshop_best_evaluation extends workshop_evaluation {
         }
 
         // identify the best assessments - that is those with the shortest distance from the best assessment
-        $bestids = array_keys($distances, min($distances));
+        $bestids = moodle_array_keys_filter($distances, min($distances));
 
         // for every assessment, calculate its distance from the nearest best assessment
         $distances = array();

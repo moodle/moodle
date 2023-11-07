@@ -16,6 +16,8 @@ Description of import of Horde libraries
 Notes:
 * 2023-01-20 Applied patch https://github.com/horde/Util/pull/10
 * 2023-01-20 Horde/Mail is copied from https://github.com/bytestream/Mail/tree/v2.7.1 for PHP 8.1 compatibility
+* MDL-79890: Calls to array_keys() passing a second parameter have been modified to call `moodle_array_keys_filter` instead for PHP 8.3 compat.
+  This change is not fed upstream as Horde appears abandoned.
 
 ====
 #!/bin/sh

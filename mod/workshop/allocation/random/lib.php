@@ -702,7 +702,7 @@ class workshop_random_allocator implements workshop_allocator {
     protected function filter_current_assessments(&$newallocations, $assessments) {
         foreach ($assessments as $assessment) {
             $allocation     = array($assessment->reviewerid => $assessment->authorid);
-            $foundat        = array_keys($newallocations, $allocation);
+            $foundat        = moodle_array_keys_filter($newallocations, $allocation);
             $newallocations = array_diff_key($newallocations, array_flip($foundat));
         }
     }

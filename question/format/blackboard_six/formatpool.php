@@ -446,7 +446,7 @@ class qformat_blackboard_six_pool extends qformat_blackboard_six_base {
                     $choiceid = $this->getpath($choice,
                             array('@', 'id'), '', true);
                     $fiber = array_search($choiceid, $mappings);
-                    $fiber = array_keys ($mappings, $choiceid);
+                    $fiber = moodle_array_keys_filter($mappings, $choiceid);
                     foreach ($fiber as $correctanswerid) {
                         // We have found a correspondance for this choice so we need to take the associated answer.
                         foreach ($answers as $answer) {

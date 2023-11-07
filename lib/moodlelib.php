@@ -11049,9 +11049,10 @@ function exceeds_password_length(string $password, int $pepperlength = 0): bool 
  *
  * @param array $array
  * @param mixed $filter The value to filter on
+ * @param bool $strict Whether to apply a strit test with the filter
  * @return array
  */
-function moodle_array_keys_filter(array $array, mixed $filter, bool $strict): array {
+function moodle_array_keys_filter(array $array, mixed $filter, bool $strict = false): array {
     return array_keys(array_filter(
         $array,
         function($value, $key) use ($filter, $strict): bool {

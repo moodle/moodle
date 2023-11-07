@@ -628,7 +628,7 @@ abstract class list_item {
      */
     public function create_children(&$records, &$children, $thisrecordid) {
         //keys where value is $thisrecordid
-        $thischildren = array_keys($children, $thisrecordid);
+        $thischildren = moodle_array_keys_filter($children, $thisrecordid);
         foreach ($thischildren as $child) {
             $thisclass = get_class($this);
             $newlistitem = new $thisclass($records[$child], $this->children, $this->attributes);
