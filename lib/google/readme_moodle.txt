@@ -53,6 +53,8 @@ Local changes (to reapply until upstream upgrades contain them):
       cd lib/google/src
       for file in `find . -name '*.php' `; do sed -i '/^class /i #[AllowDynamicProperties]' $file; done
       ```
+    * MDL-46563 - PHP 8.3 compliance
+      - Converted use of `get_class()` to `static::class`
 
 Information
 -----------
