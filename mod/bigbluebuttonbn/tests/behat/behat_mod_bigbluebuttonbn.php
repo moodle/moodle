@@ -263,7 +263,7 @@ XPATH
         $mockedcomponent = new ReflectionClass(core_component::class);
         $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
         $mockedplugintypes->setAccessible(true);
-        $mockedplugintypes->setValue(null);
+        $mockedplugintypes->setValue(null, null);
         $init = $mockedcomponent->getMethod('init');
         $init->setAccessible(true);
         $init->invoke(null);
