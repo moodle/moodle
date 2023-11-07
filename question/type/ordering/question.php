@@ -93,6 +93,9 @@ class qtype_ordering_question extends question_graded_automatically {
     /** @var array contatining current order of answerids */
     public $currentresponse;
 
+    /** @var array of scored for every item */
+    protected $itemscores = [];
+
     /**
      * Start a new attempt at this question, storing any information that will
      * be needed later in the step.
@@ -856,7 +859,8 @@ class qtype_ordering_question extends question_graded_automatically {
         list($correctresponse, $currentresponse) = $this->get_response_depend_on_grading_type($gradingtype);
 
         foreach ($this->currentresponse as $position => $answerid) {
-            $fraction = $this->get_fraction_of_item($position, $answerid, $correctresponse, $currentresponse);
+            [$fraction, $score, $maxscore] =
+                $this->get_fraction_maxscore_score_of_item($position, $answerid, $correctresponse, $currentresponse);
             if (is_null($fraction)) {
                 continue;
             }
@@ -880,14 +884,14 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param int $answerid The answerid of the current response.
      * @param array $correctresponse The correct response list base on grading type.
      * @param array $currentresponse The current response list base on grading type.
-     * @return float|null Float if the grade, base on the fraction scale and null if the item is not in the correct response.
+     * @return array.
      */
-    protected function get_fraction_of_item(
+    protected function get_fraction_maxscore_score_of_item(
         int $position,
         int $answerid,
         array $correctresponse,
         array $currentresponse
-    ): float|null {
+    ): array {
         $gradingtype = $this->options->gradingtype;
 
         $score    = 0;
@@ -952,7 +956,7 @@ class qtype_ordering_question extends question_graded_automatically {
         }
         $fraction = $maxscore ? $score / $maxscore : $maxscore;
 
-        return $fraction;
+        return [$fraction, $score, $maxscore];
     }
 
     /**
@@ -1005,4 +1009,49 @@ class qtype_ordering_question extends question_graded_automatically {
 
         return [$correctresponse, $currentresponse];
     }
+
+    /**
+     * Returns score for one item depending on correctness and question settings.
+     *
+     * @param question_definition $question question definition object
+     * @param int $position The position of the current response.
+     * @param int $answerid The answerid of the current response.
+     * @return array (score, maxscore, fraction, percent, class)
+     */
+    public function get_ordering_item_score(question_definition $question, int $position, int $answerid): array {
+
+        if (!isset($this->itemscores[$position])) {
+
+            [$correctresponse, $currentresponse] = $this->get_response_depend_on_grading_type($question->options->gradingtype);
+
+            $percent  = 0;    // 100 * $fraction.
+            [$fraction, $score, $maxscore] =
+                $this->get_fraction_maxscore_score_of_item($position, $answerid, $correctresponse, $currentresponse);
+
+            if ($maxscore === null) {
+                // An unscored item is either an illegal item
+                // or last item of RELATIVE_NEXT_EXCLUDE_LAST
+                // or an item in an incorrect ALL_OR_NOTHING
+                // or an item from an unrecognized grading type.
+                $class = 'unscored';
+            } else {
+                if ($maxscore > 0) {
+                    $percent = round(100 * $fraction, 0);
+                }
+                $class = match (true) {
+                    $fraction > 0.999999 => 'correct',
+                    $fraction < 0.000001 => 'incorrect',
+                    $fraction >= 0.66 => 'partial66',
+                    $fraction >= 0.33 => 'partial33',
+                    default => 'partial00',
+                };
+            }
+
+            $score = [$score, $maxscore, $fraction, $percent, $class];
+            $this->itemscores[$position] = $score;
+        }
+
+        return $this->itemscores[$position];
+    }
+
 }

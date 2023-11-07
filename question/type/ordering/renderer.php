@@ -138,6 +138,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
                 switch ($options->correctness) {
                     case question_display_options::VISIBLE:
                         $score = $this->get_ordering_item_score($question, $position, $answerid);
+                        // To do: we need image calculation in MDL-79873.
                         list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
                         $class = trim("$sortableitem $class");
                         break;
@@ -154,6 +155,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
                 if (isset($options->highlightresponse) && $options->highlightresponse) {
                     $score = $this->get_ordering_item_score($question, $position, $answerid);
+                    // To do: we need image calculation here in MDL-79873.
                     list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
                     $class = trim("$sortableitem $class");
                 }
@@ -246,86 +248,9 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @return string Output grade detail of the response.
      */
     public function specific_grade_detail_feedback(question_attempt $qa): string {
-        $gradingtype = '';
-        $gradedetails = '';
-        $scoredetails = '';
-
-        // Decide if we should show grade explanation for "partial" or "wrong" states.
-        // This should detect "^graded(partial|wrong)$" and possibly others.
-        if ($step = $qa->get_last_step()) {
-            $show = preg_match('/(partial|wrong)$/', $step->get_state());
-        } else {
-            $show = false;
-        }
-
-        // If required, add explanation of grade calculation.
-        if ($show) {
-
-            $plugin = 'qtype_ordering';
-            $question = $qa->get_question();
-
-            // Show grading details if they are required.
-            if ($question->options->showgrading) {
-
-                // Fetch grading type.
-                $gradingtype = $question->options->gradingtype;
-                $gradingtype = qtype_ordering_question::get_grading_types($gradingtype);
-
-                // Format grading type, e.g. Grading type: Relative to next item, excluding last item.
-                if ($gradingtype) {
-                    $gradingtype = get_string('gradingtype', $plugin).': '.$gradingtype;
-                    $gradingtype = html_writer::tag('p', $gradingtype, array('class' => 'gradingtype'));
-                }
-
-                // Fetch grade details and score details.
-                if ($currentresponse = $question->currentresponse) {
-
-                    $totalscore = 0;
-                    $totalmaxscore = 0;
-
-                    $sortableitem = $question->get_ordering_layoutclass();
-                    $params = array('class' => $sortableitem);
-
-                    $scoredetails .= html_writer::tag('p', get_string('scoredetails', $plugin));
-                    $scoredetails .= html_writer::start_tag('ol', array('class' => 'scoredetails'));
-
-                    // Format scoredetails, e.g. 1 /2 = 50%, for each item.
-                    foreach ($currentresponse as $position => $answerid) {
-                        if (array_key_exists($answerid, $question->answers)) {
-                            $answer = $question->answers[$answerid];
-                            $score = $this->get_ordering_item_score($question, $position, $answerid);
-                            list($score, $maxscore, $fraction, $percent, $class, $img) = $score;
-                            if ($maxscore === null) {
-                                $score = get_string('noscore', $plugin);
-                            } else {
-                                $totalscore += $score;
-                                $totalmaxscore += $maxscore;
-                                $score = "$score / $maxscore = $percent%";
-                            }
-                            $scoredetails .= html_writer::tag('li', $score, $params);
-                        }
-                    }
-
-                    $scoredetails .= html_writer::end_tag('ol');
-
-                    if ($totalmaxscore == 0) {
-                        $scoredetails = ''; // ALL_OR_NOTHING.
-                    } else {
-                        // Format gradedetails, e.g. 4 /6 = 67%.
-                        if ($totalscore == 0) {
-                            $gradedetails = 0;
-                        } else {
-                            $gradedetails = round(100 * $totalscore / $totalmaxscore, 0);
-                        }
-                        $gradedetails = "$totalscore / $totalmaxscore = $gradedetails%";
-                        $gradedetails = get_string('gradedetails', $plugin).': '.$gradedetails;
-                        $gradedetails = html_writer::tag('p', $gradedetails, array('class' => 'gradedetails'));
-                    }
-                }
-            }
-        }
-
-        return $gradingtype.$gradedetails.$scoredetails;
+        $specificgradedetailfeedback = new \qtype_ordering\output\specific_grade_detail_feedback($qa);
+        return $this->output->render_from_template('qtype_ordering/specific_grade_detail_feedback',
+            $specificgradedetailfeedback->export_for_template($this->output));
     }
 
     /**
@@ -358,6 +283,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
     /**
      * Fills $this->correctinfo and $this->currentinfo depending on question options.
+     * TO DO: REMOVE ME in MDL-79873
      *
      * @param object $question
      */
@@ -406,6 +332,8 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
     /**
      * Returns score for one item depending on correctness and question settings.
+     *
+     * TO DO: REMOVE ME in MDL-79873
      *
      * @param object $question
      * @param int $position
@@ -539,6 +467,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
     /**
      * Return true if answer is 100% correct.
+     * TO DO: REMOVE ME in MDL-79873
      *
      * @return bool
      */

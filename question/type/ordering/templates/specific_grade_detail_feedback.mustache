@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template qtype_ordering/specific_grade_detail_feedback
+
+    Renders the grade detail of the response.
+
+    Context variables required for this template:
+    * showpartialwrong - Whether to show grade details.
+    * gradingtype - Grading type.
+    * gradedetails - Total score (percent).
+    * orderinglayoutclass - The ordering layout CSS class.
+    * scoredetails - An array containing the score details.
+
+    Example context (json):
+    {
+        "showpartialwrong": true,
+        "gradingtype": "Grading type: Absolute position",
+        "gradedetails": "93",
+        "orderinglayoutclass": "vertical",
+        "scoredetails": [
+            {
+                "score": "1",
+                "maxscore": "1",
+                "percent": "100"
+            },
+            {
+                "score": "0",
+                "maxscore": "1",
+                "percent": "0"
+            }
+        ]
+    }
+}}
+
+{{#showpartialwrong}}
+    {{#gradingtype}}
+        <p class="gradingtype">
+            {{gradingtype}}
+        </p>
+    {{/gradingtype}}
+    {{#gradedetails}}
+        <p class="gradedetails">
+            {{#str}} gradedetails, qtype_ordering {{/str}}:
+            {{totalscore}} / {{totalmaxscore}} = {{gradedetails}}%
+        </p>
+    {{/gradedetails}}
+    {{#str}} scoredetails, qtype_ordering {{/str}}
+    <ol class="scoredetails">
+        {{#scoredetails}}
+            <li class="{{orderinglayoutclass}}">
+                {{score}} / {{maxscore}} = {{percent}}%
+            </li>
+        {{/scoredetails}}
+    </ol>
+{{/showpartialwrong}}
