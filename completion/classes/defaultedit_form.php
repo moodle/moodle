@@ -129,7 +129,15 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
                 $this->get_suffix()
             );
             $data = (array)$data;
-            $modform->data_preprocessing($data);
+            try {
+                $modform->data_preprocessing($data);
+            } catch (moodle_exception $e) {
+                debugging(
+                    'data_preprocessing function of module ' . $modnames[0] .
+                    ' should be fixed so it can be shown together with other Default activity completion forms',
+                    DEBUG_DEVELOPER
+                );
+            }
             // Unset fields that will conflict with this form and set data to this form.
             unset($data['cmid']);
             unset($data['modids']);
