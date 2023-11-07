@@ -44,8 +44,8 @@ Feature: I can edit a bigbluebutton instance
     And I am on the "RoomRecordings" "bigbluebuttonbn activity editing" page logged in as "admin"
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Completion tracking         | Show activity as complete when conditions are met |
-      | Require view                | 1                                                 |
+      | Add requirements  | 1 |
+      | View the activity | 1 |
     And I press "Save and return to course"
     And I log out
     # Then I visit the page first to make sure that completion settings are locked.
@@ -54,6 +54,6 @@ Feature: I can edit a bigbluebutton instance
     And I am on the "RoomRecordings" "bigbluebuttonbn activity editing" page logged in as "admin"
     When I expand all fieldsets
     Then I should see "Completion options locked"
-    And the "Require view" "field" should be disabled
-    And the "completionattendanceenabled" "field" should be disabled
+    And the "View the activity" "field" should be disabled
+    And the "Require attendance (minutes)" "field" should be disabled
     And the "Chats" "field" should be disabled
