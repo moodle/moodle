@@ -31,6 +31,7 @@ information provided here is intended especially for developers.
 * A new \core\deprecation class can be used to inspect for deprecated attributes:
   - `\core\deprecation::is_deprecated(example::class);`
   - `\core\deprecation::emit_deprecation_if_present([self::class, 'some_method']);`
+* Added missing deprecation for PARAM_CLEANFILE which was deprecated in Moodle 2.0.
 
 === 4.3 ===
 

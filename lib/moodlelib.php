@@ -310,6 +310,7 @@ define('PARAM_TIMEZONE', \core\param::TIMEZONE->value);
 
 /**
  * PARAM_CLEANFILE - deprecated alias of PARAM_FILE; originally was removing regional chars too
+ * @deprecated since 2.0
  */
 define('PARAM_CLEANFILE', \core\param::CLEANFILE->value);
 
