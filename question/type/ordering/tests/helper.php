@@ -187,4 +187,26 @@ class qtype_ordering_test_helper extends question_test_helper {
         ];
         return $questiondata;
     }
+
+    /**
+     * Return an array of answer codes in the order of given response.
+     *
+     * @param question_definition $question The question object.
+     * @param array $items The array of input items.
+     * @return array The array of answer codes in the order of given response.
+     */
+    public static function get_response(question_definition $question, array $items): array {
+
+        $md5keys = [];
+        foreach ($items as $item) {
+            foreach ($question->answers as $answer) {
+                if ($item === $answer->answer) {
+                    $md5keys[] = $answer->md5key;
+                    break;
+                }
+            }
+        }
+
+        return ['response_' . $question->id => implode(',', $md5keys)];
+    }
 }

@@ -29,6 +29,7 @@ use test_question_maker;
 use question_state;
 use question_pattern_expectation;
 use stdClass;
+use qtype_ordering_test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
@@ -55,16 +56,8 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
      */
     protected function get_response($items) {
         $question = $this->quba->get_question($this->slot);
-        $md5keys = [];
-        foreach ($items as $item) {
-            foreach ($question->answers as $answer) {
-                if ($item === $answer->answer) {
-                    $md5keys[] = $answer->md5key;
-                    break;
-                }
-            }
-        }
-        return ['response_' . $question->id => implode(',', $md5keys)];
+
+        return qtype_ordering_test_helper::get_response($question, $items);
     }
 
     public function test_deferred_feedback() {
