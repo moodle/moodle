@@ -39,6 +39,7 @@
                             "hasname": "true"
                         },
                         "id": 3,
+                        "cmid": 3,
                         "module": "forum",
                         "anchor": "activity-3",
                         "extraclasses": "newmessages"
@@ -51,6 +52,7 @@
                             "hasname": "true"
                         },
                         "id": 4,
+                        "cmid": 4,
                         "anchor": "activity-4",
                         "module": "assign",
                         "extraclasses": ""
@@ -123,11 +125,30 @@
         {{> core_courseformat/local/content/section/controlmenu }}
     {{/ core_courseformat/local/content/section/controlmenu }}
 {{/controlmenu}}
+{{#header}}
+    {{#headerdisplaymultipage}}
+        {{^controlmenu}}
+            <div class="section_goto bulk-hidden ml-auto" data-sectionid="{{id}}">
+                <a href="{{{url}}}"
+                   class="btn btn-icon d-flex align-items-center justify-content-center icon-no-margin"
+                   title="{{#str}}gotosection, course, {{name}}{{/str}}">
+                        <span class="dir-rtl-hide">
+                            {{#pix}}t/right, moodle{{/pix}}
+                        </span>
+                        <span class="dir-ltr-hide">
+                            {{#pix}}t/left, moodle, {{#str}}gotosection, course, {{name}}{{/str}}{{/pix}}
+                        </span>
+                        <span class="sr-only">
+                            {{#str}}gotosection, course, {{name}}{{/str}}
+                        </span>
+                </a>
+            </div>
+        {{/controlmenu}}
+    {{/headerdisplaymultipage}}
+{{/header}}
 </div>
 <div id="coursecontentcollapse{{num}}"
-    class="content {{^iscoursedisplaymultipage}}
-        {{^sitehome}}course-content-item-content collapse {{^contentcollapsed}}show{{/contentcollapsed}}{{/sitehome}}
-    {{/iscoursedisplaymultipage}}">
+    class="content {{^iscoursedisplaymultipage}}{{^sitehome}}course-content-item-content collapse {{^contentcollapsed}}show{{/contentcollapsed}}{{/sitehome}}{{/iscoursedisplaymultipage}}">
     <div class="{{#hasavailability}}description{{/hasavailability}} my-3" data-for="sectioninfo">
     {{#summary}}
         {{$ core_courseformat/local/content/section/summary }}

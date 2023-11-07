@@ -32,16 +32,17 @@
                 "count": "2"
             }
         ],
-        "modprogress": "Total 5"
+        "modprogress": "Progress: 1 / 5",
+        "totalactivities": "5"
     }
 }}
-<div class="section-summary-activities pr-2 mdl-right">
-    {{#mods}}
-    <span class="activity-count">{{name}}: {{count}}</span>
-    {{/mods}}
-</div>
-{{#showcompletion}}
-    <div class="section-summary-activities pr-2 mdl-right">
-        <span class="activity-count">{{modprogress}}</span>
+<div class="section-summary-activities d-flex">
+    <div class="d-flex align-items-center">
+        {{#pix}}i/activities, moodle{{/pix}}{{#str}} totalactivities, course, {{totalactivities}} {{/str}}
     </div>
-{{/showcompletion}}
+    {{#showcompletion}}
+        <div class="d-flex ml-auto align-items-center">
+            {{#pix}}i/stats, moodle{{/pix}}{{modprogress}}
+        </div>
+    {{/showcompletion}}
+ </div>

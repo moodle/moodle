@@ -28251,14 +28251,6 @@ body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
   margin: 2px 5px 2px 5px;
 }
 
-.course-content .section-summary .section-summary-activities .activity-count {
-  color: #6a737b;
-  font-size: 0.8203125rem;
-  margin: 3px;
-  white-space: nowrap;
-  display: inline-block;
-}
-
 .course-content .section-summary .summary {
   margin-top: 5px;
 }
@@ -29140,6 +29132,12 @@ span.editinstructions .alert-link {
   padding-left: 0;
   border-bottom: 1px solid #dee2e6;
 }
+.course-section .sectionname > a {
+  color: #1d2125;
+}
+.course-section .sectionname > a:hover {
+  text-decoration: none;
+}
 .course-section:last-child:not(.section-summary) {
   border-bottom: 0;
 }
@@ -29180,12 +29178,18 @@ span.editinstructions .alert-link {
   margin-top: 0.5rem;
   border-radius: 0.25rem;
 }
-.course-section .section-summary-activities .activity-count {
-  color: #6a737b;
-  font-size: 0.8203125rem;
-  margin: 3px;
-  white-space: nowrap;
-  display: inline-block;
+.course-section .section-summary-activities .icon {
+  width: inherit;
+  color: #0f6cbf;
+}
+.course-section .section-summary-activities + .section {
+  border-top: 1px solid #dee2e6;
+  margin-top: 1rem !important;
+  padding-top: 1rem !important;
+}
+.course-section .section_goto .icon {
+  font-size: 1.171875rem;
+  color: #0f6cbf;
 }
 .course-section.dndupload-dropzone {
   border: 2px dashed #0f6cbf;
