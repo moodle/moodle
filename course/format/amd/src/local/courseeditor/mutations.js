@@ -14,6 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import ajax from 'core/ajax';
+import {get_string as getString} from "core/str";
 
 /**
  * Default mutation manager
@@ -65,6 +66,11 @@ export default class {
      * @param {number} targetCmId optional target cm id (for moving actions)
      */
     async _sectionBasicAction(stateManager, action, sectionIds, targetSectionId, targetCmId) {
+        const logEntry = this._getLoggerEntry(stateManager, action, sectionIds, {
+            targetSectionId,
+            targetCmId,
+            itemType: 'section',
+        });
         const course = stateManager.get('course');
         this.sectionLock(stateManager, sectionIds, true);
         const updates = await this._callEditWebservice(
@@ -77,6 +83,7 @@ export default class {
         this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
+        stateManager.addLoggerEntry(await logEntry);
     }
 
     /**
@@ -88,6 +95,11 @@ export default class {
      * @param {number} targetCmId optional target cm id (for moving actions)
      */
     async _cmBasicAction(stateManager, action, cmIds, targetSectionId, targetCmId) {
+        const logEntry = this._getLoggerEntry(stateManager, action, cmIds, {
+            targetSectionId,
+            targetCmId,
+            itemType: 'cm',
+        });
         const course = stateManager.get('course');
         this.cmLock(stateManager, cmIds, true);
         const updates = await this._callEditWebservice(
@@ -100,6 +112,51 @@ export default class {
         this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.cmLock(stateManager, cmIds, false);
+        stateManager.addLoggerEntry(await logEntry);
+    }
+
+    /**
+     * Get log entry for the current action.
+     * @param {StateManager} stateManager the current state manager
+     * @param {string} action the action name
+     * @param {int[]|null} itemIds the element ids
+     * @param {Object|undefined} data extra params for the log entry
+     * @param {string|undefined} data.itemType the element type (will be taken from action if none)
+     * @param {int|null|undefined} data.targetSectionId the target section id
+     * @param {int|null|undefined} data.targetCmId the target cm id
+     * @param {String|null|undefined} data.component optional component (for format plugins)
+     * @return {Object} the log entry
+     */
+    async _getLoggerEntry(stateManager, action, itemIds, data = {}) {
+        const feedbackParams = {
+            action,
+            itemType: data.itemType ?? action.split('_')[0],
+        };
+        let batch = '';
+        if (itemIds.length > 1) {
+            feedbackParams.count = itemIds.length;
+            batch = '_batch';
+        } else if (itemIds.length === 1) {
+            const itemInfo = stateManager.get(feedbackParams.itemType, itemIds[0]);
+            feedbackParams.name = itemInfo.title ?? itemInfo.name;
+            // Apply shortener for modules like label.
+        }
+        if (data.targetSectionId) {
+            feedbackParams.targetSectionName = stateManager.get('section', data.targetSectionId).title;
+        }
+        if (data.targetCmId) {
+            feedbackParams.targetCmName = stateManager.get('cm', data.targetCmId).name;
+        }
+
+        const message = await getString(
+            `${action.toLowerCase()}_feedback${batch}`,
+            data.component ?? 'core_courseformat',
+            feedbackParams
+        );
+
+        return {
+            feedbackMessage: message,
+        };
     }
 
     /**
@@ -185,6 +242,7 @@ export default class {
      * @param {number|undefined} targetCmId the target course module id
      */
     async cmDuplicate(stateManager, cmIds, targetSectionId, targetCmId) {
+        const logEntry = this._getLoggerEntry(stateManager, 'cm_duplicate', cmIds);
         const course = stateManager.get('course');
         // Lock all target sections.
         const sectionIds = new Set();
@@ -203,6 +261,7 @@ export default class {
         stateManager.processUpdates(updates);
 
         this.sectionLock(stateManager, Array.from(sectionIds), false);
+        stateManager.addLoggerEntry(await logEntry);
     }
 
     /**
