@@ -171,7 +171,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                 var elementId;
                 var elements = [];
                 drop.all(CSS.DRAGITEM).each(function(v) {
-                    childElement = v.one('.felement').one('[id^="feedback_item_"]');
+                    childElement = v.one('.felement')?.one('[id^="feedback_item_"]');
                     if (childElement) {
                         elementId = this.get_node_id(childElement.get('id'));
                         if (elements.indexOf(elementId) == -1) {
