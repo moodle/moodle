@@ -8,6 +8,8 @@ information provided here is intended especially for developers.
 * Add a new method core_user::get_initials to get the initials of a user in a way compatible with internationalisation.
 * The `core/sortable_list` JS module adds a `sortable-list-is-dropped` class onto the dropped element after successful
   drag/drop, which can be used to add transition effects in calling code
+* course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
+  them all in a single cache set.
 
 === 4.3 ===
 
