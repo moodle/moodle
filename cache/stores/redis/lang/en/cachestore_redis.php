@@ -42,13 +42,35 @@ $string['privacy:metadata:redis:data'] = 'The various data stored in the cache';
 $string['serializer_igbinary'] = 'The igbinary serializer.';
 $string['serializer_php'] = 'The default PHP serializer.';
 $string['server'] = 'Server';
-$string['server_desc'] = 'For Unix socket usage, use the format <strong>/var/redis.sock</strong> or <strong>unix:///var/redis.sock</strong>';
-$string['server_help'] = 'This sets the hostname, IP address or Unix socket path of the Redis server to use.';
+$string['server_help'] = 'This sets the hostname, IP address or Unix socket path of the Redis server to use.
+
+Some example values:
+
+* testredis.abc.com - To connect to a Redis server by hostname (Port 6379 by default).
+* testredis.abc.com:1234 - To connect to a Redis server by hostname with a specific port.
+* 1.2.3.4 - To connect to a Redis server by IP address (Port 6379 by default).
+* 1.2.3.4:1234 - To connect to a Redis server by IP address with a specific port.
+* unix:///var/redis.sock - To connect to a Redis server using a Unix socket.
+* /var/redis.sock - To connect to a Redis server using a Unix socket (alternative format).
+
+See <a href="https://redis.io/docs/reference/clients/#accepting-client-connections" target="_new">Accepting Client Connections</a> and <a href="https://redis.io/resources/clients/#php" target="_new">Redis PHP clients</a> for more information.
+';
 $string['password'] = 'Password';
 $string['password_help'] = 'This sets the password of the Redis server.';
 $string['task_ttl'] = 'Free up memory used by expired entries in Redis caches';
 $string['test_server'] = 'Test server';
-$string['test_server_desc'] = 'Redis server to use for testing.<br>For Unix socket usage, use the format <strong>/var/redis.sock</strong> or <strong>unix:///var/redis.sock</strong>';
+$string['test_server_desc'] = 'Redis server to use for testing.
+
+Some example values:
+
+* testredis.abc.com - To connect to a Redis server by hostname (Port 6379 by default).
+* testredis.abc.com:1234 - To connect to a Redis server by hostname with a specific port.
+* 1.2.3.4 - To connect to a Redis server by IP address (Port 6379 by default).
+* 1.2.3.4:1234 - To connect to a Redis server by IP address with a specific port.
+* unix:///var/redis.sock - To connect to a Redis server using a Unix socket.
+* /var/redis.sock - To connect to a Redis server using a Unix socket (alternative format).
+
+See <a href="https://redis.io/docs/reference/clients/#accepting-client-connections" target="_new">Accepting Client Connections</a> and <a href="https://redis.io/resources/clients/#php" target="_new">Redis PHP clients</a> for more information.';
 $string['test_password'] = 'Test server password';
 $string['test_password_desc'] = 'Redis test server password.';
 $string['test_serializer'] = 'Serializer';
