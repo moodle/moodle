@@ -223,6 +223,21 @@ $rb-right-sidebar-width: 350px !default;
         width: $rb-right-sidebar-width;
         flex-shrink: 0;
     }
+
+    // Improve autocomplete styles.
+    div[data-region="settings-conditions"] .reportbuilder-conditions-select,
+    div[data-region="settings-filters"] .reportbuilder-filters-select {
+        .form-autocomplete-selection {
+            display: none;
+        }
+        .form-autocomplete-input {
+            width: 100%;
+        }
+        .form-autocomplete-suggestions {
+            width: calc(100% - 2 * #{map-get($spacers, 2)});
+        }
+    }
+
     .list-group-item {
         padding: .75rem;
         .icon {

@@ -24,7 +24,7 @@
 "use strict";
 
 import $ from 'jquery';
-import CustomEvents from 'core/custom_interaction_events';
+import AutoComplete from 'core/form-autocomplete';
 import 'core/inplace_editable';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
@@ -65,7 +65,11 @@ const reloadSettingsFiltersRegion = (reportElement, templateContext) => {
  * Initialise filters form, must be called on each init because the form container is re-created when switching editor modes
  */
 const initFiltersForm = () => {
-    CustomEvents.define(reportSelectors.actions.reportAddFilter, [CustomEvents.events.accessibleChange]);
+    const reportElement = document.querySelector(reportSelectors.regions.report);
+
+    // Enhance filter selector.
+    const reportAddFilter = reportElement.querySelector(reportSelectors.actions.reportAddFilter);
+    AutoComplete.enhance(reportAddFilter, false, '', getString('selectafilter', 'core_reportbuilder'));
 };
 
 /**
@@ -80,6 +84,7 @@ export const init = initialized => {
         'filteradded',
         'filterdeleted',
         'filtermoved',
+        'selectafilter',
     ]);
 
     prefetchStrings('core', [
@@ -91,14 +96,14 @@ export const init = initialized => {
         return;
     }
 
-    // Add filter to report. Use custom events helper to ensure consistency across platforms.
-    $(document).on(CustomEvents.events.accessibleChange, reportSelectors.actions.reportAddFilter, event => {
+    // Add filter to report.
+    document.addEventListener('change', event => {
         const reportAddFilter = event.target.closest(reportSelectors.actions.reportAddFilter);
         if (reportAddFilter) {
             event.preventDefault();
 
             // Check if dropdown is closed with no filter selected.
-            if (reportAddFilter.selectedIndex === 0) {
+            if (reportAddFilter.value === "" || reportAddFilter.value === "0") {
                 return;
             }
 

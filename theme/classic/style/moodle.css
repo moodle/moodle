@@ -32579,12 +32579,6 @@ body.path-question-type .mform fieldset.hidden {
   position: relative;
 }
 
-[data-filterregion=filter][data-filter-type=category] .form-autocomplete-suggestions li[aria-disabled=true] {
-  font-weight: bold;
-  color: #1d2125;
-  background-color: #fff;
-}
-
 @media (max-width: 767.98px) {
   .que .info {
     float: none;
@@ -33280,6 +33274,13 @@ fieldset.coursesearchbox label {
   pointer-events: none;
   color: #6a737b;
   background-color: #e9ecef;
+}
+.form-autocomplete-suggestions li.suggestions-heading {
+  pointer-events: none;
+  font-weight: bold;
+  color: #1d2125;
+  background-color: #fff;
+  padding-left: calc(1.5rem / 2);
 }
 .form-autocomplete-suggestions li::before {
   content: "​";
@@ -37929,6 +37930,18 @@ div.editor_atto_toolbar button .icon {
     width: 350px;
     flex-shrink: 0;
   }
+}
+.reportbuilder-sidebar-settings div[data-region=settings-conditions] .reportbuilder-conditions-select .form-autocomplete-selection,
+.reportbuilder-sidebar-settings div[data-region=settings-filters] .reportbuilder-filters-select .form-autocomplete-selection {
+  display: none;
+}
+.reportbuilder-sidebar-settings div[data-region=settings-conditions] .reportbuilder-conditions-select .form-autocomplete-input,
+.reportbuilder-sidebar-settings div[data-region=settings-filters] .reportbuilder-filters-select .form-autocomplete-input {
+  width: 100%;
+}
+.reportbuilder-sidebar-settings div[data-region=settings-conditions] .reportbuilder-conditions-select .form-autocomplete-suggestions,
+.reportbuilder-sidebar-settings div[data-region=settings-filters] .reportbuilder-filters-select .form-autocomplete-suggestions {
+  width: calc(100% - 2 * 0.5rem);
 }
 .reportbuilder-sidebar-settings .list-group-item {
   padding: 0.75rem;

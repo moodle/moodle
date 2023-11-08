@@ -1,6 +1,11 @@
 This files describes API changes in core_form libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.4 ===
+
+* Now autocomplete suggestions will preserve classes defined in respective original "option" elements
+  Alongside with that new ".suggestions-heading" class was added to easily generate suggestion headings
+
 === 4.3 ===
 
 * Added a new parameter to allow Groups to add attributes.

@@ -58,6 +58,6 @@
     }}{{#filtertypeclass}}data-filter-type-class="{{filtertypeclass}}" {{/filtertypeclass}}{{!
 }}>
     {{#values}}
-        <option value="{{value}}"{{#disabled}} disabled{{/disabled}}>{{{title}}}</option>
+        <option value="{{value}}"{{#disabled}} disabled{{/disabled}}{{#classes}} class="{{{classes}}}"{{/classes}}>{{{title}}}</option>
     {{/values}}
 </select>
