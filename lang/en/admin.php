@@ -1456,6 +1456,7 @@ $string['testoutgoingmailconf_sentmail'] = 'This site has successfully sent a te
 $string['testoutgoingmailconf_subject'] = '{$a->site}: test message. {$a->additional} Sent: {$a->time}';
 $string['testoutgoingmailconf_subjectadditional'] = 'Additional subject';
 $string['testoutgoingmailconf_toemail'] = 'To email address';
+$string['themedefinedinconfigphp'] = 'The theme cannot be changed because it is set to {$a} in config.php.';
 $string['themedesignermode'] = 'Theme designer mode';
 $string['themedesignermodewarning'] = 'Theme designer mode is enabled. This should not be enabled on production sites as it can significantly reduce performance.';
 $string['themelist'] = 'Theme list';
