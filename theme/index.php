@@ -22,7 +22,6 @@
  */
 
 require_once(__DIR__ . '/../config.php');
-require_once($CFG->libdir . '/adminlib.php');
 
 // Theme selector has been moved to admin/themeselector.php.
 redirect (new moodle_url('/admin/themeselector.php'));
