@@ -16,6 +16,7 @@
 
 namespace core_admin\reportbuilder\local\systemreports;
 
+use core_admin\reportbuilder\local\filters\courserole;
 use core\context\system;
 use core_cohort\reportbuilder\local\entities\cohort;
 use core_cohort\reportbuilder\local\entities\cohort_member;
@@ -218,7 +219,17 @@ class users extends system_report {
                 $now1 => $now,
                 $now2 => $now,
             ])
-            ->add_joins($this->get_joins()));
+        );
+
+        // Course role filter.
+        $this->add_filter((new filter(
+            courserole::class,
+            'courserole',
+            new lang_string('courserole', 'filters'),
+            $this->get_entity('user')->get_entity_name(),
+        ))
+            ->set_field_sql("{$entityuseralias}.id")
+        );
 
         // Add user profile fields filters.
         $userprofilefields = new user_profile_fields($entityuseralias . '.id', $entityuser->get_entity_name());
