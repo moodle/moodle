@@ -58,6 +58,9 @@
     <div class="d-flex align-items-end flex-column p-3">
         {{#current}}
             <strong><span class="text-success" id="current-theme-{{choose}}">{{#str}}currenttheme, moodle{{/str}}</span></strong>
+            {{#definedinconfig}}
+                <div class="alert alert-info p-1">{{#str}}configoverride, admin{{/str}}</div>
+            {{/definedinconfig}}
         {{/current}}
         {{^current}}
             {{#actionurl}}
