@@ -19,6 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\entities;
 
 use advanced_testcase;
+use core\context\system;
 
 /**
  * Unit tests for user entity
@@ -49,6 +50,35 @@ class user_test extends advanced_testcase {
     }
 
     /**
+     * Test getting all user identity columns
+     */
+    public function test_get_identity_columns() : void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->getDataGenerator()->create_custom_profile_field(['datatype' => 'text', 'name' => 'Hi', 'shortname' => 'hi']);
+        set_config('showuseridentity', 'username,profilefield_hi');
+        $context = system::instance();
+
+        $user = new user();
+        $user->initialise();
+
+        // All columns.
+        $this->assertEqualsCanonicalizing([
+            'user:username',
+            'user:profilefield_hi',
+        ], array_map(
+            fn($column) => $column->get_unique_identifier(),
+            $user->get_identity_columns($context),
+        ));
+
+        // Exclude username.
+        $columns = $user->get_identity_columns($context, ['username']);
+        $this->assertCount(1, $columns);
+        $this->assertEquals('user:profilefield_hi', reset($columns)->get_unique_identifier());
+    }
+
+    /**
      * Test getting user identity filter
      */
     public function test_get_identity_filter(): void {
@@ -64,6 +94,35 @@ class user_test extends advanced_testcase {
 
         $filterprofilefield = $user->get_identity_filter('profile_field_hi');
         $this->assertEquals('user:profilefield_hi', $filterprofilefield->get_unique_identifier());
+    }
+
+    /**
+     * Test getting all user identity filters
+     */
+    public function test_get_identity_filters() : void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->getDataGenerator()->create_custom_profile_field(['datatype' => 'text', 'name' => 'Hi', 'shortname' => 'hi']);
+        set_config('showuseridentity', 'username,profilefield_hi');
+        $context = system::instance();
+
+        $user = new user();
+        $user->initialise();
+
+        // All filters.
+        $this->assertEqualsCanonicalizing([
+            'user:username',
+            'user:profilefield_hi',
+        ], array_map(
+            fn($filter) => $filter->get_unique_identifier(),
+            $user->get_identity_columns($context),
+        ));
+
+        // Exclude username.
+        $filters = $user->get_identity_filters($context, ['username']);
+        $this->assertCount(1, $filters);
+        $this->assertEquals('user:profilefield_hi', reset($filters)->get_unique_identifier());
     }
 
     /**
