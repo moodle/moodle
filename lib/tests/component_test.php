@@ -23,7 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  *
  * @covers \core_component
- * @runTestsInSeparateProcesses
  */
 class component_test extends advanced_testcase {
 
@@ -602,6 +601,7 @@ class component_test extends advanced_testcase {
      * @param array $psr4 The PSR-4 namespaces to be used in the test.
      * @param string $classname The name of the class to attempt to load.
      * @param string $includedfiles The file expected to be loaded.
+     * @runInSeparateProcess
      */
     public function test_classloader($psr0, $psr4, $classname, $includedfiles) {
         $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
@@ -713,6 +713,7 @@ class component_test extends advanced_testcase {
      * @param array $psr4 The PSR-4 namespaces to be used in the test.
      * @param string $classname The name of the class to attempt to load.
      * @param string|bool $file The expected file corresponding to the class or false for nonexistant.
+     * @runInSeparateProcess
      */
     public function test_psr_classloader($psr0, $psr4, $classname, $file) {
         $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
