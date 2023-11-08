@@ -6,6 +6,8 @@ information provided here is intended especially for developers.
 (via options.pending). This is a backport of patch MDL-78779.
 * Add a new parameter to the debounce (core/utils) function to allow for cancellation.
 * Add a new method core_user::get_initials to get the initials of a user in a way compatible with internationalisation.
+* course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
+  them all in a single cache set.
 
 === 4.1.6 ===
 * \moodle_page::set_title() has been updated to append the site name depending on the value of $CFG->sitenameintitle and whether
