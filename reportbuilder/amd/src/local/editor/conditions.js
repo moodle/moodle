@@ -73,7 +73,8 @@ const initConditionsForm = () => {
 
     // Enhance condition selector.
     const reportAddCondition = reportElement.querySelector(reportSelectors.actions.reportAddCondition);
-    AutoComplete.enhance(reportAddCondition, false, '', getString('selectacondition', 'core_reportbuilder'));
+    AutoComplete.enhanceField(reportAddCondition, false, '', getString('selectacondition', 'core_reportbuilder'))
+        .catch(Notification.exception);
 
     // Handle dynamic conditions form.
     const conditionFormContainer = reportElement.querySelector(reportSelectors.regions.settingsConditions);
