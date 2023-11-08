@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Testable contenttype plugin class.
- *
- * @package    core_contentbank
- * @category   test
- * @copyright  2020 Sara Arjona <sara@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace contenttype_testable;
 
 /**
@@ -39,18 +30,6 @@ class contenttype extends \core_contentbank\contenttype {
 
     /** @var array Additional features for testing */
     public static $featurestotest;
-
-    /**
-     * Returns the HTML code to render the icon for content bank contents.
-     *
-     * @param  content $content The content to delete.
-     * @return string               HTML code to render the icon
-     */
-    public function get_icon(\core_contentbank\content $content): string {
-        global $OUTPUT;
-
-        return $OUTPUT->image_url('f/archive-64', 'moodle')->out(false);
-    }
 
     /**
      * Return an array of implemented features by this plugin.
