@@ -45,6 +45,24 @@ class text_attribute extends element {
     private bool $isreadonly;
 
     /**
+     * @var string|null The input type to pass to the template.
+     *                  This defaults to text but can be overridden to number for grade inputs.
+     */
+    private $type = null;
+
+    /**
+     * @var string|null The value to set for the input's `min` attribute.
+     *                  This is set if a minimum grade is provided for the grade input field.
+     */
+    private $min = null;
+
+    /**
+     * @var string|null The value to set for the input's `max` attribute.
+     *                  This is set if a maximum grade is provided for the grade input field.
+     */
+    private $max = null;
+
+    /**
      * Constructor
      *
      * @param string $name The input name (the first bit)
@@ -89,6 +107,46 @@ class text_attribute extends element {
             $context->label = get_string('gradefor', 'gradereport_singleview', $this->label);
         }
 
+        // Set this input field with type="number" if the decimal separator for current language is set to a period.
+        // Other decimal separators may not be recognised by browsers yet which may cause issues when entering grades.
+        $decsep = get_string('decsep', 'core_langconfig');
+        $context->isnumeric = $this->type === 'number' && $decsep === '.';
+        if ($context->isnumeric) {
+            $context->type = $this->type;
+            $context->min = $this->min;
+            $context->max = $this->max;
+        }
+
         return $OUTPUT->render_from_template('gradereport_singleview/text_attribute', $context);
+    }
+
+    /**
+     * Input type setter.
+     *
+     * @param string|null $type
+     * @return void
+     */
+    public function set_type(?string $type): void {
+        $this->type = $type;
+    }
+
+    /**
+     * Min attribute setter.
+     *
+     * @param string|null $min
+     * @return void
+     */
+    public function set_min(?string $min): void {
+        $this->min = $min;
+    }
+
+    /**
+     * Max attribute setter.
+     *
+     * @param string|null $max
+     * @return void
+     */
+    public function set_max(?string $max): void {
+        $this->max = $max;
     }
 }
