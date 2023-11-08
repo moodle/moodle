@@ -4191,16 +4191,27 @@ function delete_user(stdClass $user) {
     $delemail = !empty($user->email) ? $user->email : $user->username . '.' . $user->id . '@unknownemail.invalid';
 
     $deltime = time();
-    $deltimelength = core_text::strlen((string) $deltime);
 
     // Max username length is 100 chars. Select up to limit - (length of current time + 1 [period character]) from users email.
-    $delname = clean_param($delemail, PARAM_USERNAME);
-    $delname = core_text::substr($delname, 0, 100 - ($deltimelength + 1)) . ".{$deltime}";
+    $delnameprefix = clean_param($delemail, PARAM_USERNAME);
+    $delnamesuffix = $deltime;
+    $delnamesuffixlength = 10;
+    do {
+        // Workaround for bulk deletes of users with the same email address.
+        $delname = sprintf(
+            "%s.%10d",
+            core_text::substr(
+                $delnameprefix,
+                0,
+                // 100 Character maximum, with a '.' character, and a 10-digit timestamp.
+                100 - 1 - $delnamesuffixlength,
+            ),
+            $delnamesuffix,
+        );
+        $delnamesuffix++;
 
-    // Workaround for bulk deletes of users with the same email address.
-    while ($DB->record_exists('user', array('username' => $delname))) { // No need to use mnethostid here.
-        $delname++;
-    }
+        // No need to use mnethostid here.
+    } while ($DB->record_exists('user', ['username' => $delname]));
 
     // Mark internal user record as "deleted".
     $updateuser = new stdClass();
