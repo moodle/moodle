@@ -36,22 +36,26 @@ enum param: string {
     /**
      * PARAM_ALPHA - contains only English ascii letters [a-zA-Z].
      */
+    #[param_clientside_regex('^[a-zA-Z]+$')]
     case ALPHA = 'alpha';
 
     /**
      * PARAM_ALPHAEXT the same contents as PARAM_ALPHA (English ascii letters [a-zA-Z]) plus the chars in quotes: "_-" allowed
      * NOTE: originally this allowed "/" too, please use PARAM_SAFEPATH if "/" needed
      */
+    #[param_clientside_regex('^[a-zA-Z_\-]*$')]
     case ALPHAEXT = 'alphaext';
 
     /**
      * PARAM_ALPHANUM - expected numbers 0-9 and English ascii letters [a-zA-Z] only.
      */
+    #[param_clientside_regex('^[a-zA-Z0-9]*$')]
     case ALPHANUM = 'alphanum';
 
     /**
      * PARAM_ALPHANUMEXT - expected numbers 0-9, letters (English ascii letters [a-zA-Z]) and _- only.
      */
+    #[param_clientside_regex('^[a-zA-Z0-9_\-]*$')]
     case ALPHANUMEXT = 'alphanumext';
 
     /**
@@ -108,6 +112,7 @@ enum param: string {
      * This is preferred over PARAM_FLOAT for numbers typed in by the user.
      * Cleans localised numbers to computer readable numbers; false for invalid numbers.
      */
+    #[param_clientside_regex('^\d*([\.,])\d+$')]
     case LOCALISEDFLOAT = 'localisedfloat';
 
     /**
@@ -165,6 +170,7 @@ enum param: string {
     /**
      * PARAM_SAFEDIR - safe directory name, suitable for include() and require()
      */
+    #[param_clientside_regex('^[a-zA-Z0-9_\-]*$')]
     case SAFEDIR = 'safedir';
 
     /**
@@ -173,11 +179,13 @@ enum param: string {
      *
      * This is NOT intended to be used for absolute paths or any user uploaded files.
      */
+    #[param_clientside_regex('^[a-zA-Z0-9\/_\-]*$')]
     case SAFEPATH = 'safepath';
 
     /**
      * PARAM_SEQUENCE - expects a sequence of numbers like 8 to 1,5,6,4,6,8,9.  Numbers and comma only.
      */
+    #[param_clientside_regex('^[0-9,]*$')]
     case SEQUENCE = 'sequence';
 
     /**
@@ -316,6 +324,7 @@ enum param: string {
      * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
      * NOTE: numbers and underscores are strongly discouraged in plugin names!
      */
+    #[param_clientside_regex('^[a-z][a-z0-9]*(_(?:[a-z][a-z0-9_](?!__))*)?[a-z0-9]+$')]
     case COMPONENT = 'component';
 
     /**
@@ -323,6 +332,7 @@ enum param: string {
      * It is usually used together with context id and component.
      * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
      */
+    #[param_clientside_regex('^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$')]
     case AREA = 'area';
 
     /**
@@ -330,6 +340,7 @@ enum param: string {
      * Only lowercase ascii letters, numbers and underscores are allowed, it has to start with a letter.
      * NOTE: numbers and underscores are strongly discouraged in plugin names! Underscores are forbidden in module names.
      */
+    #[param_clientside_regex('^[a-z](?:[a-z0-9_](?!__))*[a-z0-9]+$')]
     case PLUGIN = 'plugin';
 
     /**
@@ -407,6 +418,21 @@ enum param: string {
         }
 
         return $this->{$methodname}($value);
+    }
+
+    /**
+     * Get the clientside regular expression for this parameter.
+     *
+     * @return null|string
+     */
+    public function get_clientside_expression(): ?string {
+        $ref = new \ReflectionClassConstant(self::class, $this->name);
+        $attributes = $ref->getAttributes(param_clientside_regex::class);
+        if (count($attributes) === 0) {
+            return null;
+        }
+
+        return $attributes[0]->newInstance()->regex;
     }
 
     /**

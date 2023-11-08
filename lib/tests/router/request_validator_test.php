@@ -122,7 +122,12 @@ final class request_validator_test extends route_testcase {
      * When a pathtype fails to validate, it will result in an HttpNotFoundException.
      */
     public function test_validate_request_invalid_path_component(): void {
+        // Most of the path types are converted to regexes and will lead to a 404 before they get this far.
         $type = param::INT;
+        $this->assertEmpty(
+            $type->get_clientside_expression(),
+            'This test requires a type with no clientside expression. Please update the test.',
+        );
 
         $route = new route(
             path: '/example/{required}',
@@ -145,7 +150,12 @@ final class request_validator_test extends route_testcase {
      * When a pathtype fails to validate, it will result in an HttpNotFoundException.
      */
     public function test_validate_request_invalid_path_component_native(): void {
+        // Most of the path types are converted to regexes and will lead to a 404 before they get this far.
         $type = param::ALPHA;
+        $this->assertNotEmpty(
+            $type->get_clientside_expression(),
+            'This test requires a type with clientside expression. Please update the test.',
+        );
 
         $route = new route(
             path: '/example/{required}',

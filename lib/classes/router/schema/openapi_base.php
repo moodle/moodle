@@ -234,6 +234,10 @@ abstract class openapi_base {
             default => 'string',
         };
 
+        if ($pattern = $type->get_clientside_expression()) {
+            $data->pattern = $pattern;
+        }
+
         return $data;
     }
 }

@@ -187,5 +187,6 @@ final class parameter_test extends route_testcase {
         $description = $param->get_openapi_description(new specification());
         $this->assertNotNull($description->schema);
         $this->assertEquals('string', $description->schema->type);
+        $this->assertIsString($description->schema->pattern);
     }
 }
