@@ -2253,4 +2253,15 @@ class core_admin_renderer extends plugin_renderer_base {
 
         return $this->warning($xmlrpcwarning);
     }
+
+    /**
+     * Renders the theme selector list.
+     *
+     * @param core_admin\output\theme_selector $themeselector
+     * @return string HTML
+     */
+    public function theme_selector_list(core_admin\output\theme_selector $themeselector): string {
+        $renderable = $themeselector->export_for_template($this);
+        return $this->render_from_template('core_admin/themeselector/theme_selector', $renderable);
+    }
 }

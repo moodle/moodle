@@ -47,7 +47,8 @@ reports,core_reportbuilder|/reportbuilder/index.php',
         '10'
     ));
     $ADMIN->add('themes', $temp);
-    $ADMIN->add('themes', new admin_externalpage('themeselector', new lang_string('themeselector','admin'), $CFG->wwwroot . '/theme/index.php'));
+    $ADMIN->add('themes', new admin_externalpage('themeselector',
+        new lang_string('themeselector', 'admin'), $CFG->wwwroot . '/admin/themeselector.php'));
 
     // settings for each theme
     foreach (core_component::get_plugin_list('theme') as $theme => $themedir) {

@@ -26674,14 +26674,6 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   width: 4em;
 }
 
-#adminthemeselector table {
-  border-collapse: collapse;
-}
-
-#adminthemeselector .selectedtheme {
-  border: 1px solid #b8dce2;
-}
-
 .admin_colourpicker,
 .admin_colourpicker_preview {
   display: none;
