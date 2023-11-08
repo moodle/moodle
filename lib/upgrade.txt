@@ -6,6 +6,8 @@ information provided here is intended especially for developers.
 * Added modalform config object `moduleName` param that can be used to define alternative modal type for the modalform. By default 'core/modal_save_cancel' is used.
 * Add a new parameter to the debounce (core/utils) function to allow for cancellation.
 * Add a new method core_user::get_initials to get the initials of a user in a way compatible with internationalisation.
+* course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
+  them all in a single cache set.
 
 === 4.3 ===
 
