@@ -69,7 +69,8 @@ const initFiltersForm = () => {
 
     // Enhance filter selector.
     const reportAddFilter = reportElement.querySelector(reportSelectors.actions.reportAddFilter);
-    AutoComplete.enhance(reportAddFilter, false, '', getString('selectafilter', 'core_reportbuilder'));
+    AutoComplete.enhanceField(reportAddFilter, false, '', getString('selectafilter', 'core_reportbuilder'))
+        .catch(Notification.exception);
 };
 
 /**
