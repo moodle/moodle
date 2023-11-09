@@ -19,50 +19,23 @@ Feature: We can use a minimum grade different than zero
       | student1 | C1 | student |
       | student2 | C1 | student |
     And the following "grade categories" exist:
-      | fullname | course |
-      | Sub category 1 | C1 |
-      | Sub category 2 | C1 |
+      | fullname       | course | aggregateonlygraded |
+      | Sub category 1 | C1     | 0                   |
+      | Sub category 2 | C1     | 0                   |
+    And the following "grade items" exist:
+      | itemname      | grademin | course |
+      | Manual item 1 | -100     | C1     |
+      | Manual item 2 | 50       | C1     |
+    And the following "grade items" exist:
+      | itemname      | grademin | grademax | course | gradecategory  |
+      | Manual item 3 | -100     | 50       | C1     | Sub category 1 |
+    And the following "grade items" exist:
+      | itemname      | grademin | course | gradecategory  |
+      | Manual item 4 | -100     | C1     | Sub category 1 |
+      | Manual item 5 | 50       | C1     | Sub category 2 |
+      | Manual item 6 | 50       | C1     | Sub category 2 |
     And I log in as "admin"
-    And I set the following administration settings values:
-      | grade_aggregations_visible | Mean of grades,Weighted mean of grades,Simple weighted mean of grades,Mean of grades (with extra credits),Median of grades,Lowest grade,Highest grade,Mode of grades,Natural |
     And I am on the "Course 1" "grades > gradebook setup" page
-    And I press "Add grade item"
-    And I set the following fields to these values:
-      | Item name | Manual item 1 |
-      | Minimum grade | -100 |
-      | Grade category | Course 1 |
-    And I press "Save changes"
-    And I press "Add grade item"
-    And I set the following fields to these values:
-      | Item name | Manual item 2 |
-      | Minimum grade | 50 |
-      | Grade category | Course 1 |
-    And I press "Save changes"
-    And I press "Add grade item"
-    And I set the following fields to these values:
-      | Item name | Manual item 3 |
-      | Maximum grade | 50 |
-      | Minimum grade | -100 |
-      | Grade category | Sub category 1 |
-    And I press "Save changes"
-    And I press "Add grade item"
-    And I set the following fields to these values:
-      | Item name | Manual item 4 |
-      | Minimum grade | -100 |
-      | Grade category | Sub category 1 |
-    And I press "Save changes"
-    And I press "Add grade item"
-    And I set the following fields to these values:
-      | Item name | Manual item 5 |
-      | Minimum grade | 50 |
-      | Grade category | Sub category 2 |
-    And I press "Save changes"
-    And I press "Add grade item"
-    And I set the following fields to these values:
-      | Item name | Manual item 6 |
-      | Minimum grade | 50 |
-      | Grade category | Sub category 2 |
-    And I press "Save changes"
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the field "Show weightings" to "Show"
     And I set the field "Show contribution to course total" to "Show"
@@ -70,13 +43,7 @@ Feature: We can use a minimum grade different than zero
 
   @javascript
   Scenario: Natural aggregation with negative and positive grade
-    And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "Sub category 1":
-      | Aggregation          | Natural |
-      | Exclude empty grades | 0       |
-    And I set the following settings for grade item "Sub category 2":
-      | Aggregation          | Natural |
-      | Exclude empty grades | 0       |
+    Given I navigate to "Setup > Gradebook setup" in the course gradebook
     And I set the following settings for grade item "Course 1":
       | Aggregation          | Natural |
       | Exclude empty grades | 0       |
