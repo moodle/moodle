@@ -480,34 +480,15 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
     }
 
     /**
-     * Gereate a brief statement of how many sub-parts of this question the
+     * Generate a brief statement of how many sub-parts of this question the
      * student got correct|partial|incorrect.
      *
      * @param question_attempt $qa The question attempt to display.
      * @return string HTML fragment.
      */
     protected function num_parts_correct(question_attempt $qa) {
-        $a = new stdClass();
-        $output = '';
-
-        list($a->numright, $a->numpartial, $a->numincorrect) = $qa->get_question()->get_num_parts_right(
-            $qa->get_last_qt_data());
-
-        if ($a->numright) {
-            $a->numrightplural = get_string($a->numright > 1 ? 'itemplural' : 'itemsingular', 'qtype_ordering');
-            $output .= html_writer::nonempty_tag('div', get_string('yougotnright', 'qtype_ordering', $a));
-        }
-
-        if ($a->numpartial) {
-            $a->numpartialplural = get_string($a->numpartial > 1 ? 'itemplural' : 'itemsingular', 'qtype_ordering');
-            $output .= html_writer::nonempty_tag('div', get_string('yougotnpartial', 'qtype_ordering', $a));
-        }
-
-        if ($a->numincorrect) {
-            $a->numincorrectplural = get_string($a->numincorrect > 1 ? 'itemplural' : 'itemsingular', 'qtype_ordering');
-            $output .= html_writer::nonempty_tag('div', get_string('yougotnincorrect', 'qtype_ordering', $a));
-        }
-
-        return $output;
+        $numpartscorrect = new \qtype_ordering\output\num_parts_correct($qa);
+        return $this->output->render_from_template('qtype_ordering/num_parts_correct',
+            $numpartscorrect->export_for_template($this->output));
     }
 }

@@ -71,9 +71,6 @@ $string['gradingtype_help'] = 'Choose the type of grading calculation.
 $string['highlightresponse'] = 'Highlight response as correct or incorrect';
 $string['horizontal'] = 'Horizontal';
 
-$string['itemplural'] = 'items';
-$string['itemsingular'] = 'item';
-
 $string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
 $string['layouttype'] = 'Layout of items';
 $string['longestcontiguoussubset'] = 'Longest contiguous subset';
@@ -123,6 +120,6 @@ $string['showgrading'] = 'Grading details';
 $string['showgrading_help'] = 'Choose whether to show or hide details of the score calculation when a student reviews a response to this Ordering question.';
 
 $string['vertical'] = 'Vertical';
-$string['yougotnright'] = 'You have {$a->numright} {$a->numrightplural} correct.';
-$string['yougotnpartial'] = 'You have {$a->numpartial} {$a->numpartialplural} partially correct.';
-$string['yougotnincorrect'] = 'You have {$a->numincorrect} {$a->numincorrectplural} incorrect.';
+$string['correctitemsnumber'] = 'Correct items: {$a}';
+$string['partialitemsnumber'] = 'Partially correct items: {$a}';
+$string['incorrectitemsnumber'] = 'Incorrect items: {$a}';
