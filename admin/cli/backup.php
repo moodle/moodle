@@ -33,6 +33,7 @@ require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
 list($options, $unrecognized) = cli_get_params(array(
     'courseid' => false,
     'courseshortname' => '',
+    'cmid' => false,
     'destination' => '',
     'help' => false,
     ), array('h' => 'help'));
@@ -42,13 +43,14 @@ if ($unrecognized) {
     cli_error(get_string('cliunknowoption', 'admin', $unrecognized));
 }
 
-if ($options['help'] || !($options['courseid'] || $options['courseshortname'])) {
+if ($options['help'] || !($options['courseid'] || $options['courseshortname'] || $options['cmid'])) {
     $help = <<<EOL
-Perform backup of the given course.
+Perform backup of the given course or course module.
 
 Options:
 --courseid=INTEGER          Course ID for backup.
---courseshortname=STRING    Course shortname for backup.
+--courseshortname=STRING    Course shortname for backup. This option is ignored if courseid is set.
+--cmid=INTEGER              Course module ID for backup. This option is ignored if courseid or courseshortname is set.
 --destination=STRING        Path where to store backup file. If not set the backup
                             will be stored within the course backup file area.
 -h, --help                  Print out this help.
@@ -76,16 +78,26 @@ if (!empty($dir)) {
     }
 }
 
-// Check that the course exists.
+// Check that the course or course module exists.
 if ($options['courseid']) {
     $course = $DB->get_record('course', array('id' => $options['courseid']), '*', MUST_EXIST);
 } else if ($options['courseshortname']) {
     $course = $DB->get_record('course', array('shortname' => $options['courseshortname']), '*', MUST_EXIST);
+} else if ($options['cmid']) {
+    $cm = $DB->get_record('course_modules', ['id' => $options['cmid']], '*', MUST_EXIST);
 }
 
 cli_heading('Performing backup...');
-$bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
-                            backup::INTERACTIVE_YES, backup::MODE_GENERAL, $admin->id);
+if (!empty($course)) {
+    $bc = new backup_controller(backup::TYPE_1COURSE, $course->id, backup::FORMAT_MOODLE,
+        backup::INTERACTIVE_YES, backup::MODE_GENERAL, $admin->id);
+} else if (!empty($cm)) {
+    $bc = new backup_controller(backup::TYPE_1ACTIVITY, $cm->id, backup::FORMAT_MOODLE,
+        backup::INTERACTIVE_YES, backup::MODE_GENERAL, $admin->id);
+} else {
+    throw new \moodle_exception('invalidoption');
+}
+
 // Set the default filename.
 $format = $bc->get_format();
 $type = $bc->get_type();
@@ -113,7 +125,11 @@ if (!empty($dir)) {
         }
     }
 } else {
-    mtrace("Backup completed, the new file is listed in the backup area of the given course");
+    if (!empty($course)) {
+        mtrace("Backup completed, the new file is listed in the backup area of the given course");
+    } else {
+        mtrace("Backup completed, the new file is listed in the backup area of the given module");
+    }
 }
 $bc->destroy();
 exit(0);
