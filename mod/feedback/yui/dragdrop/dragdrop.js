@@ -215,6 +215,11 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
                         window.setTimeout(function(e) {
                             spinner.hide();
                         }, 250);
+                        require(['core/notification', 'core/str', 'core/toast'], function(Notification, Strings, Toast) {
+                            Strings.get_string('changessaved', 'core').then(function(saveString) {
+                                return Toast.add(saveString);
+                            }).catch(Notification.exception);
+                        });
                     },
                     failure : function(transactionid, xhr) {
                         var msg = {
