@@ -605,13 +605,6 @@ body:not(.editing)  .sitetopic ul.section {
     margin-left: 0;
 }
 
-.path-course-view li.activity form.togglecompletion .btn {
-    padding: 0;
-}
-.path-course-view li.activity form.togglecompletion img {
-    max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
-}
-
 .path-course-view {
     &.editing {
         li.activity span.autocompletion img {
@@ -620,15 +613,6 @@ body:not(.editing)  .sitetopic ul.section {
             margin-left: $spacer * 0.5;
         }
     }
-}
-
-.path-course-view li.activity form.togglecompletion .ajaxworking {
-    width: 16px;
-    height: 16px;
-    position: absolute;
-    right: 22px;
-    top: 3px;
-    background: url([[pix:i/ajaxloader]]) no-repeat;
 }
 
 li.section.hidden span.commands a.editing_hide,
