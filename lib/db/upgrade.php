@@ -3682,5 +3682,21 @@ privatefiles,moodle|/user/files.php';
     // Automatically generated Moodle v4.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2023110200.00) {
+        // Reorder the editors to make Tiny the default for all upgrades.
+        $editors = [];
+        array_push($editors, 'tiny');
+        $list = explode(',', $CFG->texteditors);
+        foreach ($list as $editor) {
+            if ($editor != 'tiny') {
+                array_push($editors, $editor);
+            }
+        }
+        set_config('texteditors', implode(',', $editors));
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023110200.00);
+    }
+
     return true;
 }
