@@ -16,7 +16,7 @@ notes:
 
         - `enrolment:method` (plus enrolment formatter `enrolment_name` method)
 
-        - 'enrolment:role`
+        - `enrolment:role`
 
         - `file:context`
 
