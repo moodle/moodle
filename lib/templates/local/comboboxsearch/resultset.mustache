@@ -17,12 +17,14 @@
     Wrapping template for returned result items.
 
     Context variables required for this template:
+    * instance - The instance ID of the combo box.
     * results - Our returned results to render.
     * searchterm - The entered text to find these results.
     * hasresult - Allow the handling where no results exist for the returned search term.
 
     Example context (json):
     {
+        "instance": 25,
         "results": [
             {
                 "id": 2,
@@ -39,7 +41,7 @@
 }}
 <div class="d-flex flex-column mh-100 h-100">
     <ul
-        id="{{$listid}}list{{/listid}}-result-listbox"
+        id="{{$listid}}list{{/listid}}-{{instance}}-result-listbox"
         class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group h-100 mx-0 {{$listclasses}}{{/listclasses}}"
         role="listbox"
         data-region="search-result-items-container"

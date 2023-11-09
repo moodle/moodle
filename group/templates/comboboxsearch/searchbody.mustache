@@ -29,42 +29,27 @@
     }
 }}
 <div class="flex-column h-100 w-100">
-    <span class="d-none" data-region="courseid" data-courseid="{{courseid}}" aria-hidden="true"></span>
-    <span class="d-none" data-region="groupid" data-groupid="{{groupid}}" aria-hidden="true"></span>
+    <span class="d-none" data-region="courseid" data-courseid="{{courseid}}"></span>
+    <span class="d-none" data-region="groupid" data-groupid="{{groupid}}"></span>
+    <span class="d-none" data-region="instance" data-instance="{{instance}}"></span>
 
-    {{#currentvalue}}
-        {{< core/search_input_auto }}
-            {{$label}}{{#str}}
-                searchgroups, core
-            {{/str}}{{/label}}
-            {{$value}}{{currentvalue}}{{/value}}
-            {{$additionalattributes}}
-                role="combobox"
-                aria-expanded="true"
-                aria-controls="groups-result-listbox"
-                aria-autocomplete="list"
-                data-input-element="input-{{uniqid}}"
-            {{/additionalattributes}}
-        {{/ core/search_input_auto }}
-    {{/currentvalue}}
-    {{^currentvalue}}
-        {{< core/search_input_auto }}
-            {{$label}}{{#str}}
-                searchgroups, core
-            {{/str}}{{/label}}
-            {{$placeholder}}{{#str}}
-                searchgroups, core
-            {{/str}}{{/placeholder}}
-            {{$additionalattributes}}
-                role="combobox"
-                aria-expanded="true"
-                aria-controls="groups-result-listbox"
-                aria-autocomplete="list"
-                data-input-element="input-{{uniqid}}"
-            {{/additionalattributes}}
-        {{/ core/search_input_auto }}
-    {{/currentvalue}}
-    <input type="hidden" name="search" id="input-{{uniqid}}"/>
+    {{< core/search_input_auto }}
+        {{$label}}{{#str}}
+            searchgroups, core
+        {{/str}}{{/label}}
+        {{$placeholder}}{{#str}}
+            searchgroups, core
+        {{/str}}{{/placeholder}}
+        {{$value}}{{currentvalue}}{{/value}}
+        {{$additionalattributes}}
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="groups-{{instance}}-result-listbox"
+            aria-autocomplete="list"
+            data-input-element="input-{{uniqid}}-{{instance}}"
+        {{/additionalattributes}}
+    {{/ core/search_input_auto }}
+    <input type="hidden" name="search" id="input-{{uniqid}}-{{instance}}"/>
 
     <div data-region="searchplaceholder"></div>
 </div>

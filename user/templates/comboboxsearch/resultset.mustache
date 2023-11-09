@@ -17,6 +17,7 @@
     Wrapping template for returned result items.
 
     Context variables required for this template:
+    * instance - The instance ID of the combo box.
     * users - Our returned users to render.
     * found - Count of the found users.
     * total - Total count of users within this report.
@@ -26,6 +27,7 @@
 
     Example context (json):
     {
+        "instance": 25,
         "users": [
             {
                 "id": 2,
@@ -58,7 +60,7 @@
     {{$selectall}}
         {{#selectall}}
             <li
-                id="result-row-0"
+                id="result-row-{{instance}}-0"
                 class="w-100 p-1 border-top bottom-0 position-sticky dropdown-item d-flex small p-3"
                 role="option"
                 {{! The data-short-text attribute is provided so that aria.js would use it rather than the whole content. }}

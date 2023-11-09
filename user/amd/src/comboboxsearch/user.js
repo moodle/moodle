@@ -55,9 +55,9 @@ export default class UserSearch extends search_combobox {
             resetPageButton: '[data-action="resetpage"]',
         };
 
-        const component = document.querySelector(this.componentSelector());
-        this.courseID = component.querySelector(this.selectors.courseid).dataset.courseid;
+        this.courseID = this.component.querySelector(this.selectors.courseid).dataset.courseid;
         this.groupID = document.querySelector(this.selectors.groupid)?.dataset?.groupid;
+        this.instance = this.component.querySelector(this.selectors.instance).dataset.instance;
 
         // We need to render some content by default for ARIA purposes.
         this.renderDefault();
@@ -92,6 +92,7 @@ export default class UserSearch extends search_combobox {
         const {html, js} = await renderForPromise('core_user/comboboxsearch/resultset', {
             users: this.getMatchedResults().slice(0, 5),
             hasresults: this.getMatchedResults().length > 0,
+            instance: this.instance,
             matches: this.getMatchedResults().length,
             searchterm: this.getSearchTerm(),
             selectall: this.selectAllResultsLink(),
@@ -261,6 +262,7 @@ export default class UserSearch extends search_combobox {
 
     /**
      * Build up the view all link that is dedicated to a particular result.
+     * We will call this function when a user interacts with the combobox to redirect them to show their results in the page.
      *
      * @param {Number} userID The ID of the user selected.
      */

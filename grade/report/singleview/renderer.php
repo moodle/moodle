@@ -58,6 +58,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
         $data = [
             'currentvalue' => $currentvalue,
             'courseid' => $course->id,
+            'instance' => rand(),
             'group' => $groupid ?? 0,
             'resetlink' => $resetlink->out(false),
             'name' => 'userid',
@@ -88,6 +89,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
         $data = [
             'name' => 'itemid',
             'courseid' => $course->id,
+            'instance' => rand(),
         ];
 
         // If a particular grade item option is selected (not in zero state).
@@ -102,6 +104,7 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
         $sbody = $this->render_from_template('core/local/comboboxsearch/searchbody', [
             'courseid' => $course->id,
             'currentvalue' => optional_param('gradesearchvalue', '', PARAM_NOTAGS),
+            'instance' => $data['instance'],
         ]);
         $dropdown = new comboboxsearch(
             false,

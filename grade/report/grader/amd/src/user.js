@@ -64,7 +64,7 @@ export default class User extends UserSearch {
     }
 
     /**
-     * Build up the view all link that is dedicated to a particular result.
+     * Build up the link that is dedicated to a particular result.
      *
      * @param {Number} userID The ID of the user selected.
      * @returns {string|*}

@@ -28,39 +28,22 @@
 }}
 <div class="flex-column h-100 w-100">
     <span class="d-none" data-region="courseid" data-courseid="{{courseid}}" aria-hidden="true"></span>
-
-    {{#currentvalue}}
-        {{< core/search_input_auto }}
-            {{$label}}{{#str}}
-                searchitems, core
-            {{/str}}{{/label}}
-            {{$value}}{{currentvalue}}{{/value}}
-            {{$additionalattributes}}
-                role="combobox"
-                aria-expanded="true"
-                aria-controls="list-result-listbox"
-                aria-autocomplete="list"
-                data-input-element="result-input-{{uniqid}}"
-            {{/additionalattributes}}
-        {{/ core/search_input_auto }}
-    {{/currentvalue}}
-    {{^currentvalue}}
-        {{< core/search_input_auto }}
-            {{$label}}{{#str}}
-                searchitems, core
-            {{/str}}{{/label}}
-            {{$placeholder}}{{#str}}
-                searchitems, core
-            {{/str}}{{/placeholder}}
-            {{$additionalattributes}}
-                role="combobox"
-                aria-expanded="true"
-                aria-controls="list-result-listbox"
-                aria-autocomplete="list"
-                data-input-element="result-input-{{uniqid}}"
-            {{/additionalattributes}}
-        {{/ core/search_input_auto }}
-    {{/currentvalue}}
-    <input type="hidden" name="search" id="result-input-{{uniqid}}"/>
+    {{< core/search_input_auto }}
+        {{$label}}{{#str}}
+            searchitems, core
+        {{/str}}{{/label}}
+        {{$placeholder}}{{#str}}
+            searchitems, core
+        {{/str}}{{/placeholder}}
+        {{$value}}{{currentvalue}}{{/value}}
+        {{$additionalattributes}}
+            role="combobox"
+            aria-expanded="true"
+            aria-controls="list-{{instance}}-result-listbox"
+            aria-autocomplete="list"
+            data-input-element="result-input-{{uniqid}}-{{instance}}"
+        {{/additionalattributes}}
+    {{/ core/search_input_auto }}
+    <input type="hidden" name="search" id="result-input-{{uniqid}}-{{instance}}"/>
     <div data-region="searchplaceholder"></div>
 </div>

@@ -40,6 +40,7 @@ export default class GradeItemSearch extends search_combobox {
         };
         const component = document.querySelector(this.componentSelector());
         this.courseID = component.querySelector(this.selectors.courseid).dataset.courseid;
+        this.instance = this.component.querySelector(this.selectors.instance).dataset.instance;
 
         const searchValueElement = this.component.querySelector(`#${this.searchInput.dataset.inputElement}`);
         searchValueElement.addEventListener('change', () => {
@@ -102,6 +103,7 @@ export default class GradeItemSearch extends search_combobox {
      */
     async renderDropdown() {
         const {html, js} = await renderForPromise('core/local/comboboxsearch/resultset', {
+            instance: this.instance,
             results: this.getMatchedResults(),
             hasresults: this.getMatchedResults().length > 0,
             searchterm: this.getSearchTerm(),
@@ -233,6 +235,7 @@ export default class GradeItemSearch extends search_combobox {
 
     /**
      * Build up the view all link that is dedicated to a particular result.
+     * We will call this function when a user interacts with the combobox to redirect them to show their results in the page.
      *
      * @param {Number} gradeID The ID of the grade item selected.
      */

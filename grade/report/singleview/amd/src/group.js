@@ -57,7 +57,7 @@ export default class Group extends GroupSearch {
     }
 
     /**
-     * Build up the view all link that is dedicated to a particular result.
+     * Build up the link that is dedicated to a particular result.
      *
      * @param {Number} groupID The ID of the group selected.
      * @returns {string|*}

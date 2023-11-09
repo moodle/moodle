@@ -30,7 +30,9 @@ use templatable;
  */
 class comboboxsearch implements renderable, templatable {
 
-    /** @var bool $renderlater Should the dropdown render straightaway? */
+    /** @var bool $renderlater Should the dropdown render straightaway? We sometimes need to output the component without all of the
+     * data and leave the rendering of any defaults and actual data to the caller. We will give you a basic placeholder that can
+     * then be easily replaced.*/
     protected $renderlater;
 
     /** @var string $buttoncontent What is the content of the "Button" that users will always see. */
@@ -68,16 +70,16 @@ class comboboxsearch implements renderable, templatable {
      *
      * @param bool $renderlater How we figure out if we should render the template instantly.
      * @param string $buttoncontent What gets placed in the button.
-     * @param ?string $dropdowncontent What can be placed in the dropdown if we are rendering now.
+     * @param ?string $dropdowncontent What will be placed in the dropdown if we are rendering now.
      * @param ?string $parentclasses The classes that can be added that the bootstrap events are attached to.
      * @param ?string $buttonclasses Any special classes that may be needed.
      * @param ?string $dropdownclasses Any special classes that may be needed.
-     * @param ?string $buttonheader If the button item in the tertiary nav needs an extra top header for context.
+     * @param ?string $buttonheader Sometimes we want extra context for a button before it is shown, basically a pseudo header.
      * @param ?bool $usebutton If we want the mustache to add the button roles for us or do we have another aria role node?
      * @param ?string $label The label of the combobox.
      * @param ?string $name The name of the input element representing the combobox.
      * @param ?string $value The value of the input element representing the combobox.
-     * @throws moodle_exception If the implementor incorrectly call this module.
+     * @throws moodle_exception If the implementor incorrectly calls this module.
      */
     public function __construct(
         bool $renderlater,

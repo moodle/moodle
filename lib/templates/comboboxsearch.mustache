@@ -21,6 +21,7 @@
     * name - The name of the input element representing the combobox.
     * value - The value of the input element representing the combobox.
     * renderlater - This determines if we show a placeholder whilst fetching content to replace within the placeholder region
+    * buttonheader - The header to be shown above the button
     * buttoncontent - The string to be shown to users to trigger the dropdown
     * usebutton - If we want to use a button to trigger the dropdown, or just the dropdown itself
     * dropdowncontent - If rendering now, The content within the dropdown
@@ -35,8 +36,9 @@
         "name": "input-1",
         "value": "0",
         "renderlater": false,
+        "buttonheader": "Example:",
         "usebutton": true,
-        "buttoncontent": "Example dropdown button",
+        "buttoncontent": "Dropdown button",
         "dropdowncontent": "Some body content to render right now",
         "parentclasses": "my-dropdown",
         "buttonclasses": "my-button",
@@ -47,7 +49,7 @@
 {{#buttonheader}}
     <small>{{.}}</small>
 {{/buttonheader}}
-<div class="{{#parentclasses}}{{.}}{{/parentclasses}} dropdown">
+<div class="{{#parentclasses}}{{.}}{{/parentclasses}} dropdown" data-instance="{{instance}}">
 
     {{#usebutton}}
         <div tabindex="0"
@@ -56,7 +58,7 @@
              role="combobox"
              aria-haspopup="dialog"
              aria-controls="dialog-{{instance}}-{{uniqid}}"
-             class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle keep-open d-flex text-left align-items-center p-0 font-weight-bold"
+             class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle d-flex text-left align-items-center p-0 font-weight-bold"
              aria-label="{{label}}"
              data-input-element="input-{{instance}}-{{uniqid}}">
             {{{buttoncontent}}}

@@ -18,8 +18,8 @@
 
     Context variables required for this template:
     * id - Result item system ID.
+    * instance - The instance ID of the combo box.
     * name - Result item human readable name.
-    * link - The link used to redirect upon self to show only this specific result item.
 
     The shorttext pragma can be used to provide a short text for the result item.
     This is especially useful when the result item content contains html tags.
@@ -27,11 +27,12 @@
     Example context (json):
     {
         "id": 2,
+        "instance": 25,
         "name": "Foo bar"
     }
 }}
 <li
-    id="result-{{id}}"
+    id="result-{{instance}}-{{id}}"
     class="w-100 dropdown-item d-flex px-0 align-items-center"
     role="option"
     {{! aria.js would use the data-short-text attribute if it is provided. }}

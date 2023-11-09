@@ -104,6 +104,7 @@ class gradereport_user_renderer extends plugin_renderer_base {
 
         $data = [
             'currentvalue' => $currentvalue,
+            'instance' => rand(),
             'resetlink' => $resetlink->out(false),
             'name' => 'userid',
             'value' => $submitteduserid ?? '',

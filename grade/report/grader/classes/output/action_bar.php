@@ -116,6 +116,7 @@ class action_bar extends \core_grades\output\action_bar {
             $searchinput = $OUTPUT->render_from_template('core_user/comboboxsearch/user_selector', [
                 'currentvalue' => $this->usersearch,
                 'courseid' => $courseid,
+                'instance' => rand(),
                 'resetlink' => $resetlink->out(false),
                 'group' => 0,
                 'name' => 'usersearch',

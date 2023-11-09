@@ -39,6 +39,8 @@ export default class GroupSearch extends search_combobox {
         };
         const component = document.querySelector(this.componentSelector());
         this.courseID = component.querySelector(this.selectors.courseid).dataset.courseid;
+        // Override the instance since the body is built outside the constructor for the combobox.
+        this.instance = component.querySelector(this.selectors.instance).dataset.instance;
 
         const searchValueElement = this.component.querySelector(`#${this.searchInput.dataset.inputElement}`);
         searchValueElement.addEventListener('change', () => {
@@ -103,6 +105,7 @@ export default class GroupSearch extends search_combobox {
         const {html, js} = await renderForPromise('core_group/comboboxsearch/resultset', {
             groups: this.getMatchedResults(),
             hasresults: this.getMatchedResults().length > 0,
+            instance: this.instance,
             searchterm: this.getSearchTerm(),
         });
         replaceNodeContents(this.selectors.placeholder, html, js);
@@ -120,7 +123,6 @@ export default class GroupSearch extends search_combobox {
         await this.renderDropdown();
 
         this.updateNodes();
-        this.registerInputEvents();
     }
 
     /**
@@ -167,26 +169,6 @@ export default class GroupSearch extends search_combobox {
     }
 
     /**
-     * Handle any keyboard inputs.
-     */
-    registerInputEvents() {
-        // Register & handle the text input.
-        this.searchInput.addEventListener('input', debounce(async() => {
-            this.setSearchTerms(this.searchInput.value);
-            // We can also require a set amount of input before search.
-            if (this.searchInput.value === '') {
-                // Hide the "clear" search button in the search bar.
-                this.clearSearchButton.classList.add('d-none');
-            } else {
-                // Display the "clear" search button in the search bar.
-                this.clearSearchButton.classList.remove('d-none');
-            }
-            // User has given something for us to filter against.
-            await this.filterrenderpipe();
-        }, 300));
-    }
-
-    /**
      * The handler for when a user interacts with the component.
      *
      * @param {MouseEvent} e The triggering event that we are working with.
@@ -218,7 +200,7 @@ export default class GroupSearch extends search_combobox {
      */
     registerInputHandlers() {
         // Register & handle the text input.
-        this.searchInput.addEventListener('input', debounce(() => {
+        this.searchInput.addEventListener('input', debounce(async() => {
             this.setSearchTerms(this.searchInput.value);
             // We can also require a set amount of input before search.
             if (this.getSearchTerm() === '') {
@@ -228,11 +210,14 @@ export default class GroupSearch extends search_combobox {
                 // Display the "clear" search button in the search bar.
                 this.clearSearchButton.classList.remove('d-none');
             }
+            // User has given something for us to filter against.
+            await this.filterrenderpipe();
         }, 300));
     }
 
     /**
      * Build up the view all link that is dedicated to a particular result.
+     * We will call this function when a user interacts with the combobox to redirect them to show their results in the page.
      *
      * @param {Number} groupID The ID of the group selected.
      */

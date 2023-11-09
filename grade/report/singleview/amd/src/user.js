@@ -40,6 +40,7 @@ export default class User extends UserSearch {
      */
     async renderDropdown() {
         const {html, js} = await renderForPromise('core_user/comboboxsearch/resultset', {
+            instance: this.instance,
             users: this.getMatchedResults().slice(0, 5),
             hasresults: this.getMatchedResults().length > 0,
             searchterm: this.getSearchTerm(),

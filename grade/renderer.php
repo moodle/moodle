@@ -65,6 +65,7 @@ class core_grades_renderer extends plugin_renderer_base {
         $sbody = $this->render_from_template('core_group/comboboxsearch/searchbody', [
             'courseid' => $course->id,
             'currentvalue' => optional_param('groupsearchvalue', '', PARAM_NOTAGS),
+            'instance' => rand(),
         ]);
 
         $label = $groupmode == VISIBLEGROUPS ? get_string('selectgroupsvisible') : get_string('selectgroupsseparate');
