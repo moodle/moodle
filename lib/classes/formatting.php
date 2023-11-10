@@ -24,6 +24,9 @@ namespace core;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class formatting {
+    /** @var bool Whether to apply forceclean */
+    protected ?bool $forceclean;
+
     /**
      * Given a simple string, this function returns the string
      * processed by enabled string filters if $CFG->filterall is enabled
@@ -195,7 +198,7 @@ class formatting {
                 $options['noclean'] = false;
             }
         }
-        if (!empty($CFG->forceclean)) {
+        if (!empty($this->get_forceclean())) {
             // Whatever the caller claims, the admin wants all content cleaned anyway.
             $options['noclean'] = false;
         }
@@ -348,5 +351,36 @@ class formatting {
         }
 
         return $text;
+    }
+
+    /**
+     * Set the value of the forceclean setting.
+     *
+     * @param bool $forceclean
+     * @return self
+     */
+    public function set_forceclean(bool $forceclean): self {
+        $this->forceclean = $forceclean;
+
+        return $this;
+    }
+
+    /**
+     * Get the current forceclean value.
+     *
+     * @return bool
+     */
+    public function get_forceclean(): bool {
+        global $CFG;
+
+        if (isset($this->forceclean)) {
+            return $this->forceclean;
+        }
+
+        if (isset($CFG->forceclean)) {
+            return $CFG->forceclean;
+        }
+
+        return false;
     }
 }

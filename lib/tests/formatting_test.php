@@ -532,23 +532,21 @@ class formatting_test extends \advanced_testcase {
      * @param string $cleaned Expected output of format_text() with noclean=false
      */
     public function test_format_text_cleaning($input, $nocleaned, $cleaned): void {
-        global $CFG;
-        $this->resetAfterTest();
         $formatter = new formatting();
 
-        $CFG->forceclean = false;
+        $formatter->set_forceclean(false);
         $actual = $formatter->format_text($input, FORMAT_HTML, ['filter' => false, 'noclean' => false]);
         $this->assertEquals($cleaned, $actual);
 
-        $CFG->forceclean = true;
+        $formatter->set_forceclean(true);
         $actual = $formatter->format_text($input, FORMAT_HTML, ['filter' => false, 'noclean' => false]);
         $this->assertEquals($cleaned, $actual);
 
-        $CFG->forceclean = false;
+        $formatter->set_forceclean(false);
         $actual = $formatter->format_text($input, FORMAT_HTML, ['filter' => false, 'noclean' => true]);
         $this->assertEquals($nocleaned, $actual);
 
-        $CFG->forceclean = true;
+        $formatter->set_forceclean(true);
         $actual = $formatter->format_text($input, FORMAT_HTML, ['filter' => false, 'noclean' => true]);
         $this->assertEquals($cleaned, $actual);
     }
