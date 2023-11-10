@@ -711,15 +711,14 @@ abstract class base {
      * @param int|stdClass $section Section object from database or just field course_sections.section
      *     if null the course view page is returned
      * @param array $options options for view URL. At the moment core uses:
-     *     'navigation' (bool) if true and section has no separate page, the function returns null
-     *     'sr' (int) used by multipage formats to specify to which section to return
+     *     'navigation' (bool) if true and section not empty, the function returns section page; otherwise, it returns course page.
+     *     'sr' (int) used by course formats to specify to which section to return
      *     'expanded' (bool) if true the section will be shown expanded, true by default
      * @return null|moodle_url
      */
     public function get_view_url($section, $options = array()) {
-        global $CFG;
         $course = $this->get_course();
-        $url = new moodle_url('/course/view.php', array('id' => $course->id));
+        $url = new moodle_url('/course/view.php', ['id' => $course->id]);
 
         if (array_key_exists('sr', $options)) {
             $sectionno = $options['sr'];
@@ -728,9 +727,10 @@ abstract class base {
         } else {
             $sectionno = $section;
         }
-        if (empty($CFG->linkcoursesections) && !empty($options['navigation']) && $sectionno !== null) {
-            // By default assume that sections are never displayed on separate pages.
-            return null;
+        if ((!empty($options['navigation']) || array_key_exists('sr', $options)) && $sectionno !== null) {
+            // Display section on separate page.
+            $sectioninfo = $this->get_section($sectionno);
+            return new moodle_url('/course/section.php', ['id' => $sectioninfo->id]);
         }
         if ($this->uses_sections() && $sectionno !== null) {
             // The url includes the parameter to expand the section by default.
@@ -743,6 +743,7 @@ abstract class base {
             }
             $url->set_anchor('section-'.$sectionno);
         }
+
         return $url;
     }
 
@@ -1914,5 +1915,14 @@ abstract class base {
         }
 
         return get_fast_modinfo($course)->get_section_info_by_id($newsection->id);
+    }
+
+    /**
+     * Get the required javascript files for the course format.
+     *
+     * @return array The list of javascript files required by the course format.
+     */
+    public function get_required_jsfiles(): array {
+        return [];
     }
 }

@@ -297,9 +297,8 @@ class controlmenu implements named_templatable, renderable {
             ], $coursecontext)
         ) {
             $sectionlink = new moodle_url(
-                '/course/view.php',
-                ['id' => $course->id],
-                "sectionid-{$section->id}-title"
+                '/course/section.php',
+                ['id' => $section->id]
             );
             $controls['permalink'] = [
                 'url' => $sectionlink,

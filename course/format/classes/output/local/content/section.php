@@ -147,7 +147,8 @@ class section implements named_templatable, renderable {
             'summary' => $summary->export_for_template($output),
             'highlightedlabel' => $format->get_section_highlighted_name(),
             'sitehome' => $course->id == SITEID,
-            'editing' => $PAGE->user_is_editing()
+            'editing' => $PAGE->user_is_editing(),
+            'displayonesection' => ($course->id != SITEID && $format->get_section_number() !== 0),
         ];
 
         $haspartials = [];
