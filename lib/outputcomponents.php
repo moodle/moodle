@@ -3808,7 +3808,7 @@ class custom_menu_item implements renderable, templatable {
  * of custom_menu_item nodes that can be rendered by the core renderer.
  *
  * To configure the custom menu:
- *     Settings: Administration > Appearance > Themes > Theme settings
+ *     Settings: Administration > Appearance > Advanced theme settings
  *
  * @copyright 2010 Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

@@ -109,7 +109,7 @@ Feature: Upload users
     And I navigate to "Security > Site security settings" in site administration
     And I click on "Password policy" "checkbox"
     And I click on "Save changes" "button"
-    And I navigate to "Appearance > Themes > Theme settings" in site administration
+    And I navigate to "Appearance > Advanced theme settings" in site administration
     And I click on "Allow user themes" "checkbox"
     And I click on "Save changes" "button"
     # Upload the users.

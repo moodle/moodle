@@ -368,7 +368,7 @@ class api {
             $settings->enabledashboard = $CFG->enabledashboard;
         }
 
-        if (empty($section) || $section === 'themesettings') {
+        if (empty($section) || ($section === 'themesettings' || $section === 'themesettingsadvanced')) {
             $settings->customusermenuitems = $CFG->customusermenuitems;
         }
 

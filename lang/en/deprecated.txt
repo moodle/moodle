@@ -112,3 +112,4 @@ passwordconfirmchange,core
 passwordnohelp,core
 grade,core_grades
 taskdeletecachetext,core_admin
+themesettings,core_admin
