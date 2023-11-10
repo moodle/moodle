@@ -25684,6 +25684,22 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   border-left-width: 0;
   border-right-color: #fff;
 }
+.dir-rtl span[data-flexitour=container][x-placement^=right] {
+  margin-left: 1rem;
+}
+.dir-rtl span[data-flexitour=container][x-placement^=right] div[data-role=arrow] {
+  transform: rotate(180deg);
+  left: -1rem;
+  right: auto;
+}
+.dir-rtl span[data-flexitour=container][x-placement^=left] {
+  margin-right: 1rem;
+}
+.dir-rtl span[data-flexitour=container][x-placement^=left] div[data-role=arrow] {
+  transform: rotate(180deg);
+  left: auto;
+  right: -1rem;
+}
 
 [data-region=drawer] [data-flexitour=container] {
   /*rtl:ignore*/
