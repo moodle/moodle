@@ -27,6 +27,9 @@ class formatting {
     /** @var bool Whether to apply forceclean */
     protected ?bool $forceclean;
 
+    /** @var bool Whether to apply striptags */
+    protected ?bool $striptags;
+
     /**
      * Given a simple string, this function returns the string
      * processed by enabled string filters if $CFG->filterall is enabled
@@ -115,7 +118,7 @@ class formatting {
         }
 
         // If the site requires it, strip ALL tags from this string.
-        if (!empty($CFG->formatstringstriptags)) {
+        if (!empty($this->get_striptags())) {
             if ($options['escape']) {
                 $string = str_replace(array('<', '>'), array('&lt;', '&gt;'), strip_tags($string));
             } else {
@@ -382,5 +385,34 @@ class formatting {
         }
 
         return false;
+    }
+
+    /**
+     * Set the value of the striptags setting.
+     *
+     * @param bool $striptags
+     * @return formatting
+     */
+    public function set_striptags(bool $striptags): self {
+        $this->striptags = $striptags;
+
+        return $this;
+    }
+
+    /**
+     * Get the current striptags value.
+     *
+     * Reverts to CFG->formatstringstriptags if not set.
+     *
+     * @return bool
+     */
+    public function get_striptags(): bool {
+        global $CFG;
+
+        if (isset($this->striptags)) {
+            return $this->striptags;
+        }
+
+        return $CFG->formatstringstriptags;
     }
 }
