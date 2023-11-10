@@ -42,6 +42,10 @@ information provided here is intended especially for developers.
 * \action_menu_link::$instance has been deprecated as it is no longer used.
 * The `format_string()` method has moved to `\core\formatting::format_string()`.
   The old method will be maintained, but new code should use the new method with first-class parameters.
+* The `format_text()` method has moved to `\core\formatting::format_text()`.
+  The old method will be maintained, but new code should use the new method with first-class parameters.
+* The fourth parameter to `format_text` now emits a deprecation notice.
+  It was originally deprecated in Moodle 2.0.
 
 === 4.3 ===
 
