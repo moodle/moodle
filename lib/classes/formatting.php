@@ -42,16 +42,16 @@ class formatting {
      * glossary concepts.
      *
      * @staticvar bool $strcache
-     * @param string $string The string to be filtered. Should be plain text, expect
+     * @param null|string $string The string to be filtered. Should be plain text, expect
      * possibly for multilang tags.
      * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
      * @param array $options options array/object or courseid
      * @return string
      */
     public function format_string(
-        $string,
-        $striplinks = true,
-        $options = null,
+        ?string $string,
+        bool $striplinks = true,
+        ?array $options = null,
     ): string {
         global $CFG, $PAGE;
 
@@ -63,19 +63,19 @@ class formatting {
         // We'll use a in-memory cache here to speed up repeated strings.
         static $strcache = false;
 
-        if (empty($CFG->version) or $CFG->version < 2013051400 or during_initial_install()) {
+        if (empty($CFG->version) || $CFG->version < 2013051400 || during_initial_install()) {
             // Do not filter anything during installation or before upgrade completes.
             return $string = strip_tags($string);
         }
 
-        if ($strcache === false or count($strcache) > 2000) {
+        if ($strcache === false || count($strcache) > 2000) {
             // This number might need some tuning to limit memory usage in cron.
-            $strcache = array();
+            $strcache = [];
         }
 
         if (is_numeric($options)) {
             // Legacy courseid usage.
-            $options  = array('context' => context_course::instance($options));
+            $options  = ['context' => context_course::instance($options)];
         } else {
             // Detach object, we can not modify it.
             $options = (array)$options;
@@ -99,10 +99,10 @@ class formatting {
         }
 
         // Calculate md5.
-        $cachekeys = array(
+        $cachekeys = [
             $string, $striplinks, $options['context']->id,
-            $options['escape'], current_language(), $options['filter']
-        );
+            $options['escape'], current_language(), $options['filter'],
+        ];
         $md5 = md5(implode('<+>', $cachekeys));
 
         // Fetch from cache if possible.
@@ -123,7 +123,7 @@ class formatting {
         // If the site requires it, strip ALL tags from this string.
         if (!empty($this->get_striptags())) {
             if ($options['escape']) {
-                $string = str_replace(array('<', '>'), array('&lt;', '&gt;'), strip_tags($string));
+                $string = str_replace(['<', '>'], ['&lt;', '&gt;'], strip_tags($string));
             } else {
                 $string = strip_tags($string);
             }
@@ -152,7 +152,8 @@ class formatting {
      * <pre>
      * Options:
      *      trusted     :   If true the string won't be cleaned. Default false required noclean=true.
-     *      noclean     :   If true the string won't be cleaned, unless $CFG->forceclean is set. Default false required trusted=true.
+     *      noclean     :   If true the string won't be cleaned, unless $CFG->forceclean is set.
+     *                      Default false required trusted=true.
      *      nocache     :   If true the strign will not be cached and will be formatted every call. Default false.
      *      filter      :   If true the string will be run through applicable filters as well. Default true.
      *      para        :   If true then the returned string will be wrapped in div tags. Default true.
@@ -166,18 +167,18 @@ class formatting {
      * </pre>
      *
      * @staticvar array $croncache
-     * @param string $text The text to be formatted. This is raw text originally from user input.
-     * @param int $format Identifier of the text format to be used
+     * @param null|string $text The text to be formatted. This is raw text originally from user input.
+     * @param string $format Identifier of the text format to be used
      *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_MARKDOWN]
      * @param stdClass|array $options text formatting options
-     * @param int $courseiddonotuse deprecated course id, use context option instead
      * @return string
      */
     public function format_text(
-        $text,
-        $format = FORMAT_MOODLE,
-        $options = null,
-    ) {
+        ?string $text,
+        string $format = FORMAT_MOODLE,
+        ?array $options = null,
+
+    ): string {
         global $CFG, $DB, $PAGE;
 
         if ($text === '' || is_null($text)) {
@@ -197,7 +198,7 @@ class formatting {
             $options['trusted'] = false;
         }
         if (!isset($options['noclean'])) {
-            if ($options['trusted'] and trusttext_active()) {
+            if ($options['trusted'] && trusttext_active()) {
                 // No cleaning if text trusted and noclean not specified.
                 $options['noclean'] = true;
             } else {
@@ -226,7 +227,7 @@ class formatting {
         $options['blanktarget'] = !empty($options['blanktarget']);
 
         // Calculate best context.
-        if (empty($CFG->version) or $CFG->version < 2013051400 or during_initial_install()) {
+        if (empty($CFG->version) || $CFG->version < 2013051400 || during_initial_install()) {
             // Do not filter anything during installation or before upgrade completes.
             $context = null;
         } else if (isset($options['context'])) { // First by explicit passed context option.
@@ -249,13 +250,13 @@ class formatting {
         if ($options['filter']) {
             $filtermanager = \filter_manager::instance();
             $filtermanager->setup_page_for_filters($PAGE, $context); // Setup global stuff filters may have.
-            $filteroptions = array(
+            $filteroptions = [
                 'originalformat' => $format,
                 'noclean' => $options['noclean'],
-            );
+            ];
         } else {
             $filtermanager = new \null_filter_manager();
-            $filteroptions = array();
+            $filteroptions = [];
         }
 
         switch ($format) {
@@ -331,7 +332,7 @@ class formatting {
         }
 
         if (!empty($options['overflowdiv'])) {
-            $text = \html_writer::tag('div', $text, array('class' => 'no-overflow'));
+            $text = \html_writer::tag('div', $text, ['class' => 'no-overflow']);
         }
 
         if ($options['blanktarget']) {
@@ -353,7 +354,11 @@ class formatting {
             // $domdoc->loadHTML($text, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD); however it seems like some libxml
             // versions don't work properly and end up leaving <html><body>, so I'm forced to use
             // this regex to remove those tags as a preventive measure.
-            $text = trim(preg_replace('~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i', '', $domdoc->saveHTML($domdoc->documentElement)));
+            $text = trim(preg_replace(
+                '~<(?:!DOCTYPE|/?(?:html|body))[^>]*>\s*~i',
+                '',
+                $domdoc->saveHTML($domdoc->documentElement),
+            ));
         }
 
         return $text;

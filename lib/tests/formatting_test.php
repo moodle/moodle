@@ -364,7 +364,7 @@ class formatting_test extends \advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(
             '<p>:-)</p>',
-            $formatter->format_text('<p>:-)</p>', FORMAT_HTML, array('filter' => false))
+            $formatter->format_text('<p>:-)</p>', FORMAT_HTML, ['filter' => false])
         );
     }
 
@@ -387,7 +387,7 @@ class formatting_test extends \advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(
             ':-)',
-            $formatter->format_text(':-)', FORMAT_PLAIN, array('filter' => false))
+            $formatter->format_text(':-)', FORMAT_PLAIN, ['filter' => false])
         );
     }
 
@@ -411,7 +411,7 @@ class formatting_test extends \advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(
             "<p><em>:-)</em></p>\n",
-            $formatter->format_text('*:-)*', FORMAT_MARKDOWN, array('filter' => false))
+            $formatter->format_text('*:-)*', FORMAT_MARKDOWN, ['filter' => false])
         );
     }
 
@@ -435,7 +435,7 @@ class formatting_test extends \advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(
             '<div class="text_to_html"><p>:-)</p></div>',
-            $formatter->format_text('<p>:-)</p>', FORMAT_MOODLE, array('filter' => false))
+            $formatter->format_text('<p>:-)</p>', FORMAT_MOODLE, ['filter' => false])
         );
     }
 
@@ -453,34 +453,48 @@ class formatting_test extends \advanced_testcase {
         $context = \context_course::instance($course->id);
         $page = $this->getDataGenerator()->create_module(
             'page',
-            ['course' => $course->id, 'name' => 'Test 1']
+            ['course' => $course->id, 'name' => 'Test 1'],
         );
         $cm = get_coursemodule_from_instance('page', $page->id, $page->course, false, MUST_EXIST);
         $pageurl = $CFG->wwwroot . '/mod/page/view.php?id=' . $cm->id;
 
         $this->assertSame(
             '<p>Read <a class="autolink" title="Test 1" href="' . $pageurl . '">Test 1</a>.</p>',
-            $formatter->format_text('<p>Read Test 1.</p>', FORMAT_HTML, ['context' => $context])
+            $formatter->format_text('<p>Read Test 1.</p>', FORMAT_HTML, ['context' => $context]),
         );
 
         $this->assertSame(
             '<p>Read <a class="autolink" title="Test 1" href="' . $pageurl . '">Test 1</a>.</p>',
-            $formatter->format_text('<p>Read Test 1.</p>', FORMAT_HTML, ['context' => $context, 'noclean' => true])
+            $formatter->format_text('<p>Read Test 1.</p>', FORMAT_HTML, ['context' => $context, 'noclean' => true]),
         );
 
         $this->assertSame(
             '<p>Read Test 1.</p>',
-            $formatter->format_text('<p><nolink>Read Test 1.</nolink></p>', FORMAT_HTML, ['context' => $context, 'noclean' => false])
+            $formatter->format_text(
+                '<p><nolink>Read Test 1.</nolink></p>',
+                FORMAT_HTML,
+                [
+                    'context' => $context,
+                    'noclean' => false,
+                ],
+            ),
         );
 
         $this->assertSame(
             '<p>Read Test 1.</p>',
-            $formatter->format_text('<p><nolink>Read Test 1.</nolink></p>', FORMAT_HTML, ['context' => $context, 'noclean' => true])
+            $formatter->format_text(
+                '<p><nolink>Read Test 1.</nolink></p>',
+                FORMAT_HTML,
+                [
+                    'context' => $context,
+                    'noclean' => true,
+                ],
+            ),
         );
 
         $this->assertSame(
             '<p><span class="nolink">Read Test 1.</span></p>',
-            $formatter->format_text('<p><span class="nolink">Read Test 1.</span></p>', FORMAT_HTML, ['context' => $context])
+            $formatter->format_text('<p><span class="nolink">Read Test 1.</span></p>', FORMAT_HTML, ['context' => $context]),
         );
     }
 
@@ -489,7 +503,7 @@ class formatting_test extends \advanced_testcase {
 
         $this->assertEquals(
             '<div class="no-overflow"><p>Hello world</p></div>',
-            $formatter->format_text('<p>Hello world</p>', FORMAT_HTML, array('overflowdiv' => true))
+            $formatter->format_text('<p>Hello world</p>', FORMAT_HTML, ['overflowdiv' => true]),
         );
     }
 
@@ -502,7 +516,7 @@ class formatting_test extends \advanced_testcase {
      */
     public function test_format_text_blanktarget($link, $expected): void {
         $formatter = new formatting();
-        $actual = $formatter->format_text($link, FORMAT_MOODLE, array('blanktarget' => true, 'filter' => false, 'noclean' => true));
+        $actual = $formatter->format_text($link, FORMAT_MOODLE, ['blanktarget' => true, 'filter' => false, 'noclean' => true]);
         $this->assertEquals($expected, $actual);
     }
 
@@ -511,49 +525,53 @@ class formatting_test extends \advanced_testcase {
      *
      * @return array of testcases
      */
-    public function format_text_blanktarget_testcases() {
+    public static function format_text_blanktarget_testcases(): array {
         return [
             'Simple link' => [
                 '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4">Hey, that\'s pretty good!</a>',
                 '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_blank"' .
-                    ' rel="noreferrer">Hey, that\'s pretty good!</a></div>'
+                    ' rel="noreferrer">Hey, that\'s pretty good!</a></div>',
             ],
             'Link with rel' => [
                 '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" rel="nofollow">Hey, that\'s pretty good!</a>',
                 '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" rel="nofollow noreferrer"' .
-                    ' target="_blank">Hey, that\'s pretty good!</a></div>'
+                    ' target="_blank">Hey, that\'s pretty good!</a></div>',
             ],
             'Link with rel noreferrer' => [
                 '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" rel="noreferrer">Hey, that\'s pretty good!</a>',
                 '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" rel="noreferrer"' .
-                    ' target="_blank">Hey, that\'s pretty good!</a></div>'
+                    ' target="_blank">Hey, that\'s pretty good!</a></div>',
             ],
             'Link with target' => [
                 '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_self">Hey, that\'s pretty good!</a>',
                 '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_self">' .
-                    'Hey, that\'s pretty good!</a></div>'
+                    'Hey, that\'s pretty good!</a></div>',
             ],
             'Link with target blank' => [
                 '<a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_blank">Hey, that\'s pretty good!</a>',
                 '<div class="text_to_html"><a href="https://www.youtube.com/watch?v=JeimE8Wz6e4" target="_blank"' .
-                    ' rel="noreferrer">Hey, that\'s pretty good!</a></div>'
+                    ' rel="noreferrer">Hey, that\'s pretty good!</a></div>',
             ],
             'Link with Frank\'s casket inscription' => [
+                // phpcs:ignore moodle.Files.LineLength
                 '<a href="https://en.wikipedia.org/wiki/Franks_Casket">ᚠᛁᛋᚳ᛫ᚠᛚᚩᛞᚢ᛫ᚪᚻᚩᚠᚩᚾᚠᛖᚱᚷ ᛖᚾᛒᛖᚱᛁᚷ ᚹᚪᚱᚦᚷᚪ᛬ᛋᚱᛁᚳᚷᚱᚩᚱᚾᚦᚫᚱᚻᛖᚩᚾᚷᚱᛖᚢᛏᚷᛁᛋᚹᚩᛗ ᚻ' .
                     'ᚱᚩᚾᚫᛋᛒᚪᚾ ᛗᚫᚷᛁᚠᛁᛋᚳ᛫ᚠᛚᚩᛞᚢ᛫ᚪᚻᚩᚠᚩᚾᚠᛖᚱᚷ ᛖᚾᛒᛖᚱᛁᚷ ᚹᚪᚱᚦᚷᚪ᛬ᛋᚱᛁᚳᚷᚱᚩᚱᚾᚦᚫᚱᚻᛖᚩᚾᚷᚱᛖᚢᛏᚷᛁᛋᚹᚩᛗ ᚻᚱᚩᚾᚫᛋᛒᚪᚾ ᛗᚫᚷᛁ</a>',
-                '<div class="text_to_html"><a href="https://en.wikipedia.org/wiki/Franks_Casket" target="_blank" ' .
+                    '<div class="text_to_html"><a href="https://en.wikipedia.org/wiki/Franks_Casket" target="_blank" ' .
+                    // phpcs:ignore moodle.Files.LineLength
                     'rel="noreferrer">ᚠᛁᛋᚳ᛫ᚠᛚᚩᛞᚢ᛫ᚪᚻᚩᚠᚩᚾᚠᛖᚱᚷ ᛖᚾᛒᛖᚱᛁᚷ ᚹᚪᚱᚦᚷᚪ᛬ᛋᚱᛁᚳᚷᚱᚩᚱᚾᚦᚫᚱᚻᛖᚩᚾᚷᚱᛖᚢᛏᚷᛁᛋᚹᚩᛗ ᚻᚱᚩᚾᚫᛋᛒᚪᚾ ᛗᚫᚷᛁᚠᛁᛋᚳ᛫ᚠᛚᚩᛞᚢ᛫ᚪᚻᚩᚠᚩᚾᚠᛖᚱᚷ ᛖᚾ' .
-                    'ᛒᛖᚱᛁᚷ ᚹᚪᚱᚦᚷᚪ᛬ᛋᚱᛁᚳᚷᚱᚩᚱᚾᚦᚫᚱᚻᛖᚩᚾᚷᚱᛖᚢᛏᚷᛁᛋᚹᚩᛗ ᚻᚱᚩᚾᚫᛋᛒᚪᚾ ᛗᚫᚷᛁ</a></div>'
+                    'ᛒᛖᚱᛁᚷ ᚹᚪᚱᚦᚷᚪ᛬ᛋᚱᛁᚳᚷᚱᚩᚱᚾᚦᚫᚱᚻᛖᚩᚾᚷᚱᛖᚢᛏᚷᛁᛋᚹᚩᛗ ᚻᚱᚩᚾᚫᛋᛒᚪᚾ ᛗᚫᚷᛁ</a></div>',
             ],
             'No link' => [
                 'Some very boring text written with the Latin script',
-                '<div class="text_to_html">Some very boring text written with the Latin script</div>'
+                '<div class="text_to_html">Some very boring text written with the Latin script</div>',
             ],
             'No link with Thror\'s map runes' => [
+                // phpcs:ignore moodle.Files.LineLength
                 'ᛋᛏᚫᚾᛞ ᛒᚣ ᚦᛖ ᚷᚱᛖᚣ ᛋᛏᚩᚾᛖ ᚻᚹᛁᛚᛖ ᚦᛖ ᚦᚱᚢᛋᚻ ᚾᚩᚳᛋ ᚫᚾᛞ ᚦᛖ ᛋᛖᛏᛏᛁᚾᚷ ᛋᚢᚾ ᚹᛁᚦ ᚦᛖ ᛚᚫᛋᛏ ᛚᛁᚷᚻᛏ ᚩᚠ ᛞᚢᚱᛁᚾᛋ ᛞᚫᚣ ᚹᛁᛚᛚ ᛋᚻᛁᚾᛖ ᚢᛈᚩᚾ ᚦᛖ ᚳᛖᚣᚻᚩᛚᛖ',
+                // phpcs:ignore moodle.Files.LineLength
                 '<div class="text_to_html">ᛋᛏᚫᚾᛞ ᛒᚣ ᚦᛖ ᚷᚱᛖᚣ ᛋᛏᚩᚾᛖ ᚻᚹᛁᛚᛖ ᚦᛖ ᚦᚱᚢᛋᚻ ᚾᚩᚳᛋ ᚫᚾᛞ ᚦᛖ ᛋᛖᛏᛏᛁᚾᚷ ᛋᚢᚾ ᚹᛁᚦ ᚦᛖ ᛚᚫᛋᛏ ᛚᛁᚷᚻᛏ ᚩᚠ ᛞᚢᚱᛁᚾᛋ ᛞᚫᚣ ᚹ' .
-                    'ᛁᛚᛚ ᛋᚻᛁᚾᛖ ᚢᛈᚩᚾ ᚦᛖ ᚳᛖᚣᚻᚩᛚᛖ</div>'
-            ]
+                    'ᛁᛚᛚ ᛋᚻᛁᚾᛖ ᚢᛈᚩᚾ ᚦᛖ ᚳᛖᚣᚻᚩᛚᛖ</div>',
+            ],
         ];
     }
 
