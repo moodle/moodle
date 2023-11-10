@@ -1505,36 +1505,21 @@ function reset_text_filters_cache($phpunitreset = false) {
  * @return string
  */
 function format_string($string, $striplinks = true, $options = null) {
-    global $CFG, $PAGE;
+    global $CFG;
 
-    if ($string === '' || is_null($string)) {
-        // No need to do any filters and cleaning.
-        return '';
-    }
+    // Manually include the formatting class for now until after the release after 4.5 LTS.
+    require_once("{$CFG->libdir}/classes/formatting.php");
 
-    // We'll use a in-memory cache here to speed up repeated strings.
-    static $strcache = false;
-
-    if (empty($CFG->version) or $CFG->version < 2013051400 or during_initial_install()) {
-        // Do not filter anything during installation or before upgrade completes.
-        return $string = strip_tags($string);
-    }
-
-    if ($strcache === false or count($strcache) > 2000) {
-        // This number might need some tuning to limit memory usage in cron.
-        $strcache = array();
-    }
+    $params = [
+        'string' => $string,
+        'striplinks' => (bool) $striplinks,
+    ];
 
     // This method only expects either:
     // - an array of options;
     // - a stdClass of options to be cast to an array; or
     // - an integer courseid.
-    if ($options === null) {
-        $options = [];
-    } else if (is_numeric($options)) {
-        // Legacy courseid usage.
-        $options  = ['context' => \core\context\course::instance($options)];
-    } else if ($options instanceof \core\context) {
+    if ($options instanceof \core\context) {
         // A common mistake has been to call this function with a context object.
         // This has never been expected, or nor supported.
         debugging(
@@ -1543,9 +1528,10 @@ function format_string($string, $striplinks = true, $options = null) {
             DEBUG_DEVELOPER,
         );
         $options = ['context' => $options];
-    } else if (is_array($options) || is_a($options, \stdClass::class)) {
-        // Re-cast to array to prevent modifications to the original object.
-        $options = (array) $options;
+    // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
+    } else if ($options === null || is_numeric($options) || is_array($options) || is_a($options, \stdClass::class)) {
+        // Do nothing. These are accepted options.
+        // Pass to the new method.
     } else {
         // Something else was passed, so we'll just use an empty array.
         // Attempt to cast to array since we always used to, but throw in some debugging.
@@ -1556,63 +1542,13 @@ function format_string($string, $striplinks = true, $options = null) {
         $options = (array) $options;
     }
 
-    if (empty($options['context'])) {
-        // Fallback to $PAGE->context this may be problematic in CLI and other non-standard pages :-(.
-        $options['context'] = $PAGE->context;
-    } else if (is_numeric($options['context'])) {
-        $options['context'] = context::instance_by_id($options['context']);
-    }
-    if (!isset($options['filter'])) {
-        $options['filter'] = true;
+    if ($options !== null) {
+        $params['options'] = $options;
     }
 
-    $options['escape'] = !isset($options['escape']) || $options['escape'];
-
-    if (!$options['context']) {
-        // We did not find any context? weird.
-        return $string = strip_tags($string);
-    }
-
-    // Calculate md5.
-    $cachekeys = array($string, $striplinks, $options['context']->id,
-        $options['escape'], current_language(), $options['filter']);
-    $md5 = md5(implode('<+>', $cachekeys));
-
-    // Fetch from cache if possible.
-    if (isset($strcache[$md5])) {
-        return $strcache[$md5];
-    }
-
-    // First replace all ampersands not followed by html entity code
-    // Regular expression moved to its own method for easier unit testing.
-    $string = $options['escape'] ? replace_ampersands_not_followed_by_entity($string) : $string;
-
-    if (!empty($CFG->filterall) && $options['filter']) {
-        $filtermanager = filter_manager::instance();
-        $filtermanager->setup_page_for_filters($PAGE, $options['context']); // Setup global stuff filters may have.
-        $string = $filtermanager->filter_string($string, $options['context']);
-    }
-
-    // If the site requires it, strip ALL tags from this string.
-    if (!empty($CFG->formatstringstriptags)) {
-        if ($options['escape']) {
-            $string = str_replace(array('<', '>'), array('&lt;', '&gt;'), strip_tags($string));
-        } else {
-            $string = strip_tags($string);
-        }
-    } else {
-        // Otherwise strip just links if that is required (default).
-        if ($striplinks) {
-            // Strip links in string.
-            $string = strip_links($string);
-        }
-        $string = clean_text($string);
-    }
-
-    // Store to cache.
-    $strcache[$md5] = $string;
-
-    return $string;
+    return \core\di::get(\core\formatting::class)->format_string(
+        ...$params,
+    );
 }
 
 /**
