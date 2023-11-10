@@ -30,6 +30,9 @@ class formatting {
     /** @var bool Whether to apply striptags */
     protected ?bool $striptags;
 
+    /** @var bool Whether to apply filters */
+    protected ?bool $filterall;
+
     /**
      * Given a simple string, this function returns the string
      * processed by enabled string filters if $CFG->filterall is enabled
@@ -111,7 +114,7 @@ class formatting {
         // Regular expression moved to its own method for easier unit testing.
         $string = $options['escape'] ? replace_ampersands_not_followed_by_entity($string) : $string;
 
-        if (!empty($CFG->filterall) && $options['filter']) {
+        if (!empty($this->get_filterall()) && $options['filter']) {
             $filtermanager = \filter_manager::instance();
             $filtermanager->setup_page_for_filters($PAGE, $options['context']); // Setup global stuff filters may have.
             $string = $filtermanager->filter_string($string, $options['context']);
@@ -414,5 +417,34 @@ class formatting {
         }
 
         return $CFG->formatstringstriptags;
+    }
+
+    /**
+     * Set the value of the filterall setting.
+     *
+     * @param bool $filterall
+     * @return formatting
+     */
+    public function set_filterall(bool $filterall): self {
+        $this->filterall = $filterall;
+
+        return $this;
+    }
+
+    /**
+     * Get the current filterall value.
+     *
+     * Reverts to CFG->filterall if not set.
+     *
+     * @return bool
+     */
+    public function get_filterall(): bool {
+        global $CFG;
+
+        if (isset($this->filterall)) {
+            return $this->filterall;
+        }
+
+        return $CFG->filterall;
     }
 }
