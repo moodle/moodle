@@ -856,5 +856,13 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2023110900.00);
     }
 
+    if ($oldversion < 2023120100.01) {
+        // The $CFG->linkcoursesections setting has been removed because it's not required anymore.
+        // From now, sections will be always linked because a new page, section.php, has been created to display a single section.
+        unset_config('linkcoursesections');
+
+        upgrade_main_savepoint(true, 2023120100.01);
+    }
+
     return true;
 }
