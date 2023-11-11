@@ -1049,7 +1049,7 @@ class flexible_table {
 
         $this->print_initials_bar();
 
-        echo $OUTPUT->heading(get_string('nothingtodisplay'));
+        echo $OUTPUT->notification(get_string('nothingtodisplay'), 'info', false);
 
         // Render the dynamic table footer.
         echo $this->get_dynamic_table_html_end();
