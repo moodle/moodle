@@ -398,7 +398,7 @@ class provider implements
         $ltiproxies = $DB->get_recordset('lti_tool_proxies', ['createdby' => $user->id], 'timecreated ASC');
         foreach ($ltiproxies as $ltiproxy) {
             $data[] = [
-                'name' => format_string($ltiproxy->name, true, $systemcontext),
+                'name' => format_string($ltiproxy->name, true, ['context' => $systemcontext]),
                 'createdby' => transform::user($ltiproxy->createdby),
                 'timecreated' => transform::datetime($ltiproxy->timecreated),
                 'timemodified' => transform::datetime($ltiproxy->timemodified)
