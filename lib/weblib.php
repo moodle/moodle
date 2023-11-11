@@ -1514,12 +1514,35 @@ function format_string($string, $striplinks = true, $options = null) {
         $strcache = array();
     }
 
-    if (is_numeric($options)) {
+    // This method only expects either:
+    // - an array of options;
+    // - a stdClass of options to be cast to an array; or
+    // - an integer courseid.
+    if ($options === null) {
+        $options = [];
+    } else if (is_numeric($options)) {
         // Legacy courseid usage.
-        $options  = array('context' => context_course::instance($options));
+        $options  = ['context' => \core\context\course::instance($options)];
+    } else if ($options instanceof \core\context) {
+        // A common mistake has been to call this function with a context object.
+        // This has never been expected, or nor supported.
+        debugging(
+            'The options argument should not be a context object directly. ' .
+                ' Please pass an array with a context key instead.',
+            DEBUG_DEVELOPER,
+        );
+        $options = ['context' => $options];
+    } else if (is_array($options) || is_a($options, \stdClass::class)) {
+        // Re-cast to array to prevent modifications to the original object.
+        $options = (array) $options;
     } else {
-        // Detach object, we can not modify it.
-        $options = (array)$options;
+        // Something else was passed, so we'll just use an empty array.
+        // Attempt to cast to array since we always used to, but throw in some debugging.
+        debugging(sprintf(
+            'The options argument should be an Array, or stdclass. %s passed.',
+            gettype($options),
+        ), DEBUG_DEVELOPER);
+        $options = (array) $options;
     }
 
     if (empty($options['context'])) {
