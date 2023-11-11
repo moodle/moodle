@@ -2013,17 +2013,10 @@ class coursecat_helper {
         $options = (array)$options;
         $context = context_course::instance($course->id);
         if (!isset($options['context'])) {
-            // TODO see MDL-38521
-            // option 1 (current), page context - no code required
-            // option 2, system context
-            // $options['context'] = context_system::instance();
-            // option 3, course context:
-            // $options['context'] = $context;
-            // option 4, course category context:
-            // $options['context'] = $context->get_parent_context();
+            $options['context'] = $context;
         }
         $summary = file_rewrite_pluginfile_urls($course->summary, 'pluginfile.php', $context->id, 'course', 'summary', null);
-        $summary = format_text($summary, $course->summaryformat, $options, $course->id);
+        $summary = format_text($summary, $course->summaryformat, $options);
         if (!empty($this->searchcriteria['search'])) {
             $summary = highlight($this->searchcriteria['search'], $summary);
         }
