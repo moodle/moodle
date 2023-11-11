@@ -1268,6 +1268,17 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
         return '';
     }
 
+    if ($options instanceof \core\context) {
+        // A common mistake has been to call this function with a context object.
+        // This has never been expected, nor supported.
+        debugging(
+            'The options argument should not be a context object directly. ' .
+                ' Please pass an array with a context key instead.',
+            DEBUG_DEVELOPER,
+        );
+        $options = ['context' => $options];
+    }
+
     // Detach object, we can not modify it.
     $options = (array)$options;
 
