@@ -352,7 +352,7 @@ class core_course_list_element implements IteratorAggregate {
         return format_string(
             get_course_display_name_for_list($this),
             true,
-            ['context' => $this->get_context()],
+            ['context' => $this->get_context()]
         );
     }
 
@@ -364,7 +364,7 @@ class core_course_list_element implements IteratorAggregate {
         return format_string(
             $this->__get('fullname'),
             true,
-            ['context' => $this->get_context()],
+            ['context' => $this->get_context()]
         );
     }
 
@@ -376,7 +376,7 @@ class core_course_list_element implements IteratorAggregate {
         return format_string(
             $this->__get('shortname'),
             true,
-            ['context' => $this->get_context()],
+            ['context' => $this->get_context()]
         );
     }
 

@@ -25,6 +25,7 @@ namespace core;
  * @category  test
  * @copyright 2015 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU Public License
+ * @covers ::format_text
  */
 class weblib_format_text_test extends \advanced_testcase {
 
@@ -267,5 +268,19 @@ class weblib_format_text_test extends \advanced_testcase {
                 '<div></div>',
             ],
         ];
+    }
+
+    public function test_with_context_as_options(): void {
+        $this->assertEquals(
+            '<p>Example</p>',
+            format_text('<p>Example</p>', FORMAT_HTML, \context_system::instance())
+        );
+
+        $messages = $this->getDebuggingMessages();
+        $this->assertdebuggingcalledcount(1);
+        $this->assertStringContainsString(
+            'The options argument should not be a context object directly.',
+            $messages[0]->message
+        );
     }
 }

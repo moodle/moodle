@@ -1257,6 +1257,17 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
         return '';
     }
 
+    if ($options instanceof \context) {
+        // A common mistake has been to call this function with a context object.
+        // This has never been expected, nor supported.
+        debugging(
+            'The options argument should not be a context object directly. ' .
+                ' Please pass an array with a context key instead.',
+            DEBUG_DEVELOPER
+        );
+        $options = ['context' => $options];
+    }
+
     // Detach object, we can not modify it.
     $options = (array)$options;
 
@@ -1518,7 +1529,7 @@ function format_string($string, $striplinks = true, $options = null) {
         debugging(
             'The options argument should not be a context object directly. ' .
                 ' Please pass an array with a context key instead.',
-            DEBUG_DEVELOPER,
+            DEBUG_DEVELOPER
         );
         $options = ['context' => $options];
     } else if (is_array($options) || is_a($options, \stdClass::class)) {
@@ -1529,7 +1540,7 @@ function format_string($string, $striplinks = true, $options = null) {
         // Attempt to cast to array since we always used to, but throw in some debugging.
         debugging(sprintf(
             'The options argument should be an Array, or stdclass. %s passed.',
-            gettype($options),
+            gettype($options)
         ), DEBUG_DEVELOPER);
         $options = (array) $options;
     }
