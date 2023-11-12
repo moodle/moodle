@@ -1,0 +1,6 @@
+Change Xampp DB Location to Repo Folder-
+1. Navigate to xampp/mysql/data folder
+2. Delete the moodle folder
+3. Open CMD with Administrative Priveledges
+4. Navigate to xampp/mysql/data folder with the command> cd C:/xampp/mysql/data
+5. Run The Command> mklink /d moodle [Directory Of Your repo\data\moodle]
