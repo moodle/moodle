@@ -104,10 +104,10 @@ class qtype_ordering_question extends question_graded_automatically {
      * Any information about how the question has been set up for this attempt
      * should be stored in the $step, by calling $step->set_qt_var(...).
      *
-     * @param question_attempt_step $step The first step of the {@link question_attempt}
+     * @param question_attempt_step $step The first step of the {@see question_attempt}
      *      being started. Can be used to store state.
      * @param int $variant which variant of this question to start. Will be between
-     *      1 and {@link get_num_variants()} inclusive.
+     *      1 and {@see get_num_variants()} inclusive.
      */
     public function start_attempt(question_attempt_step $step, $variant) {
         $countanswers = count($this->answers);
@@ -158,7 +158,7 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     /**
-     * When an in-progress {@link question_attempt} is re-loaded from the
+     * When an in-progress {@see question_attempt} is re-loaded from the
      * database, this method is called so that the question can re-initialise
      * its internal state as needed by this attempt.
      *
@@ -167,7 +167,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * originally. All the information required to do this should be in the
      * $step object, which is the first step of the question_attempt being loaded.
      *
-     * @param question_attempt_step $step The first step of the {@link question_attempt}
+     * @param question_attempt_step $step The first step of the {@see question_attempt}
      *      being loaded.
      */
     public function apply_attempt_state(question_attempt_step $step) {
@@ -207,9 +207,9 @@ class qtype_ordering_question extends question_graded_automatically {
         }
 
         return [
-                '_currentresponse' => implode(',', $neworder),
-                '_correctresponse' => implode(',', $newcorrect),
-            ];
+            '_currentresponse' => implode(',', $neworder),
+            '_correctresponse' => implode(',', $newcorrect),
+        ];
     }
 
     /**
@@ -217,7 +217,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * this question in its current state?
      *
      * This information is used in calls to optional_param. The parameter name
-     * has {@link question_attempt::get_field_prefix()} automatically prepended.
+     * has {@see question_attempt::get_field_prefix()} automatically prepended.
      *
      * @return array|string variable name => PARAM_... constant, or, as a special case
      *      that should only be used in unavoidable, the constant question_attempt::USE_RAW_DATA
@@ -225,7 +225,7 @@ class qtype_ordering_question extends question_graded_automatically {
      */
     public function get_expected_data() {
         $name = $this->get_response_fieldname();
-        return array($name => PARAM_TEXT);
+        return [$name => PARAM_TEXT];
     }
 
     /**
@@ -243,13 +243,13 @@ class qtype_ordering_question extends question_graded_automatically {
             $correctresponse[$position] = $answer->md5key;
         }
         $name = $this->get_response_fieldname();
-        return array($name => implode(',', $correctresponse));
+        return [$name => implode(',', $correctresponse)];
     }
 
     /**
      * Produce a plain text summary of a response.
      *
-     * @param array $response a response, as might be passed to {@link grade_response()}.
+     * @param array $response a response, as might be passed to {@see grade_response()}.
      * @return string a plain text summary of that response, that could be used in reports.
      */
     public function summarise_response(array $response) {
@@ -257,9 +257,9 @@ class qtype_ordering_question extends question_graded_automatically {
         if (array_key_exists($name, $response)) {
             $items = explode(',', $response[$name]);
         } else {
-            $items = array(); // Shouldn't happen !!
+            $items = []; // Shouldn't happen!
         }
-        $answerids = array();
+        $answerids = [];
         foreach ($this->answers as $answer) {
             $answerids[$answer->md5key] = $answer->id;
         }
@@ -270,7 +270,7 @@ class qtype_ordering_question extends question_graded_automatically {
                 $item = shorten_text($item, 10, true); // Force truncate at 10 chars.
                 $items[$i] = $item;
             } else {
-                $items[$i] = ''; // Shouldn't happen !!
+                $items[$i] = ''; // Shouldn't happen!
             }
         }
         return implode('; ', array_filter($items));
@@ -280,15 +280,15 @@ class qtype_ordering_question extends question_graded_automatically {
      * Categorise the student's response according to the categories defined by
      * get_possible_responses.
      *
-     * @param array $response a response, as might be passed to {@link grade_response()}.
-     * @return array subpartid => {@link question_classified_response} objects.
+     * @param array $response a response, as might be passed to {@see grade_response()}.
+     * @return array subpartid => {@see question_classified_response} objects.
      *      returns an empty array if no analysis is possible.
      */
     public function classify_response(array $response) {
         $this->update_current_response($response);
         $fraction = 1 / count($this->correctresponse);
 
-        $classifiedresponse = array();
+        $classifiedresponse = [];
         foreach ($this->correctresponse as $position => $answerid) {
             if (in_array($answerid, $this->currentresponse)) {
                 $currentposition = array_search($answerid, $this->currentresponse);
@@ -298,7 +298,7 @@ class qtype_ordering_question extends question_graded_automatically {
             $subqid = question_utils::to_plain_text($answer->answer, $answer->answerformat);
 
             // Truncate responses longer than 100 bytes because they cannot be stored in the database.
-            // CAUTION: This will mess up answers which are not unique within the first 100 chars !!
+            // CAUTION: This will mess up answers which are not unique within the first 100 chars!
             $maxbytes = 100;
             if (strlen($subqid) > $maxbytes) {
                 // If the truncation point is in the middle of a multi-byte unicode char,
@@ -325,7 +325,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * should move to the COMPLETE or INCOMPLETE state.
      *
      * @param array $response responses, as returned by
-     *      {@link question_attempt_step::get_qt_data()}.
+     *      {@see question_attempt_step::get_qt_data()}.
      * @return bool whether this response is a complete answer to this question.
      */
     public function is_complete_response(array $response) {
@@ -338,7 +338,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * or whether it must be considered aborted.
      *
      * @param array $response responses, as returned by
-     *      {@link question_attempt_step::get_qt_data()}.
+     *      {@see question_attempt_step::get_qt_data()}.
      * @return bool whether this response can be graded.
      */
     public function is_gradable_response(array $response) {
@@ -348,6 +348,7 @@ class qtype_ordering_question extends question_graded_automatically {
     /**
      * In situations where is_gradable_response() returns false, this method
      * should generate a description of what the problem is.
+     *
      * @param array $response
      * @return string the message
      */
@@ -361,7 +362,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * of responses can safely be discarded.
      *
      * @param array $old the responses previously recorded for this question,
-     *      as returned by {@link question_attempt_step::get_qt_data()}
+     *      as returned by {@see question_attempt_step::get_qt_data()}
      * @param array $new the new responses, in the same format.
      * @return bool whether the two sets of responses are the same - that is
      *      whether the new set of responses can safely be discarded.
@@ -373,11 +374,11 @@ class qtype_ordering_question extends question_graded_automatically {
 
     /**
      * Grade a response to the question, returning a fraction between
-     * get_min_fraction() and get_max_fraction(), and the corresponding {@link question_state}
+     * get_min_fraction() and get_max_fraction(), and the corresponding {@see question_state}
      * right, partial or wrong.
      *
      * @param array $response responses, as returned by
-     *      {@link question_attempt_step::get_qt_data()}.
+     *      {@see question_attempt_step::get_qt_data()}.
      * @return array (float, integer) the fraction, and the state.
      */
     public function grade_response(array $response) {
@@ -469,7 +470,10 @@ class qtype_ordering_question extends question_graded_automatically {
         } else {
             $fraction = ($countcorrect / $countanswers);
         }
-        return array($fraction, question_state::graded_state_for_fraction($fraction));
+        return [
+            $fraction,
+            question_state::graded_state_for_fraction($fraction),
+        ];
     }
 
     /**
@@ -537,17 +541,16 @@ class qtype_ordering_question extends question_graded_automatically {
      *
      * @return string
      */
-    public function get_response_fieldname() {
-        return 'response_'.$this->id;
+    public function get_response_fieldname(): string {
+        return 'response_' . $this->id;
     }
 
     /**
      * Convert response data from mform into array
      *
      * @param array $response Form data
-     * @return array
      */
-    public function update_current_response($response) {
+    public function update_current_response(array $response) {
         $name = $this->get_response_fieldname();
         if (array_key_exists($name, $response)) {
             $ids = explode(',', $response[$name]);
@@ -568,14 +571,14 @@ class qtype_ordering_question extends question_graded_automatically {
      *
      * @return string
      */
-    public function get_ordering_layoutclass() {
+    public function get_ordering_layoutclass(): string {
         switch ($this->options->layouttype) {
             case self::LAYOUT_VERTICAL:
                 return 'vertical';
             case self::LAYOUT_HORIZONTAL:
                 return 'horizontal';
             default:
-                return ''; // Shouldn't happen !!
+                return ''; // Shouldn't happen!
         }
     }
 
@@ -586,8 +589,8 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param bool $lastitem Include last item?
      * @return array of id of next answer
      */
-    public function get_next_answerids($answerids, $lastitem = false) {
-        $nextanswerids = array();
+    public function get_next_answerids(array $answerids, bool $lastitem = false): array {
+        $nextanswerids = [];
         $imax = count($answerids);
         $imax--;
         if ($lastitem) {
@@ -611,21 +614,21 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param bool $all include all answers
      * @return array of array('prev' => previd, 'next' => nextid)
      */
-    public function get_previous_and_next_answerids($answerids, $all = false) {
-        $prevnextanswerids = array();
+    public function get_previous_and_next_answerids(array $answerids, bool $all = false): array {
+        $prevnextanswerids = [];
         $next = $answerids;
-        $prev = array();
+        $prev = [];
         while ($answerid = array_shift($next)) {
             if ($all) {
-                $prevnextanswerids[$answerid] = (object)array(
+                $prevnextanswerids[$answerid] = (object) [
                     'prev' => $prev,
-                    'next' => $next
-                );
+                    'next' => $next,
+                ];
             } else {
-                $prevnextanswerids[$answerid] = (object)array(
-                    'prev' => array(empty($prev) ? 0 : $prev[0]),
-                    'next' => array(empty($next) ? 0 : $next[0])
-                );
+                $prevnextanswerids[$answerid] = (object) [
+                    'prev' => [empty($prev) ? 0 : $prev[0]],
+                    'next' => [empty($next) ? 0 : $next[0]],
+                ];
             }
             array_unshift($prev, $answerid);
         }
@@ -635,17 +638,16 @@ class qtype_ordering_question extends question_graded_automatically {
     /**
      * Search for best ordered subset
      *
-     * @param bool $contiguous
+     * @param bool $contiguous A flag indicating whether only contiguous values should be considered for inclusion in the subset.
      * @return array
      */
-    public function get_ordered_subset($contiguous) {
+    public function get_ordered_subset(bool $contiguous): array {
 
-        $positions = $this->get_ordered_positions($this->correctresponse,
-                                                  $this->currentresponse);
+        $positions = $this->get_ordered_positions($this->correctresponse, $this->currentresponse);
         $subsets = $this->get_ordered_subsets($positions, $contiguous);
 
         // The best subset (longest and leftmost).
-        $bestsubset = array();
+        $bestsubset = [];
 
         // The length of the best subset
         // initializing this to 1 means
@@ -669,8 +671,8 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param array $currentresponse
      * @return array
      */
-    public function get_ordered_positions($correctresponse, $currentresponse) {
-        $positions = array();
+    public function get_ordered_positions(array $correctresponse, array $currentresponse): array {
+        $positions = [];
         foreach ($currentresponse as $answerid) {
             $positions[] = array_search($answerid, $correctresponse);
         }
@@ -680,15 +682,14 @@ class qtype_ordering_question extends question_graded_automatically {
     /**
      * Get all ordered subsets in the positions array
      *
-     * @param array   $positions maps an item's current position to its correct position
-     * @param boolean $contiguous TRUE if searching only for contiguous subsets; otherwise FALSE
-     *
+     * @param array $positions maps an item's current position to its correct position
+     * @param bool $contiguous TRUE if searching only for contiguous subsets; otherwise FALSE
      * @return array of ordered subsets from within the $positions array
      */
-    public function get_ordered_subsets($positions, $contiguous) {
+    public function get_ordered_subsets(array $positions, bool $contiguous): array {
 
         // Var $subsets is the collection of all subsets within $positions.
-        $subsets = array();
+        $subsets = [];
 
         // Loop through the values at each position.
         foreach ($positions as $p => $value) {
@@ -697,7 +698,7 @@ class qtype_ordering_question extends question_graded_automatically {
             $isnew = true;
 
             // An array of new and saved subsets to be added to $subsets.
-            $new = array();
+            $new = [];
 
             // Append the current value to any subsets to which it belongs
             // i.e. any subset whose end value is less than the current value.
@@ -731,7 +732,7 @@ class qtype_ordering_question extends question_graded_automatically {
 
             // If this is a "new" value, add it as a new subset.
             if ($isnew) {
-                $new[] = array($p);
+                $new[] = [$p];
             }
 
             // Append any "new" subsets that were found during this iteration.
@@ -749,85 +750,92 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param array $types
      * @param int $type
      * @return array|string array if $type is not specified and single string if $type is specified
+     * @throws coding_exception
      */
-    public static function get_types($types, $type) {
+    public static function get_types(array $types, $type): array|string {
         if ($type === null) {
             return $types; // Return all $types.
         }
         if (array_key_exists($type, $types)) {
             return $types[$type]; // One $type.
         }
-        return $type; // Shouldn't happen !!
+
+        throw new coding_exception('Invalid type: ' . $type);
     }
 
     /**
      * Returns available values and descriptions for field "selecttype"
      *
-     * @param int $type
+     * @param int|null $type
      * @return array|string array if $type is not specified and single string if $type is specified
      */
-    public static function get_select_types($type=null) {
+    public static function get_select_types(int $type = null): array|string {
         $plugin = 'qtype_ordering';
-        $types = array(
-            self::SELECT_ALL        => get_string('selectall',        $plugin),
-            self::SELECT_RANDOM     => get_string('selectrandom',     $plugin),
-            self::SELECT_CONTIGUOUS => get_string('selectcontiguous', $plugin)
-        );
+        $types = [
+            self::SELECT_ALL => get_string('selectall', $plugin),
+            self::SELECT_RANDOM => get_string('selectrandom', $plugin),
+            self::SELECT_CONTIGUOUS => get_string('selectcontiguous', $plugin),
+        ];
         return self::get_types($types, $type);
     }
 
     /**
      * Returns available values and descriptions for field "layouttype"
      *
-     * @param int $type
+     * @param int|null $type
      * @return array|string array if $type is not specified and single string if $type is specified
      */
-    public static function get_layout_types($type=null) {
+    public static function get_layout_types(int $type = null): array|string {
         $plugin = 'qtype_ordering';
-        $types = array(
+        $types = [
             self::LAYOUT_VERTICAL   => get_string('vertical',   $plugin),
-            self::LAYOUT_HORIZONTAL => get_string('horizontal', $plugin)
-        );
+            self::LAYOUT_HORIZONTAL => get_string('horizontal', $plugin),
+        ];
         return self::get_types($types, $type);
     }
 
     /**
      * Returns available values and descriptions for field "gradingtype"
      *
-     * @param int $type
+     * @param int|null $type
      * @return array|string array if $type is not specified and single string if $type is specified
      */
-    public static function get_grading_types($type=null) {
+    public static function get_grading_types(int $type = null): array|string {
         $plugin = 'qtype_ordering';
-        $types = array(
-            self::GRADING_ALL_OR_NOTHING                 => get_string('allornothing',               $plugin),
-            self::GRADING_ABSOLUTE_POSITION              => get_string('absoluteposition',           $plugin),
-            self::GRADING_RELATIVE_TO_CORRECT            => get_string('relativetocorrect',          $plugin),
-            self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST     => get_string('relativenextexcludelast',    $plugin),
-            self::GRADING_RELATIVE_NEXT_INCLUDE_LAST     => get_string('relativenextincludelast',    $plugin),
+        $types = [
+            self::GRADING_ALL_OR_NOTHING => get_string('allornothing', $plugin),
+            self::GRADING_ABSOLUTE_POSITION => get_string('absoluteposition', $plugin),
+            self::GRADING_RELATIVE_TO_CORRECT => get_string('relativetocorrect', $plugin),
+            self::GRADING_RELATIVE_NEXT_EXCLUDE_LAST => get_string('relativenextexcludelast', $plugin),
+            self::GRADING_RELATIVE_NEXT_INCLUDE_LAST => get_string('relativenextincludelast', $plugin),
             self::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT => get_string('relativeonepreviousandnext', $plugin),
             self::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT => get_string('relativeallpreviousandnext', $plugin),
-            self::GRADING_LONGEST_ORDERED_SUBSET         => get_string('longestorderedsubset',       $plugin),
-            self::GRADING_LONGEST_CONTIGUOUS_SUBSET      => get_string('longestcontiguoussubset',    $plugin)
-        );
+            self::GRADING_LONGEST_ORDERED_SUBSET => get_string('longestorderedsubset', $plugin),
+            self::GRADING_LONGEST_CONTIGUOUS_SUBSET => get_string('longestcontiguoussubset', $plugin),
+        ];
         return self::get_types($types, $type);
     }
 
     /**
-     * @param string $style
-     * @return array of the numbering styles supported. For each one, there
-     *      should be a lang string numberingstylexxx in the qtype_ordering
-     *      language file, and a case in the switch statement in number_in_style,
-     *      and it should be listed in the definition of this column in install.xml.
+     * Get the numbering styles supported.
+     *
+     * For each style, there should be a corresponding lang string 'numberingstylexxx' in the qtype_ordering language file,
+     * a case in the switch statement in number_in_style, and it should be listed in the definition of this column in install.xml.
+     *
+     * @param string|null $style The specific numbering style to retrieve.
+     * @return array|string Numbering style(s).
+     *                      The keys are style identifiers, and the values are the corresponding language strings.
      */
-    public static function get_numbering_styles($style=null) {
+    public static function get_numbering_styles(string $style = null): array|string {
         $plugin = 'qtype_ordering';
-        $styles = array('none' => get_string('numberingstylenone', $plugin),
-                        'abc'  => get_string('numberingstyleabc',  $plugin),
-                        'ABCD'  => get_string('numberingstyleABCD',  $plugin),
-                        '123'  => get_string('numberingstyle123',  $plugin),
-                        'iii'  => get_string('numberingstyleiii',  $plugin),
-                        'IIII'  => get_string('numberingstyleIIII',  $plugin));
+        $styles = [
+            'none' => get_string('numberingstylenone', $plugin),
+            'abc' => get_string('numberingstyleabc', $plugin),
+            'ABCD' => get_string('numberingstyleABCD', $plugin),
+            '123' => get_string('numberingstyle123', $plugin),
+            'iii' => get_string('numberingstyleiii', $plugin),
+            'IIII' => get_string('numberingstyleIIII', $plugin),
+        ];
         return self::get_types($styles, $style);
     }
 
@@ -838,7 +846,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @return array Array of three elements: the number of correct subparts,
      * the number of partial correct subparts and the number of incorrect subparts.
      */
-    public function get_num_parts_right(array $response) {
+    public function get_num_parts_right(array $response): array {
         $this->update_current_response($response);
         $gradingtype = $this->options->gradingtype;
 
@@ -874,7 +882,12 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param array $currentresponse The current response list base on grading type.
      * @return float|null Float if the grade, base on the fraction scale and null if the item is not in the correct response.
      */
-    protected function get_fraction_of_item(int $position, int $answerid, array $correctresponse, array $currentresponse) {
+    protected function get_fraction_of_item(
+        int $position,
+        int $answerid,
+        array $correctresponse,
+        array $currentresponse
+    ): float|null {
         $gradingtype = $this->options->gradingtype;
 
         $score    = 0;

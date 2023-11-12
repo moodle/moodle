@@ -35,7 +35,6 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @covers     \qtype_ordering\output\correct_response
  */
 class correct_response_test extends advanced_testcase {
-
     /**
      * Test the exported data for the template that renders the correct response to a given question attempt.
      *
@@ -56,13 +55,13 @@ class correct_response_test extends advanced_testcase {
             qtype_ordering_question::LAYOUT_VERTICAL;
         // Create a question attempt.
         $qa = new \testable_question_attempt($question, 0);
-        // Create a question attempt step and add it to the question attemp.
+        // Create a question attempt step and add it to the question attempt.
         $step = new \question_attempt_step();
         $qa->add_step($step);
         $question->start_attempt($qa->get_last_step(), 1);
         // Get the grading state based on the correct response and the current response, and later set it in the question
         // attempt step.
-        list($fraction, $state) = $question->grade_response(qtype_ordering_test_helper::get_response($question, $currentresponse));
+        [$fraction, $state] = $question->grade_response(qtype_ordering_test_helper::get_response($question, $currentresponse));
         $qa->get_last_step()->set_state($state);
 
         $renderer = $PAGE->get_renderer('core');
@@ -85,7 +84,7 @@ class correct_response_test extends advanced_testcase {
                 [
                     'hascorrectresponse' => true,
                     'showcorrect' => false,
-                ]
+                ],
             ],
             'Partially correct question attempt (horizontal layout).' => [
                 ['Modular', 'Object', 'Dynamic', 'Learning', 'Oriented', 'Environment'],
@@ -102,7 +101,7 @@ class correct_response_test extends advanced_testcase {
                         ['answertext' => 'Learning'],
                         ['answertext' => 'Environment'],
                     ],
-                ]
+                ],
             ],
             'Incorrect question attempt (horizontal layout).' => [
                 ['Object', 'Dynamic', 'Modular', 'Learning', 'Environment', 'Oriented'],
@@ -119,7 +118,7 @@ class correct_response_test extends advanced_testcase {
                         ['answertext' => 'Learning'],
                         ['answertext' => 'Environment'],
                     ],
-                ]
+                ],
             ],
             'Incorrect question attempt (vertical layout).' => [
                 ['Object', 'Dynamic', 'Modular', 'Learning', 'Environment', 'Oriented'],
@@ -136,7 +135,7 @@ class correct_response_test extends advanced_testcase {
                         ['answertext' => 'Learning'],
                         ['answertext' => 'Environment'],
                     ],
-                ]
+                ],
             ],
         ];
     }

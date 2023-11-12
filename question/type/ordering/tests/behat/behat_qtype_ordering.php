@@ -34,13 +34,12 @@ require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_qtype_ordering extends behat_base {
-
     /**
      * Get the xpath for a given item by label.
      * @param string $label the text of the item to drag.
      * @return string the xpath expression.
      */
-    protected function item_xpath_by_lable($label) {
+    protected function item_xpath_by_label(string $label): string {
         return '//li[@class = "sortableitem" and contains(normalize-space(.), "' . $this->escape($label) . '")]';
     }
 
@@ -49,7 +48,7 @@ class behat_qtype_ordering extends behat_base {
      * @param string $position the number of place to drop it.
      * @return string the xpath expression.
      */
-    protected function item_xpath_by_position($position) {
+    protected function item_xpath_by_position(string $position): string {
         return '//li[@class = "sortableitem"][' . $position . ']';
     }
 
@@ -67,14 +66,22 @@ class behat_qtype_ordering extends behat_base {
      *
      * @Given /^I drag "(?P<label>[^"]*)" to space "(?P<position>\d+)" in the ordering question$/
      */
-    public function i_drag_to_space_in_the_drag_and_drop_into_text_question($label, $position) {
+    public function i_drag_to_space_in_the_drag_and_drop_into_text_question(string $label, int $position): void {
         $generalcontext = behat_context_helper::get('behat_general');
         // There was a weird issue where drag-drop was not reliable if an item was being
         // dragged to the same place it already was. So, first drag below the bottom to reliably
         // move it to the last place.
-        $generalcontext->i_drag_and_i_drop_it_in($this->item_xpath_by_lable($label),
-                'xpath_element', get_string('check', 'question'), 'button');
-        $generalcontext->i_drag_and_i_drop_it_in($this->item_xpath_by_lable($label),
-                'xpath_element', $this->item_xpath_by_position($position), 'xpath_element');
+        $generalcontext->i_drag_and_i_drop_it_in(
+            $this->item_xpath_by_label($label),
+            'xpath_element',
+            get_string('check', 'question'),
+            'button'
+        );
+        $generalcontext->i_drag_and_i_drop_it_in(
+            $this->item_xpath_by_label($label),
+            'xpath_element',
+            $this->item_xpath_by_position($position),
+            'xpath_element'
+        );
     }
 }

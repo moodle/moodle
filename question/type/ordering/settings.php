@@ -26,5 +26,5 @@ defined('MOODLE_INTERNAL') || die;
 
 if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configselect('qtype_ordering/defaultanswerformat',
-            get_string('defaultanswerformat', 'qtype_ordering'), '', FORMAT_MOODLE, format_text_menu()));
+        get_string('defaultanswerformat', 'qtype_ordering'), '', FORMAT_MOODLE, format_text_menu()));
 }

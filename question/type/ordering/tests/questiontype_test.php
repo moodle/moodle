@@ -60,15 +60,15 @@ class questiontype_test extends \advanced_testcase {
         $this->qtype = null;
     }
 
-    public function test_name() {
-        $this->assertEquals($this->qtype->name(), 'ordering');
+    public function test_name(): void {
+        $this->assertEquals('ordering', $this->qtype->name());
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_question_saving() {
+    public function test_question_saving(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -92,7 +92,7 @@ class questiontype_test extends \advanced_testcase {
         $actualquestiondata = question_bank::load_question_data($returnedfromsave->id);
 
         foreach ($questiondata as $property => $value) {
-            if (!in_array($property, array('id', 'version', 'timemodified', 'timecreated', 'options', 'stamp'))) {
+            if (!in_array($property, ['id', 'version', 'timemodified', 'timecreated', 'options', 'stamp'])) {
                 $this->assertContainsEquals($value, (array)$actualquestiondata);
                 $this->assertContainsEquals($property, array_keys((array)$actualquestiondata));
             }
@@ -119,63 +119,63 @@ class questiontype_test extends \advanced_testcase {
         }
     }
 
-    public function test_get_possible_responses() {
+    public function test_get_possible_responses(): void {
         $questiondata = test_question_maker::get_question_data('ordering');
         $possibleresponses = $this->qtype->get_possible_responses($questiondata);
-        $expectedresponseclasses = array(
-            'Modular' => array(
+        $expectedresponseclasses = [
+            'Modular' => [
                     1 => new question_possible_response('Position 1', 0.1666667),
                     2 => new question_possible_response('Position 2', 0),
                     3 => new question_possible_response('Position 3', 0),
                     4 => new question_possible_response('Position 4', 0),
                     5 => new question_possible_response('Position 5', 0),
                     6 => new question_possible_response('Position 6', 0),
-            ),
-            'Object' => array(
+            ],
+            'Object' => [
                     1 => new question_possible_response('Position 1', 0),
                     2 => new question_possible_response('Position 2', 0.1666667),
                     3 => new question_possible_response('Position 3', 0),
                     4 => new question_possible_response('Position 4', 0),
                     5 => new question_possible_response('Position 5', 0),
                     6 => new question_possible_response('Position 6', 0),
-            ),
-            'Oriented' => array(
+            ],
+            'Oriented' => [
                     1 => new question_possible_response('Position 1', 0),
                     2 => new question_possible_response('Position 2', 0),
                     3 => new question_possible_response('Position 3', 0.1666667),
                     4 => new question_possible_response('Position 4', 0),
                     5 => new question_possible_response('Position 5', 0),
                     6 => new question_possible_response('Position 6', 0),
-            ),
-            'Dynamic' => array(
+            ],
+            'Dynamic' => [
                     1 => new question_possible_response('Position 1', 0),
                     2 => new question_possible_response('Position 2', 0),
                     3 => new question_possible_response('Position 3', 0),
                     4 => new question_possible_response('Position 4', 0.1666667),
                     5 => new question_possible_response('Position 5', 0),
                     6 => new question_possible_response('Position 6', 0),
-            ),
-            'Learning' => array(
+            ],
+            'Learning' => [
                     1 => new question_possible_response('Position 1', 0),
                     2 => new question_possible_response('Position 2', 0),
                     3 => new question_possible_response('Position 3', 0),
                     4 => new question_possible_response('Position 4', 0),
                     5 => new question_possible_response('Position 5', 0.1666667),
                     6 => new question_possible_response('Position 6', 0),
-            ),
-            'Environment' => array(
+            ],
+            'Environment' => [
                     1 => new question_possible_response('Position 1', 0),
                     2 => new question_possible_response('Position 2', 0),
                     3 => new question_possible_response('Position 3', 0),
                     4 => new question_possible_response('Position 4', 0),
                     5 => new question_possible_response('Position 5', 0),
                     6 => new question_possible_response('Position 6', 0.1666667),
-            ),
-        );
-        $this->assertEqualsWithDelta($expectedresponseclasses, $possibleresponses, 0.0000005, '');
+            ],
+        ];
+        $this->assertEqualsWithDelta($expectedresponseclasses, $possibleresponses, 0.0000005);
     }
 
-    public function test_get_possible_responses_very_long() {
+    public function test_get_possible_responses_very_long(): void {
         $questiondata = test_question_maker::get_question_data('ordering');
         $onehundredchars = str_repeat('1234567890', 9) . '123456789碁';
         // Set one of the answers to over 100 chars, with a multi-byte UTF-8 character at position 100.
@@ -184,7 +184,7 @@ class questiontype_test extends \advanced_testcase {
         $this->assertArrayHasKey($onehundredchars, $possibleresponses);
     }
 
-    public function test_get_numberingstyle() {
+    public function test_get_numberingstyle(): void {
         $questiondata = test_question_maker::get_question_data('ordering');
         $expected = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
         $actual = $this->qtype->get_numberingstyle($questiondata);
@@ -215,5 +215,4 @@ class questiontype_test extends \advanced_testcase {
         $actual = $this->qtype->get_numberingstyle($questiondata);
         $this->assertEquals($expected, $actual);
     }
-
 }

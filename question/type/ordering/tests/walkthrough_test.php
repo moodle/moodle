@@ -24,7 +24,6 @@
 
 namespace qtype_ordering;
 
-use qtype_ordering\question_hint_ordering;
 use test_question_maker;
 use question_state;
 use question_pattern_expectation;
@@ -47,20 +46,19 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  * @covers    \qtype_ordering
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-
     /**
      * Get the array of post data that will .
      *
-     * @param array Representation of the response we want to submit. The answers in order.
+     * @param array $items Representation of the response we want to submit. The answers in order.
      * @return array simulated POST data.
      */
-    protected function get_response($items) {
+    protected function get_response(array $items): array {
         $question = $this->quba->get_question($this->slot);
 
         return qtype_ordering_test_helper::get_response($question, $items);
     }
 
-    public function test_deferred_feedback() {
+    public function test_deferred_feedback(): void {
 
         // Create an ordering question.
         $question = test_question_maker::make_question('ordering');
@@ -70,9 +68,11 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
-                $this->get_contains_hidden_expectation(
-                        $this->quba->get_field_prefix($this->slot) . 'response_' . $question->id),
-                $this->get_does_not_contain_feedback_expectation());
+            $this->get_contains_hidden_expectation(
+                $this->quba->get_field_prefix($this->slot) . 'response_' . $question->id
+            ),
+            $this->get_does_not_contain_feedback_expectation()
+        );
 
         // Save the right answer.
         $rightresponse = $this->get_response(['Modular', 'Object', 'Oriented', 'Dynamic', 'Learning', 'Environment']);
@@ -82,8 +82,9 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_state(question_state::$complete);
         $this->check_current_mark(null);
         $this->check_current_output(
-                $this->get_does_not_contain_correctness_expectation(),
-                $this->get_does_not_contain_feedback_expectation());
+            $this->get_does_not_contain_correctness_expectation(),
+            $this->get_does_not_contain_feedback_expectation()
+        );
 
         // If the same answer is saved again, we should not generate another step.
         $stepcount = $this->get_step_count();
@@ -99,73 +100,79 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_state(question_state::$gradedright);
         $this->check_current_mark(15);
         $this->check_current_output(
-                $this->get_contains_correct_expectation(),
-                $this->get_contains_general_feedback_expectation($question));
+            $this->get_contains_correct_expectation(),
+            $this->get_contains_general_feedback_expectation($question)
+        );
     }
 
-    public function test_interactive_behaviour() {
+    public function test_interactive_behaviour(): void {
 
         // Create a drag-and-drop question.
         $question = test_question_maker::make_question('ordering');
-        $question->hints = array(
+        $question->hints = [
             new question_hint_ordering(13, 'This is the first hint.', FORMAT_HTML, true, false, true),
             new question_hint_ordering(14, 'This is the second hint.', FORMAT_HTML, false, false, false),
-        );
+        ];
         $this->start_attempt_at_question($question, 'interactive', 3);
 
         // Check the initial state.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
-                $this->get_contains_hidden_expectation(
-                        $this->quba->get_field_prefix($this->slot) . 'response_' . $question->id),
-                $this->get_contains_submit_button_expectation(true),
-                $this->get_does_not_contain_feedback_expectation(),
-                $this->get_tries_remaining_expectation(3),
-                $this->get_does_not_contain_num_parts_correct(),
-                $this->get_no_hint_visible_expectation());
+            $this->get_contains_hidden_expectation(
+                $this->quba->get_field_prefix($this->slot) . 'response_' . $question->id
+            ),
+            $this->get_contains_submit_button_expectation(true),
+            $this->get_does_not_contain_feedback_expectation(),
+            $this->get_tries_remaining_expectation(3),
+            $this->get_does_not_contain_num_parts_correct(),
+            $this->get_no_hint_visible_expectation()
+        );
 
         // Submit the wrong answer.
         $this->process_submission(['-submit' => 1] +
-                $this->get_response(['Environment', 'Modular', 'Object', 'Oriented', 'Dynamic', 'Learning']));
+            $this->get_response(['Environment', 'Modular', 'Object', 'Oriented', 'Dynamic', 'Learning']));
 
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
-                $this->get_does_not_contain_submit_button_expectation(),
-                $this->get_contains_try_again_button_expectation(true),
-                $this->get_does_not_contain_correctness_expectation(),
-                $this->get_contains_num_parts_correct_ordering(0, 5, 1),
-                $this->get_contains_hint_expectation('This is the first hint'));
+            $this->get_does_not_contain_submit_button_expectation(),
+            $this->get_contains_try_again_button_expectation(true),
+            $this->get_does_not_contain_correctness_expectation(),
+            $this->get_contains_num_parts_correct_ordering(0, 5, 1),
+            $this->get_contains_hint_expectation('This is the first hint')
+        );
 
         // Do try again.
-        $this->process_submission(array('-tryagain' => 1));
+        $this->process_submission(['-tryagain' => 1]);
 
         // Verify.
         $this->check_current_state(question_state::$todo);
         $this->check_current_mark(null);
         $this->check_current_output(
-                $this->get_contains_submit_button_expectation(true),
-                $this->get_does_not_contain_correctness_expectation(),
-                $this->get_does_not_contain_feedback_expectation(),
-                $this->get_tries_remaining_expectation(2),
-                $this->get_no_hint_visible_expectation());
+            $this->get_contains_submit_button_expectation(true),
+            $this->get_does_not_contain_correctness_expectation(),
+            $this->get_does_not_contain_feedback_expectation(),
+            $this->get_tries_remaining_expectation(2),
+            $this->get_no_hint_visible_expectation()
+        );
 
         // Submit the right answer.
         $this->process_submission(['-submit' => 1] +
-                $this->get_response(['Modular', 'Object', 'Oriented', 'Dynamic', 'Learning', 'Environment']));
+            $this->get_response(['Modular', 'Object', 'Oriented', 'Dynamic', 'Learning', 'Environment']));
 
         // Verify.
         $this->check_current_state(question_state::$gradedright);
         // Note, this may not be the 'best possible' grade. Perhaps there should
-        // partial credit for things that were right on the first try.
+        // partially credit for things that were right on the first try.
         $this->check_current_mark(2);
         $this->check_current_output(
-                $this->get_does_not_contain_submit_button_expectation(),
-                $this->get_contains_correct_expectation(),
-                $this->get_does_not_contain_num_parts_correct(),
-                $this->get_no_hint_visible_expectation());
+            $this->get_does_not_contain_submit_button_expectation(),
+            $this->get_contains_correct_expectation(),
+            $this->get_does_not_contain_num_parts_correct(),
+            $this->get_no_hint_visible_expectation()
+        );
 
         // Check regrading does not mess anything up.
         $this->quba->regrade_all_questions();
@@ -183,7 +190,11 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
      * @param int $numincorrect The number of incorrect item.
      * @return question_pattern_expectation
      */
-    protected function get_contains_num_parts_correct_ordering($numright, $numpartial, $numincorrect) {
+    protected function get_contains_num_parts_correct_ordering(
+        int $numright,
+        int $numpartial,
+        int $numincorrect
+    ): question_pattern_expectation {
         $a = new stdClass();
         $a->numright = $numright;
         $a->numpartial = $numpartial;

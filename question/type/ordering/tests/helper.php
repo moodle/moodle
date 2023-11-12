@@ -36,8 +36,8 @@ require_once($CFG->dirroot . '/question/type/ordering/question.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_test_helper extends question_test_helper {
-    public function get_test_questions() {
-        return array('moodle');
+    public function get_test_questions(): array {
+        return ['moodle'];
     }
 
     /**
@@ -45,10 +45,9 @@ class qtype_ordering_test_helper extends question_test_helper {
      *
      * @return qtype_ordering_question the question instance.
      */
-    public function make_ordering_question_moodle() {
+    public function make_ordering_question_moodle(): qtype_ordering_question {
         question_bank::load_question_definition_classes('ordering');
         $q = new qtype_ordering_question();
-        $q->questionid = $q->id;
         test_question_maker::initialise_a_question($q);
         $q->qtype = question_bank::get_qtype('ordering');
         $q->name = 'Moodle';
@@ -80,12 +79,12 @@ class qtype_ordering_test_helper extends question_test_helper {
      *
      * @param int $id the id to set.
      * @param string $text
-     * @param int $textformat one of the FORMAT_... constanst.
+     * @param int $textformat one of the FORMAT_... constants.
      * @param int $order the position in order, numbered from 1.
      * @param bool $addmd5 whether to add the md5key property.
      * @return stdClass the answer.
      */
-    public function make_answer($id, $text, $textformat, $order, $addmd5 = false) {
+    public function make_answer(int $id, string $text, int $textformat, int $order, bool $addmd5 = false): stdClass {
         global $CFG;
 
         $answer = new stdClass();
@@ -116,14 +115,14 @@ class qtype_ordering_test_helper extends question_test_helper {
      *
      * @return stdClass simulated question form data.
      */
-    public function get_ordering_question_form_data_moodle() {
+    public function get_ordering_question_form_data_moodle(): stdClass {
         $form = new stdClass();
         $form->name = 'Moodle';
         $form->questiontext = ['text' => 'Put these words in order.', 'format' => FORMAT_HTML];
         $form->defaultmark = 1;
         $form->generalfeedback = [
             'text' => 'The correct answer is "Modular Object Oriented Dynamic Learning Environment".',
-            'format' => FORMAT_HTML
+            'format' => FORMAT_HTML,
         ];
 
         $form->layouttype = qtype_ordering_question::LAYOUT_HORIZONTAL;
@@ -160,7 +159,7 @@ class qtype_ordering_test_helper extends question_test_helper {
      *
      * @return stdClass simulated question form data.
      */
-    public function get_ordering_question_data_moodle() {
+    public function get_ordering_question_data_moodle(): stdClass {
         $questiondata = new stdClass();
         test_question_maker::initialise_question_data($questiondata);
         $questiondata->qtype = 'ordering';
