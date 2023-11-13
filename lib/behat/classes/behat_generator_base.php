@@ -279,6 +279,17 @@ abstract class behat_generator_base {
                         ' data generator is not implemented');
             }
         }
+
+        // Notify that the all the elements have been generated.
+        if (method_exists($this->componentdatagenerator, 'finish_generate_' . $generatortype)) {
+            // Using the component's own data generator if it exists.
+            $this->componentdatagenerator->{'finish_generate_' . $generatortype}();
+
+        } else if (method_exists($this->datagenerator, 'finish_generate_' . $generatortype)) {
+            // Use a method on the core data geneator, if there is one.
+            $this->datagenerator->{'finish_generate_' . $generatortype}();
+
+        }
     }
 
     /**

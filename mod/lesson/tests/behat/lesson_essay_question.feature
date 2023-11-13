@@ -18,14 +18,12 @@ Feature: In a lesson activity, teacher can add an essay question
     And the following "activities" exist:
       | activity | name             | course | idnumber  | feedback |
       | lesson   | Test lesson name | C1     | lesson1   | 1        |
-    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I follow "Add a question page"
-    And I set the field "Select a question type" to "Essay"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | Essay question |
-      | Page contents | <p>Please write a story about a <b>frog</b>.</p> |
-    And I press "Save page"
+    And the following "mod_lesson > page" exist:
+      | lesson           | qtype   | title          | content                                          |
+      | Test lesson name | essay   | Essay question | <p>Please write a story about a <b>frog</b>.</p> |
+    And the following "mod_lesson > answer" exist:
+      | page           | jumpto    | score |
+      | Essay question | Next page | 1     |
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "Please write a story about a frog."
     And I set the field "Your answer" to "<p>Once upon a time there was a little <b>green</b> frog."
