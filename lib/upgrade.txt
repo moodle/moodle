@@ -10,6 +10,7 @@ information provided here is intended especially for developers.
   drag/drop, which can be used to add transition effects in calling code
 * course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
   them all in a single cache set.
+* Behat generators can now implement the function finish_generate_ to detect when the whole list of elements have been generated.
 
 === 4.3 ===
 

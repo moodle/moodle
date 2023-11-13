@@ -32,20 +32,13 @@ Feature: Lesson group override
     And the following "activities" exist:
       | activity | name             | groupmode  | course | idnumber |
       | lesson   | Test lesson name | 1          | C1     | lesson1  |
-    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I follow "Add a question page"
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title           | True/false question 1 |
-      | Page contents        | Cat is an amphibian |
-      | id_answer_editor_0   | False |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0          | Next page |
-      | id_answer_editor_1   | True |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1          | This page |
-    And I press "Save page"
+    And the following "mod_lesson > page" exist:
+      | lesson           | qtype     | title                 | content             |
+      | Test lesson name | truefalse | True/false question 1 | Cat is an amphibian |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer        | response | jumpto        | score |
+      | True/false question 1 | False         | Correct  | Next page     | 1     |
+      | True/false question 1 | True          | Wrong    | This page     | 0     |
 
   Scenario: Add, modify then delete a group override
     Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1

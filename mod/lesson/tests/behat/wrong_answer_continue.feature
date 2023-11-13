@@ -26,24 +26,15 @@ Feature: An incorrect response to an answer with multiple attempts show appropri
     And I press "Save and display"
 
   Scenario: A student answering incorrectly to a question will see an option to move to the next question if set up.
-    Given I follow "Add a question page"
-    And I set the field "Select a question type" to "Numerical"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | Numerical question |
-      | Page contents | What is 1 + 2? |
-      | id_answer_editor_0 | 3 |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | 2 |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Just move on page |
-      | Page contents | You are here to move on |
-      | id_answer_editor_0 | End this lesson |
-      | id_jumpto_0 | End of lesson |
-    And I press "Save page"
+    Given the following "mod_lesson > pages" exist:
+      | lesson           | qtype   | title              | content                 |
+      | Test lesson name | numeric | Numerical question | What is 1 + 2?          |
+      | Test lesson name | content | Just move on page  | You are here to move on |
+    And the following "mod_lesson > answers" exist:
+      | page               | answer          | jumpto        | score |
+      | Numerical question | 3               | Next page     | 1     |
+      | Numerical question | 2               | Next page     | 0     |
+      | Just move on page  | End this lesson | End of lesson | 0     |
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     When I set the field "Your answer" to "2"
     And I press "Submit"
@@ -53,22 +44,14 @@ Feature: An incorrect response to an answer with multiple attempts show appropri
     Then I should see "You are here to move on"
 
   Scenario: A student answering incorrectly to a question will only see an option to try again if there is no matching wrong response.
-    Given I follow "Add a question page"
-    And I set the field "Select a question type" to "Numerical"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | Numerical question |
-      | Page contents | What is 1 + 2? |
-      | id_answer_editor_0 | 3 |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Just move on page |
-      | Page contents | You are here to move on |
-      | id_answer_editor_0 | End this lesson |
-      | id_jumpto_0 | End of lesson |
-    And I press "Save page"
+    Given the following "mod_lesson > pages" exist:
+      | lesson           | qtype   | title              | content                 |
+      | Test lesson name | numeric | Numerical question | What is 1 + 2?          |
+      | Test lesson name | content | Just move on page  | You are here to move on |
+    And the following "mod_lesson > answers" exist:
+      | page               | answer          | jumpto        | score |
+      | Numerical question | 3               | Next page     | 1     |
+      | Just move on page  | End this lesson | End of lesson | 0     |
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     When I set the field "Your answer" to "2"
     And I press "Submit"
