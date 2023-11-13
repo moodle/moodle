@@ -75,10 +75,16 @@ class course_modinfo {
     private $course;
 
     /**
-     * Array of section data from cache
+     * Array of section data from cache indexed by section number.
      * @var section_info[]
      */
-    private $sectioninfo;
+    private $sectioninfobynum;
+
+    /**
+     * Array of section data from cache indexed by id.
+     * @var section_info[]
+     */
+    private $sectioninfobyid;
 
     /**
      * User ID
@@ -87,17 +93,11 @@ class course_modinfo {
     private $userid;
 
     /**
-     * Array from int (section num, e.g. 0) => array of int (course-module id); this list only
-     * includes sections that actually contain at least one course-module
+     * Array indexed by section num (e.g. 0) => array of course-module ids
+     * This list only includes sections that actually contain at least one course-module
      * @var array
      */
-    private $sections;
-
-    /**
-     * Array from section id => section num.
-     * @var array
-     */
-    private $sectionids;
+    private $sectionmodules;
 
     /**
      * Array from int (cm id) => cm_info object
@@ -221,7 +221,7 @@ class course_modinfo {
      *   section; this only includes sections that contain at least one course-module
      */
     public function get_sections() {
-        return $this->sections;
+        return $this->sectionmodules;
     }
 
     /**
@@ -312,7 +312,7 @@ class course_modinfo {
      * @return section_info[] Array of section_info objects organised by section number
      */
     public function get_section_info_all() {
-        return $this->sectioninfo;
+        return $this->sectioninfobynum;
     }
 
     /**
@@ -322,14 +322,14 @@ class course_modinfo {
      * @return section_info Information for numbered section or null if not found
      */
     public function get_section_info($sectionnumber, $strictness = IGNORE_MISSING) {
-        if (!array_key_exists($sectionnumber, $this->sectioninfo)) {
+        if (!array_key_exists($sectionnumber, $this->sectioninfobynum)) {
             if ($strictness === MUST_EXIST) {
                 throw new moodle_exception('sectionnotexist');
             } else {
                 return null;
             }
         }
-        return $this->sectioninfo[$sectionnumber];
+        return $this->sectioninfobynum[$sectionnumber];
     }
 
     /**
@@ -339,15 +339,14 @@ class course_modinfo {
      * @return section_info|null Information for numbered section or null if not found
      */
     public function get_section_info_by_id(int $sectionid, int $strictness = IGNORE_MISSING): ?section_info {
-
-        if (!isset($this->sectionids[$sectionid])) {
+        if (!array_key_exists($sectionid, $this->sectioninfobyid)) {
             if ($strictness === MUST_EXIST) {
                 throw new moodle_exception('sectionnotexist');
             } else {
                 return null;
             }
         }
-        return $this->get_section_info($this->sectionids[$sectionid], $strictness);
+        return $this->sectioninfobyid[$sectionid];
     }
 
     /**
@@ -510,10 +509,9 @@ class course_modinfo {
 
         // Set initial values
         $this->userid = $userid;
-        $this->sections = array();
-        $this->sectionids = [];
-        $this->cms = array();
-        $this->instances = array();
+        $this->sectionmodules = [];
+        $this->cms = [];
+        $this->instances = [];
         $this->groups = null;
 
         // If we haven't already preloaded contexts for the course, do it now
@@ -574,18 +572,20 @@ class course_modinfo {
             $this->cms[$cm->id] = $cm;
 
             // Reconstruct sections. This works because modules are stored in order
-            if (!isset($this->sections[$cm->sectionnum])) {
-                $this->sections[$cm->sectionnum] = array();
+            if (!isset($this->sectionmodules[$cm->sectionnum])) {
+                $this->sectionmodules[$cm->sectionnum] = [];
             }
-            $this->sections[$cm->sectionnum][] = $cm->id;
+            $this->sectionmodules[$cm->sectionnum][] = $cm->id;
         }
 
         // Expand section objects
-        $this->sectioninfo = array();
+        $this->sectioninfobynum = [];
+        $this->sectioninfobyid = [];
         foreach ($coursemodinfo->sectioncache as $number => $data) {
-            $this->sectionids[$data->id] = $number;
-            $this->sectioninfo[$number] = new section_info($data, $number, null, null,
-                    $this, null);
+            $sectioninfo = new section_info($data, $number, null, null,
+                $this, null);
+            $this->sectioninfobynum[$number] = $sectioninfo;
+            $this->sectioninfobyid[$data->id] = $this->sectioninfobynum[$number];
         }
     }
 
@@ -876,8 +876,10 @@ class course_modinfo {
                         $mods[$cmid]->cm = $rawmods[$cmid]->id;
                         $mods[$cmid]->mod = $rawmods[$cmid]->modname;
 
-                        // Oh dear. Inconsistent names left here for backward compatibility.
+                        // Oh dear. Inconsistent names left 'section' here for backward compatibility,
+                        // but also save sectionid and sectionnumber.
                         $mods[$cmid]->section = $section->section;
+                        $mods[$cmid]->sectionnumber = $section->section;
                         $mods[$cmid]->sectionid = $rawmods[$cmid]->section;
 
                         $mods[$cmid]->module = $rawmods[$cmid]->module;
@@ -1121,7 +1123,7 @@ class course_modinfo {
  *    data in modinfo field
  * @property-read int $sectionnum Section number that this course-module is in (section 0 = above the calendar, section 1
  *    = week/topic 1, etc) - from cached data in modinfo field
- * @property-read int $section Section id - from course_modules table
+ * @property-read int $sectionid Section id - from course_modules table
  * @property-read array $conditionscompletion Availability conditions for this course-module based on the completion of other
  *    course-modules (array from other course-module id to required completion state for that
  *    module) - from cached data in modinfo field
@@ -1360,7 +1362,7 @@ class cm_info implements IteratorAggregate {
      * Section id - from course_modules table
      * @var int
      */
-    private $section;
+    private $sectionid;
 
     /**
      * Availability conditions for this course-module based on the completion of other
@@ -1524,7 +1526,8 @@ class cm_info implements IteratorAggregate {
         'module' => false,
         'name' => 'get_name',
         'score' => false,
-        'section' => false,
+        'section' => 'get_section_id',
+        'sectionid' => false,
         'sectionnum' => false,
         'showdescription' => false,
         'uservisible' => 'get_user_visible',
@@ -1949,7 +1952,18 @@ class cm_info implements IteratorAggregate {
      * @return section_info
      */
     public function get_section_info() {
-        return $this->modinfo->get_section_info($this->sectionnum);
+        return $this->modinfo->get_section_info_by_id($this->sectionid);
+    }
+
+    /**
+     * Getter method for property $section that returns section id.
+     *
+     * This method is called by the property ->section.
+     *
+     * @return int
+     */
+    private function get_section_id(): int {
+        return $this->sectionid;
     }
 
     /**
@@ -2240,7 +2254,7 @@ class cm_info implements IteratorAggregate {
         $this->name             = $mod->name;
         $this->visible          = $mod->visible;
         $this->visibleoncoursepage = $mod->visibleoncoursepage;
-        $this->sectionnum       = $mod->section; // Note weirdness with name here
+        $this->sectionnum       = $mod->section; // Note weirdness with name here. Keeping for backwards compatibility.
         $this->groupmode        = isset($mod->groupmode) ? $mod->groupmode : 0;
         $this->groupingid       = isset($mod->groupingid) ? $mod->groupingid : 0;
         $this->indent           = isset($mod->indent) ? $mod->indent : 0;
@@ -2256,7 +2270,7 @@ class cm_info implements IteratorAggregate {
         $this->showdescription  = isset($mod->showdescription) ? $mod->showdescription : 0;
         $this->state = self::STATE_BASIC;
 
-        $this->section = isset($mod->sectionid) ? $mod->sectionid : 0;
+        $this->sectionid = isset($mod->sectionid) ? $mod->sectionid : 0;
         $this->module = isset($mod->module) ? $mod->module : 0;
         $this->added = isset($mod->added) ? $mod->added : 0;
         $this->score = isset($mod->score) ? $mod->score : 0;
@@ -2971,7 +2985,7 @@ class cached_cm_info {
  *
  * @property-read int $id Section ID - from course_sections table
  * @property-read int $course Course ID - from course_sections table
- * @property-read int $section Section number - from course_sections table
+ * @property-read int $sectionnum Section number - from course_sections table
  * @property-read string $name Section name if specified - from course_sections table
  * @property-read int $visible Section visibility (1 = visible) - from course_sections table
  * @property-read string $summary Section summary text if specified - from course_sections table
@@ -3008,7 +3022,7 @@ class section_info implements IteratorAggregate {
      * Section number - from course_sections table
      * @var int
      */
-    private $_section;
+    private $_sectionnum;
 
     /**
      * Section name if specified - from course_sections table
@@ -3129,6 +3143,15 @@ class section_info implements IteratorAggregate {
     public $hasactivites;
 
     /**
+     * List of class read-only properties' getter methods.
+     * Used by magic functions __get(), __isset(), __empty()
+     * @var array
+     */
+    private static $standardproperties = [
+        'section' => 'get_section_number',
+    ];
+
+    /**
      * Constructs object from database information plus extra required data.
      * @param object $data Array entry from cached sectioncache
      * @param int $number Section number (array key)
@@ -3159,7 +3182,7 @@ class section_info implements IteratorAggregate {
         }
 
         // Other data from constructor arguments.
-        $this->_section = $number;
+        $this->_sectionnum = $number;
         $this->modinfo = $modinfo;
 
         // Cached course format data.
@@ -3188,6 +3211,10 @@ class section_info implements IteratorAggregate {
      * @return bool
      */
     public function __isset($name) {
+        if (isset(self::$standardproperties[$name])) {
+            $value = $this->__get($name);
+            return isset($value);
+        }
         if (method_exists($this, 'get_'.$name) ||
                 property_exists($this, '_'.$name) ||
                 array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
@@ -3204,6 +3231,10 @@ class section_info implements IteratorAggregate {
      * @return bool
      */
     public function __empty($name) {
+        if (isset(self::$standardproperties[$name])) {
+            $value = $this->__get($name);
+            return empty($value);
+        }
         if (method_exists($this, 'get_'.$name) ||
                 property_exists($this, '_'.$name) ||
                 array_key_exists($name, self::$sectionformatoptions[$this->modinfo->get_course()->format])) {
@@ -3221,6 +3252,11 @@ class section_info implements IteratorAggregate {
      * @return bool
      */
     public function __get($name) {
+        if (isset(self::$standardproperties[$name])) {
+            if ($method = self::$standardproperties[$name]) {
+                return $this->$method();
+            }
+        }
         if (method_exists($this, 'get_'.$name)) {
             return $this->{'get_'.$name}();
         }
@@ -3304,7 +3340,7 @@ class section_info implements IteratorAggregate {
         }
         $ret['sequence'] = $this->get_sequence();
         $ret['course'] = $this->get_course();
-        $ret = array_merge($ret, course_get_format($this->modinfo->get_course())->get_format_options($this->_section));
+        $ret = array_merge($ret, course_get_format($this->modinfo->get_course())->get_format_options($this->_sectionnum));
         return new ArrayIterator($ret);
     }
 
@@ -3339,8 +3375,8 @@ class section_info implements IteratorAggregate {
      * @return string
      */
     private function get_sequence() {
-        if (!empty($this->modinfo->sections[$this->_section])) {
-            return implode(',', $this->modinfo->sections[$this->_section]);
+        if (!empty($this->modinfo->sections[$this->_sectionnum])) {
+            return implode(',', $this->modinfo->sections[$this->_sectionnum]);
         } else {
             return '';
         }
@@ -3362,6 +3398,17 @@ class section_info implements IteratorAggregate {
      */
     private function get_modinfo() {
         return $this->modinfo;
+    }
+
+    /**
+     * Returns section number.
+     *
+     * This method is called by the property ->section.
+     *
+     * @return int
+     */
+    private function get_section_number(): int {
+        return $this->sectionnum;
     }
 
     /**
