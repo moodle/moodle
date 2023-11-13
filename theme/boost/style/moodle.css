@@ -16764,6 +16764,11 @@ blockquote {
 #block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
   width: calc(100% - 0.5rem) !important;
 }
+@media (max-width: 575.98px) {
+  #block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
+    width: 100% !important;
+  }
+}
 
 .block_recentlyaccessedcourses .paging-bar-container {
   margin-top: -2.4rem;
