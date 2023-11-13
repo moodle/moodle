@@ -28459,27 +28459,10 @@ body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
   margin-left: 0;
 }
 
-.path-course-view li.activity form.togglecompletion .btn {
-  padding: 0;
-}
-
-.path-course-view li.activity form.togglecompletion img {
-  max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
-}
-
 .path-course-view.editing li.activity span.autocompletion img {
   /* Use the same spacing as the filler. */
   margin-right: 0.5rem;
   margin-left: 0.5rem;
-}
-
-.path-course-view li.activity form.togglecompletion .ajaxworking {
-  width: 16px;
-  height: 16px;
-  position: absolute;
-  right: 22px;
-  top: 3px;
-  background: url([[pix:i/ajaxloader]]) no-repeat;
 }
 
 li.section.hidden span.commands a.editing_hide,
@@ -38802,6 +38785,44 @@ div.editor_atto_toolbar button .icon {
 }
 .dropdown-item.text-dark:hover {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+/**
+ Deprecations
+ */
+.path-course-view li.activity form.togglecompletion {
+  /* stylelint-disable declaration-no-important */
+  /* stylelint-enable */
+}
+body.behat-site .path-course-view li.activity form.togglecompletion,
+.path-course-view li.activity form.togglecompletion body.behat-site.path-course-view li.activity form.togglecompletion, body.themedesignermode .path-course-view li.activity form.togglecompletion,
+.path-course-view li.activity form.togglecompletion body.themedesignermode.path-course-view li.activity form.togglecompletion {
+  outline: 3px dotted #ca3120 !important;
+  background-color: #fceeed !important;
+}
+body.behat-site .path-course-view li.activity form.togglecompletion::before,
+.path-course-view li.activity form.togglecompletion body.behat-site.path-course-view li.activity form.togglecompletion::before, body.themedesignermode .path-course-view li.activity form.togglecompletion::before,
+.path-course-view li.activity form.togglecompletion body.themedesignermode.path-course-view li.activity form.togglecompletion::before {
+  content: "Deprecated style in use" !important;
+  color: #ca3120 !important;
+  font-size: smaller !important;
+}
+
+.path-course-view li.activity form.togglecompletion .ajaxworking {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  right: 22px;
+  top: 3px;
+  background: url([[pix:i/ajaxloader]]) no-repeat;
+}
+
+.path-course-view li.activity form.togglecompletion .btn {
+  padding: 0;
+}
+
+.path-course-view li.activity form.togglecompletion img {
+  max-width: none; /* The width is 0 so ensure we don't end up with a relative max-width */
 }
 
 body {

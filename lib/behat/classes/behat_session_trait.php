@@ -1008,6 +1008,35 @@ EOF;
     }
 
     /**
+     * Internal step definition to find deprecated styles.
+     *
+     * Part of behat_hooks class as is part of the testing framework, is auto-executed
+     * after each step so no features will splicitly use it.
+     *
+     * @throws Exception Unknown type, depending on what we caught in the hook or basic \Exception.
+     * @see Moodle\BehatExtension\Tester\MoodleStepTester
+     */
+    public function look_for_deprecated_styles() {
+        if (!behat_config_manager::get_behat_run_config_value('scss-deprecations')) {
+            return;
+        }
+
+        if (!$this->running_javascript()) {
+            return;
+        }
+
+        // Look for any DOM element with deprecated message in before pseudo-element.
+        $js = <<<EOF
+            [...document.querySelectorAll('*')].some(
+                el => window.getComputedStyle(el, ':before').content === '"Deprecated style in use"'
+            );
+        EOF;
+        if ($this->evaluate_script($js)) {
+            throw new \Exception(html_entity_decode("Deprecated style in use", ENT_COMPAT));
+        }
+    }
+
+    /**
      * Converts HTML tags to line breaks to display the info in CLI
      *
      * @param string $html
@@ -1045,6 +1074,9 @@ EOF;
 
         // Look for exceptions.
         $this->look_for_exceptions();
+
+        // Look for deprecated styles.
+        $this->look_for_deprecated_styles();
     }
 
     /**
