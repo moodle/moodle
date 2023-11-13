@@ -47,25 +47,24 @@ class formatting {
      * @staticvar bool $strcache
      * @param null|string $string The string to be filtered. Should be plain text, expect
      * possibly for multilang tags.
-     * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
-     * @param array $options options array/object or courseid
+     * @param boolean $striplinks To strip any link in the result text.
+     * @param array $options options array
      * @return string
      */
     public function format_string(
         ?string $string,
         bool $striplinks = true,
-        ?array $options = null,
+        array $options = [],
     ): string {
-        global $CFG, $PAGE;
+        global $PAGE;
 
         if ($string === '' || is_null($string)) {
             // No need to do any filters and cleaning.
             return '';
         }
 
-        if (empty($CFG->version) || $CFG->version < 2013051400 || during_initial_install()) {
-            // Do not filter anything during installation or before upgrade completes.
-            return $string = strip_tags($string);
+        if (!$this->should_filter_string()) {
+            return strip_tags($string);
         }
 
         if (count($this->formatstringcache) > 2000) {
@@ -73,16 +72,12 @@ class formatting {
             $this->formatstringcache = [];
         }
 
-        if (is_numeric($options)) {
-            // Legacy courseid usage.
-            $options  = ['context' => context_course::instance($options)];
-        } else {
-            // Detach object, we can not modify it.
-            $options = (array)$options;
-        }
+        // Detach object, we can not modify it.
+        $options = (array)$options;
 
         if (empty($options['context'])) {
             // Fallback to $PAGE->context this may be problematic in CLI and other non-standard pages :-(.
+            // In future we may want to add debugging here.
             $options['context'] = $PAGE->context;
         } else if (is_numeric($options['context'])) {
             $options['context'] = context::instance_by_id($options['context']);
@@ -95,7 +90,9 @@ class formatting {
 
         if (!$options['context']) {
             // We did not find any context? weird.
-            return $string = strip_tags($string);
+            throw new \coding_exception(
+                'Unable to identify context for format_string()',
+            );
         }
 
         // Calculate md5.
@@ -174,16 +171,15 @@ class formatting {
      * @param null|string $text The text to be formatted. This is raw text originally from user input.
      * @param string $format Identifier of the text format to be used
      *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_MARKDOWN]
-     * @param stdClass|array $options text formatting options
+     * @param array $options text formatting options
      * @return string
      */
     public function format_text(
         ?string $text,
         string $format = FORMAT_MOODLE,
-        ?array $options = null,
-
+        array $options = [],
     ): string {
-        global $CFG, $DB, $PAGE;
+        global $CFG, $PAGE;
 
         if ($text === '' || is_null($text)) {
             // No need to do any filters and cleaning.
@@ -191,7 +187,7 @@ class formatting {
         }
 
         // Detach object, we can not modify it.
-        $options = (array)$options;
+        $options = (array) $options;
 
         if (!isset($options['trusted'])) {
             $options['trusted'] = false;
@@ -231,17 +227,25 @@ class formatting {
         $options['blanktarget'] = !empty($options['blanktarget']);
 
         // Calculate best context.
-        if (empty($CFG->version) || $CFG->version < 2013051400 || during_initial_install()) {
+        if (!$this->should_filter_string()) {
             // Do not filter anything during installation or before upgrade completes.
             $context = null;
-        } else if (isset($options['context'])) { // First by explicit passed context option.
-            if (is_object($options['context'])) {
+        } else if (isset($options['context'])) {
+            // First by explicit passed context option.
+            if ($options['context'] instanceof context) {
                 $context = $options['context'];
-            } else {
+            } else if (is_numeric($options['context'])) {
                 $context = context::instance_by_id($options['context']);
+            } else {
+                debugging(
+                    'Unknown context passed to format_text(). Content will not be filtered.',
+                    DEBUG_DEVELOPER,
+                );
+                $context = null;
             }
         } else {
-            // Fallback to $PAGE->context this may be problematic in CLI and other non-standard pages :-(.
+            // Fallback to $PAGE->context this may be problematic in CLI and other non-standard pages.
+            // In future we may want to add debugging here.
             $context = $PAGE->context;
         }
 
@@ -284,14 +288,6 @@ class formatting {
                 $text = nl2br($text);
                 break;
 
-            case FORMAT_WIKI:
-                // This format is deprecated.
-                $text = '<p>NOTICE: Wiki-like formatting has been removed from Moodle.  You should not be seeing
-                     this message as all texts should have been converted to Markdown format instead.
-                     Please post a bug report to http://moodle.org/bugs with information about where you
-                     saw this message.</p>' . s($text);
-                break;
-
             case FORMAT_MARKDOWN:
                 $filteroptions['stage'] = 'pre_format';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
@@ -305,7 +301,7 @@ class formatting {
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
                 break;
 
-            default:  // FORMAT_MOODLE or anything else.
+            case FORMAT_MOODLE:
                 $filteroptions['stage'] = 'pre_format';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
                 $text = text_to_html($text, null, $options['para'], $options['newlines']);
@@ -317,12 +313,15 @@ class formatting {
                 $filteroptions['stage'] = 'post_clean';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
                 break;
+            default:  // FORMAT_MOODLE or anything else.
+                throw new \coding_exception("Unkown format passed to format_text: {$format}");
         }
+
         if ($options['filter']) {
             // At this point there should not be any draftfile links any more,
             // this happens when developers forget to post process the text.
             // The only potential problem is that somebody might try to format
-            // the text before storing into database which would be itself big bug..
+            // the text before storing into database which would be itself big bug.
             $text = str_replace("\"$CFG->wwwroot/draftfile.php", "\"$CFG->wwwroot/brokenfile.php#", $text);
 
             if ($CFG->debugdeveloper) {
@@ -455,5 +454,21 @@ class formatting {
         }
 
         return $CFG->filterall;
+    }
+
+    /**
+     * During initial install, or upgrade from a really old version of Moodle, we should not filter strings at all.
+     *
+     * @return bool
+     */
+    protected function should_filter_string(): bool {
+        global $CFG;
+
+        if (empty($CFG->version) || $CFG->version < 2013051400 || during_initial_install()) {
+            // Do not filter anything during installation or before upgrade completes.
+            return false;
+        }
+
+        return true;
     }
 }

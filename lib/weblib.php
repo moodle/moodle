@@ -1266,6 +1266,24 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
     // Manually include the formatting class for now until after the release after 4.5 LTS.
     require_once("{$CFG->libdir}/classes/formatting.php");
 
+    if ($format === FORMAT_WIKI) {
+        // This format was deprecated in Moodle 1.5.
+        throw new \coding_exception(
+            'Wiki-like formatting is not supported.'
+        );
+    }
+
+    if ($options instanceof \core\context) {
+        // A common mistake has been to call this function with a context object.
+        // This has never been expected, or nor supported.
+        debugging(
+            'The options argument should not be a context object directly. ' .
+                ' Please pass an array with a context key instead.',
+            DEBUG_DEVELOPER,
+        );
+        $options = ['context' => $options];
+    }
+
     if ($options) {
         $options = (array) $options;
     }
@@ -1287,6 +1305,9 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
         // Do not do anything.
     } else if ($courseiddonotuse) {
         // Legacy courseid.
+        if (!$options) {
+            $options = [];
+        }
         $options['context'] = \core\context\course::instance($courseiddonotuse);
         debugging(
             "Passing a courseid to format_text() is deprecated, please pass a context instead.",
@@ -1294,11 +1315,19 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
         );
     }
 
-    return \core\di::get(\core\formatting::class)->format_text(
-        $text,
-        $format,
-        $options,
-    );
+    $params = [
+        'text' => $text,
+    ];
+
+    if ($options) {
+        $params['options'] = $options;
+    }
+
+    if ($format !== null) {
+        $params['format'] = $format;
+    }
+
+    return \core\di::get(\core\formatting::class)->format_text(...$params);
 }
 
 /**
