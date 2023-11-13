@@ -37,9 +37,9 @@ Feature: I can edit a bigbluebutton instance
       | bigbluebuttonbn_meetingevents_enabled        | 1 |
     And the following "users" exist:
       | username | firstname | lastname |
-      | student1 | Student1   | 1        |
+      | student1 | Student1  | 1        |
     And the following "course enrolments" exist:
-      | user     | course      | role           |
+      | user     | course      | role    |
       | student1 | Test course | student |
     And I am on the "RoomRecordings" "bigbluebuttonbn activity editing" page logged in as "admin"
     And I expand all fieldsets

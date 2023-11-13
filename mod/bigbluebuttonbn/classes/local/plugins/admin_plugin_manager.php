@@ -251,6 +251,8 @@ class admin_plugin_manager {
         $class = \core_plugin_manager::resolve_plugininfo_class(extension::BBB_EXTENSION_PLUGIN_NAME);
         $class::enable_plugin($plugin, false);
         cache_helper::purge_by_event('mod_bigbluebuttonbn/pluginenabledisabled');
+        // Also clear the cache for all BigBlueButtonModules.
+        rebuild_course_cache(0, true);
         return 'view';
     }
 

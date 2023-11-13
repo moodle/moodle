@@ -69,7 +69,14 @@ class mod_form_addons extends \mod_bigbluebuttonbn\local\extension\mod_form_addo
      * @return array Array of string IDs of added items, empty array if none
      */
     public function add_completion_rules(): array {
-        return [];
+        $this->mform->addElement('advcheckbox', 'completionextraisehandtwice',
+            get_string('completionextraisehandtwice', 'bbbext_simple'),
+            get_string('completionextraisehandtwice_desc', 'bbbext_simple'));
+
+        $this->mform->addHelpButton('completionextraisehandtwice', 'completionextraisehandtwice',
+            'bbbext_simple');
+        $this->mform->disabledIf('completionextraisehandtwice', 'completion', 'neq', COMPLETION_AGGREGATION_ANY);
+        return ['completionextraisehandtwice' . $this->suffix];
     }
 
     /**
@@ -81,7 +88,7 @@ class mod_form_addons extends \mod_bigbluebuttonbn\local\extension\mod_form_addo
      *   default returns false
      */
     public function completion_rule_enabled(array $data): bool {
-        return false;
+        return !empty($data['completionextraisehandtwice' . $this->suffix]);
     }
 
     /**
@@ -111,7 +118,7 @@ class mod_form_addons extends \mod_bigbluebuttonbn\local\extension\mod_form_addo
      */
     public function validation(array $data, array $files): array {
         $errors = [];
-        if (empty($data['newfield'])) {
+        if (empty($data['newfield' . $this->suffix])) {
             $errors['newfield'] = get_string('newfielderror', 'bbbext_simple');
         }
         return $errors;

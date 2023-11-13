@@ -19,7 +19,6 @@ namespace mod_bigbluebuttonbn\completion;
 use completion_info;
 use context_module;
 use mod_bigbluebuttonbn\instance;
-use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\logger;
 use mod_bigbluebuttonbn\meeting;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;

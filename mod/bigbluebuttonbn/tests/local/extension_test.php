@@ -17,6 +17,7 @@ namespace mod_bigbluebuttonbn\local;
 
 use backup;
 use backup_controller;
+use mod_bigbluebuttonbn\completion\custom_completion;
 use mod_bigbluebuttonbn\extension;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\extension\mod_instance_helper;
@@ -259,6 +260,115 @@ class extension_test extends \advanced_testcase {
     }
 
     /**
+     * Test completion with and without addons.
+     *
+     * @param array $customcompletionrules
+     * @param array $events
+     * @param int $expectedstate
+     * @return void
+     * @dataProvider custom_completion_data_provider
+     * @covers \mod_bigbluebuttonbn\local\extension\custom_completion_addons
+     */
+    public function test_additional_completion(array $customcompletionrules, array $events, int $expectedstate): void {
+        // Enable plugin.
+        $this->enable_plugins(true);
+        $this->initialise_mock_server();
+        list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance(
+            $this->get_course(),
+            array_merge([
+                'completion' => '2',
+            ], $customcompletionrules)
+        );
+
+        $plugingenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Now create a couple of events.
+        $instance = instance::get_from_instanceid($bbactivity->id);
+        set_config('bigbluebuttonbn_meetingevents_enabled', true);
+        $meeting = $plugingenerator->create_meeting([
+            'instanceid' => $instance->get_instance_id(),
+            'groupid' => $instance->get_group_id(),
+            'participants' => json_encode([$user->id]),
+        ]);
+        foreach ($events as $edesc) {
+            $plugingenerator->add_meeting_event($user, $instance, $edesc->name, $edesc->data ?? '');
+        }
+        $result = $plugingenerator->send_all_events($instance);
+        $this->assertNotEmpty($result->data);
+        $data = json_decode(json_encode($result->data));
+        meeting::meeting_events($instance, $data);
+        $completion = new custom_completion($bbactivitycm, $user->id);
+        $result = $completion->get_overall_completion_state();
+        $this->assertEquals($expectedstate, $result);
+
+    }
+
+    /**
+     * Data generator
+     *
+     * @return array[]
+     */
+    public static function custom_completion_data_provider(): array {
+        global $CFG;
+        require_once($CFG->libdir . '/completionlib.php');
+        return [
+            'simple' => [
+                'customcompletionrules' => [
+                    'completionengagementtalks' => 1,
+                    'completionextraisehandtwice' => 1,
+                ],
+                'events' => [
+                    (object) ['name' => 'talks'],
+                    (object) ['name' => 'raisehand'],
+                    (object) ['name' => 'raisehand'],
+                ],
+                'expectedstate' => COMPLETION_COMPLETE,
+            ],
+            'not right events' => [
+                'customcompletionrules' => [
+                    'completionextraisehandtwice' => 1,
+                ],
+                'events' => [
+                    (object) ['name' => 'chats'],
+                ],
+                'expectedstate' => COMPLETION_INCOMPLETE,
+            ],
+            'not enough events' => [
+                'customcompletionrules' => [
+                    'completionextraisehandtwice' => 1,
+                ],
+                'events' => [
+                    (object) ['name' => 'raisehand'],
+                ],
+                'expectedstate' => COMPLETION_INCOMPLETE,
+            ],
+            'more events' => [
+                'customcompletionrules' => [
+                    'completionengagementtalks' => 1,
+                ],
+                'events' => [
+                    (object) ['name' => 'talks'],
+                    (object) ['name' => 'talks'],
+                    (object) ['name' => 'talks'],
+                ],
+                'expectedstate' => COMPLETION_COMPLETE,
+            ],
+            'basics are still working' => [
+                'customcompletionrules' => [
+                    'completionengagementtalks' => 1,
+                ],
+                'events' => [
+                    (object) ['name' => 'talks'],
+                ],
+                'expectedstate' => COMPLETION_COMPLETE,
+            ],
+        ];
+    }
+
+    /**
      * Data provider for testing get_class_implementing
      *
      * @return array[]
@@ -268,15 +378,15 @@ class extension_test extends \advanced_testcase {
             'mod_instance_helper with plugin disabled' => [
                 'bbbenabled' => false,
                 'apiclass' => mod_instance_helper::class,
-                'result' => []
+                'result' => [],
             ],
             'mod_instance_helper with plugin enabled' => [
                 'bbbenabled' => true,
                 'apiclass' => mod_instance_helper::class,
                 'result' => [
-                    'bbbext_simple\\bigbluebuttonbn\\mod_instance_helper'
-                ]
-            ]
+                    'bbbext_simple\\bigbluebuttonbn\\mod_instance_helper',
+                ],
+            ],
         ];
     }
 

@@ -16,7 +16,9 @@
 namespace mod_bigbluebuttonbn;
 
 use cache;
+use cm_info;
 use mod_bigbluebuttonbn\local\extension\action_url_addons;
+use mod_bigbluebuttonbn\local\extension\custom_completion_addons;
 use mod_bigbluebuttonbn\local\extension\mod_form_addons;
 use mod_bigbluebuttonbn\local\extension\mod_instance_helper;
 use stdClass;
@@ -112,6 +114,27 @@ class extension {
             $extensionclasses[] = $targetclassname;
         }
         return $extensionclasses;
+    }
+
+    /**
+     * Get all custom_completion addons classes.
+     *
+     * @return array of custom completion addon classes.
+     */
+    public static function custom_completion_addons_classes(): array {
+        return self::get_classes_implementing(custom_completion_addons::class);
+    }
+
+    /**
+     * Get all custom_completion addons classes instances.
+     *
+     * @param cm_info $cm
+     * @param int $userid
+     * @param array|null $completionstate
+     * @return array of custom completion addon instances.
+     */
+    public static function custom_completion_addons_instances(cm_info $cm, int $userid, ?array $completionstate = null): array {
+        return self::get_instances_implementing(custom_completion_addons::class, [$cm, $userid, $completionstate]);
     }
 
     /**
