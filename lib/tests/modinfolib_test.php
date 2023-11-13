@@ -895,6 +895,14 @@ class modinfolib_test extends advanced_testcase {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
+        // Invalid module ID.
+        try {
+            get_course_and_cm_from_instance(-1, 'page', $course);
+            $this->fail();
+        } catch (moodle_exception $e) {
+            $this->assertStringContainsString('Invalid module ID: -1', $e->getMessage());
+        }
+
         // Invalid module name.
         try {
             get_course_and_cm_from_cmid($page->cmid, '1337 h4x0ring');

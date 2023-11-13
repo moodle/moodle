@@ -2731,7 +2731,7 @@ function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid
     $modinfo = get_fast_modinfo($course, $userid);
     $instances = $modinfo->get_instances_of($modulename);
     if (!array_key_exists($instanceid, $instances)) {
-        throw new moodle_exception('invalidmoduleid', 'error', $instanceid);
+        throw new moodle_exception('invalidmoduleid', 'error', '', $instanceid);
     }
     return array($course, $instances[$instanceid]);
 }
