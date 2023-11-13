@@ -9,21 +9,14 @@ Feature: Pass grade activity completion in the lesson activity
       | student3 | Vinnie    | Student3 | student3@example.com |
       | teacher1 | Darrell   | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+      | fullname | shortname | category | enablecompletion | showcompletionconditions |
+      | Course 1 | C1        | 0        | 1                | 1                        |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | student1 | C1     | student        |
       | student2 | C1     | student        |
       | student3 | C1     | student        |
       | teacher1 | C1     | editingteacher |
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "Settings" in current page administration
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Enable completion tracking          | Yes |
-      | Show activity completion conditions | Yes |
-    And I press "Save and display"
     And the following "activity" exists:
       | activity                   | lesson        |
       | course                     | C1            |
@@ -33,18 +26,13 @@ Feature: Pass grade activity completion in the lesson activity
       | completion                 | 2             |
       | completionusegrade         | 1             |
       | completionpassgrade        | 1             |
-    And I am on the "Music history" "lesson activity" page
-    And I follow "Add a question page"
-    And I set the field "Select a question type" to "Numerical"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | Numerical question |
-      | Page contents | What is 1 + 2? |
-      | id_answer_editor_0 | 3 |
-      | id_jumpto_0 | End of lesson |
-      | id_enableotheranswers | 1 |
-      | id_jumpto_6 | Next page |
-    And I press "Save page"
+    And the following "mod_lesson > page" exist:
+      | lesson        | qtype   | title              | content        |
+      | Music history | numeric | Numerical question | What is 1 + 2? |
+    And the following "mod_lesson > answers" exist:
+      | page               | answer          | jumpto        | score |
+      | Numerical question | 3               | End of lesson | 1     |
+      | Numerical question | @#wronganswer#@ | Next page     | 0     |
 
   Scenario: View automatic completion items as a teacher
     When I am on the "Music history" "lesson activity" page logged in as teacher1

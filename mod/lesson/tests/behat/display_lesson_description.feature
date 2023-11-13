@@ -14,26 +14,22 @@ Feature: Display the lesson description in the lesson and optionally in the cour
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    Given the following "activity" exists:
-      | activity | lesson                  |
-      | course   | C1                      |
-      | idnumber | 0001                    |
-      | name     | Test lesson name        |
-      | intro    | Test lesson description |
-    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title  | Test lesson part 1        |
-      | Description | Lesson part 1 description |
-      | Jump        | Next page                 |
-    And I click on "Save page" "button"
+    And the following "activity" exist:
+      | activity   | name             | intro                   | course | idnumber |
+      | lesson     | Test lesson name | Test lesson description | C1     | 0001     |
+    And the following "mod_lesson > page" exist:
+      | lesson           | qtype   | title              | content            |
+      | Test lesson name | content | Test lesson part 1 | Test lesson part 1 |
+    And the following "mod_lesson > answer" exist:
+      | page               | answer        | jumpto    |
+      | Test lesson part 1 | Next page     | Next page |
 
   Scenario: Description is displayed in the Lesson
-    When I am on the "Test lesson name" "lesson activity" page
+    When I am on the "Test lesson name" "lesson activity" page logged in as teacher1
     Then I should see "Test lesson description"
 
   Scenario: Show lesson description in the course homepage
-    Given I am on the "Test lesson name" "lesson activity editing" page
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And the following fields match these values:
       | Display description on course page | |
     And I set the following fields to these values:
@@ -43,7 +39,7 @@ Feature: Display the lesson description in the lesson and optionally in the cour
     Then I should see "Test lesson description"
 
   Scenario: Hide lesson description in the course homepage
-    Given I am on the "Test lesson name" "lesson activity editing" page
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And the following fields match these values:
       | Display description on course page | |
     And I press "Save and return to course"

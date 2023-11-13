@@ -27,7 +27,20 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | idnumber | 0001                    |
       | name     | Test lesson name        |
       | retake   | 1                       |
-    When I am on the "Test lesson name" "lesson activity editing" page
+    And the following "mod_lesson > pages" exist:
+      | lesson           | qtype     | title                 | content                   |
+      | Test lesson name | truefalse | True/false question 1 | Cat is an amphibian       |
+      | Test lesson name | truefalse | True/false question 2 | Paper is made from trees. |
+      | Test lesson name | truefalse | True/false question 3 | 1+1=2                     |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer | response | jumpto        | score |
+      | True/false question 1 | False  | Correct  | Next page     | 1     |
+      | True/false question 1 | True   | Wrong    | This page     | 0     |
+      | True/false question 2 | True   | Correct  | Next page     | 1     |
+      | True/false question 2 | False  | Wrong    | This page     | 0     |
+      | True/false question 3 | True   | Correct  | Next page     | 1     |
+      | True/false question 3 | False  | Wrong    | This page     | 0     |
+    And I am on the "Test lesson name" "lesson activity editing" page
     And I expand all fieldsets
     And I set the following fields to these values:
       | id_deadline_enabled | 1 |
@@ -37,47 +50,7 @@ Feature: In Dashboard, teacher can see the number of student attempts to lessons
       | deadline[hour] | 08 |
       | deadline[minute] | 00 |
     And I press "Save and display"
-    And I follow "Add a question page"
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 1 |
-      | Page contents | Cat is an amphibian |
-      | id_answer_editor_0 | False |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | True |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 2 |
-      | Page contents | Paper is made from trees. |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I select edit type "Expanded"
-    And I click on "Add a question page here" "link" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' addlinks ')][3]" "xpath_element"
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 3 |
-      | Page contents | 1+1=2 |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I am on the "Test lesson name" "lesson activity" page logged in as student1
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "Cat is an amphibian"
     And I set the following fields to these values:
       | False | 1 |

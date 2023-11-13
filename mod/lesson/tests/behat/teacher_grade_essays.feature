@@ -42,17 +42,16 @@ Feature: In a lesson activity, a non editing teacher can grade essay questions
     And the following "activities" exist:
       | activity | name             | course | idnumber |
       | lesson   | Test lesson name | C1     | lesson1  |
+    And the following "mod_lesson > page" exist:
+      | lesson           | qtype   | title          | content                                          |
+      | Test lesson name | essay   | Essay question | <p>Please write a story about a <b>frog</b>.</p> |
+    And the following "mod_lesson > answer" exist:
+      | page           | jumpto    | score |
+      | Essay question | Next page | 1     |
     And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Group mode | Separate groups |
     And I press "Save and display"
-    And I follow "Add a question page"
-    And I set the field "Select a question type" to "Essay"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | Essay question |
-      | Page contents | <p>Please write a story about a frog.</p> |
-    And I press "Save page"
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I set the field "Your answer" to "<p>Once upon a time there was a little green frog."
     And I press "Submit"
