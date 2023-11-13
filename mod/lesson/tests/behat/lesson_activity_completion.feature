@@ -28,22 +28,14 @@ Feature: View activity completion in the lesson activity
       | completionendreached       | 1             |
       | completiontimespentenabled | 1             |
       | completiontimespent        | 3             |
-    And I am on the "Music history" "lesson activity" page logged in as teacher1
-    And I follow "Add a content page"
-    And I set the following fields to these values:
-    | Page title  | Music history part 1        |
-    | Description | The history of music part 1 |
-    | Jump        | Next page                   |
-    And I click on "Save page" "button"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "Essay"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title    | Music essay                            |
-      | Page contents | Write a really interesting music essay |
-      | Jump          | End of lesson                          |
-      | Score         | 1                                      |
-    And I press "Save page"
+    And the following "mod_lesson > pages" exist:
+      | lesson        | qtype   | title                | content                                |
+      | Music history | content | Music history part 1 |                                        |
+      | Music history | essay   | Music essay          | Write a really interesting music essay |
+    And the following "mod_lesson > answers" exist:
+      | page                 | answer                      | jumpto    | score |
+      | Music history part 1 | The history of music part 1 | Next page | 0     |
+      | Music essay          |                             | Next page | 1     |
 
   Scenario: View automatic completion items as a teacher
     When I am on the "Music history" "lesson activity" page logged in as teacher1

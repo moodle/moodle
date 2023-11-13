@@ -8,6 +8,7 @@ information provided here is intended especially for developers.
 * Add a new method core_user::get_initials to get the initials of a user in a way compatible with internationalisation.
 * course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
   them all in a single cache set.
+* Behat generators can now implement the function finish_generate_ to detect when the whole list of elements have been generated.
 
 === 4.3 ===
 
