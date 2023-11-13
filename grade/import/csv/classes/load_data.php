@@ -472,7 +472,7 @@ class gradeimport_csv_load_data {
         // Check for mapto collisions.
         $maperrors = array();
         foreach ($map as $i => $j) {
-            if ($j == 0) {
+            if (($j == 0) || ($j == 'new')) {
                 // You can have multiple ignores.
                 continue;
             } else {
