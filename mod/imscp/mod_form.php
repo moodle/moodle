@@ -59,7 +59,9 @@ class mod_imscp_mod_form extends moodleform_mod {
         // IMS-CP file upload.
         $mform->addElement('header', 'content', get_string('contentheader', 'imscp'));
         $mform->setExpanded('content', true);
-        $mform->addElement('filepicker', 'package', get_string('packagefile', 'imscp'));
+
+        $mform->addElement('filepicker', 'package', get_string('packagefile', 'imscp'), null,
+            ['accepted_types' => ['application/zip', '.imscc']]);
 
         $options = array('-1' => get_string('all'), '0' => get_string('no'),
                          '1' => '1', '2' => '2', '5' => '5', '10' => '10', '20' => '20');
@@ -78,26 +80,14 @@ class mod_imscp_mod_form extends moodleform_mod {
      * @param array $files
      */
     public function validation($data, $files) {
-        global $USER;
-
         if ($errors = parent::validation($data, $files)) {
             return $errors;
         }
 
-        $usercontext = context_user::instance($USER->id);
-        $fs = get_file_storage();
-
-        if (!$files = $fs->get_area_files($usercontext->id, 'user', 'draft', $data['package'], 'id', false)) {
+        if (!$this->get_draft_files('package')) {
             if (!$this->current->instance) {
                 $errors['package'] = get_string('required');
                 return $errors;
-            }
-        } else {
-            $file = reset($files);
-            if ($file->get_mimetype() != 'application/zip') {
-                $errors['package'] = get_string('invalidfiletype', 'error', '', $file);
-                // Better delete current file, it is not usable anyway.
-                $fs->delete_area_files($usercontext->id, 'user', 'draft', $data['package']);
             }
         }
 

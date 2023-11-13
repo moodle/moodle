@@ -127,6 +127,7 @@ abstract class core_filetypes {
             'ico' => array('type' => 'image/vnd.microsoft.icon', 'icon' => 'image',
                     'groups' => array('image'), 'string' => 'image'),
             'ics' => array('type' => 'text/calendar', 'icon' => 'text'),
+            'imscc' => array('type' => 'application/zip', 'icon' => 'archive', 'string' => 'archive'),
             'isf' => array('type' => 'application/inspiration', 'icon' => 'isf'),
             'ist' => array('type' => 'application/inspiration.template', 'icon' => 'isf'),
             'java' => array('type' => 'text/plain', 'icon' => 'sourcecode'),
