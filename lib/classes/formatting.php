@@ -33,6 +33,9 @@ class formatting {
     /** @var bool Whether to apply filters */
     protected ?bool $filterall;
 
+    /** @var array A string cache for format_string */
+    protected $formatstringcache = [];
+
     /**
      * Given a simple string, this function returns the string
      * processed by enabled string filters if $CFG->filterall is enabled
@@ -60,17 +63,14 @@ class formatting {
             return '';
         }
 
-        // We'll use a in-memory cache here to speed up repeated strings.
-        static $strcache = false;
-
         if (empty($CFG->version) || $CFG->version < 2013051400 || during_initial_install()) {
             // Do not filter anything during installation or before upgrade completes.
             return $string = strip_tags($string);
         }
 
-        if ($strcache === false || count($strcache) > 2000) {
+        if (count($this->formatstringcache) > 2000) {
             // This number might need some tuning to limit memory usage in cron.
-            $strcache = [];
+            $this->formatstringcache = [];
         }
 
         if (is_numeric($options)) {
@@ -100,14 +100,18 @@ class formatting {
 
         // Calculate md5.
         $cachekeys = [
-            $string, $striplinks, $options['context']->id,
-            $options['escape'], current_language(), $options['filter'],
+            $string,
+            $striplinks,
+            $options['context']->id,
+            $options['escape'],
+            current_language(),
+            $options['filter'],
         ];
         $md5 = md5(implode('<+>', $cachekeys));
 
         // Fetch from cache if possible.
-        if (isset($strcache[$md5])) {
-            return $strcache[$md5];
+        if (array_key_exists($md5, $this->formatstringcache)) {
+            return $this->formatstringcache[$md5];
         }
 
         // First replace all ampersands not followed by html entity code
@@ -137,7 +141,7 @@ class formatting {
         }
 
         // Store to cache.
-        $strcache[$md5] = $string;
+        $this->formatstringcache[$md5] = $string;
 
         return $string;
     }
