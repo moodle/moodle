@@ -109,10 +109,10 @@ Feature: In a lesson activity, I need to edit pages in the lesson taking into ac
       | Your answer | 2#87 |
 
   Scenario: Edit lesson question page with updated locale setting and wrong answer
-    Given I log in as "teacher1"
-    And the following "language customisations" exist:
+    Given the following "language customisations" exist:
       | component       | stringid | value |
       | core_langconfig | decsep   | ,     |
+    And I log in as "teacher1"
     When I am on the "Test lesson name" "lesson activity" page
     And I edit the lesson
     And I follow "Hardest question ever"
