@@ -56,6 +56,7 @@ const selectors = {
     count: '[data-collapse="count"]',
     placeholder: '.collapsecolumndropdown [data-region="placeholder"]',
     fullDropdown: '.collapsecolumndropdown',
+    searchResultContainer: '.searchresultitemscontainer',
 };
 
 const countIndicator = document.querySelector(selectors.count);
@@ -98,6 +99,19 @@ export default class ColumnSearch extends search_combobox {
                 document.querySelector('.gradereport-grader-table').classList.remove('d-none');
             }, 10);
         }).then(() => pendingPromise.resolve()).catch(Notification.exception);
+
+        this.$component.on('hide.bs.dropdown', () => {
+            const searchResultContainer = this.component.querySelector(selectors.searchResultContainer);
+            searchResultContainer.scrollTop = 0;
+
+            // Use setTimeout to make sure the following code is executed after the click event is handled.
+            setTimeout(() => {
+                if (this.searchInput.value !== '') {
+                    this.searchInput.value = '';
+                    this.searchInput.dispatchEvent(new Event('input', {bubbles: true}));
+                }
+            });
+        });
     }
 
     /**
@@ -498,8 +512,12 @@ export default class ColumnSearch extends search_combobox {
             'results': this.getMatchedResults(),
             'searchTerm': this.getSearchTerm(),
         });
-        this.selectallEnable();
         replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+        this.selectallEnable();
+        // Reset the expand button to be disabled as we have re-rendered the dropdown.
+        const form = this.component.querySelector(selectors.formDropdown);
+        const expandButton = form.querySelector(`[data-action="${selectors.formItems.save}"`);
+        expandButton.disabled = true;
     }
 
     /**
