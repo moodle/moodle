@@ -336,16 +336,14 @@ YUI.add('moodle-core_filepicker', function(Y) {
          */
         var formatCheckbox = function(o) {
             var el = Y.Node.create('<div/>');
-
+            var parentid = scope.one('.' + classname).get('id');
             var checkbox = Y.Node.create('<input/>')
                 .setAttribute('type', 'checkbox')
                 .setAttribute('data-fieldtype', 'checkbox')
                 .setAttribute('data-fullname', o.data.fullname)
                 .setAttribute('data-action', 'toggle')
                 .setAttribute('data-toggle', 'slave')
-                .setAttribute('data-togglegroup', 'file-selections')
-                .setAttribute('data-toggle-selectall', M.util.get_string('selectall', 'moodle'))
-                .setAttribute('data-toggle-deselectall', M.util.get_string('deselectall', 'moodle'));
+                .setAttribute('data-togglegroup', 'file-selections-' + parentid);
 
             var checkboxLabel = Y.Node.create('<label>')
                 .setHTML("Select file '" + o.data.fullname + "'")
@@ -384,12 +382,13 @@ YUI.add('moodle-core_filepicker', function(Y) {
 
             // Generate a checkbox based on toggleall's specification
             var div = Y.Node.create('<div/>');
+            var parentid = scope.one('.' + classname).get('id');
             var checkbox = Y.Node.create('<input/>')
                 .setAttribute('type', 'checkbox')
                 // .setAttribute('title', M.util.get_string('selectallornone', 'form'))
                 .setAttribute('data-action', 'toggle')
                 .setAttribute('data-toggle', 'master')
-                .setAttribute('data-togglegroup', 'file-selections');
+                .setAttribute('data-togglegroup', 'file-selections-' + parentid);
 
             var checkboxLabel = Y.Node.create('<label>')
                 .setHTML(M.util.get_string('selectallornone', 'form'))
