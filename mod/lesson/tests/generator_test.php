@@ -386,7 +386,7 @@ class generator_test extends \advanced_testcase {
         $lessongenerator->finish_generate_answer();
 
         // Check that pages and answers have been created.
-        $pages = $DB->get_records('lesson_pages', ['lessonid' => $lesson->id], 'title DESC');
+        $pages = $DB->get_records('lesson_pages', ['lessonid' => $lesson->id], $DB->sql_order_by_text('title') . ' DESC');
         $this->assertEquals(2, count($pages));
 
         $contentpagedb = array_pop($pages);
@@ -398,7 +398,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals($multichoicepage['content'], $multichoicepagedb->contents);
         $this->assertEquals(LESSON_PAGE_MULTICHOICE, $multichoicepagedb->qtype);
 
-        $answers = $DB->get_records('lesson_answers', ['lessonid' => $lesson->id], 'answer DESC');
+        $answers = $DB->get_records('lesson_answers', ['lessonid' => $lesson->id], $DB->sql_order_by_text('answer') . ' DESC');
         $this->assertEquals(5, count($answers));
 
         $multichoicepagecatanswerdb = array_pop($answers);
@@ -475,7 +475,7 @@ class generator_test extends \advanced_testcase {
         // Don't define any answers, the default answers will be added.
         $lessongenerator->finish_generate_answer();
 
-        $pages = $DB->get_records('lesson_pages', ['lessonid' => $lesson->id], 'title DESC');
+        $pages = $DB->get_records('lesson_pages', ['lessonid' => $lesson->id], $DB->sql_order_by_text('title') . ' DESC');
         $this->assertEquals(3, count($pages));
 
         $firstpagedb = array_pop($pages);
@@ -657,7 +657,7 @@ class generator_test extends \advanced_testcase {
 
         $secondcontentpagedb = $DB->get_record('lesson_pages', ['lessonid' => $lesson->id, 'title' => $secondcontentpage['title']]);
         $thirdcontentpagedb = $DB->get_record('lesson_pages', ['lessonid' => $lesson->id, 'title' => $thirdcontentpage['title']]);
-        $answers = $DB->get_records('lesson_answers', ['lessonid' => $lesson->id], 'answer DESC');
+        $answers = $DB->get_records('lesson_answers', ['lessonid' => $lesson->id], $DB->sql_order_by_text('answer') . ' DESC');
         $this->assertEquals(11, count($answers));
 
         $this->assertEquals(LESSON_THISPAGE, array_pop($answers)->jumpto);
