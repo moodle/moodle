@@ -14,6 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import ajax from 'core/ajax';
+import log from 'core/log';
 
 /**
  * Default mutation manager
@@ -235,11 +236,14 @@ export default class {
     /**
      * Move course modules to specific course location.
      *
+     * @deprecated since Moodle 4.4 MDL-77038.
+     * @todo MDL-80116 This will be deleted in Moodle 4.8.
      * @param {StateManager} stateManager the current state manager
      * @param {array} sectionIds the list of section ids to move
      * @param {number} targetSectionId the target section id
      */
     async sectionMove(stateManager, sectionIds, targetSectionId) {
+        log.debug('sectionMove() is deprecated. Use sectionMoveAfter() instead');
         if (!targetSectionId) {
             throw new Error(`Mutation sectionMove requires targetSectionId`);
         }
