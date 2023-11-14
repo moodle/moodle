@@ -97,15 +97,6 @@ export default class GroupSearch extends search_combobox {
     }
 
     /**
-     * The triggering div that contains the searching widget.
-     *
-     * @returns {string}
-     */
-    triggerSelector() {
-        return '.groupsearchwidget';
-    }
-
-    /**
      * Build the content then replace the node.
      */
     async renderDropdown() {

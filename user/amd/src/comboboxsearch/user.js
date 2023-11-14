@@ -86,15 +86,6 @@ export default class UserSearch extends search_combobox {
     }
 
     /**
-     * The triggering div that contains the searching widget.
-     *
-     * @returns {string}
-     */
-    triggerSelector() {
-        return '.usersearchwidget';
-    }
-
-    /**
      * Build the content then replace the node.
      */
     async renderDropdown() {

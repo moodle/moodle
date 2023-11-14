@@ -98,15 +98,6 @@ export default class GradeItemSearch extends search_combobox {
     }
 
     /**
-     * The triggering div that contains the searching widget.
-     *
-     * @returns {string}
-     */
-    triggerSelector() {
-        return '.gradesearchwidget';
-    }
-
-    /**
      * Build the content then replace the node.
      */
     async renderDropdown() {
