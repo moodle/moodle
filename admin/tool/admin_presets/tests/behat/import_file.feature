@@ -20,7 +20,7 @@ Feature: I can upload a preset file
     And I should see "Setting changes"
     And I should see "Unchanged settings"
     And I click on "Continue" "button"
-    Then I should see "Imported preset" in the "Site admin presets table" "table"
+    Then I should see "Imported preset" in the "reportbuilder-table" "table"
     And I navigate to "Advanced features" in site administration
     And the following fields match these values:
       | Enable portfolios | 1 |
@@ -37,8 +37,8 @@ Feature: I can upload a preset file
     And I should see "Renamed preset"
     When I click on "Apply" "button"
     And I click on "Continue" "button"
-    Then I should not see "Imported preset" in the "Site admin presets table" "table"
-    And I should see "Renamed preset" in the "Site admin presets table" "table"
+    Then I should not see "Imported preset" in the "reportbuilder-table" "table"
+    And I should see "Renamed preset" in the "reportbuilder-table" "table"
 
   Scenario: Import settings from an invalid XML file
     Given I set the field "Name" to "Renamed preset"
@@ -71,7 +71,7 @@ Feature: I can upload a preset file
     And I click on "Apply" "button"
     And I should see "Setting changes"
     And I click on "Continue" "button"
-    Then I should see "Renamed preset" in the "Site admin presets table" "table"
+    Then I should see "Renamed preset" in the "reportbuilder-table" "table"
     And I navigate to "Advanced features" in site administration
     And the following fields match these values:
       | Enable portfolios | 1 |

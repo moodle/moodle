@@ -15,16 +15,23 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Admin tool presets plugin to load some settings.
+ * External functions and service declaration for Site admin presets
  *
- * @package          tool_admin_presets
- * @copyright        2021 Pimenko <support@pimenko.com><pimenko.com>
- * @author           Jordan Kesraoui | Sylvain Revenu | Pimenko based on David Monllaó <david.monllao@urv.cat> code
- * @license          http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Documentation: {@link https://moodledev.io/docs/apis/subsystems/external/description}
+ *
+ * @package    tool_admin_presets
+ * @category   webservice
+ * @copyright  2024 David Carrillo <davidmc@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->component = 'tool_admin_presets';
-$plugin->version = 2024042201;
-$plugin->requires = 2024041600;
+$functions = [
+    'tool_admin_presets_delete_preset' => [
+        'classname' => tool_admin_presets\external\delete_preset::class,
+        'description' => 'Delete a custom preset',
+        'type' => 'write',
+        'ajax' => true,
+    ],
+];
