@@ -1412,7 +1412,6 @@ $string['taskcontextcleanup'] = 'Cleanup contexts';
 $string['entitytasklog'] = 'Task log';
 $string['tasklogging'] = 'Task log configuration';
 $string['taskcreatecontexts'] = 'Create missing contexts';
-$string['taskdeletecachetext'] = 'Delete old text cache records';
 $string['taskdeleteincompleteusers'] = 'Delete incomplete users';
 $string['taskdeleteunconfirmedusers'] = 'Delete unconfirmed users';
 $string['taskeventscron'] = 'Background processing for events';
@@ -1635,3 +1634,6 @@ $string['selectdevice'] = 'Select device';
 $string['selecttheme'] = 'Select theme for {$a} device';
 $string['themenoselected'] = 'No theme selected';
 $string['unsettheme'] = 'Unset theme';
+
+// Deprecated since Moodle 4.4.
+$string['taskdeletecachetext'] = 'Delete old text cache records';
