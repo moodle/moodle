@@ -7,6 +7,12 @@ on:
       - MOODLE_[0-9]+_STABLE
     tags-ignore:
       - v[0-9]+.[0-9]+.[0-9]+*
+  workflow_dispatch:
+    inputs:
+      phpunit_extra_options:
+        description: Additional options to apply to PHPUnit
+        required: false
+        default: ''
 
 env:
   php: 8.2
@@ -115,4 +121,4 @@ jobs:
         env:
           dbtype: ${{ matrix.db }}
           phpunit_options: ${{ secrets.phpunit_options }}
-        run: vendor/bin/phpunit $phpunit_options
+        run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}
