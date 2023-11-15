@@ -6845,7 +6845,7 @@ class admin_setting_manageenrols extends admin_setting {
 
             $test = '';
             if (!empty($enrols_available[$enrol]) and method_exists($enrols_available[$enrol], 'test_settings')) {
-                $testsettingsurl = new moodle_url('/enrol/test_settings.php', array('enrol'=>$enrol, 'sesskey'=>sesskey()));
+                $testsettingsurl = new moodle_url('/enrol/test_settings.php', ['enrol' => $enrol]);
                 $test = html_writer::link($testsettingsurl, $strtest);
             }
 
@@ -7384,7 +7384,7 @@ class admin_setting_manageauths extends admin_setting {
 
             $test = '';
             if (!empty($authplugins[$auth]) and method_exists($authplugins[$auth], 'test_settings')) {
-                $testurl = new moodle_url('/auth/test_settings.php', array('auth'=>$auth, 'sesskey'=>sesskey()));
+                $testurl = new moodle_url('/auth/test_settings.php', ['auth' => $auth]);
                 $test = html_writer::link($testurl, $txt->testsettings);
             }
 

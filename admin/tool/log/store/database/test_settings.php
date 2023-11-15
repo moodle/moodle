@@ -25,8 +25,6 @@
 require_once('../../../../../config.php');
 require_once($CFG->dirroot . '/lib/adminlib.php');
 
-require_sesskey();
-
 navigation_node::override_active_url(new moodle_url('/admin/settings.php', array('section' => 'logsettingdatabase')));
 admin_externalpage_setup('logstoredbtestsettings');
 

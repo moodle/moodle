@@ -56,7 +56,7 @@ if (!$enrol) {
 
     echo $OUTPUT->heading(get_string('testsettings', 'core_enrol'));
 
-    $url = new moodle_url('/enrol/test_settings.php', array('sesskey'=>sesskey()));
+    $url = new moodle_url('/enrol/test_settings.php');
     echo $OUTPUT->single_select($url, 'enrol', $options);
 
     echo $OUTPUT->footer();

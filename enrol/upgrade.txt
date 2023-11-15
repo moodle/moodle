@@ -10,6 +10,7 @@ information provided here is intended especially for developers.
  id in mod_lti_enrol table. Such plugins should not be supported in CSV course upload. The exception is self enrolment
  plugin since it is already supported in CSV course upload. For self enrolment plugin, find_instance() returns first
  available instance in the course.
+* A sesskey is no longer passed to the enrol/test_settings.php page so it can no longer be required in test_settings().
 
 === 4.3 ===
 

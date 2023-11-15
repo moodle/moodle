@@ -25,7 +25,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 if ($hassiteconfig) {
-    $testurl = new moodle_url('/admin/tool/log/store/database/test_settings.php', array('sesskey' => sesskey()));
+    $testurl = new moodle_url('/admin/tool/log/store/database/test_settings.php');
     $test = new admin_externalpage('logstoredbtestsettings', get_string('testsettings', 'logstore_database'),
         $testurl, 'moodle/site:config', true);
     $ADMIN->add('logging', $test);
