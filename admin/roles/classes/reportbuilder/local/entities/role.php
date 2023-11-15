@@ -97,7 +97,7 @@ class role extends base {
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$rolealias}.name, {$rolealias}.shortname, {$rolealias}.id, {$contextalias}.id AS contextid")
             ->add_fields(context_helper::get_preload_record_columns_sql($contextalias))
-            ->set_is_sortable(true)
+            ->set_is_sortable(true, ["CASE WHEN {$rolealias}.name = '' THEN {$rolealias}.shortname ELSE {$rolealias}.name END"])
             ->set_callback(static function($name, stdClass $role): string {
                 if ($name === null) {
                     return '';
