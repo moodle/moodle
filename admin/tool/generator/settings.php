@@ -32,5 +32,13 @@ if ($hassiteconfig) {
     $ADMIN->add('development', new admin_externalpage('toolgeneratortestplan',
             get_string('maketestplan', 'tool_generator'),
             $CFG->wwwroot . '/' . $CFG->admin . '/tool/generator/maketestplan.php'));
-}
 
+    $ADMIN->add(
+        'development',
+        new admin_externalpage(
+            'toolgenerator_runtestscenario',
+            get_string('testscenario', 'tool_generator'),
+            $CFG->wwwroot . '/' . $CFG->admin . '/tool/generator/runtestscenario.php'
+        )
+    );
+}

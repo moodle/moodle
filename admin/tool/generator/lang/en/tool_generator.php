@@ -95,6 +95,18 @@ $string['sitesize_5'] = 'XXL (~20GB; 4177 courses, created in ~10 hours)';
 $string['size'] = 'Size of course';
 $string['smallfiles'] = 'Small files';
 $string['targetcourse'] = 'Test target course';
+$string['testscenario'] = 'Create testing scenarios';
+$string['testscenario_description'] = 'Creating testing scenarios uses a limited feature files syntax to create all necessary elements to run a manual test.';
+$string['testscenario_filedesc'] = 'The upload feature files can only contain scenarios with core_data_generator steps. It is not yet compatible with scenario outlines. All scenarios will be executed at once but background will be ignored.';
+$string['testscenario_errorparsing'] = 'Error parsing feature file: {$a}';
+$string['testscenario_file'] = 'Feature file';
+$string['testscenario_invalidfile'] = 'The file format is not valid or contains invalid steps.';
+$string['testscenario_invalidstep'] = 'Unkown step. Create testing scenarios only accepts generator steps.';
+$string['testscenario_outline'] = 'Scenario outlines are not supported.';
+$string['testscenario_nosteps'] = 'There are no steps to execute in the file.';
+$string['testscenario_notready'] = 'Composer and behat libraries are not installed.<br><br>Please, execute this command to enable this tool: <strong>php admin/tool/generator/cli/runtestscenario.php</strong>';
+$string['testscenario_scenarionosteps'] = 'This scenario does not have any steps.';
+$string['testscenario_steps'] = 'Testing scenario steps:';
 $string['testplanexplanation'] = 'This tool creates a JMeter test plan file along with the user credentials file.
 
 This test plan is designed to work along with {$a}, which makes easier to run the test plan in a specific Moodle environment, gathers information about the runs and compares the results, so you will need to download it and use it\'s test_runner.sh script or follow the installation and usage instructions.
