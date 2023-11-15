@@ -52,7 +52,7 @@ class item_test extends advanced_testcase {
         $completed = $DB->get_record('feedback_completedtmp', ['id' => $completedid], '*', MUST_EXIST);
         $value = (object)['course_id' => $course->id, 'item' => $item->id, 'completed' => $completedid, 'value' => $valuetext];
         $DB->insert_record('feedback_valuetmp', $value);
-        feedback_save_tmp_values($completed, false);
+        feedback_save_tmp_values($completed);
 
         // Set get_analysed() method accessibility.
         $itemclass = feedback_get_item_class('textarea');
