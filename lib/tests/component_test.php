@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+// phpcs:disable moodle.PHPUnit.TestCaseNames.MissingNS
+
 /**
  * core_component related tests.
  *
@@ -25,7 +27,6 @@
  * @covers \core_component
  */
 class component_test extends advanced_testcase {
-
     /**
      * To be changed if number of subsystems increases/decreases,
      * this is defined here to annoy devs that try to add more without any thinking,
@@ -33,36 +34,43 @@ class component_test extends advanced_testcase {
      */
     const SUBSYSTEMCOUNT = 77;
 
-    public function test_get_core_subsystems() {
+    public function test_get_core_subsystems(): void {
         global $CFG;
 
         $subsystems = core_component::get_core_subsystems();
 
-        $this->assertCount(self::SUBSYSTEMCOUNT, $subsystems, 'Oh, somebody added or removed a core subsystem, think twice before doing that!');
+        $this->assertCount(
+            self::SUBSYSTEMCOUNT,
+            $subsystems,
+            'Oh, somebody added or removed a core subsystem, think twice before doing that!',
+        );
 
         // Make sure all paths are full/null, exist and are inside dirroot.
         foreach ($subsystems as $subsystem => $fulldir) {
             $this->assertFalse(strpos($subsystem, '_'), 'Core subsystems must be one work without underscores');
             if ($fulldir === null) {
-                if ($subsystem === 'filepicker' or $subsystem === 'help') {
+                if ($subsystem === 'filepicker' || $subsystem === 'help') { // phpcs:ignore
                     // Arrgghh, let's not introduce more subsystems for no real reason...
                 } else {
                     // Lang strings.
-                    $this->assertFileExists("$CFG->dirroot/lang/en/$subsystem.php", 'Core subsystems without fulldir are usually used for lang strings.');
+                    $this->assertFileExists(
+                        "$CFG->dirroot/lang/en/$subsystem.php",
+                        'Core subsystems without fulldir are usually used for lang strings.',
+                    );
                 }
                 continue;
             }
             $this->assertFileExists($fulldir);
             // Check that base uses realpath() separators and "/" in the subdirs.
-            $this->assertStringStartsWith($CFG->dirroot.'/', $fulldir);
-            $reldir = substr($fulldir, strlen($CFG->dirroot)+1);
+            $this->assertStringStartsWith($CFG->dirroot . '/', $fulldir);
+            $reldir = substr($fulldir, strlen($CFG->dirroot) + 1);
             $this->assertFalse(strpos($reldir, '\\'));
         }
 
         // Make sure all core language files are also subsystems!
         $items = new DirectoryIterator("$CFG->dirroot/lang/en");
         foreach ($items as $item) {
-            if ($item->isDot() or $item->isDir()) {
+            if ($item->isDot() || $item->isDir()) {
                 continue;
             }
             $file = $item->getFilename();
@@ -74,15 +82,18 @@ class component_test extends advanced_testcase {
             if (substr($file, -4) !== '.php') {
                 continue;
             }
-            $file = substr($file, 0, strlen($file)-4);
-            $this->assertArrayHasKey($file, $subsystems, 'All core lang files should be subsystems, think twice before adding anything!');
+            $file = substr($file, 0, strlen($file) - 4);
+            $this->assertArrayHasKey(
+                $file,
+                $subsystems,
+                'All core lang files should be subsystems, think twice before adding anything!',
+            );
         }
         unset($item);
         unset($items);
-
     }
 
-    public function test_deprecated_get_core_subsystems() {
+    public function test_deprecated_get_core_subsystems(): void {
         global $CFG;
 
         $subsystems = core_component::get_core_subsystems();
@@ -102,14 +113,17 @@ class component_test extends advanced_testcase {
                 $this->assertNull($realsubsystems[$subsystem]);
                 continue;
             }
-            $this->assertSame($fulldir, $CFG->dirroot.'/'.$realsubsystems[$subsystem]);
+            $this->assertSame($fulldir, $CFG->dirroot . '/' . $realsubsystems[$subsystem]);
         }
     }
 
-    public function test_get_plugin_types() {
+    public function test_get_plugin_types(): void {
         global $CFG;
 
-        $this->assertTrue(empty($CFG->themedir), 'Non-empty $CFG->themedir is not covered by any tests yet, you need to disable it.');
+        $this->assertTrue(
+            empty($CFG->themedir),
+            'Non-empty $CFG->themedir is not covered by any tests yet, you need to disable it.',
+        );
 
         $plugintypes = core_component::get_plugin_types();
 
@@ -118,7 +132,7 @@ class component_test extends advanced_testcase {
         }
     }
 
-    public function test_deprecated_get_plugin_types() {
+    public function test_deprecated_get_plugin_types(): void {
         global $CFG;
 
         $plugintypes = core_component::get_plugin_types();
@@ -130,11 +144,11 @@ class component_test extends advanced_testcase {
         $this->assertDebuggingCalled();
 
         foreach ($plugintypes as $plugintype => $fulldir) {
-            $this->assertSame($fulldir, $CFG->dirroot.'/'.$realplugintypes[$plugintype]);
+            $this->assertSame($fulldir, $CFG->dirroot . '/' . $realplugintypes[$plugintype]);
         }
     }
 
-    public function test_get_plugin_list() {
+    public function test_get_plugin_list(): void {
         global $CFG;
 
         $plugintypes = core_component::get_plugin_types();
@@ -146,7 +160,7 @@ class component_test extends advanced_testcase {
             }
             if ($plugintype !== 'auth') {
                 // Let's crosscheck it with independent implementation (auth/db is an exception).
-                $reldir = substr($fulldir, strlen($CFG->dirroot)+1);
+                $reldir = substr($fulldir, strlen($CFG->dirroot) + 1);
                 $dirs = get_list_of_plugins($reldir);
                 $dirs = array_values($dirs);
                 $this->assertDebuggingCalled();
@@ -155,7 +169,7 @@ class component_test extends advanced_testcase {
         }
     }
 
-    public function test_deprecated_get_plugin_list() {
+    public function test_deprecated_get_plugin_list(): void {
         $plugintypes = core_component::get_plugin_types();
 
         foreach ($plugintypes as $plugintype => $fulldir) {
@@ -164,7 +178,7 @@ class component_test extends advanced_testcase {
         }
     }
 
-    public function test_get_plugin_directory() {
+    public function test_get_plugin_directory(): void {
         $plugintypes = core_component::get_plugin_types();
 
         foreach ($plugintypes as $plugintype => $fulldir) {
@@ -175,18 +189,21 @@ class component_test extends advanced_testcase {
         }
     }
 
-    public function test_deprecated_get_plugin_directory() {
+    public function test_deprecated_get_plugin_directory(): void {
         $plugintypes = core_component::get_plugin_types();
 
         foreach ($plugintypes as $plugintype => $fulldir) {
             $plugins = core_component::get_plugin_list($plugintype);
             foreach ($plugins as $pluginname => $plugindir) {
-                $this->assertSame(core_component::get_plugin_directory($plugintype, $pluginname), get_plugin_directory($plugintype, $pluginname));
+                $this->assertSame(
+                    core_component::get_plugin_directory($plugintype, $pluginname),
+                    get_plugin_directory($plugintype, $pluginname),
+                );
             }
         }
     }
 
-    public function test_get_subsystem_directory() {
+    public function test_get_subsystem_directory(): void {
         $subsystems = core_component::get_core_subsystems();
         foreach ($subsystems as $subsystem => $fulldir) {
             $this->assertSame($fulldir, core_component::get_subsystem_directory($subsystem));
@@ -210,7 +227,7 @@ class component_test extends advanced_testcase {
      *
      * @return array
      */
-    public function is_valid_plugin_name_provider(): array {
+    public static function is_valid_plugin_name_provider(): array {
         return [
             [['mod', 'example1'], true],
             [['mod', 'feedback360'], true],
@@ -247,7 +264,7 @@ class component_test extends advanced_testcase {
         ];
     }
 
-    public function test_normalize_componentname() {
+    public function test_normalize_componentname(): void {
         // Moodle core.
         $this->assertSame('core', core_component::normalize_componentname('core'));
         $this->assertSame('core', core_component::normalize_componentname('moodle'));
@@ -276,122 +293,140 @@ class component_test extends advanced_testcase {
         $this->assertSame('local_admin', core_component::normalize_componentname('local_admin'));
 
         // Unknown words without underscore are supposed to be activity modules.
-        $this->assertSame('mod_whoonearthwouldcomewithsuchastupidnameofcomponent',
-            core_component::normalize_componentname('whoonearthwouldcomewithsuchastupidnameofcomponent'));
+        $this->assertSame(
+            'mod_whoonearthwouldcomewithsuchastupidnameofcomponent',
+            core_component::normalize_componentname('whoonearthwouldcomewithsuchastupidnameofcomponent')
+        );
         // Module names can not contain underscores, this must be a subplugin.
-        $this->assertSame('whoonearth_wouldcomewithsuchastupidnameofcomponent',
-            core_component::normalize_componentname('whoonearth_wouldcomewithsuchastupidnameofcomponent'));
-        $this->assertSame('whoonearth_would_come_withsuchastupidnameofcomponent',
-            core_component::normalize_componentname('whoonearth_would_come_withsuchastupidnameofcomponent'));
+        $this->assertSame(
+            'whoonearth_wouldcomewithsuchastupidnameofcomponent',
+            core_component::normalize_componentname('whoonearth_wouldcomewithsuchastupidnameofcomponent')
+        );
+        $this->assertSame(
+            'whoonearth_would_come_withsuchastupidnameofcomponent',
+            core_component::normalize_componentname('whoonearth_would_come_withsuchastupidnameofcomponent')
+        );
     }
 
-    public function test_normalize_component() {
+    public function test_normalize_component(): void {
         // Moodle core.
-        $this->assertSame(array('core', null), core_component::normalize_component('core'));
-        $this->assertSame(array('core', null), core_component::normalize_component('moodle'));
-        $this->assertSame(array('core', null), core_component::normalize_component(''));
+        $this->assertSame(['core', null], core_component::normalize_component('core'));
+        $this->assertSame(['core', null], core_component::normalize_component('moodle'));
+        $this->assertSame(['core', null], core_component::normalize_component(''));
 
         // Moodle core subsystems.
-        $this->assertSame(array('core', 'admin'), core_component::normalize_component('admin'));
-        $this->assertSame(array('core', 'admin'), core_component::normalize_component('core_admin'));
-        $this->assertSame(array('core', 'admin'), core_component::normalize_component('moodle_admin'));
+        $this->assertSame(['core', 'admin'], core_component::normalize_component('admin'));
+        $this->assertSame(['core', 'admin'], core_component::normalize_component('core_admin'));
+        $this->assertSame(['core', 'admin'], core_component::normalize_component('moodle_admin'));
 
         // Activity modules and their subplugins.
-        $this->assertSame(array('mod', 'workshop'), core_component::normalize_component('workshop'));
-        $this->assertSame(array('mod', 'workshop'), core_component::normalize_component('mod_workshop'));
-        $this->assertSame(array('workshopform', 'accumulative'), core_component::normalize_component('workshopform_accumulative'));
-        $this->assertSame(array('mod', 'quiz'), core_component::normalize_component('quiz'));
-        $this->assertSame(array('quiz', 'grading'), core_component::normalize_component('quiz_grading'));
-        $this->assertSame(array('mod', 'data'), core_component::normalize_component('data'));
-        $this->assertSame(array('datafield', 'checkbox'), core_component::normalize_component('datafield_checkbox'));
+        $this->assertSame(['mod', 'workshop'], core_component::normalize_component('workshop'));
+        $this->assertSame(['mod', 'workshop'], core_component::normalize_component('mod_workshop'));
+        $this->assertSame(['workshopform', 'accumulative'], core_component::normalize_component('workshopform_accumulative'));
+        $this->assertSame(['mod', 'quiz'], core_component::normalize_component('quiz'));
+        $this->assertSame(['quiz', 'grading'], core_component::normalize_component('quiz_grading'));
+        $this->assertSame(['mod', 'data'], core_component::normalize_component('data'));
+        $this->assertSame(['datafield', 'checkbox'], core_component::normalize_component('datafield_checkbox'));
 
         // Other plugin types.
-        $this->assertSame(array('auth', 'mnet'), core_component::normalize_component('auth_mnet'));
-        $this->assertSame(array('enrol', 'self'), core_component::normalize_component('enrol_self'));
-        $this->assertSame(array('block', 'html'), core_component::normalize_component('block_html'));
-        $this->assertSame(array('block', 'mnet_hosts'), core_component::normalize_component('block_mnet_hosts'));
-        $this->assertSame(array('local', 'amos'), core_component::normalize_component('local_amos'));
-        $this->assertSame(array('local', 'admin'), core_component::normalize_component('local_admin'));
+        $this->assertSame(['auth', 'mnet'], core_component::normalize_component('auth_mnet'));
+        $this->assertSame(['enrol', 'self'], core_component::normalize_component('enrol_self'));
+        $this->assertSame(['block', 'html'], core_component::normalize_component('block_html'));
+        $this->assertSame(['block', 'mnet_hosts'], core_component::normalize_component('block_mnet_hosts'));
+        $this->assertSame(['local', 'amos'], core_component::normalize_component('local_amos'));
+        $this->assertSame(['local', 'admin'], core_component::normalize_component('local_admin'));
 
         // Unknown words without underscore are supposed to be activity modules.
-        $this->assertSame(array('mod', 'whoonearthwouldcomewithsuchastupidnameofcomponent'),
-            core_component::normalize_component('whoonearthwouldcomewithsuchastupidnameofcomponent'));
+        $this->assertSame(
+            ['mod', 'whoonearthwouldcomewithsuchastupidnameofcomponent'],
+            core_component::normalize_component('whoonearthwouldcomewithsuchastupidnameofcomponent')
+        );
         // Module names can not contain underscores, this must be a subplugin.
-        $this->assertSame(array('whoonearth', 'wouldcomewithsuchastupidnameofcomponent'),
-            core_component::normalize_component('whoonearth_wouldcomewithsuchastupidnameofcomponent'));
-        $this->assertSame(array('whoonearth', 'would_come_withsuchastupidnameofcomponent'),
-            core_component::normalize_component('whoonearth_would_come_withsuchastupidnameofcomponent'));
+        $this->assertSame(
+            ['whoonearth', 'wouldcomewithsuchastupidnameofcomponent'],
+            core_component::normalize_component('whoonearth_wouldcomewithsuchastupidnameofcomponent')
+        );
+        $this->assertSame(
+            ['whoonearth', 'would_come_withsuchastupidnameofcomponent'],
+            core_component::normalize_component('whoonearth_would_come_withsuchastupidnameofcomponent')
+        );
     }
 
-    public function test_deprecated_normalize_component() {
+    public function test_deprecated_normalize_component(): void {
         // Moodle core.
-        $this->assertSame(array('core', null), normalize_component('core'));
-        $this->assertSame(array('core', null), normalize_component(''));
-        $this->assertSame(array('core', null), normalize_component('moodle'));
+        $this->assertSame(['core', null], normalize_component('core'));
+        $this->assertSame(['core', null], normalize_component(''));
+        $this->assertSame(['core', null], normalize_component('moodle'));
 
         // Moodle core subsystems.
-        $this->assertSame(array('core', 'admin'), normalize_component('admin'));
-        $this->assertSame(array('core', 'admin'), normalize_component('core_admin'));
-        $this->assertSame(array('core', 'admin'), normalize_component('moodle_admin'));
+        $this->assertSame(['core', 'admin'], normalize_component('admin'));
+        $this->assertSame(['core', 'admin'], normalize_component('core_admin'));
+        $this->assertSame(['core', 'admin'], normalize_component('moodle_admin'));
 
         // Activity modules and their subplugins.
-        $this->assertSame(array('mod', 'workshop'), normalize_component('workshop'));
-        $this->assertSame(array('mod', 'workshop'), normalize_component('mod_workshop'));
-        $this->assertSame(array('workshopform', 'accumulative'), normalize_component('workshopform_accumulative'));
-        $this->assertSame(array('mod', 'quiz'), normalize_component('quiz'));
-        $this->assertSame(array('quiz', 'grading'), normalize_component('quiz_grading'));
-        $this->assertSame(array('mod', 'data'), normalize_component('data'));
-        $this->assertSame(array('datafield', 'checkbox'), normalize_component('datafield_checkbox'));
+        $this->assertSame(['mod', 'workshop'], normalize_component('workshop'));
+        $this->assertSame(['mod', 'workshop'], normalize_component('mod_workshop'));
+        $this->assertSame(['workshopform', 'accumulative'], normalize_component('workshopform_accumulative'));
+        $this->assertSame(['mod', 'quiz'], normalize_component('quiz'));
+        $this->assertSame(['quiz', 'grading'], normalize_component('quiz_grading'));
+        $this->assertSame(['mod', 'data'], normalize_component('data'));
+        $this->assertSame(['datafield', 'checkbox'], normalize_component('datafield_checkbox'));
 
         // Other plugin types.
-        $this->assertSame(array('auth', 'mnet'), normalize_component('auth_mnet'));
-        $this->assertSame(array('enrol', 'self'), normalize_component('enrol_self'));
-        $this->assertSame(array('block', 'html'), normalize_component('block_html'));
-        $this->assertSame(array('block', 'mnet_hosts'), normalize_component('block_mnet_hosts'));
-        $this->assertSame(array('local', 'amos'), normalize_component('local_amos'));
-        $this->assertSame(array('local', 'admin'), normalize_component('local_admin'));
+        $this->assertSame(['auth', 'mnet'], normalize_component('auth_mnet'));
+        $this->assertSame(['enrol', 'self'], normalize_component('enrol_self'));
+        $this->assertSame(['block', 'html'], normalize_component('block_html'));
+        $this->assertSame(['block', 'mnet_hosts'], normalize_component('block_mnet_hosts'));
+        $this->assertSame(['local', 'amos'], normalize_component('local_amos'));
+        $this->assertSame(['local', 'admin'], normalize_component('local_admin'));
 
         // Unknown words without underscore are supposed to be activity modules.
-        $this->assertSame(array('mod', 'whoonearthwouldcomewithsuchastupidnameofcomponent'),
-            normalize_component('whoonearthwouldcomewithsuchastupidnameofcomponent'));
+        $this->assertSame(
+            ['mod', 'whoonearthwouldcomewithsuchastupidnameofcomponent'],
+            normalize_component('whoonearthwouldcomewithsuchastupidnameofcomponent')
+        );
         // Module names can not contain underscores, this must be a subplugin.
-        $this->assertSame(array('whoonearth', 'wouldcomewithsuchastupidnameofcomponent'),
-            normalize_component('whoonearth_wouldcomewithsuchastupidnameofcomponent'));
-        $this->assertSame(array('whoonearth', 'would_come_withsuchastupidnameofcomponent'),
-            normalize_component('whoonearth_would_come_withsuchastupidnameofcomponent'));
+        $this->assertSame(
+            ['whoonearth', 'wouldcomewithsuchastupidnameofcomponent'],
+            normalize_component('whoonearth_wouldcomewithsuchastupidnameofcomponent')
+        );
+        $this->assertSame(
+            ['whoonearth', 'would_come_withsuchastupidnameofcomponent'],
+            normalize_component('whoonearth_would_come_withsuchastupidnameofcomponent')
+        );
     }
 
-    public function test_get_component_directory() {
+    public function test_get_component_directory(): void {
         $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $fulldir) {
             $plugins = core_component::get_plugin_list($plugintype);
             foreach ($plugins as $pluginname => $plugindir) {
-                $this->assertSame($plugindir, core_component::get_component_directory(($plugintype.'_'.$pluginname)));
+                $this->assertSame($plugindir, core_component::get_component_directory(($plugintype . '_' . $pluginname)));
             }
         }
 
         $subsystems = core_component::get_core_subsystems();
         foreach ($subsystems as $subsystem => $fulldir) {
-            $this->assertSame($fulldir, core_component::get_component_directory(('core_'.$subsystem)));
+            $this->assertSame($fulldir, core_component::get_component_directory(('core_' . $subsystem)));
         }
     }
 
-    public function test_deprecated_get_component_directory() {
+    public function test_deprecated_get_component_directory(): void {
         $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $fulldir) {
             $plugins = core_component::get_plugin_list($plugintype);
             foreach ($plugins as $pluginname => $plugindir) {
-                $this->assertSame($plugindir, get_component_directory(($plugintype.'_'.$pluginname)));
+                $this->assertSame($plugindir, get_component_directory(($plugintype . '_' . $pluginname)));
             }
         }
 
         $subsystems = core_component::get_core_subsystems();
         foreach ($subsystems as $subsystem => $fulldir) {
-            $this->assertSame($fulldir, get_component_directory(('core_'.$subsystem)));
+            $this->assertSame($fulldir, get_component_directory(('core_' . $subsystem)));
         }
     }
 
-    public function test_get_subtype_parent() {
+    public function test_get_subtype_parent(): void {
         global $CFG;
 
         $this->assertNull(core_component::get_subtype_parent('mod'));
@@ -403,14 +438,14 @@ class component_test extends advanced_testcase {
         $this->assertNull(core_component::get_subtype_parent('assignxxxxx'));
     }
 
-    public function test_get_subplugins() {
+    public function test_get_subplugins(): void {
         global $CFG;
 
         // Any plugin with more subtypes is ok here.
         $this->assertFileExists("$CFG->dirroot/mod/assign/db/subplugins.json");
 
         $subplugins = core_component::get_subplugins('mod_assign');
-        $this->assertSame(array('assignsubmission', 'assignfeedback'), array_keys($subplugins));
+        $this->assertSame(['assignsubmission', 'assignfeedback'], array_keys($subplugins));
 
         $subs = core_component::get_plugin_list('assignsubmission');
         $feeds = core_component::get_plugin_list('assignfeedback');
@@ -427,29 +462,28 @@ class component_test extends advanced_testcase {
         $this->assertNull(core_component::get_subplugins('xxxx_yyyy'));
     }
 
-    public function test_get_plugin_types_with_subplugins() {
+    public function test_get_plugin_types_with_subplugins(): void {
         global $CFG;
 
         $types = core_component::get_plugin_types_with_subplugins();
 
         // Hardcode it here to detect if anybody hacks the code to include more subplugin types.
-        $expected = array(
+        $expected = [
             'mod' => "$CFG->dirroot/mod",
             'editor' => "$CFG->dirroot/lib/editor",
             'tool' => "$CFG->dirroot/$CFG->admin/tool",
             'local' => "$CFG->dirroot/local",
-        );
+        ];
 
         $this->assertSame($expected, $types);
-
     }
 
-    public function test_get_plugin_list_with_file() {
+    public function test_get_plugin_list_with_file(): void {
         $this->resetAfterTest(true);
 
         // No extra reset here because core_component reset automatically.
 
-        $expected = array();
+        $expected = [];
         $reports = core_component::get_plugin_list('report');
         foreach ($reports as $name => $fulldir) {
             if (file_exists("$fulldir/lib.php")) {
@@ -471,10 +505,10 @@ class component_test extends advanced_testcase {
 
         // Test missing.
         $list = core_component::get_plugin_list_with_file('report', 'idontexist.php', true);
-        $this->assertEquals(array(), array_keys($list));
+        $this->assertEquals([], array_keys($list));
     }
 
-    public function test_get_component_classes_in_namespace() {
+    public function test_get_component_classes_in_namespace(): void {
 
         // Unexisting.
         $this->assertCount(0, core_component::get_component_classes_in_namespace('core_unexistingcomponent', 'something'));
@@ -513,7 +547,8 @@ class component_test extends advanced_testcase {
         // (We don't assert exact amounts here as the count of `output` classes will change depending on plugins installed).
         $this->assertGreaterThan(
             count(\core_component::get_component_classes_in_namespace('core', 'output')),
-            count(\core_component::get_component_classes_in_namespace(null, 'output')));
+            count(\core_component::get_component_classes_in_namespace(null, 'output'))
+        );
 
         // Without either a component or namespace it returns an empty array.
         $this->assertEmpty(\core_component::get_component_classes_in_namespace());
@@ -524,7 +559,7 @@ class component_test extends advanced_testcase {
     /**
      * Data provider for classloader test
      */
-    public function classloader_provider() {
+    public static function classloader_provider(): array {
         global $CFG;
 
         // As part of these tests, we Check that there are no unexpected problems with overlapping PSR namespaces.
@@ -535,11 +570,11 @@ class component_test extends advanced_testcase {
 
         $psr0 = [
           'psr0'      => 'lib/tests/fixtures/component/psr0',
-          'overlap'   => 'lib/tests/fixtures/component/overlap'
+          'overlap'   => 'lib/tests/fixtures/component/overlap',
         ];
         $psr4 = [
           'psr4'      => 'lib/tests/fixtures/component/psr4',
-          'overlap'   => 'lib/tests/fixtures/component/overlap'
+          'overlap'   => 'lib/tests/fixtures/component/overlap',
         ];
         return [
           'PSR-0 Classloading - Root' => [
@@ -603,7 +638,7 @@ class component_test extends advanced_testcase {
      * @param string $includedfiles The file expected to be loaded.
      * @runInSeparateProcess
      */
-    public function test_classloader($psr0, $psr4, $classname, $includedfiles) {
+    public function test_classloader($psr0, $psr4, $classname, $includedfiles): void {
         $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
         $psr0namespaces->setAccessible(true);
         $psr0namespaces->setValue(null, $psr0);
@@ -624,22 +659,23 @@ class component_test extends advanced_testcase {
     /**
      * Data provider for psr_classloader test
      */
-    public function psr_classloader_provider() {
+    public static function psr_classloader_provider(): array {
         global $CFG;
 
         // As part of these tests, we Check that there are no unexpected problems with overlapping PSR namespaces.
         // This is not in the spec, but may come up in some libraries using both namespaces and PEAR-style class names.
         // If problems arise we can remove this test, but will need to add a warning.
         // Normalise to forward slash for testing purposes.
-        $directory = str_replace('\\', '/', $CFG->dirroot) . "/lib/tests/fixtures/component/";
+        $dirroot = str_replace('\\', '/', $CFG->dirroot);
+        $directory = "{$dirroot}/lib/tests/fixtures/component/";
 
         $psr0 = [
           'psr0'      => 'lib/tests/fixtures/component/psr0',
-          'overlap'   => 'lib/tests/fixtures/component/overlap'
+          'overlap'   => 'lib/tests/fixtures/component/overlap',
         ];
         $psr4 = [
           'psr4'      => 'lib/tests/fixtures/component/psr4',
-          'overlap'   => 'lib/tests/fixtures/component/overlap'
+          'overlap'   => 'lib/tests/fixtures/component/overlap',
         ];
         return [
           'PSR-0 Classloading - Root' => [
@@ -660,10 +696,10 @@ class component_test extends advanced_testcase {
               'classname' => 'psr0\\subnamespace\\slashes',
               'file' => "{$directory}psr0/subnamespace/slashes.php",
           ],
-          'PSR-0 Classloading - non-existant file' => [
+          'PSR-0 Classloading - non-existent file' => [
               'psr0' => $psr0,
               'psr4' => $psr4,
-              'classname' => 'psr0_subnamespace_nonexistant_file',
+              'classname' => 'psr0_subnamespace_nonexistent_file',
               'file' => false,
           ],
           'PSR-4 Classloading - Root' => [
@@ -684,10 +720,10 @@ class component_test extends advanced_testcase {
               'classname' => 'psr4\\subnamespace\\underscore_example',
               'file' => "{$directory}psr4/subnamespace/underscore_example.php",
           ],
-          'PSR-4 Classloading - non-existant file' => [
+          'PSR-4 Classloading - non-existent file' => [
               'psr0' => $psr0,
               'psr4' => $psr4,
-              'classname' => 'psr4\\subnamespace\\nonexistant',
+              'classname' => 'psr4\\subnamespace\\nonexistent',
               'file' => false,
           ],
           'Overlap - Ensure no unexpected problems with PSR-4 when overlapping namespaces.' => [
@@ -702,6 +738,28 @@ class component_test extends advanced_testcase {
               'classname' => 'overlap_subnamespace_example2',
               'file' => "{$directory}overlap/subnamespace/example2.php",
           ],
+            'PSR-4 namespaces can come from multiple sources - first source' => [
+                'psr0' => $psr0,
+                'psr4' => [
+                    'Psr\\Http\\Message' => [
+                        'lib/psr/http-message/src',
+                        'lib/psr/http-factory/src',
+                    ],
+                ],
+                'classname' => 'Psr\Http\Message\ServerRequestInterface',
+                'includedfiles' => "{$dirroot}/lib/psr/http-message/src/ServerRequestInterface.php",
+            ],
+            'PSR-4 namespaces can come from multiple sources - second source' => [
+                'psr0' => [],
+                'psr4' => [
+                    'Psr\\Http\\Message' => [
+                        'lib/psr/http-message/src',
+                        'lib/psr/http-factory/src',
+                    ],
+                ],
+                'classname' => 'Psr\Http\Message\ServerRequestFactoryInterface',
+                'includedfiles' => "{$dirroot}/lib/psr/http-factory/src/ServerRequestFactoryInterface.php",
+            ],
         ];
     }
 
@@ -715,21 +773,20 @@ class component_test extends advanced_testcase {
      * @param string|bool $file The expected file corresponding to the class or false for nonexistant.
      * @runInSeparateProcess
      */
-    public function test_psr_classloader($psr0, $psr4, $classname, $file) {
+    public function test_psr_classloader($psr0, $psr4, $classname, $file): void {
         $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
         $psr0namespaces->setAccessible(true);
         $psr0namespaces->setValue(null, $psr0);
 
         $psr4namespaces = new ReflectionProperty('core_component', 'psr4namespaces');
         $psr4namespaces->setAccessible(true);
-        $oldpsr4namespaces = $psr4namespaces->getValue(null);
         $psr4namespaces->setValue(null, $psr4);
 
         $component = new ReflectionClass('core_component');
         $psrclassloader = $component->getMethod('psr_classloader');
         $psrclassloader->setAccessible(true);
 
-        $returnvalue = $psrclassloader->invokeArgs(null, array($classname));
+        $returnvalue = $psrclassloader->invokeArgs(null, [$classname]);
         // Normalise to forward slashes for testing comparison.
         if ($returnvalue) {
             $returnvalue = str_replace('\\', '/', $returnvalue);
@@ -740,7 +797,7 @@ class component_test extends advanced_testcase {
     /**
      * Data provider for get_class_file test
      */
-    public function get_class_file_provider() {
+    public static function get_class_file_provider(): array {
         global $CFG;
 
         return [
@@ -766,7 +823,7 @@ class component_test extends advanced_testcase {
               'result' => $CFG->dirroot . "/test/src/Multiple/Namespaces.php",
           ],
           'Getting a file with multiple namespaces (non-existent)' => [
-              'classname' => 'Nonexistant\\Namespace\\Test',
+              'classname' => 'Nonexistent\\Namespace\\Test',
               'prefix' => "Test",
               'path' => 'test/src',
               'separators' => ['\\'],
@@ -785,19 +842,19 @@ class component_test extends advanced_testcase {
      * @param string[] $separators The characters that should be used for separating.
      * @param string|bool $result The expected result to be returned from get_class_file.
      */
-    public function test_get_class_file($classname, $prefix, $path, $separators, $result) {
+    public function test_get_class_file($classname, $prefix, $path, $separators, $result): void {
         $component = new ReflectionClass('core_component');
         $psrclassloader = $component->getMethod('get_class_file');
         $psrclassloader->setAccessible(true);
 
-        $file = $psrclassloader->invokeArgs(null, array($classname, $prefix, $path, $separators));
+        $file = $psrclassloader->invokeArgs(null, [$classname, $prefix, $path, $separators]);
         $this->assertEquals($result, $file);
     }
 
     /**
      * Confirm the get_component_list method contains an entry for every component.
      */
-    public function test_get_component_list_contains_all_components() {
+    public function test_get_component_list_contains_all_components(): void {
         global $CFG;
         $componentslist = \core_component::get_component_list();
 
@@ -811,7 +868,7 @@ class component_test extends advanced_testcase {
             $this->assertArrayHasKey($plugintype, $componentslist);
         }
 
-        // And finally, one for 'core'.
+        // And one for 'core'.
         $this->assertArrayHasKey('core', $componentslist);
 
         // Check a few of the known plugin types to confirm their presence at their respective type index.
@@ -823,7 +880,7 @@ class component_test extends advanced_testcase {
     /**
      * Test the get_component_names() method.
      */
-    public function test_get_component_names() {
+    public function test_get_component_names(): void {
         global $CFG;
         $componentnames = \core_component::get_component_names();
 
@@ -850,7 +907,7 @@ class component_test extends advanced_testcase {
     /**
      * Basic tests for APIs related functions in the core_component class.
      */
-    public function test_apis_methods() {
+    public function test_apis_methods(): void {
         $apis = core_component::get_core_apis();
         $this->assertIsArray($apis);
 
@@ -871,7 +928,7 @@ class component_test extends advanced_testcase {
      * to validate it (3rd part libraries needed). Plus the schema doesn't allow to validate things
      * like uniqueness or sorting. We are going to do all that here.
      */
-    public function test_apis_json_validation() {
+    public function test_apis_json_validation(): void {
         $apis = $sortedapis = core_component::get_core_apis();
         ksort($sortedapis); // We'll need this later.
 
@@ -917,9 +974,6 @@ class component_test extends advanced_testcase {
 
     /**
      * Test for monologo icons check in plugins.
-     *
-     * @covers core_component::has_monologo_icon
-     * @return void
      */
     public function test_has_monologo_icon(): void {
         // The Forum activity plugin has monologo icons.
@@ -935,7 +989,7 @@ class component_test extends advanced_testcase {
      *
      * @covers \core_component::get_all_directory_hashes
      */
-    public function test_get_db_directories_hash() {
+    public function test_get_db_directories_hash(): void {
         $initial = \core_component::get_all_component_hash();
 
         $dir = make_request_directory();
