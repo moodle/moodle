@@ -891,6 +891,12 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
        ?string $headerhelpcomponent = null, ?stdClass $user = null, ?action_bar $actionbar = null, $unused = null) {
     global $CFG, $OUTPUT, $PAGE, $USER;
 
+    if ($heading !== false) {
+        // Make sure to trim heading, including the non-breaking space character.
+        $heading = str_replace("&nbsp;", " ", $heading);
+        $heading = trim($heading);
+    }
+
     if ($unused !== null) {
         debugging('Deprecated argument passed to ' . __FUNCTION__, DEBUG_DEVELOPER);
     }
