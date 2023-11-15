@@ -67,6 +67,24 @@ class qtype_ordering_question extends question_graded_automatically {
     /** @var int Items are graded relative to their position in the correct answer */
     const GRADING_RELATIVE_TO_CORRECT = 7;
 
+    /** @var int {@see LAYOUT_VERTICAL} or {@see LAYOUT_HORIZONTAL}. */
+    public $layouttype;
+
+    /** @var int {@see SELECT_ALL}, {@see SELECT_RANDOM} or {@see SELECT_CONTIGUOUS}. */
+    public $selecttype;
+
+    /** @var int if {@see $selecttype} is not SELECT_ALL, then the number to select. */
+    public $selectcount;
+
+    /** @var int Which grading strategy to use. One of the GRADING_... constants. */
+    public $gradingtype;
+
+    /** @var bool Should details of the grading calculation be shown to students. */
+    public $showgrading;
+
+    /** @var string How to number the items. A key from the array returned by {@see get_numbering_styles()}. */
+    public $numberingstyle;
+
     // Fields from "qtype_ordering_options" table.
     /** @var string */
     public $correctfeedback;

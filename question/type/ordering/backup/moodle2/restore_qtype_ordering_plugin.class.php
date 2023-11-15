@@ -32,10 +32,11 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
 
     /**
      * Returns the paths to be handled by the plugin at question level
+     *
+     * @return restore_path_element[]
      */
-    protected function define_question_plugin_structure() {
-
-        $paths = array();
+    protected function define_question_plugin_structure(): array {
+        $paths = [];
 
         // This qtype uses question_answers, add them.
         $this->add_question_question_answers($paths);
@@ -53,7 +54,7 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
      *
      * @param array $data
      */
-    public function process_ordering($data) {
+    public function process_ordering(array $data): void {
         global $DB;
 
         $data = (object)$data;
@@ -61,8 +62,8 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
 
         // Detect if the question is created or mapped
         // "question" is the XML tag name, not the DB field name.
-        $oldquestionid   = $this->get_old_parentid('question');
-        $newquestionid   = $this->get_new_parentid('question');
+        $oldquestionid = $this->get_old_parentid('question');
+        $newquestionid = $this->get_new_parentid('question');
 
         // If the question has been created by restore,
         // we need to create a "qtype_ordering_options" record
@@ -83,8 +84,9 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
      * If not empty, answer is one question_answers->id.
      *
      * @param object $state
+     * @return string|false
      */
-    public function recode_legacy_state_answer($state) {
+    public function recode_legacy_state_answer($state): string|false {
         $answer = $state->answer;
         $result = '';
         if ($answer) {
