@@ -159,7 +159,7 @@ class question_engine_data_mapper {
         $record = new stdClass();
         $record->questionattemptid = $questionattemptid;
         $record->sequencenumber = $seq;
-        $record->state = $step->get_state() ?? $step->get_state()->__toString() : null;
+        $record->state = $step->get_state() ? $step->get_state()->__toString() : null;
         $record->fraction = $step->get_fraction();
         $record->timecreated = $step->get_timecreated();
         $record->userid = $step->get_user_id();
