@@ -1186,12 +1186,64 @@ class grade_report_grader extends grade_report {
         }
 
         $rows = $this->get_right_range_row($rows);
-        if ($displayaverages) {
-            $rows = $this->get_right_avg_row($rows, true);
-            $rows = $this->get_right_avg_row($rows);
+        if ($displayaverages && $this->canviewhidden) {
+            $showonlyactiveenrol = $this->show_only_active();
+
+            if ($this->currentgroup) {
+                $ungradedcounts = $this->ungraded_counts(true, true, $showonlyactiveenrol);
+                $rows[] = $this->format_averages($ungradedcounts);
+            }
+
+            $ungradedcounts = $this->ungraded_counts(false, true, $showonlyactiveenrol);
+            $rows[] = $this->format_averages($ungradedcounts);
         }
 
         return $rows;
+    }
+
+    /**
+     * Returns a row of grade items averages
+     *
+     * @param grade_item $gradeitem Grade item.
+     * @param array|null $aggr Average value and meancount information.
+     * @param bool|null $shownumberofgrades Whether to show number of grades.
+     * @return html_table_cell Formatted average cell.
+     */
+    protected function format_average_cell(grade_item $gradeitem, ?array $aggr = null, ?bool $shownumberofgrades = null): html_table_cell {
+        global $OUTPUT;
+
+        if ($gradeitem->needsupdate) {
+            $avgcell = new html_table_cell();
+            $avgcell->attributes['class'] = 'i' . $gradeitem->id;
+            $avgcell->text = $OUTPUT->container(get_string('error'), 'gradingerror');
+        } else {
+            $gradetypeclass = '';
+            if ($gradeitem->gradetype == GRADE_TYPE_SCALE) {
+                $gradetypeclass = ' grade_type_scale';
+            } else if ($gradeitem->gradetype == GRADE_TYPE_VALUE) {
+                $gradetypeclass = ' grade_type_value';
+            } else if ($gradeitem->gradetype == GRADE_TYPE_TEXT) {
+                $gradetypeclass = ' grade_type_text';
+            }
+
+            if (empty($aggr['average'])) {
+                $avgcell = new html_table_cell();
+                $avgcell->attributes['class'] = $gradetypeclass . ' i' . $gradeitem->id;
+                $avgcell->attributes['data-itemid'] = $gradeitem->id;
+                $avgcell->text = html_writer::div('-', '', ['data-collapse' => 'avgrowcell']);
+            } else {
+                $numberofgrades = '';
+                if ($shownumberofgrades) {
+                    $numberofgrades = " (" . $aggr['meancount'] . ")";
+                }
+
+                $avgcell = new html_table_cell();
+                $avgcell->attributes['class'] = $gradetypeclass . ' i' . $gradeitem->id;
+                $avgcell->attributes['data-itemid'] = $gradeitem->id;
+                $avgcell->text = html_writer::div($aggr['average'] . $numberofgrades, '', ['data-collapse' => 'avgrowcell']);
+            }
+        }
+        return $avgcell;
     }
 
     /**
@@ -1400,6 +1452,7 @@ class grade_report_grader extends grade_report {
     }
 
     /**
+     * @deprecated since Moodle 4.4 - Call calculate_average instead.
      * Builds and return the row of averages for the right part of the grader report.
      * @param array $rows Whether to return only group averages or all averages.
      * @param bool $grouponly Whether to return only group averages or all averages.
@@ -1407,6 +1460,10 @@ class grade_report_grader extends grade_report {
      */
     public function get_right_avg_row($rows=array(), $grouponly=false) {
         global $USER, $DB, $OUTPUT, $CFG;
+
+        debugging('grader_report_grader::get_right_avg_row() is deprecated.
+            Call grade_report::calculate_average() instead.', DEBUG_DEVELOPER);
+
         if (!$this->canviewhidden) {
             // Totals might be affected by hiding, if user can not see hidden grades the aggregations might be altered
             // better not show them at all if user can not see all hidden grades.

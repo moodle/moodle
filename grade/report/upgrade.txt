@@ -1,6 +1,12 @@
 This files describes API changes in /grade/report/*,
 information provided here is intended especially for developers.
 
+=== 4.4 ===
+* Method grader_report_grader::get_right_avg_row() has been deprecated. Please use grade_report::calculate_average() instead.
+* The method grade_report::ungraded_counts() now has 2 parameters - group ID and includehidden. First is needed since
+  for grader report we calculate averages for overall and for a group at same time. Second is used to decide if we want
+  to include hidden items in the count or not (For grader and summary reports they are included, for user report - not).
+
 === 4.3 ===
 * The load_users() method in the gradereport_singleview\local\screen class has been deprecated. Please use
   get_gradable_users() instead.

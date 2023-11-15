@@ -93,7 +93,8 @@ class grade_items extends base {
         );
 
         $this->report = new grade_report_summary($this->course->id, $gpr, $context);
-        $this->ungradedcounts = $this->report->ungraded_counts();
+        $showonlyactiveenrol = $this->report->show_only_active();
+        $this->ungradedcounts = $this->report->ungraded_counts(false, false, $showonlyactiveenrol);
 
         $columns = $this->get_all_columns();
         foreach ($columns as $column) {

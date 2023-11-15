@@ -28,7 +28,7 @@ use assign;
 use cm_info;
 use grade_item;
 use grade_plugin_return;
-use grade_report_summary;
+use grade_report_grader;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -290,7 +290,7 @@ class lib_test extends \advanced_testcase {
         $gpr1 = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course1,
             ]
         );
@@ -298,17 +298,17 @@ class lib_test extends \advanced_testcase {
         $gpr2 = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course2,
             ]
         );
 
-        $report1 = new grade_report_summary($course1->id, $gpr1, $context1);
-        $report2 = new grade_report_summary($course2->id, $gpr2, $context2);
+        $report1 = new grade_report_grader($course1->id, $gpr1, $context1);
+        $report2 = new grade_report_grader($course2->id, $gpr2, $context2);
 
         $ungradedcounts = [];
-        $ungradedcounts[$course1->id] = $report1->ungraded_counts();
-        $ungradedcounts[$course2->id] = $report2->ungraded_counts();
+        $ungradedcounts[$course1->id] = $report1->ungraded_counts(false);
+        $ungradedcounts[$course2->id] = $report2->ungraded_counts(false);
 
         foreach ($ungradedcounts as $key => $ungradedcount) {
             $gradeitems = grade_item::fetch_all(['courseid' => $key]);
@@ -369,6 +369,110 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Tests that ungraded_counts calculates count and sum of grades correctly when there are hidden grades.
+     * @dataProvider ungraded_counts_hidden_grades_data()
+     * @param bool $hidden Whether to inlcude hidden grades or not.
+     * @param array $expectedcount expected count value (i.e. number of ugraded grades)
+     * @param array $expectedsumarray expceted sum of grades
+     *
+     * @covers \grade_report::ungraded_counts
+     */
+    public function test_ungraded_counts_hidden_grades(bool $hidden, array $expectedcount, array $expectedsumarray) {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create users.
+        $student1 = $this->getDataGenerator()->create_user(['username' => 'student1']);
+        $student2 = $this->getDataGenerator()->create_user(['username' => 'student2']);
+        $student3 = $this->getDataGenerator()->create_user(['username' => 'student3']);
+
+        // Enrol students.
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($student3->id, $course->id, 'student');
+
+        // Create grade items in course.
+        $manuaitem = new \grade_item($this->getDataGenerator()->create_grade_item([
+            'itemname' => 'Grade item1',
+            'idnumber' => 'git1',
+            'courseid' => $course->id,
+        ]));
+
+        // Grade users.
+        $manuaitem->update_final_grade($student1->id, 1);
+        $manuaitem->update_final_grade($student3->id, 2);
+
+        // Create a hidden grade.
+        $manuaitem->update_final_grade($student2->id, 3);
+        $grade = \grade_grade::fetch(['itemid' => $manuaitem->id, 'userid' => $student2->id]);
+        $grade->hidden = 1;
+        $grade->update();
+
+        // Trigger a regrade.
+        grade_force_full_regrading($course->id);
+        grade_regrade_final_grades($course->id);
+
+        // Initialise reports.
+        $context = \context_course::instance($course->id);
+
+        $gpr = new grade_plugin_return(
+            [
+                'type' => 'report',
+                'plugin' => 'grader',
+                'course' => $course,
+            ]
+        );
+
+        $report = new grade_report_grader($course->id, $gpr, $context);
+
+        $ungradedcounts = $report->ungraded_counts(false, $hidden);
+
+        $gradeitems = grade_item::fetch_all(['courseid' => $course->id]);
+
+        foreach ($gradeitems as $gradeitem) {
+            $sumgrades = null;
+            if (array_key_exists($gradeitem->id, $ungradedcounts['ungradedcounts'])) {
+                $ungradeditem = $ungradedcounts['ungradedcounts'][$gradeitem->id];
+                if ($gradeitem->itemtype === 'course') {
+                    $this->assertEquals($expectedcount['course'], $ungradeditem->count);
+                } else if ($gradeitem->itemtype === 'manual') {
+                    $this->assertEquals($expectedcount['Grade item1'], $ungradeditem->count);
+                }
+            }
+
+            if (array_key_exists($gradeitem->id, $ungradedcounts['sumarray'])) {
+                $sumgrades = $ungradedcounts['sumarray'][$gradeitem->id];
+                if ($gradeitem->itemtype === 'course') {
+                    $this->assertEquals($expectedsumarray['course'], $sumgrades);
+                } else if ($gradeitem->itemtype === 'manual') {
+                    $this->assertEquals($expectedsumarray['Grade item1'], $sumgrades);
+                }
+            }
+        }
+    }
+
+    /**
+     * Data provider for test_ungraded_counts_hidden_grades
+     *
+     * @return array of testing scenarios
+     */
+    public function ungraded_counts_hidden_grades_data() : array {
+        return [
+            'nohidden' => [
+                'hidden' => false,
+                'count' => ['course' => 1, 'Grade item1' => 1],
+                'sumarray' => ['course' => 6.00000, 'Grade item1' => 3.00000],
+            ],
+            'includehidden' => [
+                'hidden' => true,
+                'count' => ['course' => 1, 'Grade item1' => 2],
+                'sumarray' => ['course' => 6.00000, 'Grade item1' => 6.00000],
+            ],
+        ];
+    }
+
+    /**
      * Tests that ungraded_counts calculates count and sum of grades correctly for groups when there are graded users.
      *
      * @covers \grade_report::ungraded_counts
@@ -376,14 +480,13 @@ class lib_test extends \advanced_testcase {
     public function test_ungraded_count_sumgrades_groups() {
         global $DB;
 
-        $this->resetAfterTest(true);
+        $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
 
         $studentrole = $DB->get_record('role', ['shortname' => 'student'], '*', MUST_EXIST);
 
         // Create users.
-
         $student1 = $this->getDataGenerator()->create_user(['username' => 'student1']);
         $student2 = $this->getDataGenerator()->create_user(['username' => 'student2']);
         $student3 = $this->getDataGenerator()->create_user(['username' => 'student3']);
@@ -400,7 +503,7 @@ class lib_test extends \advanced_testcase {
         $this->getDataGenerator()->create_group_member(['userid' => $student3->id, 'groupid' => $group2->id]);
         $DB->set_field('course', 'groupmode', SEPARATEGROUPS, ['id' => $course->id]);
 
-        // Create grade items in course 1.
+        // Create grade items.
         $assign1 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
         $assign2 = $this->getDataGenerator()->create_module('assign', ['course' => $course->id]);
         $quiz1 = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
@@ -411,7 +514,7 @@ class lib_test extends \advanced_testcase {
             'courseid'        => $course->id,
         ]));
 
-        // Grade users in first course.
+        // Grade users.
         $cm = cm_info::create(get_coursemodule_from_instance('assign', $assign1->id));
         $assigninstance = new assign($cm->context, $cm, $course);
         $grade = $assigninstance->get_user_grade($student1->id, true);
@@ -437,7 +540,7 @@ class lib_test extends \advanced_testcase {
         $gpr1 = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course,
                 'groupid' => $group1->id,
             ]
@@ -446,18 +549,18 @@ class lib_test extends \advanced_testcase {
         $gpr2 = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course,
                 'groupid' => $group2->id,
             ]
         );
 
-        $report1 = new grade_report_summary($course->id, $gpr1, $context);
-        $report2 = new grade_report_summary($course->id, $gpr2, $context);
+        $report1 = new grade_report_grader($course->id, $gpr1, $context);
+        $report2 = new grade_report_grader($course->id, $gpr2, $context);
 
         $ungradedcounts = [];
-        $ungradedcounts[$group1->id] = $report1->ungraded_counts();
-        $ungradedcounts[$group2->id] = $report2->ungraded_counts();
+        $ungradedcounts[$group1->id] = $report1->ungraded_counts(true);
+        $ungradedcounts[$group2->id] = $report2->ungraded_counts(true);
 
         $gradeitems = grade_item::fetch_all(['courseid' => $course->id]);
 
@@ -523,6 +626,162 @@ class lib_test extends \advanced_testcase {
                 }
             }
         }
+    }
+
+    /**
+     * Tests that ungraded_counts calculates count and sum of grades correctly when there are hidden grades.
+     * @dataProvider ungraded_counts_only_active_enrol_data()
+     * @param bool $onlyactive Site setting to show only active users.
+     * @param int $hascapability Capability constant
+     * @param bool|null $showonlyactiveenrolpref Show only active user preference.
+     * @param array $expectedcount expected count value (i.e. number of ugraded grades)
+     * @param array $expectedsumarray expected sum of grades
+     *
+     * @covers \grade_report::ungraded_counts
+     */
+    public function test_ungraded_counts_only_active_enrol(bool $onlyactive,
+            int $hascapability, ?bool $showonlyactiveenrolpref, array $expectedcount, array $expectedsumarray) {
+        global $CFG, $DB;
+
+        $this->resetAfterTest();
+
+        $CFG->grade_report_showonlyactiveenrol = $onlyactive;
+        $course = $this->getDataGenerator()->create_course();
+
+        // Create users.
+        $student1 = $this->getDataGenerator()->create_user(['username' => 'student1']);
+        $student2 = $this->getDataGenerator()->create_user(['username' => 'student2']);
+        $student3 = $this->getDataGenerator()->create_user(['username' => 'student3']);
+        $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
+
+        // Enrol students.
+        $this->getDataGenerator()->enrol_user($student1->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($student2->id, $course->id, 'student');
+
+        // Give teacher 'viewsuspendedusers' capability and set a preference to display suspended users.
+        $roleteacher = $DB->get_record('role', ['shortname' => 'teacher'], '*', MUST_EXIST);
+        $coursecontext = \context_course::instance($course->id);
+        assign_capability('moodle/course:viewsuspendedusers', $hascapability, $roleteacher->id, $coursecontext, true);
+        set_user_preference('grade_report_showonlyactiveenrol', $showonlyactiveenrolpref, $teacher);
+        accesslib_clear_all_caches_for_unit_testing();
+
+        $this->setUser($teacher);
+
+        // Suspended student.
+        $this->getDataGenerator()->enrol_user($student3->id, $course->id, 'student', 'manual', 0, 0, ENROL_USER_SUSPENDED);
+
+        // Create grade items in course.
+        $manuaitem = new \grade_item($this->getDataGenerator()->create_grade_item([
+            'itemname' => 'Grade item1',
+            'idnumber' => 'git1',
+            'courseid' => $course->id,
+        ]));
+
+        // Grade users.
+        $manuaitem->update_final_grade($student1->id, 1);
+        $manuaitem->update_final_grade($student3->id, 2);
+
+        // Trigger a regrade.
+        grade_force_full_regrading($course->id);
+        grade_regrade_final_grades($course->id);
+
+        // Initialise reports.
+        $context = \context_course::instance($course->id);
+
+        $gpr = new grade_plugin_return(
+            [
+                'type' => 'report',
+                'plugin' => 'grader',
+                'course' => $course,
+            ]
+        );
+
+        $report = new grade_report_grader($course->id, $gpr, $context);
+
+        $showonlyactiveenrol = $report->show_only_active();
+        $ungradedcounts = $report->ungraded_counts(false, false, $showonlyactiveenrol);
+
+        $gradeitems = grade_item::fetch_all(['courseid' => $course->id]);
+
+        foreach ($gradeitems as $gradeitem) {
+            $sumgrades = null;
+            if (array_key_exists($gradeitem->id, $ungradedcounts['ungradedcounts'])) {
+                $ungradeditem = $ungradedcounts['ungradedcounts'][$gradeitem->id];
+                if ($gradeitem->itemtype === 'course') {
+                    $this->assertEquals($expectedcount['course'], $ungradeditem->count);
+                } else if ($gradeitem->itemtype === 'manual') {
+                    $this->assertEquals($expectedcount['Grade item1'], $ungradeditem->count);
+                }
+            }
+
+            if (array_key_exists($gradeitem->id, $ungradedcounts['sumarray'])) {
+                $sumgrades = $ungradedcounts['sumarray'][$gradeitem->id];
+                if ($gradeitem->itemtype === 'course') {
+                    $this->assertEquals($expectedsumarray['course'], $sumgrades);
+                } else if ($gradeitem->itemtype === 'manual') {
+                    $this->assertEquals($expectedsumarray['Grade item1'], $sumgrades);
+                }
+            }
+        }
+    }
+
+    /**
+     * Data provider for test_ungraded_counts_hidden_grades
+     *
+     * @return array of testing scenarios
+     */
+    public function ungraded_counts_only_active_enrol_data(): array {
+        return [
+            'Show only active and no user preference' => [
+                'onlyactive' => true,
+                'hascapability' => 1,
+                'showonlyactiveenrolpref' => null,
+                'count' => ['course' => 1, 'Grade item1' => 1],
+                'sumarray' => ['course' => 1, 'Grade item1' => 1.00000],
+            ],
+            'Show only active and user preference set to true' => [
+                'onlyactive' => true,
+                'hascapability' => 1,
+                'showonlyactiveenrolpref' => true,
+                'count' => ['course' => 1, 'Grade item1' => 1],
+                'sumarray' => ['course' => 1, 'Grade item1' => 1.00000],
+            ],
+            'Show only active and user preference set to false' => [
+                'onlyactive' => true,
+                'hascapability' => 1,
+                'showonlyactiveenrolpref' => false,
+                'count' => ['course' => 1, 'Grade item1' => 1],
+                'sumarray' => ['course' => 3.00000, 'Grade item1' => 3.00000],
+            ],
+            'Include suspended with capability and user preference set to true' => [
+                'onlyactive' => false,
+                'hascapability' => 1,
+                'showonlyactiveenrolpref' => true,
+                'count' => ['course' => 1, 'Grade item1' => 1],
+                'sumarray' => ['course' => 1.00000, 'Grade item1' => 1.00000],
+            ],
+            'Include suspended with capability and user preference set to false' => [
+                'onlyactive' => false,
+                'hascapability' => 1,
+                'showonlyactiveenrolpref' => false,
+                'count' => ['course' => 1, 'Grade item1' => 1],
+                'sumarray' => ['course' => 3.00000, 'Grade item1' => 3.00000],
+            ],
+            'Include suspended with capability and no user preference' => [
+                'onlyactive' => false,
+                'hascapability' => 1,
+                'showonlyactiveenrolpref' => null,
+                'count' => ['course' => 1, 'Grade item1' => 1],
+                'sumarray' => ['course' => 3.00000, 'Grade item1' => 3.00000],
+            ],
+            'Include suspended without capability' => [
+                'onlyactive' => false,
+                'hascapability' => -1,
+                'showonlyactiveenrolpref' => null,
+                'count' => ['course' => 1, 'Grade item1' => 1],
+                'sumarray' => ['course' => 1.00000, 'Grade item1' => 1.00000],
+            ],
+        ];
     }
 
     /**
@@ -593,14 +852,14 @@ class lib_test extends \advanced_testcase {
         $gpr = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course,
             ]
         );
 
-        $report = new grade_report_summary($course->id, $gpr, $context);
+        $report = new grade_report_grader($course->id, $gpr, $context);
 
-        $ungradedcounts = $report->ungraded_counts();
+        $ungradedcounts = $report->ungraded_counts(false);
         $ungradedcounts['report']['meanselection'] = $meanselection;
 
         $gradeitems = grade_item::fetch_all(['courseid' => $course->id]);
@@ -679,24 +938,24 @@ class lib_test extends \advanced_testcase {
         $gpr = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course1,
             ]
         );
 
-        $report1 = new grade_report_summary($course1->id, $gpr, $context);
+        $report1 = new grade_report_grader($course1->id, $gpr, $context);
 
         $context = \context_course::instance($course2->id);
 
         $gpr = new grade_plugin_return(
             [
                 'type' => 'report',
-                'plugin' => 'summary',
+                'plugin' => 'grader',
                 'course' => $course2,
             ]
         );
 
-        $report2 = new grade_report_summary($course2->id, $gpr, $context);
+        $report2 = new grade_report_grader($course2->id, $gpr, $context);
 
         $gradeitems1 = $report1->item_types();
         $gradeitems2 = $report2->item_types();
