@@ -162,6 +162,8 @@ $string['targetlabelstudentgradetopassno'] = 'Student who is likely to meet the 
 $string['targetlabelstudentgradetopassyes'] = 'Student at risk of not meeting the minimum grade to pass the course.';
 $string['targetlabelteachingyes'] = 'Users with teaching capabilities who have access to the course';
 $string['targetlabelteachingno'] = 'Courses at risk of not starting';
+$string['totalactivities'] = 'Activities: {$a}';
+$string['gotosection'] = 'Go to section {$a}';
 
 // Deprecated since Moodle 4.3.
 $string['aria:courseimage'] = 'Course image';
