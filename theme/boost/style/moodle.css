@@ -12727,6 +12727,22 @@ a.text-dark:hover, a.text-dark:focus {
   left: 0;
   right: auto;
 }
+.dir-rtl .popover.bs-popover-right, .dir-rtl .popover.bs-popover-auto[x-placement^=right] {
+  margin-right: 0;
+  margin-left: 0.5rem;
+}
+.dir-rtl .popover.bs-popover-right .arrow, .dir-rtl .popover.bs-popover-auto[x-placement^=right] .arrow {
+  transform: rotate(180deg);
+  left: calc(-0.5rem - 1px);
+}
+.dir-rtl .popover.bs-popover-left, .dir-rtl .popover.bs-popover-auto[x-placement^=left] {
+  margin-right: 0.5rem;
+  margin-left: 0;
+}
+.dir-rtl .popover.bs-popover-left .arrow, .dir-rtl .popover.bs-popover-auto[x-placement^=left] .arrow {
+  transform: rotate(180deg);
+  right: calc(-0.5rem - 1px);
+}
 
 /**
  * Moodle variables
@@ -24952,33 +24968,6 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
   z-index: inherit;
 }
 
-/* Force positioning of popover arrows.
- *
- * The Css prefixer used in Moodle does not support complex calc statements used
- * in Bootstrap 4 CSS. For example:
- * calc((0.5rem + 1px) * -1); is stripped out by lib/php-css-parser/Parser.php.
- * See MDL-61879. For now the arrow positions of popovers are fixed until this is resolved.
- */
-.bs-popover-right .arrow,
-.bs-popover-auto[x-placement^=right] .arrow {
-  left: -9px;
-}
-
-.bs-popover-left .arrow,
-.bs-popover-auto[x-placement^=left] .arrow {
-  right: -9px;
-}
-
-.bs-popover-top .arrow,
-.bs-popover-auto[x-placement^=top] .arrow {
-  bottom: -9px;
-}
-
-.bs-popover-bottom .arrow,
-.bs-popover-auto[x-placement^=bottom] .arrow {
-  top: -9px;
-}
-
 .custom-select {
   word-wrap: normal;
 }
@@ -25699,6 +25688,22 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   content: " ";
   border-left-width: 0;
   border-right-color: #fff;
+}
+.dir-rtl span[data-flexitour=container][x-placement^=right] {
+  margin-left: 1rem;
+}
+.dir-rtl span[data-flexitour=container][x-placement^=right] div[data-role=arrow] {
+  transform: rotate(180deg);
+  left: -1rem;
+  right: auto;
+}
+.dir-rtl span[data-flexitour=container][x-placement^=left] {
+  margin-right: 1rem;
+}
+.dir-rtl span[data-flexitour=container][x-placement^=left] div[data-role=arrow] {
+  transform: rotate(180deg);
+  left: auto;
+  right: -1rem;
 }
 
 [data-region=drawer] [data-flexitour=container] {
