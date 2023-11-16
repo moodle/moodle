@@ -706,6 +706,12 @@ if (isset($CFG->debug)) {
 }
 $CFG->debugdeveloper = (($CFG->debug & DEBUG_DEVELOPER) === DEBUG_DEVELOPER);
 
+// Set a default value for whether to show exceptions in a pretty format.
+if (!property_exists($CFG, 'debug_developer_use_pretty_exceptions')) {
+    $CFG->debug_developer_use_pretty_exceptions = true;
+
+}
+
 // Find out if PHP configured to display warnings,
 // this is a security problem because some moodle scripts may
 // disclose sensitive information.
