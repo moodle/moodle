@@ -40,6 +40,7 @@ information provided here is intended especially for developers.
 * New Behat `heading` named selector to more easily assert the presence of H1-H6 elements on the page
 * Login can now utilise new param 'loginredirect' to indicate when to use value set for $CFG->alternateloginurl.
 * \action_menu_link::$instance has been deprecated as it is no longer used.
+* Removed \zip_writer::sanitise_filepath and \zipwriter::sanitise_filename as they are now automatically sanitised in the zipstream.
 
 === 4.3 ===
 

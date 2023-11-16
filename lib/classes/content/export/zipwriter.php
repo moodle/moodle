@@ -141,9 +141,9 @@ class zipwriter {
      * @return static
      */
     public static function get_stream_writer(string $filename, stdClass $exportoptions = null) {
-        $options = new \ZipStream\Option\Archive();
-        $options->setSendHttpHeaders(true);
-        $archive = new \ZipStream\ZipStream($filename, $options);
+        $archive = new \ZipStream\ZipStream(
+            outputName: $filename,
+        );
 
         $zipwriter = new static($archive, $exportoptions);
 
@@ -159,15 +159,15 @@ class zipwriter {
      * @return static
      */
     public static function get_file_writer(string $filename, stdClass $exportoptions = null) {
-        $options = new \ZipStream\Option\Archive();
-
         $dir = make_request_directory();
         $filepath = $dir . "/$filename";
         $fh = fopen($filepath, 'w');
 
-        $options->setOutputStream($fh);
-        $options->setSendHttpHeaders(false);
-        $archive = new \ZipStream\ZipStream($filename, $options);
+        $archive = new \ZipStream\ZipStream(
+            outputName: $filename,
+            outputStream: $fh,
+            sendHttpHeaders: false,
+        );
 
         $zipwriter = new static($archive, $exportoptions);
 
@@ -359,10 +359,7 @@ class zipwriter {
         // De-duplicate slashes.
         $finalpath = str_replace('//', '/', $finalpath);
 
-        // Remove leading /.
-        ltrim($finalpath, '/');
-
-        return $this->sanitise_filename($finalpath);
+        return $finalpath;
     }
 
     /**
@@ -404,18 +401,7 @@ class zipwriter {
             $relativepath = "./{$relativepath}";
         }
 
-        return $this->sanitise_filename($relativepath);
-    }
-
-    /**
-     * Sanitise the file path, removing any unsuitable characters.
-     *
-     * @param   string $filepath
-     * @return  string
-     */
-    protected function sanitise_filename(string $filepath): string {
-        // The filename must be sanitised in the same as the parent ZipStream library.
-        return \ZipStream\File::filterFilename($filepath);
+        return $relativepath;
     }
 
     /**
