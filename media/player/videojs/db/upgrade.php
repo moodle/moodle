@@ -51,20 +51,6 @@ defined('MOODLE_INTERNAL') || die;
  * @return bool always true
  */
 function xmldb_media_videojs_upgrade($oldversion) {
-    global $CFG;
-
-    if ($oldversion < 2021052503) {
-        // Remove useflash and rtmp settings.
-        unset_config('useflash', 'media_videojs');
-        unset_config('rtmp', 'media_videojs');
-
-        // Main savepoint reached.
-        upgrade_plugin_savepoint(true, 2021052503, 'media', 'videojs');
-    }
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 

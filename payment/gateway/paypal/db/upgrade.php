@@ -47,12 +47,6 @@ function xmldb_paygw_paypal_upgrade(int $oldversion): bool {
         upgrade_plugin_savepoint(true, 2021052501, 'paygw', 'paypal');
     }
 
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.1.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.2.0 release upgrade line.
     // Put any upgrade step following this.
 

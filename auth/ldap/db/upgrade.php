@@ -30,22 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool result
  */
 function xmldb_auth_ldap_upgrade($oldversion) {
-    global $CFG;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2021052501) {
-        // Normalize the memberattribute_isdn plugin config.
-        set_config('memberattribute_isdn',
-            !empty(get_config('auth_ldap', 'memberattribute_isdn')), 'auth_ldap');
-
-        upgrade_plugin_savepoint(true, 2021052501, 'auth', 'ldap');
-    }
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 

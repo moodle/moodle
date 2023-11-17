@@ -30,14 +30,6 @@ defined('MOODLE_INTERNAL') || die();
  * @param int $oldversion The version that we are upgrading from
  */
 function xmldb_message_popup_upgrade($oldversion) {
-    global $DB;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
