@@ -42,8 +42,6 @@
 // Please do not forget to use upgrade_set_timeout()
 // before any action that may take longer time to finish.
 
-defined('MOODLE_INTERNAL') || die;
-
 function xmldb_label_upgrade($oldversion) {
     global $CFG, $DB;
 

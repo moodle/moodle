@@ -36,10 +36,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once("{$CFG->libdir}/db/upgradelib.php");
-
 /**
  * Upgrade the recentlyaccesseditems db table.
  *

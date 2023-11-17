@@ -45,8 +45,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- defined('MOODLE_INTERNAL') || die;
-
 /**
  * xmldb_lti_upgrade is the function that upgrades
  * the lti module database when is needed
@@ -70,7 +68,6 @@ function xmldb_lti_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2023070501) {
-
         // Define table lti_types_categories to be created.
         $table = new xmldb_table('lti_types_categories');
 

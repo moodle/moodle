@@ -40,8 +40,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Main upgrade tasks to be executed on Moodle version bump
  *
@@ -67,13 +65,13 @@ defined('MOODLE_INTERNAL') || die();
  * All plugins within Moodle (modules, blocks, reports...) support the existence of
  * their own upgrade.php file, using the "Frankenstyle" component name as
  * defined at {@link https://moodledev.io/general/development/policies/codingstyle/frankenstyle}, for example:
- *     - {@link xmldb_page_upgrade($oldversion)}. (modules don't require the plugintype ("mod_") to be used.
- *     - {@link xmldb_auth_manual_upgrade($oldversion)}.
- *     - {@link xmldb_workshopform_accumulative_upgrade($oldversion)}.
+ *     - {@see xmldb_page_upgrade($oldversion)}. (modules don't require the plugintype ("mod_") to be used.
+ *     - {@see xmldb_auth_manual_upgrade($oldversion)}.
+ *     - {@see xmldb_workshopform_accumulative_upgrade($oldversion)}.
  *     - ....
  *
  * In order to keep the contents of this file reduced, it's allowed to create some helper
- * functions to be used here in the {@link upgradelib.php} file at the same directory. Note
+ * functions to be used here in the {@see upgradelib.php} file at the same directory. Note
  * that such a file must be manually included from upgrade.php, and there are some restrictions
  * about what can be used within it.
  *
@@ -87,7 +85,7 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_main_upgrade($oldversion) {
     global $CFG, $DB;
 
-    require_once($CFG->libdir.'/db/upgradelib.php'); // Core Upgrade-related functions.
+    require_once($CFG->libdir . '/db/upgradelib.php'); // Core Upgrade-related functions.
 
     $dbman = $DB->get_manager(); // Loads ddl manager and xmldb classes.
 
@@ -105,7 +103,6 @@ function xmldb_main_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2022120900.01) {
-
         // Remove any orphaned role assignment records (pointing to non-existing roles).
         $DB->delete_records_select('role_assignments', 'NOT EXISTS (
             SELECT r.id FROM {role} r WHERE r.id = {role_assignments}.roleid
@@ -318,7 +315,6 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023031400.02) {
-
         // Define table xapi_states to be created.
         $table = new xmldb_table('xapi_states');
 
@@ -382,7 +378,8 @@ function xmldb_main_upgrade($oldversion) {
         if (!file_exists($CFG->dirroot . '/mod/assignment/version.php')) {
             // Delete all mod_assignment grade_grades orphaned data.
             $DB->delete_records_select(
-                'grade_grades', "itemid IN (SELECT id FROM {grade_items} WHERE itemtype = 'mod' AND itemmodule = 'assignment')"
+                'grade_grades',
+                "itemid IN (SELECT id FROM {grade_items} WHERE itemtype = 'mod' AND itemmodule = 'assignment')"
             );
 
             // Delete all mod_assignment grade_grades_history orphaned data.
@@ -489,15 +486,15 @@ function xmldb_main_upgrade($oldversion) {
         $sql = 'UPDATE {external_tokens}
                    SET name = ' . $DB->sql_concat(
                        // We only need the prefix, so leave the third param with an empty string.
-                           "'" . get_string('tokennameprefix', 'webservice', '') . "'",
-                           "id");
+                        "'" . get_string('tokennameprefix', 'webservice', '') . "'",
+                        "id"
+                    );
         $DB->execute($sql);
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2023062700.01);
     }
 
     if ($oldversion < 2023062900.01) {
-
         // Define field avatarsynced to be added to communication.
         $table = new xmldb_table('communication');
         $field = new xmldb_field('avatarsynced', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'active');
@@ -515,7 +512,7 @@ function xmldb_main_upgrade($oldversion) {
         // Upgrade yaml mime type for existing yaml and yml files.
         $filetypes = [
             '%.yaml' => 'application/yaml',
-            '%.yml' => 'application/yaml,'
+            '%.yml' => 'application/yaml,',
         ];
 
         $select = $DB->sql_like('filename', '?', false);
@@ -635,7 +632,6 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023082200.04) {
-
         // Remove any non-unique filters/conditions.
         $duplicates = $DB->get_records_sql("
             SELECT MIN(id) AS id, reportid, uniqueidentifier, iscondition
@@ -731,7 +727,6 @@ function xmldb_main_upgrade($oldversion) {
     }
 
     if ($oldversion < 2023090200.01) {
-
         // Define table moodlenet_share_progress to be created.
         $table = new xmldb_table('moodlenet_share_progress');
 

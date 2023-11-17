@@ -22,7 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
 /**
  * Quiz module upgrade function.
  * @param string $oldversion the version we are upgrading from.
@@ -52,7 +51,6 @@ function xmldb_quiz_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2023042401) {
-
         // Define field reviewmaxmarks to be added to quiz.
         $table = new xmldb_table('quiz');
         $field = new xmldb_field('reviewmaxmarks', XMLDB_TYPE_INTEGER, '6', null, XMLDB_NOTNULL, null, '0', 'reviewcorrectness');

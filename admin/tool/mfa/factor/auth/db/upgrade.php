@@ -28,7 +28,6 @@
  * @param int $oldversion
  */
 function xmldb_factor_auth_upgrade($oldversion) {
-
     if ($oldversion < 2021020500) {
         $authtypes = get_enabled_auth_plugins(true);
         // Upgrade goodauth config from number to name.

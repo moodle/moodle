@@ -39,8 +39,6 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Function to upgrade mod_h5pactivity.
  * @param int $oldversion the version we are upgrading from
@@ -56,7 +54,6 @@ function xmldb_h5pactivity_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2023042401) {
-
         // Remove any orphaned attempt/result records (pointing to non-existing activities).
         $DB->delete_records_select('h5pactivity_attempts', 'NOT EXISTS (
             SELECT 1 FROM {h5pactivity} h5p WHERE h5p.id = {h5pactivity_attempts}.h5pactivityid

@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Function to upgrade tool_dataprivacy.
  *
@@ -42,7 +40,6 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2023062700) {
-
         // Define table tool_dataprivacy_contextlist to be created.
         $table = new xmldb_table('tool_dataprivacy_contextlist');
 

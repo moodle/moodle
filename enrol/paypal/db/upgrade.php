@@ -40,8 +40,6 @@
 // Please do not forget to use upgrade_set_timeout()
 // before any action that may take longer time to finish.
 
-defined('MOODLE_INTERNAL') || die();
-
 function xmldb_enrol_paypal_upgrade($oldversion) {
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.

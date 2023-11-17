@@ -41,8 +41,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- defined('MOODLE_INTERNAL') || die;
-
 /**
  * xmldb_ltiservice_gradebookservices_upgrade is the function that upgrades
  * the gradebook lti service subplugin database when is needed.

@@ -41,7 +41,6 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
     if ($oldversion < 2023011800) {
-
         // Define index course_bbbid_ix (not unique) to be added to bigbluebuttonbn_logs.
         $table = new xmldb_table('bigbluebuttonbn_logs');
         $index = new xmldb_index('course_bbbid_ix', XMLDB_INDEX_NOTUNIQUE, ['courseid', 'bigbluebuttonbnid']);
@@ -55,7 +54,6 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
         upgrade_mod_savepoint(true, 2023011800, 'bigbluebuttonbn');
     }
     if ($oldversion < 2023021300) {
-
         // Define field lockedlayout to be dropped from bigbluebuttonbn.
         $table = new xmldb_table('bigbluebuttonbn');
         $field = new xmldb_field('lockedlayout');
@@ -87,13 +85,23 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
  * @param array $fielddefinition
  * @deprecated  please do not use this anymore (historical migrations)
  */
-function xmldb_bigbluebuttonbn_add_change_field(database_manager $dbman, string $tablename, string $fieldname,
-    array $fielddefinition) {
+function xmldb_bigbluebuttonbn_add_change_field(
+    database_manager $dbman,
+    string $tablename,
+    string $fieldname,
+    array $fielddefinition
+) {
     $table = new xmldb_table($tablename);
     $field = new xmldb_field($fieldname);
-    $field->set_attributes($fielddefinition['type'], $fielddefinition['precision'], $fielddefinition['unsigned'],
-        $fielddefinition['notnull'], $fielddefinition['sequence'], $fielddefinition['default'],
-        $fielddefinition['previous']);
+    $field->set_attributes(
+        $fielddefinition['type'],
+        $fielddefinition['precision'],
+        $fielddefinition['unsigned'],
+        $fielddefinition['notnull'],
+        $fielddefinition['sequence'],
+        $fielddefinition['default'],
+        $fielddefinition['previous']
+    );
     if (!$dbman->field_exists($table, $field)) {
         $dbman->add_field($table, $field, true, true);
         return;
@@ -119,8 +127,13 @@ function xmldb_bigbluebuttonbn_add_change_field(database_manager $dbman, string 
  * @param string|false|null $indextype
  * @deprecated please do not use this anymore (historical migrations)
  */
-function xmldb_bigbluebuttonbn_index_table(database_manager $dbman, string $tablename, string $indexname, array $indexfields,
-    $indextype = XMLDB_INDEX_NOTUNIQUE) {
+function xmldb_bigbluebuttonbn_index_table(
+    database_manager $dbman,
+    string $tablename,
+    string $indexname,
+    array $indexfields,
+    $indextype = XMLDB_INDEX_NOTUNIQUE
+) {
     $table = new xmldb_table($tablename);
     if (!$dbman->table_exists($table)) {
         return;
