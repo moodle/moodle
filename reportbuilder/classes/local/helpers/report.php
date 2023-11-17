@@ -26,6 +26,7 @@ use core_reportbuilder\manager;
 use core_reportbuilder\local\models\column;
 use core_reportbuilder\local\models\filter;
 use core_reportbuilder\local\models\report as report_model;
+use core_tag_tag;
 
 /**
  * Helper class for manipulating custom reports and their elements (columns, filters, conditions, etc)
@@ -48,19 +49,24 @@ class report {
         $data->name = trim($data->name);
         $data->type = datasource::TYPE_CUSTOM_REPORT;
 
-        $reportpersistent = manager::create_report_persistent($data);
+        // Create report persistent.
+        $report = manager::create_report_persistent($data);
 
         // Add datasource default columns, filters and conditions to the report.
         if ($default) {
-            $source = $reportpersistent->get('source');
+            $source = $report->get('source');
             /** @var datasource $datasource */
-            $datasource = new $source($reportpersistent, []);
+            $datasource = new $source($report);
             $datasource->add_default_columns();
             $datasource->add_default_filters();
             $datasource->add_default_conditions();
         }
 
-        return $reportpersistent;
+        // Report tags.
+        core_tag_tag::set_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'),
+            $report->get_context(), $data->tags);
+
+        return $report;
     }
 
     /**
@@ -80,6 +86,10 @@ class report {
             'uniquerows' => $data->uniquerows,
         ])->update();
 
+        // Report tags.
+        core_tag_tag::set_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'),
+            $report->get_context(), $data->tags);
+
         return $report;
     }
 
@@ -95,6 +105,9 @@ class report {
         if ($report === false) {
             throw new invalid_parameter_exception('Invalid report');
         }
+
+        // Report tags.
+        core_tag_tag::remove_all_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'));
 
         return $report->delete();
     }

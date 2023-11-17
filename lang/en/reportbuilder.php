@@ -263,6 +263,7 @@ $string['sorting'] = 'Sorting';
 $string['sorting_help'] = 'You can set the initial sort order of columns in the report, which can then be changed by users by clicking on column names.';
 $string['switchedit'] = 'Switch to edit mode';
 $string['switchpreview'] = 'Switch to preview mode';
+$string['tagarea_reportbuilder_report'] = 'Custom reports';
 $string['tasksendschedule'] = 'Send report schedule';
 $string['tasksendschedules'] = 'Send report schedules';
 $string['timeadded'] = 'Time added';
