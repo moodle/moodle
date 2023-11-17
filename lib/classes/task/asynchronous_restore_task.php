@@ -95,4 +95,13 @@ class asynchronous_restore_task extends adhoc_task {
         $duration = time() - $started;
         mtrace('Restore completed in: ' . $duration . ' seconds');
     }
+
+    /**
+     * Sets attemptsavailable to false.
+     *
+     * @return boolean
+     */
+    public function retry_until_success(): bool {
+        return false;
+    }
 }
