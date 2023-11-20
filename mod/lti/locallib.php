@@ -871,7 +871,7 @@ function lti_build_request($instance, $typeconfig, $course, $typeid = null, $isl
     ) {
         $requestparams['lis_person_name_given'] = $USER->firstname;
         $requestparams['lis_person_name_family'] = $USER->lastname;
-        $requestparams['lis_person_name_full'] = fullname($USER);
+        $requestparams['lis_person_name_full'] = fullname($USER, true);
         $requestparams['ext_user_username'] = $USER->username;
     }
 
