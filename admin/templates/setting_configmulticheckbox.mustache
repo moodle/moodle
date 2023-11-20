@@ -23,12 +23,15 @@
     * name - form element name
     * hasoptions - there are some options
     * options - list of options containing name, key, id, checked, label
+    * readonly - bool
 
     Example context (json):
     {
         "name": "test",
         "hasoptions": true,
-        "options": [ { "name": "Option", "key": "k1", "id": "id0", "checked": true, "label": "Option label"} ]
+        "options": [ { "name": "Option", "key": "k1", "id": "id0", "checked": true, "label": "Option label"} ],
+        "readonly": false
+
     }
 }}
 <div class="form-multicheckbox">
@@ -37,7 +40,7 @@
         <ul>
             {{#options}}
                 <li>
-                    <input type="checkbox" name="{{name}}[{{key}}]" value="1" id="{{id}}_{{key}}" {{#checked}}checked{{/checked}}>
+                    <input type="checkbox" name="{{name}}[{{key}}]" value="1" id="{{id}}_{{key}}" {{#readonly}}disabled{{/readonly}} {{#checked}}checked{{/checked}}>
                     <label for="{{id}}_{{key}}">{{{label}}}</label>
                 </li>
             {{/options}}
