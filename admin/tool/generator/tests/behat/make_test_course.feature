@@ -5,7 +5,7 @@ Feature: Admins can create test courses
   I need to create testing courses quickly
 
   @javascript
-  Scenario: Create a test course as admin
+  Scenario: 'Auto-enrol admin in new courses' setting when creating a test course as admin
     Given I log in as "admin"
     And the following config values are set as admin:
       | enroladminnewcourse | 0 |
