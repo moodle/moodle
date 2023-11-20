@@ -29,8 +29,14 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['language'] = 'ژبه';
-$string['moodlelogo'] = 'د موډل نښان';
-$string['next'] = 'بل';
-$string['previous'] = 'مخکینۍ';
-$string['reload'] = 'بیا بار کړئ';
+$string['clianswerno'] = 'n';
+$string['cliansweryes'] = 'y';
+$string['cliincorrectvalueerror'] = 'تېروتنه، ناسم ارزښت د "{$a->option}" لپاره "{$a->value}"';
+$string['cliincorrectvalueretry'] = 'ناسم ارزښت، هیله ده بیاځل هڅه وکړئ';
+$string['clitypevalue'] = 'ارزښت ټایپ کړئ';
+$string['clitypevaluedefault'] = 'ارزښت ټایپ کړئ، اېنټر ته فشار ورکړئ چې عادي ارزښت وکارول شي';
+$string['cliunknowoption'] = 'ناپېژندل شوې ټاکنې: هیله ده د مرستې ټاکنه وکاروئ.';
+$string['cliyesnoprompt'] = 'د y لیکل د هو معنا ورکوي او د n لیکل د نه معنا ورکوي';
+$string['environmentrequireinstall'] = 'باید لګول او فعال شي';
+$string['environmentrequireversion'] = 'نسخه ($a-> اړتیا) اړین دي او تاسو روان یاست ($a-> اوسنی)';
+$string['upgradekeyset'] = 'د کیلو لوړول (د دې د نه تنظیمولو لپاره خالي پریږدئ)';
