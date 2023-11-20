@@ -93,16 +93,16 @@ class number extends base {
             get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()), ['size' => 3]);
         $mform->setType($this->name . '_value1', PARAM_INT);
         $mform->setDefault($this->name . '_value1', 0);
+        $mform->hideIf($this->name . '_value1', $this->name . '_operator', 'in',
+            [self::ANY_VALUE,  self::IS_NOT_EMPTY,  self::IS_EMPTY]);
 
         $objs['text2'] = $mform->createElement('text', $this->name . '_value2', get_string('to'), ['size' => 3]);
         $mform->setType($this->name . '_value2', PARAM_INT);
         $mform->setDefault($this->name . '_value2', 0);
-
-        $mform->addElement('group', $this->name . '_grp', '', $objs, '', false);
-
-        $mform->hideIf($this->name . '_value1', $this->name . '_operator', 'in',
-            [self::ANY_VALUE,  self::IS_NOT_EMPTY,  self::IS_EMPTY]);
         $mform->hideIf($this->name . '_value2', $this->name . '_operator', 'noteq', self::RANGE);
+
+        $mform->addGroup($objs, $this->name . '_grp', $this->get_header(), '', false)
+            ->setHiddenLabel(true);
     }
 
     /**

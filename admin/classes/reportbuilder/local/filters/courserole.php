@@ -55,7 +55,8 @@ class courserole extends base {
         $elements['course'] = $mform->createElement('text', "{$this->name}_course", get_string('shortnamecourse'));
         $mform->setType("{$this->name}_course", PARAM_RAW_TRIMMED);
 
-        $mform->addElement('group', "{$this->name}_group", '', $elements, '', false);
+        $mform->addGroup($elements, "{$this->name}_group", $this->get_header(), '', false)
+            ->setHiddenLabel(true);
     }
 
     /**

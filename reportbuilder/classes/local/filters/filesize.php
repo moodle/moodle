@@ -100,7 +100,8 @@ class filesize extends base {
         $mform->setDefault("{$this->name}_unit", self::SIZE_UNIT_BYTE);
         $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'eq', self::ANY_VALUE);
 
-        $mform->addElement('group', "{$this->name}_group", '', $elements, '', false);
+        $mform->addGroup($elements, "{$this->name}_group", $this->get_header(), '', false)
+            ->setHiddenLabel(true);
     }
 
     /**
