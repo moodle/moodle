@@ -6,7 +6,7 @@ Feature: Select a theme in Boost theme
 
   Background:
     Given I log in as "admin"
-    And I navigate to "Appearance > Themes > Theme selector" in site administration
+    And I navigate to "Appearance > Themes" in site administration
 
   @javascript
   Scenario: I am able to preview a theme using a modal window
@@ -26,3 +26,7 @@ Feature: Select a theme in Boost theme
     Given I should see "Current theme" in the "#theme-card-boost" "css_element"
     When I click on "Select theme 'Classic'" "button"
     Then I should see "Current theme" in the "#theme-card-classic" "css_element"
+
+  Scenario: I am able to view a theme's settings page
+    Given I click on "Edit theme settings 'Boost'" "link"
+    Then I should see "Boost"

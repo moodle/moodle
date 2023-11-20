@@ -26,7 +26,8 @@
         "image": "http://moodlesite/theme/image.php?theme=boost&image=screenshot&component=theme",
         "current": true,
         "actionurl": "http://moodlesite/admin/themeselector.php",
-        "sesskey": "123XYZ"
+        "sesskey": "123XYZ",
+        "settingsurl": "http://moodlesite/admin/settings.php?section=themesettingboost"
     }
 }}
 <div class="card dashboard-card" role="listitem" id="theme-card-{{choose}}" aria-labelledby="theme-name-{{choose}} {{#current}}current-theme-{{choose}}{{/current}}">
@@ -52,6 +53,16 @@
                     <i class="icon fa fa-info-circle m-0" aria-hidden="true"></i>
                     <span class="sr-only">{{#str}}previewthemename, moodle, {{name}}{{/str}}</span>
                 </button>
+                {{#settingsurl}}
+                    <a
+                        href="{{settingsurl}}"
+                        id="theme-settings-{{choose}}"
+                        class="btn btn-link p-0 ml-2"
+                        title="{{#str}}themeeditsettingsname, admin, {{name}}{{/str}}">
+                        <i class="icon fa fa-cog m-0" aria-hidden="true"></i>
+                        <span class="sr-only">{{#str}}themeeditsettingsname, admin, {{name}}{{/str}}</span>
+                    </a>
+                {{/settingsurl}}
             </div>
         </div>
     </div>

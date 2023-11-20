@@ -1457,8 +1457,9 @@ $string['themedesignermodewarning'] = 'Theme designer mode is enabled. This shou
 $string['themelist'] = 'Theme list';
 $string['themeresetcaches'] = 'Clear theme caches';
 $string['themeselect'] = 'Change theme';
-$string['themeselector'] = 'Theme selector';
-$string['themesettings'] = 'Theme settings';
+$string['themeselector'] = 'Themes';
+$string['themesettingsadvanced'] = 'Advanced theme settings';
+$string['themeeditsettingsname'] = 'Edit theme settings \'{$a}\'';
 $string['therewereerrors'] = 'There were errors in your data';
 $string['thirdpartylibrary'] = 'Library';
 $string['thirdpartylibrarylocation'] = 'Location';
@@ -1637,3 +1638,4 @@ $string['unsettheme'] = 'Unset theme';
 
 // Deprecated since Moodle 4.4.
 $string['taskdeletecachetext'] = 'Delete old text cache records';
+$string['themesettings'] = 'Theme settings';

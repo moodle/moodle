@@ -3851,8 +3851,7 @@ EOD;
     /**
      * Returns the custom menu if one has been set
      *
-     * A custom menu can be configured by browsing to
-     *    Settings: Administration > Appearance > Themes > Theme settings
+     * A custom menu can be configured by browsing to a theme's settings page
      * and then configuring the custommenu config setting as described.
      *
      * Theme developers: DO NOT OVERRIDE! Please override function

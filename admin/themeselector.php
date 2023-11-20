@@ -112,6 +112,14 @@ foreach ($themes as $themename => $themedir) {
         $themedata['sesskey'] = sesskey();
     }
 
+    // Settings url.
+    $settingspath = "$themedir/settings.php";
+    if (file_exists($settingspath)) {
+        $section = "themesetting{$themename}";
+        $settingsurl = new moodle_url('/admin/settings.php', ['section' => $section]);
+        $themedata['settingsurl'] = $settingsurl;
+    }
+
     $data[$index] = $themedata;
     $index++;
 }
