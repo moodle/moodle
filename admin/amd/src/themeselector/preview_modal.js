@@ -29,6 +29,7 @@ import Templates from 'core/templates';
 import {getString} from 'core/str';
 
 const SELECTORS = {
+    THEMES_CONTAINER: 'themelist',
     PREVIEW: '[data-action="preview"]',
 };
 
@@ -66,6 +67,8 @@ const buildModal = async(element) => {
     // This string can be long. We will fetch it with JS as opposed to passing it as an attribute.
     let description = await getString('choosereadme', 'theme_' + element.getAttribute('data-choose'));
 
+    const themesContainer = document.getElementById(SELECTORS.THEMES_CONTAINER);
+    const definedInConfig = parseInt(themesContainer.dataset.definedinconfig);
     // Prepare data for modal.
     const data = {
         name: element.getAttribute('data-name'),
@@ -75,11 +78,12 @@ const buildModal = async(element) => {
         actionurl: element.getAttribute('data-actionurl'),
         choose: element.getAttribute('data-choose'),
         sesskey: element.getAttribute('data-sesskey'),
+        definedinconfig: definedInConfig,
     };
 
     // Determine which modal template we should use.
     let modalTemplate = ModalSaveCancel;
-    if (data.current) {
+    if (data.current || data.definedinconfig) {
         modalTemplate = ModalCancel;
     }
 

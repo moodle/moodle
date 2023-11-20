@@ -34,13 +34,18 @@ class theme_selector implements renderable, templatable {
     /** @var array $themedata Theme data to pass to the template. */
     private $themedata = null;
 
+    /** @var bool Whether $CFG->theme is defined in config.php. */
+    private $definedinconfig;
+
     /**
      * Constructor.
      *
      * @param array $themedata Theme data used for template.
+     * @param bool $definedinconfig Whether $CFG->theme is defined in config.php.
      */
-    public function __construct(array $themedata) {
+    public function __construct(array $themedata, bool $definedinconfig = false) {
         $this->themedata = $themedata;
+        $this->definedinconfig = $definedinconfig;
     }
 
     /**
@@ -59,6 +64,7 @@ class theme_selector implements renderable, templatable {
         $resetbutton = new \single_button($reseturl, get_string('themeresetcaches', 'admin'), 'post',
             \single_button::BUTTON_SECONDARY);
         $data->resetbutton = $resetbutton->export_for_template($output);
+        $data->definedinconfig = $this->definedinconfig;
 
         return $data;
     }

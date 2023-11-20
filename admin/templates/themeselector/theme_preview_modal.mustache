@@ -39,9 +39,12 @@
         <div class="flex-grow-1">
             <p><strong>{{#str}}themepreviewdescription, moodle, {{name}}{{/str}}</strong></p>
         </div>
-        <div>
+        <div class="d-flex align-items-end flex-column">
         {{#current}}
             <strong><span class="text-success">{{#str}}currenttheme, moodle{{/str}}</span></strong>
+            {{#definedinconfig}}
+                <div class="alert alert-info p-1">{{#str}}configoverride, admin{{/str}}</div>
+            {{/definedinconfig}}
         {{/current}}
         </div>
     </div>

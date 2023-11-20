@@ -62,7 +62,7 @@
         {{>core/single_button}}
     </div>
 {{/resetbutton}}
-<div class="card-deck dashboard-card-deck" id="themelist" data-region="card-deck" role="list">
+<div class="card-deck dashboard-card-deck" id="themelist" data-region="card-deck" role="list" data-definedinconfig="{{definedinconfig}}">
     {{#themes}}
         {{>core_admin/themeselector/theme_card}}
     {{/themes}}
