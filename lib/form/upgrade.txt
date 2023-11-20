@@ -1,0 +1,7 @@
+This files describes API changes in core_form libraries and APIs,
+information provided here is intended especially for developers.
+
+=== 4.1.7 ===
+
+* The group element has a new method `getAttributesForFormElement` which should be used in conjunction
+  with `createFormElement` to ensure that all elements within the group have unique IDs
