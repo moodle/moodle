@@ -17,6 +17,8 @@ Information provided here is intended especially for developers.
   and `$exclude` parameters
 * Custom reports now implement the tag API, with options for specifying in the `report::[create|update]_report` helper methods
   as well as in the `create_report` test generator method
+* The `tags` filter has been improved to also allow for filtering by component/itemtype core_tag definition - this is more
+  suited for system reports
 * New report filter types:
   - `filesize` for reports containing filesize data
 
