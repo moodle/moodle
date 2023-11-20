@@ -35208,6 +35208,10 @@ img.userpicture {
   vertical-align: top;
   border-top: 1px solid #dee2e6;
 }
+.generaltable th .form-check,
+.generaltable td .form-check {
+  padding: 0;
+}
 .generaltable thead th,
 .generaltable thead td {
   vertical-align: bottom;
