@@ -48,7 +48,7 @@ class quiz_grading_renderer extends plugin_renderer_base {
      * @throws coding_exception
      */
     public function render_quiz_no_grade_question_notification() {
-        return $this->notification(get_string('nothingfound', 'quiz_grading'));
+        return $this->notification(get_string('nothingfound', 'quiz_grading'), 'info', false);
     }
 
     /**
