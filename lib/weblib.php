@@ -2283,11 +2283,19 @@ function highlightfast($needle, $haystack) {
  * @return string
  */
 function get_html_lang_attribute_value(string $langcode): string {
-    if (empty(trim($langcode))) {
-        // If the language code passed is an empty string, return 'unknown'.
-        return 'unknown';
+    $langcode = clean_param($langcode, PARAM_LANG);
+    if ($langcode === '') {
+        return 'en';
     }
-    return str_replace('_', '-', $langcode);
+
+    // Grab language ISO code from lang config. If it differs from English, then it's been specified and we can return it.
+    $langiso = (string) (new lang_string('iso6391', 'core_langconfig', null, $langcode));
+    if ($langiso !== 'en') {
+        return $langiso;
+    }
+
+    // Where we cannot determine the value from lang config, use the first two characters from the lang code.
+    return substr($langcode, 0, 2);
 }
 
 /**
