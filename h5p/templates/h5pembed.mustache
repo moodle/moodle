@@ -32,11 +32,16 @@
     }
 
 }}
+{{#editurl}}
+<div class="d-flex justify-content-end mb-3">
+    <a href="{{editurl}}" class="btn text-primary">
+        {{#pix}}i/edit, core{{/pix}}
+        {{#str}}editcontent, core_h5p{{/str}}
+    </a>
+</div>
+{{/editurl}}
+
 <iframe src="{{embedurl}}" name="h5player" width=":w" height=":h"
    allowfullscreen="allowfullscreen" class="h5p-player w-100 border-0"
    style="height: 0px;" id="{{uniqid}}-h5player">
 </iframe>
-
-{{#editurl}}
-    <a href="{{editurl}}">{{#str}}editcontent, core_h5p{{/str}}</a>
-{{/editurl}}
