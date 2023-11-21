@@ -387,10 +387,21 @@ function get_whoops(): ?\Whoops\Run {
     $whoops->appendHandler(function ($exception, $inspector, $run) {
         // Moodle exceptions often have a link to the Moodle docs pages for them.
         // Add that to the first frame in the stack.
-        $info = get_exception_info($exception);
-        if ($info->moreinfourl) {
-            $collection = $inspector->getFrames();
-            $collection[0]->addComment("{$info->moreinfourl}", 'More info');
+        $collection = $inspector->getFrames();
+
+        $isdebugging = str_ends_with($collection[1]->getFile(), '/lib/weblib.php');
+        $isdebugging = $isdebugging && $collection[2]->getFunction() === 'debugging';
+
+        if ($isdebugging) {
+            $remove = array_slice($collection->getArray(), 0, 2);
+            $collection->filter(function ($frame) use ($remove): bool {
+                return array_search($frame, $remove) === false;
+            });
+        } else {
+            $info = get_exception_info($exception);
+            if ($info->moreinfourl) {
+                $collection[0]->addComment("{$info->moreinfourl}", 'More info');
+            }
         }
     });
 
