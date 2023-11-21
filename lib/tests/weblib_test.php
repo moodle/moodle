@@ -1163,9 +1163,10 @@ EXPECTED;
      */
     public function get_html_lang_attribute_value_provider() {
         return [
-            'Empty lang code' => ['    ', 'unknown'],
+            'Empty lang code' => ['    ', 'en'],
             'English' => ['en', 'en'],
-            'English, US' => ['en_us', 'en-us'],
+            'English, US' => ['en_us', 'en'],
+            'Unknown' => ['xx', 'en'],
         ];
     }
 
