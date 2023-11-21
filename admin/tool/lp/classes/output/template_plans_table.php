@@ -161,13 +161,13 @@ class template_plans_table extends table_sql {
     }
 
     /**
-     * Override the default implementation to set a decent heading level.
+     * Override the default implementation to set a notification.
      */
     public function print_nothing_to_display() {
         global $OUTPUT;
         echo $this->render_reset_button();
         $this->print_initials_bar();
-        echo $OUTPUT->heading(get_string('nothingtodisplay'), 4);
+        echo $OUTPUT->notification(get_string('nothingtodisplay'), 'info', false);
     }
 
     /**
