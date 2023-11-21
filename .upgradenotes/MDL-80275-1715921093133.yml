@@ -1,0 +1,11 @@
+issueNumber: MDL-80275
+notes:
+  core:
+    - message: >
+        The class autoloader has been moved to an earlier point in the Moodle
+        bootstrap.
+
+
+        Autoloaded classes are now available to scripts using the
+        `ABORT_AFTER_CONFIG` constant.
+      type: changed
