@@ -1,0 +1,3 @@
+[submodule "local/filemanager"]
+	path = local/filemanager
+	url = https://github.com/advancedsoftwarecanada/filemanager
