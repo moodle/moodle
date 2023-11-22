@@ -1466,12 +1466,19 @@ EOF;
         $datahash = $data->getHash();
 
         foreach ($datahash as $row) {
-            $firstcell = null;
-            foreach ($row as $column => $value) {
-                if ($firstcell === null) {
-                    $firstcell = $value;
-                } else {
-                    $this->row_column_of_table_should_contain($firstcell, $column, $table, $value);
+
+            // Row contains only a single column, just assert it's present in the table.
+            if (count($row) === 1) {
+                $this->execute('behat_general::assert_element_contains_text', [reset($row), $table, 'table']);
+            } else {
+                // Iterate over all columns.
+                $firstcell = null;
+                foreach ($row as $column => $value) {
+                    if ($firstcell === null) {
+                        $firstcell = $value;
+                    } else {
+                        $this->row_column_of_table_should_contain($firstcell, $column, $table, $value);
+                    }
                 }
             }
         }
@@ -1491,18 +1498,25 @@ EOF;
         $datahash = $data->getHash();
 
         foreach ($datahash as $value) {
-            $row = array_shift($value);
-            foreach ($value as $column => $value) {
-                try {
-                    $this->row_column_of_table_should_contain($row, $column, $table, $value);
-                    // Throw exception if found.
-                } catch (ElementNotFoundException $e) {
-                    // Table row/column doesn't contain this value. Nothing to do.
-                    continue;
+
+            // Row contains only a single column, just assert it's not present in the table.
+            if (count($value) === 1) {
+                $this->execute('behat_general::assert_element_not_contains_text', [reset($value), $table, 'table']);
+            } else {
+                // Iterate over all columns.
+                $row = array_shift($value);
+                foreach ($value as $column => $value) {
+                    try {
+                        $this->row_column_of_table_should_contain($row, $column, $table, $value);
+                        // Throw exception if found.
+                    } catch (ElementNotFoundException $e) {
+                        // Table row/column doesn't contain this value. Nothing to do.
+                        continue;
+                    }
+                    throw new ExpectationException('"' . $column . '" with value "' . $value . '" is present in "' .
+                        $row . '"  row for table "' . $table . '"', $this->getSession()
+                    );
                 }
-                throw new ExpectationException('"' . $column . '" with value "' . $value . '" is present in "' .
-                    $row . '"  row for table "' . $table . '"', $this->getSession()
-                );
             }
         }
     }
