@@ -1,3 +1,6 @@
 [submodule "local/filemanager"]
 	path = local/filemanager
 	url = https://github.com/advancedsoftwarecanada/filemanager
+[submodule "local/systemstatusmonitor"]
+	path = local/systemstatusmonitor
+	url = https://github.com/advancedsoftwarecanada/SystemStatusMonitor
