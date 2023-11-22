@@ -107,6 +107,8 @@ class cm implements named_templatable, renderable {
      * @return stdClass data context for a mustache template
      */
     public function export_for_template(renderer_base $output): stdClass {
+        global $PAGE;
+
         $mod = $this->mod;
         $displayoptions = $this->displayoptions;
 
@@ -118,6 +120,7 @@ class cm implements named_templatable, renderable {
             'textclasses' => $displayoptions['textclasses'],
             'classlist' => [],
             'cmid' => $mod->id,
+            'editing' => $PAGE->user_is_editing(),
         ];
 
         // Add partial data segments.
