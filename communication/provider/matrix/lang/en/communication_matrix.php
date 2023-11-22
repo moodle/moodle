@@ -37,4 +37,4 @@ $string['privacy:metadata'] = 'The Matrix communication plugin does not store an
 
 // Deprecated since Moodle 4.4.
 $string['matrixrefreshtoken'] = 'Refresh token';
-$string['matrixrefreshtoken_desc'] = 'Admin refresh token to associated with the access token.';
+$string['matrixrefreshtoken_desc'] = 'Admin refresh token to be associated with the access token.';
