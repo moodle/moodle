@@ -27,36 +27,36 @@ Feature: Teacher can navigate to the previous or next user report.
 
   Scenario: A teacher can navigate to the next user report
     Given I click on "Student 1" in the "user" search widget
-    And I should see "Student 1" in the ".user-heading" "css_element"
+    And "Student 1" "heading" should exist
     And ".previous" "css_element" should not exist in the ".user-navigation" "css_element"
     And ".next" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 2" in the ".next" "css_element"
     When I click on "Student 2" "link" in the ".next" "css_element"
-    Then I should see "Student 2" in the ".user-heading" "css_element"
+    And "Student 2" "heading" should exist
     And ".previous" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 1" in the ".previous" "css_element"
     And ".next" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 3" in the ".next" "css_element"
     And I click on "Student 3" "link" in the ".next" "css_element"
-    And I should see "Student 3" in the ".user-heading" "css_element"
+    And "Student 3" "heading" should exist
     And ".previous" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 2" in the ".previous" "css_element"
     And ".next" "css_element" should not exist in the ".user-navigation" "css_element"
 
   Scenario: A teacher can navigate to the previous user report
     Given I click on "Student 3" in the "user" search widget
-    And I should see "Student 3" in the ".user-heading" "css_element"
+    And "Student 3" "heading" should exist
     And ".previous" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 2" in the ".previous" "css_element"
     And ".next" "css_element" should not exist in the ".user-navigation" "css_element"
     When I click on "Student 2" "link" in the ".previous" "css_element"
-    Then I should see "Student 2" in the ".user-heading" "css_element"
+    And "Student 2" "heading" should exist
     And ".previous" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 1" in the ".previous" "css_element"
     And ".next" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 3" in the ".next" "css_element"
     And I click on "Student 1" "link" in the ".previous" "css_element"
-    And I should see "Student 1" in the ".user-heading" "css_element"
+    And "Student 1" "heading" should exist
     And ".previous" "css_element" should not exist in the ".user-navigation" "css_element"
     And ".next" "css_element" should exist in the ".user-navigation" "css_element"
     And I should see "Student 2" in the ".next" "css_element"

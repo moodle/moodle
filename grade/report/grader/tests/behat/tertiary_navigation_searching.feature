@@ -79,14 +79,14 @@ Feature: Within the grader report, test that we can search for users
     Given I click on "Dummy" in the "user" search widget
     And the following should exist in the "user-grades" table:
       | -1-                |
-      | Turtle Manatee     |
+      | Dummy User         |
     And the following should not exist in the "user-grades" table:
       | -1-                |
       | Teacher 1          |
       | Student 1          |
       | User Example       |
       | User Test          |
-      | Dummy User         |
+      | Turtle Manatee     |
 
     # Case: No users found.
     When I set the field "Search users" to "Plagiarism"
@@ -94,14 +94,14 @@ Feature: Within the grader report, test that we can search for users
     # Table remains unchanged as the user had no results to select from the dropdown.
     And the following should exist in the "user-grades" table:
       | -1-                |
-      | Turtle Manatee     |
+      | Dummy User         |
     And the following should not exist in the "user-grades" table:
       | -1-                |
       | Teacher 1          |
       | Student 1          |
       | User Example       |
       | User Test          |
-      | Dummy User         |
+      | Turtle Manatee     |
 
     # Case: Multiple users found and select only one result.
     Then I set the field "Search users" to "User"
@@ -220,17 +220,18 @@ Feature: Within the grader report, test that we can search for users
     And I confirm "User Example" in "user" search within the gradebook widget exists
     And I confirm "User Test" in "user" search within the gradebook widget exists
     And I confirm "Student 1" in "user" search within the gradebook widget exists
+    And I press the down key
     And I press the enter key
-    And I wait until the page is ready
+    And I wait "1" seconds
     And the following should exist in the "user-grades" table:
       | -1-                |
       | Student 1          |
+    And the following should not exist in the "user-grades" table:
+      | -1-                |
       | User Example       |
       | User Test          |
       | Dummy User         |
       | Turtle Manatee     |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
       | Teacher 1          |
 
   @accessibility
@@ -396,7 +397,7 @@ Feature: Within the grader report, test that we can search for users
     And the following should exist in the "user-grades" table:
       | -1-                   |
       | Student test31        |
-    And the following should exist in the "user-grades" table:
+    And the following should not exist in the "user-grades" table:
       | -1-                   |
       | Student test32        |
     And I click on "Clear" "link" in the ".user-search" "css_element"
