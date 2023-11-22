@@ -18,6 +18,9 @@ namespace customfield_textarea;
 
 use core_customfield_generator;
 use core_customfield_test_instance_form;
+use context_user;
+use context_course;
+use context_system;
 
 /**
  * Functional test for customfield_textarea
@@ -191,5 +194,129 @@ class plugin_test extends \advanced_testcase {
      */
     public function test_delete() {
         $this->cfcat->get_handler()->delete_all();
+    }
+
+    /**
+     * Test embedded file backup and restore.
+     *
+     * @covers \customfield_textarea\data_controller::backup_define_structure
+     * @covers \customfield_textarea\data_controller::backup_restore_structure
+     */
+    public function test_embedded_file_backup_and_restore(): void {
+        global $CFG, $USER, $DB;
+        require_once($CFG->dirroot . '/customfield/tests/fixtures/test_instance_form.php');
+        $this->setAdminUser();
+        $handler = $this->cfcat->get_handler();
+
+        // Create a file.
+        $fs = get_file_storage();
+        $filerecord = [
+            'contextid' => context_user::instance($USER->id)->id,
+            'component' => 'user',
+            'filearea' => 'draft',
+            'itemid' => file_get_unused_draft_itemid(),
+            'filepath' => '/',
+            'filename' => 'mytextfile.txt',
+        ];
+        $fs->create_file_from_string($filerecord, 'Some text contents');
+
+        // Add the file to the custom field.
+        $submitdata = (array) $this->courses[1];
+        $submitdata['customfield_myfield1_editor'] = [
+            'text' => 'Here is a file: @@PLUGINFILE@@/mytextfile.txt',
+            'format' => FORMAT_HTML,
+            'itemid' => $filerecord['itemid'],
+        ];
+
+        // Set the required field and submit.
+        $submitdata['customfield_myfield2_editor'] = ['text' => 'Some text', 'format' => FORMAT_HTML];
+        core_customfield_test_instance_form::mock_submit($submitdata, []);
+        $form = new core_customfield_test_instance_form('POST',
+            ['handler' => $handler, 'instance' => $this->courses[1]]);
+        $this->assertTrue($form->is_validated());
+
+        $data = $form->get_data();
+        $this->assertNotEmpty($data->customfield_myfield1_editor);
+        $this->assertNotEmpty($data->customfield_myfield2_editor);
+        $handler->instance_form_save($data);
+
+        // Check if the draft file exists.
+        $context = context_course::instance($this->courses[1]->id);
+        $file = $fs->get_file($filerecord['contextid'], $filerecord['component'], $filerecord['filearea'], $filerecord['itemid'],
+            $filerecord['filepath'], $filerecord['filename']);
+        $this->assertNotEmpty($file);
+
+        // Check if the permanent file exists.
+        $file = $fs->get_file($context->id, 'customfield_textarea', 'value', $this->cfdata[1]->get('id'), '/', 'mytextfile.txt');
+        $this->assertNotEmpty($file);
+
+        // Backup and restore the course.
+        $backupid = $this->backup($this->courses[1]);
+        $newcourseid = $this->restore($backupid, $this->courses[1], '_copy');
+
+        $newcontext = context_course::instance($newcourseid);
+
+        $newcfdata = $DB->get_record('customfield_data', ['instanceid' => $newcourseid, 'fieldid' => $this->cfields[1]->get('id')]);
+
+        // Check if the permanent file exists in the new course after restore.
+        $file = $fs->get_file($newcontext->id, 'customfield_textarea', 'value', $newcfdata->id, '/', 'mytextfile.txt');
+        $this->assertNotEmpty($file);
+    }
+
+    /**
+     * Backs a course up to temp directory.
+     *
+     * @param \stdClass $course Course object to backup
+     * @return string ID of backup
+     */
+    protected function backup($course): string {
+        global $USER, $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+
+        // Turn off file logging, otherwise it can't delete the file (Windows).
+        $CFG->backup_file_logger_level = \backup::LOG_NONE;
+
+        // Do backup with default settings. MODE_IMPORT means it will just
+        // create the directory and not zip it.
+        $bc = new \backup_controller(\backup::TYPE_1COURSE, $course->id,
+            \backup::FORMAT_MOODLE, \backup::INTERACTIVE_NO, \backup::MODE_IMPORT,
+            $USER->id);
+        $bc->get_plan()->get_setting('users')->set_status(\backup_setting::NOT_LOCKED);
+        $bc->get_plan()->get_setting('users')->set_value(true);
+        $bc->get_plan()->get_setting('logs')->set_value(true);
+        $backupid = $bc->get_backupid();
+
+        $bc->execute_plan();
+        $bc->destroy();
+        return $backupid;
+    }
+
+    /**
+     * Restores a course from temp directory.
+     *
+     * @param string $backupid Backup id
+     * @param \stdClass $course Original course object
+     * @param string $suffix Suffix to add after original course shortname and fullname
+     * @return int New course id
+     * @throws \restore_controller_exception
+     */
+    protected function restore(string $backupid, $course, string $suffix): int {
+        global $USER, $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+
+        // Do restore to new course with default settings.
+        $newcourseid = \restore_dbops::create_new_course(
+            $course->fullname . $suffix, $course->shortname . $suffix, $course->category);
+        $rc = new \restore_controller($backupid, $newcourseid,
+            \backup::INTERACTIVE_NO, \backup::MODE_GENERAL, $USER->id,
+            \backup::TARGET_NEW_COURSE);
+        $rc->get_plan()->get_setting('logs')->set_value(true);
+        $rc->get_plan()->get_setting('users')->set_value(true);
+
+        $this->assertTrue($rc->execute_precheck());
+        $rc->execute_plan();
+        $rc->destroy();
+
+        return $newcourseid;
     }
 }

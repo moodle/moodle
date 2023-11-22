@@ -559,6 +559,7 @@ class backup_course_structure_step extends backup_structure_step {
 
         $handler = core_course\customfield\course_handler::create();
         $fieldsforbackup = $handler->get_instance_data_for_backup($this->task->get_courseid());
+        $handler->backup_define_structure($this->task->get_courseid(), $customfield);
         $customfield->set_source_array($fieldsforbackup);
 
         // Some annotations
