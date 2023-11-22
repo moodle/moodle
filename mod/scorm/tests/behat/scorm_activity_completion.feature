@@ -42,6 +42,15 @@ Feature: View activity completion in the SCORM activity
     And "Music history" should have the "Complete or pass the activity" completion condition
 
   @javascript
+  Scenario: Any grade and Passing grade options are hidden
+    Given I am on the "Music history" "scorm activity" page logged in as teacher1
+    When I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    And the field "completionusegrade" matches value "1"
+    Then I should not see "Any grade"
+    And I should not see "Passing grade"
+
+  @javascript
   Scenario: View automatic completion items as a student
     Given I am on the "Music history" "scorm activity" page logged in as student1
     # We need a little taller window because Firefox is, apparently, unable to auto-scroll within
