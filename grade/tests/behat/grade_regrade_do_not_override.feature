@@ -63,6 +63,7 @@ Feature: Regrading grades does not unnecessarily mark some as overriden
     And I set the field "Grade out of 100" to "70"
     And I press "Save changes"
     When I am on the "Course 1" "grades > Grader report > View" page
+    And I turn editing mode off
     Then the following should exist in the "gradereport-grader-table" table:
       |                      |              |              |
       | First name / Last name | Assignment 1 | Course total |
