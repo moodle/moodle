@@ -32,19 +32,10 @@ Feature: Within the User report, a teacher can search for users.
     And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
 
   Scenario: A teacher can view and trigger the user search
-    # Check the placeholder text
+    # Check the placeholder text (no users are initially shown).
     Given I should see "Search users"
     # Confirm the search is currently inactive and results are unfiltered.
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
+    And I should see "Search for a user to view their report"
     When I set the field "Search users" to "Turtle"
     And "View all results (5)" "option_role" should exist
     And I confirm "Turtle Manatee" in "user" search within the gradebook widget exists
@@ -52,16 +43,12 @@ Feature: Within the User report, a teacher can search for users.
     And I click on "Turtle Manatee" "list_item"
     # Business case: This will trigger a page reload and can not dynamically update the table.
     And I wait until the page is ready
-    Then the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
+    And "Turtle Manatee" "heading" should exist
+    And "Teacher 1" "heading" should not exist
+    And "Student 1" "heading" should not exist
+    And "User Example" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Dummy User" "heading" should not exist
     And I set the field "Search users" to "Turt"
     And "View all results (5)" "option_role" should exist
     And I click on "Clear search input" "button" in the ".user-search" "css_element"
@@ -70,32 +57,23 @@ Feature: Within the User report, a teacher can search for users.
   Scenario: A teacher can search the user report to find specified users
     # Case: Standard search.
     Given I click on "Dummy" in the "user" search widget
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
+    And "Dummy User" "heading" should exist
+    And "Teacher 1" "heading" should not exist
+    And "Student 1" "heading" should not exist
+    And "User Example" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Turtle Manatee" "heading" should not exist
 
     # Case: No users found.
     When I set the field "Search users" to "Plagiarism"
     And I should see "No results for \"Plagiarism\""
     # Table remains unchanged as the user had no results to select from the dropdown.
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
-
+    And "Dummy User" "heading" should exist
+    And "Teacher 1" "heading" should not exist
+    And "Student 1" "heading" should not exist
+    And "User Example" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Turtle Manatee" "heading" should not exist
     # Case: Multiple users found and select only one result.
     Then I set the field "Search users" to "User"
     And "View all results (5)" "option_role" should exist
@@ -109,16 +87,12 @@ Feature: Within the User report, a teacher can search for users.
     And I confirm "User (student4@example.com)" in "user" search within the gradebook widget exists
     And I click on "Dummy User" "list_item"
     And I wait until the page is ready
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Dummy User         |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Turtle Manatee     |
+    And "Dummy User" "heading" should exist
+    And "Teacher 1" "heading" should not exist
+    And "Student 1" "heading" should not exist
+    And "User Example" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Turtle Manatee" "heading" should not exist
 
     # Business case: When searching with multiple partial matches, show the matches in the dropdown + a "View all results for (Bob)"
     # Business case cont. When pressing enter with multiple partial matches, behave like when you select the "View all results for (Bob)"
@@ -127,25 +101,20 @@ Feature: Within the User report, a teacher can search for users.
     And "View all results (5)" "option_role" should exist
     And I click on "View all results (5)" "option_role"
     And I wait until the page is ready
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Dummy User         |
-      | User Example       |
-      | User Test          |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | Turtle Manatee     |
+    And "Dummy User" "heading" should exist
+    And "User Example" "heading" should exist
+    And "User Test" "heading" should exist
+    And "Student 1" "heading" should exist
+    And "Turtle Manatee" "heading" should exist
+    And "Teacher 1" "heading" should not exist
     And I click on "Clear" "link" in the ".user-search" "css_element"
     And I wait until the page is ready
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
+    And "Dummy User" "heading" should exist
+    And "User Example" "heading" should exist
+    And "User Test" "heading" should exist
+    And "Student 1" "heading" should exist
+    And "Turtle Manatee" "heading" should exist
+    And "Teacher 1" "heading" should not exist
 
     # Case: No users enrolled.
     And I am on the "Course 2" "grades > User report > View" page
@@ -220,16 +189,12 @@ Feature: Within the User report, a teacher can search for users.
     And I confirm "Student 1" in "user" search within the gradebook widget exists
     And I press the enter key
     And I wait until the page is ready
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
-      | Turtle Manatee     |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
+    And "Student 1" "heading" should exist
+    And "User Example" "heading" should exist
+    And "User Test" "heading" should exist
+    And "Dummy User" "heading" should exist
+    And "Turtle Manatee" "heading" should exist
+    And "Teacher 1" "heading" should not exist
 
   @accessibility
   Scenario: A teacher can set focus and search using the input are with a keyboard
@@ -274,18 +239,15 @@ Feature: Within the User report, a teacher can search for users.
     # Ensure we can interact with the input & clear search options with the keyboard.
     # Space & Enter have the same handling for triggering the two functionalities.
     And I set the field "Search users" to "User"
+    And I press the down key
     And I press the enter key
     And I wait to be redirected
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Dummy User         |
-      | User Example       |
-      | User Test          |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | Turtle Manatee     |
+    And "User Example" "heading" should exist
+    And "Dummy User" "heading" should not exist
+    And "Student 1" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Teacher 1" "heading" should not exist
+    And "Turtle Manatee" "heading" should not exist
     # Sometimes with behat we get unattached nodes causing spurious failures.
     And I wait "1" seconds
     And I set the field "Search users" to "ABC"
