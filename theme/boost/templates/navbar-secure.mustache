@@ -29,22 +29,24 @@
     }
 }}
 <nav class="navbar fixed-top navbar-light bg-white navbar-expand" aria-label="{{#str}}sitemenubar, admin{{/str}}">
-    <div class="navbar-brand d-flex align-items-center m-0 p-0 aabtn">
-        {{# output.should_display_navbar_logo }}
-            <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
-        {{/ output.should_display_navbar_logo }}
-        {{{ sitename }}}
-    </div>
+    <div class="container-fluid">
+        <div class="navbar-brand d-flex align-items-center m-0 p-0 aabtn">
+            {{# output.should_display_navbar_logo }}
+                <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
+            {{/ output.should_display_navbar_logo }}
+            {{{ sitename }}}
+        </div>
 
-    {{# output.secure_layout_language_menu }}
-    <ul class="nav navbar-nav language-menu my-1">
-        {{{ . }}}
-    </ul>
-    {{/ output.secure_layout_language_menu }}
+        {{# output.secure_layout_language_menu }}
+        <ul class="nav navbar-nav language-menu my-1">
+            {{{ . }}}
+        </ul>
+        {{/ output.secure_layout_language_menu }}
 
-    {{# output.secure_layout_login_info }}
-    <div class="ml-auto nav-link">
-        {{{ . }}}
+        {{# output.secure_layout_login_info }}
+        <div class="ml-auto nav-link">
+            {{{ . }}}
+        </div>
+        {{/ output.secure_layout_login_info }}
     </div>
-    {{/ output.secure_layout_login_info }}
 </nav>

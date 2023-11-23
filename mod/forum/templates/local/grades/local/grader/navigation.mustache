@@ -35,76 +35,78 @@
     }
 }}
 <nav id="nav-container-{{uniqid}}" class="grader-grading_navigation navbar px-0 px-sm-3" aria-label="{{#str}} forumgradingnavigation, mod_forum {{/str}}">
-    <div class="d-none d-sm-flex align-items-center">
-        <a href="{{{courseUrl}}}" class="btn btn-link px-2 colour-inherit">
-            <h5 class="d-inline px-0 mb-0">{{courseName}}</h5>
-        </a>
-        <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
-        <button class="btn btn-link px-2 colour-inherit" data-action="closegrader">
-            <h5 class="d-inline px-0 mb-0">{{moduleName}}</h5>
-        </button>
-        <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
-        <h5 class="d-inline px-2 mb-0 font-weight-bold">{{#str}}grading, forum{{/str}}</h5>
-    </div>
-
-    <div class="ml-1 ml-sm-auto">
-        <button
-            class="btn btn-icon icon-no-margin drawer-button mr-1 active"
-            data-action="expand-grading-drawer"
-            aria-controls="grading-drawer-{{uniqid}}"
-            aria-expanded="true"
-            type="button"
-            title="{{#str}} showgraderpanel, mod_forum {{/str}}"
-        >
-            <span class="dir-ltr-hide" aria-hidden="true">{{#pix}} show-grader-panel-rtl, mod_forum, {{#str}} showgraderpanel, mod_forum {{/str}} {{/pix}}</span>
-            <span class="dir-rtl-hide" aria-hidden="true">{{#pix}} show-grader-panel, mod_forum, {{#str}} showgraderpanel, mod_forum {{/str}} {{/pix}}</span>
-        </button>
-        <button
-            class="btn btn-icon icon-no-margin drawer-button mr-1 d-none d-sm-inline-block"
-            aria-label="{{#str}} hidegraderpanel, mod_forum {{/str}}"
-            data-action="collapse-grading-drawer"
-            aria-controls="grading-drawer-{{uniqid}}"
-            aria-expanded="true"
-            type="button"
-            title="{{#str}} hidegraderpanel, mod_forum {{/str}}"
-        >
-            <span aria-hidden="true">{{#pix}} hide-grader-panel, mod_forum, {{#str}} hidegraderpanel, mod_forum {{/str}} {{/pix}}</span>
-        </button>
-        <button
-            class="btn btn-primary font-weight-bold ml-sm-2 px-4"
-            data-action="savegrade"
-        >
-            {{#str}} save {{/str}}
-        </button>
-        <button
-            class="btn btn-secondary font-weight-bold ml-1 ml-sm-2 px-4"
-            aria-label="{{#str}} closegrader, mod_forum {{/str}}"
-            data-action="closegrader"
-            type="button"
-        >
-            {{#str}} close, mod_forum {{/str}}
-        </button>
-        <div class="btn-group d-none d-sm-inline-block">
-            <button
-                class="btn btn-icon text-muted icon-no-margin icon-size-3 ml-2"
-                type="button"
-                id="grader-actions-menu-{{uniqid}}"
-                data-toggle="dropdown"
-                aria-haspopup="true"
-                aria-expanded="false"
-                aria-label="{{#str}} actionsforgraderinterface, mod_forum {{/str}}"
-            >
-                {{#pix}} i/menu, core {{/pix}}
+    <div class="container-fluid p-0">
+        <div class="d-none d-sm-flex align-items-center">
+            <a href="{{{courseUrl}}}" class="btn btn-link px-2 colour-inherit">
+                <h5 class="d-inline px-0 mb-0">{{courseName}}</h5>
+            </a>
+            <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
+            <button class="btn btn-link px-2 colour-inherit" data-action="closegrader">
+                <h5 class="d-inline px-0 mb-0">{{moduleName}}</h5>
             </button>
-            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="grader-actions-menu-{{uniqid}}">
+            <span class="text-muted icon-no-margin">{{#pix}} i/breadcrumbdivider, core {{/pix}}</span>
+            <h5 class="d-inline px-2 mb-0 font-weight-bold">{{#str}}grading, forum{{/str}}</h5>
+        </div>
+
+        <div class="ml-1 ml-sm-auto">
+            <button
+                class="btn btn-icon icon-no-margin drawer-button mr-1 active"
+                data-action="expand-grading-drawer"
+                aria-controls="grading-drawer-{{uniqid}}"
+                aria-expanded="true"
+                type="button"
+                title="{{#str}} showgraderpanel, mod_forum {{/str}}"
+            >
+                <span class="dir-ltr-hide" aria-hidden="true">{{#pix}} show-grader-panel-rtl, mod_forum, {{#str}} showgraderpanel, mod_forum {{/str}} {{/pix}}</span>
+                <span class="dir-rtl-hide" aria-hidden="true">{{#pix}} show-grader-panel, mod_forum, {{#str}} showgraderpanel, mod_forum {{/str}} {{/pix}}</span>
+            </button>
+            <button
+                class="btn btn-icon icon-no-margin drawer-button mr-1 d-none d-sm-inline-block"
+                aria-label="{{#str}} hidegraderpanel, mod_forum {{/str}}"
+                data-action="collapse-grading-drawer"
+                aria-controls="grading-drawer-{{uniqid}}"
+                aria-expanded="true"
+                type="button"
+                title="{{#str}} hidegraderpanel, mod_forum {{/str}}"
+            >
+                <span aria-hidden="true">{{#pix}} hide-grader-panel, mod_forum, {{#str}} hidegraderpanel, mod_forum {{/str}} {{/pix}}</span>
+            </button>
+            <button
+                class="btn btn-primary font-weight-bold ml-sm-2 px-4"
+                data-action="savegrade"
+            >
+                {{#str}} save {{/str}}
+            </button>
+            <button
+                class="btn btn-secondary font-weight-bold ml-1 ml-sm-2 px-4"
+                aria-label="{{#str}} closegrader, mod_forum {{/str}}"
+                data-action="closegrader"
+                type="button"
+            >
+                {{#str}} close, mod_forum {{/str}}
+            </button>
+            <div class="btn-group d-none d-sm-inline-block">
                 <button
-                    class="dropdown-item"
+                    class="btn btn-icon text-muted icon-no-margin icon-size-3 ml-2"
                     type="button"
-                    data-action="togglefullscreen"
-                    type="button"
+                    id="grader-actions-menu-{{uniqid}}"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                    aria-label="{{#str}} actionsforgraderinterface, mod_forum {{/str}}"
                 >
-                    {{#str}} togglefullscreen, mod_forum {{/str}}
+                    {{#pix}} i/menu, core {{/pix}}
                 </button>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="grader-actions-menu-{{uniqid}}">
+                    <button
+                        class="dropdown-item"
+                        type="button"
+                        data-action="togglefullscreen"
+                        type="button"
+                    >
+                        {{#str}} togglefullscreen, mod_forum {{/str}}
+                    </button>
+                </div>
             </div>
         </div>
     </div>
