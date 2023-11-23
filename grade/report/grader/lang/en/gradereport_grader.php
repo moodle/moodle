@@ -25,6 +25,7 @@
 
 $string['clearsearch'] = 'Clear searched users';
 $string['collapsedcolumns'] = 'Collapsed columns <span class="badge badge-pill badge-primary ml-1" data-collapse="count">{$a}</span>';
+$string['editingmode_title'] = 'Editing the grader report';
 $string['eventgradereportviewed'] = 'Grader report viewed';
 $string['grader:manage'] = 'Manage the grader report';
 $string['grader:view'] = 'View grader report';
