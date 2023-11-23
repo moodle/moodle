@@ -33,6 +33,7 @@ if (!defined('MAX_MODINFO_CACHE_SIZE')) {
 }
 
 use core_courseformat\output\activitybadge;
+use core_courseformat\sectiondelegate;
 
 /**
  * Information about a course that is cached in the course table 'modinfo' field (and then in
@@ -618,7 +619,7 @@ class course_modinfo {
             'course_sections',
             ['course' => $course->id],
             'section',
-            'id, section, course, name, summary, summaryformat, sequence, visible, availability'
+            'id, section, course, name, summary, summaryformat, sequence, visible, availability, component, itemid'
         );
         $compressedsections = [];
         $courseformat = course_get_format($course);
@@ -2994,8 +2995,9 @@ class cached_cm_info {
  * @property-read int $visible Section visibility (1 = visible) - from course_sections table
  * @property-read string $summary Section summary text if specified - from course_sections table
  * @property-read int $summaryformat Section summary text format (FORMAT_xx constant) - from course_sections table
- * @property-read string $availability Availability information as JSON string -
- *    from course_sections table
+ * @property-read string $availability Availability information as JSON string - from course_sections table
+ * @property-read string|null $component Optional section delegate component - from course_sections table
+ * @property-read int|null $itemid Optional section delegate item id - from course_sections table
  * @property-read array $conditionscompletion Availability conditions for this section based on the completion of
  *    course-modules (array from course-module id to required completion state
  *    for that module) - from cached data in sectioncache field
@@ -3059,6 +3061,21 @@ class section_info implements IteratorAggregate {
     private $_availability;
 
     /**
+     * @var string|null the delegated component if any.
+     */
+    private ?string $_component = null;
+
+    /**
+     * @var int|null the delegated instance item id if any.
+     */
+    private ?int $_itemid = null;
+
+    /**
+     * @var sectiondelegate|null Section delegate instance if any.
+     */
+    private ?sectiondelegate $_delegateinstance = null;
+
+    /**
      * Availability conditions for this section based on the completion of
      * course-modules (array from course-module id to required completion state
      * for that module) - from cached data in sectioncache field
@@ -3116,7 +3133,9 @@ class section_info implements IteratorAggregate {
         'summary' => '',
         'summaryformat' => '1', // FORMAT_HTML, but must be a string
         'visible' => '1',
-        'availability' => null
+        'availability' => null,
+        'component' => null,
+        'itemid' => null,
     );
 
     /**
@@ -3413,6 +3432,20 @@ class section_info implements IteratorAggregate {
      */
     private function get_section_number(): int {
         return $this->sectionnum;
+    }
+
+    /**
+     * Get the delegate component instance.
+     */
+    public function get_component_instance(): ?sectiondelegate {
+        if (empty($this->_component)) {
+            return null;
+        }
+        if ($this->_delegateinstance !== null) {
+            return $this->_delegateinstance;
+        }
+        $this->_delegateinstance = sectiondelegate::instance($this);
+        return $this->_delegateinstance;
     }
 
     /**

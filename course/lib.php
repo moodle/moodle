@@ -561,6 +561,8 @@ function course_create_section($courseorid, $position = 0, $skipcheck = false) {
     $cw->name = null;
     $cw->visible = 1;
     $cw->availability = null;
+    $cw->component = null;
+    $cw->itemid = null;
     $cw->timemodified = time();
     $cw->id = $DB->insert_record("course_sections", $cw);
 

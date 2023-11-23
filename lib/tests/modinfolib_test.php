@@ -36,6 +36,15 @@ use Exception;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class modinfolib_test extends advanced_testcase {
+    /**
+     * Setup to ensure that fixtures are loaded.
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
+        require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
+    }
+
     public function test_section_info_properties() {
         global $DB, $CFG;
 
@@ -1357,5 +1366,37 @@ class modinfolib_test extends advanced_testcase {
 
         // Obviously, modinfo should include the Page now.
         $this->assertCount(1, $modinfo->get_instances_of('page'));
+    }
+
+    /**
+     * Test for get_component_instance.
+     * @covers \section_info::get_component_instance
+     */
+    public function test_get_component_instance(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 2]);
+
+        course_update_section(
+            $course,
+            $DB->get_record('course_sections', ['course' => $course->id, 'section' => 2]),
+            [
+                'component' => 'test_component',
+                'itemid' => 1,
+            ]
+        );
+
+        $modinfo = get_fast_modinfo($course->id);
+        $sectioninfos = $modinfo->get_section_info_all();
+
+        $this->assertNull($sectioninfos[1]->get_component_instance());
+        $this->assertNull($sectioninfos[1]->component);
+        $this->assertNull($sectioninfos[1]->itemid);
+
+        $this->assertInstanceOf('\core_courseformat\sectiondelegate', $sectioninfos[2]->get_component_instance());
+        $this->assertInstanceOf('\test_component\courseformat\sectiondelegate', $sectioninfos[2]->get_component_instance());
+        $this->assertEquals('test_component', $sectioninfos[2]->component);
+        $this->assertEquals(1, $sectioninfos[2]->itemid);
     }
 }
