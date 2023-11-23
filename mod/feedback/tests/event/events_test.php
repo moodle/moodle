@@ -212,7 +212,7 @@ class events_test extends \advanced_testcase {
 
         // Save the feedback.
         $sink = $this->redirectEvents();
-        $id = feedback_save_tmp_values($completed, false);
+        $id = feedback_save_tmp_values($completed);
         $events = $sink->get_events();
         $event = array_pop($events); // Response submitted feedback event.
         $sink->close();
@@ -248,7 +248,7 @@ class events_test extends \advanced_testcase {
 
         // Save the feedback.
         $sink = $this->redirectEvents();
-        feedback_save_tmp_values($completed, false);
+        feedback_save_tmp_values($completed);
         $events = $sink->get_events();
         $event = array_pop($events); // Response submitted feedback event.
         $sink->close();

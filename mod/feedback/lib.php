@@ -1878,10 +1878,10 @@ function feedback_set_tmp_values($feedbackcompleted) {
  *
  * @global object
  * @param object $feedbackcompletedtmp the temporary completed
- * @param object $feedbackcompleted the target completed
+ * @param stdClass|null $feedbackcompleted the target completed
  * @return int the id of the completed
  */
-function feedback_save_tmp_values($feedbackcompletedtmp, $feedbackcompleted) {
+function feedback_save_tmp_values($feedbackcompletedtmp, ?stdClass $feedbackcompleted = null) {
     global $DB;
 
     $tmpcplid = $feedbackcompletedtmp->id;

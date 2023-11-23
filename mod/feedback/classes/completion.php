@@ -553,6 +553,8 @@ class mod_feedback_completion extends mod_feedback_structure {
         global $SESSION, $DB, $USER;
 
         $feedbackcompleted = $this->find_last_completed();
+        // If no record is found, change false to null for safe use in feedback_save_tmp_values.
+        $feedbackcompleted = !$feedbackcompleted ? null : $feedbackcompleted;
         $feedbackcompletedtmp = $this->get_current_completed_tmp();
 
         if (feedback_check_is_switchrole()) {
