@@ -137,10 +137,10 @@ Feature: View the grading status of an assignment
       | Online text | I'm the student's second submission |
     And I press "Save changes"
     And I log out
-    # Teacher marks the submission again after noticing the 'Graded - follow-up submission received'.
+    # Teacher marks the submission again after noticing the 'Graded - resubmitted'.
     And I am on the "Test assignment name" "assign activity" page logged in as teacher1
     And I follow "View all submissions"
-    And I should see "Graded - follow-up submission received" in the "Student 1" "table_row"
+    And I should see "Graded - resubmitted" in the "Student 1" "table_row"
     And I wait "10" seconds
     And I click on "Grade" "link" in the "Student 1" "table_row"
     And I should see "1 of 1"
