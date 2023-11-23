@@ -81,6 +81,7 @@ $string['courseidnumberewithlink'] = 'Course ID number with link';
 $string['courseshortnamewithlink'] = 'Course short name with link';
 $string['courseselect'] = 'Select course';
 $string['customfieldcolumn'] = '{$a}';
+$string['customreport'] = 'Custom report';
 $string['customreports'] = 'Custom reports';
 $string['customreportslimit'] = 'Custom reports limit';
 $string['customreportslimit_desc'] = 'The number of custom reports may be limited for performance reasons. If set to zero, then there is no limit.';

@@ -54,20 +54,28 @@ class retrieve_test extends externallib_advanced_testcase {
         // Two reports, created one second apart to ensure consistent ordering by time created.
         $generator->create_report(['name' => 'My first report', 'source' => users::class]);
         $this->waitForSecond();
-        $generator->create_report(['name' => 'My second report', 'source' => users::class]);
+        $generator->create_report(['name' => 'My second report', 'source' => users::class, 'tags' => ['cat', 'dog']]);
 
         // Retrieve paged results.
         $result = retrieve::execute(reports_list::class, ['contextid' => system::instance()->id], '', '', 0, [], 0, 1);
         $result = external_api::clean_returnvalue(retrieve::execute_returns(), $result);
 
         $this->assertArrayHasKey('data', $result);
-        $this->assertEquals(['Name', 'Report source', 'Time created', 'Time modified', 'Modified by'], $result['data']['headers']);
+        $this->assertEquals([
+            'Name',
+            'Report source',
+            'Tags',
+            'Time created',
+            'Time modified',
+            'Modified by',
+        ], $result['data']['headers']);
 
         $this->assertCount(1, $result['data']['rows']);
-        [$name, $source, $timecreated, $timemodified, $modifiedby] = $result['data']['rows'][0]['columns'];
+        [$name, $source, $tags, $timecreated, $timemodified, $modifiedby] = $result['data']['rows'][0]['columns'];
 
         $this->assertStringContainsString('My second report', $name);
         $this->assertEquals(users::get_name(), $source);
+        $this->assertEquals('cat, dog', $tags);
         $this->assertNotEmpty($timecreated);
         $this->assertNotEmpty($timemodified);
         $this->assertEquals('Admin User', $modifiedby);

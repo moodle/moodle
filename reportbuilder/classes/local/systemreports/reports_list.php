@@ -28,6 +28,7 @@ use core_reportbuilder\manager;
 use core_reportbuilder\system_report;
 use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\date;
+use core_reportbuilder\local\filters\tags;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\helpers\audience;
@@ -38,6 +39,7 @@ use core_reportbuilder\local\report\filter;
 use core_reportbuilder\output\report_name_editable;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\permission;
+use core_tag_tag;
 
 /**
  * Reports list
@@ -113,6 +115,8 @@ class reports_list extends system_report {
      * Add columns to report
      */
     protected function add_columns(): void {
+        global $DB;
+
         $tablealias = $this->get_main_table_alias();
 
         // Report name column.
@@ -155,6 +159,37 @@ class reports_list extends system_report {
                 }
 
                 return call_user_func([$value, 'get_name']);
+            })
+        );
+
+        // Tags column. TODO: Reuse tag entity column when MDL-76392 is integrated.
+        $tagfieldconcatsql = $DB->sql_group_concat(
+            field: $DB->sql_concat_join("'|'", ['t.name', 't.rawname']),
+            sort: 't.name',
+        );
+        $this->add_column((new column(
+            'tags',
+            new lang_string('tags'),
+            $this->get_report_entity_name(),
+        ))
+            ->set_type(column::TYPE_TEXT)
+            ->add_field("(
+                SELECT {$tagfieldconcatsql}
+                  FROM {tag_instance} ti
+                  JOIN {tag} t ON t.id = ti.tagid
+                 WHERE ti.component = 'core_reportbuilder' AND ti.itemtype = 'reportbuilder_report'
+                   AND ti.itemid = {$tablealias}.id
+            )", 'tags')
+            ->set_is_sortable(true)
+            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report'))
+            ->add_callback(static function(?string $tags): string {
+                return implode(', ', array_map(static function(string $tag): string {
+                    [$name, $rawname] = explode('|', $tag);
+                    return core_tag_tag::make_display_name((object) [
+                        'name' => $name,
+                        'rawname' => $rawname,
+                    ]);
+                }, preg_split('/, /', (string) $tags, -1, PREG_SPLIT_NO_EMPTY)));
             })
         );
 
@@ -216,6 +251,21 @@ class reports_list extends system_report {
             ->set_options_callback(static function(): array {
                 return manager::get_report_datasources();
             })
+        );
+
+        // Tags filter.
+        $this->add_filter((new filter(
+            tags::class,
+            'tags',
+            new lang_string('tags'),
+            $this->get_report_entity_name(),
+            "{$tablealias}.id",
+        ))
+            ->set_options([
+                'component' => 'core_reportbuilder',
+                'itemtype' => 'reportbuilder_report',
+            ])
+            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report'))
         );
 
         // Time created filter.

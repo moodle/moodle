@@ -92,8 +92,12 @@ Feature: Manage custom reports
     And I set the following fields in the "New report" "dialogue" to these values:
       | Name          | Manager report |
       | Report source | Users          |
+      | Tags          | Cat, Dog       |
     And I click on "Save" "button" in the "New report" "dialogue"
     And I click on "Close 'Manager report' editor" "button"
+    And the following should exist in the "Reports list" table:
+      | Name           | Tags     | Report source |
+      | Manager report | Cat, Dog | Users         |
     # Manager can edit their own report, but not those of other users.
     And I set the field "Edit report name" in the "Manager report" "table_row" to "Manager report (renamed)"
     Then the "Edit report content" item should exist in the "Actions" action menu of the "Manager report (renamed)" "table_row"
@@ -140,16 +144,18 @@ Feature: Manage custom reports
     When I press "Edit report details" action in the "My report" report row
     And I set the following fields in the "Edit report details" "dialogue" to these values:
       | Name | My renamed report |
+      | Tags | Cat, Dog          |
     And I click on "Save" "button" in the "Edit report details" "dialogue"
     Then I should see "Report updated"
     And the following should exist in the "Reports list" table:
-      | Name              | Report source |
-      | My renamed report | Users         |
+      | Name              | Tags     | Report source |
+      | My renamed report | Cat, Dog | Users         |
 
   Scenario Outline: Filter custom reports
     Given the following "core_reportbuilder > Reports" exist:
-      | name       | source                                   |
-      | My users   | core_user\reportbuilder\datasource\users |
+      | name       | source                                       | tags     |
+      | My users   | core_user\reportbuilder\datasource\users     | Cat, Dog |
+      | My courses | core_course\reportbuilder\datasource\courses |          |
     And I log in as "admin"
     When I navigate to "Reports > Report builder > Custom reports" in site administration
     And I click on "Filters" "button"
@@ -158,11 +164,30 @@ Feature: Manage custom reports
       | <filter> value    | <value>     |
     And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
     Then I should see "Filters applied"
-    And I should see "My users" in the "Reports list" "table"
+    And the following should exist in the "Reports list" table:
+      | Name     | Tags     | Report source |
+      | My users | Cat, Dog | Users         |
+    And I should not see "My courses" in the "Reports list" "table"
     Examples:
       | filter        | value    |
       | Name          | My users |
       | Report source | Users    |
+      | Tags          | Cat      |
+
+  Scenario: Custom report tags are not displayed if tagging is disabled
+    Given the following config values are set as admin:
+      | usetags | 0 |
+    And the following "core_reportbuilder > Reports" exist:
+      | name      | source                                   |
+      | My report | core_user\reportbuilder\datasource\users |
+    And I log in as "admin"
+    When I navigate to "Reports > Report builder > Custom reports" in site administration
+    Then the following should exist in the "Reports list" table:
+      | Name      | Report source |
+      | My report | Users         |
+    And "Tags" "link" should not exist in the "Reports list" "table"
+    And I click on "Filters" "button"
+    And "Tags" "core_reportbuilder > Filter" should not exist
 
   Scenario: Delete custom report
     Given the following "core_reportbuilder > Reports" exist:

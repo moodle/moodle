@@ -50,20 +50,28 @@ class system_report_data_exporter_test extends advanced_testcase {
         // Two reports, created one second apart to ensure consistent ordering by time created.
         $generator->create_report(['name' => 'My first report', 'source' => users::class]);
         $this->waitForSecond();
-        $generator->create_report(['name' => 'My second report', 'source' => users::class]);
+        $generator->create_report(['name' => 'My second report', 'source' => users::class, 'tags' => ['cat', 'dog']]);
 
         $reportinstance = system_report_factory::create(reports_list::class, system::instance());
 
         $exporter = new system_report_data_exporter(null, ['report' => $reportinstance, 'page' => 0, 'perpage' => 1]);
         $export = $exporter->export($PAGE->get_renderer('core_reportbuilder'));
 
-        $this->assertEquals(['Name', 'Report source', 'Time created', 'Time modified', 'Modified by'], $export->headers);
+        $this->assertEquals([
+            'Name',
+            'Report source',
+            'Tags',
+            'Time created',
+            'Time modified',
+            'Modified by',
+        ], $export->headers);
 
         $this->assertCount(1, $export->rows);
-        [$name, $source, $timecreated, $timemodified, $modifiedby] = $export->rows[0]['columns'];
+        [$name, $source, $tags, $timecreated, $timemodified, $modifiedby] = $export->rows[0]['columns'];
 
         $this->assertStringContainsString('My second report', $name);
         $this->assertEquals(users::get_name(), $source);
+        $this->assertEquals('cat, dog', $tags);
         $this->assertNotEmpty($timecreated);
         $this->assertNotEmpty($timemodified);
         $this->assertEquals('Admin User', $modifiedby);
