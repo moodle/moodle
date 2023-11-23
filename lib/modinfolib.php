@@ -581,12 +581,13 @@ class course_modinfo {
         // Expand section objects
         $this->sectioninfobynum = [];
         $this->sectioninfobyid = [];
-        foreach ($coursemodinfo->sectioncache as $number => $data) {
-            $sectioninfo = new section_info($data, $number, null, null,
+        foreach ($coursemodinfo->sectioncache as $data) {
+            $sectioninfo = new section_info($data, $data->section, null, null,
                 $this, null);
-            $this->sectioninfobynum[$number] = $sectioninfo;
-            $this->sectioninfobyid[$data->id] = $this->sectioninfobynum[$number];
+            $this->sectioninfobynum[$data->section] = $sectioninfo;
+            $this->sectioninfobyid[$data->id] = $sectioninfo;
         }
+        ksort($this->sectioninfobynum);
     }
 
     /**
@@ -605,21 +606,25 @@ class course_modinfo {
      * the course cache. (Does not include information that is already cached
      * in some other way.)
      *
-     * @param stdClass $course Course object (must contain fields
+     * @param stdClass $course Course object (must contain fields id and cacherev)
      * @param boolean $usecache use cached section info if exists, use true for partial course rebuild
-     * @return array Information about sections, indexed by section number (not id)
+     * @return array Information about sections, indexed by section id (not number)
      */
     protected static function build_course_section_cache(\stdClass $course, bool $usecache = false): array {
         global $DB;
 
-        // Get section data
-        $sections = $DB->get_records('course_sections', array('course' => $course->id), 'section',
-                'section, id, course, name, summary, summaryformat, sequence, visible, availability');
+        // Get section data.
+        $sections = $DB->get_records(
+            'course_sections',
+            ['course' => $course->id],
+            'section',
+            'id, section, course, name, summary, summaryformat, sequence, visible, availability'
+        );
         $compressedsections = [];
         $courseformat = course_get_format($course);
 
         if ($usecache) {
-            $cachecoursemodinfo = \cache::make('core', 'coursemodinfo');
+            $cachecoursemodinfo = cache::make('core', 'coursemodinfo');
             $coursemodinfo = $cachecoursemodinfo->get_versioned($course->id, $course->cacherev);
             if ($coursemodinfo !== false) {
                 $compressedsections = $coursemodinfo->sectioncache;
@@ -627,13 +632,14 @@ class course_modinfo {
         }
 
         $formatoptionsdef = course_get_format($course)->section_format_options();
-        // Remove unnecessary data and add availability
-        foreach ($sections as $number => $section) {
-            $sectioninfocached = isset($compressedsections[$number]);
+        // Remove unnecessary data and add availability.
+        foreach ($sections as $section) {
+            $sectionid = $section->id;
+            $sectioninfocached = isset($compressedsections[$sectionid]);
             if ($sectioninfocached) {
                 continue;
             }
-            // Add cached options from course format to $section object
+            // Add cached options from course format to $section object.
             foreach ($formatoptionsdef as $key => $option) {
                 if (!empty($option['cache'])) {
                     $formatoptions = $courseformat->get_format_options($section);
@@ -642,12 +648,10 @@ class course_modinfo {
                     }
                 }
             }
-            // Clone just in case it is reused elsewhere
-            $compressedsections[$number] = clone($section);
-            section_info::convert_for_section_cache($compressedsections[$number]);
+            // Clone just in case it is reused elsewhere.
+            $compressedsections[$sectionid] = clone($section);
+            section_info::convert_for_section_cache($compressedsections[$sectionid]);
         }
-
-        ksort($compressedsections);
         return $compressedsections;
     }
 
@@ -730,15 +734,10 @@ class course_modinfo {
         $cache->acquire_lock($cachekey);
         try {
             $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
-            if ($coursemodinfo !== false) {
-                foreach ($coursemodinfo->sectioncache as $sectionno => $sectioncache) {
-                    if ($sectioncache->id == $sectionid) {
-                        $coursemodinfo->cacherev = -1;
-                        unset($coursemodinfo->sectioncache[$sectionno]);
-                        $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
-                        break;
-                    }
-                }
+            if ($coursemodinfo !== false && array_key_exists($sectionid, $coursemodinfo->sectioncache)) {
+                $coursemodinfo->cacherev = -1;
+                unset($coursemodinfo->sectioncache[$sectionid]);
+                $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
             }
         } finally {
             $cache->release_lock($cachekey);
@@ -758,10 +757,15 @@ class course_modinfo {
         $cache->acquire_lock($cachekey);
         try {
             $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
-            if ($coursemodinfo !== false && array_key_exists($sectionno, $coursemodinfo->sectioncache)) {
-                $coursemodinfo->cacherev = -1;
-                unset($coursemodinfo->sectioncache[$sectionno]);
-                $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+            if ($coursemodinfo !== false) {
+                foreach ($coursemodinfo->sectioncache as $sectionid => $sectioncache) {
+                    if ($sectioncache->section == $sectionno) {
+                        $coursemodinfo->cacherev = -1;
+                        unset($coursemodinfo->sectioncache[$sectionid]);
+                        $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+                        break;
+                    }
+                }
             }
         } finally {
             $cache->release_lock($cachekey);
@@ -3423,8 +3427,6 @@ class section_info implements IteratorAggregate {
 
         // Course id stored in course table
         unset($section->course);
-        // Section number stored in array key
-        unset($section->section);
         // Sequence stored implicity in modinfo $sections array
         unset($section->sequence);
 

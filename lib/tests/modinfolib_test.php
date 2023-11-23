@@ -1119,21 +1119,26 @@ class modinfolib_test extends advanced_testcase {
         // Reset course cache.
         rebuild_course_cache($course->id, true);
         // Build course cache.
-        get_fast_modinfo($course->id);
+        $modinfo = get_fast_modinfo($course->id);
         // Get the course modinfo cache.
         $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
         // Get the section cache.
         $sectioncaches = $coursemodinfo->sectioncache;
 
+        $numberedsections = $modinfo->get_section_info_all();
+
         // Make sure that we will have 4 section caches here.
         $this->assertCount(4, $sectioncaches);
-        $this->assertArrayHasKey(0, $sectioncaches);
-        $this->assertArrayHasKey(1, $sectioncaches);
-        $this->assertArrayHasKey(2, $sectioncaches);
-        $this->assertArrayHasKey(3, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[0]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[1]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[2]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[3]->id, $sectioncaches);
 
         // Purge cache for the section by id.
-        course_modinfo::purge_course_section_cache_by_id($course->id, $sectioncaches[1]->id);
+        course_modinfo::purge_course_section_cache_by_id(
+            $course->id,
+            $numberedsections[1]->id
+        );
         // Get the course modinfo cache.
         $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
         // Get the section cache.
@@ -1141,10 +1146,10 @@ class modinfolib_test extends advanced_testcase {
 
         // Make sure that we will have 3 section caches left.
         $this->assertCount(3, $sectioncaches);
-        $this->assertArrayNotHasKey(1, $sectioncaches);
-        $this->assertArrayHasKey(0, $sectioncaches);
-        $this->assertArrayHasKey(2, $sectioncaches);
-        $this->assertArrayHasKey(3, $sectioncaches);
+        $this->assertArrayNotHasKey($numberedsections[1]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[0]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[2]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[3]->id, $sectioncaches);
         // Make sure that the cacherev will be reset.
         $this->assertEquals(-1, $coursemodinfo->cacherev);
     }
@@ -1165,18 +1170,20 @@ class modinfolib_test extends advanced_testcase {
         // Reset course cache.
         rebuild_course_cache($course->id, true);
         // Build course cache.
-        get_fast_modinfo($course->id);
+        $modinfo = get_fast_modinfo($course->id);
         // Get the course modinfo cache.
         $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
         // Get the section cache.
         $sectioncaches = $coursemodinfo->sectioncache;
 
+        $numberedsections = $modinfo->get_section_info_all();
+
         // Make sure that we will have 4 section caches here.
         $this->assertCount(4, $sectioncaches);
-        $this->assertArrayHasKey(0, $sectioncaches);
-        $this->assertArrayHasKey(1, $sectioncaches);
-        $this->assertArrayHasKey(2, $sectioncaches);
-        $this->assertArrayHasKey(3, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[0]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[1]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[2]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[3]->id, $sectioncaches);
 
         // Purge cache for the section with section number is 1.
         course_modinfo::purge_course_section_cache_by_number($course->id, 1);
@@ -1187,10 +1194,10 @@ class modinfolib_test extends advanced_testcase {
 
         // Make sure that we will have 3 section caches left.
         $this->assertCount(3, $sectioncaches);
-        $this->assertArrayNotHasKey(1, $sectioncaches);
-        $this->assertArrayHasKey(0, $sectioncaches);
-        $this->assertArrayHasKey(2, $sectioncaches);
-        $this->assertArrayHasKey(3, $sectioncaches);
+        $this->assertArrayNotHasKey($numberedsections[1]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[0]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[2]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[3]->id, $sectioncaches);
         // Make sure that the cacherev will be reset.
         $this->assertEquals(-1, $coursemodinfo->cacherev);
     }
