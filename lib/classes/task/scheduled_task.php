@@ -80,9 +80,10 @@ abstract class scheduled_task extends task_base {
     const FIELD_DAYOFWEEK = 'dayofweek';
 
     /**
-     * Time used for the next scheduled time when a task should never run. This is 3000-01-01 00:00 GMT.
+     * Time used for the next scheduled time when a task should never run. This is 2222-01-01 00:00 GMT
+     * which is a large time that still fits in 10 digits.
      */
-    const NEVER_RUN_TIME = 32503680000;
+    const NEVER_RUN_TIME = 7952342400;
 
     /** @var string $hour - Pattern to work out the valid hours */
     private $hour = '*';
