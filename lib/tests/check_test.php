@@ -26,6 +26,7 @@ use core\check\security\passwordpolicy;
  * @category   check
  * @copyright  2020 Brendan Heywood <brendan@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \core\check
  */
 class check_test extends \advanced_testcase {
 
@@ -36,7 +37,7 @@ class check_test extends \advanced_testcase {
      * instead of build time so many checks in real life such as testing
      * an API is connecting aren't viable to unit test.
      */
-    public function test_passwordpolicy() {
+    public function test_passwordpolicy(): void {
         global $CFG;
         $prior = $CFG->passwordpolicy;
 
@@ -51,6 +52,20 @@ class check_test extends \advanced_testcase {
         $this->assertEquals($result->get_status(), result::OK);
 
         $CFG->passwordpolicy = $prior;
+    }
+
+    /**
+     * Tests that the component is correctly set.
+     */
+    public function test_get_component(): void {
+        $check = new \tool_task\check\maxfaildelay();
+
+        // If no component is set, it should return the one based off the namespace.
+        $this->assertEquals('tool_task', $check->get_component());
+
+        // However if one is set, it should return that.
+        $check->set_component('test component');
+        $this->assertEquals('test component', $check->get_component());
     }
 }
 

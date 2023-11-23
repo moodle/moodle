@@ -184,6 +184,10 @@ if ($hassiteconfig) {
     $temp = new admin_settingpage('manageantiviruses', new lang_string('antivirussettings', 'antivirus'));
     $temp->add(new admin_setting_manageantiviruses());
 
+    // Status check.
+    $temp->add(new admin_setting_heading('antivirus/statuschecks', new lang_string('statuschecks'), ''));
+    $temp->add(new admin_setting_check('antivirus/checkantivirus', new \core\check\environment\antivirus()));
+
     // Common settings.
     $temp->add(new admin_setting_heading('antiviruscommonsettings', new lang_string('antiviruscommonsettings', 'antivirus'), ''));
 
