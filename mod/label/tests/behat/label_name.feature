@@ -23,8 +23,8 @@ Feature: Set label name
     And I am on "Test" course homepage
     And "Intro Text" activity should be visible
     And I am on the "Intro Text" "label activity editing" page logged in as teacher
-    And I should see "Name" in the "General" "fieldset"
-    And I set the field "Name" to "Test Label 1"
+    And I should see "Title in course index" in the "General" "fieldset"
+    And I set the field "Title in course index" to "Test Label 1"
     And I press "Save and return to course"
     And I am on "Test" course homepage
     Then "Test Label 1" activity should be visible
