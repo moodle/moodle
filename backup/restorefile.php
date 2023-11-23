@@ -138,6 +138,8 @@ if ($data && has_capability('moodle/restore:uploadfile', $context)) {
 }
 
 echo $OUTPUT->header();
+\backup_helper::print_coursereuse_selector('restore');
+echo html_writer::tag('div', get_string('restoreinfo'), ['class' => 'pb-3']);
 
 // require uploadfile cap to use file picker
 if (has_capability('moodle/restore:uploadfile', $context)) {

@@ -88,6 +88,7 @@ if ($data) {
 }
 
 echo $OUTPUT->header();
+\backup_helper::print_coursereuse_selector('restore');
 
 echo $OUTPUT->container_start();
 echo $OUTPUT->heading($title);

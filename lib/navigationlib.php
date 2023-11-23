@@ -4747,36 +4747,6 @@ class settings_navigation extends navigation_node {
             badges_add_course_navigation($coursenode, $course);
         }
 
-        // Import data from other courses.
-        if ($adminoptions->import) {
-            $url = new moodle_url('/backup/import.php', array('id' => $course->id));
-            $coursenode->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
-        }
-
-        // Backup this course
-        if ($adminoptions->backup) {
-            $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
-            $coursenode->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup', new pix_icon('i/backup', ''));
-        }
-
-        // Restore to this course
-        if ($adminoptions->restore) {
-            $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
-            $coursenode->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
-        }
-
-        // Copy this course.
-        if ($adminoptions->copy) {
-            $url = new moodle_url('/backup/copy.php', array('id' => $course->id));
-            $coursenode->add(get_string('copycourse'), $url, self::TYPE_SETTING, null, 'copy', new pix_icon('t/copy', ''));
-        }
-
-        // Reset this course
-        if ($adminoptions->reset) {
-            $url = new moodle_url('/course/reset.php', array('id'=>$course->id));
-            $coursenode->add(get_string('reset'), $url, self::TYPE_SETTING, null, 'reset', new pix_icon('i/return', ''));
-        }
-
         // Questions
         require_once($CFG->libdir . '/questionlib.php');
         question_extend_settings_navigation($coursenode, $coursecontext)->trim_if_empty();
@@ -4826,6 +4796,56 @@ class settings_navigation extends navigation_node {
             $coursenode->add($linkattr->displaystring, $actionlink, self::TYPE_SETTING, null, 'download',
                     new pix_icon('t/download', ''));
             $coursenode->get('download')->set_force_into_more_menu(true);
+        }
+
+        // Course reuse options.
+        if ($adminoptions->import
+                || $adminoptions->backup
+                || $adminoptions->restore
+                || $adminoptions->copy
+                || $adminoptions->reset) {
+            $coursereusenav = $coursenode->add(
+                get_string('coursereuse'),
+                new moodle_url('/backup/view.php', ['id' => $course->id]),
+                self::TYPE_CONTAINER, null, 'coursereuse', new pix_icon('t/edit', ''),
+            );
+
+            // Import data from other courses.
+            if ($adminoptions->import) {
+                $url = new moodle_url('/backup/import.php', ['id' => $course->id]);
+                $coursereusenav->add(get_string('import'), $url, self::TYPE_SETTING, null, 'import', new pix_icon('i/import', ''));
+            }
+
+            // Backup this course.
+            if ($adminoptions->backup) {
+                $url = new moodle_url('/backup/backup.php', ['id' => $course->id]);
+                $coursereusenav->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup', new pix_icon('i/backup', ''));
+            }
+
+            // Restore to this course.
+            if ($adminoptions->restore) {
+                $url = new moodle_url('/backup/restorefile.php', ['contextid' => $coursecontext->id]);
+                $coursereusenav->add(
+                    get_string('restore'),
+                    $url,
+                    self::TYPE_SETTING,
+                    null,
+                    'restore',
+                    new pix_icon('i/restore', ''),
+                );
+            }
+
+            // Copy this course.
+            if ($adminoptions->copy) {
+                $url = new moodle_url('/backup/copy.php', ['id' => $course->id]);
+                $coursereusenav->add(get_string('copycourse'), $url, self::TYPE_SETTING, null, 'copy', new pix_icon('t/copy', ''));
+            }
+
+            // Reset this course.
+            if ($adminoptions->reset) {
+                $url = new moodle_url('/course/reset.php', ['id' => $course->id]);
+                $coursereusenav->add(get_string('reset'), $url, self::TYPE_SETTING, null, 'reset', new pix_icon('i/return', ''));
+            }
         }
 
         // Return we are done
@@ -5721,18 +5741,6 @@ class settings_navigation extends navigation_node {
             }
         }
 
-        // Backup this course
-        if ($adminoptions->backup) {
-            $url = new moodle_url('/backup/backup.php', array('id'=>$course->id));
-            $frontpage->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup', new pix_icon('i/backup', ''));
-        }
-
-        // Restore to this course
-        if ($adminoptions->restore) {
-            $url = new moodle_url('/backup/restorefile.php', array('contextid'=>$coursecontext->id));
-            $frontpage->add(get_string('restore'), $url, self::TYPE_SETTING, null, 'restore', new pix_icon('i/restore', ''));
-        }
-
         // Questions
         require_once($CFG->libdir . '/questionlib.php');
         question_extend_settings_navigation($frontpage, $coursecontext)->trim_if_empty();
@@ -5749,6 +5757,34 @@ class settings_navigation extends navigation_node {
         foreach ($pluginsfunction as $plugintype => $plugins) {
             foreach ($plugins as $pluginfunction) {
                 $pluginfunction($frontpage, $course, $coursecontext);
+            }
+        }
+
+        // Course reuse options.
+        if ($adminoptions->backup || $adminoptions->restore) {
+            $coursereusenav = $frontpage->add(
+                get_string('coursereuse'),
+                new moodle_url('/backup/view.php', ['id' => $course->id]),
+                self::TYPE_CONTAINER, null, 'coursereuse', new pix_icon('t/edit', ''),
+            );
+
+            // Backup this course.
+            if ($adminoptions->backup) {
+                $url = new moodle_url('/backup/backup.php', ['id' => $course->id]);
+                $coursereusenav->add(get_string('backup'), $url, self::TYPE_SETTING, null, 'backup', new pix_icon('i/backup', ''));
+            }
+
+            // Restore to this course.
+            if ($adminoptions->restore) {
+                $url = new moodle_url('/backup/restorefile.php', ['contextid' => $coursecontext->id]);
+                $coursereusenav->add(
+                    get_string('restore'),
+                    $url,
+                    self::TYPE_SETTING,
+                    null,
+                    'restore',
+                    new pix_icon('i/restore', ''),
+                );
             }
         }
 

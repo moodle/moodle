@@ -917,7 +917,6 @@ class secondary_test extends \advanced_testcase {
         $pageurl = new \moodle_url($url, [$contextidentifier => $id]);
         $PAGE->set_url($pageurl);
         navigation_node::override_active_url($pageurl);
-        $PAGE->set_course($pagecourse);
         $PAGE->set_context($contextrecord);
 
         $node = new secondary($PAGE);
@@ -941,27 +940,27 @@ class secondary_test extends \advanced_testcase {
             "Backup page returns overflow" => [
                 '/backup/backup.php',
                 'id',
-                true
+                false,
             ],
             "Restore course page returns overflow" => [
                 '/backup/restorefile.php',
                 'contextid',
-                true
+                false,
             ],
             "Import course page returns overflow" => [
                 '/backup/import.php',
                 'id',
-                true
+                false,
             ],
             "Course copy page returns overflow" => [
                 '/backup/copy.php',
                 'id',
-                true
+                false,
             ],
             "Course reset page returns overflow" => [
                 '/course/reset.php',
                 'id',
-                true
+                false,
             ],
             // The following pages should not return the overflow menu.
             "Course page returns nothing" => [

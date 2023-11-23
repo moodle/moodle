@@ -69,6 +69,10 @@ if ($importcourseid === false || $searchcourses) {
 
     // show the course selector
     echo $OUTPUT->header();
+    \backup_helper::print_coursereuse_selector('import');
+
+    echo html_writer::tag('div', get_string('importinfo'), ['class' => 'pb-3']);
+
     $backup = new import_ui(false, array());
     echo $renderer->progress_bar($backup->get_progress_bar());
     $html = $renderer->import_course_selector($url, $search);
@@ -118,6 +122,9 @@ if ($backup->get_stage() == backup_ui::STAGE_CONFIRMATION) {
 // If it's the final stage process the import
 if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     echo $OUTPUT->header();
+    \backup_helper::print_coursereuse_selector('import');
+
+    echo html_writer::tag('div', get_string('importinfo'), ['class' => 'pb-3']);
 
     // Display an extra progress bar so that we can show the current stage.
     echo html_writer::start_div('', array('id' => 'executionprogress'));
@@ -233,8 +240,12 @@ if ($backup->get_stage() == backup_ui::STAGE_FINAL) {
     $backup->save_controller();
 }
 
-// Display the current stage
+// Display the current stage.
 echo $OUTPUT->header();
+\backup_helper::print_coursereuse_selector('import');
+
+echo html_writer::tag('div', get_string('importinfo'), ['class' => 'pb-3']);
+
 if ($backup->enforce_changed_dependencies()) {
     debugging('Your settings have been altered due to unmet dependencies', DEBUG_DEVELOPER);
 }
