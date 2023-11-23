@@ -930,7 +930,15 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         // If heading is supplied, use this for the page title.
         $uniquetitle = $heading;
     } else if (in_array($active_type, ['report', 'settings'])) {
+        // For grade reports or settings pages of grade plugins, use the plugin name for the unique title.
         $uniquetitle = $stractiveplugin;
+        // But if editing mode is turned on, check if the report plugin has an editing mode title string and use it if present.
+        if ($PAGE->user_is_editing() && $active_type === 'report') {
+            $strcomponent = "gradereport_{$active_plugin}";
+            if (get_string_manager()->string_exists('editingmode_title', $strcomponent)) {
+                $uniquetitle = get_string('editingmode_title', $strcomponent);
+            }
+        }
     } else {
         $uniquetitle = $stractive_type . ': ' . $stractiveplugin;
     }
