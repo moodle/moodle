@@ -354,9 +354,9 @@ class mod_scorm_mod_form extends moodleform_mod {
         }
 
         $completionscorerequiredel = 'completionscorerequired' . $suffix;
-        if (!isset($defaultvalues[$completionscorerequiredel]) || !strlen($defaultvalues[$completionscorerequiredel])) {
-            $completionscoredisabledel = 'completionscoredisabled' . $suffix;
-            $defaultvalues[$completionscoredisabledel] = 1;
+        if (isset($defaultvalues[$completionscorerequiredel])) {
+            $completionscoreenabledel = 'completionscoreenabled' . $suffix;
+            $defaultvalues[$completionscoreenabledel] = 1;
         }
     }
 
@@ -507,9 +507,10 @@ class mod_scorm_mod_form extends moodleform_mod {
         // Require score.
         $group = [];
         $completionscorerequiredel = 'completionscorerequired' . $suffix;
+        $completionscoreenabledel = 'completionscoreenabled' . $suffix;
         $group[] =& $mform->createElement(
             'checkbox',
-            'completionscoredisabled',
+            $completionscoreenabledel,
             null,
             get_string('completionscorerequired', 'scorm')
         );
@@ -517,7 +518,7 @@ class mod_scorm_mod_form extends moodleform_mod {
         $mform->setType($completionscorerequiredel, PARAM_INT);
         $completionscoregroupel = 'completionscoregroup' . $suffix;
         $mform->addGroup($group, $completionscoregroupel, '', '', false);
-        $mform->hideIf($completionscorerequiredel, 'completionscoredisabled', 'notchecked');
+        $mform->hideIf($completionscorerequiredel, $completionscoreenabledel, 'notchecked');
         $mform->setDefault($completionscorerequiredel, 0);
 
         $items[] = $completionscoregroupel;
@@ -545,7 +546,7 @@ class mod_scorm_mod_form extends moodleform_mod {
     public function completion_rule_enabled($data) {
         $suffix = $this->get_suffix();
         $status = !empty($data['completionstatusrequired' . $suffix]);
-        $score = empty($data['completionscoredisabled' . $suffix]) && strlen($data['completionscorerequired' . $suffix]);
+        $score = !empty($data['completionscoreenabled' . $suffix]) && strlen($data['completionscorerequired' . $suffix]);
 
         return $status || $score;
     }
@@ -585,7 +586,7 @@ class mod_scorm_mod_form extends moodleform_mod {
             }
             // Else do nothing: completionstatusrequired has been already converted into a correct integer representation.
 
-            if (!empty($data->{'completionscoredisabled' . $suffix}) || !$autocompletion) {
+            if (!(isset($data->{'completionscoreenabled' . $suffix}) && $autocompletion)) {
                 $data->{'completionscorerequired' . $suffix} = null;
             }
         }
