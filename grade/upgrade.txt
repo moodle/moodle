@@ -6,6 +6,10 @@ Information provided here is intended especially for developers.
 * The grade_structure::get_element_type_string() function has been deprecated. Please use grade_helper::get_element_type_string() instead.
 * The grade_structure::get_element_header() function has been deprecated. Please use grade_helper::get_element_header() instead.
 * The grade_structure::get_activity_link() functions has been deprecated. Please use grade_helper::get_activity_link() instead.
+* Some changes to how print_grade_page_head() sets the page title:
+  * If a non-empty `$heading` parameter is passed, it will be used as the page title's unique identifying information.
+  * Add support for grade report plugins that define an `editingmode_title` lang string. If the grade report plugin defines this
+    language string, it will be used for the page title's unique identifying information when editing mode is turned on.
 
 === 4.3 ===
 * The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.
