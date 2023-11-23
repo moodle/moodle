@@ -431,7 +431,7 @@ abstract class backup_helper {
             echo \html_writer::tag(
                 'div',
                 $options,
-                ['class' => 'tertiary-navigation full-width-bottom-border ml-0', 'id' => 'tertiary-navigation']);
+                ['class' => 'container-fluid tertiary-navigation full-width-bottom-border', 'id' => 'tertiary-navigation']);
         } else {
             echo $OUTPUT->heading($current, 2, 'mb-3');
         }
