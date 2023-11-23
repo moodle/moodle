@@ -22,20 +22,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Quiz statistics report upgrade code.
  */
 function xmldb_quiz_statistics_upgrade($oldversion) {
-    global $DB;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 

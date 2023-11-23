@@ -40,8 +40,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 o
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  *
  * @global stdClass $CFG
@@ -50,14 +48,6 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool
  */
 function xmldb_lesson_upgrade($oldversion) {
-    global $CFG;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 

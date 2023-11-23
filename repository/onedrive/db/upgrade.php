@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Upgrade this plugin.
  *
@@ -24,14 +22,6 @@ defined('MOODLE_INTERNAL') || die();
  * @return bool result
  */
 function xmldb_repository_onedrive_upgrade($oldversion) {
-    global $CFG;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 

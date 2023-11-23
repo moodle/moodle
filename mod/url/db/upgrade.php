@@ -42,17 +42,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
-
 function xmldb_url_upgrade($oldversion) {
-    global $CFG;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 

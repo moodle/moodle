@@ -45,8 +45,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- defined('MOODLE_INTERNAL') || die;
-
 /**
  * xmldb_lti_upgrade is the function that upgrades
  * the lti module database when is needed
@@ -63,51 +61,6 @@ function xmldb_lti_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2021052501) {
-
-        // Changing type of field instructorcustomparameters on table lti to text.
-        $table = new xmldb_table('lti');
-        $field = new xmldb_field('instructorcustomparameters', XMLDB_TYPE_TEXT, null, null, null, null, null,
-                'instructorchoiceallowsetting');
-
-        // Launch change of type for field value.
-        $dbman->change_field_type($table, $field);
-
-        // Lti savepoint reached.
-        upgrade_mod_savepoint(true, 2021052501, 'lti');
-    }
-
-    if ($oldversion < 2022032900) {
-        // This option 'Public key type' was added in MDL-66920, but no value was set for existing 1.3 tools.
-        // Set a default of 'RSA Key' for those LTI 1.3 tools without a value, representing the only key type they
-        // could use at the time of their creation. Existing tools which have since been resaved will not be impacted.
-        $sql = "SELECT t.id
-                  FROM {lti_types} t
-             LEFT JOIN {lti_types_config} tc
-                    ON (tc.typeid = t.id AND tc.name = :typename)
-                 WHERE t.ltiversion = :ltiversion
-                   AND tc.value IS NULL";
-        $params = ['typename' => 'keytype', 'ltiversion' => '1.3.0'];
-        $recordset = $DB->get_recordset_sql($sql, $params);
-        foreach ($recordset as $record) {
-            $DB->insert_record('lti_types_config', (object) [
-                'typeid' => $record->id,
-                'name' => 'keytype',
-                'value' => 'RSA_KEY'
-            ]);
-        }
-        $recordset->close();
-
-        // Lti savepoint reached.
-        upgrade_mod_savepoint(true, 2022032900, 'lti');
-    }
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -115,7 +68,6 @@ function xmldb_lti_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2023070501) {
-
         // Define table lti_types_categories to be created.
         $table = new xmldb_table('lti_types_categories');
 

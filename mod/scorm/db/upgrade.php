@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * @global moodle_database $DB
  * @param int $oldversion
@@ -33,21 +31,6 @@ function xmldb_scorm_upgrade($oldversion) {
     global $DB, $OUTPUT;
 
     $dbman = $DB->get_manager();
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2021052501) {
-        $table = new xmldb_table('scorm');
-        $field = new xmldb_field('displayactivityname');
-        if ($dbman->field_exists($table, $field)) {
-            $dbman->drop_field($table, $field);
-        }
-        upgrade_mod_savepoint(true, 2021052501, 'scorm');
-    }
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
 
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
@@ -135,15 +118,16 @@ function xmldb_scorm_upgrade($oldversion) {
         $trans->allow_commit();
         // Scorm savepoint reached.
         upgrade_mod_savepoint(true, 2023042402, 'scorm');
-
     }
     if ($oldversion < 2023042403) {
         // Now store all translated data in the scorm_scoes_value table.
         $total = $DB->count_records('scorm_scoes_track');
         if ($total > 500000) {
             // This site has a large number of user track records, lets warn that this next part may take some time.
-            $notification = new \core\output\notification(get_string('largetrackupgrade', 'scorm', format_float($total, 0)),
-                           \core\output\notification::NOTIFY_WARNING);
+            $notification = new \core\output\notification(
+                get_string('largetrackupgrade', 'scorm', format_float($total, 0)),
+                \core\output\notification::NOTIFY_WARNING
+            );
             $notification->set_show_closebutton(false);
             echo $OUTPUT->render($notification);
         }

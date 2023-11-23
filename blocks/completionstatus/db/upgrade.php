@@ -37,8 +37,6 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Handles upgrading instances of this block.
  *
@@ -46,14 +44,6 @@ defined('MOODLE_INTERNAL') || die();
  * @param object $block
  */
 function xmldb_block_completionstatus_upgrade($oldversion, $block) {
-    global $CFG;
-
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 

@@ -22,8 +22,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Function to upgrade tool_dataprivacy.
  *
@@ -35,55 +33,6 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
 
     $dbman = $DB->get_manager();
 
-    // Automatically generated Moodle v3.9.0 release upgrade line.
-    // Put any upgrade step following this.
-
-    if ($oldversion < 2020061501) {
-
-        // Define field commentsformat to be added to tool_dataprivacy_request.
-        $table = new xmldb_table('tool_dataprivacy_request');
-        $field = new xmldb_field('commentsformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'comments');
-
-        // Conditionally launch add field commentsformat.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field dpocommentformat to be added to tool_dataprivacy_request.
-        $field = new xmldb_field('dpocommentformat', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'dpocomment');
-
-        // Conditionally launch add field dpocommentformat.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Define field systemapproved to be added to tool_dataprivacy_request.
-        $field = new xmldb_field('systemapproved', XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, '0', 'dpocommentformat');
-
-        // Conditionally launch add field systemapproved.
-        if (!$dbman->field_exists($table, $field)) {
-            $dbman->add_field($table, $field);
-        }
-
-        // Dataprivacy savepoint reached.
-        upgrade_plugin_savepoint(true, 2020061501, 'tool', 'dataprivacy');
-    }
-
-    // Automatically generated Moodle v4.0.0 release upgrade line.
-    // Put any upgrade step following this.
-    if ($oldversion < 2022053000) {
-
-        // Define key usermodified (foreign) to be added to tool_dataprivacy_purposerole.
-        $table = new xmldb_table('tool_dataprivacy_purposerole');
-        $key = new xmldb_key('usermodified', XMLDB_KEY_FOREIGN, ['usermodified'], 'user', ['id']);
-
-        // Launch add key usermodified.
-        $dbman->add_key($table, $key);
-
-        // Dataprivacy savepoint reached.
-        upgrade_plugin_savepoint(true, 2022053000, 'tool', 'dataprivacy');
-    }
-
     // Automatically generated Moodle v4.1.0 release upgrade line.
     // Put any upgrade step following this.
 
@@ -91,7 +40,6 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
     // Put any upgrade step following this.
 
     if ($oldversion < 2023062700) {
-
         // Define table tool_dataprivacy_contextlist to be created.
         $table = new xmldb_table('tool_dataprivacy_contextlist');
 
