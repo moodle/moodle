@@ -926,14 +926,16 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
     }
     $coursecontext = context_course::instance($courseid);
     // Title will be constituted by information starting from the unique identifying information for the page.
-    if (in_array($active_type, ['report', 'settings'])) {
+    if ($heading) {
+        // If heading is supplied, use this for the page title.
+        $uniquetitle = $heading;
+    } else if (in_array($active_type, ['report', 'settings'])) {
         $uniquetitle = $stractiveplugin;
     } else {
         $uniquetitle = $stractive_type . ': ' . $stractiveplugin;
     }
     $titlecomponents = [
         $uniquetitle,
-        get_string('grades'),
         $coursecontext->get_context_name(false),
     ];
     $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titlecomponents));
