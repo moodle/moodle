@@ -180,7 +180,7 @@ class groups_test extends core_reportbuilder_testcase {
         $this->assertEquals('G101', $groupidnumber);
         $this->assertEquals(format_text($group->description), $groupdescription);
         $this->assertEquals('S', $groupenrolmentkey);
-        $this->assertEquals('Visible to everyone', $groupvisibility);
+        $this->assertEquals('Visible', $groupvisibility);
         $this->assertEquals('Yes', $groupparticipation);
         $this->assertEmpty($grouppicture);
         $this->assertNotEmpty($grouptimecreated);

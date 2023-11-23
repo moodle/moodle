@@ -16,11 +16,11 @@ Feature: Backup and restore a course containing groups
       | teacher1 | C1     | editingteacher |
     And the following "groups" exist:
       | name                                      | course | idnumber | visibility | participation |
-      | Visible to everyone/Participation         | C1     | VP       | 0          | 1             |
+      | Visible/Participation                     | C1     | VP       | 0          | 1             |
       | Only visible to members/Participation     | C1     | MP       | 1          | 1             |
       | Only see own membership                   | C1     | O        | 2          | 0             |
       | Not visible                               | C1     | N        | 3          | 0             |
-      | Visible to everyone/Non-Participation     | C1     | VN       | 0          | 0             |
+      | Visible/Non-Participation                 | C1     | VN       | 0          | 0             |
       | Only visible to members/Non-Participation | C1     | MN       | 1          | 0             |
     And I log in as "admin"
     And I backup "Course 1" course using this options:
@@ -40,9 +40,9 @@ Feature: Backup and restore a course containing groups
 
     Examples:
       | group                                     | idnumber | visibility | participation |
-      | Visible to everyone/Participation         | VP       | 0          | 1             |
+      | Visible/Participation                     | VP       | 0          | 1             |
       | Only visible to members/Participation     | MP       | 1          | 1             |
       | Only see own membership                   | O        | 2          | 0             |
       | Not visible                               | N        | 3          | 0             |
-      | Visible to everyone/Non-Participation     | VN       | 0          | 0             |
+      | Visible/Non-Participation                 | VN       | 0          | 0             |
       | Only visible to members/Non-Participation | MN       | 1          | 0             |
