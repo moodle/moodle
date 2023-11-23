@@ -3029,6 +3029,41 @@ class externallib_test extends externallib_advanced_testcase {
         ], reset($course['customfields']));
     }
 
+    /**
+     * Test retrieving courses by field returning communication tools.
+     */
+    public function test_get_courses_by_field_communication(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create communication tool in course.
+        set_config('enablecommunicationsubsystem', 1);
+
+        $roomname = 'Course chat';
+        $telegramlink = 'https://my.telegram.chat/120';
+        $record = [
+            'selectedcommunication' => 'communication_customlink',
+            'communicationroomname' => $roomname,
+            'customlinkurl' => $telegramlink,
+        ];
+        $course = $this->getDataGenerator()->create_course($record);
+        $communication = \core_communication\api::load_by_instance(
+            context: \core\context\course::instance($course->id),
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id,
+        );
+
+        $result = external_api::clean_returnvalue(
+            core_course_external::get_courses_by_field_returns(),
+            core_course_external::get_courses_by_field('id', $course->id)
+        );
+
+        $course = reset($result['courses']);
+        $this->assertEquals($roomname, $course['communicationroomname']);
+        $this->assertEquals($telegramlink, $course['communicationroomurl']);
+    }
+
     public function test_get_courses_by_field_invalid_field() {
         $this->expectException('invalid_parameter_exception');
         $result = core_course_external::get_courses_by_field('zyx', 'x');
