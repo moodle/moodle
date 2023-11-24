@@ -22,7 +22,7 @@ Feature: Chat calendar entries
       | activity | name           | intro                 | course | idnumber | schedule |
       | chat     | Test chat name | Test chat description | C1     | chat1    | 0 |
     And I log in as "teacher1"
-    When I follow "Calendar" in the user menu
+    When I am viewing calendar in "upcoming" view
     Then I should not see "Test chat name"
 
   Scenario: Create a chat activity and publish the start date to the calendar
