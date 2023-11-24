@@ -155,6 +155,15 @@ class audience_test extends advanced_testcase {
         // User2 can access report1 and report2.
         $reports = audience::get_allowed_reports((int) $user2->id);
         $this->assertEqualsCanonicalizing([$report1->get('id'), $report2->get('id')], $reports);
+
+        // Purge cache, to ensure allowed reports are re-calculated.
+        audience::purge_caches();
+
+        // Now delete one of our users, ensure they no longer have any allowed reports.
+        delete_user($user2);
+
+        $reports = audience::get_allowed_reports((int) $user2->id);
+        $this->assertEmpty($reports);
     }
 
     /**
