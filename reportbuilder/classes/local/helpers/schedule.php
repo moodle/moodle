@@ -111,19 +111,21 @@ class schedule {
         $audienceids = (array) json_decode($schedule->get('audiences'));
 
         // Retrieve all selected audience records for the schedule.
-        [$audienceselect, $audienceparams] = $DB->get_in_or_equal($audienceids, SQL_PARAMS_NAMED, 'aid', true, true);
+        [$audienceselect, $audienceparams] = $DB->get_in_or_equal($audienceids, SQL_PARAMS_NAMED, 'aid', true, null);
         $audiences = audience_model::get_records_select("id {$audienceselect}", $audienceparams);
-        if (count($audiences) === 0) {
-            return [];
-        }
 
         // Now convert audiences to SQL for user retrieval.
         [$wheres, $params] = audience::user_audience_sql($audiences);
+        if (count($wheres) === 0) {
+            return [];
+        }
+
         [$userorder] = users_order_by_sql('u');
 
         $sql = 'SELECT u.*
                   FROM {user} u
-                 WHERE ' . implode(' OR ', $wheres) . '
+                 WHERE (' . implode(' OR ', $wheres) . ')
+                   AND u.deleted = 0
               ORDER BY ' . $userorder;
 
         return $DB->get_records_sql($sql, $params);
@@ -151,7 +153,8 @@ class schedule {
      * @return stored_file
      */
     public static function get_schedule_report_file(model $schedule): stored_file {
-        global $CFG;
+        global $CFG, $USER;
+
         require_once("{$CFG->libdir}/filelib.php");
 
         $table = custom_report_table_view::create($schedule->get('reportid'));
@@ -166,10 +169,9 @@ class schedule {
         $exportclass = new table_dataformat_export_format($table, $table->download);
         ob_end_clean();
 
-        // Create our schedule report stored file.
-        $context = context_user::instance($schedule->get('usercreated'));
+        // Create our schedule report stored file temporarily in user draft.
         $filerecord = [
-            'contextid' => $context->id,
+            'contextid' => context_user::instance($USER->id)->id,
             'component' => 'user',
             'filearea' => 'draft',
             'itemid' => file_get_unused_draft_itemid(),
