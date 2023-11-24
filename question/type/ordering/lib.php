@@ -32,6 +32,8 @@
  * @param array $args extra arguments
  * @param bool $forcedownload whether or not force download
  * @param array $options additional options affecting the file serving
+ * @codeCoverageIgnore
+ * This code can not be tested currently as pluginfile() is not testable.
  */
 function qtype_ordering_pluginfile(stdClass $course, stdClass $cm, stdClass $context, string $filearea, array $args,
         bool $forcedownload, array $options = []) {
