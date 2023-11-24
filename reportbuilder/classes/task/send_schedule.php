@@ -22,6 +22,7 @@ use core_user;
 use core\task\adhoc_task;
 use core_reportbuilder\local\helpers\schedule as helper;
 use core_reportbuilder\local\models\schedule;
+use moodle_exception;
 
 /**
  * Ad-hoc task for sending a single report schedule
@@ -70,8 +71,17 @@ class send_schedule extends adhoc_task {
         $scheduleattachment = null;
         $originaluser = $USER;
 
+        // Get the schedule creator, ensure it's an active account.
+        try {
+            $schedulecreator = core_user::get_user($schedule->get('usercreated'), '*', MUST_EXIST);
+            core_user::require_active_user($schedulecreator);
+        } catch (moodle_exception $exception) {
+            $this->log('Invalid schedule creator: ' . $exception->getMessage(), 0);
+            return;
+        }
+
         // Switch to schedule creator, and retrieve list of recipient users.
-        \core\cron::setup_user(core_user::get_user($schedule->get('usercreated')));
+        \core\cron::setup_user($schedulecreator);
 
         $users = helper::get_schedule_report_users($schedule);
         if (count($users) > 0) {
@@ -83,7 +93,17 @@ class send_schedule extends adhoc_task {
             if ($scheduleuserviewas === schedule::REPORT_VIEWAS_CREATOR) {
                 $scheduleattachment = helper::get_schedule_report_file($schedule);
             } else if ($scheduleuserviewas !== schedule::REPORT_VIEWAS_RECIPIENT) {
-                \core\cron::setup_user(core_user::get_user($scheduleuserviewas));
+
+                // Get the user to view the schedule report as, ensure it's an active account.
+                try {
+                    $scheduleviewas = core_user::get_user($scheduleuserviewas, '*', MUST_EXIST);
+                    core_user::require_active_user($scheduleviewas);
+                } catch (moodle_exception $exception) {
+                    $this->log('Invalid schedule view as user: ' . $exception->getMessage(), 0);
+                    return;
+                }
+
+                \core\cron::setup_user($scheduleviewas);
                 $scheduleattachment = helper::get_schedule_report_file($schedule);
             }
 
