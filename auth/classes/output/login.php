@@ -75,6 +75,10 @@ class login implements renderable, templatable {
     public $maintenance;
     /** @var string ReCaptcha element HTML. */
     public $recaptcha;
+    /** @var bool Toggle the password visibility icon. */
+    public $togglepassword;
+    /** @var bool Toggle the password visibility icon for small screens only. */
+    public $smallscreensonly;
 
     /**
      * Constructor.
@@ -130,6 +134,11 @@ class login implements renderable, templatable {
             require_once($CFG->libdir . '/recaptchalib_v2.php');
             $this->recaptcha = recaptcha_get_challenge_html(RECAPTCHA_API_URL, $CFG->recaptchapublickey);
         }
+
+        // Toggle password visibility icon.
+        $this->togglepassword = get_config('core', 'loginpasswordtoggle') == TOGGLE_SENSITIVE_ENABLED ||
+            get_config('core', 'loginpasswordtoggle') == TOGGLE_SENSITIVE_SMALL_SCREENS_ONLY;
+        $this->smallscreensonly = get_config('core', 'loginpasswordtoggle') == TOGGLE_SENSITIVE_SMALL_SCREENS_ONLY;
     }
 
     /**
@@ -175,6 +184,8 @@ class login implements renderable, templatable {
         $data->maintenance = format_text($this->maintenance, FORMAT_MOODLE);
         $data->languagemenu = $this->languagemenu;
         $data->recaptcha = $this->recaptcha;
+        $data->togglepassword = $this->togglepassword;
+        $data->smallscreensonly = $this->smallscreensonly;
 
         return $data;
     }

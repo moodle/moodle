@@ -601,6 +601,21 @@ define('CONTACT_SUPPORT_ANYONE', 2);
  */
 define('MAX_PASSWORD_CHARACTERS', 128);
 
+/**
+ * Toggle sensitive feature is disabled. Used for sensitive inputs (passwords, tokens, keys).
+ */
+define('TOGGLE_SENSITIVE_DISABLED', 0);
+
+/**
+ * Toggle sensitive feature is enabled. Used for sensitive inputs (passwords, tokens, keys).
+ */
+define('TOGGLE_SENSITIVE_ENABLED', 1);
+
+/**
+ * Toggle sensitive feature is enabled for small screens only. Used for sensitive inputs (passwords, tokens, keys).
+ */
+define('TOGGLE_SENSITIVE_SMALL_SCREENS_ONLY', 2);
+
 // PARAMETER HANDLING.
 
 /**

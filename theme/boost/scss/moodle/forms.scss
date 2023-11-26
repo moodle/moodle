@@ -480,3 +480,24 @@ textarea[data-auto-rows] {
         padding-left: 0;
     }
 }
+
+// Remove the margins that come with the icon.
+.toggle-sensitive-btn .icon {
+    margin-right: 0;
+}
+
+// Input group elements display border radius depending on the proximity of other elements.
+// This corrects border radius of the input when 'small screen only' mode hides the toggle button.
+@media (min-width: 576px) {
+    .toggle-sensitive-wrapper.small-screens-only.input-group:not(.has-validation) > {
+        .form-control:not(:last-child) {
+            @include border-radius($input-border-radius);
+        }
+        .form-control-lg:not(:last-child) {
+            @include border-radius($input-border-radius-lg);
+        }
+        .input-group-append .toggle-sensitive-btn {
+            display: none;
+        }
+    }
+}

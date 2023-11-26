@@ -1312,6 +1312,7 @@ $string['sixtyfourbitsrequired'] = 'It has been detected that your site is not u
 $string['sixtyfourbitswarning'] = 'It has been detected that your site is not using a 64-bit PHP version. It is recommended that you upgrade your site to ensure future compatibility.';
 $string['slasharguments'] = 'Use slash arguments';
 $string['slashargumentswarning'] = 'It is recommended that the use of slash arguments is enabled. In future it will be required. For more details, see the documentation <a href="https://docs.moodle.org/en/admin/environment/slasharguments">Using slash arguments</a>.';
+$string['smallscreensonly'] = 'Small screens only';
 $string['smtp'] = 'SMTP';
 $string['smtpauthtype'] = 'SMTP Auth Type';
 $string['smtpdetail'] = 'Simple Mail Transfer Protocol (SMTP) settings for sending email.';
