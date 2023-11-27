@@ -54,6 +54,8 @@ $badge = new badge($badgeid);
 $context = $badge->get_context();
 $navurl = new moodle_url('/badges/index.php', array('type' => $badge->type));
 
+require_capability('moodle/badges:viewawarded', $context);
+
 if ($badge->type == BADGE_TYPE_COURSE) {
     if (empty($CFG->badges_allowcoursebadges)) {
         print_error('coursebadgesdisabled', 'badges');
