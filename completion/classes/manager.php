@@ -528,7 +528,7 @@ class manager {
             $data['customrules'] = $customdata ? json_encode($customdata) : null;
             $defaults['customrules'] = null;
         }
-        $data = array_intersect_key($data, $defaults);
+        $data = array_merge($defaults, $data);
 
         // Get names of the affected modules.
         list($modidssql, $params) = $DB->get_in_or_equal($modids);
