@@ -384,7 +384,8 @@ class api {
             $settings->searchhideallcategory = $CFG->searchhideallcategory;
             $settings->searchmaxtopresults = $CFG->searchmaxtopresults;
             $settings->searchbannerenable = $CFG->searchbannerenable;
-            $settings->searchbanner = $CFG->searchbanner;
+            $settings->searchbanner = \core_external\util::format_text(
+                $CFG->searchbanner, FORMAT_HTML, $context)[0];
         }
 
         return $settings;
