@@ -32,6 +32,7 @@ use core_reportbuilder\local\report\filter;
 use html_writer;
 use lang_string;
 use stdClass;
+use theme_config;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -140,7 +141,7 @@ class course extends base {
             'groupmodeforce' => new lang_string('groupmodeforce', 'group'),
             'lang' => new lang_string('forcelanguage'),
             'calendartype' => new lang_string('forcecalendartype', 'calendar'),
-            'theme' => new lang_string('forcetheme'),
+            'theme' => new lang_string('theme'),
             'enablecompletion' => new lang_string('enablecompletion', 'completion'),
             'downloadcontent' => new lang_string('downloadcoursecontent', 'course'),
             'timecreated' => new lang_string('timecreated', 'core_reportbuilder'),
@@ -411,16 +412,10 @@ class course extends base {
      * @return array
      */
     public static function get_options_for_theme(): array {
-        $options = [];
-
-        $themeobjects = get_list_of_themes();
-        foreach ($themeobjects as $key => $theme) {
-            if (empty($theme->hidefromselector)) {
-                $options[$key] = get_string('pluginname', "theme_{$theme->name}");
-            }
-        }
-
-        return $options;
+        return array_map(
+            fn(theme_config $theme) => $theme->get_theme_name(),
+            get_list_of_themes(),
+        );
     }
 
     /**
@@ -454,13 +449,14 @@ class course extends base {
             return format::userdate($value, $row);
         }
 
+        if ($this->get_course_field_type($fieldname) === column::TYPE_BOOLEAN) {
+            return format::boolean_as_text($value);
+        }
+
+        // If the column has corresponding filter, determine the value from its options.
         $options = $this->get_options_for($fieldname);
         if ($options !== null && array_key_exists($value, $options)) {
             return $options[$value];
-        }
-
-        if ($this->get_course_field_type($fieldname) === column::TYPE_BOOLEAN) {
-            return format::boolean_as_text($value);
         }
 
         if (in_array($fieldname, ['fullname', 'shortname'])) {

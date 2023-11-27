@@ -77,6 +77,7 @@ class users_test extends core_reportbuilder_testcase {
             'idnumber' => 'U0001',
             'city' => 'London',
             'country' => 'GB',
+            'theme' => 'boost',
             'interests' => ['Horses'],
         ]);
 
@@ -114,6 +115,7 @@ class users_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:moodlenetprofile']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:timecreated']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastip']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:theme']);
 
         // Tags.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
@@ -159,9 +161,10 @@ class users_test extends core_reportbuilder_testcase {
         $this->assertEquals($user->moodlenetprofile, $userrow[22]);
         $this->assertNotEmpty($userrow[23]);
         $this->assertEquals('0.0.0.0', $userrow[24]);
-        $this->assertEquals('Horses', $userrow[25]);
-        $this->assertStringContainsString('Horses', $userrow[26]);
-        $this->assertEquals($cohort->name, $userrow[27]);
+        $this->assertEquals('Boost', $userrow[25]);
+        $this->assertEquals('Horses', $userrow[26]);
+        $this->assertStringContainsString('Horses', $userrow[27]);
+        $this->assertEquals($cohort->name, $userrow[28]);
     }
 
     /**
@@ -279,6 +282,14 @@ class users_test extends core_reportbuilder_testcase {
             'Filter country (no match)' => ['user:country', [
                 'user:country_operator' => select::EQUAL_TO,
                 'user:country_value' => 'AU',
+            ], false],
+            'Filter theme' => ['user:theme', [
+                'user:theme_operator' => select::EQUAL_TO,
+                'user:theme_value' => 'boost',
+            ], true],
+            'Filter theme (no match)' => ['user:theme', [
+                'user:theme_operator' => select::EQUAL_TO,
+                'user:theme_value' => 'classic',
             ], false],
             'Filter description' => ['user:description', [
                 'user:description_operator' => text::CONTAINS,
@@ -424,6 +435,7 @@ class users_test extends core_reportbuilder_testcase {
             'address' => 'Big Farm',
             'city' => 'Barcelona',
             'country' => 'ES',
+            'theme' => 'boost',
             'description' => 'Hello there',
             'moodlenetprofile' => '@zoe1@example.com',
             'interests' => ['Horses'],

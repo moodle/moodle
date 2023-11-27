@@ -92,6 +92,8 @@ class cohorts_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        set_config('allowcohortthemes', true);
+
         /** @var core_customfield_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
 
@@ -103,6 +105,7 @@ class cohorts_test extends core_reportbuilder_testcase {
             'name' => 'Legends',
             'idnumber' => 'C101',
             'description' => 'Cohort for the legends',
+            'theme' => 'boost',
             'customfield_hi' => 'Hello',
         ]);
 
@@ -131,7 +134,7 @@ class cohorts_test extends core_reportbuilder_testcase {
         $this->assertNotEmpty($timecreated);
         $this->assertNotEmpty($timemodified);
         $this->assertEquals('Created manually', $component);
-        $this->assertEmpty($theme);
+        $this->assertEquals('Boost', $theme);
         $this->assertEquals('Hello', $custom);
         $this->assertNotEmpty($timeadded);
         $this->assertEquals(fullname($user), $fullname);
@@ -184,6 +187,14 @@ class cohorts_test extends core_reportbuilder_testcase {
             'Filter description (no match)' => ['cohort:description', [
                 'cohort:description_operator' => text::IS_EMPTY,
             ], false],
+            'Filter theme' => ['cohort:theme', [
+                'cohort:theme_operator' => select::EQUAL_TO,
+                'cohort:theme_value' => 'boost',
+            ], true],
+            'Filter theme (no match)' => ['cohort:theme', [
+                'cohort:theme_operator' => select::EQUAL_TO,
+                'cohort:theme_value' => 'classic',
+            ], false],
             'Filter visible' => ['cohort:visible', [
                 'cohort:visible_operator' => boolean_select::CHECKED,
             ], true],
@@ -225,11 +236,14 @@ class cohorts_test extends core_reportbuilder_testcase {
     public function test_datasource_filters(string $filtername, array $filtervalues, bool $expectmatch): void {
         $this->resetAfterTest();
 
+        set_config('allowcohortthemes', true);
+
         // Test subject.
         $cohort = $this->getDataGenerator()->create_cohort([
             'name' => 'Legends',
             'idnumber' => 'C101',
             'description' => 'Cohort for the legends',
+            'theme' => 'boost',
         ]);
 
         $user = $this->getDataGenerator()->create_user(['username' => 'lionel']);
