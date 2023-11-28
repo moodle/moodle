@@ -11,6 +11,8 @@ information provided here is intended especially for developers.
 * course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
   them all in a single cache set.
 * Behat generators can now implement the function finish_generate_ to detect when the whole list of elements have been generated.
+* New return value 'icon' has been added to the 'external_files' webservice structure. This return value represents the
+  relative path to the relevant file type icon based on the file's mime type.
 
 === 4.3 ===
 

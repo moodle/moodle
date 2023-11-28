@@ -1195,6 +1195,7 @@ class externallib_test extends externallib_advanced_testcase {
             'timemodified' => $file['timemodified'],
             'fileurl' => \moodle_url::make_webservice_pluginfile_url($file['contextid'], $file['component'],
                             $file['filearea'], $file['itemid'], $file['filepath'], $file['filename']),
+            'icon' => 'f/image',
         );
 
         // Call the WS and check that it returns this file.
@@ -1250,6 +1251,7 @@ class externallib_test extends externallib_advanced_testcase {
             'timemodified' => $file['timemodified'],
             'fileurl' => \moodle_url::make_webservice_pluginfile_url($file['contextid'], $file['component'],
                             $file['filearea'], $file['itemid'], $file['filepath'], $file['filename']),
+            'icon' => 'f/image',
         );
 
         // Call the WS and check that it returns this file.

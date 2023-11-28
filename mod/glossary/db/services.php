@@ -50,6 +50,7 @@ $functions = array(
         'methodname'    => 'view_entry',
         'description'   => 'Notify a glossary entry as being viewed.',
         'type'          => 'write',
+        'ajax'          => true,
         'capabilities'  => 'mod/glossary:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
@@ -149,6 +150,7 @@ $functions = array(
         'methodname'    => 'get_entry_by_id',
         'description'   => 'Get an entry by ID',
         'type'          => 'read',
+        'ajax'          => true,
         'capabilities'  => 'mod/glossary:view',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
