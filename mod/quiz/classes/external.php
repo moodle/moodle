@@ -1180,6 +1180,12 @@ class mod_quiz_external extends external_api {
         $result['warnings'] = $warnings;
         $result['questions'] = self::get_attempt_questions_data($attemptobj, false, 'all');
 
+        if ($attemptobj->get_state() == quiz_attempt::IN_PROGRESS && $attemptobj->get_quiz()->navmethod == 'free') {
+            // Only count the unanswered question if the navigation method is set to free.
+            $result['totalunanswered'] = $attemptobj->get_number_of_unanswered_questions();
+        }
+
+
         return $result;
     }
 
@@ -1193,6 +1199,7 @@ class mod_quiz_external extends external_api {
         return new external_single_structure(
             [
                 'questions' => new external_multiple_structure(self::question_structure()),
+                'totalunanswered' => new external_value(PARAM_INT, 'Total unanswered questions.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             ]
         );

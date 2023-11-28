@@ -1240,6 +1240,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertNotEmpty(5, $result['questions'][0]['settings']);
         // Check at least some settings returned.
         $this->assertCount(4, (array) json_decode($result['questions'][0]['settings']));
+        $this->assertEquals(2, $result['totalunanswered']); // All questions are unanswered.
 
         // Submit a response for the first question.
         $tosubmit = [1 => ['answer' => '3.14']];
@@ -1264,7 +1265,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertGreaterThanOrEqual($timenow, $result['questions'][1]['lastactiontime']);
         $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
         $this->assertEquals(false, $result['questions'][1]['hasautosavedstep']);
-
+        $this->assertEquals(1, $result['totalunanswered']); // Only one question is unanswered.
     }
 
     /**
@@ -2100,6 +2101,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEmpty($result['questions'][2]['html']); // And more.
         $this->assertEmpty($result['questions'][3]['html']); // And more.
         $this->assertEmpty($result['questions'][4]['html']); // And more.
+        $this->assertNotContains('totalunanswered', $result);   // For sequential quizzes, unanswered questions are not considered.
     }
 
     /**
