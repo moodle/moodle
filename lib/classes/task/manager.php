@@ -50,6 +50,12 @@ class manager {
     const ADHOC_TASK_QUEUE_MODE_FILLING = 1;
 
     /**
+     * @var int Used to set the retention period for adhoc tasks that have failed and to be cleaned up.
+     * The number is in week unit. The default value is 4 weeks.
+     */
+    const ADHOC_TASK_FAILED_RETENTION = 4 * WEEKSECS;
+
+    /**
      * @var array A cached queue of adhoc tasks
      */
     public static $miniqueue;
@@ -1716,5 +1722,19 @@ class manager {
         }
 
         return null;
+    }
+
+    /**
+     * Clean up failed adhoc tasks.
+     */
+    public static function clean_failed_adhoc_tasks(): void {
+        global $CFG, $DB;
+        $difftime = !empty($CFG->task_adhoc_failed_retention) ?
+            $CFG->task_adhoc_failed_retention : static::ADHOC_TASK_FAILED_RETENTION;
+        $DB->delete_records_select(
+            table: 'task_adhoc',
+            select: 'attemptsavailable = 0 AND timestarted < :time',
+            params: ['time' => time() - $difftime],
+        );
     }
 }

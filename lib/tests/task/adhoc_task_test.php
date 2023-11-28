@@ -246,6 +246,110 @@ class adhoc_task_test extends \advanced_testcase {
     }
 
     /**
+     * Test adhoc task failure cleanup.
+     *
+     * @covers ::queue_adhoc_task
+     * @covers ::get_next_adhoc_task
+     * @covers ::adhoc_task_failed
+     * @covers ::clean_failed_adhoc_tasks
+     */
+    public function test_adhoc_task_clean_up(): void {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+
+        // Create two no-retry adhoc tasks.
+        $task1 = new no_retry_adhoc_task();
+        $taskid1 = manager::queue_adhoc_task(task: $task1);
+        $task2 = new no_retry_adhoc_task();
+        $taskid2 = manager::queue_adhoc_task(task: $task2);
+
+        // Get the tasks and mark it as failed.
+        $task = manager::get_adhoc_task($taskid1);
+        manager::adhoc_task_failed(task: $task);
+        $task = manager::get_adhoc_task($taskid2);
+        manager::adhoc_task_failed(task: $task);
+
+        // These are no-retry tasks, the remaining available attempts should be reduced to 0.
+        $this->assertEquals(
+            expected: 0,
+            actual: $DB->get_field(
+                table: 'task_adhoc',
+                return: 'attemptsavailable',
+                conditions: ['id' => $taskid1],
+            ),
+        );
+        $this->assertEquals(
+            expected: 0,
+            actual: $DB->get_field(
+                table: 'task_adhoc',
+                return: 'attemptsavailable',
+                conditions: ['id' => $taskid2],
+            ),
+        );
+
+        // There will be two records in the task_adhoc table.
+        $this->assertEquals(
+            expected: 2,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+
+        // Clean up failed adhoc tasks. This will clean nothing because the tasks are not old enough.
+        manager::clean_failed_adhoc_tasks();
+
+        // There will be two records in the task_adhoc table.
+        $this->assertEquals(
+            expected: 2,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+
+        // Update the time of the task2 to be older more than 2 days.
+        $DB->set_field(
+            table: 'task_adhoc',
+            newfield: 'timestarted',
+            newvalue: time() - (DAYSECS * 2) - 10, // Plus 10 seconds to make sure it is older than 2 days.
+            conditions: ['id' => $taskid2],
+        );
+
+        // Clean up failed adhoc tasks. This will clean nothing because the tasks are not old enough.
+        manager::clean_failed_adhoc_tasks();
+
+        // There will be two records in the task_adhoc table.
+        $this->assertEquals(
+            expected: 2,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+
+        // Update the time of the task1 to be older than the cleanup time.
+        $DB->set_field(
+            table: 'task_adhoc',
+            newfield: 'timestarted',
+            newvalue: time() - $CFG->task_adhoc_failed_retention - 10, // Plus 10 seconds to make sure it is older than the retention time.
+            conditions: ['id' => $taskid1],
+        );
+
+        // Clean up failed adhoc tasks. task1 should be cleaned now.
+        manager::clean_failed_adhoc_tasks();
+
+        // There will be one record in the task_adhoc table.
+        $this->assertEquals(
+            expected: 1,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+
+        // Update the duration of the Failed ad hoc task retention period to one day.
+        $CFG->task_adhoc_failed_retention = DAYSECS;
+
+        // Clean up failed adhoc tasks. task2 should be cleaned now.
+        manager::clean_failed_adhoc_tasks();
+
+        // The task_adhoc table should be empty now.
+        $this->assertEquals(
+            expected: 0,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+    }
+
+    /**
      * Test future adhoc task execution.
      * @covers ::get_next_adhoc_task
      */
