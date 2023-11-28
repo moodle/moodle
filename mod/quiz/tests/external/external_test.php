@@ -1084,7 +1084,9 @@ class external_test extends externallib_advanced_testcase {
         $this->assertArrayNotHasKey('number', $result['questions'][0]);
         $this->assertEquals('1.a', $result['questions'][0]['questionnumber']);
         $this->assertEquals('numerical', $result['questions'][0]['type']);
+        $this->assertEquals('notyetanswered', $result['questions'][0]['stateclass']);
         $this->assertArrayNotHasKey('state', $result['questions'][0]);  // We don't receive the state yet.
+        $this->assertEquals('notyetanswered', $result['questions'][0]['stateclass']);
         $this->assertEquals(get_string('notyetanswered', 'question'), $result['questions'][0]['status']);
         $this->assertFalse($result['questions'][0]['flagged']);
         $this->assertEquals(0, $result['questions'][0]['page']);
@@ -1106,6 +1108,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(2, $result['questions'][0]['questionnumber']);
         $this->assertEquals(2, $result['questions'][0]['number']);
         $this->assertEquals('numerical', $result['questions'][0]['type']);
+        $this->assertEquals('notyetanswered', $result['questions'][0]['stateclass']);
         $this->assertArrayNotHasKey('state', $result['questions'][0]);  // We don't receive the state yet.
         $this->assertEquals(get_string('notyetanswered', 'question'), $result['questions'][0]['status']);
         $this->assertFalse($result['questions'][0]['flagged']);
@@ -1120,6 +1123,7 @@ class external_test extends externallib_advanced_testcase {
         // Now we should receive the question state.
         $result = mod_quiz_external::get_attempt_review($attempt->id, 1);
         $result = external_api::clean_returnvalue(mod_quiz_external::get_attempt_review_returns(), $result);
+        $this->assertEquals('notanswered', $result['questions'][0]['stateclass']);
         $this->assertEquals('gaveup', $result['questions'][0]['state']);
 
         // Change setting and expect two pages.
@@ -1216,7 +1220,9 @@ class external_test extends externallib_advanced_testcase {
 
         // Check the state, flagged and mark data is correct.
         $this->assertEquals('todo', $result['questions'][0]['state']);
+        $this->assertEquals('notyetanswered', $result['questions'][0]['stateclass']);
         $this->assertEquals('todo', $result['questions'][1]['state']);
+        $this->assertEquals('notyetanswered', $result['questions'][1]['stateclass']);
         $this->assertEquals(1, $result['questions'][0]['number']);
         $this->assertEquals(2, $result['questions'][1]['number']);
         $this->assertFalse($result['questions'][0]['flagged']);
@@ -1243,7 +1249,9 @@ class external_test extends externallib_advanced_testcase {
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals('answersaved', $result['questions'][0]['stateclass']);
         $this->assertEquals('todo', $result['questions'][1]['state']);
+        $this->assertEquals('notyetanswered', $result['questions'][1]['stateclass']);
         $this->assertEquals(1, $result['questions'][0]['number']);
         $this->assertEquals(2, $result['questions'][1]['number']);
         $this->assertFalse($result['questions'][0]['flagged']);
@@ -1289,7 +1297,9 @@ class external_test extends externallib_advanced_testcase {
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals('answersaved', $result['questions'][0]['stateclass']);
         $this->assertEquals('todo', $result['questions'][1]['state']);
+        $this->assertEquals('notyetanswered', $result['questions'][1]['stateclass']);
         $this->assertEquals(1, $result['questions'][0]['number']);
         $this->assertEquals(2, $result['questions'][1]['number']);
         $this->assertFalse($result['questions'][0]['flagged']);
@@ -1322,8 +1332,10 @@ class external_test extends externallib_advanced_testcase {
 
         // Check it's marked as completed only the first one.
         $this->assertEquals('complete', $result['questions'][0]['state']);
+        $this->assertEquals('answersaved', $result['questions'][0]['stateclass']);
         $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
         $this->assertEquals('complete', $result['questions'][1]['state']);
+        $this->assertEquals('answersaved', $result['questions'][1]['stateclass']);
         $this->assertEquals(1, $result['questions'][1]['sequencecheck']);
 
     }
