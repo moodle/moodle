@@ -108,10 +108,6 @@ class recording_row_playback implements renderable, templatable {
             return true;
         }
 
-        // Exclude imported recordings.
-        if ($this->recording->get('imported')) {
-            return false;
-        }
         $canmanagerecordings = roles::has_capability_in_course(
             $this->recording->get('courseid'), 'mod/bigbluebuttonbn:managerecordings');
         $canviewallformats = roles::has_capability_in_course(
