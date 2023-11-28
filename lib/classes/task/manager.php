@@ -785,6 +785,7 @@ class manager {
             'SELECT classname, COALESCE(COUNT(*), 0) running, MIN(timestarted) earliest
                FROM {task_adhoc}
               WHERE timestarted IS NOT NULL
+                    AND (attemptsavailable > 0 OR attemptsavailable IS NULL)
                     AND nextruntime < :timestart
            GROUP BY classname
            ORDER BY running ASC, earliest DESC',
@@ -939,10 +940,12 @@ class manager {
                        SELECT classname, COUNT(*) running, MIN(timestarted) earliest
                          FROM {task_adhoc} run
                         WHERE timestarted IS NOT NULL
+                              AND (attemptsavailable > 0 OR attemptsavailable IS NULL)
                      GROUP BY classname
                    ) run ON run.classname = q.classname
              WHERE nextruntime < :timestart
-                   AND q.timestarted IS NULL " .
+                   AND q.timestarted IS NULL
+                   AND (q.attemptsavailable > 0 OR q.attemptsavailable IS NULL) " .
             (!empty($pertasksql) ? "AND (" . $pertasksql . ") " : "") .
             ($runmax ? "AND (COALESCE(run.running, 0)) < :runmax " : "") .
          "ORDER BY COALESCE(run.running, 0) ASC, run.earliest DESC, q.nextruntime ASC, q.id ASC",

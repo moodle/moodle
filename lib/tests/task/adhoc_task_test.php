@@ -156,19 +156,19 @@ class adhoc_task_test extends \advanced_testcase {
         $now = time();
         // Create a normal adhoc task.
         $task = new adhoc_test_task();
-        $taskid = manager::queue_adhoc_task(task: $task);
+        $taskid1 = manager::queue_adhoc_task(task: $task);
 
         // This is a normal task, so it should have unlimited attempts. The remaining available attempts should be null.
         $attemptsavailable = $DB->get_field(
             table: 'task_adhoc',
             return: 'attemptsavailable',
-            conditions: ['id' => $taskid]
+            conditions: ['id' => $taskid1]
         );
         $this->assertNull(actual: $attemptsavailable);
 
         // Get the task from the scheduler, execute it, and mark it as failed.
         $task = manager::get_next_adhoc_task(timestart: $now);
-        $taskid = $task->get_id();
+        $taskid1 = $task->get_id();
         $task->execute();
         manager::adhoc_task_failed(task: $task);
 
@@ -176,20 +176,20 @@ class adhoc_task_test extends \advanced_testcase {
         $attemptsavailable = $DB->get_field(
             table: 'task_adhoc',
             return: 'attemptsavailable',
-            conditions: ['id' => $taskid]
+            conditions: ['id' => $taskid1]
         );
         $this->assertNull(actual: $attemptsavailable);
 
         // Create a no-retry adhoc task.
         $now = time();
         $task = new no_retry_adhoc_task();
-        $taskid = manager::queue_adhoc_task(task: $task);
+        $taskid2 = manager::queue_adhoc_task(task: $task);
 
         // This is no-retry task, so it should have only 1 attempt available.
         $attemptsavailable = $DB->get_field(
             table: 'task_adhoc',
             return: 'attemptsavailable',
-            conditions: ['id' => $taskid]
+            conditions: ['id' => $taskid2]
         );
         $this->assertEquals(
             expected: 1,
@@ -198,7 +198,7 @@ class adhoc_task_test extends \advanced_testcase {
 
         // Get the task from the scheduler, execute it, and mark it as failed.
         $task = manager::get_next_adhoc_task(timestart: $now);
-        $taskid = $task->get_id();
+        $taskid2 = $task->get_id();
         $task->execute();
         manager::adhoc_task_failed(task: $task);
 
@@ -206,12 +206,43 @@ class adhoc_task_test extends \advanced_testcase {
         $attemptsavailable = $DB->get_field(
             table: 'task_adhoc',
             return: 'attemptsavailable',
-            conditions: ['id' => $taskid]
+            conditions: ['id' => $taskid2]
         );
         $this->assertEquals(
             expected: 0,
             actual: $attemptsavailable,
         );
+
+        // There will be two records in the task_adhoc table, one for each task.
+        $this->assertEquals(
+            expected: 2,
+            actual: $DB->count_records(table: 'task_adhoc')
+        );
+        // But get_next_adhoc_task() should return only the allowed re-try task.
+        // The no-retry task should not be returned because it has no remaining attempts.
+        do {
+            $task = manager::get_next_adhoc_task(timestart: $now + 86400);
+            if ($task) {
+                manager::adhoc_task_failed(task: $task);
+                $this->assertEquals(
+                    expected: $taskid1,
+                    actual: $task->get_id(),
+                );
+            }
+        } while ($task);
+
+        // Mark the normal task as complete.
+        $task = manager::get_adhoc_task(taskid: $taskid1);
+        manager::adhoc_task_complete($task);
+
+        // There will be one record in the task_adhoc table.
+        $this->assertEquals(
+            expected: 1,
+            actual: $DB->count_records(table: 'task_adhoc')
+        );
+
+        // But get_next_adhoc_task() should return nothing.
+        $this->assertNull(manager::get_next_adhoc_task(timestart: $now + 86400));
     }
 
     /**
