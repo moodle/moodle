@@ -2379,8 +2379,16 @@ function lti_get_configured_types($courseid, $sectionreturn = 0) {
         }
         $type->icon = html_writer::empty_tag('img', ['src' => $iconurl, 'alt' => '', 'class' => "icon $iconclass"]);
 
-        $type->link = new moodle_url('/course/modedit.php', array('add' => 'lti', 'return' => 0, 'course' => $courseid,
-            'sr' => $sectionreturn, 'typeid' => $ltitype->id));
+        $params = [
+            'add' => 'lti',
+            'return' => 0,
+            'course' => $courseid,
+            'typeid' => $ltitype->id,
+        ];
+        if (!is_null($sectionreturn)) {
+            $params['sr'] = $sectionreturn;
+        }
+        $type->link = new moodle_url('/course/modedit.php', $params);
         $types[] = $type;
     }
     return $types;

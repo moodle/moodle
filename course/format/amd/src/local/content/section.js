@@ -100,7 +100,7 @@ export default class extends DndSection {
      */
     validateDropData(dropdata) {
         // If the format uses one section per page sections dropping in the content is ignored.
-       if (dropdata?.type === 'section' && this.reactive.sectionReturn != 0) {
+       if (dropdata?.type === 'section' && this.reactive.sectionReturn !== null) {
             return false;
         }
         return super.validateDropData(dropdata);

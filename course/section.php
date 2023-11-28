@@ -168,7 +168,7 @@ echo $renderer->container_start('course-content');
 // Include course AJAX.
 include_course_ajax($course, $modinfo->get_used_module_names());
 
-$format->set_section_number($section->section);
+$format->set_sectionid($section->id);
 $outputclass = $format->get_output_classname('content');
 $widget = new $outputclass($format);
 echo $renderer->render($widget);

@@ -32,6 +32,11 @@
     }
 }}
 <button class="btn btn-link text-decoration-none section-modchooser section-modchooser-link activity-add d-flex align-items-center activitychooser-button"
-     data-action="open-chooser" data-sectionid="{{num}}" data-sectionreturnid="{{sectionreturn}}" data-beforemod="{{id}}" aria-label="{{#str}}insertresourceoractivitybefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}" tabindex="0">
+     data-action="open-chooser"
+     data-sectionid="{{num}}"
+     {{#sectionreturn}}data-sectionreturnid="{{.}}"{{/sectionreturn}}
+     data-beforemod="{{id}}"
+     aria-label="{{#str}}insertresourceoractivitybefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}"
+     tabindex="0">
      {{#pix}} t/add, core {{/pix}}
 </button>
