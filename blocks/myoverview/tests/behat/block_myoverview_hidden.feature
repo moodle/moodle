@@ -94,6 +94,7 @@ Feature: The my overview block allows users to hide their courses
     When I click on "All" "link" in the "Course overview" "block"
     And I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
     And I click on "Remove from view" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    And I wait "1" seconds
     Then I should not see "Course 2" in the "Course overview" "block"
 
   Scenario: Test a course is never hidden with "All (including removed from view)" courses
