@@ -17,78 +17,128 @@
  * JavaScript for managing multiple grade items for a quiz.
  *
  * @module     mod_quiz/edit_multiple_grades
- * @copyright  2023 THe Open University
+ * @copyright  2023 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import {call as fetchMany} from 'core/ajax';
 import MoodleConfig from 'core/config';
-import {addIconToContainerRemoveOnCompletion} from 'core/loadingicon';
+import {addIconToContainer} from 'core/loadingicon';
 import Notification from 'core/notification';
 import Pending from 'core/pending';
 import {get_string as getString} from 'core/str';
+import {render as renderTemplate} from 'core/templates';
+import {replaceNode} from 'core/templates';
+
+/**
+ * @type {Object} selectors used in this code.
+ */
+const SELECTORS = {
+    'addGradeItemButton': '#mod_quiz-add_grade_item',
+    'editingPageContents': '#edit_grading_page-contents',
+    'gradeItemList': 'table#mod_quiz-grade-item-list',
+    'gradeItemSelect': 'select[data-slot-id]',
+    'gradeItemSelectId': (id) => 'select#grade-item-choice-' + id,
+    'updateGradeItemLink': (id) => 'tr[data-quiz-grade-item-id="' + id + '"] .quickeditlink',
+    'inplaceEditable': 'span.inplaceeditable',
+    'inplaceEditableOn': 'span.inplaceeditable.inplaceeditingon',
+    'slotList': 'table#mod_quiz-slot-list',
+};
 
 /**
  * Call the Ajax service to create a quiz grade item.
  *
- * @param {Number} quizId
- * @param {String} name
- * @return {Promise}
+ * @param {Number} quizId id of the quiz to update.
+ * @param {String} name name of the grade item to create.
+ * @returns {Promise<Object>} a promise that resolves to the template context required to re-render the page.
  */
-const createGradeItem = (quizId, name) => fetchMany([{
+const createGradeItem = (
+    quizId,
+    name
+) => callServiceAndReturnRenderingData({
     methodname: 'mod_quiz_create_grade_items',
     args: {
         quizid: quizId,
         quizgradeitems: [{name: name}],
     }
-}])[0];
+});
 
 /**
  * Call the Ajax service to update a quiz grade item.
  *
- * @param {Number} quizId
- * @param {Number} gradeItemId
- * @param {String} newName
- * @return {Promise}
+ * @param {Number} quizId id of the quiz to update.
+ * @param {Number} gradeItemId id of the grade item to update.
+ * @param {String} newName the new name to set.
+ * @return {Promise} Promise that resolves to the context required to re-render the page.
  */
-const updateGradeItem = (quizId, gradeItemId, newName) => fetchMany([{
+const updateGradeItem = (
+    quizId,
+    gradeItemId,
+    newName
+) => callServiceAndReturnRenderingData({
     methodname: 'mod_quiz_update_grade_items',
     args: {
         quizid: quizId,
         quizgradeitems: [{id: gradeItemId, name: newName}],
     }
-}])[0];
+});
 
 /**
  * Call the Ajax service to delete a quiz grade item.
  *
- * @param {Number} quizId
- * @param {Number} gradeItemId
- * @return {Promise}
+ * @param {Number} quizId id of the quiz to update.
+ * @param {Number} gradeItemId id of the grade item to delete.
+ * @return {Promise} Promise that resolves to the context required to re-render the page.
  */
-const deleteGradeItem = (quizId, gradeItemId) => fetchMany([{
+const deleteGradeItem = (
+    quizId,
+    gradeItemId
+) => callServiceAndReturnRenderingData({
     methodname: 'mod_quiz_delete_grade_items',
     args: {
         quizid: quizId,
         quizgradeitems: [{id: gradeItemId}],
     }
-}])[0];
+});
 
 /**
  * Call the Ajax service to update the quiz grade item used by a slot.
  *
- * @param {Number} quizId
- * @param {Number} slotId
- * @param {Number|null} gradeItemId
- * @return {Promise}
+ * @param {Number} quizId id of the quiz to update.
+ * @param {Number} slotId id of the slot to update.
+ * @param {Number|null} gradeItemId new grade item ot set, or null to un-set.
+ * @return {Promise} Promise that resolves to the context required to re-render the page.
  */
-const updateSlotGradeItem = (quizId, slotId, gradeItemId) => fetchMany([{
+const updateSlotGradeItem = (
+    quizId,
+    slotId,
+    gradeItemId
+) => callServiceAndReturnRenderingData({
     methodname: 'mod_quiz_update_slots',
     args: {
         quizid: quizId,
         slots: [{id: slotId, quizgradeitemid: gradeItemId}],
     }
-}])[0];
+});
+
+/**
+ * Make a web service call, and also call mod_quiz_get_edit_grading_page_data to get the date to re-render the page.
+ *
+ * @param {Object} methodCall a web service call to pass to fetchMany. Must include methodCall.args.quizid.
+ * @returns {Promise<Object>} a promise that resolves to the template context required to re-render the page.
+ */
+const callServiceAndReturnRenderingData = (methodCall) => {
+    return Promise.all(fetchMany([
+        methodCall,
+        {
+            methodname: 'mod_quiz_get_edit_grading_page_data',
+            args: {
+                quizid: methodCall.args.quizid,
+            }
+        },
+    ]))
+    .then(results => JSON.parse(results[1]));
+};
 
 /**
  * Handle click events on the delete icon.
@@ -100,15 +150,25 @@ const handleGradeItemDelete = (e) => {
     const pending = new Pending('delete-quiz-grade-item');
 
     const tableCell = e.target.closest('td');
-    addIconToContainerRemoveOnCompletion(tableCell, pending);
+    addIconToContainer(tableCell, pending);
 
     const tableRow = tableCell.closest('tr');
     const quizId = tableRow.closest('table').dataset.quizId;
     const gradeItemId = tableRow.dataset.quizGradeItemId;
 
+    let nextItemToFocus;
+    if (tableRow.nextElementSibling) {
+        nextItemToFocus = SELECTORS.updateGradeItemLink(tableRow.nextElementSibling.dataset.quizGradeItemId);
+    } else {
+        nextItemToFocus = SELECTORS.addGradeItemButton;
+    }
+
     deleteGradeItem(quizId, gradeItemId)
-        .then(() => pending.resolve())
-        .then(() => window.location.reload())
+        .then(reRenderPage)
+        .then(() => {
+            pending.resolve();
+            document.querySelector(nextItemToFocus).focus();
+        })
         .catch(Notification.exception);
 };
 
@@ -132,9 +192,9 @@ const stopEditingGadeItem = (editableSpan) => {
 const handleGradeItemEditStart = (e) => {
     e.preventDefault();
     const pending = new Pending('edit-quiz-grade-item-start');
-    const editableSpan = e.target.closest('span.inplaceeditable');
+    const editableSpan = e.target.closest(SELECTORS.inplaceEditable);
 
-    document.querySelectorAll('span.inplaceeditable.inplaceeditingon').forEach(stopEditingGadeItem);
+    document.querySelectorAll(SELECTORS.inplaceEditableOn).forEach(stopEditingGadeItem);
 
     editableSpan.dataset.oldContent = editableSpan.innerHTML;
     getString('edittitleinstructions')
@@ -143,7 +203,7 @@ const handleGradeItemEditStart = (e) => {
             editableSpan.innerHTML = '<span class="editinstructions">' + instructions + '</span>' +
                     '<label class="sr-only" for="' + uniqueId + '">' + editableSpan.dataset.editLabel + '</label>' +
                     '<input type="text" id="' + uniqueId + '" value="' + editableSpan.dataset.rawName +
-                            '" class="ignoredirty form-control">';
+                            '" class="ignoredirty form-control w-100">';
 
             const inputElement = editableSpan.querySelector('input');
             inputElement.focus();
@@ -165,8 +225,10 @@ const handleGradeItemKeyDown = (e) => {
         return;
     }
 
-    const editableSpan = e.target.closest('span.inplaceeditable.inplaceeditingon');
-    if (!editableSpan) {
+    const editableSpan = e.target.closest(SELECTORS.inplaceEditableOn);
+
+    // Check this click is on a relevant element.
+    if (!editableSpan || !editableSpan.closest(SELECTORS.gradeItemList)) {
         return;
     }
 
@@ -175,16 +237,30 @@ const handleGradeItemKeyDown = (e) => {
 
     const newName = editableSpan.querySelector('input').value;
     const tableCell = e.target.closest('th');
-    addIconToContainerRemoveOnCompletion(tableCell, pending);
+    addIconToContainer(tableCell);
 
     const tableRow = tableCell.closest('tr');
     const quizId = tableRow.closest('table').dataset.quizId;
     const gradeItemId = tableRow.dataset.quizGradeItemId;
 
     updateGradeItem(quizId, gradeItemId, newName)
-        .then(() => pending.resolve())
-        .then(() => window.location.reload())
+        .then(reRenderPage)
+        .then(() => {
+            pending.resolve();
+            document.querySelector(SELECTORS.updateGradeItemLink(gradeItemId)).focus({'focusVisible': true});
+        })
         .catch(Notification.exception);
+};
+
+/**
+ * Replace the contents of the page with the page re-rendered from the provided data, once that promise resolves.
+ *
+ * @param {Object} editGradingPageData the template context data required to re-render the page.
+ * @returns {Promise<void>} a promise that will resolve when the page is updated.
+ */
+const reRenderPage = (editGradingPageData) => {
+    return renderTemplate('mod_quiz/edit_grading_page', editGradingPageData)
+        .then((html, js) => replaceNode(document.querySelector(SELECTORS.editingPageContents), html, js || ''));
 };
 
 /**
@@ -197,8 +273,10 @@ const handleGradeItemKeyUp = (e) => {
         return;
     }
 
-    const editableSpan = e.target.closest('span.inplaceeditable.inplaceeditingon');
-    if (!editableSpan) {
+    const editableSpan = e.target.closest(SELECTORS.inplaceEditableOn);
+
+    // Check this click is on a relevant element.
+    if (!editableSpan || !editableSpan.closest(SELECTORS.gradeItemList)) {
         return;
     }
 
@@ -217,8 +295,10 @@ const handleGradeItemFocusOut = (e) => {
         return;
     }
 
-    const editableSpan = e.target.closest('span.inplaceeditable.inplaceeditingon');
-    if (!editableSpan) {
+    const editableSpan = e.target.closest(SELECTORS.inplaceEditableOn);
+
+    // Check this click is on a relevant element.
+    if (!editableSpan || !editableSpan.closest(SELECTORS.gradeItemList)) {
         return;
     }
 
@@ -232,8 +312,10 @@ const handleGradeItemFocusOut = (e) => {
  * @param {Event} e event.
  */
 const handleSlotGradeItemChanged = (e) => {
-    const select = e.target.closest('select[data-slot-id]');
-    if (!select) {
+    const select = e.target.closest(SELECTORS.gradeItemSelect);
+
+    // Check this click is on a relevant element.
+    if (!select || !select.closest(SELECTORS.slotList)) {
         return;
     }
 
@@ -243,13 +325,16 @@ const handleSlotGradeItemChanged = (e) => {
     const slotId = select.dataset.slotId;
     const newGradeItemId = select.value ? select.value : null;
     const tableCell = e.target.closest('td');
-    addIconToContainerRemoveOnCompletion(tableCell, pending);
+    addIconToContainer(tableCell, pending);
 
     const quizId = tableCell.closest('table').dataset.quizId;
 
     updateSlotGradeItem(quizId, slotId, newGradeItemId)
-        .then(() => pending.resolve())
-        .then(() => window.location.reload())
+        .then(reRenderPage)
+        .then(() => {
+            pending.resolve();
+            document.querySelector(SELECTORS.gradeItemSelectId(slotId)).focus();
+        })
         .catch(Notification.exception);
 };
 
@@ -261,7 +346,8 @@ const handleSlotGradeItemChanged = (e) => {
 const handleGradeItemClick = (e) => {
     const link = e.target.closest('a');
 
-    if (!link) {
+    // Check this click is on a relevant element.
+    if (!link || !link.closest(SELECTORS.gradeItemList)) {
         return;
     }
 
@@ -280,16 +366,24 @@ const handleGradeItemClick = (e) => {
  * @param {Event} e click event.
  */
 const handleAddGradeItemClick = (e) => {
+    // Check the click is on the element of interest.
+    if (!e.target.closest(SELECTORS.addGradeItemButton)) {
+        return;
+    }
+
     e.preventDefault();
     const pending = new Pending('create-quiz-grade-item');
-    addIconToContainerRemoveOnCompletion(e.target.parentNode, pending);
+    addIconToContainer(e.target.parentNode, pending);
 
     const quizId = e.target.dataset.quizId;
 
     getString('gradeitemdefaultname', 'quiz')
         .then((name) => createGradeItem(quizId, name))
-        .then(() => pending.resolve())
-        .then(() => window.location.reload())
+        .then(reRenderPage)
+        .then(() => {
+            pending.resolve();
+            document.querySelector(SELECTORS.addGradeItemButton).focus();
+        })
         .catch(Notification.exception);
 };
 
@@ -297,20 +391,14 @@ const handleAddGradeItemClick = (e) => {
  * Replace the container with a new version.
  */
 const registerEventListeners = () => {
-    const gradeItemTable = document.getElementById('mod_quiz-grade-item-list');
-    if (gradeItemTable) {
-        gradeItemTable.addEventListener('click', handleGradeItemClick);
-        gradeItemTable.addEventListener('keydown', handleGradeItemKeyDown);
-        gradeItemTable.addEventListener('keyup', handleGradeItemKeyUp);
-        gradeItemTable.addEventListener('focusout', handleGradeItemFocusOut);
-    }
+    document.body.addEventListener('click', handleGradeItemClick);
+    document.body.addEventListener('keydown', handleGradeItemKeyDown);
+    document.body.addEventListener('keyup', handleGradeItemKeyUp);
+    document.body.addEventListener('focusout', handleGradeItemFocusOut);
 
-    document.getElementById('mod_quiz-add_grade_item').addEventListener('click', handleAddGradeItemClick);
+    document.body.addEventListener('click', handleAddGradeItemClick);
 
-    const slotTable = document.getElementById('mod_quiz-slot-list');
-    if (gradeItemTable) {
-        slotTable.addEventListener('change', handleSlotGradeItemChanged);
-    }
+    document.body.addEventListener('change', handleSlotGradeItemChanged);
 };
 
 /**

@@ -287,4 +287,12 @@ $functions = [
         'capabilities' => 'mod/quiz:manage',
         'ajax' => true,
     ],
+
+    'mod_quiz_get_edit_grading_page_data' => [
+        'classname' => 'mod_quiz\external\get_edit_grading_page_data',
+        'description' => 'Get the data required to re-render the Quiz grading setup page',
+        'type' => 'read',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
 ];

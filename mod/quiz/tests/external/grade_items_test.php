@@ -137,6 +137,29 @@ final class grade_items_test extends externallib_advanced_testcase {
         delete_grade_items::execute($quizobj->get_quizid(), [['id' => $items[0]->id]]);
     }
 
+    public function test_get_edit_grading_page_data_service_works(): void {
+        global $PAGE;
+        $PAGE->set_url('/');
+
+        $quizobj = $this->create_quiz_with_two_grade_items();
+
+        $jsondata = get_edit_grading_page_data::execute($quizobj->get_quizid());
+
+        $this->assertJson($jsondata);
+        $data = json_decode($jsondata);
+        $this->assertEquals($quizobj->get_quizid(), $data->quizid);
+    }
+
+    public function test_get_edit_grading_page_data_service_checks_permissions(): void {
+        $quizobj = $this->create_quiz_with_two_grade_items();
+
+        $unprivilegeduser = $this->getDataGenerator()->create_user();
+        $this->setUser($unprivilegeduser);
+
+        $this->expectException(required_capability_exception::class);
+        get_edit_grading_page_data::execute($quizobj->get_quizid());
+    }
+
     /**
      * Create a quiz of two shortanswer questions, each contributing to a different grade item.
      *

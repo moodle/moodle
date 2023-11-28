@@ -46,96 +46,100 @@
     }
 }}
 
-<h2>{{#str}} gradeitemsetup, quiz {{/str}}</h2>
+<div id="edit_grading_page-contents">
 
-<h3>{{#str}} gradeitems, grades {{/str}}</h3>
+    <h2>{{#str}} gradeitemsetup, quiz {{/str}}</h2>
 
-{{^hasgradeitems}}
-    {{#nogradeitems}}
-        {{> core/notification_info}}
-    {{/nogradeitems}}
-{{/hasgradeitems}}
+    <h3>{{#str}} gradeitems, grades {{/str}}</h3>
 
-{{#hasgradeitems}}
-<table class="generaltable table-responsive" id="mod_quiz-grade-item-list" data-quiz-id="{{quizid}}">
-    <thead>
-        <tr>
-            <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
-            <th scope="col">{{#str}} actions {{/str}}</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#gradeitems}}
-            <tr data-quiz-grade-item-id="{{id}}">
-                <th scope="row">
-                    <span class="inplaceeditable inplaceeditable-text"
-                        data-raw-name="{{name}}" data-edit-label="{{#str}} gradeitemnewname, quiz, {{{displayname}}} {{/str}}">
-                            <a href="#" class="quickeditlink" data-action-edit="1" title="{{#str}} gradeitemedit, quiz, {{{displayname}}} {{/str}}">
-                                <span class="displayvalue">{{{displayname}}}</span>
-                                <span class="quickediticon">
-                                    {{#pix}}t/editstring, core{{/pix}}
-                                </span>
-                            </a>
-                    </span>
-                </th>
-                <td class="align-middle">
-                    {{^isused}}
-                        <a href="#" data-action-delete="1">
-                            {{#pix}} t/delete, core, {{#str}} gradeitemdelete, quiz, {{{name}}} {{/str}} {{/pix}}
-                        </a>
-                    {{/isused}}
-                </td>
-            </tr>
-        {{/gradeitems}}
-    </tbody>
-</table>
-{{/hasgradeitems}}
+    {{^hasgradeitems}}
+        {{#nogradeitems}}
+            {{> core/notification_info}}
+        {{/nogradeitems}}
+    {{/hasgradeitems}}
 
-<div class="mb-5">
-    <button type="button" class="btn btn-secondary" id="mod_quiz-add_grade_item"
-            data-quiz-id="{{quizid}}">{{#str}} additem, grades{{/str}}</button>
-</div>
-
-<h3>{{#str}} gradeitemmarkscheme, quiz {{/str}}</h3>
-
-{{^hasslots}}
-    {{#noslots}}
-        {{> core/notification_info}}
-    {{/noslots}}
-{{/hasslots}}
-
-{{#hasslots}}
-    <table class="generaltable table-responsive" id="mod_quiz-slot-list" data-quiz-id="{{quizid}}">
-        <thead>
-            <tr>
-                <th scope="col">{{#str}} qnumberbrief, quiz {{/str}}</th>
-                <th scope="col">{{#str}} question, quiz {{/str}}</th>
-                <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{#sections}}
-                <tr class="mod_quiz-new-section">
-                    <td colspan="3">
-                        <h4>{{{displayname}}}</h4>
-                    </td>
+    {{#hasgradeitems}}
+        <table class="generaltable table-responsive" id="mod_quiz-grade-item-list" data-quiz-id="{{quizid}}">
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
+                    <th scope="col">{{#str}} actions {{/str}}</th>
                 </tr>
-
-                {{#slots}}
-                    <tr>
-                        <td>{{displaynumber}}</td>
-                        <th scope="row"><label for="grade-item-choice-{{id}}">{{{displayname}}}</label></th>
-                        <td>
-                            <select id="grade-item-choice-{{id}}" class="form-control" data-slot-id="{{id}}">
-                                {{#choices}}
-                                    <option value="{{id}}"{{#isselected}} selected="selected"{{/isselected}}>{{choice}}</option>
-                                {{/choices}}
-                            </select>
+            </thead>
+            <tbody>
+                {{#gradeitems}}
+                    <tr data-quiz-grade-item-id="{{id}}">
+                        <th scope="row">
+                            <span class="inplaceeditable inplaceeditable-text"
+                                data-raw-name="{{name}}" data-edit-label="{{#str}} gradeitemnewname, quiz, {{{displayname}}} {{/str}}">
+                                    <a href="#" class="quickeditlink" data-action-edit="1" title="{{#str}} gradeitemedit, quiz, {{{displayname}}} {{/str}}">
+                                        <span class="displayvalue">{{{displayname}}}</span>
+                                        <span class="quickediticon">
+                                            {{#pix}}t/editstring, core{{/pix}}
+                                        </span>
+                                    </a>
+                            </span>
+                        </th>
+                        <td class="align-middle">
+                            {{^isused}}
+                                <a href="#" data-action-delete="1">
+                                    {{#pix}} t/delete, core, {{#str}} gradeitemdelete, quiz, {{{name}}} {{/str}} {{/pix}}
+                                </a>
+                            {{/isused}}
                         </td>
                     </tr>
-                {{/slots}}
-            {{/sections}}
+                {{/gradeitems}}
+            </tbody>
+        </table>
+    {{/hasgradeitems}}
 
-        </tbody>
-    </table>
-{{/hasslots}}
+    <div class="mb-5">
+        <button type="button" class="btn btn-secondary" id="mod_quiz-add_grade_item"
+                data-quiz-id="{{quizid}}">{{#str}} additem, grades{{/str}}</button>
+    </div>
+
+    <h3>{{#str}} gradeitemmarkscheme, quiz {{/str}}</h3>
+
+    {{^hasslots}}
+        {{#noslots}}
+            {{> core/notification_info}}
+        {{/noslots}}
+    {{/hasslots}}
+
+    {{#hasslots}}
+        <table class="generaltable table-responsive" id="mod_quiz-slot-list" data-quiz-id="{{quizid}}">
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}} qnumberbrief, quiz {{/str}}</th>
+                    <th scope="col">{{#str}} question, quiz {{/str}}</th>
+                    <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#sections}}
+                    <tr class="mod_quiz-new-section">
+                        <td colspan="3">
+                            <h4>{{{displayname}}}</h4>
+                        </td>
+                    </tr>
+
+                    {{#slots}}
+                        <tr>
+                            <td>{{displaynumber}}</td>
+                            <th scope="row"><label for="grade-item-choice-{{id}}">{{{displayname}}}</label></th>
+                            <td>
+                                <select id="grade-item-choice-{{id}}" class="form-control" data-slot-id="{{id}}">
+                                    {{#choices}}
+                                        <option value="{{id}}"{{#isselected}} selected="selected"{{/isselected}}>{{choice}}</option>
+                                    {{/choices}}
+                                </select>
+                            </td>
+                        </tr>
+                    {{/slots}}
+                {{/sections}}
+
+            </tbody>
+        </table>
+    {{/hasslots}}
+
+</div>
