@@ -197,5 +197,15 @@ function xmldb_quiz_upgrade($oldversion) {
     // Automatically generated Moodle v4.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2023100901) {
+
+        // Set the value for all existing rows to match the previous behaviour,
+        // but only where users have not already set another value.
+        $DB->set_field('quiz', 'reviewmaxmarks', 0x11110, ['reviewmaxmarks' => 0]);
+
+        // Quiz savepoint reached.
+        upgrade_mod_savepoint(true, 2023100901, 'quiz');
+    }
+
     return true;
 }
