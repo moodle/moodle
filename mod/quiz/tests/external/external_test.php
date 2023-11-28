@@ -2074,17 +2074,20 @@ class external_test extends externallib_advanced_testcase {
     }
 
     /**
-     * Test that a sequential navigation quiz is not allowing to see questions in advance for a student
+     * Test that a sequential navigation quiz is not allowing to see questions content in advance for a student.
      */
     public function test_sequential_navigation_attempt_summary() {
         // Test user with full capabilities.
         $quiz = $this->prepare_sequential_quiz();
         $attemptobj = $this->create_quiz_attempt_object($quiz);
         $this->setUser($this->student);
-        // Check that we do not return other questions than the one currently viewed.
+        // Check that we do not return content from other questions except than the ones currently viewed.
         $result = mod_quiz_external::get_attempt_summary($attemptobj->get_attemptid());
-        $this->assertCount(1, $result['questions']);
-        $this->assertStringContainsString('Question (1)', $result['questions'][0]['html']);
+        $this->assertStringContainsString('Question (1)', $result['questions'][0]['html']); // Current question.
+        $this->assertEmpty($result['questions'][1]['html']); // Next question.
+        $this->assertEmpty($result['questions'][2]['html']); // And more.
+        $this->assertEmpty($result['questions'][3]['html']); // And more.
+        $this->assertEmpty($result['questions'][4]['html']); // And more.
     }
 
     /**
@@ -2137,6 +2140,7 @@ class external_test extends externallib_advanced_testcase {
         $data = [
             'course' => $this->course->id,
             'sumgrades' => 2,
+            'questionsperpage' => 1,
             'preferredbehaviour' => 'deferredfeedback',
             'navmethod' => QUIZ_NAVMETHOD_SEQ
         ];

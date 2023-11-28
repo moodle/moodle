@@ -968,41 +968,18 @@ class mod_quiz_external extends external_api {
             $qattempt = $attemptobj->get_question_attempt($slot);
             $questiondef = $qattempt->get_question(true);
 
-            // Get response files (for questions like essay that allows attachments).
-            $responsefileareas = [];
-            foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
-                if ($files = $attemptobj->get_question_attempt($slot)->get_last_qt_files($area, $contextid)) {
-                    $responsefileareas[$area]['area'] = $area;
-                    $responsefileareas[$area]['files'] = [];
-
-                    foreach ($files as $file) {
-                        $responsefileareas[$area]['files'][] = [
-                            'filename' => $file->get_filename(),
-                            'fileurl' => $qattempt->get_response_file_url($file),
-                            'filesize' => $file->get_filesize(),
-                            'filepath' => $file->get_filepath(),
-                            'mimetype' => $file->get_mimetype(),
-                            'timemodified' => $file->get_timemodified(),
-                        ];
-                    }
-                }
-            }
-
             // Check display settings for question.
             $settings = $questiondef->get_question_definition_for_external_rendering($qattempt, $displayoptions);
 
+            // Navigation information.
             $question = [
                 'slot' => $slot,
-                'type' => $qtype,
                 'page' => $attemptobj->get_question_page($slot),
                 'questionnumber' => $attemptobj->get_question_number($slot),
                 'flagged' => $attemptobj->is_question_flagged($slot),
-                'html' => $attemptobj->render_question($slot, $review, $renderer) . $PAGE->requires->get_end_code(),
-                'responsefileareas' => $responsefileareas,
                 'sequencecheck' => $qattempt->get_sequence_check_count(),
                 'lastactiontime' => $qattempt->get_last_step()->get_timecreated(),
                 'hasautosavedstep' => $qattempt->has_autosaved_step(),
-                'settings' => !empty($settings) ? json_encode($settings) : null,
             ];
 
             if ($question['questionnumber'] === (string) (int) $question['questionnumber']) {
@@ -1023,9 +1000,44 @@ class mod_quiz_external extends external_api {
             if ($displayoptions->marks >= question_display_options::MARK_AND_MAX) {
                 $question['mark'] = $attemptobj->get_question_mark($slot);
             }
-            if ($attemptobj->check_page_access($attemptobj->get_question_page($slot), false)) {
-                $questions[] = $question;
+
+            // Check access. This is needed especially when sequential navigation is enforced. To prevent the student see "future" questions.
+            $haveaccess = $attemptobj->check_page_access($attemptobj->get_question_page($slot), false);
+            if (!$haveaccess) {
+                $question['type'] = '';
+                $question['html'] = '';
             }
+
+            // For visited pages/questions it is ok to keep data the user already saw.
+            $questionalreadyseen = $attemptobj->get_currentpage() >= $attemptobj->get_question_page($slot);
+
+            // Information when only the user has access to the question at any moment (free navigation) or already seen.
+            if ($haveaccess || $questionalreadyseen) {
+                // Get response files (for questions like essay that allows attachments).
+                $responsefileareas = [];
+                foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
+                    if ($files = $attemptobj->get_question_attempt($slot)->get_last_qt_files($area, $contextid)) {
+                        $responsefileareas[$area]['area'] = $area;
+                        $responsefileareas[$area]['files'] = [];
+
+                        foreach ($files as $file) {
+                            $responsefileareas[$area]['files'][] = [
+                                'filename' => $file->get_filename(),
+                                'fileurl' => $qattempt->get_response_file_url($file),
+                                'filesize' => $file->get_filesize(),
+                                'filepath' => $file->get_filepath(),
+                                'mimetype' => $file->get_mimetype(),
+                                'timemodified' => $file->get_timemodified(),
+                            ];
+                        }
+                    }
+                }
+                $question['type'] = $qtype;
+                $question['html'] = $attemptobj->render_question($slot, $review, $renderer) . $PAGE->requires->get_end_code();
+                $question['responsefileareas'] = $responsefileareas;
+                $question['settings'] = !empty($settings) ? json_encode($settings) : null;
+            }
+            $questions[] = $question;
         }
         return $questions;
     }
