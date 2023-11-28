@@ -143,6 +143,78 @@ class adhoc_task_test extends \advanced_testcase {
     }
 
     /**
+     * Test adhoc task failure retry backoff.
+     *
+     * @covers ::queue_adhoc_task
+     * @covers ::get_next_adhoc_task
+     * @covers ::adhoc_task_failed
+     */
+    public function test_adhoc_task_with_retry_flag(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $now = time();
+        // Create a normal adhoc task.
+        $task = new adhoc_test_task();
+        $taskid = manager::queue_adhoc_task(task: $task);
+
+        // This is a normal task, so it should have unlimited attempts. The remaining available attempts should be null.
+        $attemptsavailable = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'attemptsavailable',
+            conditions: ['id' => $taskid]
+        );
+        $this->assertNull(actual: $attemptsavailable);
+
+        // Get the task from the scheduler, execute it, and mark it as failed.
+        $task = manager::get_next_adhoc_task(timestart: $now);
+        $taskid = $task->get_id();
+        $task->execute();
+        manager::adhoc_task_failed(task: $task);
+
+        // This is a normal task, so it should have unlimited attempts. The remaining available attempts should be null.
+        $attemptsavailable = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'attemptsavailable',
+            conditions: ['id' => $taskid]
+        );
+        $this->assertNull(actual: $attemptsavailable);
+
+        // Create a no-retry adhoc task.
+        $now = time();
+        $task = new no_retry_adhoc_task();
+        $taskid = manager::queue_adhoc_task(task: $task);
+
+        // This is no-retry task, so it should have only 1 attempt available.
+        $attemptsavailable = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'attemptsavailable',
+            conditions: ['id' => $taskid]
+        );
+        $this->assertEquals(
+            expected: 1,
+            actual: $attemptsavailable,
+        );
+
+        // Get the task from the scheduler, execute it, and mark it as failed.
+        $task = manager::get_next_adhoc_task(timestart: $now);
+        $taskid = $task->get_id();
+        $task->execute();
+        manager::adhoc_task_failed(task: $task);
+
+        // This is no-retry task, the remaining available attempts should be reduced to 0.
+        $attemptsavailable = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'attemptsavailable',
+            conditions: ['id' => $taskid]
+        );
+        $this->assertEquals(
+            expected: 0,
+            actual: $attemptsavailable,
+        );
+    }
+
+    /**
      * Test future adhoc task execution.
      * @covers ::get_next_adhoc_task
      */

@@ -229,6 +229,9 @@ class manager {
             $record->nextruntime = time() - 1;
         }
 
+        // Check if the task is allowed to be retried or not.
+        $record->attemptsavailable = $task->retry_until_success() ? null : 1;
+
         // Check if the same task is already scheduled.
         if ($checkforexisting && self::task_is_scheduled($task)) {
             return false;
@@ -311,6 +314,7 @@ class manager {
         $record->timestarted = $task->get_timestarted();
         $record->hostname = $task->get_hostname();
         $record->pid = $task->get_pid();
+        $record->attemptsavailable = $task->get_attempts_available();
 
         return $record;
     }
@@ -356,6 +360,9 @@ class manager {
         }
         if (isset($record->pid)) {
             $task->set_pid($record->pid);
+        }
+        if (isset($record->attemptsavailable)) {
+            $task->set_attempts_available($record->attemptsavailable);
         }
 
         return $task;
@@ -1106,6 +1113,9 @@ class manager {
         $task->set_pid();
         $task->set_next_run_time(time() + $delay);
         $task->set_fail_delay($delay);
+        if (!$task->retry_until_success() && $task->get_attempts_available() > 0) {
+            $task->set_attempts_available($task->get_attempts_available() - 1);
+        }
         $record = self::record_from_adhoc_task($task);
         $DB->update_record('task_adhoc', $record);
 
