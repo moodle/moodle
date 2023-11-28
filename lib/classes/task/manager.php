@@ -543,6 +543,7 @@ class manager {
                     'failed' => 0,
                     'running' => 0,
                     'due' => 0,
+                    'stop' => false,
                 ];
             }
 
@@ -562,6 +563,11 @@ class manager {
                 if ($nextruntime <= $now) {
                     $classsummary['due']++;
                 }
+            }
+
+            // Mark the task as stopped if it has no attempts available.
+            if (isset($r->attemptsavailable) && $r->attemptsavailable == 0) {
+                $classsummary['stop'] = true;
             }
 
             $summary[$r->component][$r->classname] = $classsummary;
