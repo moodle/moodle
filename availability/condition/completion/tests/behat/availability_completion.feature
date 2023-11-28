@@ -20,6 +20,8 @@ Feature: availability_completion
       | activity | course | name   | completion |
       | page     | C1     | Page 1 | 1          |
       | page     | C1     | Page 2 |            |
+      | page     | C1     | Page 3 | 1          |
+      | page     | C1     | Page 4 |            |
 
   @javascript
   Scenario: Test condition
@@ -119,3 +121,25 @@ Feature: availability_completion
       | must not be marked complete      | False   | True    | should      | should             | should not         |
       | must be complete with pass grade | False   | True    | should not  | should not         | should             |
       | must be complete with fail grade | False   | True    | should not  | should             | should not         |
+
+  @javascript
+  Scenario: Edit dependent activity name should also change the access restriction message
+    Given I am on the "Page 2" "page activity editing" page logged in as "teacher1"
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
+    And I click on ".availability-item .availability-eye img" "css_element"
+    And I set the field "Activity or resource" to "Page 1"
+    And I press "Save and return to course"
+    And I am on the "Page 4" "page activity editing" page
+    And I expand all fieldsets
+    And I click on "Add restriction..." "button"
+    And I click on "Activity completion" "button" in the "Add restriction..." "dialogue"
+    And I click on ".availability-item .availability-eye img" "css_element"
+    And I set the field "Activity or resource" to "Page 3"
+    And I press "Save and return to course"
+    And I switch editing mode on
+    And I set the field "Edit title" in the "Page 1" "activity" to "Page X"
+    And I wait until the page is ready
+    Then I should see "Not available unless: The activity Page X is marked complete" in the "Page 2" "activity"
+    Then I should see "Not available unless: The activity Page 3 is marked complete" in the "Page 4" "activity"
