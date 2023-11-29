@@ -1061,18 +1061,20 @@ class courselib_test extends advanced_testcase {
         rebuild_course_cache($course->id, true);
 
         // Build course cache.
-        get_fast_modinfo($course->id);
+        $modinfo = get_fast_modinfo($course->id);
         // Get the course modinfo cache.
         $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
         // Get the section cache.
         $sectioncaches = $coursemodinfo->sectioncache;
 
+        $numberedsections = $modinfo->get_section_info_all();
+
         // Make sure that we will have 4 section caches here.
         $this->assertCount(4, $sectioncaches);
-        $this->assertArrayHasKey(0, $sectioncaches);
-        $this->assertArrayHasKey(1, $sectioncaches);
-        $this->assertArrayHasKey(2, $sectioncaches);
-        $this->assertArrayHasKey(3, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[0]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[1]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[2]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[3]->id, $sectioncaches);
 
         // Move section.
         move_section_to($course, 2, 3);
@@ -1083,10 +1085,10 @@ class courselib_test extends advanced_testcase {
 
         // Make sure that we will have 2 section caches left.
         $this->assertCount(2, $sectioncaches);
-        $this->assertArrayHasKey(0, $sectioncaches);
-        $this->assertArrayHasKey(1, $sectioncaches);
-        $this->assertArrayNotHasKey(2, $sectioncaches);
-        $this->assertArrayNotHasKey(3, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[0]->id, $sectioncaches);
+        $this->assertArrayHasKey($numberedsections[1]->id, $sectioncaches);
+        $this->assertArrayNotHasKey($numberedsections[2]->id, $sectioncaches);
+        $this->assertArrayNotHasKey($numberedsections[3]->id, $sectioncaches);
     }
 
     /**
