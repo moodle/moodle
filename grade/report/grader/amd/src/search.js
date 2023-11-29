@@ -127,16 +127,24 @@ export default class UserSearch extends GradebookSearchClass {
             this.getMatchedResults().map((user) => {
                 for (const [key, value] of Object.entries(user)) {
                     const valueString = value.toString().toLowerCase();
-                    if (!valueString.includes(this.getPreppedSearchTerm())) {
+                    const preppedSearchTerm = this.getPreppedSearchTerm();
+                    const searchTerm = this.getSearchTerm();
+
+                    if (!valueString.includes(preppedSearchTerm)) {
                         continue;
                     }
+
                     // Ensure we have a good string, otherwise fallback to the key.
                     user.matchingFieldName = stringMap.get(key) ?? key;
-                    user.matchingField = valueString.replace(
-                        this.getPreppedSearchTerm(),
-                        `<span class="font-weight-bold">${this.getSearchTerm()}</span>`
+
+                    // Safely prepare our matching results.
+                    const escapedValueString = valueString.replace(/</g, '&lt;');
+                    const escapedMatchingField = escapedValueString.replace(
+                        preppedSearchTerm.replace(/</g, '&lt;'),
+                        `<span class="font-weight-bold">${searchTerm.replace(/</g, '&lt;')}</span>`
                     );
-                    user.matchingField = `${user.matchingField} (${user.email})`;
+
+                    user.matchingField = `${escapedMatchingField} (${user.email})`;
                     user.link = this.selectOneLink(user.id);
                     break;
                 }
