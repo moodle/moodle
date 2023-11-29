@@ -9,7 +9,7 @@ Feature: Backup and restore of the question that was tagged
   @javascript @_file_upload
   Scenario: Restore the quiz containing the question that was tagged
     Given I am on the "Course 1" "restore" page logged in as "admin"
-    And I press "Manage backup files"
+    And I press "Manage course backups"
     And I upload "backup/moodle2/tests/fixtures/test_tags_backup.mbz" file to "Files" filemanager
     And I press "Save changes"
     And I restore "test_tags_backup.mbz" backup into a new course using this options:

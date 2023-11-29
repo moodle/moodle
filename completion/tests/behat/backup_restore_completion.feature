@@ -32,7 +32,7 @@ Feature: Backup and restore the activity with the completion
   @javascript @_file_upload
   Scenario: Restore the legacy assignment with completion condition.
     Given I am on the "Course 1" "restore" page logged in as "admin"
-    And I press "Manage backup files"
+    And I press "Manage course backups"
     And I upload "completion/tests/fixtures/legacy_course_completion.mbz" file to "Files" filemanager
     And I press "Save changes"
     And I restore "legacy_course_completion.mbz" backup into a new course using this options:
