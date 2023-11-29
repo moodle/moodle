@@ -181,8 +181,8 @@ foreach ($jsfiles as $jsfile) {
 
 echo $renderer->container_end();
 
-// Trigger course viewed event.
-course_view($context, $section->section);
+// Trigger section viewed event.
+course_section_view($context, $sectionid);
 
 // Load the view JS module if completion tracking is enabled for this course.
 $completion = new completion_info($course);
