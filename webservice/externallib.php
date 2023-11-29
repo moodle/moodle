@@ -210,6 +210,8 @@ class core_webservice_external extends \core_external\external_api {
             $siteinfo['usersessionscount'] = $DB->count_records('sessions', ['userid' => $USER->id]);
         }
 
+        $siteinfo['policyagreed'] = $USER->policyagreed;
+
         return $siteinfo;
     }
 
@@ -282,6 +284,7 @@ class core_webservice_external extends \core_external\external_api {
                 'limitconcurrentlogins' => new external_value(PARAM_INT, 'Number of concurrent sessions allowed', VALUE_OPTIONAL),
                 'usersessionscount' => new external_value(PARAM_INT, 'Number of active sessions for current user.
                     Only returned when limitconcurrentlogins is used.', VALUE_OPTIONAL),
+                'policyagreed' => new external_value(PARAM_INT, 'Whether user accepted all the policies.', VALUE_OPTIONAL),
             )
         );
     }

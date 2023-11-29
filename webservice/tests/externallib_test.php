@@ -141,6 +141,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertFalse($siteinfo['userissiteadmin']);
         $this->assertEquals($CFG->calendartype, $siteinfo['sitecalendartype']);
         $this->assertEquals($user['theme'], $siteinfo['theme']);
+        $this->assertEquals($USER->policyagreed, $siteinfo['policyagreed']);
 
         // Now as admin.
         $this->setAdminUser();
