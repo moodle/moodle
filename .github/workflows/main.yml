@@ -26,7 +26,7 @@ jobs:
        sudo apt-get install -y unzip
        wget https://download.moodle.org/download.php/direct/stable310/moodle-latest-310.tgz
        tar -xvf moodle-latest-310.tgz
-       mv moodle/* .
+       rsync -av --progress moodle/* .
        rm -rf moodle moodle-latest-310.tgz
 
    - name: Start Moodle
