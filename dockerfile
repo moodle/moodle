@@ -1,4 +1,3 @@
-[5:11 PM] Daisy Jabbour
 FROM php:7.4-apache
  
 # Install necessary packages
