@@ -187,6 +187,8 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
             'introformat' => FORMAT_HTML,
             'markingworkflow' => 1,
             'markingallocation' => 1,
+            'blindmarking' => 1,
+            'markinganonymous' => 1,
             'activityeditor' => [
                 'text' => 'Test activity',
                 'format' => 1,
@@ -249,6 +251,8 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
             '@"' . $CFG->wwwroot . '/webservice/pluginfile.php/\d+/mod_assign/intro/intro\.txt"@', $assignment['intro']);
         $this->assertEquals(1, $assignment['markingworkflow']);
         $this->assertEquals(1, $assignment['markingallocation']);
+        $this->assertEquals(1, $assignment['blindmarking']);
+        $this->assertEquals(1, $assignment['markinganonymous']);
         $this->assertEquals(0, $assignment['preventsubmissionnotingroup']);
         $this->assertEquals(0, $assignment['timelimit']);
         $this->assertEquals(0, $assignment['submissionattachments']);
@@ -280,6 +284,8 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->assertArrayNotHasKey('introattachments', $assignment);
         $this->assertEquals(1, $assignment['markingworkflow']);
         $this->assertEquals(1, $assignment['markingallocation']);
+        $this->assertEquals(1, $assignment['blindmarking']);
+        $this->assertEquals(1, $assignment['markinganonymous']);
         $this->assertEquals(0, $assignment['preventsubmissionnotingroup']);
 
         $result = mod_assign_external::get_assignments(array($course2->id));
@@ -318,6 +324,8 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
         $this->assertArrayNotHasKey('introattachments', $assignment);
         $this->assertEquals(1, $assignment['markingworkflow']);
         $this->assertEquals(1, $assignment['markingallocation']);
+        $this->assertEquals(1, $assignment['blindmarking']);
+        $this->assertEquals(1, $assignment['markinganonymous']);
         $this->assertEquals(0, $assignment['preventsubmissionnotingroup']);
     }
 
