@@ -25,4 +25,4 @@ jobs:
      with:
        context: .
        push: true
-       tags: your-dockerhub-username/moodle:latest
+       tags: daisyjabbour/moodle:latest
