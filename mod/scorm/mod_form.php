@@ -273,7 +273,8 @@ class mod_scorm_mod_form extends moodleform_mod {
         // A SCORM module should define this within itself and is not needed here.
         $suffix = $this->get_suffix();
         $completionpassgradeel = 'completionpassgrade' . $suffix;
-        if ($mform->elementExists($completionpassgradeel)) {
+        // The 'completionpassgrade' is a radio element with multiple options, so we should remove all of them.
+        while ($mform->elementExists($completionpassgradeel)) {
             $mform->removeElement($completionpassgradeel);
         }
 
