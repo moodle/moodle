@@ -359,7 +359,7 @@ function get_whoops(): ?\Whoops\Run {
         return null;
     }
 
-    if (defined('BEHAT_TEST') && BEHAT_TEST) {
+    if (defined('BEHAT_SITE_RUNNING') && BEHAT_SITE_RUNNING) {
         return null;
     }
 
