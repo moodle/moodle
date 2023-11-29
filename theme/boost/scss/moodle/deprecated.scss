@@ -37,6 +37,10 @@
 //     @include deprecated-styles();
 // }
 
+//
+// Deprecated since Moodle 4.4.
+//
+
 // The .togglecompletion usage was deprecated in 311 and finally removed in 403.
 // Replaced by core_renderer::activity_information() and proper use of templates.
 .path-course-view li.activity form.togglecompletion {
