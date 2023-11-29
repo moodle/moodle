@@ -30,6 +30,7 @@ $string['editphonenumber'] = 'Edit phone number';
 $string['editphonenumberinfo'] = "If you didn't get the code or entered the wrong number, please edit number and try again.";
 $string['errorawsconection'] = 'Error connecting to AWS server: {$a}';
 $string['errorsmssent'] = 'Error sending a SMS message containing your verification code.';
+$string['error:emptyverification'] = 'Empty code. Try again.';
 $string['error:wrongphonenumber'] = 'The phone number you provided is not in a valid format.';
 $string['error:wrongverification'] = 'Wrong code. Try again.';
 $string['event:smssent'] = 'SMS Message sent';

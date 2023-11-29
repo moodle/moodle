@@ -76,6 +76,11 @@ class aws_sns implements gateway_interface {
         // We have to truncate the senderID to 11 chars.
         $senderid = substr($senderid, 0, 11);
 
+        if (defined('BEHAT_SITE_RUNNING')) {
+            // Fake SMS sending in behat.
+            return true;
+        }
+
         try {
             // These messages need to be transactional.
             $client->SetSMSAttributes([

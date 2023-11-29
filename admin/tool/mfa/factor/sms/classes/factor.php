@@ -177,9 +177,6 @@ class factor extends object_factor_base {
         if (!empty($SESSION->tool_mfa_sms_number)) {
             return $SESSION->tool_mfa_sms_number;
         }
-        if (!empty($USER->phone2)) {
-            return $USER->phone2;
-        }
         $phonenumber = $DB->get_field('tool_mfa', 'label', ['factor' => $this->name, 'userid' => $USER->id, 'revoked' => 0]);
         if (!empty($phonenumber)) {
             return $phonenumber;
@@ -197,12 +194,15 @@ class factor extends object_factor_base {
     public function setup_factor_form_validation(array $data): array {
         $errors = [];
 
+        // Phone number validation.
         if (!empty($data["phonenumber"]) && empty(helper::is_valid_phonenumber($data["phonenumber"]))) {
             $errors['phonenumber'] = get_string('error:wrongphonenumber', 'factor_sms');
 
-        } else if (!empty($data["verificationcode"])) {
-            $result = $this->secretmanager->validate_secret($data['verificationcode']);
-            if ($result !== $this->secretmanager::VALID) {
+        } else if (!empty($this->get_phonenumber())) {
+            // Code validation.
+            if (empty($data["verificationcode"])) {
+                $errors['verificationcode'] = get_string('error:emptyverification', 'factor_sms');
+            } else if ($this->secretmanager->validate_secret($data['verificationcode']) !== $this->secretmanager::VALID) {
                 $errors['verificationcode'] = get_string('error:wrongverification', 'factor_sms');
             }
         }
@@ -221,6 +221,9 @@ class factor extends object_factor_base {
         if (!empty($SESSION->tool_mfa_sms_number)) {
             unset($SESSION->tool_mfa_sms_number);
         }
+        // Clean temp secrets code.
+        $secretmanager = new \tool_mfa\local\secret_manager('sms');
+        $secretmanager->cleanup_temp_secrets();
     }
 
     /**
@@ -246,7 +249,7 @@ class factor extends object_factor_base {
         global $DB, $SESSION, $USER;
 
         // Handle phone number submission.
-        if (empty($USER->phone2) && empty($SESSION->tool_mfa_sms_number)) {
+        if (empty($SESSION->tool_mfa_sms_number)) {
             $SESSION->tool_mfa_sms_number = !empty($data->phonenumber) ? $data->phonenumber : '';
 
             $addurl = new \moodle_url('/admin/tool/mfa/action.php', [

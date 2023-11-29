@@ -34,6 +34,9 @@ require_sesskey();
 
 // Remove session phone number.
 unset($SESSION->tool_mfa_sms_number);
+// Clean temp secrets code.
+$secretmanager = new \tool_mfa\local\secret_manager('sms');
+$secretmanager->cleanup_temp_secrets();
 
 redirect(new \moodle_url('/admin/tool/mfa/action.php', [
     'action' => 'setup',

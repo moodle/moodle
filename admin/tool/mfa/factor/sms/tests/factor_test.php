@@ -98,6 +98,7 @@ class factor_test extends \advanced_testcase {
             ['+551155256325', true],
             ['649709233', false],
             ['+34649709233', true],
+            ['+aaasss', false],
         ];
     }
 
@@ -106,8 +107,8 @@ class factor_test extends \advanced_testcase {
      * @covers \factor_sms\helper::is_valid_phonenumber
      * @dataProvider is_valid_phonenumber_provider
      *
-     * @param string $phonenumber Phone number.
-     * @param bool $valid. True if the given phone number is valid, false if is invalid
+     * @param string $phonenumber
+     * @param bool $valid True if the given phone number is valid, false if is invalid
      */
     public function test_is_valid_phonenumber(string $phonenumber, bool $valid): void {
         $this->resetAfterTest(true);
@@ -119,20 +120,23 @@ class factor_test extends \advanced_testcase {
     }
 
     /**
-     * Test format number with different phones and different country codes
+     * Test set up user factor and verification code with a random phone number
      * @covers ::setup_user_factor
      * @covers ::check_verification_code
      * @covers ::revoke_user_factor
      */
     public function test_check_verification_code(): void {
-        $this->resetAfterTest(true);
-        // Generate a fake phone number.
-        $phonenumber = '+34' . (string)random_int(100000000, 999999999);
+        global $SESSION;
 
-        // Create and login a user.
+        $this->resetAfterTest(true);
+
+        // Create and login a user and set up the phone number.
         $user = $this->getDataGenerator()->create_user();
-        $user->phone2 = $phonenumber;
         $this->setUser($user);
+
+        // Generate a fake phone number and save it in session.
+        $phonenumber = '+34' . (string)random_int(100000000, 999999999);
+        $SESSION->tool_mfa_sms_number = $phonenumber;
 
         $smsfactor = \tool_mfa\plugininfo\factor::get_factor('sms');
         $rc = new \ReflectionClass($smsfactor::class);
@@ -156,5 +160,7 @@ class factor_test extends \advanced_testcase {
         // Test that calling the revoke on the generic type revokes all.
         $smsfactor->revoke_user_factor($factorinstance->id);
         $this->assertEquals(0, count($smsfactor->get_active_user_factors($user)));
+
+        unset($SESSION->tool_mfa_sms_number);
     }
 }
