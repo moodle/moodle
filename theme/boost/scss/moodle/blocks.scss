@@ -348,13 +348,6 @@ $card-gutter : $card-deck-margin * 2;
     color: $text-muted;
 }
 
-@include media-breakpoint-down(sm) {
-    .block.card {
-        border-left: 0;
-        border-right: 0;
-    }
-}
-
 .block_social_activities li a.movehere,
 .block_site_main_menu li a.movehere {
     display: block;
