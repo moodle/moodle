@@ -45,4 +45,11 @@ $functions = [
         'ajax' => true,
         'type' => 'write',
     ],
+
+    'tool_policy_get_user_acceptances' => [
+        'classname' => '\tool_policy\external\get_user_acceptances',
+        'description' => 'Get user policies acceptances.',
+        'type' => 'read',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 ];
