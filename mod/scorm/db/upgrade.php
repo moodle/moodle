@@ -185,7 +185,7 @@ function xmldb_scorm_upgrade($oldversion) {
         // Don't bother triggering this next step if the upgrade completed within the last hour.
         if (time() - HOURSECS > $upgraded) {
             // Get all attempts that have occurred since the upgrade.
-            $sql = "SELECT DISTINCT s.*, sa.userid
+            $sql = "SELECT DISTINCT s.id, sa.userid
                       FROM {scorm} s
                       JOIN {scorm_attempt} sa ON sa.scormid = s.id
                       JOIN {scorm_scoes_value} sv on sv.attemptid = sa.id
