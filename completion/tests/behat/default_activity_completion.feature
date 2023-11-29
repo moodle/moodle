@@ -48,3 +48,37 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I should see "Student must receive a grade to complete this activity" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
     And I should see "Student must make a submission" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Assignments']]" "xpath_element"
+
+  @javascript
+  Scenario: Course activity completion default rules for SCORM
+    Given the following "courses" exist:
+      | fullname | shortname | category | enablecompletion |
+      | Course 1 | C1        | 0        | 1                |
+    And the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | Frist | teacher1@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+    And I am on the "Course 1" course page logged in as teacher1
+    When I navigate to "Course completion" in current page administration
+    And I select "Default activity completion" from the "Course completion tertiary navigation" singleselect
+    And I click on "SCORM packages" "checkbox"
+    And I click on "Edit" "button"
+    # Check Passed option.
+    And I set the following fields to these values:
+      | completion | Show activity as complete when conditions are met|
+      | completionstatusrequired[2] | 1 |
+    And I click on "Save changes" "button"
+    Then I should see "Changes saved"
+    And I should see "Student must achieve at least one of the following statuses: Passed, Completed"
+    And I navigate to "Course completion" in current page administration
+    And I select "Default activity completion" from the "Course completion tertiary navigation" singleselect
+    And I click on "SCORM packages" "checkbox"
+    And I click on "Edit" "button"
+    # Uncheck Pass option.
+    And I set the following fields to these values:
+      | completionstatusrequired[2] | 0 |
+    And I click on "Save changes" "button"
+    Then I should see "Changes saved"
+    And I should see "Student must achieve at least one of the following statuses: Completed"
