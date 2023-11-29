@@ -57,6 +57,7 @@ class activity_completion implements renderable, templatable {
         global $CFG;
 
         $overallcompletion = $this->cmcompletion->get_overall_completion();
+        $isoverallcomplete = $this->cmcompletion->is_overall_complete();
         $overrideby = $this->get_overrideby();
         $course = $this->cminfo->get_course();
 
@@ -77,8 +78,8 @@ class activity_completion implements renderable, templatable {
             'ismanual' => $this->cmcompletion->is_manual(),
             'showmanualcompletion' => $this->cmcompletion->show_manual_completion(),
             'istrackeduser' => $this->cmcompletion->is_tracked_user(),
-            'overallcomplete' => $overallcompletion == COMPLETION_COMPLETE,
-            'overallincomplete' => $overallcompletion == COMPLETION_INCOMPLETE,
+            'overallcomplete' => $isoverallcomplete,
+            'overallincomplete' => !$isoverallcomplete,
             'withavailability' => $withavailability ?? false,
             'overrideby' => $overrideby,
             'completiondetails' => $this->get_completion_details($overrideby),

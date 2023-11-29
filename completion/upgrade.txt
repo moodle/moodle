@@ -1,6 +1,10 @@
 This file describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
 
+=== 4.3.1 ===
+* A new method, cm_completion_details::is_overall_complete() has been added to calculate whether a module should be considered or
+  not completed, based on their completion options and the current value for the overall complete state.
+
 === 4.3 ===
 * A trait class, core_completion/form/form_trait has been added to reuse code for adding and validation completion settings to any
   form.
