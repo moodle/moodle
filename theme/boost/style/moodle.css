@@ -27235,12 +27235,6 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .dashboard-card-deck 
   color: #6a737b;
 }
 
-@media (max-width: 767.98px) {
-  .block.card {
-    border-left: 0;
-    border-right: 0;
-  }
-}
 .block_social_activities li a.movehere,
 .block_site_main_menu li a.movehere {
   display: block;
