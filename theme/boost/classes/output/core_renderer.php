@@ -50,7 +50,7 @@ class core_renderer extends \core_renderer {
             $url->param('edit', 'on');
             $editstring = get_string('turneditingon');
         }
-        $button = new \single_button($url, $editstring, $method, ['class' => 'btn btn-primary']);
+        $button = new \single_button($url, $editstring, $method, \single_button::BUTTON_PRIMARY);
         return $this->render_single_button($button);
     }
 
