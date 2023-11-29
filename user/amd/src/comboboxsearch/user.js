@@ -140,15 +140,23 @@ export default class UserSearch extends search_combobox {
                     if (value === null) {
                         continue;
                     }
+
                     const valueString = value.toString().toLowerCase();
-                    if (valueString.includes(this.getPreppedSearchTerm()) && !this.bannedFilterFields.includes(key)) {
+                    const preppedSearchTerm = this.getPreppedSearchTerm();
+                    const searchTerm = this.getSearchTerm();
+
+                    if (valueString.includes(preppedSearchTerm) && !this.bannedFilterFields.includes(key)) {
                         // Ensure we have a good string, otherwise fallback to the key.
                         user.matchingFieldName = stringMap.get(key) ?? key;
-                        user.matchingField = valueString.replace(
-                            this.getPreppedSearchTerm(),
-                            `<span class="font-weight-bold">${this.getSearchTerm()}</span>`
+
+                        // Safely prepare our matching results.
+                        const escapedValueString = valueString.replace(/</g, '&lt;');
+                        const escapedMatchingField = escapedValueString.replace(
+                            preppedSearchTerm.replace(/</g, '&lt;'),
+                            `<span class="font-weight-bold">${searchTerm.replace(/</g, '&lt;')}</span>`
                         );
-                        user.matchingField = `${user.matchingField} (${user.email})`;
+
+                        user.matchingField = `${escapedMatchingField} (${user.email})`;
                         user.link = this.selectOneLink(user.id);
                         break;
                     }
