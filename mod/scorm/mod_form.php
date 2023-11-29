@@ -333,16 +333,16 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         // Set some completion default data.
         $cvalues = array();
-        if (empty($this->_instance)) {
-            // When in add mode, set a default completion rule that requires the SCORM's status be set to "Completed".
-            $cvalues[4] = 1;
-        } else if (!empty($defaultvalues['completionstatusrequired']) && !is_array($defaultvalues['completionstatusrequired'])) {
+        if (!empty($defaultvalues['completionstatusrequired']) && !is_array($defaultvalues['completionstatusrequired'])) {
             // Unpack values.
             foreach (scorm_status_options() as $key => $value) {
                 if (($defaultvalues['completionstatusrequired'] & $key) == $key) {
                     $cvalues[$key] = 1;
                 }
             }
+        } else if (empty($this->_instance)) {
+            // When in add mode, set a default completion rule that requires the SCORM's status be set to "Completed".
+            $cvalues[4] = 1;
         }
         if (!empty($cvalues)) {
             $defaultvalues['completionstatusrequired'] = $cvalues;
