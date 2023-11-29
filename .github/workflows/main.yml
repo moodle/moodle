@@ -29,14 +29,6 @@ jobs:
        mv moodle/* .
        rm -rf moodle moodle-latest-310.tgz
 
-   - name: Setup MySQL
-     uses: jwilder/setup-mysql@v1
-     with:
-       mysql-version: '5.7'
-       mysql-database: 'moodle'
-       mysql-user: 'moodle'
-       mysql-password: 'moodle'
-
    - name: Start Moodle
      run: |
        php -S localhost:8000
