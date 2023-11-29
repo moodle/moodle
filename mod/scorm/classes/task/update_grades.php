@@ -14,17 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace mod_scorm\task;
+
 /**
- * scorm version information.
+ * Adhoc task for recalculating grades.
  *
  * @package    mod_scorm
- * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @copyright  2022 Dan Marsden
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$plugin->version   = 2023100901;    // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023100400;    // Requires this Moodle version.
-$plugin->component = 'mod_scorm';   // Full name of the plugin (used for diagnostics).
-
+class update_grades extends \core\task\adhoc_task {
+    /**
+     * Execute task.
+     */
+    public function execute() {
+        global $CFG, $DB;
+        require_once($CFG->dirroot.'/mod/scorm/locallib.php');
+        $data = $this->get_custom_data();
+        $scorm = $DB->get_record('scorm', ['id' => $data->scormid]);
+        scorm_update_grades($scorm, $data->userid);
+    }
+}
