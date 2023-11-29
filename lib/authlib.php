@@ -1113,7 +1113,9 @@ function signup_validate_data($data, $files) {
 
     // Construct fake user object to check password policy against required information.
     $tempuser = new stdClass();
-    $tempuser->id = 1;
+    // To prevent errors with check_password_policy(),
+    // the temporary user and the guest must not share the same ID.
+    $tempuser->id = (int)$CFG->siteguest + 1;
     $tempuser->username = $data['username'];
     $tempuser->firstname = $data['firstname'];
     $tempuser->lastname = $data['lastname'];
