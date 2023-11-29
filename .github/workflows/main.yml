@@ -18,12 +18,20 @@ jobs:
      uses: shivammathur/setup-php@v2
      with:
        php-version: '7.4'
-       extensions: mbstring, intl, gd, xml, mysql, mysqli, zip, bcmath, curl
+       extensions: mbstring, intl, gd, xml, pgsql, mysqli, zip, bcmath, curl
        coverage: xdebug
+
+   - name: Cache Moodle
+     uses: actions/cache@v2
+     with:
+       path: moodle
+       key: ${{ runner.os }}-moodle-${{ hashFiles('**/moodle-latest-310.tgz') }}
+       restore-keys: |
+         ${{ runner.os }}-moodle-
 
    - name: Install dependencies
      run: |
-       sudo apt-get install -y unzip
+       sudo apt-get install -y unzip rsync
        wget https://download.moodle.org/download.php/direct/stable310/moodle-latest-310.tgz
        tar -xvf moodle-latest-310.tgz
        rsync -av --progress moodle/* .
@@ -32,3 +40,4 @@ jobs:
    - name: Start Moodle
      run: |
        php -S localhost:8000
+
