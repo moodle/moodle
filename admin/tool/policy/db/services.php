@@ -52,4 +52,11 @@ $functions = [
         'type' => 'read',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+
+    'tool_policy_set_acceptances_status' => [
+        'classname' => '\tool_policy\external\set_acceptances_status',
+        'description' => 'Set the acceptance status (accept or decline only) for the indicated policies for the given user.',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 ];
