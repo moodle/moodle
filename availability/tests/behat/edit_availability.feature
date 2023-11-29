@@ -264,3 +264,16 @@ Feature: edit_availability
     And I should not see "Content"
     And I should see "Collapse all"
     And I should not see "Expand all"
+
+  @javascript
+  Scenario: Edit activity availability button is shown after duplicating an activity
+    # Setting a restriction up
+    Given I am on the "MyForum" "forum activity editing" page logged in as teacher1
+    And I expand all fieldsets
+    And I press "Add restriction..."
+    And I click on "Date" "button" in the "Add restriction..." "dialogue"
+    When I press "Save and return to course"
+    And I turn editing mode on
+    And I duplicate "MyForum" activity
+    # Testing edit restrictions link
+    Then "Edit restrictions" "link" should exist in the "MyForum (copy)" "core_availability > Activity availability"
