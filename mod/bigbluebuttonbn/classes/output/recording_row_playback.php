@@ -111,11 +111,6 @@ class recording_row_playback implements renderable, templatable {
             return true;
         }
 
-        // Exclude imported recordings.
-        if ($this->recording->get('imported')) {
-            return false;
-        }
-
         // Exclude non moderators.
         if ($this->instance) {
             if (!$this->instance->is_admin() && !$this->instance->is_moderator()) {
