@@ -388,6 +388,11 @@ class api {
                 $CFG->searchbanner, FORMAT_HTML, $context)[0];
         }
 
+        if (empty($section) || $section === 'privacysettings') {
+            $settings->tool_dataprivacy_contactdataprotectionofficer = get_config('tool_dataprivacy', 'contactdataprotectionofficer');
+            $settings->tool_dataprivacy_showdataretentionsummary = get_config('tool_dataprivacy', 'showdataretentionsummary');
+        }
+
         return $settings;
     }
 

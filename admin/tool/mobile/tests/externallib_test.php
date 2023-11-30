@@ -267,6 +267,9 @@ class externallib_test extends externallib_advanced_testcase {
         $expected[] = ['name' => 'searchbannerenable', 'value' => $CFG->searchbannerenable];
         $expected[] = ['name' => 'searchbanner', 'value' => $CFG->searchbanner];
 
+        $expected[] = ['name' => 'tool_dataprivacy_contactdataprotectionofficer', 'value' => get_config('tool_dataprivacy', 'contactdataprotectionofficer')];
+        $expected[] = ['name' => 'tool_dataprivacy_showdataretentionsummary', 'value' => get_config('tool_dataprivacy', 'showdataretentionsummary')];
+
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
 

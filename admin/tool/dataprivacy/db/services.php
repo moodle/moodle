@@ -32,6 +32,7 @@ $functions = [
         'capabilities'  => '',
         'ajax'          => true,
         'loginrequired' => true,
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'tool_dataprivacy_contact_dpo' => [
         'classname'     => 'tool_dataprivacy\external',
@@ -42,6 +43,7 @@ $functions = [
         'capabilities'  => '',
         'ajax'          => true,
         'loginrequired' => true,
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
     'tool_dataprivacy_mark_complete' => [
         'classname'     => 'tool_dataprivacy\external',
