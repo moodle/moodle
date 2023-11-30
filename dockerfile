@@ -1,40 +1,64 @@
-# Use PHP with Apache as the base image
-FROM php:7.4-apache
-
-# Install system dependencies
-RUN apt-get update && apt-get install -y \
-        libpng-dev \
-        libjpeg-dev \
-        libpq-dev \
-        libxml2-dev \
-        libzip-dev \
-        unzip \
-        curl \
-        graphviz \
-        aspell \
-        ghostscript \
-        clamav \
-        software-properties-common
-
-# Install PHP 7.4 and additional modules
-RUN apt-get install -y php7.4 \
-    && docker-php-ext-install -j$(nproc) pgsql pdo pdo_pgsql mysqli xml zip intl
-
-# Install Apache and other dependencies
-RUN apt-get install -y apache2 libapache2-mod-php
-
-# Enable Apache mod_rewrite
+# Use the official Ubuntu 20.04 image
+FROM ubuntu:20.04
+ 
+# Install necessary packages
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    apache2 \
+    git \
+    software-properties-common \
+    postgresql \
+    postgresql-contrib \
+&& rm -rf /var/lib/apt/lists/*
+ 
+# Add PHP repository
+RUN add-apt-repository ppa:ondrej/php && apt-get update
+ 
+# Install PHP 7.3 and required extensions
+RUN apt-get install -y \
+    php7.3 \
+    php7.3-pgsql \
+    libapache2-mod-php7.3 \
+    graphviz \
+    aspell \
+    ghostscript \
+    clamav \
+    php7.3-pspell \
+    php7.3-curl \
+    php7.3-gd \
+    php7.3-intl \
+    php7.3-mysql \
+    php7.3-xml \
+    php7.3-xmlrpc \
+    php7.3-ldap \
+    php7.3-zip \
+    php7.3-soap \
+    php7.3-mbstring \
+&& rm -rf /var/lib/apt/lists/*
+ 
+# Enable Apache modules
 RUN a2enmod rewrite
-
-# Copy your Moodle code into the image
+ 
+ 
+# Copy Moodle to Apache's web directory
 COPY . /var/www/html
-
-# Set necessary permissions and expose port 80
-RUN mkdir /var/moodledata \
-    && chown -R www-data /var/moodledata \
-    && chmod -R 777 /var/moodledata \
-    && chmod -R 0755 /var/www/html/moodle \
-    && chmod -R 777 /var/www/html/moodle \
-    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
-
+ 
+# Create moodledata directory
+RUN mkdir /var/moodledata && chown -R www-data /var/moodledata && chmod -R 777 /var/moodledata
+ 
+# Set permissions for Moodle directory
+RUN chmod -R 0755 /var/www/html/moodle
+ 
+# Fix deprecated string syntax
+RUN find /var/www/html/moodle -type f -name '*.php' -exec sed -i 's/\${\([^}]*\)}/{$\1}/g' {} +
+ 
+ 
+ 
+# Restart Apache
+RUN service apache2 restart
+ 
+# Expose ports
 EXPOSE 80
+ 
+# Start Apache in the foreground
+CMD ["apache2ctl", "-D", "FOREGROUND"]
