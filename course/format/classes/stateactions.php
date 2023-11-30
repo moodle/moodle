@@ -140,6 +140,8 @@ class stateactions {
     /**
      * Move course sections to another location in the same course.
      *
+     * @deprecated since Moodle 4.4 MDL-77038.
+     * @todo MDL-80116 This will be deleted in Moodle 4.8.
      * @param stateupdates $updates the affected course elements track
      * @param stdClass $course the course object
      * @param int[] $ids the list of affected course module ids
@@ -153,6 +155,10 @@ class stateactions {
         ?int $targetsectionid = null,
         ?int $targetcmid = null
     ): void {
+        debugging(
+            'The method stateactions::section_move() has been deprecated, please use stateactions::section_move_after() instead.',
+            DEBUG_DEVELOPER
+        );
         // Validate target elements.
         if (!$targetsectionid) {
             throw new moodle_exception("Action cm_move requires targetsectionid");

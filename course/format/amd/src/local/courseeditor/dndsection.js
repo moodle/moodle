@@ -119,10 +119,9 @@ export default class extends BaseComponent {
         if (dropdata?.type === 'cm') {
             return true;
         }
-        // We accept any section but the section 0 or ourself
+        // We accept any section but yourself and the next one.
         if (dropdata?.type === 'section') {
-            const sectionzeroid = this.course.sectionlist[0];
-            return dropdata?.id != this.id && dropdata?.id != sectionzeroid && this.id != sectionzeroid;
+            return dropdata?.id != this.id && dropdata?.number != this.section.number + 1;
         }
         return false;
     }
@@ -151,14 +150,8 @@ export default class extends BaseComponent {
             this.getLastCm()?.classList.add(this.classes.DROPDOWN);
         }
         if (dropdata.type == 'section') {
-            // The relative move of section depends on the section number.
-            if (this.section.number > dropdata.number) {
-                this.element.classList.remove(this.classes.DROPUP);
-                this.element.classList.add(this.classes.DROPDOWN);
-            } else {
-                this.element.classList.add(this.classes.DROPUP);
-                this.element.classList.remove(this.classes.DROPDOWN);
-            }
+            this.element.classList.remove(this.classes.DROPUP);
+            this.element.classList.add(this.classes.DROPDOWN);
         }
     }
 
@@ -194,7 +187,7 @@ export default class extends BaseComponent {
             this.reactive.dispatch(mutation, [dropdata.id], this.id);
         }
         if (dropdata.type == 'section') {
-            this.reactive.dispatch('sectionMove', [dropdata.id], this.id);
+            this.reactive.dispatch('sectionMoveAfter', [dropdata.id], this.id);
         }
     }
 }
