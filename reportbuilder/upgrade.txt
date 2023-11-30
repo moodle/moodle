@@ -3,6 +3,7 @@ Information provided here is intended especially for developers.
 
 === 4.4 ===
 
+* New methods `get_identity_[columns|filters]` in user entity, for retrieving all user identity field report elements
 * The database helper `generate_alias[es]` and `generate_param_name[s]` methods now accept an optional `$suffix` argument for
   appending additional string to the generated value
 

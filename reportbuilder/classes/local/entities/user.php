@@ -21,6 +21,7 @@ namespace core_reportbuilder\local\entities;
 use context_helper;
 use context_system;
 use context_user;
+use core\context;
 use core_component;
 use html_writer;
 use lang_string;
@@ -124,6 +125,19 @@ class user extends base {
     }
 
     /**
+     * Returns columns that correspond to the site configured identity fields
+     *
+     * @param context $context
+     * @param string[] $excluding
+     * @return column[]
+     */
+    public function get_identity_columns(context $context, array $excluding = []): array {
+        $identityfields = fields::for_identity($context)->excluding(...$excluding)->get_required_fields();
+
+        return array_map([$this, 'get_identity_column'], $identityfields);
+    }
+
+    /**
      * Returns filter that corresponds to the given identity field, profile field identifiers will be converted to those
      * used by the {@see user_profile_fields} helper
      *
@@ -136,6 +150,19 @@ class user extends base {
         }
 
         return $this->get_filter($identityfield);
+    }
+
+    /**
+     * Returns filters that correspond to the site configured identity fields
+     *
+     * @param context $context
+     * @param string[] $excluding
+     * @return filter[]
+     */
+    public function get_identity_filters(context $context, array $excluding = []): array {
+        $identityfields = fields::for_identity($context)->excluding(...$excluding)->get_required_fields();
+
+        return array_map([$this, 'get_identity_filter'], $identityfields);
     }
 
     /**
