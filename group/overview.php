@@ -87,8 +87,12 @@ foreach ($groupings as $grouping) {
 // Groups not in a grouping.
 $members[OVERVIEW_GROUPING_GROUP_NO_GROUPING] = array();
 
-// Get all groups
+// Get all groups and sort them by formatted name.
 $groups = $DB->get_records('groups', array('courseid'=>$courseid), 'name');
+foreach ($groups as $id => $group) {
+    $groups[$id]->formattedname = format_string($group->name, true, ['context' => $context]);
+}
+core_collator::asort_objects_by_property($groups, 'formattedname');
 
 $params = array('courseid'=>$courseid);
 if ($groupid) {
@@ -156,6 +160,7 @@ $groups[OVERVIEW_NO_GROUP] = (object)array(
     'courseid' => $courseid,
     'idnumber' => '',
     'name' => $strnogroup,
+    'formattedname' => $strnogroup,
     'description' => '',
     'descriptionformat' => FORMAT_HTML,
     'enrolmentkey' => '',
@@ -233,12 +238,12 @@ if ($dataformat !== '') {
             if (empty($users)) {
                 $alldata[$i] = array_fill_keys(array_keys($columnnames), '');
                 $alldata[$i]['grouping'] = $groupingname;
-                $alldata[$i]['group'] = $groups[$gpid]->name;
+                $alldata[$i]['group'] = $groups[$gpid]->formattedname;
                 $i++;
             }
             foreach ($users as $option => $user) {
                 $alldata[$i]['grouping'] = $groupingname;
-                $alldata[$i]['group'] = $groups[$gpid]->name;
+                $alldata[$i]['group'] = $groups[$gpid]->formattedname;
                 $alldata[$i]['firstname'] = $user->firstname;
                 $alldata[$i]['lastname'] = $user->lastname;
                 foreach ($extrafields as $field) {
@@ -295,7 +300,7 @@ echo $OUTPUT->render($select);
 $options = array();
 $options[0] = get_string('all');
 foreach ($groups as $group) {
-    $options[$group->id] = strip_tags(format_string($group->name));
+    $options[$group->id] = $group->formattedname;
 }
 $popupurl = new moodle_url($rooturl.'&grouping='.$groupingid);
 $select = new single_select($popupurl, 'group', $options, $groupid, array());
@@ -322,7 +327,7 @@ foreach ($members as $gpgid=>$groupdata) {
             continue;
         }
         $line = array();
-        $name = print_group_picture($groups[$gpid], $course->id, false, true, false) . format_string($groups[$gpid]->name);
+        $name = print_group_picture($groups[$gpid], $course->id, false, true, false) . $groups[$gpid]->formattedname;
         $description = file_rewrite_pluginfile_urls($groups[$gpid]->description, 'pluginfile.php', $context->id, 'group', 'description', $gpid);
         $options = new stdClass;
         $options->noclean = true;
