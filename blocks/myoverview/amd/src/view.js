@@ -97,14 +97,20 @@ const DEFAULT_PAGED_CONTENT_CONFIG = {
  * @return {promise} Resolved with an array of courses.
  */
 const getMyCourses = (filters, limit) => {
-    return Repository.getEnrolledCoursesByTimeline({
+    const params = {
         offset: courseOffset,
         limit: limit,
         classification: filters.grouping,
         sort: filters.sort,
         customfieldname: filters.customfieldname,
-        customfieldvalue: filters.customfieldvalue
-    });
+        customfieldvalue: filters.customfieldvalue,
+    };
+    if (filters.display === 'summary') {
+        params.requiredfields = Repository.SUMMARY_REQUIRED_FIELDS;
+    } else {
+        params.requiredfields = Repository.CARDLIST_REQUIRED_FIELDS;
+    }
+    return Repository.getEnrolledCoursesByTimeline(params);
 };
 
 /**
@@ -116,15 +122,21 @@ const getMyCourses = (filters, limit) => {
  * @return {promise} Resolved with an array of courses.
  */
 const getSearchMyCourses = (filters, limit, searchValue) => {
-    return Repository.getEnrolledCoursesByTimeline({
+    const params = {
         offset: courseOffset,
         limit: limit,
         classification: 'search',
         sort: filters.sort,
         customfieldname: filters.customfieldname,
         customfieldvalue: filters.customfieldvalue,
-        searchvalue: searchValue
-    });
+        searchvalue: searchValue,
+    };
+    if (filters.display === 'summary') {
+        params.requiredfields = Repository.SUMMARY_REQUIRED_FIELDS;
+    } else {
+        params.requiredfields = Repository.CARDLIST_REQUIRED_FIELDS;
+    }
+    return Repository.getEnrolledCoursesByTimeline(params);
 };
 
 /**

@@ -62,3 +62,35 @@ export const setFavouriteCourses = args => {
 
     return Ajax.call([request])[0];
 };
+
+/**
+ * These course fields are the only ones needed to be included in the results for the card and list views.
+ *
+ * @type {string[]}
+ */
+export const CARDLIST_REQUIRED_FIELDS = [
+    'id',
+    'fullname',
+    'shortname',
+    'showcoursecategory',
+    'showshortname',
+    'visible',
+    'enddate',
+];
+
+/**
+ * These course fields are the only ones needed to be included in the results for the card and list views.
+ *
+ * @type {string[]}
+ */
+export const SUMMARY_REQUIRED_FIELDS = [
+    'id',
+    'fullname',
+    'shortname',
+    'showcoursecategory',
+    'showshortname',
+    'visible',
+    'enddate',
+    'summary',
+    'summaryformat',
+];
