@@ -3031,6 +3031,7 @@ class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test retrieving courses by field returning communication tools.
+     * @covers \core_course_external::get_courses_by_field
      */
     public function test_get_courses_by_field_communication(): void {
         $this->resetAfterTest();
