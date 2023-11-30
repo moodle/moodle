@@ -24,10 +24,20 @@ namespace core\task;
  */
 class badges_adhoc_task extends adhoc_task {
 
+    /**
+     * Sets the name of the badges adhoc task
+     *
+     * @return void
+     */
     public function get_name() {
         return get_string('taskbadgesadhoc', 'admin');
     }
 
+    /**
+     * Badge adhoc task to assign a single badge
+     *
+     * @return void
+     */
     public function execute() {
         $data = $this->get_custom_data();
         $badge = new \core_badges\badge($data->badgeid);
@@ -43,7 +53,7 @@ class badges_adhoc_task extends adhoc_task {
             mtrace("$traceprefix badge was issued to $issued users.");
 
         } catch (\moodle_exception $e) {
-            $badgeeditlink = 
+            $badgeeditlink =
                 new \moodle_url('/badges/edit.php', ['id' => $data->badgeid, 'action' => 'badge']);
 
             switch($e->errorcode){
