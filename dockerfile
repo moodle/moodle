@@ -1,7 +1,7 @@
 # Use PHP with Apache as the base image
 FROM php:7.4-apache
 
-# Install system dependencies and add Ondrej PHP repository
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
         libpng-dev \
         libjpeg-dev \
@@ -14,10 +14,13 @@ RUN apt-get update && apt-get install -y \
         aspell \
         ghostscript \
         clamav \
-        software-properties-common \
-    && rm -rf /var/lib/apt/lists/* \
-    && add-apt-repository ppa:ondrej/php \
-    && apt-get update
+        software-properties-common
+
+# Add Ondrej PHP repository
+RUN add-apt-repository ppa:ondrej/php
+
+# Update package list
+RUN apt-get update
 
 # Install PHP 7.4 and additional modules
 RUN apt-get install -y php7.4 \
