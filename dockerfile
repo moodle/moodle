@@ -16,12 +16,6 @@ RUN apt-get update && apt-get install -y \
         clamav \
         software-properties-common
 
-# Add Ondrej PHP repository
-RUN add-apt-repository ppa:ondrej/php
-
-# Update package list
-RUN apt-get update
-
 # Install PHP 7.4 and additional modules
 RUN apt-get install -y php7.4 \
     && docker-php-ext-install -j$(nproc) pgsql pdo pdo_pgsql mysqli xml zip intl
