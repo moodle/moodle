@@ -41,7 +41,7 @@ RUN a2enmod rewrite
  
  
 # Copy Moodle to Apache's web directory
-COPY . /var/www/html
+COPY . /var/www/html/moodle
  
 # Create moodledata directory
 RUN mkdir /var/moodledata && chown -R www-data /var/moodledata && chmod -R 777 /var/moodledata
