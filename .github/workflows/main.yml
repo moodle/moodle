@@ -1,28 +1,26 @@
-name: Build and Push Docker image
+name: Build and Deploy Docker Image
 
 on:
- push:
-  branches: [ main ]
- pull_request:
-  branches: [ main ]
+  push:
+    branches:
+      - main
 
 jobs:
- build:
-  runs-on: ubuntu-latest
+  build-and-deploy:
+    runs-on: ubuntu-latest
 
-  steps:
-  - name: Checkout code
-    uses: actions/checkout@v2
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-  - name: Login to DockerHub
-    uses: docker/login-action@v1
-    with:
-      username: ${{ secrets.DOCKERHUB_USERNAME }}
-      password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build Docker image
+      run: docker build -t zonemc/moodle2:latest .
 
-  - name: Build and push Docker image
-    uses: docker/build-push-action@v2
-    with:
-      context: .
-      push: true
-      tags: zonemc/moodle2:latest
+    - name: Login to DockerHub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Push Docker image
+      run: docker push zonemc/moodle2:latest
