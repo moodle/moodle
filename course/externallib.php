@@ -2793,6 +2793,8 @@ class core_course_external extends external_api {
                     ),
                     'Additional options for particular course format.', VALUE_OPTIONAL
                 ),
+                'communicationroomname' => new external_value(PARAM_TEXT, 'Communication tool room name.', VALUE_OPTIONAL),
+                'communicationroomurl' => new external_value(PARAM_RAW, 'Communication tool room URL.', VALUE_OPTIONAL),
             );
             $coursestructure = array_merge($coursestructure, $extra);
         }
@@ -3273,6 +3275,8 @@ class core_course_external extends external_api {
             }
         }
 
+        $iscommapiavailable = \core_communication\api::is_available();
+
         $coursesdata = array();
         foreach ($courses as $course) {
             $context = context_course::instance($course->id);
@@ -3333,6 +3337,19 @@ class core_course_external extends external_api {
                     'name' => $key,
                     'value' => $value
                 );
+            }
+
+            // Communication tools for the course.
+            if ($iscommapiavailable) {
+                $communication = \core_communication\api::load_by_instance(
+                    context: $context,
+                    component: 'core_course',
+                    instancetype: 'coursecommunication',
+                    instanceid: $course->id
+                );
+                $coursesdata[$course->id]['communicationroomname'] = \core_external\util::format_string($communication->get_room_name(), $context);
+                // This will be usually an URL, however, it is better to consider that can be anything a plugin might return, this is why we will use PARAM_RAW.
+                $coursesdata[$course->id]['communicationroomurl'] = $communication->get_communication_room_url();
             }
         }
 
