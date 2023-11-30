@@ -20,9 +20,6 @@ RUN apt-get update && apt-get install -y \
 # Add Ondrej PHP repository
 RUN add-apt-repository ppa:ondrej/php
 
-# Update package list and install PHP 7.4
-RUN apt-get update && apt-get install -y php7.4
-
 # Install additional PHP modules
 RUN apt-get install -y php7.4-pgsql php7.4-curl php7.4-gd php7.4-intl php7.4-mysql \
                        php7.4-xml php7.4-xmlrpc php7.4-ldap php7.4-zip php7.4-soap \
