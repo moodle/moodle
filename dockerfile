@@ -14,16 +14,14 @@ RUN apt-get update && apt-get install -y \
         aspell \
         ghostscript \
         clamav \
+        software-properties-common \
 && rm -rf /var/lib/apt/lists/*
 
-# Purge existing PHP installations
-RUN apt-get purge -y $(dpkg -l | grep php | awk '{print $2}' | tr "\n" " ")
+# Add Ondrej PHP repository
+RUN add-apt-repository ppa:ondrej/php
 
-# Add Ondrej PHP repository and install PHP 7.4
-RUN apt-get install -y software-properties-common \
-&& add-apt-repository ppa:ondrej/php \
-&& apt-get update \
-&& apt-get install -y php7.4
+# Update package list and install PHP 7.4
+RUN apt-get update && apt-get install -y php7.4
 
 # Install additional PHP modules
 RUN apt-get install -y php7.4-pgsql php7.4-curl php7.4-gd php7.4-intl php7.4-mysql \
