@@ -3890,6 +3890,11 @@ class core_course_external extends external_api {
                     VALUE_DEFAULT, null),
                 'searchvalue' => new external_value(PARAM_RAW, 'The value a user wishes to search against',
                     VALUE_DEFAULT, null),
+                'requiredfields' => new core_external\external_multiple_structure(
+                    new external_value(PARAM_ALPHANUMEXT, 'Field name to be included from the results', VALUE_DEFAULT),
+                    'Array of the only field names that need to be returned. If empty, all fields will be returned.',
+                    VALUE_DEFAULT, []
+                ),
             )
         );
     }
@@ -3908,15 +3913,15 @@ class core_course_external extends external_api {
      * c1 is skipped (because the offset applies *before* the classification filtering)
      * and c4 and c5 will be return.
      *
-     * @param  string $classification past, inprogress, or future
-     * @param  int $limit Result set limit
-     * @param  int $offset Offset the full course set before timeline classification is applied
-     * @param  string $sort SQL sort string for results
-     * @param  string $customfieldname
-     * @param  string $customfieldvalue
-     * @param  string $searchvalue
+     * @param string $classification past, inprogress, or future
+     * @param int $limit Result set limit
+     * @param int $offset Offset the full course set before timeline classification is applied
+     * @param string|null $sort SQL sort string for results
+     * @param string|null $customfieldname
+     * @param string|null $customfieldvalue
+     * @param string|null $searchvalue
+     * @param array $requiredfields Array of the only field names that need to be returned. If empty, all fields will be returned.
      * @return array list of courses and warnings
-     * @throws  invalid_parameter_exception
      */
     public static function get_enrolled_courses_by_timeline_classification(
         string $classification,
@@ -3925,7 +3930,8 @@ class core_course_external extends external_api {
         string $sort = null,
         string $customfieldname = null,
         string $customfieldvalue = null,
-        string $searchvalue = null
+        string $searchvalue = null,
+        array $requiredfields = []
     ) {
         global $CFG, $PAGE, $USER;
         require_once($CFG->dirroot . '/course/lib.php');
@@ -3938,6 +3944,7 @@ class core_course_external extends external_api {
                 'sort' => $sort,
                 'customfieldvalue' => $customfieldvalue,
                 'searchvalue' => $searchvalue,
+                'requiredfields' => $requiredfields,
             )
         );
 
@@ -3947,6 +3954,7 @@ class core_course_external extends external_api {
         $sort = $params['sort'];
         $customfieldvalue = $params['customfieldvalue'];
         $searchvalue = clean_param($params['searchvalue'], PARAM_TEXT);
+        $requiredfields = $params['requiredfields'];
 
         switch($classification) {
             case COURSE_TIMELINE_ALLINCLUDINGHIDDEN:
@@ -3972,11 +3980,16 @@ class core_course_external extends external_api {
         }
 
         self::validate_context(context_user::instance($USER->id));
+        $exporterfields = array_keys(course_summary_exporter::define_properties());
+        // Get the required properties from the exporter fields based on the required fields.
+        $requiredproperties = array_intersect($exporterfields, $requiredfields);
+        // If the resulting required properties is empty, fall back to the exporter fields.
+        if (empty($requiredproperties)) {
+            $requiredproperties = $exporterfields;
+        }
 
-        $requiredproperties = course_summary_exporter::define_properties();
-        $fields = join(',', array_keys($requiredproperties));
+        $fields = join(',', $requiredproperties);
         $hiddencourses = get_hidden_courses_on_timeline();
-        $courses = [];
 
         // If the timeline requires really all courses, get really all courses.
         if ($classification == COURSE_TIMELINE_ALLINCLUDINGHIDDEN) {
