@@ -75,7 +75,7 @@ trait reader {
      */
     public static function decode_other(?string $other) {
         if ($other === 'N;' || preg_match('~^.:~', $other ?? '')) {
-            return unserialize($other);
+            return unserialize($other, ['allowed_classes' => [stdClass::class]]);
         } else {
             return json_decode($other ?? '', true);
         }
