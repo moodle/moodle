@@ -47,7 +47,6 @@ class badges_cron_task extends scheduled_task {
         global $DB, $CFG;
         if (!empty($CFG->enablebadges)) {
             require_once($CFG->libdir . '/badgeslib.php');
-            $total = 0;
 
             $courseparams = array();
             if (empty($CFG->badges_allowcoursebadges)) {
@@ -72,23 +71,11 @@ class badges_cron_task extends scheduled_task {
 
             mtrace('Started reviewing available badges.');
             foreach ($badges as $bid) {
-                $badge = new \badge($bid);
-
-                if ($badge->has_criteria()) {
-                    if (debugging()) {
-                        mtrace('Processing badge "' . $badge->name . '"...');
-                    }
-
-                    $issued = $badge->review_all_criteria();
-
-                    if (debugging()) {
-                        mtrace('...badge was issued to ' . $issued . ' users.');
-                    }
-                    $total += $issued;
-                }
-            }
-
-            mtrace('Badges were issued ' . $total . ' time(s).');
+            $task = new badges_adhoc_task();
+            $task->set_custom_data(['badgeid' => $bid]);
+            manager::queue_adhoc_task($task, true);
         }
+
+        mtrace(count($badges) . " adhoc badge tasks were added");
     }
 }
