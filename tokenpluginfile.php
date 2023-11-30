@@ -31,6 +31,9 @@ define('NO_DEBUG_DISPLAY', true);
 
 require_once('config.php');
 
+// Allow CORS requests.
+header('Access-Control-Allow-Origin: *');
+
 $relativepath = get_file_argument();
 $token = optional_param('token', '', PARAM_ALPHANUM);
 if (0 == strpos($relativepath, '/token/')) {
