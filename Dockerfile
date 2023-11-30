@@ -39,11 +39,8 @@ RUN apt-get install -y \
 # Enable Apache modules
 RUN a2enmod rewrite
 
-# Clone Moodle repository
-RUN git clone -b MOODLE_400_STABLE --single-branch git://git.moodle.org/moodle.git /opt/moodle
-
 # Copy Moodle to Apache's web directory
-RUN cp -R /opt/moodle /var/www/html/
+COPY . /var/www/html/moodle
 
 # Create moodledata directory
 RUN mkdir /var/moodledata && chown -R www-data /var/moodledata && chmod -R 777 /var/moodledata
@@ -53,10 +50,6 @@ RUN chmod -R 0755 /var/www/html/moodle
 
 # Fix deprecated string syntax
 RUN find /var/www/html/moodle -type f -name '*.php' -exec sed -i 's/\${\([^}]*\)}/{$\1}/g' {} +
-
-
-
-
 
 # Restart Apache
 RUN service apache2 restart
