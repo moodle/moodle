@@ -5445,4 +5445,87 @@ EOT;
         $this->assertEquals($expected, is_proxybypass($url));
     }
 
+    /**
+     * Test that the moodle_array_keys_filter method behaves in the same way
+     * that array_keys behaved before Moodle 8.3.
+     *
+     * @dataProvider moodle_array_keys_filter_provider
+     * @param array $array
+     * @param mixed $filter
+     * @param bool $strict
+     * @param array $expected
+     * @covers ::moodle_array_keys_filter
+     */
+    public function test_moodle_array_keys_filter(
+        array $array,
+        mixed $filter,
+        bool $strict,
+        array $expected,
+    ): void {
+        $this->assertSame(
+            $expected,
+            moodle_array_keys_filter($array, $filter, $strict),
+        );
+    }
+
+    /**
+     * Data provider for moodle_array_keys_filter tests.
+     *
+     * @return array
+     */
+    public static function moodle_array_keys_filter_provider(): array {
+        return [
+            [['a', 'b', 'c'], 'b', false, [1]],
+            [
+                [
+                    'alpha' => 'a',
+                    'bravo' => 'b',
+                    'charlie' => 'c',
+                ],
+                'b',
+                false,
+                ['bravo'],
+            ],
+            [
+                [
+                    'zero' => 0,
+                    'one' => 1,
+                    'true' => true,
+                ],
+                '1',
+                false,
+                ['one', 'true'],
+            ],
+            [
+                [
+                    'zero' => 0,
+                    'one' => 1,
+                    'true' => true,
+                ],
+                true,
+                false,
+                ['one', 'true'],
+            ],
+            [
+                [
+                    'zero' => 0,
+                    'one' => 1,
+                    'true' => true,
+                ],
+                true,
+                true,
+                ['true'],
+            ],
+            [
+                [
+                    'zero' => 0,
+                    'one' => 1,
+                    'true' => true,
+                ],
+                1,
+                true,
+                ['one'],
+            ],
+        ];
+    }
 }

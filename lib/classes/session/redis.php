@@ -25,8 +25,7 @@
 namespace core\session;
 
 use RedisException;
-
-defined('MOODLE_INTERNAL') || die();
+use SessionHandlerInterface;
 
 /**
  * Redis based session handler.
@@ -39,7 +38,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright  2016 Russell Smith
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class redis extends handler {
+class redis extends handler implements SessionHandlerInterface {
     /**
      * Compressor: none.
      */
@@ -204,12 +203,8 @@ class redis extends handler {
 
         $this->connection = new \Redis();
 
-        $result = session_set_save_handler(array($this, 'handler_open'),
-            array($this, 'handler_close'),
-            array($this, 'handler_read'),
-            array($this, 'handler_write'),
-            array($this, 'handler_destroy'),
-            array($this, 'handler_gc'));
+        $result = session_set_save_handler($this);
+
         if (!$result) {
             throw new exception('redissessionhandlerproblem', 'error');
         }
@@ -288,11 +283,11 @@ class redis extends handler {
     /**
      * Update our session search path to include session name when opened.
      *
-     * @param string $savepath  unused session save path. (ignored)
-     * @param string $sessionname Session name for this session. (ignored)
+     * @param string $path  unused session save path. (ignored)
+     * @param string $name Session name for this session. (ignored)
      * @return bool true always as we will succeed.
      */
-    public function handler_open($savepath, $sessionname) {
+    public function open(string $path, string $name): bool {
         return true;
     }
 
@@ -301,7 +296,7 @@ class redis extends handler {
      *
      * @return bool true on success.  false on unable to unlock sessions.
      */
-    public function handler_close() {
+    public function close(): bool {
         $this->lasthash = null;
         try {
             foreach ($this->locks as $id => $expirytime) {
@@ -317,6 +312,7 @@ class redis extends handler {
 
         return true;
     }
+
     /**
      * Read the session data from storage
      *
@@ -325,7 +321,7 @@ class redis extends handler {
      *
      * @throws RedisException when we are unable to talk to the Redis server.
      */
-    public function handler_read($id) {
+    public function read(string $id): string|false {
         try {
             if ($this->requires_write_lock()) {
                 $this->lock_session($id);
@@ -402,7 +398,7 @@ class redis extends handler {
      * @param string $data session data
      * @return bool true on write success, false on failure
      */
-    public function handler_write($id, $data) {
+    public function write(string $id, string $data): bool {
 
         $hash = sha1(base64_encode($data));
 
@@ -438,7 +434,7 @@ class redis extends handler {
      * @param string $id the session id to destroy.
      * @return bool true if the session was deleted, false otherwise.
      */
-    public function handler_destroy($id) {
+    public function destroy(string $id): bool {
         $this->lasthash = null;
         try {
             $this->connection->del($id);
@@ -454,11 +450,12 @@ class redis extends handler {
     /**
      * Garbage collect sessions.  We don't we any as Redis does it for us.
      *
-     * @param integer $maxlifetime All sessions older than this should be removed.
+     * @param integer $max_lifetime All sessions older than this should be removed.
      * @return bool true, as Redis handles expiry for us.
      */
-    public function handler_gc($maxlifetime) {
-        return true;
+    // phpcs:ignore moodle.NamingConventions.ValidVariableName.VariableNameUnderscore
+    public function gc(int $max_lifetime): int|false {
+        return false;
     }
 
     /**
@@ -601,7 +598,7 @@ class redis extends handler {
 
         $rs = $DB->get_recordset('sessions', array(), 'id DESC', 'id, sid');
         foreach ($rs as $record) {
-            $this->handler_destroy($record->sid);
+            $this->destroy($record->sid);
         }
         $rs->close();
     }
@@ -616,6 +613,6 @@ class redis extends handler {
             return;
         }
 
-        $this->handler_destroy($sid);
+        $this->destroy($sid);
     }
 }

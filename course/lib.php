@@ -639,7 +639,7 @@ function course_add_cm_to_section($courseorid, $cmid, $sectionnum, $beforemod = 
     $modarray = explode(",", trim($section->sequence));
     if (empty($section->sequence)) {
         $newsequence = "$cmid";
-    } else if ($beforemod && ($key = array_keys($modarray, $beforemod))) {
+    } else if ($beforemod && ($key = moodle_array_keys_filter($modarray, $beforemod))) {
         $insertarray = array($cmid, $beforemod);
         array_splice($modarray, $key[0], 1, $insertarray);
         $newsequence = implode(",", $modarray);
@@ -1111,7 +1111,7 @@ function delete_mod_from_section($modid, $sectionid) {
 
         $modarray = explode(",", $section->sequence);
 
-        if ($key = array_keys ($modarray, $modid)) {
+        if ($key = moodle_array_keys_filter($modarray, $modid)) {
             array_splice($modarray, $key[0], 1);
             $newsequence = implode(",", $modarray);
             $DB->set_field("course_sections", "sequence", $newsequence, array("id"=>$section->id));

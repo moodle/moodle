@@ -143,7 +143,7 @@ extends Horde_Imap_Client_Cache_Backend
 
                     foreach (array_keys(array_flip($val['slice'])) as $slice) {
                         $data = array();
-                        foreach (array_keys($s['s'], $slice) as $uid) {
+                        foreach (moodle_array_keys_filter($s['s'], $slice) as $uid) {
                             $data[$uid] = is_array($d[$uid])
                                 ? serialize($d[$uid])
                                 : $d[$uid];
@@ -297,7 +297,7 @@ extends Horde_Imap_Client_Cache_Backend
         foreach (array_unique($deleted) as $slice) {
             /* Get rid of slice if less than 10% of capacity. */
             if (($slice != $slicemap['i']) &&
-                ($slice_uids = array_keys($slicemap['s'], $slice)) &&
+                ($slice_uids = moodle_array_keys_filter($slicemap['s'], $slice)) &&
                 ($this->_params['slicesize'] * 0.1) > count($slice_uids)) {
                 $this->_toUpdate($mailbox, 'add', $slice_uids);
                 $this->_cache->expire($this->_getCid($mailbox, $slice));
@@ -416,7 +416,7 @@ extends Horde_Imap_Client_Cache_Backend
             $ptr = &$this->_slicemap[$mailbox];
 
             // Slice data is corrupt; remove from slicemap.
-            foreach (array_keys($ptr['s'], $slice) as $val) {
+            foreach (moodle_array_keys_filter($ptr['s'], $slice) as $val) {
                 unset($ptr['s'][$val]);
             }
 

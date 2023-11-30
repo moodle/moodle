@@ -1097,7 +1097,7 @@ class grade_category extends grade_object {
                 $freq = array_count_values($converted_grade_values);
                 arsort($freq);                      // sort by frequency keeping keys
                 $top = reset($freq);               // highest frequency count
-                $modes = array_keys($freq, $top);  // search for all modes (have the same highest count)
+                $modes = moodle_array_keys_filter($freq, $top);  // Search for all modes (have the same highest count).
                 rsort($modes, SORT_NUMERIC);       // get highest mode
                 $agg_grade = reset($modes);
                 // Record the weights as used.

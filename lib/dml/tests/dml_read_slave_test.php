@@ -562,7 +562,7 @@ class dml_read_slave_test extends \base_testcase {
             $this->assertNull($DB->get_dbhwrite());
 
             $session = new \core\session\database();
-            $session->handler_read('dummy');
+            $session->read('dummy');
 
             $this->assertEquals(0, $DB->perf_get_reads_slave());
             $this->assertTrue($DB->perf_get_reads() > 0);
