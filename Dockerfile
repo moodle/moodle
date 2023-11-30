@@ -54,19 +54,9 @@ RUN chmod -R 0755 /var/www/html/moodle
 # Fix deprecated string syntax
 RUN find /var/www/html/moodle -type f -name '*.php' -exec sed -i 's/\${\([^}]*\)}/{$\1}/g' {} +
 
-# Configure PostgreSQL
-USER postgres
-RUN echo "CREATE USER moodleuser WITH PASSWORD '123';" | \
-    psql && \
-    echo "CREATE DATABASE moodle WITH OWNER moodleuser;" | \
-    psql && \
-    echo "host       moodle     moodleuser     0.0.0.0/32       md5" >> /etc/postgresql/14/main/pg_hba.conf && \
-    echo "host       moodle     moodleuser     3.70.247.132/32   md5" >> /etc/postgresql/14/main/pg_hba.conf && \
-    echo "listen_addresses = '*'" >> /etc/postgresql/14/main/postgresql.conf
 
-# Restart PostgreSQL
-USER root
-RUN service postgresql restart
+
+
 
 # Restart Apache
 RUN service apache2 restart
