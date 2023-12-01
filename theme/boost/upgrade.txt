@@ -1,6 +1,10 @@
 This file describes API changes in /theme/boost
 information provided here is intended especially for theme designers.
 
+=== 4.4 ===
+* Bootstrap badge color helper clases (badge-[primary|secondary|...]) are no longer used, use bg-[primary|secondary|...] instead.
+* Bootstrap badge-pill is no longer used, use rounded-pill instead.
+
 === 4.3 ===
 * The $activity-iconcontainer-height and $activity-iconcontainer-width variables have been changed from 50px to 52px.
 * New SCSS mixin optional_animate to animate an element unless if the user has reduced motion in their preferences.

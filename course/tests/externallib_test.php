@@ -1178,7 +1178,7 @@ class externallib_test extends externallib_advanced_testcase {
                 // Afterlink for forums has been removed; it has been moved to the new activity badge content.
                 $this->assertEmpty($module['afterlink']);
                 $this->assertEquals('1 unread post', $module['activitybadge']['badgecontent']);
-                $this->assertEquals('badge-dark', $module['activitybadge']['badgestyle']);
+                $this->assertEquals('bg-dark text-white', $module['activitybadge']['badgestyle']);
                 $this->assertEquals(
                     plugin_supports(
                         'mod',

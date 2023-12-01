@@ -151,7 +151,7 @@ class reports_list extends system_report {
             ->add_callback(function(string $value, stdClass $row) {
                 if (!$this->report_source_valid($value)) {
                     // Add danger badge if report source is not valid (either it's missing, or has errors).
-                    return html_writer::span(get_string('errorsourceinvalid', 'core_reportbuilder'), 'badge badge-danger');
+                    return html_writer::span(get_string('errorsourceinvalid', 'core_reportbuilder'), 'badge bg-danger text-white');
                 }
 
                 return call_user_func([$value, 'get_name']);

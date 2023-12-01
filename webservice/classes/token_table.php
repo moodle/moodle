@@ -182,7 +182,7 @@ class token_table extends \table_sql {
 
         if ($data->serviceshortname <> MOODLE_OFFICIAL_MOBILE_SERVICE && !is_siteadmin($data->userid)
                 && array_key_exists($data->userid, $usermissingcaps)) {
-            $count = \html_writer::span(count($usermissingcaps[$data->userid]), 'badge badge-danger');
+            $count = \html_writer::span(count($usermissingcaps[$data->userid]), 'badge bg-danger text-white');
             $links = array_map(function($capname) {
                 return get_capability_docs_link((object)['name' => $capname]) . \html_writer::div($capname, 'text-muted');
             }, $usermissingcaps[$data->userid]);

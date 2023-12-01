@@ -752,7 +752,7 @@ function mod_glossary_get_tagged_entries($tag, $exclusivemode = false, $fromctx 
 
             $approved = "";
             if (!$item->approved) {
-                $approved = '<br>'. html_writer::span(get_string('entrynotapproved', 'mod_glossary'), 'badge badge-warning');
+                $approved = '<br>'. html_writer::span(get_string('entrynotapproved', 'mod_glossary'), 'badge bg-warning text-dark');
             }
             $tagfeed->add($icon, $pagename, $cmname.'<br>'.$coursename.$approved);
         }

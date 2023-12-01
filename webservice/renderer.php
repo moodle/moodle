@@ -126,7 +126,7 @@ class core_webservice_renderer extends plugin_renderer_base {
             $link = html_writer::link($settingsurl, fullname($user));
 
             if (!empty($user->missingcapabilities)) {
-                $count = html_writer::span(count($user->missingcapabilities), 'badge badge-danger');
+                $count = html_writer::span(count($user->missingcapabilities), 'badge bg-danger text-white');
                 $links = array_map(function($capname) {
                     return get_capability_docs_link((object)['name' => $capname]) . html_writer::div($capname, 'text-muted');
                 }, $user->missingcapabilities);
@@ -674,7 +674,7 @@ EOF;
 
             $tags = '';
             if (!empty($description->deprecated)) {
-                $tags .= ' ' . html_writer::span(get_string('deprecated', 'core_webservice'), 'badge badge-warning');
+                $tags .= ' ' . html_writer::span(get_string('deprecated', 'core_webservice'), 'badge bg-warning text-dark');
             }
 
             if (empty($printableformat)) {

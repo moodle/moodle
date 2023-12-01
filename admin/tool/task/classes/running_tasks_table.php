@@ -110,9 +110,9 @@ class running_tasks_table extends \table_sql {
      */
     public function col_type($row) : string {
         if ($row->type == 'scheduled') {
-            $output = \html_writer::span(get_string('scheduled', 'tool_task'), 'badge badge-primary');
+            $output = \html_writer::span(get_string('scheduled', 'tool_task'), 'badge bg-primary text-white');
         } else if ($row->type == 'adhoc') {
-            $output = \html_writer::span(get_string('adhoc', 'tool_task'), 'badge badge-dark');
+            $output = \html_writer::span(get_string('adhoc', 'tool_task'), 'badge bg-dark text-white');
         } else {
             // This shouldn't ever happen.
             $output = '';

@@ -67,7 +67,7 @@
             <div class="event-name-container flex-grow-1 line-height-3 nowrap text-truncate">
                 <div class="d-flex">
                     <h6 class="event-name mb-0 pb-1 text-truncate">
-                        {{#overdue}}<span class="badge badge-pill badge-danger ml-1 float-right">{{#str}} overdue, block_timeline {{/str}}</span>{{/overdue}}
+                        {{#overdue}}<span class="badge rounded-pill bg-danger text-white ml-1 float-right">{{#str}} overdue, block_timeline {{/str}}</span>{{/overdue}}
                         <a href="{{url}}"
                                 title="{{name}}"
                                 aria-label='{{#cleanstr}} ariaeventlistitem, block_timeline, { "name": {{#quote}}{{{activityname}}}{{/quote}}, "course": {{#quote}}{{{course.fullnamedisplay}}}{{/quote}}, "date": "{{#userdate}} {{timesort}}, {{#str}} strftimedatetime, core_langconfig {{/str}} {{/userdate}}" } {{/cleanstr}}'>
@@ -93,7 +93,7 @@
                     title="{{action.name}}">
                 {{{action.name}}}
                 {{#action.showitemcount}}
-                <span class="badge badge-secondary">{{action.itemcount}}</span>
+                <span class="badge bg-secondary text-dark">{{action.itemcount}}</span>
                 {{/action.showitemcount}}
                 </a>
             </h6>

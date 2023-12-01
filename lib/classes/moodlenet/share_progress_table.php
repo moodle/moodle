@@ -180,11 +180,11 @@ class share_progress_table extends table_sql {
     protected function col_status(stdClass $row): string {
         // Display a badge indicating the status of the share.
         if ($row->status == share_recorder::STATUS_IN_PROGRESS) {
-            $status = html_writer::span(get_string('inprogress'), 'badge badge-warning');
+            $status = html_writer::span(get_string('inprogress'), 'badge bg-warning text-dark');
         } else if ($row->status == share_recorder::STATUS_SENT) {
-            $status = html_writer::span(get_string('sent'), 'badge badge-success');
+            $status = html_writer::span(get_string('sent'), 'badge bg-success text-white');
         } else if ($row->status == share_recorder::STATUS_ERROR) {
-            $status = html_writer::span(get_string('error'), 'badge badge-danger');
+            $status = html_writer::span(get_string('error'), 'badge bg-danger text-white');
         }
 
         return $status;

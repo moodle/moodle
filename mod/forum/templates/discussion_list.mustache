@@ -215,12 +215,12 @@
                                             </a>
                                         </div>
                                         <div>
-                                            <span class="badge badge-danger rounded" data-region="locked-label" {{^discussion.locked}}hidden{{/discussion.locked}}>
+                                            <span class="badge bg-danger text-white rounded" data-region="locked-label" {{^discussion.locked}}hidden{{/discussion.locked}}>
                                                 {{#str}}locked, forum{{/str}}
                                             </span>
                                             {{#discussion.timed.istimed}}
                                             <span>
-                                                 <button class="btn badge badge-primary rounded border-0" data-region="timed-label"
+                                                 <button class="btn badge bg-primary text-white rounded border-0" data-region="timed-label"
                                                     data-toggle="popover" data-container="body" data-placement="right" data-html="true"
                                                     data-content="{{#discussion.timed}}{{#discussion.times}}{{> mod_forum/discussion_times}}{{/discussion.times}}{{/discussion.timed}}"
                                                     data-trigger="click" aria-label="{{#str}}timeddiscussion, forum{{/str}}" title="{{#str}}timeddiscussion, forum{{/str}}">
@@ -304,7 +304,7 @@
                                             {{#unread}}
                                             {{! TODO Rewrite as AJAX}}
                                                 <span class="lead">
-                                                    <a href="{{{discussion.urls.viewfirstunread}}}" class="badge badge-primary rounded-pill font-weight-normal"
+                                                    <a href="{{{discussion.urls.viewfirstunread}}}" class="badge bg-primary text-white rounded-pill font-weight-normal"
                                                        title="{{#str}}unreadpostsnumber, mod_forum, {{unread}}{{/str}}" aria-label="{{#str}}unreadpostsnumber, mod_forum, {{unread}}{{/str}}">
                                                         {{unread}}
                                                     </a>

@@ -468,7 +468,7 @@ class tool_task_renderer extends plugin_renderer_base {
         $componentname = $plugininfo->displayname;
         if ($plugininfo->is_enabled() === false) {
             $componentname .= ' ' . html_writer::span(
-                            get_string('disabled', 'tool_task'), 'badge badge-secondary');
+                            get_string('disabled', 'tool_task'), 'badge bg-secondary text-dark');
         }
         $componentname .= "\n" . html_writer::span($plugininfo->component, 'task-class text-ltr');
 

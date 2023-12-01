@@ -64,7 +64,7 @@ class activitybadge_test extends \advanced_testcase {
         // The activitybadge for a forum with unread messages shouldn't be empty.
         $class = activitybadge::create_instance($data->forumunread);
         $result = $class->export_for_template($renderer);
-        $this->check_activitybadge($result, '1 unread post', 'badge-dark');
+        $this->check_activitybadge($result, '1 unread post', 'bg-dark text-white');
 
         // The activitybadge for a forum without unread messages should be empty.
         $class = activitybadge::create_instance($data->forumread);

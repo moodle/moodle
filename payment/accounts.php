@@ -52,10 +52,10 @@ foreach ($accounts as $account) {
     }
     $name = $account->get_formatted_name();
     if (!$account->is_available()) {
-        $name .= ' ' . html_writer::span(get_string('accountnotavailable', 'payment'), 'badge badge-warning');
+        $name .= ' ' . html_writer::span(get_string('accountnotavailable', 'payment'), 'badge bg-warning text-dark');
     }
     if ($account->get('archived')) {
-        $name .= ' ' . html_writer::span(get_string('accountarchived', 'payment'), 'badge badge-secondary');
+        $name .= ' ' . html_writer::span(get_string('accountarchived', 'payment'), 'badge bg-secondary text-dark');
     }
 
     $menu = new action_menu();

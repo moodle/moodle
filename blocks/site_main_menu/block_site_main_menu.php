@@ -61,7 +61,7 @@ class block_site_main_menu extends block_list {
         $controlmenuclass = $format->get_output_classname('content\\cm\\controlmenu');
 
         $badgeattributes = [
-            'class' => 'badge badge-pill badge-warning mt-2',
+            'class' => 'badge rounded-pill bg-warning text-dark mt-2',
             'data-region' => 'visibility'
         ];
 
