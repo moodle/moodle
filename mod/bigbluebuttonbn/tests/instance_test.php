@@ -158,6 +158,34 @@ class instance_test extends advanced_testcase {
     }
 
     /**
+     * Test getting Meeting ID from log as Log field (meetingid) is the full meeting id (with courseid, and bigbluebuttonid).
+     *
+     * @covers ::get_from_meetingid
+     */
+    public function test_get_from_meetingid_from_log(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        [
+            'record' => $record,
+            'course' => $course,
+            'cm' => $cm,
+        ] = $this->get_test_instance();
+        $instance = instance::get_from_cmid($cm->id);
+        $instance->set_group_id(1);
+        logger::log_meeting_joined_event($instance, 1);
+        $logs = $DB->get_records('bigbluebuttonbn_logs',
+            ['courseid' => $course->id, 'bigbluebuttonbnid' => $instance->get_instance_id()], 'timecreated DESC');
+        $log = end($logs);
+        $retrievedinstance = instance::get_from_meetingid(
+            $log->meetingid
+        );
+
+        $this->assertEquals($cm->instance, $retrievedinstance->get_instance_id());
+        $this->assertEquals($cm->id, $retrievedinstance->get_cm_id());
+    }
+
+    /**
      * Ensure that invalid meetingids throw an appropriate exception.
      *
      * @dataProvider invalid_meetingid_provider
