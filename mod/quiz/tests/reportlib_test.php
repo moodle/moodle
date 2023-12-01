@@ -158,4 +158,37 @@ class reportlib_test extends \advanced_testcase {
         $bestattempt = reset($bestattempt);
         $this->assertEquals(2, $bestattempt->attempt);
     }
+
+    public function test_quiz_results_never_below_zero() {
+        global $DB;
+        $this->resetAfterTest();
+
+        $quizid = 7;
+        $fakegrade = new \stdClass();
+        $fakegrade->quiz = $quizid;
+
+        // Have 5 test grades.
+        $fakegrade->userid = 10;
+        $fakegrade->grade = 6.66667;
+        $DB->insert_record('quiz_grades', $fakegrade);
+
+        $fakegrade->userid = 11;
+        $fakegrade->grade = -2.86;
+        $DB->insert_record('quiz_grades', $fakegrade);
+
+        $fakegrade->userid = 12;
+        $fakegrade->grade = 10.0;
+        $DB->insert_record('quiz_grades', $fakegrade);
+
+        $fakegrade->userid = 13;
+        $fakegrade->grade = -5.0;
+        $DB->insert_record('quiz_grades', $fakegrade);
+
+        $fakegrade->userid = 14;
+        $fakegrade->grade = 33.33333;
+        $DB->insert_record('quiz_grades', $fakegrade);
+
+        $data = quiz_report_grade_bands(5, 20, $quizid);
+        $this->assertGreaterThanOrEqual(0, min(array_keys($data)));
+    }
 }
