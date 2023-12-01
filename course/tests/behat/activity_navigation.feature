@@ -52,6 +52,7 @@ Feature: Activity navigation
     # Hidden activity.
     And I click on "Hide" "link" in the "Glossary 1" activity
     # Hidden section.
+    And I am on "Course 1" course homepage
     And I hide section "5"
     # Set up book.
     And I follow "Book 1"
