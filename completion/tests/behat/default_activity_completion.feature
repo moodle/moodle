@@ -157,7 +157,7 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I set the following fields to these values:
       | id_completion_scorm_2              | 1 |
       | completionview_scorm               | 0 |
-      | completionscoredisabled            | 1 |
+      | completionscoreenabled_scorm       | 1 |
       | completionscorerequired_scorm      | 3 |
       | completionstatusrequired_scorm[2]  | 1 |
       | completionstatusrequired_scorm[4]  | 0 |
@@ -187,14 +187,17 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And the field "completionview_assign" matches value "0"
     And the field "completionusegrade_assign" matches value "0"
     And the field "completionsubmit_assign" matches value "1"
+    And I click on "Expand Forum" "button"
     And the field "id_completion_forum_2" matches value "1"
     And the field "completionview_forum" matches value "0"
     And the field "completionpostsenabled_forum" matches value "1"
     And the field "completionposts_forum" matches value "3"
     And the field "completiondiscussionsenabled_forum" matches value "0"
     And the field "completionrepliesenabled_forum" matches value "0"
+    And I click on "Expand SCORM package" "button"
     And the field "id_completion_scorm_2" matches value "1"
     And the field "completionview_scorm" matches value "0"
+    And the field "completionscoreenabled_scorm" matches value "1"
     And the field "completionscorerequired_scorm" matches value "3"
     And the field "completionstatusrequired_scorm[2]" matches value "1"
     And the field "completionstatusrequired_scorm[4]" matches value "0"
