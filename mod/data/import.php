@@ -76,14 +76,20 @@ if ($form->is_cancelled()) {
 }
 
 /// Print the page header
-$PAGE->navbar->add(get_string('add', 'data'));
+$pagename = get_string('uploadrecords', 'data');
+$PAGE->navbar->add($pagename);
 $PAGE->add_body_class('mediumwidth');
-$PAGE->set_title($data->name);
+$titleparts = [
+    $pagename,
+    format_string($data->name),
+    format_string($course->fullname),
+];
+$PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
 echo $OUTPUT->header();
-echo $OUTPUT->heading_with_help(get_string('uploadrecords', 'mod_data'), 'uploadrecords', 'mod_data');
+echo $OUTPUT->heading_with_help($pagename, 'uploadrecords', 'mod_data');
 
 if ($formdata = $form->get_data()) {
     $filecontent = $form->get_file_content('recordsfile');
