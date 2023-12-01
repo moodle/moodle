@@ -416,6 +416,7 @@ $string['savesuccess'] = 'Preset saved. <a href="{$a->url}">Preview preset</a>';
 $string['search'] = 'Search';
 $string['search:activity'] = 'Database - activity information';
 $string['search:entry'] = 'Database - entries';
+$string['searchresults'] = 'Entries containing "{$a}"';
 $string['selectedrequired'] = 'All selected required';
 $string['selectfields'] = 'Select fields';
 $string['selectexportoptions'] = 'Select export options';

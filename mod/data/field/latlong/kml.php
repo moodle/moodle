@@ -76,15 +76,7 @@ if ($rid) {
 require_course_login($course, true, $cm);
 
 $context = context_module::instance($cm->id);
-
-/// If it's hidden then it's don't show anything.  :)
-if (empty($cm->visible) and !has_capability('moodle/course:viewhiddenactivities', $context)) {
-    $PAGE->set_title($data->name);
-    echo $OUTPUT->header();
-    notice(get_string("activityiscurrentlyhidden"));
-}
-
-/// If we have an empty Database then redirect because this page is useless without data
+// If we have an empty Database then redirect because this page is useless without data.
 if (has_capability('mod/data:managetemplates', $context)) {
     if (!$DB->record_exists('data_fields', array('dataid'=>$data->id))) {      // Brand new database!
         redirect($CFG->wwwroot.'/mod/data/field.php?d='.$data->id);  // Redirect to field entry
