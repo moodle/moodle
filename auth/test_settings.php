@@ -56,7 +56,7 @@ if (!$auth) {
 
     echo $OUTPUT->heading(get_string('testsettings', 'core_auth'));
 
-    $url = new moodle_url('/auth/test_settings.php', array('sesskey'=>sesskey()));
+    $url = new moodle_url('/auth/test_settings.php');
     echo $OUTPUT->single_select($url, 'auth', $options);
 
     echo $OUTPUT->footer();
