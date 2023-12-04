@@ -243,4 +243,10 @@ $functions = [
         'ajax'          => true,
         'loginrequired' => true,
     ],
+    'tool_dataprivacy_get_access_information' => [
+        'classname'     => '\tool_dataprivacy\external\get_access_information',
+        'description'   => 'Retrieving privacy API access (permissions) information for the current user.',
+        'type'          => 'read',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 ];

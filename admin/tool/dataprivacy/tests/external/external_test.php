@@ -1113,4 +1113,31 @@ class external_test extends externallib_advanced_testcase {
             ]
         ], $results[$student1->id]);
     }
+
+    /**
+     * Test for external::get_access_information().
+     */
+    public function test_get_access_information() {
+        $this->resetAfterTest();
+
+        $this->setAdminUser();
+        $result = get_access_information::execute();
+        $result = external_api::clean_returnvalue(get_access_information::execute_returns(), $result);
+        $this->assertFalse($result['cancontactdpo']);   // Disabled by default.
+
+        // Enable contact DPO.
+        set_config('contactdataprotectionofficer', 1, 'tool_dataprivacy');
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+        $result = get_access_information::execute();
+        $result = external_api::clean_returnvalue(get_access_information::execute_returns(), $result);
+
+        $this->assertTrue($result['cancontactdpo']);
+        $this->assertTrue($result['cancreatedatadownloadrequest']);
+        $this->assertTrue($result['cancreatedatadeletionrequest']);
+        $this->assertFalse($result['canmanagedatarequests']);
+        $this->assertFalse($result['hasongoingdatadownloadrequest']);
+        $this->assertFalse($result['hasongoingdatadeletionrequest']);
+    }
 }
