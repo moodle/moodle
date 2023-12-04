@@ -414,7 +414,7 @@ $string['courserequestfailed'] = 'For some reason, your course request could not
 $string['courserequestintro'] = 'Use this form to request a course to be created for you.<br />Try and fill in as much information as you can to allow<br />the administrators to understand your reasons for wanting this course.';
 $string['courserequestreason'] = 'Reasons for wanting this course';
 $string['courserequestroleerror'] = 'The creators\' role in new courses configuration is invalid. Please see <a href="{$a}">user policies</a>.';
-$string['courserequestsuccess'] = 'Your course request has been saved successfully. You will be sent an email to inform you whether your request was approved.';
+$string['courserequestsuccess'] = 'Course request submitted.';
 $string['courserequestsupport'] = 'Supporting information to help the administrator evaluate this request';
 $string['courserequestwarning'] = 'The user requesting this course will be automatically enrolled and assigned the role of {$a}.';
 $string['courserestore'] = 'Course restore';
@@ -2411,7 +2411,7 @@ $string['weeks'] = 'weeks';
 $string['weekhide'] = 'Hide this week from {$a}';
 $string['weeklyoutline'] = 'Weekly outline';
 $string['weekshow'] = 'Show this week to {$a}';
-$string['welcomeback'] = 'Welcome back, {$a->firstname}! 👋';
+$string['welcomeback'] = 'Hi, {$a->firstname}! 👋';
 $string['welcometosite'] = 'Welcome, {$a->firstname}! 👋';
 $string['welcometocourse'] = 'Welcome to {$a}';
 $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!

@@ -34,7 +34,7 @@ $string['error:futurecode'] = 'This code is invalid. Please verify the time on y
     Current system time is {$a}.';
 $string['error:oldcode'] = 'This code is too old. Please verify the time on your authenticator device is correct and try again.
     Current system time is {$a}.';
-$string['error:wrongverification'] = 'Incorrect verification code';
+$string['error:wrongverification'] = 'Incorrect verification code.';
 $string['factorsetup'] = 'App setup';
 $string['info'] = '<p>Use any time-based one-time password (TOTP) authenticator app on your device to generate a verification code, even when it is offline.</p>
 
