@@ -26,10 +26,10 @@ Feature: An admin can create courses with meta enrolments using a CSV file
     Given I upload "admin/tool/uploadcourse/tests/fixtures/enrolment_meta.csv" file to "File" filemanager
     And I click on "Preview" "button"
     And I should see "Unknown meta course shortname"
-    And I should see "You can not meta link course to itself"
+    And I should see "You can't add a meta link to the same course."
     When I click on "Upload courses" "button"
     And I should see "Unknown meta course shortname"
-    And I should see "You can not meta link course to itself"
+    And I should see "You can't add a meta link to the same course."
     And I should see "Courses created: 1"
     And I should see "Courses updated: 0"
     And I should see "Courses errors: 2"

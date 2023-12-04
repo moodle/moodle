@@ -800,7 +800,7 @@ class self_test extends \advanced_testcase {
         ] + (array) $instance, [], $instance, $context);
 
         $this->assertArrayHasKey('password', $errors);
-        $this->assertEquals('Enrolment key matches an existing group enrolment key', $errors['password']);
+        $this->assertEquals('This enrolment key is already used as a group enrolment key.', $errors['password']);
     }
 
     /**
