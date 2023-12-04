@@ -24,6 +24,7 @@
  * @author    Fred Dixon  (ffdixon [at] blindsidenetworks [dt] com)
  */
 
+use mod_bigbluebuttonbn\extension;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\helpers\roles;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
@@ -67,6 +68,8 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $context = context_course::instance($course->id);
         $bigbluebuttonbn = empty($this->get_current()->id) ? null : $this->get_current();
 
+        $this->formextensions = extension::mod_form_addons_instances($mform, $bigbluebuttonbn);
+
         $instancetyperofiles = $this->get_instance_type_profiles();
         $this->bigbluebuttonbn_mform_add_block_profiles($mform, $instancetyperofiles);
         // Data for participant selection.
@@ -85,6 +88,9 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $this->bigbluebuttonbn_mform_add_block_guest_access($mform, $cfg, $this->current);
         // Add block 'Schedule'.
         $this->bigbluebuttonbn_mform_add_block_schedule($mform, $this->current);
+        // Now add subplugins form elements.
+        $this->add_subplugins_elements();
+
         // Add standard elements, common to all modules.
         $this->standard_coursemodule_elements();
         // Add standard buttons, common to all modules.
@@ -167,6 +173,9 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
                 $defaultvalues['completionattendanceenabled'] = 1;
             }
         }
+        foreach ($this->formextensions as $formextension) {
+            $formextension->data_preprocessing($defaultvalues);
+        }
     }
 
     /**
@@ -189,7 +198,11 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
                 $errors['voicebridge'] = get_string('mod_form_field_voicebridge_notunique_error', 'bigbluebuttonbn');
             }
         }
-        return $errors;
+        $additionalsubpluginerrors = [];
+        foreach ($this->formextensions as $formextension) {
+            $additionalsubpluginerrors = array_merge($additionalsubpluginerrors, $formextension->validation($data, $files));
+        }
+        return array_merge($errors, $additionalsubpluginerrors);
     }
 
     /**
@@ -240,8 +253,11 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         ]);
         $mform->addHelpButton('completionengagementgroup', 'completionengagementgroup', 'bigbluebuttonbn');
         $mform->disabledIf('completionengagementgroup', 'completion', 'neq', COMPLETION_AGGREGATION_ANY);
-
-        return ['completionattendancegroup', 'completionengagementgroup'];
+        $completionrules = ['completionattendancegroup', 'completionengagementgroup'];
+        foreach ($this->formextensions as $formextension) {
+            $completionrules = array_merge($completionrules, $formextension->add_completion_rules());
+        }
+        return $completionrules;
     }
 
     /**
@@ -251,12 +267,16 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
      * @return bool True if one or more rules is enabled, false if none are.
      */
     public function completion_rule_enabled($data) {
-        return (!empty($data['completionattendanceenabled']) && $data['completionattendance'] != 0)
+        $enabled = (!empty($data['completionattendanceenabled']) && $data['completionattendance'] != 0)
             || !empty($data['completionengagementchats'])
             || !empty($data['completionengagementtalks'])
             || !empty($data['completionengagementraisehand'])
             || !empty($data['completionengagementpollvotes'])
             || !empty($data['completionengagementemojis']);
+        foreach ($this->formextensions as $formextension) {
+            $enabled = $enabled || $formextension->completion_rule_enabled($data);
+        }
+        return $enabled;
     }
 
     /**
@@ -275,6 +295,9 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
             if (empty($data->completionattendanceenabled) || !$autocompletion) {
                 $data->completionattendance = 0;
             }
+        }
+        foreach ($this->formextensions as $formextension) {
+            $formextension->data_postprocessing($data);
         }
     }
 
@@ -688,5 +711,28 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         }
         $mform->setDefault($name, $defaultvalue);
         $mform->setType($name, $datatype);
+    }
+
+    /**
+     * Definition after data
+     *
+     * Here just to tweak form group in completion that should not be frozen. This avoid
+     * unwanted warnings.
+     */
+    public function definition_after_data() {
+        parent::definition_after_data();
+        foreach ($this->formextensions as $formextension) {
+            $formextension->definition_after_data();
+        }
+    }
+
+    /**
+     * Add subplugins form elements
+     * @return void
+     */
+    private function add_subplugins_elements() {
+        foreach ($this->formextensions as $formextension) {
+            $formextension->add_fields();
+        }
     }
 }

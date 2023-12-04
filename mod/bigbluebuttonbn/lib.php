@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die;
 use core_calendar\action_factory;
 use core_calendar\local\event\entities\action_interface;
 use mod_bigbluebuttonbn\completion\custom_completion;
+use mod_bigbluebuttonbn\extension;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\bigbluebutton;
 use mod_bigbluebuttonbn\local\exceptions\server_not_available_exception;
@@ -107,6 +108,9 @@ function bigbluebuttonbn_add_instance($bigbluebuttonbn) {
     logger::log_instance_created($bigbluebuttonbn);
     // Complete the process.
     mod_helper::process_post_save($bigbluebuttonbn);
+
+    // Call any active subplugin so to signal a new creation.
+    extension::add_instance($bigbluebuttonbn);
     return $bigbluebuttonbn->id;
 }
 
@@ -142,6 +146,8 @@ function bigbluebuttonbn_update_instance($bigbluebuttonbn) {
 
     // Complete the process.
     mod_helper::process_post_save($bigbluebuttonbn);
+    // Call any active subplugin so to signal update.
+    extension::update_instance($bigbluebuttonbn);
     return true;
 }
 
@@ -193,6 +199,9 @@ function bigbluebuttonbn_delete_instance($id) {
     }
 
     $result = true;
+
+    // Call any active subplugin so to signal deletion.
+    extension::delete_instance($id);
 
     // Delete the instance.
     if (!$DB->delete_records('bigbluebuttonbn', ['id' => $id])) {
@@ -352,32 +361,24 @@ function bigbluebuttonbn_reset_userdata(stdClass $data) {
  * @return null|cached_cm_info
  */
 function bigbluebuttonbn_get_coursemodule_info($coursemodule) {
-    global $DB;
-
-    $dbparams = ['id' => $coursemodule->instance];
-    $customcompletionfields = custom_completion::get_defined_custom_rules();
-    $fieldsarray = array_merge([
-        'id',
-        'name',
-        'intro',
-        'introformat',
-    ], $customcompletionfields);
-    $fields = join(',', $fieldsarray);
-    $bigbluebuttonbn = $DB->get_record('bigbluebuttonbn', $dbparams, $fields);
-    if (!$bigbluebuttonbn) {
+    $instance = instance::get_from_instanceid($coursemodule->instance);
+    if (empty($instance)) {
         return null;
     }
     $info = new cached_cm_info();
-    $info->name = $bigbluebuttonbn->name;
+    // Warning here: if any of the instance method calls ::get_cm this will result is a recursive call.
+    // So best is just to access instance variables not linked to the cm.
+    $info->name = $instance->get_instance_var('name');
     if ($coursemodule->showdescription) {
         // Convert intro to html. Do not filter cached version, filters run at display time.
-        $info->content = format_module_intro('bigbluebuttonbn', $bigbluebuttonbn, $coursemodule->id, false);
+        $info->content = format_module_intro('bigbluebuttonbn', $instance->get_instance_data(), $coursemodule->id, false);
     }
+    $customcompletionfields = custom_completion::get_defined_custom_rules();
     // Populate the custom completion rules as key => value pairs, but only if the completion mode is 'automatic'.
     if ($coursemodule->completion == COMPLETION_TRACKING_AUTOMATIC) {
         foreach ($customcompletionfields as $completiontype) {
             $info->customdata['customcompletionrules'][$completiontype] =
-                $bigbluebuttonbn->$completiontype ?? 0;
+                $instance->get_instance_var($completiontype) ?? 0;
         }
     }
 

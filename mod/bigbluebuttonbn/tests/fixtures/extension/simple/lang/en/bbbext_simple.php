@@ -13,20 +13,17 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Settings for BigBlueButtonBN.
+ * Language File.
  *
  * @package   mod_bigbluebuttonbn
- * @copyright 2010 onwards, Blindside Networks Inc
+ * @copyright 2023 onwards, Blindside Networks Inc
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author    Jesus Federico  (jesus [at] blindsidenetworks [dt] com)
- * @author    Fred Dixon  (ffdixon [at] blindsidenetworks [dt] com)
+ * @author    Laurent David (laurent@call-learning.fr)
  */
 
-defined('MOODLE_INTERNAL') || die;
-
-$bbbsettings = new mod_bigbluebuttonbn\settings($ADMIN, $module, $section, $hassiteconfig);
-$bbbsettings->add_all_settings();
-
-$settings = null;
+defined('MOODLE_INTERNAL') || die();
+$string['config_extension'] = 'Sample config extension setting';
+$string['newfield'] = 'New field';
+$string['newfielderror'] = 'New field cannot be empty';
+$string['pluginname'] = 'Simple BigBlueButtonPlugin';
