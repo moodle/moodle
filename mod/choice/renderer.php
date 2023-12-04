@@ -186,7 +186,10 @@ class mod_choice_renderer extends plugin_renderer_base {
             } else if ($optionid > 0) {
                 $headertitle = format_string($choices->options[$optionid]->text);
                 if (!empty($choices->options[$optionid]->user) && count($choices->options[$optionid]->user) > 0) {
-                    if ((count($choices->options[$optionid]->user)) == ($choices->options[$optionid]->maxanswer)) {
+                    if (
+                        $choices->limitanswers &&
+                        (count($choices->options[$optionid]->user) == $choices->options[$optionid]->maxanswer)
+                    ) {
                         $headertitle .= ' ' . get_string('full', 'choice');
                     }
                 }
