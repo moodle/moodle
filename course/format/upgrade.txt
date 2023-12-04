@@ -7,6 +7,8 @@ Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/forma
   valid section move mutation.
 * The state action core_courseformat\stateactions::section_move is deprecated and
   replaced by core_courseformat\stateactions::section_move_after.
+* $CFG->linkcoursesections setting has been completely removed because it's not required anymore. From now on, sections will be
+always linked because a new page, section.php, has been created to display any single section.
 
 === 4.3 ===
 * New core_courseformat\output\activitybadge class that can be extended by any module to display content near the activity name.

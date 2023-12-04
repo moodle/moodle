@@ -135,7 +135,13 @@ class controlmenu implements named_templatable, renderable {
         $baseurl = course_get_url($course, $sectionreturn);
         $baseurl->param('sesskey', sesskey());
 
-        $controls = [];
+        $controls['view'] = [
+            'url'   => new moodle_url('/course/section.php', ['id' => $section->id]),
+            'icon' => 'i/viewsection',
+            'name' => get_string('view'),
+            'pixattr' => ['class' => ''],
+            'attr' => ['class' => 'icon view'],
+        ];
 
         if (!$isstealth && has_capability('moodle/course:update', $coursecontext, $user)) {
             if ($section->section > 0
@@ -291,9 +297,8 @@ class controlmenu implements named_templatable, renderable {
             ], $coursecontext)
         ) {
             $sectionlink = new moodle_url(
-                '/course/view.php',
-                ['id' => $course->id],
-                "sectionid-{$section->id}-title"
+                '/course/section.php',
+                ['id' => $section->id]
             );
             $controls['permalink'] = [
                 'url' => $sectionlink,

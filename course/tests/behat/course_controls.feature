@@ -16,7 +16,7 @@ Feature: Course activity controls works as expected
   # * Course controls with paged mode in a section's page
 
   @javascript @_cross_browser
-  Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected
+  Scenario Outline: Check activities using topics and weeks formats, and paged mode and not paged mode
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -30,14 +30,13 @@ Feature: Course activity controls works as expected
       | activity | course | section | name              |
       | forum    | C1     | 1       | Test forum name 1 |
       | forum    | C1     | 1       | Test forum name 2 |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    And I am on the "Course 1" course page logged in as "teacher1"
     When I click on <targetpage> "link" in the "region-main" "region"
+    And I turn editing mode on
     And I add the "Recent activity" block
     And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
     And I click on "Delete" "button" in the "Delete block?" "dialogue"
-    And <belowpage> "section" <should_see_other_sections> exist
     And <belowpage> "section" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
@@ -76,14 +75,16 @@ Feature: Course activity controls works as expected
 
     Examples:
       | courseformat | coursedisplay | targetpage              | should_see_other_sections | should_see_other_sections_following_block_sections_links | belowpage                |
-      | topics       | 0             | "General"               | should                    | should                                                   | "Topic 2"                |
-      | topics       | 1             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
+      | topics       | 0             | "General"               | should                    | should not                                               | "Topic 2"                |
       | topics       | 1             | "General"               | should                    | should not                                               | "Topic 2"                |
-      | weeks        | 0             | "General"               | should                    | should                                                   | "8 January - 14 January" |
-      | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
+      | topics       | 0             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
+      | topics       | 1             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
+      | weeks        | 0             | "General"               | should                    | should not                                               | "8 January - 14 January" |
       | weeks        | 1             | "General"               | should                    | should not                                               | "8 January - 14 January" |
+      | weeks        | 0             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
+      | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
 
-  Scenario Outline: General activities course controls using topics and weeks formats, and paged mode and not paged mode works as expected without javascript
+  Scenario Outline: Check, without javascript, activities using topics and weeks formats, and paged mode and not paged mode
     Given the following "users" exist:
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
@@ -97,9 +98,9 @@ Feature: Course activity controls works as expected
       | activity  | name                   | course | idnumber     | section |
       | forum     | Test forum name 1      | C1     | 0001         | 1       |
       | forum     | Test forum name 2      | C1     | 0002         | 1       |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
+    And I am on the "Course 1" course page logged in as "teacher1"
     When I click on <targetpage> "link" in the "region-main" "region"
+    And I turn editing mode on
     And I add the "Recent activity" block
     And I open the action menu in "Recent activity" "block"
     And I click on "Delete Recent activity block" "link"
@@ -121,28 +122,27 @@ Feature: Course activity controls works as expected
     And I should see "Test forum name 2"
     And I should see "Edited test forum name 2"
     And I hide section "1"
-    And <belowpage> "section" <should_see_other_sections> exist
     And section "1" should be hidden
     And all activities in section "1" should be hidden
     And I show section "1"
-    And <belowpage> "section" <should_see_other_sections> exist
     And section "1" should be visible
     And the following config values are set as admin:
       | unaddableblocks | | theme_boost|
     And I add the "Section links" block
-    And <belowpage> "section" <should_see_other_sections> exist
     And I should see "1 2 3 4 5" in the "Section links" "block"
     And I click on "2" "link" in the "Section links" "block"
     And I <should_see_other_sections_following_block_sections_links> see "Test forum name 2"
 
     Examples:
       | courseformat | coursedisplay | targetpage              | should_see_other_sections | should_see_other_sections_following_block_sections_links | belowpage                |
-      | topics       | 0             | "General"               | should                    | should                                                   | "Topic 2"                |
-      | topics       | 1             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
+      | topics       | 0             | "General"               | should                    | should not                                               | "Topic 2"                |
       | topics       | 1             | "General"               | should                    | should not                                               | "Topic 2"                |
-      | weeks        | 0             | "General"               | should                    | should                                                   | "8 January - 14 January" |
-      | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
+      | topics       | 0             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
+      | topics       | 1             | "Topic 1"               | should not                | should not                                               | "Topic 2"                |
+      | weeks        | 0             | "General"               | should                    | should not                                               | "8 January - 14 January" |
       | weeks        | 1             | "General"               | should                    | should not                                               | "8 January - 14 January" |
+      | weeks        | 0             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
+      | weeks        | 1             | "1 January - 7 January" | should not                | should not                                               | "8 January - 14 January" |
 
   @javascript
   Scenario Outline: Indentation should allow one level only

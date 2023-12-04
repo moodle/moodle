@@ -86,12 +86,8 @@ class content implements named_templatable, renderable {
         global $PAGE;
         $format = $this->format;
 
-        // Most formats uses section 0 as a separate section so we remove from the list.
         $sections = $this->export_sections($output);
         $initialsection = '';
-        if (!empty($sections)) {
-            $initialsection = array_shift($sections);
-        }
 
         $data = (object)[
             'title' => $format->page_title(), // This method should be in the course_format class.
@@ -188,7 +184,6 @@ class content implements named_templatable, renderable {
         $singlesection = $this->format->get_section_number();
         if ($singlesection) {
             return [
-                $modinfo->get_section_info(0),
                 $modinfo->get_section_info($singlesection),
             ];
         }

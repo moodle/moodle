@@ -1,5 +1,5 @@
 @core @core_courseformat @core_course @show_editor @javascript
-Feature: Bulk course section actions one section per page.
+Feature: Bulk course section actions one section per page
   In order to edit the course section in one section per page setting
   As a teacher
   I need to be able to edit sections in bulk in both display modes.
@@ -33,8 +33,10 @@ Feature: Bulk course section actions one section per page.
   Scenario: Bulk section edit is only available when multiple sections are displayed
     Given I click on "Select topic Topic 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
+    And I click on "Close bulk actions" "button" in the "sticky-footer" "region"
     # Move to single topic page.
-    When I click on "Topic 1" "link" in the "region-main" "region"
+    And I open section "1" edit menu
+    When I click on "View" "link" in the "Topic 1" "section"
     And I click on "Bulk actions" "button"
     Then "Select topic Topic 1" "checkbox" should not exist
 

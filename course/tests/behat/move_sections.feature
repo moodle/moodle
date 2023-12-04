@@ -17,17 +17,19 @@ Feature: Sections can be moved
     And the following "activities" exist:
       | activity | name               | course | idnumber | section |
       | forum    | Test forum name    | C1     | forum1   | 1       |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Move up and down a section with Javascript disabled in a single page course
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     When I move down section "1"
     Then I should see "Test forum name" in the "Topic 2" "section"
     And I move up section "2"
     And I should see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Move up and down a section with Javascript disabled in the course home of a course using paged mode
-    Given I navigate to "Settings" in current page administration
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
@@ -37,11 +39,13 @@ Feature: Sections can be moved
     And I should see "Test forum name" in the "Topic 1" "section"
 
   Scenario: Sections can not be moved with Javascript disabled in a section page of a course using paged mode
-    Given I navigate to "Settings" in current page administration
+    Given I am on the "Course 1" course page logged in as "teacher1"
+    And I navigate to "Settings" in current page administration
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
-    When I follow "Topic 2"
+    When I click on "Topic 2" "link" in the "region-main" "region"
+    And I turn editing mode on
     Then "Topic 1" "section" should not exist
     And "Topic 3" "section" should not exist
     And "Move down" "link" should not exist
@@ -49,6 +53,8 @@ Feature: Sections can be moved
 
   @javascript
   Scenario: Move section with javascript
+    Given I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     When I open section "1" edit menu
     And I click on "Move" "link" in the "Topic 1" "section"
     And I click on "Topic 3" "link" in the ".modal-body" "css_element"
