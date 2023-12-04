@@ -51,5 +51,3 @@ if (!empty($displaysection)) {
 $outputclass = $format->get_output_classname('content');
 $output = new $outputclass($format);
 echo $renderer->render($output);
-
-$PAGE->requires->js('/course/format/weeks/format.js');
