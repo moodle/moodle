@@ -9,6 +9,43 @@ Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/forma
   replaced by core_courseformat\stateactions::section_move_after.
 * $CFG->linkcoursesections setting has been completely removed because it's not required anymore. From now on, sections will be
 always linked because a new page, section.php, has been created to display any single section.
+* Final deprecation for:
+  - core_courseformat\output\section_renderer::section_edit_control_menu
+  - core_courseformat\output\section_renderer::section_right_content
+  - core_courseformat\output\section_renderer::section_left_content
+  - core_courseformat\output\section_renderer::section_header
+  - core_courseformat\output\section_renderer::section_footer
+  - core_courseformat\output\section_renderer::start_section_list
+  - core_courseformat\output\section_renderer::end_section_list
+  - core_courseformat\output\section_renderer::section_edit_control_items
+  - core_courseformat\output\section_renderer::section_summary
+  - core_courseformat\output\section_renderer::section_activity_summary
+  - core_courseformat\output\section_renderer::section_availability_message
+  - core_courseformat\output\section_renderer::section_availability
+  - core_courseformat\output\section_renderer::course_activity_clipboard
+  - core_courseformat\output\section_renderer::get_nav_links
+  - core_courseformat\output\section_renderer::stealth_section_header
+  - core_courseformat\output\section_renderer::stealth_section_footer
+  - core_courseformat\output\section_renderer::section_nav_selection
+  - core_courseformat\output\section_renderer::print_single_section_page
+  - core_courseformat\output\section_renderer::print_multiple_section_page
+  - core_courseformat\output\section_renderer::change_number_sections
+  - core_courseformat\output\section_renderer::format_summary_text
+  - core_course_renderer::course_section_cm_edit_actions
+  - core_course_renderer::is_cm_conditionally_hidden
+  - core_course_renderer::course_section_cm_name
+  - core_course_renderer::course_section_cm_classes
+  - core_course_renderer::course_section_cm_name_title
+  - core_course_renderer::course_section_cm_text
+  - core_course_renderer::availability_info
+  - core_course_renderer::course_section_cm_availability
+  - core_course_renderer::course_section_cm_list_item
+  - core_course_renderer::course_section_cm
+  - core_course_renderer::course_section_cm_list
+  - core_course\output\course_module_name
+  - course/format/renderer.php
+  - course/format/topics/renderer.php
+  - course/format/weeks/renderer.php
 
 === 4.3 ===
 * New core_courseformat\output\activitybadge class that can be extended by any module to display content near the activity name.
