@@ -151,7 +151,7 @@ class language_menu implements \renderable, \templatable {
             if ($langparam) {
                 $attributes = [
                     'data-lang' => $langparam,
-                    'lang' => $langparam,
+                    'lang' => get_html_lang_attribute_value($langparam),
                 ];
             }
             $lang = new \action_menu_link_secondary($node['url'], null, $node['title'], $attributes);
