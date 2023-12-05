@@ -2177,6 +2177,9 @@ function create_course($data, $editoroptions = NULL) {
     $data->id = $course->id;
     $handler->instance_form_save($data, true);
 
+    $hook = new \core_course\hook\after_form_submission($data, true);
+    \core\hook\manager::get_instance()->dispatch($hook);
+
     return $course;
 }
 
@@ -2424,6 +2427,9 @@ function update_course($data, $editoroptions = NULL) {
     // Update custom fields if there are any of them in the form.
     $handler = core_course\customfield\course_handler::create();
     $handler->instance_form_save($data);
+
+    $hook = new \core_course\hook\after_form_submission($data);
+    \core\hook\manager::get_instance()->dispatch($hook);
 
     // Update with the new data
     $DB->update_record('course', $data);

@@ -22,6 +22,11 @@ information provided here is intended especially for developers.
 * New format actions classes. Those classes will eventually replace all course/lib.php content editing functions.
   All new methods are distributed in three classes formats can extend. Method can be accessed using static
   methods (see doc block of core_courseformat\formatactions for more information).
+* New hooks for extending course form:
+ - core_course\hook\after_form_definition
+ - core_course\hook\after_form_definition_after_data
+ - core_course\hook\after_form_validation
+ - core_course\hook\after_form_submission
 
 === 4.3 ===
 * The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used

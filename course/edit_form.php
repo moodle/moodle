@@ -418,6 +418,8 @@ class course_edit_form extends moodleform {
         $handler->set_parent_context($categorycontext); // For course handler only.
         $handler->instance_form_definition($mform, empty($course->id) ? 0 : $course->id);
 
+        $hook = new \core_course\hook\after_form_definition($this, $mform);
+        \core\hook\manager::get_instance()->dispatch($hook);
 
         // When two elements we need a group.
         $buttonarray = array();
@@ -488,6 +490,9 @@ class course_edit_form extends moodleform {
         // Tweak the form with values provided by custom fields in use.
         $handler  = core_course\customfield\course_handler::create();
         $handler->instance_form_definition_after_data($mform, empty($courseid) ? 0 : $courseid);
+
+        $hook = new \core_course\hook\after_form_definition_after_data($this, $mform);
+        \core\hook\manager::get_instance()->dispatch($hook);
     }
 
     /**
@@ -534,6 +539,31 @@ class course_edit_form extends moodleform {
         $handler = core_course\customfield\course_handler::create();
         $errors  = array_merge($errors, $handler->instance_form_validation($data, $files));
 
+        $hook = new \core_course\hook\after_form_validation($this, $data, $files);
+        \core\hook\manager::get_instance()->dispatch($hook);
+        $pluginerrors = $hook->get_errors();
+        if (!empty($pluginerrors)) {
+            $errors = array_merge($errors, $pluginerrors);
+        }
+
         return $errors;
+    }
+
+    /**
+     * Returns course object.
+     *
+     * @return \stdClass
+     */
+    public function get_course(): stdClass {
+        return $this->course;
+    }
+
+    /**
+     * Returns context.
+     *
+     * @return \core\context
+     */
+    public function get_context(): \core\context {
+        return $this->context;
     }
 }
