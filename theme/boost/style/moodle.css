@@ -30163,6 +30163,10 @@ body.drawer-ease {
 .drawer.drawer-bottom.show {
   bottom: 0;
 }
+.drawer.drawer-primary .drawertoggle {
+  margin-right: 16px;
+  margin-left: 5px;
+}
 
 @media (min-width: 992px) {
   .drawer#theme_boost-drawers-blocks:focus-within {
@@ -30182,6 +30186,12 @@ body.drawer-ease {
   height: 60px;
   display: flex;
   align-items: center;
+}
+.drawerheader .sitename {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  margin-right: 16px;
 }
 
 .drawer.scrolled .drawerheader {
@@ -30268,6 +30278,12 @@ body.drawer-ease {
     bottom: 0;
   }
 }
+@media (max-width: 991.98px) {
+  .drawer-md.drawer-primary .drawertoggle {
+    margin-right: 16px;
+    margin-left: 5px;
+  }
+}
 @media (max-width: 767.98px) {
   .drawer-sm {
     display: block;
@@ -30346,6 +30362,12 @@ body.drawer-ease {
   }
   .drawer-sm.drawer-bottom.show {
     bottom: 0;
+  }
+}
+@media (max-width: 767.98px) {
+  .drawer-sm.drawer-primary .drawertoggle {
+    margin-right: 16px;
+    margin-left: 5px;
   }
 }
 .drawercontent {
@@ -37765,6 +37787,16 @@ div.editor_atto_toolbar button .icon {
 
 .pagelayout-embedded #page {
   margin-top: 0;
+}
+
+.navbar-bootswatch .navbar-brand {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.navbar-bootswatch .navbar-brand .sitename {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 :root {
