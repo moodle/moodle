@@ -91,6 +91,11 @@ information provided here is intended especially for developers.
   - `question_category_options`
   - `question_add_context_in_key`
   - `question_fix_top_names`
+* Deprecated core\hook\manager::is_deprecated_plugin_callback() in favour of ::get_hooks_deprecating_plugin_callback(),
+  which will return the classnames of hooks deprecating a callback, or null if it's not deprecated. The return value can be cast
+  to bool if the original functionality is desired.
+* core\hook\manager::phpunit_get_instance() now sets self::$instance to the mocked instance if the optional $persist argument is
+  true, so future calls to ::get_instance() will return it.
 
 === 4.3 ===
 

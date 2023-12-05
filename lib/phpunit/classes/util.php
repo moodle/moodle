@@ -107,6 +107,9 @@ class phpunit_util extends testing_util {
         // Stop all hook redirections.
         \core\hook\manager::get_instance()->phpunit_stop_redirections();
 
+        // Reset the hook manager instance.
+        \core\hook\manager::phpunit_reset_instance();
+
         // Stop any message redirection.
         self::stop_message_redirection();
 
