@@ -155,6 +155,16 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
         return call_user_func_array([$this->_mform, 'createElement'], func_get_args());
     }
 
+    /**
+     * Return attributes suitable for passing to {@see createFormElement}, comprised of all group attributes without ID in
+     * order to ensure uniqueness of that value within the group
+     *
+     * @return array
+     */
+    public function getAttributesForFormElement(): array {
+        return array_diff_key((array) $this->getAttributes(), array_flip(['id']));
+    }
+
     public function export_for_template(renderer_base $output) {
         global $OUTPUT;
 
