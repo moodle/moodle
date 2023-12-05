@@ -29,4 +29,9 @@ $callbacks = [
         'callback' => quiz_statistics\hook_callbacks::class . '::quiz_structure_modified',
         'priority' => 500,
     ],
+    [
+        'hook' => mod_quiz\hook\attempt_state_changed::class,
+        'callback' => quiz_statistics\hook_callbacks::class . '::quiz_attempt_submitted_or_deleted',
+        'priority' => 500,
+    ],
 ];

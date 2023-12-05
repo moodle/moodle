@@ -16,7 +16,10 @@
 namespace quiz_statistics;
 
 use core\dml\sql_join;
+use mod_quiz\hook\attempt_state_changed;
 use mod_quiz\hook\structure_modified;
+use mod_quiz\quiz_attempt;
+use quiz_statistics\task\recalculate;
 
 /**
  * Hook callbacks
@@ -46,5 +49,21 @@ class hook_callbacks {
 
         $report = new \quiz_statistics_report();
         $report->clear_cached_data($qubaids);
+    }
+
+    /**
+     * Queue a statistics recalculation when an attempt is submitted or deleting.
+     *
+     * @param attempt_state_changed $hook
+     * @return bool True if a task was queued.
+     */
+    public static function quiz_attempt_submitted_or_deleted(attempt_state_changed $hook): bool {
+        $originalattempt = $hook->get_original_attempt();
+        $updatedattempt = $hook->get_updated_attempt();
+        if (is_null($updatedattempt) || $updatedattempt->state === quiz_attempt::FINISHED) {
+            // Only recalculate on deletion or submission.
+            return recalculate::queue_future_run($originalattempt->quiz);
+        }
+        return false;
     }
 }

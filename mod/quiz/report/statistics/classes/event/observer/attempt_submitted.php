@@ -16,6 +16,7 @@
 
 namespace quiz_statistics\event\observer;
 
+use core\check\performance\debugging;
 use quiz_statistics\task\recalculate;
 
 /**
@@ -25,6 +26,8 @@ use quiz_statistics\task\recalculate;
  * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.4 MDL-80099.
+ * @todo Final deprecation in Moodle 4.8 MDL-80956.
  */
 class attempt_submitted {
     /**
@@ -35,8 +38,11 @@ class attempt_submitted {
      *
      * @param \mod_quiz\event\attempt_submitted $event
      * @return void
+     * @deprecated Since Moodle 4.4 MDL-80099
      */
     public static function process(\mod_quiz\event\attempt_submitted $event): void {
+        debugging('quiz_statistics\event\observer\attempt_submitted event observer has been deprecated in favour of ' .
+            'the quiz_statistics\hook_callbacks::quiz_attempt_submitted_or_deleted hook callback.', DEBUG_DEVELOPER);
         $data = $event->get_data();
         recalculate::queue_future_run($data['other']['quizid']);
     }

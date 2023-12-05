@@ -39,6 +39,7 @@ use core_question\local\bank\condition;
 use mod_quiz\access_manager;
 use mod_quiz\event\attempt_submitted;
 use mod_quiz\grade_calculator;
+use mod_quiz\hook\attempt_state_changed;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
@@ -144,6 +145,8 @@ function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattemp
     } else {
         $attempt->timecheckstate = $timeclose;
     }
+
+    \core\hook\manager::get_instance()->dispatch(new attempt_state_changed(null, $attempt));
 
     return $attempt;
 }
@@ -448,10 +451,14 @@ function quiz_delete_attempt($attempt, $quiz) {
         $event->add_record_snapshot('quiz_attempts', $attempt);
         $event->trigger();
 
+        // This class callback is deprecated, and will be removed in Moodle 4.8 (MDL-80327).
+        // Use the attempt_state_changed hook instead.
         $callbackclasses = \core_component::get_plugin_list_with_class('quiz', 'quiz_attempt_deleted');
         foreach ($callbackclasses as $callbackclass) {
-            component_class_callback($callbackclass, 'callback', [$quiz->id]);
+            component_class_callback($callbackclass, 'callback', [$quiz->id], null, true);
         }
+
+        \core\hook\manager::get_instance()->dispatch(new attempt_state_changed($attempt, null));
     }
 
     // Search quiz_attempts for other instances by this user.
