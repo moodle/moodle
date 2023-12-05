@@ -248,6 +248,14 @@ ORDER BY
     $data[$bands - 1] += $data[$bands];
     unset($data[$bands]);
 
+    // See MDL-60632. When a quiz participant achieves an overall negative grade the chart fails to render.
+    foreach ($data as $databand => $datanum) {
+        if ($databand < 0) {
+            $data["0"] += $datanum; // Add to band 0.
+            unset($data[$databand]); // Remove entry below 0.
+        }
+    }
+
     return $data;
 }
 
