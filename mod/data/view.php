@@ -44,6 +44,7 @@ $disapprove = optional_param('disapprove', 0, PARAM_INT);    // disapproval reco
 $delete = optional_param('delete', 0, PARAM_INT);    //delete recordid
 $multidelete = optional_param_array('delcheck', null, PARAM_INT);
 $serialdelete = optional_param('serialdelete', null, PARAM_RAW);
+$confirm = optional_param('confirm', 0, PARAM_INT);
 
 $record = null;
 
@@ -206,7 +207,6 @@ if ($data->jstemplate) {
 /// Print the page header
 // Note: MDL-19010 there will be further changes to printing header and blocks.
 // The code will be much nicer than this eventually.
-$title = $courseshortname.': ' . format_string($data->name);
 
 if ($PAGE->user_allowed_editing() && !$PAGE->theme->haseditswitch) {
     // Change URL parameter and block display string value depending on whether editing is enabled or not
@@ -226,7 +226,21 @@ if ($mode == 'asearch') {
 }
 
 $PAGE->add_body_class('mediumwidth');
-$PAGE->set_title($title);
+$titleparts = [
+    format_string($data->name),
+    format_string($course->fullname),
+];
+if (!empty(trim($search))) {
+    // Indicate search results on page title when searching.
+    array_unshift($titleparts, get_string('searchresults', 'data', s($search)));
+} else if (!empty($delete) && empty($confirm)) {
+    // Displaying the delete confirmation page.
+    array_unshift($titleparts, get_string('deleteentry', 'data'));
+} else if ($record !== null || $mode == 'single') {
+    // Indicate on the page tile if the user is viewing this page on single view mode.
+    array_unshift($titleparts, get_string('single', 'data'));
+}
+$PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
@@ -271,7 +285,7 @@ if ($data->intro and empty($page) and empty($record) and $mode != 'single') {
 /// Delete any requested records
 
 if ($delete && confirm_sesskey() && (data_user_can_manage_entry($delete, $data, $context))) {
-    if ($confirm = optional_param('confirm',0,PARAM_INT)) {
+    if ($confirm) {
         if (data_delete_record($delete, $data, $course->id, $cm->id)) {
             echo $OUTPUT->notification(get_string('recorddeleted','data'), 'notifysuccess');
         }
