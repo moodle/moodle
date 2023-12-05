@@ -7,6 +7,8 @@ information provided here is intended especially for developers.
   Alongside with that new ".suggestions-heading" class was added to easily generate suggestion headings
 * The `core/form-autocomplete` module now exports an `enhanceField` method to return native promise (of
   which the previous `enhance` is now a wrapper of, while preserving jQuery promise return)
+* The group element has a new method `getAttributesForFormElement` which should be used in conjunction
+  with `createFormElement` to ensure that all elements within the group have unique IDs
 
 === 4.3 ===
 
