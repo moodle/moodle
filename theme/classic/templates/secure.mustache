@@ -75,6 +75,9 @@
                     <div class="card">
                         <div class="card-body">
                             {{{ output.course_content_header }}}
+                            {{#headercontent}}
+                                {{> core/activity_header }}
+                            {{/headercontent}}
                             {{{ output.main_content }}}
                             {{{ output.course_content_footer }}}
                         </div>
