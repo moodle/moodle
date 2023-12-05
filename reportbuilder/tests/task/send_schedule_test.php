@@ -147,6 +147,32 @@ class send_schedule_test extends advanced_testcase {
     }
 
     /**
+     * Test executing task where the schedule "View as user" is an inactive account
+     */
+    public function test_execute_report_viewas_user_invalid(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+        $audience = $generator->create_audience(['reportid' => $report->get('id'), 'configdata' => []]);
+
+        $schedule = $generator->create_schedule([
+            'reportid' => $report->get('id'),
+            'name' => 'My schedule',
+            'userviewas' => 42,
+            'audiences' => json_encode([$audience->get_persistent()->get('id')]),
+        ]);
+
+        $this->expectOutputRegex("/^Sending schedule: My schedule\nInvalid schedule view as user: Invalid user/");
+        $sendschedule = new send_schedule();
+        $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
+        $sendschedule->execute();
+    }
+
+    /**
      * Test executing task for a schedule that is configured to not send empty reports
      */
     public function test_execute_report_empty(): void {
@@ -196,6 +222,24 @@ class send_schedule_test extends advanced_testcase {
 
         $this->expectOutputString("Sending schedule: My schedule\n" .
             "Sending schedule complete\n");
+        $sendschedule = new send_schedule();
+        $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
+        $sendschedule->execute();
+    }
+
+    /**
+     * Test executing task where the schedule creator is an inactive account
+     */
+    public function test_execute_schedule_creator_invalid(): void {
+        $this->resetAfterTest();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class]);
+        $schedule = $generator->create_schedule(['reportid' => $report->get('id'), 'name' => 'My schedule', 'usercreated' => 42]);
+
+        $this->expectOutputRegex("/^Sending schedule: My schedule\nInvalid schedule creator: Invalid user/");
         $sendschedule = new send_schedule();
         $sendschedule->set_custom_data(['reportid' => $report->get('id'), 'scheduleid' => $schedule->get('id')]);
         $sendschedule->execute();

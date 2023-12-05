@@ -85,14 +85,17 @@ class audience {
 
             // Generate audience SQL based on those for the current report.
             [$wheres, $params] = self::user_audience_sql($audiences);
-            $allwheres = implode(' OR ', $wheres);
+            if (count($wheres) === 0) {
+                continue;
+            }
 
             $paramuserid = database::generate_param_name();
             $params[$paramuserid] = $userid;
 
             $sql = "SELECT DISTINCT(u.id)
                       FROM {user} u
-                     WHERE ({$allwheres})
+                     WHERE (" . implode(' OR ', $wheres) . ")
+                       AND u.deleted = 0
                        AND u.id = :{$paramuserid}";
 
             // If we have a matching record, user can view the report.
