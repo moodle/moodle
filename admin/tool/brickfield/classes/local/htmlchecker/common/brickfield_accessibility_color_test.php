@@ -170,6 +170,19 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
         'yellowgreen' => '9acd32'
     ];
 
+    /** @var string[] Define estimated relative font-size codes to pt values. */
+    public $fontsizenames = [
+        'xx-small' => 9,
+        'x-small' => 10,
+        'small' => 11,
+        'smaller' => 11,
+        'medium' => 12,
+        'large' => 14,
+        'larger' => 14,
+        'x-large' => 18,
+        'xx-large' => 24,
+    ];
+
     /**
      * Helper method that finds the luminosity between the provided
      * foreground and background parameters.
@@ -227,7 +240,8 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
             $l2 = (.2126 * $r4 + 0.7152 * $g4 + 0.0722 * $b4);
         }
 
-        $luminosity = round(($l1 + 0.05) / ($l2 + 0.05), 2);
+        // Increase round to 4 to avoid a 4.49 contrast being round up to a false pass of 4.5.
+        $luminosity = round(($l1 + 0.05) / ($l2 + 0.05), 4);
         return $luminosity;
     }
 
@@ -361,5 +375,36 @@ class brickfield_accessibility_color_test extends brickfield_accessibility_test 
             ? $forergb['b'] - $backrgb['b']
             : $backrgb['b'] - $forergb['b'];
         return ['red' => $reddiff, 'green' => $greendiff, 'blue' => $bluediff];
+    }
+
+    /**
+     * Helper method that finds the estimated font-size for the provided
+     * string font-size parameter.
+     * @param string $fontsize The css font-size, in various formats
+     * @return int The estimated font-size
+     */
+    public function get_fontsize(string $fontsize): int {
+        $newfontsize = 12; // Default value, in pt, equivalent to 16px.
+
+        // Search for rem, em, and px initially, typical font-size values.
+        $pos1 = stripos($fontsize, 'rem');
+        $pos2 = stripos($fontsize, 'em');
+        $pos3 = stripos($fontsize, 'px');
+        if ($pos1 !== false) {
+            $rem = substr($fontsize, 0, -3);
+            $newfontsize = $newfontsize * $rem;
+        } else if ($pos2 !== false) {
+            $em = substr($fontsize, 0, -2);
+            $newfontsize = $newfontsize * $em;
+        } else if ($pos3 !== false) {
+            $px = substr($fontsize, 0, -2);
+            $newfontsize = 0.75 * $px;
+        } else if (in_array($fontsize, array_keys($this->fontsizenames))) {
+            $newfontsize = $this->fontsizenames[$fontsize];
+        } else {
+            preg_match_all('!\d+!', $fontsize, $matches);
+            $newfontsize = $matches[0][0] ?? $newfontsize;
+        }
+        return (int) $newfontsize;
     }
 }
