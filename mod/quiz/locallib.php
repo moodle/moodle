@@ -446,6 +446,11 @@ function quiz_delete_attempt($attempt, $quiz) {
         $event = \mod_quiz\event\attempt_deleted::create($params);
         $event->add_record_snapshot('quiz_attempts', $attempt);
         $event->trigger();
+
+        $callbackclasses = \core_component::get_plugin_list_with_class('quiz', 'quiz_attempt_deleted');
+        foreach ($callbackclasses as $callbackclass) {
+            component_class_callback($callbackclass, 'callback', [$quiz->id]);
+        }
     }
 
     // Search quiz_attempts for other instances by this user.
