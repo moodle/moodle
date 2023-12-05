@@ -30,4 +30,14 @@ $callbacks = [
         'callback' => [\tool_mobile\local\hook\output\before_standard_head_html_generation::class, 'callback'],
         'priority' => 0,
     ],
+    [
+        'hook' => core\hook\user\after_complete_login::class,
+        'callback' => 'tool_mobile\local\hooks\user\after_complete_login::callback',
+        'priority' => 500,
+    ],
+    [
+        'hook' => tool_mfa\hook\after_user_passed_mfa::class,
+        'callback' => 'tool_mobile\local\hooks\user\after_user_passed_mfa::callback',
+        'priority' => 500,
+    ],
 ];
