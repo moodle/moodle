@@ -13,34 +13,31 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 namespace quiz_statistics;
 
 use core\dml\sql_join;
+use mod_quiz\hook\structure_modified;
 
 /**
- * Clear the statistics cache when the quiz structure is modified.
+ * Hook callbacks
  *
  * @package   quiz_statistics
  * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_structure_modified {
+class hook_callbacks {
     /**
-     * Clear the statistics cache.
+     * Clear the statistics cache for the quiz where the structure was modified.
      *
-     * @param int $quizid The quiz to clear the cache for.
+     * @param structure_modified $hook The structure_modified hook containing the new structure.
      * @return void
      */
-    public static function callback(int $quizid): void {
-        global $DB, $CFG;
+    public static function quiz_structure_modified(structure_modified $hook) {
+        global $CFG;
         require_once($CFG->dirroot . '/mod/quiz/report/statistics/statisticslib.php');
         require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
-        $quiz = $DB->get_record('quiz', ['id' => $quizid]);
-        if (!$quiz) {
-            throw new \coding_exception('Could not find quiz with ID ' . $quizid . '.');
-        }
+        $quiz = $hook->get_structure()->get_quiz();
         $qubaids = quiz_statistics_qubaids_condition(
             $quiz->id,
             new sql_join(),
