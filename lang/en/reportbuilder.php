@@ -138,11 +138,11 @@ $string['filterdateweeks'] = 'week(s)';
 $string['filterdateyears'] = 'year(s)';
 $string['filterdeleted'] = 'Deleted filter \'{$a}\'';
 $string['filterdoesnotcontain'] = 'Does not contain';
-$string['filterdurationunit'] = '{$a} unit';
 $string['filterendswith'] = 'Ends with';
 $string['filterequalorgreaterthan'] = 'Greater than or equal';
 $string['filterequalorlessthan'] = 'Less than or equal';
 $string['filterfieldoperator'] = '{$a} operator';
+$string['filterfieldunit'] = '{$a} unit';
 $string['filterfieldvalue'] = '{$a} value';
 $string['filtergreaterthan'] = 'Greater than';
 $string['filterinvalid'] = 'Invalid filter';
@@ -280,3 +280,6 @@ $string['usermodified'] = 'Modified by';
 $string['userpicture'] = 'User picture';
 $string['userselect'] = 'Select user';
 $string['viewreport'] = 'View report';
+
+// Deprecated since Moodle 4.4.
+$string['filterdurationunit'] = '{$a} unit';
