@@ -117,22 +117,25 @@ abstract class frontend {
         foreach ($enabled as $plugin => $info) {
             // Create plugin front-end object.
             $class = '\availability_' . $plugin . '\frontend';
-            $frontend = new $class();
-
-            // Add to array of required YUI modules.
-            $component = $frontend->get_component();
-            $modules[] = 'moodle-' . $component . '-form';
-
-            // Get parameters for this plugin.
-            $componentparams->{$plugin} = array($component,
-                    $frontend->allow_add($course, $cm, $section),
-                    $frontend->get_javascript_init_params($course, $cm, $section));
-
-            // Include strings for this plugin.
-            $identifiers = $frontend->get_javascript_strings();
-            $identifiers[] = 'title';
-            $identifiers[] = 'description';
-            $PAGE->requires->strings_for_js($identifiers, $component);
+            $details = $pluginmanager->get_plugin_info('availability_'.$plugin);
+            if (!is_null($details->rootdir)) {
+                $frontend = new $class();
+    
+                // Add to array of required YUI modules.
+                $component = $frontend->get_component();
+                $modules[] = 'moodle-' . $component . '-form';
+    
+                // Get parameters for this plugin.
+                $componentparams->{$plugin} = array($component,
+                        $frontend->allow_add($course, $cm, $section),
+                        $frontend->get_javascript_init_params($course, $cm, $section));
+    
+                // Include strings for this plugin.
+                $identifiers = $frontend->get_javascript_strings();
+                $identifiers[] = 'title';
+                $identifiers[] = 'description';
+                $PAGE->requires->strings_for_js($identifiers, $component);
+            }
         }
 
         // Include all JS (in one call). The init function runs on DOM ready.
