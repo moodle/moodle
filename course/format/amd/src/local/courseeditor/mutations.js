@@ -15,6 +15,14 @@
 
 import ajax from 'core/ajax';
 import {get_string as getString} from "core/str";
+import SRLogger from "core/local/reactive/srlogger";
+
+/**
+ * Flag to determine whether the screen reader-only logger has already been set, so we only need to set it once.
+ *
+ * @type {boolean}
+ */
+let isLoggerSet = false;
 
 /**
  * Default mutation manager
@@ -128,6 +136,11 @@ export default class {
      * @return {Object} the log entry
      */
     async _getLoggerEntry(stateManager, action, itemIds, data = {}) {
+        if (!isLoggerSet) {
+            // In case the logger has not been set from init(), ensure we set the logger.
+            stateManager.setLogger(new SRLogger());
+            isLoggerSet = true;
+        }
         const feedbackParams = {
             action,
             itemType: data.itemType ?? action.split('_')[0],
@@ -167,10 +180,13 @@ export default class {
      * @param {StateManager} stateManager the state manager
      */
     init(stateManager) {
-        // Add a method to prepare the fields when some update is comming from the server.
+        // Add a method to prepare the fields when some update is coming from the server.
         stateManager.addUpdateTypes({
             prepareFields: this._prepareFields,
         });
+        // Use the screen reader-only logger (SRLogger) to handle the feedback messages from the mutations.
+        stateManager.setLogger(new SRLogger());
+        isLoggerSet = true;
     }
 
     /**
