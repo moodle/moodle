@@ -2181,7 +2181,6 @@ function data_print_header($course, $cm, $data, $currenttab='', string $actionba
 
     global $CFG, $displaynoticegood, $displaynoticebad, $OUTPUT, $PAGE, $USER;
 
-    $PAGE->set_title($data->name);
     echo $OUTPUT->header();
 
     echo $actionbar;
