@@ -28,6 +28,7 @@ $string['ajaxerror'] = 'Error';
 $string['ajaxfailedupdate'] = 'Unable to update [1] for [2]';
 $string['ajaxfieldchanged'] = 'The field you are currently editing has changed, would you like to use the updated value?';
 $string['ajaxchoosescale'] = 'Choose';
+$string['editingmode_title'] = 'Editing the grader report';
 $string['eventgradereportviewed'] = 'Grader report viewed';
 $string['grader:manage'] = 'Manage the grader report';
 $string['grader:view'] = 'View grader report';
