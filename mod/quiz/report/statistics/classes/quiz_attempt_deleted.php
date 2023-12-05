@@ -13,41 +13,27 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-namespace quiz_statistics\tests;
+
+namespace quiz_statistics;
+
+use quiz_statistics\task\recalculate;
 
 /**
- * Test helper functions for statistics
+ * Queue a statistics recalculation when an attempt is deleted.
  *
  * @package   quiz_statistics
  * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class statistics_helper {
+class quiz_attempt_deleted {
     /**
-     * Run any ad-hoc recalculation tasks that have been scheduled.
+     * Queue a recalculation.
      *
-     * We need a special function to do this as the tasks are deferred by one hour,
-     * so we need to pass a custom $timestart argument.
-     *
-     * @param bool $discardoutput Capture and discard output from executed tasks?
+     * @param int $quizid The quiz the attempt belongs to.
      * @return void
      */
-    public static function run_pending_recalculation_tasks(bool $discardoutput = false): void {
-        while ($task = \core\task\manager::get_next_adhoc_task(
-            time() + HOURSECS + 1,
-            false,
-            '\quiz_statistics\task\recalculate'
-        )) {
-            if ($discardoutput) {
-                ob_start();
-            }
-            $task->execute();
-            if ($discardoutput) {
-                ob_end_clean();
-            }
-            \core\task\manager::adhoc_task_complete($task);
-        }
+    public static function callback(int $quizid): void {
+        recalculate::queue_future_run($quizid);
     }
-
 }
