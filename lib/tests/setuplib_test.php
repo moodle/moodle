@@ -106,8 +106,8 @@ class setuplib_test extends \advanced_testcase {
 
         // Delete existing localcache directory, as this is testing first call
         // to make_localcache_directory.
-        remove_dir($CFG->localcachedir, true);
-        $dir = make_localcache_directory('', false);
+        $this->assertTrue(remove_dir($CFG->localcachedir));
+        $dir = make_localcache_directory('');
         $this->assertSame($CFG->localcachedir, $dir);
         $this->assertFileDoesNotExist("$CFG->localcachedir/.htaccess");
         $this->assertFileExists($timestampfile);
