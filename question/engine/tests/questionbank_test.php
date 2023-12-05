@@ -16,6 +16,7 @@
 
 namespace core_question;
 
+use core_question\local\bank\question_version_status;
 use qubaid_list;
 use question_bank;
 use question_engine;
@@ -123,5 +124,47 @@ class questionbank_test extends \advanced_testcase {
         // Try to load a non-existent question.
         $this->expectException(\dml_missing_record_exception::class);
         question_finder::get_instance()->load_many_for_cache([-1]);
+    }
+
+    /**
+     * Test get_questions_from_categories.
+     *
+     * @covers \question_finder::get_questions_from_categories
+     *
+     * @return void
+     */
+    public function test_get_questions_from_categories(): void {
+        $this->resetAfterTest();
+
+        /** @var core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        // Create three questions in a question bank category, each with three versions.
+        // The first question has all three versions in status ready.
+        $cat = $questiongenerator->create_question_category();
+        $q1v1 = $questiongenerator->create_question('truefalse', null, ['name' => 'Q1V1', 'category' => $cat->id]);
+        $q1v2 = $questiongenerator->update_question($q1v1, null, ['name' => 'Q1V2']);
+        $q1v3 = $questiongenerator->update_question($q1v2, null, ['name' => 'Q1V3']);
+        // The second question has the first version in status draft, the second version in status ready,
+        // and third version in status draft.
+        $q2v1 = $questiongenerator->create_question('numerical', null, ['name' => 'Q2V2', 'category' => $cat->id,
+            'status' => question_version_status::QUESTION_STATUS_DRAFT, ]);
+        $q2v2 = $questiongenerator->update_question($q2v1, null, ['name' => 'Q2V2',
+            'status' => question_version_status::QUESTION_STATUS_READY, ]);
+        $q2v3 = $questiongenerator->update_question($q2v2, null,
+            ['name' => 'Q2V3', 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+        // The third question has all three version in status draft.
+        $q3v1 = $questiongenerator->create_question('shortanswer', null, ['name' => 'Q3V1', 'category' => $cat->id,
+            'status' => question_version_status::QUESTION_STATUS_DRAFT, ]);
+        $q3v2 = $questiongenerator->update_question($q3v1, null, ['name' => 'Q3V2',
+            'status' => question_version_status::QUESTION_STATUS_DRAFT, ]);
+        $q3v3 = $questiongenerator->update_question($q3v2, null, ['name' => 'Q3V3',
+            'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+
+        // Test the returned array of questions in that category is the desired one with version three of the first
+        // question, version two of the second question, and the third question omitted completely since there are
+        // only draft versions.
+        $this->assertEquals([$q1v3->id => $q1v3->id, $q2v2->id => $q2v2->id],
+            question_bank::get_finder()->get_questions_from_categories([$cat->id], ""));
     }
 }
