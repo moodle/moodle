@@ -93,7 +93,6 @@ require_capability('mod/data:managetemplates', $context);
 $actionbar = new \mod_data\output\action_bar($data->id, $PAGE->url);
 
 $PAGE->add_body_class('mediumwidth');
-$PAGE->set_title(get_string('course') . ': ' . $course->fullname);
 $PAGE->set_heading($course->fullname);
 $PAGE->activityheader->disable();
 
@@ -224,7 +223,12 @@ switch ($mode) {
                 }
 
             } else {
-
+                $titleparts = [
+                    get_string('deletefield', 'data'),
+                    format_string($data->name),
+                    format_string($course->fullname),
+                ];
+                $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
                 data_print_header($course,$cm,$data, false);
                 echo $OUTPUT->heading(get_string('deletefield', 'data'), 2, 'mb-4');
 
@@ -303,26 +307,34 @@ asort($menufield);    //sort in alphabetical order
 $PAGE->force_settings_menu(true);
 
 $PAGE->set_pagetype('mod-data-field-' . $newtype);
+$titleparts = [
+    format_string($data->name),
+    format_string($course->fullname),
+];
 if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
-    data_print_header($course, $cm, $data,'fields');
+    array_unshift($titleparts, get_string('newfield', 'data'));
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
+    data_print_header($course, $cm, $data, 'fields');
     echo $OUTPUT->heading(get_string('newfield', 'data'));
 
     $field = data_get_field_new($newtype, $data);
     $field->display_edit_field();
 
 } else if ($mode == 'display' && confirm_sesskey()) { /// Display/edit existing field
-    data_print_header($course, $cm, $data,'fields');
+    array_unshift($titleparts, get_string('editfield', 'data'));
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
+    data_print_header($course, $cm, $data, 'fields');
     echo $OUTPUT->heading(get_string('editfield', 'data'));
 
     $field = data_get_field_from_id($fid, $data);
     $field->display_edit_field();
 
 } else {                                              /// Display the main listing of all fields
+    array_unshift($titleparts, get_string('managefields', 'data'));
+    $PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
     $hasfields = $manager->has_fields();
-
     // Check if it is an empty database with no fields.
     if (!$hasfields) {
-        $PAGE->set_title($data->name);
         echo $OUTPUT->header();
         echo $renderer->render_fields_zero_state($manager);
         echo $OUTPUT->footer();
