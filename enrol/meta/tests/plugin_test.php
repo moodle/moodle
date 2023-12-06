@@ -16,6 +16,9 @@
 
 namespace enrol_meta;
 
+use context_course;
+use enrol_meta_plugin;
+
 /**
  * Meta enrolment sync functional test.
  *
@@ -592,6 +595,40 @@ class plugin_test extends \advanced_testcase {
         $this->assertTrue(groups_is_member($groupid, $user1->id));
         $this->assertFalse(groups_is_member($groupid, $user2->id));
 
+    }
+
+    /**
+     * Test enrolling users in a course, where the customint2 (group) property of the instance points to an invalid group
+     *
+     * @covers \enrol_meta_handler::sync_with_parent_course
+     * @covers ::enrol_meta_sync
+     */
+    public function test_add_to_group_invalid(): void {
+        $this->resetAfterTest();
+
+        $this->enable_plugin();
+
+        $courseone = $this->getDataGenerator()->create_course();
+        $coursetwo = $this->getDataGenerator()->create_course();
+
+        /** @var enrol_meta_plugin $plugin */
+        $plugin = enrol_get_plugin('meta');
+        $plugin->add_instance($coursetwo, ['customint1' => $courseone->id, 'customint2' => 42]);
+
+        // Ensure the event observer works for invalid groups.
+        $userone = $this->getDataGenerator()->create_and_enrol($courseone);
+
+        // Now disable the plugin, add another enrolment.
+        $this->disable_plugin();
+        $usertwo = $this->getDataGenerator()->create_and_enrol($courseone);
+
+        // Re-enable the plugin, run sync task - should also work for invalid groups.
+        $this->enable_plugin();
+        enrol_meta_sync($coursetwo->id);
+
+        $coursetwocontext = context_course::instance($coursetwo->id);
+        $this->assertTrue(is_enrolled($coursetwocontext, $userone));
+        $this->assertTrue(is_enrolled($coursetwocontext, $usertwo));
     }
 
     /**
