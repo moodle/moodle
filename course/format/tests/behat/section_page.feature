@@ -30,7 +30,7 @@ Feature: Single section course page
   Scenario: Collapsed sections are always expanded in the single section page
     Given I press "Collapse all"
     And I should not see "Activity sample 1.1" in the "region-main" "region"
-    When I click on "Topic 1" "link" in the "region-main" "region"
+    When I am on the "Course 1 > Topic 1" "course > section" page
     Then I should see "Activity sample 1.1"
     And I should see "Activity sample 1.2"
     And I should see "Activity sample 1.3"
@@ -38,7 +38,7 @@ Feature: Single section course page
     And I should not see "Activity sample 2.1" in the "region-main" "region"
 
   Scenario: General section is not displayed in the single section page
-    When I click on "Topic 1" "link" in the "region-main" "region"
+    When I am on the "Course 1 > Topic 1" "course > section" page
     Then I should not see "General" in the "#section-1" "css_element"
     And I should not see "Activity sample 0.1" in the "region-main" "region"
     And I should see "Activity sample 1.1"
