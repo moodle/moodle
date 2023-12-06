@@ -46,6 +46,7 @@ information provided here is intended especially for developers.
   The old method will be maintained, but new code should use the new method with first-class parameters.
 * The fourth parameter to `format_text` now emits a deprecation notice.
   It was originally deprecated in Moodle 2.0.
+* The smiley option for format_text has been removed. It was deprecated in Moodle 2.0.
 
 === 4.3 ===
 

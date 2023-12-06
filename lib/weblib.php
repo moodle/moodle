@@ -1318,6 +1318,15 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
     $params['text'] =  $text;
 
     if ($options) {
+        // The smiley option was deprecated in Moodle 2.0.
+        if (array_key_exists('smiley', $options)) {
+            unset($options['smiley']);
+            debugging(
+                'The smiley option is deprecated and no longer used.',
+                DEBUG_DEVELOPER,
+            );
+        }
+
         $validoptions = [
             'text',
             'format',
@@ -1332,7 +1341,6 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
             'allowid',
             'noclean',
             'nocache',
-            'smiley',
         ];
 
         $invalidoptions = array_diff(array_keys($options), $validoptions);
@@ -3743,7 +3751,6 @@ function get_formatted_help_string($identifier, $component, $ajax = false, $a = 
         $options = new stdClass();
         $options->trusted = false;
         $options->noclean = false;
-        $options->smiley = false;
         $options->filter = false;
         $options->para = true;
         $options->newlines = false;

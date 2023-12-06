@@ -47,7 +47,6 @@ if ($msgform->is_cancelled()) {
     $options = new stdClass();
     $options->para     = false;
     $options->newlines = true;
-    $options->smiley   = false;
     $options->trusted = trusttext_trusted(\context_system::instance());
 
     $msg = format_text($formdata->messagebody['text'], $formdata->messagebody['format'], $options);
