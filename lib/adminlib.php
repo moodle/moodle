@@ -3270,6 +3270,7 @@ class admin_setting_configmulticheckbox extends admin_setting {
         $context = (object) [
             'id' => $this->get_id(),
             'name' => $this->get_full_name(),
+            'readonly' => $this->is_readonly(),
         ];
 
         $options = array();
