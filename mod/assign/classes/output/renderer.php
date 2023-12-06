@@ -649,7 +649,7 @@ class renderer extends \plugin_renderer_base {
             $cell1content = get_string('submissionteam', 'assign');
             $group = $status->submissiongroup;
             if ($group) {
-                $cell2content = format_string($group->name, false, $status->context);
+                $cell2content = format_string($group->name, false, ['context' => $status->context]);
             } else if ($status->preventsubmissionnotingroup) {
                 if (count($status->usergroups) == 0) {
                     $notification = new \core\output\notification(get_string('noteam', 'assign'), 'error');
