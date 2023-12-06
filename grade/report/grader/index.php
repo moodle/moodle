@@ -116,8 +116,6 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
     grade_report_grader::do_process_action($target, $action, $courseid);
 }
 
-$reportname = get_string('pluginname', 'gradereport_grader');
-
 // Do this check just before printing the grade header (and only do it once).
 grade_regrade_final_grades_if_required($course);
 
@@ -141,7 +139,7 @@ $PAGE->requires->js_call_amd('gradereport_grader/collapse', 'init', [
 $numusers = $report->get_numusers(true, true);
 
 $actionbar = new \gradereport_grader\output\action_bar($context, $report, $numusers);
-print_grade_page_head($COURSE->id, 'report', 'grader', $reportname, false, $buttons, true,
+print_grade_page_head($COURSE->id, 'report', 'grader', false, false, $buttons, true,
     null, null, null, $actionbar, false);
 
 // make sure separate group does not prevent view
