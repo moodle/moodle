@@ -103,7 +103,9 @@ class question_usage_table extends table_sql {
         $course = get_course($values->courseid);
         $context = context_course::instance($course->id);
 
-        return html_writer::link(course_get_url($course), format_string($course->fullname, true, $context));
+        return html_writer::link(course_get_url($course), format_string($course->fullname, true, [
+            'context' => $context,
+        ]));
     }
 
     public function col_attempts(\stdClass $values): string {
