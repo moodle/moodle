@@ -59,11 +59,13 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
         $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
         $matchq = $questiongenerator->create_question('match', null, ['category' => $cat->id]);
+        $description = $questiongenerator->create_question('description', null, ['category' => $cat->id]);
 
         // Add them to the quiz.
         quiz_add_quiz_question($saq->id, $quiz);
         quiz_add_quiz_question($numq->id, $quiz);
         quiz_add_quiz_question($matchq->id, $quiz);
+        quiz_add_quiz_question($description->id, $quiz);
 
         // Make a user to do the quiz.
         $user1 = $this->getDataGenerator()->create_user();
@@ -78,7 +80,7 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user1->id);
 
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
-        $this->assertEquals('1,2,3,0', $attempt->layout);
+        $this->assertEquals('1,2,3,4,0', $attempt->layout);
 
         quiz_attempt_save_started($quizobj, $quba, $attempt);
 
