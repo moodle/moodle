@@ -618,6 +618,14 @@ All rights reserved.</copyright>
     </copyrights>
   </library>
   <library>
+    <location>psr/container</location>
+    <name>container</name>
+    <description>Common Container Interface (PHP FIG PSR-11).</description>
+    <version>2.0.2</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/container</repository>
+  </library>
+  <library>
     <location>psr/http-client</location>
     <name>http-client</name>
     <description>Provides an abstraction that describe the components of a HTTP Client.</description>
