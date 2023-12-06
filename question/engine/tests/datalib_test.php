@@ -40,6 +40,7 @@ require_once(__DIR__ . '/helpers.php');
  * @category  test
  * @copyright 2014 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \question_engine_data_mapper
  */
 class datalib_test extends \qbehaviour_walkthrough_test_base {
 
@@ -249,6 +250,34 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
 
         // Delete it.
         question_engine::delete_questions_usage_by_activity($quba->get_id());
+    }
+
+    public function test_cannot_save_a_step_with_a_missing_state(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Create a question.
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $generator->create_question_category();
+        $questiondata = $generator->create_question('shortanswer', null, ['category' => $cat->id]);
+
+        // Create a usage.
+        $quba = question_engine::make_questions_usage_by_activity('test', \context_system::instance());
+        $quba->set_preferred_behaviour('deferredfeedback');
+        $slot = $quba->add_question(question_bank::load_question($questiondata->id));
+        $quba->start_all_questions();
+
+        // Add a step with a bad state.
+        $newstep = new \question_attempt_step();
+        $newstep->set_state(null);
+        $addstepmethod = new \ReflectionMethod('question_attempt', 'add_step');
+        $addstepmethod->setAccessible(true);
+        $addstepmethod->invoke($quba->get_question_attempt($slot), $newstep);
+
+        // Verify that trying to save this throws an exception.
+        $this->expectException(\dml_write_exception::class);
+        question_engine::save_questions_usage_by_activity($quba);
     }
 
     /**
