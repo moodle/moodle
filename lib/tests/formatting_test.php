@@ -75,13 +75,12 @@ class formatting_test extends \advanced_testcase {
      */
     public function test_format_string_values(
         string $expected,
-        mixed $input,
-        array $options = [],
+        array $params,
     ): void {
         $formatting = new formatting();
         $this->assertSame(
             $expected,
-            $formatting->format_string($input, ...$options),
+            $formatting->format_string(...$params),
         );
     }
 
@@ -93,24 +92,65 @@ class formatting_test extends \advanced_testcase {
     public static function format_string_provider(): array {
         return [
             // Ampersands.
-            ["&amp; &amp;&amp;&amp;&amp;&amp; &amp;&amp;", "& &&&&& &&"],
-            ["ANother &amp; &amp;&amp;&amp;&amp;&amp; Category", "ANother & &&&&& Category"],
-            ["ANother &amp; &amp;&amp;&amp;&amp;&amp; Category", "ANother & &&&&& Category", [true]],
-            ["Nick's Test Site &amp; Other things", "Nick's Test Site & Other things", [true]],
-            ["& < > \" '", "& < > \" '", [true, ['escape' => false]]],
+            [
+                'expected' => "&amp; &amp;&amp;&amp;&amp;&amp; &amp;&amp;",
+                'params' => ["& &&&&& &&"],
+            ],
+            [
+                'expected' => "ANother &amp; &amp;&amp;&amp;&amp;&amp; Category",
+                'params' => ["ANother & &&&&& Category"],
+            ],
+            [
+                'expected' => "ANother &amp; &amp;&amp;&amp;&amp;&amp; Category",
+                'params' => [
+                    'string' => "ANother & &&&&& Category",
+                    'striplinks' => true,
+                ],
+            ],
+            [
+                'expected' => "Nick's Test Site &amp; Other things",
+                'params' => [
+                    'string' => "Nick's Test Site & Other things",
+                    'striplinks' => true,
+                ],
+            ],
+            [
+                'expected' => "& < > \" '",
+                'params' => [
+                    'string' => "& < > \" '",
+                    'striplinks' => true,
+                    'escape' => false,
+                ],
+            ],
 
             // String entities.
-            ["&quot;", "&quot;"],
+            [
+                'expected' => "&quot;",
+                'params' => ["&quot;"],
+            ],
 
             // Digital entities.
-            ["&11234;", "&11234;"],
+            [
+                'expected' => "&11234;",
+                'params' => ["&11234;"],
+            ],
 
             // Unicode entities.
-            ["&#4475;", "&#4475;"],
+            [
+                'expected' => "&#4475;",
+                'params' => ["&#4475;"],
+            ],
 
             // Nulls.
-            ['', null],
-            ['', null, [true, ['escape' => false]]],
+            ['', [null]],
+            [
+                'expected' => '',
+                'params' => [
+                    'string' => null,
+                    'striplinks' => true,
+                    'escape' => false,
+                ],
+            ],
         ];
     }
 
@@ -130,9 +170,9 @@ class formatting_test extends \advanced_testcase {
         $rawstring = '<span lang="en" class="multilang">English</span><span lang="ca" class="multilang">Catalan</span>';
         $expectednofilter = strip_tags($rawstring);
         $expectedfilter = 'English';
-        $striplinks = true;
         $context = \core\context\course::instance($course->id);
         $options = [
+            'striplinks' => true,
             'context' => $context,
             'escape' => true,
             'filter' => false,
@@ -144,7 +184,7 @@ class formatting_test extends \advanced_testcase {
 
         // Format the string without filters. It should just strip the
         // links.
-        $nofilterresult = $formatting->format_string($rawstring, $striplinks, $options);
+        $nofilterresult = $formatting->format_string($rawstring, ...$options);
         $this->assertEquals($expectednofilter, $nofilterresult);
 
         // Add the multilang filter. Make sure it's enabled globally.
@@ -153,23 +193,23 @@ class formatting_test extends \advanced_testcase {
         filter_set_local_state('multilang', $context->id, TEXTFILTER_ON);
 
         // Even after setting the filters, no filters are applied yet.
-        $nofilterresult = $formatting->format_string($rawstring, $striplinks, $options);
+        $nofilterresult = $formatting->format_string($rawstring,...$options);
         $this->assertEquals($expectednofilter, $nofilterresult);
 
         // Apply the filter as an option.
         $options['filter'] = true;
-        $filterresult = $formatting->format_string($rawstring, $striplinks, $options);
+        $filterresult = $formatting->format_string($rawstring,  ...$options);
         $this->assertMatchesRegularExpression("/$expectedfilter/", $filterresult);
 
         // Apply it as a formatting setting.
         unset($options['filter']);
         $formatting->set_filterall(true);
-        $filterresult = $formatting->format_string($rawstring, $striplinks, $options);
+        $filterresult = $formatting->format_string($rawstring,  ...$options);
         $this->assertMatchesRegularExpression("/$expectedfilter/", $filterresult);
 
         // Unset it and we do not filter.
         $formatting->set_filterall(false);
-        $nofilterresult = $formatting->format_string($rawstring, $striplinks, $options);
+        $nofilterresult = $formatting->format_string($rawstring,  ...$options);
         $this->assertEquals($expectednofilter, $nofilterresult);
 
         // Set it again.
@@ -179,7 +219,7 @@ class formatting_test extends \advanced_testcase {
         // Confirm that we get back the cached string. The result should be
         // the same as the filtered text above even though we've disabled the
         // multilang filter in between.
-        $cachedresult = $formatting->format_string($rawstring, $striplinks, $options);
+        $cachedresult = $formatting->format_string($rawstring, ...$options);
         $this->assertMatchesRegularExpression("/$expectedfilter/", $cachedresult);
     }
 
@@ -205,7 +245,7 @@ class formatting_test extends \advanced_testcase {
         $formatter = new formatting();
         $this->assertEquals(
             $expected,
-            $formatter->format_text($input, $format, $options),
+            $formatter->format_text($input, $format, ...$options),
         );
     }
 
@@ -333,14 +373,14 @@ class formatting_test extends \advanced_testcase {
                 1,
                 $text,
                 FORMAT_MARKDOWN,
-                ['trusted' => true, 'noclean' => true],
+                ['trusted' => true, 'clean' => false],
             ],
             [
                 "<p>lala <object>xx</object></p>\n",
                 1,
                 $text,
                 FORMAT_MARKDOWN,
-                ['trusted' => false, 'noclean' => true],
+                ['trusted' => false, 'clean' => false],
             ],
         ];
     }
@@ -364,7 +404,11 @@ class formatting_test extends \advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(
             '<p>:-)</p>',
-            $formatter->format_text('<p>:-)</p>', FORMAT_HTML, ['filter' => false])
+            $formatter->format_text(
+                '<p>:-)</p>',
+                FORMAT_HTML,
+                filter: false,
+            )
         );
     }
 
@@ -387,7 +431,11 @@ class formatting_test extends \advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(
             ':-)',
-            $formatter->format_text(':-)', FORMAT_PLAIN, ['filter' => false])
+            $formatter->format_text(
+                ':-)',
+                FORMAT_PLAIN,
+                filter: false,
+            )
         );
     }
 
@@ -411,7 +459,7 @@ class formatting_test extends \advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(
             "<p><em>:-)</em></p>\n",
-            $formatter->format_text('*:-)*', FORMAT_MARKDOWN, ['filter' => false])
+            $formatter->format_text('*:-)*', FORMAT_MARKDOWN, filter: false)
         );
     }
 
@@ -435,7 +483,7 @@ class formatting_test extends \advanced_testcase {
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(
             '<div class="text_to_html"><p>:-)</p></div>',
-            $formatter->format_text('<p>:-)</p>', FORMAT_MOODLE, ['filter' => false])
+            $formatter->format_text('<p>:-)</p>', FORMAT_MOODLE, filter: false)
         );
     }
 
@@ -460,23 +508,16 @@ class formatting_test extends \advanced_testcase {
 
         $this->assertSame(
             '<p>Read <a class="autolink" title="Test 1" href="' . $pageurl . '">Test 1</a>.</p>',
-            $formatter->format_text('<p>Read Test 1.</p>', FORMAT_HTML, ['context' => $context]),
+            $formatter->format_text('<p>Read Test 1.</p>', FORMAT_HTML, context: $context),
         );
 
         $this->assertSame(
             '<p>Read <a class="autolink" title="Test 1" href="' . $pageurl . '">Test 1</a>.</p>',
-            $formatter->format_text('<p>Read Test 1.</p>', FORMAT_HTML, ['context' => $context, 'noclean' => true]),
-        );
-
-        $this->assertSame(
-            '<p>Read Test 1.</p>',
             $formatter->format_text(
-                '<p><nolink>Read Test 1.</nolink></p>',
+                '<p>Read Test 1.</p>',
                 FORMAT_HTML,
-                [
-                    'context' => $context,
-                    'noclean' => false,
-                ],
+                context: $context,
+                clean: false,
             ),
         );
 
@@ -485,16 +526,28 @@ class formatting_test extends \advanced_testcase {
             $formatter->format_text(
                 '<p><nolink>Read Test 1.</nolink></p>',
                 FORMAT_HTML,
-                [
-                    'context' => $context,
-                    'noclean' => true,
-                ],
+                context: $context,
+                clean: true,
+            ),
+        );
+
+        $this->assertSame(
+            '<p>Read Test 1.</p>',
+            $formatter->format_text(
+                '<p><nolink>Read Test 1.</nolink></p>',
+                FORMAT_HTML,
+                context: $context,
+                clean: false,
             ),
         );
 
         $this->assertSame(
             '<p><span class="nolink">Read Test 1.</span></p>',
-            $formatter->format_text('<p><span class="nolink">Read Test 1.</span></p>', FORMAT_HTML, ['context' => $context]),
+            $formatter->format_text(
+                '<p><span class="nolink">Read Test 1.</span></p>',
+                FORMAT_HTML,
+                context: $context,
+            ),
         );
     }
 
@@ -503,7 +556,11 @@ class formatting_test extends \advanced_testcase {
 
         $this->assertEquals(
             '<div class="no-overflow"><p>Hello world</p></div>',
-            $formatter->format_text('<p>Hello world</p>', FORMAT_HTML, ['overflowdiv' => true]),
+            $formatter->format_text(
+                '<p>Hello world</p>',
+                FORMAT_HTML,
+                overflowdiv: true,
+            ),
         );
     }
 
@@ -516,7 +573,13 @@ class formatting_test extends \advanced_testcase {
      */
     public function test_format_text_blanktarget($link, $expected): void {
         $formatter = new formatting();
-        $actual = $formatter->format_text($link, FORMAT_MOODLE, ['blanktarget' => true, 'filter' => false, 'noclean' => true]);
+        $actual = $formatter->format_text(
+            $link,
+            FORMAT_MOODLE,
+            blanktarget: true,
+            filter: false,
+            clean: false,
+        );
         $this->assertEquals($expected, $actual);
     }
 
@@ -588,19 +651,19 @@ class formatting_test extends \advanced_testcase {
         $formatter = new formatting();
 
         $formatter->set_forceclean(false);
-        $actual = $formatter->format_text($input, FORMAT_HTML, ['filter' => false, 'noclean' => false]);
+        $actual = $formatter->format_text($input, FORMAT_HTML, filter: false, clean: true);
         $this->assertEquals($cleaned, $actual);
 
         $formatter->set_forceclean(true);
-        $actual = $formatter->format_text($input, FORMAT_HTML, ['filter' => false, 'noclean' => false]);
+        $actual = $formatter->format_text($input, FORMAT_HTML, filter: false, clean: true);
         $this->assertEquals($cleaned, $actual);
 
         $formatter->set_forceclean(false);
-        $actual = $formatter->format_text($input, FORMAT_HTML, ['filter' => false, 'noclean' => true]);
+        $actual = $formatter->format_text($input, FORMAT_HTML, filter: false, clean: false);
         $this->assertEquals($nocleaned, $actual);
 
         $formatter->set_forceclean(true);
-        $actual = $formatter->format_text($input, FORMAT_HTML, ['filter' => false, 'noclean' => true]);
+        $actual = $formatter->format_text($input, FORMAT_HTML, filter: false, clean: false);
         $this->assertEquals($cleaned, $actual);
     }
 

@@ -1252,7 +1252,6 @@ function format_text_menu() {
  *      blanktarget :   If true all <a> tags will have target="_blank" added unless target is explicitly specified.
  * </pre>
  *
- * @staticvar array $croncache
  * @param string $text The text to be formatted. This is raw text originally from user input.
  * @param int $format Identifier of the text format to be used
  *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_MARKDOWN]
@@ -1281,46 +1280,81 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
                 ' Please pass an array with a context key instead.',
             DEBUG_DEVELOPER,
         );
-        $options = ['context' => $options];
+        $params['context'] = $options;
+        $options = [];
     }
 
     if ($options) {
         $options = (array) $options;
     }
 
-    if ($options instanceof \core\context) {
-        // A common mistake has been to call this function with a context object.
-        // This has never been expected, nor supported.
-        debugging(
-            'The options argument should not be a context object directly. ' .
-                ' Please pass an array with a context key instead.',
-            DEBUG_DEVELOPER,
-        );
-        $options = ['context' => $options];
-    }
-
     if (empty($CFG->version) || $CFG->version < 2013051400 || during_initial_install()) {
         // Do not filter anything during installation or before upgrade completes.
+        $params['context'] = null;
     } else if ($options && isset($options['context'])) { // First by explicit passed context option.
-        // Do not do anything.
+        if (is_numeric($options['context'])) {
+            // A contextid was passed.
+            $params['context'] = \core\context::instance_by_id($options['context']);
+        } else if ($options['context'] instanceof \core\context) {
+            $params['context'] = $options['context'];
+        } else {
+            debugging(
+                'Unknown context passed to format_text(). Content will not be filtered.',
+                DEBUG_DEVELOPER,
+            );
+        }
+
+        // Unset the context from $options to prevent it overriding the configured value.
+        unset($options['context']);
     } else if ($courseiddonotuse) {
         // Legacy courseid.
-        if (!$options) {
-            $options = [];
-        }
-        $options['context'] = \core\context\course::instance($courseiddonotuse);
+        $params['context'] = \core\context\course::instance($courseiddonotuse);
         debugging(
             "Passing a courseid to format_text() is deprecated, please pass a context instead.",
             DEBUG_DEVELOPER,
         );
     }
 
-    $params = [
-        'text' => $text,
-    ];
+    $params['text'] =  $text;
 
     if ($options) {
-        $params['options'] = $options;
+        $validoptions = [
+            'text',
+            'format',
+            'context',
+            'trusted',
+            'clean',
+            'filter',
+            'para',
+            'newlines',
+            'overflowdiv',
+            'blanktarget',
+            'allowid',
+            'noclean',
+            'nocache',
+            'smiley',
+        ];
+
+        $invalidoptions = array_diff(array_keys($options), $validoptions);
+        if ($invalidoptions) {
+            debugging(sprintf(
+                'The following options are not valid: %s',
+                implode(', ', $invalidoptions),
+            ), DEBUG_DEVELOPER);
+            foreach ($invalidoptions as $option) {
+                unset($options[$option]);
+            }
+        }
+
+        foreach ($options as $option => $value) {
+            $params[$option] = $value;
+        }
+
+        // The noclean option has been renamed to clean.
+        if (array_key_exists('noclean', $params)) {
+            $params['clean'] = !$params['noclean'];
+            unset($params['noclean']);
+        }
     }
 
     if ($format !== null) {
@@ -1402,23 +1436,70 @@ function format_string($string, $striplinks = true, $options = null) {
                 ' Please pass an array with a context key instead.',
             DEBUG_DEVELOPER,
         );
-        $options = ['context' => $options];
-    // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
-    } else if ($options === null || is_numeric($options) || is_array($options) || is_a($options, \stdClass::class)) {
-        // Do nothing. These are accepted options.
-        // Pass to the new method.
-    } else {
+        $params['context'] = $options;
+        $options = [];
+    } else if (is_numeric($options)) {
+        // Legacy courseid usage.
+        $params['context'] = \core\context\course::instance($options);
+        $options = [];
+    } else if (is_array($options) || is_a($options, \stdClass::class)) {
+        $options = (array) $options;
+        if (isset($options['context'])) {
+            if (is_numeric($options['context'])) {
+                // A contextid was passed usage.
+                $params['context'] = \core\context::instance_by_id($options['context']);
+            } else if ($options['context'] instanceof \core\context) {
+                $params['context'] = $options['context'];
+            } else {
+                debugging(
+                    'An invalid value for context was provided.',
+                    DEBUG_DEVELOPER,
+                );
+            }
+        }
+    } else if ($options !== null) {
         // Something else was passed, so we'll just use an empty array.
-        // Attempt to cast to array since we always used to, but throw in some debugging.
         debugging(sprintf(
             'The options argument should be an Array, or stdclass. %s passed.',
             gettype($options),
         ), DEBUG_DEVELOPER);
-        $options = (array) $options;
+
+        // Attempt to cast to array since we always used to, but throw in some debugging.
+        $options = array_filter(
+            (array) $options,
+            fn ($key) => !is_numeric($key),
+            ARRAY_FILTER_USE_KEY,
+        );
     }
 
-    if ($options !== null) {
-        $params['options'] = $options;
+    if (isset($options['filter'])) {
+        $params['filter'] = (bool) $options['filter'];
+    } else {
+        $params['filter'] = true;
+    }
+
+    if (isset($options['escape'])) {
+        $params['escape'] = (bool) $options['escape'];
+    } else {
+        $params['escape'] = true;
+    }
+
+    $validoptions = [
+        'string',
+        'striplinks',
+        'context',
+        'filter',
+        'escape',
+    ];
+
+    if ($options) {
+        $invalidoptions = array_diff(array_keys($options), $validoptions);
+        if ($invalidoptions) {
+            debugging(sprintf(
+                'The following options are not valid: %s',
+                implode(', ', $invalidoptions),
+            ), DEBUG_DEVELOPER);
+        }
     }
 
     return \core\di::get(\core\formatting::class)->format_string(

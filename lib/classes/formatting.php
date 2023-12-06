@@ -44,17 +44,20 @@ class formatting {
      * need filter processing e.g. activity titles, post subjects,
      * glossary concepts.
      *
-     * @staticvar bool $strcache
      * @param null|string $string The string to be filtered. Should be plain text, expect
      * possibly for multilang tags.
      * @param boolean $striplinks To strip any link in the result text.
-     * @param array $options options array
+     * @param null|context $context The context used for formatting
+     * @param bool $filter Whether to apply filters
+     * @param bool $escape Whether to escape ampersands
      * @return string
      */
     public function format_string(
         ?string $string,
         bool $striplinks = true,
-        array $options = [],
+        ?context $context = null,
+        bool $filter = true,
+        bool $escape = true,
     ): string {
         global $PAGE;
 
@@ -72,37 +75,26 @@ class formatting {
             $this->formatstringcache = [];
         }
 
-        // Detach object, we can not modify it.
-        $options = (array)$options;
-
-        if (empty($options['context'])) {
+        if ($context === null) {
             // Fallback to $PAGE->context this may be problematic in CLI and other non-standard pages :-(.
             // In future we may want to add debugging here.
-            $options['context'] = $PAGE->context;
-        } else if (is_numeric($options['context'])) {
-            $options['context'] = context::instance_by_id($options['context']);
-        }
-        if (!isset($options['filter'])) {
-            $options['filter'] = true;
-        }
-
-        $options['escape'] = !isset($options['escape']) || $options['escape'];
-
-        if (!$options['context']) {
-            // We did not find any context? weird.
-            throw new \coding_exception(
-                'Unable to identify context for format_string()',
-            );
+            $context = $PAGE->context;
+            if (!$context) {
+                // We did not find any context? weird.
+                throw new \coding_exception(
+                    'Unable to identify context for format_string()',
+                );
+            }
         }
 
         // Calculate md5.
         $cachekeys = [
             $string,
             $striplinks,
-            $options['context']->id,
-            $options['escape'],
+            $context->id,
+            $escape,
             current_language(),
-            $options['filter'],
+            $filter,
         ];
         $md5 = md5(implode('<+>', $cachekeys));
 
@@ -113,17 +105,19 @@ class formatting {
 
         // First replace all ampersands not followed by html entity code
         // Regular expression moved to its own method for easier unit testing.
-        $string = $options['escape'] ? replace_ampersands_not_followed_by_entity($string) : $string;
+        if ($escape) {
+            $string = replace_ampersands_not_followed_by_entity($string);
+        }
 
-        if (!empty($this->get_filterall()) && $options['filter']) {
+        if (!empty($this->get_filterall()) && $filter) {
             $filtermanager = \filter_manager::instance();
-            $filtermanager->setup_page_for_filters($PAGE, $options['context']); // Setup global stuff filters may have.
-            $string = $filtermanager->filter_string($string, $options['context']);
+            $filtermanager->setup_page_for_filters($PAGE, $context); // Setup global stuff filters may have.
+            $string = $filtermanager->filter_string($string, $context);
         }
 
         // If the site requires it, strip ALL tags from this string.
         if (!empty($this->get_striptags())) {
-            if ($options['escape']) {
+            if ($escape) {
                 $string = str_replace(['<', '>'], ['&lt;', '&gt;'], strip_tags($string));
             } else {
                 $string = strip_tags($string);
@@ -143,41 +137,40 @@ class formatting {
         return $string;
     }
 
-
     /**
      * Given text in a variety of format codings, this function returns the text as safe HTML.
      *
      * This function should mainly be used for long strings like posts,
      * answers, glossary items etc. For short strings {@link format_string()}.
      *
-     * <pre>
-     * Options:
-     *      trusted     :   If true the string won't be cleaned. Default false required noclean=true.
-     *      noclean     :   If true the string won't be cleaned, unless $CFG->forceclean is set.
-     *                      Default false required trusted=true.
-     *      nocache     :   If true the strign will not be cached and will be formatted every call. Default false.
-     *      filter      :   If true the string will be run through applicable filters as well. Default true.
-     *      para        :   If true then the returned string will be wrapped in div tags. Default true.
-     *      newlines    :   If true then lines newline breaks will be converted to HTML newline breaks. Default true.
-     *      context     :   The context that will be used for filtering.
-     *      overflowdiv :   If set to true the formatted text will be encased in a div
-     *                      with the class no-overflow before being returned. Default false.
-     *      allowid     :   If true then id attributes will not be removed, even when
-     *                      using htmlpurifier. Default false.
-     *      blanktarget :   If true all <a> tags will have target="_blank" added unless target is explicitly specified.
-     * </pre>
-     *
-     * @staticvar array $croncache
      * @param null|string $text The text to be formatted. This is raw text originally from user input.
      * @param string $format Identifier of the text format to be used
-     *            [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_MARKDOWN]
-     * @param array $options text formatting options
+     *              [FORMAT_MOODLE, FORMAT_HTML, FORMAT_PLAIN, FORMAT_MARKDOWN]
+     * @param null|context $context The context used for filtering
+     * @param bool $trusted If true the string won't be cleaned.
+     *              Note: FORMAT_MARKDOWN does not support trusted text.
+     * @param null|bool $clean If true the string will be cleaned.
+     *              Note: This parameter is overridden if the text is trusted
+     * @param bool $filter If true the string will be run through applicable filters as well.
+     * @param bool $para If true then the returned string will be wrapped in div tags.
+     * @param bool $newlines If true then lines newline breaks will be converted to HTML newline breaks.
+     * @param bool $overflowdiv If set to true the formatted text will be encased in a div
+     * @param bool $blanktarget If true all <a> tags will have target="_blank" added unless target is explicitly specified.
+     * @param bool $allowid If true then id attributes will not be removed, even when using htmlpurifier.
      * @return string
      */
     public function format_text(
         ?string $text,
         string $format = FORMAT_MOODLE,
-        array $options = [],
+        ?context $context = null,
+        bool $trusted = false,
+        ?bool $clean = null,
+        bool $filter = true,
+        bool $para = true,
+        bool $newlines = true,
+        bool $overflowdiv = false,
+        bool $blanktarget = false,
+        bool $allowid = false,
     ): string {
         global $CFG, $PAGE;
 
@@ -186,64 +179,29 @@ class formatting {
             return '';
         }
 
-        // Detach object, we can not modify it.
-        $options = (array) $options;
-
-        if (!isset($options['trusted'])) {
-            $options['trusted'] = false;
-        }
         if ($format == FORMAT_MARKDOWN) {
             // Markdown format cannot be trusted in trusttext areas,
             // because we do not know how to sanitise it before editing.
-            $options['trusted'] = false;
+            $trusted = false;
         }
-        if (!isset($options['noclean'])) {
-            if ($options['trusted'] && trusttext_active()) {
-                // No cleaning if text trusted and noclean not specified.
-                $options['noclean'] = true;
+        if ($clean === null) {
+            if ($trusted && trusttext_active()) {
+                // No cleaning if text trusted and clean not specified.
+                $clean = false;
             } else {
-                $options['noclean'] = false;
+                $clean = true;
             }
         }
         if (!empty($this->get_forceclean())) {
             // Whatever the caller claims, the admin wants all content cleaned anyway.
-            $options['noclean'] = false;
+            $clean = true;
         }
-        if (!isset($options['nocache'])) {
-            $options['nocache'] = false;
-        }
-        if (!isset($options['filter'])) {
-            $options['filter'] = true;
-        }
-        if (!isset($options['para'])) {
-            $options['para'] = true;
-        }
-        if (!isset($options['newlines'])) {
-            $options['newlines'] = true;
-        }
-        if (!isset($options['overflowdiv'])) {
-            $options['overflowdiv'] = false;
-        }
-        $options['blanktarget'] = !empty($options['blanktarget']);
 
         // Calculate best context.
         if (!$this->should_filter_string()) {
             // Do not filter anything during installation or before upgrade completes.
             $context = null;
-        } else if (isset($options['context'])) {
-            // First by explicit passed context option.
-            if ($options['context'] instanceof context) {
-                $context = $options['context'];
-            } else if (is_numeric($options['context'])) {
-                $context = context::instance_by_id($options['context']);
-            } else {
-                debugging(
-                    'Unknown context passed to format_text(). Content will not be filtered.',
-                    DEBUG_DEVELOPER,
-                );
-                $context = null;
-            }
-        } else {
+        } else if ($context === null) {
             // Fallback to $PAGE->context this may be problematic in CLI and other non-standard pages.
             // In future we may want to add debugging here.
             $context = $PAGE->context;
@@ -251,16 +209,15 @@ class formatting {
 
         if (!$context) {
             // Either install/upgrade or something has gone really wrong because context does not exist (yet?).
-            $options['nocache'] = true;
-            $options['filter']  = false;
+            $filter = false;
         }
 
-        if ($options['filter']) {
+        if ($filter) {
             $filtermanager = \filter_manager::instance();
             $filtermanager->setup_page_for_filters($PAGE, $context); // Setup global stuff filters may have.
             $filteroptions = [
                 'originalformat' => $format,
-                'noclean' => $options['noclean'],
+                'noclean' => !$clean,
             ];
         } else {
             $filtermanager = new \null_filter_manager();
@@ -274,8 +231,10 @@ class formatting {
                 // Text is already in HTML format, so just continue to the next filtering stage.
                 $filteroptions['stage'] = 'pre_clean';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
-                if (!$options['noclean']) {
-                    $text = clean_text($text, FORMAT_HTML, $options);
+                if ($clean) {
+                    $text = clean_text($text, FORMAT_HTML, [
+                        'allowid' => $allowid,
+                    ]);
                 }
                 $filteroptions['stage'] = 'post_clean';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
@@ -294,8 +253,10 @@ class formatting {
                 $text = markdown_to_html($text);
                 $filteroptions['stage'] = 'pre_clean';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
-                if (!$options['noclean']) {
-                    $text = clean_text($text, FORMAT_HTML, $options);
+                if ($clean) {
+                    $text = clean_text($text, FORMAT_HTML, [
+                        'allowid' => $allowid,
+                    ]);
                 }
                 $filteroptions['stage'] = 'post_clean';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
@@ -304,11 +265,13 @@ class formatting {
             case FORMAT_MOODLE:
                 $filteroptions['stage'] = 'pre_format';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
-                $text = text_to_html($text, null, $options['para'], $options['newlines']);
+                $text = text_to_html($text, null, $para, $newlines);
                 $filteroptions['stage'] = 'pre_clean';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
-                if (!$options['noclean']) {
-                    $text = clean_text($text, FORMAT_HTML, $options);
+                if ($clean) {
+                    $text = clean_text($text, FORMAT_HTML, [
+                        'allowid' => $allowid,
+                    ]);
                 }
                 $filteroptions['stage'] = 'post_clean';
                 $text = $filtermanager->filter_text($text, $context, $filteroptions);
@@ -317,7 +280,7 @@ class formatting {
                 throw new \coding_exception("Unkown format passed to format_text: {$format}");
         }
 
-        if ($options['filter']) {
+        if ($filter) {
             // At this point there should not be any draftfile links any more,
             // this happens when developers forget to post process the text.
             // The only potential problem is that somebody might try to format
@@ -334,11 +297,11 @@ class formatting {
             }
         }
 
-        if (!empty($options['overflowdiv'])) {
+        if (!empty($overflowdiv)) {
             $text = \html_writer::tag('div', $text, ['class' => 'no-overflow']);
         }
 
-        if ($options['blanktarget']) {
+        if ($blanktarget) {
             $domdoc = new \DOMDocument();
             libxml_use_internal_errors(true);
             $domdoc->loadHTML('<?xml version="1.0" encoding="UTF-8" ?>' . $text);
