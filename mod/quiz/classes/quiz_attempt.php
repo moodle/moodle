@@ -2323,6 +2323,9 @@ class quiz_attempt {
     public function get_number_of_unanswered_questions(): int {
         $totalunanswered = 0;
         foreach ($this->get_slots() as $slot) {
+            if (!$this->is_real_question($slot)) {
+                continue;
+            }
             $questionstate = $this->get_question_state($slot);
             if ($questionstate == question_state::$todo || $questionstate == question_state::$invalid) {
                 $totalunanswered++;
