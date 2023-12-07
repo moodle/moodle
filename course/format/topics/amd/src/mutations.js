@@ -42,11 +42,19 @@ class TopicsMutations extends DefaultMutations {
      * @param {array} sectionIds the list of section ids
      */
     sectionHighlight = async function(stateManager, sectionIds) {
+        const logEntry = this._getLoggerEntry(
+            stateManager,
+            'section_highlight',
+            sectionIds,
+            {component: 'format_topics'}
+        );
         const course = stateManager.get('course');
         this.sectionLock(stateManager, sectionIds, true);
         const updates = await this._callEditWebservice('section_highlight', course.id, sectionIds);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
+        stateManager.addLoggerEntry(await logEntry);
+
     };
 
     /**
@@ -59,11 +67,18 @@ class TopicsMutations extends DefaultMutations {
      * @param {array} sectionIds the list of section ids
      */
     sectionUnhighlight = async function(stateManager, sectionIds) {
+        const logEntry = this._getLoggerEntry(
+            stateManager,
+            'section_unhighlight',
+            sectionIds,
+            {component: 'format_topics'}
+        );
         const course = stateManager.get('course');
         this.sectionLock(stateManager, sectionIds, true);
         const updates = await this._callEditWebservice('section_unhighlight', course.id, sectionIds);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
+        stateManager.addLoggerEntry(await logEntry);
     };
 }
 
