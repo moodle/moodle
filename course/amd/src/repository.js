@@ -151,6 +151,27 @@ const getEnrolledUsersFromCourseModuleID = (cmid, groupID, onlyActive = false) =
 };
 
 /**
+ * Get the list of gradable users enrolled in this course.
+ *
+ * @param {Number} courseid Course ID from which the users will be obtained
+ * @param {Number} groupID Group ID from which the users will be obtained
+ * @param {Boolean} onlyActive Whether to fetch only the active enrolled users or all enrolled users in the course.
+ * @returns {Promise} Promise containing a list of users
+ */
+const getGradabaleUsersFromCourseID = (courseid, groupID, onlyActive = false) => {
+    const request = {
+        methodname: 'core_grades_get_gradable_users',
+        args: {
+            courseid: courseid,
+            groupid: groupID,
+            onlyactive: onlyActive,
+        },
+    };
+
+    return Ajax.call([request])[0];
+};
+
+/**
  * Toggle the completion state of an activity with manual completion.
  *
  * @param {Number} cmid The course module ID.
@@ -172,6 +193,7 @@ export default {
     getEnrolledCoursesByTimelineClassification,
     getLastAccessedCourses,
     getUsersFromCourseModuleID: getEnrolledUsersFromCourseModuleID,
+    getGradableUsersFromCourseID: getGradabaleUsersFromCourseID,
     toggleManualCompletion,
     getEnrolledCoursesWithEventsByTimelineClassification,
 };
