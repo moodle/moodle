@@ -528,8 +528,8 @@ class question_finder implements cache_data_source {
 
     /**
      * Get the ids of all the questions in a list of categories.
-     * @param array $categoryids either a categoryid, or a comma-separated list
-     *      category ids, or an array of them.
+     * @param array $categoryids either a category id, or a comma-separated list
+     *      of category ids, or an array of them.
      * @param string $extraconditions extra conditions to AND with the rest of
      *      the where clause. Must use named parameters.
      * @param array $extraparams any parameters used by $extraconditions.
@@ -545,6 +545,7 @@ class question_finder implements cache_data_source {
             $extraconditions = ' AND (' . $extraconditions . ')';
         }
         $qcparams['readystatus'] = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+        $qcparams['readystatusqv'] = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
         $sql = "SELECT q.id, q.id AS id2
                   FROM {question} q
                   JOIN {question_versions} qv ON qv.questionid = q.id
@@ -552,6 +553,12 @@ class question_finder implements cache_data_source {
                  WHERE qbe.questioncategoryid {$qcsql}
                        AND q.parent = 0
                        AND qv.status = :readystatus
+                       AND qv.version = (SELECT MAX(v.version)
+                                          FROM {question_versions} v
+                                          JOIN {question_bank_entries} be
+                                            ON be.id = v.questionbankentryid
+                                         WHERE be.id = qbe.id
+                                           AND v.status = :readystatusqv)
                        {$extraconditions}";
 
         return $DB->get_records_sql_menu($sql, $qcparams + $extraparams);
