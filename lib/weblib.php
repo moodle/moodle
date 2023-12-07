@@ -1240,7 +1240,6 @@ function format_text_menu() {
  * Options:
  *      trusted     :   If true the string won't be cleaned. Default false required noclean=true.
  *      noclean     :   If true the string won't be cleaned, unless $CFG->forceclean is set. Default false required trusted=true.
- *      nocache     :   If true the strign will not be cached and will be formatted every call. Default false.
  *      filter      :   If true the string will be run through applicable filters as well. Default true.
  *      para        :   If true then the returned string will be wrapped in div tags. Default true.
  *      newlines    :   If true then lines newline breaks will be converted to HTML newline breaks. Default true.
@@ -1327,6 +1326,15 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
             );
         }
 
+        // The nocache option was deprecated in Moodle 2.3 in MDL-34347.
+        if (array_key_exists('nocache', $options)) {
+            unset($options['nocache']);
+            debugging(
+                'The nocache option is deprecated and no longer used.',
+                DEBUG_DEVELOPER,
+            );
+        }
+
         $validoptions = [
             'text',
             'format',
@@ -1340,7 +1348,6 @@ function format_text($text, $format = FORMAT_MOODLE, $options = null, $courseidd
             'blanktarget',
             'allowid',
             'noclean',
-            'nocache',
         ];
 
         $invalidoptions = array_diff(array_keys($options), $validoptions);

@@ -111,9 +111,9 @@ class htmlpurifier_test extends \basic_testcase {
      */
     public function test_format_text_allowid() {
         // Start off by not allowing ids (default).
-        $options = array(
-            'nocache' => true
-        );
+        $options = [
+            'allowid' => false,
+        ];
         $result = format_text('<div id="example">Frog</div>', FORMAT_HTML, $options);
         $this->assertSame('<div>Frog</div>', $result);
 
