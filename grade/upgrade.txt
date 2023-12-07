@@ -8,6 +8,8 @@ Information provided here is intended especially for developers.
     language string, it will be used for the page title's unique identifying information when editing mode is turned on.
 * The function gradeimport_csv_load_data::insert_grade_record() now has extra parameter $gradeitem to carry over the grade item related info
   for validation.
+* The function get_gradable_users() in grade/lib.php has extra param now to retrieve only active enrolments.
+* A new webservice core_grades_get_gradable_users has been added to retrieve gradable users for a course.
 
 === 4.1.6 ===
 * The grade `itemname` property contained in the return structure of the following external methods is now PARAM_CLEANHTML:

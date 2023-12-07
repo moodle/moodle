@@ -755,5 +755,25 @@ abstract class grade_report {
 
         return $modnames;
     }
+
+    /**
+     * Load a valid list of gradable users in a course.
+     *
+     * @param int $courseid The course ID.
+     * @param int|null $groupid The group ID (optional).
+     * @return array A list of enrolled gradable users.
+     */
+    public static function get_gradable_users(int $courseid, ?int $groupid = null): array {
+        global $CFG;
+        require_once($CFG->dirroot . '/grade/lib.php');
+
+        $context = context_course::instance($courseid);
+        $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+        $onlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol) ||
+            !has_capability('moodle/course:viewsuspendedusers', $context);
+
+        return get_gradable_users($courseid, $groupid, $onlyactiveenrol);
+    }
+
 }
 
