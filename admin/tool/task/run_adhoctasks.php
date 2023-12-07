@@ -111,6 +111,7 @@ require_sesskey();
 \core\session\manager::write_close();
 
 // Prepare to handle output via mtrace.
+require('lib.php');
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 
 // Run the specified tasks.

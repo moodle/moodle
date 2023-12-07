@@ -1516,10 +1516,38 @@ class manager {
             $command = "{$phpbinary} {$scriptpath} {$taskarg}";
 
             // Execute it.
-            passthru($command);
+            self::passthru_via_mtrace($command);
         }
 
         return true;
+    }
+
+    /**
+     * This behaves similar to passthru but filters every line via
+     * the mtrace function so it can be post processed.
+     *
+     * @param string $command to run
+     * @return void
+     */
+    public static function passthru_via_mtrace(string $command) {
+        $descriptorspec = [
+            0 => ['pipe', 'r'], // STDIN.
+            1 => ['pipe', 'w'], // STDOUT.
+            2 => ['pipe', 'w'], // STDERR.
+        ];
+        flush();
+        $process = proc_open($command, $descriptorspec, $pipes, realpath('./'), []);
+        if (is_resource($process)) {
+            while ($s = fgets($pipes[1])) {
+                mtrace($s, '');
+                flush();
+            }
+        }
+
+        fclose($pipes[0]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
     }
 
     /**
@@ -1586,7 +1614,7 @@ class manager {
         }
 
         // Execute it.
-        passthru($command);
+        self::passthru_via_mtrace($command);
     }
 
     /**
