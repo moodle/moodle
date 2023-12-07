@@ -776,6 +776,20 @@ function initialise_cfg() {
         return;
     }
 
+    // IOMAD - Set the theme if the server hostname matches one of ours.
+    if(!CLI_SCRIPT && !during_initial_install()){
+        $CFG->wwwrootdefault = $CFG->wwwroot;
+
+        // Does this match a company hostname?
+        if ($DB->get_manager()->table_exists('company') &&
+            ($companyrec = $DB->get_record('company', array('hostname' => $_SERVER['SERVER_NAME'])))) {
+            $company = new company($companyrec->id);
+
+            // Set the wwwroot to the company one using the same protocol.
+            $CFG->wwwroot  = $company->get_wwwroot();
+        }
+    }
+
     foreach ($localcfg as $name => $value) {
         // Note that get_config() keeps forced settings
         // and normalises values to string if possible.
