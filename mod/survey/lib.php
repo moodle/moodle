@@ -814,11 +814,18 @@ function survey_supports($feature) {
 function survey_extend_settings_navigation($settings, $surveynode) {
     global $PAGE, $DB;
 
-    if (has_capability('mod/survey:readresponses', $PAGE->cm->context)) {
+    $cm = get_coursemodule_from_id('survey', $PAGE->cm->id);
+    $context = context_module::instance($cm->id);
+
+     // Check to see if groups are being used in this survey, confirm user can access.
+    $groupmode = groups_get_activity_groupmode($cm);
+    $currentgroup = groups_get_activity_group($cm, true);
+
+    if (has_capability('mod/survey:readresponses', $context) &&
+            !($currentgroup === 0 && $groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context))) {
+
         $responsesnode = $surveynode->add(get_string("responsereports", "survey"));
 
-
-        $cm = get_coursemodule_from_id('survey', $PAGE->cm->id);
         $survey = $DB->get_record("survey", ["id" => $cm->instance]);
         if ($survey && ($survey->template != SURVEY_CIQ)) {
             $url = new moodle_url('/mod/survey/report.php', array('id' => $PAGE->cm->id, 'action' => 'summary'));
