@@ -200,14 +200,14 @@ reports,core_reportbuilder|/reportbuilder/index.php',
     ));
 
     $choices = [HOMEPAGE_SITE => new lang_string('home')];
-    if (!empty($CFG->enabledashboard)) {
+    if (!isset($CFG->enabledashboard) || $CFG->enabledashboard) {
         $choices[HOMEPAGE_MY] = new lang_string('mymoodle', 'admin');
     }
     $choices[HOMEPAGE_MYCOURSES] = new lang_string('mycourses', 'admin');
     $choices[HOMEPAGE_USER] = new lang_string('userpreference', 'admin');
     $temp->add(new admin_setting_configselect('defaulthomepage', new lang_string('defaulthomepage', 'admin'),
             new lang_string('configdefaulthomepage', 'admin'), get_default_home_page(), $choices));
-    if (!empty($CFG->enabledashboard)) {
+    if (!isset($CFG->enabledashboard) || $CFG->enabledashboard) {
         $temp->add(new admin_setting_configcheckbox(
             'allowguestmymoodle',
             new lang_string('allowguestmymoodle', 'admin'),
