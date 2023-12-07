@@ -91,3 +91,22 @@ Feature: In a lesson activity, if custom scoring is not enabled, student should 
     Then I should see "Congratulations - end of lesson reached"
     And I should see "Your score is 1 (out of 1)."
     And I should see "Your current grade is Excellent"
+
+  Scenario: Verify lesson summary with grade type set to none
+    Given I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    # Since by default the grade type is point, change it to None.
+    And I set the field "grade[modgrade_type]" to "None"
+    And I press "Save and return to course"
+    # Answer the question incorrectly.
+    When I am on the "Test lesson name" "lesson activity" page logged in as student1
+    And I press "Next page"
+    And I set the following fields to these values:
+      | Your answer | 1 |
+    And I press "Submit"
+    And I press "Continue"
+    # Confirm the information displayed at the end of lesson when grade type is set to None.
+    Then I should see "Congratulations - end of lesson reached"
+    And I should see "Number of questions answered: 1"
+    And I should see "Number of correct answers: 0"
+    And I should see "Your score is 0 (out of 1)."
+    And I should not see "Your current grade is 0.0 out of 75"
