@@ -29,7 +29,8 @@
 
     Example context (json):
     {
-        "elementid": "exampleId"
+        "elementid": "exampleId:1",
+        "elementidescaped": "exampleId\\:1"
     }
 }}
 <div class="tiny_equation_library">
@@ -40,7 +41,7 @@
                    }}{{#active}} aria-selected="true"{{/active}}{{!
                    }}{{^active}} aria-selected="false" tabindex="-1"{{/active}}{{!
                    }} href="#{{elementid}}_tiny_equation_group_{{key}}"{{!
-                   }} data-target="#{{elementid}}_tiny_equation_group_{{key}}"
+                   }} data-target="#{{elementidescaped}}_tiny_equation_group_{{key}}"
                    role="tab" data-toggle="tab"
                 >
                     {{groupname}}
