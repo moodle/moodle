@@ -991,6 +991,15 @@ class moodle_url {
     }
 
     /**
+     * IOMAD sets the 'host' portion of a URL.
+     *
+     * @return string Host of the URL.
+     */
+    public function set_host($newhost) {
+        $this->host = $newhost;
+    }
+
+    /**
      * Returns the 'port' portion of a URL. For example, if the URL is
      * http://www.example.org:447/my/file/is/here.txt?really=1 then this will
      * return '447'.

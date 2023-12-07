@@ -24,6 +24,8 @@
 
 namespace mod_forum\task;
 
+use company;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -295,11 +297,28 @@ class send_user_notifications extends \core\task\adhoc_task {
      * @param   \context    $context
      */
     protected function send_post($course, $forum, $discussion, $post, $cm, $context) {
-        global $CFG, $PAGE;
+        global $CFG, $PAGE, $DB;
 
         $author = $this->get_post_author($post->userid, $course, $forum, $cm, $context);
         if (empty($author)) {
             return false;
+        }
+
+        // IOMAD - check if the user has a company URL and not the site default.
+        if ($companyrec = $DB->get_record_sql("SELECT DISTINCT c.id
+                                               FROM {company} c
+                                               JOIN {company_users} cu ON (c.id = cu.companyid)
+                                               WHERE c.hostname IS NOT NULL
+                                               AND cu.userid = :userid",
+                                              ['userid' => $this->recipient->id])) {
+            $company = new company($companyrec->id);
+
+            // Set the wwwroot to the company one using the same protocol.
+            $CFG->wwwroot  = $company->get_wwwroot();
+
+            // Set the wwwroot to the company one using the same protocol.
+            $CFG->wwwroot  = $company->get_wwwroot();
+            $PAGE->url->set_host($CFG->wwwroot);
         }
 
         // Prepare to actually send the post now, and build up the content.
@@ -370,7 +389,7 @@ class send_user_notifications extends \core\task\adhoc_task {
                 'message' => $post->message,
             ]);
 
-        $contexturl = new \moodle_url('/mod/forum/discuss.php', ['d' => $discussion->id], "p{$post->id}");
+        $contexturl = new \moodle_url($CFG->wwwroot . '/mod/forum/discuss.php', ['d' => $discussion->id], "p{$post->id}");
         $eventdata->contexturl = $contexturl->out();
         $eventdata->contexturlname = $discussion->name;
         // User image.
