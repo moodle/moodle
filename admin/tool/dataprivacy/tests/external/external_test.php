@@ -1140,4 +1140,107 @@ class external_test extends externallib_advanced_testcase {
         $this->assertFalse($result['hasongoingdatadownloadrequest']);
         $this->assertFalse($result['hasongoingdatadeletionrequest']);
     }
+
+    /**
+     * Test for external::create_data_request()
+     */
+    public function test_create_data_request() {
+        $this->resetAfterTest();
+
+        $systemcontext = \context_system::instance();
+        $user = $this->getDataGenerator()->create_user();
+        $requester = $this->getDataGenerator()->create_user();
+        $role = $this->getDataGenerator()->create_role();
+        assign_capability('tool/dataprivacy:makedatarequestsforchildren', CAP_ALLOW, $role, $systemcontext);
+        role_assign($role, $requester->id, \context_user::instance($user->id));
+
+        // Enable contact DPO.
+        set_config('contactdataprotectionofficer', 1, 'tool_dataprivacy');
+
+        // Create a data request for myself.
+        $this->setUser($user);
+        $comment = 'Example comment';
+        $result = create_data_request::execute(api::DATAREQUEST_TYPE_DELETE, $comment);
+        $result = external_api::clean_returnvalue(create_data_request::execute_returns(), $result);
+
+        $this->assertEmpty($result['warnings']);
+
+        $requests = api::get_data_requests($user->id);
+        $this->assertCount(1, $requests);
+        $request = reset($requests);
+        $this->assertEquals($result['datarequestid'], $request->get('id'));
+        $this->assertEquals($user->id, $request->get('userid'));
+        $this->assertEquals(api::DATAREQUEST_TYPE_DELETE, $request->get('type'));
+        $this->assertEquals($comment, $request->get('comments'));
+
+        // Create on behalf of other user a different type of request.
+        $this->setUser($requester);
+        $comment = 'Example comment';
+        $result = create_data_request::execute(api::DATAREQUEST_TYPE_EXPORT, $comment, $user->id);
+        $result = external_api::clean_returnvalue(create_data_request::execute_returns(), $result);
+
+        $this->assertEmpty($result['warnings']);
+
+        $requests = api::get_data_requests($user->id);
+        $this->assertCount(2, $requests);
+        foreach ($requests as $request) {
+            if ($request->get('type') == api::DATAREQUEST_TYPE_EXPORT) {
+                $this->assertEquals($result['datarequestid'], $request->get('id'));
+                $this->assertEquals($user->id, $request->get('userid'));
+                $this->assertEquals($comment, $request->get('comments'));
+            } else {
+                $this->assertEquals($user->id, $request->get('userid'));
+                $this->assertEquals(api::DATAREQUEST_TYPE_DELETE, $request->get('type'));
+                $this->assertEquals('Example comment', $request->get('comments'));
+            }
+        }
+    }
+
+    /**
+     * Test for external::create_data_request() when no dpo available.
+     */
+    public function test_create_data_request_no_dpo() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage(get_string('contactdpoviaprivacypolicy', 'tool_dataprivacy'));
+        create_data_request::execute(api::DATAREQUEST_TYPE_DELETE, 'Example comment');
+    }
+
+    /**
+     * Test for external::create_data_request() with missing permission.
+     */
+    public function test_create_data_request_no_permission() {
+        $this->resetAfterTest();
+
+        // Enable contact DPO.
+        set_config('contactdataprotectionofficer', 1, 'tool_dataprivacy');
+
+        $user = $this->getDataGenerator()->create_user();
+        $anotheruser = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $this->expectException(\required_capability_exception::class);
+        create_data_request::execute(api::DATAREQUEST_TYPE_DELETE, 'Example comment', $anotheruser->id);
+    }
+
+    /**
+     * Test for external::create_data_request() with invalid request type.
+     */
+    public function test_create_data_request_invalid_type() {
+        $this->resetAfterTest();
+
+        // Enable contact DPO.
+        set_config('contactdataprotectionofficer', 1, 'tool_dataprivacy');
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage(get_string('errorinvalidrequesttype', 'tool_dataprivacy'));
+        create_data_request::execute(125, 'Example comment');
+    }
 }

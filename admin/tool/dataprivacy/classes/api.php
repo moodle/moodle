@@ -1630,4 +1630,47 @@ class api {
 
         return $contexts;
     }
+
+    /**
+     * Validates a data request creation.
+     *
+     * @param stdClass $data the data request information, including userid and type
+     * @return array array of errors, empty if everything went ok
+     */
+    public static function validate_create_data_request(stdClass $data): array {
+        global $USER;
+
+        $errors = [];
+        $validrequesttypes = [
+            self::DATAREQUEST_TYPE_EXPORT,
+            self::DATAREQUEST_TYPE_DELETE,
+        ];
+        if (!in_array($data->type, $validrequesttypes)) {
+            $errors['errorinvalidrequesttype'] = get_string('errorinvalidrequesttype', 'tool_dataprivacy');
+        }
+
+        $userid = $data->userid;
+
+        if (self::has_ongoing_request($userid, $data->type)) {
+            $errors['errorrequestalreadyexists'] = get_string('errorrequestalreadyexists', 'tool_dataprivacy');
+        }
+
+        // Check if current user can create data requests.
+        if ($data->type == self::DATAREQUEST_TYPE_DELETE) {
+            if ($userid == $USER->id) {
+                if (!self::can_create_data_deletion_request_for_self()) {
+                    $errors['errorcannotrequestdeleteforself'] = get_string('errorcannotrequestdeleteforself', 'tool_dataprivacy');
+                }
+            } else if (!self::can_create_data_deletion_request_for_other()
+                && !self::can_create_data_deletion_request_for_children($userid)) {
+                $errors['errorcannotrequestdeleteforother'] = get_string('errorcannotrequestdeleteforother', 'tool_dataprivacy');
+            }
+        } else if ($data->type == self::DATAREQUEST_TYPE_EXPORT) {
+            if ($userid == $USER->id && !self::can_create_data_download_request_for_self()) {
+                $errors['errorcannotrequestexportforself'] = get_string('errorcannotrequestexportforself', 'tool_dataprivacy');
+            }
+        }
+
+        return $errors;
+    }
 }

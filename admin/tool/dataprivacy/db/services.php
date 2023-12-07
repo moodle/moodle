@@ -249,4 +249,10 @@ $functions = [
         'type'          => 'read',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'tool_dataprivacy_create_data_request' => [
+        'classname'     => '\tool_dataprivacy\external\create_data_request',
+        'description'   => 'Creates a data request.',
+        'type'          => 'write',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 ];

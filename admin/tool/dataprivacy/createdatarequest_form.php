@@ -164,36 +164,11 @@ class tool_dataprivacy_data_request_form extends \core\form\persistent {
      * @throws dml_exception
      */
     public function extra_validation($data, $files, array &$errors) {
-        global $USER;
 
-        $validrequesttypes = [
-            api::DATAREQUEST_TYPE_EXPORT,
-            api::DATAREQUEST_TYPE_DELETE
-        ];
-        if (!in_array($data->type, $validrequesttypes)) {
-            $errors['type'] = get_string('errorinvalidrequesttype', 'tool_dataprivacy');
-        }
+        $validationerrors = api::validate_create_data_request($data);
 
-        $userid = $data->userid;
-
-        if (api::has_ongoing_request($userid, $data->type)) {
-            $errors['type'] = get_string('errorrequestalreadyexists', 'tool_dataprivacy');
-        }
-
-        // Check if current user can create data requests.
-        if ($data->type == api::DATAREQUEST_TYPE_DELETE) {
-            if ($userid == $USER->id) {
-                if (!api::can_create_data_deletion_request_for_self()) {
-                    $errors['type'] = get_string('errorcannotrequestdeleteforself', 'tool_dataprivacy');
-                }
-            } else if (!api::can_create_data_deletion_request_for_other()
-                && !api::can_create_data_deletion_request_for_children($userid)) {
-                $errors['type'] = get_string('errorcannotrequestdeleteforother', 'tool_dataprivacy');
-            }
-        } else if ($data->type == api::DATAREQUEST_TYPE_EXPORT) {
-            if ($userid == $USER->id && !api::can_create_data_download_request_for_self()) {
-                $errors['type'] = get_string('errorcannotrequestexportforself', 'tool_dataprivacy');
-            }
+        foreach ($validationerrors as $error) {
+            $errors['type'] = $error;
         }
 
         return $errors;
