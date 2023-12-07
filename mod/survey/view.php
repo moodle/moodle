@@ -83,7 +83,10 @@ if (has_capability('mod/survey:readresponses', $context) or ($groupmode == VISIB
     $currentgroup = 0;
 }
 
-if (has_capability('mod/survey:readresponses', $context)) {
+$currentactivitygroup = groups_get_activity_group($cm, true);
+if (has_capability('mod/survey:readresponses', $context) &&
+        !($currentactivitygroup === 0 && $groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context))) {
+
     $numusers = survey_count_responses($survey->id, $currentgroup, $groupingid);
     echo "<div class=\"reportlink\"><a href=\"report.php?id=$cm->id\">".
           get_string("viewsurveyresponses", "survey", $numusers)."</a></div>";
