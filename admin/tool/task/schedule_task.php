@@ -89,6 +89,7 @@ echo $OUTPUT->select_element_for_append();
 
 // Prepare to handle output via mtrace.
 echo html_writer::start_tag('pre', ['style' => 'color: #fff; background: #333; padding: 1em; min-height: 24lh']);
+require('lib.php');
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 
 // Run the specified task (this will output an error if it doesn't exist).

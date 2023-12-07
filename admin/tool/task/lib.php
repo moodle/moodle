@@ -45,5 +45,6 @@ function tool_task_status_checks() : array {
  * @param string $eol End of line character
  */
 function tool_task_mtrace_wrapper(string $message, string $eol): void {
-    echo s($message . $eol);
+    $message = s($message);
+    echo $message . $eol;
 }
