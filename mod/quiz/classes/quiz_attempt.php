@@ -947,8 +947,7 @@ class quiz_attempt {
      * state data about this question.
      *
      * @param int $slot the number used to identify this question within this attempt.
-     * @return string the formatted grade, to the number of decimal places specified
-     *      by the quiz.
+     * @return string the name of the question. Must be output through format_string.
      */
     public function get_question_name($slot) {
         return $this->quba->get_question($slot, false)->name;

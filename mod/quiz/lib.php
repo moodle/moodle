@@ -664,7 +664,7 @@ function quiz_get_user_grades($quiz, $userid = 0) {
  * Round a grade to the correct number of decimal places, and format it for display.
  *
  * @param stdClass $quiz The quiz table row, only $quiz->decimalpoints is used.
- * @param float $grade The grade to round.
+ * @param float|null $grade The grade to round and display (or null meaning no grade).
  * @return string
  */
 function quiz_format_grade($quiz, $grade) {

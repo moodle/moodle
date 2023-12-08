@@ -11,6 +11,10 @@ This file describes API changes in the quiz code.
   unanswered questions.
 * quiz_settings::no_review_message now takes a new argument $attemptsubmittime for the time when the quiz attempt was
   submitted. It is strongly recommended that you always pass that.
+* In the renderer, related to rendering the review page, review_summary_table and filter_review_summary_table have been
+  replaced by review_attempt_summary and filter_review_attempt_summary. This is to support changing the $summarydata argument
+  the review_page() method to an instance of a new templateable class attempt_summary_information for displaying this.
+  The $summarydata argument of review_question_page has also been changed to an attempt_summary_information.
 
 === 4.3 ===
 
