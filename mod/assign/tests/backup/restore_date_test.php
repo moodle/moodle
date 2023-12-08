@@ -85,8 +85,6 @@ class restore_date_test extends \restore_date_testcase {
 
     /**
      * Test backup and restore of an assignment with non-default settings.
-     *
-     * @return void
      */
     public function test_restore_settings() {
         global $DB;
@@ -107,7 +105,7 @@ class restore_date_test extends \restore_date_testcase {
             'gradingduedate' => time() + 2,
             'allowsubmissionsfromdate' => time() - 1,
             'grade' => 10,
-            'timemodified' => time(),
+            'timemodified' => 100,
             'completionsubmit' => 1,
             'requiresubmissionstatement' => 1,
             'teamsubmission' => 1,
@@ -129,7 +127,7 @@ class restore_date_test extends \restore_date_testcase {
             'timelimit' => DAYSECS,
             'submissionattachments' => 1,
         ];
-        $this->getDataGenerator()->create_module('assign', $record);
+        $assign = $this->getDataGenerator()->create_module('assign', $record);
 
         // Do backup and restore.
         $newcourseid = $this->backup_and_restore($course, $this->startdate);
@@ -156,9 +154,12 @@ class restore_date_test extends \restore_date_testcase {
                     $this->assertEquals($value['text'], $newassign->activity);
                     $this->assertEquals($value['format'], $newassign->activityformat);
                     break;
+                case 'timemodified':
+                    $this->assertFieldsNotRolledForward($assign, $newassign, ['timemodified']);
+                    break;
                 default:
                     // All other settings should match the original assignment.
-                    $this->assertEquals($value, $newsetting);
+                    $this->assertEquals($value, $newsetting, "Failed for '{$setting}'");
             }
         }
     }
