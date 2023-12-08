@@ -2,6 +2,6 @@ Add/Edit Staff
 1. Created a Dummy account and assigned role 'Student' to it. Username: dummy, password: Dummy2023*
 2. As site admin I'm able to edit Dummy's profile. Added raspberry to Dummy's description and updated the profile
 3. Guest accounts are unable to add/edit staff because they have no admin privileges.
-
+4. Course "TEMP" had to be created to ensure allow teachers and student roles to be assigned
 Student accounts are also unable to add accounts. Dummy's a student now
 Delete Dummy and delete the courses when you're done with review
