@@ -5,5 +5,18 @@ Log in using admin
 2. Creating a site event
 - Created a site event called 'Global' and set it to the 10th of Dec
 
-Course and Group events require Courses and Groups to be created. Seeing that you're stressed enough as is
-I don't want to make you go through the hassle of removing courses and groups
+3. Creating a course event
+- Created a Course called 'TESTING'
+- Added Abel as a student to view event
+- Created a course event called 'Exam' for the 11th
+
+4. Creating a group event
+- Created two groups. Group 1 and 2
+- Added myself to Group 1 and Abel to Group 2
+- Created event 'Only Emmanuel' for Group 1 and 'Only Abel' for Group 2
+
+Make sure to delete
+-All events
+-Courses
+-Groups
+When done with review. I don't think you need to pull since this already exists in the User Management Module
