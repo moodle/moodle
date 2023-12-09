@@ -30,7 +30,7 @@ use editor_tiny\plugin;
 class plugininfo extends plugin {
 
     /**
-     * Determine if the plugin should be enabled by checking if the Tiny Premium API key is set.
+     * Determine if the plugin should be enabled by checking the capability and if the Tiny Premium API key is set.
      *
      * @param context $context The context that the editor is used within
      * @param array $options The options passed in when requesting the editor
@@ -44,6 +44,6 @@ class plugininfo extends plugin {
         array $fpoptions,
         ?editor $editor = null
     ): bool {
-        return get_config('tiny_premium', 'apikey') != false;
+        return has_capability('tiny/premium:accesspremium', $context) && (get_config('tiny_premium', 'apikey') != false);
     }
 }
