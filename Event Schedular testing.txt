@@ -1,0 +1,9 @@
+Log in using admin
+1. Creating a user event
+- Created a user event called 'Personal' and set it to the 10th of Dec
+
+2. Creating a site event
+- Created a site event called 'Global' and set it to the 10th of Dec
+
+Course and Group events require Courses and Groups to be created. Seeing that you're stressed enough as is
+I don't want to make you go through the hassle of removing courses and groups
