@@ -25,7 +25,7 @@
 
 ?>
 
-<!-- Design ka na dito, make sure mo na yung mga madagdag mo na files nasa loob ng auto_proctor folder - Angge-->
+<!-- Design ka na dito, make sure mo na yung mga madagdag mo na files nasa loob ng auto_proctor folder - Angel-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
