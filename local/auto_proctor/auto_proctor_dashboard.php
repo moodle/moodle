@@ -23,6 +23,8 @@
 
  require_once(__DIR__ . '/../../config.php'); // Setup moodle global variable also
 
+ //echo $OUTPUT->header(); // Output header
+
 ?>
 
 <!-- Design ka na dito, make sure mo na yung mga madagdag mo na files nasa loob ng auto_proctor folder - Angel-->
