@@ -41,4 +41,8 @@ if (!empty($defaulth5plib)) {
 
     $settings->add(new admin_settings_h5plib_handler_select('h5plibraryhandler', new lang_string('h5plibraryhandler', 'core_h5p'),
         new lang_string('h5plibraryhandler_help', 'core_h5p'), $defaulth5plib));
+
+    $settings->add(new admin_setting_configcheckbox("h5penablelangplugin",
+        new lang_string('h5penablelangplugin', 'core_h5p'),
+        new lang_string('h5penablelangplugin_help', 'core_h5p'), 0));
 }

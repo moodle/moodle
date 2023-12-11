@@ -371,6 +371,12 @@ class editor {
             }
         }
 
+        // If the language plugin is enabled, add the init script.
+        if (!empty($CFG->h5penablelangplugin)) {
+            $assets['js'][] = '/h5p/js/h5p_lang_plugin.js' . $cachebuster;
+        }
+
+
         // Add JavaScript with library framework integration (editor part).
         $PAGE->requires->js(autoloader::get_h5p_editor_library_url('scripts/h5peditor-editor.js' . $cachebuster), true);
         $PAGE->requires->js(autoloader::get_h5p_editor_library_url('scripts/h5peditor-init.js' . $cachebuster), true);
