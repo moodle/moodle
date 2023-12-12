@@ -307,7 +307,12 @@ class report_schedules extends system_report {
         $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/delete', ''),
-            ['data-action' => 'schedule-delete', 'data-schedule-id' => ':id', 'data-schedule-name' => ':name'],
+            [
+                'data-action' => 'schedule-delete',
+                'data-schedule-id' => ':id',
+                'data-schedule-name' => ':name',
+                'class' => 'text-danger',
+            ],
             false,
             new lang_string('deleteschedule', 'core_reportbuilder')
         ))

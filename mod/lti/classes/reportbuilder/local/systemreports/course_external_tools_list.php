@@ -237,7 +237,8 @@ class course_external_tools_list extends system_report {
                         'data-action' => 'course-tool-delete',
                         'data-course-tool-id' => $row->id,
                         'data-course-tool-name' => $row->name,
-                        'data-course-tool-usage' => $this->perrowtoolusage
+                        'data-course-tool-usage' => $this->perrowtoolusage,
+                        'class' => 'text-danger',
                     ],
                 ));
 
