@@ -29,7 +29,7 @@ import {
     fetchNotifications,
 } from 'core/notification';
 import Pending from 'core/pending';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {add as addToast} from 'core/toast';
 import {eventTypes, notifyCurrentSessionEnded} from './events';
 

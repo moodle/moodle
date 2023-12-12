@@ -53,6 +53,14 @@ class discrimination_index extends column_base {
         echo $PAGE->get_renderer('qbank_statistics')->render_discrimination_index($discriminationindex);
     }
 
+    public function display_preview(\stdClass $question, string $rowclasses): void {
+        global $PAGE;
+
+        $this->display_start($question, $rowclasses);
+        echo $PAGE->get_renderer('qbank_statistics')->render_discrimination_index(50.00);
+        $this->display_end($question, $rowclasses);;
+    }
+
     public function get_extra_classes(): array {
         return ['pr-3'];
     }

@@ -2183,8 +2183,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                     'objectid' => $childcat->id,
                     'context' => $childcat->get_context()
                 ));
-                $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'editcategory.php?id=' . $childcat->id,
-                    $childcat->id));
                 $event->trigger();
             }
             fix_course_sortorder();
@@ -2375,7 +2373,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 'objectid' => $this->id,
                 'context' => $this->get_context()
             ));
-            $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'editcategory.php?id=' . $this->id, $this->id));
             $event->trigger();
         }
     }
@@ -2447,7 +2444,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 'objectid' => $this->id,
                 'context' => $this->get_context()
             ));
-            $event->set_legacy_logdata(array(SITEID, 'category', 'hide', 'editcategory.php?id=' . $this->id, $this->id));
             $event->trigger();
         }
     }
@@ -2506,7 +2502,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 'objectid' => $this->id,
                 'context' => $this->get_context()
             ));
-            $event->set_legacy_logdata(array(SITEID, 'category', 'show', 'editcategory.php?id=' . $this->id, $this->id));
             $event->trigger();
         }
     }
@@ -3070,8 +3065,6 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
                 'objectid' => $this->id,
                 'context' => $this->get_context()
             ));
-            $event->set_legacy_logdata(array(SITEID, 'category', 'move', 'management.php?categoryid=' . $this->id,
-                $this->id));
             $event->trigger();
 
             // Finally reorder courses.

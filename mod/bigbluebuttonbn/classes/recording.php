@@ -81,6 +81,9 @@ class recording extends persistent {
     /** @var instance A cached copy of the instance */
     protected $instance;
 
+    /** @var bool imported recording status */
+    public $imported;
+
     /**
      * Create an instance of this class.
      *
@@ -205,7 +208,7 @@ class recording extends persistent {
      * Get select for given group mode and context
      *
      * @param int $groupmode
-     * @param context $context
+     * @param \context $context
      * @param int $courseid
      * @param int $groupid
      * @param int $groupingid

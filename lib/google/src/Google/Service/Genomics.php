@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics extends Google_Service
 {
   /** View and manage your data in Google BigQuery. */
@@ -626,6 +627,7 @@ class Google_Service_Genomics extends Google_Service
  *   $callsets = $genomicsService->callsets;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Callsets_Resource extends Google_Service_Resource
 {
 
@@ -715,6 +717,7 @@ class Google_Service_Genomics_Callsets_Resource extends Google_Service_Resource
  *   $datasets = $genomicsService->datasets;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Datasets_Resource extends Google_Service_Resource
 {
 
@@ -878,6 +881,7 @@ class Google_Service_Genomics_Datasets_Resource extends Google_Service_Resource
  *   $operations = $genomicsService->operations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Operations_Resource extends Google_Service_Resource
 {
 
@@ -965,6 +969,7 @@ class Google_Service_Genomics_Operations_Resource extends Google_Service_Resourc
  *   $readgroupsets = $genomicsService->readgroupsets;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Readgroupsets_Resource extends Google_Service_Resource
 {
 
@@ -1088,6 +1093,7 @@ class Google_Service_Genomics_Readgroupsets_Resource extends Google_Service_Reso
  *   $coveragebuckets = $genomicsService->coveragebuckets;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ReadgroupsetsCoveragebuckets_Resource extends Google_Service_Resource
 {
 
@@ -1143,6 +1149,7 @@ class Google_Service_Genomics_ReadgroupsetsCoveragebuckets_Resource extends Goog
  *   $reads = $genomicsService->reads;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Reads_Resource extends Google_Service_Resource
 {
 
@@ -1179,6 +1186,7 @@ class Google_Service_Genomics_Reads_Resource extends Google_Service_Resource
  *   $references = $genomicsService->references;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_References_Resource extends Google_Service_Resource
 {
 
@@ -1223,6 +1231,7 @@ class Google_Service_Genomics_References_Resource extends Google_Service_Resourc
  *   $bases = $genomicsService->bases;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ReferencesBases_Resource extends Google_Service_Resource
 {
 
@@ -1262,6 +1271,7 @@ class Google_Service_Genomics_ReferencesBases_Resource extends Google_Service_Re
  *   $referencesets = $genomicsService->referencesets;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Referencesets_Resource extends Google_Service_Resource
 {
 
@@ -1306,6 +1316,7 @@ class Google_Service_Genomics_Referencesets_Resource extends Google_Service_Reso
  *   $variants = $genomicsService->variants;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Variants_Resource extends Google_Service_Resource
 {
 
@@ -1421,6 +1432,7 @@ class Google_Service_Genomics_Variants_Resource extends Google_Service_Resource
  *   $variantsets = $genomicsService->variantsets;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Variantsets_Resource extends Google_Service_Resource
 {
 
@@ -1527,6 +1539,7 @@ class Google_Service_Genomics_Variantsets_Resource extends Google_Service_Resour
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Binding extends Google_Collection
 {
   protected $collection_key = 'members';
@@ -1554,6 +1567,7 @@ class Google_Service_Genomics_Binding extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_CallSet extends Google_Collection
 {
   protected $collection_key = 'variantSetIds';
@@ -1617,14 +1631,17 @@ class Google_Service_Genomics_CallSet extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_CallSetInfo extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_CancelOperationRequest extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_CigarUnit extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1660,6 +1677,7 @@ class Google_Service_Genomics_CigarUnit extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_CoverageBucket extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1687,6 +1705,7 @@ class Google_Service_Genomics_CoverageBucket extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Dataset extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1731,10 +1750,12 @@ class Google_Service_Genomics_Dataset extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Empty extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Experiment extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1779,6 +1800,7 @@ class Google_Service_Genomics_Experiment extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ExportReadGroupSetRequest extends Google_Collection
 {
   protected $collection_key = 'referenceNames';
@@ -1815,6 +1837,7 @@ class Google_Service_Genomics_ExportReadGroupSetRequest extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ExportVariantSetRequest extends Google_Collection
 {
   protected $collection_key = 'callSetIds';
@@ -1869,10 +1892,12 @@ class Google_Service_Genomics_ExportVariantSetRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_GetIamPolicyRequest extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ImportReadGroupSetsRequest extends Google_Collection
 {
   protected $collection_key = 'sourceUris';
@@ -1918,6 +1943,7 @@ class Google_Service_Genomics_ImportReadGroupSetsRequest extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ImportReadGroupSetsResponse extends Google_Collection
 {
   protected $collection_key = 'readGroupSetIds';
@@ -1936,6 +1962,7 @@ class Google_Service_Genomics_ImportReadGroupSetsResponse extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ImportVariantsRequest extends Google_Collection
 {
   protected $collection_key = 'sourceUris';
@@ -1981,6 +2008,7 @@ class Google_Service_Genomics_ImportVariantsRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ImportVariantsResponse extends Google_Collection
 {
   protected $collection_key = 'callSetIds';
@@ -1999,6 +2027,7 @@ class Google_Service_Genomics_ImportVariantsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_LinearAlignment extends Google_Collection
 {
   protected $collection_key = 'cigar';
@@ -2037,6 +2066,7 @@ class Google_Service_Genomics_LinearAlignment extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ListBasesResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2072,6 +2102,7 @@ class Google_Service_Genomics_ListBasesResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ListCoverageBucketsResponse extends Google_Collection
 {
   protected $collection_key = 'coverageBuckets';
@@ -2109,6 +2140,7 @@ class Google_Service_Genomics_ListCoverageBucketsResponse extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ListDatasetsResponse extends Google_Collection
 {
   protected $collection_key = 'datasets';
@@ -2137,6 +2169,7 @@ class Google_Service_Genomics_ListDatasetsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ListOperationsResponse extends Google_Collection
 {
   protected $collection_key = 'operations';
@@ -2165,6 +2198,7 @@ class Google_Service_Genomics_ListOperationsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Operation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2219,6 +2253,7 @@ class Google_Service_Genomics_Operation extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_OperationEvent extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2236,6 +2271,7 @@ class Google_Service_Genomics_OperationEvent extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_OperationMetadata extends Google_Collection
 {
   protected $collection_key = 'events';
@@ -2282,14 +2318,17 @@ class Google_Service_Genomics_OperationMetadata extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_OperationMetadataRequest extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_OperationResponse extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Policy extends Google_Collection
 {
   protected $collection_key = 'bindings';
@@ -2327,6 +2366,7 @@ class Google_Service_Genomics_Policy extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Position extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2362,6 +2402,7 @@ class Google_Service_Genomics_Position extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Program extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2415,6 +2456,7 @@ class Google_Service_Genomics_Program extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Range extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2450,6 +2492,7 @@ class Google_Service_Genomics_Range extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Read extends Google_Collection
 {
   protected $collection_key = 'alignedQuality';
@@ -2614,6 +2657,7 @@ class Google_Service_Genomics_Read extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ReadGroup extends Google_Collection
 {
   protected $collection_key = 'programs';
@@ -2715,10 +2759,12 @@ class Google_Service_Genomics_ReadGroup extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ReadGroupInfo extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ReadGroupSet extends Google_Collection
 {
   protected $collection_key = 'readGroups';
@@ -2792,14 +2838,17 @@ class Google_Service_Genomics_ReadGroupSet extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ReadGroupSetInfo extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ReadInfo extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Reference extends Google_Collection
 {
   protected $collection_key = 'sourceAccessions';
@@ -2872,6 +2921,7 @@ class Google_Service_Genomics_Reference extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ReferenceBound extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -2898,6 +2948,7 @@ class Google_Service_Genomics_ReferenceBound extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_ReferenceSet extends Google_Collection
 {
   protected $collection_key = 'sourceAccessions';
@@ -2979,6 +3030,7 @@ class Google_Service_Genomics_ReferenceSet extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchCallSetsRequest extends Google_Collection
 {
   protected $collection_key = 'variantSetIds';
@@ -3024,6 +3076,7 @@ class Google_Service_Genomics_SearchCallSetsRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchCallSetsResponse extends Google_Collection
 {
   protected $collection_key = 'callSets';
@@ -3052,6 +3105,7 @@ class Google_Service_Genomics_SearchCallSetsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchReadGroupSetsRequest extends Google_Collection
 {
   protected $collection_key = 'datasetIds';
@@ -3097,6 +3151,7 @@ class Google_Service_Genomics_SearchReadGroupSetsRequest extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchReadGroupSetsResponse extends Google_Collection
 {
   protected $collection_key = 'readGroupSets';
@@ -3125,6 +3180,7 @@ class Google_Service_Genomics_SearchReadGroupSetsResponse extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchReadsRequest extends Google_Collection
 {
   protected $collection_key = 'readGroupSetIds';
@@ -3197,6 +3253,7 @@ class Google_Service_Genomics_SearchReadsRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchReadsResponse extends Google_Collection
 {
   protected $collection_key = 'alignments';
@@ -3225,6 +3282,7 @@ class Google_Service_Genomics_SearchReadsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchReferenceSetsRequest extends Google_Collection
 {
   protected $collection_key = 'md5checksums';
@@ -3279,6 +3337,7 @@ class Google_Service_Genomics_SearchReferenceSetsRequest extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchReferenceSetsResponse extends Google_Collection
 {
   protected $collection_key = 'referenceSets';
@@ -3307,6 +3366,7 @@ class Google_Service_Genomics_SearchReferenceSetsResponse extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchReferencesRequest extends Google_Collection
 {
   protected $collection_key = 'md5checksums';
@@ -3361,6 +3421,7 @@ class Google_Service_Genomics_SearchReferencesRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchReferencesResponse extends Google_Collection
 {
   protected $collection_key = 'references';
@@ -3389,6 +3450,7 @@ class Google_Service_Genomics_SearchReferencesResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchVariantSetsRequest extends Google_Collection
 {
   protected $collection_key = 'datasetIds';
@@ -3425,6 +3487,7 @@ class Google_Service_Genomics_SearchVariantSetsRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchVariantSetsResponse extends Google_Collection
 {
   protected $collection_key = 'variantSets';
@@ -3453,6 +3516,7 @@ class Google_Service_Genomics_SearchVariantSetsResponse extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchVariantsRequest extends Google_Collection
 {
   protected $collection_key = 'variantSetIds';
@@ -3543,6 +3607,7 @@ class Google_Service_Genomics_SearchVariantsRequest extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SearchVariantsResponse extends Google_Collection
 {
   protected $collection_key = 'variants';
@@ -3571,6 +3636,7 @@ class Google_Service_Genomics_SearchVariantsResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_SetIamPolicyRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3589,6 +3655,7 @@ class Google_Service_Genomics_SetIamPolicyRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Status extends Google_Collection
 {
   protected $collection_key = 'details';
@@ -3625,10 +3692,12 @@ class Google_Service_Genomics_Status extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_StatusDetails extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_TestIamPermissionsRequest extends Google_Collection
 {
   protected $collection_key = 'permissions';
@@ -3647,6 +3716,7 @@ class Google_Service_Genomics_TestIamPermissionsRequest extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_TestIamPermissionsResponse extends Google_Collection
 {
   protected $collection_key = 'permissions';
@@ -3665,10 +3735,12 @@ class Google_Service_Genomics_TestIamPermissionsResponse extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_UndeleteDatasetRequest extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_Variant extends Google_Collection
 {
   protected $collection_key = 'names';
@@ -3796,6 +3868,7 @@ class Google_Service_Genomics_Variant extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_VariantCall extends Google_Collection
 {
   protected $collection_key = 'genotypeLikelihood';
@@ -3859,14 +3932,17 @@ class Google_Service_Genomics_VariantCall extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_VariantCallInfo extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_VariantInfo extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_VariantSet extends Google_Collection
 {
   protected $collection_key = 'referenceBounds';
@@ -3914,6 +3990,7 @@ class Google_Service_Genomics_VariantSet extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_VariantSetMetadata extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -3985,6 +4062,7 @@ class Google_Service_Genomics_VariantSetMetadata extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Genomics_VariantSetMetadataInfo extends Google_Model
 {
 }

@@ -132,15 +132,6 @@ $tasks = array(
         'month' => '*'
     ),
     array(
-        'classname' => 'core\task\legacy_plugin_cron_task',
-        'blocking' => 0,
-        'minute' => '*',
-        'hour' => '*',
-        'day' => '*',
-        'dayofweek' => '*',
-        'month' => '*'
-    ),
-    array(
         'classname' => 'core\task\grade_cron_task',
         'blocking' => 0,
         'minute' => '*',
@@ -427,5 +418,34 @@ $tasks = array(
         'day' => '*',
         'dayofweek' => '*',
         'month' => '*'
-    ]
+    ],
+    [
+        'classname' => 'core_xapi\task\state_cleanup_task',
+        'blocking' => 0,
+        'minute' => 'R',
+        'hour' => '0',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*'
+    ],
+    [
+        'classname' => 'core\task\show_started_courses_task',
+        'blocking' => 0,
+        'minute' => '00',
+        'hour' => '01',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+        'disabled' => true,
+    ],
+    [
+        'classname' => 'core\task\hide_ended_courses_task',
+        'blocking' => 0,
+        'minute' => '00',
+        'hour' => '01',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+        'disabled' => true,
+    ],
 );

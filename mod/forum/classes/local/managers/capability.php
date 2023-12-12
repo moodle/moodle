@@ -444,6 +444,7 @@ class capability {
         $context = $this->get_context();
         $ownpost = $post->is_owned_by_user($user);
         $ineditingtime = $post->get_age() < $CFG->maxeditingtime;
+        $mailnow = $post->should_mail_now();
 
         switch ($this->forum->get_type()) {
             case 'news':
@@ -457,7 +458,7 @@ class capability {
                 break;
         }
 
-        return ($ownpost && $ineditingtime) || has_capability('mod/forum:editanypost', $context, $user);
+        return ($ownpost && $ineditingtime && !$mailnow) || has_capability('mod/forum:editanypost', $context, $user);
     }
 
     /**
@@ -484,8 +485,9 @@ class capability {
         $context = $this->get_context();
         $ownpost = $post->is_owned_by_user($user);
         $ineditingtime = $post->get_age() < $CFG->maxeditingtime;
+        $mailnow = $post->should_mail_now();
 
-        if (!($ownpost && $ineditingtime && has_capability('mod/forum:deleteownpost', $context, $user) ||
+        if (!($ownpost && $ineditingtime && has_capability('mod/forum:deleteownpost', $context, $user) && !$mailnow ||
                 has_capability('mod/forum:deleteanypost', $context, $user))) {
 
             throw new moodle_exception('cannotdeletepost', 'forum');

@@ -105,7 +105,10 @@ if (!isloggedin() or isguestuser()) {
     $referer = get_local_referer(false);
 
     echo $OUTPUT->header();
-    echo $OUTPUT->confirm(get_string('noguestpost', 'forum').'<br /><br />'.get_string('liketologin'), get_login_url(), $referer);
+    echo $OUTPUT->confirm(get_string('noguestpost', 'forum'), get_login_url(), $referer, [
+        'confirmtitle' => get_string('noguestpost:title', 'forum'),
+        'continuestr' => get_string('login')
+    ]);
     echo $OUTPUT->footer();
     exit;
 }

@@ -23,6 +23,7 @@ class Content extends WriterPart
     const NUMBER_COLS_REPEATED_MAX = 1024;
     const NUMBER_ROWS_REPEATED_MAX = 1048576;
 
+    /** @var Formula */
     private $formulaConvertor;
 
     /**
@@ -125,7 +126,16 @@ class Content extends WriterPart
             $objWriter->writeAttribute('table:name', $spreadsheet->getSheet($sheetIndex)->getTitle());
             $objWriter->writeAttribute('table:style-name', Style::TABLE_STYLE_PREFIX . (string) ($sheetIndex + 1));
             $objWriter->writeElement('office:forms');
+            $lastColumn = 0;
             foreach ($spreadsheet->getSheet($sheetIndex)->getColumnDimensions() as $columnDimension) {
+                $thisColumn = $columnDimension->getColumnNumeric();
+                $emptyColumns = $thisColumn - $lastColumn - 1;
+                if ($emptyColumns > 0) {
+                    $objWriter->startElement('table:table-column');
+                    $objWriter->writeAttribute('table:number-columns-repeated', (string) $emptyColumns);
+                    $objWriter->endElement();
+                }
+                $lastColumn = $thisColumn;
                 $objWriter->startElement('table:table-column');
                 $objWriter->writeAttribute(
                     'table:style-name',
@@ -155,7 +165,7 @@ class Content extends WriterPart
                 $objWriter->startElement('table:table-row');
                 if ($span_row) {
                     if ($span_row > 1) {
-                        $objWriter->writeAttribute('table:number-rows-repeated', $span_row);
+                        $objWriter->writeAttribute('table:number-rows-repeated', (string) $span_row);
                     }
                     $objWriter->startElement('table:table-cell');
                     $objWriter->writeAttribute('table:number-columns-repeated', (string) self::NUMBER_COLS_REPEATED_MAX);
@@ -254,7 +264,7 @@ class Content extends WriterPart
         if ($numberColsRepeated > 0) {
             if ($numberColsRepeated > 1) {
                 $objWriter->startElement('table:table-cell');
-                $objWriter->writeAttribute('table:number-columns-repeated', $numberColsRepeated);
+                $objWriter->writeAttribute('table:number-columns-repeated', (string) $numberColsRepeated);
                 $objWriter->endElement();
             } else {
                 $objWriter->writeElement('table:table-cell');
@@ -275,7 +285,7 @@ class Content extends WriterPart
             $objWriter->writeElement('table:table-cell');
         } elseif ($diff > 1) {
             $objWriter->startElement('table:table-cell');
-            $objWriter->writeAttribute('table:number-columns-repeated', $diff);
+            $objWriter->writeAttribute('table:number-columns-repeated', (string) $diff);
             $objWriter->endElement();
         }
     }
@@ -322,7 +332,7 @@ class Content extends WriterPart
             return;
         }
 
-        $mergeRange = Coordinate::splitRange($cell->getMergeRange());
+        $mergeRange = Coordinate::splitRange((string) $cell->getMergeRange());
         [$startCell, $endCell] = $mergeRange[0];
         $start = Coordinate::coordinateFromString($startCell);
         $end = Coordinate::coordinateFromString($endCell);

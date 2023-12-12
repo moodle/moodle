@@ -208,15 +208,21 @@ class analysis_for_question {
 
         $transaction = $DB->start_delegated_transaction();
 
-        $DB->delete_records_select('question_response_count',
-            'analysisid IN (
-                SELECT id
-                  FROM {question_response_analysis}
-                 WHERE hashcode= ? AND whichtries = ? AND questionid = ?
-                )', [$qubaids->get_hash_code(), $whichtries, $questionid]);
-
-        $DB->delete_records('question_response_analysis',
-                ['hashcode' => $qubaids->get_hash_code(), 'whichtries' => $whichtries, 'questionid' => $questionid]);
+        $analysisids = $DB->get_fieldset_select(
+            'question_response_analysis',
+            'id',
+            'hashcode = ? AND whichtries = ? AND questionid = ?',
+            [
+                $qubaids->get_hash_code(),
+                $whichtries,
+                $questionid,
+            ]
+        );
+        if (!empty($analysisids)) {
+            [$insql, $params] = $DB->get_in_or_equal($analysisids);
+            $DB->delete_records_select('question_response_count', 'analysisid ' . $insql, $params);
+            $DB->delete_records_select('question_response_analysis', 'id ' . $insql, $params);
+        }
 
         foreach ($this->get_variant_nos() as $variantno) {
             foreach ($this->get_subpart_ids($variantno) as $subpartid) {

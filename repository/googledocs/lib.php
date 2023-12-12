@@ -164,7 +164,12 @@ class repository_googledocs extends repository {
 
         $repositoryname = get_string('pluginname', 'repository_googledocs');
 
-        $button = new single_button($url, get_string('logintoaccount', 'repository', $repositoryname), 'post', true);
+        $button = new single_button(
+            $url,
+            get_string('logintoaccount', 'repository', $repositoryname),
+            'post',
+            single_button::BUTTON_PRIMARY
+        );
         $button->add_action(new popup_action('click', $url, 'Login'));
         $button->class = 'mdl-align';
         $button = $OUTPUT->render($button);
@@ -384,7 +389,7 @@ class repository_googledocs extends repository {
                     'title' => $gfile->name,
                     'path' => $this->build_node_path($gfile->id, $gfile->name, $path),
                     'date' => strtotime($gfile->modifiedTime),
-                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(64))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false),
                     'thumbnail_height' => 64,
                     'thumbnail_width' => 64,
                     'children' => array()

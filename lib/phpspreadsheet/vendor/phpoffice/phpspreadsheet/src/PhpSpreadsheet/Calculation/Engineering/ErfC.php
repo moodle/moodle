@@ -43,13 +43,18 @@ class ErfC
         return ExcelError::VALUE();
     }
 
-    //
-    //    Private method to calculate the erfc value
-    //
-    private static $oneSqrtPi = 0.564189583547756287;
+    private const ONE_SQRT_PI = 0.564189583547756287;
 
+    /**
+     * Method to calculate the erfc value.
+     *
+     * @param float|int|string $value
+     *
+     * @return float
+     */
     private static function erfcValue($value)
     {
+        $value = (float) $value;
         if (abs($value) < 2.2) {
             return 1 - Erf::erfValue($value);
         }
@@ -59,7 +64,7 @@ class ErfC
         $a = $n = 1;
         $b = $c = $value;
         $d = ($value * $value) + 0.5;
-        $q1 = $q2 = $b / $d;
+        $q2 = $b / $d;
         do {
             $t = $a * $n + $b * $value;
             $a = $b;
@@ -72,6 +77,6 @@ class ErfC
             $q2 = $b / $d;
         } while ((abs($q1 - $q2) / $q2) > Functions::PRECISION);
 
-        return self::$oneSqrtPi * exp(-$value * $value) * $q2;
+        return self::ONE_SQRT_PI * exp(-$value * $value) * $q2;
     }
 }

@@ -23,22 +23,21 @@
  */
 
 namespace tool_mobile;
-defined('MOODLE_INTERNAL') || die();
 
-require_once("$CFG->libdir/externallib.php");
+defined('MOODLE_INTERNAL') || die();
 require_once("$CFG->dirroot/webservice/lib.php");
 
-use external_api;
-use external_files;
-use external_function_parameters;
-use external_value;
-use external_single_structure;
-use external_multiple_structure;
-use external_warnings;
+use core_external\external_api;
+use core_external\external_files;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_settings;
+use core_external\external_value;
+use core_external\external_warnings;
 use context_system;
 use moodle_exception;
 use moodle_url;
-use core_text;
 use core_user;
 use coding_exception;
 
@@ -76,7 +75,7 @@ class external extends external_api {
     /**
      * Returns description of get_plugins_supporting_mobile() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.1
      */
     public static function get_plugins_supporting_mobile_returns() {
@@ -131,7 +130,7 @@ class external extends external_api {
     /**
      * Returns description of get_public_config() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.2
      */
     public static function get_public_config_returns() {
@@ -237,7 +236,7 @@ class external extends external_api {
     /**
      * Returns description of get_config() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.2
      */
     public static function get_config_returns() {
@@ -346,7 +345,7 @@ class external extends external_api {
     /**
      * Returns description of get_autologin_key() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.2
      */
     public static function get_autologin_key_returns() {
@@ -525,7 +524,7 @@ class external extends external_api {
         $webservicemanager = new \webservice;
         $token = $webservicemanager->get_user_ws_token(required_param('wstoken', PARAM_ALPHANUM));
 
-        $settings = \external_settings::get_instance();
+        $settings = external_settings::get_instance();
         $defaultlang = current_language();
         $responses = [];
 
@@ -672,9 +671,9 @@ class external extends external_api {
         }
 
         // Get an existing token or create a new one.
-        $token = external_generate_token_for_current_user($service);
+        $token = \core_external\util::generate_token_for_current_user($service);
         $privatetoken = $token->privatetoken; // Save it here, the next function removes it.
-        external_log_token_request($token);
+        \core_external\util::log_token_request($token);
 
         $result = [
             'token' => $token->token,
@@ -687,7 +686,7 @@ class external extends external_api {
     /**
      * Returns description of get_tokens_for_qr_login() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.9
      */
     public static function get_tokens_for_qr_login_returns() {
@@ -747,7 +746,7 @@ class external extends external_api {
     /**
      * Returns description of validate_subscription_key() result value.
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since  Moodle 3.9
      */
     public static function validate_subscription_key_returns() {

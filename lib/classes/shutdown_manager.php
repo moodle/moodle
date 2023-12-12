@@ -195,7 +195,7 @@ class core_shutdown_manager {
      * Standard shutdown sequence.
      */
     protected static function request_shutdown() {
-        global $CFG;
+        global $CFG, $OUTPUT, $PERF;
 
         // Help apache server if possible.
         $apachereleasemem = false;
@@ -208,15 +208,19 @@ class core_shutdown_manager {
         }
 
         // Deal with perf logging.
-        if ((defined('MDL_PERF') && MDL_PERF) || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
+        if (MDL_PERF || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
             if ($apachereleasemem) {
                 error_log('Mem usage over '.$apachereleasemem.': marking Apache child for reaping.');
             }
-            if (defined('MDL_PERFTOLOG') && MDL_PERFTOLOG) {
+            if (MDL_PERFTOLOG) {
                 $perf = get_performance_info();
                 error_log("PERF: " . $perf['txt']);
             }
-            if (defined('MDL_PERFINC') && MDL_PERFINC) {
+            if (!empty($PERF->perfdebugdeferred)) {
+                $perf = get_performance_info();
+                echo $OUTPUT->select_element_for_replace('#perfdebugfooter', $perf['html']);
+            }
+            if (MDL_PERFINC) {
                 $inc = get_included_files();
                 $ts  = 0;
                 foreach ($inc as $f) {
@@ -224,9 +228,9 @@ class core_shutdown_manager {
                         $fs = filesize($f);
                         $ts += $fs;
                         $hfs = display_size($fs);
-                        error_log(substr($f, strlen($CFG->dirroot)) . " size: $fs ($hfs)", null, null, 0);
+                        error_log(substr($f, strlen($CFG->dirroot)) . " size: $fs ($hfs)");
                     } else {
-                        error_log($f , null, null, 0);
+                        error_log($f);
                     }
                 }
                 if ($ts > 0 ) {
@@ -234,6 +238,16 @@ class core_shutdown_manager {
                     error_log("Total size of files included: $ts ($hts)");
                 }
             }
+        }
+
+        // Close the current streaming element if any.
+        if ($OUTPUT->has_started()) {
+            echo $OUTPUT->close_element_for_append();
+        }
+
+        // Print any closing buffered tags.
+        if (!empty($CFG->closingtags)) {
+            echo $CFG->closingtags;
         }
     }
 }

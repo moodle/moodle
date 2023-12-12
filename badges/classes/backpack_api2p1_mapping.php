@@ -67,6 +67,12 @@ class backpack_api2p1_mapping {
     /** @var boolean Differentiate the function that can be called on a user backpack or a site backpack. */
     private $isuserbackpack;
 
+    /** @var mixed List of parameters for this method. */
+    protected $postparams;
+
+    /** @var int OpenBadges version 1 or 2. */
+    protected $backpackapiversion;
+
     /**
      * Create a mapping.
      *

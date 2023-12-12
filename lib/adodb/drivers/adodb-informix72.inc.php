@@ -80,12 +80,9 @@ class ADODB_informix72 extends ADOConnection {
 
 	function ServerInfo()
 	{
-	    if (isset($this->version)) return $this->version;
-
-	    $arr['description'] = $this->GetOne("select DBINFO('version','full') from systables where tabid = 1");
-	    $arr['version'] = $this->GetOne("select DBINFO('version','major') || DBINFO('version','minor') from systables where tabid = 1");
-	    $this->version = $arr;
-	    return $arr;
+		$arr['description'] = $this->GetOne("select DBINFO('version','full') from systables where tabid = 1");
+		$arr['version'] = $this->GetOne("select DBINFO('version','major') || DBINFO('version','minor') from systables where tabid = 1");
+		return $arr;
 	}
 
 

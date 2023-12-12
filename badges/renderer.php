@@ -192,6 +192,8 @@ class core_badges_renderer extends plugin_renderer_base {
         $dl[get_string('imageauthorurl', 'badges')] =
             html_writer::link($badge->imageauthorurl, $badge->imageauthorurl, array('target' => '_blank'));
         $dl[get_string('imagecaption', 'badges')] = $badge->imagecaption;
+        $tags = \core_tag_tag::get_item_tags('core_badges', 'badge', $badge->id);
+        $dl[get_string('tags', 'badges')] = $this->output->tag_list($tags, '');
         $display .= $this->definition_list($dl);
 
         // Issuer details.
@@ -263,8 +265,16 @@ class core_badges_renderer extends plugin_renderer_base {
         return html_writer::div($display, null, array('id' => 'badge-overview'));
     }
 
-    // Prints action icons for the badge.
+    /**
+     * Prints action icons for the badge.
+     *
+     * @deprecated sinde Moodle 4.3
+     * @param \core_badges\badge $badge
+     * @param \context $context
+     * @return string
+     */
     public function print_badge_table_actions($badge, $context) {
+        debugging("print_badge_table_actions() is deprecated.", DEBUG_DEVELOPER);
         $actions = "";
 
         if (has_capability('moodle/badges:configuredetails', $context) && $badge->has_criteria()) {
@@ -479,10 +489,12 @@ class core_badges_renderer extends plugin_renderer_base {
     /**
      * Render a table of badges.
      *
+     * @deprecated since Moodle 4.3
      * @param \core_badges\output\badge_management $badges
      * @return string
      */
     protected function render_badge_management(\core_badges\output\badge_management $badges) {
+        debugging("render_badge_management() is deprecated.", DEBUG_DEVELOPER);
         $paging = new paging_bar($badges->totalcount, $badges->page, $badges->perpage, $this->page->url, 'page');
 
         // New badge button.

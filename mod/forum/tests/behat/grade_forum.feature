@@ -66,8 +66,9 @@ Feature: I can grade a students interaction across a forum
     But I should not see "Test Forum 1 rating"
 
     # The values saved should be reflected here.
-    Given I click on "Edit  forum Test Forum 1 whole forum" "link"
-    When I expand all fieldsets
+    And I click on grade item menu "Test Forum 1 whole forum" of type "gradeitem" on "grader" page
+    And I choose "Edit grade item" in the open action menu
+    When I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
     And I should see "Tutor" in the "Parent category" "fieldset"
@@ -118,8 +119,9 @@ Feature: I can grade a students interaction across a forum
     But I should not see "Test Forum 1 whole forum"
 
     # The values saved should be reflected here.
-    Given I click on "Edit  forum Test Forum 1 rating" "link"
-    When I expand all fieldsets
+    And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
+    And I choose "Edit grade item" in the open action menu
+    When I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
     And I should see "Tutor" in the "Parent category" "fieldset"
@@ -145,15 +147,32 @@ Feature: I can grade a students interaction across a forum
     And I should see "Test Forum 1 whole forum"
 
     # The values saved should be reflected here.
-    Given I click on "Edit  forum Test Forum 1 rating" "link"
-    When I expand all fieldsets
+    And I click on grade item menu "Test Forum 1 rating" of type "gradeitem" on "grader" page
+    And I choose "Edit grade item" in the open action menu
+    When I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Maximum grade" matches value "100"
     Then the field "Grade to pass" matches value "40"
     And I should see "Peers" in the "Parent category" "fieldset"
-    And I press "cancel"
+    And I press "Cancel"
 
-    Given I click on "Edit  forum Test Forum 1 whole forum" "link"
-    When I expand all fieldsets
+    And I click on grade item menu "Test Forum 1 whole forum" of type "gradeitem" on "grader" page
+    And I choose "Edit grade item" in the open action menu
+    When I click on "Show more..." "link" in the ".modal-dialog" "css_element"
     Then the field "Maximum grade" matches value "10"
     Then the field "Grade to pass" matches value "4"
     And I should see "Tutor" in the "Parent category" "fieldset"
+
+  Scenario: Ensure that only gradable users are available in forum grading interface
+    Given I am on the "Test Forum 1" "forum activity editing" page logged in as "admin"
+    And I expand all fieldsets
+    When I set the field "Whole forum grading > Type" to "Point"
+    And I set the field "Whole forum grading > Maximum grade" to "10"
+    And I set the field "Whole forum grading > Grade to pass" to "4"
+    And I press "Save and display"
+    And I press "Grade users"
+    Then I should see "1 out of 1"
+    And I should see "Student 1"
+    And I should not see "Teacher 1"
+    And I press "Save changes and proceed to the next user"
+    And I should see "Student 1"
+    And I should not see "Teacher 1"

@@ -117,6 +117,15 @@ class viewcontent implements renderable, templatable {
             ];
         }
 
+        if ($this->contenttype->can_copy($this->content)) {
+            // Add the copy content item to the menu.
+            $options[get_string('copycontent', 'contentbank')] = [
+                'data-action' => 'copycontent',
+                'data-contentname' => get_string('copyof', 'contentbank', $this->content->get_name()),
+                'data-contentid' => $this->content->get_id(),
+            ];
+        }
+
         // Add the delete content item to the menu.
         if ($this->contenttype->can_delete($this->content)) {
             $options[get_string('delete')] = [

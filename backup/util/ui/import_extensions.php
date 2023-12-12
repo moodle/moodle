@@ -207,7 +207,7 @@ class import_ui_stage_confirmation extends backup_ui_stage_confirmation {
 
     /**
      * Initialises the stages moodleform
-     * @return moodleform
+     * @return base_moodleform
      */
     protected function initialise_stage_form() {
         $form = parent::initialise_stage_form();

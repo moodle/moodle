@@ -101,7 +101,7 @@ if (!file_exists($source)) {
 }
 
 // Emulate normal session - we use admin account by default.
-cron_setup_user();
+\core\cron::setup_user();
 
 // Get the file list.
 $files = [];

@@ -38,18 +38,17 @@ Feature: Editing random questions already in a quiz based on category and tags
     And I follow "a random question"
     # To actually reproduce MDL-68733 it would be better to set tags easy,essay here, and then below just delete one tag.
     # However, the state of Behat for autocomplete fields does not let us actually do that.
-    And I set the field "Tags" to "easy"
+    And I apply question bank filter "Tag" with value "easy"
     And I press "Add random question"
     And I open the "Page 1" add to quiz menu
     And I follow "a random question"
-    And I set the field "Tags" to "hard"
+    And I apply question bank filter "Tag" with value "hard"
     And I press "Add random question"
     And I follow "Add page break"
-    When I click on "Configure question" "link" in the "Random (Questions Category 1, tags: easy)" "list_item"
-    And I click on "easy" "autocomplete_selection"
-    And I set the field "Tags" to "essay"
-    And I press "Save changes"
-    Then I should see "Random (Questions Category 1, tags: essay)" on quiz page "1"
-    And I should see "Random (Questions Category 1, tags: hard)" on quiz page "2"
-    And I click on "Configure question" "link" in the "Questions Category 1, tags: hard" "list_item"
+    When I click on "Configure question" "link" in the "Random question based on filter condition with tags: easy" "list_item"
+    And I apply question bank filter "Tag" with value "essay"
+    And I press "Update filter conditions"
+    Then I should see "Random question based on filter condition with tags: essay" on quiz page "1"
+    And I should see "Random question based on filter condition with tags: hard" on quiz page "2"
+    And I click on "Configure question" "link" in the "Random question based on filter condition with tags: hard" "list_item"
     And "hard" "autocomplete_selection" should be visible

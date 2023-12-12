@@ -72,4 +72,7 @@ class viewquestionname_column_helper extends column_base {
         return 'q.name';
     }
 
+    public function get_default_width(): int {
+        return 250;
+    }
 }

@@ -14,10 +14,19 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-require_once(__DIR__ . "/../../../config.php");
-require_once($CFG->libdir.'/gradelib.php');
-require_once($CFG->dirroot.'/grade/lib.php');
-require_once($CFG->dirroot.'/grade/import/lib.php');
+/**
+ * Page to import grades directly from a spreadsheet (Excel or Libre Office):
+ *
+ * @package   gradeimport
+ * @copyright 2007 Moodle Pty Ltd (http://moodle.com)
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
+require_once("../../../config.php");
+require_once($CFG->libdir . '/gradelib.php');
+require_once($CFG->dirroot . '/grade/lib.php');
+require_once($CFG->dirroot . '/grade/import/grade_import_form.php');
+require_once($CFG->dirroot . '/grade/import/lib.php');
 require_once($CFG->libdir . '/csvlib.class.php');
 
 $id            = required_param('id', PARAM_INT); // Course id.

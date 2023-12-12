@@ -25,15 +25,15 @@ import Notification from 'core/notification';
 import Ajax from 'core/ajax';
 import Url from 'core/url';
 import Templates from 'core/templates';
-import ModalFactory from 'core/modal_factory';
+import Modal from 'core/modal';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 // Load global strings.
 prefetchStrings('mod_data', ['mapping:dialogtitle:usepreset']);
 
 const selectors = {
-    selectPresetButton: 'input[name="selectpreset"]',
+    selectPreset: '[data-action="selectpreset"]',
 };
 
 /**
@@ -48,10 +48,10 @@ export const init = () => {
  */
 const registerEventListeners = () => {
     document.addEventListener('click', (event) => {
-        const usepreset = event.target.closest(selectors.selectPresetButton);
-        if (usepreset) {
+        const preset = event.target.closest(selectors.selectPreset);
+        if (preset) {
             event.preventDefault();
-            showMappingDialogue(usepreset);
+            showMappingDialogue(preset);
         }
     });
 };
@@ -72,6 +72,7 @@ const showMappingDialogue = (usepreset) => {
                 body: Templates.render('mod_data/fields_mapping_body', result.data),
                 footer: Templates.render('mod_data/fields_mapping_footer', getMappingButtons(cmId, presetName)),
                 large: true,
+                show: true,
             });
         } else {
             window.location.href = Url.relativeUrl(
@@ -99,11 +100,9 @@ const showMappingDialogue = (usepreset) => {
  * @return {Object} The modal ready to display immediately and render body in later.
  */
 const buildModal = (params) => {
-    return ModalFactory.create({
+    return Modal.create({
         ...params,
-        type: ModalFactory.types.DEFAULT,
     }).then(modal => {
-        modal.show();
         modal.showFooter();
         modal.registerCloseOnCancel();
         return modal;

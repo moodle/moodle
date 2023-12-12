@@ -340,20 +340,4 @@ class behat_field_manager {
 
         return $fieldtype;
     }
-
-    /**
-     * @deprecated since Moodle 2.6 MDL-39634 - please do not use this function any more.
-     */
-    public static function get_field() {
-        throw new coding_exception('behat_field_manager::get_field() can not be used any more, ' .
-            'function behat_field_manager::get_form_field() instead');
-    }
-
-    /**
-     * @deprecated since Moodle 2.6 MDL-39634 - please do not use this function any more.
-     */
-    protected static function get_node_type() {
-        throw new coding_exception('behat_field_manager::get_node_type() can not be used any more, ' .
-            'function behat_field_manager::get_field_node_type() instead');
-    }
 }

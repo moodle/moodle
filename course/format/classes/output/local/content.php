@@ -54,6 +54,9 @@ class content implements named_templatable, renderable {
     /** @var string section selector class name */
     protected $sectionselectorclass;
 
+    /** @var string bulk editor bar toolbox */
+    protected $bulkedittoolsclass;
+
     /** @var bool if uses add section */
     protected $hasaddsection = true;
 
@@ -70,6 +73,7 @@ class content implements named_templatable, renderable {
         $this->addsectionclass = $format->get_output_classname('content\\addsection');
         $this->sectionnavigationclass = $format->get_output_classname('content\\sectionnavigation');
         $this->sectionselectorclass = $format->get_output_classname('content\\sectionselector');
+        $this->bulkedittoolsclass = $format->get_output_classname('content\\bulkedittools');
     }
 
     /**
@@ -115,6 +119,11 @@ class content implements named_templatable, renderable {
         if ($this->hasaddsection) {
             $addsection = new $this->addsectionclass($format);
             $data->numsections = $addsection->export_for_template($output);
+        }
+
+        if ($format->show_editor()) {
+            $bulkedittools = new $this->bulkedittoolsclass($format);
+            $data->bulkedittools = $bulkedittools->export_for_template($output);
         }
 
         return $data;

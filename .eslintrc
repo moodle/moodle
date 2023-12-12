@@ -1,8 +1,12 @@
 {
   'plugins': [
-    'babel',
+    '@babel',
     'promise',
-    'jsdoc',
+    'jsdoc'
+  ],
+  'extends': [
+    'eslint:recommended',
+    'plugin:promise/recommended'
   ],
   'env': {
     'browser': true,
@@ -16,42 +20,19 @@
     'M': true,
     'Y': true
   },
+  // Warn about unused eslint-disable statements.
+  'reportUnusedDisableDirectives': true,
   'rules': {
     // See http://eslint.org/docs/rules/ for all rules and explanations of all
     // rules.
 
     // === Possible Errors ===
     'comma-dangle': 'off',
-    'no-compare-neg-zero': 'error',
-    'no-cond-assign': 'error',
     'no-console': 'error',
-    'no-constant-condition': 'error',
-    'no-control-regex': 'error',
-    'no-debugger': 'error',
-    'no-dupe-args': 'error',
-    'no-dupe-keys': 'error',
-    'no-duplicate-case': 'error',
     'no-empty': 'warn',
-    'no-empty-character-class': 'error',
-    'no-ex-assign': 'error',
-    'no-extra-boolean-cast': 'error',
     'no-extra-parens': 'off',
-    'no-extra-semi': 'error',
-    'no-func-assign': 'error',
-    'no-inner-declarations': 'error',
-    'no-invalid-regexp': 'error',
-    'no-irregular-whitespace': 'error',
-    'no-obj-calls': 'error',
     'no-prototype-builtins': 'off',
-    'no-regex-spaces': 'error',
-    'no-sparse-arrays': 'error',
-    'no-unexpected-multiline': 'error',
     'no-unreachable': 'warn',
-    'no-unsafe-finally': 'error',
-    'no-unsafe-negation': 'error',
-    'use-isnan': 'error',
-    'valid-jsdoc': ['warn', { 'requireReturn': false, 'requireParamDescription': false, 'requireReturnDescription': false }],
-    'valid-typeof': 'error',
 
     // === Best Practices ===
     // (these mostly match our jshint config)
@@ -63,15 +44,12 @@
     'dot-notation': 'warn',
     'no-alert': 'warn',
     'no-caller': 'error',
-    'no-case-declarations': 'error',
     'no-div-regex': 'error',
-    'no-empty-pattern': 'error',
     'no-empty-function': 'warn',
     'no-eq-null': 'error',
     'no-eval': 'error',
     'no-extend-native': 'error',
     'no-extra-bind': 'warn',
-    'no-fallthrough': 'error',
     'no-floating-decimal': 'warn',
     'no-global-assign': 'warn',
     'no-implied-eval': 'error',
@@ -83,28 +61,22 @@
     'no-multi-str': 'error',
     'no-new-func': 'error',
     'no-new-wrappers': 'error',
-    'no-octal': 'error',
     'no-octal-escape': 'error',
     'no-proto': 'error',
     'no-redeclare': 'warn',
     'no-restricted-globals': ['error', { 'name': 'Notification' }],
     'no-return-assign': 'error',
     'no-script-url': 'error',
-    'no-self-assign': 'error',
     'no-self-compare': 'error',
     'no-sequences': 'warn',
     'no-throw-literal': 'warn',
     'no-unmodified-loop-condition': 'error',
     'no-unused-expressions': 'error',
-    'no-unused-labels': 'error',
     'no-useless-call': 'warn',
     'no-useless-escape': 'warn',
-    'no-with': 'error',
     'wrap-iife': ['error', 'any'],
 
     // === Variables ===
-    'no-delete-var': 'error',
-    'no-undef': 'error',
     'no-undef-init': 'error',
     'no-unused-vars': ['error', { 'caughtErrors': 'none' }],
 
@@ -137,8 +109,6 @@
     'max-statements-per-line': ['warn', { max: 2 }],
     'new-cap': ['warn', { 'properties': false }],
     'new-parens': 'warn',
-    'newline-after-var': 'off',
-    'newline-before-return': 'off',
     'newline-per-chained-call': 'off',
     'no-array-constructor': 'off',
     'no-bitwise': 'error',
@@ -146,7 +116,6 @@
     'no-inline-comments': 'off',
     'no-lonely-if': 'off',
     'no-mixed-operators': 'off',
-    'no-mixed-spaces-and-tabs': 'error',
     'no-multiple-empty-lines': 'warn',
     'no-negated-condition': 'off',
     'no-nested-ternary': 'warn',
@@ -168,7 +137,6 @@
     'padded-blocks': 'off',
     'quote-props': ['warn', 'as-needed', {'unnecessary': false, 'keywords': true, 'numbers': true}],
     'quotes': 'off',
-    'require-jsdoc': 'warn',
     'semi': 'error',
     'semi-spacing': ['warn', {'before': false, 'after': true}],
     'sort-vars': 'off',
@@ -181,21 +149,19 @@
     'unicode-bom': 'error',
     'wrap-regex': 'off',
 
-    // === Promises ===
+    // === Promises (override plugin:promise/recommended) ===
     'promise/always-return': 'warn',
     'promise/no-return-wrap': 'warn',
     'promise/param-names': 'warn',
-    'promise/catch-or-return': ['warn', {terminationMethod: ['catch', 'fail']}],
+    'promise/catch-or-return': ['warn', {terminationMethod: ['catch', 'fail', 'always'], allowFinally: true}],
     'promise/no-native': 'warn',
-    'promise/no-promise-in-callback': 'warn',
-    'promise/no-callback-in-promise': 'warn',
     'promise/avoid-new': 'warn',
 
     // === Deprecations ===
     "no-restricted-properties": ['warn', {
         'object': 'M',
         'property': 'str',
-        'message': 'Use AMD module "core/str" or M.util.get_string()'
+        'message': 'Use "core/str" module or M.util.get_string()'
     }],
   },
   overrides: [
@@ -235,7 +201,6 @@
       parser: '@babel/eslint-parser',
       // Check AMD with some slightly stricter rules.
       rules: {
-        'no-unused-vars': 'error',
         'no-implicit-globals': 'error',
         // Disable all of the rules that have babel versions.
         'new-cap': 'off',
@@ -247,65 +212,37 @@
         'semi': 'off',
         'no-unused-expressions': 'off',
         // Enable all of the babel version of these rules.
-        'babel/new-cap': ['warn', { 'properties': false }],
+        '@babel/new-cap': ['warn', { 'properties': false }],
         // Not using this rule for the time being because it isn't
         // compatible with jQuery and ES6.
-        'babel/no-invalid-this': 'off',
-        'babel/object-curly-spacing': 'warn',
-        // This is off in the original style int.
-        'babel/quotes': 'off',
-        'babel/semi': 'error',
-        'babel/no-unused-expressions': 'error',
+        '@babel/no-invalid-this': 'off',
+        '@babel/object-curly-spacing': 'warn',
+        '@babel/semi': 'error',
+        '@babel/no-unused-expressions': 'error',
         // === Promises ===
         // We have Promise now that we're using ES6.
         'promise/no-native': 'off',
         'promise/avoid-new': 'off',
 
         // === JSDocs ===
-        "jsdoc/check-access": [
-          'error',
-        ],
-        "jsdoc/check-alignment": 1, // Recommended.
-        "jsdoc/check-param-names": [
-          'error',
-        ],
-        "jsdoc/check-property-names": [
-          'error',
-        ],
-        "jsdoc/empty-tags": [
-          'error',
-        ],
-        "jsdoc/implements-on-classes": [
-          'error',
-        ],
-        "jsdoc/multiline-blocks": [
-          'error',
-        ],
-        "jsdoc/require-jsdoc": [
-          'error',
-        ],
-        "jsdoc/require-param": [
-          'error',
-        ],
-        "jsdoc/require-param-name": [
-          'error',
-        ],
-        "jsdoc/require-param-type": [
-          'error',
-        ],
-        "jsdoc/require-property": [
-          'error',
-        ],
-        "jsdoc/require-property-name": [
-          'error',
-        ],
-        "jsdoc/require-property-type": [
-          'error',
-        ],
+        'jsdoc/check-access': 'error',
+        'jsdoc/check-alignment': 1, // Recommended.
+        'jsdoc/check-param-names': 'error',
+        'jsdoc/check-property-names': 'error',
+        'jsdoc/empty-tags': 'error',
+        'jsdoc/implements-on-classes': 'error',
+        'jsdoc/multiline-blocks': 'error',
+        'jsdoc/require-jsdoc': 'error',
+        'jsdoc/require-param': 'error',
+        'jsdoc/require-param-name': 'error',
+        'jsdoc/require-param-type': 'error',
+        'jsdoc/require-property': 'error',
+        'jsdoc/require-property-name': 'error',
+        'jsdoc/require-property-type': 'error'
       },
       parserOptions: {
         'sourceType': 'module',
-        'requireConfigFile': false,
+        'requireConfigFile': false
       }
     }
   ]

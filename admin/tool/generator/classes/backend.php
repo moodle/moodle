@@ -122,11 +122,13 @@ abstract class tool_generator_backend {
 
     /**
      * Displays information as part of progress.
+     *
      * @param string $langstring Part of langstring (after progress_)
      * @param mixed $a Optional lang string parameters
      * @param bool $leaveopen If true, doesn't close LI tag (ready for dots)
+     * @param string $module module for language string
      */
-    protected function log($langstring, $a = null, $leaveopen = false) {
+    public function log(string $langstring, $a = null, bool $leaveopen = false, string $module = 'tool_generator'): void {
         if (!$this->progress) {
             return;
         }
@@ -135,7 +137,7 @@ abstract class tool_generator_backend {
         } else {
             echo html_writer::start_tag('li');
         }
-        echo get_string('progress_' . $langstring, 'tool_generator', $a);
+        echo get_string('progress_' . $langstring, $module, $a);
         if (!$leaveopen) {
             if (CLI_SCRIPT) {
                 echo "\n";
@@ -153,10 +155,11 @@ abstract class tool_generator_backend {
     /**
      * Outputs dots. There is up to one dot per second. Once a minute, it
      * displays a percentage.
+     *
      * @param int $number Number of completed items
      * @param int $total Total number of items to complete
      */
-    protected function dot($number, $total) {
+    public function dot(int $number, int $total): void {
         if (!$this->progress) {
             return;
         }
@@ -184,7 +187,7 @@ abstract class tool_generator_backend {
     /**
      * Ends a log string that was started using log function with $leaveopen.
      */
-    protected function end_log() {
+    public function end_log(): void {
         if (!$this->progress) {
             return;
         }
@@ -195,5 +198,4 @@ abstract class tool_generator_backend {
             echo html_writer::end_tag('li');
         }
     }
-
 }

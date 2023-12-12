@@ -216,7 +216,7 @@ class user_competency extends persistent {
     /**
      * Get the context.
      *
-     * @return context The context.
+     * @return \context The context.
      */
     public function get_context() {
         return context_user::instance($this->get('userid'));

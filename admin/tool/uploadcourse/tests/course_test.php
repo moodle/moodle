@@ -540,7 +540,7 @@ class course_test extends \advanced_testcase {
             'enrolment_1' => 'guest',
             'enrolment_1_disable' => '1',
             'enrolment_2' => 'self',
-            'enrolment_2_roleid' => '2',
+            'enrolment_2_roleid' => '5',
             'enrolment_3' => 'manual',
             'enrolment_3_delete' => '1',
         );

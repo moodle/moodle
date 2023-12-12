@@ -46,9 +46,8 @@ class PdfStream extends PdfType
 
         // Find the first "newline"
         while (($firstByte = $reader->getByte($offset)) !== false) {
-            if ($firstByte !== "\n" && $firstByte !== "\r") {
-                $offset++;
-            } else {
+            $offset++;
+            if ($firstByte === "\n" || $firstByte === "\r") {
                 break;
             }
         }
@@ -60,11 +59,7 @@ class PdfStream extends PdfType
             );
         }
 
-        $sndByte = $reader->getByte($offset + 1);
-        if ($firstByte === "\n" || $firstByte === "\r") {
-            $offset++;
-        }
-
+        $sndByte = $reader->getByte($offset);
         if ($sndByte === "\n" && $firstByte !== "\n") {
             $offset++;
         }

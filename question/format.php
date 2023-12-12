@@ -54,6 +54,8 @@ class qformat_default {
     protected $importcontext = null;
     /** @var bool $displayprogress Whether to display progress. */
     public $displayprogress = true;
+    /** @var context[] */
+    public $contexts;
 
     // functions to indicate import/export functionality
     // override to return true if implemented
@@ -166,7 +168,7 @@ class qformat_default {
 
     /**
      * set an array of contexts.
-     * @param array $contexts Moodle course variable
+     * @param context[] $contexts
      */
     public function setContexts($contexts) {
         $this->contexts = $contexts;

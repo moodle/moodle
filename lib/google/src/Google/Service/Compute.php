@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -3983,6 +3984,7 @@ class Google_Service_Compute extends Google_Service
  *   $addresses = $computeService->addresses;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Addresses_Resource extends Google_Service_Resource
 {
 
@@ -4110,6 +4112,7 @@ class Google_Service_Compute_Addresses_Resource extends Google_Service_Resource
  *   $autoscalers = $computeService->autoscalers;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Autoscalers_Resource extends Google_Service_Resource
 {
 
@@ -4278,6 +4281,7 @@ class Google_Service_Compute_Autoscalers_Resource extends Google_Service_Resourc
  *   $backendServices = $computeService->backendServices;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_BackendServices_Resource extends Google_Service_Resource
 {
 
@@ -4421,6 +4425,7 @@ class Google_Service_Compute_BackendServices_Resource extends Google_Service_Res
  *   $diskTypes = $computeService->diskTypes;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskTypes_Resource extends Google_Service_Resource
 {
 
@@ -4516,6 +4521,7 @@ class Google_Service_Compute_DiskTypes_Resource extends Google_Service_Resource
  *   $disks = $computeService->disks;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Disks_Resource extends Google_Service_Resource
 {
 
@@ -4665,6 +4671,7 @@ class Google_Service_Compute_Disks_Resource extends Google_Service_Resource
  *   $firewalls = $computeService->firewalls;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Firewalls_Resource extends Google_Service_Resource
 {
 
@@ -4790,6 +4797,7 @@ class Google_Service_Compute_Firewalls_Resource extends Google_Service_Resource
  *   $forwardingRules = $computeService->forwardingRules;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_ForwardingRules_Resource extends Google_Service_Resource
 {
 
@@ -4936,6 +4944,7 @@ class Google_Service_Compute_ForwardingRules_Resource extends Google_Service_Res
  *   $globalAddresses = $computeService->globalAddresses;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_GlobalAddresses_Resource extends Google_Service_Resource
 {
 
@@ -5027,6 +5036,7 @@ class Google_Service_Compute_GlobalAddresses_Resource extends Google_Service_Res
  *   $globalForwardingRules = $computeService->globalForwardingRules;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_GlobalForwardingRules_Resource extends Google_Service_Resource
 {
 
@@ -5135,6 +5145,7 @@ class Google_Service_Compute_GlobalForwardingRules_Resource extends Google_Servi
  *   $globalOperations = $computeService->globalOperations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_GlobalOperations_Resource extends Google_Service_Resource
 {
 
@@ -5242,6 +5253,7 @@ class Google_Service_Compute_GlobalOperations_Resource extends Google_Service_Re
  *   $httpHealthChecks = $computeService->httpHealthChecks;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_HttpHealthChecks_Resource extends Google_Service_Resource
 {
 
@@ -5372,6 +5384,7 @@ class Google_Service_Compute_HttpHealthChecks_Resource extends Google_Service_Re
  *   $httpsHealthChecks = $computeService->httpsHealthChecks;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_HttpsHealthChecks_Resource extends Google_Service_Resource
 {
 
@@ -5502,6 +5515,7 @@ class Google_Service_Compute_HttpsHealthChecks_Resource extends Google_Service_R
  *   $images = $computeService->images;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Images_Resource extends Google_Service_Resource
 {
 
@@ -5618,6 +5632,7 @@ class Google_Service_Compute_Images_Resource extends Google_Service_Resource
  *   $instanceGroupManagers = $computeService->instanceGroupManagers;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagers_Resource extends Google_Service_Resource
 {
 
@@ -5925,6 +5940,7 @@ class Google_Service_Compute_InstanceGroupManagers_Resource extends Google_Servi
  *   $instanceGroups = $computeService->instanceGroups;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroups_Resource extends Google_Service_Resource
 {
 
@@ -6150,6 +6166,7 @@ class Google_Service_Compute_InstanceGroups_Resource extends Google_Service_Reso
  *   $instanceTemplates = $computeService->instanceTemplates;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceTemplates_Resource extends Google_Service_Resource
 {
 
@@ -6241,6 +6258,7 @@ class Google_Service_Compute_InstanceTemplates_Resource extends Google_Service_R
  *   $instances = $computeService->instances;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
 {
 
@@ -6589,6 +6607,7 @@ class Google_Service_Compute_Instances_Resource extends Google_Service_Resource
  *   $licenses = $computeService->licenses;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Licenses_Resource extends Google_Service_Resource
 {
 
@@ -6616,6 +6635,7 @@ class Google_Service_Compute_Licenses_Resource extends Google_Service_Resource
  *   $machineTypes = $computeService->machineTypes;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_MachineTypes_Resource extends Google_Service_Resource
 {
 
@@ -6711,6 +6731,7 @@ class Google_Service_Compute_MachineTypes_Resource extends Google_Service_Resour
  *   $networks = $computeService->networks;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Networks_Resource extends Google_Service_Resource
 {
 
@@ -6802,6 +6823,7 @@ class Google_Service_Compute_Networks_Resource extends Google_Service_Resource
  *   $projects = $computeService->projects;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Projects_Resource extends Google_Service_Resource
 {
 
@@ -6892,6 +6914,7 @@ class Google_Service_Compute_Projects_Resource extends Google_Service_Resource
  *   $regionOperations = $computeService->regionOperations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_RegionOperations_Resource extends Google_Service_Resource
 {
 
@@ -6971,6 +6994,7 @@ class Google_Service_Compute_RegionOperations_Resource extends Google_Service_Re
  *   $regions = $computeService->regions;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Regions_Resource extends Google_Service_Resource
 {
 
@@ -7031,6 +7055,7 @@ class Google_Service_Compute_Regions_Resource extends Google_Service_Resource
  *   $routes = $computeService->routes;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Routes_Resource extends Google_Service_Resource
 {
 
@@ -7122,6 +7147,7 @@ class Google_Service_Compute_Routes_Resource extends Google_Service_Resource
  *   $snapshots = $computeService->snapshots;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Snapshots_Resource extends Google_Service_Resource
 {
 
@@ -7202,6 +7228,7 @@ class Google_Service_Compute_Snapshots_Resource extends Google_Service_Resource
  *   $sslCertificates = $computeService->sslCertificates;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_SslCertificates_Resource extends Google_Service_Resource
 {
 
@@ -7293,6 +7320,7 @@ class Google_Service_Compute_SslCertificates_Resource extends Google_Service_Res
  *   $targetHttpProxies = $computeService->targetHttpProxies;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetHttpProxies_Resource extends Google_Service_Resource
 {
 
@@ -7403,6 +7431,7 @@ class Google_Service_Compute_TargetHttpProxies_Resource extends Google_Service_R
  *   $targetHttpsProxies = $computeService->targetHttpsProxies;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetHttpsProxies_Resource extends Google_Service_Resource
 {
 
@@ -7531,6 +7560,7 @@ class Google_Service_Compute_TargetHttpsProxies_Resource extends Google_Service_
  *   $targetInstances = $computeService->targetInstances;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetInstances_Resource extends Google_Service_Resource
 {
 
@@ -7659,6 +7689,7 @@ class Google_Service_Compute_TargetInstances_Resource extends Google_Service_Res
  *   $targetPools = $computeService->targetPools;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPools_Resource extends Google_Service_Resource
 {
 
@@ -7899,6 +7930,7 @@ class Google_Service_Compute_TargetPools_Resource extends Google_Service_Resourc
  *   $targetVpnGateways = $computeService->targetVpnGateways;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetVpnGateways_Resource extends Google_Service_Resource
 {
 
@@ -8029,6 +8061,7 @@ class Google_Service_Compute_TargetVpnGateways_Resource extends Google_Service_R
  *   $urlMaps = $computeService->urlMaps;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_UrlMaps_Resource extends Google_Service_Resource
 {
 
@@ -8171,6 +8204,7 @@ class Google_Service_Compute_UrlMaps_Resource extends Google_Service_Resource
  *   $vpnTunnels = $computeService->vpnTunnels;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_VpnTunnels_Resource extends Google_Service_Resource
 {
 
@@ -8299,6 +8333,7 @@ class Google_Service_Compute_VpnTunnels_Resource extends Google_Service_Resource
  *   $zoneOperations = $computeService->zoneOperations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_ZoneOperations_Resource extends Google_Service_Resource
 {
 
@@ -8378,6 +8413,7 @@ class Google_Service_Compute_ZoneOperations_Resource extends Google_Service_Reso
  *   $zones = $computeService->zones;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Compute_Zones_Resource extends Google_Service_Resource
 {
 
@@ -8433,6 +8469,7 @@ class Google_Service_Compute_Zones_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AccessConfig extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8477,6 +8514,7 @@ class Google_Service_Compute_AccessConfig extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Address extends Google_Collection
 {
   protected $collection_key = 'users';
@@ -8576,6 +8614,7 @@ class Google_Service_Compute_Address extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AddressAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8630,10 +8669,12 @@ class Google_Service_Compute_AddressAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AddressAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AddressList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -8689,6 +8730,7 @@ class Google_Service_Compute_AddressList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AddressesScopedList extends Google_Collection
 {
   protected $collection_key = 'addresses';
@@ -8718,6 +8760,7 @@ class Google_Service_Compute_AddressesScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AddressesScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -8755,6 +8798,7 @@ class Google_Service_Compute_AddressesScopedListWarning extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AddressesScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8781,6 +8825,7 @@ class Google_Service_Compute_AddressesScopedListWarningData extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AttachedDisk extends Google_Collection
 {
   protected $collection_key = 'licenses';
@@ -8890,6 +8935,7 @@ class Google_Service_Compute_AttachedDisk extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AttachedDiskInitializeParams extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -8934,6 +8980,7 @@ class Google_Service_Compute_AttachedDiskInitializeParams extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Autoscaler extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9024,6 +9071,7 @@ class Google_Service_Compute_Autoscaler extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalerAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9078,10 +9126,12 @@ class Google_Service_Compute_AutoscalerAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalerAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalerList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -9137,6 +9187,7 @@ class Google_Service_Compute_AutoscalerList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalersScopedList extends Google_Collection
 {
   protected $collection_key = 'autoscalers';
@@ -9166,6 +9217,7 @@ class Google_Service_Compute_AutoscalersScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalersScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -9203,6 +9255,7 @@ class Google_Service_Compute_AutoscalersScopedListWarning extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalersScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9229,6 +9282,7 @@ class Google_Service_Compute_AutoscalersScopedListWarningData extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalingPolicy extends Google_Collection
 {
   protected $collection_key = 'customMetricUtilizations';
@@ -9295,6 +9349,7 @@ class Google_Service_Compute_AutoscalingPolicy extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalingPolicyCpuUtilization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9312,6 +9367,7 @@ class Google_Service_Compute_AutoscalingPolicyCpuUtilization extends Google_Mode
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalingPolicyCustomMetricUtilization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9347,6 +9403,7 @@ class Google_Service_Compute_AutoscalingPolicyCustomMetricUtilization extends Go
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_AutoscalingPolicyLoadBalancingUtilization extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9364,6 +9421,7 @@ class Google_Service_Compute_AutoscalingPolicyLoadBalancingUtilization extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Backend extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9435,6 +9493,7 @@ class Google_Service_Compute_Backend extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_BackendService extends Google_Collection
 {
   protected $collection_key = 'healthChecks';
@@ -9562,6 +9621,7 @@ class Google_Service_Compute_BackendService extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_BackendServiceGroupHealth extends Google_Collection
 {
   protected $collection_key = 'healthStatus';
@@ -9590,6 +9650,7 @@ class Google_Service_Compute_BackendServiceGroupHealth extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_BackendServiceList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -9645,6 +9706,7 @@ class Google_Service_Compute_BackendServiceList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DeprecationStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9698,6 +9760,7 @@ class Google_Service_Compute_DeprecationStatus extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Disk extends Google_Collection
 {
   protected $collection_key = 'users';
@@ -9878,6 +9941,7 @@ class Google_Service_Compute_Disk extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -9932,10 +9996,12 @@ class Google_Service_Compute_DiskAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -9991,6 +10057,7 @@ class Google_Service_Compute_DiskList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskMoveRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10017,6 +10084,7 @@ class Google_Service_Compute_DiskMoveRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskType extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10116,6 +10184,7 @@ class Google_Service_Compute_DiskType extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskTypeAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10170,10 +10239,12 @@ class Google_Service_Compute_DiskTypeAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskTypeAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskTypeList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -10229,6 +10300,7 @@ class Google_Service_Compute_DiskTypeList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskTypesScopedList extends Google_Collection
 {
   protected $collection_key = 'diskTypes';
@@ -10258,6 +10330,7 @@ class Google_Service_Compute_DiskTypesScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskTypesScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -10295,6 +10368,7 @@ class Google_Service_Compute_DiskTypesScopedListWarning extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DiskTypesScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10321,6 +10395,7 @@ class Google_Service_Compute_DiskTypesScopedListWarningData extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DisksScopedList extends Google_Collection
 {
   protected $collection_key = 'disks';
@@ -10350,6 +10425,7 @@ class Google_Service_Compute_DisksScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DisksScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -10387,6 +10463,7 @@ class Google_Service_Compute_DisksScopedListWarning extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_DisksScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10413,6 +10490,7 @@ class Google_Service_Compute_DisksScopedListWarningData extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Firewall extends Google_Collection
 {
   protected $collection_key = 'targetTags';
@@ -10522,6 +10600,7 @@ class Google_Service_Compute_Firewall extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_FirewallAllowed extends Google_Collection
 {
   protected $collection_key = 'ports';
@@ -10550,6 +10629,7 @@ class Google_Service_Compute_FirewallAllowed extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_FirewallList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -10605,6 +10685,7 @@ class Google_Service_Compute_FirewallList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ForwardingRule extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10714,6 +10795,7 @@ class Google_Service_Compute_ForwardingRule extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ForwardingRuleAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10768,10 +10850,12 @@ class Google_Service_Compute_ForwardingRuleAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ForwardingRuleAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ForwardingRuleList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -10827,6 +10911,7 @@ class Google_Service_Compute_ForwardingRuleList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ForwardingRulesScopedList extends Google_Collection
 {
   protected $collection_key = 'forwardingRules';
@@ -10856,6 +10941,7 @@ class Google_Service_Compute_ForwardingRulesScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ForwardingRulesScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -10893,6 +10979,7 @@ class Google_Service_Compute_ForwardingRulesScopedListWarning extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ForwardingRulesScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10919,6 +11006,7 @@ class Google_Service_Compute_ForwardingRulesScopedListWarningData extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_HealthCheckReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10936,6 +11024,7 @@ class Google_Service_Compute_HealthCheckReference extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_HealthStatus extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -10980,6 +11069,7 @@ class Google_Service_Compute_HealthStatus extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_HostRule extends Google_Collection
 {
   protected $collection_key = 'hosts';
@@ -11016,6 +11106,7 @@ class Google_Service_Compute_HostRule extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_HttpHealthCheck extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11141,6 +11232,7 @@ class Google_Service_Compute_HttpHealthCheck extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_HttpHealthCheckList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -11196,6 +11288,7 @@ class Google_Service_Compute_HttpHealthCheckList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_HttpsHealthCheck extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11321,6 +11414,7 @@ class Google_Service_Compute_HttpsHealthCheck extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_HttpsHealthCheckList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -11376,6 +11470,7 @@ class Google_Service_Compute_HttpsHealthCheckList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Image extends Google_Collection
 {
   protected $collection_key = 'licenses';
@@ -11522,6 +11617,7 @@ class Google_Service_Compute_Image extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ImageList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -11577,6 +11673,7 @@ class Google_Service_Compute_ImageList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ImageRawDisk extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11612,6 +11709,7 @@ class Google_Service_Compute_ImageRawDisk extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Instance extends Google_Collection
 {
   protected $collection_key = 'serviceAccounts';
@@ -11789,6 +11887,7 @@ class Google_Service_Compute_Instance extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -11843,10 +11942,12 @@ class Google_Service_Compute_InstanceAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroup extends Google_Collection
 {
   protected $collection_key = 'namedPorts';
@@ -11956,6 +12057,7 @@ class Google_Service_Compute_InstanceGroup extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12010,10 +12112,12 @@ class Google_Service_Compute_InstanceGroupAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -12069,6 +12173,7 @@ class Google_Service_Compute_InstanceGroupList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManager extends Google_Collection
 {
   protected $collection_key = 'targetPools';
@@ -12205,6 +12310,7 @@ class Google_Service_Compute_InstanceGroupManager extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagerActionsSummary extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12276,6 +12382,7 @@ class Google_Service_Compute_InstanceGroupManagerActionsSummary extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagerAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12330,10 +12437,12 @@ class Google_Service_Compute_InstanceGroupManagerAggregatedList extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagerAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagerList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -12389,6 +12498,7 @@ class Google_Service_Compute_InstanceGroupManagerList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagersAbandonInstancesRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -12407,6 +12517,7 @@ class Google_Service_Compute_InstanceGroupManagersAbandonInstancesRequest extend
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagersDeleteInstancesRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -12425,6 +12536,7 @@ class Google_Service_Compute_InstanceGroupManagersDeleteInstancesRequest extends
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagersListManagedInstancesResponse extends Google_Collection
 {
   protected $collection_key = 'managedInstances';
@@ -12444,6 +12556,7 @@ class Google_Service_Compute_InstanceGroupManagersListManagedInstancesResponse e
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagersRecreateInstancesRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -12462,6 +12575,7 @@ class Google_Service_Compute_InstanceGroupManagersRecreateInstancesRequest exten
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagersScopedList extends Google_Collection
 {
   protected $collection_key = 'instanceGroupManagers';
@@ -12491,6 +12605,7 @@ class Google_Service_Compute_InstanceGroupManagersScopedList extends Google_Coll
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagersScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -12528,6 +12643,7 @@ class Google_Service_Compute_InstanceGroupManagersScopedListWarning extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagersScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12554,6 +12670,7 @@ class Google_Service_Compute_InstanceGroupManagersScopedListWarningData extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagersSetInstanceTemplateRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12571,6 +12688,7 @@ class Google_Service_Compute_InstanceGroupManagersSetInstanceTemplateRequest ext
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupManagersSetTargetPoolsRequest extends Google_Collection
 {
   protected $collection_key = 'targetPools';
@@ -12598,6 +12716,7 @@ class Google_Service_Compute_InstanceGroupManagersSetTargetPoolsRequest extends 
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupsAddInstancesRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -12617,6 +12736,7 @@ class Google_Service_Compute_InstanceGroupsAddInstancesRequest extends Google_Co
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupsListInstances extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -12672,6 +12792,7 @@ class Google_Service_Compute_InstanceGroupsListInstances extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupsListInstancesRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12689,6 +12810,7 @@ class Google_Service_Compute_InstanceGroupsListInstancesRequest extends Google_M
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupsRemoveInstancesRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -12708,6 +12830,7 @@ class Google_Service_Compute_InstanceGroupsRemoveInstancesRequest extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupsScopedList extends Google_Collection
 {
   protected $collection_key = 'instanceGroups';
@@ -12737,6 +12860,7 @@ class Google_Service_Compute_InstanceGroupsScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupsScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -12774,6 +12898,7 @@ class Google_Service_Compute_InstanceGroupsScopedListWarning extends Google_Coll
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupsScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12800,6 +12925,7 @@ class Google_Service_Compute_InstanceGroupsScopedListWarningData extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceGroupsSetNamedPortsRequest extends Google_Collection
 {
   protected $collection_key = 'namedPorts';
@@ -12828,6 +12954,7 @@ class Google_Service_Compute_InstanceGroupsSetNamedPortsRequest extends Google_C
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -12883,6 +13010,7 @@ class Google_Service_Compute_InstanceList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceMoveRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -12909,6 +13037,7 @@ class Google_Service_Compute_InstanceMoveRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceProperties extends Google_Collection
 {
   protected $collection_key = 'serviceAccounts';
@@ -13005,6 +13134,7 @@ class Google_Service_Compute_InstanceProperties extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13022,6 +13152,7 @@ class Google_Service_Compute_InstanceReference extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceTemplate extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13094,6 +13225,7 @@ class Google_Service_Compute_InstanceTemplate extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceTemplateList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -13149,6 +13281,7 @@ class Google_Service_Compute_InstanceTemplateList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstanceWithNamedPorts extends Google_Collection
 {
   protected $collection_key = 'namedPorts';
@@ -13186,6 +13319,7 @@ class Google_Service_Compute_InstanceWithNamedPorts extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstancesScopedList extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -13215,6 +13349,7 @@ class Google_Service_Compute_InstancesScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstancesScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -13252,6 +13387,7 @@ class Google_Service_Compute_InstancesScopedListWarning extends Google_Collectio
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_InstancesScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13278,6 +13414,7 @@ class Google_Service_Compute_InstancesScopedListWarningData extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_License extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13322,6 +13459,7 @@ class Google_Service_Compute_License extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_MachineType extends Google_Collection
 {
   protected $collection_key = 'scratchDisks';
@@ -13459,6 +13597,7 @@ class Google_Service_Compute_MachineType extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_MachineTypeAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13513,10 +13652,12 @@ class Google_Service_Compute_MachineTypeAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_MachineTypeAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_MachineTypeList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -13572,6 +13713,7 @@ class Google_Service_Compute_MachineTypeList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_MachineTypeScratchDisks extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13589,6 +13731,7 @@ class Google_Service_Compute_MachineTypeScratchDisks extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_MachineTypesScopedList extends Google_Collection
 {
   protected $collection_key = 'machineTypes';
@@ -13618,6 +13761,7 @@ class Google_Service_Compute_MachineTypesScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_MachineTypesScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -13655,6 +13799,7 @@ class Google_Service_Compute_MachineTypesScopedListWarning extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_MachineTypesScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13681,6 +13826,7 @@ class Google_Service_Compute_MachineTypesScopedListWarningData extends Google_Mo
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ManagedInstance extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13735,6 +13881,7 @@ class Google_Service_Compute_ManagedInstance extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ManagedInstanceLastAttempt extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13753,6 +13900,7 @@ class Google_Service_Compute_ManagedInstanceLastAttempt extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ManagedInstanceLastAttemptErrors extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -13772,6 +13920,7 @@ class Google_Service_Compute_ManagedInstanceLastAttemptErrors extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ManagedInstanceLastAttemptErrorsErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13807,6 +13956,7 @@ class Google_Service_Compute_ManagedInstanceLastAttemptErrorsErrors extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Metadata extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -13844,6 +13994,7 @@ class Google_Service_Compute_Metadata extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_MetadataItems extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13870,6 +14021,7 @@ class Google_Service_Compute_MetadataItems extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_NamedPort extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13896,6 +14048,7 @@ class Google_Service_Compute_NamedPort extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Network extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -13977,6 +14130,7 @@ class Google_Service_Compute_Network extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_NetworkInterface extends Google_Collection
 {
   protected $collection_key = 'accessConfigs';
@@ -14023,6 +14177,7 @@ class Google_Service_Compute_NetworkInterface extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_NetworkList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -14078,6 +14233,7 @@ class Google_Service_Compute_NetworkList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Operation extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -14287,6 +14443,7 @@ class Google_Service_Compute_Operation extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14341,10 +14498,12 @@ class Google_Service_Compute_OperationAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationError extends Google_Collection
 {
   protected $collection_key = 'errors';
@@ -14364,6 +14523,7 @@ class Google_Service_Compute_OperationError extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationErrorErrors extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14399,6 +14559,7 @@ class Google_Service_Compute_OperationErrorErrors extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -14454,6 +14615,7 @@ class Google_Service_Compute_OperationList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -14491,6 +14653,7 @@ class Google_Service_Compute_OperationWarnings extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14517,6 +14680,7 @@ class Google_Service_Compute_OperationWarningsData extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationsScopedList extends Google_Collection
 {
   protected $collection_key = 'operations';
@@ -14546,6 +14710,7 @@ class Google_Service_Compute_OperationsScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationsScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -14583,6 +14748,7 @@ class Google_Service_Compute_OperationsScopedListWarning extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_OperationsScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14609,6 +14775,7 @@ class Google_Service_Compute_OperationsScopedListWarningData extends Google_Mode
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_PathMatcher extends Google_Collection
 {
   protected $collection_key = 'pathRules';
@@ -14655,6 +14822,7 @@ class Google_Service_Compute_PathMatcher extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_PathRule extends Google_Collection
 {
   protected $collection_key = 'paths';
@@ -14682,6 +14850,7 @@ class Google_Service_Compute_PathRule extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Project extends Google_Collection
 {
   protected $collection_key = 'quotas';
@@ -14784,6 +14953,7 @@ class Google_Service_Compute_Project extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Quota extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14819,6 +14989,7 @@ class Google_Service_Compute_Quota extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Region extends Google_Collection
 {
   protected $collection_key = 'zones';
@@ -14920,6 +15091,7 @@ class Google_Service_Compute_Region extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_RegionList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -14975,6 +15147,7 @@ class Google_Service_Compute_RegionList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ResourceGroupReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -14992,6 +15165,7 @@ class Google_Service_Compute_ResourceGroupReference extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Route extends Google_Collection
 {
   protected $collection_key = 'warnings';
@@ -15146,6 +15320,7 @@ class Google_Service_Compute_Route extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_RouteList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -15201,6 +15376,7 @@ class Google_Service_Compute_RouteList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_RouteWarnings extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -15238,6 +15414,7 @@ class Google_Service_Compute_RouteWarnings extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_RouteWarningsData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15264,6 +15441,7 @@ class Google_Service_Compute_RouteWarningsData extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Scheduling extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15299,6 +15477,7 @@ class Google_Service_Compute_Scheduling extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_SerialPortOutput extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15334,6 +15513,7 @@ class Google_Service_Compute_SerialPortOutput extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ServiceAccount extends Google_Collection
 {
   protected $collection_key = 'scopes';
@@ -15361,6 +15541,7 @@ class Google_Service_Compute_ServiceAccount extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Snapshot extends Google_Collection
 {
   protected $collection_key = 'licenses';
@@ -15487,6 +15668,7 @@ class Google_Service_Compute_Snapshot extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_SnapshotList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -15542,6 +15724,7 @@ class Google_Service_Compute_SnapshotList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_SslCertificate extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15622,6 +15805,7 @@ class Google_Service_Compute_SslCertificate extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_SslCertificateList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -15677,6 +15861,7 @@ class Google_Service_Compute_SslCertificateList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Tags extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -15704,6 +15889,7 @@ class Google_Service_Compute_Tags extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetHttpProxy extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -15775,6 +15961,7 @@ class Google_Service_Compute_TargetHttpProxy extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetHttpProxyList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -15830,6 +16017,7 @@ class Google_Service_Compute_TargetHttpProxyList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetHttpsProxiesSetSslCertificatesRequest extends Google_Collection
 {
   protected $collection_key = 'sslCertificates';
@@ -15848,6 +16036,7 @@ class Google_Service_Compute_TargetHttpsProxiesSetSslCertificatesRequest extends
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetHttpsProxy extends Google_Collection
 {
   protected $collection_key = 'sslCertificates';
@@ -15929,6 +16118,7 @@ class Google_Service_Compute_TargetHttpsProxy extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetHttpsProxyList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -15984,6 +16174,7 @@ class Google_Service_Compute_TargetHttpsProxyList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetInstance extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16073,6 +16264,7 @@ class Google_Service_Compute_TargetInstance extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetInstanceAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16127,10 +16319,12 @@ class Google_Service_Compute_TargetInstanceAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetInstanceAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetInstanceList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -16186,6 +16380,7 @@ class Google_Service_Compute_TargetInstanceList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetInstancesScopedList extends Google_Collection
 {
   protected $collection_key = 'targetInstances';
@@ -16215,6 +16410,7 @@ class Google_Service_Compute_TargetInstancesScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetInstancesScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -16252,6 +16448,7 @@ class Google_Service_Compute_TargetInstancesScopedListWarning extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetInstancesScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16278,6 +16475,7 @@ class Google_Service_Compute_TargetInstancesScopedListWarningData extends Google
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPool extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -16395,6 +16593,7 @@ class Google_Service_Compute_TargetPool extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16449,10 +16648,12 @@ class Google_Service_Compute_TargetPoolAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolInstanceHealth extends Google_Collection
 {
   protected $collection_key = 'healthStatus';
@@ -16481,6 +16682,7 @@ class Google_Service_Compute_TargetPoolInstanceHealth extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -16536,6 +16738,7 @@ class Google_Service_Compute_TargetPoolList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolsAddHealthCheckRequest extends Google_Collection
 {
   protected $collection_key = 'healthChecks';
@@ -16555,6 +16758,7 @@ class Google_Service_Compute_TargetPoolsAddHealthCheckRequest extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolsAddInstanceRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -16574,6 +16778,7 @@ class Google_Service_Compute_TargetPoolsAddInstanceRequest extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolsRemoveHealthCheckRequest extends Google_Collection
 {
   protected $collection_key = 'healthChecks';
@@ -16593,6 +16798,7 @@ class Google_Service_Compute_TargetPoolsRemoveHealthCheckRequest extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolsRemoveInstanceRequest extends Google_Collection
 {
   protected $collection_key = 'instances';
@@ -16612,6 +16818,7 @@ class Google_Service_Compute_TargetPoolsRemoveInstanceRequest extends Google_Col
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolsScopedList extends Google_Collection
 {
   protected $collection_key = 'targetPools';
@@ -16641,6 +16848,7 @@ class Google_Service_Compute_TargetPoolsScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolsScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -16678,6 +16886,7 @@ class Google_Service_Compute_TargetPoolsScopedListWarning extends Google_Collect
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetPoolsScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16704,6 +16913,7 @@ class Google_Service_Compute_TargetPoolsScopedListWarningData extends Google_Mod
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16721,6 +16931,7 @@ class Google_Service_Compute_TargetReference extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetVpnGateway extends Google_Collection
 {
   protected $collection_key = 'tunnels';
@@ -16829,6 +17040,7 @@ class Google_Service_Compute_TargetVpnGateway extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetVpnGatewayAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -16883,10 +17095,12 @@ class Google_Service_Compute_TargetVpnGatewayAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetVpnGatewayAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetVpnGatewayList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -16942,6 +17156,7 @@ class Google_Service_Compute_TargetVpnGatewayList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetVpnGatewaysScopedList extends Google_Collection
 {
   protected $collection_key = 'targetVpnGateways';
@@ -16971,6 +17186,7 @@ class Google_Service_Compute_TargetVpnGatewaysScopedList extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetVpnGatewaysScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -17008,6 +17224,7 @@ class Google_Service_Compute_TargetVpnGatewaysScopedListWarning extends Google_C
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TargetVpnGatewaysScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17034,6 +17251,7 @@ class Google_Service_Compute_TargetVpnGatewaysScopedListWarningData extends Goog
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_TestFailure extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17078,6 +17296,7 @@ class Google_Service_Compute_TestFailure extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_UrlMap extends Google_Collection
 {
   protected $collection_key = 'tests';
@@ -17189,6 +17408,7 @@ class Google_Service_Compute_UrlMap extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_UrlMapList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -17244,6 +17464,7 @@ class Google_Service_Compute_UrlMapList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_UrlMapReference extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17261,6 +17482,7 @@ class Google_Service_Compute_UrlMapReference extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_UrlMapTest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17305,6 +17527,7 @@ class Google_Service_Compute_UrlMapTest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_UrlMapValidationResult extends Google_Collection
 {
   protected $collection_key = 'testFailures';
@@ -17351,6 +17574,7 @@ class Google_Service_Compute_UrlMapValidationResult extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_UrlMapsValidateRequest extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17369,6 +17593,7 @@ class Google_Service_Compute_UrlMapsValidateRequest extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_UrlMapsValidateResponse extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17387,6 +17612,7 @@ class Google_Service_Compute_UrlMapsValidateResponse extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_UsageExportLocation extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17413,6 +17639,7 @@ class Google_Service_Compute_UsageExportLocation extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_VpnTunnel extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17547,6 +17774,7 @@ class Google_Service_Compute_VpnTunnel extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_VpnTunnelAggregatedList extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17601,10 +17829,12 @@ class Google_Service_Compute_VpnTunnelAggregatedList extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_VpnTunnelAggregatedListItems extends Google_Model
 {
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_VpnTunnelList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -17660,6 +17890,7 @@ class Google_Service_Compute_VpnTunnelList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_VpnTunnelsScopedList extends Google_Collection
 {
   protected $collection_key = 'vpnTunnels';
@@ -17689,6 +17920,7 @@ class Google_Service_Compute_VpnTunnelsScopedList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_VpnTunnelsScopedListWarning extends Google_Collection
 {
   protected $collection_key = 'data';
@@ -17726,6 +17958,7 @@ class Google_Service_Compute_VpnTunnelsScopedListWarning extends Google_Collecti
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_VpnTunnelsScopedListWarningData extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -17752,6 +17985,7 @@ class Google_Service_Compute_VpnTunnelsScopedListWarningData extends Google_Mode
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_Zone extends Google_Collection
 {
   protected $collection_key = 'maintenanceWindows';
@@ -17853,6 +18087,7 @@ class Google_Service_Compute_Zone extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ZoneList extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -17908,6 +18143,7 @@ class Google_Service_Compute_ZoneList extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Compute_ZoneMaintenanceWindows extends Google_Model
 {
   protected $internal_gapi_mappings = array(

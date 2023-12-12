@@ -20,7 +20,7 @@ Feature: Requiredness The course custom fields can be mandatory or not
 
   Scenario: A required course custom field must be filled when editing course settings
     When I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
     And I click on "Short text" "link"
     And I set the following fields to these values:
@@ -41,7 +41,7 @@ Feature: Requiredness The course custom fields can be mandatory or not
 
   Scenario: A course custom field that is not required may not be filled
     When I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
     And I click on "Short text" "link"
     And I set the following fields to these values:

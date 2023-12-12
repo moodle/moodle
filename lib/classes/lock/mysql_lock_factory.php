@@ -14,18 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * MySQL / MariaDB locking factory.
- *
- * @package    core
- * @category   lock
- * @copyright  Brendan Heywood <brendan@catalyst-au.net>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core\lock;
 
-defined('MOODLE_INTERNAL') || die();
+use coding_exception;
 
 /**
  * MySQL / MariaDB locking factory.
@@ -49,7 +40,7 @@ class mysql_lock_factory implements lock_factory {
     /**
      * Return a unique prefix based on the database name and prefix.
      * @param string $type - Used to prefix lock keys.
-     * @return string.
+     * @return string
      */
     protected function get_unique_db_prefix($type) {
         global $CFG;
@@ -101,18 +92,10 @@ class mysql_lock_factory implements lock_factory {
     }
 
     /**
-     * Multiple locks for the same resource can NOT be held by a single process.
-     *
-     * Hard coded to false and workaround inconsistent support in different
-     * versions of MySQL / MariaDB.
-     *
      * @deprecated since Moodle 3.10.
-     * @return boolean - false
      */
     public function supports_recursion() {
-        debugging('The function supports_recursion() is deprecated, please do not use it anymore.',
-            DEBUG_DEVELOPER);
-        return false;
+        throw new coding_exception('The function supports_recursion() has been removed, please do not use it anymore.');
     }
 
     /**
@@ -167,18 +150,10 @@ class mysql_lock_factory implements lock_factory {
     }
 
     /**
-     * Extend a lock that was previously obtained with @lock.
-     *
      * @deprecated since Moodle 3.10.
-     * @param lock $lock - a lock obtained from this factory.
-     * @param int $maxlifetime - the new lifetime for the lock (in seconds).
-     * @return boolean - true if the lock was extended.
      */
-    public function extend_lock(lock $lock, $maxlifetime = 86400) {
-        debugging('The function extend_lock() is deprecated, please do not use it anymore.',
-            DEBUG_DEVELOPER);
-        // Not supported by this factory.
-        return false;
+    public function extend_lock() {
+        throw new coding_exception('The function extend_lock() has been removed, please do not use it anymore.');
     }
 
     /**

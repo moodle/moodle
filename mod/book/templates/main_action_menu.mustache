@@ -42,12 +42,16 @@
     <div class="row">
         {{#previous}}
             <div class="navitem">
-                <a class="btn btn-secondary" href="{{url}}">{{title}}</a>
+                <a class="btn btn-link btn-previous" href="{{url}}#mod_book-chapter" title="{{title}}">
+                    {{#pix}} i/previous, core {{/pix}}
+                </a>
             </div>
         {{/previous}}
         {{#next}}
             <div class="navitem ml-auto">
-                <a class="btn btn-secondary" href="{{url}}">{{title}}</a>
+                <a class="btn btn-link btn-next" href="{{url}}#mod_book-chapter" title="{{title}}">
+                    {{#pix}} i/next, core {{/pix}}
+                </a>
             </div>
         {{/next}}
     </div>

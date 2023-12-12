@@ -12,7 +12,7 @@ Feature: The maximum number of weeks/topics in a course can be configured
       | user | course | role |
       | manager1 | Acceptance test site | manager |
     And I log in as "admin"
-    And I navigate to "Courses > Course default settings" in site administration
+    And I navigate to "Courses > Default settings > Course default settings" in site administration
 
   @javascript
   Scenario: The number of sections can be increased and the limits are applied to courses

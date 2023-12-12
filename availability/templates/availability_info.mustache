@@ -25,74 +25,36 @@
         "header": "Not available unless:",
         "items" : [
             {
-                "showmorelink": 0,
-                "abbreviate" : 0,
-                "hidden" : 0,
                 "hasitems": 0,
                 "header": "You belong to Green Group"
             },
             {
-                "showmorelink": 0,
-                "abbreviate" : 0,
-                "hidden" : 0,
                 "hasitems": 0,
                 "header": "You belong to Red Group"
             },
             {
-                "showmorelink": 0,
-                "abbreviate" : 1,
-                "hidden" : 0,
                 "hasitems": 0,
                 "header": "You belong to Orange Group"
             },
             {
-                "showmorelink": 0,
-                "abbreviate" : 0,
-                "hidden" : 1,
                 "hasitems": 0,
                 "header": "You belong to Pink Group"
             },
             {
-                "showmorelink": 0,
-                "abbreviate" : 0,
-                "hidden" : 1,
                 "hasitems": 0,
                 "header": "You belong to Red Group"
             }
         ],
-        "hasitems": 1,
-        "showmorelink": 1
+        "hasitems": 1
     }
 }}
 {{{header}}}
 {{#hasitems}}
 <ul {{#id}} id="availability-tree-{{id}}" {{/id}} data-region="availability-multiple">
     {{#items}}
-        <li class="{{#hidden}}d-none{{/hidden}}">
-            {{#abbreviate}}
-                <span class="d-none">
-                    {{> core_availability/availability_info }}
-                </span><span class="d-block">...</span>
-            {{/abbreviate}}
-            {{^abbreviate}}
-                {{> core_availability/availability_info }}
-            {{/abbreviate}}
+        <li>
+            {{> core_availability/availability_info }}
         </li>
     {{/items}}
-    {{#showmorelink}}
-        <li data-action="showmore" class="d-block showmore">
-            <a role="button" aria-expanded="false" aria-controls="availability-tree-{{id}}" href="#" >
-                {{#str}}showmore, availability{{/str}}
-            </a>
-        </li>
-    {{/showmorelink}}
 </ul>
 {{/hasitems}}
-
-{{#showmorelink}}
-{{#js}}
-require(['core_availability/availability_more'], function(availabilityMore) {
-        availabilityMore.init();
-});
-{{/js}}
-{{/showmorelink}}

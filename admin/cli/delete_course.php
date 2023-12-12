@@ -28,7 +28,6 @@ define('CLI_SCRIPT', true);
 
 require(__DIR__ . '/../../config.php');
 require_once($CFG->libdir . '/clilib.php');
-require_once($CFG->libdir . '/cronlib.php');
 
 list($options, $unrecognized) = cli_get_params(
     [

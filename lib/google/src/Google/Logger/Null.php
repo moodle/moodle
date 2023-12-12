@@ -24,6 +24,7 @@ if (!class_exists('Google_Client')) {
  *
  * This logger simply discards all messages.
  */
+#[AllowDynamicProperties]
 class Google_Logger_Null extends Google_Logger_Abstract
 {
   /**

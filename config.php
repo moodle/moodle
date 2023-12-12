@@ -4,23 +4,16 @@ unset($CFG);
 global $CFG;
 $CFG = new stdClass();
 
-$CFG->dbtype = 'mariadb';  // Use 'mysqli' for MySQL, or 'pgsql' for PostgreSQL.
-$CFG->dbhost = 'localhost'; // Database server (usually 'localhost').
-$CFG->dbname = 'moodle';  // Your database name (the one you created).
-$CFG->dbuser = 'yewo'; // Your database username.
-$CFG->dbpass = 'Muwemi2015*'; // Your database password.
-$CFG->dbport = '3306'; // Port for the database server (default is 3306 for MySQL).
+$CFG->dbtype    = 'mariadb';
+$CFG->dblibrary = 'native';
+$CFG->dbhost    = 'localhost'; // Replace with your RDS endpoint
+$CFG->dbname    = 'moodle'; // Replace with your database name
+$CFG->dbuser    = 'root';   // Replace with your database username
+$CFG->dbpass    = 'Muwemi2015*';   // Replace with your database password
+$CFG->prefix    = 'mdl_'; // You can change the table prefix if needed
+$CFG->dboptions = ['dbcollation' => 'utf8mb4_unicode_ci'];
 
-$CFG->prefix = 'mdl_'; // Table prefix (you can leave this as 'mdl_' by default).
-
-$CFG->dboptions = array (
-  'dbpersist' => 0,
-  'dbport' => '3306',
-  'dbsocket' => '',
-  'dbcollation' => 'utf8mb4_general_ci',
-);
-
-$CFG->wwwroot   = 'https://localhost:443';
+$CFG->wwwroot   = 'https://localhost';
 $CFG->dataroot  = 'C:\\xampp\\moodledata';
 $CFG->admin     = 'admin';
 

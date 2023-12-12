@@ -60,6 +60,30 @@ Feature: Quiz user override
     And I should not see "Student One"
 
   @javascript
+  Scenario: Add multiple user overrides, one after another
+    Given the following "activities" exist:
+      | activity   | name      | course | idnumber |
+      | quiz       | Test quiz | C1     | quiz1    |
+    And I am on the "Test quiz" "mod_quiz > View" page logged in as "teacher"
+    And I change window size to "large"
+    And I navigate to "Overrides" in current page administration
+    And I press "Add user override"
+    And I set the following fields to these values:
+      | Override user      | Student One                |
+      | timeclose[enabled] | 1                          |
+      | Close the quiz     | ## 1 January 2020 08:00 ## |
+    And I press "Save and enter another override"
+    And I set the following fields to these values:
+      | Override user      | Student Two                |
+      | timeclose[enabled] | 1                          |
+      | Close the quiz     | ## 2 January 2020 08:00 ## |
+    When I press "Save"
+    Then the following should exist in the "generaltable" table:
+      | User        | Overrides   | -4-                  |
+      | Student One | Quiz closes | 1 January 2020, 8:00 |
+      | Student Two | Quiz closes | 2 January 2020, 8:00 |
+
+  @javascript
   Scenario: Can add a user override when the quiz is not available to the student
     Given the following "activities" exist:
       | activity   | name      | course | idnumber | visible |
@@ -196,3 +220,23 @@ Feature: Quiz user override
       | quiz       | Other quiz | C2     | quiz2    |
     When I am on the "Other quiz" "mod_quiz > User overrides" page logged in as "admin"
     Then the "Add user override" "button" should be disabled
+
+  @javascript
+  Scenario: Should see only enrolled users in user selector
+    Given the following "users" exist:
+      | username | firstname | lastname | email           |
+      | manager  | Max       | Manager  | man@example.com |
+    And the following "role assigns" exist:
+      | user    | role    | contextlevel | reference |
+      | manager | manager | System       |           |
+    And the following "activities" exist:
+      | activity | name      | course | idnumber | groupmode |
+      | quiz     | Test quiz | C1     | quiz1    | 1         |
+    And the following "role capability" exists:
+      | role             | manager |
+      | mod/quiz:attempt | allow   |
+    When I am on the "Test quiz" "mod_quiz > User overrides" page logged in as "teacher"
+    And I press "Add user override"
+    And I click on "Override user" "field"
+    And I type "Max Manager"
+    Then I should see "No suggestions"

@@ -20,34 +20,26 @@
  * @copyright  2016 Ryan Wyllie <ryan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([
-        'jquery',
-        'core/ajax',
-        'core/str',
-        'core/notification',
-        'core/custom_interaction_events',
-        'core/modal',
-        'core/modal_registry',
-        'core/fragment',
-        ],
-        function(
-            $,
-            Ajax,
-            Str,
-            Notification,
-            CustomEvents,
-            Modal,
-            ModalRegistry,
-            Fragment
-        ) {
 
-    var registered = false;
-    var SELECTORS = {
-        SAVE_BUTTON: '[data-action="save"]',
-        CANCEL_BUTTON: '[data-action="cancel"]',
-        PROCESSOR: '[data-processor-name]',
-        PREFERENCE_ROW: '[data-region="preference-row"]',
-    };
+
+import $ from 'jquery';
+import * as Ajax from 'core/ajax';
+import * as Str from 'core/str';
+import * as Notification from 'core/notification';
+import * as CustomEvents from 'core/custom_interaction_events';
+import Modal from 'core/modal';
+import * as Fragment from 'core/fragment';
+
+const SELECTORS = {
+    SAVE_BUTTON: '[data-action="save"]',
+    CANCEL_BUTTON: '[data-action="cancel"]',
+    PROCESSOR: '[data-processor-name]',
+    PREFERENCE_ROW: '[data-region="preference-row"]',
+};
+
+export default class NotificationProcessorSettings extends Modal {
+    static TYPE = 'core_message-notification_processor_settings';
+    static TEMPLATE = 'core/modal_save_cancel';
 
     /**
      * Constructor for the Modal.
@@ -55,19 +47,15 @@ define([
      * @class
      * @param {object} root The root jQuery element for the modal.
      */
-    var NotificationProcessorSettings = function(root) {
-        Modal.call(this, root);
+    constructor(root) {
+        super(root);
         this.name = null;
         this.userId = null;
         this.contextId = null;
         this.element = null;
         this.saveButton = this.getFooter().find(SELECTORS.SAVE_BUTTON);
         this.cancelButton = this.getFooter().find(SELECTORS.CANCEL_BUTTON);
-    };
-
-    NotificationProcessorSettings.TYPE = 'core_message-notification_processor_settings';
-    NotificationProcessorSettings.prototype = Object.create(Modal.prototype);
-    NotificationProcessorSettings.prototype.constructor = NotificationProcessorSettings;
+    }
 
     /**
      * Set the userid to the given value.
@@ -75,9 +63,9 @@ define([
      * @method setUserId
      * @param {int} id The notification userid
      */
-    NotificationProcessorSettings.prototype.setUserId = function(id) {
+    setUserId(id) {
         this.userId = id;
-    };
+    }
 
     /**
      * Retrieve the current userid, if any.
@@ -85,9 +73,9 @@ define([
      * @method getUserId
      * @return {int|null} The notification userid
      */
-    NotificationProcessorSettings.prototype.getUserId = function() {
+    getUserId() {
         return this.userId;
-    };
+    }
 
     /**
      * Set the object to the given value.
@@ -95,9 +83,9 @@ define([
      * @method setElement
      * @param {object} element The notification node element.
      */
-    NotificationProcessorSettings.prototype.setElement = function(element) {
+    setElement(element) {
         this.element = element;
-    };
+    }
 
     /**
      * Retrieve the current element, if any.
@@ -105,9 +93,9 @@ define([
      * @method getElement
      * @return {object|null} The notification node element.
      */
-    NotificationProcessorSettings.prototype.getElement = function() {
+    getElement() {
         return this.element;
-    };
+    }
 
     /**
      * Set the name to the given value.
@@ -115,9 +103,9 @@ define([
      * @method setName
      * @param {string} name The notification name.
      */
-    NotificationProcessorSettings.prototype.setName = function(name) {
+    setName(name) {
         this.name = name;
-    };
+    }
 
     /**
      * Retrieve the current name, if any.
@@ -125,18 +113,18 @@ define([
      * @method getName
      * @return {string|null} The notification name.
      */
-    NotificationProcessorSettings.prototype.getName = function() {
+    getName() {
         return this.name;
-    };
+    }
     /**
      * Set the context id to the given value.
      *
      * @method setContextId
      * @param {Number} id The notification context id
      */
-    NotificationProcessorSettings.prototype.setContextId = function(id) {
+    setContextId(id) {
         this.contextId = id;
-    };
+    }
 
     /**
      * Retrieve the current context id, if any.
@@ -144,9 +132,9 @@ define([
      * @method getContextId
      * @return {Number|null} The notification context id
      */
-    NotificationProcessorSettings.prototype.getContextId = function() {
+    getContextId() {
         return this.contextId;
-    };
+    }
 
     /**
      * Get the form element from the modal.
@@ -154,29 +142,29 @@ define([
      * @method getForm
      * @return {object}
      */
-    NotificationProcessorSettings.prototype.getForm = function() {
+    getForm() {
         return this.getBody().find('form');
-    };
+    }
 
     /**
      * Disable the buttons in the footer.
      *
      * @method disableButtons
      */
-    NotificationProcessorSettings.prototype.disableButtons = function() {
+    disableButtons() {
         this.saveButton.prop('disabled', true);
         this.cancelButton.prop('disabled', true);
-    };
+    }
 
     /**
      * Enable the buttons in the footer.
      *
      * @method enableButtons
      */
-    NotificationProcessorSettings.prototype.enableButtons = function() {
+    enableButtons() {
         this.saveButton.prop('disabled', false);
         this.cancelButton.prop('disabled', false);
-    };
+    }
 
     /**
      * Load the title for the modal to the appropriate value
@@ -185,12 +173,12 @@ define([
      * @method loadTitleContent
      * @return {object} A promise resolved with the new title text.
      */
-    NotificationProcessorSettings.prototype.loadTitleContent = function() {
+    loadTitleContent() {
         this.titlePromise = Str.get_string('processorsettings', 'message');
         this.setTitle(this.titlePromise);
 
         return this.titlePromise;
-    };
+    }
 
     /**
      * Load the body for the modal to the appropriate value
@@ -199,10 +187,10 @@ define([
      * @method loadBodyContent
      * @return {object} A promise resolved with the fragment html and js from
      */
-    NotificationProcessorSettings.prototype.loadBodyContent = function() {
+    loadBodyContent() {
         this.disableButtons();
 
-        var args = {
+        const args = {
             userid: this.getUserId(),
             type: this.getName(),
         };
@@ -210,14 +198,14 @@ define([
         this.bodyPromise = Fragment.loadFragment('message', 'processor_settings', this.getContextId(), args);
         this.setBody(this.bodyPromise);
 
-        this.bodyPromise.then(function() {
+        this.bodyPromise.then(() => {
             this.enableButtons();
             return;
-        }.bind(this))
-        .fail(Notification.exception);
+        })
+        .catch(Notification.exception);
 
         return this.bodyPromise;
-    };
+    }
 
     /**
      * Load both the title and body content.
@@ -225,9 +213,9 @@ define([
      * @method loadAllContent
      * @return {object} promise
      */
-    NotificationProcessorSettings.prototype.loadAllContent = function() {
+    loadAllContent() {
         return $.when(this.loadTitleContent(), this.loadBodyContent());
-    };
+    }
 
     /**
      * Load the modal content before showing it. This
@@ -236,10 +224,10 @@ define([
      *
      * @method show
      */
-    NotificationProcessorSettings.prototype.show = function() {
+    show() {
         this.loadAllContent();
-        Modal.prototype.show.call(this);
-    };
+        super.show(this);
+    }
 
     /**
      * Clear the notification from the modal when it's closed so
@@ -247,12 +235,12 @@ define([
      *
      * @method hide
      */
-    NotificationProcessorSettings.prototype.hide = function() {
-        Modal.prototype.hide.call(this);
+    hide() {
+        super.hide(this);
         this.setContextId(null);
         this.setName(null);
         this.setUserId(null);
-    };
+    }
 
     /**
      * Checks if the processor has been configured. If so then remove the unconfigured
@@ -261,15 +249,15 @@ define([
      * @method updateConfiguredStatus
      * @return {Promise|boolean}
      */
-    NotificationProcessorSettings.prototype.updateConfiguredStatus = function() {
-        var processorHeader = $(this.getElement()).closest(SELECTORS.PROCESSOR);
+    updateConfiguredStatus() {
+        const processorHeader = $(this.getElement()).closest(SELECTORS.PROCESSOR);
 
         if (!processorHeader.hasClass('unconfigured')) {
             return false;
         }
 
-        var processorName = processorHeader.attr('data-processor-name');
-        var request = {
+        const processorName = processorHeader.attr('data-processor-name');
+        const request = {
             methodname: 'core_message_get_message_processor',
             args: {
                 name: processorName,
@@ -278,56 +266,45 @@ define([
         };
 
         return Ajax.call([request])[0]
-            .fail(Notification.exception)
-            .done(function(result) {
+            .then((result) => {
                 // Check if the user has figured configuring the processor.
                 if (result.userconfigured) {
                     // If they have then we can enable the settings.
-                    var notifications = $(SELECTORS.PREFERENCE_ROW + ' [data-processor-name="' + processorName + '"]');
+                    const notifications = $(SELECTORS.PREFERENCE_ROW + ' [data-processor-name="' + processorName + '"]');
                     processorHeader.removeClass('unconfigured');
                     notifications.removeClass('disabled');
                 }
+                return result;
             });
-    };
+    }
 
     /**
      * Set up all of the event handling for the modal.
      *
      * @method registerEventListeners
      */
-    NotificationProcessorSettings.prototype.registerEventListeners = function() {
+    registerEventListeners() {
         // Apply parent event listeners.
-        Modal.prototype.registerEventListeners.call(this);
+        super.registerEventListeners(this);
 
         // When the user clicks the save button we trigger the form submission.
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.SAVE_BUTTON, function(e, data) {
+        this.getModal().on(CustomEvents.events.activate, SELECTORS.SAVE_BUTTON, (e, data) => {
             this.getForm().submit();
             data.originalEvent.preventDefault();
-        }.bind(this));
+        });
 
-        this.getModal().on('mpp:formsubmitted', function(e) {
+        this.getModal().on('mpp:formsubmitted', (e) => {
             this.hide();
             this.updateConfiguredStatus();
             e.stopPropagation();
-        }.bind(this));
+        });
 
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.CANCEL_BUTTON, function(e, data) {
+        this.getModal().on(CustomEvents.events.activate, SELECTORS.CANCEL_BUTTON, (e, data) => {
             this.hide();
             data.originalEvent.preventDefault();
             e.stopPropagation();
-        }.bind(this));
-    };
-
-    // Automatically register with the modal registry the first time this module is imported
-    // so that you can create modals
-    // of this type using the modal factory.
-    if (!registered) {
-        ModalRegistry.register(
-                                NotificationProcessorSettings.TYPE,
-                                NotificationProcessorSettings,
-                                'core/modal_save_cancel');
-        registered = true;
+        });
     }
+}
 
-    return NotificationProcessorSettings;
-});
+NotificationProcessorSettings.registerModalType();

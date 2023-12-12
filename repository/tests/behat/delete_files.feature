@@ -1,8 +1,8 @@
 @core @core_filepicker @_file_upload
 Feature: Delete files and folders from the file manager
-  In order to clean the file manager contents
-  As a user
-  I need to delete files from file areas
+    In order to clean the file manager contents
+    As a user
+    I need to delete files from file areas
 
   Background:
     Given the following "blocks" exist:
@@ -38,7 +38,7 @@ Feature: Delete files and folders from the file manager
     And I set the field "Select file 'empty.txt'" to "1"
     When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected 1 file(s)?"
-    When I click on "OK" "button" in the "Confirm" "dialogue"
+    When I click on "Yes" "button" in the "Confirm" "dialogue"
     Then I should not see "empty.txt" in the "Manage private files" "dialogue"
     But I should see "Delete me later" in the "Manage private files" "dialogue"
     When I press "Save changes"
@@ -47,7 +47,7 @@ Feature: Delete files and folders from the file manager
     But I should see "Delete me later" in the "Manage private files" "dialogue"
     And I set the field "Select file 'Delete me later'" to "1"
     And I click on "Delete" "link"
-    And I click on "OK" "button" in the "Confirm" "dialogue"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
     Then I should not see "Delete me later" in the "Manage private files" "dialogue"
     When I press "Save changes"
     And I follow "Manage private files..."
@@ -67,7 +67,7 @@ Feature: Delete files and folders from the file manager
     And I set the field "Select file 'Delete me'" to "1"
     When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected 2 file(s)?"
-    When I click on "OK" "button" in the "Confirm" "dialogue"
+    When I click on "Yes" "button" in the "Confirm" "dialogue"
     Then I should not see "Delete me" in the "Manage private files" "dialogue"
     And I should not see "empty.txt" in the "Manage private files" "dialogue"
     But I should see "Do not delete me" in the "Manage private files" "dialogue"
@@ -92,12 +92,12 @@ Feature: Delete files and folders from the file manager
     And I click on "Display folder with file details" "link"
     When I click on "Select all/none" "checkbox"
     Then the following fields match these values:
-      | Select file 'empty.txt' | 1 |
-      | Select file 'Delete me' | 1 |
+      | Select file 'empty.txt'     | 1 |
+      | Select file 'Delete me'     | 1 |
       | Select file 'Delete me too' | 1 |
     When I click on "Delete" "link"
     Then I should see "Are you sure you want to delete the selected 3 file(s)?"
-    When I click on "OK" "button" in the "Confirm" "dialogue"
+    When I click on "Yes" "button" in the "Confirm" "dialogue"
     Then I should not see "Delete me" in the "Manage private files" "dialogue"
     And I should not see "empty.txt" in the "Manage private files" "dialogue"
     And I should not see "Delete me too" in the "Manage private files" "dialogue"
@@ -109,3 +109,23 @@ Feature: Delete files and folders from the file manager
     Then I should not see "Delete me" in the "Private files" "block"
     And I should not see "empty.txt" in the "Private files" "block"
     And I should not see "Delete me too" in the "Private files" "block"
+
+  @javascript
+  Scenario: Verify system logs for deleted draft files
+    Given I log in as "admin"
+    And I follow "Manage private files..."
+    And I upload "lib/tests/fixtures/update_validator/zips/multidir.zip" file to "Files" filemanager
+    And I follow "multidir.zip"
+    And I click on "Unzip" "button"
+    And I click on "Display folder with file details" "link"
+    And I set the field "Select file 'one'" to "1"
+    And I click on "Delete" "link"
+    And I should see "Are you sure you want to delete the selected 1 file(s)?"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
+    And I click on "Save changes" "button"
+    And I am on the "System logs report" page
+    And I click on "Get these logs" "button"
+    And I should see "The user with id '2' has deleted folder '/one/.' from the draft file area with item id" in the "has deleted folder '/one/.'" "table_row"
+    And I should see "Size: 0 bytes. Content hash:" in the "has deleted folder '/one/.'" "table_row"
+    Then I should see "The user with id '2' has deleted file '/one/version.php' from the draft file area with item id" in the "has deleted file '/one/version.php'" "table_row"
+    And I should see "Size: 40 bytes. Content hash:" in the "has deleted file '/one/version.php'" "table_row"

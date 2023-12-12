@@ -66,7 +66,7 @@ export default class Component extends DndCmItem {
      * @return {Component}
      */
     static init(target, selectors) {
-        return new Component({
+        return new this({
             element: document.getElementById(target),
             selectors,
         });
@@ -100,8 +100,8 @@ export default class Component extends DndCmItem {
             this.reactive.dispatch('setPageItem', 'cm', this.id, true);
             this.element.scrollIntoView({block: "center"});
         }
-        // Add anchor logic if the element is not user visible.
-        if (!cm.uservisible) {
+        // Add anchor logic if the element is not user visible or the element hasn't URL.
+        if (!cm.uservisible || !cm.url) {
             this.addEventListener(
                 this.getElement(this.selectors.CM_NAME),
                 'click',
@@ -180,12 +180,8 @@ export default class Component extends DndCmItem {
         const exporter = this.reactive.getExporter();
         const data = exporter.cmCompletion(state, element);
 
-        try {
-            const {html, js} = await Templates.renderForPromise(completionTemplate, data);
-            Templates.replaceNode(completionElement, html, js);
-        } catch (error) {
-            throw error;
-        }
+        const {html, js} = await Templates.renderForPromise(completionTemplate, data);
+        Templates.replaceNode(completionElement, html, js);
     }
 
     /**

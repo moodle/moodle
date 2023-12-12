@@ -16,6 +16,9 @@
 
 namespace core_cohort;
 
+use core_cohort\customfield\cohort_handler;
+use core_customfield\data_controller;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -32,10 +35,33 @@ require_once("$CFG->dirroot/cohort/lib.php");
  */
 class lib_test extends \advanced_testcase {
 
+    /**
+     * Create Cohort custom field for testing.
+     *
+     * @return \core_customfield\field_controller
+     */
+    protected function create_cohort_custom_field(): \core_customfield\field_controller {
+        $fieldcategory = self::getDataGenerator()->create_custom_field_category([
+            'component' => 'core_cohort',
+            'area' => 'cohort',
+            'name' => 'Other fields',
+        ]);
+
+        return self::getDataGenerator()->create_custom_field([
+            'shortname' => 'testfield1',
+            'name' => 'Custom field',
+            'type' => 'text',
+            'categoryid' => $fieldcategory->get('id'),
+        ]);
+    }
+
     public function test_cohort_add_cohort() {
         global $DB;
 
         $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->create_cohort_custom_field();
 
         $cohort = new \stdClass();
         $cohort->contextid = \context_system::instance()->id;
@@ -43,6 +69,7 @@ class lib_test extends \advanced_testcase {
         $cohort->idnumber = 'testid';
         $cohort->description = 'test cohort desc';
         $cohort->descriptionformat = FORMAT_HTML;
+        $cohort->customfield_testfield1 = 'Test value 1';
 
         $id = cohort_add_cohort($cohort);
         $this->assertNotEmpty($id);
@@ -56,6 +83,10 @@ class lib_test extends \advanced_testcase {
         $this->assertSame($newcohort->component, '');
         $this->assertSame($newcohort->theme, '');
         $this->assertSame($newcohort->timecreated, $newcohort->timemodified);
+
+        $handler = cohort_handler::create();
+        $customfieldsdata = $handler->export_instance_data_object($id);
+        $this->assertEquals('Test value 1', $customfieldsdata->testfield1);
     }
 
     public function test_cohort_add_cohort_missing_name() {
@@ -102,7 +133,6 @@ class lib_test extends \advanced_testcase {
         $url = new \moodle_url('/cohort/index.php', array('contextid' => $event->contextid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $id));
-        $this->assertEventLegacyData($cohort, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -110,6 +140,9 @@ class lib_test extends \advanced_testcase {
         global $DB;
 
         $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->create_cohort_custom_field();
 
         $cohort = new \stdClass();
         $cohort->contextid = \context_system::instance()->id;
@@ -117,6 +150,8 @@ class lib_test extends \advanced_testcase {
         $cohort->idnumber = 'testid';
         $cohort->description = 'test cohort desc';
         $cohort->descriptionformat = FORMAT_HTML;
+        $cohort->customfield_testfield1 = 'Test value 1';
+
         $id = cohort_add_cohort($cohort);
         $this->assertNotEmpty($id);
         $DB->set_field('cohort', 'timecreated', $cohort->timecreated - 10, array('id'=>$id));
@@ -124,6 +159,8 @@ class lib_test extends \advanced_testcase {
         $cohort = $DB->get_record('cohort', array('id'=>$id));
 
         $cohort->name = 'test cohort 2';
+        $cohort->customfield_testfield1 = 'Test value updated';
+
         cohort_update_cohort($cohort);
 
         $newcohort = $DB->get_record('cohort', array('id'=>$id));
@@ -137,6 +174,10 @@ class lib_test extends \advanced_testcase {
         $this->assertSame($newcohort->theme, '');
         $this->assertGreaterThan($newcohort->timecreated, $newcohort->timemodified);
         $this->assertLessThanOrEqual(time(), $newcohort->timemodified);
+
+        $handler = cohort_handler::create();
+        $customfieldsdata = $handler->export_instance_data_object($id);
+        $this->assertEquals('Test value updated', $customfieldsdata->testfield1);
     }
 
     public function test_cohort_update_cohort_event() {
@@ -179,7 +220,6 @@ class lib_test extends \advanced_testcase {
         $url = new \moodle_url('/cohort/edit.php', array('id' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $id));
-        $this->assertEventLegacyData($cohort, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -187,12 +227,17 @@ class lib_test extends \advanced_testcase {
         global $DB;
 
         $this->resetAfterTest();
+        $this->setAdminUser();
 
-        $cohort = $this->getDataGenerator()->create_cohort();
+        $field = $this->create_cohort_custom_field();
+
+        $cohort = $this->getDataGenerator()->create_cohort(['customfield_testfield1' => 'Test value 1']);
+        $this->assertTrue($DB->record_exists('customfield_data', ['instanceid' => $cohort->id, 'fieldid' => $field->get('id')]));
 
         cohort_delete_cohort($cohort);
 
         $this->assertFalse($DB->record_exists('cohort', array('id'=>$cohort->id)));
+        $this->assertFalse($DB->record_exists('customfield_data', ['instanceid' => $cohort->id, 'fieldid' => $field->get('id')]));
     }
 
     public function test_cohort_delete_cohort_event() {
@@ -219,7 +264,6 @@ class lib_test extends \advanced_testcase {
         $url = new \moodle_url('/cohort/index.php', array('contextid' => $event->contextid));
         $this->assertEquals($url, $event->get_url());
         $this->assertEquals($cohort, $event->get_record_snapshot('cohort', $cohort->id));
-        $this->assertEventLegacyData($cohort, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -279,7 +323,6 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $url = new \moodle_url('/cohort/assign.php', array('id' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
-        $this->assertEventLegacyData((object) array('cohortid' => $cohort->id, 'userid' => $user->id), $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -325,7 +368,6 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $url = new \moodle_url('/cohort/assign.php', array('id' => $event->objectid));
         $this->assertEquals($url, $event->get_url());
-        $this->assertEventLegacyData((object) array('cohortid' => $cohort->id, 'userid' => $user->id), $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -649,6 +691,142 @@ class lib_test extends \advanced_testcase {
     }
 
     /**
+     * Test that all get functions return custom fields data.
+     *
+     * @covers \cohort_get_cohort, \cohort_get_cohorts, \cohort_get_all_cohorts
+     * @covers \cohort_get_available_cohorts, \cohort_get_user_cohorts
+     */
+    public function test_get_functions_return_custom_fields() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = self::getDataGenerator()->create_user();
+        $course = self::getDataGenerator()->create_course();
+        $coursectx = \context_course::instance(($course->id));
+
+        $this->create_cohort_custom_field();
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(['customfield_testfield1' => 'Test value 1']);
+        $cohort2 = $this->getDataGenerator()->create_cohort();
+
+        // Test cohort_get_cohort.
+        $result = cohort_get_cohort($cohort1->id, $coursectx, true);
+        $this->assertObjectHasAttribute('customfields', $result);
+        $this->assertCount(1, $result->customfields);
+        $field = reset($result->customfields);
+        $this->assertInstanceOf(data_controller::class, $field);
+        $this->assertEquals('testfield1', $field->get_field()->get('shortname'));
+        $this->assertEquals('Test value 1', $field->get_value());
+
+        // Test custom fields are not returned if not needed.
+        $result = cohort_get_cohort($cohort1->id, $coursectx);
+        $this->assertObjectNotHasAttribute('customfields', $result);
+
+        // Test cohort_get_cohorts.
+        $result = cohort_get_cohorts(\context_system::instance()->id, 0, 25, '', true);
+        $this->assertEquals(2, $result['totalcohorts']);
+        $this->assertEquals(2, $result['allcohorts']);
+        foreach ($result['cohorts'] as $cohort) {
+            $this->assertObjectHasAttribute('customfields', $cohort);
+            $this->assertCount(1, $cohort->customfields);
+            $field = reset($cohort->customfields);
+            $this->assertInstanceOf(data_controller::class, $field);
+            $this->assertEquals('testfield1', $field->get_field()->get('shortname'));
+
+            if ($cohort->id == $cohort1->id ) {
+                $this->assertEquals('Test value 1', $field->get_value());
+            } else {
+                $this->assertEquals('', $field->get_value());
+            }
+        }
+
+        // Test custom fields are not returned if not needed.
+        $result = cohort_get_cohorts(\context_system::instance()->id, 0, 25, '');
+        $this->assertEquals(2, $result['totalcohorts']);
+        $this->assertEquals(2, $result['allcohorts']);
+        foreach ($result['cohorts'] as $cohort) {
+            $this->assertObjectNotHasAttribute('customfields', $cohort);
+        }
+
+        // Test test_cohort_get_all_cohorts.
+        $result = cohort_get_all_cohorts(0, 100, '', true);
+        $this->assertEquals(2, $result['totalcohorts']);
+        $this->assertEquals(2, $result['allcohorts']);
+        foreach ($result['cohorts'] as $cohort) {
+            $this->assertObjectHasAttribute('customfields', $cohort);
+            $this->assertCount(1, $cohort->customfields);
+            $field = reset($cohort->customfields);
+            $this->assertInstanceOf(data_controller::class, $field);
+            $this->assertEquals('testfield1', $field->get_field()->get('shortname'));
+
+            if ($cohort->id == $cohort1->id ) {
+                $this->assertEquals('Test value 1', $field->get_value());
+            } else {
+                $this->assertEquals('', $field->get_value());
+            }
+        }
+
+        // Test custom fields are not returned if not needed.
+        $result = cohort_get_all_cohorts(0, 100, '');
+        $this->assertEquals(2, $result['totalcohorts']);
+        $this->assertEquals(2, $result['allcohorts']);
+        foreach ($result['cohorts'] as $cohort) {
+            $this->assertObjectNotHasAttribute('customfields', $cohort);
+        }
+
+        // Test cohort_get_available_cohorts.
+        $result = cohort_get_available_cohorts($coursectx, COHORT_ALL, 0, 25, '', true);
+        $this->assertCount(2, $result);
+        foreach ($result as $cohort) {
+            $this->assertObjectHasAttribute('customfields', $cohort);
+            $this->assertCount(1, $cohort->customfields);
+            $field = reset($cohort->customfields);
+            $this->assertInstanceOf(data_controller::class, $field);
+            $this->assertEquals('testfield1', $field->get_field()->get('shortname'));
+
+            if ($cohort->id == $cohort1->id ) {
+                $this->assertEquals('Test value 1', $field->get_value());
+            } else {
+                $this->assertEquals('', $field->get_value());
+            }
+        }
+
+        // Test custom fields are not returned if not needed.
+        $result = cohort_get_available_cohorts($coursectx, COHORT_ALL, 0, 25, '');
+        $this->assertCount(2, $result);
+        foreach ($result as $cohort) {
+            $this->assertObjectNotHasAttribute('customfields', $cohort);
+        }
+
+        // Test cohort_get_user_cohorts.
+        cohort_add_member($cohort1->id, $user->id);
+        cohort_add_member($cohort2->id, $user->id);
+
+        $result = cohort_get_user_cohorts($user->id, true);
+        $this->assertCount(2, $result);
+        foreach ($result as $cohort) {
+            $this->assertObjectHasAttribute('customfields', $cohort);
+            $this->assertCount(1, $cohort->customfields);
+            $field = reset($cohort->customfields);
+            $this->assertInstanceOf(data_controller::class, $field);
+            $this->assertEquals('testfield1', $field->get_field()->get('shortname'));
+
+            if ($cohort->id == $cohort1->id ) {
+                $this->assertEquals('Test value 1', $field->get_value());
+            } else {
+                $this->assertEquals('', $field->get_value());
+            }
+        }
+
+        // Test that there is no custom fields returned if not required.
+        $result = cohort_get_user_cohorts($user->id);
+        $this->assertCount(2, $result);
+        foreach ($result as $cohort) {
+            $this->assertObjectNotHasAttribute('customfields', $cohort);
+        }
+    }
+
+    /**
      * Create a cohort with allowcohortthemes enabled/disabled.
      */
     public function test_cohort_add_theme_cohort() {
@@ -730,4 +908,66 @@ class lib_test extends \advanced_testcase {
         $this->assertNotEmpty($updatedcohort->theme);
         $this->assertSame($cohort1->theme, $updatedcohort->theme);
     }
+
+    /**
+     * Test that lib function returns custom field data for a cohorts.
+     *
+     * @covers \cohort_get_custom_fields_data
+     */
+    public function test_cohort_get_custom_fields_data() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->create_cohort_custom_field();
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(['customfield_testfield1' => 'Test value 1']);
+        $cohort2 = $this->getDataGenerator()->create_cohort();
+
+        $result = cohort_get_custom_fields_data([$cohort1->id, $cohort2->id, 777]);
+        $this->assertArrayHasKey($cohort1->id, $result);
+        $this->assertArrayHasKey($cohort2->id, $result);
+        $this->assertArrayHasKey(777, $result);
+
+        foreach ($result as $cohortid => $fieldcontrollers) {
+            foreach ($fieldcontrollers as $fieldcontroller) {
+                $this->assertInstanceOf(data_controller::class, $fieldcontroller);
+                if ($cohortid == $cohort1->id) {
+                    $this->assertSame('Test value 1', $fieldcontroller->export_value());
+                } else {
+                    $this->assertNull($fieldcontroller->export_value());
+                }
+            }
+        }
+    }
+
+    /**
+     * Test the behaviour of cohort_get_cohort().
+     *
+     * @covers ::cohort_get_cohort
+     */
+    public function test_cohort_get_cohort() {
+        $this->resetAfterTest();
+
+        $cat = $this->getDataGenerator()->create_category();
+        $cat1 = $this->getDataGenerator()->create_category(['parent' => $cat->id]);
+        $cat2 = $this->getDataGenerator()->create_category(['parent' => $cat->id]);
+
+        $course1 = $this->getDataGenerator()->create_course(['category' => $cat1->id, 'shortname' => 'ANON1']);
+        $course2 = $this->getDataGenerator()->create_course(['category' => $cat2->id, 'shortname' => 'ANON2']);
+
+        $cohort1 = $this->getDataGenerator()->create_cohort(['contextid' => \context_coursecat::instance($cat1->id)->id]);
+
+        $result = cohort_get_cohort($cohort1->id, \context_course::instance($course2->id));
+        $this->assertFalse($result);
+
+        $result = cohort_get_cohort($cohort1->id, \context_course::instance($course2->id), true);
+        $this->assertFalse($result);
+
+        $result = cohort_get_cohort($cohort1->id, \context_course::instance($course1->id));
+        $this->assertEquals($cohort1->id, $result->id);
+
+        $result = cohort_get_cohort($cohort1->id, \context_course::instance($course1->id), true);
+        $this->assertEquals($cohort1->id, $result->id);
+    }
+
 }

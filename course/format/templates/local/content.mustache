@@ -33,8 +33,10 @@
                                     "hasname": "true"
                                 },
                                 "id": 3,
+                                "cmid": 3,
                                 "module": "forum",
-                                "extraclasses": "newmessages"
+                                "extraclasses": "newmessages",
+                                "anchor": "module-3"
                             }
                         }
                     ],
@@ -61,9 +63,11 @@
                                     "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Another forum</span></a>",
                                     "hasname": "true"
                                 },
-                                "id": 3,
+                                "id": 4,
+                                "cmid": 4,
                                 "module": "forum",
-                                "extraclasses": "newmessages"
+                                "extraclasses": "newmessages",
+                                "anchor": "module-4"
                             }
                         }
                     ],
@@ -90,8 +94,10 @@
                                     "hasname": "true"
                                 },
                                 "id": 5,
+                                "cmid": 5,
                                 "module": "forum",
-                                "extraclasses": "newmessages"
+                                "extraclasses": "newmessages",
+                                "anchor": "module-5"
                             }
                         }
                     ],
@@ -129,8 +135,8 @@
         },
         "sectionreturn": 1,
         "singlesection": {
-            "num": 1,
-            "id": 35,
+            "num": 5,
+            "id": 37,
             "header": {
                 "name": "Single Section Example",
                 "url": "#"
@@ -143,9 +149,11 @@
                                 "cmname": "<a class=\"aalink\" href=\"#\"><span class=\"instancename\">Assign example</span></a>",
                                 "hasname": "true"
                             },
-                            "id": 4,
+                            "id": 6,
+                            "cmid": 6,
                             "module": "assign",
-                            "extraclasses": ""
+                            "extraclasses": "",
+                            "anchor": "module-6"
                         }
                     }
                 ],
@@ -199,6 +207,11 @@
             {{> core_courseformat/local/content/addsection}}
         {{/ core_courseformat/local/content/addsection}}
     {{/numsections}}
+    {{#bulkedittools}}
+        {{$ core_courseformat/local/content/bulkedittools}}
+            {{> core_courseformat/local/content/bulkedittools}}
+        {{/ core_courseformat/local/content/bulkedittools}}
+    {{/bulkedittools}}
 </div>
 {{#js}}
 require(['core_courseformat/local/content'], function(component) {

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<libraries>
+  <library>
+    <location>amd/src/prism.js</location>
+    <name>PrismJS</name>
+    <description>Prism is a lightweight, robust, and elegant syntax highlighting library. It's a spin-off project from Dabblet.</description>
+    <version>1.16.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/PrismJS/prism</repository>
+    <copyrights>
+      <copyright>2012 Lea Verou</copyright>
+    </copyrights>
+  </library>
+</libraries>

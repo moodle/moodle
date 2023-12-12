@@ -41,6 +41,15 @@ if (!defined('CURL_SSLVERSION_TLSv1')) {
  */
 class repository_s3 extends repository {
 
+    /** @var string access key. */
+    protected $access_key;
+    /** @var string secret key. */
+    protected $secret_key;
+    /** @var string endpoint URL. */
+    protected $endpoint;
+    /** @var S3 S3 class. */
+    protected $s;
+
     /**
      * Constructor
      * @param int $repositoryid
@@ -143,7 +152,7 @@ class repository_s3 extends repository {
                 $folder = array(
                     'title' => $bucket,
                     'children' => array(),
-                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false),
                     'path' => $bucket
                     );
                 $tree[] = $folder;
@@ -188,8 +197,8 @@ class repository_s3 extends repository {
                     $folders[] = array(
                         'title' => $title,
                         'children' => array(),
-                        'thumbnail'=> $OUTPUT->image_url(file_folder_icon(90))->out(false),
-                        'path' => $bucket . '/' . $object['prefix']
+                        'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false),
+                        'path' => $bucket . '/' . $object['prefix'],
                     );
                 } else {
                     $files[] = array(
@@ -197,7 +206,7 @@ class repository_s3 extends repository {
                         'size' => $object['size'],
                         'datemodified' => $object['time'],
                         'source' => $bucket . '/' . $object['name'],
-                        'thumbnail' => $OUTPUT->image_url(file_extension_icon($title, 90))->out(false)
+                        'thumbnail' => $OUTPUT->image_url(file_extension_icon($title))->out(false)
                     );
                 }
             }

@@ -102,17 +102,6 @@ $capabilities = array(
         'clonepermissionsfrom' => 'mod/lti:addinstance',
     ),
 
-    // The ability to add a manual instance (i.e. not from a preconfigured tool) to the course.
-    'mod/lti:addmanualinstance' => array(
-        'captype' => 'write',
-        'contextlevel' => CONTEXT_COURSE,
-        'archetypes' => array(
-            'editingteacher' => CAP_ALLOW,
-            'manager' => CAP_ALLOW
-        ),
-        'clonepermissionsfrom' => 'mod/lti:addinstance',
-    ),
-
     // The ability to request the administrator to configure a particular
     // External tool globally.
     'mod/lti:requesttooladd' => array(
@@ -124,3 +113,10 @@ $capabilities = array(
         )
     )
 );
+$deprecatedcapabilities = [
+    // The ability to add a manual instance (i.e. not from a preconfigured tool) to the course.
+    'mod/lti:addmanualinstance' => [
+        'message' => 'Manual instance configuration is deprecated. Please create a course tool (mod/lti:addcoursetool) and ensure '.
+            'users are able to add an instance of the course tool via the activity chooser (mod/lti:addpreconfiguredinstance).'
+    ],
+];

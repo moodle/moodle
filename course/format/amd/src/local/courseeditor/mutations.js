@@ -14,6 +14,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import ajax from 'core/ajax';
+import {getString} from "core/str";
+import SRLogger from "core/local/reactive/srlogger";
+
+/**
+ * Flag to determine whether the screen reader-only logger has already been set, so we only need to set it once.
+ *
+ * @type {boolean}
+ */
+let isLoggerSet = false;
 
 /**
  * Default mutation manager
@@ -65,6 +74,11 @@ export default class {
      * @param {number} targetCmId optional target cm id (for moving actions)
      */
     async _sectionBasicAction(stateManager, action, sectionIds, targetSectionId, targetCmId) {
+        const logEntry = this._getLoggerEntry(stateManager, action, sectionIds, {
+            targetSectionId,
+            targetCmId,
+            itemType: 'section',
+        });
         const course = stateManager.get('course');
         this.sectionLock(stateManager, sectionIds, true);
         const updates = await this._callEditWebservice(
@@ -74,8 +88,10 @@ export default class {
             targetSectionId,
             targetCmId
         );
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
+        stateManager.addLoggerEntry(await logEntry);
     }
 
     /**
@@ -87,6 +103,11 @@ export default class {
      * @param {number} targetCmId optional target cm id (for moving actions)
      */
     async _cmBasicAction(stateManager, action, cmIds, targetSectionId, targetCmId) {
+        const logEntry = this._getLoggerEntry(stateManager, action, cmIds, {
+            targetSectionId,
+            targetCmId,
+            itemType: 'cm',
+        });
         const course = stateManager.get('course');
         this.cmLock(stateManager, cmIds, true);
         const updates = await this._callEditWebservice(
@@ -96,8 +117,59 @@ export default class {
             targetSectionId,
             targetCmId
         );
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.cmLock(stateManager, cmIds, false);
+        stateManager.addLoggerEntry(await logEntry);
+    }
+
+    /**
+     * Get log entry for the current action.
+     * @param {StateManager} stateManager the current state manager
+     * @param {string} action the action name
+     * @param {int[]|null} itemIds the element ids
+     * @param {Object|undefined} data extra params for the log entry
+     * @param {string|undefined} data.itemType the element type (will be taken from action if none)
+     * @param {int|null|undefined} data.targetSectionId the target section id
+     * @param {int|null|undefined} data.targetCmId the target cm id
+     * @param {String|null|undefined} data.component optional component (for format plugins)
+     * @return {Object} the log entry
+     */
+    async _getLoggerEntry(stateManager, action, itemIds, data = {}) {
+        if (!isLoggerSet) {
+            // In case the logger has not been set from init(), ensure we set the logger.
+            stateManager.setLogger(new SRLogger());
+            isLoggerSet = true;
+        }
+        const feedbackParams = {
+            action,
+            itemType: data.itemType ?? action.split('_')[0],
+        };
+        let batch = '';
+        if (itemIds.length > 1) {
+            feedbackParams.count = itemIds.length;
+            batch = '_batch';
+        } else if (itemIds.length === 1) {
+            const itemInfo = stateManager.get(feedbackParams.itemType, itemIds[0]);
+            feedbackParams.name = itemInfo.title ?? itemInfo.name;
+            // Apply shortener for modules like label.
+        }
+        if (data.targetSectionId) {
+            feedbackParams.targetSectionName = stateManager.get('section', data.targetSectionId).title;
+        }
+        if (data.targetCmId) {
+            feedbackParams.targetCmName = stateManager.get('cm', data.targetCmId).name;
+        }
+
+        const message = await getString(
+            `${action.toLowerCase()}_feedback${batch}`,
+            data.component ?? 'core_courseformat',
+            feedbackParams
+        );
+
+        return {
+            feedbackMessage: message,
+        };
     }
 
     /**
@@ -108,10 +180,13 @@ export default class {
      * @param {StateManager} stateManager the state manager
      */
     init(stateManager) {
-        // Add a method to prepare the fields when some update is comming from the server.
+        // Add a method to prepare the fields when some update is coming from the server.
         stateManager.addUpdateTypes({
             prepareFields: this._prepareFields,
         });
+        // Use the screen reader-only logger (SRLogger) to handle the feedback messages from the mutations.
+        stateManager.setLogger(new SRLogger());
+        isLoggerSet = true;
     }
 
     /**
@@ -176,6 +251,36 @@ export default class {
     }
 
     /**
+     * Duplicate course modules
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of course modules ids
+     * @param {number|undefined} targetSectionId the optional target sectionId
+     * @param {number|undefined} targetCmId the target course module id
+     */
+    async cmDuplicate(stateManager, cmIds, targetSectionId, targetCmId) {
+        const logEntry = this._getLoggerEntry(stateManager, 'cm_duplicate', cmIds);
+        const course = stateManager.get('course');
+        // Lock all target sections.
+        const sectionIds = new Set();
+        if (targetSectionId) {
+            sectionIds.add(targetSectionId);
+        } else {
+            cmIds.forEach((cmId) => {
+                const cm = stateManager.get('cm', cmId);
+                sectionIds.add(cm.sectionid);
+            });
+        }
+        this.sectionLock(stateManager, Array.from(sectionIds), true);
+
+        const updates = await this._callEditWebservice('cm_duplicate', course.id, cmIds, targetSectionId, targetCmId);
+        this.bulkReset(stateManager);
+        stateManager.processUpdates(updates);
+
+        this.sectionLock(stateManager, Array.from(sectionIds), false);
+        stateManager.addLoggerEntry(await logEntry);
+    }
+
+    /**
      * Move course modules to specific course location.
      *
      * Note that one of targetSectionId or targetCmId should be provided in order to identify the
@@ -197,6 +302,7 @@ export default class {
         const course = stateManager.get('course');
         this.cmLock(stateManager, cmids, true);
         const updates = await this._callEditWebservice('cm_move', course.id, cmids, targetSectionId, targetCmId);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.cmLock(stateManager, cmids, false);
     }
@@ -215,6 +321,26 @@ export default class {
         const course = stateManager.get('course');
         this.sectionLock(stateManager, sectionIds, true);
         const updates = await this._callEditWebservice('section_move', course.id, sectionIds, targetSectionId);
+        this.bulkReset(stateManager);
+        stateManager.processUpdates(updates);
+        this.sectionLock(stateManager, sectionIds, false);
+    }
+
+    /**
+     * Move course modules after a specific course location.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of section ids to move
+     * @param {number} targetSectionId the target section id
+     */
+    async sectionMoveAfter(stateManager, sectionIds, targetSectionId) {
+        if (!targetSectionId) {
+            throw new Error(`Mutation sectionMoveAfter requires targetSectionId`);
+        }
+        const course = stateManager.get('course');
+        this.sectionLock(stateManager, sectionIds, true);
+        const updates = await this._callEditWebservice('section_move_after', course.id, sectionIds, targetSectionId);
+        this.bulkReset(stateManager);
         stateManager.processUpdates(updates);
         this.sectionLock(stateManager, sectionIds, false);
     }
@@ -243,6 +369,21 @@ export default class {
     async sectionDelete(stateManager, sectionIds) {
         const course = stateManager.get('course');
         const updates = await this._callEditWebservice('section_delete', course.id, sectionIds);
+        this.bulkReset(stateManager);
+        stateManager.processUpdates(updates);
+    }
+
+    /**
+     * Delete cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of section ids
+     */
+    async cmDelete(stateManager, cmIds) {
+        const course = stateManager.get('course');
+        this.cmLock(stateManager, cmIds, true);
+        const updates = await this._callEditWebservice('cm_delete', course.id, cmIds);
+        this.bulkReset(stateManager);
+        this.cmLock(stateManager, cmIds, false);
         stateManager.processUpdates(updates);
     }
 
@@ -298,6 +439,33 @@ export default class {
      */
     async cmMoveLeft(stateManager, cmIds) {
         await this._cmBasicAction(stateManager, 'cm_moveleft', cmIds);
+    }
+
+    /**
+     * Set cms group mode to NOGROUPS.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmNoGroups(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_nogroups', cmIds);
+    }
+
+    /**
+     * Set cms group mode to VISIBLEGROUPS.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmVisibleGroups(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_visiblegroups', cmIds);
+    }
+
+    /**
+     * Set cms group mode to SEPARATEGROUPS.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    async cmSeparateGroups(stateManager, cmIds) {
+        await this._cmBasicAction(stateManager, 'cm_separategroups', cmIds);
     }
 
     /**
@@ -409,6 +577,17 @@ export default class {
     }
 
     /**
+     * Update the course index collapsed attribute of all sections.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {boolean} collapsed the new collapsed value
+     */
+    async allSectionsIndexCollapsed(stateManager, collapsed) {
+        const sectionIds = stateManager.getIds('section');
+        this.sectionIndexCollapsed(stateManager, sectionIds, collapsed);
+    }
+
+    /**
      * Update the course content collapsed attribute of some sections.
      *
      * @param {StateManager} stateManager the current state manager
@@ -461,6 +640,126 @@ export default class {
             }
         });
         return collapsedSectionIds;
+    }
+
+    /**
+     * Enable/disable bulk editing.
+     *
+     * Note: reenabling the bulk will clean the current selection.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {Boolean} enabled the new bulk state.
+     */
+    bulkEnable(stateManager, enabled) {
+        const state = stateManager.state;
+        stateManager.setReadOnly(false);
+        state.bulk.enabled = enabled;
+        state.bulk.selectedType = '';
+        state.bulk.selection = [];
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Reset the current selection.
+     * @param {StateManager} stateManager the current state manager
+     */
+    bulkReset(stateManager) {
+        const state = stateManager.state;
+        stateManager.setReadOnly(false);
+        state.bulk.selectedType = '';
+        state.bulk.selection = [];
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Select a list of cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    cmSelect(stateManager, cmIds) {
+        this._addIdsToSelection(stateManager, 'cm', cmIds);
+    }
+
+    /**
+     * Unselect a list of cms.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} cmIds the list of cm ids
+     */
+    cmUnselect(stateManager, cmIds) {
+        this._removeIdsFromSelection(stateManager, 'cm', cmIds);
+    }
+
+    /**
+     * Select a list of sections.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of cm ids
+     */
+    sectionSelect(stateManager, sectionIds) {
+        this._addIdsToSelection(stateManager, 'section', sectionIds);
+    }
+
+    /**
+     * Unselect a list of sections.
+     * @param {StateManager} stateManager the current state manager
+     * @param {array} sectionIds the list of cm ids
+     */
+    sectionUnselect(stateManager, sectionIds) {
+        this._removeIdsFromSelection(stateManager, 'section', sectionIds);
+    }
+
+    /**
+     * Add some ids to the current bulk selection.
+     * @param {StateManager} stateManager the current state manager
+     * @param {String} typeName the type name (section/cm)
+     * @param {array} ids the list of ids
+     */
+    _addIdsToSelection(stateManager, typeName, ids) {
+        const bulk = stateManager.state.bulk;
+        if (!bulk?.enabled) {
+            throw new Error(`Bulk is not enabled`);
+        }
+        if (bulk?.selectedType !== "" && bulk?.selectedType !== typeName) {
+            throw new Error(`Cannot add ${typeName} to the current selection`);
+        }
+
+        // Stored ids are strings for compatability with HTML data attributes.
+        ids = ids.map(value => value.toString());
+
+        stateManager.setReadOnly(false);
+        bulk.selectedType = typeName;
+        const newSelection = new Set([...bulk.selection, ...ids]);
+        bulk.selection = [...newSelection];
+        stateManager.setReadOnly(true);
+    }
+
+    /**
+     * Remove some ids to the current bulk selection.
+     *
+     * The method resets the selection type if the current selection is empty.
+     *
+     * @param {StateManager} stateManager the current state manager
+     * @param {String} typeName the type name (section/cm)
+     * @param {array} ids the list of ids
+     */
+    _removeIdsFromSelection(stateManager, typeName, ids) {
+        const bulk = stateManager.state.bulk;
+        if (!bulk?.enabled) {
+            throw new Error(`Bulk is not enabled`);
+        }
+        if (bulk?.selectedType !== "" && bulk?.selectedType !== typeName) {
+            throw new Error(`Cannot remove ${typeName} from the current selection`);
+        }
+
+        // Stored ids are strings for compatability with HTML data attributes.
+        ids = ids.map(value => value.toString());
+
+        stateManager.setReadOnly(false);
+        const IdsToFilter = new Set(ids);
+        bulk.selection = bulk.selection.filter(current => !IdsToFilter.has(current));
+        if (bulk.selection.length === 0) {
+            bulk.selectedType = '';
+        }
+        stateManager.setReadOnly(true);
     }
 
     /**

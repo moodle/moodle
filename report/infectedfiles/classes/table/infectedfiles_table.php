@@ -37,6 +37,10 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class infectedfiles_table extends \table_sql implements \renderable {
+
+    /** @var int current page. */
+    protected $page;
+
     /**
      * Table constructor
      *
@@ -243,7 +247,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
         // Delete All.
         $deleteallparams = ['action' => 'deleteall', 'sesskey' => sesskey()];
         $deleteallurl = new \moodle_url($managefilepage, $deleteallparams);
-        $deletebutton = new \single_button($deleteallurl, get_string('deleteall'), 'post', true);
+        $deletebutton = new \single_button($deleteallurl, get_string('deleteall'), 'post', \single_button::BUTTON_PRIMARY);
         $deletebutton->add_confirm_action(get_string('confirmdeleteall', 'report_infectedfiles'));
         echo $OUTPUT->render($deletebutton);
 
@@ -252,7 +256,7 @@ class infectedfiles_table extends \table_sql implements \renderable {
         // Download All.
         $downloadallparams = ['action' => 'downloadall', 'sesskey' => sesskey()];
         $downloadallurl = new \moodle_url($managefilepage, $downloadallparams);
-        $downloadbutton = new \single_button($downloadallurl, get_string('downloadall'), 'post', true);
+        $downloadbutton = new \single_button($downloadallurl, get_string('downloadall'), 'post', \single_button::BUTTON_PRIMARY);
         $downloadbutton->add_confirm_action(get_string('confirmdownloadall', 'report_infectedfiles'));
         echo $OUTPUT->render($downloadbutton);
     }

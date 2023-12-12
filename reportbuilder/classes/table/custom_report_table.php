@@ -23,7 +23,7 @@ use html_writer;
 use moodle_exception;
 use moodle_url;
 use stdClass;
-use core_reportbuilder\manager;
+use core_reportbuilder\{datasource, manager};
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\output\column_aggregation_editable;
@@ -37,6 +37,9 @@ use core_reportbuilder\output\column_heading_editable;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class custom_report_table extends base_report_table {
+
+    /** @var datasource $report */
+    protected $report;
 
     /** @var string Unique ID prefix for the table */
     private const UNIQUEID_PREFIX = 'custom-report-table-';

@@ -21,6 +21,7 @@ use core\task\manager;
 use testing_data_generator;
 use tool_dataprivacy\local\helper;
 use tool_dataprivacy\task\process_data_request_task;
+use tool_dataprivacy\task\initiate_data_request_task;
 
 /**
  * API tests.
@@ -273,6 +274,55 @@ class api_test extends \advanced_testcase {
     }
 
     /**
+     * Test for api::approve_data_request() when allow filtering of exports by course.
+     */
+    public function test_approve_data_request_with_allow_filtering() {
+        global $DB;
+        $this->resetAfterTest();
+        set_config('allowfiltering', 1, 'tool_dataprivacy');
+        $this->setAdminUser();
+
+        $generator = new testing_data_generator();
+        $s1 = $generator->create_user();
+        $u1 = $generator->create_user();
+
+        $context = \context_system::instance();
+
+        // Manager role.
+        $managerroleid = $DB->get_field('role', 'id', array('shortname' => 'manager'));
+        // Give the manager role with the capability to manage data requests.
+        assign_capability('tool/dataprivacy:managedatarequests', CAP_ALLOW, $managerroleid, $context->id, true);
+        // Assign u1 as a manager.
+        role_assign($managerroleid, $u1->id, $context->id);
+
+        // Map the manager role to the DPO role.
+        set_config('dporoles', $managerroleid, 'tool_dataprivacy');
+
+        $course = $this->getDataGenerator()->create_course([]);
+
+        $coursecontext1 = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($s1->id, $course->id, 'student');
+
+        $datarequest = api::create_data_request($s1->id, api::DATAREQUEST_TYPE_EXPORT);
+        $requestid = $datarequest->get('id');
+        ob_start();
+        $this->runAdhocTasks('tool_dataprivacy\task\initiate_data_request_task');
+        ob_end_clean();
+
+        $this->setUser($u1);
+        $result = api::approve_data_request($requestid, [$coursecontext1]);
+        $this->assertTrue($result);
+        $datarequest = new data_request($requestid);
+        $this->assertEquals($u1->id, $datarequest->get('dpo'));
+        $this->assertEquals(api::DATAREQUEST_STATUS_APPROVED, $datarequest->get('status'));
+
+        // Test adhoc task creation.
+        $adhoctasks = manager::get_adhoc_tasks(process_data_request_task::class);
+        $this->assertCount(1, $adhoctasks);
+    }
+
+    /**
      * Test for api::approve_data_request() when called by a user who doesn't have the DPO role.
      */
     public function test_approve_data_request_non_dpo_user() {
@@ -292,6 +342,44 @@ class api_test extends \advanced_testcase {
         $this->setUser($teacher);
         $this->expectException(\required_capability_exception::class);
         api::approve_data_request($requestid);
+    }
+
+    /**
+     * Test for api::add_request_contexts_with_status().
+     */
+    public function test_add_request_contexts_with_status() {
+        global $DB;
+        $this->resetAfterTest();
+        set_config('allowfiltering', 1, 'tool_dataprivacy');
+
+        $this->setAdminUser();
+        $user = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course(['startdate' => time() - YEARSECS, 'enddate' => time() - YEARSECS]);
+        $coursecontext = \context_course::instance($course->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        // Create the initial contextlist.
+        $initialcollection = new \core_privacy\local\request\contextlist_collection($user->id);
+
+        $contextlist = new \core_privacy\local\request\contextlist();
+        $contextlist->add_from_sql('SELECT id FROM {context} WHERE id = :contextid', ['contextid' => $coursecontext->id]);
+        $contextlist->set_component('tool_dataprivacy');
+        $initialcollection->add_contextlist($contextlist);
+
+        $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT);
+        $requestid = $datarequest->get('id');
+
+        ob_start();
+        api::add_request_contexts_with_status($initialcollection, $requestid, contextlist_context::STATUS_PENDING);
+        ob_end_clean();
+
+        $result = $DB->get_record('tool_dataprivacy_ctxlst_ctx', ['contextid' => $coursecontext->id]);
+        $this->assertEquals($result->status, contextlist_context::STATUS_PENDING);
+
+        $result1 = $DB->get_field('tool_dataprivacy_rqst_ctxlst', 'requestid', ['contextlistid' => $result->contextlistid]);
+        $this->assertEquals($result1, $requestid);
     }
 
     /**
@@ -549,35 +637,39 @@ class api_test extends \advanced_testcase {
         return [
             'Export request by user, automatic approval off' => [
                 false, api::DATAREQUEST_TYPE_EXPORT, 'automaticdataexportapproval', false, 0,
-                api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0
+                api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0, 0
             ],
             'Export request by user, automatic approval on' => [
                 false, api::DATAREQUEST_TYPE_EXPORT, 'automaticdataexportapproval', true, 0,
-                api::DATAREQUEST_STATUS_APPROVED, 1
+                api::DATAREQUEST_STATUS_APPROVED, 1 , 0
             ],
             'Export request by PO, automatic approval off' => [
                 true, api::DATAREQUEST_TYPE_EXPORT, 'automaticdataexportapproval', false, 0,
-                api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0
+                api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0, 0
+            ],
+            'Export request by PO, automatic approval off, allow filtering of exports by course' => [
+                    true, api::DATAREQUEST_TYPE_EXPORT, 'automaticdataexportapproval', false, 0,
+                    api::DATAREQUEST_STATUS_PENDING, 0, 1
             ],
             'Export request by PO, automatic approval on' => [
                 true, api::DATAREQUEST_TYPE_EXPORT, 'automaticdataexportapproval', true, 'dpo',
-                api::DATAREQUEST_STATUS_APPROVED, 1
+                api::DATAREQUEST_STATUS_APPROVED, 1, 0
             ],
             'Delete request by user, automatic approval off' => [
                 false, api::DATAREQUEST_TYPE_DELETE, 'automaticdatadeletionapproval', false, 0,
-                api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0
+                api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0, 0
             ],
             'Delete request by user, automatic approval on' => [
                 false, api::DATAREQUEST_TYPE_DELETE, 'automaticdatadeletionapproval', true, 0,
-                api::DATAREQUEST_STATUS_APPROVED, 1
+                api::DATAREQUEST_STATUS_APPROVED, 1, 0
             ],
             'Delete request by PO, automatic approval off' => [
                 true, api::DATAREQUEST_TYPE_DELETE, 'automaticdatadeletionapproval', false, 0,
-                api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0
+                api::DATAREQUEST_STATUS_AWAITING_APPROVAL, 0, 0
             ],
             'Delete request by PO, automatic approval on' => [
                 true, api::DATAREQUEST_TYPE_DELETE, 'automaticdatadeletionapproval', true, 'dpo',
-                api::DATAREQUEST_STATUS_APPROVED, 1
+                api::DATAREQUEST_STATUS_APPROVED, 1, 0
             ],
         ];
     }
@@ -595,11 +687,20 @@ class api_test extends \advanced_testcase {
      *                                   someone else and automatic data request approval is turned on.
      * @param int $expectedstatus The expected status of the data request.
      * @param int $expectedtaskcount The number of expected queued data requests tasks.
+     * @param bool $allowfiltering Whether allow filtering of exports by course turn on or off.
      * @throws coding_exception
      * @throws invalid_persistent_exception
      */
-    public function test_create_data_request($asprivacyofficer, $type, $setting, $automaticapproval, $expecteddpoval,
-                                             $expectedstatus, $expectedtaskcount) {
+    public function test_create_data_request(
+        $asprivacyofficer,
+        $type,
+        $setting,
+        $automaticapproval,
+        $expecteddpoval,
+        $expectedstatus,
+        $expectedtaskcount,
+        $allowfiltering,
+    ) {
         global $USER;
 
         $this->resetAfterTest();
@@ -622,6 +723,9 @@ class api_test extends \advanced_testcase {
         if ($expecteddpoval === 'dpo') {
             $expecteddpoval = $USER->id;
         }
+        if ($allowfiltering) {
+            set_config('allowfiltering', 1, 'tool_dataprivacy');
+        }
 
         // Test data request creation.
         $datarequest = api::create_data_request($user->id, $type, $comment);
@@ -636,6 +740,12 @@ class api_test extends \advanced_testcase {
         // Test number of queued data request tasks.
         $datarequesttasks = manager::get_adhoc_tasks(process_data_request_task::class);
         $this->assertCount($expectedtaskcount, $datarequesttasks);
+
+        if ($allowfiltering) {
+            // Test number of queued initiate data request tasks.
+            $datarequesttasks = manager::get_adhoc_tasks(initiate_data_request_task::class);
+            $this->assertCount(1, $datarequesttasks);
+        }
     }
 
     /**
@@ -837,6 +947,54 @@ class api_test extends \advanced_testcase {
                 }
             }
         }
+    }
+
+    /**
+     * Test for api::get_approved_contextlist_collection_for_request.
+     */
+    public function test_get_approved_contextlist_collection_for_request() {
+        $this->resetAfterTest();
+        set_config('allowfiltering', 1, 'tool_dataprivacy');
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course([]);
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+
+        $record = new \stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $generator->create_discussion($record);
+
+        $generator->create_discussion($record);
+
+        $coursecontext1 = \context_course::instance($course->id);
+
+        $forumcontext1 = \context_module::instance($forum->cmid);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT);
+
+        ob_start();
+        $this->runAdhocTasks('tool_dataprivacy\task\initiate_data_request_task');
+        ob_end_clean();
+
+        api::approve_contexts_belonging_to_request($datarequest->get('id'), [$coursecontext1->id]);
+        $contextlistcollection = api::get_approved_contextlist_collection_for_request($datarequest);
+        $approvecontexts = [];
+        foreach ($contextlistcollection->get_contextlists() as $contextlist) {
+            foreach ($contextlist->get_contextids() as $contextid) {
+                $approvecontexts[] = $contextid;
+            }
+        }
+        $this->assertContains(strval($coursecontext1->id), $approvecontexts);
+        $this->assertContains(strval($forumcontext1->id), $approvecontexts);
     }
 
     /**
@@ -2396,5 +2554,159 @@ class api_test extends \advanced_testcase {
         }
 
         $this->assertEquals($expected, api::is_automatic_request_approval_on($type));
+    }
+
+    /**
+     * Test approve part of context list before export if filtering of exports by course is allowed.
+     */
+    public function test_approve_contexts_belonging_to_request(): void {
+        global $DB;
+        set_config('allowfiltering', 1, 'tool_dataprivacy');
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course([]);
+        $course2 = $this->getDataGenerator()->create_course([]);
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+        $forum2 = $this->getDataGenerator()->create_module('forum', ['course' => $course2->id]);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+
+        $record = new \stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $generator->create_discussion($record);
+
+        $record->course = $course2->id;
+        $record->forum = $forum2->id;
+        $generator->create_discussion($record);
+
+        $coursecontext1 = \context_course::instance($course->id);
+        $coursecontext2 = \context_course::instance($course2->id);
+
+        $forumcontext1 = \context_module::instance($forum->cmid);
+        $forumcontext2 = \context_module::instance($forum2->cmid);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id, 'student');
+
+        $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT);
+
+        ob_start();
+        $this->runAdhocTasks('tool_dataprivacy\task\initiate_data_request_task');
+        ob_end_clean();
+
+        $contextcount = $DB->count_records('tool_dataprivacy_ctxlst_ctx');
+        api::approve_contexts_belonging_to_request($datarequest->get('id'), [$coursecontext1->id]);
+        $items = $DB->get_records('tool_dataprivacy_ctxlst_ctx',  null, '', 'id, contextid, status');
+
+        $approvecontexts = [];
+        $rejectedcontext = [];
+        foreach ($items as $item) {
+            if ($item->status == contextlist_context::STATUS_APPROVED) {
+                $approvecontexts[] = $item->contextid;
+            }
+            if ($item->status == contextlist_context::STATUS_REJECTED) {
+                $rejectedcontext[] = $item->contextid;
+            }
+        }
+
+        // Check no pending context left.
+        $this->assertEquals($contextcount, count($approvecontexts) + count($rejectedcontext));
+
+        $this->assertContains(strval($coursecontext1->id), $approvecontexts);
+        $this->assertContains(strval($forumcontext1->id), $approvecontexts);
+        $this->assertContains(strval($coursecontext2->id), $rejectedcontext);
+        $this->assertContains(strval($forumcontext2->id), $rejectedcontext);
+    }
+
+    /**
+     * Test update request contexts with status.
+     */
+    public function test_update_request_contexts_with_status(): void {
+        global $DB;
+        set_config('allowfiltering', 1, 'tool_dataprivacy');
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course([]);
+
+        $forum = $this->getDataGenerator()->create_module('forum', ['course' => $course->id]);
+
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_forum');
+
+        $record = new \stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+        $record->forum = $forum->id;
+        $generator->create_discussion($record);
+
+        $coursecontext = \context_course::instance($course->id);
+
+        $forumcontext = \context_module::instance($forum->cmid);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+
+        $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT);
+
+        ob_start();
+        $this->runAdhocTasks('tool_dataprivacy\task\initiate_data_request_task');
+        ob_end_clean();
+
+        $requestid = $datarequest->get("id");
+
+        api::update_request_contexts_with_status($requestid, contextlist_context::STATUS_APPROVED);
+        // Test all request contexts is updated with status approved.
+        $results = $DB->get_records(contextlist_context::TABLE, ['contextid' => $coursecontext->id]);
+        foreach ($results as $result) {
+            $this->assertEquals($result->status, contextlist_context::STATUS_APPROVED);
+        }
+        $results = $DB->get_records(contextlist_context::TABLE, ['contextid' => $forumcontext->id]);
+        foreach ($results as $result) {
+            $this->assertEquals($result->status, contextlist_context::STATUS_APPROVED);
+        }
+    }
+
+    /**
+     * Test api get_course_contexts_for_view_filter.
+     */
+    public function test_get_course_contexts_for_view_filter(): void {
+        set_config('allowfiltering', 1, 'tool_dataprivacy');
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $user = $this->getDataGenerator()->create_user();
+
+        $course = $this->getDataGenerator()->create_course([]);
+        $course2 = $this->getDataGenerator()->create_course([]);
+
+        $record = new \stdClass();
+        $record->course = $course->id;
+        $record->userid = $user->id;
+
+        $coursecontext1 = \context_course::instance($course->id);
+        $coursecontext2 = \context_course::instance($course2->id);
+
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id, 'student');
+
+        $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT);
+
+        ob_start();
+        $this->runAdhocTasks('tool_dataprivacy\task\initiate_data_request_task');
+        ob_end_clean();
+
+        api::approve_contexts_belonging_to_request($datarequest->get('id'), [$coursecontext1->id]);
+        $requestid = $datarequest->get('id');
+
+        $result = api::get_course_contexts_for_view_filter($requestid);
+        $this->assertContains($coursecontext1, $result);
+        $this->assertContains($coursecontext2, $result);
     }
 }

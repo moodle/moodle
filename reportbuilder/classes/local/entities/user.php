@@ -144,18 +144,7 @@ class user extends base {
      * @return string[]
      */
     public function get_tag_joins(): array {
-        $user = $this->get_table_alias('user');
-        $taginstance = $this->get_table_alias('tag_instance');
-        $tag = $this->get_table_alias('tag');
-
-        return [
-            "LEFT JOIN {tag_instance} {$taginstance}
-                    ON {$taginstance}.component = 'core'
-                   AND {$taginstance}.itemtype = 'user'
-                   AND {$taginstance}.itemid = {$user}.id",
-            "LEFT JOIN {tag} {$tag}
-                    ON {$tag}.id = {$taginstance}.tagid",
-        ];
+        return $this->get_tag_joins_for_entity('core', 'user', $this->get_table_alias('user') . '.id');
     }
 
     /**

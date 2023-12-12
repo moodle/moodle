@@ -25,6 +25,9 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\output\navigation_panel_review;
+use mod_quiz\output\renderer;
+use mod_quiz\quiz_attempt;
 
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
@@ -35,7 +38,7 @@ $page      = optional_param('page', 0, PARAM_INT);
 $showall   = optional_param('showall', null, PARAM_BOOL);
 $cmid      = optional_param('cmid', null, PARAM_INT);
 
-$url = new moodle_url('/mod/quiz/review.php', array('attempt'=>$attemptid));
+$url = new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptid]);
 if ($page !== 0) {
     $url->param('page', $page);
 } else if ($showall) {
@@ -76,7 +79,7 @@ if ($attemptobj->is_own_attempt()) {
     }
 
 } else if (!$attemptobj->is_review_allowed()) {
-    throw new moodle_quiz_exception($attemptobj->get_quizobj(), 'noreviewattempt');
+    throw new moodle_exception('noreviewattempt', 'quiz', $attemptobj->view_url());
 }
 
 // Load the questions and states needed by this page.
@@ -132,58 +135,58 @@ if ($attempt->state == quiz_attempt::FINISHED) {
 }
 
 // Prepare summary informat about the whole attempt.
-$summarydata = array();
+$summarydata = [];
 if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $USER->id) {
     // If showuserpicture is true, the picture is shown elsewhere, so don't repeat it.
-    $student = $DB->get_record('user', array('id' => $attemptobj->get_userid()));
+    $student = $DB->get_record('user', ['id' => $attemptobj->get_userid()]);
     $userpicture = new user_picture($student);
     $userpicture->courseid = $attemptobj->get_courseid();
-    $summarydata['user'] = array(
+    $summarydata['user'] = [
         'title'   => $userpicture,
-        'content' => new action_link(new moodle_url('/user/view.php', array(
-                                'id' => $student->id, 'course' => $attemptobj->get_courseid())),
+        'content' => new action_link(new moodle_url('/user/view.php', [
+                                'id' => $student->id, 'course' => $attemptobj->get_courseid()]),
                           fullname($student, true)),
-    );
+    ];
 }
 
 if ($attemptobj->has_capability('mod/quiz:viewreports')) {
     $attemptlist = $attemptobj->links_to_other_attempts($attemptobj->review_url(null, $page,
             $showall));
     if ($attemptlist) {
-        $summarydata['attemptlist'] = array(
+        $summarydata['attemptlist'] = [
             'title'   => get_string('attempts', 'quiz'),
             'content' => $attemptlist,
-        );
+        ];
     }
 }
 
 // Timing information.
-$summarydata['startedon'] = array(
+$summarydata['startedon'] = [
     'title'   => get_string('startedon', 'quiz'),
     'content' => userdate($attempt->timestart),
-);
+];
 
-$summarydata['state'] = array(
+$summarydata['state'] = [
     'title'   => get_string('attemptstate', 'quiz'),
     'content' => quiz_attempt::state_name($attempt->state),
-);
+];
 
 if ($attempt->state == quiz_attempt::FINISHED) {
-    $summarydata['completedon'] = array(
+    $summarydata['completedon'] = [
         'title'   => get_string('completedon', 'quiz'),
         'content' => userdate($attempt->timefinish),
-    );
-    $summarydata['timetaken'] = array(
+    ];
+    $summarydata['timetaken'] = [
         'title'   => get_string('timetaken', 'quiz'),
         'content' => $timetaken,
-    );
+    ];
 }
 
 if (!empty($overtime)) {
-    $summarydata['overdue'] = array(
+    $summarydata['overdue'] = [
         'title'   => get_string('overdue', 'quiz'),
         'content' => $overtime,
-    );
+    ];
 }
 
 // Show marks (if the user is allowed to see marks at the moment).
@@ -194,10 +197,10 @@ if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades
         // Cannot display grade.
 
     } else if (is_null($grade)) {
-        $summarydata['grade'] = array(
+        $summarydata['grade'] = [
             'title'   => get_string('grade', 'quiz'),
             'content' => quiz_format_grade($quiz, $grade),
-        );
+        ];
 
     } else {
         // Show raw marks only if they are different from the grade (like on the view page).
@@ -205,10 +208,10 @@ if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades
             $a = new stdClass();
             $a->grade = quiz_format_grade($quiz, $attempt->sumgrades);
             $a->maxgrade = quiz_format_grade($quiz, $quiz->sumgrades);
-            $summarydata['marks'] = array(
+            $summarydata['marks'] = [
                 'title'   => get_string('marks', 'quiz'),
                 'content' => get_string('outofshort', 'quiz', $a),
-            );
+            ];
         }
 
         // Now the scaled grade.
@@ -225,10 +228,10 @@ if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades
         } else {
             $formattedgrade = get_string('outof', 'quiz', $a);
         }
-        $summarydata['grade'] = array(
+        $summarydata['grade'] = [
             'title'   => get_string('grade', 'quiz'),
             'content' => $formattedgrade,
-        );
+        ];
     }
 }
 
@@ -238,10 +241,10 @@ $summarydata = array_merge($summarydata, $attemptobj->get_additional_summary_dat
 // Feedback if there is any, and the user is allowed to see it now.
 $feedback = $attemptobj->get_overall_feedback($grade);
 if ($options->overallfeedback && $feedback) {
-    $summarydata['feedback'] = array(
+    $summarydata['feedback'] = [
         'title'   => get_string('feedback', 'quiz'),
         'content' => $feedback,
-    );
+    ];
 }
 
 // Summary table end. ==============================================================================
@@ -254,10 +257,11 @@ if ($showall) {
     $lastpage = $attemptobj->is_last_page($page);
 }
 
+/** @var renderer $output */
 $output = $PAGE->get_renderer('mod_quiz');
 
 // Arrange for the navigation to be displayed.
-$navbc = $attemptobj->get_navigation_panel($output, 'quiz_review_nav_panel', $page, $showall);
+$navbc = $attemptobj->get_navigation_panel($output, navigation_panel_review::class, $page, $showall);
 $regions = $PAGE->blocks->get_regions();
 $PAGE->blocks->add_fake_block($navbc, reset($regions));
 

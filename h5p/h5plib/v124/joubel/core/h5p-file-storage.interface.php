@@ -20,6 +20,13 @@ interface H5PFileStorage {
   public function saveLibrary($library);
 
   /**
+   * Delete library folder
+   *
+   * @param array $library
+   */
+  public function deleteLibrary($library);
+
+  /**
    * Store the content folder.
    *
    * @param string $source

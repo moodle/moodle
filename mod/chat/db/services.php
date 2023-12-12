@@ -96,4 +96,13 @@ $functions = array(
         'type'          => 'read',
         'services'      => array(MOODLE_OFFICIAL_MOBILE_SERVICE)
     ),
+
+    'mod_chat_view_sessions' => [
+        'classname'     => 'mod_chat\external\view_sessions',
+        'methodname'    => 'execute',
+        'description'   => 'Trigger the chat session viewed event.',
+        'type'          => 'write',
+        'capabilities'  => 'mod/chat:readlog',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE]
+    ],
 );

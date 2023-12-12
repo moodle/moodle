@@ -22,8 +22,7 @@
  */
 
 use core_user\output\myprofile\tree;
-
-defined('MOODLE_INTERNAL') || die();
+use tool_dataprivacy\form\exportfilter_form;
 
 /**
  * Add nodes to myprofile page.
@@ -278,4 +277,25 @@ function tool_dataprivacy_pluginfile($course, $cm, $context, $filearea, $args, $
     } else {
         send_file_not_found();
     }
+}
+
+/**
+ * Fragment to add a select course.
+ *
+ * @param array $args The fragment arguments.
+ * @return string The rendered mform fragment.
+ */
+function tool_dataprivacy_output_fragment_selectcourses_form(array $args): string {
+    $args = (object)$args;
+
+    $context = context_system::instance();
+    require_capability('tool/dataprivacy:managedatarequests', $context);
+
+    if (!empty($args->jsonformdata)) {
+        $serialiseddata = json_decode($args->jsonformdata);
+    }
+
+    $mform = new exportfilter_form(null, ['requestid' => $serialiseddata->requestid]);
+
+    return $mform->render();
 }

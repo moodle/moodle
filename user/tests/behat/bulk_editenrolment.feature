@@ -49,6 +49,26 @@ Feature: Bulk enrolments
     And I should see "3 unenrolled users"
 
   @javascript
+  Scenario: Bulk delete enrolments when user is themselves enrolled
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I navigate to course participants
+    And I click on "Select all" "checkbox"
+    And I set the field "With selected users..." to "Delete selected user enrolments"
+    Then I should see "User \"Teacher 1\" was removed from the selection."
+    And the following should exist in the "generaltable" table:
+      | Name      | Status |
+      | Student 1 | Active |
+      | Student 2 | Active |
+    And I should not see "Teacher 1" in the "generaltable" "table"
+    And I press "Unenrol users"
+    And I should see "2 unenrolled users"
+    And I should see "User \"Teacher 1\" was removed from the selection."
+    And I should see "Teacher 1" in the "participants" "table"
+    And I should not see "Student 1" in the "participants" "table"
+    And I should not see "Student 2" in the "participants" "table"
+
+  @javascript
   Scenario: Bulk edit enrolment for deleted user
     When I log in as "admin"
     And I navigate to "Users > Accounts > Bulk user actions" in site administration

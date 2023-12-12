@@ -16,6 +16,8 @@
 
 namespace core_search;
 
+use stdClass;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;

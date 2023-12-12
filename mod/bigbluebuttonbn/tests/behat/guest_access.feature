@@ -30,7 +30,7 @@ Feature: Guest access allows external users to connect to a meeting
       | bigbluebuttonbn_guestaccess_enabled | 1 |
     When I am on the "RoomRecordings" "bigbluebuttonbn activity editing" page logged in as "admin"
     Then I should see "Guest access"
-    Then I click on "Expand all" "link"
+    And I click on "Expand all" "link" in the "region-main" "region"
     Then I should see "Allow guest access"
     And I should not see "Meeting link"
     And I should not see "Meeting password"

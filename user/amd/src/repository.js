@@ -20,7 +20,59 @@
  * @copyright  2020 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 import {call as fetchMany} from 'core/ajax';
+
+/**
+ * Get single user preference
+ *
+ * @param {String} name Name of the preference
+ * @param {Number} userid User ID (defaults to current user)
+ * @return {Promise}
+ */
+export const getUserPreference = (name, userid = 0) => {
+    return getUserPreferences(name, userid)
+        .then(response => response.preferences[0].value);
+};
+
+/**
+ * Get multiple user preferences
+ *
+ * @param {String|null} name Name of the preference (omit if you want to retrieve all)
+ * @param {Number} userid User ID (defaults to current user)
+ * @return {Promise}
+ */
+export const getUserPreferences = (name = null, userid = 0) => {
+    return fetchMany([{
+        methodname: 'core_user_get_user_preferences',
+        args: {name, userid}
+    }])[0];
+};
+
+/**
+ * Set single user preference
+ *
+ * @param {String} name Name of the preference
+ * @param {String|null} value Value of the preference (omit if you want to remove the current value)
+ * @param {Number} userid User ID (defaults to current user)
+ * @return {Promise}
+ */
+export const setUserPreference = (name, value = null, userid = 0) => {
+    return setUserPreferences([{name, value, userid}]);
+};
+
+/**
+ * Set multiple user preferences
+ *
+ * @param {Object[]} preferences Array of preferences containing name/value/userid attributes
+ * @return {Promise}
+ */
+export const setUserPreferences = (preferences) => {
+    return fetchMany([{
+        methodname: 'core_user_set_user_preferences',
+        args: {preferences}
+    }])[0];
+};
 
 /**
  * Unenrol the user with the specified user enrolmentid ID.

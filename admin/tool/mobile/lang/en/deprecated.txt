@@ -1,2 +1,0 @@
-mobileappconnected,tool_mobile
-openusingembeddedbrowser,tool_mobile

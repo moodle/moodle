@@ -78,26 +78,39 @@ class content_item_readonly_repository_test extends \advanced_testcase {
      */
     public function test_find_all() {
         $this->resetAfterTest();
-        global $DB;
 
-        // We'll compare our results to those which are course-specific.
+        global $DB, $CFG;
+        require_once($CFG->dirroot . '/mod/lti/tests/generator/lib.php');
+        require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
+        // We'll compare our results to those which are course-specific, using mod_lti as an example.
         $course = $this->getDataGenerator()->create_course();
         $user = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+        /** @var \mod_lti_generator $ltigenerator */
+        $ltigenerator = $this->getDataGenerator()->get_plugin_generator('mod_lti');
+        $ltigenerator->create_tool_types([
+            'name' => 'site tool',
+            'baseurl' => 'http://example.com',
+            'coursevisible' => LTI_COURSEVISIBLE_ACTIVITYCHOOSER,
+            'state' => LTI_TOOL_STATE_CONFIGURED
+        ]);
         $teacherrole = $DB->get_record('role', array('shortname' => 'editingteacher'));
-        assign_capability('mod/lti:addmanualinstance', CAP_PROHIBIT, $teacherrole->id, \context_course::instance($course->id));
+        assign_capability('mod/lti:addpreconfiguredinstance', CAP_PROHIBIT, $teacherrole->id,
+            \core\context\course::instance($course->id));
         $cir = new content_item_readonly_repository();
+        $this->setUser($user); // This is needed since the underlying lti code needs the global user despite the api accepting user.
 
-        // Course specific - lti won't be returned as the user doesn't have the required cap.
+        // Course specific - the tool won't be returned as the user doesn't have the capability required to use preconfigured tools.
         $forcourse = $cir->find_all_for_course($course, $user);
         $forcourse = array_filter($forcourse, function($contentitem) {
-            return $contentitem->get_name() === 'lti';
+            return str_contains($contentitem->get_name(), 'lti_type');
         });
         $this->assertEmpty($forcourse);
 
-        // All - all items are returned, including lti.
+        // All - all items are returned, including the lti site tool.
         $all = $cir->find_all();
         $all = array_filter($all, function($contentitem) {
-            return $contentitem->get_name() === 'lti';
+            return str_contains($contentitem->get_name(), 'lti_type');
         });
         $this->assertCount(1, $all);
     }

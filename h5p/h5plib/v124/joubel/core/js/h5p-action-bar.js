@@ -35,11 +35,15 @@ H5P.ActionBar = (function ($, EventDispatcher) {
       var handler = function () {
         self.trigger(type);
       };
-      H5P.jQuery('<li/>', {
+
+      const $actionList = H5P.jQuery('<li/>', {
         'class': 'h5p-button h5p-noselect h5p-' + (customClass ? customClass : type),
-        role: 'button',
+        appendTo: $actions
+      });
+
+      const $actionButton = H5P.jQuery('<button/>', {
         tabindex: 0,
-        title: H5P.t(type + 'Description'),
+        'aria-label': H5P.t(type + 'Description'),
         html: H5P.t(type),
         on: {
           click: handler,
@@ -50,8 +54,10 @@ H5P.ActionBar = (function ($, EventDispatcher) {
             }
           }
         },
-        appendTo: $actions
+        appendTo: $actionList
       });
+
+      H5P.Tooltip($actionButton.get(0));
 
       hasActions = true;
     };
@@ -69,7 +75,8 @@ H5P.ActionBar = (function ($, EventDispatcher) {
     }
     if (displayOptions.icon) {
       // Add about H5P button icon
-      H5P.jQuery('<li><a class="h5p-link" href="http://h5p.org" target="_blank" title="' + H5P.t('h5pDescription') + '"></a></li>').appendTo($actions);
+      const $h5pLogo = H5P.jQuery('<li><a class="h5p-link" href="http://h5p.org" target="_blank" aria-label="' + H5P.t('h5pDescription') + '"></a></li>').appendTo($actions);
+      H5P.Tooltip($h5pLogo.find('.h5p-link').get(0));
       hasActions = true;
     }
 

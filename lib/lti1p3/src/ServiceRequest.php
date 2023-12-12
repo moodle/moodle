@@ -7,6 +7,7 @@ use Packback\Lti1p3\Interfaces\IServiceRequest;
 class ServiceRequest implements IServiceRequest
 {
     // Request methods
+    public const METHOD_DELETE = 'DELETE';
     public const METHOD_GET = 'GET';
     public const METHOD_POST = 'POST';
     public const METHOD_PUT = 'PUT';
@@ -14,21 +15,25 @@ class ServiceRequest implements IServiceRequest
     // Request types
     public const TYPE_UNSUPPORTED = 'unsupported';
     public const TYPE_AUTH = 'auth';
+
     // MessageLaunch
     public const TYPE_GET_KEYSET = 'get_keyset';
+
     // AGS
     public const TYPE_GET_GRADES = 'get_grades';
     public const TYPE_SYNC_GRADE = 'sync_grades';
     public const TYPE_CREATE_LINEITEM = 'create_lineitem';
+    public const TYPE_DELETE_LINEITEM = 'delete_lineitem';
     public const TYPE_GET_LINEITEMS = 'get_lineitems';
     public const TYPE_GET_LINEITEM = 'get_lineitem';
     public const TYPE_UPDATE_LINEITEM = 'update_lineitem';
+
     // CGS
     public const TYPE_GET_GROUPS = 'get_groups';
     public const TYPE_GET_SETS = 'get_sets';
+
     // NRPS
     public const TYPE_GET_MEMBERSHIPS = 'get_memberships';
-
     private $method;
     private $url;
     private $type;
@@ -125,6 +130,7 @@ class ServiceRequest implements IServiceRequest
             static::TYPE_GET_GRADES => 'Getting grades:',
             static::TYPE_SYNC_GRADE => 'Syncing grade for this lti_user_id:',
             static::TYPE_CREATE_LINEITEM => 'Creating lineitem:',
+            static::TYPE_DELETE_LINEITEM => 'Deleting lineitem:',
             static::TYPE_GET_LINEITEMS => 'Getting lineitems:',
             static::TYPE_GET_LINEITEM => 'Getting a lineitem:',
             static::TYPE_UPDATE_LINEITEM => 'Updating lineitem:',

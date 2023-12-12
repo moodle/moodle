@@ -141,7 +141,7 @@ class MoodleQuickForm_cohort extends MoodleQuickForm_autocomplete {
             if (!cohort_can_view_cohort($cohort, $currentcontext)) {
                 continue;
             }
-            $label = format_string($cohort->name, true, $currentcontext);
+            $label = format_string($cohort->name, true, ['context' => $currentcontext]);
             $this->addOption($label, $cohort->id);
         }
 

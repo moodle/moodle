@@ -53,6 +53,12 @@ class XMLDBAction {
     /** @var bool Actions must be protected by sesskey mechanism*/
     protected $sesskey_protected;
 
+    /** @var mixed */
+    protected $subaction;
+
+    /** @var bool Set own core attributes. */
+    protected $can_subaction;
+
     /**
      * Constructor
      */

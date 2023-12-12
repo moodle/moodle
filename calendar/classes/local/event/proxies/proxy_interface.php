@@ -46,7 +46,7 @@ interface proxy_interface {
     /**
      * Get the full instance of the proxied class.
      *
-     * @return \stdClass
+     * @return mixed
      */
     public function get_proxied_instance();
 }

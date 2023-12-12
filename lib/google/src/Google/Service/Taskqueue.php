@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Taskqueue extends Google_Service
 {
   /** Manage your Tasks and Taskqueues. */
@@ -258,6 +259,7 @@ class Google_Service_Taskqueue extends Google_Service
  *   $taskqueues = $taskqueueService->taskqueues;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Taskqueue_Taskqueues_Resource extends Google_Service_Resource
 {
 
@@ -287,6 +289,7 @@ class Google_Service_Taskqueue_Taskqueues_Resource extends Google_Service_Resour
  *   $tasks = $taskqueueService->tasks;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
 {
 
@@ -417,6 +420,7 @@ class Google_Service_Taskqueue_Tasks_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Taskqueue_Task extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -498,6 +502,7 @@ class Google_Service_Taskqueue_Task extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Taskqueue_TaskQueue extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -553,6 +558,7 @@ class Google_Service_Taskqueue_TaskQueue extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Taskqueue_TaskQueueAcl extends Google_Collection
 {
   protected $collection_key = 'producerEmails';
@@ -589,6 +595,7 @@ class Google_Service_Taskqueue_TaskQueueAcl extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Taskqueue_TaskQueueStats extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -633,6 +640,7 @@ class Google_Service_Taskqueue_TaskQueueStats extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Taskqueue_Tasks extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -661,6 +669,7 @@ class Google_Service_Taskqueue_Tasks extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Taskqueue_Tasks2 extends Google_Collection
 {
   protected $collection_key = 'items';

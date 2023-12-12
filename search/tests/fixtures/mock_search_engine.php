@@ -40,6 +40,9 @@ class engine extends \core_search\engine {
     /** @var array Schema updates applied */
     protected $schemaupdates = [];
 
+    /** @var array delete of course index. */
+    protected $deletes = [];
+
     public function is_installed() {
         return true;
     }
@@ -58,6 +61,7 @@ class engine extends \core_search\engine {
 
     public function execute_query($data, $usercontexts, $limit = 0) {
         // No need to implement.
+        return [];
     }
 
     public function delete($areaid = null) {

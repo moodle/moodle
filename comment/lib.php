@@ -96,6 +96,8 @@ class comment {
     private static $comment_page = null;
     /** @var string comment itemid component in non-javascript UI */
     private static $comment_component = null;
+    /** @var stdClass comment paramaters for callback. */
+    protected $comment_param;
 
     /**
      * Construct function of comment class, initialise
@@ -504,6 +506,9 @@ class comment {
 
                 $html .= html_writer::start_tag('div', array('class' => 'comment-area'));
                 $html .= html_writer::start_tag('div', array('class' => 'db'));
+                $html .= html_writer::tag('label',
+                        get_string('comment', 'comment'),
+                        ['for' => 'dlg-content-'.$this->cid, 'class' => 'sr-only']);
                 $html .= html_writer::tag('textarea', '', $textareaattrs);
                 $html .= html_writer::end_tag('div'); // .db
 

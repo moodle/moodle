@@ -16,7 +16,7 @@ Feature: Award badges based on user profile field
       | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Profile completion"
     And I set the field "id_field_picture" to "1"

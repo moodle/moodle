@@ -1,0 +1,49 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_group/comboboxsearch/resultset
+
+    Wrapping template for returned result items.
+
+    Context variables required for this template:
+    * groups - Our returned groups to render.
+    * searchterm - The entered text to find these results.
+    * hasgroups - Allow the handling where no users exist for the returned search term.
+
+    Example context (json):
+    {
+        "groups": [
+            {
+                "id": 2,
+                "name": "Foo bar",
+                "link": "http://foo.bar/grade/report/grader/index.php?id=42&userid=2"
+            },
+            {
+                "id": 3,
+                "name": "Bar Foo",
+                "link": "http://foo.bar/grade/report/grader/index.php?id=42&userid=3"
+            }
+        ],
+        "searchterm": "Foo",
+        "hasresults": true
+    }
+}}
+{{<core/local/comboboxsearch/resultset}}
+    {{$listid}}groups{{/listid}}
+    {{$results}}
+        {{#groups}}
+            {{>core_group/comboboxsearch/resultitem}}
+        {{/groups}}
+    {{/results}}
+{{/core/local/comboboxsearch/resultset}}

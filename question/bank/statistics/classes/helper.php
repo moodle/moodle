@@ -44,6 +44,8 @@ class helper {
      *
      * @param int[] $questionids array of question ids that we are interested in.
      * @return \stdClass[] list of objects with fields ->component and ->contextid.
+     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
+     * @todo MDL-78090 Final deprecation in Moodle 4.7
      */
     private static function get_all_places_where_questions_were_attempted(array $questionids): array {
         global $DB;
@@ -78,6 +80,8 @@ class helper {
      * @param string $component frankenstyle component name, e.g. 'mod_quiz'.
      * @param \context $context the context to load the statistics for.
      * @return all_calculated_for_qubaid_condition|null question statistics.
+     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
+     * @todo MDL-78090 Final deprecation in Moodle 4.7
      */
     private static function load_statistics_for_place(string $component, \context $context): ?all_calculated_for_qubaid_condition {
         // This check is basically if (component_exists).
@@ -97,8 +101,10 @@ class helper {
      *
      * @param all_calculated_for_qubaid_condition $statistics the batch of statistics.
      * @param int $questionid a question id.
-     * @param string $item ane of the field names in all_calculated_for_qubaid_condition, e.g. 'facility'.
+     * @param string $item one of the field names in all_calculated_for_qubaid_condition, e.g. 'facility'.
      * @return float|null the required value.
+     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
+     * @todo MDL-78090 Final deprecation in Moodle 4.7
      */
     private static function extract_item_value(all_calculated_for_qubaid_condition $statistics,
             int $questionid, string $item): ?float {
@@ -124,9 +130,11 @@ class helper {
      * Calculate average for a stats item on a list of questions.
      *
      * @param int[] $questionids list of ids of the questions we are interested in.
-     * @param string $item ane of the field names in all_calculated_for_qubaid_condition, e.g. 'facility'.
+     * @param string $item one of the field names in all_calculated_for_qubaid_condition, e.g. 'facility'.
      * @return array array keys are question ids and the corresponding values are the average values.
      *      Only questions for which there are data are included.
+     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
+     * @todo MDL-78090 Final deprecation in Moodle 4.7
      */
     private static function calculate_average_question_stats_item(array $questionids, string $item): array {
         $places = self::get_all_places_where_questions_were_attempted($questionids);
@@ -165,8 +173,12 @@ class helper {
      *
      * @param int $questionid
      * @return float|null
+     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
+     * @todo MDL-78090 Final deprecation in Moodle 4.7
      */
     public static function calculate_average_question_facility(int $questionid): ?float {
+        debugging('Deprecated: please use statistics_bulk_loader instead, ' .
+                'or get_required_statistics_fields in your question bank column class.', DEBUG_DEVELOPER);
         $averages = self::calculate_average_question_stats_item([$questionid], 'facility');
         return $averages[$questionid] ?? null;
     }
@@ -176,8 +188,12 @@ class helper {
      *
      * @param int $questionid question id
      * @return float|null
+     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
+     * @todo MDL-78090 Final deprecation in Moodle 4.7
      */
     public static function calculate_average_question_discriminative_efficiency(int $questionid): ?float {
+        debugging('Deprecated: please use statistics_bulk_loader instead, ' .
+                'or get_required_statistics_fields in your question bank column class.', DEBUG_DEVELOPER);
         $averages = self::calculate_average_question_stats_item([$questionid], 'discriminativeefficiency');
         return $averages[$questionid] ?? null;
     }
@@ -187,8 +203,12 @@ class helper {
      *
      * @param int $questionid question id
      * @return float|null
+     * @deprecated since Moodle 4.3 please use the method from statistics_bulk_loader.
+     * @todo MDL-78090 Final deprecation in Moodle 4.7
      */
     public static function calculate_average_question_discrimination_index(int $questionid): ?float {
+        debugging('Deprecated: please use statistics_bulk_loader instead, ' .
+                'or get_required_statistics_fields in your question bank column class.', DEBUG_DEVELOPER);
         $averages = self::calculate_average_question_stats_item([$questionid], 'discriminationindex');
         return $averages[$questionid] ?? null;
     }

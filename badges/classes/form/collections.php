@@ -63,14 +63,12 @@ class collections extends moodleform {
         $backpack = get_backpack_settings($USER->id);
         $sitebackpack = badges_get_site_backpack($backpack->backpackid);
 
-        $mform->addElement('header', 'backpackheader', get_string('backpackconnection', 'badges'));
-        $mform->addHelpButton('backpackheader', 'backpackconnection', 'badges');
+        $mform->addElement('header', 'backpackheader', get_string('backpackconnection_connected', 'badges'));
         $mform->addElement('static', 'url', get_string('url'), $backpackweburl);
 
         $status = html_writer::tag('span', get_string('connected', 'badges'), array('class' => 'connected'));
         $mform->addElement('static', 'status', get_string('status'), $status);
         $mform->addElement('static', 'email', get_string('email'), $email);
-        $mform->addHelpButton('email', 'backpackemail', 'badges');
         $mform->addElement('submit', 'disconnect', get_string('disconnect', 'badges'));
 
         $mform->addElement('header', 'collectionheader', get_string('backpackimport', 'badges'));

@@ -11,14 +11,21 @@
             "email": "mark@lange.demon.co.uk"
         }
     ],
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "markbaker/ukraine": true
+        }
+    },
     "require": {
         "php": "^7.2 || ^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^7.0 || ^8.0 || ^9.3",
-        "squizlabs/php_codesniffer": "^3.4",
-        "phpcompatibility/php-compatibility": "^9.0",
-        "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0"
+        "phpunit/phpunit": "^7.0 || ^8.0 || ^9.0",
+        "squizlabs/php_codesniffer": "^3.7",
+        "phpcompatibility/php-compatibility": "^9.3",
+        "dealerdirect/phpcodesniffer-composer-installer": "dev-master"
     },
     "autoload": {
         "psr-4": {

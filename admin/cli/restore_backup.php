@@ -80,8 +80,8 @@ if (!$category = $DB->get_record('course_categories', ['id' => $options['categor
     throw new \moodle_exception('invalidcategoryid');
 }
 
-$backupdir = "restore_" . uniqid();
-$path = $CFG->tempdir . DIRECTORY_SEPARATOR . "backup" . DIRECTORY_SEPARATOR . $backupdir;
+$backupdir = restore_controller::get_tempdir_name(SITEID, $USER->id);
+$path = make_backup_temp_directory($backupdir);
 
 cli_heading(get_string('extractingbackupfileto', 'backup', $path));
 $fp = get_file_packer('application/vnd.moodle.backup');

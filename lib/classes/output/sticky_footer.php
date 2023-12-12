@@ -47,6 +47,11 @@ class sticky_footer implements named_templatable, renderable {
     protected $stickyclasses = 'justify-content-end';
 
     /**
+     * @var bool if the footer should auto enable or not.
+     */
+    protected $autoenable = true;
+
+    /**
      * @var array extra HTML attributes (attribute => value).
      */
     protected $attributes = [];
@@ -76,6 +81,15 @@ class sticky_footer implements named_templatable, renderable {
     }
 
     /**
+     * Set the auto enable value.
+     *
+     * @param bool $autoenable the footer content
+     */
+    public function set_auto_enable(bool $autoenable) {
+        $this->autoenable = $autoenable;
+    }
+
+    /**
      * Add extra classes to the sticky footer.
      *
      * @param string $stickyclasses the extra classes
@@ -100,7 +114,7 @@ class sticky_footer implements named_templatable, renderable {
     /**
      * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
+     * @param \renderer_base $output typically, the renderer that's calling this function
      * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
@@ -111,11 +125,15 @@ class sticky_footer implements named_templatable, renderable {
                 'value' => $value,
             ];
         }
-        return [
+        $data = [
             'stickycontent' => (string)$this->stickycontent,
             'stickyclasses' => $this->stickyclasses,
             'extras' => $extras,
         ];
+        if (!$this->autoenable) {
+            $data['disable'] = true;
+        }
+        return $data;
     }
 
     /**

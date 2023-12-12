@@ -1,0 +1,52 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_courseformat/local/content/cm/cmicon
+
+    Displays a course module icon.
+
+    Example context (json):
+    {
+        "uservisible": true,
+        "url": "#",
+        "icon": "../../../pix/help.svg",
+        "iconclass": "",
+        "purpose": "content",
+        "modname": "resource",
+        "pluginname": "File",
+        "showtooltip": 1
+    }
+}}
+{{#url}}
+    {{#uservisible}}
+        <a href="{{url}}"
+            class="activity-icon activityiconcontainer smaller {{purpose}} btn btn-link courseicon align-self-start mr-2"
+            {{#showtooltip}}data-toggle="tooltip" title="{{{pluginname}}}" data-placement="top"{{/showtooltip}}
+        >
+            <img src="{{{icon}}}" class="activityicon {{iconclass}}"
+                 alt="{{#cleanstr}} activityicon, moodle, {{{pluginname}}} {{/cleanstr}}"
+            >
+        </a>
+    {{/uservisible}}
+    {{^uservisible}}
+        <div class="activity-icon activityiconcontainer smaller {{purpose}} courseicon align-self-start mr-2">
+            <img src="{{{icon}}}" class="activityicon {{iconclass}}"
+                 alt="{{#cleanstr}} activityicon, moodle, {{{pluginname}}} {{/cleanstr}}"
+            >
+        </div>
+    {{/uservisible}}
+{{/url}}

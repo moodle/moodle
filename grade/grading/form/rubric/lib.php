@@ -22,6 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_external\external_format_value;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot.'/grade/grading/form/lib.php');

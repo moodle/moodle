@@ -75,7 +75,7 @@ class restore_data_activity_task extends restore_activity_task {
         $rules = array();
 
         $rules[] = new restore_decode_rule('DATAVIEWBYID', '/mod/data/view.php?id=$1', 'course_module');
-        $rules[] = new restore_decode_rule('DATAVIEWBYD', '/mod/data/index.php?d=$1', 'data');
+        $rules[] = new restore_decode_rule('DATAVIEWBYD', '/mod/data/view.php?d=$1', 'data');
         $rules[] = new restore_decode_rule('DATAINDEX', '/mod/data/index.php?id=$1', 'course');
         $rules[] = new restore_decode_rule('DATAVIEWRECORD', '/mod/data/view.php?d=$1&amp;rid=$2', array('data', 'data_record'));
 

@@ -33,7 +33,7 @@ Feature: Option to include groups and groupings when importing a course to anoth
     When I am on the "Course 2" "groups" page
     Then I should see "Group 1"
     And I should see "Group 2"
-    And I select "Groupings" from the "jump" singleselect
+    And I am on the "Course 2" "groupings" page
     And I should see "Grouping 1"
     And I should see "Grouping 2"
 
@@ -43,6 +43,6 @@ Feature: Option to include groups and groupings when importing a course to anoth
     When I am on the "Course 2" "groups" page
     Then I should not see "Group 1"
     And I should not see "Group 2"
-    And I select "Groupings" from the "jump" singleselect
+    And I am on the "Course 2" "groupings" page
     And I should not see "Grouping 1"
     And I should not see "Grouping 2"

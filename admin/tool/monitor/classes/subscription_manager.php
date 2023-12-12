@@ -36,7 +36,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class subscription_manager {
 
-    /** @const Period of time, in days, after which an inactive subscription will be removed completely.*/
+    /** @var Period of time, in days, after which an inactive subscription will be removed completely.*/
     const INACTIVE_SUBSCRIPTION_LIFESPAN_IN_DAYS = 30;
 
     /**

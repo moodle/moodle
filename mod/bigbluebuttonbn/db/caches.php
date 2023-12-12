@@ -56,4 +56,12 @@ $definitions = [
     'currentfetch' => [
         'mode' => cache_store::MODE_REQUEST,
     ],
+
+    // The 'subplugins' cache stores a cache of subplugins data to accelerate some of the subplugin discovery features.
+    'subplugins' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'invalidationevents' => [
+            'mod_bigbluebuttonbn/subpluginschanged',
+        ],
+    ],
 ];

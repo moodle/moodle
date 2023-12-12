@@ -24,11 +24,15 @@
 
 namespace mod_assign\output;
 
+use assign_files;
+use html_writer;
+use mod_assign\output\grading_app;
+use portfolio_add_button;
+use stored_file;
+
 defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/mod/assign/locallib.php');
-
-use \mod_assign\output\grading_app;
 
 /**
  * A custom renderer class that extends the plugin_renderer_base and is used by the assign module.
@@ -39,6 +43,9 @@ use \mod_assign\output\grading_app;
  */
 class renderer extends \plugin_renderer_base {
 
+    /** @var string a unique ID. */
+    public $htmlid;
+
     /**
      * Rendering assignment files
      *
@@ -46,8 +53,8 @@ class renderer extends \plugin_renderer_base {
      * @param int $userid
      * @param string $filearea
      * @param string $component
-     * @param stdClass $course
-     * @param stdClass $coursemodule
+     * @param \stdClass $course
+     * @param \stdClass $coursemodule
      * @return string
      */
     public function assign_files(\context $context, $userid, $filearea, $component, $course = null, $coursemodule = null) {
@@ -649,7 +656,7 @@ class renderer extends \plugin_renderer_base {
             $cell1content = get_string('submissionteam', 'assign');
             $group = $status->submissiongroup;
             if ($group) {
-                $cell2content = format_string($group->name, false, $status->context);
+                $cell2content = format_string($group->name, false, ['context' => $status->context]);
             } else if ($status->preventsubmissionnotingroup) {
                 if (count($status->usergroups) == 0) {
                     $notification = new \core\output\notification(get_string('noteam', 'assign'), 'error');
@@ -1397,11 +1404,13 @@ class renderer extends \plugin_renderer_base {
             $result .= '<li yuiConfig=\'' . json_encode($yuiconfig) . '\'>' .
                 '<div>' .
                     '<div class="fileuploadsubmission">' . $image . ' ' .
-                    $file->fileurl . ' ' .
+                    html_writer::link($tree->get_file_url($file), $file->get_filename(), [
+                        'target' => '_blank',
+                    ]) . ' ' .
                     $plagiarismlinks . ' ' .
-                    $file->portfoliobutton . ' ' .
+                    $this->get_portfolio_button($tree, $file) . ' ' .
                     '</div>' .
-                    '<div class="fileuploadsubmissiontime">' . $file->timemodified . '</div>' .
+                    '<div class="fileuploadsubmissiontime">' . $tree->get_modified_time($file) . '</div>' .
                 '</div>' .
             '</li>';
         }
@@ -1409,6 +1418,36 @@ class renderer extends \plugin_renderer_base {
         $result .= '</ul>';
 
         return $result;
+    }
+
+    /**
+     * Get the portfolio button content for the specified file.
+     *
+     * @param assign_files $tree
+     * @param stored_file $file
+     * @return string
+     */
+    protected function get_portfolio_button(assign_files $tree, stored_file $file): string {
+        global $CFG;
+        if (empty($CFG->enableportfolios)) {
+            return '';
+        }
+
+        if (!has_capability('mod/assign:exportownsubmission', $tree->context)) {
+            return '';
+        }
+
+        require_once($CFG->libdir . '/portfoliolib.php');
+
+        $button = new portfolio_add_button();
+        $portfolioparams = [
+            'cmid' => $tree->cm->id,
+            'fileid' => $file->get_id(),
+        ];
+        $button->set_callback_options('assign_portfolio_caller', $portfolioparams, 'mod_assign');
+        $button->set_format_by_file($file);
+
+        return (string) $button->to_html(PORTFOLIO_ADD_ICON_LINK);
     }
 
     /**

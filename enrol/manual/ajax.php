@@ -60,7 +60,7 @@ $outcome->response = new stdClass();
 $outcome->error = '';
 $outcome->count = 0;
 
-$searchanywhere = get_user_preferences('userselector_searchanywhere', false);
+$searchanywhere = get_user_preferences('userselector_searchtype') === USER_SEARCH_CONTAINS;
 
 switch ($action) {
     case 'enrol':

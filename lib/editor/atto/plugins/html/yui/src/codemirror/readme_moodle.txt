@@ -3,15 +3,16 @@ Description of importing the codemirror library into Moodle.
 NOTE: To make it more readable, in this explanation [LIBRARYPATH] means:
     [PATH TO YOUR MOODLE]/lib/editor/atto/plugins/html/yui/src/codemirror
 
-1 Download the latest codemirror code somewhere (example /tmp/cm) using: npm install codemirror OR download the zip file
-  (note down the version number displayed by the command, you'll need it later)
+1 Download the latest codemirror code somewhere (example /tmp/cm) using:
+
+mkdir -p codemirror/node_modules
+npm install --prefix codemirror codemirror@5 --save-dev
+
+Note down the version number displayed by the command, to update thirdpartylibs.xml accordingly.
 
 2 Then copy the following files to your local Moodle directory:
-If using npm install:
-[CODEMIRRORPATH] = node_modules
 
-If using the zip file:
-[CODEMIRRORPATH] = codemirror-X.XX.X
+[CODEMIRRORPATH] = codemirror/node_modules
 
 cp [CODEMIRRORPATH]/codemirror/lib/codemirror.js [LIBRARYPATH]/js
 cp [CODEMIRRORPATH]/codemirror/mode/css/css.js [LIBRARYPATH]/js

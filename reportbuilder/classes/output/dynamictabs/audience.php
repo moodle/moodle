@@ -42,23 +42,23 @@ class audience extends base {
      * @return array
      */
     public function export_for_template(renderer_base $output): array {
+        $reportid = (int) $this->data['reportid'];
+
         // Get all the audiences types to populate the left menu.
         $menucardsexporter = new custom_report_audience_cards_exporter(null);
         $menucards = (array) $menucardsexporter->export($output);
 
         // Get all current audiences instances for this report.
-        $audienceinstances = $this->get_all_report_audiences();
+        $audienceinstances = $this->get_all_report_audiences($reportid);
 
-        $data = [
+        return [
             'tabheading' => get_string('audience', 'core_reportbuilder'),
-            'reportid' => $this->data['reportid'],
-            'contextid' => (new report((int)$this->data['reportid']))->get('contextid'),
+            'reportid' => $reportid,
+            'contextid' => (new report($reportid))->get('contextid'),
             'sidebarmenucards' => $menucards,
             'instances' => $audienceinstances,
             'hasinstances' => !empty($audienceinstances),
         ];
-
-        return $data;
     }
 
     /**
@@ -92,32 +92,39 @@ class audience extends base {
     /**
      * Get all current audiences instances for this report.
      *
+     * @param int $reportid
      * @return array
      */
-    private function get_all_report_audiences(): array {
+    private function get_all_report_audiences(int $reportid): array {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('core');
 
         $audienceinstances = [];
-        $reportaudiences = audience_helper::get_base_records((int)$this->data['reportid']);
         $showormessage = false;
+
+        // Retrieve list of audiences that are used in report schedules, to warn user when editing.
+        $scheduleaudiences = audience_helper::get_audiences_for_report_schedules($reportid);
+
+        $reportaudiences = audience_helper::get_base_records($reportid);
         foreach ($reportaudiences as $reportaudience) {
             $persistent = $reportaudience->get_persistent();
             $canedit = $reportaudience->user_can_edit();
 
             $editable = new audience_heading_editable(0, $persistent);
 
-            $params = [
+            $audienceinstances[] = [
                 'instanceid' => $persistent->get('id'),
                 'description' => $reportaudience->get_description(),
                 'heading' => $reportaudience->get_name(),
                 'headingeditable' => $editable->render($renderer),
+                'editwarning' => in_array($persistent->get('id'), $scheduleaudiences) ?
+                    get_string('audienceusedbyschedule', 'core_reportbuilder') : '',
                 'canedit' => $canedit,
                 'candelete' => $canedit,
                 'showormessage' => $showormessage,
             ];
-            $audienceinstances[] = $params;
+
             $showormessage = true;
         }
 

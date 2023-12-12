@@ -86,7 +86,7 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
                 'type' => PARAM_INT,
             ),
             'modname' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_PLUGIN,
             ),
             'name' => array(
                     'type' => PARAM_TEXT,
@@ -108,7 +108,7 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
     public static function define_other_properties() {
         return array(
             'viewurl' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_RAW,
             ),
             'courseviewurl' => array(
                     'type' => PARAM_URL,
@@ -117,7 +117,7 @@ class recentlyaccesseditems_item_exporter extends \core\external\exporter {
                 'type' => PARAM_RAW,
             ),
             'purpose' => array(
-                'type' => PARAM_TEXT,
+                'type' => PARAM_ALPHA,
             )
         );
     }

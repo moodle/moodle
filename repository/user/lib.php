@@ -102,7 +102,7 @@ class repository_user extends repository {
                             'datecreated' => $child->get_timecreated(),
                             'path' => $encodedpath,
                             'children'=>array(),
-                            'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false)
+                            'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false)
                         );
                         $list[] = $node;
                     } else {
@@ -116,8 +116,8 @@ class repository_user extends repository {
                             'license' => $child->get_license(),
                             'isref' => $child->is_external_file(),
                             'source'=> $encodedpath,
-                            'icon' => $OUTPUT->image_url(file_file_icon($child, 24))->out(false),
-                            'thumbnail' => $OUTPUT->image_url(file_file_icon($child, 90))->out(false)
+                            'icon' => $OUTPUT->image_url(file_file_icon($child))->out(false),
+                            'thumbnail' => $OUTPUT->image_url(file_file_icon($child))->out(false)
                         );
                         if ($child->get_status() == 666) {
                             $node['originalmissing'] = true;

@@ -24,62 +24,35 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
 
   Scenario: View student progress for lesson that was never attempted
-    Given I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 1 |
-      | Page contents | Paper is made from trees. |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    When I am on "Course 1" course homepage
+    Given the following "mod_lesson > pages" exist:
+      | lesson           | qtype     | title                 | content                   |
+      | Test lesson name | content   | First page name       | First page contents       |
+      | Test lesson name | truefalse | True/false question 1 | Paper is made from trees. |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer    | response | jumpto    | score |
+      | First page name       | Next page |          | Next page | 0     |
+      | True/false question 1 | True      | Correct  | Next page | 1     |
+      | True/false question 1 | False     | Wrong    | This page | 0     |
+    When I log in as "teacher1"
+    And I am on "Course 1" course homepage
     And I navigate to course participants
     And I follow "Student 1"
     And I follow "Outline report"
     Then I should see "No attempts have been made on this lesson"
 
   Scenario: View student progress for an incomplete lesson containing both content and question pages
-    Given I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 1 |
-      | Page contents | Paper is made from trees. |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Second page name |
-      | Page contents | Second page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | Next page |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
+    Given the following "mod_lesson > pages" exist:
+      | lesson           | qtype     | title                 | content                   |
+      | Test lesson name | content   | First page name       | First page contents       |
+      | Test lesson name | content   | Second page name      | Second page contents      |
+      | Test lesson name | truefalse | True/false question 1 | Paper is made from trees. |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer        | response | jumpto        | score |
+      | First page name       | Next page     |          | Next page     | 0     |
+      | Second page name      | Previous page |          | Previous page | 0     |
+      | Second page name      | Next page     |          | Next page     | 0     |
+      | True/false question 1 | True          | Correct  | Next page     | 1     |
+      | True/false question 1 | False         | Wrong    | This page     | 0     |
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"
@@ -90,35 +63,18 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I should see "Lesson has been started, but not yet completed"
 
   Scenario: View student progress for a lesson containing both content and question pages
-    Given I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 1 |
-      | Page contents | Paper is made from trees. |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Second page name |
-      | Page contents | Second page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | Next page |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
+    Given the following "mod_lesson > pages" exist:
+      | lesson           | qtype     | title                 | content                   |
+      | Test lesson name | content   | First page name       | First page contents       |
+      | Test lesson name | content   | Second page name      | Second page contents      |
+      | Test lesson name | truefalse | True/false question 1 | Paper is made from trees. |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer        | response | jumpto        | score |
+      | First page name       | Next page     |          | Next page     | 0     |
+      | Second page name      | Previous page |          | Previous page | 0     |
+      | Second page name      | Next page     |          | Next page     | 0     |
+      | True/false question 1 | True          | Correct  | Next page     | 1     |
+      | True/false question 1 | False         | Wrong    | This page     | 0     |
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"
@@ -137,22 +93,15 @@ Feature: Teachers can review student progress on all lessons in a course by view
     And I should see "Grade: 100.00 / 100.00"
 
   Scenario: View student attempts in a lesson containing only content pages
-    Given I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Second page name |
-      | Page contents | Second page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | End of lesson |
-      | id_jumpto_1 | End of lesson |
-    And I press "Save page"
+    Given the following "mod_lesson > pages" exist:
+      | lesson           | qtype     | title            | content                   |
+      | Test lesson name | content   | First page name  | First page contents       |
+      | Test lesson name | content   | Second page name | Second page contents      |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer        | jumpto        | score |
+      | First page name       | Next page     | Next page     | 0     |
+      | Second page name      | Previous page | Previous page | 0     |
+      | Second page name      | End of lesson | End of lesson | 0     |
     When I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "First page contents"
     And I press "Next page"

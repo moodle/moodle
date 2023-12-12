@@ -58,10 +58,11 @@ class mod_survey_mod_form extends moodleform_mod {
         parent::data_postprocessing($data);
         if (!empty($data->completionunlocked)) {
             // Turn off completion settings if the checkboxes aren't ticked.
-            $autocompletion = !empty($data->completion) &&
-                $data->completion == COMPLETION_TRACKING_AUTOMATIC;
-            if (!$autocompletion || empty($data->completionsubmit)) {
-                $data->completionsubmit = 0;
+            $suffix = $this->get_suffix();
+            $completion = $data->{'completion' . $suffix};
+            $autocompletion = !empty($completion) && $completion == COMPLETION_TRACKING_AUTOMATIC;
+            if (!$autocompletion || empty($data->{'completionsubmit' . $suffix})) {
+                $data->{'completionsubmit' . $suffix} = 0;
             }
         }
     }
@@ -72,19 +73,21 @@ class mod_survey_mod_form extends moodleform_mod {
      */
     public function add_completion_rules() {
         $mform =& $this->_form;
-        $mform->addElement('checkbox', 'completionsubmit', '', get_string('completionsubmit', 'survey'));
+        $suffix = $this->get_suffix();
+        $completionsubmitel = 'completionsubmit' . $suffix;
+        $mform->addElement('checkbox', $completionsubmitel, '', get_string('completionsubmit', 'survey'));
         // Enable this completion rule by default.
-        $mform->setDefault('completionsubmit', 1);
-        return array('completionsubmit');
+        $mform->setDefault($completionsubmitel, 1);
+        return [$completionsubmitel];
     }
 
     /**
      * Enable completion rules
-     * @param stdclass $data
-     * @return array
+     * @param array $data
+     * @return bool
      */
     public function completion_rule_enabled($data) {
-        return !empty($data['completionsubmit']);
+        $suffix = $this->get_suffix();
+        return !empty($data['completionsubmit' . $suffix]);
     }
 }
-

@@ -52,14 +52,9 @@ defined('MOODLE_INTERNAL') || die();
  *          [bool] If set to true then only stores that can guarantee data will remain available once set will be used.
  *     + requiremultipleidentifiers
  *          [bool] If set to true then only stores that support multiple identifiers will be used.
- *     + requirelockingread
- *          [bool] If set to true then a lock will be gained before reading from the cache store. It is recommended not to use
- *          this setting unless 100% absolutely positively required. Remember 99.9% of caches will NOT need this setting.
- *          This setting will only be used for application caches presently.
- *     + requirelockingwrite
- *          [bool] If set to true then a lock will be gained before writing to the cache store. As above this is not recommended
- *          unless truly needed. Please think about the order of your code and deal with race conditions there first.
- *          This setting will only be used for application caches presently.
+ *     + requirelockingbeforewrite
+ *          [bool] If set to true then the system will throw an exception if you try to write to
+ *          the cache without having a lock on the relevant keys.
  *     + maxsize
  *          [int] If set this will be used as the maximum number of entries within the cache store for this definition.
  *          Its important to note that cache stores don't actually have to acknowledge this setting or maintain it as a hard limit.
@@ -191,22 +186,10 @@ class cache_definition {
 
     /**
      * If set to true then we know that this definition requires the locking functionality.
-     * This gets set during construction based upon the settings requirelockingread and requirelockingwrite.
+     * This gets set during construction based upon the setting requirelockingbeforewrite.
      * @var bool
      */
     protected $requirelocking = false;
-
-    /**
-     * Set to true if this definition requires read locking.
-     * @var bool
-     */
-    protected $requirelockingread = false;
-
-    /**
-     * Gets set to true if this definition requires write locking.
-     * @var bool
-     */
-    protected $requirelockingwrite = false;
 
     /**
      * Gets set to true if this definition requires a lock to be acquired before a write is attempted.
@@ -361,8 +344,6 @@ class cache_definition {
         $requireidentifiers = array();
         $requiredataguarantee = false;
         $requiremultipleidentifiers = false;
-        $requirelockingread = false;
-        $requirelockingwrite = false;
         $requirelockingbeforewrite = false;
         $requiresearchable = ($mode === cache_store::MODE_SESSION) ? true : false;
         $maxsize = null;
@@ -397,19 +378,20 @@ class cache_definition {
         }
 
         if (array_key_exists('requirelockingread', $definition)) {
-            $requirelockingread = (bool)$definition['requirelockingread'];
+            debugging('The cache option requirelockingread is deprecated and now has no effect.',
+                    DEBUG_DEVELOPER);
         }
         if (array_key_exists('requirelockingwrite', $definition)) {
-            $requirelockingwrite = (bool)$definition['requirelockingwrite'];
+            debugging('The cache option requirelockingwrite is deprecated and now has no effect. ' .
+                    "Consider removing the option, or using requirelockingbeforewrite for the $component:$area definition",
+                    DEBUG_DEVELOPER);
         }
         if (array_key_exists('requirelockingbeforewrite', $definition)) {
             $requirelockingbeforewrite = (bool)$definition['requirelockingbeforewrite'];
         }
-        if ($requirelockingbeforewrite && ($requirelockingwrite || $requirelockingread)) {
-            throw new coding_exception('requirelockingbeforewrite cannot be set with requirelockingread or requirelockingwrite
-                    in a cache definition, as this will result in conflicting locks.');
-        }
-        $requirelocking = $requirelockingwrite || $requirelockingbeforewrite || $requirelockingread;
+        // This generic $requirelocking variable is kept in code in case we ever add
+        // another locking option, most obviously requirelockingbeforeread.
+        $requirelocking = $requirelockingbeforewrite;
 
         if (array_key_exists('requiresearchable', $definition)) {
             $requiresearchable = (bool)$definition['requiresearchable'];
@@ -535,8 +517,6 @@ class cache_definition {
         $cachedefinition->requiredataguarantee = $requiredataguarantee;
         $cachedefinition->requiremultipleidentifiers = $requiremultipleidentifiers;
         $cachedefinition->requirelocking = $requirelocking;
-        $cachedefinition->requirelockingread = $requirelockingread;
-        $cachedefinition->requirelockingwrite = $requirelockingwrite;
         $cachedefinition->requirelockingbeforewrite = $requirelockingbeforewrite;
         $cachedefinition->requiresearchable = $requiresearchable;
         $cachedefinition->maxsize = $maxsize;
@@ -738,22 +718,6 @@ class cache_definition {
      */
     public function require_locking() {
         return $this->requirelocking;
-    }
-
-    /**
-     * Returns true if this definition requires read locking.
-     * @return bool
-     */
-    public function require_locking_read() {
-        return $this->requirelockingread;
-    }
-
-    /**
-     * Returns true if this definition requires write locking.
-     * @return bool
-     */
-    public function require_locking_write() {
-        return $this->requirelockingwrite;
     }
 
     /**

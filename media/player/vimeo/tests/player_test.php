@@ -225,4 +225,21 @@ class player_test extends \advanced_testcase {
         $this->assertDoesNotMatchRegularExpression('~mediaplugin_vimeo~', $content);
         $this->assertDoesNotMatchRegularExpression('~</iframe>~', $content);
     }
+
+    /**
+     * Test that Vimeo media plugin renders embed code correctly
+     * when the "do not track" config options is set to true.
+     *
+     * @covers \media_vimeo_plugin::embed_external
+     */
+    public function test_vimeo_donottrack(): void {
+        // Turn on the do not track option.
+        set_config('donottrack', true, 'media_vimeo');
+
+        // Test that the embed code contains the do not track param in the url.
+        $url = new \moodle_url('https://vimeo.com/226053498');
+        $text = \html_writer::link($url, 'Watch this one');
+        $content = format_text($text, FORMAT_HTML);
+        $this->assertMatchesRegularExpression('~dnt=1~', $content);
+    }
 }

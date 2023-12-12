@@ -29,11 +29,6 @@ use tool_brickfield\manager;
 class brickfield_guideline extends brickfield_accessibility_guideline {
 
     /**
-     * @var array An array of test class names which will be called for this guideline
-     */
-    public $tests = [];
-
-    /**
      * brickfield_guideline constructor.
      * @param \DOMDocument $dom
      * @param \brickfield_accessibility_css $css

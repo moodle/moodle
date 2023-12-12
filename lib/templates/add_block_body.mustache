@@ -25,14 +25,20 @@
 
     Example context (json):
     {
-        "blocks" : [ { "name": "test", "title": "Test block" } ],
+        "blocks" : [
+            { "name": "test", "title": "Test block" },
+            { "name": "html", "title": "Block with form", "blockform": "block_edit_form" }
+        ],
         "url" : "?a=b"
     }
 
 }}
 <div class="list-group">
 {{#blocks}}
-    <a href="{{url}}&amp;bui_addblock={{name}}" class="list-group-item list-group-item-action">{{title}}</a>
+    <a href="{{url}}&amp;bui_addblock={{name}}" class="list-group-item list-group-item-action"
+        data-blockname="{{name}}" data-blocktitle="{{title}}" data-blockregion="{{blockregion}}"
+        {{#blockform}}data-action="showaddblockform" data-blockform="{{blockform}}"{{/blockform}}
+    >{{#blockform}}{{#str}}textellipsis, moodle, {{title}}{{/str}}{{/blockform}}{{^blockform}}{{title}}{{/blockform}}</a>
 {{/blocks}}
 {{^blocks}}
     <div class="alert alert-primary" role="alert">

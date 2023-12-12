@@ -32,6 +32,7 @@ Feature: The various checks that may happen when an attept is started
     When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
     And I press "Attempt quiz"
     Then I should see "Text of the first question"
+    And I should not see "v1" in the "Question 1" "question"
 
   @javascript
   Scenario: Start a quiz with time limit and password

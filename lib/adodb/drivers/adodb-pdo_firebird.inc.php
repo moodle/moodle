@@ -32,14 +32,6 @@ class ADODB_pdo_firebird extends ADODB_pdo
 
 	var $arrayClass = 'ADORecordSet_array_pdo_firebird';
 
-	function _init($parentDriver)
-	{
-		$this->pdoDriver = $parentDriver;
-		//$parentDriver->_bindInputArray = true;
-		//$parentDriver->hasTransactions = false; // // should be set to false because of PDO SQLite driver not supporting changing autocommit mode
-		//$parentDriver->hasInsertID = true;
-	}
-
 	/**
 	 * Gets the version iformation from the server
 	 *
@@ -241,12 +233,6 @@ class ADODB_pdo_firebird extends ADODB_pdo
 	{
 		$seqname = strtoupper($seqname);
 		return $this->Execute("DROP SEQUENCE $seqname");
-	}
-
-
-	public function _affectedrows()
-	{
-		return fbird_affected_rows($this->_transactionID ? $this->_transactionID : $this->_connectionID);
 	}
 
 	public function genId($seqname = 'adodbseq', $startID = 1)

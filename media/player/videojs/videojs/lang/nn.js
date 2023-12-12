@@ -16,7 +16,7 @@ videojs.addLanguage('nn', {
   "Progress Bar": "Framdriftsvisar",
   "progress bar timing: currentTime={1} duration={2}": "{1} av {2}",
   "Fullscreen": "Fullskjerm",
-  "Non-Fullscreen": "Stenga fullskjerm",
+  "Exit Fullscreen": "Stenga fullskjerm",
   "Mute": "Lyd av",
   "Unmute": "Lyd på",
   "Playback Rate": "Avspelingshastigheit",
