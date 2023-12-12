@@ -335,6 +335,7 @@ class page_requirements_manager {
                 'admin'                 => $CFG->admin,
                 'svgicons'              => $page->theme->use_svg_icons(),
                 'usertimezone'          => usertimezone(),
+                'language'              => current_language(),
                 'courseId'              => isset($courseid) ? (int) $courseid : 0,
                 'courseContextId'       => isset($coursecontext) ? $coursecontext->id : 0,
                 'contextid'             => $contextid,
