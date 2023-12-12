@@ -17,43 +17,47 @@ Feature: Filter users by idnumber
   @javascript
   Scenario: Filtering id numbers - with case "is empty"
     # We should see see admin on the user list, the following e-mail is admin's e-mail.
-    Then I should see "moodle@example.com" in the "users" "table"
-    And I should see "Teacher" in the "users" "table"
-    And I should see "Student1" in the "users" "table"
-    And I should see "Student2" in the "users" "table"
-    And I should see "Student3" in the "users" "table"
-    And I follow "Show more..."
-    And I set the field "id_idnumber_op" to "is empty"
-    When I press "Add filter"
+    Then I should see "moodle@example.com" in the "reportbuilder-table" "table"
+    And I should see "Teacher" in the "reportbuilder-table" "table"
+    And I should see "Student1" in the "reportbuilder-table" "table"
+    And I should see "Student2" in the "reportbuilder-table" "table"
+    And I should see "Student3" in the "reportbuilder-table" "table"
+    And I click on "Filters" "button"
+    And I set the following fields in the "ID number" "core_reportbuilder > Filter" to these values:
+      | ID number operator | Is empty |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I click on "Filters" "button"
     # We should see admin on the user list, the following e-mail is admin's e-mail.
-    Then I should see "moodle@example.com" in the "users" "table"
-    And I should not see "Teacher" in the "users" "table"
-    And I should not see "Student1" in the "users" "table"
-    And I should not see "Student2" in the "users" "table"
-    And I should not see "Student3" in the "users" "table"
+    Then I should see "moodle@example.com" in the "reportbuilder-table" "table"
+    And I should not see "Teacher" in the "reportbuilder-table" "table"
+    And I should not see "Student1" in the "reportbuilder-table" "table"
+    And I should not see "Student2" in the "reportbuilder-table" "table"
+    And I should not see "Student3" in the "reportbuilder-table" "table"
 
   @javascript
   Scenario Outline: Filtering id numbers - with all other cases
     # We should see see admin on the user list, the following e-mail is admin's e-mail.
-    Then I should see "moodle@example.com" in the "users" "table"
-    And I should see "Teacher" in the "users" "table"
-    And I should see "Student1" in the "users" "table"
-    And I should see "Student2" in the "users" "table"
-    And I should see "Student3" in the "users" "table"
-    And I follow "Show more..."
-    And I set the field "id_idnumber_op" to "<Category>"
-    And I set the field "idnumber" to "<Argument>"
-    When I press "Add filter"
-    Then I should <Admin's Visibility> "moodle@example.com" in the "users" "table"
-    And I should <Teacher's Vis> "Teacher" in the "users" "table"
-    And I should <S1's Vis> "Student1" in the "users" "table"
-    And I should <S2's Vis> "Student2" in the "users" "table"
-    And I should <S3's Vis> "Student3" in the "users" "table"
+    Then I should see "moodle@example.com" in the "reportbuilder-table" "table"
+    And I should see "Teacher" in the "reportbuilder-table" "table"
+    And I should see "Student1" in the "reportbuilder-table" "table"
+    And I should see "Student2" in the "reportbuilder-table" "table"
+    And I should see "Student3" in the "reportbuilder-table" "table"
+    And I click on "Filters" "button"
+    And I set the following fields in the "ID number" "core_reportbuilder > Filter" to these values:
+      | ID number operator | <Category> |
+      | ID number value    | <Argument> |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I click on "Filters" "button"
+    Then I should <Admin's Visibility> "moodle@example.com" in the "reportbuilder-table" "table"
+    And I should <Teacher's Vis> "Teacher" in the "reportbuilder-table" "table"
+    And I should <S1's Vis> "Student1" in the "reportbuilder-table" "table"
+    And I should <S2's Vis> "Student2" in the "reportbuilder-table" "table"
+    And I should <S3's Vis> "Student3" in the "reportbuilder-table" "table"
 
     Examples:
-      | Category        | Argument | Admin's Visibility | Teacher's Vis | S1's Vis | S2's Vis | S3's Vis |
-      | contains        | 0        | not see            | see           | see      | see      | see      |
-      | doesn't contain | 2        | see                | not see       | see      | not see  | see      |
-      | is equal to     | 2000000  | not see            | not see       | not see  | see      | not see  |
-      | starts with     | 0        | not see            | see           | see      | not see  | not see  |
-      | ends with       | 0        | not see            | not see       | not see  | see      | see      |
+      | Category         | Argument | Admin's Visibility | Teacher's Vis | S1's Vis | S2's Vis | S3's Vis |
+      | Contains         | 0        | not see            | see           | see      | see      | see      |
+      | Does not contain | 2        | see                | not see       | see      | not see  | see      |
+      | Is equal to      | 2000000  | not see            | not see       | not see  | see      | not see  |
+      | Starts with      | 0        | not see            | see           | see      | not see  | not see  |
+      | Ends with        | 0        | not see            | not see       | not see  | see      | see      |

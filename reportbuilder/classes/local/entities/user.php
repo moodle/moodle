@@ -444,6 +444,8 @@ class user extends base {
             'username' => new lang_string('username'),
             'moodlenetprofile' => new lang_string('moodlenetprofile', 'user'),
             'timecreated' => new lang_string('timecreated', 'core_reportbuilder'),
+            'timemodified' => new lang_string('timemodified', 'core_reportbuilder'),
+            'lastip' => new lang_string('lastip'),
         ];
     }
 
@@ -464,6 +466,7 @@ class user extends base {
                 break;
             case 'lastaccess':
             case 'timecreated':
+            case 'timemodified':
                 $fieldtype = column::TYPE_TIMESTAMP;
                 break;
             default:
