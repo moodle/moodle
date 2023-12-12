@@ -27,6 +27,7 @@ namespace tool_dataprivacy\external;
 use core_external\external_api;
 use externallib_advanced_testcase;
 use tool_dataprivacy\api;
+use tool_dataprivacy\data_request;
 use tool_dataprivacy\context_instance;
 use tool_dataprivacy\external;
 
@@ -1243,4 +1244,97 @@ class external_test extends externallib_advanced_testcase {
         $this->expectExceptionMessage(get_string('errorinvalidrequesttype', 'tool_dataprivacy'));
         create_data_request::execute(125, 'Example comment');
     }
+
+    /**
+     * Test for external::get_data_requests().
+     */
+    public function test_get_data_requests() {
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $anotheruser = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Empty results.
+        $result = get_data_requests::execute($user->id);
+        $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
+
+        $this->assertEmpty($result['warnings']);
+        $this->assertEmpty($result['requests']);
+
+        // Create data requests.
+        $comment = 'Example comment';
+        $request1 = api::create_data_request($user->id, api::DATAREQUEST_TYPE_DELETE, $comment);
+        $request2 = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT, $comment);
+        $request3 = api::create_data_request($anotheruser->id, api::DATAREQUEST_TYPE_EXPORT, $comment,
+            data_request::DATAREQUEST_CREATION_AUTO);
+
+        // Get data requests.
+        $result = get_data_requests::execute($user->id);
+        $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
+
+        $this->assertEmpty($result['warnings']);
+        $this->assertCount(2, $result['requests']);
+        foreach ($result['requests'] as $request) {
+            if ($request['id'] == $request1->get('id')) {
+                $this->assertEquals($user->id, $request['userid']);
+                $this->assertEquals(api::DATAREQUEST_TYPE_DELETE, $request['type']);
+                $this->assertEquals($comment, $request['comments']);
+            } else {
+                $this->assertEquals($user->id, $request['userid']);
+                $this->assertEquals(api::DATAREQUEST_TYPE_EXPORT, $request['type']);
+                $this->assertEquals($comment, $request['comments']);
+            }
+        }
+
+        // Filter by type.
+        $result = get_data_requests::execute($user->id, [], [api::DATAREQUEST_TYPE_DELETE]);
+        $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
+        $this->assertCount(1, $result['requests']);
+        $this->assertEquals($request1->get('id'), $result['requests'][0]['id']);
+
+        // Admin get all.
+        $this->setAdminUser();
+        $result = get_data_requests::execute();
+        $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
+
+        $this->assertCount(3, $result['requests']);
+
+        // Test limit.
+        $result = get_data_requests::execute(0, [], [], [], '', 2, 1);
+        $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
+
+        $this->assertCount(1, $result['requests']);
+
+        // Test sort.
+        $result = get_data_requests::execute(0, [], [], [], 'id DESC');
+        $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
+        $this->assertEquals($request1->get('id'), $result['requests'][2]['id']);
+        $this->assertEquals($request2->get('id'), $result['requests'][1]['id']);
+        $this->assertEquals($request3->get('id'), $result['requests'][0]['id']);
+
+        // Test filter by status.
+        api::update_request_status($request1->get('id'), api::DATAREQUEST_STATUS_DOWNLOAD_READY);
+        $result = get_data_requests::execute(0, [api::DATAREQUEST_STATUS_DOWNLOAD_READY]);
+        $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
+
+        $this->assertCount(1, $result['requests']);
+        $this->assertEquals($request1->get('id'), $result['requests'][0]['id']);
+
+        // Test filter by creation method.
+        $result = get_data_requests::execute(0, [], [], [data_request::DATAREQUEST_CREATION_AUTO]);
+        $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
+
+        $this->assertCount(1, $result['requests']);
+        $this->assertEquals($request3->get('id'), $result['requests'][0]['id']);
+
+        // Get data requests for another user without required permissions.
+        $this->setUser($anotheruser);
+
+        $this->expectException(\moodle_exception::class);
+        $dponamestring = implode (', ', api::get_dpo_role_names());
+        $this->expectExceptionMessage(get_string('privacyofficeronly', 'tool_dataprivacy', $dponamestring));
+        $result = get_data_requests::execute($user->id);
+    }
+
 }

@@ -255,4 +255,10 @@ $functions = [
         'type'          => 'write',
         'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'tool_dataprivacy_get_data_requests' => [
+        'classname'     => '\tool_dataprivacy\external\get_data_requests',
+        'description'   => 'Gets data request.',
+        'type'          => 'read',
+        'services'      => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
 ];
