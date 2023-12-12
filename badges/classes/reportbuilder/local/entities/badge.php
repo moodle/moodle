@@ -44,16 +44,16 @@ require_once("{$CFG->libdir}/badgeslib.php");
 class badge extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'badge' => 'b',
-            'context' => 'bctx',
-            'tag_instance' => 'bti',
-            'tag' => 'bt',
+            'badge',
+            'context',
+            'tag_instance',
+            'tag',
         ];
     }
 
