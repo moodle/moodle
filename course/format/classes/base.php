@@ -177,7 +177,7 @@ abstract class base {
      *
      * @param int|stdClass $courseorid either course id or
      *     an object that has the property 'format' and may contain property 'id'
-     * @return course_format
+     * @return base
      */
     public static final function instance($courseorid) {
         global $DB;
