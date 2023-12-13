@@ -279,6 +279,6 @@ class format_topics_test extends \advanced_testcase {
 
         $course = $generator->create_course(['format' => 'topics']);
         $format = course_get_format($course);
-        $this->assertNotEmpty($format->get_required_jsfiles());
+        $this->assertEmpty($format->get_required_jsfiles());
     }
 }

@@ -265,16 +265,6 @@ class outputrequirementslib_test extends \advanced_testcase {
                 0,
                 $wwwroot . $admin . 'environment.xml'
             ],
-            'Course Format JS (slasharguments on)' => [
-                '/course/format/topics/format.js',
-                1,
-                $wwwroot . '/lib/javascript.php/1/course/format/topics/format.js'
-            ],
-            'Course Format JS (slasharguments off)' => [
-                '/course/format/topics/format.js',
-                0,
-                $wwwroot . '/lib/javascript.php?rev=1&jsfile=%2Fcourse%2Fformat%2Ftopics%2Fformat.js'
-            ],
             'Data JS' => [
                 '/mod/data/data.js',
                 1,
