@@ -62,7 +62,7 @@ M.availability_profile.form.getNode = function(json) {
     html += '</select></label> <label><span class="accesshide">' + M.util.get_string('label_value', 'availability_profile') +
             '</span><input name="value" type="text" class="form-control" style="width: 10em" title="' +
             M.util.get_string('label_value', 'availability_profile') + '"/></label></span>';
-    var node = Y.Node.create('<span class="form-inline">' + html + '</span>');
+    var node = Y.Node.create('<span class="d-flex flex-wrap align-items-center">' + html + '</span>');
 
     // Set initial values if specified.
     if (json.sf !== undefined &&

@@ -95,7 +95,7 @@ echo $OUTPUT->box_start();     // The forms section at the top
 
 <div class="mdl-align">
 
-<form method="post" action="index.php" class="form-inline spamcleanerform">
+<form method="post" action="index.php" class="d-flex flex-wrap align-items-center spamcleanerform">
   <div>
     <label class="accesshide" for="keyword_el"><?php print_string('spamkeyword', 'tool_spamcleaner') ?></label>
     <input type="text" class="form-control" name="keyword" id="keyword_el" value="<?php p($keyword) ?>" />

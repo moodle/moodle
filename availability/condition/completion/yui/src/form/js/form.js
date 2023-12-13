@@ -42,7 +42,7 @@ M.availability_completion.form.getNode = function(json) {
             '<option value="2">' + M.util.get_string('option_pass', 'availability_completion') + '</option>' +
             '<option value="3">' + M.util.get_string('option_fail', 'availability_completion') + '</option>' +
             '</select></label></span>';
-    var node = Y.Node.create('<span class="form-inline">' + html + '</span>');
+    var node = Y.Node.create('<span class="d-flex flex-wrap align-items-center">' + html + '</span>');
 
     // Set initial values.
     if (json.cm !== undefined &&

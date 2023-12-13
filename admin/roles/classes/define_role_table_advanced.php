@@ -663,7 +663,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         } else {
             $extraclass = '';
         }
-        echo '<div class="felement col-md-9 form-inline' . $extraclass . '">';
+        echo '<div class="felement col-md-9 d-flex flex-wrap align-items-center' . $extraclass . '">';
         echo $field;
         if (isset($this->errors[$name])) {
             echo $OUTPUT->error_text($this->errors[$name]);

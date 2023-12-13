@@ -78,7 +78,7 @@ class data_field_latlong extends data_field_base {
         }
         $str = '<div title="'.s($this->field->description).'">';
         $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name.'</span></legend>';
-        $str .= '<table class="form-inline"><tr><td align="right">';
+        $str .= '<table class="d-flex flex-wrap align-items-center"><tr><td align="right">';
         $classes = 'mod-data-input form-control-static';
         $str .= '<label for="field_'.$this->field->id.'_0" class="' . $classes . '">' . get_string('latitude', 'data');
         if ($this->field->required) {

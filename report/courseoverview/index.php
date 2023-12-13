@@ -70,7 +70,8 @@ if (empty($timeoptions)) {
     throw new \moodle_exception('nostatstodisplay', 'error', $CFG->wwwroot.'/course/view.php?id='.$course->id);
 }
 
-echo html_writer::start_tag('form', array('action' => 'index.php', 'method' => 'post', 'class' => 'form-inline'));
+echo html_writer::start_tag('form', ['action' => 'index.php', 'method' => 'post',
+    'class' => 'd-flex flex-wrap align-items-center']);
 echo html_writer::start_tag('div');
 
 $table = new html_table();

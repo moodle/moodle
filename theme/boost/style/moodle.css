@@ -28312,10 +28312,6 @@ table.calendartable caption {
   padding-bottom: 13rem;
 }
 
-.jumpmenu .form-inline {
-  display: block;
-}
-
 .path-course-view .completionprogress {
   margin-left: 25px;
 }
@@ -32845,8 +32841,8 @@ body.path-question-type .mform fieldset.hidden {
   z-index: 1060;
   height: 60px;
 }
-.simplesearchform .collapse.show .form-inline,
-.simplesearchform .collapsing .form-inline {
+.simplesearchform .collapse.show .searchform-navbar,
+.simplesearchform .collapsing .searchform-navbar {
   width: auto;
   margin-left: auto;
   margin-right: auto;
@@ -32893,25 +32889,20 @@ body.path-question-type .mform fieldset.hidden {
   margin-bottom: 4px;
 }
 
-.mform .form-inline .form-control,
-.mform .form-inline .custom-select {
+.mform .d-flex .form-control,
+.mform .d-flex .custom-select {
   max-width: 100%;
 }
-.mform .form-inline textarea.form-control {
+.mform .d-flex textarea.form-control {
   width: 100%;
 }
-.mform .form-inline .fitem {
+.mform .d-flex .fitem {
   margin: 0.1rem 0.25rem 0.1rem 0 !important; /* stylelint-disable-line declaration-no-important */
 }
-.mform .form-inline br + label {
+.mform .d-flex br + label {
   justify-content: flex-start;
   width: 100%;
   margin-right: 0;
-}
-
-.unresponsive.mform .form-inline,
-.unresponsive.mform .form-inline label {
-  display: inline-flex;
 }
 
 #jump-to-activity.custom-select {
@@ -32959,14 +32950,6 @@ input#id_externalurl {
 .form-label .form-shortname {
   font-size: 0.703125rem;
   display: block;
-}
-
-.form-item .form-inline {
-  display: inline;
-}
-
-.form-inline label:not(.sr-only):not(.accesshide) + select {
-  margin-left: 0.5rem;
 }
 
 .formsettingheading .form-horizontal {
@@ -33248,19 +33231,6 @@ textarea[data-auto-rows] {
     margin-left: auto;
   }
 }
-/** Allow wrapping an mform in a div with the form-inline class to have an inline, responsive form. */
-@media (min-width: 768px) {
-  .form-inline .col-md-9,
-  .form-inline .col-md-3 {
-    margin-bottom: 1rem;
-    width: auto;
-  }
-  .form-inline .col-md-9 label,
-  .form-inline .col-md-3 label {
-    margin-left: 1rem;
-  }
-}
-
 [data-fieldtype=modgrade] .fitem {
   padding-bottom: 0.375rem;
 }
@@ -33280,9 +33250,9 @@ textarea[data-auto-rows] {
   display: none;
 }
 
-.form-inline[data-fieldtype=autocomplete],
-.form-inline[data-fieldtype=tags] {
-  display: block;
+.felement[data-fieldtype=autocomplete],
+.felement[data-fieldtype=tags] {
+  display: block !important; /* stylelint-disable-line declaration-no-important */
 }
 
 [data-fieldtype=editor] > div {
@@ -33292,11 +33262,6 @@ textarea[data-auto-rows] {
 @media (min-width: 768px) {
   .mform fieldset .fcontainer.collapseable .col-form-label {
     padding-left: 2.5rem;
-  }
-}
-@media (min-width: 576px) {
-  .mform .form-inline .fdefaultcustom label {
-    justify-content: initial;
   }
 }
 .collapsemenu .collapseall {
@@ -33583,14 +33548,6 @@ select {
 }
 #page-mod-forum-view table .limit-width .author-info {
   max-width: calc(100% - 35px - 0.5rem);
-}
-
-#page-mod-forum-discuss .discussioncontrols {
-  width: auto;
-  margin: 0;
-}
-#page-mod-forum-discuss .discussioncontrols .form-inline input {
-  margin-top: -1px;
 }
 
 /** Gently highlight the selected post by changing it's background to blue and then fading it out. */
@@ -34227,10 +34184,6 @@ div#dock {
   display: inline;
 }
 
-.path-mod-lesson .form-inline label.form-check-label {
-  display: inline-block;
-}
-
 .path-mod-lesson .slideshow {
   overflow: auto;
   padding: 15px;
@@ -34403,11 +34356,6 @@ img.userpicture {
 #page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
   line-height: 1.5;
   vertical-align: bottom;
-}
-
-#page-mod-quiz-mod #id_reviewoptionshdr .form-inline {
-  float: left;
-  clear: left;
 }
 
 #page-mod-quiz-mod #id_reviewoptionshdr .form-check {

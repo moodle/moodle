@@ -79,7 +79,7 @@ class data_field_date extends data_field_base {
             $content = time();
         }
 
-        $str = '<div title="'.s($this->field->description).'" class="mod-data-input form-inline">';
+        $str = '<div title="'.s($this->field->description).'" class="mod-data-input d-flex flex-wrap align-items-center">';
 
         $dayselector = html_writer::select_time(
             type: 'days',
@@ -120,7 +120,7 @@ class data_field_date extends data_field_base {
             . html_writer::select_time('months', 'f_' . $this->field->id . '_m', $value['timestamp'] ?? $currenttime)
             . html_writer::select_time('years', 'f_' . $this->field->id . '_y', $value['timestamp'] ?? $currenttime);
         $datecheck = html_writer::checkbox('f_' . $this->field->id . '_z', 1, $value['usedate'] ?? 0);
-        $str = '<div class="form-inline">' . $selectors . ' ' . $datecheck . ' ' . get_string('usedate', 'data') . '</div>';
+        $str = '<div class="d-flex flex-wrap">' . $selectors . ' ' . $datecheck . ' ' . get_string('usedate', 'data') . '</div>';
 
         return $str;
     }

@@ -181,7 +181,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output = '';
         $output .= html_writer::start_div('maxgrade');
         $output .= html_writer::start_tag('form', ['method' => 'post', 'action' => 'edit.php',
-                'class' => 'quizsavegradesform form-inline']);
+                'class' => 'quizsavegradesform d-flex flex-wrap align-items-center']);
         $output .= html_writer::start_tag('fieldset', ['class' => 'invisiblefieldset']);
         $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
         $output .= html_writer::input_hidden_params($pageurl);

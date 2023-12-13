@@ -85,7 +85,7 @@ class qtype_shortanswer_renderer extends qtype_renderer {
         $result = html_writer::tag('div', $questiontext, array('class' => 'qtext'));
 
         if (!$placeholder) {
-            $result .= html_writer::start_tag('div', array('class' => 'ablock form-inline'));
+            $result .= html_writer::start_tag('div', ['class' => 'ablock d-flex flex-wrap align-items-center']);
             $answerspan = html_writer::tag('span', $input, array('class' => 'answer'));
             $label = $options->add_question_identifier_to_label(get_string('answercolon', 'qtype_numerical'), true);
             $result .= html_writer::tag('label', $label . $answerspan,
