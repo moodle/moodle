@@ -42,10 +42,13 @@ Feature: Average grades are displayed in the gradebook
       | student2 | C1     | student | suspended |
     And I log in as "admin"
     And I navigate to "Users > Accounts > Browse list of users" in site administration
-    And I set the following fields to these values:
-      | username | student5 |
-    And I press "Add filter"
-    And I click on "Delete" "link"
+    And I click on "Filters" "button"
+    And I set the following fields in the "Username" "core_reportbuilder > Filter" to these values:
+      | Username operator | Is equal to |
+      | Username value    | student5    |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I click on "Filters" "button"
+    And I press "Delete" action in the "Student 5" report row
     And I press "Delete"
     # Enable averages
     And I am on the "Course 1" "grades > course grade settings" page
