@@ -228,6 +228,7 @@ function resource_get_coursemodule_info($coursemodule) {
         $mainfile = reset($files);
         $resource->mainfile = $mainfile->get_filename();
         $info->icon = file_file_icon($mainfile);
+        $info->customdata['filtericon'] = true;
     }
 
     $display = resource_get_final_display_type($resource);
