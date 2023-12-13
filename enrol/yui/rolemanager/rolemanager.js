@@ -366,7 +366,7 @@ YUI.add('moodle-enrol-rolemanager', function(Y) {
                                         M.util.get_string('closebuttontitle', 'moodle') + '">' +
                                         '<span aria-hidden="true">&times;</span></div>' +
                                         '<h3>'+M.util.get_string('assignroles', 'role')+'</h3>' +
-                                        '</div><div class="content popover-content form-inline form-group"></div></div>');
+                                        '</div><div class="content popover-content form-inline mb-3"></div></div>');
             var content = element.one('.content');
             var roles = m.get(ASSIGNABLEROLES);
             for (i in roles) {

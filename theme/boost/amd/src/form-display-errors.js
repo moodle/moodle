@@ -42,7 +42,7 @@ define(['jquery', 'core_form/events'], function($, FormEvent) {
                 const msg = e.detail.message;
                 e.preventDefault();
 
-                var parent = $(element).closest('.form-group');
+                var parent = $(element).closest('.fitem');
                 var feedback = parent.find('.form-control-feedback');
                 const feedbackId = feedback.attr('id');
 

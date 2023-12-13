@@ -69,7 +69,7 @@ class tool_lp_site_competencies_form_element extends MoodleQuickForm_hidden {
             $params = [$context->id];
             // Require some JS to select the competencies.
             $PAGE->requires->js_call_amd('tool_lp/form_competency_element', 'init', $params);
-            $html .= '<div class="form-group row">';
+            $html .= '<div class="mb-3 row">';
             $html .= '<div class="col-md-3"></div>';
             $html .= '<div class="col-md-9">';
             $html .= '<div data-region="competencies"></div>';

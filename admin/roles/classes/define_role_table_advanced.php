@@ -645,7 +645,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     protected function print_field($name, $caption, $field, $helpicon = null) {
         global $OUTPUT;
         // Attempt to generate HTML like formslib.
-        echo '<div class="fitem row form-group">';
+        echo '<div class="fitem row mb-3">';
         echo '<div class="fitemtitle col-md-3">';
         if ($name) {
             echo '<label for="' . $name . '">';

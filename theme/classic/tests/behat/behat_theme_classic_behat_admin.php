@@ -82,7 +82,6 @@ class behat_theme_classic_behat_admin extends behat_admin {
                 // Multi element settings, interacting only the first one.
                 $fieldxpath = "//*[label[contains(., $label)]|span[contains(., $label)]]" .
                         "/ancestor::div[contains(concat(' ', normalize-space(@class), ' '), ' form-item ')]" .
-                        "/descendant::div[contains(concat(' ', @class, ' '), ' form-group ')]" .
                         "/descendant::*[self::input | self::textarea | self::select]" .
                         "[not(./@type = 'submit' or ./@type = 'image' or ./@type = 'hidden')]";
                 $fieldnode = $this->find('xpath', $fieldxpath);

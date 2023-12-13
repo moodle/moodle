@@ -47,7 +47,7 @@ class preview_options_form extends moodleform {
         $mform->setExpanded('attemptoptionsheader', false);
         // Add html element with class to display long text in single line.
         $mform->addElement('html', \html_writer::div(get_string('theoptionsyouselectonlyaffectthepreview',
-            'qbank_previewquestion'), "col-md-12 row d-flex col-form-label form-group"));
+            'qbank_previewquestion'), "col-md-12 row d-flex col-form-label mb-3"));
         $versions = $this->_customdata['versions'];
         $versions[question_preview_options::ALWAYS_LATEST] = get_string('alwayslatest', 'qbank_previewquestion');
         $currentversion = $this->_customdata['restartversion'];

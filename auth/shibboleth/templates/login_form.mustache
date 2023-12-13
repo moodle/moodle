@@ -71,7 +71,7 @@
             <div class="row justify-content-center ml-1 mr-1 mb-1">
                 <div class="col-md-5">
                     <form action="{{loginurl}}" method="post" id="login">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <label for="idp">{{#str}}auth_shibboleth_select_organization, auth_shibboleth{{/str}}</label>
                             <select id="idp" name="idp" class="form-control input-block-level {{^isvalid}}is-invalid{{/isvalid}}">
                                 <option value="-">{{#str}}auth_shibboleth_select_member, auth_shibboleth{{/str}}</option>

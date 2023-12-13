@@ -32013,7 +32013,7 @@ table.question-bank-table .header.checkbox .form-check {
 body.path-question-type {
   /* Hacks to display the labels within a form group. */
 }
-body.path-question-type .form-group .col-form-label.sr-only:not(legend):not([for=id_category]) {
+body.path-question-type .fitem .col-form-label.sr-only:not(legend):not([for=id_category]) {
   position: static;
   width: auto;
   height: auto;
@@ -32900,8 +32900,8 @@ body.path-question-type .mform fieldset.hidden {
 .mform .form-inline textarea.form-control {
   width: 100%;
 }
-.mform .form-inline .form-group {
-  margin: 0.1rem 0.25rem 0.1rem 0;
+.mform .form-inline .fitem {
+  margin: 0.1rem 0.25rem 0.1rem 0 !important; /* stylelint-disable-line declaration-no-important */
 }
 .mform .form-inline br + label {
   justify-content: flex-start;
@@ -33261,7 +33261,7 @@ textarea[data-auto-rows] {
   }
 }
 
-[data-fieldtype=modgrade] .form-group {
+[data-fieldtype=modgrade] .fitem {
   padding-bottom: 0.375rem;
 }
 
@@ -34393,7 +34393,7 @@ img.userpicture {
   max-width: none;
 }
 
-#page-mod-quiz-mod #id_reviewoptionshdr .form-group {
+#page-mod-quiz-mod #id_reviewoptionshdr .fitem {
   float: left;
   width: 20rem;
   display: inline-block;
@@ -34915,16 +34915,16 @@ img.userpicture {
 .path-backup .mform .grouped_settings:nth-of-type(even) {
   background-color: #fff;
 }
-.path-backup .mform .root_setting .form-group,
-.path-backup .mform .grouped_settings .form-group {
+.path-backup .mform .root_setting .fitem,
+.path-backup .mform .grouped_settings .fitem {
   /* These checkboxes with no label on the left. */
 }
-.path-backup .mform .root_setting .form-group .col-md-3.checkbox,
-.path-backup .mform .grouped_settings .form-group .col-md-3.checkbox {
+.path-backup .mform .root_setting .fitem .col-md-3.checkbox,
+.path-backup .mform .grouped_settings .fitem .col-md-3.checkbox {
   width: 0%;
 }
-.path-backup .mform .root_setting .form-group .col-md-9.checkbox,
-.path-backup .mform .grouped_settings .form-group .col-md-9.checkbox {
+.path-backup .mform .root_setting .fitem .col-md-9.checkbox,
+.path-backup .mform .grouped_settings .fitem .col-md-9.checkbox {
   width: 100%;
   left: 0;
 }
@@ -37705,13 +37705,13 @@ div.editor_atto_toolbar button .icon {
   text-overflow: clip;
   word-break: break-all;
 }
-.reportbuilder-filters-sidebar .form-group[data-groupname=buttonar] {
+.reportbuilder-filters-sidebar .fitem[data-groupname=buttonar] {
   position: absolute;
   bottom: 0;
   height: 4rem;
   align-items: center;
 }
-.reportbuilder-filters-sidebar .form-group[data-groupname=buttonar] .col-form-label {
+.reportbuilder-filters-sidebar .fitem[data-groupname=buttonar] .col-form-label {
   display: none !important; /* stylelint-disable-line declaration-no-important */
 }
 
@@ -37719,20 +37719,20 @@ div.editor_atto_toolbar button .icon {
 .reportbuilder-conditions-list .mform.full-width-labels .fdate_selector {
   flex-wrap: wrap;
 }
-.reportbuilder-filters-wrapper .mform.full-width-labels .form-group,
-.reportbuilder-conditions-list .mform.full-width-labels .form-group {
-  margin-bottom: 0;
+.reportbuilder-filters-wrapper .mform.full-width-labels .fitem,
+.reportbuilder-conditions-list .mform.full-width-labels .fitem {
+  margin-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
   max-width: 100%;
 }
-.reportbuilder-filters-wrapper .mform.full-width-labels .form-group:not(.row):last-child,
-.reportbuilder-conditions-list .mform.full-width-labels .form-group:not(.row):last-child {
+.reportbuilder-filters-wrapper .mform.full-width-labels .fitem:not(.row):last-child,
+.reportbuilder-conditions-list .mform.full-width-labels .fitem:not(.row):last-child {
   flex: 1;
   min-width: 0;
 }
-.reportbuilder-filters-wrapper .mform.full-width-labels .form-group:not(.row):last-child span,
-.reportbuilder-filters-wrapper .mform.full-width-labels .form-group:not(.row):last-child .custom-select,
-.reportbuilder-conditions-list .mform.full-width-labels .form-group:not(.row):last-child span,
-.reportbuilder-conditions-list .mform.full-width-labels .form-group:not(.row):last-child .custom-select {
+.reportbuilder-filters-wrapper .mform.full-width-labels .fitem:not(.row):last-child span,
+.reportbuilder-filters-wrapper .mform.full-width-labels .fitem:not(.row):last-child .custom-select,
+.reportbuilder-conditions-list .mform.full-width-labels .fitem:not(.row):last-child span,
+.reportbuilder-conditions-list .mform.full-width-labels .fitem:not(.row):last-child .custom-select {
   width: 100%;
 }
 

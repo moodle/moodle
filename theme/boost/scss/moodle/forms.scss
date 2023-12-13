@@ -30,8 +30,8 @@
     textarea.form-control {
         width: 100%;
     }
-    .form-group {
-        margin: 0.1rem 0.25rem 0.1rem 0;
+    .fitem {
+        margin: 0.1rem 0.25rem 0.1rem 0 !important; /* stylelint-disable-line declaration-no-important */
     }
     br + label {
         justify-content: flex-start;
@@ -414,7 +414,7 @@ textarea[data-auto-rows] {
     }
 }
 
-[data-fieldtype="modgrade"] .form-group {
+[data-fieldtype="modgrade"] .fitem {
     padding-bottom: $input-padding-y;
 }
 
