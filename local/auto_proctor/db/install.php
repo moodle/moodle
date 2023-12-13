@@ -23,6 +23,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+// Copy the id of quiz from quiz table to auto_proctor_quiz_tb table
+// This is for the enabling of auto-proctor feature per quiz
 function xmldb_local_auto_proctor_install() {
     global $DB;
 
