@@ -144,10 +144,8 @@ class repository extends base {
         if ($hassiteconfig && $this->is_enabled()) {
             // Completely no access to repository setting when it is not enabled.
             $sectionname = $this->get_settings_section_name();
-            $settingsurl = new moodle_url('/admin/repository.php',
-                array('sesskey' => sesskey(), 'action' => 'edit', 'repos' => $this->name));
             $settings = new admin_externalpage($sectionname, $this->displayname,
-                $settingsurl, 'moodle/site:config', false);
+                new moodle_url('/admin/repository.php', ['action' => 'edit', 'repos' => $this->name]), 'moodle/site:config', false);
             $adminroot->add($parentnodename, $settings);
         }
     }
