@@ -22,9 +22,11 @@
  */
 
 function local_auto_proctor_extend_navigation(global_navigation $navigation){
-    if(!has_capability('moodle/site:config', context_system::instance())){
-        return;
-    }
+    
+    // Acces control for admin only
+    // if(!has_capability('moodle/site:config', context_system::instance())){
+    //     return;
+    // }
 
     $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/auto_proctor_dashboard.php');
     $main_node->nodetype = 1;
