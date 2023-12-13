@@ -46,14 +46,12 @@ Feature: Safe Exam Browser settings in quiz edit form
       | course       | C1             |
       | role         | editingteacher |
     And I log in as "teacher"
-    And I am on "Course 1" course homepage with editing mode on
     # Create the quiz.
-    When I add a "Quiz" to section "0" and I fill the form with:
+    When I add a quiz activity to course "Course 1" section "0" and I fill the form with:
       | Name | My quiz |
     Then I should not see "Adding a new Quiz"
     # Edit the quiz.
-    And I open "My quiz" actions menu
-    And I click on "Edit settings" "link" in the "My quiz" activity
+    And I am on the "My quiz" "quiz activity editing" page
     And I set the field "Name" to "My quiz edited"
     And I press "Save and return to course"
     And I should not see "Updating: Quiz"

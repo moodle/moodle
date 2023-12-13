@@ -6,8 +6,8 @@ Feature: Confirm that conditions on completion no longer cause a bug
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1        | topics |
+      | fullname | shortname | format | enablecompletion |
+      | Course 1 | C1        | topics | 1                |
     And the following "users" exist:
       | username |
       | teacher1 |
@@ -17,21 +17,14 @@ Feature: Confirm that conditions on completion no longer cause a bug
 
   @javascript
   Scenario: Multiple completion conditions on glossary
-    # Set up course.
-    Given I am on the "Course 1" "course" page logged in as "teacher1"
-    And I navigate to "Settings" in current page administration
-    And I expand all fieldsets
-    And I set the field "Enable completion tracking" to "Yes"
-    And I press "Save and display"
-    And I turn editing mode on
     # Add a couple of Pages with manual completion.
     And the following "activities" exist:
       | activity | course | name  | completion |
       | page     | C1     | Page1 | 1          |
       | page     | C1     | Page2 | 1          |
-
+    And I log in as "teacher1"
     # Add a Glossary.
-    When I add a "Glossary" to section "1"
+    When I add a glossary activity to course "Course 1" section "1"
     And I set the following fields to these values:
       | Name | TestGlossary |
     And I expand all fieldsets

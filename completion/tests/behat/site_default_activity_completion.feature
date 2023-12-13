@@ -17,8 +17,7 @@ Feature: Allow admins to edit the default activity completion rules at site leve
       | course     | C1                   |
       | name       | Test assignment one  |
       | completion | 1                    |
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Assignment" to section "0"
+    When I add a assign activity to course "Course 1" section "0"
     And I expand all fieldsets
     # Completion tracking 0 = Do not indicate activity completion.
     Then the field "None" matches value "1"
@@ -39,8 +38,7 @@ Feature: Allow admins to edit the default activity completion rules at site leve
     And the following "core_completion > Course default" exist:
       | course               | module | completion | completionview | completionusegrade | completionsubmit |
       | Acceptance test site | assign | 2          | 0              | 1                  | 1                |
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Assignment" to section "0"
+    When I add a assign activity to course "Course 1" section "0"
     And I expand all fieldsets
     Then the field "Add requirements" matches value "1"
     And the field "completionview" matches value "0"
@@ -64,8 +62,7 @@ Feature: Allow admins to edit the default activity completion rules at site leve
       | course               | module | completion | completionview | completionusegrade | completionsubmit |
       | Acceptance test site | assign | 2          | 0              | 1                  | 1                |
       | C1                   | assign | 2          | 1              | 0                  | 1                |
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Assignment" to section "0"
+    When I add a assign activity to course "Course 1" section "0"
     And I expand all fieldsets
     Then the field "Add requirements" matches value "1"
     And the field "completionview" matches value "1"

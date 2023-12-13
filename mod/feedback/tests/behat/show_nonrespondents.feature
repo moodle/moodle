@@ -34,12 +34,10 @@ Feature: Show users who have not responded to the feedback survey
       | grouping | group  |
       | GXI1     | GI1    |
 
-  @javascript
   Scenario: See users who have not responded
     # Set up a feedback.
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Feedback" to section "1" and I fill the form with:
+    And I add a feedback activity to course "Course 1" section "1" and I fill the form with:
       | Name                | Frogs                                             |
       | Description         | x                                                 |
       | Record user names   | User's name will be logged and shown with answers |

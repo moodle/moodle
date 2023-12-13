@@ -93,7 +93,7 @@ Feature: Sections can be edited and deleted in topics format
   @javascript
   Scenario: Add a topic and then add an activity in it
     When I click on "Add topic" "link" in the "Topic 5" "section"
-    And I add a "Assignment" to section "6" and I fill the form with:
+    And I add an assign activity to course "Course 1" section "6" and I fill the form with:
       | Assignment name | Very new activity |
       | Description     | Test              |
     Then I should see "Very new activity" in the "Topic 6" "section"

@@ -18,8 +18,7 @@ Feature: Add scorm activity
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     When I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "SCORM package" to section "1"
+    And I add a scorm activity to course "Course 1" section "1"
     And I set the following fields to these values:
       | Name | Awesome SCORM package |
       | Description | Description |
