@@ -202,7 +202,7 @@ class behat_course extends behat_base {
             if ($section) {
                 // Section 1 represents the contents on the frontpage.
                 $sectionxpath = "//body[@id='page-site-index']" .
-                        "/descendant::div[contains(concat(' ',normalize-space(@class),' '),' sitetopic ')]";
+                    "/descendant::div[contains(concat(' ',normalize-space(@class),' '),' sitetopic ')]";
             } else {
                 // Section 0 represents "Site main menu" block.
                 $sectionxpath = "//*[contains(concat(' ',normalize-space(@class),' '),' block_site_main_menu ')]";
@@ -224,10 +224,116 @@ class behat_course extends behat_base {
         // Clicks the selected activity if it exists.
         $activityliteral = behat_context_helper::escape(ucfirst($activity));
         $activityxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' modchooser ')]" .
-                "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
-                "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
-                "[normalize-space(.)=$activityliteral]" .
-                "/parent::a";
+            "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
+            "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
+            "[normalize-space(.)=$activityliteral]" .
+            "/parent::a";
+
+        $this->execute('behat_general::i_click_on', [$activityxpath, 'xpath']);
+    }
+
+    /**
+     * Adds the selected activity/resource filling the form data with the specified field/value pairs.
+     *
+     * Sections 0 and 1 are also allowed on frontpage.
+     *
+     * @Given I add a :activity activity to course :coursefullname section :sectionnum and I fill the form with:
+     * @Given I add an :activity activity to course :coursefullname section :sectionnum and I fill the form with:
+     * @param string $activity The activity name
+     * @param string $coursefullname The course full name of the course.
+     * @param int $section The section number
+     * @param TableNode $data The activity field/value data
+     */
+    public function i_add_to_course_section_and_i_fill_the_form_with($activity, $coursefullname, $section, TableNode $data) {
+
+        // Add activity to section.
+        $this->execute(
+            "behat_course::i_add_to_course_section",
+            [$this->escape($activity), $this->escape($coursefullname), $this->escape($section)]
+        );
+
+        // Wait to be redirected.
+        $this->execute('behat_general::wait_until_the_page_is_ready');
+
+        // Set form fields.
+        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $data);
+
+        // Save course settings.
+        $this->execute("behat_forms::press_button", get_string('savechangesandreturntocourse'));
+    }
+
+    /**
+     * Open a add activity form page.
+     *
+     * @Given I add a :activity activity to course :coursefullname section :sectionnum
+     * @Given I add an :activity activity to course :coursefullname section :sectionnum
+     * @throws coding_exception
+     * @param string $activity The activity name.
+     * @param string $coursefullname The course full name of the course.
+     * @param string $sectionnum The section number.
+     */
+    public function i_add_to_course_section(string $activity, string $coursefullname, string $sectionnum): void {
+        $addurl = new moodle_url('/course/modedit.php', [
+            'add' => $activity,
+            'course' => $this->get_course_id($coursefullname),
+            'section' => intval($sectionnum),
+        ]);
+        $this->execute('behat_general::i_visit', [$addurl]);
+    }
+
+    /**
+     * Opens the activity chooser and opens the activity/resource link form page.
+     *
+     * Sections 0 and 1 are also allowed on frontpage.
+     *
+     * This step require javascript enabled and it is used mainly to click activities or resources by name,
+     * not by plugin name. Use the standard behat_course::i_add_to_course_section step instead unless the
+     * plugin create extra entries into the activity chooser (like LTI).
+     *
+     * @Given I add a :activityname to section :sectionnum using the activity chooser
+     * @Given I add an :activityname to section :sectionnum using the activity chooser
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $activityname
+     * @param int $sectionnum
+     */
+    public function i_add_to_section_using_the_activity_chooser($activityname, $sectionnum) {
+
+        $this->require_javascript('Please use the \'the following "activity" exists:\' data generator instead.');
+
+        if ($this->getSession()->getPage()->find('css', 'body#page-site-index') && (int) $sectionnum <= 1) {
+            // We are on the frontpage.
+            if ($sectionnum) {
+                // Section 1 represents the contents on the frontpage.
+                $sectionxpath = "//body[@id='page-site-index']" .
+                    "/descendant::div[contains(concat(' ',normalize-space(@class),' '),' sitetopic ')]";
+            } else {
+                // Section 0 represents "Site main menu" block.
+                $sectionxpath = "//*[contains(concat(' ',normalize-space(@class),' '),' block_site_main_menu ')]";
+            }
+        } else {
+            // We are inside the course.
+            $sectionxpath = "//li[@id='section-" . $sectionnum . "']";
+        }
+
+        // Clicks add activity or resource section link.
+        $sectionnode = $this->find('xpath', $sectionxpath);
+        $this->execute(
+            'behat_general::i_click_on_in_the',
+            [
+                "//button[@data-action='open-chooser' and not(@data-beforemod)]",
+                'xpath',
+                $sectionnode,
+                'NodeElement',
+            ]
+        );
+
+        // Clicks the selected activity if it exists.
+        $activityliteral = behat_context_helper::escape(ucfirst($activityname));
+        $activityxpath = "//div[contains(concat(' ', normalize-space(@class), ' '), ' modchooser ')]" .
+            "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optioninfo ')]" .
+            "/descendant::div[contains(concat(' ', normalize-space(@class), ' '), ' optionname ')]" .
+            "[normalize-space(.)=$activityliteral]" .
+            "/parent::a";
 
         $this->execute('behat_general::i_click_on', [$activityxpath, 'xpath']);
     }
