@@ -242,7 +242,7 @@ class factor extends object_factor_base {
      * WebAuthn Factor implementation.
      *
      * @param \MoodleQuickForm $mform
-     * @return object $mform
+     * @return \MoodleQuickForm $mform
      */
     public function setup_factor_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm {
         global $PAGE, $USER, $SESSION;

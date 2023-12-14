@@ -1874,7 +1874,7 @@ class core_plugin_manager {
 
             'factor' => [
                 'admin', 'auth', 'capability', 'cohort',  'email', 'grace', 'iprange', 'nosetup', 'role',
-                'token', 'totp', 'webauthn',
+                'token', 'totp', 'webauthn', 'sms',
             ],
 
             'filter' => array(

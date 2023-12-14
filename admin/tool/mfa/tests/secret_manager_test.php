@@ -262,4 +262,29 @@ class secret_manager_test extends \advanced_testcase {
          $reflectedsessionid->setValue($secman, 'diffsession');
         $this->assertFalse($reflectedmethod->invoke($secman, true));
     }
+
+    /**
+     * Tests with cleanup temporal secrets
+     *
+     * @covers ::cleanup_temp_secrets
+     */
+    public function test_cleanup_temp_secrets(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $secman = new \tool_mfa\local\secret_manager('mock');
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Create secrets.
+        $secman->create_secret(1800, true);
+        $secman->create_secret(1800, true);
+
+        // Cleanup current user secrets.
+        $secman->cleanup_temp_secrets();
+
+        // Check there are no secrets of the current user.
+        $records = $DB->get_records('tool_mfa_secrets', ['userid' => $user->id]);
+        $this->assertEmpty($records);
+    }
 }

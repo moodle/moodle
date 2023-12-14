@@ -29,7 +29,7 @@ use tool_mfa\local\form\revoke_factor_form;
 
 require_login(null, false);
 if (isguestuser()) {
-    throw new require_login_exception('Guests are not allowed here.');
+    throw new require_login_exception('error:isguestuser', 'tool_mfa');
 }
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
@@ -85,6 +85,7 @@ switch ($action) {
             $form->is_validated();
 
             if ($form->is_cancelled()) {
+                $factorobject->setup_factor_form_is_cancelled($factorid);
                 redirect($returnurl);
             }
 

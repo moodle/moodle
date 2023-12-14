@@ -26,7 +26,7 @@ require_once(__DIR__ . '/../../../config.php');
 
 require_login(null, false);
 if (isguestuser()) {
-    throw new require_login_exception('Guests are not allowed here.');
+    throw new require_login_exception('error:isguestuser', 'tool_mfa');
 }
 
 $action = optional_param('action', '', PARAM_TEXT);
