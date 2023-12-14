@@ -44,6 +44,9 @@ class repository_equella_generator extends testing_repository_generator {
         if (!isset($record['equella_url'])) {
             $record['equella_url'] = 'http://dummy.url.com';
         }
+        if (!isset($record['equella_userfield'])) {
+            $record['equella_userfield'] = 'default';
+        }
         if (!isset($record['equella_select_restriction'])) {
             $record['equella_select_restriction'] = 'none';
         }
@@ -53,8 +56,20 @@ class repository_equella_generator extends testing_repository_generator {
         if (!isset($record['equella_shareid'])) {
             $record['equella_shareid'] = 'id';
         }
-        if (!isset($record['equella_sharesecret'])) {
-            $record['equella_url'] = 'secret';
+        if (!isset($record['equella_sharedsecret'])) {
+            $record['equella_sharedsecret'] = 'secret';
+        }
+        if (!isset($record['equella_manager_shareid'])) {
+            $record['equella_manager_shareid'] = '';
+        }
+        if (!isset($record['equella_manager_sharedsecret'])) {
+            $record['equella_manager_sharedsecret'] = '';
+        }
+        if (!isset($record['equella_editingteacher_shareid'])) {
+            $record['equella_editingteacher_shareid'] = '';
+        }
+        if (!isset($record['equella_editingteacher_sharedsecret'])) {
+            $record['equella_editingteacher_sharedsecret'] = '';
         }
         return $record;
     }

@@ -29,6 +29,9 @@ $string['breadcrumb'] = 'EQUELLA';
 
 $string['equellaurl'] = 'EQUELLA URL';
 $string['equellaaction'] = 'EQUELLA action';
+$string['equellausername'] = 'Username';
+$string['equellauserfield'] = 'EQUELLA userfield';
+$string['equellauserfield_help'] = 'Choose the user field to be used for matching equella user (Only the user fields of type short text are being listed)';
 $string['equellaoptions'] = 'EQUELLA options';
 $string['equella:view'] = 'View EQUELLA repository';
 $string['sharedid'] = 'Shared secret ID';
