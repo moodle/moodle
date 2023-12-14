@@ -151,6 +151,12 @@ $functions = array(
         'ajax'          => true,
         'loginrequired' => false,
     ),
+    'core_blog_get_access_information' => [
+        'classname' => '\core_blog\external\get_access_information',
+        'description' => 'Retrieves permission information for the current user.',
+        'type' => 'read',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_calendar_get_calendar_monthly_view' => array(
         'classname' => 'core_calendar_external',
         'methodname' => 'get_calendar_monthly_view',

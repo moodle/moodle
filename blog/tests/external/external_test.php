@@ -641,4 +641,35 @@ class external_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertNotEmpty($event->get_name());
     }
+
+    /**
+     * Test get_access_information
+     */
+    public function test_get_access_information() {
+        global $CFG;
+
+        $this->setAdminUser();
+        $result = get_access_information::execute();
+        $result = external_api::clean_returnvalue(get_access_information::execute_returns(), $result);
+
+        $this->assertTrue($result['canview']);
+        $this->assertTrue($result['cansearch']);
+        $this->assertTrue($result['canviewdrafts']);
+        $this->assertTrue($result['cancreate']);
+        $this->assertTrue($result['canmanageentries']);
+        $this->assertTrue($result['canmanageexternal']);
+        $this->assertEmpty($result['warnings']);
+
+        $this->setUser($this->userid);
+        $result = get_access_information::execute();
+        $result = external_api::clean_returnvalue(get_access_information::execute_returns(), $result);
+
+        $this->assertTrue($result['canview']);
+        $this->assertTrue($result['cansearch']);
+        $this->assertFalse($result['canviewdrafts']);
+        $this->assertTrue($result['cancreate']);
+        $this->assertFalse($result['canmanageentries']);
+        $this->assertTrue($result['canmanageexternal']);
+        $this->assertEmpty($result['warnings']);
+    }
 }
