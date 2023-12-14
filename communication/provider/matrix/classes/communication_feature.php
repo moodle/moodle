@@ -190,6 +190,24 @@ class communication_feature implements
     }
 
     public function update_room_membership(array $userids): void {
+
+        // Filter out any users that are not room members yet.
+        $response = $this->matrixapi->get_room_members(
+            roomid: $this->get_room_id(),
+        );
+        $body = self::get_body($response);
+
+        if (isset($body->joined)) {
+            foreach ($userids as $key => $userid) {
+                $matrixuserid = matrix_user_manager::get_matrixid_from_moodle(
+                    userid: $userid,
+                );
+                if (!array_key_exists($matrixuserid, (array) $body->joined)) {
+                    unset($userids[$key]);
+                }
+            }
+        }
+
         $this->set_matrix_power_levels();
         // Mark the users as synced for the updated members.
         $this->processor->mark_users_as_synced($userids);
