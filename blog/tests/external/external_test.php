@@ -119,6 +119,7 @@ class external_test extends \advanced_testcase {
         $this->assertEquals('tag1', $result['entries'][0]['tags'][0]['rawname']);
 
         $this->assertEquals($this->postid, $result['entries'][0]['id']);
+        $this->assertFalse($result['entries'][0]['canedit']);
     }
 
     /**
@@ -266,6 +267,7 @@ class external_test extends \advanced_testcase {
         $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals($this->postid, $result['entries'][0]['id']);
+        $this->assertTrue($result['entries'][0]['canedit']);
     }
 
     /**
@@ -283,6 +285,7 @@ class external_test extends \advanced_testcase {
         $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
         $this->assertCount(1, $result['entries']);
         $this->assertEquals($this->postid, $result['entries'][0]['id']);
+        $this->assertTrue($result['entries'][0]['canedit']);
     }
 
     /**
