@@ -183,12 +183,7 @@ class graded_users_iterator {
             }
         }
 
-        $userfieldsapi = \core_user\fields::for_identity($coursecontext, false)->with_userpic();
-        $userfields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-
-        // This need to be fixed - webservices in grade/report/user/classes/external/user.php don't check permission properly.
-        $userfields .= ', u.idnumber, u.institution, u.department';
-
+        $userfields = 'u.*';
         $customfieldssql = '';
         if ($this->allowusercustomfields && !empty($CFG->grade_export_customprofilefields)) {
             $customfieldscount = 0;
@@ -222,7 +217,8 @@ class graded_users_iterator {
         $this->users_rs = $DB->get_recordset_sql($users_sql, $params);
 
         if (!$this->onlyactive) {
-            $this->suspendedusers = get_suspended_userids($coursecontext);
+            $context = context_course::instance($this->course->id);
+            $this->suspendedusers = get_suspended_userids($context);
         } else {
             $this->suspendedusers = array();
         }
