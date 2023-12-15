@@ -8,10 +8,10 @@ Feature: Configure access to reports based on intended audience
       | datatype | shortname | name  |
       | text     | fruit     | Fruit |
     And the following "users" exist:
-      | username  | firstname | lastname | email             | profile_field_fruit |
-      | user1     | User      | 1        | user1@example.com | Apple               |
-      | user2     | User      | 2        | user2@example.com | Banana              |
-      | user3     | User      | 3        | user3@example.com | Banana              |
+      | username  | firstname | middlename | lastname | email             | profile_field_fruit |
+      | user1     | User      | One        | 1        | user1@example.com | Apple               |
+      | user2     | User      | Two        | 2        | user2@example.com | Banana              |
+      | user3     | User      | Three      | 3        | user3@example.com | Banana              |
     And the following "core_reportbuilder > Reports" exist:
       | name      | source                                   | default |
       | My report | core_user\reportbuilder\datasource\users | 1       |
@@ -215,6 +215,31 @@ Feature: Configure access to reports based on intended audience
     And I should not see "User 1" in the "reportbuilder-table" "table"
     And I should see "User 2" in the "reportbuilder-table" "table"
     And I should not see "User 3" in the "reportbuilder-table" "table"
+
+  Scenario: View configured user additional names on the access tab
+    Given the following config values are set as admin:
+      | alternativefullnameformat | firstname middlename lastname |
+    And the following "core_reportbuilder > Audiences" exist:
+      | report    | configdata |
+      | My report |            |
+    And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
+    When I click on the "Access" dynamic tab
+    Then I should see "User One 1" in the "reportbuilder-table" "table"
+    And I should see "User Two 2" in the "reportbuilder-table" "table"
+    And I should see "User Three 3" in the "reportbuilder-table" "table"
+    # Now sort each of them.
+    And I click on "First name" "link" in the "reportbuilder-table" "table"
+    And "Admin User" "table_row" should appear before "User One 1" "table_row"
+    And I click on "First name" "link" in the "reportbuilder-table" "table"
+    And "User One 1" "table_row" should appear before "Admin User" "table_row"
+    And I click on "Middle name" "link" in the "reportbuilder-table" "table"
+    And "User Two 2" "table_row" should appear before "User One 1" "table_row"
+    And I click on "Middle name" "link" in the "reportbuilder-table" "table"
+    And "User One 1" "table_row" should appear before "User Two 2" "table_row"
+    And I click on "Last name" "link" in the "reportbuilder-table" "table"
+    And "User One 1" "table_row" should appear before "User Two 2" "table_row"
+    And I click on "Last name" "link" in the "reportbuilder-table" "table"
+    And "User Two 2" "table_row" should appear before "User One 1" "table_row"
 
   Scenario: View configured user identity fields on the access tab
     Given the following config values are set as admin:
