@@ -20,94 +20,73 @@
  * @copyright  2017 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define([
-    'jquery',
-    'core/notification',
-    'core/custom_interaction_events',
-    'core/modal',
-    'core/modal_events',
-    'core/modal_registry',
-    'core_calendar/events',
-],
-function(
-    $,
-    Notification,
-    CustomEvents,
-    Modal,
-    ModalEvents,
-    ModalRegistry,
-    CalendarEvents
-) {
 
-    var registered = false;
-    var SELECTORS = {
-        DELETE_ONE_BUTTON: '[data-action="deleteone"]',
-        DELETE_ALL_BUTTON: '[data-action="deleteall"]',
-        CANCEL_BUTTON: '[data-action="cancel"]',
-    };
+import $ from 'jquery';
+import * as CustomEvents from 'core/custom_interaction_events';
+import Modal from 'core/modal';
+import ModalEvents from 'core/modal_events';
+import CalendarEvents from './events';
 
-    /**
-     * Constructor for the Modal.
-     *
-     * @class
-     * @param {object} root The root jQuery element for the modal
-     */
-    var ModalDelete = function(root) {
-        Modal.call(this, root);
+const SELECTORS = {
+    DELETE_ONE_BUTTON: '[data-action="deleteone"]',
+    DELETE_ALL_BUTTON: '[data-action="deleteall"]',
+    CANCEL_BUTTON: '[data-action="cancel"]',
+};
 
+/**
+ * Constructor for the Modal.
+ *
+ * @class
+ * @param {object} root The root jQuery element for the modal
+ */
+export default class ModalDelete extends Modal {
+    static TYPE = 'core_calendar-modal_delete';
+    static TEMPLATE = 'calendar/event_delete_modal';
+
+    constructor(root) {
+        super(root);
         this.setRemoveOnClose(true);
-    };
-
-    ModalDelete.TYPE = 'core_calendar-modal_delete';
-    ModalDelete.prototype = Object.create(Modal.prototype);
-    ModalDelete.prototype.constructor = ModalDelete;
+    }
 
     /**
      * Set up all of the event handling for the modal.
      *
      * @method registerEventListeners
      */
-    ModalDelete.prototype.registerEventListeners = function() {
+    registerEventListeners() {
         // Apply parent event listeners.
-        Modal.prototype.registerEventListeners.call(this);
+        super.registerEventListeners(this);
 
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.DELETE_ONE_BUTTON, function(e, data) {
-            var saveEvent = $.Event(ModalEvents.save);
+        this.getModal().on(CustomEvents.events.activate, SELECTORS.DELETE_ONE_BUTTON, (e, data) => {
+            const saveEvent = $.Event(ModalEvents.save);
             this.getRoot().trigger(saveEvent, this);
 
             if (!saveEvent.isDefaultPrevented()) {
                 this.hide();
                 data.originalEvent.preventDefault();
             }
-        }.bind(this));
+        });
 
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.DELETE_ALL_BUTTON, function(e, data) {
-            var saveEvent = $.Event(CalendarEvents.deleteAll);
+        this.getModal().on(CustomEvents.events.activate, SELECTORS.DELETE_ALL_BUTTON, (e, data) => {
+            const saveEvent = $.Event(CalendarEvents.deleteAll);
             this.getRoot().trigger(saveEvent, this);
 
             if (!saveEvent.isDefaultPrevented()) {
                 this.hide();
                 data.originalEvent.preventDefault();
             }
-        }.bind(this));
+        });
 
-        this.getModal().on(CustomEvents.events.activate, SELECTORS.CANCEL_BUTTON, function(e, data) {
-            var cancelEvent = $.Event(ModalEvents.cancel);
+        this.getModal().on(CustomEvents.events.activate, SELECTORS.CANCEL_BUTTON, (e, data) => {
+            const cancelEvent = $.Event(ModalEvents.cancel);
             this.getRoot().trigger(cancelEvent, this);
 
             if (!cancelEvent.isDefaultPrevented()) {
                 this.hide();
                 data.originalEvent.preventDefault();
             }
-        }.bind(this));
-    };
-
-    // Automatically register with the modal registry the first time this module is imported so that you can create modals
-    // of this type using the modal factory.
-    if (!registered) {
-        ModalRegistry.register(ModalDelete.TYPE, ModalDelete, 'calendar/event_delete_modal');
-        registered = true;
+        });
     }
+}
 
-    return ModalDelete;
-});
+ModalDelete.registerModalType();

@@ -59,13 +59,14 @@ class login_change_password_form extends moodleform {
         $mform->setType('password', PARAM_RAW);
 
         $mform->addElement('password', 'newpassword1', get_string('newpassword'),
-                            ['autocomplete' => 'new-password']);
+            ['autocomplete' => 'new-password', 'maxlength' => MAX_PASSWORD_CHARACTERS]);
         $mform->addRule('newpassword1', get_string('required'), 'required', null, 'client');
+        $mform->addRule('password', get_string('maximumchars', '', MAX_PASSWORD_CHARACTERS),
+            'maxlength', MAX_PASSWORD_CHARACTERS, 'client');
         $mform->setType('newpassword1', PARAM_RAW);
 
-        $mform->addElement('password', 'newpassword2',
-                            get_string('newpassword').' ('.get_String('again').')',
-                            ['autocomplete' => 'new-password']);
+        $mform->addElement('password', 'newpassword2', get_string('newpassword').' ('.get_String('again').')',
+            ['autocomplete' => 'new-password', 'maxlength' => MAX_PASSWORD_CHARACTERS]);
         $mform->addRule('newpassword2', get_string('required'), 'required', null, 'client');
         $mform->setType('newpassword2', PARAM_RAW);
 

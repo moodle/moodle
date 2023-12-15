@@ -51,9 +51,9 @@ class token_filter extends moodleform {
             $mform->setExpanded('tokenfilter', true);
         }
 
-        // Token.
-        $mform->addElement('text', 'token', get_string('token', 'core_webservice'), ['size' => 32]);
-        $mform->setType('token', PARAM_ALPHANUM);
+        // Token name.
+        $mform->addElement('text', 'name', get_string('tokenname', 'core_webservice'), ['size' => 32]);
+        $mform->setType('name', PARAM_TEXT);
 
         // User selector.
         $attributes = [

@@ -22,7 +22,6 @@
  */
 
 import Ajax from 'core/ajax';
-import * as Notification from 'core/notification';
 
 /**
  * Retrieve a list of enrolled courses.
@@ -62,29 +61,4 @@ export const setFavouriteCourses = args => {
     };
 
     return Ajax.call([request])[0];
-};
-
-/**
- * Update the user preferences.
- *
- * @param {Object} args Arguments send to the webservice.
- *
- * Sample args:
- * {
- *     preferences: [
- *         {
- *             type: 'block_example_user_sort_preference'
- *             value: 'title'
- *         }
- *     ]
- * }
- */
-export const updateUserPreferences = args => {
-    const request = {
-        methodname: 'core_user_update_user_preferences',
-        args: args
-    };
-
-    Ajax.call([request])[0]
-        .fail(Notification.exception);
 };

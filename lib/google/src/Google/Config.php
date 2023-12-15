@@ -18,6 +18,7 @@
 /**
  * A class to contain the library configuration for the Google API client.
  */
+#[AllowDynamicProperties]
 class Google_Config
 {
   const GZIP_DISABLED = true;

@@ -25,7 +25,7 @@ Feature: Award badges based on cohort
       | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
@@ -62,7 +62,7 @@ Feature: Award badges based on cohort
       | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I expand all fieldsets
@@ -104,7 +104,7 @@ Feature: Award badges based on cohort
       | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
@@ -142,7 +142,7 @@ Feature: Award badges based on cohort
       | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
@@ -195,7 +195,7 @@ Feature: Award badges based on cohort
       | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
@@ -254,7 +254,7 @@ Feature: Award badges based on cohort
       | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
@@ -313,7 +313,7 @@ Feature: Award badges based on cohort
       | image       | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I expand all fieldsets
@@ -372,7 +372,7 @@ Feature: Award badges based on cohort
       | Site Badge 2 | 0      | Site badge description | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge 1" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "One Cohort"
@@ -381,7 +381,7 @@ Feature: Award badges based on cohort
     When I press "Continue"
     And I should see "Recipients (1)"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge 2" "table_row"
+    And I press "Edit" action in the "Site Badge 2" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I set the field "id_cohort_cohorts" to "Two Cohort"
@@ -429,7 +429,7 @@ Feature: Award badges based on cohort
       | Site Badge 2 | 0      | Site badge description | badges/tests/behat/badge.png |
     And I log in as "admin"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge 1" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I expand all fieldsets
@@ -440,7 +440,7 @@ Feature: Award badges based on cohort
     When I press "Continue"
     And I should see "Recipients (1)"
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge 2" "table_row"
+    And I press "Edit" action in the "Site Badge 2" report row
     And I select "Criteria" from the "jump" singleselect
     And I set the field "type" to "Cohort membership"
     And I expand all fieldsets

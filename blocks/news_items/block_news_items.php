@@ -104,7 +104,7 @@ class block_news_items extends block_base {
 
         /// Actually create the listing now
 
-            $strftimerecent = get_string('strftimerecent');
+            $strposttimeformat = get_string('strftimedatetime', 'core_langconfig');
             $strmore = get_string('more', 'forum');
 
         /// Accessibility: markup as a list.
@@ -129,7 +129,7 @@ class block_news_items extends block_base {
 
                 $text .= '<li class="post">'.
                          '<div class="head clearfix">'.
-                         '<div class="date">'.userdate($posttime, $strftimerecent).'</div>'.
+                         '<div class="date">'.userdate($posttime, $strposttimeformat).'</div>'.
                          '<div class="name">'.$userfullname.'</div>'.
                          '</div>'.
                          '<div class="info"><a href="'.$CFG->wwwroot.'/mod/forum/discuss.php?d='.$discussion->discussion.'">'.$discussion->subject.'</a></div>'.

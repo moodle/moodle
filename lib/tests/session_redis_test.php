@@ -29,6 +29,7 @@ use RedisException;
  * define('TEST_SESSION_REDIS_HOST', '127.0.0.1');
  *
  * @package   core
+ * @covers    \core\session\redis
  * @author    Russell Smith <mr-russ@smith2001.net>
  * @copyright 2016 Russell Smith
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -40,6 +41,8 @@ class session_redis_test extends \advanced_testcase {
     protected $keyprefix = null;
     /** @var $redis The current testing redis connection */
     protected $redis = null;
+    /** @var bool $encrypted Is the current testing redis connection encrypted*/
+    protected $encrypted = false;
     /** @var int $acquiretimeout how long we wait for session lock in seconds when testing Redis */
     protected $acquiretimeout = 1;
     /** @var int $lockexpire how long to wait in seconds before expiring the lock when testing Redis */
@@ -67,6 +70,19 @@ class session_redis_test extends \advanced_testcase {
         $this->keyprefix = 'phpunit'.rand(1, 100000);
 
         $CFG->session_redis_host = TEST_SESSION_REDIS_HOST;
+        if (strpos(TEST_SESSION_REDIS_HOST, ':')) {
+            list($server, $port) = explode(':', TEST_SESSION_REDIS_HOST);
+        } else {
+            $server = TEST_SESSION_REDIS_HOST;
+            $port = 6379;
+        }
+
+        $opts = [];
+        if (defined('TEST_SESSION_REDIS_ENCRYPT') && TEST_SESSION_REDIS_ENCRYPT) {
+            $this->encrypted = true;
+            $sslopts = $CFG->session_redis_encrypt = ['verify_peer' => false, 'verify_peer_name' => false];
+            $opts['stream'] = $sslopts;
+        }
         $CFG->session_redis_prefix = $this->keyprefix;
 
         // Set a very short lock timeout to ensure tests run quickly.  We are running single threaded,
@@ -75,7 +91,10 @@ class session_redis_test extends \advanced_testcase {
         $CFG->session_redis_lock_expire = $this->lockexpire;
 
         $this->redis = new Redis();
-        $this->redis->connect(TEST_SESSION_REDIS_HOST);
+        $this->redis->connect($server, $port, 1, null, 1, 0, $opts);
+        if (!$this->redis->ping()) {
+            $this->markTestSkipped("Redis ping failed");
+        }
     }
 
     public function tearDown(): void {
@@ -325,7 +344,11 @@ class session_redis_test extends \advanced_testcase {
             $actual = $e->getMessage();
         }
 
-        $expected = 'Failed to connect (try 5 out of 5) to redis at ' . TEST_SESSION_REDIS_HOST . ':111111';
+        $host = TEST_SESSION_REDIS_HOST;
+        if ($this->encrypted) {
+            $host = "tls://$host";
+        }
+        $expected = "Failed to connect (try 5 out of 5) to redis at $host:111111";
         $this->assertDebuggingCalledCount(5);
         $this->assertStringContainsString($expected, $actual);
     }
@@ -335,5 +358,17 @@ class session_redis_test extends \advanced_testcase {
      */
     protected function assertSessionNoLocks() {
         $this->assertEmpty($this->redis->keys($this->keyprefix.'*.lock'));
+    }
+
+    public function test_session_redis_encrypt() {
+        global $CFG;
+
+        $CFG->session_redis_encrypt = ['verify_peer' => false, 'verify_peer_name' => false];
+
+        $sess = new \core\session\redis();
+
+        $prop = new \ReflectionProperty(\core\session\redis::class, 'host');
+        $prop->setAccessible(true);
+        $this->assertEquals('tls://' . TEST_SESSION_REDIS_HOST, $prop->getValue($sess));
     }
 }

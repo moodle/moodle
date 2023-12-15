@@ -117,6 +117,7 @@ if ($form->is_cancelled()) {
         unset($badge->message_editor);
 
         if ($badge->save()) {
+            core_tag_tag::set_item_tags('core_badges', 'badge', $badge->id, $context, $data->tags);
             badges_process_badge_image($badge, $form->save_temp_file('image'));
             $form->set_data($badge);
             $statusmsg = get_string('changessaved');

@@ -46,14 +46,12 @@ class events_test extends \advanced_testcase {
 
         $sink = $this->redirectEvents();
 
-        $fakelogdata = array(1, 'B', true, null);
         $params = array(
             'other' => array(
                 'function' => 'A function'
             )
         );
         $event = \core\event\webservice_function_called::create($params);
-        $event->set_legacy_logdata($fakelogdata);
         $event->trigger();
 
         $events = $sink->get_events();
@@ -62,7 +60,6 @@ class events_test extends \advanced_testcase {
 
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals('A function', $event->other['function']);
-        $this->assertEventLegacyLogData($fakelogdata, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -73,7 +70,6 @@ class events_test extends \advanced_testcase {
 
         $sink = $this->redirectEvents();
 
-        $fakelogdata = array(1, 'B', true, null);
         $params = array(
             'other' => array(
                 'reason' => 'Unit Test',
@@ -82,7 +78,6 @@ class events_test extends \advanced_testcase {
             )
         );
         $event = \core\event\webservice_login_failed::create($params);
-        $event->set_legacy_logdata($fakelogdata);
         $event->trigger();
 
         $events = $sink->get_events();
@@ -93,7 +88,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($params['other']['reason'], $event->other['reason']);
         $this->assertEquals($params['other']['method'], $event->other['method']);
         $this->assertEquals($params['other']['tokenid'], $event->other['tokenid']);
-        $this->assertEventLegacyLogData($fakelogdata, $event);
 
         // We cannot set the token in the other properties.
         $params['other']['token'] = 'I should not be set';
@@ -144,9 +138,6 @@ class events_test extends \advanced_testcase {
         // Assert that the event contains the right information.
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals($service->id, $event->objectid);
-        $returnurl = $CFG->wwwroot . "/" . $CFG->admin . "/settings.php?section=externalservices";
-        $expected = array(SITEID, 'webservice', 'add', $returnurl, get_string('addservice', 'webservice', $service));
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -189,9 +180,6 @@ class events_test extends \advanced_testcase {
         // Assert that the event contains the right information.
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals($service->id, $event->objectid);
-        $returnurl = $CFG->wwwroot . "/" . $CFG->admin . "/settings.php?section=externalservices";
-        $expected = array(SITEID, 'webservice', 'edit', $returnurl, get_string('editservice', 'webservice', $service));
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -234,9 +222,6 @@ class events_test extends \advanced_testcase {
         // Assert that the event contains the right information.
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals($service->id, $event->objectid);
-        $returnurl = $CFG->wwwroot . "/" . $CFG->admin . "/settings.php?section=externalservices";
-        $expected = array(SITEID, 'webservice', 'delete', $returnurl, get_string('deleteservice', 'webservice', $service));
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -263,9 +248,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals(1, $event->objectid);
         $this->assertEquals(2, $event->relateduserid);
-        $expected = array(SITEID, 'core', 'assign', $CFG->admin . '/webservice/service_users.php?id=' . $params['objectid'],
-            'add', '', $params['relateduserid']);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -292,9 +274,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals(1, $event->objectid);
         $this->assertEquals(2, $event->relateduserid);
-        $expected = array(SITEID, 'core', 'assign', $CFG->admin . '/webservice/service_users.php?id=' . $params['objectid'],
-            'remove', '', $params['relateduserid']);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -322,8 +301,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals(1, $event->objectid);
         $this->assertEquals(2, $event->relateduserid);
-        $expected = array(SITEID, 'webservice', 'automatically create user token', '' , 'User ID: ' . 2);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -352,8 +329,6 @@ class events_test extends \advanced_testcase {
 
         $this->assertEquals(\context_system::instance(), $event->get_context());
         $this->assertEquals(1, $event->objectid);
-        $expected = array(SITEID, 'webservice', 'sending requested user token', '' , 'User ID: ' . $user->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 }

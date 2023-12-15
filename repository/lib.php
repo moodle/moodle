@@ -519,7 +519,7 @@ abstract class repository implements cacheable_object {
     public $disabled = false;
     /** @var int repository instance id */
     public $id;
-    /** @var stdClass current context */
+    /** @var context current context */
     public $context;
     /** @var array repository options */
     public $options;
@@ -531,6 +531,10 @@ abstract class repository implements cacheable_object {
     public $instance;
     /** @var string Type of repository (webdav, google_docs, dropbox, ...). Read from $this->get_typename(). */
     protected $typename;
+    /** @var string instance name. */
+    public $name;
+    /** @var bool true if the super construct is called, otherwise false. */
+    public $super_called;
 
     /**
      * Constructor
@@ -1386,7 +1390,7 @@ abstract class repository implements cacheable_object {
                 'url'=>moodle_url::make_draftfile_url($file->get_itemid(), $file->get_filepath(), $file->get_filename())->out(),
                 'id'=>$file->get_itemid(),
                 'file'=>$file->get_filename(),
-                'icon' => $OUTPUT->image_url(file_extension_icon($thefile, 32))->out(),
+                'icon' => $OUTPUT->image_url(file_extension_icon($thefile))->out(),
             );
         } else {
             return null;
@@ -1432,7 +1436,7 @@ abstract class repository implements cacheable_object {
                     'size' => 0,
                     'date' => $filedate,
                     'path' => array_reverse($path),
-                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false)
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false)
                 );
 
                 //if ($dynamicmode && $child->is_writable()) {
@@ -1469,8 +1473,8 @@ abstract class repository implements cacheable_object {
                     'date' => $filedate,
                     //'source' => $child->get_url(),
                     'source' => base64_encode($source),
-                    'icon'=>$OUTPUT->image_url(file_file_icon($child, 24))->out(false),
-                    'thumbnail'=>$OUTPUT->image_url(file_file_icon($child, 90))->out(false),
+                    'icon' => $OUTPUT->image_url(file_file_icon($child))->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_file_icon($child))->out(false),
                 );
                 $filecount++;
             }
@@ -1785,9 +1789,12 @@ abstract class repository implements cacheable_object {
      *
      * @param string $source encoded and serialized data of file
      * @return int file size in bytes
+     *
+     * @deprecated since Moodle 4.3
      */
     public function get_file_size($source) {
-        // TODO MDL-33297 remove this function completely?
+        debugging(__FUNCTION__ . ' is deprecated, please do not use it any more', DEBUG_DEVELOPER);
+
         $browser    = get_file_browser();
         $params     = unserialize(base64_decode($source));
         $contextid  = clean_param($params['contextid'], PARAM_INT);
@@ -2200,7 +2207,7 @@ abstract class repository implements cacheable_object {
      */
     protected static function prepare_breadcrumb($breadcrumb) {
         global $OUTPUT;
-        $foldericon = $OUTPUT->image_url(file_folder_icon(24))->out(false);
+        $foldericon = $OUTPUT->image_url(file_folder_icon())->out(false);
         $len = count($breadcrumb);
         for ($i = 0; $i < $len; $i++) {
             if (is_array($breadcrumb[$i]) && !isset($breadcrumb[$i]['icon'])) {
@@ -2221,7 +2228,7 @@ abstract class repository implements cacheable_object {
      */
     protected static function prepare_list($list) {
         global $OUTPUT;
-        $foldericon = $OUTPUT->image_url(file_folder_icon(24))->out(false);
+        $foldericon = $OUTPUT->image_url(file_folder_icon())->out(false);
 
         // Reset the array keys because non-numeric keys will create an object when converted to JSON.
         $list = array_values($list);
@@ -2281,7 +2288,7 @@ abstract class repository implements cacheable_object {
                 if ($isfolder) {
                     $file['icon'] = $foldericon;
                 } else if ($filename) {
-                    $file['icon'] = $OUTPUT->image_url(file_extension_icon($filename, 24))->out(false);
+                    $file['icon'] = $OUTPUT->image_url(file_extension_icon($filename))->out(false);
                 }
             }
 
@@ -2303,7 +2310,7 @@ abstract class repository implements cacheable_object {
      * format and stores formatted values.
      *
      * @param array|stdClass $listing result of get_listing() or search() or file_get_drafarea_files()
-     * @return array
+     * @return stdClass
      */
     public static function prepare_listing($listing) {
         $wasobject = false;
@@ -2421,7 +2428,7 @@ abstract class repository implements cacheable_object {
     /**
      * Edit/Create Admin Settings Moodle form
      *
-     * @param moodleform $mform Moodle form (passed by reference)
+     * @param MoodleQuickForm $mform Moodle form (passed by reference)
      * @param string $classname repository class name
      */
     public static function type_config_form($mform, $classname = 'repository') {
@@ -2886,6 +2893,10 @@ final class repository_instance_form extends moodleform {
     protected $instance;
     /** @var string repository plugin type */
     protected $plugin;
+    /** @var string repository type ID */
+    protected $typeid;
+    /** @var string repository context ID */
+    protected $contextid;
 
     /**
      * Added defaults to moodle form
@@ -3008,6 +3019,8 @@ final class repository_type_form extends moodleform {
     protected $plugin;
     /** @var string action */
     protected $action;
+    /** @var string plugin name */
+    protected $pluginname;
 
     /**
      * Definition of the moodleform
@@ -3108,12 +3121,12 @@ final class repository_type_form extends moodleform {
 /**
  * Generate all options needed by filepicker
  *
- * @param array $args including following keys
+ * @param stdClass $args including following keys
  *          context
  *          accepted_types
  *          return_types
  *
- * @return array the list of repository instances, including meta infomation, containing the following keys
+ * @return stdClass the list of repository instances, including meta infomation, containing the following keys
  *          externallink
  *          repositories
  *          accepted_types
@@ -3177,11 +3190,6 @@ function initialise_filepicker($args) {
     $return->userprefs['recentlicense'] = get_user_preferences('filepicker_recentlicense', '');
     $return->userprefs['recentviewmode'] = get_user_preferences('filepicker_recentviewmode', '');
 
-    user_preference_allow_ajax_update('filepicker_recentrepository', PARAM_INT);
-    user_preference_allow_ajax_update('filepicker_recentlicense', PARAM_SAFEDIR);
-    user_preference_allow_ajax_update('filepicker_recentviewmode', PARAM_INT);
-
-
     // provided by form element
     $return->accepted_types = file_get_typegroup('extension', $args->accepted_types);
     $return->return_types = $args->return_types;
@@ -3235,11 +3243,15 @@ function repository_delete_selected_files($context, string $component, string $f
                 $files = $fs->get_directory_files($context->id, $component, $filearea, $itemid, $filepath, true);
                 foreach ($files as $file) {
                     $file->delete();
+                    // Log the event when a file is deleted from the draft area.
+                    create_event_draft_file_deleted($context, $file);
                 }
                 $storedfile->delete();
+                create_event_draft_file_deleted($context, $storedfile);
                 $return[$parentpath] = "";
             } else {
                 if ($result = $storedfile->delete()) {
+                    create_event_draft_file_deleted($context, $storedfile);
                     $return[$parentpath] = "";
                 }
             }
@@ -3247,6 +3259,27 @@ function repository_delete_selected_files($context, string $component, string $f
     }
 
     return $return;
+}
+
+/**
+ * Convenience function to create draft_file_deleted log event.
+ *
+ * @param context $context The context where delete is called.
+ * @param stored_file $storedfile the file to be logged.
+ */
+function create_event_draft_file_deleted(context $context, stored_file $storedfile): void {
+    $logevent = \core\event\draft_file_deleted::create([
+        'objectid' => $storedfile->get_id(),
+        'context' => $context,
+        'other' => [
+            'itemid' => $storedfile->get_itemid(),
+            'filename' => $storedfile->get_filename(),
+            'filesize' => $storedfile->get_filesize(),
+            'filepath' => $storedfile->get_filepath(),
+            'contenthash' => $storedfile->get_contenthash(),
+        ],
+    ]);
+    $logevent->trigger();
 }
 
 /**

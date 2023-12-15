@@ -1140,7 +1140,7 @@ class restore_create_included_users extends restore_execution_step {
     protected function define_execution() {
 
         restore_dbops::create_included_users($this->get_basepath(), $this->get_restoreid(),
-                $this->task->get_userid(), $this->task->get_progress());
+                $this->task->get_userid(), $this->task->get_progress(), $this->task->get_courseid());
     }
 }
 
@@ -1159,7 +1159,10 @@ class restore_groups_structure_step extends restore_structure_step {
         $groupinfo = $this->get_setting_value('groups');
         if ($groupinfo) {
             $paths[] = new restore_path_element('group', '/groups/group');
+            $paths[] = new restore_path_element('groupcustomfield', '/groups/groupcustomfields/groupcustomfield');
             $paths[] = new restore_path_element('grouping', '/groups/groupings/grouping');
+            $paths[] = new restore_path_element('groupingcustomfield',
+                '/groups/groupings/groupingcustomfields/groupingcustomfield');
             $paths[] = new restore_path_element('grouping_group', '/groups/groupings/grouping/grouping_groups/grouping_group');
         }
         return $paths;
@@ -1225,6 +1228,18 @@ class restore_groups_structure_step extends restore_structure_step {
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
     }
 
+    /**
+     * Restore group custom field values.
+     * @param array $data data for group custom field
+     * @return void
+     */
+    public function process_groupcustomfield($data) {
+        $newgroup = $this->get_mapping('group', $data['groupid']);
+        $data['groupid'] = $newgroup->newitemid;
+        $handler = \core_group\customfield\group_handler::create();
+        $handler->restore_instance_data_from_backup($this->task, $data);
+    }
+
     public function process_grouping($data) {
         global $DB;
 
@@ -1268,6 +1283,18 @@ class restore_groups_structure_step extends restore_structure_step {
         $this->set_mapping('grouping', $oldid, $newitemid, $restorefiles);
         // Invalidate the course group data cache just in case.
         cache_helper::invalidate_by_definition('core', 'groupdata', array(), array($data->courseid));
+    }
+
+    /**
+     * Restore grouping custom field values.
+     * @param array $data data for grouping custom field
+     * @return void
+     */
+    public function process_groupingcustomfield($data) {
+        $newgroup = $this->get_mapping('grouping', $data['groupingid']);
+        $data['groupingid'] = $newgroup->newitemid;
+        $handler = \core_group\customfield\grouping_handler::create();
+        $handler->restore_instance_data_from_backup($this->task, $data);
     }
 
     public function process_grouping_group($data) {
@@ -1930,6 +1957,9 @@ class restore_course_structure_step extends restore_structure_step {
 
         $showactivitydatesdefault = ($courseconfig->showactivitydates ?? null);
         $data->showactivitydates = $data->showactivitydates ?? $showactivitydatesdefault;
+
+        $pdffontdefault = ($courseconfig->pdfexportfont ?? null);
+        $data->pdfexportfont = $data->pdfexportfont ?? $pdffontdefault;
 
         $languages = get_string_manager()->get_list_of_translations(); // Get languages for quick search
         if (isset($data->lang) && !array_key_exists($data->lang, $languages)) {
@@ -2618,6 +2648,7 @@ class restore_badges_structure_step extends restore_structure_step {
         $paths[] = new restore_path_element('alignment', '/badges/badge/alignments/alignment');
         $paths[] = new restore_path_element('relatedbadge', '/badges/badge/relatedbadges/relatedbadge');
         $paths[] = new restore_path_element('manual_award', '/badges/badge/manual_awards/manual_award');
+        $paths[] = new restore_path_element('tag', '/badges/badge/tags/tag');
 
         return $paths;
     }
@@ -2824,6 +2855,22 @@ class restore_badges_structure_step extends restore_structure_step {
             }
 
             $DB->insert_record('badge_manual_award', $award);
+        }
+    }
+
+    /**
+     * Process tag.
+     *
+     * @param array $data The data.
+     * @throws base_step_exception
+     */
+    public function process_tag(array $data): void {
+        $data = (object)$data;
+        $badgeid = $this->get_new_parentid('badge');
+
+        if (!empty($data->rawname)) {
+            core_tag_tag::add_item_tag('core_badges', 'badge', $badgeid,
+                context_course::instance($this->get_courseid()), $data->rawname);
         }
     }
 
@@ -4221,6 +4268,61 @@ class restore_contentbankcontent_structure_step extends restore_structure_step {
 }
 
 /**
+ * This structure steps restores the xAPI states.
+ */
+class restore_xapistate_structure_step extends restore_structure_step {
+
+    /**
+     * Define structure for xAPI state step
+     */
+    protected function define_structure() {
+        return [new restore_path_element('xapistate', '/states/state')];
+    }
+
+    /**
+     * Define data processed for xAPI state.
+     *
+     * @param array|stdClass $data
+     */
+    public function process_xapistate($data) {
+        global $DB;
+
+        $data = (object)$data;
+        $oldid = $data->id;
+        $exists = false;
+
+        $params = [
+            'component' => $data->component,
+            'itemid' => $this->task->get_contextid(),
+            // Set stateid to 'restored', to let plugins identify the origin of this state is a backup.
+            'stateid' => 'restored',
+            'statedata' => $data->statedata,
+            'registration' => $data->registration,
+            'timecreated' => $data->timecreated,
+            'timemodified' => time(),
+        ];
+
+        // Trying to map users. Users cannot always be mapped, for instance, when copying.
+        $params['userid'] = $this->get_mappingid('user', $data->userid);
+        if (!$params['userid']) {
+            // Leave the userid unchanged when we are restoring the same site.
+            if ($this->task->is_samesite()) {
+                $params['userid'] = $data->userid;
+            }
+            $filter = $params;
+            unset($filter['statedata']);
+            $exists = $DB->record_exists('xapi_states', $filter);
+        }
+
+        if (!$exists && $params['userid']) {
+            // Only insert the record if the user exists or can be mapped.
+            $newitemid = $DB->insert_record('xapi_states', $params);
+            $this->set_mapping('xapi_states', $oldid, $newitemid, true);
+        }
+    }
+}
+
+/**
  * This structure steps restores one instance + positions of one block
  * Note: Positions corresponding to one existing context are restored
  * here, but all the ones having unknown contexts are sent to backup_ids
@@ -4340,7 +4442,13 @@ class restore_block_instance_structure_step extends restore_structure_step {
         // Let's look for anything within configdata neededing processing
         // (nulls and uses of legacy file.php)
         if ($attrstotransform = $this->task->get_configdata_encoded_attributes()) {
-            $configdata = (array) unserialize_object(base64_decode($data->configdata));
+            $configdata = array_filter(
+                (array) unserialize_object(base64_decode($data->configdata)),
+                static function($value): bool {
+                    return !($value instanceof __PHP_Incomplete_Class);
+                }
+            );
+
             foreach ($configdata as $attribute => $value) {
                 if (in_array($attribute, $attrstotransform)) {
                     $configdata[$attribute] = $this->contentprocessor->process_cdata($value);
@@ -5404,7 +5512,7 @@ class restore_create_question_files extends restore_execution_step {
      *
      * @param int             $oldctxid Old context id.
      * @param int             $newctxid New context id.
-     * @param \core\progress  $progress Progress object to use.
+     * @param \core\progress\base  $progress Progress object to use.
      */
     private function send_common_files($oldctxid, $newctxid, $progress) {
         // Add common question files (question and question_answer ones).
@@ -5432,7 +5540,7 @@ class restore_create_question_files extends restore_execution_step {
      * @param text            $qtype The qtype name to send.
      * @param int             $oldctxid Old context id.
      * @param int             $newctxid New context id.
-     * @param \core\progress  $progress Progress object to use.
+     * @param \core\progress\base  $progress Progress object to use.
      */
     private function send_qtype_files($qtype, $oldctxid, $newctxid, $progress) {
         if (!isset($this->qtypecomponentscache[$qtype])) {
@@ -6116,14 +6224,29 @@ trait restore_question_set_reference_data_trait {
         $data = (object) $data;
         $data->usingcontextid = $this->get_mappingid('context', $data->usingcontextid);
         $data->itemid = $this->get_new_parentid('quiz_question_instance');
-        $filtercondition = json_decode($data->filtercondition);
-        if ($category = $this->get_mappingid('question_category', $filtercondition->questioncategoryid)) {
-            $filtercondition->questioncategoryid = $category;
+        $filtercondition = json_decode($data->filtercondition, true);
+
+        if (!isset($filtercondition['filter'])) {
+            // Pre-4.3, convert the old filtercondition format to the new format.
+            $filtercondition = \core_question\question_reference_manager::convert_legacy_set_reference_filter_condition(
+                    $filtercondition);
         }
-        $data->filtercondition = json_encode($filtercondition);
+
+        // Map category id used for category filter condition and corresponding context id.
+        $oldcategoryid = $filtercondition['filter']['category']['values'][0];
+        $newcategoryid = $this->get_mappingid('question_category', $oldcategoryid);
+        $filtercondition['filter']['category']['values'][0] = $newcategoryid;
+
         if ($context = $this->get_mappingid('context', $data->questionscontextid)) {
             $data->questionscontextid = $context;
         }
+
+        $filtercondition['cat'] = implode(',', [
+            $filtercondition['filter']['category']['values'][0],
+            $data->questionscontextid,
+        ]);
+
+        $data->filtercondition = json_encode($filtercondition);
 
         $DB->insert_record('question_set_references', $data);
     }
@@ -6140,6 +6263,9 @@ abstract class restore_questions_activity_structure_step extends restore_activit
     use restore_questions_attempt_data_trait;
     use restore_question_reference_data_trait;
     use restore_question_set_reference_data_trait;
+
+    /** @var \question_engine_attempt_upgrader manages upgrading all the question attempts. */
+    private $attemptupgrader;
 
     /**
      * Attach below $element (usually attempts) the needed restore_path_elements

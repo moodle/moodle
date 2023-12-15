@@ -219,6 +219,9 @@ $card-gutter : $card-deck-margin * 2;
         margin-right: 0;
         .dashboard-card {
             width: calc(100% - #{$card-gutter}) !important;
+            @include media-breakpoint-down(xs) {
+                width: 100% !important;
+            }
         }
     }
 }
@@ -309,25 +312,26 @@ $card-gutter : $card-deck-margin * 2;
 }
 .block_settings .block_tree [aria-expanded="true"] > p:before,
 .block_navigation .block_tree [aria-expanded="true"] > p:before {
-    content: $fa-var-angle-down;
+    @extend .fa-solid;
+    content: fa-content($fa-var-angle-down);
     margin-right: 0;
-    @include fa-icon();
     font-size: 16px;
     width: 16px;
 }
 
 .block_settings .block_tree [aria-expanded="false"] > p:before,
 .block_navigation .block_tree [aria-expanded="false"] > p:before {
-    content: $fa-var-angle-right;
+    @extend .fa-solid;
+    content: fa-content($fa-var-angle-right);
     margin-right: 0;
-    @include fa-icon();
     font-size: 16px;
     width: 16px;
 }
 .dir-rtl {
     .block_settings .block_tree [aria-expanded="false"] > p:before,
     .block_navigation .block_tree [aria-expanded="false"] > p:before {
-        content: $fa-var-angle-left;
+        @extend .fa-solid;
+        content: fa-content($fa-var-angle-left);
     }
 }
 
@@ -342,13 +346,6 @@ $card-gutter : $card-deck-margin * 2;
 
 .block.invisibleblock .card-title {
     color: $text-muted;
-}
-
-@include media-breakpoint-down(sm) {
-    .block.card {
-        border-left: 0;
-        border-right: 0;
-    }
 }
 
 .block_social_activities li a.movehere,

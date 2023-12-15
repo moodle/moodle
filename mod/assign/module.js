@@ -27,7 +27,8 @@ M.mod_assign.init_tree = function(Y, expand_all, htmlid) {
 
 M.mod_assign.init_grading_table = function(Y) {
     Y.use('node', function(Y) {
-        checkboxes = Y.all('td.c0 input');
+        const checkboxes = Y.all('td.c0 input');
+        let rowelement;
         checkboxes.each(function(node) {
             node.on('change', function(e) {
                 rowelement = e.currentTarget.get('parentNode').get('parentNode');
@@ -50,59 +51,63 @@ M.mod_assign.init_grading_table = function(Y) {
             }
         });
 
-        var selectall = Y.one('th.c0 input');
+        const selectall = Y.one('th.c0 input');
         if (selectall) {
             selectall.on('change', function(e) {
-                if (e.currentTarget.get('checked')) {
-                    checkboxes = Y.all('td.c0 input[type="checkbox"]');
-                    checkboxes.each(function(node) {
-                        rowelement = node.get('parentNode').get('parentNode');
+                Y.all('td.c0 input[type="checkbox"]').each(function(node) {
+                    rowelement = node.get('parentNode').get('parentNode');
+                    if (e.currentTarget.get('checked')) {
                         node.set('checked', true);
                         rowelement.removeClass('unselectedrow');
                         rowelement.addClass('selectedrow');
-                    });
-                } else {
-                    checkboxes = Y.all('td.c0 input[type="checkbox"]');
-                    checkboxes.each(function(node) {
-                        rowelement = node.get('parentNode').get('parentNode');
+                    } else {
                         node.set('checked', false);
                         rowelement.removeClass('selectedrow');
                         rowelement.addClass('unselectedrow');
-                    });
-                }
+                    }
+                });
             });
         }
 
-        var batchform = Y.one('form.gradingbatchoperationsform');
+        const batchform = Y.one('form.gradingbatchoperationsform');
         if (batchform) {
             batchform.on('submit', function(e) {
                 M.util.js_pending('mod_assign/module.js:batch:submit');
-                checkboxes = Y.all('td.c0 input');
-                var selectedusers = [];
+                let selectedusers = [];
                 checkboxes.each(function(node) {
                     if (node.get('checked')) {
-                        selectedusers[selectedusers.length] = node.get('value');
+                        selectedusers.push(node.get('value'));
                     }
                 });
 
-                operation = Y.one('#id_operation');
-                usersinput = Y.one('input.selectedusers');
+                const operation = Y.one('#id_operation');
+                const usersinput = Y.one('input.selectedusers');
                 usersinput.set('value', selectedusers.join(','));
-                if (selectedusers.length == 0) {
+                if (selectedusers.length === 0) {
                     alert(M.util.get_string('nousersselected', 'assign'));
                     e.preventDefault();
                 } else {
-                    action = operation.get('value');
-                    prefix = 'plugingradingbatchoperation_';
-                    if (action.indexOf(prefix) == 0) {
-                        pluginaction = action.substr(prefix.length);
-                        plugin = pluginaction.split('_')[0];
-                        action = pluginaction.substr(plugin.length + 1);
+                    let action = operation.get('value');
+                    const prefix = 'plugingradingbatchoperation_';
+                    let confirmmessage = false;
+                    if (action.indexOf(prefix) === 0) {
+                        const pluginaction = action.slice(prefix.length);
+                        const plugin = pluginaction.split('_')[0];
+                        action = pluginaction.slice(plugin.length + 1);
                         confirmmessage = M.util.get_string('batchoperationconfirm' + action, 'assignfeedback_' + plugin);
+                    } else if (action === 'message') {
+                        e.preventDefault();
+                        require(['core_message/message_send_bulk'], function(BulkSender) {
+                            BulkSender.showModal(selectedusers, function() {
+                                document.getElementById('page-header').scrollIntoView();
+                            });
+                        });
                     } else {
                         confirmmessage = M.util.get_string('batchoperationconfirm' + operation.get('value'), 'assign');
                     }
-                    if (!confirm(confirmmessage)) {
+                    // Complete here the action (js_complete event) when we send a bulk message, or we have a confirmation message.
+                    // When the confirmation dialogue is completed, the event is fired.
+                    if (action === 'message' || confirmmessage !== false && !confirm(confirmmessage)) {
                         M.util.js_complete('mod_assign/module.js:batch:submit');
                         e.preventDefault();
                     }

@@ -19,6 +19,7 @@ namespace mod_data;
 use action_menu;
 use action_menu_link_secondary;
 use core\output\checkbox_toggleall;
+use data_field_base;
 use html_writer;
 use mod_data\manager;
 use moodle_url;
@@ -78,6 +79,9 @@ class template {
 
     /** @var array The mod_data fields. */
     protected $fields = [];
+
+    /** @var array All fields that are not present in the template content. */
+    protected $otherfields = [];
 
     /**
      * Class contructor.
@@ -213,6 +217,13 @@ class template {
             return;
         }
         $this->tags = $matches['tags'];
+        // Check if some tag require some extra template scan.
+        foreach ($this->tags as $tagname) {
+            $methodname = "preprocess_tag_{$tagname}";
+            if (method_exists($this, $methodname)) {
+                $this->$methodname($templatecontent);
+            }
+        }
     }
 
     /**
@@ -309,9 +320,13 @@ class template {
                 $this->search,
                 $field->display_browse_field($entry->id, $this->templatename)
             );
-            // Field id.
+            // Other dynamic field information.
             $pattern = '[[' . $field->field->name . '#id]]';
             $result[$pattern] = $field->field->id;
+            $pattern = '[[' . $field->field->name . '#name]]';
+            $result[$pattern] = $field->field->name;
+            $pattern = '[[' . $field->field->name . '#description]]';
+            $result[$pattern] = $field->field->description;
         }
         return $result;
     }
@@ -708,6 +723,46 @@ class template {
     }
 
     /**
+     * Prepare otherfield tag scanning the present template fields.
+     *
+     * @param string $templatecontent the template content
+     */
+    protected function preprocess_tag_otherfields(string $templatecontent) {
+        $otherfields = [];
+        $fields = $this->manager->get_fields();
+        foreach ($fields as $field) {
+            if (strpos($templatecontent, "[[" . $field->field->name . "]]") === false) {
+                $otherfields[] = $field;
+            }
+        }
+        $this->otherfields = $otherfields;
+    }
+
+    /**
+     * Returns the ##otherfields## tag replacement for an entry.
+     *
+     * @param stdClass $entry the entry object
+     * @param bool $canmanageentry if the current user can manage this entry
+     * @return string the tag replacement
+     */
+    protected function get_tag_otherfields_replacement(stdClass $entry, bool $canmanageentry): string {
+        global $OUTPUT;
+        $fields = [];
+        foreach ($this->otherfields as $field) {
+            $fieldvalue = highlight(
+                $this->search,
+                $field->display_browse_field($entry->id, $this->templatename)
+            );
+            $fieldinfo = [
+                'fieldname' => $field->field->name,
+                'fieldcontent' => $fieldvalue,
+            ];
+            $fields[] = $fieldinfo;
+        }
+        return $OUTPUT->render_from_template('mod_data/fields_otherfields', ['fields' => $fields]);
+    }
+
+    /**
      * Returns the ##actionsmenu## tag replacement for an entry.
      *
      * @param stdClass $entry the entry object
@@ -718,10 +773,9 @@ class template {
         global $OUTPUT, $CFG;
 
         $actionmenu = new action_menu();
-        $icon = $OUTPUT->pix_icon('i/menu', get_string('actions'));
-        $actionmenu->set_menu_trigger($icon, 'btn btn-icon d-flex align-items-center justify-content-center');
+        $actionmenu->set_kebab_trigger();
         $actionmenu->set_action_label(get_string('actions'));
-        $actionmenu->attributes['class'] .= ' entry-actionsmenu';
+        $actionmenu->set_additional_classes('entry-actionsmenu');
 
         // Show more.
         if ($this->showmore) {
@@ -843,6 +897,8 @@ class template {
         ?int $entryid = null,
         ?stdClass $entrydata = null
     ): string {
+        global $OUTPUT;
+
         $manager = $this->manager;
         $renderer = $manager->get_renderer();
         $templatecontent = $this->templatecontent;
@@ -865,34 +921,38 @@ class template {
         $replacements = [];
 
         // Then we generate strings to replace.
+        $otherfields = [];
         foreach ($possiblefields as $field) {
-            // To skip unnecessary calls to display_add_field().
+            $fieldinput = $this->get_field_input($processeddata, $field, $entryid, $entrydata);
             if (strpos($templatecontent, "[[" . $field->field->name . "]]") !== false) {
                 // Replace the field tag.
                 $patterns[] = "[[" . $field->field->name . "]]";
-                $errors = '';
-                $fieldnotifications = $processeddata->fieldnotifications[$field->field->name] ?? [];
-                if (!empty($fieldnotifications)) {
-                    foreach ($fieldnotifications as $notification) {
-                        $errors .= $renderer->notification($notification);
-                    }
-                }
-                $fielddisplay = '';
-                if ($field->type === 'unknown') {
-                    if ($this->canmanageentries) { // Display notification for users that can manage entries.
-                        $errors .= $renderer->notification(get_string('missingfieldtype', 'data',
-                        (object)['name' => $field->field->name]));
-                    }
-                } else {
-                    $fielddisplay = $field->display_add_field($entryid, $entrydata);
-                }
-
-                $replacements[] = $errors . $fielddisplay;
+                $replacements[] = $fieldinput;
+            } else {
+                // Is in another fields.
+                $otherfields[] = [
+                    'fieldname' => $field->field->name,
+                    'fieldcontent' => $fieldinput,
+                ];
             }
 
             // Replace the field id tag.
             $patterns[] = "[[" . $field->field->name . "#id]]";
             $replacements[] = 'field_' . $field->field->id;
+            $patterns[] = '[[' . $field->field->name . '#name]]';
+            $replacements[] = $field->field->name;
+            $patterns[] = '[[' . $field->field->name . '#description]]';
+            $replacements[] = $field->field->description;
+        }
+
+        $patterns[] = "##otherfields##";
+        if (!empty($otherfields)) {
+            $replacements[] = $OUTPUT->render_from_template(
+                'mod_data/fields_otherfields',
+                ['fields' => $otherfields]
+            );
+        } else {
+            $replacements[] = '';
         }
 
         if (core_tag_tag::is_enabled('mod_data', 'data_records')) {
@@ -902,5 +962,43 @@ class template {
 
         $result .= str_ireplace($patterns, $replacements, $templatecontent);
         return $result;
+    }
+
+    /**
+     * Return the input form html from a specific field.
+     *
+     * @param stdClass $processeddata the previous process data information.
+     * @param data_field_base $field the field object
+     * @param int|null $entryid the possible entry id
+     * @param stdClass|null $entrydata the entry data from a previous form or from a real entry
+     * @return string the add entry HTML content
+     */
+    private function get_field_input(
+        stdClass $processeddata,
+        data_field_base $field,
+        ?int $entryid = null,
+        ?stdClass $entrydata = null
+    ): string {
+        $renderer = $this->manager->get_renderer();
+        $errors = '';
+        $fieldnotifications = $processeddata->fieldnotifications[$field->field->name] ?? [];
+        if (!empty($fieldnotifications)) {
+            foreach ($fieldnotifications as $notification) {
+                $errors .= $renderer->notification($notification);
+            }
+        }
+        $fielddisplay = '';
+        if ($field->type === 'unknown') {
+            if ($this->canmanageentries) { // Display notification for users that can manage entries.
+                $errors .= $renderer->notification(get_string(
+                    'missingfieldtype',
+                    'data',
+                    (object)['name' => $field->field->name]
+                ));
+            }
+        } else {
+            $fielddisplay = $field->display_add_field($entryid, $entrydata);
+        }
+        return $errors . $fielddisplay;
     }
 }

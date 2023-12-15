@@ -206,8 +206,6 @@ class core_course_renderer extends plugin_renderer_base {
      *     ownerselector => A JS/CSS selector that can be used to find an cm node.
      *         If specified the owning node will be given the class 'action-menu-shown' when the action
      *         menu is being displayed.
-     *     constraintselector => A JS/CSS selector that can be used to find the parent node for which to constrain
-     *         the action menu to when it is being displayed.
      *     donotenhance => If set to true the action menu that gets displayed won't be enhanced by JS.
      * @return string
      */
@@ -232,15 +230,8 @@ class core_course_renderer extends plugin_renderer_base {
             $ownerselector = 'li.activity';
         }
 
-        if (isset($displayoptions['constraintselector'])) {
-            $constraint = $displayoptions['constraintselector'];
-        } else {
-            $constraint = '.course-content';
-        }
-
         $menu = new action_menu();
         $menu->set_owner_selector($ownerselector);
-        $menu->set_constraint($constraint);
         $menu->set_menu_trigger(get_string('edit'));
 
         foreach ($actions as $action) {
@@ -289,98 +280,6 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Render the deprecated nonajax activity chooser.
-     *
-     * @deprecated since Moodle 3.11
-     *
-     * @todo MDL-71331 deprecate this function
-     * @param stdClass $course the course object
-     * @param int $section relative section number (field course_sections.section)
-     * @param int $sectionreturn The section to link back to
-     * @param array $displayoptions additional display options, for example blocks add
-     *     option 'inblock' => true, suggesting to display controls vertically
-     * @return string
-     */
-    private function course_section_add_cm_control_nonajax($course, $section, $sectionreturn = null,
-            $displayoptions = array()): string {
-        global $USER;
-
-        $vertical = !empty($displayoptions['inblock']);
-
-        // Check to see if user can add menus.
-        if (
-            !has_capability('moodle/course:manageactivities', context_course::instance($course->id))
-            || !$this->page->user_is_editing()
-        ) {
-            return '';
-        }
-
-        debugging('non-js dropdowns are deprecated.', DEBUG_DEVELOPER);
-        // Retrieve all modules with associated metadata.
-        $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
-        $urlparams = ['section' => $section];
-        if (!is_null($sectionreturn)) {
-            $urlparams['sr'] = $sectionreturn;
-        }
-        $modules = $contentitemservice->get_content_items_for_user_in_course($USER, $course, $urlparams);
-
-        // Return if there are no content items to add.
-        if (empty($modules)) {
-            return '';
-        }
-
-        // We'll sort resources and activities into two lists.
-        $activities = array(MOD_CLASS_ACTIVITY => array(), MOD_CLASS_RESOURCE => array());
-
-        foreach ($modules as $module) {
-            $activityclass = MOD_CLASS_ACTIVITY;
-            if ($module->archetype == MOD_ARCHETYPE_RESOURCE) {
-                $activityclass = MOD_CLASS_RESOURCE;
-            } else if ($module->archetype === MOD_ARCHETYPE_SYSTEM) {
-                // System modules cannot be added by user, do not add to dropdown.
-                continue;
-            }
-            $link = $module->link;
-            $activities[$activityclass][$link] = $module->title;
-        }
-
-        $straddactivity = get_string('addactivity');
-        $straddresource = get_string('addresource');
-        $sectionname = get_section_name($course, $section);
-        $strresourcelabel = get_string('addresourcetosection', null, $sectionname);
-        $stractivitylabel = get_string('addactivitytosection', null, $sectionname);
-
-        $nonajaxcontrol = html_writer::start_tag('div', array('class' => 'section_add_menus', 'id' => 'add_menus-section-'
-            . $section));
-
-        if (!$vertical) {
-            $nonajaxcontrol .= html_writer::start_tag('div', array('class' => 'horizontal'));
-        }
-
-        if (!empty($activities[MOD_CLASS_RESOURCE])) {
-            $select = new url_select($activities[MOD_CLASS_RESOURCE], '', array('' => $straddresource), "ressection$section");
-            $select->set_help_icon('resources');
-            $select->set_label($strresourcelabel, array('class' => 'accesshide'));
-            $nonajaxcontrol .= $this->output->render($select);
-        }
-
-        if (!empty($activities[MOD_CLASS_ACTIVITY])) {
-            $select = new url_select($activities[MOD_CLASS_ACTIVITY], '', array('' => $straddactivity), "section$section");
-            $select->set_help_icon('activities');
-            $select->set_label($stractivitylabel, array('class' => 'accesshide'));
-            $nonajaxcontrol .= $this->output->render($select);
-        }
-
-        if (!$vertical) {
-            $nonajaxcontrol .= html_writer::end_tag('div');
-        }
-
-        $nonajaxcontrol .= html_writer::end_tag('div');
-
-        return $nonajaxcontrol;
-    }
-
-    /**
      * Renders html to display a course search form
      *
      * @param string $value default value to populate the search field
@@ -400,144 +299,10 @@ class core_course_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Renders html for completion box on course page
-     *
-     * If completion is disabled, returns empty string
-     * If completion is automatic, returns an icon of the current completion state
-     * If completion is manual, returns a form (with an icon inside) that allows user to
-     * toggle completion
-     *
      * @deprecated since Moodle 3.11
-     * @todo MDL-71183 Final deprecation in Moodle 4.3.
-     * @see \core_renderer::activity_information
-     *
-     * @param stdClass $course course object
-     * @param completion_info $completioninfo completion info for the course, it is recommended
-     *     to fetch once for all modules in course/section for performance
-     * @param cm_info $mod module to show completion for
-     * @param array $displayoptions display options, not used in core
-     * @return string
      */
-    public function course_section_cm_completion($course, &$completioninfo, cm_info $mod, $displayoptions = array()) {
-        global $CFG, $DB, $USER;
-
-        debugging(__FUNCTION__ . ' is deprecated and is being replaced by the activity_information output component.',
-            DEBUG_DEVELOPER);
-
-        $output = '';
-
-        $istrackeduser = $completioninfo->is_tracked_user($USER->id);
-        $isediting = $this->page->user_is_editing();
-
-        if (!empty($displayoptions['hidecompletion']) || !isloggedin() || isguestuser() || !$mod->uservisible) {
-            return $output;
-        }
-        if ($completioninfo === null) {
-            $completioninfo = new completion_info($course);
-        }
-        $completion = $completioninfo->is_enabled($mod);
-
-        if ($completion == COMPLETION_TRACKING_NONE) {
-            if ($isediting) {
-                $output .= html_writer::span('&nbsp;', 'filler');
-            }
-            return $output;
-        }
-
-        $completionicon = '';
-
-        if ($isediting || !$istrackeduser) {
-            switch ($completion) {
-                case COMPLETION_TRACKING_MANUAL :
-                    $completionicon = 'manual-enabled'; break;
-                case COMPLETION_TRACKING_AUTOMATIC :
-                    $completionicon = 'auto-enabled'; break;
-            }
-        } else {
-            $completiondata = $completioninfo->get_data($mod, true);
-            if ($completion == COMPLETION_TRACKING_MANUAL) {
-                switch($completiondata->completionstate) {
-                    case COMPLETION_INCOMPLETE:
-                        $completionicon = 'manual-n' . ($completiondata->overrideby ? '-override' : '');
-                        break;
-                    case COMPLETION_COMPLETE:
-                        $completionicon = 'manual-y' . ($completiondata->overrideby ? '-override' : '');
-                        break;
-                }
-            } else { // Automatic
-                switch($completiondata->completionstate) {
-                    case COMPLETION_INCOMPLETE:
-                        $completionicon = 'auto-n' . ($completiondata->overrideby ? '-override' : '');
-                        break;
-                    case COMPLETION_COMPLETE:
-                        $completionicon = 'auto-y' . ($completiondata->overrideby ? '-override' : '');
-                        break;
-                    case COMPLETION_COMPLETE_PASS:
-                        $completionicon = 'auto-pass'; break;
-                    case COMPLETION_COMPLETE_FAIL:
-                        $completionicon = 'auto-fail'; break;
-                }
-            }
-        }
-        if ($completionicon) {
-            $formattedname = html_entity_decode($mod->get_formatted_name(), ENT_QUOTES, 'UTF-8');
-            if (!$isediting && $istrackeduser && $completiondata->overrideby) {
-                $args = new stdClass();
-                $args->modname = $formattedname;
-                $overridebyuser = \core_user::get_user($completiondata->overrideby, '*', MUST_EXIST);
-                $args->overrideuser = fullname($overridebyuser);
-                $imgalt = get_string('completion-alt-' . $completionicon, 'completion', $args);
-            } else {
-                $imgalt = get_string('completion-alt-' . $completionicon, 'completion', $formattedname);
-            }
-
-            if ($isediting || !$istrackeduser || !has_capability('moodle/course:togglecompletion', $mod->context)) {
-                // When editing, the icon is just an image.
-                $completionpixicon = new pix_icon('i/completion-'.$completionicon, $imgalt, '',
-                        array('title' => $imgalt, 'class' => 'iconsmall'));
-                $output .= html_writer::tag('span', $this->output->render($completionpixicon),
-                        array('class' => 'autocompletion'));
-            } else if ($completion == COMPLETION_TRACKING_MANUAL) {
-                $newstate =
-                    $completiondata->completionstate == COMPLETION_COMPLETE
-                    ? COMPLETION_INCOMPLETE
-                    : COMPLETION_COMPLETE;
-                // In manual mode the icon is a toggle form...
-
-                // If this completion state is used by the
-                // conditional activities system, we need to turn
-                // off the JS.
-                $extraclass = '';
-                if (!empty($CFG->enableavailability) &&
-                        core_availability\info::completion_value_used($course, $mod->id)) {
-                    $extraclass = ' preventjs';
-                }
-                $output .= html_writer::start_tag('form', array('method' => 'post',
-                    'action' => new moodle_url('/course/togglecompletion.php'),
-                    'class' => 'togglecompletion'. $extraclass));
-                $output .= html_writer::start_tag('div');
-                $output .= html_writer::empty_tag('input', array(
-                    'type' => 'hidden', 'name' => 'id', 'value' => $mod->id));
-                $output .= html_writer::empty_tag('input', array(
-                    'type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-                $output .= html_writer::empty_tag('input', array(
-                    'type' => 'hidden', 'name' => 'modulename', 'value' => $formattedname));
-                $output .= html_writer::empty_tag('input', array(
-                    'type' => 'hidden', 'name' => 'completionstate', 'value' => $newstate));
-                $output .= html_writer::tag('button',
-                    $this->output->pix_icon('i/completion-' . $completionicon, $imgalt),
-                        array('class' => 'btn btn-link', 'aria-live' => 'assertive'));
-                $output .= html_writer::end_tag('div');
-                $output .= html_writer::end_tag('form');
-            } else {
-                // In auto mode, the icon is just an image.
-                $completionpixicon = new pix_icon('i/completion-'.$completionicon, $imgalt, '',
-                        array('title' => $imgalt));
-                $output .= html_writer::tag('span', $this->output->render($completionpixicon),
-                        array('class' => 'autocompletion'));
-            }
-        }
-        return $output;
+    public function course_section_cm_completion() {
+        throw new coding_exception(__FUNCTION__ . ' is deprecated. Use the activity_completion output component instead.');
     }
 
     /**
@@ -1179,9 +944,10 @@ class core_course_renderer extends plugin_renderer_base {
                     return $role->displayname;
                 }, $coursecontact['roles']);
                 $name = html_writer::tag('span', implode(", ", $rolenames).': ', ['class' => 'font-weight-bold']);
-                $name .= html_writer::link(new moodle_url('/user/view.php',
-                        ['id' => $coursecontact['user']->id, 'course' => SITEID]),
-                        $coursecontact['username']);
+                $name .= html_writer::link(
+                   \core_user::get_profile_url($coursecontact['user'], context_system::instance()),
+                   $coursecontact['username']
+                );
                 $content .= html_writer::tag('li', $name);
             }
             $content .= html_writer::end_tag('ul');
@@ -1209,7 +975,7 @@ class core_course_renderer extends plugin_renderer_base {
                     html_writer::empty_tag('img', ['src' => $url, 'alt' => '']),
                     ['class' => 'courseimage']);
             } else {
-                $image = $this->output->pix_icon(file_file_icon($file, 24), $file->get_filename(), 'moodle');
+                $image = $this->output->pix_icon(file_file_icon($file), $file->get_filename(), 'moodle');
                 $filename = html_writer::tag('span', $image, ['class' => 'fp-icon']).
                     html_writer::tag('span', $file->get_filename(), ['class' => 'fp-filename']);
                 $contentfiles .= html_writer::tag('span',
@@ -2106,10 +1872,13 @@ class core_course_renderer extends plugin_renderer_base {
      *
      * Defer to template.
      *
+     * @deprecated since Moodle 4.3 MDL-78744
+     * @todo MDL-78926 This method will be deleted in Moodle 4.7
      * @param \core_course\output\activity_information $page
      * @return string html for the page
      */
     public function render_activity_information(\core_course\output\activity_information $page) {
+        debugging('render_activity_information method is deprecated.', DEBUG_DEVELOPER);
         $data = $page->export_for_template($this->output);
         return $this->output->render_from_template('core_course/activity_info', $data);
     }

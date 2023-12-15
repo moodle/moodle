@@ -73,16 +73,6 @@ class template_updated extends \core\event\base {
     }
 
     /**
-     * Get the legacy event log data.
-     *
-     * @return array
-     */
-    public function get_legacy_logdata() {
-        return array($this->courseid, 'data', 'templates saved', 'templates.php?id=' . $this->contextinstanceid .
-            '&amp;d=' . $this->other['dataid'], $this->other['dataid'], $this->contextinstanceid);
-    }
-
-    /**
      * Get URL related to the action.
      *
      * @return \moodle_url

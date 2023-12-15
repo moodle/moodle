@@ -173,8 +173,8 @@ class enrol_meta_handler {
             $ue->userid = $userid;
             $ue->enrolid = $instance->id;
             $ue->status = $parentstatus;
-            if ($instance->customint2) {
-                groups_add_member($instance->customint2, $userid, 'enrol_meta', $instance->id);
+            if ($instance->customint2 && $group = $DB->get_record('groups', ['id' => $instance->customint2])) {
+                groups_add_member($group, $userid, 'enrol_meta', $instance->id);
             }
         }
 
@@ -346,8 +346,8 @@ function enrol_meta_sync($courseid = NULL, $verbose = false) {
         $ue->timestart = ($ue->timestart == 9999999999) ? 0 : (int)$ue->timestart;
 
         $meta->enrol_user($instance, $ue->userid, null, $ue->timestart, $ue->timeend, $ue->status);
-        if ($instance->customint2) {
-            groups_add_member($instance->customint2, $ue->userid, 'enrol_meta', $instance->id);
+        if ($instance->customint2 && $group = $DB->get_record('groups', ['id' => $instance->customint2])) {
+            groups_add_member($group, $ue->userid, 'enrol_meta', $instance->id);
         }
         if ($verbose) {
             mtrace("  enrolling: $ue->userid ==> $instance->courseid");

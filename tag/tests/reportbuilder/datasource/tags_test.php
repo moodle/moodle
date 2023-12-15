@@ -20,7 +20,6 @@ namespace core_tag\reportbuilder\datasource;
 
 use context_course;
 use context_user;
-use core_collator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
 use core_reportbuilder\local\filters\{boolean_select, date, select};
@@ -47,11 +46,11 @@ class tags_test extends core_reportbuilder_testcase {
     public function test_datasource_default(): void {
         $this->resetAfterTest();
 
-        $course = $this->getDataGenerator()->create_course(['tags' => ['Horses']]);
-        $coursecontext = context_course::instance($course->id);
-
         $user = $this->getDataGenerator()->create_user(['interests' => ['Pies']]);
         $usercontext = context_user::instance($user->id);
+
+        $course = $this->getDataGenerator()->create_course(['tags' => ['Horses']]);
+        $coursecontext = context_course::instance($course->id);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
@@ -60,22 +59,18 @@ class tags_test extends core_reportbuilder_testcase {
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(2, $content);
 
-        // Consistent order (course, user), just in case.
-        core_collator::asort_array_of_arrays_by_key($content, 'c3_contextid');
-        $content = array_values($content);
+        // Default columns are collection, tag (with link), standard, context. Sorted by collection and tag.
+        [$collection, $tag, $standard, $context] = array_values($content[0]);
+        $this->assertEquals('Default collection', $collection);
+        $this->assertStringContainsString('Horses', $tag);
+        $this->assertEquals('No', $standard);
+        $this->assertEquals($coursecontext->get_context_name(), $context);
 
-        // Default columns are collection, tag name, tag standard, instance context.
-        [$courserow, $userrow] = array_map('array_values', $content);
-
-        $this->assertEquals('Default collection', $courserow[0]);
-        $this->assertStringContainsString('Horses', $courserow[1]);
-        $this->assertEquals('No', $courserow[2]);
-        $this->assertEquals($coursecontext->get_context_name(), $courserow[3]);
-
-        $this->assertEquals('Default collection', $userrow[0]);
-        $this->assertStringContainsString('Pies', $userrow[1]);
-        $this->assertEquals('No', $courserow[2]);
-        $this->assertEquals($usercontext->get_context_name(), $userrow[3]);
+        [$collection, $tag, $standard, $context] = array_values($content[1]);
+        $this->assertEquals('Default collection', $collection);
+        $this->assertStringContainsString('Pies', $tag);
+        $this->assertEquals('No', $standard);
+        $this->assertEquals($usercontext->get_context_name(), $context);
     }
 
     /**
@@ -84,6 +79,7 @@ class tags_test extends core_reportbuilder_testcase {
     public function test_datasource_non_default_columns(): void {
         $this->resetAfterTest();
 
+        $this->getDataGenerator()->create_tag(['name' => 'Horses', 'description' => 'Neigh', 'flag' => 2]);
         $course = $this->getDataGenerator()->create_course(['tags' => ['Horses']]);
         $coursecontext = context_course::instance($course->id);
 
@@ -103,8 +99,10 @@ class tags_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:flagged']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:timemodified']);
 
+        // Context.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'context:link']);
+
         // Instance.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:contexturl']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:area']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:component']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'instance:itemtype']);
@@ -125,8 +123,8 @@ class tags_test extends core_reportbuilder_testcase {
 
         // Tag.
         $this->assertEquals('Horses', $courserow[4]);
-        $this->assertEmpty($courserow[5]);
-        $this->assertEquals('No', $courserow[6]);
+        $this->assertEquals('<div class="text_to_html">Neigh</div>', $courserow[5]);
+        $this->assertEquals('Yes', $courserow[6]);
         $this->assertNotEmpty($courserow[7]);
 
         // Instance.
@@ -187,10 +185,10 @@ class tags_test extends core_reportbuilder_testcase {
                 'tag:standard_operator' => boolean_select::CHECKED,
             ], false],
             'Filter tag flagged' => ['tag:flagged', [
-                'tag:flagged_operator' => boolean_select::NOT_CHECKED,
+                'tag:flagged_operator' => boolean_select::CHECKED,
             ], true],
             'Filter tag flagged (no match)' => ['tag:flagged', [
-                'tag:flagged_operator' => boolean_select::CHECKED,
+                'tag:flagged_operator' => boolean_select::NOT_CHECKED,
             ], false],
             'Filter tag time modified' => ['tag:timemodified', [
                 'tag:timemodified_operator' => date::DATE_RANGE,
@@ -245,6 +243,7 @@ class tags_test extends core_reportbuilder_testcase {
     ): void {
         $this->resetAfterTest();
 
+        $this->getDataGenerator()->create_tag(['name' => 'Horses', 'flag' => 2]);
         $this->getDataGenerator()->create_course(['tags' => ['Horses']]);
 
         /** @var core_reportbuilder_generator $generator */

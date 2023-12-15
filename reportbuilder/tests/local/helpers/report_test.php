@@ -387,6 +387,25 @@ class report_test extends advanced_testcase {
     }
 
     /**
+     * Test adding duplicate report condition
+     */
+    public function test_add_report_condition_duplicate(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false]);
+
+        // First one is fine.
+        report::add_report_condition($report->get('id'), 'user:email');
+
+        $this->expectException(invalid_parameter_exception::class);
+        $this->expectExceptionMessage('Duplicate condition');
+        report::add_report_condition($report->get('id'), 'user:email');
+    }
+
+    /**
      * Test deleting report condition
      */
     public function test_delete_report_condition(): void {
@@ -534,6 +553,25 @@ class report_test extends advanced_testcase {
         $this->expectException(invalid_parameter_exception::class);
         $this->expectExceptionMessage('Invalid filter');
         report::add_report_filter($report->get('id'), 'user:invalid');
+    }
+
+    /**
+     * Test adding duplicate report filter
+     */
+    public function test_add_report_filter_duplicate(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'My report', 'source' => users::class, 'default' => false]);
+
+        // First one is fine.
+        report::add_report_filter($report->get('id'), 'user:email');
+
+        $this->expectException(invalid_parameter_exception::class);
+        $this->expectExceptionMessage('Duplicate filter');
+        report::add_report_filter($report->get('id'), 'user:email');
     }
 
     /**

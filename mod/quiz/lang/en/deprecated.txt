@@ -4,3 +4,4 @@ completionpass_help,mod_quiz
 completiondetail:passgrade,mod_quiz
 gradetopassnotset,mod_quiz
 basicideasofquiz,mod_quiz
+completionminattemptsgroup,mod_quiz

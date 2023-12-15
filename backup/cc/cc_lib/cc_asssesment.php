@@ -1042,6 +1042,9 @@ class cc_assesment_itemfeedbacktype extends cc_question_metadata_base {
     protected $solution = null;
     protected $hint = null;
 
+    /** @var cc_assignment_displayfeedbacktype item feedback. */
+    protected $itemfeedback;
+
     public function __construct() {
         $this->set_setting(cc_qti_tags::ident, cc_helpers::uuidgen('I_'));
         $this->set_setting(cc_qti_tags::title);
@@ -1385,6 +1388,12 @@ class cc_assesment_flow_labeltype extends cc_question_metadata_base {
      * @var cc_assesment_response_labeltype
      */
     protected $response_label = null;
+
+    /** @var cc_assesment_material assesment material. */
+    protected $material;
+
+    /** @var cc_assesment_response_matref assesment response material ref. */
+    protected $material_ref;
 
     public function __construct() {
         $this->set_setting(cc_qti_tags::t_class);

@@ -33,7 +33,7 @@ use custom_menu;
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class primary implements renderable, templatable {
-    /** @var moodle_page $page the moodle page that the navigation belongs to */
+    /** @var \moodle_page $page the moodle page that the navigation belongs to */
     private $page = null;
 
     /**
@@ -55,9 +55,9 @@ class primary implements renderable, templatable {
             $output = $this->page->get_renderer('core');
         }
 
-        $menudata = (object) array_merge($this->get_primary_nav(), $this->get_custom_menu($output));
+        $menudata = (object) $this->merge_primary_and_custom($this->get_primary_nav(), $this->get_custom_menu($output));
         $moremenu = new \core\navigation\output\more_menu($menudata, 'navbar-nav', false);
-        $mobileprimarynav = array_merge($this->get_primary_nav(), $this->get_custom_menu($output));
+        $mobileprimarynav = $this->merge_primary_and_custom($this->get_primary_nav(), $this->get_custom_menu($output), true);
 
         $languagemenu = new \core\output\language_menu($this->page);
 
@@ -72,18 +72,31 @@ class primary implements renderable, templatable {
     /**
      * Get the primary nav object and standardize the output
      *
+     * @param \navigation_node|null $parent used for nested nodes, by default the primarynav node
      * @return array
      */
-    protected function get_primary_nav(): array {
+    protected function get_primary_nav($parent = null): array {
+        if ($parent === null) {
+            $parent = $this->page->primarynav;
+        }
         $nodes = [];
-        foreach ($this->page->primarynav->children as $node) {
+        foreach ($parent->children as $node) {
+            $children = $this->get_primary_nav($node);
+            $activechildren = array_filter($children, function($child) {
+                return !empty($child['isactive']);
+            });
+            if ($node->preceedwithhr && count($nodes) && empty($nodes[count($nodes) - 1]['divider'])) {
+                $nodes[] = ['divider' => true];
+            }
             $nodes[] = [
                 'title' => $node->get_title(),
                 'url' => $node->action(),
                 'text' => $node->text,
                 'icon' => $node->icon,
-                'isactive' => $node->isactive,
+                'isactive' => $node->isactive || !empty($activechildren),
                 'key' => $node->key,
+                'children' => $children,
+                'haschildren' => !empty($children) ? 1 : 0,
             ];
         }
 
@@ -114,6 +127,114 @@ class primary implements renderable, templatable {
         }
 
         return $nodes;
+    }
+
+    /**
+     * When defining custom menu items, the active flag is not obvserved correctly. Therefore, the merge of the primary
+     * and custom navigation must be handled a bit smarter. Change the "isactive" flag of the nodes (this may set by
+     * default in the primary nav nodes but is entirely missing in the custom nav nodes).
+     * Set the $expandedmenu argument to true when the menu for the mobile template is build.
+     *
+     * @param array $primary
+     * @param array $custom
+     * @param bool $expandedmenu
+     * @return array
+     */
+    protected function merge_primary_and_custom(array $primary, array $custom, bool $expandedmenu = false): array {
+        if (empty($custom)) {
+            return $primary; // No custom nav, nothing to merge.
+        }
+        // Remember the amount of primary nodes and whether we changed the active flag in the custom menu nodes.
+        $primarylen = count($primary);
+        $changed = false;
+        foreach (array_keys($custom) as $i) {
+            if (!$changed) {
+                if ($this->flag_active_nodes($custom[$i], $expandedmenu)) {
+                    $changed = true;
+                }
+            }
+            $primary[] = $custom[$i];
+        }
+        // In case some custom node is active, mark all primary nav elements as inactive.
+        if ($changed) {
+            for ($i = 0; $i < $primarylen; $i++) {
+                $primary[$i]['isactive'] = false;
+            }
+        }
+        return $primary;
+    }
+
+    /**
+     * Recursive checks if any of the children is active. If that's the case this node (the parent) is active as
+     * well. If the node has no children, check if the node itself is active. Use pass by reference for the node
+     * object because we actively change/set the "isactive" flag inside the method and this needs to be kept at the
+     * callers side.
+     * Set $expandedmenu to true, if the mobile menu is done, in this case the active flag gets the node that is
+     * actually active, while the parent hierarchy of the active node gets the flag isopen.
+     *
+     * @param object $node
+     * @param bool $expandedmenu
+     * @return bool
+     */
+    protected function flag_active_nodes(object $node, bool $expandedmenu = false): bool {
+        global $FULLME;
+        $active = false;
+        foreach (array_keys($node->children ?? []) as $c) {
+            if ($this->flag_active_nodes($node->children[$c], $expandedmenu)) {
+                $active = true;
+            }
+        }
+        // One of the children is active, so this node (the parent) is active as well.
+        if ($active) {
+            if ($expandedmenu) {
+                $node->isopen = true;
+            } else {
+                $node->isactive = true;
+            }
+            return true;
+        }
+
+        // By default, the menu item node to check is not active.
+        $node->isactive = false;
+
+        // Check if the node url matches the called url. The node url may omit the trailing index.php, therefore check
+        // this as well.
+        if (empty($node->url)) {
+            // Current menu node has no url set, so it can't be active.
+            return false;
+        }
+        $nodeurl = parse_url($node->url);
+        $current = parse_url($FULLME ?? '');
+
+        $pathmatches = false;
+
+        // Exact match of the path of node and current url.
+        $nodepath = $nodeurl['path'] ?? '/';
+        $currentpath = $current['path'] ?? '/';
+        if ($nodepath === $currentpath) {
+            $pathmatches = true;
+        }
+        // The current url may be trailed by a index.php, otherwise it's the same as the node path.
+        if (!$pathmatches && $nodepath . 'index.php' === $currentpath) {
+            $pathmatches = true;
+        }
+        // No path did match, so the node can't be active.
+        if (!$pathmatches) {
+            return false;
+        }
+        // We are here because the path matches, so now look at the query string.
+        $nodequery = $nodeurl['query'] ?? '';
+        $currentquery = $current['query'] ?? '';
+        // If the node has no query string defined, then the patch match is sufficient.
+        if (empty($nodeurl['query'])) {
+            $node->isactive = true;
+            return true;
+        }
+        // If the node contains a query string then also the current url must match this query.
+        if ($nodequery === $currentquery) {
+            $node->isactive = true;
+        }
+        return $node->isactive;
     }
 
     /**

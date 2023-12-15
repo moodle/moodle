@@ -104,6 +104,9 @@ class phpunit_util extends testing_util {
     public static function reset_all_data($detectchanges = false) {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $FULLME, $FILTERLIB_PRIVATE;
 
+        // Stop all hook redirections.
+        \core\hook\manager::get_instance()->phpunit_stop_redirections();
+
         // Stop any message redirection.
         self::stop_message_redirection();
 
@@ -258,6 +261,15 @@ class phpunit_util extends testing_util {
         if (class_exists('\core_reportbuilder\manager')) {
             \core_reportbuilder\manager::reset_caches();
         }
+        if (class_exists('\core_cohort\customfield\cohort_handler')) {
+            \core_cohort\customfield\cohort_handler::reset_caches();
+        }
+        if (class_exists('\core_group\customfield\group_handler')) {
+            \core_group\customfield\group_handler::reset_caches();
+        }
+        if (class_exists('\core_group\customfield\grouping_handler')) {
+            \core_group\customfield\grouping_handler::reset_caches();
+        }
 
         // Clear static cache within restore.
         if (class_exists('restore_section_structure_step')) {
@@ -308,7 +320,13 @@ class phpunit_util extends testing_util {
     public static function reset_database() {
         global $DB;
 
-        if (!is_null(self::$lastdbwrites) and self::$lastdbwrites == $DB->perf_get_writes()) {
+        if (defined('PHPUNIT_ISOLATED_TEST') && PHPUNIT_ISOLATED_TEST && self::$lastdbwrites === null) {
+            // This is an isolated test and the lastdbwrites has not yet been initialised.
+            // Isolated test runs are reset by the test runner before the run starts.
+            self::$lastdbwrites = $DB->perf_get_writes();
+        }
+
+        if (!is_null(self::$lastdbwrites) && self::$lastdbwrites == $DB->perf_get_writes()) {
             return false;
         }
 
@@ -949,8 +967,8 @@ class phpunit_util extends testing_util {
     /**
      * Get the coverage config for the supplied includelist and excludelist configuration.
      *
-     * @param   array[] $includelists The list of files/folders in the includelist.
-     * @param   array[] $excludelists The list of files/folders in the excludelist.
+     * @param   string[] $includelists The list of files/folders in the includelist.
+     * @param   string[] $excludelists The list of files/folders in the excludelist.
      * @return  string
      */
     protected static function get_coverage_config(array $includelists, array $excludelists) : string {

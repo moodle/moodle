@@ -25,213 +25,213 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$capabilities = array(
-    'quizaccess/seb:managetemplates' => array(
+$capabilities = [
+    'quizaccess/seb:managetemplates' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_SYSTEM,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
-        )
-    ),
-    'quizaccess/seb:bypassseb' => array(
+        ]
+    ],
+    'quizaccess/seb:bypassseb' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_requiresafeexambrowser' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_requiresafeexambrowser' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_templateid' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_templateid' => [
         'captype' => 'read',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_filemanager_sebconfigfile' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_filemanager_sebconfigfile' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_showsebdownloadlink' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_showsebdownloadlink' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_allowedbrowserexamkeys' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_allowedbrowserexamkeys' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_linkquitseb' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_linkquitseb' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_userconfirmquit' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_userconfirmquit' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_allowuserquitseb' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_allowuserquitseb' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_quitpassword' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_quitpassword' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_allowreloadinexam' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_allowreloadinexam' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_showsebtaskbar' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_showsebtaskbar' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_showreloadbutton' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_showreloadbutton' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_showtime' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_showtime' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_showkeyboardlayout' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_showkeyboardlayout' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
+        ]
+    ],
 
-    'quizaccess/seb:manage_seb_showwificontrol' => array(
+    'quizaccess/seb:manage_seb_showwificontrol' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_enableaudiocontrol' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_enableaudiocontrol' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_muteonstartup' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_muteonstartup' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_allowspellchecking' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_allowspellchecking' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_activateurlfiltering' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_activateurlfiltering' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_filterembeddedcontent' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_filterembeddedcontent' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_expressionsallowed' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_expressionsallowed' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_regexallowed' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_regexallowed' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_expressionsblocked' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_expressionsblocked' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-    'quizaccess/seb:manage_seb_regexblocked' => array(
+        ]
+    ],
+    'quizaccess/seb:manage_seb_regexblocked' => [
         'captype' => 'write',
         'contextlevel' => CONTEXT_MODULE,
-        'archetypes' => array(
+        'archetypes' => [
             'manager' => CAP_ALLOW,
             'editingteacher' => CAP_ALLOW
-        )
-    ),
-);
+        ]
+    ],
+];

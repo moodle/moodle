@@ -14,11 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core_external\external_api;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
+require_once($CFG->dirroot . '/mod/lti/locallib.php');
 
 /**
  * Abstract base testcase for mod_lti unit tests.
@@ -45,7 +48,11 @@ abstract class mod_lti_testcase extends externallib_advanced_testcase  {
         $type->description = "Example description $uniqueid";
         $type->toolproxyid = $toolproxyid;
         $type->baseurl = $this->getExternalTestFileUrl("/test$uniqueid.html");
-        lti_add_type($type, new stdClass());
+        $type->coursevisible = LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
+        $config = new stdClass();
+        $config->lti_coursevisible = LTI_COURSEVISIBLE_ACTIVITYCHOOSER;
+
+        $type->id = lti_add_type($type, $config);
         return $type;
     }
 

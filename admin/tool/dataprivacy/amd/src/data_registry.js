@@ -20,9 +20,9 @@
  * @copyright  2018 David Monllao
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/str', 'core/ajax', 'core/notification', 'core/templates', 'core/modal_factory',
-    'core/modal_events', 'core/fragment', 'tool_dataprivacy/add_purpose', 'tool_dataprivacy/add_category'],
-    function($, Str, Ajax, Notification, Templates, ModalFactory, ModalEvents, Fragment, AddPurpose, AddCategory) {
+define(['jquery', 'core/str', 'core/ajax', 'core/notification', 'core/templates',
+    'core/fragment', 'tool_dataprivacy/add_purpose', 'tool_dataprivacy/add_category'],
+    function($, Str, Ajax, Notification, Templates, Fragment, AddPurpose, AddCategory) {
 
         var SELECTORS = {
             TREE_NODES: '[data-context-tree-node=1]',
@@ -309,4 +309,3 @@ define(['jquery', 'core/str', 'core/ajax', 'core/notification', 'core/templates'
         };
     }
 );
-

@@ -10,7 +10,7 @@ videojs.addLanguage('pt-PT', {
   "Loaded": "Carregado",
   "Progress": "Progresso",
   "Fullscreen": "Ecrã inteiro",
-  "Non-Fullscreen": "Ecrã normal",
+  "Exit Fullscreen": "Ecrã normal",
   "Mute": "Desativar som",
   "Unmute": "Ativar som",
   "Playback Rate": "Velocidade de reprodução",

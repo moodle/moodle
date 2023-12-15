@@ -29,6 +29,8 @@ use Moodle\H5PCore;
 use Moodle\H5peditorFile;
 use Moodle\H5PFileStorage;
 
+// phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
+
 /**
  * Class to handle storage and export of H5P Content.
  *
@@ -48,15 +50,10 @@ class file_storage implements H5PFileStorage {
     public const CACHED_ASSETS_FILEAREA = 'cachedassets';
     /** The export file area */
     public const EXPORT_FILEAREA = 'export';
+    /** The export css file area */
+    public const CSS_FILEAREA = 'css';
     /** The icon filename */
     public const ICON_FILENAME = 'icon.svg';
-
-    /**
-     * The editor file area.
-     * @deprecated since Moodle 3.10 MDL-68909. Please do not use this constant any more.
-     * @todo MDL-69530 This will be deleted in Moodle 4.2.
-     */
-    public const EDITOR_FILEAREA = 'editor';
 
     /**
      * @var \context $context Currently we use the system context everywhere.
@@ -86,14 +83,26 @@ class file_storage implements H5PFileStorage {
             'contextid' => $this->context->id,
             'component' => self::COMPONENT,
             'filearea' => self::LIBRARY_FILEAREA,
-            'filepath' => '/' . H5PCore::libraryToString($library, true) . '/',
-            'itemid' => $library['libraryId']
+            'filepath' => '/' . H5PCore::libraryToFolderName($library) . '/',
+            'itemid' => $library['libraryId'],
         ];
 
         // Easiest approach: delete the existing library version and copy the new one.
         $this->delete_library($library);
         $this->copy_directory($library['uploadDirectory'], $options);
     }
+
+    /**
+     * Delete library folder.
+     *
+     * @param array $library
+     */
+    public function deleteLibrary($library) {
+        // Although this class had a method (delete_library()) for removing libraries before this was added to the interface,
+        // it's not safe to call it from here because looking at the place where it's called, it's not clear what are their
+        // expectation. This method will be implemented once more information will be added to the H5P technical doc.
+    }
+
 
     /**
      * Store the content folder.
@@ -162,7 +171,7 @@ class file_storage implements H5PFileStorage {
      * @param string $target Where the library folder will be saved
      */
     public function exportLibrary($library, $target) {
-        $folder = H5PCore::libraryToString($library, true);
+        $folder = H5PCore::libraryToFolderName($library);
         $this->export_file_tree($target . '/' . $folder, $this->context->id, self::LIBRARY_FILEAREA,
                 '/' . $folder . '/', $library['libraryId']);
     }
@@ -432,7 +441,7 @@ class file_storage implements H5PFileStorage {
 
         // Move all temporary content files to editor.
         $it = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($contentsource,\RecursiveDirectoryIterator::SKIP_DOTS),
+            new \RecursiveDirectoryIterator($contentsource, \RecursiveDirectoryIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::SELF_FIRST
         );
 
@@ -583,7 +592,7 @@ class file_storage implements H5PFileStorage {
         global $DB;
 
         // A library ID of false would result in all library files being deleted, which we don't want. Return instead.
-        if ($library['libraryId'] === false) {
+        if (empty($library['libraryId'])) {
             return;
         }
 

@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration extends Google_Service
 {
   /** View and manage your Google Play Developer account. */
@@ -245,6 +246,7 @@ class Google_Service_GamesConfiguration extends Google_Service
  *   $achievementConfigurations = $gamesConfigurationService->achievementConfigurations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_AchievementConfigurations_Resource extends Google_Service_Resource
 {
 
@@ -356,6 +358,7 @@ class Google_Service_GamesConfiguration_AchievementConfigurations_Resource exten
  *   $imageConfigurations = $gamesConfigurationService->imageConfigurations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_ImageConfigurations_Resource extends Google_Service_Resource
 {
 
@@ -384,6 +387,7 @@ class Google_Service_GamesConfiguration_ImageConfigurations_Resource extends Goo
  *   $leaderboardConfigurations = $gamesConfigurationService->leaderboardConfigurations;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_LeaderboardConfigurations_Resource extends Google_Service_Resource
 {
 
@@ -490,6 +494,7 @@ class Google_Service_GamesConfiguration_LeaderboardConfigurations_Resource exten
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_AchievementConfiguration extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -572,6 +577,7 @@ class Google_Service_GamesConfiguration_AchievementConfiguration extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_AchievementConfigurationDetail extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -636,6 +642,7 @@ class Google_Service_GamesConfiguration_AchievementConfigurationDetail extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_AchievementConfigurationListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -673,6 +680,7 @@ class Google_Service_GamesConfiguration_AchievementConfigurationListResponse ext
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_GamesNumberAffixConfiguration extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -741,6 +749,7 @@ class Google_Service_GamesConfiguration_GamesNumberAffixConfiguration extends Go
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_GamesNumberFormatConfiguration extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -786,6 +795,7 @@ class Google_Service_GamesConfiguration_GamesNumberFormatConfiguration extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_ImageConfiguration extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -830,6 +840,7 @@ class Google_Service_GamesConfiguration_ImageConfiguration extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_LeaderboardConfiguration extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -912,6 +923,7 @@ class Google_Service_GamesConfiguration_LeaderboardConfiguration extends Google_
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_LeaderboardConfigurationDetail extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -967,6 +979,7 @@ class Google_Service_GamesConfiguration_LeaderboardConfigurationDetail extends G
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_LeaderboardConfigurationListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1004,6 +1017,7 @@ class Google_Service_GamesConfiguration_LeaderboardConfigurationListResponse ext
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_LocalizedString extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1039,6 +1053,7 @@ class Google_Service_GamesConfiguration_LocalizedString extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_GamesConfiguration_LocalizedStringBundle extends Google_Collection
 {
   protected $collection_key = 'translations';

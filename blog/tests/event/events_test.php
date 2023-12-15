@@ -137,10 +137,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals($this->userid, $event->relateduserid);
         $this->assertEquals("post", $event->objecttable);
-        $arr = array(SITEID, 'blog', 'add', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id, $blog->subject);
-        $this->assertEventLegacyLogData($arr, $event);
-        $this->assertEquals("blog_entry_added", $event->get_legacy_eventname());
-        $this->assertEventLegacyData($blog, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -172,10 +168,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals($this->userid, $event->relateduserid);
         $this->assertEquals("post", $event->objecttable);
-        $this->assertEquals("blog_entry_edited", $event->get_legacy_eventname());
-        $this->assertEventLegacyData($blog, $event);
-        $arr = array (SITEID, 'blog', 'update', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id, $blog->subject);
-        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -207,11 +199,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($this->userid, $event->relateduserid);
         $this->assertEquals("post", $event->objecttable);
         $this->assertEquals($record, $event->get_record_snapshot("post", $blog->id));
-        $this->assertSame('blog_entry_deleted', $event->get_legacy_eventname());
-        $arr = array(SITEID, 'blog', 'delete', 'index.php?userid=' . $blog->userid, 'deleted blog entry with entry id# ' .
-                $blog->id);
-        $this->assertEventLegacyLogData($arr, $event);
-        $this->assertEventLegacyData($blog, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -292,9 +279,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($USER->id, $event->userid);
         $this->assertEquals($this->userid, $event->relateduserid);
         $this->assertEquals('blog_association', $event->objecttable);
-        $arr = array(SITEID, 'blog', 'add association', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id,
-                     $blog->subject, 0, $this->userid);
-        $this->assertEventLegacyLogData($arr, $event);
 
         // Add blog associations with a module.
         $blog = new \blog_entry($this->postid);
@@ -308,9 +292,6 @@ class events_test extends \advanced_testcase {
         $this->assertEquals($blog->id, $event->other['blogid']);
         $this->assertEquals($this->cmid, $event->other['associateid']);
         $this->assertEquals('coursemodule', $event->other['associatetype']);
-        $arr = array(SITEID, 'blog', 'add association', 'index.php?userid=' . $this->userid . '&entryid=' . $blog->id,
-                     $blog->subject, $this->cmid, $this->userid);
-        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -393,10 +374,7 @@ class events_test extends \advanced_testcase {
 
         // Validate event data.
         $url = new \moodle_url('/blog/index.php', $other);
-        $url2 = new \moodle_url('index.php', $other);
         $this->assertEquals($url, $event->get_url());
-        $arr = array(SITEID, 'blog', 'view', $url2->out(), 'view blog entry');
-        $this->assertEventLegacyLogData($arr, $event);
         $this->assertEventContextNotUsed($event);
     }
 

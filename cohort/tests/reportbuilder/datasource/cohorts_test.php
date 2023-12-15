@@ -18,11 +18,12 @@ declare(strict_types=1);
 
 namespace core_cohort\reportbuilder\datasource;
 
+use context_coursecat;
+use context_system;
+use core_customfield_generator;
 use core_reportbuilder_generator;
 use core_reportbuilder_testcase;
-use core_reportbuilder\manager;
-use core_reportbuilder\local\filters\user;
-use core_user;
+use core_reportbuilder\local\filters\{date, select, text};
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -40,9 +41,175 @@ require_once("{$CFG->dirroot}/reportbuilder/tests/helpers.php");
 class cohorts_test extends core_reportbuilder_testcase {
 
     /**
-     * Test cohorts datasource
+     * Test default datasource
      */
-    public function test_cohorts_datasource(): void {
+    public function test_datasource_default(): void {
+        $this->resetAfterTest();
+
+        // Test subject.
+        $contextsystem = context_system::instance();
+        $cohortone = $this->getDataGenerator()->create_cohort([
+            'contextid' => $contextsystem->id,
+            'name' => 'Legends',
+            'idnumber' => 'C101',
+            'description' => 'Cohort for the legends',
+        ]);
+
+        $category = $this->getDataGenerator()->create_category();
+        $contextcategory = context_coursecat::instance($category->id);
+        $cohorttwo = $this->getDataGenerator()->create_cohort([
+            'contextid' => $contextcategory->id,
+            'name' => 'Category cohort',
+            'description' => 'This is my category cohort',
+        ]);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Cohorts', 'source' => cohorts::class, 'default' => 1]);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+
+        // Default columns are name, context, idnumber, description. Sorted by name.
+        $this->assertEquals([
+            [$cohorttwo->name, $contextcategory->get_context_name(false), $cohorttwo->idnumber,
+                format_text($cohorttwo->description)],
+            [$cohortone->name, $contextsystem->get_context_name(false), $cohortone->idnumber,
+                format_text($cohortone->description)],
+        ], array_map('array_values', $content));
+    }
+
+    /**
+     * Test datasource columns that aren't added by default
+     */
+    public function test_datasource_non_default_columns(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        /** @var core_customfield_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_customfield');
+
+        $fieldcategory = $generator->create_category(['component' => 'core_cohort', 'area' => 'cohort']);
+        $field = $generator->create_field(['categoryid' => $fieldcategory->get('id'), 'shortname' => 'hi']);
+
+        // Test subject.
+        $cohort = $this->getDataGenerator()->create_cohort([
+            'name' => 'Legends',
+            'idnumber' => 'C101',
+            'description' => 'Cohort for the legends',
+            'customfield_hi' => 'Hello',
+        ]);
+
+        $user = $this->getDataGenerator()->create_user(['firstname' => 'Lionel', 'lastname' => 'Richards']);
+        cohort_add_member($cohort->id, $user->id);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Cohorts', 'source' => cohorts::class, 'default' => 0]);
+
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:visible']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:timecreated']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:timemodified']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:component']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:theme']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:customfield_hi']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort_member:timeadded']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertCount(1, $content);
+
+        [$visible, $timecreated, $timemodified, $component, $theme, $custom, $timeadded, $fullname] = array_values($content[0]);
+
+        $this->assertEquals('Yes', $visible);
+        $this->assertNotEmpty($timecreated);
+        $this->assertNotEmpty($timemodified);
+        $this->assertEquals('Created manually', $component);
+        $this->assertEmpty($theme);
+        $this->assertEquals('Hello', $custom);
+        $this->assertNotEmpty($timeadded);
+        $this->assertEquals(fullname($user), $fullname);
+    }
+
+    /**
+     * Data provider for {@see test_datasource_filters}
+     *
+     * @return array[]
+     */
+    public function datasource_filters_provider(): array {
+        return [
+            // Cohort.
+            'Filter context' => ['cohort:context', [
+                'cohort:context_operator' => select::EQUAL_TO,
+                'cohort:context_value' => context_system::instance()->id,
+            ], true],
+            'Filter content (no match)' => ['cohort:context', [
+                'cohort:context_operator' => select::EQUAL_TO,
+                'cohort:context_value' => -1,
+            ], false],
+            'Filter name' => ['cohort:name', [
+                'cohort:name_operator' => text::IS_EQUAL_TO,
+                'cohort:name_value' => 'Legends',
+            ], true],
+            'Filter name (no match)' => ['cohort:name', [
+                'cohort:name_operator' => text::IS_EQUAL_TO,
+                'cohort:name_value' => 'Dancing',
+            ], false],
+            'Filter idnumber' => ['cohort:idnumber', [
+                'cohort:idnumber_operator' => text::IS_EQUAL_TO,
+                'cohort:idnumber_value' => 'C101',
+            ], true],
+            'Filter idnumber (no match)' => ['cohort:idnumber', [
+                'cohort:idnumber_operator' => text::IS_EQUAL_TO,
+                'cohort:idnumber_value' => 'C102',
+            ], false],
+            'Filter time created' => ['cohort:timecreated', [
+                'cohort:timecreated_operator' => date::DATE_RANGE,
+                'cohort:timecreated_from' => 1622502000,
+            ], true],
+            'Filter time created (no match)' => ['cohort:timecreated', [
+                'cohort:timecreated_operator' => date::DATE_RANGE,
+                'cohort:timecreated_to' => 1622502000,
+            ], false],
+            'Filter description' => ['cohort:description', [
+                'cohort:description_operator' => text::CONTAINS,
+                'cohort:description_value' => 'legends',
+            ], true],
+            'Filter description (no match)' => ['cohort:description', [
+                'cohort:description_operator' => text::IS_EMPTY,
+            ], false],
+
+            // Cohort member.
+            'Filter time added' => ['cohort_member:timeadded', [
+                'cohort_member:timeadded_operator' => date::DATE_RANGE,
+                'cohort_member:timeadded_from' => 1622502000,
+            ], true],
+            'Filter time added (no match)' => ['cohort_member:timeadded', [
+                'cohort_member:timeadded_operator' => date::DATE_RANGE,
+                'cohort_member:timeadded_to' => 1622502000,
+            ], false],
+
+            // User.
+            'Filter user' => ['user:username', [
+                'user:username_operator' => text::IS_EQUAL_TO,
+                'user:username_value' => 'lionel',
+            ], true],
+            'Filter user (no match)' => ['user:username', [
+                'user:username_operator' => text::IS_EQUAL_TO,
+                'user:username_value' => 'rick',
+            ], false],
+        ];
+    }
+
+    /**
+     * Test datasource filters
+     *
+     * @param string $filtername
+     * @param array $filtervalues
+     * @param bool $expectmatch
+     *
+     * @dataProvider datasource_filters_provider
+     */
+    public function test_datasource_filters(string $filtername, array $filtervalues, bool $expectmatch): void {
         $this->resetAfterTest();
 
         // Test subject.
@@ -52,85 +219,26 @@ class cohorts_test extends core_reportbuilder_testcase {
             'description' => 'Cohort for the legends',
         ]);
 
-        $user = $this->getDataGenerator()->create_user(['firstname' => 'Lionel', 'lastname' => 'Richards']);
+        $user = $this->getDataGenerator()->create_user(['username' => 'lionel']);
         cohort_add_member($cohort->id, $user->id);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'Cohorts', 'source' => cohorts::class]);
 
-        // Add user fullname column to the report.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:fullname']);
-
-        $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(1, $content);
-
-        $contentrow = array_values(reset($content));
-        $this->assertEquals([
-            'Legends', // Name.
-            'System', // Context.
-            'C101', // ID number.
-            '<div class="text_to_html">Cohort for the legends</div>', // Description.
-            'Lionel Richards', // User.
-        ], $contentrow);
-    }
-
-    /**
-     * Data provider for {@see test_cohorts_datasource_user_select}
-     *
-     * @return array[]
-     */
-    public function cohorts_datasource_user_select_provider(): array {
-        return [
-            ['user01', 'Cohort01'],
-            ['user02', 'Cohort02'],
-        ];
-    }
-
-    /**
-     * Test cohorts datasource, while adding the user select condition
-     *
-     * @param string $username
-     * @param string $expectedcohort
-     *
-     * @dataProvider cohorts_datasource_user_select_provider
-     */
-    public function test_cohorts_datasource_user_select(string $username, string $expectedcohort): void {
-        $this->resetAfterTest();
-
-        // First cohort/user member.
-        $cohort01 = $this->getDataGenerator()->create_cohort(['name' => 'Cohort01']);
-        $user01 = $this->getDataGenerator()->create_user(['username' => 'user01']);
-        cohort_add_member($cohort01->id, $user01->id);
-
-        // Second cohort/user member.
-        $cohort02 = $this->getDataGenerator()->create_cohort(['name' => 'Cohort02']);
-        $user02 = $this->getDataGenerator()->create_user(['username' => 'user02']);
-        cohort_add_member($cohort02->id, $user02->id);
-
-        /** @var core_reportbuilder_generator $generator */
-        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
-        $report = $generator->create_report(['name' => 'User cohorts', 'source' => cohorts::class, 'default' => 0]);
-
-        // Add cohort name and user fullname columns.
+        // Create report containing single column, and given filter.
+        $report = $generator->create_report(['name' => 'Cohorts', 'source' => cohorts::class, 'default' => 0]);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:name']);
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:username']);
 
-        // Add condition to limit report data to current user.
-        $condition = $generator->create_condition(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:userselect']);
-        manager::get_report_from_persistent($report)->set_condition_values([
-            $condition->get('uniqueidentifier') . '_operator' => user::USER_CURRENT,
-        ]);
+        // Add filter, set it's values.
+        $generator->create_filter(['reportid' => $report->get('id'), 'uniqueidentifier' => $filtername]);
+        $content = $this->get_custom_report_content($report->get('id'), 0, $filtervalues);
 
-        // Switch user, request report.
-        $currentuser = core_user::get_user_by_username($username);
-        $this->setUser($currentuser);
-
-        $content = $this->get_custom_report_content($report->get('id'));
-        $this->assertCount(1, $content);
-
-        $contentrow = array_values(reset($content));
-        $this->assertEquals([$expectedcohort, $username], $contentrow);
+        if ($expectmatch) {
+            $this->assertCount(1, $content);
+            $this->assertEquals('Legends', reset($content[0]));
+        } else {
+            $this->assertEmpty($content);
+        }
     }
 
     /**

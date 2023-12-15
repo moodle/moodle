@@ -58,6 +58,7 @@ Feature: Basic recycle bin functionality
     And I am on "Course 1" course homepage
     And I should see "Test assign 1" in the "Topic 1" "section"
 
+  @javascript
   Scenario: Restore a deleted course
     Given I log in as "admin"
     And I go to the courses management page
@@ -77,8 +78,7 @@ Feature: Basic recycle bin functionality
     And I wait to be redirected
     And I go to the courses management page
     And I should see "Course 2" in the "#course-listing" "css_element"
-    And I am on the "Course 2" "groups" page
-    And I select "Overview" from the "jump" singleselect
+    And I am on the "Course 2" "groups overview" page
     And "Student 1" "text" should exist in the "Group A" "table_row"
     And "Student 2" "text" should exist in the "Group A" "table_row"
     And "Student 2" "text" should exist in the "Group B" "table_row"

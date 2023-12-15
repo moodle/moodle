@@ -32,7 +32,7 @@ import Pending from 'core/pending';
 import {prefetchStrings} from 'core/prefetch';
 import {publish} from 'core/pubsub';
 import SortableList from 'core/sortable_list';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import {add as addToast} from 'core/toast';
 import * as reportEvents from 'core_reportbuilder/local/events';
 import * as reportSelectors from 'core_reportbuilder/local/selectors';

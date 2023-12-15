@@ -19,7 +19,7 @@
     Context variables required for this template:
     * generalnavselector - The data object containing the required properties to render the general navigation selector.
     * groupselector - (optional) HTML that outputs the group selector
-    * userselector - (optional) HTML that outputs the user selector
+    * userselector - (optional) The data object containing the required properties to render the user selector
     * viewasselector - (optional) HTML that outputs the 'view report as' selector
 
     Example context (json):
@@ -63,7 +63,10 @@
             ]
         },
         "groupselector": "<div class='group-selector'></div>",
-        "userselector": "<div class='user-selector'></div>",
+        "userselector": {
+            "content": "<div class='user-selector'></div>",
+            "courseid": 25
+        },
         "viewasselector": "<div class='view-user-selector'></div>"
     }
 }}
@@ -82,8 +85,11 @@
             <div class="navitem-divider"></div>
         {{/groupselector}}
         {{#userselector}}
-            <div class="navitem">
-                {{{userselector}}}
+            <span class="d-none" data-region="courseid" data-courseid="{{courseid}}" aria-hidden="true"></span>
+            <div class="navitem flex-column">
+                {{#content}}
+                    {{{.}}}
+                {{/content}}
             </div>
             <div class="navitem-divider"></div>
         {{/userselector}}

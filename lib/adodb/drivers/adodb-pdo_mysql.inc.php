@@ -57,7 +57,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 		return $date . ' + INTERVAL ' .	$fraction . ' SECOND';
 //		return "from_unixtime(unix_timestamp($date)+$fraction)";
 	}
-	
+
 	/**
 	 * Get a list of indexes on the specified table.
 	 *
@@ -266,7 +266,6 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 	function SelectDB($dbName)
 	{
 		$this->database = $dbName;
-		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 		$try = $this->Execute('use ' . $dbName);
 		return ($try !== false);
 	}
@@ -275,7 +274,7 @@ class ADODB_pdo_mysql extends ADODB_pdo {
 	function SelectLimit($sql, $nrows=-1, $offset=-1, $inputarr=false, $secs=0)
 	{
 		$nrows = (int) $nrows;
-		$offset = (int) $offset;		
+		$offset = (int) $offset;
 		$offsetStr =($offset>=0) ? "$offset," : '';
 		// jason judge, see PHPLens Issue No: 9220
 		if ($nrows < 0) {

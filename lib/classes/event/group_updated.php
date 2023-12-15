@@ -45,24 +45,6 @@ class group_updated extends base {
     }
 
     /**
-     * Legacy event data if get_legacy_eventname() is not empty.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        return $this->get_record_snapshot('groups', $this->objectid);
-    }
-
-    /**
-     * Return the legacy event name.
-     *
-     * @return string
-     */
-    public static function get_legacy_eventname() {
-        return 'groups_group_updated';
-    }
-
-    /**
      * Return localised event name.
      *
      * @return string

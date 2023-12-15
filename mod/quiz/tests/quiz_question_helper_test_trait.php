@@ -13,6 +13,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 
 /**
  * Helper trait for quiz question unit tests.
@@ -67,11 +69,11 @@ trait quiz_question_helper_test_trait {
         // Create a couple of questions.
         $cat = $questiongenerator->create_question_category($override);
 
-        $saq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
         // Create another version.
         $questiongenerator->update_question($saq);
         quiz_add_quiz_question($saq->id, $quiz);
-        $numq = $questiongenerator->create_question('numerical', null, array('category' => $cat->id));
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
         // Create two version.
         $questiongenerator->update_question($numq);
         $questiongenerator->update_question($numq);
@@ -88,9 +90,9 @@ trait quiz_question_helper_test_trait {
     protected function add_one_random_question($questiongenerator, \stdClass $quiz, $override = []): void {
         // Create a random question.
         $cat = $questiongenerator->create_question_category($override);
-        $questiongenerator->create_question('truefalse', null, array('category' => $cat->id));
-        $questiongenerator->create_question('essay', null, array('category' => $cat->id));
-        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
+        $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
+        $questiongenerator->create_question('essay', null, ['category' => $cat->id]);
+        $this->add_random_questions($quiz->id, 0, $cat->id, 1);
     }
 
     /**
@@ -105,7 +107,7 @@ trait quiz_question_helper_test_trait {
         $this->setUser($user);
 
         $starttime = time();
-        $quizobj = quiz::create($quiz->id, $user->id);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
 
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
@@ -177,5 +179,29 @@ trait quiz_question_helper_test_trait {
      */
     protected function duplicate_quiz($course, $quiz): ?\cm_info {
         return duplicate_module($course, get_fast_modinfo($course)->get_cm($quiz->cmid));
+    }
+
+    /**
+     * Add random questions to a quiz, with a filter condition based on a category ID.
+     *
+     * @param int $quizid The quiz to add the questions to.
+     * @param int $page The page number to add the questions to.
+     * @param int $categoryid The category ID to use for the filter condition.
+     * @param int $number The number of questions to add.
+     * @return void
+     */
+    protected function add_random_questions(int $quizid, int $page, int $categoryid, int $number): void {
+        $settings = quiz_settings::create($quizid);
+        $structure = \mod_quiz\structure::create_for_quiz($settings);
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
+                    'values' => [$categoryid],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ];
+        $structure->add_random_questions($page, $number, $filtercondition);
     }
 }

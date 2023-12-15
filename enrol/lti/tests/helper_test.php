@@ -525,7 +525,7 @@ class helper_test extends \advanced_testcase {
 
         $cartridge = \enrol_lti\helper::create_cartridge($tool1->id);
         $this->assertStringContainsString('<blti:title>Test LTI</blti:title>', $cartridge);
-        $this->assertStringContainsString("<blti:icon>$CFG->wwwroot/theme/image.php/_s/boost/theme/1/favicon</blti:icon>", $cartridge);
+        $this->assertStringContainsString("<blti:icon>$CFG->wwwroot/theme/image.php/boost/theme/1/favicon</blti:icon>", $cartridge);
         $this->assertStringContainsString("<blti:launch_url>$CFG->wwwroot/enrol/lti/tool.php?id=$tool1->id</blti:launch_url>", $cartridge);
     }
 }

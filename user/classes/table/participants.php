@@ -250,8 +250,8 @@ class participants extends \table_sql implements dynamic_table {
      */
     public function col_fullname($data) {
         global $OUTPUT;
-
-        return $OUTPUT->user_picture($data, array('size' => 35, 'courseid' => $this->course->id, 'includefullname' => true));
+        return $OUTPUT->render(\core_user::get_profile_picture($data, null,
+            ['courseid' => $this->course->id, 'includefullname' => true]));
     }
 
     /**

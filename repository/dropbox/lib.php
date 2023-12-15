@@ -687,7 +687,7 @@ class repository_dropbox extends repository {
                         // Use the display path here rather than lower.
                         // Dropbox is case insensitive but this leads to more accurate breadcrumbs.
                         'path'              => file_correct_filepath($entrydata->path_display),
-                        'thumbnail'         => $OUTPUT->image_url(file_folder_icon(64))->out(false),
+                        'thumbnail'         => $OUTPUT->image_url(file_folder_icon())->out(false),
                         'thumbnail_height'  => 64,
                         'thumbnail_width'   => 64,
                         'children'          => array(),
@@ -699,7 +699,7 @@ class repository_dropbox extends repository {
                         'source'            => $entrydata->path_lower,
                         'size'              => $entrydata->size,
                         'date'              => strtotime($entrydata->client_modified),
-                        'thumbnail'         => $OUTPUT->image_url(file_extension_icon($entrydata->path_lower, 64))->out(false),
+                        'thumbnail'         => $OUTPUT->image_url(file_extension_icon($entrydata->path_lower))->out(false),
                         'realthumbnail'     => $this->get_thumbnail_url($entrydata),
                         'thumbnail_height'  => 64,
                         'thumbnail_width'   => 64,

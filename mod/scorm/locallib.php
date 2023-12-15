@@ -436,29 +436,46 @@ function scorm_get_scoes($id, $organisation=false) {
     }
 }
 
-function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $value, $forcecompleted=false, $trackdata = null) {
+/**
+ * Insert SCORM track into db.
+ *
+ * @param int $userid The userid
+ * @param int $scormid The id from scorm table
+ * @param int $scoid The scoid
+ * @param int|stdClass $attemptornumber - number of attempt or attempt record from scorm_attempt table.
+ * @param string $element The element being saved
+ * @param string $value The value of the element
+ * @param boolean $forcecompleted Force this sco as completed
+ * @param stdclass $trackdata - existing tracking data
+ * @return int - the id of the record being saved.
+ */
+function scorm_insert_track($userid, $scormid, $scoid, $attemptornumber, $element, $value, $forcecompleted=false, $trackdata = null) {
     global $DB, $CFG;
+
+    if (is_object($attemptornumber)) {
+        $attempt = $attemptornumber;
+    } else {
+        $attempt = scorm_get_attempt($userid, $scormid, $attemptornumber);
+    }
 
     $id = null;
 
     if ($forcecompleted) {
         // TODO - this could be broadened to encompass SCORM 2004 in future.
         if (($element == 'cmi.core.lesson_status') && ($value == 'incomplete')) {
-            if ($track = $DB->get_record_select('scorm_scoes_track',
-                                                'userid=? AND scormid=? AND scoid=? AND attempt=? '.
-                                                'AND element=\'cmi.core.score.raw\'',
-                                                array($userid, $scormid, $scoid, $attempt))) {
+            $track = scorm_get_sco_value($scoid, $userid, 'cmi.core.score.raw', $attempt->attempt);
+            if (!empty($track)) {
                 $value = 'completed';
             }
         }
         if ($element == 'cmi.core.score.raw') {
-            if ($tracktest = $DB->get_record_select('scorm_scoes_track',
-                                                    'userid=? AND scormid=? AND scoid=? AND attempt=? '.
-                                                    'AND element=\'cmi.core.lesson_status\'',
-                                                    array($userid, $scormid, $scoid, $attempt))) {
+            $tracktest = scorm_get_sco_value($scoid, $userid, 'cmi.core.lesson_status', $attempt->attempt);
+            if (!empty($tracktest)) {
                 if ($tracktest->value == "incomplete") {
-                    $tracktest->value = "completed";
-                    $DB->update_record('scorm_scoes_track', $tracktest);
+                    $v = new stdClass();
+                    $v->id = $track->valueid;
+                    $v->value = "completed";
+                    $DB->update_record('scorm_scoes_value', $v);
                 }
             }
         }
@@ -469,47 +486,40 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
                 if ($value == 'passed') {
                     $objectivesatisfiedstatus = true;
                 }
-
-                if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
-                                                                        'scormid' => $scormid,
-                                                                        'scoid' => $scoid,
-                                                                        'attempt' => $attempt,
-                                                                        'element' => 'objectiveprogressstatus'))) {
-                    $track->value = $objectiveprogressstatus;
-                    $track->timemodified = time();
-                    $DB->update_record('scorm_scoes_track', $track);
-                    $id = $track->id;
+                $track = scorm_get_sco_value($scoid, $userid, 'objectiveprogressstatus', $attempt->attempt);
+                if (!empty($track)) {
+                    $v = new stdClass();
+                    $v->id = $track->valueid;
+                    $v->value = $objectiveprogressstatus;
+                    $v->timemodified = time();
+                    $DB->update_record('scorm_scoes_value', $v);
+                    $id = $track->valueid;
                 } else {
                     $track = new stdClass();
-                    $track->userid = $userid;
-                    $track->scormid = $scormid;
                     $track->scoid = $scoid;
-                    $track->attempt = $attempt;
-                    $track->element = 'objectiveprogressstatus';
+                    $track->attemptid = $attempt->id;
+                    $track->elementid = scorm_get_elementid('objectiveprogressstatus');
                     $track->value = $objectiveprogressstatus;
                     $track->timemodified = time();
-                    $id = $DB->insert_record('scorm_scoes_track', $track);
+                    $id = $DB->insert_record('scorm_scoes_value', $track);
                 }
                 if ($objectivesatisfiedstatus) {
-                    if ($track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
-                                                                            'scormid' => $scormid,
-                                                                            'scoid' => $scoid,
-                                                                            'attempt' => $attempt,
-                                                                            'element' => 'objectivesatisfiedstatus'))) {
-                        $track->value = $objectivesatisfiedstatus;
-                        $track->timemodified = time();
-                        $DB->update_record('scorm_scoes_track', $track);
-                        $id = $track->id;
+                    $track = scorm_get_sco_value($scoid, $userid, 'objectivesatisfiedstatus', $attempt->attempt);
+                    if (!empty($track)) {
+                        $v = new stdClass();
+                        $v->id = $track->valueid;
+                        $v->value = $objectivesatisfiedstatus;
+                        $v->timemodified = time();
+                        $DB->update_record('scorm_scoes_value', $v);
+                        $id = $track->valueid;
                     } else {
                         $track = new stdClass();
-                        $track->userid = $userid;
-                        $track->scormid = $scormid;
                         $track->scoid = $scoid;
-                        $track->attempt = $attempt;
-                        $track->element = 'objectivesatisfiedstatus';
+                        $track->attemptid = $attempt->id;
+                        $track->elementid = scorm_get_elementid('objectivesatisfiedstatus');
                         $track->value = $objectivesatisfiedstatus;
                         $track->timemodified = time();
-                        $id = $DB->insert_record('scorm_scoes_track', $track);
+                        $id = $DB->insert_record('scorm_scoes_value', $track);
                     }
                 }
             }
@@ -523,58 +533,53 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
             $track = $trackdata[$element];
         }
     } else {
-        $track = $DB->get_record('scorm_scoes_track', array('userid' => $userid,
-                                                            'scormid' => $scormid,
-                                                            'scoid' => $scoid,
-                                                            'attempt' => $attempt,
-                                                            'element' => $element));
+        $track = scorm_get_sco_value($scoid, $userid, $element, $attempt->attempt);
     }
     if ($track) {
         if ($element != 'x.start.time' ) { // Don't update x.start.time - keep the original value.
             if ($track->value != $value) {
-                $track->value = $value;
-                $track->timemodified = time();
-                $DB->update_record('scorm_scoes_track', $track);
+                $v = new stdClass();
+                $v->id = $track->valueid;
+                $v->value = $value;
+                $v->timemodified = time();
+                $DB->update_record('scorm_scoes_value', $v);
             }
-            $id = $track->id;
+            $id = $track->valueid;
         }
     } else {
         $track = new stdClass();
-        $track->userid = $userid;
-        $track->scormid = $scormid;
         $track->scoid = $scoid;
-        $track->attempt = $attempt;
-        $track->element = $element;
+        $track->attemptid = $attempt->id;
+        $track->elementid = scorm_get_elementid($element);
         $track->value = $value;
         $track->timemodified = time();
-        $id = $DB->insert_record('scorm_scoes_track', $track);
+        $id = $DB->insert_record('scorm_scoes_value', $track);
         $track->id = $id;
     }
 
     // Trigger updating grades based on a given set of SCORM CMI elements.
     $scorm = false;
-    if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw')) ||
-        (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
-         && in_array($track->value, array('completed', 'passed')))) {
+    if (in_array($element, ['cmi.core.score.raw', 'cmi.score.raw']) ||
+        (in_array($element, ['cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'])
+         && in_array($value, ['completed', 'passed']))) {
         $scorm = $DB->get_record('scorm', array('id' => $scormid));
         include_once($CFG->dirroot.'/mod/scorm/lib.php');
         scorm_update_grades($scorm, $userid);
     }
 
     // Trigger CMI element events.
-    if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw')) ||
-        (in_array($element, array('cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'))
-        && in_array($track->value, array('completed', 'failed', 'passed')))) {
+    if (in_array($element, ['cmi.core.score.raw', 'cmi.score.raw']) ||
+        (in_array($element, ['cmi.completion_status', 'cmi.core.lesson_status', 'cmi.success_status'])
+        && in_array($value, ['completed', 'failed', 'passed']))) {
         if (!$scorm) {
             $scorm = $DB->get_record('scorm', array('id' => $scormid));
         }
         $cm = get_coursemodule_from_instance('scorm', $scormid);
-        $data = array(
-            'other' => array('attemptid' => $attempt, 'cmielement' => $element, 'cmivalue' => $track->value),
-            'objectid' => $scorm->id,
-            'context' => context_module::instance($cm->id),
-            'relateduserid' => $userid
-        );
+        $data = ['other' => ['attemptid' => $attempt->id, 'cmielement' => $element, 'cmivalue' => $value],
+                 'objectid' => $scorm->id,
+                 'context' => context_module::instance($cm->id),
+                 'relateduserid' => $userid,
+                ];
         if (in_array($element, array('cmi.core.score.raw', 'cmi.score.raw'))) {
             // Create score submitted event.
             $event = \mod_scorm\event\scoreraw_submitted::create($data);
@@ -584,13 +589,13 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
         }
         // Fix the missing track keys when the SCORM track record already exists, see $trackdata in datamodel.php.
         // There, for performances reasons, columns are limited to: element, id, value, timemodified.
-        // Missing fields are: userid, scormid, scoid, attempt.
-        $track->userid = $userid;
-        $track->scormid = $scormid;
+        // Missing fields are: scoid, attemptid, elementid.
         $track->scoid = $scoid;
-        $track->attempt = $attempt;
+        $track->attemptid = $attempt->id;
+        $track->elementid = scorm_get_elementid($element);
+        $track->id = $id;
         // Trigger submitted event.
-        $event->add_record_snapshot('scorm_scoes_track', $track);
+        $event->add_record_snapshot('scorm_scoes_value', $track);
         $event->add_record_snapshot('course_modules', $cm);
         $event->add_record_snapshot('scorm', $scorm);
         $event->trigger();
@@ -608,7 +613,7 @@ function scorm_insert_track($userid, $scormid, $scoid, $attempt, $element, $valu
  */
 function scorm_has_tracks($scormid, $userid) {
     global $DB;
-    return $DB->record_exists('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scormid));
+    return $DB->record_exists('scorm_attempt', ['userid' => $userid, 'scormid' => $scormid]);
 }
 
 function scorm_get_tracks($scoid, $userid, $attempt='') {
@@ -616,14 +621,19 @@ function scorm_get_tracks($scoid, $userid, $attempt='') {
     global $DB;
 
     if (empty($attempt)) {
-        if ($scormid = $DB->get_field('scorm_scoes', 'scorm', array('id' => $scoid))) {
+        if ($scormid = $DB->get_field('scorm_scoes', 'scorm', ['id' => $scoid])) {
             $attempt = scorm_get_last_attempt($scormid, $userid);
         } else {
             $attempt = 1;
         }
     }
-    if ($tracks = $DB->get_records('scorm_scoes_track', array('userid' => $userid, 'scoid' => $scoid,
-                                                              'attempt' => $attempt), 'element ASC')) {
+    $sql = "SELECT v.id, a.userid, a.scormid, v.scoid, a.attempt, v.value, v.timemodified, e.element
+              FROM {scorm_attempt} a
+              JOIN {scorm_scoes_value} v ON v.attemptid = a.id
+              JOIN {scorm_element} e ON e.id = v.elementid
+             WHERE a.userid = ? AND v.scoid = ? AND a.attempt = ?
+          ORDER BY e.element ASC";
+    if ($tracks = $DB->get_records_sql($sql, [$userid, $scoid, $attempt])) {
         $usertrack = scorm_format_interactions($tracks);
         $usertrack->userid = $userid;
         $usertrack->scoid = $scoid;
@@ -636,7 +646,7 @@ function scorm_get_tracks($scoid, $userid, $attempt='') {
 /**
  * helper function to return a formatted list of interactions for reports.
  *
- * @param array $trackdata the records from scorm_scoes_track table
+ * @param array $trackdata the user tracking records from the database
  * @return object formatted list of interactions
  */
 function scorm_format_interactions($trackdata) {
@@ -693,27 +703,24 @@ function scorm_format_interactions($trackdata) {
 function scorm_get_sco_runtime($scormid, $scoid, $userid, $attempt=1) {
     global $DB;
 
-    $timedata = new stdClass();
     $params = array('userid' => $userid, 'scormid' => $scormid, 'attempt' => $attempt);
+    $sql = "SELECT min(timemodified) as start, max(timemodified) as finish
+              FROM {scorm_scoes_value} v
+              JOIN {scorm_attempt} a on a.id = v.attemptid
+              WHERE a.userid = :userid AND a.scormid = :scormid AND a.attempt = :attempt";
     if (!empty($scoid)) {
         $params['scoid'] = $scoid;
+        $sql .= " AND v.scoid = :scoid";
     }
-    $tracks = $DB->get_records('scorm_scoes_track', $params, "timemodified ASC");
-    if ($tracks) {
-        $tracks = array_values($tracks);
-    }
-
-    if ($tracks) {
-        $timedata->start = $tracks[0]->timemodified;
+    $timedata = $DB->get_record_sql($sql, $params);
+    if (!empty($timedata)) {
+        return $timedata;
     } else {
+        $timedata = new stdClass();
         $timedata->start = false;
+
+        return $timedata;
     }
-    if ($tracks && $track = array_pop($tracks)) {
-        $timedata->finish = $track->timemodified;
-    } else {
-        $timedata->finish = $timedata->start;
-    }
-    return $timedata;
 }
 
 function scorm_grade_user_attempt($scorm, $userid, $attempt=1) {
@@ -840,7 +847,7 @@ function scorm_get_last_attempt($scormid, $userid) {
 
     // Find the last attempt number for the given user id and scorm id.
     $sql = "SELECT MAX(attempt)
-              FROM {scorm_scoes_track}
+              FROM {scorm_attempt}
              WHERE userid = ? AND scormid = ?";
     $lastattempt = $DB->get_field_sql($sql, array($userid, $scormid));
     if (empty($lastattempt)) {
@@ -863,7 +870,7 @@ function scorm_get_first_attempt($scormid, $userid) {
 
     // Find the first attempt number for the given user id and scorm id.
     $sql = "SELECT MIN(attempt)
-              FROM {scorm_scoes_track}
+              FROM {scorm_attempt}
              WHERE userid = ? AND scormid = ?";
 
     $lastattempt = $DB->get_field_sql($sql, array($userid, $scormid));
@@ -886,12 +893,14 @@ function scorm_get_last_completed_attempt($scormid, $userid) {
     global $DB;
 
     // Find the last completed attempt number for the given user id and scorm id.
-    $sql = "SELECT MAX(attempt)
-              FROM {scorm_scoes_track}
+    $sql = "SELECT MAX(a.attempt)
+              FROM {scorm_attempt} a
+              JOIN {scorm_scoes_value} v ON v.attemptid = a.id
+              JOIN {scorm_element} e ON e.id = v.elementid
              WHERE userid = ? AND scormid = ?
-               AND (".$DB->sql_compare_text('value')." = ".$DB->sql_compare_text('?')." OR ".
-                      $DB->sql_compare_text('value')." = ".$DB->sql_compare_text('?').")";
-    $lastattempt = $DB->get_field_sql($sql, array($userid, $scormid, 'completed', 'passed'));
+               AND (" . $DB->sql_compare_text('v.value') . " = " . $DB->sql_compare_text('?') . " OR ".
+                    $DB->sql_compare_text('v.value') . " = " . $DB->sql_compare_text('?') . ")";
+    $lastattempt = $DB->get_field_sql($sql, [$userid, $scormid, 'completed', 'passed']);
     if (empty($lastattempt)) {
         return '1';
     } else {
@@ -910,8 +919,8 @@ function scorm_get_last_completed_attempt($scormid, $userid) {
 function scorm_get_all_attempts($scormid, $userid) {
     global $DB;
     $attemptids = array();
-    $sql = "SELECT DISTINCT attempt FROM {scorm_scoes_track} WHERE userid = ? AND scormid = ? ORDER BY attempt";
-    $attempts = $DB->get_records_sql($sql, array($userid, $scormid));
+    $sql = "SELECT DISTINCT attempt FROM {scorm_attempt} WHERE userid = ? AND scormid = ? ORDER BY attempt";
+    $attempts = $DB->get_records_sql($sql, [$userid, $scormid]);
     foreach ($attempts as $attempt) {
         $attemptids[] = $attempt->attempt;
     }
@@ -926,7 +935,7 @@ function scorm_get_all_attempts($scormid, $userid) {
  * @param  string   $action base URL for the organizations select box
  * @param  stdClass $cm     course module object
  */
-function scorm_print_launch ($user, $scorm, $action, $cm) {
+function scorm_print_launch($user, $scorm, $action, $cm) {
     global $CFG, $DB, $OUTPUT;
 
     if ($scorm->updatefreq == SCORM_UPDATE_EVERYTIME) {
@@ -1084,7 +1093,7 @@ function scorm_get_count_users($scormid, $groupingid=null) {
 
     if (!empty($groupingid)) {
         $sql = "SELECT COUNT(DISTINCT st.userid)
-                FROM {scorm_scoes_track} st
+                FROM {scorm_attempt} st
                     INNER JOIN {groups_members} gm ON st.userid = gm.userid
                     INNER JOIN {groupings_groups} gg ON gm.groupid = gg.groupid
                 WHERE st.scormid = ? AND gg.groupingid = ?
@@ -1092,7 +1101,7 @@ function scorm_get_count_users($scormid, $groupingid=null) {
         $params = array($scormid, $groupingid);
     } else {
         $sql = "SELECT COUNT(DISTINCT st.userid)
-                FROM {scorm_scoes_track} st
+                FROM {scorm_attempt} st
                 WHERE st.scormid = ?
                 ";
         $params = array($scormid);
@@ -1334,7 +1343,7 @@ function scorm_get_attempt_status($user, $scorm, $cm='') {
     if (!empty($cm)) {
         $context = context_module::instance($cm->id);
         if (has_capability('mod/scorm:deleteownresponses', $context) &&
-            $DB->record_exists('scorm_scoes_track', array('userid' => $user->id, 'scormid' => $scorm->id))) {
+            $DB->record_exists('scorm_attempt', ['userid' => $user->id, 'scormid' => $scorm->id])) {
             // Check to see if any data is stored for this user.
             $deleteurl = new moodle_url($PAGE->url, array('action' => 'delete', 'sesskey' => sesskey()));
             $result .= $OUTPUT->single_button($deleteurl, get_string('deleteallattempts', 'scorm'));
@@ -1370,17 +1379,30 @@ function scorm_get_attempt_count($userid, $scorm, $returnobjects = false, $ignor
         $params = array('userid' => $userid, 'scormid' => $scorm->id);
         if ($ignoremissingcompletion) { // Exclude attempts that don't have the completion element requested.
             $params['element'] = $element;
+            $sql = "SELECT DISTINCT a.attempt AS attemptnumber
+              FROM {scorm_attempt} a
+              JOIN {scorm_scoes_value} v ON v.attemptid = a.id
+              JOIN {scorm_element} e ON e.id = v.elementid
+             WHERE a.userid = :userid AND a.scormid = :scormid AND e.element = :element ORDER BY a.attempt";
+            $attempts = $DB->get_records_sql($sql, $params);
+        } else {
+            $attempts = $DB->get_records('scorm_attempt', $params, 'attempt', 'DISTINCT attempt AS attemptnumber');
         }
-        $attempts = $DB->get_records('scorm_scoes_track', $params, 'attempt', 'DISTINCT attempt AS attemptnumber');
+
         return $attempts;
     } else {
-        $params = array($userid, $scorm->id);
-        $sql = "SELECT COUNT(DISTINCT attempt)
-                  FROM {scorm_scoes_track}
-                 WHERE userid = ? AND scormid = ?";
+        $params = ['userid' => $userid, 'scormid' => $scorm->id];
         if ($ignoremissingcompletion) { // Exclude attempts that don't have the completion element requested.
-            $sql .= ' AND element = ?';
-            $params[] = $element;
+            $params['element'] = $element;
+            $sql = "SELECT COUNT(DISTINCT a.attempt)
+                      FROM {scorm_attempt} a
+                      JOIN {scorm_scoes_value} v ON v.attemptid = a.id
+                      JOIN {scorm_element} e ON e.id = v.elementid
+                     WHERE a.userid = :userid AND a.scormid = :scormid AND e.element = :element";
+        } else {
+            $sql = "SELECT COUNT(DISTINCT attempt)
+                      FROM {scorm_attempt}
+                     WHERE userid = :userid AND scormid = :scormid";
         }
 
         $attemptscount = $DB->count_records_sql($sql, $params);
@@ -1453,22 +1475,26 @@ function scorm_delete_responses($attemptids, $scorm) {
  *
  * @param int $userid ID of User
  * @param stdClass $scorm Scorm object
- * @param int $attemptid user attempt that need to be deleted
+ * @param int|stdClass $attemptornumber user attempt that need to be deleted
  *
  * @return bool true suceeded
  */
-function scorm_delete_attempt($userid, $scorm, $attemptid) {
-    global $DB;
+function scorm_delete_attempt($userid, $scorm, $attemptornumber) {
+    if (is_object($attemptornumber)) {
+        $attempt = $attemptornumber;
+    } else {
+        $attempt = scorm_get_attempt($userid, $scorm->id, $attemptornumber, false);
+    }
 
-    $DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id, 'attempt' => $attemptid));
+    scorm_delete_tracks($scorm->id, null, $userid, $attempt->id);
     $cm = get_coursemodule_from_instance('scorm', $scorm->id);
 
     // Trigger instances list viewed event.
-    $event = \mod_scorm\event\attempt_deleted::create(array(
-         'other' => array('attemptid' => $attemptid),
+    $event = \mod_scorm\event\attempt_deleted::create([
+         'other' => ['attemptid' => $attempt->attempt],
          'context' => context_module::instance($cm->id),
          'relateduserid' => $userid
-    ));
+    ]);
     $event->add_record_snapshot('course_modules', $cm);
     $event->add_record_snapshot('scorm', $scorm);
     $event->trigger();
@@ -2496,6 +2522,123 @@ function scorm_update_calendar(stdClass $scorm, $cmid) {
             calendar_event::create($event, false);
         }
     }
+}
 
-    return true;
+/**
+ * Function to delete user tracks from tables.
+ *
+ * @param int $scormid - id from scorm.
+ * @param int $scoid - id of sco that needs to be deleted.
+ * @param int $userid - userid that needs to be deleted.
+ * @param int $attemptid - attemptid that should be deleted.
+ * @since Moodle 4.3
+ */
+function scorm_delete_tracks($scormid, $scoid = null, $userid = null, $attemptid = null) {
+    global $DB;
+
+    $usersql = '';
+    $params = ['scormid' => $scormid];
+    if (!empty($attemptid)) {
+        $params['attemptid'] = $attemptid;
+        $sql = "attemptid = :attemptid";
+    } else {
+        if (!empty($userid)) {
+            $usersql = ' AND userid = :userid';
+            $params['userid'] = $userid;
+        }
+        $sql = "attemptid in (SELECT id FROM {scorm_attempt} WHERE scormid = :scormid $usersql)";
+    }
+
+    if (!empty($scoid)) {
+        $params['scoid'] = $scoid;
+        $sql .= " AND scoid = :scoid";
+    }
+    $DB->delete_records_select('scorm_scoes_value', $sql, $params);
+
+    if (empty($scoid)) {
+        if (empty($attemptid)) {
+            // Scoid is empty so we delete the attempt as well.
+            $DB->delete_records('scorm_attempt', $params);
+        } else {
+            $DB->delete_records('scorm_attempt', ['id' => $attemptid]);
+        }
+    }
+}
+
+/**
+ * Get specific scorm track data.
+ * Note: the $attempt var is optional as SCORM 2004 code doesn't always use it, probably a bug,
+ * but we do not want to change SCORM 2004 behaviour right now.
+ *
+ * @param int $scoid - scoid.
+ * @param int $userid - user id of user.
+ * @param string $element - name of element being requested.
+ * @param int $attempt - attempt number (not id)
+ * @since Moodle 4.3
+ * @return mixed
+ */
+function scorm_get_sco_value($scoid, $userid, $element, $attempt = null): ?stdClass {
+    global $DB;
+    $params = ['scoid' => $scoid, 'userid' => $userid, 'element' => $element];
+
+    $sql = "SELECT a.id, a.userid, a.scormid, a.attempt, v.id as valueid, v.scoid, v.value, v.timemodified, e.element
+              FROM {scorm_attempt} a
+              JOIN {scorm_scoes_value} v ON v.attemptid = a.id
+              JOIN {scorm_element} e on e.id = v.elementid
+              WHERE v.scoid = :scoid AND a.userid = :userid AND e.element = :element";
+
+    if ($attempt !== null) {
+        $params['attempt'] = $attempt;
+        $sql .= " AND a.attempt = :attempt";
+    }
+    $value = $DB->get_record_sql($sql, $params);
+    return $value ?: null;
+}
+
+/**
+ * Get attempt record, allow one to be created if doesn't exist.
+ *
+ * @param int $userid - user id.
+ * @param int $scormid - SCORM id.
+ * @param int $attempt - attempt number.
+ * @param boolean $create - should an attempt record be created if it does not exist.
+ * @since Moodle 4.3
+ * @return stdclass
+ */
+function scorm_get_attempt($userid, $scormid, $attempt, $create = true): ?stdClass {
+    global $DB;
+    $params = ['scormid' => $scormid, 'userid' => $userid, 'attempt' => $attempt];
+    $attemptobject = $DB->get_record('scorm_attempt', $params);
+    if (empty($attemptobject) && $create) {
+        // Create new attempt.
+        $attemptobject = new stdClass();
+        $attemptobject->userid = $userid;
+        $attemptobject->attempt = $attempt;
+        $attemptobject->scormid = $scormid;
+        $attemptobject->id = $DB->insert_record('scorm_attempt', $attemptobject);
+    }
+    return $attemptobject ?: null;
+}
+
+/**
+ * Get Scorm element id from cache, allow one to be created if doesn't exist.
+ *
+ * @param string $elementname - name of element that is being requested.
+ * @since Moodle 4.3
+ * @return int - element id.
+ */
+function scorm_get_elementid($elementname): ?int {
+    global $DB;
+    $cache = cache::make('mod_scorm', 'elements');
+    $element = $cache->get($elementname);
+    if (empty($element)) {
+        // Create new attempt.
+        $element = new stdClass();
+        $element->element = $elementname;
+        $elementid = $DB->insert_record('scorm_element', $element);
+        $cache->set($elementname, $elementid);
+        return $elementid;
+    } else {
+        return $element;
+    }
 }

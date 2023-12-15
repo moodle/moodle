@@ -205,7 +205,7 @@ class files {
         );
         return [
             'icondesc' => get_mimetype_description($file),
-            'iconname' => file_file_icon($file, 24),
+            'iconname' => file_file_icon($file),
             'name' => $file->get_filename(),
             'url' => $url->out(false),
         ];

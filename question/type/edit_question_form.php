@@ -52,8 +52,8 @@ abstract class question_wizard_form extends moodleform {
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_LOCALURL);
 
-        $mform->addElement('hidden', 'scrollpos');
-        $mform->setType('scrollpos', PARAM_INT);
+        $mform->addElement('hidden', 'mdlscrollto');
+        $mform->setType('mdlscrollto', PARAM_INT);
 
         $mform->addElement('hidden', 'appendqnumstring');
         $mform->setType('appendqnumstring', PARAM_ALPHA);
@@ -256,7 +256,6 @@ abstract class question_edit_form extends question_wizard_form {
         $this->definition_inner($mform);
 
         if (core_tag_tag::is_enabled('core_question', 'question')
-            && class_exists('qbank_tagquestion\\tags_action_column')
             && \core\plugininfo\qbank::is_plugin_enabled('qbank_tagquestion')) {
             $this->add_tag_fields($mform);
         }

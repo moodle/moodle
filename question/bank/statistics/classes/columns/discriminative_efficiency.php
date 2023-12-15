@@ -51,6 +51,14 @@ class discriminative_efficiency extends column_base {
         echo $PAGE->get_renderer('qbank_statistics')->render_discriminative_efficiency($discriminativeefficiency);
     }
 
+    public function display_preview(\stdClass $question, string $rowclasses): void {
+        global $PAGE;
+
+        $this->display_start($question, $rowclasses);
+        echo $PAGE->get_renderer('qbank_statistics')->render_discriminative_efficiency(25);
+        $this->display_end($question, $rowclasses);;
+    }
+
     public function get_extra_classes(): array {
         return ['pr-3'];
     }

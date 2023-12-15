@@ -84,6 +84,7 @@ $string['errorcannotdeleteenrolment'] = 'Cannot delete enrolment method \'{$a}\'
 $string['errorcannotdisableenrolment'] = 'Cannot disable enrolment method \'{$a}\'';
 $string['errorwhilerestoringcourse'] = 'Error while restoring the course';
 $string['errorwhiledeletingcourse'] = 'Error while deleting the course';
+$string['errorunsupportedmethod'] = 'Enrolment method \'{$a}\' is not supported in csv upload';
 $string['generatedshortnameinvalid'] = 'The generated shortname is invalid';
 $string['generatedshortnamealreadyinuse'] = 'The generated shortname is already in use';
 $string['id'] = 'ID';

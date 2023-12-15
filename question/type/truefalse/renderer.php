@@ -37,6 +37,7 @@ class qtype_truefalse_renderer extends qtype_renderer {
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
 
+        /** @var qtype_truefalse_question $question */
         $question = $qa->get_question();
         $response = $qa->get_last_qt_var('answer', '');
 

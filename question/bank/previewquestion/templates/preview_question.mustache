@@ -41,7 +41,9 @@
         "question": "<div>question html</div>",
         "questionicon": "<i class='icon fa fa-search-plus fa-fw' title='Preview question' aria-label='Preview question'></i>",
         "questiontitle": "Question title",
-        "versiontitle": "Version 3 (latest)",
+        "versiontitle": {
+            "versioninfo": "Version 3 (latest)"
+        },
         "questionidumber": "qidnumber1",
         "restartdisabled": "disabled='disabled'",
         "finishdisabled": "disabled='disabled'",
@@ -58,7 +60,9 @@
         <h2 class="mt-2">{{{questionicon}}}</h2>
         <h2 class="ml-2 mt-2"> {{questiontitle}}</h2>
         <h3 class="px-2 py-1 ml-2 mt-2">
-            <span class="badge bg-primary text-light">{{versiontitle}}</span>
+            {{#versiontitle}}
+                {{>core_question/question_version_info}}
+            {{/versiontitle}}
         </h3>
     </div>
     {{#newerversion}}

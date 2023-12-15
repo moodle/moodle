@@ -213,7 +213,7 @@ class repository_local extends repository {
         );
         if ($fileinfo->is_directory()) {
             $node['path'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->image_url(file_folder_icon(90))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_folder_icon())->out(false);
             $node['children'] = array();
         } else {
             $node['size'] = $fileinfo->get_filesize();
@@ -224,8 +224,8 @@ class repository_local extends repository {
                 $node['originalmissing'] = true;
             }
             $node['source'] = $encodedpath;
-            $node['thumbnail'] = $OUTPUT->image_url(file_file_icon($fileinfo, 90))->out(false);
-            $node['icon'] = $OUTPUT->image_url(file_file_icon($fileinfo, 24))->out(false);
+            $node['thumbnail'] = $OUTPUT->image_url(file_file_icon($fileinfo))->out(false);
+            $node['icon'] = $OUTPUT->image_url(file_file_icon($fileinfo))->out(false);
             if ($imageinfo = $fileinfo->get_imageinfo()) {
                 // what a beautiful picture, isn't it
                 $fileurl = new moodle_url($fileinfo->get_url());

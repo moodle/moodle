@@ -656,13 +656,6 @@ class enrollib_test extends advanced_testcase {
         $this->assertInstanceOf('\core\event\user_enrolment_created', $event);
         $this->assertEquals($dbuserenrolled->id, $event->objectid);
         $this->assertEquals(context_course::instance($course1->id), $event->get_context());
-        $this->assertEquals('user_enrolled', $event->get_legacy_eventname());
-        $expectedlegacyeventdata = $dbuserenrolled;
-        $expectedlegacyeventdata->enrol = $manual->get_name();
-        $expectedlegacyeventdata->courseid = $course1->id;
-        $this->assertEventLegacyData($expectedlegacyeventdata, $event);
-        $expected = array($course1->id, 'course', 'enrol', '../enrol/users.php?id=' . $course1->id, $course1->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -697,14 +690,6 @@ class enrollib_test extends advanced_testcase {
         // Validate the event.
         $this->assertInstanceOf('\core\event\user_enrolment_deleted', $event);
         $this->assertEquals(context_course::instance($course->id), $event->get_context());
-        $this->assertEquals('user_unenrolled', $event->get_legacy_eventname());
-        $expectedlegacyeventdata = $dbuserenrolled;
-        $expectedlegacyeventdata->enrol = $manualplugin->get_name();
-        $expectedlegacyeventdata->courseid = $course->id;
-        $expectedlegacyeventdata->lastenrol = true;
-        $this->assertEventLegacyData($expectedlegacyeventdata, $event);
-        $expected = array($course->id, 'course', 'unenrol', '../enrol/users.php?id=' . $course->id, $course->id);
-        $this->assertEventLegacyLogData($expected, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -1120,6 +1105,43 @@ class enrollib_test extends advanced_testcase {
         $manualplugin->update_user_enrol($manualinstance, $user1->id, ENROL_USER_SUSPENDED);
         $this->assertCount(2, enrol_get_course_users($course1->id, false));
         $this->assertCount(1, enrol_get_course_users($course1->id, true));
+    }
+
+    /**
+     * test_course_users in groups
+     *
+     * @covers \enrol_get_course_users()
+     * @return void
+     */
+    public function test_course_users_in_groups() {
+        $this->resetAfterTest();
+
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+
+        $this->getDataGenerator()->enrol_user($user1->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user2->id, $course->id);
+        $this->getDataGenerator()->enrol_user($user3->id, $course->id);
+
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user1->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user1->id]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group2->id, 'userid' => $user2->id]);
+
+        $this->assertCount(3, enrol_get_course_users($course->id));
+        $this->assertCount(1, enrol_get_course_users($course->id, false, [], [], [$group1->id]));
+        $this->assertCount(2, enrol_get_course_users($course->id, false, [], [], [$group2->id]));
+
+        $instances = enrol_get_instances($course->id, true);
+        $manualinstance = reset($instances);
+
+        $manualplugin = enrol_get_plugin('manual');
+        $manualplugin->update_user_enrol($manualinstance, $user1->id, ENROL_USER_SUSPENDED);
+        $this->assertCount(2, enrol_get_course_users($course->id, false, [], [], [$group2->id]));
+        $this->assertCount(1, enrol_get_course_users($course->id, true, [], [], [$group2->id]));
     }
 
     /**

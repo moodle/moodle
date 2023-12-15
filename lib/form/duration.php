@@ -172,10 +172,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
      * Override of standard quickforms method to create this element.
      */
     function _createElements() {
-        $attributes = $this->getAttributes();
-        if (is_null($attributes)) {
-            $attributes = [];
-        }
+        $attributes = $this->getAttributesForFormElement();
         if (!isset($attributes['size'])) {
             $attributes['size'] = 3;
         }
@@ -191,7 +188,7 @@ class MoodleQuickForm_duration extends MoodleQuickForm_group {
         // If optional we add a checkbox which the user can use to turn if on
         if($this->_options['optional']) {
             $this->_elements[] = $this->createFormElement('checkbox', 'enabled', null,
-                    get_string('enable'), $this->getAttributes(), true);
+                    get_string('enable'), $attributes, true);
         }
         foreach ($this->_elements as $element){
             if (method_exists($element, 'setHiddenLabel')){

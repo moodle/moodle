@@ -64,15 +64,6 @@ class course extends base {
     }
 
     /**
-     * The default machine-readable name for this entity that will be used in the internal names of the columns/filters.
-     *
-     * @return string
-     */
-    protected function get_default_entity_name(): string {
-        return 'course';
-    }
-
-    /**
      * The default title for this entity in the list of columns/filters in the report builder.
      *
      * @return lang_string
@@ -215,18 +206,7 @@ class course extends base {
      * @return string[]
      */
     public function get_tag_joins(): array {
-        $course = $this->get_table_alias('course');
-        $taginstance = $this->get_table_alias('tag_instance');
-        $tag = $this->get_table_alias('tag');
-
-        return [
-            "LEFT JOIN {tag_instance} {$taginstance}
-                    ON {$taginstance}.component = 'core'
-                   AND {$taginstance}.itemtype = 'course'
-                   AND {$taginstance}.itemid = {$course}.id",
-            "LEFT JOIN {tag} {$tag}
-                    ON {$tag}.id = {$taginstance}.tagid",
-        ];
+        return $this->get_tag_joins_for_entity('core', 'course', $this->get_table_alias('course') . '.id');
     }
 
     /**

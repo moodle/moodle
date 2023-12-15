@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import ModalForm from 'core_form/modalform';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 /**
  * User profile fields editor

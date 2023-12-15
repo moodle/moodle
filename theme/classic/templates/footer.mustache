@@ -33,8 +33,17 @@
 <footer id="page-footer" class="footer-dark bg-dark text-light">
     <div class="container footer-dark-inner">
         <div id="course-footer">{{{ output.course_footer }}}</div>
-
+        {{#output.has_communication_links}}
+            <button onclick="window.open('{{output.communication_url}}', '_blank', 'noreferrer')" class="btn btn-icon bg-primary text-white icon-no-margin btn-footer-communication" aria-label="{{#str}}communicationroomlink, course{{/str}}">
+                {{#pix}}t/messages-o, core{{/pix}}
+            </button>
+        {{/output.has_communication_links}}
         <div class="pb-3">
+            {{#output.has_communication_links}}
+                <div class="footer-section footer-link-communication">
+                    <div class="footer-support-link">{{{ output.communication_link }}}</div>
+                </div>
+            {{/output.has_communication_links}}
             {{# output.page_doc_link }}
                 <div class="footer-support-link">{{{ output.page_doc_link }}}</div>
             {{/ output.page_doc_link }}

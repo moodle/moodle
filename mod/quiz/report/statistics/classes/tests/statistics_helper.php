@@ -30,15 +30,22 @@ class statistics_helper {
      * We need a special function to do this as the tasks are deferred by one hour,
      * so we need to pass a custom $timestart argument.
      *
+     * @param bool $discardoutput Capture and discard output from executed tasks?
      * @return void
      */
-    public static function run_pending_recalculation_tasks(): void {
+    public static function run_pending_recalculation_tasks(bool $discardoutput = false): void {
         while ($task = \core\task\manager::get_next_adhoc_task(
             time() + HOURSECS + 1,
             false,
             '\quiz_statistics\task\recalculate'
         )) {
+            if ($discardoutput) {
+                ob_start();
+            }
             $task->execute();
+            if ($discardoutput) {
+                ob_end_clean();
+            }
             \core\task\manager::adhoc_task_complete($task);
         }
     }

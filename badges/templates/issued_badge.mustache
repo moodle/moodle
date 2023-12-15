@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_badges/issued_badges
+    @template core_badges/issued_badge
 
     Display an issued badge.
 
@@ -211,6 +211,11 @@
             </div>
             {{/coursefullname}}
         </div>
+        {{#badgetag}}
+            <p class="pb-2">
+                {{> core_tag/taglist}}
+            </p>
+        {{/badgetag}}
 
         <p class="pb-4">{{{badgedescription}}}</p>
 

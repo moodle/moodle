@@ -26,12 +26,20 @@ namespace core;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class sessionlib_test extends \advanced_testcase {
+
+    /**
+     * @covers ::cron_setup_user
+     */
     public function test_cron_setup_user() {
+        // This function uses the $GLOBALS super global. Disable the VariableNameLowerCase sniff for this function.
+        // phpcs:disable moodle.NamingConventions.ValidVariableName.VariableNameLowerCase
+
         global $PAGE, $USER, $SESSION, $SITE, $CFG;
         $this->resetAfterTest();
 
         // NOTE: this function contains some static caches, let's reset first.
         cron_setup_user('reset');
+        $this->assertDebuggingCalledCount(1);
 
         $admin = get_admin();
         $user1 = $this->getDataGenerator()->create_user();
@@ -39,6 +47,7 @@ class sessionlib_test extends \advanced_testcase {
         $course = $this->getDataGenerator()->create_course();
 
         cron_setup_user();
+        $this->assertDebuggingCalledCount(1);
         $this->assertSame($admin->id, $USER->id);
         $this->assertSame($PAGE->context, \context_course::instance($SITE->id));
         $this->assertSame($CFG->timezone, $USER->timezone);
@@ -53,6 +62,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
 
         cron_setup_user(null, $course);
+        $this->assertDebuggingCalledCount(1);
         $this->assertSame($admin->id, $USER->id);
         $this->assertSame($PAGE->context, \context_course::instance($course->id));
         $this->assertSame($adminsession, $SESSION);
@@ -62,6 +72,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
 
         cron_setup_user($user1);
+        $this->assertDebuggingCalledCount(1);
         $this->assertSame($user1->id, $USER->id);
         $this->assertSame($PAGE->context, \context_course::instance($SITE->id));
         $this->assertNotSame($adminsession, $SESSION);
@@ -75,6 +86,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
 
         cron_setup_user($user1);
+        $this->assertDebuggingCalledCount(1);
         $this->assertSame($user1->id, $USER->id);
         $this->assertSame($PAGE->context, \context_course::instance($SITE->id));
         $this->assertNotSame($adminsession, $SESSION);
@@ -85,6 +97,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
 
         cron_setup_user($user2);
+        $this->assertDebuggingCalledCount(1);
         $this->assertSame($user2->id, $USER->id);
         $this->assertSame($PAGE->context, \context_course::instance($SITE->id));
         $this->assertNotSame($adminsession, $SESSION);
@@ -98,6 +111,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
 
         cron_setup_user($user2, $course);
+        $this->assertDebuggingCalledCount(1);
         $this->assertSame($user2->id, $USER->id);
         $this->assertSame($PAGE->context, \context_course::instance($course->id));
         $this->assertNotSame($adminsession, $SESSION);
@@ -109,6 +123,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
 
         cron_setup_user($user1);
+        $this->assertDebuggingCalledCount(1);
         $this->assertSame($user1->id, $USER->id);
         $this->assertSame($PAGE->context, \context_course::instance($SITE->id));
         $this->assertNotSame($adminsession, $SESSION);
@@ -120,6 +135,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
 
         cron_setup_user();
+        $this->assertDebuggingCalledCount(1);
         $this->assertSame($admin->id, $USER->id);
         $this->assertSame($PAGE->context, \context_course::instance($SITE->id));
         $this->assertSame($adminsession, $SESSION);
@@ -130,18 +146,22 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertSame($GLOBALS['USER'], $USER);
 
         cron_setup_user('reset');
+        $this->assertDebuggingCalledCount(1);
         $this->assertSame($GLOBALS['SESSION'], $_SESSION['SESSION']);
         $this->assertSame($GLOBALS['SESSION'], $SESSION);
         $this->assertSame($GLOBALS['USER'], $_SESSION['USER']);
         $this->assertSame($GLOBALS['USER'], $USER);
 
         cron_setup_user();
+        $this->assertDebuggingCalledCount(1);
         $this->assertNotSame($adminsession, $SESSION);
         $this->assertNotSame($adminuser, $USER);
         $this->assertSame($GLOBALS['SESSION'], $_SESSION['SESSION']);
         $this->assertSame($GLOBALS['SESSION'], $SESSION);
         $this->assertSame($GLOBALS['USER'], $_SESSION['USER']);
         $this->assertSame($GLOBALS['USER'], $USER);
+
+        // phpcs:enable
     }
 
     /**

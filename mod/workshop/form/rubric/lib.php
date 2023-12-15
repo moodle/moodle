@@ -81,10 +81,10 @@ function workshopform_rubric_pluginfile($course, $cm, $context, $filearea, array
  */
 class workshop_rubric_strategy implements workshop_strategy {
 
-    /** @const default number of dimensions to show */
+    /** @var default number of dimensions to show */
     const MINDIMS = 3;
 
-    /** @const number of dimensions to add */
+    /** @var number of dimensions to add */
     const ADDDIMS = 2;
 
     /** @var workshop the parent workshop instance */

@@ -92,8 +92,7 @@ class css_text_has_contrast extends brickfield_accessibility_color_test {
                     $italic = false;
 
                     if (isset($style['font-size'])) {
-                        preg_match_all('!\d+!', $style['font-size'], $matches);
-                        $fontsize = $matches[0][0];
+                        $fontsize = $this->get_fontsize($style['font-size']);
                     }
 
                     if (isset($style['font-weight'])) {

@@ -205,6 +205,21 @@ ini_set('log_errors', '1');
 $CFG->themerev = 1;
 $CFG->jsrev = 1;
 
+
+(function () {
+    // Determine if this test is being run with isolation.
+    // This is tricky because neither PHPUnit, nor PHP provide an official way to work this out.
+    // PHPUnit does set a value, but not until later on and we need this earlier.
+    // PHPUnit runs isolated tests by creating a class on the fly and running it through proc_open as standard input.
+    // There is no other legitimate reason to run PHPUnit this way that I'm aware of.
+    // When run in this way, PHP sets the value of $_SERVER['PHP_SELF'] to "Standard input code".
+    // It has done this since 2016, and it is unlikely to change.
+    define(
+        'PHPUNIT_ISOLATED_TEST',
+        $_SERVER['PHP_SELF'] === 'Standard input code',
+    );
+})();
+
 // load test case stub classes and other stuff
 require_once("$CFG->dirroot/lib/phpunit/lib.php");
 
@@ -222,6 +237,10 @@ if (PHPUNIT_UTIL) {
     // we are not going to do testing, this is 'true' in utility scripts that only init database
     return;
 }
+
+// Make sure the hook manager gets initialised before anybody tries to override callbacks,
+// this is not using caches intentionally to help with development.
+\core\hook\manager::get_instance();
 
 // is database and dataroot ready for testing?
 list($errorcode, $message) = phpunit_util::testing_ready_problem();

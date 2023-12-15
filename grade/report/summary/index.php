@@ -47,7 +47,7 @@ require_capability('moodle/grade:viewall', $context);
 
 print_grade_page_head($courseid, 'report', 'summary', false,
     false, false, true, null, null,
-    null, null, false);
+    null, null);
 
 $report = system_report_factory::create(summary::class, context_course::instance($courseid));
 

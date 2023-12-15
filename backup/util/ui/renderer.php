@@ -567,7 +567,7 @@ class core_backup_renderer extends plugin_renderer_base {
         if ($method != 'post') {
             $method = 'get';
         }
-        $button = new single_button($url, get_string('continue'), $method, true);
+        $button = new single_button($url, get_string('continue'), $method, single_button::BUTTON_PRIMARY);
         $button->class = 'continuebutton';
         return $this->render($button);
     }
@@ -754,9 +754,12 @@ class core_backup_renderer extends plugin_renderer_base {
                     $row->attributes['class'] .= ' dimmed';
                 }
                 $id = $this->make_unique_id('restore-course');
+                $attrs = ['type' => 'radio', 'name' => 'targetid', 'value' => $course->id, 'id' => $id];
+                if ($course->id == $component->get_current_course_id()) {
+                    $attrs['checked'] = 'checked';
+                }
                 $row->cells = [
-                    html_writer::empty_tag('input', ['type' => 'radio', 'name' => 'targetid', 'value' => $course->id,
-                        'id' => $id]),
+                    html_writer::empty_tag('input', $attrs),
                     html_writer::label(
                         format_string($course->shortname, true, ['context' => context_course::instance($course->id)]),
                         $id,

@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_comment\reportbuilder\datasource;
 
+use core\reportbuilder\local\entities\context;
 use core_reportbuilder\datasource;
 use core_reportbuilder\local\entities\user;
 use core_comment\reportbuilder\local\entities\comment;
@@ -48,8 +49,14 @@ class comments extends datasource {
         $commentalias = $commententity->get_table_alias('comments');
 
         $this->set_main_table('comments', $commentalias);
-
         $this->add_entity($commententity);
+
+        // Join the context entity.
+        $contextentity = (new context())
+            ->set_table_alias('context', $commententity->get_table_alias('context'));
+        $this->add_entity($contextentity
+            ->add_join($commententity->get_context_join())
+        );
 
         // Join the user entity to the comment userid (author).
         $userentity = new user();
@@ -68,10 +75,22 @@ class comments extends datasource {
      */
     public function get_default_columns(): array {
         return [
-            'comment:context',
-            'comment:content',
             'user:fullname',
+            'context:name',
+            'comment:content',
             'comment:timecreated',
+        ];
+    }
+
+    /**
+     * Return the column sorting that will be added to the report upon creation
+     *
+     * @return int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'user:fullname' => SORT_ASC,
+            'comment:timecreated' => SORT_ASC,
         ];
     }
 

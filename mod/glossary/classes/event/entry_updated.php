@@ -81,17 +81,6 @@ class entry_updated extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    public function get_legacy_logdata() {
-        return array($this->courseid, 'glossary', 'update entry',
-            "view.php?id={$this->contextinstanceid}&amp;mode=entry&amp;hook={$this->objectid}",
-            $this->objectid, $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

@@ -259,6 +259,8 @@ class dbTable extends dbObject {
 	 */
 	var $currentPlatform = true;
 
+	/** @var dbData Stores information about table data. */
+	var $data;
 
 	/**
 	 * Iniitializes a new table object.
@@ -830,6 +832,9 @@ class dbData extends dbObject {
 
 	var $row;
 
+	/** @var string Field name */
+	var $current_field;
+
 	/**
 	 * Initializes the new dbData object.
 	 *
@@ -1400,6 +1405,9 @@ class adoSchema {
 	 * @var int	How to handle existing data rows (insert, update, or ignore)
 	 */
 	var $existingData;
+
+	/**  @var dbTable A table object. */
+	var $obj;
 
 	/**
 	 * Creates an adoSchema object

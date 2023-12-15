@@ -95,31 +95,48 @@ if ($mform->is_cancelled()) {
 
     $currentgroup = groups_get_activity_group($cm);
 
-    $exportdata = data_get_exportdata($data->id, $fields, $selectedfields, $currentgroup, $context,
-        $exportuser, $exporttime, $exportapproval, $tags);
-    $count = count($exportdata);
+    $exporter = null;
     switch ($formdata['exporttype']) {
         case 'csv':
-            data_export_csv($exportdata, $formdata['delimiter_name'], $data->name, $count);
-            break;
-        case 'xls':
-            data_export_xls($exportdata, $data->name, $count);
+            $exporter = new \mod_data\local\exporter\csv_entries_exporter();
+            $exporter->set_delimiter_name($formdata['delimiter_name']);
             break;
         case 'ods':
-            data_export_ods($exportdata, $data->name, $count);
+            $exporter = new \mod_data\local\exporter\ods_entries_exporter();
             break;
+        default:
+            throw new coding_exception('Invalid export format has been specified. '
+                . 'Only "csv" and "ods" are currently supported.');
     }
+
+    $includefiles = !empty($formdata['includefiles']);
+    \mod_data\local\exporter\utils::data_exportdata($data->id, $fields, $selectedfields, $exporter, $currentgroup, $context,
+        $exportuser, $exporttime, $exportapproval, $tags, $includefiles);
+    $count = $exporter->get_records_count();
+    $filename = clean_filename("{$data->name}-{$count}_record");
+    if ($count > 1) {
+        $filename .= 's';
+    }
+    $filename .= clean_filename('-' . gmdate("Ymd_Hi"));
+    $exporter->set_export_file_name($filename);
+    $exporter->send_file();
 }
 
 // Build header to match the rest of the UI.
 $PAGE->add_body_class('mediumwidth');
-$PAGE->set_title($data->name);
+$pagename = get_string('exportentries', 'data');
+$titleparts = [
+    $pagename,
+    format_string($data->name),
+    format_string($course->fullname),
+];
+$PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 $PAGE->force_settings_menu(true);
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('exportentries', 'data'));
+echo $OUTPUT->heading($pagename);
 
 groups_print_activity_menu($cm, $url);
 

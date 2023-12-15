@@ -28,6 +28,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Coordinate extends Google_Service
 {
   /** View and manage your Google Maps Coordinate jobs. */
@@ -476,6 +477,7 @@ class Google_Service_Coordinate extends Google_Service
  *   $customFieldDef = $coordinateService->customFieldDef;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_CustomFieldDef_Resource extends Google_Service_Resource
 {
 
@@ -503,6 +505,7 @@ class Google_Service_Coordinate_CustomFieldDef_Resource extends Google_Service_R
  *   $jobs = $coordinateService->jobs;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Jobs_Resource extends Google_Service_Resource
 {
 
@@ -651,6 +654,7 @@ class Google_Service_Coordinate_Jobs_Resource extends Google_Service_Resource
  *   $location = $coordinateService->location;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Location_Resource extends Google_Service_Resource
 {
 
@@ -683,6 +687,7 @@ class Google_Service_Coordinate_Location_Resource extends Google_Service_Resourc
  *   $schedule = $coordinateService->schedule;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Schedule_Resource extends Google_Service_Resource
 {
 
@@ -755,6 +760,7 @@ class Google_Service_Coordinate_Schedule_Resource extends Google_Service_Resourc
  *   $team = $coordinateService->team;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Team_Resource extends Google_Service_Resource
 {
 
@@ -787,6 +793,7 @@ class Google_Service_Coordinate_Team_Resource extends Google_Service_Resource
  *   $worker = $coordinateService->worker;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Worker_Resource extends Google_Service_Resource
 {
 
@@ -808,6 +815,7 @@ class Google_Service_Coordinate_Worker_Resource extends Google_Service_Resource
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_CustomField extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -843,6 +851,7 @@ class Google_Service_Coordinate_CustomField extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_CustomFieldDef extends Google_Collection
 {
   protected $collection_key = 'enumitems';
@@ -916,6 +925,7 @@ class Google_Service_Coordinate_CustomFieldDef extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_CustomFieldDefListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -944,6 +954,7 @@ class Google_Service_Coordinate_CustomFieldDefListResponse extends Google_Collec
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_CustomFields extends Google_Collection
 {
   protected $collection_key = 'customField';
@@ -972,6 +983,7 @@ class Google_Service_Coordinate_CustomFields extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_EnumItemDef extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1007,6 +1019,7 @@ class Google_Service_Coordinate_EnumItemDef extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Job extends Google_Collection
 {
   protected $collection_key = 'jobChange';
@@ -1054,6 +1067,7 @@ class Google_Service_Coordinate_Job extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_JobChange extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1090,6 +1104,7 @@ class Google_Service_Coordinate_JobChange extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_JobListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1127,6 +1142,7 @@ class Google_Service_Coordinate_JobListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_JobState extends Google_Collection
 {
   protected $collection_key = 'note';
@@ -1219,6 +1235,7 @@ class Google_Service_Coordinate_JobState extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Location extends Google_Collection
 {
   protected $collection_key = 'addressLine';
@@ -1264,6 +1281,7 @@ class Google_Service_Coordinate_Location extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_LocationListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1311,6 +1329,7 @@ class Google_Service_Coordinate_LocationListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_LocationRecord extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1364,6 +1383,7 @@ class Google_Service_Coordinate_LocationRecord extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Schedule extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1417,6 +1437,7 @@ class Google_Service_Coordinate_Schedule extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Team extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1452,6 +1473,7 @@ class Google_Service_Coordinate_Team extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_TeamListResponse extends Google_Collection
 {
   protected $collection_key = 'items';
@@ -1480,6 +1502,7 @@ class Google_Service_Coordinate_TeamListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_TokenPagination extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1515,6 +1538,7 @@ class Google_Service_Coordinate_TokenPagination extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_Worker extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -1541,6 +1565,7 @@ class Google_Service_Coordinate_Worker extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Coordinate_WorkerListResponse extends Google_Collection
 {
   protected $collection_key = 'items';

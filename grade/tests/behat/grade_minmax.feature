@@ -25,31 +25,31 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I set the following administration settings values:
       | grade_minmaxtouse | Min and max grades as specified in grade item settings |
     And I am on the "C1" "grades > gradebook setup" page
-    And I press "Add grade item"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 1 |
       | Grade category | C1 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 2 |
       | Grade category | C1 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 3 |
       | Grade category | CAT1 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 4 |
       | Grade category | CAT1 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | MI 5 |
       | Grade category | C1 |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[mi1]]+[[mi2]]+[[mi3]]" calculation for grade item "MI 5" with idnumbers:
       | MI 1 | mi1 |
       | MI 2 | mi2 |
@@ -60,7 +60,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
     And I set the field "Show contribution to course total" to "Show"
     And I press "Save changes"
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "CAT1":
+    And I set the following settings for grade item "CAT1" of type "category" on "setup" page:
       | Aggregation          | Natural |
     And I am on the "C1" "grades > Grader report > View" page logged in as "teacher1"
     And I turn editing mode on
@@ -93,11 +93,11 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | CAT1 total   | 33.33 %           | 10.00  | 0–100 | 10.00 %    | -                            |
       | Course total | -                 | 60.00  | 0–300 | 20.00 %    | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "MI 1":
+    And I set the following settings for grade item "MI 1" of type "gradeitem" on "setup" page:
       | Rescale existing grades | No    |
       | Maximum grade           | 50.00 |
       | Minimum grade           | 5.00  |
-    And I set the following settings for grade item "MI 3":
+    And I set the following settings for grade item "MI 3" of type "gradeitem" on "setup" page:
       | Rescale existing grades | No    |
       | Maximum grade           | 50.00 |
       | Minimum grade           | 5.00  |
@@ -123,7 +123,7 @@ Feature: We can choose what min or max grade to use when aggregating grades.
       | CAT1 total   | 25.00 %           | 10.00  | 0–50  | 20.00 %    | -                            |
       | Course total | -                 | 60.00  | 0–200 | 30.00 %    | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "MI 5":
+    And I set the following settings for grade item "MI 5" of type "gradeitem" on "setup" page:
       | Rescale existing grades | No    |
       | Maximum grade          | 200.00 |
     And I navigate to "View > User report" in the course gradebook

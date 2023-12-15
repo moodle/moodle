@@ -248,8 +248,12 @@ interface cache_loader_with_locking {
      * However this doesn't guarantee consistent access. It will become the responsibility of the calling code to ensure
      * locks are acquired, checked, and released.
      *
+     * Prior to Moodle 4,3 this function used to return false if the lock cannot be obtained. It
+     * now always returns true, and throws an exception if the lock cannot be obtained.
+     *
      * @param string|int $key
-     * @return bool True if the lock could be acquired, false otherwise.
+     * @return bool Always returns true (for backwards compatibility)
+     * @throws moodle_exception If the lock cannot be obtained after a timeout
      */
     public function acquire_lock($key);
 

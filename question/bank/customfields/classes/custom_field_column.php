@@ -17,6 +17,8 @@
 namespace qbank_customfields;
 
 use core_question\local\bank\column_base;
+use core_question\local\bank\view;
+use qbank_customfields\customfield\question_handler;
 
 /**
  * A column type for the name of the question creator.
@@ -42,6 +44,16 @@ class custom_field_column extends column_base {
         $this->field = $field;
     }
 
+    public static function from_column_name(view $view, string $columnname): custom_field_column {
+        $handler = question_handler::create();
+        foreach ($handler->get_fields() as $field) {
+            if ($field->get('shortname') == $columnname) {
+                return new static($view, $field);
+            }
+        }
+        throw new \coding_exception('Custom field ' . $columnname . ' does not exist.');
+    }
+
     /**
      * Get the internal name for this column. Used as a CSS class name,
      * and to store information about the current sort. Must match PARAM_ALPHA.
@@ -60,7 +72,7 @@ class custom_field_column extends column_base {
      * @return string The unique name;
      */
     public function get_column_name(): string {
-        return 'custom_field_column\\' . $this->field->get('shortname');
+        return $this->field->get('shortname');
     }
 
     /**

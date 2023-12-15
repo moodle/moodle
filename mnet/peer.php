@@ -39,6 +39,23 @@ class mnet_peer {
     /** @var int $sslverification The level of SSL verification to apply. */
     public $sslverification = self::SSL_HOST_AND_PEER;
 
+    /** @var int deleted status. */
+    public $deleted;
+
+    /** @var stdClass data from mnet_application table in DB. */
+    public $application;
+
+    /**
+     * Current SSL public key
+     *
+     * MNet need to compare the remote machine's SSL Cert and the public key to warn users of any mismatch.
+     * The property is the remote machine's SSL Cert.
+     *
+     * @see admin/mnet/peers.php
+     * @var string
+     */
+    public $currentkey;
+
     /*
      * Fetch information about a peer identified by wwwroot
      * If information does not preexist in db, collect it together based on
@@ -255,8 +272,7 @@ class mnet_peer {
         global $CFG, $DB;
 
         if (clean_param($id, PARAM_INT) != $id) {
-            $this->errno[]  = 1;
-            $this->errmsg[] = 'Your id ('.$id.') is not legal';
+            $this->error[] = ['code' => 1, 'text' => 'Your id ('.$id.') is not legal'];
             return false;
         }
 
@@ -301,7 +317,14 @@ class mnet_peer {
         $this->bootstrapped = true;
     }
 
+    /**
+     * Get public key.
+     *
+     * @deprecated since Moodle 4.3
+     * @todo MDL-78304 Final deprecation.
+     */
     function get_public_key() {
+        debugging('Function get_public_key() is deprecated.', DEBUG_DEVELOPER);
         if (isset($this->public_key_ref)) return $this->public_key_ref;
         $this->public_key_ref = openssl_pkey_get_public($this->public_key);
         return $this->public_key_ref;

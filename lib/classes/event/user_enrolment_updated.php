@@ -79,27 +79,6 @@ class user_enrolment_updated extends base {
     }
 
     /**
-     * Return name of the legacy event, which is replaced by this event.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'user_enrol_modified';
-    }
-
-    /**
-     * Return user_enrol_modified legacy event data.
-     *
-     * @return \stdClass
-     */
-    protected function get_legacy_eventdata() {
-        $legacyeventdata = $this->get_record_snapshot('user_enrolments', $this->objectid);
-        $legacyeventdata->enrol = $this->other['enrol'];
-        $legacyeventdata->courseid = $this->courseid;
-        return $legacyeventdata;
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

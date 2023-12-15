@@ -1,0 +1,43 @@
+#page-admin-question-bank-columnsortorder-sortcolumns .addcolumn {
+    display: inline-block;
+}
+.qbank-sortable-column {
+    background-color: white;
+    position: relative;
+}
+.jsenabled .qbank-column-list button.savewidths {
+    display: none;
+}
+.qbank-sortable-column .qbank_columnsortorder-action-handle {
+    display: none;
+}
+.qbank-sortable-column.show-handles .qbank_columnsortorder-action-handle {
+    display: block;
+}
+.qbank-sortable-column .handle-container {
+    pointer-events: none; /* Prevent the handle container blocking clicks to elements in the header */
+    width: 100%;
+    position: absolute;
+    top: 40%;
+    z-index: 1;
+}
+.qbank_columnsortorder-action-handle {
+    pointer-events: auto; /* Ensure the handles themselves receive clicks */
+}
+.qbank_columnsortorder-action-handle.move {
+    margin-left: -21px;
+    width: 16px;
+}
+.qbank_columnsortorder-action-handle.resize {
+    cursor: col-resize;
+    position: absolute;
+    top: 0;
+    right: 5px;
+}
+.qbank_columnsortorder-action-handle.resize img {
+    /* Prevent the resize handle icon being dragged across the page */
+    pointer-events: none;
+}
+.qbank_columnsortorder-action-handle .icon {
+    margin-right: 0;
+}

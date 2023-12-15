@@ -44,6 +44,9 @@ class repository_recent extends repository {
     /** @var int only retrieve files within the time limit */
     protected $timelimit;
 
+    /** @var int recent files number configuration. */
+    protected $number;
+
     /**
      * Initialize recent plugin
      * @param int $repositoryid
@@ -161,8 +164,8 @@ class repository_recent extends repository {
                         'author' => $fileinfo->get_author(),
                         'license' => $fileinfo->get_license(),
                         'source'=> $params,
-                        'icon' => $OUTPUT->image_url(file_file_icon($fileinfo, 24))->out(false),
-                        'thumbnail' => $OUTPUT->image_url(file_file_icon($fileinfo, 90))->out(false),
+                        'icon' => $OUTPUT->image_url(file_file_icon($fileinfo))->out(false),
+                        'thumbnail' => $OUTPUT->image_url(file_file_icon($fileinfo))->out(false),
                     );
                     if ($imageinfo = $fileinfo->get_imageinfo()) {
                         $fileurl = new moodle_url($fileinfo->get_url());

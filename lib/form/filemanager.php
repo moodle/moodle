@@ -453,7 +453,6 @@ class form_filemanager implements renderable {
 
         $this->options->userprefs = array();
         $this->options->userprefs['recentviewmode'] = get_user_preferences('filemanager_recentviewmode', '');
-        user_preference_allow_ajax_update('filemanager_recentviewmode', PARAM_INT);
 
         // building file picker options
         $params = new stdClass();

@@ -668,6 +668,18 @@ class managers_capability_test extends \advanced_testcase {
         $CFG->maxeditingtime = 200;
         $this->assertTrue($capabilitymanager->can_edit_post($user, $discussion, $post));
 
+        // Can not edit within editing time if $post->mailnow > 0 (selected).
+        $CFG->maxeditingtime = 200;
+        $post = $this->entityfactory->get_post_from_stdClass(
+            (object) array_merge((array) $this->postrecord, ['mailnow' => 1])
+        );
+        $this->assertFalse($capabilitymanager->can_edit_post($user, $discussion, $post));
+
+        // Back to normal - mailnow not selected.
+        $post = $this->entityfactory->get_post_from_stdClass(
+            (object) array_merge((array) $this->postrecord, ['mailnow' => 0])
+        );
+
         // 10 seconds to edit. No longer in editing time.
         $CFG->maxeditingtime = 10;
         $this->assertFalse($capabilitymanager->can_edit_post($user, $discussion, $post));
@@ -768,6 +780,17 @@ class managers_capability_test extends \advanced_testcase {
         $this->give_capability('mod/forum:deleteownpost');
         // 200 second editing time to make sure our post is still within it.
         $CFG->maxeditingtime = 200;
+
+        // Can not delete within editing time if $post->mailnow > 0 (selected).
+        $post = $this->entityfactory->get_post_from_stdClass(
+            (object) array_merge((array) $this->postrecord, ['mailnow' => 1])
+        );
+        $this->assertFalse($capabilitymanager->can_delete_post($user, $discussion, $post));
+
+        // Back to normal - mailnow not selected.
+        $post = $this->entityfactory->get_post_from_stdClass(
+            (object) array_merge((array) $this->postrecord, ['mailnow' => 0])
+        );
 
         // Make the post owned by someone else.
         $post = $this->entityfactory->get_post_from_stdClass(

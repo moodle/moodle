@@ -90,16 +90,24 @@ abstract class datasource extends base {
     /**
      * Add default datasource columns to the report
      *
-     * This method is optional and can be called when the report is created to add the default columns defined in the
-     * selected datasource.
+     * Uses column data returned by the source {@see get_default_columns} and {@see get_default_column_sorting} methods
+     *
+     * @throws coding_exception If default column sorting refers to an invalid column
      */
     public function add_default_columns(): void {
         $reportid = $this->get_report_persistent()->get('id');
 
         // Retrieve default column sorting, and track index of both sorted/non-sorted columns.
         $columnidentifiers = $this->get_default_columns();
-        $defaultcolumnsorting = array_intersect_key($this->get_default_column_sorting(),
+
+        $defaultcolumnsorting = $this->get_default_column_sorting();
+        $defaultcolumnsortinginvalid = array_diff_key($defaultcolumnsorting,
             array_fill_keys($columnidentifiers, 1));
+
+        if (count($defaultcolumnsortinginvalid) > 0) {
+            throw new coding_exception('Invalid column name', array_key_first($defaultcolumnsortinginvalid));
+        }
+
         $columnnonsortingindex = count($defaultcolumnsorting) + 1;
 
         foreach ($columnidentifiers as $uniqueidentifier) {
@@ -120,14 +128,17 @@ abstract class datasource extends base {
     }
 
     /**
-     * Return the columns that will be added to the report once is created
+     * Return the default columns that will be added to the report upon creation, by {@see add_default_columns}
      *
      * @return string[]
      */
     abstract public function get_default_columns(): array;
 
     /**
-     * Return the default sorting that will be added to the report once it is created
+     * Return the default column sorting that will be set for the report upon creation, by {@see add_default_columns}
+     *
+     * When overriding this method in child classes, column identifiers specified must refer to default columns returned from
+     * the {@see get_default_columns} method
      *
      * @return int[] array [column identifier => SORT_ASC/SORT_DESC]
      */
@@ -136,7 +147,8 @@ abstract class datasource extends base {
     }
 
     /**
-     * Return all configured report columns
+     * Override parent method, returning only those columns specifically added to the custom report (rather than all that are
+     * available)
      *
      * @return column[]
      */
@@ -157,6 +169,10 @@ abstract class datasource extends base {
 
             // Ensure the column is still present and available.
             if ($instance !== null && $instance->get_is_available()) {
+                if ($instance->get_is_deprecated()) {
+                    debugging("The column '{$instance->get_unique_identifier()}' is deprecated, please do not use it any more." .
+                        " {$instance->get_is_deprecated_message()}", DEBUG_DEVELOPER);
+                }
 
                 // We should clone the report column to ensure if it's added twice to a report, each operates independently.
                 $this->activecolumns['values'][] = clone $instance
@@ -224,7 +240,8 @@ abstract class datasource extends base {
     abstract public function get_default_filters(): array;
 
     /**
-     * Return all configured report filters
+     * Override parent method, returning only those filters specifically added to the custom report (rather than all that are
+     * available)
      *
      * @return filter[]
      */
@@ -245,6 +262,11 @@ abstract class datasource extends base {
 
             // Ensure the filter is still present and available.
             if ($instance !== null && $instance->get_is_available()) {
+                if ($instance->get_is_deprecated()) {
+                    debugging("The filter '{$instance->get_unique_identifier()}' is deprecated, please do not use it any more." .
+                        " {$instance->get_is_deprecated_message()}", DEBUG_DEVELOPER);
+                }
+
                 $this->activefilters['values'][$instance->get_unique_identifier()] =
                     $instance->set_persistent($filter);
             }
@@ -323,7 +345,8 @@ abstract class datasource extends base {
     }
 
     /**
-     * Return all configured report conditions
+     * Override parent method, returning only those conditions specifically added to the custom report (rather than all that are
+     * available)
      *
      * @return filter[]
      */
@@ -344,6 +367,11 @@ abstract class datasource extends base {
 
             // Ensure the condition is still present and available.
             if ($instance !== null && $instance->get_is_available()) {
+                if ($instance->get_is_deprecated()) {
+                    debugging("The condition '{$instance->get_unique_identifier()}' is deprecated, please do not use it any more." .
+                        " {$instance->get_is_deprecated_message()}", DEBUG_DEVELOPER);
+                }
+
                 $this->activeconditions['values'][$instance->get_unique_identifier()] =
                     $instance->set_persistent($condition);
             }

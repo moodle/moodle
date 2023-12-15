@@ -6,13 +6,16 @@ Description of import of various YUI libraries into Moodle:
 * Accessibility change. Which folder or file has no children, remove unnecessary tab stop.
   lib/yuilib/2in3/2.9.0/build/yui2-treeview/yui2-treeview.js
 
-2/ YUI3 version 3.17.2:
-* full copy of the "build" directory. Unit test code coverage files (*-coverage.js)
+2/ YUI3 version 3.18.1:
+* Full copy of the "build" directory. Unit test code coverage files (*-coverage.js)
   are removed but no other changes are made.
-* make sure there are no @VERSION@ leftovers - replace them with current version
-* exact version specified in lib/setup.php
-* update lib/thirdpartylibs.xml
-* verify our simpleyui rollup contents in /theme/yui_combo.php
+  Useful command: find . -type f -name "*-coverage.js" -delete
+* Make sure there are no @VERSION@ leftovers - replace them with current version
+  Useful command: find . -type f -exec sed -i "s/@VERSION@/3.18.1/g" {} \;
+* Exact version specified in lib/setup.php
+* Update yuilib version in lib/thirdpartylibs.xml with 3.18.1
+* Verify our simpleyui rollup contents in /theme/yui_combo.php.
+  e.g. http://[yourmoodle]/theme/yui_combo.php?rollup/3.18.1/yui-moodlesimple.js
 
 If you need to patch the YUI library between its official releases, you *must* read
 http://docs.moodle.org/dev/YUI/Patching.

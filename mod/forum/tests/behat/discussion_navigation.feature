@@ -53,8 +53,7 @@ Feature: A user can navigate to previous and next discussions
       | Message | Answer to discussion |
     # We need to wait a bit to guarantee that the post is created after the previous ones.
     # because there is a bug in the forum_get_discussion_neighbours() when all the discussion
-    # last modified times are the same. See MDL-79247 for more details. Once that bug is fixed
-    # we can remove this wait.
+    # last modified times are the same. See MDL-79247 for more details.
     And I wait "1" seconds
     And I press "Post to forum"
     And I should not see "Discussion 2"

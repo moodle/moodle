@@ -115,6 +115,27 @@ class base_test extends advanced_testcase {
     }
 
     /**
+     * Test setting table join alias
+     */
+    public function test_set_table_join_alias(): void {
+        $entity = new base_test_entity();
+
+        $entity->set_table_join_alias('mytable', 'newalias');
+        $this->assertTrue($entity->has_table_join_alias('mytable'));
+        $this->assertEquals('newalias', $entity->get_table_alias('mytable'));
+    }
+
+    /**
+     * Test that entity doesn't have table join alias by default
+     *
+     * {@see test_set_table_join_alias} for assertion where it does
+     */
+    public function test_has_table_join_alias(): void {
+        $entity = new base_test_entity();
+        $this->assertFalse($entity->has_table_join_alias('mytable'));
+    }
+
+    /**
      * Test entity name
      */
     public function test_set_entity_name(): void {
@@ -124,17 +145,6 @@ class base_test extends advanced_testcase {
 
         $entity->set_entity_name('newentityname');
         $this->assertEquals('newentityname', $entity->get_entity_name());
-    }
-
-    /**
-     * Test invalid entity name
-     */
-    public function test_set_entity_name_invalid(): void {
-        $entity = new base_test_entity();
-
-        $this->expectException(coding_exception::class);
-        $this->expectExceptionMessage('Entity name must be comprised of alphanumeric character, underscore or dash');
-        $entity->set_entity_name('');
     }
 
     /**

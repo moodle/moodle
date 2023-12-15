@@ -25,7 +25,7 @@ Feature: Automatic updating of groups and groupings
       | Group name | Group (with ID) |
       | Group ID number | An ID |
     And I press "Save changes"
-    And I select "Groupings" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groupings"
     And I press "Create grouping"
     And I set the following fields to these values:
       | Grouping name | Grouping (without ID) |
@@ -35,7 +35,7 @@ Feature: Automatic updating of groups and groupings
       | Grouping name | Grouping (with ID) |
       | Grouping ID number | An ID |
     And I press "Save changes"
-    And I select "Groups" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groups"
 
   @javascript
   Scenario: Update groups and groupings with ID numbers
@@ -51,7 +51,7 @@ Feature: Automatic updating of groups and groupings
     And I press "Edit group settings"
     And the field "idnumber" matches value "An ID (updated)"
     And I press "Save changes"
-    And I select "Groupings" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groupings"
     And I click on "Edit" "link" in the "Grouping (with ID)" "table_row"
     And the field "idnumber" matches value "An ID"
     And I set the following fields to these values:
@@ -82,7 +82,7 @@ Feature: Automatic updating of groups and groupings
     And the "idnumber" "field" should be readonly
     And the field "idnumber" matches value "An ID"
     And I press "Save changes"
-    And I select "Groupings" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groupings"
     And I click on "Edit" "link" in the "Grouping (with ID)" "table_row"
     And the "idnumber" "field" should be readonly
     And the field "idnumber" matches value "An ID"
@@ -140,3 +140,20 @@ Feature: Automatic updating of groups and groupings
       | Enrolment key | Abcdef-1 |
     And I press "Save changes"
     And I should not see "This enrolment key is already used for another group."
+
+  @javascript
+  Scenario: Visibility and Participation settings are locked once a group has members
+    Given I set the field "groups" to "Group (with ID)"
+    And I press "Edit group settings"
+    And "visibility" "select" should exist
+    And the field "Group membership visibility" matches value "Visible"
+    And the "participation" "checkbox" should be enabled
+    And the field "Show group in dropdown menu for activities in group mode" matches value "1"
+    When the following "group members" exist:
+      | user     | group |
+      | teacher1 | An ID |
+    And I reload the page
+    Then "visibility" "select" should not exist
+    And "Visible" "text" should exist
+    And the "participation" "checkbox" should be disabled
+    And the field "Show group in dropdown menu for activities in group mode" matches value "1"

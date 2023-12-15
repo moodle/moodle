@@ -51,7 +51,7 @@ const mariadbConfig = {
   port: dbPort,
   user: dbUser,
   password: dbPassword,
-  database: "redirection_module_db",
+  database: "users",
   connectionLimit: 10000,
   waitForConnections: true,
   connectionTimeout: 10000,

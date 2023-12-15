@@ -161,7 +161,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
 
         // Ensure that a name is set on the iframe relating to the editorid.
         $js = <<<EOF
-            const element = instance.dom.select("${textlocator}")[${position}];
+            const element = instance.dom.select("{$textlocator}")[{$position}];
             instance.selection.select(element);
         EOF;
 
@@ -241,7 +241,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
         $js = <<<EOF
             const editorDocument = instance.getDoc();
             const element = editorDocument.evaluate(
-                "${xpath}",
+                "{$xpath}",
                 editorDocument,
                 null,
                 XPathResult.FIRST_ORDERED_NODE_TYPE,

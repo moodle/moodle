@@ -1,4 +1,0 @@
-allowsubmissionsfromdatesummary,mod_assign
-allowsubmissionsanddescriptionfromdatesummary,mod_assign
-relativedatessubmissionduedateafter,mod_assign
-relativedatessubmissionduedatebefore,mod_assign

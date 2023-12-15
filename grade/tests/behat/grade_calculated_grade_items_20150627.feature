@@ -23,18 +23,19 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
 
   @javascript
   Scenario: The max grade for a category item, with a calculation using Natural aggregation, can be changed
-    Given I press "Add category"
+    Given I choose the "Add category" item in the "Add" action menu
     And I set the following fields to these values:
       | Category name | Calc cat |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | grade item 1 |
       | Grade category | Calc cat |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[gi1]]/2" calculation for grade category "Calc cat" with idnumbers:
       | grade item 1 | gi1 |
-    And I set the following settings for grade item "Calc cat":
+    And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
       | Maximum grade | 50 |
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
@@ -45,23 +46,24 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
+      | Calc cat total                      | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–100 | 37.50 %    | -                            |
 
   @javascript
   Scenario: Changing max grade for a category item with a calculation that has existing grades will display the same points with the new max grade values immediately.
-    Given I press "Add category"
+    Given I choose the "Add category" item in the "Add" action menu
     And I set the following fields to these values:
       | Category name | Calc cat |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New category" "dialogue"
+    And I wait until the page is ready
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | grade item 1 |
       | Grade category | Calc cat |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[gi1]]/2" calculation for grade category "Calc cat" with idnumbers:
       | grade item 1 | gi1 |
-    And I set the following settings for grade item "Calc cat":
+    And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
       | Maximum grade | 50 |
     And I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on
@@ -72,10 +74,10 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
+      | Calc cat total                      | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–100 | 37.50 %    | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "Calc cat":
+    And I set the following settings for grade item "Calc cat" of type "category" on "setup" page:
       | Maximum grade | 40 |
     And I navigate to "View > Grader report" in the course gradebook
     And I give the grade "65.00" to the user "Student 2" for the grade item "grade item 1"
@@ -85,13 +87,13 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     Then the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
+      | Calc cat total                      | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–100 | 37.50 %    | -                            |
     And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 32.50  | 0–100 | 32.50 %    | -                            |
+      | Calc cat total                      | 100.00 %          | 32.50  | 0–100 | 32.50 %    | -                            |
       | Course total                        | -                 | 32.50  | 0–100 | 32.50 %    | -                            |
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the following fields to these values:
@@ -102,28 +104,28 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 75.00  | 0–100 | 75.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
+      | Calc cat total                      | 100.00 %          | 37.50  | 0–100 | 37.50 %    | -                            |
       | Course total                        | -                 | 37.50  | 0–100 | 37.50 %    | -                            |
     And I click on "Student 2" in the "user" search widget
     And the following should exist in the "user-grade" table:
       | Grade item                          | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | grade item 1                        | -                 | 65.00  | 0–100 | 65.00 %    | -                            |
-      | Calc cat totalInclude empty grades. | 100.00 %          | 32.50  | 0–100 | 32.50 %    | -                            |
+      | Calc cat total                      | 100.00 %          | 32.50  | 0–100 | 32.50 %    | -                            |
       | Course total                        | -                 | 32.50  | 0–100 | 32.50 %    | -                            |
 
   @javascript
   Scenario: Values in calculated grade items are not always out of one hundred
-    Given I press "Add grade item"
+    Given I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | grade item 1 |
-    And I press "Save changes"
-    And I press "Add grade item"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
+    And I choose the "Add grade item" item in the "Add" action menu
     And I set the following fields to these values:
       | Item name | calc item |
-    And I press "Save changes"
+    And I click on "Save" "button" in the "New grade item" "dialogue"
     And I set "=[[gi1]]/2" calculation for grade item "calc item" with idnumbers:
       | grade item 1 | gi1 |
-    And I set the following settings for grade item "calc item":
+    And I set the following settings for grade item "calc item" of type "gradeitem" on "setup" page:
       | Maximum grade | 50 |
     And I navigate to "Setup > Course grade settings" in the course gradebook
     And I set the following fields to these values:
@@ -141,7 +143,7 @@ Feature: Gradebook calculations for calculated grade items before the fix 201506
       | calc item    | 50.00 %           | 37.50  | 0–100 | 37.50 %    | 18.75 %                      |
       | Course total | -                 | 112.50 | 0–200 | 56.25 %    | -                            |
     And I navigate to "Setup > Gradebook setup" in the course gradebook
-    And I set the following settings for grade item "calc item":
+    And I set the following settings for grade item "calc item" of type "gradeitem" on "setup" page:
       | Rescale existing grades | No |
       | Maximum grade | 40 |
     And I navigate to "View > Grader report" in the course gradebook

@@ -43,7 +43,6 @@ class user_password_updated_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertEquals($user1->id, $event->relateduserid);
         $this->assertSame($context1, $event->get_context());
-        $this->assertEventLegacyLogData(null, $event);
         $this->assertFalse($event->other['forgottenreset']);
         $event->trigger();
 
@@ -52,7 +51,6 @@ class user_password_updated_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertEquals($user2->id, $event->relateduserid);
         $this->assertSame($context2, $event->get_context());
-        $this->assertEventLegacyLogData(null, $event);
         $this->assertFalse($event->other['forgottenreset']);
         $event->trigger();
 
@@ -61,7 +59,6 @@ class user_password_updated_test extends \advanced_testcase {
         $this->assertEventContextNotUsed($event);
         $this->assertEquals($user1->id, $event->relateduserid);
         $this->assertSame($context1, $event->get_context());
-        $this->assertEventLegacyLogData(array(SITEID, 'user', 'set password', 'profile.php?id='.$user1->id, $user1->id), $event);
         $this->assertTrue($event->other['forgottenreset']);
         $event->trigger();
     }

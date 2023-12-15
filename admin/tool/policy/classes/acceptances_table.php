@@ -155,6 +155,7 @@ class acceptances_table extends \table_sql {
             $this->columns[$key] = count($this->columns);
             $this->column_style[$key] = array();
             $this->column_class[$key] = $columnclass;
+            $this->columnsticky[$key] = '';
             $this->column_suppress[$key] = false;
             $this->headers[] = $label;
         }

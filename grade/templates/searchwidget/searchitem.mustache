@@ -23,27 +23,37 @@
     {
         "id": "1",
         "name": "Quiz 1",
-        "url": "http://foo.bar/gradereport/?userid=25",
-        "fullname": "Cameron Greeve",
-        "active": true
+        "fullname": "Cameron Greeve"
     }
 }}
-<li class="w-100 result-row" role="none" id="result-row-{{id}}">
+<li
+    role="option"
+    class="dropdown-item d-flex px-2 py-1 {{^name}}align-items-center{{/name}}"
+    {{#name}}id="item-{{id}}"{{/name}}
+    {{^name}}id="user-{{id}}"{{/name}}
+    data-value="{{id}}"
+>
     {{#name}}
-        <a role="menuitem" id="item-{{id}}" href="{{url}}" class="dropdown-item d-flex px-2 py-1" tabindex="-1"">
-            <span class="pull-left result-cell text-truncate mr-2">
-                {{name}}
-            </span>
-        </a>
+        <span class="pull-left result-cell text-truncate mr-2">
+            {{name}}
+        </span>
     {{/name}}
     {{^name}}
-        <a role="menuitem" id="user-{{id}}" href="{{url}}" class="dropdown-item d-flex px-2 py-1 align-items-center" tabindex="-1">
-            <span class="w-50 pull-left text-truncate mr-2">
+        <div class="d-block pr-2 w-25">
+            {{#profileimage}}
+                <img class="userpicture w-75 mx-auto d-block" src="{{profileimage}}" alt="" />
+            {{/profileimage}}
+            {{^profileimage}}
+                <span class="userinitials"></span>
+            {{/profileimage}}
+        </div>
+        <div class="d-block pr-3 w-75">
+            <span class="w-100 p-0 font-weight-bold">
                 {{fullname}}
             </span>
-            <span class="w-50 pull-left text-truncate small email">
+            <span class="w-100 pull-left text-truncate small">
                 {{email}}
             </span>
-        </a>
+        </div>
     {{/name}}
 </li>

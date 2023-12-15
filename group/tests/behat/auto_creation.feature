@@ -66,7 +66,7 @@ Feature: Automatic creation of groups
     And I should see "No" in the "Group messaging" "select"
     And I press "Cancel"
     # Check groupings.
-    And I select "Groupings" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groupings"
     And I should see "Grouping name"
     And I click on "Show groups in grouping" "link" in the "Grouping name" "table_row"
     And the "removeselect" select box should contain "Group A"

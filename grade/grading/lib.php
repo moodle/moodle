@@ -38,7 +38,7 @@ use core_grades\component_gradeitems;
  * @category grading
  * @example $manager = get_grading_manager($areaid);
  * @example $manager = get_grading_manager(context_system::instance());
- * @example $manager = get_grading_manager($context, 'mod_assignment', 'submission');
+ * @example $manager = get_grading_manager($context, 'mod_assign', 'submission');
  * @param stdClass|int|null $context_or_areaid if $areaid is passed, no other parameter is needed
  * @param string|null $component the frankenstyle name of the component
  * @param string|null $area the name of the gradable area

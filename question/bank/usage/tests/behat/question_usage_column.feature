@@ -31,10 +31,23 @@ Feature: Use the qbank plugin manager page for question usage
   @javascript
   Scenario: Question usage modal should work without any usage data
     And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
-    And I set the field "Select a category" to "Test questions"
+    And I apply question bank filter "Category" with value "Test questions"
     And I should see "Test questions"
     And I should see "0" on the usage column
     When I click "0" on the usage column
     Then I should see "Version 1"
+    And I should see "v1 (latest)" in the "Question 1" "question"
     And I click on "Close" "button" in the ".modal-dialog" "css_element"
     And I should see "0" on the usage column
+
+  @javascript
+  Scenario: Question usage modal should work with usage data
+    Given quiz "Test quiz" contains the following questions:
+      | question       | page |
+      | First question | 1    |
+    And I am on the "Test quiz" "mod_quiz > question bank" page logged in as "admin"
+    And I apply question bank filter "Category" with value "Test questions"
+    And I should see "Test questions"
+    And I should see "1" on the usage column
+    When I click "1" on the usage column
+    Then "Test quiz" "table_row" should exist in the "question-usage_table" "region"

@@ -211,3 +211,9 @@ class backup_activity_userinfo_setting extends activity_backup_setting {}
  */
 class backup_contentbankcontent_setting extends backup_generic_setting {
 }
+
+/**
+ * Root setting to control if backup will include xAPI state or not.
+ */
+class backup_xapistate_setting extends backup_generic_setting {
+}

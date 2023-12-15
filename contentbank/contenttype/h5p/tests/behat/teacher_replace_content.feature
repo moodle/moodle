@@ -80,3 +80,30 @@ Feature: Replace H5P file from an existing content requires special capabilities
     When I click on "teachercontent" "link"
     And I click on "More" "button"
     Then I should not see "Replace with file"
+
+  Scenario: Replacing with invalid packages throws error
+    Given I log in as "admin"
+    And I navigate to "H5P > Manage H5P content types" in site administration
+    And I upload "h5p/tests/fixtures/no-json-file.h5p" file to "H5P content type" filemanager
+    And I upload "h5p/tests/fixtures/unzippable.h5p" file to "H5P content type" filemanager
+    And I log out
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage
+    And I expand "Site pages" node
+    And I click on "Content bank" "link"
+    And I click on "teachercontent" "link"
+    When I click on "More" "button"
+    And I click on "Replace with file" "link"
+    And I upload "h5p/tests/fixtures/no-json-file.h5p" file to "Upload content" filemanager
+    And I click on "Save changes" "button"
+    And I wait until the page is ready
+    Then I should see "A valid main h5p.json file is missing"
+    And I should see "Only files with the following extensions are allowed"
+    And I should not see "Sorry, this file is not valid"
+    And I click on "More" "button"
+    And I click on "Replace with file" "link"
+    And I upload "h5p/tests/fixtures/unzippable.h5p" file to "Upload content" filemanager
+    And I click on "Save changes" "button"
+    And I wait until the page is ready
+    And I should see "It is not possible to unzip it"
+    And I should not see "Sorry, this file is not valid"

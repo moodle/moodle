@@ -16,7 +16,7 @@ videojs.addLanguage('lv', {
   "Progress Bar": "Progresa josla",
   "progress bar timing: currentTime={1} duration={2}": "{1} no {2}",
   "Fullscreen": "Pilnekrāna režīms",
-  "Non-Fullscreen": "Iziet no pilnekrāna režīma",
+  "Exit Fullscreen": "Iziet no pilnekrāna režīma",
   "Mute": "Izslēgt skaņu",
   "Unmute": "Ieslēgt skaņu",
   "Playback Rate": "Atskaņošanas ātrums",
@@ -85,5 +85,7 @@ videojs.addLanguage('lv', {
   "End of dialog window.": "Parakstu iestatījumu loga beigas",
   "{1} is loading.": "{1} ielādē.",
   "Exit Picture-in-Picture": "Iziet no Attēls attēlā",
-  "Picture-in-Picture": "Attēls attēlā"
+  "Picture-in-Picture": "Attēls attēlā",
+  "Skip forward {1} seconds": "Pārtīt uz priekšu {1} sekundes",
+  "Skip backward {1} seconds": "Pārtīt atpakaļ {1} sekundes"
 });
