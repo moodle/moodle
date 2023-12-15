@@ -74,17 +74,16 @@ class specific_grade_detail_feedback extends renderable_base {
                 foreach ($currentresponse as $position => $answerid) {
                     if (array_key_exists($answerid, $question->answers)) {
                         $score = $question->get_ordering_item_score($question, $position, $answerid);
-                        [$score, $maxscore, $fraction, $percent, $class] = $score;
-                        if (!isset($maxscore)) {
-                            $score = get_string('noscore', $plugin);
+                        if (!isset($score['maxscore'])) {
+                            $score['score'] = get_string('noscore', $plugin);
                         } else {
-                            $totalscore += $score;
-                            $totalmaxscore += $maxscore;
+                            $totalscore += $score['score'];
+                            $totalmaxscore += $score['maxscore'];
                         }
                         $data['scoredetails'][] = [
-                            'score' => $score,
-                            'maxscore' => $maxscore,
-                            'percent' => $percent,
+                            'score' => $score['score'],
+                            'maxscore' => $score['maxscore'],
+                            'percent' => $score['percent'],
                         ];
                     }
                 }

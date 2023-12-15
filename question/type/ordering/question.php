@@ -1065,8 +1065,14 @@ class qtype_ordering_question extends question_graded_automatically {
                 };
             }
 
-            $score = [$score, $maxscore, $fraction, $percent, $class];
-            $this->itemscores[$position] = $score;
+            $itemscores = [
+                'score' => $score,
+                'maxscore' => $maxscore,
+                'fraction' => $fraction,
+                'percent' => $percent,
+                'class' => $class,
+            ];
+            $this->itemscores[$position] = $itemscores;
         }
 
         return $this->itemscores[$position];
