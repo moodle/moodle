@@ -15,12 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package     local_message
+ * @package     local_auto_proctor
  * @author      Angelica
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @var stdClass $plugin
- */
+*/
 
+// Adding the auto-proctor in navigation bar
 function local_auto_proctor_extend_navigation(global_navigation $navigation){
     
     // Acces control for admin only
@@ -35,3 +36,23 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
     $main_node->isexpandable = false;
     $main_node->showinflatnavigation = true;
  }
+
+// Event observer, this check event happened or created
+class local_auto_proctor_observer {
+    
+    public static function quiz_created($eventdata) {
+
+        // Check if the created module is a quiz
+        if ($eventdata->other['modulename'] === 'quiz') {
+            // Log check
+            error_log("quiz created", 0);
+    
+            // Insert data into mdl_auto_proctor_quiz_tb table
+            global $DB;
+            $quizId = $eventdata->other['instanceid'];
+            $courseId = $eventdata->courseid;
+
+            $DB->insert_record('auto_proctor_quiz_tb', ['quizid' => $quizId, 'course' => $courseId]);
+        }
+    }
+}
