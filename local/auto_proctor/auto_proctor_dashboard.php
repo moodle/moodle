@@ -19,11 +19,20 @@
  * @author      Angelica
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @var stdClass $plugin
- */
+*/
 
- require_once(__DIR__ . '/../../config.php'); // Setup moodle global variable also
+require_once(__DIR__ . '/../../config.php'); // Setup moodle global variable also
 
- //echo $OUTPUT->header(); // Output header
+// Get the global $DB object
+global $DB;
+
+// AP Table
+$AP_tb = 'auto_proctor_quiz_tb';
+
+// Retrieve records from auto_proctor_quiz_tb
+$records = $DB->get_records($AP_tb);
+
+//echo $OUTPUT->header(); // Output header
 
 ?>
 
@@ -36,6 +45,21 @@
     <title>Auto-Proctor Dashboard</title>
 </head>
 <body>
-    <h1> Hello bitch! </h1>
+    
+    <?php
+        // Display the results in an HTML table
+            echo '<table border="1">';
+            echo '<thead><tr><th>Quiz ID</th><th>Course</th><!-- Add more columns as needed --></tr></thead>';
+            echo '<tbody>';
+            foreach ($records as $record) {
+                echo '<tr>';
+                echo '<td>' . $record->quizid . '</td>';
+                echo '<td>' . $record->course. '</td>';
+                // Add more columns as needed
+                echo '</tr>';
+            }
+            echo '</tbody>';
+            echo '</table>';
+    ?>
 </body>
 </html>
