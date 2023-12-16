@@ -35,12 +35,14 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
     $main_node->forceopen = true;
     $main_node->isexpandable = false;
     $main_node->showinflatnavigation = true;
- }
+}
+
 
 // Event observer, this check event happened or created
 class local_auto_proctor_observer {
     
     public static function quiz_created($eventdata) {
+        //error_log("Event Data: " . print_r($eventdata, true), 0);
 
         // Check if the created module is a quiz
         if ($eventdata->other['modulename'] === 'quiz') {
@@ -52,7 +54,14 @@ class local_auto_proctor_observer {
             $quizId = $eventdata->other['instanceid'];
             $courseId = $eventdata->courseid;
 
+            error_log("Quiz ID: $quizId, Course ID: $courseId", 0);
+
             $DB->insert_record('auto_proctor_quiz_tb', ['quizid' => $quizId, 'course' => $courseId]);
         }
+        else {
+            error_log("not quiz", 0);
+        }
+        // Rebuild caches so that event will be triggered correctly
+        purge_all_caches();
     }
 }
