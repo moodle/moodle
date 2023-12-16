@@ -10,7 +10,10 @@
             <!-- Define id as an auto-increment key -->
             <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
             <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-            <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+            <FIELD NAME="monitor_tab_switching" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
+            <FIELD NAME="monitor_camera" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
+            <FIELD NAME="monitor_microphone" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
         </FIELDS>
         <KEYS>
             <!-- Define id as the primary key -->
