@@ -22,7 +22,7 @@
 */
 
 require_once(__DIR__ . '/../../config.php'); // Setup moodle global variable also
-
+require_login();
 // Get the global $DB object
 global $DB;
 
