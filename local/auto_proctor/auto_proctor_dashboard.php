@@ -35,22 +35,74 @@ global $DB;
     $quiz_records = $DB->get_records($quiz_tb);
 
 
-// Process enabling feature submissions
+// Enabling auto-proctor features
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     foreach ($quiz_records as $quiz_record) {
-        $buttonName = 'enable_tab_switching_' . $quiz_record->id;
+        $monitor_tab_switching = 'enable_tab_switching_' . $quiz_record->id;
+        $monitor_camera = 'enable_camera_' . $quiz_record->id;
+        $monitor_microphone = 'enable_microphone_' . $quiz_record->id;
 
-        // Check which button was clicked
-        if (isset($_POST[$buttonName])) {
-            // Handle the action for the clicked button
+        // Monitor tab switching
+        if (isset($_POST[$monitor_tab_switching])) {
             $quizId = $quiz_record->id;
 
-            // Update the auto_proctor_quiz_tb table using direct SQL query
-            $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_tab_switching = 1 WHERE quizid = :quizid";
-            $params = array('quizid' => $quizId);
+            // Get monitor_tab_switching activation value
+            $field_monitor_tab_switching = 'monitor_tab_switching';
+            $field_value_monitor_tab_switching = $DB->get_field($AP_tb, $field_monitor_tab_switching, array('quizid' => $quizId));
+
+            // If activated, then activate, and vice versa
+            $new_field_value = ($field_value_monitor_tab_switching == 0) ? 1 : 0;
+
+            // Update the auto_proctor_quiz_tb table with new value
+            $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_tab_switching = :new_field_value WHERE quizid = :quizid";
+            $params = array('quizid' => $quizId, 'new_field_value' => $new_field_value);
             $DB->execute($sql, $params);
 
-            echo "Tab switching enabled for Quiz ID: {$quizId}";
+            // Redirect to the same page after processing the form to prevent the form being submitted every refresh
+            header("Location: {$_SERVER['PHP_SELF']}");
+            exit;
+        }
+        
+        // Monitor camera
+        if (isset($_POST[$monitor_camera])) {
+            $quizId = $quiz_record->id;
+
+            // Get monitor_tab_switching activation value
+            $field_monitor_camera = 'monitor_camera';
+            $field_value_monitor_camera = $DB->get_field($AP_tb, $field_monitor_camera, array('quizid' => $quizId));
+
+            // If activated, then activate, and vice versa
+            $new_field_value = ($field_value_monitor_camera == 0) ? 1 : 0;
+
+            // Update the auto_proctor_quiz_tb table with new value
+            $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_camera= :new_field_value WHERE quizid = :quizid";
+            $params = array('quizid' => $quizId, 'new_field_value' => $new_field_value);
+            $DB->execute($sql, $params);
+
+            // Redirect to the same page after processing the form to prevent the form being submitted every refresh
+            header("Location: {$_SERVER['PHP_SELF']}");
+            exit;
+        }
+
+        // Monitor microphone
+        if (isset($_POST[$monitor_microphone])) {
+            $quizId = $quiz_record->id;
+
+            // Get monitor_tab_switching activation value
+            $field_monitor_microphone = 'monitor_microphone';
+            $field_value_monitor_microphone = $DB->get_field($AP_tb, $field_monitor_microphone, array('quizid' => $quizId));
+
+            // If activated, then activate, and vice versa
+            $new_field_value = ($field_value_monitor_microphone == 0) ? 1 : 0;
+
+            // Update the auto_proctor_quiz_tb table with new value
+            $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_microphone= :new_field_value WHERE quizid = :quizid";
+            $params = array('quizid' => $quizId, 'new_field_value' => $new_field_value);
+            $DB->execute($sql, $params);
+
+            // Redirect to the same page after processing the form to prevent the form being submitted every refresh
+            header("Location: {$_SERVER['PHP_SELF']}");
+            exit;
         }
     }
 }
@@ -77,8 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 echo '<thead>
                         <tr>
                             <th>Quiz ID</th>
+                            <th>Course ID</th>
                             <th>Quiz Name</th>
-                            <th>Course</th>
+                            <th></th>
+                            <th></th>
                             <th></th>
                         </tr>
                     </thead>';
@@ -89,7 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         echo '<td>' . $quiz_record->id . '</td>';
                         echo '<td>' . $quiz_record->course . '</td>';
                         echo '<td>' . $quiz_record->name. '</td>';
-                        echo '<td><button type="submit" name="enable_tab_switching_' . $quiz_record->id . '">Enable Tab Switching</button></td>';
+                        echo '<td><button type="submit" name="enable_tab_switching_' . $quiz_record->id . '">Monitor Tab Switching</button></td>';
+                        echo '<td><button type="submit" name="enable_camera_' . $quiz_record->id . '">Monitor Camera</button></td>';
+                        echo '<td><button type="submit" name="enable_microphone_' . $quiz_record->id . '">Monitor Microphone</button></td>';
                         echo '</tr>';
                     }
                 echo '</tbody>';
