@@ -36,12 +36,14 @@ use core_reportbuilder\local\report\{column, filter};
 class collection extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
-        return ['tag_coll' => 'tc'];
+    protected function get_default_tables(): array {
+        return [
+            'tag_coll',
+        ];
     }
 
     /**

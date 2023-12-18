@@ -445,7 +445,7 @@ class format_topics extends core_courseformat\base {
      * @return array The list of javascript files required by the course format.
      */
     public function get_required_jsfiles(): array {
-        return ['/course/format/topics/format.js'];
+        return [];
     }
 }
 

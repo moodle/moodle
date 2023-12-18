@@ -30,6 +30,7 @@ $string['addtoacl'] = 'Add to access control';
 $string['allhosts'] = 'All hosts';
 $string['allhosts_no_options'] = 'No options are available when viewing multiple hosts';
 $string['allow'] = 'Allow';
+$string['allowaccess'] = 'Allow access';
 $string['applicationtype'] = 'Application type';
 $string['authfail_nosessionexists'] = 'Authorisation failed: the mnet session does not exist.';
 $string['authfail_sessiontimedout'] = 'Authorisation failed: the mnet session has timed out.';
@@ -54,6 +55,7 @@ $string['deleteoutoftime'] = 'Your 60-second window for deleting this key has ex
 $string['deleteuserrecord'] = 'SSO ACL: delete record for user \'{$a->user}\' from {$a->host}.';
 $string['deletewrongkeyvalue'] = 'An error has occurred. If you were not trying to delete your server\'s SSL key, it is possible you have been the subject of a malicious attack. No action has been taken.';
 $string['deny'] = 'Deny';
+$string['denyaccess'] = 'Deny access';
 $string['description'] = 'Description';
 $string['duplicate_usernames'] = 'We failed to create an index on the columns "mnethostid" and "username" in your user table.<br />This can occur when you have <a href="{$a}" target="_blank">duplicate usernames in your user table</a>.<br />Your upgrade should still complete successfully. Click on the link above, and instructions on fixing this problem will appear in a new window. You can attend to that at the end of the upgrade.<br />';
 $string['enabled_for_all'] = '(This service has been enabled for all hosts).';

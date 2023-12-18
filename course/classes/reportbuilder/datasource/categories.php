@@ -60,13 +60,13 @@ class categories extends datasource {
         $this->add_entity($courseentity
             ->add_join("LEFT JOIN {course} {$coursealias} ON {$coursealias}.category = {$categoryalias}.id"));
 
-        // Join cohort entity (amend alias to avoid clash with course entity, indicate context table join alias).
+        // Join cohort entity (indicate context table join alias).
         $cohortentity = (new cohort())
-            ->set_table_alias('cohort', 'ch')
             ->set_table_join_alias('context', $contextalias);
+        $cohort = $cohortentity->get_table_alias('cohort');
         $this->add_entity($cohortentity
             ->add_join($categoryentity->get_context_join())
-            ->add_join("LEFT JOIN {cohort} ch ON ch.contextid = {$contextalias}.id"));
+            ->add_join("LEFT JOIN {cohort} {$cohort} ON {$cohort}.contextid = {$contextalias}.id"));
 
         // Join role entity.
         $roleentity = (new role())

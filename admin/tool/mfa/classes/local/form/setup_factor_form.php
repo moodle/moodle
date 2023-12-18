@@ -71,7 +71,7 @@ class setup_factor_form extends \moodleform {
         $factor = \tool_mfa\plugininfo\factor::get_factor($factorname);
         $mform = $factor->setup_factor_form_definition_after_data($mform);
         $this->xss_whitelist_static_form_elements($mform);
-        $this->add_action_buttons();
+        $this->add_action_buttons(true, $factor->setup_factor_form_submit_button_string());
     }
 
     /**

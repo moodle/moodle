@@ -563,8 +563,7 @@ abstract class base {
     /**
      * Set if the current format instance will show multiple sections or an individual one.
      *
-     * Some formats has the hability to swith from one section to multiple sections per page,
-     * this method replaces the old print_multiple_section_page and print_single_section_page.
+     * Some formats has the hability to swith from one section to multiple sections per page.
      *
      * @param int $singlesection zero for all sections or a section number
      */

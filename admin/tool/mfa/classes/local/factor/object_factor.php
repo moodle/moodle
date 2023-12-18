@@ -65,7 +65,7 @@ interface object_factor {
      * Defines setup_factor form definition page for particular factor.
      *
      * @param \MoodleQuickForm $mform
-     * @return object $mform
+     * @return \MoodleQuickForm $mform
      * @throws \coding_exception
      */
     public function setup_factor_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm;
@@ -74,7 +74,7 @@ interface object_factor {
      * Defines setup_factor form definition page after form data has been set.
      *
      * @param \MoodleQuickForm $mform
-     * @return object $mform
+     * @return \MoodleQuickForm $mform
      * @throws \coding_exception
      */
     public function setup_factor_form_definition_after_data(\MoodleQuickForm $mform): \MoodleQuickForm;
@@ -92,7 +92,7 @@ interface object_factor {
      * Defines login form definition page for particular factor.
      *
      * @param \MoodleQuickForm $mform
-     * @return object $mform
+     * @return \MoodleQuickForm $mform
      * @throws \coding_exception
      */
     public function login_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm;
@@ -101,7 +101,7 @@ interface object_factor {
      * Defines login form definition page after form data has been set.
      *
      * @param \MoodleQuickForm $mform
-     * @return object $mform
+     * @return \MoodleQuickForm $mform
      * @throws \coding_exception
      */
     public function login_form_definition_after_data(\MoodleQuickForm $mform): \MoodleQuickForm;
@@ -114,6 +114,21 @@ interface object_factor {
      * @return array
      */
     public function login_form_validation(array $data): array;
+
+    /**
+     * Setups in given factor when the form is cancelled
+     *
+     * @param int $factorid
+     * @return void
+     */
+    public function setup_factor_form_is_cancelled(int $factorid): void;
+
+    /**
+     * Setup submit button string in given factor
+     *
+     * @return string|null
+     */
+    public function setup_factor_form_submit_button_string(): ?string;
 
     /**
      * Setups given factor and adds it to user's active factors list.

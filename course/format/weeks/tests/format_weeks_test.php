@@ -276,6 +276,6 @@ class format_weeks_test extends \advanced_testcase {
 
         $course = $generator->create_course(['format' => 'weeks']);
         $format = course_get_format($course);
-        $this->assertNotEmpty($format->get_required_jsfiles());
+        $this->assertEmpty($format->get_required_jsfiles());
     }
 }

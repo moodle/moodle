@@ -110,6 +110,7 @@ class users_test extends core_reportbuilder_testcase {
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:confirmed']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:moodlenetprofile']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:timecreated']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:lastip']);
 
         // Tags.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
@@ -151,8 +152,9 @@ class users_test extends core_reportbuilder_testcase {
         $this->assertEquals('Yes', $userrow[21]);
         $this->assertEquals($user->moodlenetprofile, $userrow[22]);
         $this->assertNotEmpty($userrow[23]);
-        $this->assertEquals('Horses', $userrow[24]);
-        $this->assertStringContainsString('Horses', $userrow[25]);
+        $this->assertEquals('0.0.0.0', $userrow[24]);
+        $this->assertEquals('Horses', $userrow[25]);
+        $this->assertStringContainsString('Horses', $userrow[26]);
     }
 
     /**
@@ -357,6 +359,14 @@ class users_test extends core_reportbuilder_testcase {
                 'user:lastaccess_from' => 1619823600,
                 'user:lastaccess_to' => 1622502000,
             ], false],
+            'Filter lastip' => ['user:lastip', [
+                'user:lastip_operator' => text::IS_EQUAL_TO,
+                'user:lastip_value' => '0.0.0.0',
+            ], true],
+            'Filter lastip (no match)' => ['user:lastip', [
+                'user:lastip_operator' => text::IS_EQUAL_TO,
+                'user:lastip_value' => '1.2.3.4',
+            ], false],
 
             // Tags.
             'Filter tag name' => ['tag:name', [
@@ -401,6 +411,7 @@ class users_test extends core_reportbuilder_testcase {
             'description' => 'Hello there',
             'moodlenetprofile' => '@zoe1@example.com',
             'interests' => ['Horses'],
+            'lastip' => '0.0.0.0',
         ]);
 
         /** @var core_reportbuilder_generator $generator */

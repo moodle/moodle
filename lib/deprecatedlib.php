@@ -846,9 +846,6 @@ function print_section_add_menus() {
 
 /**
  * @deprecated since 2.5. Please use:
- * $courserenderer = $PAGE->get_renderer('core', 'course');
- * $actions = course_get_cm_edit_actions($mod, $indent, $section);
- * return ' ' . $courserenderer->course_section_cm_edit_actions($actions);
  */
 function make_editing_buttons() {
     throw new coding_exception('Function make_editing_buttons() is removed, please see PHPdocs in '.

@@ -46,12 +46,14 @@ class task_log extends base {
     protected const FAILED = 1;
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
-        return ['task_log' => 'tl'];
+    protected function get_default_tables(): array {
+        return [
+            'task_log',
+        ];
     }
 
     /**

@@ -341,7 +341,7 @@ class factor extends object_factor_base {
      * TOTP Factor implementation.
      *
      * @param stdClass $data
-     * @return stdClass the factor record, or null.
+     * @return stdClass|null the factor record, or null.
      */
     public function setup_user_factor(stdClass $data): stdClass|null {
         global $DB, $USER;

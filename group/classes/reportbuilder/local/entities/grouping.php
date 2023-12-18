@@ -37,14 +37,14 @@ use core_reportbuilder\local\report\{column, filter};
 class grouping extends base {
 
     /**
-     * Database tables that this entity uses and their default aliases
+     * Database tables that this entity uses
      *
-     * @return array
+     * @return string[]
      */
-    protected function get_default_table_aliases(): array {
+    protected function get_default_tables(): array {
         return [
-            'context' => 'ggctx',
-            'groupings' => 'gg',
+            'context',
+            'groupings',
         ];
     }
 

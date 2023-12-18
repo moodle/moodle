@@ -118,3 +118,4 @@ copycourseheading,core_backup
 backupcourse,core_backup
 linkcoursesections,core_admin
 linkcoursesections_help,core_admin
+showallusers,core
