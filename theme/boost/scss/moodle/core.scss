@@ -869,21 +869,12 @@ tr.flagged-tag a {
     padding-left: 17px;
 }
 
-.tag_feed.media-list .media .itemimage {
-    float: left;
+.tag_feed img {
+    max-height: 35px;
+    max-width: 35px;
 }
 
-.tag_feed.media-list .media .itemimage img {
-    height: 35px;
-    width: 35px;
-}
-
-.tag_feed.media-list .media .media-body {
-    padding-right: 10px;
-    padding-left: 10px;
-}
-
-.tag_feed .media .muted a {
+.tag_feed .muted a {
     color: $text-muted;
 }
 
