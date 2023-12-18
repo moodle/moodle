@@ -964,5 +964,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024010400.01);
     }
 
+    if ($oldversion < 2024012300.00) {
+
+        // Define field valuetrust to be added to customfield_data.
+        $table = new xmldb_table('customfield_data');
+        $field = new xmldb_field('valuetrust', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0', 'valueformat');
+
+        // Conditionally launch add field valuetrust.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024012300.00);
+    }
+
     return true;
 }

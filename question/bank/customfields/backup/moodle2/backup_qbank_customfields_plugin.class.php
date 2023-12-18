@@ -41,12 +41,13 @@ class backup_qbank_customfields_plugin extends \backup_qbank_plugin {
         $plugin->add_child($pluginwrapper);
 
         $customfields = new backup_nested_element('customfields');
-        $customfield = new backup_nested_element('customfield', ['id'], ['shortname', 'type', 'value', 'valueformat']);
+        $customfield = new backup_nested_element('customfield', ['id'],
+            ['shortname', 'type', 'value', 'valueformat', 'valuetrust']);
 
         $pluginwrapper->add_child($customfields);
         $customfields->add_child($customfield);
 
-        $customfield->set_source_sql("SELECT cfd.id, cff.shortname, cff.type,  cfd.value, cfd.valueformat
+        $customfield->set_source_sql("SELECT cfd.id, cff.shortname, cff.type,  cfd.value, cfd.valueformat, cfd.valuetrust
                                         FROM {customfield_data} cfd
                                         JOIN {customfield_field} cff ON cff.id = cfd.fieldid
                                         JOIN {customfield_category} cfc ON cfc.id = cff.categoryid

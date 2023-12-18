@@ -512,7 +512,9 @@ abstract class handler {
                     'shortname' => $d->get_field()->get('shortname'),
                     'type' => $d->get_field()->get('type'),
                     'value' => $d->get_value(),
-                    'valueformat' => $d->get('valueformat')];
+                    'valueformat' => $d->get('valueformat'),
+                    'valuetrust' => $d->get('valuetrust'),
+                ];
             }
         }
         return $finalfields;

@@ -318,6 +318,7 @@ class question_handler extends \core_customfield\handler {
                     $d->set($d->datafield(), $data['value']);
                     $d->set('value', $data['value']);
                     $d->set('valueformat', $data['valueformat']);
+                    $d->set('valuetrust', !empty($data['valuetrust']));
                     $d->set('contextid', $data['fieldcontextid']);
                     $d->save();
                 }
