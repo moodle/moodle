@@ -847,4 +847,62 @@ class external_test extends \externallib_advanced_testcase {
         ];
         add_entry::execute('Subject', 'Summary', FORMAT_HTML, $options);
     }
+
+    /**
+     * Test delete_entry
+     */
+    public function test_delete_entry() {
+        $this->resetAfterTest(true);
+
+        // I can delete my own entry.
+        $this->setUser($this->userid);
+
+        $result = delete_entry::execute($this->postid);
+        $result = external_api::clean_returnvalue(delete_entry::execute_returns(), $result);
+        $this->assertTrue($result['status']);
+    }
+
+    /**
+     * Test delete_entry from another user (no permissions)
+     */
+    public function test_delete_entry_no_permissions() {
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $this->courseid);
+
+        // I can delete my own entry.
+        $this->setUser($user);
+
+        $this->expectException('\moodle_exception');
+        delete_entry::execute($this->postid);
+    }
+
+    /**
+     * Test delete_entry when blogs not enabled.
+     */
+    public function test_delete_entry_blog_not_enabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->enableblogs = 0;
+        $this->setAdminUser();
+
+        $this->expectException('\moodle_exception');
+        $this->expectExceptionMessage(get_string('blogdisable', 'blog'));
+        delete_entry::execute(1);
+    }
+
+    /**
+     * Test delete_entry invalid entry id.
+     */
+    public function test_delete_entry_invalid_entry() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $this->expectException('\moodle_exception');
+        delete_entry::execute(1);
+    }
 }

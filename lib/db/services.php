@@ -163,6 +163,12 @@ $functions = array(
         'type' => 'write',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_blog_delete_entry' => [
+        'classname' => '\core_blog\external\delete_entry',
+        'description' => 'Deletes a blog post entry.',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_calendar_get_calendar_monthly_view' => array(
         'classname' => 'core_calendar_external',
         'methodname' => 'get_calendar_monthly_view',
