@@ -28,17 +28,15 @@ Feature: Section 0 default/custom title
   Scenario: Editing section 0 title
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I edit the section "0" and I fill the form with:
-      | Custom                          | 1                |
-      | New value for Section name      | Edited section 0 |
-    And I should see "Edited section 0" in the "li#section-0" "css_element"
+    And I set the field "Edit section name" in the "li#section-0" "css_element" to "Edited section 0"
+    And I should see "Edited section 0" in the "page" "region"
     When I set the field "Edit section name" in the "li#section-0" "css_element" to ""
     Then I should not see "Edited section 0" in the "li#section-0" "css_element"
     And I should see "General" in the "li#section-0" "css_element"
     And "New name for section" "field" should not exist
     And I set the field "Edit section name" in the "li#section-0" "css_element" to "Edited section 0"
-    And I should see "Edited section 0" in the "li#section-0" "css_element"
+    And I should see "Edited section 0" in the "page" "region"
     And I edit the section "0" and I fill the form with:
       | Custom | 0                      |
-    And I should not see "Edited section 0" in the "li#section-0" "css_element"
-    And I should see "General" in the "li#section-0" "css_element"
+    And I should not see "Edited section 0" in the "page" "region"
+    And I should see "General" in the "page" "region"

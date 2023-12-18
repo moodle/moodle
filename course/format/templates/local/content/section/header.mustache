@@ -36,9 +36,11 @@
 {{/ core_courseformat/local/content/section/bulkselect }}
 {{/sectionbulk}}
 {{#headerdisplaymultipage}}
-    <h3 id="sectionid-{{id}}-title" class="h4 sectionname">
-        {{{title}}}
-    </h3>
+    {{^displayonesection}}
+        <h3 id="sectionid-{{id}}-title" class="h4 sectionname">
+            {{{title}}}
+        </h3>
+    {{/displayonesection}}
 {{/headerdisplaymultipage}}
 {{^headerdisplaymultipage}}
     {{#sitehome}}
@@ -47,11 +49,6 @@
         </h2>
     {{/sitehome}}
     {{^sitehome}}
-        {{#displayonesection}}
-            <h3 id="sectionid-{{id}}-title" class="h4 sectionname mb-0">
-                {{{title}}}
-            </h3>
-        {{/displayonesection}}
         {{^displayonesection}}
             <div class="d-flex align-items-start position-relative">
                 <a role="button"

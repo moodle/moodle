@@ -46,6 +46,7 @@ $course = get_course($section->course);
 // Fix course format if it is no longer installed.
 $format = course_get_format($course);
 $course->format = $format->get_format();
+$format->set_sectionid($section->id);
 
 // When the course format doesn't support sections, redirect to course page.
 if (!course_format_uses_sections($course->format)) {
@@ -62,18 +63,18 @@ require_login($course);
 
 // Must set layout before getting section info. See MDL-47555.
 $PAGE->set_pagelayout('course');
-$PAGE->add_body_class('limitedwidth');
+$PAGE->add_body_classes(['limitedwidth', 'single-section-page']);
 
 // Get section details and check it exists.
 $modinfo = get_fast_modinfo($course);
-$coursesections = $modinfo->get_section_info($section->section, MUST_EXIST);
+$sectioninfo = $modinfo->get_section_info($section->section, MUST_EXIST);
 
 // Check user is allowed to see it.
-if (!$coursesections->uservisible) {
+if (!$sectioninfo->uservisible) {
     // Check if coursesection has conditions affecting availability and if
     // so, output availability info.
-    if ($coursesections->visible && $coursesections->availableinfo) {
-        $sectionname = get_section_name($course, $coursesections);
+    if ($sectioninfo->visible && $sectioninfo->availableinfo) {
+        $sectionname = get_section_name($course, $sectioninfo);
         $message = get_string('notavailablecourse', '', $sectionname);
         redirect(course_get_url($course), $message, null, \core\output\notification::NOTIFY_ERROR);
     } else {
@@ -84,7 +85,7 @@ if (!$coursesections->uservisible) {
     }
 }
 
-$PAGE->set_pagetype('course-view-' . $course->format);
+$PAGE->set_pagetype('section-view-' . $course->format);
 $PAGE->set_other_editing_capability('moodle/course:update');
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
@@ -141,7 +142,20 @@ if (!empty($bulkbutton)) {
     $PAGE->add_header_action($bulkbutton);
 }
 
-$PAGE->set_heading($course->fullname);
+// Add to the header the control menu for the section.
+if ($format->show_editor()) {
+    $sectionclass = new \core_courseformat\output\local\content\section($format, $sectioninfo);
+    $renderable = $sectionclass->export_for_template($renderer);
+    $controlmenuhtml = $renderable->controlmenu->menu;
+    $PAGE->add_header_action($controlmenuhtml);
+    $sectionheading = $OUTPUT->render($format->inplace_editable_render_section_name($sectioninfo, false));
+    $PAGE->set_heading($sectionheading, false, false);
+} else {
+    $PAGE->set_heading($sectiontitle);
+}
+
+$PAGE->set_secondary_navigation(false);
+
 echo $OUTPUT->header();
 
 // Show communication room status notification.
@@ -168,7 +182,6 @@ echo $renderer->container_start('course-content');
 // Include course AJAX.
 include_course_ajax($course, $modinfo->get_used_module_names());
 
-$format->set_sectionid($section->id);
 $outputclass = $format->get_output_classname('content');
 $widget = new $outputclass($format);
 echo $renderer->render($widget);

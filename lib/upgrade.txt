@@ -53,6 +53,8 @@ information provided here is intended especially for developers.
   It was originally deprecated in Moodle 2.0.
 * The smiley option for format_text has been removed. It was deprecated in Moodle 2.0.
 * The nocache option for format_text has been removed. It was deprecated in Moodle 2.3.
+* The set_heading() method has a new parameter, $clean, to define whether the heading should be cleaned or not when no formatting
+  is applied.
 
 === 4.3 ===
 

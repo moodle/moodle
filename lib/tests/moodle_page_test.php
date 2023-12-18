@@ -321,8 +321,12 @@ class moodle_page_test extends \advanced_testcase {
         $this->assertSame('a heading edit', $this->testpage->heading);
 
         // Without formatting the tags are preserved but cleaned.
-        $this->testpage->set_heading('a heading <a href="#">edit</a><p>', false);
-        $this->assertSame('a heading <a href="#">edit</a><p></p>', $this->testpage->heading);
+        $this->testpage->set_heading('<div data-param1="value1">a heading <a href="#">edit</a><p></div>', false);
+        $this->assertSame('<div>a heading <a href="#">edit</a><p></p></div>', $this->testpage->heading);
+
+        // Without formatting nor clean.
+        $this->testpage->set_heading('<div data-param1="value1">a heading <a href="#">edit</a><p></div>', false, false);
+        $this->assertSame('<div data-param1="value1">a heading <a href="#">edit</a><p></div>', $this->testpage->heading);
     }
 
     /**

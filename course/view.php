@@ -202,11 +202,28 @@ if ($PAGE->user_allowed_editing()) {
     if (has_capability('moodle/course:sectionvisibility', $context)) {
         if ($hide && confirm_sesskey()) {
             set_section_visible($course->id, $hide, '0');
-            redirect($PAGE->url);
+            if ($sectionid) {
+                redirect(course_get_url($course, $section, ['navigation' => true]));
+            } else {
+                redirect($PAGE->url);
+            }
         }
 
         if ($show && confirm_sesskey()) {
             set_section_visible($course->id, $show, '1');
+            if ($sectionid) {
+                redirect(course_get_url($course, $section, ['navigation' => true]));
+            } else {
+                redirect($PAGE->url);
+            }
+        }
+    }
+
+    if ($marker >= 0 && confirm_sesskey()) {
+        course_set_marker($course->id, $marker);
+        if ($sectionid) {
+            redirect(course_get_url($course, $section, ['navigation' => true]));
+        } else {
             redirect($PAGE->url);
         }
     }

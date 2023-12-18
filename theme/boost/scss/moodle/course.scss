@@ -343,10 +343,6 @@
     margin-top: 5px;
 }
 
-.course-content .single-section {
-    margin-top: 1em;
-}
-
 .course-content .single-section .section-navigation {
     display: block;
     padding: 0.5em;
@@ -428,6 +424,11 @@
             width: auto;
         }
     }
+}
+
+.course-content .single-section ul.topics li.section,
+.course-content .single-section ul.weeks li.section {
+    padding-top: 0;
 }
 
 @include media-breakpoint-down(sm) {
@@ -568,6 +569,10 @@
 li.section.hidden span.commands a.editing_hide,
 li.section.hidden span.commands a.editing_show {
     cursor: default;
+}
+
+.single-section-page .header-action {
+    display: inline-block;
 }
 
 input.titleeditor {
