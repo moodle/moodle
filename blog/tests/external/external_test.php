@@ -968,4 +968,236 @@ class external_test extends \externallib_advanced_testcase {
         $this->expectExceptionMessage(get_string('cannoteditentryorblog', 'blog'));
         prepare_entry_for_edition::execute($this->postid);
     }
+
+    /**
+     * Test update_entry
+     */
+    public function test_update_entry() {
+        global $USER;
+
+        $this->resetAfterTest(true);
+
+        // Add post with attachments.
+        $this->setAdminUser();
+
+        // Draft files.
+        $draftidinlineattach = file_get_unused_draft_itemid();
+        $draftidattach = file_get_unused_draft_itemid();
+        $usercontext = \context_user::instance($USER->id);
+        $inlinefilename = 'inlineimage.png';
+        $filerecordinline = [
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $draftidinlineattach,
+            'filepath'  => '/',
+            'filename'  => $inlinefilename,
+        ];
+        $fs = get_file_storage();
+
+        // Create a file in a draft area for regular attachments.
+        $filerecordattach = $filerecordinline;
+        $attachfilename = 'attachment.txt';
+        $filerecordattach['filename'] = $attachfilename;
+        $filerecordattach['itemid'] = $draftidattach;
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
+        $options = [
+            [
+                'name' => 'inlineattachmentsid',
+                'value' => $draftidinlineattach,
+            ],
+            [
+                'name' => 'attachmentsid',
+                'value' => $draftidattach,
+            ],
+            [
+                'name' => 'tags',
+                'value' => 'tag1, tag2',
+            ],
+            [
+                'name' => 'courseassoc',
+                'value' => $this->courseid,
+            ],
+        ];
+
+        $subject = 'First post';
+        $summary = 'First post summary';
+        $result = add_entry::execute($subject, $summary, FORMAT_HTML, $options);
+        $result = external_api::clean_returnvalue(add_entry::execute_returns(), $result);
+        $entryid = $result['entryid'];
+
+        // Retrieve file areas.
+        $result = prepare_entry_for_edition::execute($entryid);
+        $result = external_api::clean_returnvalue(prepare_entry_for_edition::execute_returns(), $result);
+
+        // Update files.
+        $inlinefilename = 'inlineimage2.png';
+        $filerecordinline = [
+            'contextid' => $usercontext->id,
+            'component' => 'user',
+            'filearea'  => 'draft',
+            'itemid'    => $result['inlineattachmentsid'],
+            'filepath'  => '/',
+            'filename'  => $inlinefilename,
+        ];
+        $fs = get_file_storage();
+
+        // Create a file in a draft area for regular attachments.
+        $filerecordattach = $filerecordinline;
+        $newattachfilename = 'attachment2.txt';
+        $filerecordattach['filename'] = $newattachfilename;
+        $filerecordattach['itemid'] = $result['attachmentsid'];
+        $fs->create_file_from_string($filerecordinline, 'image contents (not really)');
+        $fs->create_file_from_string($filerecordattach, 'simple text attachment');
+
+        // Remove one previous attachment file.
+        $filetoremove = (object) ['filename' => 'attachment.txt', 'filepath' => '/'];
+        repository_delete_selected_files($usercontext, 'user', 'draft', $result['attachmentsid'], [$filetoremove]);
+
+        // Update.
+        $options = [
+            ['name' => 'inlineattachmentsid', 'value' => $result['inlineattachmentsid']],
+            ['name' => 'attachmentsid', 'value' => $result['attachmentsid']],
+            ['name' => 'tags', 'value' => 'tag3'],
+            ['name' => 'courseassoc', 'value' => $this->courseid],
+            ['name' => 'modassoc', 'value' => $this->cmid],
+        ];
+
+        $subject = 'First post updated';
+        $summary = 'First post summary updated';
+        $result = update_entry::execute($entryid, $subject, $summary, FORMAT_HTML, $options);
+        $result = external_api::clean_returnvalue(update_entry::execute_returns(), $result);
+
+        // Retrieve files via WS.
+        $result = \core_blog\external::get_entries();
+        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+
+        foreach ($result['entries'] as $entry) {
+            if ($entry['id'] == $entryid) {
+                $this->assertEquals($subject, $entry['subject']);
+                $this->assertEquals($summary, $entry['summary']);
+                $this->assertEquals($this->courseid, $entry['courseid']);
+                $this->assertEquals($this->cmid, $entry['coursemoduleid']);
+                $this->assertCount(1, $entry['attachmentfiles']);
+                $this->assertCount(2, $entry['summaryfiles']);
+                $this->assertCount(1, $entry['tags']);
+                $this->assertEquals($newattachfilename, $entry['attachmentfiles'][0]['filename']);
+            }
+        }
+    }
+
+    /**
+     * Test update_entry when blogs not enabled.
+     */
+    public function test_update_entry_blog_not_enabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->enableblogs = 0;
+        $this->setAdminUser();
+
+        $this->expectException('\moodle_exception');
+        $this->expectExceptionMessage(get_string('blogdisable', 'blog'));
+        update_entry::execute($this->postid, 'Subject', 'Summary', FORMAT_HTML);
+    }
+
+    /**
+     * Test update_entry without permissions.
+     */
+    public function test_update_entry_no_permission() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+
+        // Remove capability.
+        $sitecontext = \context_system::instance();
+        $this->unassignUserCapability('moodle/blog:create', $sitecontext->id, $CFG->defaultuserroleid);
+        $user = $this->getDataGenerator()->create_user();
+        $this->setuser($user);
+
+        $this->expectException('\moodle_exception');
+        $this->expectExceptionMessage(get_string('cannoteditentryorblog', 'blog'));
+        update_entry::execute($this->postid, 'Subject', 'Summary', FORMAT_HTML);
+    }
+
+    /**
+     * Test update_entry invalid parameter.
+     */
+    public function test_update_entry_invalid_parameter() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $this->expectException('\moodle_exception');
+        $this->expectExceptionMessage(get_string('errorinvalidparam', 'webservice', 'invalid'));
+        $options = [['name' => 'invalid', 'value' => 'invalidvalue']];
+        update_entry::execute($this->postid, 'Subject', 'Summary', FORMAT_HTML, $options);
+    }
+
+    /**
+     * Test update_entry diabled associations.
+     */
+    public function test_update_entry_disabled_assoc() {
+        global $CFG;
+        $CFG->useblogassociations = 0;
+
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $this->expectException('\moodle_exception');
+        $this->expectExceptionMessage(get_string('errorinvalidparam', 'webservice', 'modassoc'));
+        $options = [['name' => 'modassoc', 'value' => 1]];
+        update_entry::execute($this->postid, 'Subject', 'Summary', FORMAT_HTML, $options);
+    }
+
+    /**
+     * Test update_entry invalid publish state.
+     */
+    public function test_update_entry_invalid_publishstate() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $this->expectException('\moodle_exception');
+        $this->expectExceptionMessage(get_string('errorinvalidparam', 'webservice', 'publishstate'));
+        $options = [['name' => 'publishstate', 'value' => 'something']];
+        update_entry::execute($this->postid, 'Subject', 'Summary', FORMAT_HTML, $options);
+    }
+
+    /**
+     * Test update_entry invalid association.
+     */
+    public function test_update_entry_invalid_association() {
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course();
+        $anothercourse = $this->getDataGenerator()->create_course();
+        $page = $this->getDataGenerator()->create_module('page', ['course' => $course->id]);
+
+        $this->setAdminUser();
+
+        $this->expectException('\moodle_exception');
+        $this->expectExceptionMessage(get_string('errorinvalidparam', 'webservice', 'modassoc'));
+        $options = [
+            ['name' => 'courseassoc', 'value' => $anothercourse->id],
+            ['name' => 'modassoc', 'value' => $page->cmid],
+        ];
+        update_entry::execute($this->postid, 'Subject', 'Summary', FORMAT_HTML, $options);
+    }
+
+    /**
+     * Test update_entry from another user (no permissions)
+     */
+    public function test_update_entry_no_permissions() {
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $this->courseid);
+
+        // I can delete my own entry.
+        $this->setUser($user);
+
+        $this->expectException('\moodle_exception');
+        update_entry::execute($this->postid, 'Subject', 'Summary', FORMAT_HTML);
+    }
 }
