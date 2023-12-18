@@ -181,7 +181,6 @@ class ADODB_oracle extends ADOConnection {
 		}
 
 
-		// returns query ID if successful, otherwise false
 		function _query($sql,$inputarr=false)
 		{
             // <G. Giunta 2003/03/03/> Reset error messages before executing

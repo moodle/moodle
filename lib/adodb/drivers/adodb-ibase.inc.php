@@ -256,7 +256,7 @@ class ADODB_ibase extends ADOConnection {
 
 
 	// See http://community.borland.com/article/0,1410,25844,00.html
-	function RowLock($tables,$where,$col=false)
+	function rowLock($table, $where, $col = false)
 	{
 		if ($this->autoCommit) {
 			$this->BeginTrans();
@@ -332,7 +332,7 @@ class ADODB_ibase extends ADOConnection {
 
 	// returns query ID if successful, otherwise false
 	// there have been reports of problems with nested queries - the code is probably not re-entrant?
-	function _query($sql,$iarr=false)
+	function _query($sql, $inputarr = false)
 	{
 		if (!$this->autoCommit && $this->_transactionID) {
 			$conn = $this->_transactionID;
@@ -344,11 +344,11 @@ class ADODB_ibase extends ADOConnection {
 		if (is_array($sql)) {
 			$fn = 'ibase_execute';
 			$sql = $sql[1];
-			if (is_array($iarr)) {
-				if (!isset($iarr[0])) {
-					$iarr[0] = '';  // PHP5 compat hack
+			if (is_array($inputarr)) {
+				if (!isset($inputarr[0])) {
+					$inputarr[0] = '';  // PHP5 compat hack
 				}
-				$fnarr = array_merge(array($sql), $iarr);
+				$fnarr = array_merge(array($sql), $inputarr);
 				$ret = call_user_func_array($fn, $fnarr);
 			} else {
 				$ret = $fn($sql);
@@ -356,11 +356,11 @@ class ADODB_ibase extends ADOConnection {
 		} else {
 			$fn = 'ibase_query';
 
-			if (is_array($iarr)) {
-				if (sizeof($iarr) == 0) {
-					$iarr[0] = ''; // PHP5 compat hack
+			if (is_array($inputarr)) {
+				if (sizeof($inputarr) == 0) {
+					$inputarr[0] = ''; // PHP5 compat hack
 				}
-				$fnarr = array_merge(array($conn, $sql), $iarr);
+				$fnarr = array_merge(array($conn, $sql), $inputarr);
 				$ret = call_user_func_array($fn, $fnarr);
 			} else {
 				$ret = $fn($conn, $sql);
@@ -734,7 +734,7 @@ class ADODB_ibase extends ADOConnection {
 	Class Name: Recordset
 --------------------------------------------------------------------------------------*/
 
-class ADORecordset_ibase extends ADORecordSet
+class ADORecordSet_ibase extends ADORecordSet
 {
 
 	var $databaseType = "ibase";

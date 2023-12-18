@@ -167,6 +167,14 @@ class ADODB_mysqli extends ADOConnection {
 		if(!extension_loaded("mysqli")) {
 			return null;
 		}
+		// Check for a function that only exists in mysqlnd
+		if (!function_exists('mysqli_stmt_get_result')) {
+			// @TODO This will be treated as if the mysqli extension were not available
+			// This could be misleading, so we output an additional error message.
+			// We should probably throw a specific exception instead.
+			$this->outp("MySQL Native Driver (msqlnd) required");
+			return null;
+		}
 		$this->_connectionID = @mysqli_init();
 
 		if (is_null($this->_connectionID)) {
@@ -1091,16 +1099,6 @@ class ADODB_mysqli extends ADOConnection {
 		return array($sql,$stmt);
 	}
 
-	/**
-	 * Execute SQL
-	 *
-	 * @param string     $sql      SQL statement to execute, or possibly an array
-	 *                             holding prepared statement ($sql[0] will hold sql text)
-	 * @param array|bool $inputarr holds the input data to bind to.
-	 *                             Null elements will be set to null.
-	 *
-	 * @return ADORecordSet|bool
-	 */
 	public function execute($sql, $inputarr = false)
 	{
 		if ($this->fnExecute) {
@@ -1146,8 +1144,10 @@ class ADODB_mysqli extends ADOConnection {
 					}
 					$bulkTypeArray[] = $typeArray;
 				}
+				$currentBulkBind = $this->bulkBind;
 				$this->bulkBind = false;
 				$ret = $this->_execute($sql, $bulkTypeArray);
+				$this->bulkBind = $currentBulkBind;
 			} else {
 				$typeArray = $this->getBindParamWithType($inputarr);
 				$ret = $this->_execute($sql, $typeArray);
@@ -1189,14 +1189,14 @@ class ADODB_mysqli extends ADOConnection {
 	}
 
 	/**
-	* Return the query id.
-	*
-	* @param string|array $sql
-	* @param array $inputarr
-	*
-	* @return bool|mysqli_result
+	 * Execute a query.
+	 *
+	 * @param string|array $sql        Query to execute.
+	 * @param array        $inputarr   An optional array of parameters.
+	 *
+	 * @return mysqli_result|bool
 	*/
-	function _query($sql, $inputarr)
+	function _query($sql, $inputarr = false)
 	{
 		global $ADODB_COUNTRECS;
 		// Move to the next recordset, or return false if there is none. In a stored proc
@@ -1466,6 +1466,9 @@ class ADODB_mysqli extends ADOConnection {
 		return $this->charSet ?: false;
 	}
 
+	/**
+	 * @deprecated 5.21.0 Use {@see setConnectionParameter()} instead
+	 */
 	function setCharSet($charset)
 	{
 		if (!$this->_connectionID || !method_exists($this->_connectionID,'set_charset')) {

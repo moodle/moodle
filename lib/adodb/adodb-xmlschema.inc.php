@@ -412,7 +412,7 @@ class dbTable extends dbObject {
 	 * @param string $type	ADODB datadict field type.
 	 * @param string $size	Field size
 	 * @param array $opts	Field options array
-	 * @return array Field specifier array
+	 * @return void
 	 */
 	function addField( $name, $type, $size = NULL, $opts = NULL ) {
 		$field_id = $this->FieldID( $name );
@@ -446,7 +446,7 @@ class dbTable extends dbObject {
 	 * @param string $field	Field name
 	 * @param string $opt ADOdb field option
 	 * @param mixed $value Field option value
-	 * @return array Field specifier array
+	 * @return void
 	 */
 	function addFieldOpt( $field, $opt, $value = NULL ) {
 		if( !isset( $value ) ) {

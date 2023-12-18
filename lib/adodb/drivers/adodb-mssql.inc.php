@@ -725,7 +725,6 @@ order by constraint_name, referenced_table_name, keyno";
 		return $this->Execute($sql) != false;
 	}
 
-	// returns query ID if successful, otherwise false
 	function _query($sql,$inputarr=false)
 	{
 		$this->_errorMsg = false;

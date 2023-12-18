@@ -334,7 +334,6 @@ class ADODB_informix72 extends ADOConnection {
 		else return array($sql,$stmt);
 	}
 */
-	// returns query ID if successful, otherwise false
 	function _query($sql,$inputarr=false)
 	{
 	global $ADODB_COUNTRECS;

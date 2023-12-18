@@ -508,32 +508,38 @@ function _adodb_getcount($zthis, $sql,$inputarr=false,$secs2cache=0)
 	return $qryRecs;
 }
 
-/*
- 	Code originally from "Cornel G" <conyg@fx.ro>
-
-	This code might not work with SQL that has UNION in it
-
-	Also if you are using CachePageExecute(), there is a strong possibility that
-	data will get out of synch. use CachePageExecute() only with tables that
-	rarely change.
-*/
-function _adodb_pageexecute_all_rows($zthis, $sql, $nrows, $page,
-						$inputarr=false, $secs2cache=0)
+/**
+ * Execute query with pagination including record count.
+ *
+ * This code might not work with SQL that has UNION in it.
+ * Also if you are using cachePageExecute(), there is a strong possibility that
+ * data will get out of sync. cachePageExecute() should only be used with
+ * tables that rarely change.
+ *
+ * @param ADOConnection $zthis      Connection
+ * @param string        $sql        Query to execute
+ * @param int           $nrows      Number of rows per page
+ * @param int           $page       Page number to retrieve (1-based)
+ * @param array         $inputarr   Array of bind variables
+ * @param int           $secs2cache Time-to-live of the cache (in seconds), 0 to force query execution
+ *
+ * @return ADORecordSet|bool
+ *
+ * @author Cornel G <conyg@fx.ro>
+ */
+function _adodb_pageexecute_all_rows($zthis, $sql, $nrows, $page, $inputarr=false, $secs2cache=0)
 {
 	$atfirstpage = false;
 	$atlastpage = false;
 
-	// If an invalid nrows is supplied,
-	// we assume a default value of 10 rows per page
+	// If an invalid nrows is supplied, assume a default value of 10 rows per page
 	if (!isset($nrows) || $nrows <= 0) $nrows = 10;
 
 	$qryRecs = _adodb_getcount($zthis,$sql,$inputarr,$secs2cache);
 	$lastpageno = (int) ceil($qryRecs / $nrows);
-	$zthis->_maxRecordCount = $qryRecs;
 
-	// ***** Here we check whether $page is the last page or
-	// whether we are trying to retrieve
-	// a page number greater than the last page number.
+	// Check whether $page is the last page or if we are trying to retrieve
+	// a page number greater than the last one.
 	if ($page >= $lastpageno) {
 		$page = $lastpageno;
 		$atlastpage = true;
@@ -565,7 +571,25 @@ function _adodb_pageexecute_all_rows($zthis, $sql, $nrows, $page,
 	return $rsreturn;
 }
 
-// Iván Oliva version
+/**
+ * Execute query with pagination without last page information.
+ *
+ * This code might not work with SQL that has UNION in it.
+ * Also if you are using cachePageExecute(), there is a strong possibility that
+ * data will get out of sync. cachePageExecute() should only be used with
+ * tables that rarely change.
+ *
+ * @param ADOConnection $zthis      Connection
+ * @param string        $sql        Query to execute
+ * @param int           $nrows      Number of rows per page
+ * @param int           $page       Page number to retrieve (1-based)
+ * @param array         $inputarr   Array of bind variables
+ * @param int           $secs2cache Time-to-live of the cache (in seconds), 0 to force query execution
+ *
+ * @return ADORecordSet|bool
+ *
+ * @author Iván Oliva
+ */
 function _adodb_pageexecute_no_last_page($zthis, $sql, $nrows, $page, $inputarr=false, $secs2cache=0)
 {
 	$atfirstpage = false;
