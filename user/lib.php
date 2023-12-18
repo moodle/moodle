@@ -377,8 +377,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
         $userdetails['customfields'] = array();
         foreach ($categories as $categoryid => $fields) {
             foreach ($fields as $formfield) {
-                if ($formfield->is_visible() and !$formfield->is_empty()) {
-
+                if ($formfield->show_field_content()) {
                     $userdetails['customfields'][] = [
                         'name' => $formfield->field->name,
                         'value' => $formfield->data,
