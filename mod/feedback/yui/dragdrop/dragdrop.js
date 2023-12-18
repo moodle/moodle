@@ -3,7 +3,7 @@ YUI.add('moodle-mod_feedback-dragdrop', function(Y) {
     var CSS = {
         DRAGAREA: '#feedback_dragarea',
         DRAGITEMCLASS: 'feedback_itemlist',
-        DRAGITEM: 'div.feedback_itemlist',
+        DRAGITEM: '.row.feedback_itemlist',
         DRAGLIST: '#feedback_dragarea form',
         DRAGHANDLE: 'itemhandle'
     };
