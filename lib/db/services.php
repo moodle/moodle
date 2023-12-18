@@ -169,6 +169,12 @@ $functions = array(
         'type' => 'write',
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
     ],
+    'core_blog_prepare_entry_for_edition' => [
+        'classname' => '\core_blog\external\prepare_entry_for_edition',
+        'description' => 'Prepare a draft area for editing a blog entry..',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_calendar_get_calendar_monthly_view' => array(
         'classname' => 'core_calendar_external',
         'methodname' => 'get_calendar_monthly_view',

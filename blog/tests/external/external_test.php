@@ -905,4 +905,67 @@ class external_test extends \externallib_advanced_testcase {
         $this->expectException('\moodle_exception');
         delete_entry::execute(1);
     }
+
+    /**
+     * Test prepare_entry_for_edition.
+     */
+    public function test_prepare_entry_for_edition() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $result = prepare_entry_for_edition::execute($this->postid);
+        $result = external_api::clean_returnvalue(prepare_entry_for_edition::execute_returns(), $result);
+        $this->assertCount(2, $result['areas']);
+        $this->assertIsInt($result['inlineattachmentsid']);
+        $this->assertIsInt($result['attachmentsid']);
+        foreach ($result['areas'] as $area) {
+            if ($area['area'] == 'summary') {
+                $this->assertCount(4, $area['options']);
+            } else {
+                $this->assertEquals('attachment', $area['area']);
+                $this->assertCount(3, $area['options']);
+            }
+        }
+    }
+
+    /**
+     * Test prepare_entry_for_edition when blogs not enabled.
+     */
+    public function test_prepare_entry_for_edition_blog_not_enabled() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->enableblogs = 0;
+        $this->setAdminUser();
+
+        $this->expectException('\moodle_exception');
+        $this->expectExceptionMessage(get_string('blogdisable', 'blog'));
+        prepare_entry_for_edition::execute($this->postid);
+    }
+
+    /**
+     * Test prepare_entry_for_edition invalid entry id.
+     */
+    public function test_prepare_entry_for_edition_invalid_entry() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        $this->expectException('\moodle_exception');
+        prepare_entry_for_edition::execute($this->postid + 1000);
+    }
+
+    /**
+     * Test prepare_entry_for_edition without permissions.
+     */
+    public function test_prepare_entry_for_edition_no_permission() {
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $this->courseid);
+        $this->setuser($user);
+
+        $this->expectException('\moodle_exception');
+        $this->expectExceptionMessage(get_string('cannoteditentryorblog', 'blog'));
+        prepare_entry_for_edition::execute($this->postid);
+    }
 }
