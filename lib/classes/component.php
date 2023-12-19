@@ -1460,18 +1460,16 @@ $cache = '.var_export($cache, true).';
     }
 
     /**
-     * Returns a list of frankenstyle component names.
+     * Returns a list of frankenstyle component names, including all plugins, subplugins, and subsystems.
      *
-     * E.g.
-     *  [
-     *      'core_course',
-     *      'core_message',
-     *      'mod_assign',
-     *      ...
-     *  ]
-     * @return array the list of frankenstyle component names.
+     * Note: By default the 'core' subsystem is not included.
+     *
+     * @param bool $includecore Whether to include the 'core' subsystem
+     * @return string[] the list of frankenstyle component names.
      */
-    public static function get_component_names() : array {
+    public static function get_component_names(
+        bool $includecore = false,
+    ): array {
         $componentnames = [];
         // Get all plugins.
         foreach (self::get_plugin_types() as $plugintype => $typedir) {
@@ -1483,6 +1481,11 @@ $cache = '.var_export($cache, true).';
         foreach (self::get_core_subsystems() as $subsystemname => $subsystempath) {
             $componentnames[] = 'core_' . $subsystemname;
         }
+
+        if ($includecore) {
+            $componentnames[] = 'core';
+        }
+
         return $componentnames;
     }
 
