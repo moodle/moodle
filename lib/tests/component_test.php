@@ -915,6 +915,69 @@ final class component_test extends advanced_testcase {
     }
 
     /**
+     * Test that the classloader can load from the test namespaces.
+     */
+    public function test_classloader_tests_namespace(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $getclassfilecontent = function (string $classname, ?string $namespace): string {
+            if ($namespace) {
+                $content = "<?php\nnamespace $namespace;\nclass $classname {}";
+            } else {
+                $content = "<?php\nclass $classname {}";
+            }
+            return $content;
+        };
+
+        $vfileroot = \org\bovigo\vfs\vfsStream::setup('root', null, [
+            'lib' => [
+                'classes' => [
+                    'example.php' => $getclassfilecontent('example', 'core'),
+                ],
+                'tests' => [
+                    'classes' => [
+                        'example_classname.php' => $getclassfilecontent('example_classname', \core\tests::class),
+                    ],
+                    'behat' => [
+                        'example_classname.php' => $getclassfilecontent('example_classname', \core\behat::class),
+                    ],
+                ],
+            ],
+        ]);
+
+        // Note: This is pretty hacky, but it's the only way to test the classloader.
+        // We have to override the dirroot and libdir, and then reset the plugintypes property.
+        $CFG->dirroot = $vfileroot->url();
+        $CFG->libdir = $vfileroot->url() . '/lib';
+        (new ReflectionProperty('core_component', 'plugintypes'))->setValue(null, null);
+
+        // Existing classes do not break.
+        $this->assertTrue(
+            class_exists(\core\example::class),
+        );
+
+        // Test and behat classes work.
+        $this->assertTrue(
+            class_exists(\core\tests\example_classname::class),
+        );
+        $this->assertTrue(
+            class_exists(\core\behat\example_classname::class),
+        );
+
+        // Non-existent classes do not do anything.
+        $this->assertFalse(
+            class_exists(\core\tests\example_classname_not_found::class),
+        );
+    }
+
+    public function tearDown(): void {
+        $plugintypes = new ReflectionProperty('core_component', 'plugintypes');
+        $plugintypes->setValue(null, null);
+    }
+
+    /**
      * Test the PSR classloader.
      *
      * @dataProvider psr_classloader_provider

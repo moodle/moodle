@@ -1,0 +1,10 @@
+issueNumber: MDL-66903
+notes:
+  core:
+    - message: >
+        Added the ability for unit tests to autoload classes in the
+        `\[component]\tests\`
+
+        namespace from the `[path/to/component]/tests/classes` directory.
+      type: improved
+
