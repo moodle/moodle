@@ -1064,22 +1064,31 @@ final class component_test extends advanced_testcase {
 
     /**
      * Test the get_component_names() method.
+     *
+     * @dataProvider get_component_names_provider
+     * @param bool $includecore Whether to include core in the list.
+     * @param bool $coreexpected Whether core is expected to be in the list.
      */
-    public function test_get_component_names() {
+    public function test_get_component_names(
+        bool $includecore,
+        bool $coreexpected,
+    ): void {
         global $CFG;
-        $componentnames = \core_component::get_component_names();
+        $componentnames = \core_component::get_component_names($includecore);
 
         // We should have an entry for each plugin type.
         $plugintypes = \core_component::get_plugin_types();
         $numplugintypes = 0;
-        foreach ($plugintypes as $type => $typedir) {
-            foreach (\core_component::get_plugin_list($type) as $plugin) {
-                $numplugintypes++;
-            }
+        foreach (array_keys($plugintypes) as $type) {
+            $numplugintypes += count(\core_component::get_plugin_list($type));
         }
         // And an entry for each core subsystem.
         $numcomponents = $numplugintypes + count(\core_component::get_core_subsystems());
 
+        if ($coreexpected) {
+            // Add one for core.
+            $numcomponents++;
+        }
         $this->assertEquals($numcomponents, count($componentnames));
 
         // Check a few of the known plugin types to confirm their presence at their respective type index.
@@ -1087,6 +1096,23 @@ final class component_test extends advanced_testcase {
         $this->assertContains('mod_forum', $componentnames);
         $this->assertContains('tool_usertours', $componentnames);
         $this->assertContains('core_favourites', $componentnames);
+        if ($coreexpected) {
+            $this->assertContains('core', $componentnames);
+        } else {
+            $this->assertNotContains('core', $componentnames);
+        }
+    }
+
+    /**
+     * Data provider for get_component_names() test.
+     *
+     * @return array
+     */
+    public static function get_component_names_provider(): array {
+        return [
+            [false, false],
+            [true, true],
+        ];
     }
 
     /**
