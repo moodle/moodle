@@ -19,6 +19,7 @@ information provided here is intended especially for developers.
   that are also members of these groups.
 * The options for `format_string()`, and `format_text()` are now checked for incorrectly passed context objects.
   Please note that this was never an accepted value but previously failed silently.
+* The current page language is available in new `core/config` language property for Javascript modules
 
 === 4.3 ===
 
