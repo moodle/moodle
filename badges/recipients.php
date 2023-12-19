@@ -28,26 +28,11 @@ require_once(__DIR__ . '/../config.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 $badgeid    = required_param('id', PARAM_INT);
-$sortby     = optional_param('sort', 'dateissued', PARAM_ALPHA);
-$sorthow    = optional_param('dir', 'DESC', PARAM_ALPHA);
-$page       = optional_param('page', 0, PARAM_INT);
 
 require_login();
 
 if (empty($CFG->enablebadges)) {
     throw new \moodle_exception('badgesdisabled', 'badges');
-}
-
-if (!in_array($sortby, array('firstname', 'lastname', 'dateissued'))) {
-    $sortby = 'dateissued';
-}
-
-if ($sorthow != 'ASC' and $sorthow != 'DESC') {
-    $sorthow = 'DESC';
-}
-
-if ($page < 0) {
-    $page = 0;
 }
 
 $badge = new badge($badgeid);
@@ -73,7 +58,7 @@ if ($badge->type == BADGE_TYPE_COURSE) {
 }
 
 $PAGE->set_context($context);
-$PAGE->set_url('/badges/recipients.php', array('id' => $badgeid, 'sort' => $sortby, 'dir' => $sorthow));
+$PAGE->set_url('/badges/recipients.php', ['id' => $badgeid]);
 $PAGE->set_heading($heading);
 $PAGE->set_title($badge->name);
 $PAGE->navbar->add($badge->name);
@@ -88,28 +73,9 @@ echo $output->render_tertiary_navigation($actionbar);
 echo $OUTPUT->heading(print_badge_image($badge, $context, 'small') . ' ' . $badge->name);
 echo $output->print_badge_status_box($badge);
 
-$userfieldsapi = \core_user\fields::for_name();
-$namefields = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-$sql = "SELECT b.userid, b.dateissued, b.uniquehash, $namefields
-    FROM {badge_issued} b INNER JOIN {user} u
-        ON b.userid = u.id
-    WHERE b.badgeid = :badgeid AND u.deleted = 0
-    ORDER BY $sortby $sorthow";
-
-$totalcount = $DB->count_records('badge_issued', array('badgeid' => $badge->id));
-
-if ($badge->has_awards()) {
-    $users = $DB->get_records_sql($sql, array('badgeid' => $badge->id), $page * BADGE_PERPAGE, BADGE_PERPAGE);
-    $recipients             = new core_badges\output\badge_recipients($users);
-    $recipients->sort       = $sortby;
-    $recipients->dir        = $sorthow;
-    $recipients->page       = $page;
-    $recipients->perpage    = BADGE_PERPAGE;
-    $recipients->totalcount = $totalcount;
-
-    echo $output->render($recipients);
-} else {
-    echo $output->notification(get_string('noawards', 'badges'));
-}
+$report = \core_reportbuilder\system_report_factory::create(\core_badges\reportbuilder\local\systemreports\recipients::class,
+    $PAGE->context, '', '', 0, ['badgeid' => $badge->id]);
+$report->set_default_no_results_notice(new lang_string('noawards', 'badges'));
+echo $report->output();
 
 echo $output->footer();

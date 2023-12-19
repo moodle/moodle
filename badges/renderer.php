@@ -443,8 +443,12 @@ class core_badges_renderer extends plugin_renderer_base {
      *
      * @param \core_badges\output\badge_collection $badges
      * @return string
+     *
+     * @deprecated since Moodle 4.4
+     * @todo MDL-80455 this will be removed in Moodle 4.8
      */
     protected function render_badge_collection(\core_badges\output\badge_collection $badges) {
+        debugging('The method render_badge_collection() has been deprecated', DEBUG_DEVELOPER);
         $paging = new paging_bar($badges->totalcount, $badges->page, $badges->perpage, $this->page->url, 'page');
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
@@ -784,8 +788,12 @@ class core_badges_renderer extends plugin_renderer_base {
      *
      * @param \core_badges\output\badge_recipients $recipients
      * @return string
+     *
+     * @deprecated since Moodle 4.4
+     * @todo MDL-80455 this will be removed in Moodle 4.8
      */
     protected function render_badge_recipients(\core_badges\output\badge_recipients $recipients) {
+        debugging('The method render_badge_recipients() has been deprecated', DEBUG_DEVELOPER);
         $paging = new paging_bar($recipients->totalcount, $recipients->page, $recipients->perpage, $this->page->url, 'page');
         $htmlpagingbar = $this->render($paging);
         $table = new html_table();
