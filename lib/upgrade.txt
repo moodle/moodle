@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.1.8 ===
+
+* The current page language is available in new `core/config` language property for Javascript modules
+
 === 4.1.7 ===
 * Add a new parameter to the debounce (core/utils) function allow it to create its own own Pending promise.
 (via options.pending). This is a backport of patch MDL-78779.
