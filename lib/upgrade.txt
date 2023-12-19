@@ -4,6 +4,8 @@ information provided here is intended especially for developers.
 === 4.2.5 ===
 
 * The current page language is available in new `core/config` language property for Javascript modules
+* The customdata of adhoc_task class now accepts a new value called noretry. If set to true, the adhoc task will not be retried
+  if it fails.
 
 === 4.2.4 ===
 * Add a new parameter to the debounce (core/utils) function allow it to create its own own Pending promise.
