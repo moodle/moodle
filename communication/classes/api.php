@@ -21,6 +21,7 @@ use core_communication\task\add_members_to_room_task;
 use core_communication\task\create_and_configure_room_task;
 use core_communication\task\delete_room_task;
 use core_communication\task\remove_members_from_room;
+use core_communication\task\synchronise_provider_task;
 use core_communication\task\update_room_task;
 use core_communication\task\update_room_membership_task;
 use stdClass;
@@ -645,5 +646,23 @@ class api {
                 }
                 break;
         }
+    }
+
+    /**
+     * Add the task to sync the provider data with local Moodle data.
+     */
+    public function sync_provider(): void {
+        // No communication, return.
+        if (!$this->communication) {
+            return;
+        }
+
+        if ($this->communication->get_provider() === processor::PROVIDER_NONE) {
+            return;
+        }
+
+        synchronise_provider_task::queue(
+            $this->communication
+        );
     }
 }

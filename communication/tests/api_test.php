@@ -17,6 +17,8 @@
 namespace core_communication;
 
 use communication_matrix\matrix_test_helper_trait;
+use core_communication\task\synchronise_provider_task;
+use core_communication\task\synchronise_providers_task;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -330,5 +332,23 @@ class api_test extends \advanced_testcase {
 
         $adhoctask = reset($adhoctask);
         $this->assertInstanceOf('\\core_communication\\task\\update_room_membership_task', $adhoctask);
+    }
+
+    /**
+     * Test sync_provider method for the sync of available provider.
+     *
+     * @covers ::sync_provider
+     */
+    public function test_sync_provider(): void {
+        // Generate the data.
+        $user = $this->getDataGenerator()->create_user();
+        $course1 = $this->get_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course1->id);
+        $course2 = $this->get_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course2->id);
+        // Now run the task to add sync providers.
+        $this->execute_task(synchronise_providers_task::class);
+        $adhoctask = \core\task\manager::get_adhoc_tasks(synchronise_provider_task::class);
+        $this->assertCount(2, $adhoctask);
     }
 }

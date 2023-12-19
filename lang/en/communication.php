@@ -39,3 +39,4 @@ $string['privacy:metadata:communication_user:userid'] = 'The user ID for communi
 $string['privacy:metadata:communication_user:synced'] = 'The user is synced with the provider or not';
 $string['selectcommunicationprovider'] = 'Provider';
 $string['selectcommunicationprovider_help'] = 'The tool available for chat and related communication methods.';
+$string['synchroniseproviders'] = 'Synchronise communication providers';
