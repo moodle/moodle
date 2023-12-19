@@ -200,50 +200,15 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * area that contains the various forms of feedback. This function generates
      * the content of this area belonging to the question type.
      *
+     * @codeCoverageIgnore This is tested by the feedback exporter.
      * @param question_attempt $qa The question attempt to display.
      * @param question_display_options $options Controls what should and should not be displayed.
      * @return string HTML fragment.
      */
     public function feedback(question_attempt $qa, question_display_options $options) {
-        $output = '';
-        $hint = null;
-
-        $isshownumpartscorrect = true;
-
-        if ($options->feedback) {
-            $output .= html_writer::nonempty_tag('div', $this->specific_feedback($qa),
-                array('class' => 'specificfeedback'));
-
-            if ($options->numpartscorrect) {
-                $output .= html_writer::nonempty_tag('div', $this->num_parts_correct($qa),
-                    array('class' => 'numpartscorrect'));
-                $isshownumpartscorrect = false;
-            }
-
-            $output .= $this->specific_grade_detail_feedback($qa);
-            $hint = $qa->get_applicable_hint();
-        }
-
-        if ($options->numpartscorrect && $isshownumpartscorrect) {
-            $output .= html_writer::nonempty_tag('div', $this->num_parts_correct($qa),
-                array('class' => 'numpartscorrect'));
-        }
-
-        if ($hint) {
-            $output .= $this->hint($qa, $hint);
-        }
-
-        if ($options->generalfeedback) {
-            $output .= html_writer::nonempty_tag('div', $this->general_feedback($qa),
-                array('class' => 'generalfeedback'));
-        }
-
-        if ($options->rightanswer) {
-            $output .= html_writer::nonempty_tag('div', $this->correct_response($qa),
-                array('class' => 'rightanswer'));
-        }
-
-        return $output;
+        $feedback = new \qtype_ordering\output\feedback($qa, $options);
+        return $this->output->render_from_template('qtype_ordering/feedback',
+            $feedback->export_for_template($this->output));
     }
 
     /**
@@ -262,6 +227,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * Generate the specific feedback. This is feedback that varies according to
      * the response the student gave.
      *
+     * @codeCoverageIgnore This is tested by the feedback exporter.
      * @param question_attempt $qa The question attempt to display.
      * @return string HTML fragment.
      */
