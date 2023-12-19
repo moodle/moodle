@@ -21,7 +21,6 @@
  * @var stdClass $plugin
 */
 
-// Adding the auto-proctor in navigation bar
 function local_auto_proctor_extend_navigation(global_navigation $navigation){
     
     // Acces control for admin only
@@ -29,12 +28,43 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
     //     return;
     // }
 
-    $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/auto_proctor_dashboard.php');
-    $main_node->nodetype = 1;
-    $main_node->collapse = false;
-    $main_node->forceopen = true;
-    $main_node->isexpandable = false;
-    $main_node->showinflatnavigation = true;
+    // Adding the auto-proctor in navigation bar ==================================
+        $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/auto_proctor_dashboard.php');
+        $main_node->nodetype = 1;
+        $main_node->collapse = false;
+        $main_node->forceopen = true;
+        $main_node->isexpandable = false;
+        $main_node->showinflatnavigation = true;
+
+
+    // Capture student quiz attempt ========================================
+        global $DB, $PAGE;
+
+        // Check if the current page is a quiz attempt
+        if ($PAGE->cm && $PAGE->cm->modname === 'quiz' && $PAGE->cm->instance) {
+            $quizid = $PAGE->cm->instance;
+
+            // Check if the user is starting or reattempting the quiz
+            $action = optional_param('attempt', '', PARAM_TEXT);
+
+            if (!empty($action)) {
+                // Check if monitor_tab_switching is activated for the selected quiz
+                $monitor_tab_switching = $DB->get_records_select('auto_proctor_quiz_tb', 'quizid = ? AND monitor_tab_switching = ?', array($quizid, 1));
+
+                // Check if records were found
+                if ($monitor_tab_switching) {
+                    echo '<script type="text/javascript">';
+                    echo 'console.log("Monitoring Tab Switching");';
+                    echo '</script>';
+                } else {
+                    echo '<script type="text/javascript">';
+                    echo 'console.log("Not Monitored");';
+                    echo '</script>';
+                }
+            }
+}
+
+
 }
 
 
