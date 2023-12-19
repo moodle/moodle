@@ -411,6 +411,73 @@ class component_test extends advanced_testcase {
         }
     }
 
+    /**
+     * Unit tests for get_component_from_classname.
+     *
+     * @dataProvider get_component_from_classname_provider
+     * @param string $classname The class name to test
+     * @param string|null $expected The expected component
+     * @covers \core_component::get_component_from_classname
+     */
+    public function test_get_component_from_classname(
+        string $classname,
+        string|null $expected,
+    ): void {
+        $this->assertEquals(
+            $expected,
+            \core_component::get_component_from_classname($classname),
+        );
+    }
+
+    /**
+     * Data provider for get_component_from_classname tests.
+     *
+     * @return array
+     */
+    public static function get_component_from_classname_provider(): array {
+        // Start off with testcases which have the leading \.
+        $testcases = [
+            // Core.
+            [\core\example::class, 'core'],
+
+            // A core subsystem.
+            [\core_message\example::class, 'core_message'],
+
+            // A fake core subsystem.
+            [\core_fake\example::class, null],
+
+            // A plugin.
+            [\mod_forum\example::class, 'mod_forum'],
+
+            // A plugin in the old style is not supported.
+            [\mod_forum_example::class, null],
+
+            // A fake plugin.
+            [\mod_fake\example::class, null],
+
+            // A subplugin.
+            [\tiny_link\example::class, 'tiny_link'],
+        ];
+
+        // Duplicate the testcases, adding a nested namespace.
+        $testcases = array_merge(
+            $testcases,
+            array_map(
+                fn ($testcase) => [$testcase[0] . '\\in\\sub\\directory', $testcase[1]],
+                $testcases,
+            ),
+        );
+
+        // Duplicate the testcases, removing the leading \.
+        return array_merge(
+            $testcases,
+            array_map(
+                fn ($testcase) => [ltrim($testcase[0], '\\'), $testcase[1]],
+                $testcases,
+            ),
+        );
+    }
+
     public function test_deprecated_get_component_directory(): void {
         $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $fulldir) {
