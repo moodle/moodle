@@ -151,76 +151,10 @@
 }
 
 @media print {
-    #page-content .region-main, {
+    #page-content .region-main {
         max-width: 100% !important; /* stylelint-disable-line declaration-no-important */
         flex: 0 0 100% !important; /* stylelint-disable-line declaration-no-important */
         padding: 0 1rem 0 !important; /* stylelint-disable-line declaration-no-important */
-    }
-}
-
-@include media-breakpoint-up(sm) {
-    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-        width: calc(50% - #{$card-gutter});
-    }
-}
-
-@include media-breakpoint-up(md) {
-    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-        width: calc(50% - #{$card-gutter});
-    }
-    .blocks-post,
-    .blocks-pre {
-        .dashboard-card-deck .dashboard-card {
-            width: calc(100% - #{$card-gutter});
-        }
-    }
-}
-
-@include media-breakpoint-up(lg) {
-    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-        width: calc(33.33% - #{$card-gutter});
-    }
-    .blocks-post,
-    .blocks-pre {
-        .dashboard-card-deck .dashboard-card {
-            width: calc(50% - #{$card-gutter});
-        }
-    }
-}
-
-@include media-breakpoint-up(xl) {
-    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-        width: calc(25% - #{$card-gutter});
-    }
-    .blocks-post,
-    .blocks-pre {
-        .dashboard-card-deck .dashboard-card {
-            width: calc(33.33% - #{$card-gutter});
-        }
-    }
-}
-
-@media (min-width: 1360px) {
-    .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-        width: calc(20% - #{$card-gutter});
-    }
-    .blocks-post,
-    .blocks-pre {
-        .dashboard-card-deck .dashboard-card {
-            width: calc(25% - #{$card-gutter});
-        }
-    }
-}
-
-@include media-breakpoint-up(md) {
-    .blockcolumn {
-        .dashboard-card-deck {
-            margin-left: 0;
-            margin-right: 0;
-            .dashboard-card {
-                width: calc(100% - #{$card-gutter}) !important; /* stylelint-disable-line declaration-no-important */
-            }
-        }
     }
 }
 
