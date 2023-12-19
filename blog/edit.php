@@ -96,7 +96,7 @@ if (!empty($modid)) {
 $blogheaders = blog_get_headers();
 
 if (!has_capability('moodle/blog:create', $sitecontext) && !has_capability('moodle/blog:manageentries', $sitecontext)) {
-    throw new \moodle_exception('cannoteditentryorblog');
+    throw new \moodle_exception('cannoteditentryorblog', 'blog');
 }
 
 // Make sure that the person trying to edit has access right.

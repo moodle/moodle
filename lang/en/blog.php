@@ -56,6 +56,7 @@ $string['blogs'] = 'Blogs';
 $string['blogscourse'] = 'Course blogs';
 $string['blogssite'] = 'Site blogs';
 $string['blogtags'] = 'Blog tags';
+$string['cannoteditentryorblog'] = 'You cannot edit this entry or blog';
 $string['cannotviewcourseblog'] = 'You do not have the required permissions to view blogs in this course';
 $string['cannotviewcourseorgroupblog'] = 'You do not have the required permissions to view blogs in this course/group';
 $string['cannotviewsiteblog'] = 'You do not have the required permissions to view all site blogs';
