@@ -20,16 +20,22 @@ img.userpicture {
 
 .path-mod-book {
     #mod_book-chaptersnavigation {
-        margin-left: -5px;
-        margin-right: -5px;
+        margin: 0 -0.75rem;
 
-        @include media-breakpoint-down(md) {
+        @include media-breakpoint-down(sm) {
             top: calc(100% - 150px);
+            z-index: 1;
         }
     }
 
     .book_content {
         margin: 0 30px;
+
+        @include media-breakpoint-down(sm) {
+            margin-left: -10px;
+            margin-right: -10px;
+            padding: 0 5px;
+        }
     }
 }
 
