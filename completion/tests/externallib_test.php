@@ -34,6 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 2.9
+ * @coversDefaultClass \core_completion_external
  */
 class externallib_test extends externallib_advanced_testcase {
 
@@ -177,6 +178,7 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertTrue($status['uservisible']);
                 $details = $status['details'];
                 $this->assertCount(0, $details);
+                $this->assertTrue($status['isoverallcomplete']);
             } else if ($status['cmid'] == $forumautocompletion->cmid) {
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
@@ -190,7 +192,7 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertCount(1, $details);
                 $this->assertEquals('completionview', $details[0]['rulename']);
                 $this->assertEquals(0, $details[0]['rulevalue']['status']);
-
+                $this->assertFalse($status['isoverallcomplete']);
             } else if ($status['cmid'] == $assignautocompletion->cmid) {
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
@@ -200,6 +202,7 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertTrue($status['isautomatic']);
                 $this->assertTrue($status['istrackeduser']);
                 $this->assertTrue($status['uservisible']);
+                $this->assertFalse($status['isoverallcomplete']);
                 $details = $status['details'];
                 $this->assertCount(3, $details);
                 $expecteddetails = [
@@ -223,6 +226,7 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertTrue($status['uservisible']);
                 $details = $status['details'];
                 $this->assertCount(0, $details);
+                $this->assertFalse($status['isoverallcomplete']);
             }
         }
         $this->assertEquals(4, $activitiesfound);
@@ -250,6 +254,7 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
                 $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
                 $this->assertEquals($teacher->id, $status['overrideby']);
+                $this->assertFalse($status['isoverallcomplete']);
                 break;
             }
         }
@@ -273,14 +278,17 @@ class externallib_test extends externallib_advanced_testcase {
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_COMPLETE, $status['state']);
                 $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
+                $this->assertTrue($status['isoverallcomplete']);
             } else if (in_array($status['cmid'], [$forumautocompletion->cmid, $assignautocompletion->cmid])) {
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
                 $this->assertEquals(COMPLETION_TRACKING_AUTOMATIC, $status['tracking']);
+                $this->assertFalse($status['isoverallcomplete']);
             } else {
                 $activitiesfound++;
                 $this->assertEquals(COMPLETION_INCOMPLETE, $status['state']);
                 $this->assertEquals(COMPLETION_TRACKING_MANUAL, $status['tracking']);
+                $this->assertFalse($status['isoverallcomplete']);
             }
         }
         $this->assertEquals(5, $activitiesfound);
