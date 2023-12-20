@@ -3094,6 +3094,17 @@ class externallib_test extends externallib_advanced_testcase {
         $course = reset($result['courses']);
         $this->assertEquals($roomname, $course['communicationroomname']);
         $this->assertEquals($telegramlink, $course['communicationroomurl']);
+
+        // Course without comm tools.
+        $course = $this->getDataGenerator()->create_course();
+        $result = external_api::clean_returnvalue(
+            core_course_external::get_courses_by_field_returns(),
+            core_course_external::get_courses_by_field('id', $course->id)
+        );
+
+        $course = reset($result['courses']);
+        $this->assertNotContains('communicationroomname', $course);
+        $this->assertNotContains('communicationroomurl', $course);
     }
 
     public function test_get_courses_by_field_invalid_field() {

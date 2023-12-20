@@ -3349,9 +3349,11 @@ class core_course_external extends external_api {
                     instancetype: 'coursecommunication',
                     instanceid: $course->id
                 );
-                $coursesdata[$course->id]['communicationroomname'] = \core_external\util::format_string($communication->get_room_name(), $context);
-                // This will be usually an URL, however, it is better to consider that can be anything a plugin might return, this is why we will use PARAM_RAW.
-                $coursesdata[$course->id]['communicationroomurl'] = $communication->get_communication_room_url();
+                if ($communication->get_provider()) {
+                    $coursesdata[$course->id]['communicationroomname'] = \core_external\util::format_string($communication->get_room_name(), $context);
+                    // This will be usually an URL, however, it is better to consider that can be anything a plugin might return, this is why we will use PARAM_RAW.
+                    $coursesdata[$course->id]['communicationroomurl'] = $communication->get_communication_room_url();
+                }
             }
         }
 
