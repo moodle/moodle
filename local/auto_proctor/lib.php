@@ -38,7 +38,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
 
     // Capture student quiz attempt ========================================
-        global $DB, $PAGE;
+        global $DB, $PAGE, $USER;
 
         // Check if the current page is a quiz attempt
         if ($PAGE->cm && $PAGE->cm->modname === 'quiz' && $PAGE->cm->instance) {
@@ -48,23 +48,92 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
             $action = optional_param('attempt', '', PARAM_TEXT);
 
             if (!empty($action)) {
-                // Check if monitor_tab_switching is activated for the selected quiz
-                $monitor_tab_switching = $DB->get_records_select('auto_proctor_quiz_tb', 'quizid = ? AND monitor_tab_switching = ?', array($quizid, 1));
 
-                // Check if records were found
-                if ($monitor_tab_switching) {
+                // Check if aut0-proctor is activated
+                $sql = "SELECT *
+                    FROM {auto_proctor_quiz_tb}
+                    WHERE quizid = :quizid
+                    AND (monitor_tab_switching = 1 OR monitor_camera = 1 OR monitor_microphone = 1)"
+                ;
+
+                $params = array('quizid' => $quizid);
+
+                $auto_proctor_activated = $DB->get_records_sql($sql, $params);
+
+                if ($auto_proctor_activated){
                     echo '<script type="text/javascript">';
-                    echo 'console.log("Monitoring Tab Switching");';
+                    echo 'console.log("AP ACTIVATED");';
                     echo '</script>';
-                } else {
+
+                    // Retrieve the user ID
+                    $userid = $USER->id;
+
+                    // Check if the user has an ongoing quiz attempt
+                    $quizattempt = $DB->get_record('quiz_attempts', array('userid' => $userid, 'quiz' => $quizid, 'state' => 'inprogress'));
+
                     echo '<script type="text/javascript">';
-                    echo 'console.log("Not Monitored");';
+                    echo 'console.log(' . json_encode(['userid' => $userid, 'quizid' => $quizid]) . ');';
+
+                    // Check if $quizattempt is not empty before logging
+                    if (!empty($quizattempt)) {
+
+                        // Get attempt number
+                        $attemptValue = $quizattempt->attempt;
+
+                        // Check if there is existing record in auto_proctor_session_consent_tb table
+                        $sql = "SELECT *
+                                FROM {auto_proctor_session_consent_tb}
+                                WHERE userid = :userid
+                                AND quizid = :quizid
+                                AND attempt = :attempt";
+
+                                $params = [
+                                    'userid' => $userid,
+                                    'quizid' => $quizid,
+                                    'attempt' => $attemptValue,
+                                ]
+                        ;
+
+                        $existing_session = $DB->get_records_sql($sql, $params);
+
+                        // If no record found the insert new record
+                        if(!$existing_session){  
+                            // Output the results to the browser console
+                            echo 'console.log("Insert new session");';
+
+                            // Insert data into auto_proctor_session_consent_tb table
+                            $insertData = new stdClass();
+                            $insertData->userid = $userid;
+                            $insertData->quizid = $quizid;
+                            $insertData->attempt = $attemptValue;
+
+                            $DB->insert_record('auto_proctor_session_consent_tb', $insertData);
+                        }
+
+                        // TAB_SWITCHING ====================================================================================
+                        // Check if there's a matching record in auto_proctor_session_consent_tb
+                        $consent_tab_switching = $DB->get_record('auto_proctor_session_consent_tb', array(
+                            'userid' => $userid,
+                            'quizid' => $quizid,
+                            'attempt' => $attemptValue,
+                            'consent_tab_switching' => 0, // Check for consent_tab_switching equal to 0
+                        ));
+
+                        if($consent_tab_switching){
+                            echo 'console.log("Prompt");';
+                        }
+                        else{
+                            echo 'console.log("Not prompt");';
+                        }
+                    }
+
                     echo '</script>';
                 }
+
             }
-}
+        }
 
-
+        
 }
 
 
