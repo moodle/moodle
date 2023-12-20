@@ -38,11 +38,12 @@ $CFG = new stdClass();
 // will be stored.  This database must already have been created         //
 // and a username/password created to access it.                         //
 
-$CFG->dbtype = 'mariadb';  // Use 'mysqli' for MySQL, or 'pgsql' for PostgreSQL.
-$CFG->dbhost = 'localhost'; // Database server (usually 'localhost').
-$CFG->dbname = 'moodle';  // Your database name (the one you created).
-$CFG->dbuser = 'admin'; // Your database username.
-$CFG->dbpass = 'ZenAlpha37!'; // Your database password.
+$CFG->dbtype    = 'pgsql';      // 'pgsql', 'mariadb', 'mysqli', 'auroramysql', 'sqlsrv' or 'oci'
+$CFG->dblibrary = 'native';     // 'native' only at the moment
+$CFG->dbhost    = 'localhost';  // eg 'localhost' or 'db.isp.com' or IP
+$CFG->dbname    = 'moodle';     // database name, eg moodle
+$CFG->dbuser    = 'username';   // your database username
+$CFG->dbpass    = 'password';   // your database password
 $CFG->prefix    = 'mdl_';       // prefix to use for all table names
 $CFG->dboptions = array(
     'dbpersist' => false,       // should persistent database connections be
@@ -55,7 +56,7 @@ $CFG->dboptions = array(
                                 //  (please note mysql is always using socket
                                 //  if dbhost is 'localhost' - if you need
                                 //  local port connection use '127.0.0.1')
-    'dbport'    => '3306',          // the TCP port number to use when connecting
+    'dbport'    => '',          // the TCP port number to use when connecting
                                 //  to the server. keep empty string for the
                                 //  default port
     'dbhandlesoptions' => false,// On PostgreSQL poolers like pgbouncer don't
@@ -136,7 +137,8 @@ $CFG->dboptions = array(
 // If you need both intranet and Internet access please read
 // http://docs.moodle.org/en/masquerading
 
-$CFG->wwwroot   = 'http://localhost/MESD-Learning-Management-System';
+$CFG->wwwroot   = 'http://example.com/moodle';
+
 
 //=========================================================================
 // 3. DATA FILES LOCATION
@@ -151,7 +153,8 @@ $CFG->wwwroot   = 'http://localhost/MESD-Learning-Management-System';
 //
 // - On Windows systems you might specify something like 'c:\moodledata'
 
-$CFG->dataroot  = '/var/moodledata';
+$CFG->dataroot  = '/home/example/moodledata';
+
 
 //=========================================================================
 // 4. DATA FILES PERMISSIONS
