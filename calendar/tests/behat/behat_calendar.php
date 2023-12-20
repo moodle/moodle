@@ -176,8 +176,7 @@ class behat_calendar extends behat_base {
      * @return void
      */
     public function i_am_viewing_site_calendar() {
-        $url = new moodle_url('/calendar/view.php', ['view' => 'month']);
-        $this->execute('behat_general::i_visit', [$url]);
+        $this->i_am_viewing_calendar_in_view('month');
     }
 
     /**
