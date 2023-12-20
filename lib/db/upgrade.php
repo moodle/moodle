@@ -864,5 +864,38 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2023120100.01);
     }
 
+    if ($oldversion < 2023121800.02) {
+        // Define field attemptsavailable to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field(
+            name: 'attemptsavailable',
+            type: XMLDB_TYPE_INTEGER,
+            precision: '1',
+            unsigned: null,
+            notnull: null,
+            sequence: null,
+            default: null,
+            previous: 'pid',
+        );
+
+        // Conditionally launch add field attemptsavailable.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Set attemptsavailable to 0 for the tasks that have not been run before.
+        // Set attemptsavailable to 1 for the tasks that have been run and failed before.
+        $DB->execute('
+            UPDATE {task_adhoc}
+               SET attemptsavailable = CASE
+                                            WHEN faildelay = 0 THEN 1
+                                            WHEN faildelay > 0 THEN 0
+                                       END
+        ');
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023121800.02);
+    }
+
     return true;
 }

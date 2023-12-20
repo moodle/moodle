@@ -107,6 +107,25 @@ class adhoc_test4_task extends adhoc_test_task {
 class adhoc_test5_task extends adhoc_test_task {
 }
 
+/**
+ * Test class for no-retry adhoc task.
+ *
+ * @package    core
+ * @copyright  2023 Huong Nguyen <huongnv13@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class no_retry_adhoc_task extends adhoc_test_task {
+
+    /**
+     * Prevent the task from retrying.
+     * @return bool
+     */
+    public function retry_until_success(): bool {
+        return false;
+    }
+
+}
+
 class scheduled_test_task extends \core\task\scheduled_task {
     public function get_name() {
         return "Test task";

@@ -119,7 +119,9 @@ class tool_task_renderer extends plugin_renderer_base {
 
                 // Prepares the next run time cell contents.
                 $nextrun = '';
-                if ($stats['due'] > 0) {
+                if ($stats['stop']) {
+                    $nextrun = get_string('never', 'admin');
+                } else if ($stats['due'] > 0) {
                     $nextrun = get_string('asap', 'tool_task');
                 } else if ($stats['nextruntime']) {
                     $nextrun = userdate($stats['nextruntime']);
@@ -271,7 +273,11 @@ class tool_task_renderer extends plugin_renderer_base {
             if (!$started) {
                 $nextruntime = $task->get_next_run_time();
                 $due = $nextruntime < $now;
-                $nextrun = $due ? userdate($nextruntime) : get_string('asap', 'tool_task');
+                if ($task->get_attempts_available() > 0) {
+                    $nextrun = $due ? userdate($nextruntime) : get_string('asap', 'tool_task');
+                } else {
+                    $nextrun = get_string('never', 'admin');
+                }
 
                 if ($wantruntasks && ($faildelay || $due)) {
                     $nextrun .= ' '.html_writer::div(
