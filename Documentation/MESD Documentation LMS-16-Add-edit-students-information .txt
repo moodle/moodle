@@ -1,0 +1,89 @@
+MESD LMS Documentation 
+Edit Student Profile 
+Students are usually asked to edit their profile in Moodle. It is also possible for the site administrator to edit users' profiles. In Moodle, adding or editing student information typically involves managing user accounts and their associated details.
+
+Standard settings
+General
+User name
+This may be changed. Can only contain alphabetical letters in lowercase, numbers, hyphen '-', underscore '_', period '.', or at sign '@'.
+New Password
+Has an unmask setting to reveal the actual password. Password is validated to ensure that password complexity requirements as enforced. See Password policy for more information.
+Force password change
+An initial password can be set by the administrator or bulk uploading, but this will force the user to create a new password.
+First name, surname
+The first two fields are quite self-explanatory. The first and last names should be those that the student is to be known by in the course. They will identify the student everywhere in the course.
+Email address
+The email address should be the address at which the student receives acknowledgements and messages from the system, and is also the address that is displayed to the instructor and other users of the Moodle site, assuming that they have set the "Email display" option to allow other participants in the course to see their address, so it should be a mail address that they check regularly. Other email display options are to hide your mail address from all users (it will still be visible to admins and instructors), or to make it available to everyone who visits the course, not just those that are enrolled.
+Email display
+This controls the visibility of the address to others, allowing you to show or hide your email in the class. There are three options: you can set it so that all users (including guests) could see your email, or so that only other enrollees in the course can see the email address, or so that no one could see your email address at all.
+Email activated
+One can either enable or disable emails being sent to the email address in their profile. Note that if this is disabled, the user will not receive any mail whatsoever from the site.
+City/town; country
+These fields are used to further identify you by geographical location.
+Timezone
+This field is used to convert time-related messages on the system (such as assignment deadlines) from the default Moodle timezone to the correct time in whichever zone you have selected.
+Preferred language
+A Moodle site might have multiple languages installed from language packs. This sets the user's prefered language using a drop down menu.
+Preferred theme
+If site configurations has allowuserthemes enabled, then users will be allowed to set their own preferred theme. User themes override site themes but not if the course setting is Force theme.
+Description
+In this field you can enter some text about yourself, be it information about your studies, hobbies, qualifications or anything else that does not break the acceptable use policy of this site. This text will be visible to anyone that views your profile.
+Picture of
+The user's picture (also known as an Avatar) can be changed in this section. The default, Moodle picture is automatically used when a new user is created. Moodle creates two sizes of a user's picture. The two images files are called "f1" and 'f2". The site administrator can change the default images. Here is the standard default "f1" image.
+ 
+Current picture
+This shows the picture associated with a profile. Sometimes the refresh button on your browser will update the current image view.
+TIP: The site administrator can view all uploaded user pictures via the URL <moodle url>/userpix/. For example http://demo.moodle.org/userpix/.
+TIP: Want the default picture to be blank? Replace the picture with a file that has 1 white pixel.
+TIP: The site administrator can change the default picture for the site by replacing the F1 and F2 images in the theme or pic folders.
+Delete
+Checking this box and using the update button will delete the current picture and restore the Moodle site default user picture.
+New picture
+This field has a Browse button to allow the user to find and then upload a new picture for the profile. Uploaded image types supported include gif, jpg, and png. The file upload size shown is determined by the maxbytes variable on the configuration page. User pictures are 100px by 100px for the larger view and 35px by 35px for the smaller view. Both of these small images are created by Moodle in the upload process, which also reduces the file size to around 4K. The pictures are stored in each Users sub-folder of the Moodle data folder as "f1" and "f2".
+TIP: The picture does not change? Or the picture will not change after repeated uploads of a new photo file? The most common solution is to refresh your browser cache. It is also possible the problem has to do with the server cache. Ask your site administrator or hosting service if there is a server cache setting that is causing this problem. Often removing an unnecessary cache will solve this.
+Picture Description
+This text appears when the mouse rolls over the picture as a description.
+Interests
+List of interests
+Use a comma between different interests. This allows you to connect with others who list similar interests.
+
+Usage
+
+Here are the general steps to add or edit student information:
+1. Login as Administrator:
+•	Log in to Moodle with administrative privileges.
+2. Navigate to User Management:
+•	Go to "Site administration" in the left navigation menu.
+3. Add a New User:
+•	To add a new student, go to "Users" > "Accounts" > "Add a new user."
+•	Fill in the required information, such as username, password, email, and any other necessary details.
+•	Click on the "Create user" button to add the new student.
+4. Edit Existing User:
+•	To edit an existing student's information, go to "Users" > "Accounts" > "Browse list of users."
+•	Find the student in the list and click on their name.
+•	On the user profile page, click on the "Edit profile" tab.
+•	Modify the required information.
+•	Click on the "Update profile" button to save the changes.
+5. Upload Users (Optional):
+•	If you have a large number of students to add, you can use the "Upload users" feature to import user information in bulk.
+•	Navigate to "Users" > "Accounts" > "Upload users."
+•	Follow the instructions to upload a CSV file with user details.
+6. Custom Profile Fields:
+•	If you need to capture additional information about students, consider using custom profile fields.
+•	Go to "Users" > "Accounts" > "User Profile fields" to create and manage custom fields.
+•	Then edit the students profile and add the added information from the profile fields.
+7. Enrollment in Courses:
+•	To manage a student's enrollment in courses, go to the specific course.
+•	Navigate to "Participants" and use the "Enrol users" option to add or remove students from the course.
+8. Messaging and Communication:
+•	Use Moodle's messaging and communication tools to interact with students.
+•	Send messages, announcements, or use forums to facilitate communication.
+9. Roles and Permissions:
+•	Be aware of the roles and permissions assigned to students.
+•	Go to "Users" > "Permissions" > "Assign system roles" to check or modify roles.
+10. Reports and Analytics (Optional):
+•	Use Moodle's reporting tools to gather analytics and reports on student activity.
+•	Navigate to "Site administration" > "Reports" for various reporting options.
+11. External Integrations (Optional):
+•	If your institution uses external systems, consider integrations to synchronize student information.
+
