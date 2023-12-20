@@ -192,4 +192,44 @@ class choicelist_test extends advanced_testcase {
             $this->assertFalse(isset($option['extras']));
         }
     }
+
+    /**
+     * Test for a choice with option selected.
+     *
+     * @covers ::_construct
+     * @covers ::add_option
+     * @covers ::set_selected_value
+     * @covers ::get_selected_value
+     * @covers ::set_allow_empty
+     * @covers ::get_allow_empty
+     * @covers ::export_for_template
+     */
+    public function test_set_allow_empty(): void {
+        $choice = new choicelist('Choose an option');
+        $choice->add_option('option1', 'Option 1');
+        $choice->add_option('option2', 'Option 2');
+
+        $choice->set_allow_empty(true);
+        $this->assertTrue($choice->get_allow_empty());
+        $this->assertNull($choice->get_selected_value());
+
+        $choice->set_allow_empty(false);
+        $this->assertFalse($choice->get_allow_empty());
+        $this->assertEquals('option1', $choice->get_selected_value());
+
+        // Validate the null selected value is not changed when allow empty is set to true.
+        $choice->set_allow_empty(true);
+        $this->assertTrue($choice->get_allow_empty());
+        $this->assertNull($choice->get_selected_value());
+
+        $choice->set_selected_value('option2');
+
+        $choice->set_allow_empty(false);
+        $this->assertFalse($choice->get_allow_empty());
+        $this->assertEquals('option2', $choice->get_selected_value());
+
+        $choice->set_allow_empty(true);
+        $this->assertTrue($choice->get_allow_empty());
+        $this->assertEquals('option2', $choice->get_selected_value());
+    }
 }

@@ -232,6 +232,7 @@ Both classes provide the following methods:
 - `setVisible(Boolean)` to open or close the dropdown.
 - `isVisible()` to know if it is open or closed.
 - `setButtonContent(String)` to replace the button content.
+- `setButtonDisabled(Boolean)` to disable or enable the dropdown button.
 - `getElement()`to get the main HTMLElement to add eventListeners.
 
 The following example uses the module to open the dropdown when an extra button is preset:
