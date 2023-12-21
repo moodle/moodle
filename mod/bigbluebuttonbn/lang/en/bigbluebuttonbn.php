@@ -260,12 +260,106 @@ $string['config_muteonstart_default'] = 'Mute on start enabled by default';
 $string['config_muteonstart_default_description'] = 'If enabled the session will be muted on start.';
 $string['config_muteonstart_editable'] = 'Mute on start can be edited';
 $string['config_muteonstart_editable_description'] = 'Mute on start by default can be edited when the instance is added or updated.';
+
 $string['config_welcome_default'] = 'Default welcome message';
 $string['config_welcome_default_description'] = 'The welcome message is displayed when participants enter the room. If the field is left blank, then a message set on the BigBlueButton server is displayed.';
 $string['config_welcome_editable'] = 'Default welcome message is editable by teachers';
 $string['config_welcome_editable_description'] = 'Welcome message can be edited when the instance is added or updated';
 $string['config_default_messages'] = 'Default messages';
 $string['config_default_messages_description'] = 'Set message defaults for activities';
+
+$string['config_disabledfeaturessettings'] = 'Configuration for disabled features settings';
+$string['config_disabledfeaturessettings_description'] = 'These settings enable or disable options in the UI for disabled features settings, and also define default values for these options.';
+
+$string['config_breakoutrooms_default'] = 'Disable breakout rooms enabled by default';
+$string['config_breakoutrooms_default_description'] = 'If enabled the breakout rooms will be disabled.';
+$string['config_breakoutrooms_editable'] = 'Disable breakout rooms can be edited';
+$string['config_breakoutrooms_editable_description'] = 'Disable breakout rooms by default can be edited when the instance is added or updated.';
+
+$string['config_captions_default'] = 'Disable captions enabled by default';
+$string['config_captions_default_description'] = 'If enabled the captions will be disabled.';
+$string['config_captions_editable'] = 'Disable captions can be edited';
+$string['config_captions_editable_description'] = 'Disable captions by default can be edited when the instance is added or updated.';
+
+$string['config_chat_default'] = 'Disable chat enabled by default';
+$string['config_chat_default_description'] = 'If enabled the chat will be disabled.';
+$string['config_chat_editable'] = 'Disable chat can be edited';
+$string['config_chat_editable_description'] = 'Disable chat by default can be edited when the instance is added or updated.';
+
+$string['config_downloadpresentationwithannotations_default'] = 'Disable download presentation with annotations enabled by default';
+$string['config_downloadpresentationwithannotations_default_description'] = 'If enabled the download presentation with annotations will be disabled.';
+$string['config_downloadpresentationwithannotations_editable'] = 'Disable download presentation with annotations can be edited';
+$string['config_downloadpresentationwithannotations_editable_description'] = 'Disable download presentation with annotations by default can be edited when the instance is added or updated.';
+
+$string['config_snapshotofcurrentslide_default'] = 'Disable snapshot of currentslide enabled by default';
+$string['config_snapshotofcurrentslide_default_description'] = 'If enabled the snapshot of currentslide will be disabled.';
+$string['config_snapshotofcurrentslide_editable'] = 'Disable snapshot of currentslide can be edited';
+$string['config_snapshotofcurrentslide_editable_description'] = 'Disable snapshot of currentslide by default can be edited when the instance is added or updated.';
+
+$string['config_externalvideos_default'] = 'Disable external videos enabled by default';
+$string['config_externalvideos_default_description'] = 'If enabled the external videos will be disabled.';
+$string['config_externalvideos_editable'] = 'Disable external videos can be edited';
+$string['config_externalvideos_editable_description'] = 'Disable external videos by default can be edited when the instance is added or updated.';
+
+$string['config_importpresentationwithannotationsfrombreakoutrooms_default'] = 'Disable capture breakout presentation enabled by default';
+$string['config_importpresentationwithannotationsfrombreakoutrooms_default_description'] = 'If enabled the capture breakout presentation will be disabled.';
+$string['config_importpresentationwithannotationsfrombreakoutrooms_editable'] = 'Disable capture breakout presentation can be edited';
+$string['config_importpresentationwithannotationsfrombreakoutrooms_editable_description'] = 'Disable capture breakout presentation by default can be edited when the instance is added or updated.';
+
+$string['config_importsharednotesfrombreakoutrooms_default'] = 'Disable capture breakout shared notes enabled by default';
+$string['config_importsharednotesfrombreakoutrooms_default_description'] = 'If enabled the capture breakout shared notes will be disabled.';
+$string['config_importsharednotesfrombreakoutrooms_editable'] = 'Disable capture breakout shared notes can be edited';
+$string['config_importsharednotesfrombreakoutrooms_editable_description'] = 'Disable capture breakout shared notes by default can be edited when the instance is added or updated.';
+
+$string['config_layouts_default'] = 'Disable layouts enabled by default';
+$string['config_layouts_default_description'] = 'If enabled the layouts will be disabled.';
+$string['config_layouts_editable'] = 'Disable layouts can be edited';
+$string['config_layouts_editable_description'] = 'Disable layouts by default can be edited when the instance is added or updated.';
+
+$string['config_learningdashboard_default'] = 'Disable learning dashboard enabled by default';
+$string['config_learningdashboard_default_description'] = 'If enabled the learning dashboard will be disabled.';
+$string['config_learningdashboard_editable'] = 'Disable learning dashboard can be edited';
+$string['config_learningdashboard_editable_description'] = 'Disable learning dashboard by default can be edited when the instance is added or updated.';
+
+$string['config_polls_default'] = 'Disable polls enabled by default';
+$string['config_polls_default_description'] = 'If enabled the polls will be disabled.';
+$string['config_polls_editable'] = 'Disable polls can be edited';
+$string['config_polls_editable_description'] = 'Disable polls by default can be edited when the instance is added or updated.';
+
+$string['config_screenshare_default'] = 'Disable screenshare enabled by default';
+$string['config_screenshare_default_description'] = 'If enabled the screenshare will be disabled.';
+$string['config_screenshare_editable'] = 'Disable screenshare can be edited';
+$string['config_screenshare_editable_description'] = 'Disable screenshare by default can be edited when the instance is added or updated.';
+
+$string['config_sharednotes_default'] = 'Disable shared notes enabled by default';
+$string['config_sharednotes_default_description'] = 'If enabled the shared notes will be disabled.';
+$string['config_sharednotes_editable'] = 'Disable shared notes can be edited';
+$string['config_sharednotes_editable_description'] = 'Disable shared notes by default can be edited when the instance is added or updated.';
+
+$string['config_virtualbackgrounds_default'] = 'Disable virtual backgrounds enabled by default';
+$string['config_virtualbackgrounds_default_description'] = 'If enabled the virtual backgrounds will be disabled.';
+$string['config_virtualbackgrounds_editable'] = 'Disable virtual backgrounds can be edited';
+$string['config_virtualbackgrounds_editable_description'] = 'Disable virtual backgrounds by default can be edited when the instance is added or updated.';
+
+$string['config_customvirtualbackgrounds_default'] = 'Disable custom virtual backgrounds enabled by default';
+$string['config_customvirtualbackgrounds_default_description'] = 'If enabled the custom virtual backgrounds will be disabled.';
+$string['config_customvirtualbackgrounds_editable'] = 'Disable custom virtual backgrounds can be edited';
+$string['config_customvirtualbackgrounds_editable_description'] = 'Disable custom virtual backgrounds by default can be edited when the instance is added or updated.';
+
+$string['config_presentationdf_default'] = 'Disable presentation enabled by default';
+$string['config_presentationdf_default_description'] = 'If enabled the presentation will be disabled.';
+$string['config_presentationdf_editable'] = 'Disable presentation can be edited';
+$string['config_presentationdf_editable_description'] = 'Disable presentation by default can be edited when the instance is added or updated.';
+
+$string['config_cameraascontent_default'] = 'Disable camera as content enabled by default';
+$string['config_cameraascontent_default_description'] = 'If enabled the camera as content will be disabled.';
+$string['config_cameraascontent_editable'] = 'Disable camera as content can be edited';
+$string['config_cameraascontent_editable_description'] = 'Disable camera as content by default can be edited when the instance is added or updated.';
+
+$string['config_timer_default'] = 'Disable timer enabled by default';
+$string['config_timer_default_description'] = 'If enabled the timer will be disabled.';
+$string['config_timer_editable'] = 'Disable timer can be edited';
+$string['config_timer_editable_description'] = 'Disable timer by default can be edited when the instance is added or updated.';
 
 $string['config_locksettings'] = 'Configuration for locking settings';
 $string['config_locksettings_description'] = 'These settings enable or disable options in the UI for locking settings, and also define default values for these options.';
@@ -407,6 +501,24 @@ $string['mod_form_field_participant_bbb_role_viewer'] = 'Viewer';
 $string['mod_form_field_instanceprofiles'] = 'Instance type';
 $string['mod_form_field_instanceprofiles_help'] = 'If a session is to be recorded, select \'Room with recordings\', otherwise \'Room only\'. After a session is recorded, if there are to be no more sessions, select \'Recordings only\'.';
 $string['mod_form_field_muteonstart'] = 'Mute on start';
+$string['mod_form_field_breakoutrooms'] = 'Disable breakout rooms';
+$string['mod_form_field_captions'] = 'Disable captions';
+$string['mod_form_field_chat'] = 'Disable chat';
+$string['mod_form_field_downloadpresentationwithannotations'] = 'Disable annotated presentation download';
+$string['mod_form_field_snapshotofcurrentslide'] = 'Disable allow snapshot of the current slide';
+$string['mod_form_field_importpresentationwithannotationsfrombreakoutrooms'] = 'Disable capture breakout presentation';
+$string['mod_form_field_importsharednotesfrombreakoutrooms'] = 'Disable capture breakout shared notes';
+$string['mod_form_field_layouts'] = 'Disable layouts';
+$string['mod_form_field_learningdashboard'] = 'Disable learning analytics dashboard';
+$string['mod_form_field_polls'] = 'Disable polls';
+$string['mod_form_field_externalvideos'] = 'Disable external videos';
+$string['mod_form_field_screenshare'] = 'Disable screensharing';
+$string['mod_form_field_sharednotes'] = 'Disable shared notes';
+$string['mod_form_field_virtualbackgrounds'] = 'Disable virtual backgrounds';
+$string['mod_form_field_customvirtualbackgrounds'] = 'Disable virtual backgrounds uploads';
+$string['mod_form_field_presentationdf'] = 'Disable presentation';
+$string['mod_form_field_cameraascontent'] = 'Disable enables/disables camera as a content';
+$string['mod_form_field_timer'] = 'Disable timer';
 $string['mod_form_field_recordings_html'] = 'Show the table in plain HTML';
 $string['mod_form_field_recordings_deleted'] = 'Include recordings from deleted activities';
 $string['mod_form_field_recordings_imported'] = 'Show only imported links';

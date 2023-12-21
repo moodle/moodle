@@ -448,6 +448,149 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
         $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
             $field['description_key'], $cfg['muteonstart_default']);
 
+        $field = ['type' => 'hidden', 'name' => 'breakoutrooms', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['breakoutrooms_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_breakoutrooms';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['breakoutrooms_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'captions', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['captions_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_captions';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['captions_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'chat', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['chat_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_chat';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['chat_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'downloadpresentationwithannotations', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['downloadpresentationwithannotations_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_downloadpresentationwithannotations';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['downloadpresentationwithannotations_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'snapshotofcurrentslide', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['snapshotofcurrentslide_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_snapshotofcurrentslide';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['snapshotofcurrentslide_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'externalvideos', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['externalvideos_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_externalvideos';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['externalvideos_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'importpresentationwithannotationsfrombreakoutrooms', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['importpresentationwithannotationsfrombreakoutrooms_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_importpresentationwithannotationsfrombreakoutrooms';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['importpresentationwithannotationsfrombreakoutrooms_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'importsharednotesfrombreakoutrooms', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['importsharednotesfrombreakoutrooms_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_importsharednotesfrombreakoutrooms';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['importsharednotesfrombreakoutrooms_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'layouts', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['layouts_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_layouts';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['layouts_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'learningdashboard', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['learningdashboard_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_learningdashboard';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['learningdashboard_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'polls', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['polls_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_polls';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['polls_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'screenshare', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['screenshare_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_screenshare';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['screenshare_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'sharednotes', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['sharednotes_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_sharednotes';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['sharednotes_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'virtualbackgrounds', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['virtualbackgrounds_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_virtualbackgrounds';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['virtualbackgrounds_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'customvirtualbackgrounds', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['customvirtualbackgrounds_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_customvirtualbackgrounds';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['customvirtualbackgrounds_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'presentationdf', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['presentationdf_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_presentationdf';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['presentationdf_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'cameraascontent', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['cameraascontent_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_cameraascontent';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['cameraascontent_default']);
+
+        $field = ['type' => 'hidden', 'name' => 'timer', 'data_type' => PARAM_INT, 'description_key' => null];
+        if ($cfg['timer_editable']) {
+            $field['type'] = 'checkbox';
+            $field['description_key'] = 'mod_form_field_timer';
+        }
+        $this->bigbluebuttonbn_mform_add_element($mform, $field['type'], $field['name'], $field['data_type'],
+            $field['description_key'], $cfg['timer_default']);
     }
 
     /**
@@ -579,7 +722,8 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
      */
     private function bigbluebuttonbn_mform_add_block_room(MoodleQuickForm &$mform, array $cfg) {
         if ($cfg['voicebridge_editable'] || $cfg['waitformoderator_editable'] ||
-            $cfg['userlimit_editable'] || $cfg['recording_editable'] || $cfg['muteonstart_editable']) {
+            $cfg['userlimit_editable'] || $cfg['recording_editable'] || $cfg['muteonstart_editable'] ||
+            $cfg['virtualbackgrounds'] || $cfg['screenshare']) {
             $mform->addElement('header', 'room', get_string('mod_form_block_room', 'bigbluebuttonbn'));
             $this->bigbluebuttonbn_mform_add_block_room_room($mform, $cfg);
         }

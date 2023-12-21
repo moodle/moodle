@@ -94,6 +94,60 @@ class mod_helper {
         if (!isset($bigbluebuttonbn->muteonstart)) {
             $bigbluebuttonbn->muteonstart = 0;
         }
+        if (!isset($bigbluebuttonbn->breakoutrooms)) {
+            $bigbluebuttonbn->breakoutrooms = 0;
+        }
+        if (!isset($bigbluebuttonbn->captions)) {
+            $bigbluebuttonbn->captions = 0;
+        }
+        if (!isset($bigbluebuttonbn->chat)) {
+            $bigbluebuttonbn->chat = 0;
+        }
+        if (!isset($bigbluebuttonbn->downloadpresentationwithannotations)) {
+            $bigbluebuttonbn->downloadpresentationwithannotations = 0;
+        }
+        if (!isset($bigbluebuttonbn->snapshotofcurrentslide)) {
+            $bigbluebuttonbn->snapshotofcurrentslide = 0;
+        }
+        if (!isset($bigbluebuttonbn->externalvideos)) {
+            $bigbluebuttonbn->externalvideos = 0;
+        }
+        if (!isset($bigbluebuttonbn->importpresentationwithannotationsfrombreakoutrooms)) {
+            $bigbluebuttonbn->importpresentationwithannotationsfrombreakoutrooms = 0;
+        }
+        if (!isset($bigbluebuttonbn->importsharednotesfrombreakoutrooms)) {
+            $bigbluebuttonbn->importsharednotesfrombreakoutrooms = 0;
+        }
+        if (!isset($bigbluebuttonbn->layouts)) {
+            $bigbluebuttonbn->layouts = 0;
+        }
+        if (!isset($bigbluebuttonbn->learningdashboard)) {
+            $bigbluebuttonbn->learningdashboard = 0;
+        }
+        if (!isset($bigbluebuttonbn->polls)) {
+            $bigbluebuttonbn->polls = 0;
+        }
+        if (!isset($bigbluebuttonbn->screenshare)) {
+            $bigbluebuttonbn->screenshare = 0;
+        }
+        if (!isset($bigbluebuttonbn->sharednotes)) {
+            $bigbluebuttonbn->sharednotes = 0;
+        }
+        if (!isset($bigbluebuttonbn->virtualbackgrounds)) {
+            $bigbluebuttonbn->virtualbackgrounds = 0;
+        }
+        if (!isset($bigbluebuttonbn->customvirtualbackgrounds)) {
+            $bigbluebuttonbn->customvirtualbackgrounds = 0;
+        }
+        if (!isset($bigbluebuttonbn->presentationdf)) {
+            $bigbluebuttonbn->presentationdf = 0;
+        }
+        if (!isset($bigbluebuttonbn->cameraascontent)) {
+            $bigbluebuttonbn->cameraascontent = 0;
+        }
+        if (!isset($bigbluebuttonbn->timer)) {
+            $bigbluebuttonbn->timer = 0;
+        }
         if (!isset($bigbluebuttonbn->disablecam)) {
             $bigbluebuttonbn->disablecam = 0;
         }

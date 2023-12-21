@@ -364,6 +364,30 @@ class meeting {
     }
 
     /**
+     * Conversion between form settings and disabledFeaturedSettings as set in BBB API.
+     */
+    const DISABLED_FEATURES_SETTINGS_MEETING_DATA = [
+        'breakoutrooms' => 'breakoutRooms',
+        'captions' => 'captions',
+        'chat' => 'chat',
+        'downloadpresentationwithannotations' => 'downloadPresentationWithAnnotations',
+        'snapshotofcurrentslide' => 'snapshotOfCurrentSlide',
+        'externalvideos' => 'externalVideos',
+        'importpresentationwithannotationsfrombreakoutrooms' => 'importPresentationWithAnnotationsFromBreakoutRooms',
+        'importsharednotesfrombreakoutrooms' => 'importSharedNotesFromBreakoutRooms',
+        'layouts' => 'layouts',
+        'learningdashboard' => 'learningDashboard',
+        'polls' => 'polls',
+        'screenshare' => 'screenshare',
+        'sharednotes' => 'sharedNotes',
+        'virtualbackgrounds' => 'virtualBackgrounds',
+        'customvirtualbackgrounds' => 'customVirtualBackgrounds',
+        'presentationdf' => 'presentationdf',
+        'cameraascontent' => 'cameraAsContent',
+        'timer' => 'timer'
+    ];
+
+    /**
      * Conversion between form settings and lockSettings as set in BBB API.
      */
     const LOCK_SETTINGS_MEETING_DATA = [
@@ -408,6 +432,22 @@ class meeting {
         if ($this->instance->get_mute_on_start()) {
             $data['muteOnStart'] = 'true';
         }
+        // Disabled features settings.
+        $disabledFeatures = '';
+        foreach (self::DISABLED_FEATURES_SETTINGS_MEETING_DATA as $instancevarname => $disabledfeaturename) {
+            $instancevar = $this->instance->get_instance_var($instancevarname);
+            if (!is_null($instancevar)) {
+                if ($instancevar) {
+                    // presentationdf had to be used for disabled features as presentation attribute is used in other places.
+                    if ($instancevarname == 'presentationdf') {
+                        $disabledfeaturename = 'presentation';
+                    }
+                    // This will be disabled whenever one settings is disabled.
+                    $disabledFeatures .= $disabledfeaturename .',';
+                }
+            }
+        }
+        $data['disabledFeatures'] = rtrim($disabledFeatures, ',');
         // Here a bit of a change compared to the API default behaviour: we should not allow guest to join
         // a meeting managed by Moodle by default.
         if ($this->instance->is_guest_allowed()) {

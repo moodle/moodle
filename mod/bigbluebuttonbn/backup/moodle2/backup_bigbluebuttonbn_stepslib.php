@@ -47,12 +47,14 @@ class backup_bigbluebuttonbn_activity_structure_step extends backup_activity_str
             'type', 'course', 'name', 'intro', 'introformat', 'meetingid',
             'moderatorpass', 'viewerpass', 'wait', 'record', 'recordallfromstart',
             'recordhidebutton', 'welcome', 'voicebridge', 'openingtime', 'closingtime', 'timecreated',
-            'timemodified', 'presentation', 'participants', 'userlimit',
-            'recordings_html', 'recordings_deleted', 'recordings_imported', 'recordings_preview',
-            'clienttype', 'muteonstart', 'completionattendance',
-            'completionengagementchats', 'completionengagementtalks', 'completionengagementraisehand',
-            'completionengagementpollvotes', 'completionengagementemojis',
-            'guestallowed', 'mustapproveuser']);
+            'timemodified', 'presentation', 'participants', 'userlimit', 'recordings_html', 'recordings_deleted',
+            'recordings_imported', 'recordings_preview', 'clienttype', 'muteonstart', 'breakoutrooms', 'captions',
+            'chat', 'downloadpresentationwithannotations', 'snapshotofcurrentslide', 'externalvideos',
+            'importpresentationwithannotationsfrombreakoutrooms', 'importsharednotesfrombreakoutrooms', 'layouts',
+            'learningdashboard', 'polls', 'screenshare', 'sharednotes', 'virtualbackgrounds', 'customvirtualbackgrounds',
+            'presentationdf', 'cameraascontent', 'timer', 'completionattendance', 'completionengagementchats',
+            'completionengagementtalks', 'completionengagementraisehand', 'completionengagementpollvotes',
+            'completionengagementemojis', 'guestallowed', 'mustapproveuser']);
 
         $logs = new backup_nested_element('logs');
 

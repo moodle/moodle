@@ -73,6 +73,85 @@ function xmldb_bigbluebuttonbn_upgrade($oldversion = 0) {
     // Automatically generated Moodle v4.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+    if ($oldversion < 2023122105) {
+        // Define field lockedlayout to be dropped from bigbluebuttonbn.
+        $table = new xmldb_table('bigbluebuttonbn');
+        // Add disabled featured fields.
+        $field = new xmldb_field('breakoutrooms', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'muteonstart');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('captions', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'breakoutrooms');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('chat', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'captions');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('downloadpresentationwithannotations', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'chat');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('snapshotofcurrentslide', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'downloadpresentationwithannotations');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('externalvideos', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'snapshotofcurrentslide');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('importpresentationwithannotationsfrombreakoutrooms', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'externalvideos');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('importsharednotesfrombreakoutrooms', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'importpresentationwithannotationsfrombreakoutrooms');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('layouts', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'importsharednotesfrombreakoutrooms');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('learningdashboard', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'layouts');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('polls', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'learningdashboard');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('screenshare', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'polls');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('sharednotes', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'screenshare');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('virtualbackgrounds', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'sharednotes');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('customvirtualbackgrounds', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'virtualbackgrounds');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('presentationdf', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'customvirtualbackgrounds');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('cameraascontent', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'presentation');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        $field = new xmldb_field('timer', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, 0, 'cameraascontent');
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Bigbluebuttonbn savepoint reached.
+        upgrade_mod_savepoint(true, 2023122105, 'bigbluebuttonbn');
+    }
     return true;
 }
 

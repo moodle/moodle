@@ -110,6 +110,7 @@ class settings {
         $this->add_userlimit_settings();
         $this->add_participants_settings();
         $this->add_muteonstart_settings();
+        $this->add_disabled_features_settings();
         $this->add_lock_settings();
         // Renders settings for extended capabilities.
         $this->add_extended_settings();
@@ -859,6 +860,75 @@ class settings {
             );
         }
         $this->admin->add($this->parent, $muteonstartsetting);
+    }
+
+    /**
+     * Helper function to render disabled features settings.
+     */
+    protected function add_disabled_features_settings(): void {
+        $disabledfeaturessetting = new admin_settingpage(
+            "{$this->sectionnameprefix}_disabledfeaturessettings",
+            get_string('config_disabledfeaturessettings', 'bigbluebuttonbn'),
+            'moodle/site:config',
+            !((boolean) setting_validator::section_disabled_features_shown()) && ($this->moduleenabled)
+        );
+        // Configuration for various lock settings for meetings.
+        if ($this->admin->fulltree) {
+            $this->add_disabled_features_setting_from_name('breakoutrooms', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('captions', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('chat', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('downloadpresentationwithannotations', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('snapshotofcurrentslide', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('externalvideos', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('importpresentationwithannotationsfrombreakoutrooms', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('importsharednotesfrombreakoutrooms', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('layouts', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('learningdashboard', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('polls', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('screenshare', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('sharednotes', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('virtualbackgrounds', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('customvirtualbackgrounds', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('presentationdf', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('cameraascontent', $disabledfeaturessetting);
+            $this->add_disabled_features_setting_from_name('timer', $disabledfeaturessetting);
+        }
+        $this->admin->add($this->parent, $disabledfeaturessetting);
+    }
+
+    /**
+     * Helper function renders setting if the feature is enabled.
+     *
+     * @param string $settingname
+     * @param admin_settingpage $lockingsetting The parent settingpage to add to
+     */
+    protected function add_disabled_features_setting_from_name(string $settingname, admin_settingpage $lockingsetting): void {
+        $validatorname = "section_{$settingname}_shown";
+        if ((boolean) setting_validator::$validatorname()) {
+            // Configuration for BigBlueButton.
+            $item = new admin_setting_configcheckbox(
+                    'bigbluebuttonbn_' . $settingname . '_default',
+                    get_string('config_' . $settingname . '_default', 'bigbluebuttonbn'),
+                    get_string('config_' . $settingname . '_default_description', 'bigbluebuttonbn'),
+                    config::defaultvalue($settingname . '_default')
+            );
+            $this->add_conditional_element(
+                    $settingname . '_default',
+                    $item,
+                    $lockingsetting
+            );
+            $item = new admin_setting_configcheckbox(
+                    'bigbluebuttonbn_' . $settingname . '_editable',
+                    get_string('config_' . $settingname . '_editable', 'bigbluebuttonbn'),
+                    get_string('config_' . $settingname . '_editable_description', 'bigbluebuttonbn'),
+                    config::defaultvalue($settingname . '_editable')
+            );
+            $this->add_conditional_element(
+                    $settingname . '_editable',
+                    $item,
+                    $lockingsetting
+            );
+        }
     }
 
     /**
