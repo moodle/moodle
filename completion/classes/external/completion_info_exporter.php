@@ -65,6 +65,9 @@ class completion_info_exporter extends \core\external\exporter {
      * @return array Keys are the property names, values are their values.
      */
     protected function get_other_values(renderer_base $output): array {
+        global $CFG;
+        require_once($CFG->libdir . '/completionlib.php');
+
         $cmcompletion = \core_completion\cm_completion_details::get_instance($this->cminfo, $this->userid);
         $cmcompletiondetails = $cmcompletion->get_details();
 
@@ -75,8 +78,14 @@ class completion_info_exporter extends \core\external\exporter {
                 'rulevalue' => (array)$rulevalue,
             ];
         }
+        // Temporary fix for 4.3 only to return via state COMPLETION_COMPLETE depending on the current state and overall status.
+        $state = $cmcompletion->get_overall_completion();
+        if ($state == COMPLETION_COMPLETE_FAIL && $cmcompletion->is_overall_complete()) {
+            $state = COMPLETION_COMPLETE;
+        }
+
         return [
-            'state'         => $cmcompletion->get_overall_completion(),
+            'state'         => $state,
             'timecompleted' => $cmcompletion->get_timemodified(),
             'overrideby'    => $cmcompletion->overridden_by(),
             'valueused'     => \core_availability\info::completion_value_used($this->course, $this->cminfo->id),
