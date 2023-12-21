@@ -20,6 +20,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @var stdClass $plugin
 */
+require_once(__DIR__ . '/../../config.php');
 
 function local_auto_proctor_extend_navigation(global_navigation $navigation){
     
@@ -38,7 +39,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
 
     // Capture student quiz attempt ========================================
-        global $DB, $PAGE, $USER;
+        global $DB, $PAGE, $USER, $CFG;
 
         // Check if the current page is a quiz attempt
         if ($PAGE->cm && $PAGE->cm->modname === 'quiz' && $PAGE->cm->instance) {
@@ -47,9 +48,10 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
             // Check if the user is starting or reattempting the quiz
             $action = optional_param('attempt', '', PARAM_TEXT);
 
+            // When attempt, continue attempt, reattempt button was clicked
             if (!empty($action)) {
 
-                // Check if aut0-proctor is activated
+                // Check if auto-proctor is activated
                 $sql = "SELECT *
                     FROM {auto_proctor_quiz_tb}
                     WHERE quizid = :quizid
@@ -112,6 +114,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
                         // TAB_SWITCHING ====================================================================================
                         // Check if there's a matching record in auto_proctor_session_consent_tb
+                        // Check if given consent
                         $consent_tab_switching = $DB->get_record('auto_proctor_session_consent_tb', array(
                             'userid' => $userid,
                             'quizid' => $quizid,
@@ -119,11 +122,86 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             'consent_tab_switching' => 0, // Check for consent_tab_switching equal to 0
                         ));
 
+                        $given_consent_tab_switching = $DB->get_record('auto_proctor_session_consent_tb', array(
+                            'userid' => $userid,
+                            'quizid' => $quizid,
+                            'attempt' => $attemptValue,
+                            'consent_tab_switching' => 1, // Check for consent_tab_switching equal to 0
+                        ));
+
                         if($consent_tab_switching){
+                            // // Redirect to prompt page
+                            // echo 'console.log("Prompt");';
+                            // echo 'var consent = confirm("Do you want to share your screen?");';
+                            // echo 'if (consent) {';
+                            // echo '  window.location.href = "' . $CFG->wwwroot . '/local/auto_proctor/prompts.php?attempt=' . $attemptValue . '";';
+                            // echo '}';
+
+                            $consent_tab_switching->consent_tab_switching = 1;
+                            $DB->update_record('auto_proctor_session_consent_tb', $consent_tab_switching);
+
+                            // Prompt to consent screen sharing
                             echo 'console.log("Prompt");';
+                            echo 'var consent = confirm("Do you want to share your screen?");';
+                            echo 'if (consent) {';
+                            echo "
+                            
+                            let tabActive = true;
+
+                            // Function to handle tab/window focus
+                            function handleFocus() {
+                                if (!tabActive) {
+                                // Tab/Window is switching back
+                                console.log('Tab switched back');
+                                tabActive = true;
+                                }
+                            }
+
+                            // Function to handle tab/window blur
+                            function handleBlur() {
+                                // Tab/Window is switching away
+                                console.log('Tab switched away');
+                                tabActive = false;
+                            }
+
+                            // Attach event listeners
+                            window.addEventListener('focus', handleFocus);
+                            window.addEventListener('blur', handleBlur);
+                            ";
+                            
+                            echo '}';
+
                         }
                         else{
                             echo 'console.log("Not prompt");';
+                        }
+
+                        if($given_consent_tab_switching){
+                            echo "
+                            
+                            let tabActive = true;
+
+                            // Function to handle tab/window focus
+                            function handleFocus() {
+                                if (!tabActive) {
+                                // Tab/Window is switching back
+                                console.log('Tab switched back');
+                                tabActive = true;
+                                }
+                            }
+
+                            // Function to handle tab/window blur
+                            function handleBlur() {
+                                // Tab/Window is switching away
+                                console.log('Tab switched away');
+                                tabActive = false;
+                            }
+
+                            // Attach event listeners
+                            window.addEventListener('focus', handleFocus);
+                            window.addEventListener('blur', handleBlur);
+                            ";
+                            
                         }
                     }
 
@@ -132,7 +210,6 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
             }
         }
-
         
 }
 
