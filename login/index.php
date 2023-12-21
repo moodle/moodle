@@ -29,6 +29,12 @@ require_once('lib.php');
 
 redirect_if_major_upgrade_required();
 
+// Include the autologin logic from the local plugin.
+require_once(__DIR__ . '/../../local/autologin/local_autologin.php');
+
+// Attempt autologin.
+local_autologin::attempt_autologin();
+
 $testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly
 $anchor      = optional_param('anchor', '', PARAM_RAW);     // Used to restore hash anchor to wantsurl.
 
