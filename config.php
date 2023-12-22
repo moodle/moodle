@@ -14,7 +14,7 @@ $CFG->prefix    = 'mdl_'; // You can change the table prefix if needed
 $CFG->dboptions = ['dbcollation' => 'utf8mb4_unicode_ci'];
 
 $CFG->wwwroot   = 'https://localhost';
-$CFG->dataroot  = 'C:\\xampp\\moodledata';
+$CFG->dataroot  = '/var/moodledata';
 $CFG->admin     = 'admin';
 
 $CFG->directorypermissions = 0777;
