@@ -33,7 +33,7 @@ redirect_if_major_upgrade_required();
 require_once(__DIR__ . '/../local/autologin/classes/autologin.php');
 
 // Attempt autologin.
-\local\autologin\autologin::attempt_autologin();
+\local\autologin\classes\autologin::attempt_autologin();
 
 $testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly
 $anchor      = optional_param('anchor', '', PARAM_RAW);     // Used to restore hash anchor to wantsurl.
