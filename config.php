@@ -8,8 +8,8 @@ $CFG->dbtype    = 'mariadb';
 $CFG->dblibrary = 'native';
 $CFG->dbhost    = 'localhost'; // Replace with your RDS endpoint
 $CFG->dbname    = 'moodle'; // Replace with your database name
-$CFG->dbuser    = 'root';   // Replace with your database username
-$CFG->dbpass    = 'Muwemi2015*';   // Replace with your database password
+$CFG->dbuser    = 'admin';   // Replace with your database username
+$CFG->dbpass    = 'Password';   // Replace with your database password
 $CFG->prefix    = 'mdl_'; // You can change the table prefix if needed
 $CFG->dboptions = ['dbcollation' => 'utf8mb4_unicode_ci'];
 
