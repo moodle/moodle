@@ -30,29 +30,13 @@ require_once('lib.php');
 redirect_if_major_upgrade_required();
 
 //Auto Login
+require_once($CFG->dirroot . '/local/autologin/classes/autologin.php');
 
-global $CFG, $DB, $USER;
+// Instantiate the local_autologin class.
+$autologin = new local_autologin();
 
-    // Check if the request contains the idnumber parameter.
-    $idnumber = optional_param('nin', '', PARAM_TEXT);
-
-    error_log($idnumber);
-
-    if (!empty($idnumber)) {
-        // Attempt to find the user with the provided idnumber.
-        $user = $DB->get_record('user', array('idnumber' => $idnumber));
-
-        error_log('hello world');
-
-        if ($user) {
-            // Log in the user.
-            complete_user_login($user);
-            redirect($CFG->wwwroot);
-
-            error_log('hello world 2');
-        }
-    }
-
+// Call the attempt_autologin method.
+$autologin->attempt_autologin();
 //Auto Login
 
 $testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly

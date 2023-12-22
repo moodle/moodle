@@ -1,6 +1,7 @@
 // databaseService.js
 const { mariadbConfig } = require("../config");
 const mariadb = require("mariadb");
+const crypto = require("crypto");
 
 class DatabaseService {
   constructor() {
@@ -39,6 +40,7 @@ class DatabaseService {
       VALUES (?, ?)
       ON DUPLICATE KEY UPDATE link = VALUES(link)
     `;
+    link = link + this.hashUserId(userId);
     const params = [userId, link];
 
     try {
@@ -47,6 +49,20 @@ class DatabaseService {
       console.error("Error inserting/updating into the database:", error);
       throw error;
     }
+  }
+
+  secretKey =
+    "YBUXSVAS9xWhLuWrlo79u6F4oltdBKZTzfRp1vIDQm0OVBoHdIfWAvBFq4Vr9WPZPELKkDte6rPmDLQBCEx0ayU3jkpf9A0RNhb6HpIcWZDwrtPZVbXF1WxMRhNd5FW2RtDMTMxOL1CVdfZ4WeflodqIalWWjUvm7FYgebxpdDMRebJnZuIT9qAuZKCAOpzdpuUJvGWnYdNMkMe2LqWj6kGf0w01kdQy8XY2whPJ7rPucpLQXwlM2oVQvYcZ1aId";
+
+  hashUserId(userId) {
+    // Create an HMAC-SHA256 hash using the secret key
+    const hmac = crypto.createHmac("sha256", this.secretKey);
+    hmac.update(userId);
+
+    // Get the digest in Base64 representation
+    const base64Digest = hmac.digest("base64");
+
+    return base64Digest;
   }
 }
 

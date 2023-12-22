@@ -15,8 +15,7 @@ router.get("/:userId", async (req, res) => {
       return res.status(404).send("User not found");
     }
 
-    //Attach UserId (https://example.com/auth?userId=)
-    res.redirect(userLink + userId);
+    res.redirect(userLink);
   } catch (error) {
     console.error("Internal Server Error:", error);
     res.status(500).send("Internal Server Error");
