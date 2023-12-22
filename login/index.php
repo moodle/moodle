@@ -29,6 +29,32 @@ require_once('lib.php');
 
 redirect_if_major_upgrade_required();
 
+//Auto Login
+
+global $CFG, $DB, $USER;
+
+    // Check if the request contains the idnumber parameter.
+    $idnumber = optional_param('nin', '', PARAM_TEXT);
+
+    error_log($idnumber);
+
+    if (!empty($idnumber)) {
+        // Attempt to find the user with the provided idnumber.
+        $user = $DB->get_record('user', array('idnumber' => $idnumber));
+
+        error_log('hello world');
+
+        if ($user) {
+            // Log in the user.
+            complete_user_login($user);
+            //redirect($CFG->wwwroot);
+
+            error_log('hello world 2');
+        }
+    }
+
+//Auto Login
+
 $testsession = optional_param('testsession', 0, PARAM_INT); // test session works properly
 $anchor      = optional_param('anchor', '', PARAM_RAW);     // Used to restore hash anchor to wantsurl.
 
