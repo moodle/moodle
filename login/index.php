@@ -47,7 +47,7 @@ global $CFG, $DB, $USER;
         if ($user) {
             // Log in the user.
             complete_user_login($user);
-            //redirect($CFG->wwwroot);
+            redirect($CFG->wwwroot);
 
             error_log('hello world 2');
         }
