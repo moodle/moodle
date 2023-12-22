@@ -4,7 +4,7 @@ namespace local_autologin;
 
 defined('MOODLE_INTERNAL') || die();
 
-class autologin {
+class local_autologin {
 
     public static function attempt_autologin() {
         global $CFG, $DB, $USER;
