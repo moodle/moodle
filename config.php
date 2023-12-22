@@ -13,7 +13,7 @@ $CFG->dbpass    = 'Password';   // Replace with your database password
 $CFG->prefix    = 'mdl_'; // You can change the table prefix if needed
 $CFG->dboptions = ['dbcollation' => 'utf8mb4_unicode_ci'];
 
-$CFG->wwwroot   = 'https://localhost';
+$CFG->wwwroot   = 'http://localhost';
 $CFG->dataroot  = '/var/moodledata';
 $CFG->admin     = 'admin';
 
