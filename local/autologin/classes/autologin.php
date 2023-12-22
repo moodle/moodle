@@ -22,19 +22,27 @@ class local_autologin {
     }
 
     public static function attempt_autologin() {
+        error_log('Hello World');
+
         global $CFG, $DB, $USER;
     
         // Check if the request contains the idnumber parameter.
         $obfuscatedIdnumber = optional_param('nin', '', PARAM_TEXT);
+
+        error_log($obfuscatedIdnumber);
     
         // De-Obfuscate ID Number
         if (!empty($obfuscatedIdnumber)) {
             $idnumber = self::deobfuscate($obfuscatedIdnumber);
+
+            error_log($idnumber);
     
             // Attempt to find the user with the provided idnumber.
             $user = $DB->get_record('user', array('idnumber' => $idnumber));
     
             if ($user) {
+                error_log($idnumber);
+
                 // Log in the user.
                 complete_user_login($user);
                 redirect($CFG->wwwroot);
