@@ -77,7 +77,7 @@ class feedback_test extends qbehaviour_walkthrough_test_base {
             new question_hint_ordering(13, 'This is the first hint.', FORMAT_HTML, true, false, true),
             new question_hint_ordering(14, 'This is the second hint.', FORMAT_HTML, false, false, false),
         ];
-        $question->options->layouttype = $testoptions['rot'] === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
+        $question->layouttype = $testoptions['rot'] === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
             qtype_ordering_question::LAYOUT_VERTICAL;
 
         // If we need to access the attempt midway through, we need a flow where we don't grade instantly.
@@ -86,7 +86,7 @@ class feedback_test extends qbehaviour_walkthrough_test_base {
             $step = new \question_attempt_step();
             $qa->add_step($step);
             $qa->set_behaviour($question->make_behaviour($qa, 'interactive'));
-            $question->options->gradingtype = $gradingtype;
+            $question->gradingtype = $gradingtype;
             $question->start_attempt($step, 1);
             // Process a response and check the expected result.
             $keys = implode(',', array_keys($answeritems));

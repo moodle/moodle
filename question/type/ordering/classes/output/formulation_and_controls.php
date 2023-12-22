@@ -72,7 +72,7 @@ class formulation_and_controls extends renderable_base {
         if ($class = $question->get_ordering_layoutclass()) {
             $data['layoutclass'] = $class;
         }
-        if ($numberingstyle = $question->options->numberingstyle) {
+        if ($numberingstyle = $question->numberingstyle) {
             $data['numberingstyle'] = $numberingstyle;
         }
 

@@ -14,6 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use qtype_ordering\output\correct_response;
+use qtype_ordering\output\feedback;
+use qtype_ordering\output\formulation_and_controls;
+use qtype_ordering\output\num_parts_correct;
+use qtype_ordering\output\specific_grade_detail_feedback;
+
 /**
  * Ordering question renderer class.
  *
@@ -21,41 +27,24 @@
  * @copyright  2013 Gordon Bateson (gordonbateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-// Prevent direct access to this script.
-
-/**
- * Generates the output for ordering questions
- *
- * @copyright  2013 Gordon Bateson
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
-    /** @var array of answerids in correct order */
-    protected $correctinfo = null;
-
-    /** @var array of answerids in order of current answer*/
-    protected $currentinfo = null;
-
-    /** @var array of scored for every item */
-    protected $itemscores = array();
-
-    /** @var bool True if answer is 100% correct */
-    protected $allcorrect = null;
+    // Disable coverage report for most of this file as each method is tested separately and as a while via Behat.
+    // @codeCoverageIgnoreStart
 
     /**
      * Generate the display of the formulation part of the question. This is the
-     * area that contains the quetsion text, and the controls for students to
+     * area that contains the question text, and the controls for students to
      * input their answers. Some question types also embed bits of feedback, for
      * example ticks and crosses, in this area.
      *
      * @param question_attempt $qa the question attempt to display.
      * @param question_display_options $options controls what should and should not be displayed.
      * @return string HTML fragment.
+     * @throws moodle_exception
      */
-    public function formulation_and_controls(question_attempt $qa, question_display_options $options) {
-        $formulationandcontrols = new \qtype_ordering\output\formulation_and_controls($qa, $options);
+    public function formulation_and_controls(question_attempt $qa, question_display_options $options): string {
+        $formulationandcontrols = new formulation_and_controls($qa, $options);
         return $this->output->render_from_template('qtype_ordering/formulation_and_controls',
             $formulationandcontrols->export_for_template($this->output));
     }
@@ -65,13 +54,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * area that contains the various forms of feedback. This function generates
      * the content of this area belonging to the question type.
      *
-     * @codeCoverageIgnore This is tested by the feedback exporter.
      * @param question_attempt $qa The question attempt to display.
      * @param question_display_options $options Controls what should and should not be displayed.
      * @return string HTML fragment.
+     * @throws moodle_exception
      */
-    public function feedback(question_attempt $qa, question_display_options $options) {
-        $feedback = new \qtype_ordering\output\feedback($qa, $options);
+    public function feedback(question_attempt $qa, question_display_options $options): string {
+        $feedback = new feedback($qa, $options);
         return $this->output->render_from_template('qtype_ordering/feedback',
             $feedback->export_for_template($this->output));
     }
@@ -81,9 +70,10 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      *
      * @param question_attempt $qa The question attempt to display.
      * @return string Output grade detail of the response.
+     * @throws moodle_exception
      */
     public function specific_grade_detail_feedback(question_attempt $qa): string {
-        $specificgradedetailfeedback = new \qtype_ordering\output\specific_grade_detail_feedback($qa);
+        $specificgradedetailfeedback = new specific_grade_detail_feedback($qa);
         return $this->output->render_from_template('qtype_ordering/specific_grade_detail_feedback',
             $specificgradedetailfeedback->export_for_template($this->output));
     }
@@ -92,11 +82,10 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * Generate the specific feedback. This is feedback that varies according to
      * the response the student gave.
      *
-     * @codeCoverageIgnore This is tested by the feedback exporter.
      * @param question_attempt $qa The question attempt to display.
      * @return string HTML fragment.
      */
-    public function specific_feedback(question_attempt $qa) {
+    public function specific_feedback(question_attempt $qa): string {
         return $this->combined_feedback($qa);
     }
 
@@ -107,15 +96,14 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      *
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
+     * @throws moodle_exception
      */
     public function correct_response(question_attempt $qa): string {
-        $correctresponse = new \qtype_ordering\output\correct_response($qa);
+        $correctresponse = new correct_response($qa);
 
         return $this->output->render_from_template('qtype_ordering/correct_response',
             $correctresponse->export_for_template($this->output));
     }
-
-    // Custom methods.
 
     /**
      * Generate a brief statement of how many sub-parts of this question the
@@ -123,18 +111,23 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      *
      * @param question_attempt $qa The question attempt to display.
      * @return string HTML fragment.
+     * @throws moodle_exception
      */
-    protected function num_parts_correct(question_attempt $qa) {
-        $numpartscorrect = new \qtype_ordering\output\num_parts_correct($qa);
+    protected function num_parts_correct(question_attempt $qa): string {
+        $numpartscorrect = new num_parts_correct($qa);
         return $this->output->render_from_template('qtype_ordering/num_parts_correct',
             $numpartscorrect->export_for_template($this->output));
     }
 
+    // Below this point, is code that will be included in the report as it isn't reported in isolation.
+    // @codeCoverageIgnoreEnd
+
     /**
      * Return an appropriate icon (green tick, red cross, etc.) for a grade.
+     * Note: Strict typing the params here breaks code eval as the parent function is not strictly typed.
      *
-     * @param float $fraction grade on a scale 0..1.
-     * @param bool $selected whether to show a big or small icon. (Deprecated)
+     * @param float $fraction The fraction of the maximum grade that was awarded.
+     * @param bool $selected Deprecated: size option.
      * @return string html fragment.
      */
     public function feedback_image($fraction, $selected = true): string {

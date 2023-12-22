@@ -77,9 +77,6 @@ class qtype_ordering extends question_type {
             $question->answers[$answerid]->md5key = 'ordering_item_' . md5(($CFG->passwordsaltmain ?? '') . $answer->answer);
         }
 
-        $question->options = clone($questiondata->options);
-        unset($question->options->answers);
-
         $this->initialise_combined_feedback($question, $questiondata, true);
     }
 

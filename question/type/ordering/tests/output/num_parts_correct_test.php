@@ -54,7 +54,7 @@ class num_parts_correct_test extends advanced_testcase {
         $step = new \question_attempt_step();
         $qa->add_step($step);
         $question->start_attempt($step, 1);
-        $question->options->gradingtype = $gradingtype;
+        $question->gradingtype = $gradingtype;
 
         $keys = implode(',', array_keys($answeritems));
         $step->set_qt_var('_currentresponse', $keys);

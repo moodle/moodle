@@ -61,7 +61,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Zero grade on any error (no partial score at all, it is either 1 or 0).
-        $question->options->gradingtype = qtype_ordering_question::GRADING_ALL_OR_NOTHING;
+        $question->gradingtype = qtype_ordering_question::GRADING_ALL_OR_NOTHING;
         $question->start_attempt(new question_attempt_pending_step(), 1);
 
         $this->assertEquals(
@@ -97,7 +97,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Counts items, placed into right absolute place.
-        $question->options->gradingtype = qtype_ordering_question::GRADING_ABSOLUTE_POSITION;
+        $question->gradingtype = qtype_ordering_question::GRADING_ABSOLUTE_POSITION;
         $question->start_attempt(new question_attempt_pending_step(), 1);
         // Every item is in the correct position.
         $this->assertEquals(
@@ -163,7 +163,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Every sequential pair in right order is graded (last pair is excluded).
-        $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST;
+        $question->gradingtype = qtype_ordering_question::GRADING_RELATIVE_NEXT_EXCLUDE_LAST;
         $question->start_attempt(new question_attempt_pending_step(), 1);
 
         // Every item is in the correct position.
@@ -212,7 +212,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Every sequential pair in right order is graded (last pair is included).
-        $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST;
+        $question->gradingtype = qtype_ordering_question::GRADING_RELATIVE_NEXT_INCLUDE_LAST;
         $question->start_attempt(new question_attempt_pending_step(), 1);
         // Every item is in the correct position.
         $this->assertEquals(
@@ -250,7 +250,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Single answers that are placed before and after each answer is graded if in right order.
-        $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT;
+        $question->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ONE_PREVIOUS_AND_NEXT;
         $question->start_attempt(new question_attempt_pending_step(), 1);
         // All items are in the correct position.
         $this->assertEquals(
@@ -297,7 +297,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // All answers that are placed before and after each answer is graded if in right order.
-        $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
+        $question->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $question->start_attempt(new question_attempt_pending_step(), 1);
         // All items are in the correct position.
         $this->assertEquals(
@@ -353,7 +353,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Only longest ordered subset is graded.
-        $question->options->gradingtype = qtype_ordering_question::GRADING_LONGEST_ORDERED_SUBSET;
+        $question->gradingtype = qtype_ordering_question::GRADING_LONGEST_ORDERED_SUBSET;
         $question->start_attempt(new question_attempt_pending_step(), 1);
         // All items are in the correct position.
         $this->assertEquals(
@@ -400,7 +400,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Only longest ordered and contiguous subset is graded.
-        $question->options->gradingtype = qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET;
+        $question->gradingtype = qtype_ordering_question::GRADING_LONGEST_CONTIGUOUS_SUBSET;
         $question->start_attempt(new question_attempt_pending_step(), 1);
         // All items are in the correct position.
         $this->assertEquals(
@@ -447,7 +447,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
         // Items are graded relative to their position in the correct answer.
-        $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT;
+        $question->gradingtype = qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT;
         $question->start_attempt(new question_attempt_pending_step(), 1);
         // All items are in the correct position.
         $this->assertEquals(
@@ -579,13 +579,13 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
 
-        if ($question->options->layouttype === 0) {
+        if ($question->layouttype === 0) {
             $this->assertEquals('vertical', $question->get_ordering_layoutclass());
-        } else if ($question->options->layouttype === 1) {
+        } else if ($question->layouttype === 1) {
             $this->assertEquals('horizontal', $question->get_ordering_layoutclass());
         }
         // Confirm that if an invalid layouttype is set, an empty string is returned.
-        $question->options->layouttype = 3;
+        $question->layouttype = 3;
         $error = $question->get_ordering_layoutclass();
         $this->assertEquals('', $error);
     }
@@ -697,7 +697,7 @@ class question_test extends \advanced_testcase {
         /** @var qtype_ordering_question $question */
         $question = test_question_maker::make_question('ordering');
 
-        $question->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT;
+        $question->gradingtype = qtype_ordering_question::GRADING_RELATIVE_TO_CORRECT;
         $question->start_attempt(new question_attempt_pending_step(), 1);
 
         $response = qtype_ordering_test_helper::get_response(

@@ -52,7 +52,7 @@ class formulation_and_controls_test extends advanced_testcase {
         global $PAGE;
 
         $question = test_question_maker::make_question('ordering');
-        $question->options->layouttype = $layouttype === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
+        $question->layouttype = $layouttype === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
             qtype_ordering_question::LAYOUT_VERTICAL;
         $qa = new \testable_question_attempt($question, 0);
         $step = new \question_attempt_step();
@@ -66,7 +66,7 @@ class formulation_and_controls_test extends advanced_testcase {
         $options->rightanswer = question_display_options::VISIBLE;
         $options->manualcomment = question_display_options::VISIBLE;
         $options->history = question_display_options::VISIBLE;
-        $question->options->gradingtype = $gradingtype;
+        $question->gradingtype = $gradingtype;
 
         $keys = implode(',', array_keys($answeritems));
         $values = array_values($answeritems);

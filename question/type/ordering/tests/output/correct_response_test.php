@@ -50,8 +50,8 @@ class correct_response_test extends advanced_testcase {
 
         $question = test_question_maker::make_question('ordering');
         // Set the grading type and layout type options.
-        $question->options->gradingtype = qtype_ordering_question::GRADING_ABSOLUTE_POSITION;
-        $question->options->layouttype = $layouttype === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
+        $question->gradingtype = qtype_ordering_question::GRADING_ABSOLUTE_POSITION;
+        $question->layouttype = $layouttype === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
             qtype_ordering_question::LAYOUT_VERTICAL;
         // Create a question attempt.
         $qa = new \testable_question_attempt($question, 0);

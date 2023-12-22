@@ -52,9 +52,9 @@ class specific_grade_detail_feedback extends renderable_base {
         $plugin = 'qtype_ordering';
 
         // Show grading details if they are required.
-        if ($question->options->showgrading) {
+        if ($question->showgrading) {
             // Fetch grading type.
-            $gradingtype = $question->options->gradingtype;
+            $gradingtype = $question->gradingtype;
             $gradingtype = qtype_ordering_question::get_grading_types($gradingtype);
 
             // Format grading type, e.g. Grading type: Relative to next item, excluding last item.

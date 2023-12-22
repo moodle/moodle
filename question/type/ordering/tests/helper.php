@@ -62,14 +62,13 @@ class qtype_ordering_test_helper extends question_test_helper {
             17 => $this->make_answer(17, 'Learning', FORMAT_HTML, 5, true),
             18 => $this->make_answer(18, 'Environment', FORMAT_HTML, 6, true),
         ];
-        $q->options = new stdClass();
-        $q->options->layouttype = qtype_ordering_question::LAYOUT_HORIZONTAL;
-        $q->options->selecttype = qtype_ordering_question::SELECT_ALL;
-        $q->options->selectcount = 0;
-        $q->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
-        $q->options->showgrading = true;
-        $q->options->numberingstyle = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
-        $q->options->shownumcorrect = 1;
+        $q->layouttype = qtype_ordering_question::LAYOUT_HORIZONTAL;
+        $q->selecttype = qtype_ordering_question::SELECT_ALL;
+        $q->selectcount = 0;
+        $q->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
+        $q->showgrading = true;
+        $q->numberingstyle = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
+        $q->shownumcorrect = 1;
 
         return $q;
     }

@@ -102,9 +102,6 @@ class qtype_ordering_question extends question_graded_automatically {
     /** @var array Records from "question_answers" table */
     public $answers;
 
-    /** @var stdClass Records from "qtype_ordering_options" table */
-    public $options;
-
     /** @var array of answerids in correct order */
     public $correctresponse;
 
@@ -134,12 +131,12 @@ class qtype_ordering_question extends question_graded_automatically {
         $countanswers = count($this->answers);
 
         // Sanitize "selecttype".
-        $selecttype = $this->options->selecttype;
+        $selecttype = $this->selecttype;
         $selecttype = max(0, $selecttype);
         $selecttype = min(2, $selecttype);
 
         // Sanitize "selectcount".
-        $selectcount = $this->options->selectcount;
+        $selectcount = $this->selectcount;
         $selectcount = max(3, $selectcount);
         $selectcount = min($countanswers, $selectcount);
 
@@ -408,7 +405,7 @@ class qtype_ordering_question extends question_graded_automatically {
         $countcorrect = 0;
         $countanswers = 0;
 
-        $gradingtype = $this->options->gradingtype;
+        $gradingtype = $this->gradingtype;
         switch ($gradingtype) {
 
             case self::GRADING_ALL_OR_NOTHING:
@@ -593,7 +590,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @return string
      */
     public function get_ordering_layoutclass(): string {
-        switch ($this->options->layouttype) {
+        switch ($this->layouttype) {
             case self::LAYOUT_VERTICAL:
                 return 'vertical';
             case self::LAYOUT_HORIZONTAL:
@@ -873,7 +870,7 @@ class qtype_ordering_question extends question_graded_automatically {
      */
     public function get_num_parts_right(array $response): array {
         $this->update_current_response($response);
-        $gradingtype = $this->options->gradingtype;
+        $gradingtype = $this->gradingtype;
 
         $numright = 0;
         $numpartial = 0;
@@ -914,7 +911,7 @@ class qtype_ordering_question extends question_graded_automatically {
         array $correctresponse,
         array $currentresponse
     ): array {
-        $gradingtype = $this->options->gradingtype;
+        $gradingtype = $this->gradingtype;
 
         $score    = 0;
         $maxscore = null;
@@ -1044,7 +1041,7 @@ class qtype_ordering_question extends question_graded_automatically {
 
         if (!isset($this->itemscores[$position])) {
 
-            [$correctresponse, $currentresponse] = $this->get_response_depend_on_grading_type($question->options->gradingtype);
+            [$correctresponse, $currentresponse] = $this->get_response_depend_on_grading_type($this->gradingtype);
 
             $percent  = 0;    // 100 * $fraction.
             [$fraction, $score, $maxscore] =

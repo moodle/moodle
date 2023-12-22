@@ -53,10 +53,10 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
         $this->resetAfterTest();
         $question = test_question_maker::make_question('ordering');
         // Options need to be set before starting the attempt otherwise they are not passed along.
-        $question->options->layouttype = $layouttype === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
+        $question->layouttype = $layouttype === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
             qtype_ordering_question::LAYOUT_VERTICAL;
-        $question->options->gradingtype = $gradingtype;
-        $question->options->selecttype = $selecttype;
+        $question->gradingtype = $gradingtype;
+        $question->selecttype = $selecttype;
         $qa = new \testable_question_attempt($question, 0);
         $step = new \question_attempt_step();
         $qa->add_step($step);
