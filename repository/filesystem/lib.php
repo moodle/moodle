@@ -99,7 +99,7 @@ class repository_filesystem extends repository {
         $fileslist = array();
         $dirslist = array();
         if ($dh = opendir($abspath)) {
-            while (($file = readdir($dh)) != false) {
+            while (false !== ($file = readdir($dh))) {
                 if ($file != '.' and $file != '..') {
                     if (is_file($abspath . $file)) {
                         $fileslist[] = $file;
@@ -108,6 +108,7 @@ class repository_filesystem extends repository {
                     }
                 }
             }
+            closedir($dh);
         }
         core_collator::asort($fileslist, core_collator::SORT_NATURAL);
         core_collator::asort($dirslist, core_collator::SORT_NATURAL);
