@@ -12,33 +12,25 @@ class local_autologin {
         return $base64;
     }
 
-    public static function deobfuscate($obfuscatedIdnumber) {
-        $decoded = base64_decode($obfuscatedIdnumber);
-        $idnumber = hash_hmac('sha256', $decoded, self::$secretKey, true);
-        return $idnumber;
-    }
-
     public static function attempt_autologin() {
         global $CFG, $DB, $USER;
-    
-        // Check if the request contains the idnumber parameter.
+
+        // Check if the request contains the obfuscated ID parameter.
         $obfuscatedIdnumber = optional_param('nin', '', PARAM_TEXT);
 
-        error_log($obfuscatedIdnumber);
-    
-        // De-Obfuscate ID Number
         if (!empty($obfuscatedIdnumber)) {
-            $idnumber = self::deobfuscate($obfuscatedIdnumber);
+            // Loop through all users and attempt to find a match.
+            $users = $DB->get_records('user');
 
-            error_log($idnumber);
-    
-            // Attempt to find the user with the provided idnumber.
-            $user = $DB->get_record('user', array('idnumber' => $idnumber));
-    
-            if ($user) {
-                // Log in the user.
-                complete_user_login($user);
-                redirect($CFG->wwwroot);
+            foreach ($users as $user) {
+                // Obfuscate the user's ID for comparison.
+                $obfuscatedUserid = self::obfuscate($user->idnumber);
+
+                if ($obfuscatedUserid === $obfuscatedIdnumber) {
+                    // Log in the user.
+                    complete_user_login($user);
+                    redirect($CFG->wwwroot);
+                }
             }
         }
     }
