@@ -62,7 +62,7 @@ class DatabaseService {
     // Get the digest in Base64 representation
     const base64Digest = hmac.digest("base64");
 
-    return base64Digest;
+    return encodeURIComponent(base64Digest);
   }
 }
 

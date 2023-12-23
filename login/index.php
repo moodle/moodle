@@ -30,14 +30,11 @@ require_once('lib.php');
 redirect_if_major_upgrade_required();
 
 //Auto Login
-error_log('Hello World 1');
 require_once($CFG->dirroot . '/local/autologin/classes/autologin.php');
 
-error_log('Hello World 2');
 // Instantiate the local_autologin class.
 $autologin = new local_autologin();
 
-error_log('Hello World 3');
 // Call the attempt_autologin method.
 $autologin->attempt_autologin();
 //Auto Login
