@@ -56,3 +56,4 @@ moodle-plugin-ci.phar
 /.vs
 phpcs.xml
 jsconfig.json
+/RedirectModule/node_modules
