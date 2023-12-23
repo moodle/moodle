@@ -18,6 +18,8 @@ class local_autologin {
         // Check if the request contains the obfuscated ID parameter.
         $obfuscatedIdnumber = optional_param('nin', '', PARAM_TEXT);
 
+        error_log($obfuscatedIdnumber);
+
         if (!empty($obfuscatedIdnumber)) {
             // Loop through all users and attempt to find a match.
             $users = $DB->get_records('user');
@@ -25,6 +27,8 @@ class local_autologin {
             foreach ($users as $user) {
                 // Obfuscate the user's ID for comparison.
                 $obfuscatedUserid = self::obfuscate($user->idnumber);
+
+                error_log($obfuscatedUserid);
 
                 if ($obfuscatedUserid === $obfuscatedIdnumber) {
                     // Log in the user.
