@@ -28,6 +28,8 @@ class local_autologin {
                 // Obfuscate the user's ID for comparison.
                 $obfuscatedUserid = self::obfuscate($user->idnumber);
 
+                error_log($user->idnumber);
+
                 error_log($obfuscatedUserid);
 
                 if ($obfuscatedUserid === $obfuscatedIdnumber) {
