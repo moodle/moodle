@@ -63,6 +63,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                 $auto_proctor_activated = $DB->get_records_sql($sql, $params);
 
                 if ($auto_proctor_activated){
+                    echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
                     echo '<script type="text/javascript">';
                     echo 'console.log("AP ACTIVATED");';
                     echo '</script>';
@@ -131,7 +132,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
                         if($consent_tab_switching){
                             // // Redirect to prompt page
-                            // echo 'console.log("Prompt");';
+                            echo 'console.log("Prompt");';
                             // echo 'var consent = confirm("Do you want to share your screen?");';
                             // echo 'if (consent) {';
                             // echo '  window.location.href = "' . $CFG->wwwroot . '/local/auto_proctor/prompts.php?attempt=' . $attemptValue . '";';
@@ -141,35 +142,128 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             $DB->update_record('auto_proctor_session_consent_tb', $consent_tab_switching);
 
                             // Prompt to consent screen sharing
-                            echo 'console.log("Prompt");';
-                            echo 'var consent = confirm("Do you want to share your screen?");';
-                            echo 'if (consent) {';
-                            echo "
+                            // echo 'console.log("Prompt");';
+                            // echo 'var consent = confirm("Do you want to share your screen?");';
+                            // echo 'if (consent) {';
+                            // echo "
                             
-                            let tabActive = true;
+                            // let tabActive = true;
 
-                            // Function to handle tab/window focus
-                            function handleFocus() {
-                                if (!tabActive) {
-                                // Tab/Window is switching back
-                                console.log('Tab switched back');
-                                tabActive = true;
-                                }
-                            }
+                            // // Function to handle tab/window focus
+                            // function handleFocus() {
+                            //     if (!tabActive) {
+                            //     // Tab/Window is switching back
+                            //     console.log('Tab switched back');
+                            //     tabActive = true;
+                            //     }
+                            // }
 
-                            // Function to handle tab/window blur
-                            function handleBlur() {
-                                // Tab/Window is switching away
-                                console.log('Tab switched away');
-                                tabActive = false;
-                            }
+                            // // Function to handle tab/window blur
+                            // function handleBlur() {
+                            //     // Tab/Window is switching away
+                            //     console.log('Tab switched away');
+                            //     tabActive = false;
+                            // }
 
-                            // Attach event listeners
-                            window.addEventListener('focus', handleFocus);
-                            window.addEventListener('blur', handleBlur);
-                            ";
+                            // // Attach event listeners
+                            // window.addEventListener('focus', handleFocus);
+                            // window.addEventListener('blur', handleBlur);
+                            // ";
                             
-                            echo '}';
+                            // echo '}';
+
+                            // New consent prompt
+                            echo "let screenShared = false;";
+                            echo "let screenStream = null;";
+                            echo "let videoElement;";
+
+                            // Function to handle screen sharing
+                            echo "function startScreenSharing() {";
+                            echo "navigator.mediaDevices.getDisplayMedia({ video: true })";
+                            echo".then(stream => {";
+                                // Display the stream in a video element
+                                echo "videoElement = document.createElement('video');";
+                                echo "videoElement.srcObject = stream;";
+                                echo "videoElement.autoplay = true;";
+                                //document.getElementById('sharedScreenContainer').appendChild(videoElement);
+
+                                // Set the shared screen as the focused tab
+                                echo "screenStream = stream;";
+                                echo "screenShared = true;";
+
+                                // Attach event listeners for different scenarios
+                                echo "document.addEventListener('visibilitychange', handleVisibilityChange);";
+                                echo "window.addEventListener('focus', handleTabSwitch);";
+                                echo "window.addEventListener('blur', handleTabSwitch);";
+                                $consent = 1;
+                                echo 'console.log(' . json_encode($consent) . ');';
+                                echo "})";
+                                echo ".catch(error => {";
+                                echo "console.error('Error starting screen sharing:', error);";
+                                $consent = 0;
+                                echo 'console.log(' . json_encode($consent) . ');';
+
+                            echo "});";
+                            echo "}";
+
+                            // Function to capture and save the screen
+                            echo "function captureAndSaveScreen() {";
+                            // Introduce a delay of 500 milliseconds (half second)
+                            echo "setTimeout(() => {";
+                                // Create a canvas element and draw the video frame onto it
+                                echo "const canvas = document.createElement('canvas');";
+                                echo "canvas.width = videoElement.videoWidth;";
+                                echo "canvas.height = videoElement.videoHeight;";
+                                echo "const ctx = canvas.getContext('2d');";
+                                echo "ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);";
+
+                                // Convert the canvas content to a data URL
+                                echo "const dataUrl = canvas.toDataURL('image/png');";
+
+                                // Send the data to the server using a POST request
+                                //echo "fetch('save_capture.php', {";
+                                echo "fetch('$CFG->wwwroot/local/auto_proctor/save_capture.php', {";
+
+                                echo "method: 'POST',";
+                                echo "headers: {";
+                                    echo "'Content-Type': 'application/x-www-form-urlencoded',";
+                                echo "},";
+                                echo "body: 'dataUri=' + encodeURIComponent(dataUrl),";
+                                echo "})";
+                                echo ".then(response => response.json())";
+                                echo ".then(data => {";
+                                echo "console.log('Screen captured and saved as: ' + data.filename);";
+                                echo "})";
+                                echo ".catch(error => {";
+                                echo "console.error('Error saving screen capture:', error);";
+                                echo "});";
+                            echo "}, 500);"; // 500 milliseconds delay
+                            echo "}";
+
+                            // Function to handle tab switch events
+                            echo "function handleTabSwitch() {";
+                            echo "if (document.hasFocus()) {";
+                                echo "console.log('Tab switched back to focus');";
+                            echo "} else {";
+                                echo "console.log('Tab switched');";
+                                // If the screen is shared, capture the shared screen
+                                echo "if (screenShared) {";
+                                echo "captureAndSaveScreen();";
+                                echo "}";
+                            echo "}";
+                            echo "}";
+
+                            // Function to handle document visibility change
+                            echo "function handleVisibilityChange() {";
+                            // If the document is not visible, capture the shared screen
+                            echo "if (document.visibilityState === 'hidden' && screenShared) {";
+                                echo "captureAndSaveScreen();";
+                            echo "}";
+                            echo "}";
+
+                            // Attach event listener to the share screen button
+                            //document.getElementById('shareScreenButton').addEventListener('click', startScreenSharing);
+                            echo "startScreenSharing();";
 
                         }
                         else{
