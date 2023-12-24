@@ -80,12 +80,12 @@ class action_bar extends \core_grades\output\action_bar {
         // If the user has the capability to view all grades, display the group selector (if applicable), the user selector
         // and the view mode selector (if applicable).
         if (has_capability('moodle/grade:viewall', $this->context)) {
-            $course = get_course($courseid);
-            $gradesrenderer = $PAGE->get_renderer('core_grades');
             $userreportrenderer = $PAGE->get_renderer('gradereport_user');
-
-            $data['groupselector'] = $gradesrenderer->group_selector($course);
-            $data['userselector'] = $userreportrenderer->users_selector($course, $this->userid, $this->currentgroupid);
+            $data['groupselector'] = $PAGE->get_renderer('core_grades')->group_selector(get_course($courseid));
+            $data['userselector'] = [
+                'courseid' => $courseid,
+                'content' => $userreportrenderer->users_selector(get_course($courseid), $this->userid, $this->currentgroupid)
+            ];
 
             // Do not output the 'view mode' selector when in zero state or when the current user is viewing its own report.
             if (!is_null($this->userid) && $USER->id != $this->userid) {

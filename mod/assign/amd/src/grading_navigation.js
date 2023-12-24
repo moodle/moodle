@@ -22,8 +22,8 @@
  * @since      3.1
  */
 define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
-        'core/ajax', 'mod_assign/grading_form_change_checker'],
-       function($, notification, str, autocomplete, ajax, checker) {
+        'core/ajax', 'core_user/repository', 'mod_assign/grading_form_change_checker'],
+       function($, notification, str, autocomplete, ajax, UserRepository, checker) {
 
     /**
      * GradingNavigation class.
@@ -219,12 +219,7 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
             });
         }
 
-        return ajax.call([{
-            methodname: 'core_user_set_user_preferences',
-            args: {
-                preferences: preferences
-            }
-        }])[0];
+        return UserRepository.setUserPreferences(preferences);
     };
     /**
      * Turn a filter on or off.

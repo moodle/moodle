@@ -28,7 +28,6 @@
  */
 
 define('NO_DEBUG_DISPLAY', true);
-define('NO_MOODLE_COOKIES', true);
 
 require_once(__DIR__ . '/../../../config.php');
 
@@ -41,7 +40,7 @@ if (!empty($CFG->enablemobilewebservice) && !empty($mobilesettings->enablesmarta
 
     $manifest = new StdClass;
     $manifest->short_name = format_string($SITE->shortname, true, [
-        'context' => context_system::instance(),
+        'context' => \core\context\system::instance(),
     ]);
     $manifest->prefer_related_applications = true;
     $manifest->icons = [(object)

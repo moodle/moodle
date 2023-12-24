@@ -139,29 +139,6 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
         }
     }
 }
-/* Force positioning of popover arrows.
- *
- * The Css prefixer used in Moodle does not support complex calc statements used
- * in Bootstrap 4 CSS. For example:
- * calc((0.5rem + 1px) * -1); is stripped out by lib/php-css-parser/Parser.php.
- * See MDL-61879. For now the arrow positions of popovers are fixed until this is resolved.
- */
-.bs-popover-right .arrow,
-.bs-popover-auto[x-placement^="right"] .arrow {
-    left: -9px;
-}
-.bs-popover-left .arrow,
-.bs-popover-auto[x-placement^="left"] .arrow {
-    right: -9px;
-}
-.bs-popover-top .arrow,
-.bs-popover-auto[x-placement^="top"] .arrow {
-    bottom: -9px;
-}
-.bs-popover-bottom .arrow,
-.bs-popover-auto[x-placement^="bottom"] .arrow {
-    top: -9px;
-}
 
 // Fixes an issue on Safari when the .custom-select is inside a .card class.
 .custom-select {

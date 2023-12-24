@@ -1,5 +1,23 @@
-This files describes API changes in /completion/* - completion,
+This file describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
+
+=== 4.3.1 ===
+* A new method, cm_completion_details::is_overall_complete() has been added to calculate whether a module should be considered or
+  not completed, based on their completion options and the current value for the overall complete state.
+
+=== 4.3 ===
+* A trait class, core_completion/form/form_trait has been added to reuse code for adding and validation completion settings to any
+  form.
+* New method is_manual() has been added to `core_completion/cm_completion_details`
+* The method manager::get_activities_and_resources() now has the optional $includedefaults parameter to define whether the default
+  values should be included or not.
+* The methods manager::apply_default_completion() and manager::get_default_completion() now have the optional $suffix parameter
+  to be added to the name of the completion rules.
+* The method manager::defaultcompletion() now has the $modules and $form parameters, to specify the modules that have been set
+  through the form and the current form that has been sent.
+* Support for deprecated `[modname]_get_completion_state` callbacks has been removed, custom completion rules must be implemented
+  by appropriate `mod_[modname]\completion\custom_completion` class instead
+* $CFG->completiondefault setting has been removed.
 
 === 4.0 ===
 * New method mark_course_completions_activity_criteria() has been added to mark course completions instantly. It is

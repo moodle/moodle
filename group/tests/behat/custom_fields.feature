@@ -34,12 +34,12 @@ Feature: Custom profile fields in groups
     And I am on the "Course 1" "groups" page
 
     # Check the Overview page.
-    And I select "Overview" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Overview"
     And "Robin Hood (user1, fox)" "text" should exist in the "Canines" "table_row"
     And "Little John (user2, bear)" "text" should exist in the "No group" "table_row"
 
     # Check the groups page.
-    And I select "Groups" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groups"
     And I set the field "groups" to "Canines"
     And I should see "Robin Hood (user1, fox)"
     And I should not see "Little John (user2, bear)"

@@ -32,7 +32,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use mod_h5pactivity\local\manager;
-use external_api;
+use core_external\external_api;
 use externallib_advanced_testcase;
 
 /**

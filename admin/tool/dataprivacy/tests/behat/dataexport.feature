@@ -54,7 +54,7 @@ Feature: Data export from the privacy API
     And I reload the page
     And I should see "Download ready" in the "Victim User 1" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
-    And following "Download" should download between "1" and "150000" bytes
+    And following "Download" should download between "1" and "200000" bytes
     And the following config values are set as admin:
       | privacyrequestexpiry | 1 | tool_dataprivacy |
     And I wait "1" seconds
@@ -89,7 +89,7 @@ Feature: Data export from the privacy API
     And I reload the page
     And I should see "Download ready" in the "Export all of my personal data" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
-    And following "Download" should download between "1" and "155000" bytes
+    And following "Download" should download between "1" and "200000" bytes
 
     And the following config values are set as admin:
       | privacyrequestexpiry | 1 | tool_dataprivacy |
@@ -126,7 +126,7 @@ Feature: Data export from the privacy API
     And I reload the page
     And I should see "Download ready" in the "Victim User 1" "table_row"
     And I open the action menu in "Victim User 1" "table_row"
-    And following "Download" should download between "1" and "150000" bytes
+    And following "Download" should download between "1" and "200000" bytes
 
     And the following config values are set as admin:
       | privacyrequestexpiry | 1 | tool_dataprivacy |
@@ -161,3 +161,105 @@ Feature: Data export from the privacy API
     When I press "Save changes"
     Then I should see "Your request has been submitted and will be processed soon."
     And I should see "Approved" in the "Export all of my personal data" "table_row"
+
+  @javascript
+  Scenario: As admin, enable allow filtering of exports by course setting, export data for a user and download it
+    Given the following config values are set as admin:
+      | allowfiltering | 1 | tool_dataprivacy |
+    And I log in as "admin"
+    And I navigate to "Users > Privacy and policies > Data requests" in site administration
+    And I follow "New request"
+    And I set the field "User" to "Victim User 1"
+    And I should see "Export my personal data"
+    And I press "Save changes"
+    Then I should see "Victim User 1"
+    And I should see "Pending" in the "Victim User 1" "table_row"
+    And I run all adhoc tasks
+    And I reload the page
+    And I should see "Awaiting approval" in the "Victim User 1" "table_row"
+    And I open the action menu in "Victim User 1" "table_row"
+    And I follow "Approve request (all data)"
+    And I press "Approve request"
+    And I should see "Approved" in the "Victim User 1" "table_row"
+    And I run all adhoc tasks
+    And I reload the page
+    And I should see "Download ready" in the "Victim User 1" "table_row"
+    And I open the action menu in "Victim User 1" "table_row"
+    And following "Download" should download between "1" and "170000" bytes
+    And the following config values are set as admin:
+      | privacyrequestexpiry | 1 | tool_dataprivacy |
+    And I wait "1" seconds
+    And I navigate to "Users > Privacy and policies > Data requests" in site administration
+    And I should see "Expired" in the "Victim User 1" "table_row"
+    And I open the action menu in "Victim User 1" "table_row"
+    And I should not see "Download"
+
+  @javascript
+  Scenario: As admin, enable allow filtering of exports by course setting, filter before export data for a user and download it
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+      | Course 2 | C2        |
+      | Coruse 3 | C3        |
+    And the following "course enrolments" exist:
+      | user    | course | role    |
+      | victim  | C1     | student |
+      | victim  | C2     | student |
+    And the following config values are set as admin:
+      | allowfiltering | 1 | tool_dataprivacy |
+    And I log in as "admin"
+    And I navigate to "Users > Privacy and policies > Data requests" in site administration
+    And I follow "New request"
+    And I set the field "User" to "Victim User 1"
+    And I press "Save changes"
+    Then I should see "Victim User 1"
+    And I run all adhoc tasks
+    And I reload the page
+    And I open the action menu in "Victim User 1" "table_row"
+    And I follow "Approve request (data from selected courses)"
+    And I should see "Course 1"
+    And I should see "Course 2"
+    And I should not see "Course 3"
+    And I press "Approve request"
+    And I should see "You must select at least one course"
+    And I set the field "Select courses to export" to "Course 1"
+    And I press "Approve request"
+    And I should see "Approved" in the "Victim User 1" "table_row"
+    And I run all adhoc tasks
+    And I reload the page
+    And I should see "Download ready" in the "Victim User 1" "table_row"
+    And I open the action menu in "Victim User 1" "table_row"
+    And following "Download" should download between "1" and "180000" bytes
+
+  @javascript
+  Scenario: Filter before export data for a user and download it in the view request action
+    Given the following "courses" exist:
+      | fullname | shortname |
+      | Course 1 | C1        |
+      | Course 2 | C2        |
+      | Coruse 3 | C3        |
+    And the following "course enrolments" exist:
+      | user    | course | role    |
+      | victim  | C1     | student |
+      | victim  | C2     | student |
+    And the following config values are set as admin:
+      | allowfiltering | 1 | tool_dataprivacy |
+    And I log in as "admin"
+    And I navigate to "Users > Privacy and policies > Data requests" in site administration
+    And I follow "New request"
+    And I set the field "User" to "Victim User 1"
+    And I press "Save changes"
+    Then I should see "Victim User 1"
+    And I run all adhoc tasks
+    And I reload the page
+    And I open the action menu in "Victim User 1" "table_row"
+    And I follow "View the request"
+    And I press "Approve selected courses"
+    And I set the field "Select courses to export" to "Course 1"
+    And I press "Approve request"
+    And I should see "Approved" in the "Victim User 1" "table_row"
+    And I run all adhoc tasks
+    And I reload the page
+    And I should see "Download ready" in the "Victim User 1" "table_row"
+    And I open the action menu in "Victim User 1" "table_row"
+    And following "Download" should download between "1" and "180000" bytes

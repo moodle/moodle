@@ -21,21 +21,30 @@
  * @copyright   2017 Marina Glancy
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die;
-
-/**
- * Default activity completion form
- *
- * @package     core_completion
- * @copyright   2017 Marina Glancy
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class core_completion_defaultedit_form extends core_completion_edit_base_form {
     /** @var array */
     protected $modules;
     /** @var array */
     protected $_modnames;
+
+    public function __construct(
+        $action = null,
+        $customdata = null,
+        $method = 'post',
+        $target = '',
+        $attributes = null,
+        $editable = true,
+        $ajaxformdata = null
+    ) {
+        $this->modules = $customdata['modules'];
+        if ($modname = $this->get_module_name()) {
+            // Set the form suffix to the module name so that the form identifier is unique for each module type.
+            $this->set_suffix('_' . $modname);
+        }
+
+        parent::__construct($action, $customdata, $method, $target, $attributes, $editable, $ajaxformdata);
+    }
+
 
     /**
      * Returns list of types of selected modules
@@ -76,7 +85,7 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
             throw new \moodle_exception('noformdesc');
         }
 
-        list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data($course, $modname, 0);
+        list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data($course, $modname, 0, $this->get_suffix());
         $data->return = 0;
         $data->sr = 0;
         $data->add = $modname;
@@ -85,6 +94,7 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
         $mformclassname = 'mod_'.$modname.'_mod_form';
         $PAGE->start_collecting_javascript_requirements();
         $this->_moduleform = new $mformclassname($data, 0, $cmrec, $course);
+        $this->_moduleform->set_suffix('_' . $modname);
         $PAGE->end_collecting_javascript_requirements();
 
         return $this->_moduleform;
@@ -94,7 +104,8 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
      * Form definition,
      */
     public function definition() {
-        $this->course = $this->_customdata['course'];
+        $course = $this->_customdata['course'];
+        $this->course = is_numeric($course) ? get_course($course) : $course;
         $this->modules = $this->_customdata['modules'];
 
         $mform = $this->_form;
@@ -111,14 +122,35 @@ class core_completion_defaultedit_form extends core_completion_edit_base_form {
             $modnames = array_keys($this->get_module_names());
             $modname = $modnames[0];
             // Pre-fill the form with the current completion rules of the first selected module type.
-            list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data($this->course, $modname, 0);
+            list($module, $context, $cw, $cmrec, $data) = prepare_new_moduleinfo_data(
+                $this->course,
+                $modname,
+                0,
+                $this->get_suffix()
+            );
             $data = (array)$data;
-            $modform->data_preprocessing($data);
+            try {
+                $modform->data_preprocessing($data);
+            } catch (moodle_exception $e) {
+                debugging(
+                    'data_preprocessing function of module ' . $modnames[0] .
+                    ' should be fixed so it can be shown together with other Default activity completion forms',
+                    DEBUG_DEVELOPER
+                );
+            }
             // Unset fields that will conflict with this form and set data to this form.
             unset($data['cmid']);
             unset($data['modids']);
             unset($data['id']);
             $this->set_data($data);
         }
+    }
+
+    /**
+     * This method has been overridden because the form identifier must be unique for each module type.
+     * Otherwise, the form will display the same data for each module type once it's submitted.
+     */
+    protected function get_form_identifier() {
+        return parent::get_form_identifier() . $this->get_suffix();
     }
 }

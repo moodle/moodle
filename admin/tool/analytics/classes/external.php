@@ -24,15 +24,11 @@
 
 namespace tool_analytics;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once("$CFG->libdir/externallib.php");
-
-use external_api;
-use external_function_parameters;
-use external_value;
-use external_single_structure;
-use external_multiple_structure;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_value;
+use core_external\external_single_structure;
+use core_external\external_multiple_structure;
 
 /**
  * This is the external API for this component.
@@ -100,7 +96,7 @@ class external extends external_api {
      * potential_contexts return
      *
      * @since  Moodle 3.8
-     * @return external_description
+     * @return \core_external\external_description
      */
     public static function potential_contexts_returns() {
         return new external_multiple_structure(

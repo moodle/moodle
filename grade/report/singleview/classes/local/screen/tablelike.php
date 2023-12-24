@@ -61,6 +61,24 @@ abstract class tablelike extends screen implements be_readonly {
     protected $definition = [];
 
     /**
+     * Total items
+     * @var int $total
+     */
+    protected $total;
+
+    /**
+     * Table tab index
+     * @var int $index
+     */
+    protected $index;
+
+    /**
+     *  The grade item or user.
+     * @var mixed $item
+     */
+    protected $item;
+
+    /**
      * Format a row of the table
      *
      * @var mixed $item
@@ -176,6 +194,7 @@ abstract class tablelike extends screen implements be_readonly {
             return $warnings;
         }
         $table = new html_table();
+        $table->id = 'singleview-grades';
 
         $table->head = $this->headers();
 
@@ -201,17 +220,7 @@ abstract class tablelike extends screen implements be_readonly {
         $data->table = $table;
         $data->instance = $this;
 
-        $buttonattr = ['class' => 'singleview_buttons submit'];
-        $buttonhtml = implode(' ', $this->buttons($this->is_readonly()));
-        $buttons = html_writer::tag('div', $buttonhtml, $buttonattr);
-
-        $sessionvalidation = html_writer::empty_tag('input',
-            ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
-
-        $html = html_writer::tag('form',
-            html_writer::table($table)  . $this->bulk_insert() . $buttons . $sessionvalidation,
-            ['method' => 'POST']
-        );
+        $html = html_writer::table($table);
 
         return html_writer::div($html, 'reporttable position-relative');
     }

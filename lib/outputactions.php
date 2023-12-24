@@ -170,18 +170,17 @@ class popup_action extends component_action {
      */
     public function __construct($event, $url, $name='popup', $params=array()) {
         global $CFG;
-        $this->name = $name;
 
         $url = new moodle_url($url);
 
-        if ($this->name) {
-            $_name = $this->name;
-            if (($_name = preg_replace("/\s/", '_', $_name)) != $this->name) {
-                throw new coding_exception('The $name of a popup window shouldn\'t contain spaces - string modified. '. $this->name .' changed to '. $_name);
-                $this->name = $_name;
+        if ($name) {
+            $_name = $name;
+            if (($_name = preg_replace("/\s/", '_', $_name)) != $name) {
+                throw new coding_exception('The $name of a popup window shouldn\'t contain spaces - string modified. '. $name .' changed to '. $_name);
+                $name = $_name;
             }
         } else {
-            $this->name = 'popup';
+            $name = 'popup';
         }
 
         foreach ($this->params as $var => $val) {

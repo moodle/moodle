@@ -64,10 +64,8 @@ Feature: Add and configure blocks throughout the site
     Given I log in as "admin"
     And I am on homepage
     And I turn editing mode on
-    And I add the "Text" block
-    And I configure the "(new text block)" block
-    And I set the following fields to these values:
+    And I add the "Text" block to the default region with:
       | Text block title | Foo " onload="document.getElementsByTagName('body')[0].remove()" alt=" |
       | Content     | Example |
-    When I press "Save changes"
-    Then I should see "Example"
+    Then I should see "Example" in the "block_html" "block"
+    Then I should see "document.getElementsByTagName"

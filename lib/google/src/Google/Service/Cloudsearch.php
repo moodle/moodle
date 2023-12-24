@@ -30,6 +30,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Cloudsearch extends Google_Service
 {
 

@@ -66,6 +66,8 @@ class completion_completion extends data_object {
     /* @var int Flag to trigger cron aggregation (timestamp) */
     public $reaggregate;
 
+    /** @var float user's course grade. */
+    public $gradefinal;
 
     /**
      * Finds and returns a data_object instance based on params.

@@ -77,42 +77,48 @@ class datalib_test extends \advanced_testcase {
         $user2 = self::getDataGenerator()->create_user($user2);
 
         // Search by name (anywhere in text).
-        list($sql, $params) = users_search_sql('User Test 2', '');
+        list($sql, $params) = users_search_sql('User Test 2', '', USER_SEARCH_CONTAINS);
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
         $this->assertFalse(array_key_exists($user1->id, $results));
         $this->assertTrue(array_key_exists($user2->id, $results));
 
         // Search by (most of) full name.
-        list($sql, $params) = users_search_sql('First Name User Test 2 Last Name User', '');
+        list($sql, $params) = users_search_sql('First Name User Test 2 Last Name User', '', USER_SEARCH_CONTAINS);
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
         $this->assertFalse(array_key_exists($user1->id, $results));
         $this->assertTrue(array_key_exists($user2->id, $results));
 
         // Search by name (start of text) valid or not.
-        list($sql, $params) = users_search_sql('User Test 2', '', false);
+        list($sql, $params) = users_search_sql('User Test 2', '');
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
         $this->assertEquals(0, count($results));
-        list($sql, $params) = users_search_sql('First Name User Test 2', '', false);
+        list($sql, $params) = users_search_sql('First Name User Test 2', '');
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
         $this->assertFalse(array_key_exists($user1->id, $results));
         $this->assertTrue(array_key_exists($user2->id, $results));
 
         // Search by extra fields included or not (address).
-        list($sql, $params) = users_search_sql('Test Street', '', true);
+        list($sql, $params) = users_search_sql('Test Street', '', USER_SEARCH_CONTAINS);
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
         $this->assertCount(0, $results);
-        list($sql, $params) = users_search_sql('Test Street', '', true, array('address'));
+        list($sql, $params) = users_search_sql('Test Street', '', USER_SEARCH_CONTAINS, array('address'));
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
         $this->assertCount(2, $results);
 
         // Exclude user.
-        list($sql, $params) = users_search_sql('User Test', '', true, array(), array($user1->id));
+        list($sql, $params) = users_search_sql('User Test', '', USER_SEARCH_CONTAINS, array(), array($user1->id));
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
         $this->assertFalse(array_key_exists($user1->id, $results));
         $this->assertTrue(array_key_exists($user2->id, $results));
 
         // Include only user.
-        list($sql, $params) = users_search_sql('User Test', '', true, array(), array(), array($user1->id));
+        list($sql, $params) = users_search_sql('User Test', '', USER_SEARCH_CONTAINS, array(), array(), array($user1->id));
+        $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
+        $this->assertTrue(array_key_exists($user1->id, $results));
+        $this->assertFalse(array_key_exists($user2->id, $results));
+
+        // Exact match only.
+        [$sql, $params] = users_search_sql('Last Name User Test 1', '', USER_SEARCH_EXACT_MATCH, [], null, null, true);
         $results = $DB->get_records_sql("SELECT id FROM {user} WHERE $sql ORDER BY username", $params);
         $this->assertTrue(array_key_exists($user1->id, $results));
         $this->assertFalse(array_key_exists($user2->id, $results));
@@ -120,7 +126,7 @@ class datalib_test extends \advanced_testcase {
         // Join with another table and use different prefix.
         set_user_preference('amphibian', 'frog', $user1);
         set_user_preference('amphibian', 'salamander', $user2);
-        list($sql, $params) = users_search_sql('User Test 1', 'qq');
+        list($sql, $params) = users_search_sql('User Test 1', 'qq', USER_SEARCH_CONTAINS);
         $results = $DB->get_records_sql("
                 SELECT up.id, up.value
                   FROM {user} qq
@@ -135,7 +141,7 @@ class datalib_test extends \advanced_testcase {
         // Join with another table and include other table fields in search.
         set_user_preference('reptile', 'snake', $user1);
         set_user_preference('reptile', 'lizard', $user2);
-        list($sql, $params) = users_search_sql('snake', 'qq', true, ['up.value']);
+        list($sql, $params) = users_search_sql('snake', 'qq', USER_SEARCH_CONTAINS, ['up.value']);
         $results = $DB->get_records_sql("
                 SELECT up.id, up.value
                   FROM {user} qq

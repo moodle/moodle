@@ -28,17 +28,13 @@ namespace core_grades\grades\grader\gradingpanel\point\external;
 
 use coding_exception;
 use context;
-use core_user;
 use core_grades\component_gradeitem as gradeitem;
 use core_grades\component_gradeitems;
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use external_warnings;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_single_structure;
+use core_external\external_value;
 use moodle_exception;
-use required_capability_exception;
 
 /**
  * External grading panel point API

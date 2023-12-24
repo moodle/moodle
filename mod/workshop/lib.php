@@ -2253,6 +2253,38 @@ function workshop_get_coursemodule_info($coursemodule) {
 }
 
 /**
+ * Get the current user preferences that are available
+ *
+ * @return array[]
+ */
+function mod_workshop_user_preferences(): array {
+    $preferencedefinition = [
+        'type' => PARAM_BOOL,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => false,
+        'permissioncallback' => [core_user::class, 'is_current_user'],
+    ];
+
+    return [
+        'workshop-viewlet-allexamples-collapsed' => $preferencedefinition,
+        'workshop-viewlet-allsubmissions-collapsed' => $preferencedefinition,
+        'workshop-viewlet-assessmentform-collapsed' => $preferencedefinition,
+        'workshop-viewlet-assignedassessments-collapsed' => $preferencedefinition,
+        'workshop-viewlet-cleargrades-collapsed' => $preferencedefinition,
+        'workshop-viewlet-conclusion-collapsed' => $preferencedefinition,
+        'workshop-viewlet-examples-collapsed' => $preferencedefinition,
+        'workshop-viewlet-examplesfail-collapsed' => $preferencedefinition,
+        'workshop-viewlet-gradereport-collapsed' => $preferencedefinition,
+        'workshop-viewlet-instructauthors-collapsed' => $preferencedefinition,
+        'workshop-viewlet-instructreviewers-collapsed' => $preferencedefinition,
+        'workshop-viewlet-intro-collapsed' => $preferencedefinition,
+        'workshop-viewlet-ownsubmission-collapsed' => $preferencedefinition,
+        'workshop-viewlet-publicsubmissions-collapsed' => $preferencedefinition,
+        'workshop-viewlet-yourgrades-collapsed' => $preferencedefinition,
+    ];
+}
+
+/**
  * Callback to fetch the activity event type lang string.
  *
  * @param string $eventtype The event type.

@@ -69,10 +69,38 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
     /**
      * Render the default completion tab.
      *
-     * @param Array|stdClass $data the context data to pass to the template.
+     * @param array|stdClass $data the context data to pass to the template.
+     * @param array $modules The modules that have been sent through the form.
+     * @param moodleform $form The current form that has been sent.
      * @return bool|string
      */
-    public function defaultcompletion($data) {
+    public function defaultcompletion($data, $modules, $form) {
+        $course = get_course($data->courseid);
+        foreach ($data->modules as $module) {
+            // If the user can manage this module, then the activity completion form needs to be returned too, without the
+            // cancel button (so only "Save changes" button is displayed).
+            if ($module->canmanage) {
+                // Only create the form if it's different from the one that has been sent.
+                $modform = $form;
+                if (empty($form) || !in_array($module->id, array_keys($modules))) {
+                    $modform = new \core_completion_defaultedit_form(
+                        null,
+                        [
+                            'course' => $course,
+                            'modules' => [
+                                $module->id => $module,
+                            ],
+                            'displaycancel' => false,
+                            'forceuniqueid' => true,
+                        ],
+                    );
+                    $module->modulecollapsed = true;
+                }
+                $module->formhtml = $modform->render();
+            }
+        }
+        $data->issite = $course->id == SITEID;
+
         return parent::render_from_template('core_course/defaultactivitycompletion', $data);
     }
 
@@ -103,8 +131,12 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
      * @param moodleform $form
      * @param array $modules
      * @return string
+     * @deprecated since Moodle 4.3 MDL-78528
+     * @todo MDL-78711 This will be deleted in Moodle 4.7
      */
     public function edit_default_completion($form, $modules) {
+        debugging('edit_default_completion() is deprecated and will be removed.', DEBUG_DEVELOPER);
+
         ob_start();
         $form->display();
         $formhtml = ob_get_contents();

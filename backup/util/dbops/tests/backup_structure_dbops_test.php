@@ -45,7 +45,7 @@ class backup_structure_dbops_test extends \advanced_testcase {
     public function test_convert_params_to_values(
         array $params,
         $processor,
-        array $expected
+        array $expected,
     ): void {
         if (is_callable($processor)) {
             $newprocessor = $this->createMock(\backup_structure_processor::class);

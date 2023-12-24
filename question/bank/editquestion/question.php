@@ -37,7 +37,7 @@ $wizardnow = optional_param('wizardnow', '', PARAM_ALPHA);
 $originalreturnurl = optional_param('returnurl', 0, PARAM_LOCALURL);
 $appendqnumstring = optional_param('appendqnumstring', '', PARAM_ALPHA);
 $inpopup = optional_param('inpopup', 0, PARAM_BOOL);
-$scrollpos = optional_param('scrollpos', 0, PARAM_INT);
+$mdlscrollto = optional_param('mdlscrollto', 0, PARAM_INT);
 
 \core_question\local\bank\helper::require_plugin_enabled('qbank_editquestion');
 
@@ -72,8 +72,8 @@ if ($appendqnumstring !== '') {
 if ($inpopup !== 0) {
     $url->param('inpopup', $inpopup);
 }
-if ($scrollpos) {
-    $url->param('scrollpos', $scrollpos);
+if ($mdlscrollto) {
+    $url->param('mdlscrollto', $mdlscrollto);
 }
 $PAGE->set_url($url);
 
@@ -92,8 +92,8 @@ if ($originalreturnurl) {
 } else {
     $returnurl = $questionbankurl;
 }
-if ($scrollpos) {
-    $returnurl->param('scrollpos', $scrollpos);
+if ($mdlscrollto) {
+    $returnurl->param('mdlscrollto', $mdlscrollto);
 }
 
 if ($cmid) {
@@ -204,7 +204,7 @@ if ($wizardnow !== '') {
 }
 $toform = fullclone($question); // Send the question object and a few more parameters to the form.
 $toform->category = "{$category->id},{$category->contextid}";
-$toform->scrollpos = $scrollpos;
+$toform->mdlscrollto = $mdlscrollto;
 if ($formeditable && $id) {
     $toform->categorymoveto = $toform->category;
 }
@@ -332,10 +332,11 @@ if ($mform->is_cancelled()) {
         }
 
     } else {
-        $nexturlparams = array(
+        $nexturlparams = [
                 'returnurl' => $originalreturnurl,
                 'appendqnumstring' => $appendqnumstring,
-                'scrollpos' => $scrollpos);
+                'mdlscrollto' => $mdlscrollto,
+        ];
         if (isset($fromform->nextpageparam) && is_array($fromform->nextpageparam)) {
             // Useful for passing data to the next page which is not saved in the database.
             $nexturlparams += $fromform->nextpageparam;

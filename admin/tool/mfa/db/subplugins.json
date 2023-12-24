@@ -1,0 +1,5 @@
+{
+  "plugintypes": {
+    "factor": "admin\/tool\/mfa\/factor"
+  }
+}

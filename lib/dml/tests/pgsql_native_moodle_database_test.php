@@ -23,6 +23,12 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace core;
+
+use stdClass, ReflectionClass;
+use moodle_database, pgsql_native_moodle_database;
+use xmldb_table;
+use moodle_exception;
 
 /**
  * Test specific features of the Postgres dml.
@@ -31,8 +37,9 @@
  * @category test
  * @copyright 2020 Ruslan Kabalin
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers  \pgsql_native_moodle_database
  */
-class pgsql_native_moodle_database_test extends advanced_testcase {
+class pgsql_native_moodle_database_test extends \advanced_testcase {
 
     /**
      * Setup before class.
@@ -357,5 +364,67 @@ class pgsql_native_moodle_database_test extends advanced_testcase {
         $this->assertCount(1, $stored);
         $oneint = array_column($stored, 'oneint');
         $this->assertEquals([-1], $oneint);
+    }
+
+    /**
+     * SSL connection helper.
+     *
+     * @param mixed $ssl
+     * @return resource|PgSql\Connection
+     * @throws moodle_exception
+     */
+    public function new_connection($ssl) {
+        global $DB;
+
+        // Open new connection.
+        $cfg = $DB->export_dbconfig();
+        if (!isset($cfg->dboptions)) {
+            $cfg->dboptions = [];
+        }
+
+        $cfg->dboptions['ssl'] = $ssl;
+
+        // Get a separate disposable db connection handle with guaranteed 'readonly' config.
+        $db2 = moodle_database::get_driver_instance($cfg->dbtype, $cfg->dblibrary);
+        $db2->raw_connect($cfg->dbhost, $cfg->dbuser, $cfg->dbpass, $cfg->dbname, $cfg->prefix, $cfg->dboptions);
+
+        $reflector = new ReflectionClass($db2);
+        $rp = $reflector->getProperty('pgsql');
+        $rp->setAccessible(true);
+        return $rp->getValue($db2);
+    }
+
+    /**
+     * Test SSL connection.
+     *
+     * @return void
+     * @covers ::raw_connect
+     */
+    public function test_ssl_connection(): void {
+        $pgconnerr = 'pg_connect(): Unable to connect to PostgreSQL server:';
+
+        try {
+            $pgsql = $this->new_connection('require');
+            // Either connect ...
+            $this->assertNotNull($pgsql);
+        } catch (moodle_exception $e) {
+            // ... or fail with SSL not supported.
+            $this->assertStringContainsString($pgconnerr, $e->debuginfo);
+            $this->assertStringContainsString('server does not support SSL', $e->debuginfo);
+            $this->markTestIncomplete('SSL not supported.');
+        }
+
+        try {
+            $pgsql = $this->new_connection('verify-full');
+            // Either connect ...
+            $this->assertNotNull($pgsql);
+        } catch (moodle_exception $e) {
+            // ... or fail with invalid cert.
+            $this->assertStringContainsString($pgconnerr, $e->debuginfo);
+            $this->assertStringContainsString('change sslmode to disable server certificate verification', $e->debuginfo);
+        }
+
+        $this->expectException(moodle_exception::class);
+        $this->new_connection('invalid-mode');
     }
 }

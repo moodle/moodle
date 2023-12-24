@@ -177,8 +177,8 @@ class filter_test extends \basic_testcase {
             // Some more urls.
             '<link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="Peer review - Moodle Tracker"/>' => '<link rel="search" type="application/opensearchdescription+xml" href="/osd.jsp" title="Peer review - Moodle Tracker"/>',
             '<a href="https://moodledev.io"></a><span>www.google.com</span><span class="placeholder"></span>' =>
-                '<a href="https://moodledev.io"></a><span>' .
-                '<a href="http://www.google.com" class="_blanktarget">www.google.com</a></span><span class="placeholder"></span>',
+                '<a href="https://moodledev.io"></a><span><a href="http://www.google.com" class="_blanktarget">www.google.com</a>' .
+                '</span><span class="placeholder"></span>',
             'http://nolandforzombies.com <a href="zombiesFTW.com">Zombies FTW</a> http://aliens.org' => '<a href="http://nolandforzombies.com" class="_blanktarget">http://nolandforzombies.com</a> <a href="zombiesFTW.com">Zombies FTW</a> <a href="http://aliens.org" class="_blanktarget">http://aliens.org</a>',
             // Test 'nolink' class.
             'URL: <span class="nolink">http://moodle.org</span>' => 'URL: <span class="nolink">http://moodle.org</span>',

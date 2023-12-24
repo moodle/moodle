@@ -23,7 +23,7 @@
 
 import Notification from 'core/notification';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 import Ajax from 'core/ajax';
 import Url from 'core/url';
 
@@ -68,10 +68,9 @@ const deletePresetConfirm = (deleteOption) => {
     const presetName = deleteOption.getAttribute('data-presetname');
     const dataId = deleteOption.getAttribute('data-dataid');
 
-    Notification.saveCancelPromise(
+    Notification.deleteCancelPromise(
         getString('deleteconfirm', 'mod_data', presetName),
         getString('deletewarning', 'mod_data'),
-        getString('delete', 'core'),
     ).then(() => {
         return deletePreset(dataId, presetName);
     }).catch(() => {

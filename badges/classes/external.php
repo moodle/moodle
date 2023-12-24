@@ -26,10 +26,15 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->libdir . '/badgeslib.php');
 
 use core_badges\external\user_badge_exporter;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 
 /**
  * Badges external functions
@@ -123,65 +128,7 @@ class core_badges_external extends external_api {
         $result['warnings'] = $warnings;
 
         foreach ($userbadges as $badge) {
-            $context = ($badge->type == BADGE_TYPE_SITE) ? context_system::instance() : context_course::instance($badge->courseid);
-            $canconfiguredetails = has_capability('moodle/badges:configuredetails', $context);
-
-            // If the user is viewing another user's badge and doesn't have the right capability return only part of the data.
-            if ($USER->id != $user->id and !$canconfiguredetails) {
-                $badge = (object) array(
-                    'id' => $badge->id,
-                    'name' => $badge->name,
-                    'description' => $badge->description,
-                    'issuername' => $badge->issuername,
-                    'issuerurl' => $badge->issuerurl,
-                    'issuercontact' => $badge->issuercontact,
-                    'uniquehash' => $badge->uniquehash,
-                    'dateissued' => $badge->dateissued,
-                    'dateexpire' => $badge->dateexpire,
-                    'version' => $badge->version,
-                    'language' => $badge->language,
-                    'imageauthorname' => $badge->imageauthorname,
-                    'imageauthoremail' => $badge->imageauthoremail,
-                    'imageauthorurl' => $badge->imageauthorurl,
-                    'imagecaption' => $badge->imagecaption,
-                );
-            }
-
-            // Create a badge instance to be able to get the endorsement and other info.
-            $badgeinstance = new badge($badge->id);
-            $endorsement = $badgeinstance->get_endorsement();
-            $alignments = $badgeinstance->get_alignments();
-            $relatedbadges = $badgeinstance->get_related_badges();
-
-            if (!$canconfiguredetails) {
-                // Return only the properties visible by the user.
-
-                if (!empty($alignments)) {
-                    foreach ($alignments as $alignment) {
-                        unset($alignment->targetdescription);
-                        unset($alignment->targetframework);
-                        unset($alignment->targetcode);
-                    }
-                }
-
-                if (!empty($relatedbadges)) {
-                    foreach ($relatedbadges as $relatedbadge) {
-                        unset($relatedbadge->version);
-                        unset($relatedbadge->language);
-                        unset($relatedbadge->type);
-                    }
-                }
-            }
-
-            $related = array(
-                'context' => $context,
-                'endorsement' => $endorsement ? $endorsement : null,
-                'alignment' => $alignments,
-                'relatedbadges' => $relatedbadges,
-            );
-
-            $exporter = new user_badge_exporter($badge, $related);
-            $result['badges'][] = $exporter->export($PAGE->get_renderer('core'));
+            $result['badges'][] = badges_prepare_badge_for_external($badge, $user);
         }
 
         return $result;

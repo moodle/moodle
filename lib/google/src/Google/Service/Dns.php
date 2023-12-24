@@ -29,6 +29,7 @@
  *
  * @author Google, Inc.
  */
+#[AllowDynamicProperties]
 class Google_Service_Dns extends Google_Service
 {
   /** View and manage your data across Google Cloud Platform services. */
@@ -284,6 +285,7 @@ class Google_Service_Dns extends Google_Service
  *   $changes = $dnsService->changes;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Dns_Changes_Resource extends Google_Service_Resource
 {
 
@@ -357,6 +359,7 @@ class Google_Service_Dns_Changes_Resource extends Google_Service_Resource
  *   $managedZones = $dnsService->managedZones;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Dns_ManagedZones_Resource extends Google_Service_Resource
 {
 
@@ -438,6 +441,7 @@ class Google_Service_Dns_ManagedZones_Resource extends Google_Service_Resource
  *   $projects = $dnsService->projects;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Dns_Projects_Resource extends Google_Service_Resource
 {
 
@@ -464,6 +468,7 @@ class Google_Service_Dns_Projects_Resource extends Google_Service_Resource
  *   $resourceRecordSets = $dnsService->resourceRecordSets;
  *  </code>
  */
+#[AllowDynamicProperties]
 class Google_Service_Dns_ResourceRecordSets_Resource extends Google_Service_Resource
 {
 
@@ -498,6 +503,7 @@ class Google_Service_Dns_ResourceRecordSets_Resource extends Google_Service_Reso
 
 
 
+#[AllowDynamicProperties]
 class Google_Service_Dns_Change extends Google_Collection
 {
   protected $collection_key = 'deletions';
@@ -563,6 +569,7 @@ class Google_Service_Dns_Change extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Dns_ChangesListResponse extends Google_Collection
 {
   protected $collection_key = 'changes';
@@ -600,6 +607,7 @@ class Google_Service_Dns_ChangesListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Dns_ManagedZone extends Google_Collection
 {
   protected $collection_key = 'nameServers';
@@ -681,6 +689,7 @@ class Google_Service_Dns_ManagedZone extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Dns_ManagedZonesListResponse extends Google_Collection
 {
   protected $collection_key = 'managedZones';
@@ -718,6 +727,7 @@ class Google_Service_Dns_ManagedZonesListResponse extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Dns_Project extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -763,6 +773,7 @@ class Google_Service_Dns_Project extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Dns_Quota extends Google_Model
 {
   protected $internal_gapi_mappings = array(
@@ -834,6 +845,7 @@ class Google_Service_Dns_Quota extends Google_Model
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Dns_ResourceRecordSet extends Google_Collection
 {
   protected $collection_key = 'rrdatas';
@@ -888,6 +900,7 @@ class Google_Service_Dns_ResourceRecordSet extends Google_Collection
   }
 }
 
+#[AllowDynamicProperties]
 class Google_Service_Dns_ResourceRecordSetsListResponse extends Google_Collection
 {
   protected $collection_key = 'rrsets';

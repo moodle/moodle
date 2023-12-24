@@ -318,14 +318,11 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
     var defaultQualityName = H5PEditor.t('core', 'videoQualityDefaultLabel', { ':index': index + 1 });
     var qualityName = (file.metadata && file.metadata.qualityName) ? file.metadata.qualityName : defaultQualityName;
 
-    // Check if source is YouTube
-    var youtubeRegex = C.providers.filter(function (provider) {
-      return provider.name === 'YouTube';
-    })[0].regexp;
-    var isYoutube = file.path && file.path.match(youtubeRegex);
+    // Check if source is provider (Vimeo, YouTube, Panopto)
+    const isProvider = file.path && C.findProvider(file.path);
 
     // Only allow single source if YouTube
-    if (isYoutube) {
+    if (isProvider) {
       // Remove all other files except this one
       that.$files.children().each(function (i) {
         if (i !== that.updateIndex) {
@@ -339,7 +336,7 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
       // This is now the first and only file
       index = 0;
     }
-    this.$add.toggleClass('hidden', !!isYoutube);
+    this.$add.toggleClass('hidden', isProvider);
 
     // If updating remove and recreate element
     if (that.updateIndex !== undefined) {
@@ -349,7 +346,7 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
     }
 
     // Create file with customizable quality if enabled and not youtube
-    if (this.field.enableCustomQualityLabel === true && !isYoutube) {
+    if (this.field.enableCustomQualityLabel === true && !isProvider) {
       fileHtml = '<li class="h5p-av-row">' +
         '<div class="h5p-thumbnail">' +
           '<div class="h5p-type" title="' + file.mime + '">' + file.mime.split('/')[1] + '</div>' +
@@ -468,12 +465,10 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
     }
     else {
       // Try to find a provider
-      for (i = 0; i < C.providers.length; i++) {
-        if (C.providers[i].regexp.test(url)) {
-          mime = C.providers[i].name;
-          aspectRatio = C.providers[i].aspectRatio;
-          break;
-        }
+      const provider = C.findProvider(url);
+      if (provider) {
+        mime = provider.name;
+        aspectRatio = provider.aspectRatio;
       }
     }
 
@@ -683,8 +678,27 @@ H5PEditor.widgets.video = H5PEditor.widgets.audio = H5PEditor.AV = (function ($)
       name: 'Panopto',
       regexp: /^[^\/]+:\/\/([^\/]*panopto\.[^\/]+)\/Panopto\/.+\?id=(.+)$/i,
       aspectRatio: '16:9',
+    },
+    {
+      name: 'Vimeo',
+      regexp: /^.*(vimeo\.com\/)((channels\/[A-z]+\/)|(groups\/[A-z]+\/videos\/))?([0-9]+)/,
+      aspectRatio: '16:9',
     }
   ];
+
+  /**
+   * Find & return an external provider based on the URL
+   *
+   * @param {string} url
+   * @returns {Object}
+   */
+  C.findProvider = function (url) {
+    for (i = 0; i < C.providers.length; i++) {
+      if (C.providers[i].regexp.test(url)) {
+        return C.providers[i];
+      }
+    }
+  };
 
   // Avoid ID attribute collisions
   let idCounter = 0;

@@ -2,7 +2,9 @@
     {{$element}}
         {{^element.frozen}}
             <button
-                class="btn btn-secondary"
+                class="btn
+                {{^element.customclassoverride}}btn-secondary{{/element.customclassoverride}}
+                {{#element.customclassoverride}}{{.}}{{/element.customclassoverride}}"
                 name="{{element.name}}"
                 id="{{element.id}}"
                 type="button"

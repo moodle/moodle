@@ -25,9 +25,17 @@
 
 namespace mod_quiz\question\bank;
 
+defined('MOODLE_INTERNAL') || die();
+
+use core\output\datafilter;
+use core_question\local\bank\column_base;
+use core_question\local\bank\condition;
+use core_question\local\bank\column_manager_base;
 use core_question\local\bank\question_version_status;
 use mod_quiz\question\bank\filter\custom_category_condition;
+use qbank_managecategories\category_condition;
 
+require_once($CFG->dirroot . '/mod/quiz/locallib.php');
 /**
  * Subclass to customise the view of the question bank for the quiz editing screen.
  *
@@ -45,8 +53,10 @@ class custom_view extends \core_question\local\bank\view {
     /** @var \stdClass $quiz the quiz settings. */
     protected $quiz = false;
 
-    /** @var int The maximum displayed length of the category info. */
-    const MAX_TEXT_LENGTH = 200;
+    /**
+     * @var string $component the component the api is used from.
+     */
+    public $component = 'mod_quiz';
 
     /**
      * Constructor.
@@ -56,69 +66,62 @@ class custom_view extends \core_question\local\bank\view {
      * @param \stdClass $cm activity settings.
      * @param \stdClass $quiz quiz settings.
      */
-    public function __construct($contexts, $pageurl, $course, $cm, $quiz) {
-        parent::__construct($contexts, $pageurl, $course, $cm);
-        $this->quiz = $quiz;
+    public function __construct($contexts, $pageurl, $course, $cm, $params, $extraparams) {
+        // Default filter condition.
+        if (!isset($params['filter'])) {
+            $params['filter']  = [];
+            [$categoryid, $contextid] = custom_category_condition::validate_category_param($params['cat']);
+            if (!is_null($categoryid)) {
+                $category = custom_category_condition::get_category_record($categoryid, $contextid);
+                $params['filter']['category'] = [
+                    'jointype' => custom_category_condition::JOINTYPE_DEFAULT,
+                    'values' => [$category->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ];
+            }
+        }
+
+        $this->init_columns($this->wanted_columns(), $this->heading_column());
+        parent::__construct($contexts, $pageurl, $course, $cm, $params, $extraparams);
+        [$this->quiz, ] = get_module_from_cmid($cm->id);
+        $this->set_quiz_has_attempts(quiz_has_attempts($this->quiz->id));
         $this->pagesize = self::DEFAULT_PAGE_SIZE;
+    }
+
+    /**
+     * Just use the base column manager in this view.
+     *
+     * @return void
+     */
+    protected function init_column_manager(): void {
+        $this->columnmanager = new column_manager_base();
+    }
+
+    /**
+     * Don't display plugin controls.
+     *
+     * @param \core\context $context
+     * @param int $categoryid
+     * @return string
+     */
+    protected function get_plugin_controls(\core\context $context, int $categoryid): string {
+        return '';
     }
 
     protected function get_question_bank_plugins(): array {
         $questionbankclasscolumns = [];
-        $corequestionbankcolumns = [
-            'add_action_column',
-            'checkbox_column',
-            'question_type_column',
-            'question_name_text_column',
-            'preview_action_column'
+        $customviewcolumns = [
+            'mod_quiz\question\bank\add_action_column' . column_base::ID_SEPARATOR  . 'add_action_column',
+            'core_question\local\bank\checkbox_column' . column_base::ID_SEPARATOR . 'checkbox_column',
+            'qbank_viewquestiontype\question_type_column' . column_base::ID_SEPARATOR . 'question_type_column',
+            'mod_quiz\question\bank\question_name_text_column' . column_base::ID_SEPARATOR . 'question_name_text_column',
+            'mod_quiz\question\bank\preview_action_column'  . column_base::ID_SEPARATOR  . 'preview_action_column',
         ];
 
-        if (question_get_display_preference('qbshowtext', 0, PARAM_INT, new \moodle_url(''))) {
-            $corequestionbankcolumns[] = 'question_text_row';
-        }
-
-        foreach ($corequestionbankcolumns as $fullname) {
-            $shortname = $fullname;
-            if (class_exists('mod_quiz\\question\\bank\\' . $fullname)) {
-                $fullname = 'mod_quiz\\question\\bank\\' . $fullname;
-                $questionbankclasscolumns[$shortname] = new $fullname($this);
-            } else if (class_exists('core_question\\local\\bank\\' . $fullname)) {
-                $fullname = 'core_question\\local\\bank\\' . $fullname;
-                $questionbankclasscolumns[$shortname] = new $fullname($this);
-            } else {
-                $questionbankclasscolumns[$shortname] = '';
-            }
-        }
-        $plugins = \core_component::get_plugin_list_with_class('qbank', 'plugin_feature', 'plugin_feature.php');
-        foreach ($plugins as $componentname => $plugin) {
-            $pluginentrypointobject = new $plugin();
-            $plugincolumnobjects = $pluginentrypointobject->get_question_columns($this);
-            // Don't need the plugins without column objects.
-            if (empty($plugincolumnobjects)) {
-                unset($plugins[$componentname]);
-                continue;
-            }
-            foreach ($plugincolumnobjects as $columnobject) {
-                $columnname = $columnobject->get_column_name();
-                foreach ($corequestionbankcolumns as $key => $corequestionbankcolumn) {
-                    if (!\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
-                        unset($questionbankclasscolumns[$columnname]);
-                        continue;
-                    }
-                    // Check if it has custom preference selector to view/hide.
-                    if ($columnobject->has_preference() && !$columnobject->get_preference()) {
-                        continue;
-                    }
-                    if ($corequestionbankcolumn === $columnname) {
-                        $questionbankclasscolumns[$columnname] = $columnobject;
-                    }
-                }
-            }
-        }
-
-        // Mitigate the error in case of any regression.
-        foreach ($questionbankclasscolumns as $shortname => $questionbankclasscolumn) {
-            if (empty($questionbankclasscolumn)) {
-                unset($questionbankclasscolumns[$shortname]);
+        foreach ($customviewcolumns as $columnid) {
+            [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $columnid, 2);
+            if (class_exists($columnclass)) {
+                $questionbankclasscolumns[$columnid] = $columnclass::from_column_name($this, $columnname);
             }
         }
 
@@ -132,8 +135,8 @@ class custom_view extends \core_question\local\bank\view {
     protected function default_sort(): array {
         // Using the extended class for quiz specific sort.
         return [
-            'qbank_viewquestiontype\\question_type_column' => 1,
-            'mod_quiz\\question\\bank\\question_name_text_column' => 1,
+            'qbank_viewquestiontype__question_type_column' => SORT_ASC,
+            'mod_quiz__question__bank__question_name_text_column' => SORT_ASC,
         ];
     }
 
@@ -144,21 +147,11 @@ class custom_view extends \core_question\local\bank\view {
      *
      * @param bool $quizhasattempts whether the quiz has attempts.
      */
-    public function set_quiz_has_attempts($quizhasattempts): void {
+    private function set_quiz_has_attempts($quizhasattempts): void {
         $this->quizhasattempts = $quizhasattempts;
         if ($quizhasattempts && isset($this->visiblecolumns['addtoquizaction'])) {
             unset($this->visiblecolumns['addtoquizaction']);
         }
-    }
-
-    /**
-     * Question preview url.
-     *
-     * @param \stdClass $question
-     * @return \moodle_url
-     */
-    public function preview_question_url($question) {
-        return quiz_question_preview_url($this->quiz, $question);
     }
 
     /**
@@ -171,6 +164,7 @@ class custom_view extends \core_question\local\bank\view {
         $params = $this->baseurl->params();
         $params['addquestion'] = $questionid;
         $params['sesskey'] = sesskey();
+        $params['cmid'] = $this->cm->id;
         return new \moodle_url('/mod/quiz/edit.php', $params);
     }
 
@@ -186,7 +180,7 @@ class custom_view extends \core_question\local\bank\view {
      */
     public function render($pagevars, $tabname): string {
         ob_start();
-        $this->display($pagevars, $tabname);
+        $this->display();
         $out = ob_get_contents();
         ob_end_clean();
         return $out;
@@ -201,7 +195,7 @@ class custom_view extends \core_question\local\bank\view {
         echo \html_writer::start_tag('div', ['class' => 'pt-2']);
         if ($canuseall) {
             // Add selected questions to the quiz.
-            $params = array(
+            $params = [
                 'type' => 'submit',
                 'name' => 'add',
                 'class' => 'btn btn-primary',
@@ -210,14 +204,21 @@ class custom_view extends \core_question\local\bank\view {
                 'data-togglegroup' => 'qbank',
                 'data-toggle' => 'action',
                 'disabled' => true,
-            );
+            ];
             echo \html_writer::empty_tag('input', $params);
         }
         echo \html_writer::end_tag('div');
     }
 
+    /**
+     * Override the base implementation in \core_question\local\bank\view
+     * because we don't want to print new question form in the fragment
+     * for the modal.
+     *
+     * @param false|mixed|\stdClass $category
+     * @param bool $canadd
+     */
     protected function create_new_question_form($category, $canadd): void {
-        // Don't display this.
     }
 
     /**
@@ -228,59 +229,15 @@ class custom_view extends \core_question\local\bank\view {
     protected function display_question_bank_header(): void {
     }
 
-    /**
-     * Override the base implementation in \core_question\bank\view
-     * because we don't want it to read from the $_POST global variables
-     * for the sort parameters since they are not present in a fragment.
-     *
-     * Unfortunately the best we can do is to look at the URL for
-     * those parameters (only marginally better really).
-     */
-    protected function init_sort_from_params(): void {
-        $this->sort = [];
-        for ($i = 1; $i <= self::MAX_SORTS; $i++) {
-            if (!$sort = $this->baseurl->param('qbs' . $i)) {
-                break;
-            }
-            // Work out the appropriate order.
-            $order = 1;
-            if ($sort[0] == '-') {
-                $order = -1;
-                $sort = substr($sort, 1);
-                if (!$sort) {
-                    break;
-                }
-            }
-            // Deal with subsorts.
-            list($colname) = $this->parse_subsort($sort);
-            $this->get_column_type($colname);
-            $this->sort[$sort] = $order;
-        }
-    }
-
     protected function build_query(): void {
         // Get the required tables and fields.
-        $joins = [];
-        $fields = ['qv.status', 'qc.id as categoryid', 'qv.version', 'qv.id as versionid', 'qbe.id as questionbankentryid'];
-        if (!empty($this->requiredcolumns)) {
-            foreach ($this->requiredcolumns as $column) {
-                $extrajoins = $column->get_extra_joins();
-                foreach ($extrajoins as $prefix => $join) {
-                    if (isset($joins[$prefix]) && $joins[$prefix] != $join) {
-                        throw new \coding_exception('Join ' . $join . ' conflicts with previous join ' . $joins[$prefix]);
-                    }
-                    $joins[$prefix] = $join;
-                }
-                $fields = array_merge($fields, $column->get_required_fields());
-            }
-        }
-        $fields = array_unique($fields);
+        [$fields, $joins] = $this->get_component_requirements(array_merge($this->requiredcolumns, $this->questionactions));
 
         // Build the order by clause.
         $sorts = [];
-        foreach ($this->sort as $sort => $order) {
-            list($colname, $subsort) = $this->parse_subsort($sort);
-            $sorts[] = $this->requiredcolumns[$colname]->sort_expression($order < 0, $subsort);
+        foreach ($this->sort as $sortname => $sortorder) {
+            [$colname, $subsort] = $this->parse_subsort($sortname);
+            $sorts[] = $this->requiredcolumns[$colname]->sort_expression($sortorder == SORT_DESC, $subsort);
         }
 
         // Build the where clause.
@@ -289,49 +246,58 @@ class custom_view extends \core_question\local\bank\view {
                                           JOIN {question_bank_entries} be
                                             ON be.id = v.questionbankentryid
                                          WHERE be.id = qbe.id)';
-        $readyonly = "qv.status = '" . question_version_status::QUESTION_STATUS_READY . "' ";
-        $tests = ['q.parent = 0', $latestversion, $readyonly];
+        $onlyready = '((' . "qv.status = '" . question_version_status::QUESTION_STATUS_READY . "'" .'))';
         $this->sqlparams = [];
+        $conditions = [];
         foreach ($this->searchconditions as $searchcondition) {
             if ($searchcondition->where()) {
-                $tests[] = '((' . $searchcondition->where() .'))';
+                $conditions[] = '((' . $searchcondition->where() .'))';
             }
             if ($searchcondition->params()) {
                 $this->sqlparams = array_merge($this->sqlparams, $searchcondition->params());
             }
         }
+        $majorconditions = ['q.parent = 0', $latestversion, $onlyready];
+        // Get higher level filter condition.
+        $jointype = isset($this->pagevars['jointype']) ? (int)$this->pagevars['jointype'] : condition::JOINTYPE_DEFAULT;
+        $nonecondition = ($jointype === datafilter::JOINTYPE_NONE) ? ' NOT ' : '';
+        $separator = ($jointype === datafilter::JOINTYPE_ALL) ? ' AND ' : ' OR ';
         // Build the SQL.
         $sql = ' FROM {question} q ' . implode(' ', $joins);
-        $sql .= ' WHERE ' . implode(' AND ', $tests);
+        $sql .= ' WHERE ' . implode(' AND ', $majorconditions);
+        if (!empty($conditions)) {
+            $sql .= ' AND ' . $nonecondition . ' ( ';
+            $sql .= implode($separator, $conditions);
+            $sql .= ' ) ';
+        }
         $this->countsql = 'SELECT count(1)' . $sql;
         $this->loadsql = 'SELECT ' . implode(', ', $fields) . $sql . ' ORDER BY ' . implode(', ', $sorts);
     }
 
-    public function wanted_filters($cat, $tagids, $showhidden, $recurse, $editcontexts, $showquestiontext): void {
-        global $CFG;
-        list(, $contextid) = explode(',', $cat);
-        $catcontext = \context::instance_by_id($contextid);
-        $thiscontext = $this->get_most_specific_context();
-        // Category selection form.
-        $this->display_question_bank_header();
-
-        // Display tag filter if usetags setting is enabled/enablefilters is true.
-        if ($this->enablefilters) {
-            if (is_array($this->customfilterobjects)) {
-                foreach ($this->customfilterobjects as $filterobjects) {
-                    $this->searchconditions[] = $filterobjects;
+    public function add_standard_search_conditions(): void {
+        foreach ($this->plugins as $componentname => $plugin) {
+            if (\core\plugininfo\qbank::is_plugin_enabled($componentname)) {
+                $pluginentrypointobject = new $plugin();
+                if ($componentname === 'qbank_managecategories') {
+                    $pluginentrypointobject = new quiz_managecategories_feature();
                 }
-            } else {
-                if ($CFG->usetags) {
-                    array_unshift($this->searchconditions,
-                        new \core_question\bank\search\tag_condition([$catcontext, $thiscontext], $tagids));
+                if ($componentname === 'qbank_viewquestiontext' || $componentname === 'qbank_deletequestion') {
+                    continue;
                 }
-
-                array_unshift($this->searchconditions, new \core_question\bank\search\hidden_condition(!$showhidden));
-                array_unshift($this->searchconditions, new custom_category_condition(
-                    $cat, $recurse, $editcontexts, $this->baseurl, $this->course));
+                $pluginobjects = $pluginentrypointobject->get_question_filters($this);
+                foreach ($pluginobjects as $pluginobject) {
+                    $this->add_searchcondition($pluginobject, $pluginobject->get_condition_key());
+                }
             }
         }
-        $this->display_options_form($showquestiontext);
+    }
+
+    /**
+     * Return the quiz settings for the quiz this question bank is displayed in.
+     *
+     * @return bool|\stdClass
+     */
+    public function get_quiz() {
+        return $this->quiz;
     }
 }

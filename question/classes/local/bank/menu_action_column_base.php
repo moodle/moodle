@@ -35,6 +35,8 @@ namespace core_question\local\bank;
  * @copyright 2019 Tim Hunt
  * @author    2021 Safat Shahin <safatshahin@catalyst-au.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @deprecated Since Moodle 4.3 MDL-75125 - Use question_action_base instead.
+ * @todo MDL-78090 This class will be deleted in Moodle 4.7
  */
 abstract class menu_action_column_base extends action_column_base implements menuable_action {
 
@@ -53,6 +55,7 @@ abstract class menu_action_column_base extends action_column_base implements men
     abstract protected function get_url_icon_and_label(\stdClass $question);
 
     protected function display_content($question, $rowclasses): void {
+        debugging('The menu_action_column_base class is deprecated. Please use question_action_base instead.', DEBUG_DEVELOPER);
         [$url, $icon, $label] = $this->get_url_icon_and_label($question);
         if ($url) {
             $this->print_icon($icon, $label, $url);
@@ -60,6 +63,7 @@ abstract class menu_action_column_base extends action_column_base implements men
     }
 
     public function get_action_menu_link(\stdClass $question): ?\action_menu_link {
+        debugging('The menu_action_column_base class is deprecated. Please use question_action_base instead.', DEBUG_DEVELOPER);
         [$url, $icon, $label] = $this->get_url_icon_and_label($question);
         if (!$url) {
             return null;

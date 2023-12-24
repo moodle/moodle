@@ -64,9 +64,9 @@ class qtype_calculatedmulti_test_helper extends question_test_helper {
         $q->incorrectfeedbackformat = FORMAT_HTML;
         $q->shownumcorrect = 1;
         $q->answers = array(
-            13 => new question_answer(13, '{={a} + {b}}', 1.0, 'Very good.', FORMAT_HTML),
-            14 => new question_answer(14, '{={a} - {b}}', 0.0, 'Add. not subtract!', FORMAT_HTML),
-            17 => new question_answer(17, '{={a} + 2 * {b}}', 0.0, 'Just add.', FORMAT_HTML),
+            13 => new \qtype_calculated\qtype_calculated_answer(13, '{={a} + {b}}', 1.0, 'Very good.', FORMAT_HTML, 0),
+            14 => new \qtype_calculated\qtype_calculated_answer(14, '{={a} - {b}}', 0.0, 'Add. not subtract!', FORMAT_HTML, 0),
+            17 => new \qtype_calculated\qtype_calculated_answer(17, '{={a} + 2 * {b}}', 0.0, 'Just add.', FORMAT_HTML, 0),
         );
         $q->answers[13]->correctanswerlength = 2;
         $q->answers[13]->correctanswerformat = 1;
@@ -107,10 +107,10 @@ class qtype_calculatedmulti_test_helper extends question_test_helper {
         $q->incorrectfeedbackformat = FORMAT_HTML;
         $q->shownumcorrect = 1;
         $q->answers = array(
-                13 => new qtype_numerical_answer(13, '{a} + {b}!', 0.5, 'Good', FORMAT_HTML, 0),
-                14 => new qtype_numerical_answer(14, '{={a} + {b}}', 0.5, 'Good',
+                13 => new \qtype_calculated\qtype_calculated_answer(13, '{a} + {b}!', 0.5, 'Good', FORMAT_HTML, 0),
+                14 => new \qtype_calculated\qtype_calculated_answer(14, '{={a} + {b}}', 0.5, 'Good',
                         FORMAT_HTML, 0),
-                17 => new qtype_numerical_answer(17, '{={a} - {b}}', -0.5, 'Wrong.', FORMAT_HTML, 0),
+                17 => new \qtype_calculated\qtype_calculated_answer(17, '{={a} - {b}}', -0.5, 'Wrong.', FORMAT_HTML, 0),
         );
         $q->answers[13]->correctanswerlength = 2;
         $q->answers[13]->correctanswerformat = 1;

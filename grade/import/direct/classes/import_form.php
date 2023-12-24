@@ -74,6 +74,6 @@ class gradeimport_direct_import_form extends moodleform {
         $mform->addElement('advcheckbox', 'forceimport', get_string('forceimport', 'grades'));
         $mform->addHelpButton('forceimport', 'forceimport', 'grades');
         $mform->setDefault('forceimport', false);
-        $this->add_action_buttons(false, get_string('uploadgrades', 'grades'));
+        $this->add_sticky_action_buttons(false, get_string('uploadgrades', 'grades'));
     }
 }

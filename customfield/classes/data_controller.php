@@ -238,7 +238,13 @@ abstract class data_controller {
      */
     protected function is_unique($value) : bool {
         global $DB;
+
+        // Ensure the "value" datafield can be safely compared across all databases.
         $datafield = $this->datafield();
+        if ($datafield === 'value') {
+            $datafield = $DB->sql_cast_to_char($datafield);
+        }
+
         $where = "fieldid = ? AND {$datafield} = ?";
         $params = [$this->get_field()->get('id'), $value];
         if ($this->get('id')) {

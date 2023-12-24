@@ -120,7 +120,10 @@ class user_editadvanced_form extends moodleform {
         }
 
         $purpose = user_edit_map_field_purpose($userid, 'password');
-        $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'), 'size="20"' . $purpose);
+        $mform->addElement('passwordunmask', 'newpassword', get_string('newpassword'),
+            'maxlength="'.MAX_PASSWORD_CHARACTERS.'" size="20"' . $purpose);
+        $mform->addRule('newpassword', get_string('maximumchars', '', MAX_PASSWORD_CHARACTERS),
+            'maxlength', MAX_PASSWORD_CHARACTERS, 'client');
         $mform->addHelpButton('newpassword', 'newpassword');
         $mform->setType('newpassword', core_user::get_property_type('password'));
         $mform->disabledIf('newpassword', 'createpassword', 'checked');

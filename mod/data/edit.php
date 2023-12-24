@@ -122,8 +122,18 @@ if ($rid) {
 }
 
 $PAGE->add_body_class('mediumwidth');
-$PAGE->set_title($data->name);
-$PAGE->set_heading($course->fullname);
+if ($rid) {
+    $pagename = get_string('editentry', 'data');
+} else {
+    $pagename = get_string('newentry', 'data');
+}
+$PAGE->navbar->add($pagename);
+$titleparts = [
+    $pagename,
+    format_string($data->name),
+    format_string($course->fullname),
+];
+$PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->force_settings_menu(true);
 $PAGE->set_secondary_active_tab('modulepage');
 $PAGE->activityheader->disable();
@@ -184,11 +194,7 @@ echo '<input name="rid" value="'.$rid.'" type="hidden" />';
 echo '<input name="sesskey" value="'.sesskey().'" type="hidden" />';
 echo $OUTPUT->box_start('generalbox boxaligncenter boxwidthwide');
 
-if (!$rid){
-    echo $OUTPUT->heading(get_string('newentry','data'));
-} else {
-    echo $OUTPUT->heading(get_string('editentry','data'));
-}
+echo $OUTPUT->heading($pagename);
 
 $template = $manager->get_template($mode);
 echo $template->parse_add_entry($processeddata, $rid, $datarecord);
@@ -200,13 +206,13 @@ if (empty($redirectbackto)) {
 $actionbuttons = html_writer::link(
     $redirectbackto,
     get_string('cancel'),
-    ['class' => 'btn btn-secondary', 'role' => 'button']
+    ['class' => 'btn btn-secondary mx-1', 'role' => 'button']
 );
 $actionbuttons .= html_writer::empty_tag('input', [
     'type' => 'submit',
     'name' => 'saveandview',
     'value' => get_string('save'),
-    'class' => 'btn btn-primary ml-2'
+    'class' => 'btn btn-primary mx-1'
 ]);
 
 if (!$rid && ((!$data->maxentries) ||
@@ -214,7 +220,7 @@ if (!$rid && ((!$data->maxentries) ||
     (data_numentries($data) < ($data->maxentries - 1)))) {
     $actionbuttons .= html_writer::empty_tag('input', [
         'type' => 'submit', 'name' => 'saveandadd',
-        'value' => get_string('saveandadd', 'data'), 'class' => 'btn btn-primary ml-2'
+        'value' => get_string('saveandadd', 'data'), 'class' => 'btn btn-primary mx-1'
     ]);
 }
 

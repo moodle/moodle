@@ -172,7 +172,7 @@ class behat_filepicker extends behat_base {
         $this->perform_on_element('delete', $exception);
 
         // Yes, we are sure.
-        $this->execute('behat_general::i_click_on_in_the', [get_string('ok'), 'button', get_string('confirm'), 'dialogue']);
+        $this->execute('behat_general::i_click_on_in_the', [get_string('yes'), 'button', get_string('confirm'), 'dialogue']);
     }
 
     /**

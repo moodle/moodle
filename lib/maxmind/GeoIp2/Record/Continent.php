@@ -25,6 +25,8 @@ class Continent extends AbstractPlaceRecord
 {
     /**
      * @ignore
+     *
+     * @var array<string>
      */
     protected $validAttributes = [
         'code',

@@ -113,7 +113,7 @@ class user_profile_fields {
     }
 
     /**
-     * Generate table alias for given profile field
+     * Get table alias for given profile field
      *
      * The entity name is used to ensure the alias differs when the entity is used multiple times within the same report, each
      * having their own table alias/join
@@ -133,7 +133,7 @@ class user_profile_fields {
     }
 
     /**
-     * Generate table join for given profile field
+     * Get table join for given profile field
      *
      * @param profile_field_base $profilefield
      * @return string
@@ -180,9 +180,8 @@ class user_profile_fields {
                 ->set_type($columntype)
                 ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
                 ->add_callback(static function($value, stdClass $row, profile_field_base $field): string {
-                    // Special handling of checkboxes, we want to display their boolean state rather than the input element itself.
-                    if (is_a($field, 'profile_field_checkbox')) {
-                        return format::boolean_as_text($value);
+                    if ($value === null) {
+                        return '';
                     }
 
                     $field->data = $value;

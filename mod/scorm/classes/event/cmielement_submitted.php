@@ -49,7 +49,7 @@ abstract class cmielement_submitted extends \core\event\base {
     protected function init() {
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->data['objecttable'] = 'scorm_scoes_track';
+        $this->data['objecttable'] = 'scorm_scoes_value';
     }
 
     /**

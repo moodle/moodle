@@ -24,8 +24,6 @@ use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\helpers\database;
 use core_tag\reportbuilder\local\entities\tag;
-use core_reportbuilder\manager;
-use core_reportbuilder\local\helpers\report;
 
 /**
  * Users datasource

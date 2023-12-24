@@ -70,13 +70,12 @@ Feature: Edit capabilities
 
   @javascript
   Scenario: Edit permissions escapes role names correctly
-    When I am on the "C1" "Course" page logged in as "admin"
-    And I navigate to "Settings" in current page administration
+    When I am on the "Course 1" "renameroles" page logged in as "admin"
     And I set the following fields to these values:
       | Your word for 'Teacher'             | Teacher >= editing  |
       | Your word for 'Non-editing teacher' | Teacher < "editing" |
       | Your word for 'Student'             | Studier & 'learner' |
-    And I press "Save and display"
+    And I press "Save"
     And I navigate to course participants
     Then I should see "Teacher >= editing (Teacher)" in the "Teacher 1" "table_row"
     And I should see "Teacher < \"editing\" (Non-editing teacher)" in the "Teaching Assistant" "table_row"

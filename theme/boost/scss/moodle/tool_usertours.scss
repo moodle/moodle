@@ -103,6 +103,26 @@ span[data-flexitour="container"] {
             }
         }
     }
+
+    // RTL specific styles.
+    .dir-rtl & {
+        &[x-placement^="right"] {
+            margin-left: $popover-arrow-width;
+            div[data-role="arrow"] {
+                transform: rotate(180deg);
+                left: -$popover-arrow-width;
+                right: auto;
+            }
+        }
+        &[x-placement^="left"] {
+            margin-right: $popover-arrow-width;
+            div[data-role="arrow"] {
+                transform: rotate(180deg);
+                left: auto;
+                right: -$popover-arrow-width;
+            }
+        }
+    }
 }
 
 // Hack the bone! Hack the bone!

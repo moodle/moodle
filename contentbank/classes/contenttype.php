@@ -14,21 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Content type manager class
- *
- * @package    core_contentbank
- * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_contentbank;
 
 use core\event\contentbank_content_created;
 use core\event\contentbank_content_deleted;
 use core\event\contentbank_content_viewed;
 use stored_file;
-use Exception;
 use moodle_url;
 
 /**
@@ -51,6 +42,12 @@ abstract class contenttype {
      * @since  Moodle 3.10
      */
     const CAN_DOWNLOAD = 'download';
+
+    /**
+     * @var string Constant representing whether the plugin implements copy feature
+     * @since  Moodle 4.3
+     */
+    const CAN_COPY = 'copy';
 
     /** @var \context This contenttype's context. **/
     protected $context = null;
@@ -120,9 +117,9 @@ abstract class contenttype {
         $content = $this->create_content($record);
         try {
             $content->import_file($file);
-        } catch (Exception $e) {
+        } catch (\moodle_exception $e) {
             $this->delete_content($content);
-            throw $e;
+            throw new \moodle_exception($e->errorcode);
         }
 
         return $content;
@@ -281,7 +278,7 @@ abstract class contenttype {
      */
     public function get_icon(content $content): string {
         global $OUTPUT;
-        return $OUTPUT->image_url('f/unknown-64', 'moodle')->out(false);
+        return $OUTPUT->image_url('f/unknown')->out(false);
     }
 
     /**
@@ -466,6 +463,35 @@ abstract class contenttype {
     }
 
     /**
+     * Returns whether or not the user has permission to copy the content.
+     *
+     * @since  Moodle 4.3
+     * @param  content $content The content to be copied.
+     * @return bool    True if the user can copy the content. False otherwise.
+     */
+    final public function can_copy(content $content): bool {
+        global $USER;
+
+        if (!$this->is_feature_supported(self::CAN_COPY)) {
+            return false;
+        }
+
+        if (!$this->can_access()) {
+            return false;
+        }
+
+        if (!$this->is_copy_allowed($content)) {
+            return false;
+        }
+
+        $hascapability = has_capability('moodle/contentbank:copyanycontent', $this->context);
+        if (!$hascapability && ($content->get_content()->usercreated == $USER->id)) {
+            $hascapability = has_capability('moodle/contentbank:copycontent', $this->context);
+        }
+        return $hascapability;
+    }
+
+    /**
      * Returns plugin allows downloading.
      *
      * @since  Moodle 3.10
@@ -473,6 +499,18 @@ abstract class contenttype {
      * @return bool    True if plugin allows downloading. False otherwise.
      */
     protected function is_download_allowed(content $content): bool {
+        // Plugins can overwrite this function to add any check they need.
+        return true;
+    }
+
+    /**
+     * Returns plugin allows copying.
+     *
+     * @since  Moodle 4.3
+     * @param  content $content The content to be copied.
+     * @return bool    True if plugin allows copying. False otherwise.
+     */
+    protected function is_copy_allowed(content $content): bool {
         // Plugins can overwrite this function to add any check they need.
         return true;
     }

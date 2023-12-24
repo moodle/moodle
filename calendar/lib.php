@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_external\external_api;
+
 if (!defined('MOODLE_INTERNAL')) {
     die('Direct access to this script is forbidden.');    ///  It must be included from a Moodle page
 }
@@ -180,7 +182,7 @@ define('CALENDAR_EVENT_TYPE_ACTION', 1);
  */
 class calendar_event {
 
-    /** @var array An object containing the event properties can be accessed via the magic __get/set methods */
+    /** @var stdClass An object containing the event properties can be accessed via the magic __get/set methods */
     protected $properties = null;
 
     /** @var string The converted event discription with file paths resolved.
@@ -975,7 +977,7 @@ class calendar_event {
             $this->editorcontext = $this->get_context();
         }
 
-        return external_format_string($this->properties->name, $this->editorcontext->id);
+        return \core_external\util::format_string($this->properties->name, $this->editorcontext->id);
     }
 
     /**
@@ -993,7 +995,11 @@ class calendar_event {
 
             if (!calendar_is_valid_eventtype($this->properties->eventtype)) {
                 // We don't have a context here, do a normal format_text.
-                return external_format_text($this->properties->description, $this->properties->format, $this->editorcontext->id);
+                return \core_external\util::format_text(
+                    $this->properties->description,
+                    $this->properties->format,
+                    $this->editorcontext
+                );
             }
         }
 
@@ -1004,8 +1010,14 @@ class calendar_event {
             $itemid = $this->properties->id;
         }
 
-        return external_format_text($this->properties->description, $this->properties->format, $this->editorcontext->id,
-            'calendar', 'event_description', $itemid);
+        return \core_external\util::format_text(
+            $this->properties->description,
+            $this->properties->format,
+            $this->editorcontext,
+            'calendar',
+            'event_description',
+            $itemid
+        );
     }
 }
 
@@ -1053,6 +1065,18 @@ class calendar_information {
 
     /** @var string The calendar's view mode. */
     protected $viewmode;
+
+    /** @var \stdClass course data. */
+    public $course;
+
+    /** @var int day. */
+    protected $day;
+
+    /** @var int month. */
+    protected $month;
+
+    /** @var int year. */
+    protected $year;
 
     /**
      * Creates a new instance
@@ -1648,11 +1672,14 @@ function calendar_get_events_by_id($eventids) {
 /**
  * Get control options for calendar.
  *
+ * @deprecated since Moodle 4.3
  * @param string $type of calendar
  * @param array $data calendar information
- * @return string $content return available control for the calender in html
+ * @return string $content return available control for the calendar in html
  */
 function calendar_top_controls($type, $data) {
+    debugging(__FUNCTION__ . ' has been deprecated and should not be used anymore.', DEBUG_DEVELOPER);
+
     global $PAGE, $OUTPUT;
 
     // Get the calendar type we are using.
@@ -1909,6 +1936,7 @@ function calendar_get_link_href($linkbase, $d, $m, $y, $time = 0) {
 /**
  * Build and return a previous month HTML link, with an arrow.
  *
+ * @deprecated since Moodle 4.3
  * @param string $text The text label.
  * @param string|moodle_url $linkbase The URL stub.
  * @param int $d The number of the date.
@@ -1920,6 +1948,8 @@ function calendar_get_link_href($linkbase, $d, $m, $y, $time = 0) {
  * @return string HTML string.
  */
 function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide = false, $time = 0) {
+    debugging(__FUNCTION__ . ' has been deprecated and should not be used anymore.', DEBUG_DEVELOPER);
+
     $href = calendar_get_link_href(new \moodle_url($linkbase), $d, $m, $y, $time);
 
     if (empty($href)) {
@@ -1937,6 +1967,7 @@ function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide = 
 /**
  * Build and return a next month HTML link, with an arrow.
  *
+ * @deprecated since Moodle 4.3
  * @param string $text The text label.
  * @param string|moodle_url $linkbase The URL stub.
  * @param int $d the number of the Day
@@ -1948,6 +1979,8 @@ function calendar_get_link_previous($text, $linkbase, $d, $m, $y, $accesshide = 
  * @return string HTML string.
  */
 function calendar_get_link_next($text, $linkbase, $d, $m, $y, $accesshide = false, $time = 0) {
+    debugging(__FUNCTION__ . ' has been deprecated and should not be used anymore.', DEBUG_DEVELOPER);
+
     $href = calendar_get_link_href(new \moodle_url($linkbase), $d, $m, $y, $time);
 
     if (empty($href)) {
@@ -3168,7 +3201,7 @@ function calendar_import_events_from_ical(iCalendar $ical, int $subscriptionid =
  * Fetch a calendar subscription and update the events in the calendar.
  *
  * @param int $subscriptionid The course ID for the calendar.
- * @return string A log of the import progress, including errors.
+ * @return array A log of the import progress, including errors.
  */
 function calendar_update_subscription_events($subscriptionid) {
     $sub = calendar_get_subscription($subscriptionid);
@@ -4010,7 +4043,7 @@ function calendar_inplace_editable(string $itemtype, int $itemid, int $newvalue)
 
         $subscription = calendar_get_subscription($itemid);
         $context = calendar_get_calendar_context($subscription);
-        \external_api::validate_context($context);
+        external_api::validate_context($context);
 
         $updateresult = \core_calendar\output\refreshintervalcollection::update($itemid, $newvalue);
 
@@ -4025,5 +4058,5 @@ function calendar_inplace_editable(string $itemtype, int $itemid, int $newvalue)
         return $updateresult;
     }
 
-    \external_api::validate_context(context_system::instance());
+    external_api::validate_context(context_system::instance());
 }

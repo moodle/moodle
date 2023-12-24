@@ -120,6 +120,10 @@ class MoodleODSWorksheet {
     public $rows = array();
     public $showgrid = true;
     public $name;
+    /** @var int Max number of rows in the sheet. */
+    public $maxr = 0;
+    /** @var int Max number of cols in the sheet. */
+    public $maxc = 0;
 
     /**
      * Constructs one Moodle Worksheet.
@@ -864,8 +868,6 @@ class MoodleODSWriter {
         $colstyles = '';
 
         foreach($this->worksheets as $wsnum=>$ws) {
-            $this->worksheets[$wsnum]->maxr = 0;
-            $this->worksheets[$wsnum]->maxc = 0;
             foreach($ws->data as $rnum=>$row) {
                 if ($rnum > $this->worksheets[$wsnum]->maxr) {
                     $this->worksheets[$wsnum]->maxr = $rnum;

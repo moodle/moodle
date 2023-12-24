@@ -25,6 +25,10 @@
         "type": 1,
         "table": "table",
         "editmode": true,
+        "attributes": [{
+            "name": "data-custom",
+            "value": "1"
+        }],
         "sidebarmenucards": [{
             "menucards": [{
                 "name": "General",
@@ -93,7 +97,8 @@
      data-report-id="{{id}}"
      data-report-type="{{type}}"
      data-parameter="[]"
-     {{#editmode}}data-editing{{/editmode}}>
+     {{#editmode}}data-editing{{/editmode}}
+     {{#attributes}}{{name}}="{{value}}" {{/attributes}}>
     <div class="reportbuilder-wrapper d-flex flex-column flex-lg-row">
         {{#editmode}}
             {{! Menu sidebar }}

@@ -61,7 +61,7 @@ class send_login_notifications extends adhoc_task {
         $userauth = get_auth_plugin($USER->auth);
         if ($userauth->can_change_password()) {
             if ($changepwurl = $userauth->change_password_url()) {
-                $changepasswordlink = (string) $changepwurl;
+                $changepasswordlink = $changepwurl;
             } else {
                 $changepasswordlink = (new \moodle_url('/login/change_password.php'))->out(false);
             }

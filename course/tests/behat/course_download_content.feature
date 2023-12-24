@@ -21,7 +21,7 @@ Feature: Course content can be downloaded
     And I set the following fields to these values:
     | Download course content feature available | 1 |
     And I press "Save changes"
-    And I navigate to "Courses > Course default settings" in site administration
+    And I navigate to "Courses > Default settings > Course default settings" in site administration
     And I set the field "Enable download course content" to "Yes"
     And I press "Save changes"
     And I log out

@@ -22,71 +22,27 @@ Feature: In a lesson activity, students can not re-attempt a question more than 
       | name                     | Test lesson name        |
       | retake                   | 1                       |
       | minquestions             | 3                       |
-    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I follow "Add a content page"
-    And I set the following fields to these values:
-      | Page title | First page name |
-      | Page contents | First page contents |
-      | id_answer_editor_0 | Next page |
-      | id_jumpto_0 | Next page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Third page name |
-      | Page contents | Third page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | Next page |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 3 |
-      | Page contents | Paper is made from trees. |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I select "Add a content page" from the "qtype" singleselect
-    And I set the following fields to these values:
-      | Page title | Second page name |
-      | Page contents | Second page contents |
-      | id_answer_editor_0 | Previous page |
-      | id_jumpto_0 | Previous page |
-      | id_answer_editor_1 | Next page |
-      | id_jumpto_1 | Next page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 2 |
-      | Page contents | Kermit is a frog |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | True/false question 1 |
-      | Page contents | The earth is round. |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
+    And the following "mod_lesson > pages" exist:
+      | lesson           | qtype     | title                 | content                   |
+      | Test lesson name | content   | First page name       | First page contents       |
+      | Test lesson name | truefalse | True/false question 1 | The earth is round.       |
+      | Test lesson name | truefalse | True/false question 2 | Kermit is a frog          |
+      | Test lesson name | content   | Second page name      | Second page contents      |
+      | Test lesson name | truefalse | True/false question 3 | Paper is made from trees. |
+      | Test lesson name | content   | Third page name       | Third page contents       |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer        | response | jumpto        | score |
+      | First page name       | Next page     |          | Next page     | 0     |
+      | Second page name      | Previous page |          | Previous page | 0     |
+      | Second page name      | Next page     |          | Next page     | 0     |
+      | True/false question 1 | True          | Correct  | Next page     | 1     |
+      | True/false question 1 | False         | Wrong    | This page     | 0     |
+      | True/false question 2 | True          | Correct  | Next page     | 1     |
+      | True/false question 2 | False         | Wrong    | This page     | 0     |
+      | True/false question 3 | True          | Correct  | Next page     | 1     |
+      | True/false question 3 | False         | Wrong    | This page     | 0     |
+      | Third page name       | Previous page |          | Previous page | 0     |
+      | Third page name       | Next page     |          | Next page     | 0     |
 
   Scenario: Check that we can leave a quiz and when we re-enter we can not re-attempt the question again
     Given I am on the "Test lesson name" "lesson activity" page logged in as student1

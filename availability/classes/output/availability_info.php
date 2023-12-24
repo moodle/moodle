@@ -40,12 +40,6 @@ class availability_info implements renderable, templatable {
     /** @var core_availability_multiple_messages availabilitymessages the course format class */
     protected $availabilitymessages;
 
-    /** @var int counts number of conditions */
-    protected $count = 0;
-
-    /** @var int Maximum number of lines of availability info */
-    protected const MAXVISIBLE = 4;
-
     /**
      * Constructor.
      *
@@ -53,7 +47,6 @@ class availability_info implements renderable, templatable {
      */
     public function __construct(core_availability_multiple_messages $renderable) {
         $this->availabilitymessages = $renderable;
-        $this->count = 0;
     }
 
     /**
@@ -68,10 +61,6 @@ class availability_info implements renderable, templatable {
 
         $template->id = uniqid();
 
-        if ($this->count >= self::MAXVISIBLE) {
-            $template->showmorelink = true;
-        }
-
         return $template;
     }
 
@@ -82,12 +71,9 @@ class availability_info implements renderable, templatable {
      */
     protected function get_item_base_template(): stdClass {
         return (object)[
-            'hidden' => $this->count > self::MAXVISIBLE,
-            'abbreviate' => $this->count === self::MAXVISIBLE,
             'id' => false,
             'items' => [],
             'hasitems' => false,
-            'showmorelink' => false,
         ];
     }
 
@@ -101,15 +87,9 @@ class availability_info implements renderable, templatable {
 
         $template = $this->get_item_base_template();
 
-        $template->header = get_string(
-            'list_' . ($availability->root ? 'root_' : '') .
-                ($availability->andoperator ? 'and' : 'or') .
-                ($availability->treehidden ? '_hidden' : ''),
-            'availability'
-        );
+        $template->header = $this->get_item_header($availability);
 
         foreach ($availability->items as $item) {
-            $this->count++;
             if (is_string($item)) {
                 $simple_item = $this->get_item_base_template();
                 $simple_item->header = $item;
@@ -122,5 +102,21 @@ class availability_info implements renderable, templatable {
         $template->hasitems = !empty($template->items);
 
         return $template;
+    }
+
+    /**
+     * Get the item header.
+     * Depending on availability configuration this will return a string from a combined string identifier.
+     * For example: list_root_and_hidden, list_and, list_root_or_hidden, list_root_or, etc.
+     *
+     * @param core_availability_multiple_messages $availability the availability messages
+     * @return string the item header
+     */
+    protected function get_item_header(core_availability_multiple_messages $availability): string {
+        $stridentifier = 'list_' . ($availability->root ? 'root_' : '') .
+            ($availability->andoperator ? 'and' : 'or') .
+            ($availability->treehidden ? '_hidden' : '');
+
+        return get_string($stridentifier, 'availability');
     }
 }

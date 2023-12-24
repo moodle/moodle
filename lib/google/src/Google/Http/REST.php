@@ -22,6 +22,7 @@ if (!class_exists('Google_Client')) {
 /**
  * This class implements the RESTful transport of apiServiceRequest()'s
  */
+#[AllowDynamicProperties]
 class Google_Http_REST
 {
   /**
@@ -39,7 +40,7 @@ class Google_Http_REST
     $runner = new Google_Task_Runner(
         $client,
         sprintf('%s %s', $req->getRequestMethod(), $req->getUrl()),
-        array(get_class(), 'doExecute'),
+        array(self::class, 'doExecute'),
         array($client, $req)
     );
 

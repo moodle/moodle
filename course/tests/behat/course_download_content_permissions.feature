@@ -37,7 +37,7 @@ Feature: Access to downloading course content can be controlled
     Given I log in as "admin"
     And I am on "Hockey 101" course homepage
     And "Download course content" "link" should not exist in current page administration
-    When I navigate to "Courses > Course default settings" in site administration
+    When I navigate to "Courses > Default settings > Course default settings" in site administration
     And I set the field "Enable download course content" to "Yes"
     And I press "Save changes"
     And I am on "Hockey 101" course homepage

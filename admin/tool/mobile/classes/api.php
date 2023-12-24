@@ -65,6 +65,12 @@ class api {
     const DEFAULT_ANDROID_APP_ID = 'com.moodle.moodlemobile';
     /** @var string Default iOS app id */
     const DEFAULT_IOS_APP_ID = '633359593';
+    /** @var int AUTOLOGOUT disabled value */
+    const AUTOLOGOUT_DISABLED = 0;
+    /** @var int AUTOLOGOUT type inmediate value */
+    const AUTOLOGOUT_INMEDIATE = 1;
+    /** @var int AUTOLOGOUT type custom value */
+    const AUTOLOGOUT_CUSTOM = 2;
 
     /**
      * Returns a list of Moodle plugins supporting the mobile app.
@@ -122,7 +128,7 @@ class api {
                                     $stringinfo[0],
                                     $stringinfo[1] ?? '',
                                     null,
-                                    $langid
+                                    $langid,
                                 );
                             }
                         }
@@ -174,12 +180,12 @@ class api {
         // Check if contacting site support is available to all visitors.
         $sitesupportavailable = (isset($CFG->supportavailability) && $CFG->supportavailability == CONTACT_SUPPORT_ANYONE);
 
-        list($authinstructions, $notusedformat) = external_format_text($CFG->auth_instructions, FORMAT_MOODLE, $context->id);
-        list($maintenancemessage, $notusedformat) = external_format_text($CFG->maintenance_message, FORMAT_MOODLE, $context->id);
+        [$authinstructions] = \core_external\util::format_text($CFG->auth_instructions, FORMAT_MOODLE, $context->id);
+        [$maintenancemessage] = \core_external\util::format_text($CFG->maintenance_message, FORMAT_MOODLE, $context->id);
         $settings = array(
             'wwwroot' => $CFG->wwwroot,
             'httpswwwroot' => $CFG->wwwroot,
-            'sitename' => external_format_string($SITE->fullname, $context->id, true),
+            'sitename' => \core_external\util::format_string($SITE->fullname, $context->id, true),
             'guestlogin' => $CFG->guestloginbutton,
             'rememberusername' => $CFG->rememberusername,
             'authloginviaemail' => $CFG->authloginviaemail,
@@ -269,12 +275,12 @@ class api {
         if (empty($section) or $section == 'frontpagesettings') {
             require_once($CFG->dirroot . '/course/format/lib.php');
             // First settings that anyone can deduce.
-            $settings->fullname = external_format_string($SITE->fullname, $context->id);
-            $settings->shortname = external_format_string($SITE->shortname, $context->id);
+            $settings->fullname = \core_external\util::format_string($SITE->fullname, $context->id);
+            $settings->shortname = \core_external\util::format_string($SITE->shortname, $context->id);
 
             // Return to a var instead of directly to $settings object because of differences between
             // list() in php5 and php7. {@link http://php.net/manual/en/function.list.php}
-            $formattedsummary = external_format_text($SITE->summary, $SITE->summaryformat,
+            $formattedsummary = \core_external\util::format_text($SITE->summary, $SITE->summaryformat,
                                                                                         $context->id);
             $settings->summary = $formattedsummary[0];
             $settings->summaryformat = $formattedsummary[1];
@@ -319,6 +325,8 @@ class api {
             $mintimereq = get_config('tool_mobile', 'autologinmintimebetweenreq');
             $mintimereq = empty($mintimereq) ? 6 * MINSECS : $mintimereq;
             $settings->tool_mobile_autologinmintimebetweenreq = $mintimereq;
+            $settings->tool_mobile_autologout = get_config('tool_mobile', 'autologout');
+            $settings->tool_mobile_autologouttime = get_config('tool_mobile', 'autologouttime');
         }
 
         if (empty($section) or $section == 'calendar') {
@@ -362,6 +370,22 @@ class api {
 
         if (empty($section) || $section === 'themesettings') {
             $settings->customusermenuitems = $CFG->customusermenuitems;
+        }
+
+        if (empty($section) || $section === 'locationsettings') {
+            $settings->timezone = $CFG->timezone;
+            $settings->forcetimezone = $CFG->forcetimezone;
+        }
+
+        if (empty($section) || $section === 'manageglobalsearch') {
+            $settings->searchengine = $CFG->searchengine;
+            $settings->searchenablecategories = $CFG->searchenablecategories;
+            $settings->searchdefaultcategory = $CFG->searchdefaultcategory;
+            $settings->searchhideallcategory = $CFG->searchhideallcategory;
+            $settings->searchmaxtopresults = $CFG->searchmaxtopresults;
+            $settings->searchbannerenable = $CFG->searchbannerenable;
+            $settings->searchbanner = \core_external\util::format_text(
+                $CFG->searchbanner, FORMAT_HTML, $context)[0];
         }
 
         return $settings;
@@ -492,6 +516,7 @@ class api {
             'comments' => 'CoreBlockDelegate_AddonBlockComments',
             'completionstatus' => 'CoreBlockDelegate_AddonBlockCompletionStatus',
             'feedback' => 'CoreBlockDelegate_AddonBlockFeedback',
+            'globalsearch' => 'CoreBlockDelegate_AddonBlockGlobalSearch',
             'glossary_random' => 'CoreBlockDelegate_AddonBlockGlossaryRandom',
             'html' => 'CoreBlockDelegate_AddonBlockHtml',
             'lp' => 'CoreBlockDelegate_AddonBlockLp',
@@ -500,6 +525,7 @@ class api {
             'private_files' => 'CoreBlockDelegate_AddonBlockPrivateFiles',
             'recent_activity' => 'CoreBlockDelegate_AddonBlockRecentActivity',
             'rss_client' => 'CoreBlockDelegate_AddonBlockRssClient',
+            'search_forums' => 'CoreBlockDelegate_AddonBlockSearchForums',
             'selfcompletion' => 'CoreBlockDelegate_AddonBlockSelfCompletion',
             'tags' => 'CoreBlockDelegate_AddonBlockTags',
         );
@@ -526,6 +552,7 @@ class api {
                 'CoreFilterDelegate' => new lang_string('type_filter_plural', 'plugin'),
                 'CoreReportBuilderDelegate' => new lang_string('reportbuilder', 'core_reportbuilder'),
                 'NoDelegate_CoreUserSupport' => new lang_string('contactsitesupport', 'admin'),
+                'NoDelegate_GlobalSearch' => new lang_string('globalsearch', 'search'),
             ),
             "$mainmenu" => array(
                 '$mmSideMenuDelegate_mmaFrontpage' => new lang_string('sitehome'),

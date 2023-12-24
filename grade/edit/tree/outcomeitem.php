@@ -22,6 +22,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_grades\form\add_outcome;
+
 require_once '../../../config.php';
 require_once $CFG->dirroot.'/grade/lib.php';
 require_once $CFG->dirroot.'/grade/report/lib.php';
@@ -111,6 +113,11 @@ if (empty($parent_category)) {
 
 $mform->set_data($item);
 
+$simpleform = new add_outcome(null, ['itemid' => $grade_item->id, 'courseid' => $courseid, 'gpr' => $gpr]);
+// Data has been carried over from the dynamic form.
+if ($simpledata = $simpleform->get_submitted_data()) {
+    $mform->set_data($simpledata);
+}
 
 if ($data = $mform->get_data()) {
 

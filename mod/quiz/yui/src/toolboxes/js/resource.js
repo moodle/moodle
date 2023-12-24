@@ -174,39 +174,42 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         ev.preventDefault();
 
         // Get the element we're working on.
-        var element = activity,
-            // Create confirm string (different if element has or does not have name)
-            confirmstring = '',
-            qtypename = M.util.get_string('pluginname',
-                        'qtype_' + element.getAttribute('class').match(/qtype_([^\s]*)/)[1]);
-        confirmstring = M.util.get_string('confirmremovequestion', 'quiz', qtypename);
+        var element = activity;
+        // Create confirm string (different if element has or does not have name)
+        var qtypename = M.util.get_string(
+            'pluginname',
+            'qtype_' + element.getAttribute('class').match(/qtype_([^\s]*)/)[1]
+        );
 
         // Create the confirmation dialogue.
-        var confirm = new M.core.confirm({
-            question: confirmstring,
-            modal: true
-        });
-
-        // If it is confirmed.
-        confirm.on('complete-yes', function() {
-            var spinner = this.add_spinner(element);
-            var data = {
-                'class': 'resource',
-                'action': 'DELETE',
-                'id': Y.Moodle.mod_quiz.util.slot.getId(element)
-            };
-            this.send_request(data, spinner, function(response) {
-                if (response.deleted) {
-                    // Actually remove the element.
-                    Y.Moodle.mod_quiz.util.slot.remove(element);
-                    this.reorganise_edit_page();
-                    if (M.core.actionmenu && M.core.actionmenu.instance) {
-                        M.core.actionmenu.instance.hideMenu(ev);
+        require(['core/notification'], function(Notification) {
+            Notification.saveCancelPromise(
+                M.util.get_string('confirm', 'moodle'),
+                M.util.get_string('confirmremovequestion', 'quiz', qtypename),
+                M.util.get_string('yes', 'moodle')
+            ).then(function() {
+                var spinner = this.add_spinner(element);
+                var data = {
+                    'class': 'resource',
+                    'action': 'DELETE',
+                    'id': Y.Moodle.mod_quiz.util.slot.getId(element)
+                };
+                this.send_request(data, spinner, function(response) {
+                    if (response.deleted) {
+                        // Actually remove the element.
+                        Y.Moodle.mod_quiz.util.slot.remove(element);
+                        this.reorganise_edit_page();
+                        if (M.core.actionmenu && M.core.actionmenu.instance) {
+                            M.core.actionmenu.instance.hideMenu(ev);
+                        }
                     }
-                }
-            });
+                });
 
-        }, this);
+                return;
+            }.bind(this)).catch(function() {
+                // User cancelled.
+            });
+        }.bind(this));
     },
 
     /**
@@ -248,12 +251,12 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
         var problemsection = this.find_sections_that_would_become_empty();
 
         if (typeof problemsection !== 'undefined') {
-            var alert = new M.core.alert({
-                title: M.util.get_string('cannotremoveslots', 'quiz'),
-                message: M.util.get_string('cannotremoveallsectionslots', 'quiz', problemsection)
+            require(['core/notification'], function(Notification) {
+                Notification.alert(
+                    M.util.get_string('cannotremoveslots', 'quiz'),
+                    M.util.get_string('cannotremoveallsectionslots', 'quiz', problemsection)
+                );
             });
-
-            alert.show();
         } else {
             this.delete_multiple_with_confirmation(ev);
         }
@@ -284,37 +287,39 @@ Y.extend(RESOURCETOOLBOX, TOOLBOX, {
             return;
         }
 
-        // Create the confirmation dialogue.
-        var confirm = new M.core.confirm({
-            question: M.util.get_string('areyousureremoveselected', 'quiz'),
-            modal: true
-        });
+        require(['core/notification'], function(Notification) {
+            Notification.saveCancelPromise(
+                M.util.get_string('confirm', 'moodle'),
+                M.util.get_string('areyousureremoveselected', 'quiz'),
+                M.util.get_string('yes', 'moodle')
+            ).then(function() {
+                var spinner = this.add_spinner(element);
+                var data = {
+                    'class': 'resource',
+                    field: 'deletemultiple',
+                    ids: ids
+                };
+                // Delete items on server.
+                this.send_request(data, spinner, function(response) {
+                    // Delete locally if deleted on server.
+                    if (response.deleted) {
+                        // Actually remove the element.
+                        Y.all(SELECTOR.SELECTMULTIPLECHECKBOX + ':checked').each(function(node) {
+                            Y.Moodle.mod_quiz.util.slot.remove(node.ancestor('li.activity'));
+                        });
+                        // Update the page numbers and sections.
+                        this.reorganise_edit_page();
 
-        // If it is confirmed.
-        confirm.on('complete-yes', function() {
-            var spinner = this.add_spinner(element);
-            var data = {
-                'class': 'resource',
-                field: 'deletemultiple',
-                ids: ids
-            };
-            // Delete items on server.
-            this.send_request(data, spinner, function(response) {
-                // Delete locally if deleted on server.
-                if (response.deleted) {
-                    // Actually remove the element.
-                    Y.all(SELECTOR.SELECTMULTIPLECHECKBOX + ':checked').each(function(node) {
-                        Y.Moodle.mod_quiz.util.slot.remove(node.ancestor('li.activity'));
-                    });
-                    // Update the page numbers and sections.
-                    this.reorganise_edit_page();
+                        // Remove the select multiple options.
+                        Y.one('body').removeClass(CSS.SELECTMULTIPLE);
+                    }
+                });
 
-                    // Remove the select multiple options.
-                    Y.one('body').removeClass(CSS.SELECTMULTIPLE);
-                }
+                return;
+            }.bind(this)).catch(function() {
+                // User cancelled.
             });
-
-        }, this);
+        }.bind(this));
     },
 
     /**

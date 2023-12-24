@@ -50,7 +50,7 @@ class core_renderer extends \core_renderer {
             $url->param('edit', 'on');
             $editstring = get_string('turneditingon');
         }
-        $button = new \single_button($url, $editstring, $method, ['class' => 'btn btn-primary']);
+        $button = new \single_button($url, $editstring, $method, \single_button::BUTTON_PRIMARY);
         return $this->render_single_button($button);
     }
 
@@ -72,12 +72,11 @@ class core_renderer extends \core_renderer {
      * @return string A rendered context header.
      */
     public function context_header($headerinfo = null, $headinglevel = 1): string {
-        global $DB, $USER, $CFG, $SITE;
+        global $DB, $USER, $CFG;
         require_once($CFG->dirroot . '/user/lib.php');
         $context = $this->page->context;
         $heading = null;
         $imagedata = null;
-        $subheader = null;
         $userbuttons = null;
 
         // Make sure to use the heading if it has been set.
@@ -169,7 +168,7 @@ class core_renderer extends \core_renderer {
                 ];
                 $imagedata = html_writer::img($iconurl->out(false), '', $iconattrs);
                 $purposeclass = plugin_supports('mod', $this->page->activityname, FEATURE_MOD_PURPOSE);
-                $purposeclass .= ' activityiconcontainer';
+                $purposeclass .= ' activityiconcontainer icon-size-6';
                 $purposeclass .= ' modicon_' . $this->page->activityname;
                 $imagedata = html_writer::tag('div', $imagedata, ['class' => $purposeclass]);
                 if (!empty($USER->editing)) {
@@ -177,7 +176,6 @@ class core_renderer extends \core_renderer {
                 }
             }
         }
-
 
         $contextheader = new \context_header($heading, $headinglevel, $imagedata, $userbuttons, $prefix);
         return $this->render_context_header($contextheader);

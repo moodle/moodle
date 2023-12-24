@@ -12,6 +12,7 @@ class LtiGrade
     private $timestamp;
     private $user_id;
     private $submission_review;
+    private $canvas_extension;
 
     public function __construct(array $grade = null)
     {

@@ -49,6 +49,10 @@ define('CACHE_DISABLE_ALL', true); // Disables caching.. just in case.
 define('PHPUNIT_TEST', false);
 define('IGNORE_COMPONENT_CACHE', true);
 define('MDL_PERF_TEST', false);
+define('MDL_PERF', false);
+define('MDL_PERFTOFOOT', false);
+define('MDL_PERFTOLOG', false);
+define('MDL_PERFINC', false);
 
 // Servers should define a default timezone in php.ini, but if they don't then make sure something is defined.
 if (!function_exists('date_default_timezone_set') or !function_exists('date_default_timezone_get')) {

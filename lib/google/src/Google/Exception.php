@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 
+#[AllowDynamicProperties]
 class Google_Exception extends Exception
 {
 }

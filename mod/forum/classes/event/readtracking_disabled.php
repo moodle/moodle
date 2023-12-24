@@ -80,16 +80,6 @@ class readtracking_disabled extends \core\event\base {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array|null
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'forum', 'stop tracking', 'view.php?f=' . $this->other['forumid'],
-            $this->other['forumid'], $this->contextinstanceid);
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

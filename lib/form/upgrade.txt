@@ -1,0 +1,15 @@
+This files describes API changes in core_form libraries and APIs,
+information provided here is intended especially for developers.
+
+=== 4.3.1 ===
+
+* The group element has a new method `getAttributesForFormElement` which should be used in conjunction
+  with `createFormElement` to ensure that all elements within the group have unique IDs
+
+=== 4.3 ===
+
+* Added a new parameter to allow Groups to add attributes.
+
+=== 4.2 ===
+
+* The moodle-form-passwordunmask module has been removed. It was deprecated in Moodle 3.2.

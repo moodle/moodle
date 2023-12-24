@@ -61,29 +61,23 @@ Feature: The activity results block displays student in separate groups scores
     And I am on "Course 1" course homepage with editing mode on
 
   Scenario: Configure the block on the course page to show 1 high score
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 1 |
       | config_showworst | 0 |
       | config_gradeformat | Percentages |
       | config_nameformat | Display full names |
       | config_decimalpoints | 0 |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 1" in the "Activity results" "block"
     And I should see "95%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show 1 high score as a fraction
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 1 |
       | config_showworst | 0 |
       | config_gradeformat | Fractions |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 1" in the "Activity results" "block"
     And I should see "95.00/100.00" in the "Activity results" "block"
     And I am on the "Course 1" course page logged in as student1
@@ -91,15 +85,12 @@ Feature: The activity results block displays student in separate groups scores
     And I should see "100.00/100.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show 1 high score as a absolute numbers
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 1 |
       | config_showworst | 0 |
       | config_gradeformat | Absolute numbers |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 1" in the "Activity results" "block"
     And I should see "95.00" in the "Activity results" "block"
     And I am on the "Course 1" course page logged in as student1
@@ -107,16 +98,13 @@ Feature: The activity results block displays student in separate groups scores
     And I should see "100.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores as percentages
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 3 |
       | config_showworst | 0 |
       | config_gradeformat | Percentages |
       | config_nameformat | Display full names |
       | config_decimalpoints | 0 |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 1" in the "Activity results" "block"
     And I should see "95%" in the "Activity results" "block"
     And I should see "Group 2" in the "Activity results" "block"
@@ -130,15 +118,12 @@ Feature: The activity results block displays student in separate groups scores
     And I should see "90%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores as fractions
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 3 |
       | config_showworst | 0 |
       | config_gradeformat | Fractions |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 1" in the "Activity results" "block"
     And I should see "95.00/100.00" in the "Activity results" "block"
     And I should see "Group 2" in the "Activity results" "block"
@@ -152,15 +137,12 @@ Feature: The activity results block displays student in separate groups scores
     And I should see "80.00/100.00" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores as absolute numbers
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 3 |
       | config_showworst | 0 |
       | config_gradeformat | Absolute numbers |
       | config_nameformat | Display full names |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group 1" in the "Activity results" "block"
     And I should see "95.00" in the "Activity results" "block"
     And I should see "Group 2" in the "Activity results" "block"
@@ -176,15 +158,12 @@ Feature: The activity results block displays student in separate groups scores
   Scenario: Try to configure the block on the course page to show multiple high scores using ID numbers
     Given the following config values are set as admin:
       | showuseridentity | idnumber,email |
-    And I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    And I add the "Activity results" block to the default region with:
       | config_showbest | 3 |
       | config_showworst | 0 |
       | config_gradeformat | Percentages |
       | config_nameformat | Display only ID numbers |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group" in the "Activity results" "block"
     And I should see "95.00%" in the "Activity results" "block"
     And I should see "85.00%" in the "Activity results" "block"
@@ -198,15 +177,12 @@ Feature: The activity results block displays student in separate groups scores
     And I should see "90.00%" in the "Activity results" "block"
 
   Scenario: Try to configure the block on the course page to show multiple high scores using anonymous names
-    Given I add the "Activity results" block
-    When I configure the "Activity results" block
-    And I set the following fields to these values:
+    Given I add the "Activity results" block to the default region with:
       | config_showbest | 3 |
       | config_showworst | 0 |
       | config_gradeformat | Percentages |
       | config_nameformat | Anonymous results |
       | config_usegroups | Yes |
-    And I press "Save changes"
     Then I should see "Group" in the "Activity results" "block"
     And I should see "95.00%" in the "Activity results" "block"
     And I should see "85.00%" in the "Activity results" "block"

@@ -279,7 +279,7 @@ class block_tag_youtube extends block_base {
     /**
      * Renders the list of items.
      *
-     * @param array $videosdata
+     * @param stdClass $videosdata
      * @return string HTML
      */
     protected function render_items($videosdata) {

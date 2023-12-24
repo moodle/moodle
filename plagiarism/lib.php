@@ -73,24 +73,6 @@ abstract class plagiarism_plugin {
         return array('analyzed' => '', 'score' => '', 'reporturl' => '');
     }
     /**
-     * hook to add plagiarism specific settings to a module settings page
-     * @deprecated Since Moodle 3.9. MDL-65835 Please use {plugin name}_coursemodule_edit_post_actions() instead.
-     * @todo MDL-67526 Remove this method.
-     * @param object $mform  - Moodle form
-     * @param object $context - current context
-     * @param string $modulename - Name of the module
-     */
-    public function get_form_elements_module($mform, $context, $modulename = "") {
-    }
-    /**
-     * hook to save plagiarism specific settings on a module settings page
-     * @deprecated Since Moodle 3.9. MDL-65835 Please use {plugin name}_coursemodule_standard_elements() instead.
-     * @todo MDL-67526 Remove this method.
-     * @param object $data - data from an mform submission.
-     */
-    public function save_form_elements($data) {
-    }
-    /**
      * hook to allow a disclosure to be printed notifying users what will happen with their submission
      * @param int $cmid - course module id
      * @return string

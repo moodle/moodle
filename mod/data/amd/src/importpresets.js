@@ -16,14 +16,14 @@
 /**
  * Javascript module for importing presets.
  *
- * @module     mod_data/importpreset
+ * @module     mod_data/importpresets
  * @copyright  2022 Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 import ModalForm from 'core_form/modalform';
 import Notification from 'core/notification';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 const selectors = {
     importPresetButton: '[data-action="importpresets"]',

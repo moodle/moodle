@@ -127,13 +127,11 @@ class edit_item_form extends moodleform {
 
         $mform->addElement('float', 'multfactor', get_string('multfactor', 'grades'));
         $mform->addHelpButton('multfactor', 'multfactor', 'grades');
-        $mform->setAdvanced('multfactor');
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('multfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
         $mform->addElement('float', 'plusfactor', get_string('plusfactor', 'grades'));
         $mform->addHelpButton('plusfactor', 'plusfactor', 'grades');
-        $mform->setAdvanced('plusfactor');
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_NONE);
         $mform->disabledIf('plusfactor', 'gradetype', 'eq', GRADE_TYPE_TEXT);
 
@@ -234,16 +232,6 @@ class edit_item_form extends moodleform {
 /// add return tracking info
         $gpr = $this->_customdata['gpr'];
         $gpr->add_mform_elements($mform);
-
-/// mark advanced according to site settings
-        if (isset($CFG->grade_item_advanced)) {
-            $advanced = explode(',', $CFG->grade_item_advanced);
-            foreach ($advanced as $el) {
-                if ($mform->elementExists($el)) {
-                    $mform->setAdvanced($el);
-                }
-            }
-        }
 //-------------------------------------------------------------------------------
         // buttons
         $this->add_action_buttons();

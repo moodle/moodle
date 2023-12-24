@@ -130,11 +130,12 @@ class MoodleQuickForm_date_selector extends MoodleQuickForm_group {
         // If optional we add a checkbox which the user can use to turn if on.
         if ($this->_options['optional']) {
             $this->_elements[] = $this->createFormElement('checkbox', 'enabled', null,
-                get_string('enable'), $this->getAttributes(), true);
+                get_string('enable'), $this->getAttributesForFormElement(), true);
         }
         foreach ($dateformat as $key => $value) {
             // E_STRICT creating elements without forms is nasty because it internally uses $this
-            $this->_elements[] = $this->createFormElement('select', $key, get_string($key, 'form'), $value, $this->getAttributes(), true);
+            $this->_elements[] = $this->createFormElement('select', $key, get_string($key, 'form'), $value,
+                $this->getAttributesForFormElement(), true);
         }
         // The YUI2 calendar only supports the gregorian calendar type so only display the calendar image if this is being used.
         if ($calendartype->get_name() === 'gregorian') {

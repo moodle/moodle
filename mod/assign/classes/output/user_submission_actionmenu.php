@@ -119,7 +119,12 @@ class user_submission_actionmenu implements templatable, renderable {
                     'help' => $help->export_for_template($output)
                 ];
                 $url = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'editsubmission']);
-                $newattemptbutton = new single_button($url, get_string('addnewattempt', 'mod_assign'), 'get', true);
+                $newattemptbutton = new single_button(
+                    $url,
+                    get_string('addnewattempt', 'mod_assign'),
+                    'get',
+                    single_button::BUTTON_PRIMARY
+                );
                 $newattempthelp = new help_icon('addnewattempt', 'mod_assign');
                 $data['edit']['button'] = $newattemptbutton->export_for_template($output);
                 $data['edit']['help'] = $newattempthelp->export_for_template($output);
@@ -143,7 +148,12 @@ class user_submission_actionmenu implements templatable, renderable {
                     $data['edit']['begin'] = true;
                     $data['edit']['help'] = '';
                 } else {
-                    $newattemptbutton = new single_button($url, get_string('addsubmission', 'mod_assign'), 'get', true);
+                    $newattemptbutton = new single_button(
+                        $url,
+                        get_string('addsubmission', 'mod_assign'),
+                        'get',
+                        single_button::BUTTON_PRIMARY
+                    );
                     $data['edit']['button'] = $newattemptbutton->export_for_template($output);
                     $data['edit']['help'] = '';
                 }
@@ -151,7 +161,7 @@ class user_submission_actionmenu implements templatable, renderable {
         }
         if ($this->showsubmit) {
             $url = new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'submit']);
-            $button = new single_button($url, get_string('submitassignment', 'mod_assign'), 'get', true);
+            $button = new single_button($url, get_string('submitassignment', 'mod_assign'), 'get', single_button::BUTTON_PRIMARY);
             $help = new help_icon('submitassignment', 'mod_assign');
             $data['submit'] = [
                 'button' => $button->export_for_template($output),

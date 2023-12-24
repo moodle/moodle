@@ -72,36 +72,6 @@ class course_deleted extends base {
     }
 
     /**
-     * Returns the name of the legacy event.
-     *
-     * @return string legacy event name
-     */
-    public static function get_legacy_eventname() {
-        return 'course_deleted';
-    }
-
-    /**
-     * Returns the legacy event data.
-     *
-     * @return \stdClass the course that was deleted
-     */
-    protected function get_legacy_eventdata() {
-        $course = $this->get_record_snapshot('course', $this->objectid);
-        $course->context = $this->context;
-        $course->timemodified = $this->data['timecreated'];
-        return $course;
-    }
-
-    /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array(SITEID, 'course', 'delete', 'view.php?id=' . $this->objectid, $this->other['fullname']  . '(ID ' . $this->objectid . ')');
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

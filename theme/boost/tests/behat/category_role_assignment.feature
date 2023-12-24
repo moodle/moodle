@@ -25,7 +25,7 @@ Feature: Role assignments can be made at the category level
     And I am on course index
     When I follow "Cat 1"
     And I navigate to "Permissions" in current page administration
-    Then I should see "Assign roles" in the "jump" "select"
+    Then "Assign roles" "text" should exist in the ".tertiary-navigation" "css_element"
 
   @javascript
   Scenario: A user with a category role cannot assign roles if there are no roles to assign
@@ -41,4 +41,4 @@ Feature: Role assignments can be made at the category level
     And I am on course index
     When I follow "Cat 1"
     And I navigate to "Permissions" in current page administration
-    Then I should not see "Assign roles" in the "jump" "select"
+    Then "Assign roles" "text" should not exist in the ".tertiary-navigation" "css_element"

@@ -34,7 +34,7 @@ Feature: Manage custom report schedules
       | Name          | My schedule                 |
       | Starting from | ##tomorrow 11:00##          |
       | Subject       | You're all I've ever wanted |
-    And I set the field "Body" to "And my arms are open wide"
+      | Body          | And my arms are open wide   |
     # Confirm each audience is present in the form, select only the manually added users.
     And I should see "All my lovely users" in the "New schedule" "dialogue"
     And I set the field "Manually added users: User One, User Two" to "1"

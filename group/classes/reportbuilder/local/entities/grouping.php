@@ -24,11 +24,11 @@ use lang_string;
 use stdClass;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\{date, text};
-use core_reportbuilder\local\helpers\format;
+use core_reportbuilder\local\helpers\{custom_fields, format};
 use core_reportbuilder\local\report\{column, filter};
 
 /**
- * Group member entity
+ * Grouping entity
  *
  * @package     core_group
  * @copyright   2022 Paul Holden <paulh@moodle.com>
@@ -63,13 +63,23 @@ class grouping extends base {
      * @return base
      */
     public function initialise(): base {
-        $columns = $this->get_all_columns();
+        $groupingsalias = $this->get_table_alias('groupings');
+
+        $customfields = (new custom_fields(
+            "{$groupingsalias}.id",
+            $this->get_entity_name(),
+            'core_group',
+            'grouping',
+        ))
+            ->add_joins($this->get_joins());
+
+        $columns = array_merge($this->get_all_columns(), $customfields->get_columns());
         foreach ($columns as $column) {
             $this->add_column($column);
         }
 
         // All the filters defined by the entity can also be used as conditions.
-        $filters = $this->get_all_filters();
+        $filters = array_merge($this->get_all_filters(), $customfields->get_filters());
         foreach ($filters as $filter) {
             $this
                 ->add_filter($filter)
