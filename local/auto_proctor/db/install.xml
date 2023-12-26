@@ -11,9 +11,9 @@
             <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
             <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
             <FIELD NAME="course" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
-            <FIELD NAME="monitor_tab_switching" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
-            <FIELD NAME="monitor_camera" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
-            <FIELD NAME="monitor_microphone" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="false" SEQUENCE="false"/>
+            <FIELD NAME="monitor_tab_switching" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="monitor_camera" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="monitor_microphone" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         </FIELDS>
         <KEYS>
             <!-- Define id as the primary key -->
@@ -31,9 +31,9 @@
             <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
             <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
             <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-            <FIELD NAME="consent_tab_switching" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" SEQUENCE="false"/>
-            <FIELD NAME="consent_camera" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" SEQUENCE="false"/>
-            <FIELD NAME="consent_microphone" TYPE="int" LENGTH="10" DEFAULT="0" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="consent_tab_switching" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="consent_camera" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="consent_microphone" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         </FIELDS>
         <KEYS>
             <!-- Define id as the primary key -->
@@ -41,6 +41,27 @@
             <!-- Define quizid as a foreign key -->
             <KEY NAME="fk_auto_proctor_session_consent_tb_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             <KEY NAME="fk_auto_proctor_session_consent_tb_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
+        </KEYS>
+        </TABLE>
+
+        <!-- TABLE FOR AUTO-PROCTOR TAB SWITCHING REPORT TABLE  -->
+        <TABLE NAME="auto_proctor_tab_switching_report_tb" COMMENT="captured tab switching evidence">
+        <FIELDS>
+            <!-- Define id as an auto-increment key -->
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="stop_sharing" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="img_name" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        </FIELDS>
+        <KEYS>
+            <!-- Define id as the primary key -->
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <!-- Define quizid as a foreign key -->
+            <KEY NAME="fk_auto_proctor_tab_switching_report_tb_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_tab_switching_report_tb_quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_tab_switching_report_tb_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
         </KEYS>
         </TABLE>
   </TABLES>
