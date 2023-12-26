@@ -70,6 +70,9 @@ class section implements named_templatable, renderable {
     /** @var optional move here output class */
     protected $movehereclass;
 
+    /** @var optional visibility output class */
+    protected $visibilityclass;
+
     /** @var bool if the title is hidden for some reason */
     protected $hidetitle = false;
 
@@ -104,6 +107,7 @@ class section implements named_templatable, renderable {
         $this->controlmenuclass = $format->get_output_classname('content\\section\\controlmenu');
         $this->availabilityclass = $format->get_output_classname('content\\section\\availability');
         $this->movehereclass = $format->get_output_classname('content\\section\\movehere');
+        $this->visibilityclass = $format->get_output_classname('content\\section\\visibility');
     }
 
     /**
@@ -256,8 +260,6 @@ class section implements named_templatable, renderable {
     protected function add_visibility_data(stdClass &$data, renderer_base $output): bool {
         global $USER;
         $result = false;
-        $course = $this->format->get_course();
-        $context = context_course::instance($course->id);
         // Check if it is a stealth sections (orphaned).
         if ($this->isstealth) {
             $data->isstealth = true;
@@ -266,13 +268,16 @@ class section implements named_templatable, renderable {
         }
         if (!$this->section->visible) {
             $data->ishidden = true;
-            $data->notavailable = true;
+            $course = $this->format->get_course();
+            $context = context_course::instance($course->id);
             if (has_capability('moodle/course:viewhiddensections', $context, $USER)) {
-                $data->hiddenfromstudents = true;
-                $data->notavailable = false;
                 $result = true;
             }
         }
+        /* @var \core_courseformat\output\local\content\section\visibility $visibility By default the visibility class used
+         * here but can be overriden by any course format */
+        $visibility = new $this->visibilityclass($this->format, $this->section);
+        $data->visibility = $visibility->export_for_template($output);
         return $result;
     }
 

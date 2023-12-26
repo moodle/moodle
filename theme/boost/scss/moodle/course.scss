@@ -1193,6 +1193,12 @@ $divider-hover-color: $primary !default;
 
     .sectionbadges .badge {
         margin-left: map-get($spacers, 2);
+        font-weight: normal;
+        .icon {
+            font-size: 12px;
+            width: 12px;
+            height: 12px;
+        }
     }
 
     .course-section-header.draggable {
