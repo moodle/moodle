@@ -47,6 +47,7 @@ class courserole_test extends advanced_testcase {
             'Filter by category' => ['', 'cat2', '', ['user1', 'user2', 'user3']],
             'Filter by category and course' => ['', 'cat2', 'course2', ['user1', 'user2']],
             'Filter by course' => ['', '', 'course3', ['user3']],
+            'Filter by course (ensure whitespace is trimmed)' => ['', '', '  course3  ', ['user3']],
         ];
     }
 

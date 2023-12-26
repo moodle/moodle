@@ -266,6 +266,7 @@ class core_course_external extends external_api {
                         $module['modname'] = (string) $cm->modname;
                         $module['modplural'] = (string) $cm->modplural;
                         $module['modicon'] = $cm->get_icon_url()->out(false);
+                        $module['purpose'] = plugin_supports('mod', $cm->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
                         $module['indent'] = $cm->indent;
                         $module['onclick'] = $cm->onclick;
                         $module['afterlink'] = $cm->afterlink;
@@ -461,6 +462,7 @@ class core_course_external extends external_api {
                                         VALUE_OPTIONAL),
                                     'modicon' => new external_value(PARAM_URL, 'activity icon url'),
                                     'modname' => new external_value(PARAM_PLUGIN, 'activity module type'),
+                                    'purpose' => new external_value(PARAM_ALPHA, 'the module purpose'),
                                     'modplural' => new external_value(PARAM_TEXT, 'activity module plural name'),
                                     'availability' => new external_value(PARAM_RAW, 'module availability settings', VALUE_OPTIONAL),
                                     'indent' => new external_value(PARAM_INT, 'number of identation in the site'),
@@ -3347,9 +3349,11 @@ class core_course_external extends external_api {
                     instancetype: 'coursecommunication',
                     instanceid: $course->id
                 );
-                $coursesdata[$course->id]['communicationroomname'] = \core_external\util::format_string($communication->get_room_name(), $context);
-                // This will be usually an URL, however, it is better to consider that can be anything a plugin might return, this is why we will use PARAM_RAW.
-                $coursesdata[$course->id]['communicationroomurl'] = $communication->get_communication_room_url();
+                if ($communication->get_provider()) {
+                    $coursesdata[$course->id]['communicationroomname'] = \core_external\util::format_string($communication->get_room_name(), $context);
+                    // This will be usually an URL, however, it is better to consider that can be anything a plugin might return, this is why we will use PARAM_RAW.
+                    $coursesdata[$course->id]['communicationroomurl'] = $communication->get_communication_room_url();
+                }
             }
         }
 

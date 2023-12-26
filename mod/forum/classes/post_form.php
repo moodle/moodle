@@ -1,5 +1,4 @@
 <?php
-
 // This file is part of Moodle - http://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
@@ -84,8 +83,6 @@ class mod_forum_post_form extends moodleform {
 
         $mform =& $this->_form;
 
-        $course = $this->_customdata['course'];
-        $cm = $this->_customdata['cm'];
         $coursecontext = $this->_customdata['coursecontext'];
         $modcontext = $this->_customdata['modcontext'];
         $forum = $this->_customdata['forum'];
@@ -120,7 +117,9 @@ class mod_forum_post_form extends moodleform {
         $mform->setType('message', PARAM_RAW);
         $mform->addRule('message', get_string('required'), 'required', null, 'client');
 
-        if (!$inpagereply) {
+        if ($inpagereply) {
+            $this->add_group_elements_if_applicable($mform);
+        } else {
             $manageactivities = has_capability('moodle/course:manageactivities', $coursecontext);
 
             if (\mod_forum\subscriptions::is_forcesubscribed($forum)) {
@@ -168,79 +167,7 @@ class mod_forum_post_form extends moodleform {
                 }
             }
 
-            if ($groupmode = groups_get_activity_groupmode($cm, $course)) {
-                $groupdata = groups_get_activity_allowed_groups($cm);
-                $groupinfo = array();
-                foreach ($groupdata as $groupid => $group) {
-                    // Check whether this user can post in this group.
-                    // We must make this check because all groups are returned for a visible grouped activity.
-                    if (forum_user_can_post_discussion($forum, $groupid, null, $cm, $modcontext)) {
-                        // Build the data for the groupinfo select.
-                        $groupinfo[$groupid] = format_string($group->name, true, ['context' => $modcontext]);
-                    } else {
-                        unset($groupdata[$groupid]);
-                    }
-                }
-                $groupcount = count($groupinfo);
-
-                // Check whether a user can post to all of their own groups.
-
-                // Posts to all of my groups are copied to each group that the user is a member of. Certain conditions must be met.
-                // 1) It only makes sense to allow this when a user is in more than one group.
-                // Note: This check must come before we consider adding accessallgroups, because that is not a real group.
-                $canposttoowngroups = empty($post->edit) && $groupcount > 1;
-
-                // 2) Important: You can *only* post to multiple groups for a top level post. Never any reply.
-                $canposttoowngroups = $canposttoowngroups && empty($post->parent);
-
-                // 3) You also need the canposttoowngroups capability.
-                $canposttoowngroups = $canposttoowngroups && has_capability('mod/forum:canposttomygroups', $modcontext);
-                if ($canposttoowngroups) {
-                    // This user is in multiple groups, and can post to all of their own groups.
-                    // Note: This is not the same as accessallgroups. This option will copy a post to all groups that a
-                    // user is a member of.
-                    $mform->addElement('checkbox', 'posttomygroups', get_string('posttomygroups', 'forum'));
-                    $mform->addHelpButton('posttomygroups', 'posttomygroups', 'forum');
-                    $mform->disabledIf('groupinfo', 'posttomygroups', 'checked');
-                }
-
-                // Check whether this user can post to all groups.
-                // Posts to the 'All participants' group go to all groups, not to each group in a list.
-                // It makes sense to allow this, even if there currently aren't any groups because there may be in the future.
-                if (forum_user_can_post_discussion($forum, -1, null, $cm, $modcontext)) {
-                    // Note: We must reverse in this manner because array_unshift renumbers the array.
-                    $groupinfo = array_reverse($groupinfo, true);
-                    $groupinfo[-1] = get_string('allparticipants');
-                    $groupinfo = array_reverse($groupinfo, true);
-                    $groupcount++;
-                }
-
-                // Determine whether the user can select a group from the dropdown. The dropdown is available for several reasons.
-                // 1) This is a new post (not an edit), and there are at least two groups to choose from.
-                $canselectgroupfornew = empty($post->edit) && $groupcount > 1;
-
-                // 2) This is editing of an existing post and the user is allowed to movediscussions.
-                // We allow this because the post may have been moved from another forum where groups are not available.
-                // We show this even if no groups are available as groups *may* have been available but now are not.
-                $canselectgroupformove =
-                    $groupcount && !empty($post->edit) && has_capability('mod/forum:movediscussions', $modcontext);
-
-                // Important: You can *only* change the group for a top level post. Never any reply.
-                $canselectgroup = empty($post->parent) && ($canselectgroupfornew || $canselectgroupformove);
-
-                if ($canselectgroup) {
-                    $mform->addElement('select', 'groupinfo', get_string('group'), $groupinfo);
-                    $mform->setDefault('groupinfo', $post->groupid);
-                    $mform->setType('groupinfo', PARAM_INT);
-                } else {
-                    if (empty($post->groupid)) {
-                        $groupname = get_string('allparticipants');
-                    } else {
-                        $groupname = format_string($groupdata[$post->groupid]->name);
-                    }
-                    $mform->addElement('static', 'groupinfo', get_string('group'), $groupname);
-                }
-            }
+            $this->add_group_elements_if_applicable($mform);
 
             if (!empty($CFG->forum_enabletimedposts) && !$post->parent &&
                 has_capability('mod/forum:viewhiddentimedposts', $coursecontext)) {
@@ -342,5 +269,96 @@ class mod_forum_post_form extends moodleform {
             $errors['subject'] = get_string('erroremptysubject', 'forum');
         }
         return $errors;
+    }
+
+    /**
+     * Adds elements to control what groups will have access to the post or exits when no relevant group mode is set.
+     *
+     * @param MoodleQuickForm $mform
+     */
+    private function add_group_elements_if_applicable(MoodleQuickForm $mform): void {
+        global $CFG;
+
+        $course = $this->_customdata['course'];
+        $cm = $this->_customdata['cm'];
+        $forum = $this->_customdata['forum'];
+        $modcontext = $this->_customdata['modcontext'];
+        $post = $this->_customdata['post'];
+
+        if (!groups_get_activity_groupmode($cm, $course)) {
+            return;
+        }
+
+        $groupdata = groups_get_activity_allowed_groups($cm);
+        $groupinfo = [];
+        foreach ($groupdata as $groupid => $group) {
+            // Check whether this user can post in this group.
+            // We must make this check because all groups are returned for a visible grouped activity.
+            if (forum_user_can_post_discussion($forum, $groupid, null, $cm, $modcontext)) {
+                // Build the data for the groupinfo select.
+                $groupinfo[$groupid] = format_string($group->name, true, ['context' => $modcontext]);
+            } else {
+                unset($groupdata[$groupid]);
+            }
+        }
+        $groupcount = count($groupinfo);
+
+        // Check whether a user can post to all of their own groups.
+
+        // Posts to all of my groups are copied to each group that the user is a member of. Certain conditions must be met.
+        // 1) It only makes sense to allow this when a user is in more than one group.
+        // Note: This check must come before we consider adding accessallgroups, because that is not a real group.
+        $canposttoowngroups = empty($post->edit) && $groupcount > 1;
+
+        // 2) Important: You can *only* post to multiple groups for a top level post. Never any reply.
+        $canposttoowngroups = $canposttoowngroups && empty($post->parent);
+
+        // 3) You also need the canposttoowngroups capability.
+        $canposttoowngroups = $canposttoowngroups && has_capability('mod/forum:canposttomygroups', $modcontext);
+        if ($canposttoowngroups) {
+            // This user is in multiple groups, and can post to all of their own groups.
+            // Note: This is not the same as accessallgroups. This option will copy a post to all groups that a
+            // user is a member of.
+            $mform->addElement('checkbox', 'posttomygroups', get_string('posttomygroups', 'forum'));
+            $mform->addHelpButton('posttomygroups', 'posttomygroups', 'forum');
+            $mform->disabledIf('groupinfo', 'posttomygroups', 'checked');
+        }
+
+        // Check whether this user can post to all groups.
+        // Posts to the 'All participants' group go to all groups, not to each group in a list.
+        // It makes sense to allow this, even if there currently aren't any groups because there may be in the future.
+        if (forum_user_can_post_discussion($forum, -1, null, $cm, $modcontext)) {
+            // Note: We must reverse in this manner because array_unshift renumbers the array.
+            $groupinfo = array_reverse($groupinfo, true);
+            $groupinfo[-1] = get_string('allparticipants');
+            $groupinfo = array_reverse($groupinfo, true);
+            $groupcount++;
+        }
+
+        // Determine whether the user can select a group from the dropdown. The dropdown is available for several reasons.
+        // 1) This is a new post (not an edit), and there are at least two groups to choose from.
+        $canselectgroupfornew = empty($post->edit) && $groupcount > 1;
+
+        // 2) This is editing of an existing post and the user is allowed to movediscussions.
+        // We allow this because the post may have been moved from another forum where groups are not available.
+        // We show this even if no groups are available as groups *may* have been available but now are not.
+        $canselectgroupformove =
+            $groupcount && !empty($post->edit) && has_capability('mod/forum:movediscussions', $modcontext);
+
+        // Important: You can *only* change the group for a top level post. Never any reply.
+        $canselectgroup = empty($post->parent) && ($canselectgroupfornew || $canselectgroupformove);
+
+        if ($canselectgroup) {
+            $mform->addElement('select', 'groupinfo', get_string('group'), $groupinfo);
+            $mform->setDefault('groupinfo', $post->groupid);
+            $mform->setType('groupinfo', PARAM_INT);
+        } else {
+            if (empty($post->groupid)) {
+                $groupname = get_string('allparticipants');
+            } else {
+                $groupname = format_string($groupdata[$post->groupid]->name);
+            }
+            $mform->addElement('static', 'groupinfo', get_string('group'), $groupname);
+        }
     }
 }

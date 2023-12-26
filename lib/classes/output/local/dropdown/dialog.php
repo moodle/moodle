@@ -81,6 +81,11 @@ class dialog implements named_templatable, renderable {
     protected $extras = [];
 
     /**
+     * @var bool if the element is disabled.
+     */
+    protected $disabled = false;
+
+    /**
      * Constructor.
      *
      * The definition object could contain the following keys:
@@ -191,6 +196,14 @@ class dialog implements named_templatable, renderable {
     }
 
     /**
+     * Set the dropdown disabled attribute.
+     * @param bool $disabled the disabled value
+     */
+    public function set_disabled(bool $disabled) {
+        $this->disabled = $disabled;
+    }
+
+    /**
      * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
      *
      * @param \renderer_base $output typically, the renderer that's calling this function
@@ -220,6 +233,9 @@ class dialog implements named_templatable, renderable {
             'dialogclasses' => $this->dropdownwidth,
             'extras' => $extras,
         ];
+        if ($this->disabled) {
+            $data['disabledbutton'] = true;
+        }
         // Bootstrap 4 dropdown position still uses left and right literals.
         $data["position"] = $this->dropdownposition;
         if (right_to_left()) {

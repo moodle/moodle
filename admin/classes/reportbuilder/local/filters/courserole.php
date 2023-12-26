@@ -53,7 +53,7 @@ class courserole extends base {
 
         // Course.
         $elements['course'] = $mform->createElement('text', "{$this->name}_course", get_string('shortnamecourse'));
-        $mform->setType("{$this->name}_course", PARAM_RAW);
+        $mform->setType("{$this->name}_course", PARAM_RAW_TRIMMED);
 
         $mform->addElement('group', "{$this->name}_group", '', $elements, '', false);
     }
@@ -85,7 +85,7 @@ class courserole extends base {
         }
 
         // Course.
-        $course = $values["{$this->name}_course"] ?? '';
+        $course = trim($values["{$this->name}_course"] ?? '');
         if ($course !== '') {
             $selects[] = "{$coursealias}.shortname = :{$courseparam}";
             $params[$courseparam] = $course;

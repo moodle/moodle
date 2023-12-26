@@ -143,6 +143,213 @@ class adhoc_task_test extends \advanced_testcase {
     }
 
     /**
+     * Test adhoc task failure retry backoff.
+     *
+     * @covers ::queue_adhoc_task
+     * @covers ::get_next_adhoc_task
+     * @covers ::adhoc_task_failed
+     */
+    public function test_adhoc_task_with_retry_flag(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $now = time();
+        // Create a normal adhoc task.
+        $task = new adhoc_test_task();
+        $taskid1 = manager::queue_adhoc_task(task: $task);
+
+        // This is a normal task, so it should have unlimited attempts. The remaining available attempts should be null.
+        $attemptsavailable = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'attemptsavailable',
+            conditions: ['id' => $taskid1]
+        );
+        $this->assertNull(actual: $attemptsavailable);
+
+        // Get the task from the scheduler, execute it, and mark it as failed.
+        $task = manager::get_next_adhoc_task(timestart: $now);
+        $taskid1 = $task->get_id();
+        $task->execute();
+        manager::adhoc_task_failed(task: $task);
+
+        // This is a normal task, so it should have unlimited attempts. The remaining available attempts should be null.
+        $attemptsavailable = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'attemptsavailable',
+            conditions: ['id' => $taskid1]
+        );
+        $this->assertNull(actual: $attemptsavailable);
+
+        // Create a no-retry adhoc task.
+        $now = time();
+        $task = new no_retry_adhoc_task();
+        $taskid2 = manager::queue_adhoc_task(task: $task);
+
+        // This is no-retry task, so it should have only 1 attempt available.
+        $attemptsavailable = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'attemptsavailable',
+            conditions: ['id' => $taskid2]
+        );
+        $this->assertEquals(
+            expected: 1,
+            actual: $attemptsavailable,
+        );
+
+        // Get the task from the scheduler, execute it, and mark it as failed.
+        $task = manager::get_next_adhoc_task(timestart: $now);
+        $taskid2 = $task->get_id();
+        $task->execute();
+        manager::adhoc_task_failed(task: $task);
+
+        // This is no-retry task, the remaining available attempts should be reduced to 0.
+        $attemptsavailable = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'attemptsavailable',
+            conditions: ['id' => $taskid2]
+        );
+        $this->assertEquals(
+            expected: 0,
+            actual: $attemptsavailable,
+        );
+
+        // There will be two records in the task_adhoc table, one for each task.
+        $this->assertEquals(
+            expected: 2,
+            actual: $DB->count_records(table: 'task_adhoc')
+        );
+        // But get_next_adhoc_task() should return only the allowed re-try task.
+        // The no-retry task should not be returned because it has no remaining attempts.
+        do {
+            $task = manager::get_next_adhoc_task(timestart: $now + 86400);
+            if ($task) {
+                manager::adhoc_task_failed(task: $task);
+                $this->assertEquals(
+                    expected: $taskid1,
+                    actual: $task->get_id(),
+                );
+            }
+        } while ($task);
+
+        // Mark the normal task as complete.
+        $task = manager::get_adhoc_task(taskid: $taskid1);
+        manager::adhoc_task_complete($task);
+
+        // There will be one record in the task_adhoc table.
+        $this->assertEquals(
+            expected: 1,
+            actual: $DB->count_records(table: 'task_adhoc')
+        );
+
+        // But get_next_adhoc_task() should return nothing.
+        $this->assertNull(manager::get_next_adhoc_task(timestart: $now + 86400));
+    }
+
+    /**
+     * Test adhoc task failure cleanup.
+     *
+     * @covers ::queue_adhoc_task
+     * @covers ::get_next_adhoc_task
+     * @covers ::adhoc_task_failed
+     * @covers ::clean_failed_adhoc_tasks
+     */
+    public function test_adhoc_task_clean_up(): void {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+
+        // Create two no-retry adhoc tasks.
+        $task1 = new no_retry_adhoc_task();
+        $taskid1 = manager::queue_adhoc_task(task: $task1);
+        $task2 = new no_retry_adhoc_task();
+        $taskid2 = manager::queue_adhoc_task(task: $task2);
+
+        // Get the tasks and mark it as failed.
+        $task = manager::get_adhoc_task($taskid1);
+        manager::adhoc_task_failed(task: $task);
+        $task = manager::get_adhoc_task($taskid2);
+        manager::adhoc_task_failed(task: $task);
+
+        // These are no-retry tasks, the remaining available attempts should be reduced to 0.
+        $this->assertEquals(
+            expected: 0,
+            actual: $DB->get_field(
+                table: 'task_adhoc',
+                return: 'attemptsavailable',
+                conditions: ['id' => $taskid1],
+            ),
+        );
+        $this->assertEquals(
+            expected: 0,
+            actual: $DB->get_field(
+                table: 'task_adhoc',
+                return: 'attemptsavailable',
+                conditions: ['id' => $taskid2],
+            ),
+        );
+
+        // There will be two records in the task_adhoc table.
+        $this->assertEquals(
+            expected: 2,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+
+        // Clean up failed adhoc tasks. This will clean nothing because the tasks are not old enough.
+        manager::clean_failed_adhoc_tasks();
+
+        // There will be two records in the task_adhoc table.
+        $this->assertEquals(
+            expected: 2,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+
+        // Update the time of the task2 to be older more than 2 days.
+        $DB->set_field(
+            table: 'task_adhoc',
+            newfield: 'timestarted',
+            newvalue: time() - (DAYSECS * 2) - 10, // Plus 10 seconds to make sure it is older than 2 days.
+            conditions: ['id' => $taskid2],
+        );
+
+        // Clean up failed adhoc tasks. This will clean nothing because the tasks are not old enough.
+        manager::clean_failed_adhoc_tasks();
+
+        // There will be two records in the task_adhoc table.
+        $this->assertEquals(
+            expected: 2,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+
+        // Update the time of the task1 to be older than the cleanup time.
+        $DB->set_field(
+            table: 'task_adhoc',
+            newfield: 'timestarted',
+            newvalue: time() - $CFG->task_adhoc_failed_retention - 10, // Plus 10 seconds to make sure it is older than the retention time.
+            conditions: ['id' => $taskid1],
+        );
+
+        // Clean up failed adhoc tasks. task1 should be cleaned now.
+        manager::clean_failed_adhoc_tasks();
+
+        // There will be one record in the task_adhoc table.
+        $this->assertEquals(
+            expected: 1,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+
+        // Update the duration of the Failed ad hoc task retention period to one day.
+        $CFG->task_adhoc_failed_retention = DAYSECS;
+
+        // Clean up failed adhoc tasks. task2 should be cleaned now.
+        manager::clean_failed_adhoc_tasks();
+
+        // The task_adhoc table should be empty now.
+        $this->assertEquals(
+            expected: 0,
+            actual: $DB->count_records(table: 'task_adhoc'),
+        );
+    }
+
+    /**
      * Test future adhoc task execution.
      * @covers ::get_next_adhoc_task
      */

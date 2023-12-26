@@ -29,9 +29,6 @@ require_once($CFG->libdir . '/badgeslib.php');
 
 $type       = required_param('type', PARAM_INT);
 $courseid   = optional_param('id', 0, PARAM_INT);
-$sortby     = optional_param('sort', 'name', PARAM_ALPHA);
-$sorthow    = optional_param('dir', 'DESC', PARAM_ALPHA);
-$page       = optional_param('page', 0, PARAM_INT);
 
 require_login();
 
@@ -43,22 +40,10 @@ if (empty($CFG->badges_allowcoursebadges) && $courseid != 0) {
     throw new \moodle_exception('coursebadgesdisabled', 'badges');
 }
 
-if (!in_array($sortby, array('name', 'dateissued'))) {
-    $sortby = 'name';
-}
-
-if ($sorthow != 'ASC' && $sorthow != 'DESC') {
-    $sorthow = 'ASC';
-}
-
-if ($page < 0) {
-    $page = 0;
-}
-
 if ($course = $DB->get_record('course', array('id' => $courseid))) {
-    $PAGE->set_url('/badges/view.php', array('type' => $type, 'id' => $course->id, 'sort' => $sortby, 'dir' => $sorthow));
+    $PAGE->set_url('/badges/view.php', ['type' => $type, 'id' => $course->id]);
 } else {
-    $PAGE->set_url('/badges/view.php', array('type' => $type, 'sort' => $sortby, 'dir' => $sorthow));
+    $PAGE->set_url('/badges/view.php', ['type' => $type]);
 }
 
 $PAGE->add_body_class('limitedwidth');
@@ -109,25 +94,15 @@ echo $output->header();
 echo $output->render_tertiary_navigation($actionbar);
 echo $OUTPUT->heading($title);
 
-$totalcount = count(badges_get_badges($type, $courseid, '', '', 0, 0, $USER->id));
-$records = badges_get_badges($type, $courseid, $sortby, $sorthow, $page, BADGE_PERPAGE, $USER->id);
-
-if ($totalcount) {
-    if ($course && $course->startdate > time()) {
-        echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
-    }
-
-    $badges             = new \core_badges\output\badge_collection($records);
-    $badges->sort       = $sortby;
-    $badges->dir        = $sorthow;
-    $badges->page       = $page;
-    $badges->perpage    = BADGE_PERPAGE;
-    $badges->totalcount = $totalcount;
-
-    echo $output->render($badges);
-} else {
-    echo $output->notification(get_string('nobadges', 'badges'), 'info');
+if ($course && $course->startdate > time()) {
+    echo $OUTPUT->box(get_string('error:notifycoursedate', 'badges'), 'generalbox notifyproblem');
 }
+
+$report = \core_reportbuilder\system_report_factory::create(\core_badges\reportbuilder\local\systemreports\course_badges::class,
+    $PAGE->context, '', '', 0, ['type' => $type, 'courseid' => $courseid]);
+$report->set_default_no_results_notice(new lang_string('nobadges', 'badges'));
+echo $report->output();
+
 // Trigger event, badge listing viewed.
 $eventparams = array('context' => $PAGE->context, 'other' => $eventotherparams);
 $event = \core\event\badge_listing_viewed::create($eventparams);

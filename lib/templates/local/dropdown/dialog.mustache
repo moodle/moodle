@@ -49,6 +49,7 @@
         ],
         "buttonclasses": "extraclasses",
         "dialogclasses": "extraclasses",
+        "disabledbutton": false,
         "classes": "extraclasses"
     }
 }}
@@ -78,6 +79,7 @@
         aria-haspopup="true"
         aria-expanded="false"
         data-for="dropdowndialog_button"
+        {{#disabledbutton}} disabled {{/disabledbutton}}
     >
         {{$ buttoncontent }}
             {{{ buttoncontent }}}

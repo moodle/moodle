@@ -53,6 +53,12 @@ class text_test extends advanced_testcase {
             [text::STARTS_WITH, 'sunlight', false],
             [text::ENDS_WITH, 'looking for?', true],
             [text::ENDS_WITH, 'your heart', false],
+
+            // Ensure whitespace is trimmed.
+            [text::CONTAINS, '   looking for   ', true],
+            [text::IS_EQUAL_TO, '  Hello, is it me you\'re looking for?  ', true],
+            [text::STARTS_WITH, '  Hello, is it me  ', true],
+            [text::ENDS_WITH, '  you\'re looking for?  ', true],
         ];
     }
 

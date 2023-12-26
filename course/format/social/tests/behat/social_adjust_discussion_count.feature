@@ -14,97 +14,18 @@ Feature: Change number of discussions displayed
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
-    And I log in as "teacher1"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 10 |
-      | Message | This is forum post ten |
-    And I press "Post to forum"
-    And I wait to be redirected
-    And I am on "Course 1" course homepage
-    And I wait "1" seconds
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 9 |
-      | Message | This is forum post nine |
-    And I press "Post to forum"
-    And I wait to be redirected
-    And I am on "Course 1" course homepage
-    And I wait "1" seconds
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 8 |
-      | Message | This is forum post eight |
-    And I press "Post to forum"
-    And I wait to be redirected
-    And I am on "Course 1" course homepage
-    And I wait "1" seconds
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 7 |
-      | Message | This is forum post seven |
-    And I press "Post to forum"
-    And I wait to be redirected
-    And I am on "Course 1" course homepage
-    And I wait "1" seconds
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 6 |
-      | Message | This is forum post six |
-    And I press "Post to forum"
-    And I wait to be redirected
-    And I am on "Course 1" course homepage
-    And I wait "1" seconds
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 5 |
-      | Message | This is forum post five |
-    And I press "Post to forum"
-    And I wait to be redirected
-    And I am on "Course 1" course homepage
-    And I wait "1" seconds
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 4 |
-      | Message | This is forum post four |
-    And I press "Post to forum"
-    And I wait to be redirected
-    And I am on "Course 1" course homepage
-    And I wait "1" seconds
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 3 |
-      | Message | This is forum post three |
-    And I press "Post to forum"
-    And I wait to be redirected
-    And I am on "Course 1" course homepage
-    And I wait "1" seconds
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 2 |
-      | Message | This is forum post two |
-    And I press "Post to forum"
-    And I wait to be redirected
-    And I am on "Course 1" course homepage
-    And I wait "1" seconds
-    And I click on "Social forum" "link"
-    And I follow "Add discussion topic"
-    And I set the following fields to these values:
-      | Subject | Forum Post 1 |
-      | Message | This is forum post one |
-    And I press "Post to forum"
-    And I wait to be redirected
+    And the following "mod_forum > discussions" exist:
+      | user     | forum        | subject       | message                  | created             | timemodified        |
+      | teacher1 | Social forum | Forum Post 10 | This is forum post ten   | ##now +1 second##   | ##now +1 second##   |
+      | teacher1 | Social forum | Forum Post 9  | This is forum post nine  | ##now +2 seconds##  | ##now +2 seconds##  |
+      | teacher1 | Social forum | Forum Post 8  | This is forum post eight | ##now +3 seconds##  | ##now +3 seconds##  |
+      | teacher1 | Social forum | Forum Post 7  | This is forum post seven | ##now +4 seconds##  | ##now +4 seconds##  |
+      | teacher1 | Social forum | Forum Post 6  | This is forum post six   | ##now +5 seconds##  | ##now +5 seconds##  |
+      | teacher1 | Social forum | Forum Post 5  | This is forum post five  | ##now +6 seconds##  | ##now +6 seconds##  |
+      | teacher1 | Social forum | Forum Post 4  | This is forum post four  | ##now +7 seconds##  | ##now +7 seconds##  |
+      | teacher1 | Social forum | Forum Post 3  | This is forum post three | ##now +8 seconds##  | ##now +8 seconds##  |
+      | teacher1 | Social forum | Forum Post 2  | This is forum post two   | ##now +9 seconds##  | ##now +9 seconds##  |
+      | teacher1 | Social forum | Forum Post 1  | This is forum post one   | ##now +10 seconds## | ##now +10 seconds## |
     And I am on the "C1" "course editing" page logged in as teacher1
 
   Scenario: When number of discussions is decreased fewer discussions appear

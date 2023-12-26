@@ -1,0 +1,149 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core_form/element-choicedropdown
+    Choice dialog form element template.
+    Context variables required for this template:
+    * id - Element id,
+    * nameraw - Raw Element name without '[]'
+    * name - Element name,
+    * label -  Element label,
+    * multiple - multi select?,
+    * checked - checked?,
+    * error - Is there an error associated with this element?,
+    * size - Element size,
+    * value - Element value,
+    * helpbutton - Helpbutton,
+    * hiddenlabel - Element hidden flag,
+    * frozen - Element frozen flag,
+    * hardfrozen - Element hard fronzen flag,
+    * extraclasses - Extra classes assocaited,
+    * type - Element type,
+    * attributes - Element attributes,
+    * options - [
+        {
+            text - Option text,
+            value - Option value,
+            selected - Selected?,
+            disabled - Disabled?,
+            optionattributes - Option attributes
+        }
+    ]
+
+    Example context (json):
+    {
+        "element": {
+            "wrapperid": "fitem_id_choicedropdownfield",
+            "iderror": "error_id_choicedropdownfield",
+            "id": "id_choicedropdownfield",
+            "nameraw": "choicedropdownfield",
+            "name": "choicedropdownfield",
+            "label": null,
+            "multiple": null,
+            "checked": null,
+            "error": null,
+            "size": null,
+            "value": null,
+            "helpbutton": "",
+            "hiddenlabel": false,
+            "frozen": false,
+            "hardfrozen": false,
+            "extraclasses": null,
+            "type": "select",
+            "attributes": "",
+            "fieldicon": "<a class='btn'><i class='icon fa fa-ellipsis-h'></i></a>",
+            "options": [
+                {
+                    "rawoptionid": "1",
+                    "text": "Hidden",
+                    "value": 0,
+                    "selected": false,
+                    "disabled": false,
+                    "optionattributes": ""
+                },
+                {
+                    "rawoptionid": "2",
+                    "text": "Visible to everyone",
+                    "value": 1,
+                    "selected": true,
+                    "disabled": false,
+                    "optionattributes": ""
+                },
+                {
+                    "rawoptionid": "3",
+                    "text": "Allow only other course members to see my email address",
+                    "value": 2,
+                    "selected": false,
+                    "disabled": false,
+                    "optionattributes": ""
+                }
+            ]
+        }
+    }
+}}
+{{< core_form/element-template }}
+    {{$element}}
+        {{^element.frozen}}
+        <select
+            class="custom-select d-none {{#error}}is-invalid{{/error}}"
+            name="{{element.name}}"
+            id="{{element.id}}"
+            data-region="choice-select"
+            {{#element.multiple}}multiple{{/element.multiple}}
+            {{#element.size}}size="{{element.size}}"{{/element.size}}
+            {{#error}} autofocus aria-describedby="{{element.iderror}}" {{/error}}
+            {{{element.attributes}}}
+        >
+            {{#element.select}}
+                {{#options}}
+                <option
+                    value="{{value}}"
+                    data-optionid="{{element.id}}_{{optionuniqid}}"
+                    {{#selected}}selected{{/selected}}
+                    {{#disabled}}disabled{{/disabled}}
+                    {{{optionattributes}}}
+                >
+                    {{{name}}}
+                </option>
+                {{/options}}
+            {{/element.select}}
+        </select>
+        {{#element.dropdown}}
+            {{< core/local/dropdown/status}}
+                {{$ buttonclasses }} btn btn-outline-secondary dropdown-toggle {{/ buttonclasses }}
+            {{/ core/local/dropdown/status}}
+        {{/element.dropdown}}
+        {{/element.frozen}}
+        {{#element.frozen}}
+            {{#element.options}}
+                {{#selected}}
+                    {{{text}}}
+                    {{^element.hardfrozen}}
+                    <input
+                        type="hidden"
+                        name="{{element.name}}"
+                        value="{{value}}"
+                        id="{{element.id}}"
+                    >
+                    {{/element.hardfrozen}}
+                {{/selected}}
+            {{/element.options}}
+        {{/element.frozen}}
+    {{/element}}
+{{/ core_form/element-template }}
+{{#js}}
+    require(['core_form/choicedropdown'], function(ChioceDropdown) {
+        ChioceDropdown.init('{{element.id}}');
+    });
+{{/js}}

@@ -60,23 +60,27 @@ class state_test extends \advanced_testcase {
 
         // Create and enrol user.
         $this->setAdminUser();
-
-        // Add some activities to the course.
-        $this->getDataGenerator()->create_module('page', ['course' => $course->id], ['section' => 1,
-            'visible' => 1]);
-        $this->getDataGenerator()->create_module('forum', ['course' => $course->id], ['section' => 1,
-            'visible' => 1]);
-        $this->getDataGenerator()->create_module('assign', ['course' => $course->id], ['section' => 2,
-            'visible' => 0]);
-        $this->getDataGenerator()->create_module('glossary', ['course' => $course->id], ['section' => 4,
-            'visible' => 1]);
-        $this->getDataGenerator()->create_module('label', ['course' => $course->id], ['section' => 5,
-            'visible' => 0]);
-        $this->getDataGenerator()->create_module('feedback', ['course' => $course->id], ['section' => 5,
-            'visible' => 1]);
-
         $courseformat = course_get_format($course->id);
         $modinfo = $courseformat->get_modinfo();
+        $issocialformat = $courseformat->get_format() === 'social';
+
+        // Only create activities if the course format is not social.
+        // There's no course home page (and sections) for social course format.
+        if (!$issocialformat || $format == 'theunittest') {
+            // Add some activities to the course.
+            $this->getDataGenerator()->create_module('page', ['course' => $course->id], ['section' => 1,
+                'visible' => 1]);
+            $this->getDataGenerator()->create_module('forum', ['course' => $course->id], ['section' => 1,
+                'visible' => 1]);
+            $this->getDataGenerator()->create_module('assign', ['course' => $course->id], ['section' => 2,
+                'visible' => 0]);
+            $this->getDataGenerator()->create_module('glossary', ['course' => $course->id], ['section' => 4,
+                'visible' => 1]);
+            $this->getDataGenerator()->create_module('label', ['course' => $course->id], ['section' => 5,
+                'visible' => 0]);
+            $this->getDataGenerator()->create_module('feedback', ['course' => $course->id], ['section' => 5,
+                'visible' => 1]);
+        }
 
         $courseclass = $courseformat->get_output_classname('state\\course');
         $sectionclass = $courseformat->get_output_classname('state\\section');
@@ -106,23 +110,27 @@ class state_test extends \advanced_testcase {
 
         foreach ($sections as $key => $section) {
             $this->assertEquals($section->id, $result->course->sectionlist[$key]);
+            if (!$issocialformat || $format == 'theunittest') {
+                if (!empty($section->uservisible)) {
+                    $sectionstate = new $sectionclass($courseformat, $section);
+                    $result->section[$key] = $sectionstate->export_for_template($renderer);
+                    $this->assertEquals($section->id, $result->section[$key]->id);
+                    $this->assertEquals($section->section, $result->section[$key]->section);
+                    $this->assertTrue($section->visible == $result->section[$key]->visible);
 
-            if (!empty($section->uservisible)) {
-                $sectionstate = new $sectionclass($courseformat, $section);
-                $result->section[$key] = $sectionstate->export_for_template($renderer);
-                $this->assertEquals($section->id, $result->section[$key]->id);
-                $this->assertEquals($section->section, $result->section[$key]->section);
-                $this->assertTrue($section->visible == $result->section[$key]->visible);
-
-                if ($key === 0 || $key === 3 || $key === 6) {
-                    $this->assertEmpty($result->section[$key]->cmlist);
-                } else if ($key === 1) {
-                    $this->assertEquals(2, count($result->section[$key]->cmlist));
-                } else if ($key === 2 || $key === 4) {
-                    $this->assertEquals(1, count($result->section[$key]->cmlist));
-                } else if ($key === 5) {
-                    $this->assertEquals(2, count($result->section[$key]->cmlist));
+                    if ($key === 0 || $key === 3 || $key === 6) {
+                        $this->assertEmpty($result->section[$key]->cmlist);
+                    } else if ($key === 1) {
+                        $this->assertEquals(2, count($result->section[$key]->cmlist));
+                    } else if ($key === 2 || $key === 4) {
+                        $this->assertEquals(1, count($result->section[$key]->cmlist));
+                    } else if ($key === 5) {
+                        $this->assertEquals(2, count($result->section[$key]->cmlist));
+                    }
                 }
+            } else {
+                // Social course format doesn't have sections.
+                $this->assertEmpty($result->section);
             }
         }
 

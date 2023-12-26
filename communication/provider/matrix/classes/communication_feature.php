@@ -48,6 +48,7 @@ class communication_feature implements
     \core_communication\form_provider,
     \core_communication\room_chat_provider,
     \core_communication\room_user_provider,
+    \core_communication\synchronise_provider,
     \core_communication\user_provider {
     /** @var ?matrix_room $room The matrix room object to update room information */
     private ?matrix_room $room = null;
@@ -772,5 +773,9 @@ class communication_feature implements
             return true;
         }
         return false;
+    }
+
+    public function synchronise_room_members(): void {
+        $this->set_matrix_power_levels();
     }
 }

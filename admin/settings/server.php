@@ -390,6 +390,17 @@ if ($hassiteconfig) {
             30 * MINSECS
         )
     );
+
+    $temp->add(
+        new admin_setting_configduration(
+            'task_adhoc_failed_retention',
+            new lang_string('task_adhoc_failed_retention', 'admin'),
+            new lang_string('task_adhoc_failed_retention_desc', 'admin'),
+            \core\task\manager::ADHOC_TASK_FAILED_RETENTION,
+            WEEKSECS
+        )
+    );
+
     $ADMIN->add('taskconfig', $temp);
 
     // Task log configuration.

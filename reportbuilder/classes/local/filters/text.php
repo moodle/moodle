@@ -94,7 +94,7 @@ class text extends base {
 
         $mform->addElement('group', $this->name . '_group', '', $elements, '', false);
 
-        $mform->setType($this->name . '_value', PARAM_RAW);
+        $mform->setType($this->name . '_value', PARAM_RAW_TRIMMED);
         $mform->hideIf($this->name . '_value', $this->name . '_operator', 'eq', self::ANY_VALUE);
         $mform->hideIf($this->name . '_value', $this->name . '_operator', 'eq', self::IS_EMPTY);
         $mform->hideIf($this->name . '_value', $this->name . '_operator', 'eq', self::IS_NOT_EMPTY);
@@ -103,19 +103,15 @@ class text extends base {
     /**
      * Return filter SQL
      *
-     * @param array|null $values
+     * @param array $values
      * @return array array of two elements - SQL query and named parameters
      */
-    public function get_sql_filter(?array $values) : array {
+    public function get_sql_filter(array $values): array {
         global $DB;
         $name = database::generate_param_name();
 
-        if (!$values) {
-            return ['', []];
-        }
-
         $operator = (int) ($values["{$this->name}_operator"] ?? self::ANY_VALUE);
-        $value = $values["{$this->name}_value"] ?? '';
+        $value = trim($values["{$this->name}_value"] ?? '');
 
         $fieldsql = $this->filter->get_field_sql();
         $params = $this->filter->get_field_params();

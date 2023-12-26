@@ -53,5 +53,8 @@ class task_log_cleanup_task extends scheduled_task {
         if (is_a($logger, database_logger::class, true)) {
             $logger::cleanup();
         }
+
+        // Clean failed ad-hoc tasks.
+        manager::clean_failed_adhoc_tasks();
     }
 }
