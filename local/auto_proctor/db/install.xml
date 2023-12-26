@@ -4,7 +4,7 @@
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
     <TABLES>
-        <!-- TABLE FOR AUTO-PROCTORE QUIZZES  -->
+        <!-- TABLE FOR AUTO-PROCTOR QUIZZES  -->
         <TABLE NAME="auto_proctor_quiz_tb" COMMENT="each record is fetched from the quiz table">
         <FIELDS>
             <!-- Define id as an auto-increment key -->
@@ -23,7 +23,7 @@
         </KEYS>
         </TABLE>
 
-        <!-- TABLE FOR AUTO-PROCTORE SESSION CONSENT  -->
+        <!-- TABLE FOR AUTO-PROCTOR SESSION CONSENT  -->
         <TABLE NAME="auto_proctor_session_consent_tb" COMMENT="recorded session consent">
         <FIELDS>
             <!-- Define id as an auto-increment key -->
