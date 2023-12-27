@@ -17,13 +17,13 @@
 namespace core_question;
 
 use quiz_statistics\tests\statistics_helper;
+use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 use qubaid_list;
 use question_bank;
 use question_engine;
 use question_engine_data_mapper;
 use question_state;
-use quiz;
-use quiz_attempt;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -362,7 +362,7 @@ class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_base {
 
         // Create attempt.
         $user = $this->getDataGenerator()->create_user();
-        $quizobj = quiz::create($quiz->id, $user->id);
+        $quizobj = quiz_settings::create($quiz->id, $user->id);
         $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         $timenow = time();

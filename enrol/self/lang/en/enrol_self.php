@@ -92,7 +92,7 @@ If an enrolment key is specified, any user attempting to enrol in the course wil
 $string['passwordinvalid'] = 'Incorrect enrolment key, please try again';
 $string['passwordinvalidhint'] = 'That enrolment key was incorrect, please try again<br />
 (Here\'s a hint - it starts with \'{$a}\')';
-$string['passwordmatchesgroupkey'] = 'Enrolment key matches an existing group enrolment key';
+$string['passwordmatchesgroupkey'] = 'This enrolment key is already used as a group enrolment key.';
 $string['pluginname'] = 'Self enrolment';
 $string['pluginname_desc'] = 'The self enrolment plugin allows users to choose which courses they want to participate in. The courses may be protected by an enrolment key. Internally the enrolment is done via the manual enrolment plugin which has to be enabled in the same course.';
 $string['requirepassword'] = 'Require enrolment key';

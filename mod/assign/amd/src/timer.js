@@ -14,7 +14,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 import Notification from 'core/notification';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 /**
  * A javascript module for the time in the assign module.

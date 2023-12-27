@@ -33,19 +33,25 @@ Feature: Question bank Modified by column
     And I should see "View creator"
     When I click on "Disable" "link" in the "View creator" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I set the field "Select a category" to "Test questions"
+    And I set the field "Filter type" to "Category"
+    And I set the field "Category" to "Test questions"
+    And I press "Apply filters"
     Then I should not see "Modified by"
     And I navigate to "Plugins > Question bank plugins > Manage question bank plugins" in site administration
     And I click on "Enable" "link" in the "View creator" "table_row"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I set the field "Select a category" to "Test questions"
+    And I set the field "Filter type" to "Category"
+    And I set the field "Category" to "Test questions"
+    And I press "Apply filters"
     Then I should see "Modified by"
 
   @javascript
   Scenario: Editing a question shows the modifier of the question
     And I log in as "teacher1"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I set the field "Select a category" to "Test questions"
+    And I set the field "Filter type" to "Category"
+    And I set the field "Category" to "Test questions"
+    And I press "Apply filters"
     And I should see "First question"
     And I choose "Edit question" action for "First question" in the question bank
     And I should see "Version 1"
@@ -55,7 +61,9 @@ Feature: Question bank Modified by column
     And I should see "Teacher1"
     And I log in as "teacher2"
     And I am on the "Test quiz" "mod_quiz > question bank" page
-    And I set the field "Select a category" to "Test questions"
+    And I set the field "Filter type" to "Category"
+    And I set the field "Category" to "Test questions"
+    And I press "Apply filters"
     And I choose "Edit question" action for "Renamed question v2" in the question bank
     Then I should see "Version 2"
     And I set the field "id_name" to "Renamed question v3"

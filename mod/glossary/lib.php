@@ -1009,8 +1009,8 @@ function glossary_get_entries($glossaryid, $entrylist, $pivot = "") {
 /**
  * @global object
  * @global object
- * @param object $concept
- * @param string $courseid
+ * @param string $concept
+ * @param int $courseid
  * @return array
  */
 function glossary_get_entries_search($concept, $courseid) {
@@ -2791,7 +2791,7 @@ function glossary_get_post_actions() {
 /**
  * Implementation of the function for printing the form elements that control
  * whether the course reset functionality affects the glossary.
- * @param object $mform form passed by reference
+ * @param MoodleQuickForm $mform form passed by reference
  */
 function glossary_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'glossaryheader', get_string('modulenameplural', 'glossary'));
@@ -3167,7 +3167,7 @@ function glossary_extend_settings_navigation(settings_navigation $settings, navi
     // Safe guard check - Ideally, there shouldn't be any hidden entries if the glossary has 'defaultapproval'.
     if (has_capability('mod/glossary:approve', $settings->get_page()->cm->context) &&
             (!$glossary->defaultapproval || $hiddenentries)) {
-        $glossarynode->add(get_string('pendingapproval', 'glossary'),
+        $glossarynode->add(get_string('pendingapprovalcount', 'glossary', $hiddenentries),
             new moodle_url('/mod/glossary/view.php', ['id' => $settings->get_page()->cm->id, 'mode' => 'approval']),
             navigation_node::TYPE_CUSTOM, null, 'pendingapproval');
     }

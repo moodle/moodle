@@ -96,17 +96,6 @@ class submission_graded extends base {
     }
 
     /**
-     * Return legacy data for add_to_log().
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        $grade = $this->get_record_snapshot('assign_grades', $this->objectid);
-        $this->set_legacy_logdata('grade submission', $this->assign->format_grade_for_log($grade));
-        return parent::get_legacy_logdata();
-    }
-
-    /**
      * Custom validation.
      *
      * @throws \coding_exception

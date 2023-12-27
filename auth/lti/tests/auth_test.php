@@ -220,7 +220,7 @@ class auth_test extends \advanced_testcase {
         $auth = get_auth_plugin('lti');
 
         // When testing platform users who have authenticated before, make that first auth call.
-        if (!empty($launchdata['has_authenticated_before']) && $launchdata['has_authenticated_before']) {
+        if (!empty($launchdata['has_authenticated_before'])) {
             $mockjwtdata = $this->get_mock_launchdata_for_user($launchdata['user']);
             $firstauthuser = $auth->find_or_create_user_from_launch($mockjwtdata);
         }
@@ -261,8 +261,8 @@ class auth_test extends \advanced_testcase {
 
         // Verify user count is correct. i.e. no user is created when migration claim is correctly processed or when
         // the user has authenticated with the tool before.
-        $numnewusers = (!empty($expected['migrated']) && $expected['migrated']) ? 0 : 1;
-        $numnewusers = (!empty($launchdata['has_authenticated_before']) && $launchdata['has_authenticated_before']) ?
+        $numnewusers = (!empty($expected['migrated'])) ? 0 : 1;
+        $numnewusers = (!empty($launchdata['has_authenticated_before'])) ?
             0 : $numnewusers;
         $this->assertEquals($numnewusers, $countusersafter - $countusersbefore);
 
@@ -294,11 +294,11 @@ class auth_test extends \advanced_testcase {
         }
 
         // Verify picture sync occurs, if expected.
-        if (!empty($expected['syncpicture']) && $expected['syncpicture']) {
+        if (!empty($expected['syncpicture'])) {
             $this->verify_user_profile_image_updated($user->id);
         }
 
-        if (!empty($expected['migrated']) && $expected['migrated']) {
+        if (!empty($expected['migrated'])) {
             // If migrated, verify the user account is reusing the legacy user account.
             $legacyuserids = array_column($legacyusers, 'id');
             $this->assertContains($user->id, $legacyuserids);
@@ -799,7 +799,7 @@ class auth_test extends \advanced_testcase {
         $auth = get_auth_plugin('lti');
 
         // When testing platform users who have authenticated before, make that first auth call.
-        if (!empty($memberdata['has_authenticated_before']) && $memberdata['has_authenticated_before']) {
+        if (!empty($memberdata['has_authenticated_before'])) {
             $mockmemberdata = $this->get_mock_member_data_for_user($memberdata['user'],
                 $memberdata['legacy_user_id'] ?? '');
             $firstauthuser = $auth->find_or_create_user_from_membership($mockmemberdata, $iss,
@@ -834,8 +834,8 @@ class auth_test extends \advanced_testcase {
 
         // Verify user count is correct. i.e. no user is created when migration claim is correctly processed or when
         // the user has authenticated with the tool before.
-        $numnewusers = (!empty($expected['migrated']) && $expected['migrated']) ? 0 : 1;
-        $numnewusers = (!empty($memberdata['has_authenticated_before']) && $memberdata['has_authenticated_before']) ?
+        $numnewusers = (!empty($expected['migrated'])) ? 0 : 1;
+        $numnewusers = (!empty($memberdata['has_authenticated_before'])) ?
             0 : $numnewusers;
         $this->assertEquals($numnewusers, $countusersafter - $countusersbefore);
 
@@ -866,7 +866,7 @@ class auth_test extends \advanced_testcase {
                 break;
         }
 
-        if (!empty($expected['migrated']) && $expected['migrated']) {
+        if (!empty($expected['migrated'])) {
             // If migrated, verify the user account is reusing the legacy user account.
             $legacyuserids = array_column($legacyusers, 'id');
             $this->assertContains($user->id, $legacyuserids);

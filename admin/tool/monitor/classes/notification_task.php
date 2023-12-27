@@ -110,17 +110,33 @@ class notification_task extends \core\task\adhoc_task {
      * @return mixed final template string.
      */
     protected function replace_placeholders($template, subscription $subscription, $eventobj, $context) {
-        $template = str_replace('{link}', $eventobj->link, $template);
-        if ($eventobj->contextlevel == CONTEXT_MODULE && !empty($eventobj->contextinstanceid)
-            && (strpos($template, '{modulelink}') !== false)) {
-            $cm = get_fast_modinfo($eventobj->courseid)->get_cm($eventobj->contextinstanceid);
-            $modulelink = $cm->url;
-            $template = str_replace('{modulelink}', $modulelink, $template);
-        }
-        $template = str_replace('{rulename}', $subscription->get_name($context), $template);
-        $template = str_replace('{description}', $subscription->get_description($context), $template);
-        $template = str_replace('{eventname}', $subscription->get_event_name(), $template);
+        $replacements = [
+            '{link}' => $eventobj->link,
+            '{rulename}' => $subscription->get_name($context),
+            '{description}' => $subscription->get_description($context),
+            '{eventname}' => $subscription->get_event_name(),
+        ];
 
-        return $template;
+        if ($eventobj->contextlevel >= CONTEXT_COURSE && !empty($eventobj->courseid)) {
+            $iscoursetemplate = str_contains($template, '{course');
+            $ismodtemplate = str_contains($template, '{module');
+            if ($iscoursetemplate || $ismodtemplate) {
+                $modinfo = get_fast_modinfo($eventobj->courseid);
+                $course = $modinfo->get_course();
+                $replacements['{coursefullname}'] = $course->fullname;
+                $replacements['{courseshortname}'] = $course->shortname;
+
+                if ($eventobj->contextlevel == CONTEXT_MODULE && !empty($eventobj->contextinstanceid) && $ismodtemplate) {
+                    $cm = $modinfo->get_cm($eventobj->contextinstanceid);
+                    $replacements['{modulelink}'] = $cm->url;
+                    $replacements['{modulename}'] = $cm->get_name();
+                }
+            }
+        }
+        return str_replace(
+            search: array_keys($replacements),
+            replace: array_values($replacements),
+            subject: $template,
+        );
     }
 }

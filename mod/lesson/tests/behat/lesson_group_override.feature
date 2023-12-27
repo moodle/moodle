@@ -32,20 +32,13 @@ Feature: Lesson group override
     And the following "activities" exist:
       | activity | name             | groupmode  | course | idnumber |
       | lesson   | Test lesson name | 1          | C1     | lesson1  |
-    And I am on the "Test lesson name" "lesson activity" page logged in as teacher1
-    And I follow "Add a question page"
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title           | True/false question 1 |
-      | Page contents        | Cat is an amphibian |
-      | id_answer_editor_0   | False |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0          | Next page |
-      | id_answer_editor_1   | True |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1          | This page |
-    And I press "Save page"
+    And the following "mod_lesson > page" exist:
+      | lesson           | qtype     | title                 | content             |
+      | Test lesson name | truefalse | True/false question 1 | Cat is an amphibian |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer        | response | jumpto        | score |
+      | True/false question 1 | False         | Correct  | Next page     | 1     |
+      | True/false question 1 | True          | Wrong    | This page     | 0     |
 
   Scenario: Add, modify then delete a group override
     Given I am on the "Test lesson name" "lesson activity" page logged in as teacher1
@@ -369,3 +362,23 @@ Feature: Lesson group override
     And I select "Group overrides" from the "jump" singleselect
     Then I should see "Group 1" in the ".generaltable" "css_element"
     And I should not see "Group 2" in the ".generaltable" "css_element"
+
+  Scenario: "Not visible" groups should not be available for group overrides
+    Given the following "groups" exist:
+      | name                                 | course | idnumber | visibility | participation |
+      | Visible to everyone/Participation         | C1     | VP       | 0          | 1             |
+      | Only Only visible to members/Participation     | C1     | MP       | 1          | 1             |
+      | Only see own membership                   | C1     | O        | 2          | 0             |
+      | Not visible                          | C1     | N        | 3          | 0             |
+      | Visible to everyone/Non-Participation     | C1     | VN       | 0          | 0             |
+      | Only visible to members/Non-Participation | C1     | MN       | 1          | 0             |
+    When I am on the "lesson1" Activity page logged in as teacher1
+    And I navigate to "Overrides" in current page administration
+    And I select "Group overrides" from the "jump" singleselect
+    And I follow "Add group override"
+    Then I should see "Visible to everyone/Participation" in the "Override group" "select"
+    And I should see "Visible to everyone/Non-Participation" in the "Override group" "select"
+    And I should see "Only visible to members" in the "Override group" "select"
+    And I should see "Only visible to members/Non-Participation" in the "Override group" "select"
+    And I should see "Only see own membership" in the "Override group" "select"
+    And I should not see "Not visible" in the "Override group" "select"

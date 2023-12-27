@@ -113,6 +113,19 @@ class groups extends datasource {
     }
 
     /**
+     * Return the column sorting that will be added to the report upon creation
+     *
+     * @return int[]
+     */
+    public function get_default_column_sorting(): array {
+        return [
+            'course:coursefullnamewithlink' => SORT_ASC,
+            'group:name' => SORT_ASC,
+            'user:fullname' => SORT_ASC,
+        ];
+    }
+
+    /**
      * Return the filters that will be added to the report as part of default setup
      *
      * @return string[]

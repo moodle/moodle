@@ -319,6 +319,44 @@ class behat_forms extends behat_base {
     }
 
     /**
+     * Checks, the field contains the value.
+     *
+     * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" (?P<doesnot_bool>does not )?match(?:es)* expression "(?P<expression_string>(?:[^"]|\\")*)"$/
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     * @param string $field The naem or reference to the field
+     * @param bool $doesnot
+     * @param string $expression The Perl-like regular expression, including any delimeters and flag
+     * @return void
+     */
+    public function the_field_matches_expression(
+        string $field,
+        bool $doesnot,
+        string $expression,
+    ): void {
+        // Get the field.
+        $formfield = behat_field_manager::get_form_field_from_label($field, $this);
+
+        // Checks if the provided value matches the current field value.
+        $fieldvalue = $formfield->get_value();
+        $matches = preg_match($expression, $fieldvalue);
+        if ($matches === 1 && $doesnot) {
+            throw new ExpectationException(
+                "The '{$field}' field matches the expression '{$expression}' and it should not",
+                $this->getSession()
+            );
+        } else if ($matches === 0 && !$doesnot) {
+            throw new ExpectationException(
+                "The '{$field}' field does not match the expression '{$expression}'",
+                $this->getSession()
+            );
+        } else if ($matches === false) {
+            throw new coding_exception(
+                "The expression '{$expression}' was not valid",
+            );
+        }
+    }
+
+    /**
      * Checks, the field matches the value.
      *
      * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" matches multiline:$/

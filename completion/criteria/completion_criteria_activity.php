@@ -155,8 +155,8 @@ class completion_criteria_activity extends completion_criteria {
 
         $data = $info->get_data($cm, false, $completion->userid);
 
-        // If the activity is complete
-        if (in_array($data->completionstate, array(COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS, COMPLETION_COMPLETE_FAIL))) {
+        // If the activity is complete.
+        if (in_array($data->completionstate, [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS])) {
             if ($mark) {
                 $completion->mark_complete();
             }

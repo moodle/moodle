@@ -106,8 +106,8 @@ class setuplib_test extends \advanced_testcase {
 
         // Delete existing localcache directory, as this is testing first call
         // to make_localcache_directory.
-        remove_dir($CFG->localcachedir, true);
-        $dir = make_localcache_directory('', false);
+        $this->assertTrue(remove_dir($CFG->localcachedir));
+        $dir = make_localcache_directory('');
         $this->assertSame($CFG->localcachedir, $dir);
         $this->assertFileDoesNotExist("$CFG->localcachedir/.htaccess");
         $this->assertFileExists($timestampfile);
@@ -519,5 +519,27 @@ class setuplib_test extends \advanced_testcase {
     public function test_core_uuid_generate() {
         $uuid = \core\uuid::generate();
         $this->assertTrue(self::is_valid_uuid_v4($uuid), "Invalid v4 UUID: '$uuid'");
+    }
+
+    /**
+     * Test require_phpunit_isolation in a test which is not isolated.
+     *
+     * @covers ::require_phpunit_isolation
+     */
+    public function test_require_phpunit_isolation(): void {
+        // A unit test which is not isolated will throw a coding_exception when the function is called.
+        $this->expectException('coding_exception');
+        require_phpunit_isolation();
+    }
+
+    /**
+     * Test require_phpunit_isolation in a test which is isolated.
+     *
+     * @covers ::require_phpunit_isolation
+     * @runInSeparateProcess
+     */
+    public function test_require_phpunit_isolation_isolated(): void {
+        $this->expectNotToPerformAssertions();
+        require_phpunit_isolation();
     }
 }

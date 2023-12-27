@@ -57,6 +57,8 @@ class redis extends handler {
     protected $host = '';
     /** @var int $port The port to connect to */
     protected $port = 6379;
+    /** @var array $sslopts SSL options, if applicable */
+    protected $sslopts = [];
     /** @var string $auth redis password  */
     protected $auth = '';
     /** @var int $database the Redis database to store sesions in */
@@ -105,6 +107,11 @@ class redis extends handler {
             $this->port = (int)$CFG->session_redis_port;
         }
 
+        if (isset($CFG->session_redis_encrypt) && $CFG->session_redis_encrypt) {
+            $this->host = 'tls://' . $this->host;
+            $this->sslopts = $CFG->session_redis_encrypt;
+        }
+
         if (isset($CFG->session_redis_auth)) {
             $this->auth = $CFG->session_redis_auth;
         }
@@ -139,7 +146,23 @@ class redis extends handler {
         $updatefreq = empty($CFG->session_update_timemodified_frequency) ? 20 : $CFG->session_update_timemodified_frequency;
         $this->timeout = $CFG->sessiontimeout + $updatefreq + MINSECS;
 
-        $this->lockexpire = $CFG->sessiontimeout;
+        // This sets the Redis session lock expiry time to whatever is lower, either
+        // the PHP execution time `max_execution_time`, if the value was defined in
+        // the `php.ini` or the globally configured `sessiontimeout`. Setting it to
+        // the lower of the two will not make things worse it if the execution timeout
+        // is longer than the session timeout.
+        // For the PHP execution time, once the PHP execution time is over, we can be sure
+        // that the lock is no longer actively held so that the lock can expire safely.
+        // Although at `lib/classes/php_time_limit.php::raise(int)`, Moodle can
+        // progressively increase the maximum PHP execution time, this is limited to the
+        // `max_execution_time` value defined in the `php.ini`.
+        // For the session timeout, we assume it is safe to consider the lock to expire
+        // once the session itself expires.
+        // If we unnecessarily hold the lock any longer, it blocks other session requests.
+        $this->lockexpire = ini_get('max_execution_time');
+        if (empty($this->lockexpire) || ($this->lockexpire > (int)$CFG->sessiontimeout)) {
+            $this->lockexpire = (int)$CFG->sessiontimeout;
+        }
         if (isset($CFG->session_redis_lock_expire)) {
             $this->lockexpire = (int)$CFG->session_redis_lock_expire;
         }
@@ -194,6 +217,11 @@ class redis extends handler {
         // MDL-59866: Add retries for connections (up to 5 times) to make sure it goes through.
         $counter = 1;
         $maxnumberofretries = 5;
+        $opts = [];
+        if ($this->sslopts) {
+            // Do not set $opts['stream'] = [], breaks connect().
+            $opts['stream'] = $this->sslopts;
+        }
 
         while ($counter <= $maxnumberofretries) {
 
@@ -202,7 +230,7 @@ class redis extends handler {
                 $delay = rand(100, 500);
 
                 // One second timeout was chosen as it is long for connection, but short enough for a user to be patient.
-                if (!$this->connection->connect($this->host, $this->port, 1, null, $delay)) {
+                if (!$this->connection->connect($this->host, $this->port, 1, null, $delay, 1, $opts)) {
                     throw new RedisException('Unable to connect to host.');
                 }
 
@@ -222,6 +250,16 @@ class redis extends handler {
                         throw new RedisException('Unable to set Redis Prefix option.');
                     }
                 }
+
+                if ($this->sslopts && !$this->connection->ping()) {
+                    /*
+                     * In case of a TLS connection, if phpredis client does not
+                     * communicate immediately with the server the connection hangs.
+                     * See https://github.com/phpredis/phpredis/issues/2332 .
+                     */
+                    throw new \RedisException("Ping failed");
+                }
+
                 if ($this->database !== 0) {
                     if (!$this->connection->select($this->database)) {
                         throw new RedisException('Unable to select Redis database '.$this->database.'.');

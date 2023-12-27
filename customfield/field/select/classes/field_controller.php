@@ -14,17 +14,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Class field
- *
- * @package   customfield_select
- * @copyright 2018 David Matamoros <davidmc@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace customfield_select;
 
-defined('MOODLE_INTERNAL') || die;
+use coding_exception;
 
 /**
  * Class field
@@ -56,17 +48,10 @@ class field_controller extends \core_customfield\field_controller {
     }
 
     /**
-     * Returns the options available as an array.
-     *
-     * @param \core_customfield\field_controller $field
-     * @return array
-     *
      * @deprecated since Moodle 3.10 - MDL-68569 please use $field->get_options
      */
-    public static function get_options_array(\core_customfield\field_controller $field) : array {
-        debugging('get_options_array() is deprecated, please use $field->get_options() instead', DEBUG_DEVELOPER);
-
-        return $field->get_options();
+    public static function get_options_array(): void {
+        throw new coding_exception('get_options_array() is deprecated, please use $field->get_options() instead');
     }
 
     /**

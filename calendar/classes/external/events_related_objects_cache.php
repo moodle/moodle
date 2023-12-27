@@ -26,9 +26,7 @@ namespace core_calendar\external;
 
 defined('MOODLE_INTERNAL') || die();
 
-use context;
 use \core_calendar\local\event\entities\event_interface;
-use stdClass;
 
 /**
  * Class to providing the related objects when exporting a list of calendar events.
@@ -90,7 +88,7 @@ class events_related_objects_cache {
      * Get the related course object for a given event.
      *
      * @param event_interface $event The event object.
-     * @return stdClass|null
+     * @return \stdClass|null
      */
     public function get_course(event_interface $event) {
         if (is_null($this->courses)) {
@@ -109,7 +107,7 @@ class events_related_objects_cache {
      * Get the related context for a given event.
      *
      * @param event_interface $event The event object.
-     * @return context|null
+     * @return \context|null
      */
     public function get_context(event_interface $event) {
         global $USER;
@@ -141,7 +139,7 @@ class events_related_objects_cache {
      * Get the related group object for a given event.
      *
      * @param event_interface $event The event object.
-     * @return stdClass|null
+     * @return \stdClass|null
      */
     public function get_group(event_interface $event) {
         if (is_null($this->groups)) {
@@ -160,7 +158,7 @@ class events_related_objects_cache {
      * Get the related course module for a given event.
      *
      * @param event_interface $event The event object.
-     * @return stdClass|null
+     * @return \stdClass|null
      */
     public function get_course_module(event_interface $event) {
         if (!$event->get_course_module()) {
@@ -182,7 +180,7 @@ class events_related_objects_cache {
      * Get the related module instance for a given event.
      *
      * @param event_interface $event The event object.
-     * @return stdClass|null
+     * @return \stdClass|null
      */
     public function get_module_instance(event_interface $event) {
         if (!$event->get_course_module()) {

@@ -23,7 +23,7 @@
 
 import Notification from 'core/notification';
 import {prefetchStrings} from 'core/prefetch';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 const selectors = {
     resetAllTemplatesAction: '[data-action="resetalltemplates"]',

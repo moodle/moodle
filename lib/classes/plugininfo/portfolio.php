@@ -23,14 +23,17 @@
  */
 namespace core\plugininfo;
 
-use core_component, core_plugin_manager, moodle_url, coding_exception;
-
-defined('MOODLE_INTERNAL') || die();
+use moodle_url;
 
 /**
  * Class for portfolios
  */
 class portfolio extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown

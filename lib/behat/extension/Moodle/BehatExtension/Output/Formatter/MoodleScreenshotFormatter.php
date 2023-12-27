@@ -228,9 +228,9 @@ class MoodleScreenshotFormatter implements Formatter {
      * @param Context $context
      */
     protected function take_screenshot(AfterStepTested $event, $context) {
-        // Goutte can't save screenshots.
+        // BrowserKit can't save screenshots.
         if ($context->getMink()->isSessionStarted($context->getMink()->getDefaultSessionName())) {
-            if (get_class($context->getMink()->getSession()->getDriver()) === 'Behat\Mink\Driver\GoutteDriver') {
+            if (get_class($context->getMink()->getSession()->getDriver()) === 'Behat\Mink\Driver\BrowserKitDriver') {
                 return false;
             }
             list ($dir, $filename) = $this->get_faildump_filename($event, 'png');

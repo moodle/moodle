@@ -469,7 +469,7 @@ class tool_customlang_menu implements renderable {
  */
 class tool_customlang_translator implements renderable {
 
-    /** @const int number of rows per page */
+    /** @var int number of rows per page */
     const PERPAGE = 100;
 
     /** @var int total number of the rows int the table */

@@ -119,7 +119,7 @@ function scorm_seq_check_child ($sco, $action, $userid) {
 
     $included = false;
     $sco = scorm_get_sco($sco->id);
-    $r = $DB->get_record('scorm_scoes_track', array('scoid' => $sco->id, 'userid' => $userid, 'element' => 'activityattemptcount'));
+    $r = scorm_get_sco_value($sco->id, $userid, 'activityattemptcount');
     if ($action == 'satisfied' || $action == 'notsatisfied') {
         if (!$sco->rollupobjectivesatisfied) {
             $included = true;
@@ -262,7 +262,7 @@ function scorm_seq_resume_all_sequencing($scoid, $userid, $seq) {
         $seq->exception = 'SB.2.6-1';
         return $seq;
     }
-    $track = $DB->get_record('scorm_scoes_track', array('scoid' => $scoid, 'userid' => $userid, 'element' => 'suspendedactivity'));
+    $track = scorm_get_sco_value($scoid, $userid, 'suspendedactivity');
     if (!$track) {
         $seq->delivery = null;
         $seq->exception = 'SB.2.6-2';
@@ -752,13 +752,12 @@ function scorm_content_delivery_environment($seq, $userid) {
         $seq->exception = 'DB.2-1';
         return $seq;
     }
-    $track = $DB->get_record('scorm_scoes_track', array('scoid' => $act->id,
-                                                        'userid' => $userid,
-                                                        'element' => 'suspendedactivity'));
+    $track = scorm_get_sco_value($act->id, $userid, 'suspendedactivity');
     if ($track != null) {
         $seq = scorm_clear_suspended_activity($seq->delivery, $seq, $userid);
 
     }
+    $attemptobject = scorm_get_attempt($userid, $track->scormid, 0);
     $seq = scorm_terminate_descendent_attempts ($seq->delivery, $userid, $seq);
     $ancestors = scorm_get_ancestors($seq->delivery);
     $arrpath = array_reverse($ancestors);
@@ -767,24 +766,32 @@ function scorm_content_delivery_environment($seq, $userid) {
         if (!scorm_seq_is('active', $activity->id, $userid)) {
             if (!isset($activity->tracked) || ($activity->tracked == 1)) {
                 if (!scorm_seq_is('suspended', $activity->id, $userid)) {
-                    $r = $DB->get_record('scorm_scoes_track', array('scoid' => $activity->id,
-                                                                    'userid' => $userid,
-                                                                    'element' => 'activityattemptcount'));
-                    $r->value = ($r->value) + 1;
-                    $DB->update_record('scorm_scoes_track', $r);
+                    $r = scorm_get_sco_value($activity->id, $userid, 'activityattemptcount');
+                    $value = new stdClass();
+                    $value->id = $r->valueid;
+                    $value->value = ($r->value) + 1;
+                    $DB->update_record('scorm_scoes_value', $value);
                     if ($r->value == 1) {
                         scorm_seq_set('activityprogressstatus', $activity->id, $userid, 'true');
                     }
-                    scorm_insert_track($userid, $activity->scorm, $activity->id, 0, 'objectiveprogressstatus', 'false');
-                    scorm_insert_track($userid, $activity->scorm, $activity->id, 0, 'objectivesatisfiedstatus', 'false');
-                    scorm_insert_track($userid, $activity->scorm, $activity->id, 0, 'objectivemeasurestatus', 'false');
-                    scorm_insert_track($userid, $activity->scorm, $activity->id, 0, 'objectivenormalizedmeasure', 0.0);
-
-                    scorm_insert_track($userid, $activity->scorm, $activity->id, 0, 'attemptprogressstatus', 'false');
-                    scorm_insert_track($userid, $activity->scorm, $activity->id, 0, 'attemptcompletionstatus', 'false');
-                    scorm_insert_track($userid, $activity->scorm, $activity->id, 0, 'attemptabsoluteduration', 0.0);
-                    scorm_insert_track($userid, $activity->scorm, $activity->id, 0, 'attemptexperiencedduration', 0.0);
-                    scorm_insert_track($userid, $activity->scorm, $activity->id, 0, 'attemptcompletionamount', 0.0);
+                    scorm_insert_track($userid, $activity->scorm, $activity->id, $attemptobject,
+                                       'objectiveprogressstatus', 'false');
+                    scorm_insert_track($userid, $activity->scorm, $activity->id, $attemptobject,
+                                       'objectivesatisfiedstatus', 'false');
+                    scorm_insert_track($userid, $activity->scorm, $activity->id, $attemptobject,
+                                       'objectivemeasurestatus', 'false');
+                    scorm_insert_track($userid, $activity->scorm, $activity->id, $attemptobject,
+                                       'objectivenormalizedmeasure', 0.0);
+                    scorm_insert_track($userid, $activity->scorm, $activity->id, $attemptobject,
+                                       'attemptprogressstatus', 'false');
+                    scorm_insert_track($userid, $activity->scorm, $activity->id, $attemptobject,
+                                       'attemptcompletionstatus', 'false');
+                    scorm_insert_track($userid, $activity->scorm, $activity->id, $attemptobject,
+                                       'attemptabsoluteduration', 0.0);
+                    scorm_insert_track($userid, $activity->scorm, $activity->id, $attemptobject,
+                                       'attemptexperiencedduration', 0.0);
+                    scorm_insert_track($userid, $activity->scorm, $activity->id, $attemptobject,
+                                       'attemptcompletionamount', 0.0);
                 }
             }
             scorm_seq_set('active', $activity->id, $userid, 'true');
@@ -793,26 +800,13 @@ function scorm_content_delivery_environment($seq, $userid) {
     $seq->delivery = $seq->currentactivity;
     scorm_seq_set('suspendedactivity', $activity->id, $userid, 'false');
 
-    // ONCE THE DELIVERY BEGINS (How should I check that?).
-
-    if (isset($activity->tracked) || ($activity->tracked == 0)) {
-        // How should I track the info and what should I do to not record the information for the activity during delivery?
-        $atabsdur = $DB->get_record('scorm_scoes_track', array('scoid' => $activity->id,
-                                                                'userid' => $userid,
-                                                                'element' => 'attemptabsoluteduration'));
-        $atexpdur = $DB->get_record('scorm_scoes_track', array('scoid' => $activity->id,
-                                                                'userid' => $userid,
-                                                                'element' => 'attemptexperiencedduration'));
-    }
     return $seq;
 }
 
 function scorm_clear_suspended_activity($act, $seq, $userid) {
     global $DB;
     $currentact = $seq->currentactivity;
-    $track = $DB->get_record('scorm_scoes_track', array('scoid' => $currentact->id,
-                                                        'userid' => $userid,
-                                                        'element' => 'suspendedactivity'));
+    $track = scorm_get_sco_value($currentact->id, $userid, 'suspendedactivity');
     if ($track != null) {
         $ancestors = scorm_get_ancestors($act);
         $commonpos = scorm_find_common_ancestor($ancestors, $currentact);
@@ -849,9 +843,7 @@ function scorm_select_children_process($scoid, $userid) {
     $sco = scorm_get_sco($scoid);
     if (!scorm_is_leaf($sco)) {
         if (!scorm_seq_is('suspended', $scoid, $userid) && !scorm_seq_is('active', $scoid, $userid)) {
-            $r = $DB->get_record('scorm_scoes_track', array('scoid' => $scoid,
-                                                            'userid' => $userid,
-                                                            'element' => 'selectiontiming'));
+            $r = scorm_get_sco_value($scoid, $userid, 'selectiontiming');
 
             switch ($r->value) {
                 case 'oneachnewattempt':
@@ -862,9 +854,7 @@ function scorm_select_children_process($scoid, $userid) {
                     if (!scorm_seq_is('activityprogressstatus', $scoid, $userid)) {
                         if (scorm_seq_is('selectioncountsstatus', $scoid, $userid)) {
                             $childlist = '';
-                            $res = $DB->get_record('scorm_scoes_track', array('scoid' => $scoid,
-                                                                                'userid' => $userid,
-                                                                                'element' => 'selectioncount'));
+                            $res = scorm_get_sco_value($scoid, $userid, 'selectioncount');
                             $i = ($res->value) - 1;
                             $children = scorm_get_children($sco);
 
@@ -892,9 +882,7 @@ function scorm_randomize_children_process($scoid, $userid) {
     $sco = scorm_get_sco($scoid);
     if (!scorm_is_leaf($sco)) {
         if (!scorm_seq_is('suspended', $scoid, $userid) && !scorm_seq_is('active', $scoid, $userid)) {
-            $r = $DB->get_record('scorm_scoes_track', array('scoid' => $scoid,
-                                                            'userid' => $userid,
-                                                            'element' => 'randomizationtiming'));
+            $r = scorm_get_sco_value($scoid, $userid, 'randomizationtiming');
 
             switch ($r->value) {
                 case 'never':

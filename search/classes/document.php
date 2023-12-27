@@ -603,7 +603,21 @@ class document implements \renderable, \templatable {
     /**
      * Export the document data to be used as a template context.
      *
+     * Just delegates all the processing to export_doc_info, also used by external functions.
      * Adding more info than the required one as people might be interested in extending the template.
+     *
+     * @param \renderer_base $output The renderer.
+     * @return array
+     */
+    public function export_for_template(\renderer_base $output): array {
+        $docdata = $this->export_doc($output);
+        return $docdata;
+    }
+
+    /**
+     * Returns the current docuement information.
+     *
+     * Adding more info than the required one as themers and ws clients might be interested in showing more stuff.
      *
      * Although content is a required field when setting up the document, it accepts '' (empty) values
      * as they may be the result of striping out HTML.
@@ -611,11 +625,12 @@ class document implements \renderable, \templatable {
      * SECURITY NOTE: It is the responsibility of the document to properly escape any text to be displayed.
      * The renderer will output the content without any further cleaning.
      *
-     * @param renderer_base $output The renderer.
+     * @param \renderer_base $output The renderer.
      * @return array
      */
-    public function export_for_template(\renderer_base $output) {
-        global $USER;
+    public function export_doc(\renderer_base $output): array {
+        global $USER, $CFG;
+        require_once($CFG->dirroot . '/course/lib.php');
 
         list($componentname, $areaname) = \core_search\manager::extract_areaid_parts($this->get('areaid'));
         $context = context::instance_by_id($this->get('contextid'));
@@ -623,15 +638,18 @@ class document implements \renderable, \templatable {
         $searcharea = \core_search\manager::get_search_area($this->data['areaid']);
         $title = $this->is_set('title') ? $this->format_text($searcharea->get_document_display_title($this)) : '';
         $data = [
+            'itemid' => $this->get('itemid'),
             'componentname' => $componentname,
             'areaname' => $areaname,
-            'courseurl' => course_get_url($this->get('courseid')),
+            'courseurl' => (course_get_url($this->get('courseid')))->out(false),
             'coursefullname' => format_string($this->get('coursefullname'), true, ['context' => $context->id]),
             'modified' => userdate($this->get('modified')),
+            'timemodified' => $this->get('modified'),
             'title' => ($title !== '') ? $title : get_string('notitle', 'search'),
-            'docurl' => $this->get_doc_url(),
+            'docurl' => ($this->get_doc_url())->out(false),
             'content' => $this->is_set('content') ? $this->format_text($this->get('content')) : null,
-            'contexturl' => $this->get_context_url(),
+            'contextid' => $this->get('contextid'),
+            'contexturl' => ($this->get_context_url())->out(false),
             'description1' => $this->is_set('description1') ? $this->format_text($this->get('description1')) : null,
             'description2' => $this->is_set('description2') ? $this->format_text($this->get('description2')) : null,
         ];
@@ -656,17 +674,20 @@ class document implements \renderable, \templatable {
             if ($this->get('userid') == $USER->id ||
                     (has_capability('moodle/user:viewdetails', $context) &&
                     has_capability('moodle/course:viewparticipants', $context))) {
-                $data['userurl'] = new \moodle_url(
+                $data['userurl'] = (new \moodle_url(
                     '/user/view.php',
                     ['id' => $this->get('userid'), 'course' => $this->get('courseid')]
-                );
+                ))->out(false);
                 $data['userfullname'] = format_string($this->get('userfullname'), true, ['context' => $context->id]);
+                $data['userid'] = $this->get('userid');
             }
         }
 
         if ($docicon = $this->get_doc_icon()) {
             $data['icon'] = $output->image_url($docicon->get_name(), $docicon->get_component());
+            $data['iconurl'] = $data['icon']->out(false);
         }
+        $data['textformat'] = $this->get_text_format();
 
         return $data;
     }

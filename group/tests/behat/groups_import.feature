@@ -41,7 +41,7 @@ Feature: Importing of groups and groupings
     And I should see "No" in the "Group messaging" "select"
     And I press "Cancel"
     # Check groupings
-    And I select "Groupings" from the "jump" singleselect
+    And I set the field "Participants tertiary navigation" to "Groupings"
     And I should see "Grouping-1"
     And I should see "Grouping-2"
     And I should see "Grouping-3"
@@ -146,3 +146,35 @@ Feature: Importing of groups and groupings
     And I should not see "group8"
     And I should not see "group10"
     And I log out
+
+  @javascript
+  Scenario: Import groups with custom field
+    Given the following "custom field categories" exist:
+      | name                   | component  | area     | itemid |
+      | Category for group1    | core_group | group    | 0      |
+      | Category for grouping1 | core_group | grouping | 0      |
+    And the following "custom fields" exist:
+      | name        | category               | type | shortname      |
+      | Test Field1 | Category for group1    | text | groupfield1    |
+      | Test Field2 | Category for grouping1 | text | groupingfield1 |
+    And I log in as "teacher1"
+    And I am on the "Course 1" "groups" page
+    And I press "Import groups"
+    When I upload "group/tests/fixtures/groups_import_with_customfield.csv" file to "Import" filemanager
+    And I press "Import groups"
+    Then I should see "Group Group1 added successfully"
+    And I should see "Group Group2 added successfully"
+    And I should see "Grouping Grouping1 added successfully"
+    And I press "Continue"
+    And I set the field "groups" to "Group1 (0)"
+    And I press "Edit group settings"
+    And the field "Test Field1" matches value "Group1-Custom"
+    And I press "Cancel"
+    And I set the field "groups" to "Group2 (0)"
+    And I press "Edit group settings"
+    And the field "Test Field1" matches value "Group2-Custom"
+    And I press "Cancel"
+    And I am on the "Course 1" "groupings" page
+    Then I should see "Grouping1"
+    And I click on "Edit" "link" in the "Grouping1" "table_row"
+    And the field "Test Field2" matches value "Grouping1-Custom"

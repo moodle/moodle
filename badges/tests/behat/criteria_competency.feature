@@ -94,7 +94,7 @@ Feature: Award badges based on competency completion
     And I click on "Add" "button" in the "Competency picker" "dialogue"
     # Add a badge to the site
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     # Set the competency as a criteria for the badge
     And I set the field "type" to "Competencies"
@@ -147,7 +147,7 @@ Feature: Award badges based on competency completion
     And I click on "Add" "button" in the "Competency picker" "dialogue"
     # Add a badge to the site
     And I navigate to "Badges > Manage badges" in site administration
-    And I click on "Edit" "link" in the "Site Badge" "table_row"
+    And I press "Edit" action in the "Site Badge" report row
     And I select "Criteria" from the "jump" singleselect
     # Set the competency as a criteria for the badge
     And I set the field "type" to "Competencies"

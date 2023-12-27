@@ -40,4 +40,25 @@
             right: auto;
         }
     }
+
+    .popover {
+        &.bs-popover-right,
+        &.bs-popover-auto[x-placement^="right"] {
+            margin-right: 0;
+            margin-left: $popover-arrow-height;
+            .arrow {
+                transform: rotate(180deg);
+                left: subtract(-$popover-arrow-height, $popover-border-width);
+            }
+        }
+        &.bs-popover-left,
+        &.bs-popover-auto[x-placement^="left"] {
+            margin-right: $popover-arrow-height;
+            margin-left: 0;
+            .arrow {
+                transform: rotate(180deg);
+                right: subtract(-$popover-arrow-height, $popover-border-width);
+            }
+        }
+    }
 }

@@ -23,7 +23,7 @@
 
 import Templates from 'core/templates';
 import Selectors from './user_picker/selectors';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 const templatePath = 'mod_forum/local/grades/local/grader';
 

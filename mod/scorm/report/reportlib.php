@@ -75,11 +75,16 @@ function get_scorm_question_count($scormid) {
     global $DB;
     $count = 0;
     $params = array();
-    $select = "scormid = ? AND ";
-    $select .= $DB->sql_like("element", "?", false);
+    $sql = "SELECT DISTINCT e.id, e.element
+              FROM {scorm_element} e
+              JOIN {scorm_scoes_value} v ON e.id = v.elementid
+              JOIN {scorm_attempt} a ON a.id = v.attemptid
+             WHERE a.scormid = ? AND ". $DB->sql_like("element", "?", false) .
+        " ORDER BY e.element";
+
     $params[] = $scormid;
     $params[] = "cmi.interactions_%.id";
-    $rs = $DB->get_recordset_select("scorm_scoes_track", $select, $params, 'element');
+    $rs = $DB->get_recordset_sql($sql, $params);
     $keywords = array("cmi.interactions_", ".id");
     if ($rs->valid()) {
         foreach ($rs as $record) {

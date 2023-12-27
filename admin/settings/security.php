@@ -164,12 +164,11 @@ if ($hassiteconfig) { // speedup for non-admins, add all caps used on this page
     $temp = new admin_settingpage('httpsecurity', new lang_string('httpsecurity', 'admin'));
 
     $temp->add(new admin_setting_configcheckbox('cookiesecure', new lang_string('cookiesecure', 'admin'), new lang_string('configcookiesecure', 'admin'), 1));
-    $temp->add(new admin_setting_configcheckbox('cookiehttponly', new lang_string('cookiehttponly', 'admin'), new lang_string('configcookiehttponly', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowframembedding', new lang_string('allowframembedding', 'admin'), new lang_string('allowframembedding_help', 'admin'), 0));
 
     // Settings elements used by the \core\files\curl_security_helper class.
     $blockedhostsdefault = [
-        '127.0.0.1',
+        '127.0.0.0/8',
         '192.168.0.0/16',
         '10.0.0.0/8',
         '172.16.0.0/12',

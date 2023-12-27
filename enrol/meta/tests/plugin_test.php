@@ -16,6 +16,9 @@
 
 namespace enrol_meta;
 
+use context_course;
+use enrol_meta_plugin;
+
 /**
  * Meta enrolment sync functional test.
  *
@@ -595,6 +598,40 @@ class plugin_test extends \advanced_testcase {
     }
 
     /**
+     * Test enrolling users in a course, where the customint2 (group) property of the instance points to an invalid group
+     *
+     * @covers \enrol_meta_handler::sync_with_parent_course
+     * @covers ::enrol_meta_sync
+     */
+    public function test_add_to_group_invalid(): void {
+        $this->resetAfterTest();
+
+        $this->enable_plugin();
+
+        $courseone = $this->getDataGenerator()->create_course();
+        $coursetwo = $this->getDataGenerator()->create_course();
+
+        /** @var enrol_meta_plugin $plugin */
+        $plugin = enrol_get_plugin('meta');
+        $plugin->add_instance($coursetwo, ['customint1' => $courseone->id, 'customint2' => 42]);
+
+        // Ensure the event observer works for invalid groups.
+        $userone = $this->getDataGenerator()->create_and_enrol($courseone);
+
+        // Now disable the plugin, add another enrolment.
+        $this->disable_plugin();
+        $usertwo = $this->getDataGenerator()->create_and_enrol($courseone);
+
+        // Re-enable the plugin, run sync task - should also work for invalid groups.
+        $this->enable_plugin();
+        enrol_meta_sync($coursetwo->id);
+
+        $coursetwocontext = context_course::instance($coursetwo->id);
+        $this->assertTrue(is_enrolled($coursetwocontext, $userone));
+        $this->assertTrue(is_enrolled($coursetwocontext, $usertwo));
+    }
+
+    /**
      * Test user_enrolment_created event.
      */
     public function test_user_enrolment_created_event() {
@@ -623,11 +660,6 @@ class plugin_test extends \advanced_testcase {
         $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $user1->id));
         $this->assertInstanceOf('\core\event\user_enrolment_created', $event);
         $this->assertEquals($dbuserenrolled->id, $event->objectid);
-        $this->assertEquals('user_enrolled', $event->get_legacy_eventname());
-        $expectedlegacyeventdata = $dbuserenrolled;
-        $expectedlegacyeventdata->enrol = 'meta';
-        $expectedlegacyeventdata->courseid = $course2->id;
-        $this->assertEventLegacyData($expectedlegacyeventdata, $event);
         $this->assertEventContextNotUsed($event);
     }
 
@@ -661,7 +693,6 @@ class plugin_test extends \advanced_testcase {
 
         $this->assertEquals(0, $DB->count_records('user_enrolments'));
         $this->assertInstanceOf('\core\event\user_enrolment_deleted', $event);
-        $this->assertEquals('user_unenrolled', $event->get_legacy_eventname());
         $this->assertEventContextNotUsed($event);
     }
 
@@ -697,13 +728,6 @@ class plugin_test extends \advanced_testcase {
         $dbuserenrolled = $DB->get_record('user_enrolments', array('userid' => $user1->id));
         $this->assertInstanceOf('\core\event\user_enrolment_updated', $event);
         $this->assertEquals($dbuserenrolled->id, $event->objectid);
-        $this->assertEquals('user_enrol_modified', $event->get_legacy_eventname());
-        $expectedlegacyeventdata = $dbuserenrolled;
-        $expectedlegacyeventdata->enrol = 'meta';
-        $expectedlegacyeventdata->courseid = $course2->id;
-        $url = new \moodle_url('/enrol/editenrolment.php', array('ue' => $event->objectid));
-        $this->assertEquals($url, $event->get_url());
-        $this->assertEventLegacyData($expectedlegacyeventdata, $event);
         $this->assertEventContextNotUsed($event);
     }
 

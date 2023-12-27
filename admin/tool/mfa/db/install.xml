@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/mfa/db" VERSION="20210219" COMMENT="XMLDB file for Moodle admin/tool/mfa"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="tool_mfa" COMMENT="Table to store factor configurations for users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID"/>
+        <FIELD NAME="factor" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Factor type"/>
+        <FIELD NAME="secret" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="Any secret data for factor"/>
+        <FIELD NAME="label" TYPE="char" LENGTH="1333" NOTNULL="false" SEQUENCE="false" COMMENT="label for factor instance, eg device or email."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="Time the factor instance was setup"/>
+        <FIELD NAME="createdfromip" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false" COMMENT="IP that the factor was setup from"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="Time factor was last modified."/>
+        <FIELD NAME="lastverified" TYPE="int" LENGTH="15" NOTNULL="false" SEQUENCE="false" COMMENT="Time user was last verified with this factor."/>
+        <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="lockcounter" TYPE="int" LENGTH="5" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Counter of failed attempts"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+        <INDEX NAME="factor" UNIQUE="false" FIELDS="factor"/>
+        <INDEX NAME="lockcounter" UNIQUE="false" FIELDS="userid, factor, lockcounter"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_mfa_secrets" COMMENT="Table to store factor secrets">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="factor" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="secret" TYPE="char" LENGTH="1333" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="expiry" TYPE="int" LENGTH="15" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="revoked" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+        <FIELD NAME="sessionid" TYPE="char" LENGTH="100" NOTNULL="false" SEQUENCE="false"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="factor" UNIQUE="false" FIELDS="factor"/>
+        <INDEX NAME="expiry" UNIQUE="false" FIELDS="expiry"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="tool_mfa_auth" COMMENT="Stores the last time a successful MFA auth was registered for a userid">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User id"/>
+        <FIELD NAME="lastverified" TYPE="int" LENGTH="15" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Timestamp of last MFA verification."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="Link to user table"/>
+      </KEYS>
+    </TABLE>
+  </TABLES>
+</XMLDB>

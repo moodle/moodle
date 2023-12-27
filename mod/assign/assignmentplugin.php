@@ -522,14 +522,10 @@ abstract class assign_plugin {
     }
 
     /**
-     * Formatting for log info
-     *
-     * @param stdClass $submissionorgrade assign_submission or assign_grade The new submission or grade
-     * @return string
+     * @deprecated since 2.7
      */
-    public function format_for_log(stdClass $submissionorgrade) {
-        // Format the info for each submission plugin add_to_log.
-        return '';
+    public function format_for_log() {
+        throw new coding_exception(__FUNCTION__ . ' has been deprecated, please do not use it any more');
     }
 
     /**

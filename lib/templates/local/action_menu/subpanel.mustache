@@ -1,0 +1,68 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template core/local/action_menu/subpanel
+    Action menu link.
+    Example context (json):
+    {
+        "id": "exampleId12345678",
+        "text": "Example link text",
+        "subpanelcontent": "Example subpanel content",
+        "url": "http://example.com",
+        "attributes": [
+            {
+                "name": "data-attribute",
+                "value": "example"
+            }
+        ],
+        "itemicon": {
+            "key": "t/groups",
+            "component": "core",
+            "title": "Example icon title"
+        },
+        "instance": 1,
+        "disabled": false
+    }
+}}
+<div
+    class="dropdown-subpanel position-relative dropright"
+    id="{{id}}"
+>
+    <a
+        class="dropdown-item dropdown-toggle {{#disabled}} disabled {{/disabled}}"
+        href="{{url}}"
+        data-toggle="dropdown-subpanel"
+        role="menuitem"
+        aria-haspopup="true"
+        tabindex="-1"
+        aria-expanded="false"
+        aria-label="{{text}}"
+        {{#attributes}}
+            {{name}}="{{value}}"
+        {{/attributes}}
+    >
+        {{#itemicon}}
+            {{#pix}}{{key}}, {{component}}, {{title}}{{/pix}}
+        {{/itemicon}}
+        <span class="menu-action-text" id="actionmenuactionsubpanel-{{instance}}">{{{text}}}</span>
+    </a>
+    <div class="dropdown-menu dropdown-subpanel-content" role="menu">
+        {{{subpanelcontent}}}
+    </div>
+</div>
+{{#js}}
+    require(['core/local/action_menu/subpanel'], function(Module) {
+        Module.init('#' + '{{id}}');
+    });
+{{/js}}

@@ -80,7 +80,7 @@ Feature: Teachers can edit course custom fields
   @javascript @editor_tiny
   Scenario: Use images in the custom field description
     When I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I click on "Edit" "link" in the "Field 1" "table_row"
     And I click on "Image" "button" in the "Description" "form_row"
     And I click on "Browse repositories..." "button"
@@ -101,7 +101,7 @@ Feature: Teachers can edit course custom fields
   @javascript
   Scenario: Custom field short name must be present and unique
     When I log in as "admin"
-    And I navigate to "Courses > Course custom fields" in site administration
+    And I navigate to "Courses > Default settings > Course custom fields" in site administration
     And I click on "Add a new custom field" "link"
     And I click on "Short text" "link"
     And I set the following fields to these values:

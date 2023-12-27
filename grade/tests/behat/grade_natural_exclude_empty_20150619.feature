@@ -25,9 +25,9 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
       | assign   | C1     | a4       | Test assignment four (extra) | x     | 20    |
       | assign   | C1     | a5       | Test assignment five (extra) | x     | 10    |
     And I am on the "Course 1" "grades > gradebook setup" page logged in as "teacher1"
-    And I set the following settings for grade item "Test assignment four (extra)":
+    And I set the following settings for grade item "Test assignment four (extra)" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
-    And I set the following settings for grade item "Test assignment five (extra)":
+    And I set the following settings for grade item "Test assignment five (extra)" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
 
   @javascript
@@ -94,11 +94,11 @@ Feature: Gradebook calculations for extra credit items before the fix 20150619
 
   @javascript
   Scenario: Make sure there are no errors when all items are marked as extra credit (before the fix 20150619)
-    And I set the following settings for grade item "Test assignment one":
+    And I set the following settings for grade item "Test assignment one" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
-    And I set the following settings for grade item "Test assignment two":
+    And I set the following settings for grade item "Test assignment two" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
-    And I set the following settings for grade item "Test assignment three":
+    And I set the following settings for grade item "Test assignment three" of type "gradeitem" on "setup" page:
       | Extra credit | 1 |
     When I navigate to "View > Grader report" in the course gradebook
     And I turn editing mode on

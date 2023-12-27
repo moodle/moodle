@@ -35,6 +35,7 @@ $string['tagsnotfound'] = 'Tags not found';
 $string['previewoptions'] = 'Preview options';
 $string['questionversion'] = 'Question version';
 $string['restartnow'] = 'Use latest version';
+$string['theoptionsyouselectonlyaffectthepreview'] = 'These settings are for testing the question. The options you select only affect the preview.';
 // Preview title.
 $string['versiontitle'] = 'Version {$a}';
 $string['versiontitlelatest'] = 'Version {$a} (latest)';

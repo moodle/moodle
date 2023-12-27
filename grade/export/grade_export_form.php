@@ -201,7 +201,7 @@ class grade_export_form extends moodleform {
             $submitstring = get_string('export', 'grades');
         }
 
-        $this->add_action_buttons(false, $submitstring);
+        $this->add_sticky_action_buttons(false, $submitstring);
     }
 
     /**

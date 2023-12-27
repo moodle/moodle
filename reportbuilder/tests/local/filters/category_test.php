@@ -40,11 +40,20 @@ class category_test extends advanced_testcase {
      */
     public function get_sql_filter_provider(): array {
         return [
-            ['One', false, ['One']],
-            ['One', true, ['One', 'Two', 'Three']],
-            ['Two', true, ['Two', 'Three']],
-            ['Three', true, ['Three']],
-            [null, false, ['Category 1', 'One', 'Two', 'Three']],
+            // Equal to.
+            ['One', category::EQUAL_TO, false, ['One']],
+            ['One', category::EQUAL_TO, true, ['One', 'Two', 'Three']],
+            ['Two', category::EQUAL_TO, true, ['Two', 'Three']],
+            ['Three', category::EQUAL_TO, true, ['Three']],
+
+            // Not equal to.
+            ['One', category::NOT_EQUAL_TO, false, ['Category 1', 'Two', 'Three', 'Four', 'Five', 'Six']],
+            ['One', category::NOT_EQUAL_TO, true, ['Category 1', 'Four', 'Five', 'Six']],
+            ['Two', category::NOT_EQUAL_TO, true, ['Category 1', 'One', 'Four', 'Five', 'Six']],
+            ['Three', category::NOT_EQUAL_TO, true, ['Category 1', 'One', 'Two', 'Four', 'Five', 'Six']],
+
+            // Default/empty state.
+            [null, category::EQUAL_TO, false, ['Category 1', 'One', 'Two', 'Three', 'Four', 'Five', 'Six']],
         ];
     }
 
@@ -52,19 +61,32 @@ class category_test extends advanced_testcase {
      * Test getting filter SQL
      *
      * @param string|null $categoryname
+     * @param int $operator
      * @param bool $subcategories
      * @param string[] $expectedcategories
      *
      * @dataProvider get_sql_filter_provider
      */
-    public function test_get_sql_filter(?string $categoryname, bool $subcategories, array $expectedcategories): void {
+    public function test_get_sql_filter(
+        ?string $categoryname,
+        int $operator,
+        bool $subcategories,
+        array $expectedcategories,
+    ): void {
+
         global $DB;
 
         $this->resetAfterTest();
 
+        // Create category tree "One -> Two -> Three".
         $category1 = $this->getDataGenerator()->create_category(['name' => 'One']);
         $category2 = $this->getDataGenerator()->create_category(['name' => 'Two', 'parent' => $category1->id]);
         $category3 = $this->getDataGenerator()->create_category(['name' => 'Three', 'parent' => $category2->id]);
+
+        // Second category tree "Four -> Five -> Six".
+        $category4 = $this->getDataGenerator()->create_category(['name' => 'Four']);
+        $category5 = $this->getDataGenerator()->create_category(['name' => 'Five', 'parent' => $category4->id]);
+        $category6 = $this->getDataGenerator()->create_category(['name' => 'Six', 'parent' => $category5->id]);
 
         if ($categoryname !== null) {
             $categoryid = $DB->get_field('course_categories', 'id', ['name' => $categoryname], MUST_EXIST);
@@ -82,6 +104,7 @@ class category_test extends advanced_testcase {
 
         // Create instance of our filter, passing given operator.
         [$select, $params] = category::create($filter)->get_sql_filter([
+            $filter->get_unique_identifier() . '_operator' => $operator,
             $filter->get_unique_identifier() . '_value' => $categoryid,
             $filter->get_unique_identifier() . '_subcategories' => $subcategories,
         ]);

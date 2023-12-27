@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/scorm/db" VERSION="20220127" COMMENT="XMLDB file for Moodle mod/scorm"
+<XMLDB PATH="mod/scorm/db" VERSION="20230406" COMMENT="XMLDB file for Moodle mod/scorm"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -84,27 +84,6 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="scorm_scoes_data_scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The relative sco"/>
       </KEYS>
-    </TABLE>
-    <TABLE NAME="scorm_scoes_track" COMMENT="to track SCOes">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
-        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="scormid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-        <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false"/>
-        <FIELD NAME="element" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
-        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-        <KEY NAME="scormid" TYPE="foreign" FIELDS="scormid" REFTABLE="scorm" REFFIELDS="id"/>
-        <KEY NAME="scoid" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="userid-scormid-scoid-attempt-element" UNIQUE="true" FIELDS="userid, scormid, scoid, attempt, element"/>
-        <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
-      </INDEXES>
     </TABLE>
     <TABLE NAME="scorm_seq_objective" COMMENT="SCORM2004 objective description">
       <FIELDS>
@@ -220,6 +199,47 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
         <KEY NAME="scormid" TYPE="foreign" FIELDS="scormid" REFTABLE="scorm" REFFIELDS="id"/>
         <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_attempt" COMMENT="List of SCORM attempts made by user.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+        <FIELD NAME="scormid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the scorm table"/>
+        <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="1" SEQUENCE="false" COMMENT="The attempt number"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="user" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id" COMMENT="The id field of the user table"/>
+        <KEY NAME="scorm" TYPE="foreign" FIELDS="scormid" REFTABLE="scorm" REFFIELDS="id" COMMENT="The id of the scormtable"/>
+      </KEYS>
+    </TABLE>
+    <TABLE NAME="scorm_element" COMMENT="List of scorm elements.">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="element" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name of SCORM element"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="element" UNIQUE="true" FIELDS="element"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="scorm_scoes_value" COMMENT="Values passed from SCORM package">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="scoid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="The id of the scorm_scoes table"/>
+        <FIELD NAME="attemptid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id from scorm_attempt"/>
+        <FIELD NAME="elementid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="id from scorm_element"/>
+        <FIELD NAME="value" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Value passed from SCORM package"/>
+        <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Time value last changed."/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="scoe" TYPE="foreign" FIELDS="scoid" REFTABLE="scorm_scoes" REFFIELDS="id" COMMENT="The id of the scorm_scoes table"/>
+        <KEY NAME="attempt" TYPE="foreign" FIELDS="attemptid" REFTABLE="scorm_attempt" REFFIELDS="id" COMMENT="id from scorm_attempt"/>
+        <KEY NAME="element" TYPE="foreign" FIELDS="elementid" REFTABLE="scorm_element" REFFIELDS="id" COMMENT="id from scorm_element"/>
       </KEYS>
     </TABLE>
   </TABLES>

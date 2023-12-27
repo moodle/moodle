@@ -95,7 +95,9 @@ class ADODB_sybase extends ADOConnection {
 	// http://www.isug.com/Sybase_FAQ/ASE/section6.1.html#6.1.4
 	function RowLock($tables,$where,$col='top 1 null as ignore')
 	{
-		if (!$this->_hastrans) $this->BeginTrans();
+		if (!$this->hasTransactions) {
+			$this->BeginTrans();
+		}
 		$tables = str_replace(',',' HOLDLOCK,',$tables);
 		return $this->GetOne("select $col from $tables HOLDLOCK where $where");
 
@@ -104,7 +106,6 @@ class ADODB_sybase extends ADOConnection {
 	function SelectDB($dbName)
 	{
 		$this->database = $dbName;
-		$this->databaseName = $dbName; # obsolete, retained for compat with older adodb versions
 		if ($this->_connectionID) {
 			return @sybase_select_db($dbName);
 		}

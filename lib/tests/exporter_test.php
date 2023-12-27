@@ -24,8 +24,11 @@
 
 namespace core;
 
-defined('MOODLE_INTERNAL') || die();
-global $CFG;
+use core_external\external_format_value;
+use core_external\external_multiple_structure;
+use core_external\external_settings;
+use core_external\external_single_structure;
+use core_external\external_value;
 
 /**
  * Exporter testcase.
@@ -70,21 +73,21 @@ class exporter_test extends \advanced_testcase {
     public function test_get_read_structure() {
         $structure = core_testable_exporter::get_read_structure();
 
-        $this->assertInstanceOf('external_single_structure', $structure);
-        $this->assertInstanceOf('external_value', $structure->keys['stringA']);
-        $this->assertInstanceOf('external_format_value', $structure->keys['stringAformat']);
-        $this->assertInstanceOf('external_value', $structure->keys['intB']);
-        $this->assertInstanceOf('external_value', $structure->keys['otherstring']);
-        $this->assertInstanceOf('external_multiple_structure', $structure->keys['otherstrings']);
+        $this->assertInstanceOf(external_single_structure::class, $structure);
+        $this->assertInstanceOf(external_value::class, $structure->keys['stringA']);
+        $this->assertInstanceOf(external_format_value::class, $structure->keys['stringAformat']);
+        $this->assertInstanceOf(external_value::class, $structure->keys['intB']);
+        $this->assertInstanceOf(external_value::class, $structure->keys['otherstring']);
+        $this->assertInstanceOf(external_multiple_structure::class, $structure->keys['otherstrings']);
     }
 
     public function test_get_create_structure() {
         $structure = core_testable_exporter::get_create_structure();
 
-        $this->assertInstanceOf('external_single_structure', $structure);
-        $this->assertInstanceOf('external_value', $structure->keys['stringA']);
-        $this->assertInstanceOf('external_format_value', $structure->keys['stringAformat']);
-        $this->assertInstanceOf('external_value', $structure->keys['intB']);
+        $this->assertInstanceOf(external_single_structure::class, $structure);
+        $this->assertInstanceOf(external_value::class, $structure->keys['stringA']);
+        $this->assertInstanceOf(external_format_value::class, $structure->keys['stringAformat']);
+        $this->assertInstanceOf(external_value::class, $structure->keys['intB']);
         $this->assertArrayNotHasKey('otherstring', $structure->keys);
         $this->assertArrayNotHasKey('otherstrings', $structure->keys);
     }
@@ -92,10 +95,10 @@ class exporter_test extends \advanced_testcase {
     public function test_get_update_structure() {
         $structure = core_testable_exporter::get_update_structure();
 
-        $this->assertInstanceOf('external_single_structure', $structure);
-        $this->assertInstanceOf('external_value', $structure->keys['stringA']);
-        $this->assertInstanceOf('external_format_value', $structure->keys['stringAformat']);
-        $this->assertInstanceOf('external_value', $structure->keys['intB']);
+        $this->assertInstanceOf(external_single_structure::class, $structure);
+        $this->assertInstanceOf(external_value::class, $structure->keys['stringA']);
+        $this->assertInstanceOf(external_format_value::class, $structure->keys['stringAformat']);
+        $this->assertInstanceOf(external_value::class, $structure->keys['intB']);
         $this->assertArrayNotHasKey('otherstring', $structure->keys);
         $this->assertArrayNotHasKey('otherstrings', $structure->keys);
     }
@@ -152,7 +155,7 @@ class exporter_test extends \advanced_testcase {
         $syscontext = \context_system::instance();
         $coursecontext = \context_course::instance($course->id);
 
-        \external_settings::get_instance()->set_filter(true);
+        external_settings::get_instance()->set_filter(true);
         filter_set_global_state('urltolink', TEXTFILTER_OFF);
         filter_set_local_state('urltolink', $coursecontext->id, TEXTFILTER_ON);
         set_config('formats', FORMAT_MARKDOWN, 'filter_urltolink');

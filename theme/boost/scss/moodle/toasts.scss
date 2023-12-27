@@ -1,7 +1,7 @@
 @mixin toast-icon($content) {
-    @include fa-icon();
+    @extend .fa-solid;
     margin: 2px 5px 0 0;
-    content: $content;
+    content: fa-content($content);
 }
 
 @mixin toast-variant($color) {

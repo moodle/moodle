@@ -22,7 +22,8 @@
 
 import $ from 'jquery';
 import * as CustomEvents from 'core/custom_interaction_events';
-import * as Repository from 'block_myoverview/repository';
+import Notification from 'core/notification';
+import {setUserPreference} from 'core_user/repository';
 import * as View from 'block_myoverview/view';
 import SELECTORS from 'block_myoverview/selectors';
 
@@ -31,6 +32,7 @@ import SELECTORS from 'block_myoverview/selectors';
  *
  * @param {String} filter The type of filter: display/sort/grouping.
  * @param {String} value The current preferred value.
+ * @return {Promise}
  */
 const updatePreferences = (filter, value) => {
     let type = null;
@@ -44,14 +46,8 @@ const updatePreferences = (filter, value) => {
         type = 'block_myoverview_user_grouping_preference';
     }
 
-    Repository.updateUserPreferences({
-        preferences: [
-            {
-                type: type,
-                value: value
-            }
-        ]
-    });
+    return setUserPreference(type, value)
+        .catch(Notification.exception);
 };
 
 /**

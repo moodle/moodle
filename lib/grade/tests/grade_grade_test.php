@@ -731,7 +731,6 @@ class grade_grade_test extends \grade_base_testcase {
                 $gradegrade->itemid = $gradeitem->id;
                 $grades[$itemid] = $gradegrade;
             }
-            $gradeitem->grade_item = $gradeitem;
         }
 
         return \grade_grade::get_hiding_affected($grades, $items);

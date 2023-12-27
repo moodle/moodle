@@ -1,0 +1,67 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template block_myoverview/zero-state
+
+    This template renders the main content area when there is no course to show.
+
+    Example context (json):
+    {
+        "nocoursesimg": "https://moodle.org/img/nocourses.svg",
+        "title": "No courses",
+        "text": "Moodle community",
+        "intro": "Come back later",
+        "buttons": [
+            {
+                "id": "buttons1",
+                "method": "get",
+                "url": "#",
+                "primary": true,
+                "label": "Button1"
+            },
+            {
+                "id": "buttons2",
+                "method": "get",
+                "url": "#",
+                "primary": false,
+                "label": "Button2"
+            }
+        ]
+    }
+}}
+
+<div class="block-myoverview block-cards" data-region="myoverview" role="navigation">
+    <hr class="mt-0"/>
+
+    <div class="container-fluid p-0">
+        <div class="text-xs-center text-center mt-3" data-region="empty-message">
+            <img class="empty-placeholder-image-lg mt-1"
+                    src="{{nocoursesimg}}"
+                    alt="{{{ title }}}"
+                    role="presentation"
+            >
+            <h5 class="h5 mt-3 mb-0">{{{ title }}}</h5>
+            <p class="mt-3 mb-0">{{{ intro }}}</p>
+
+            <div class="mt-5 mb-0 whitebutton" id="action_bar">
+                {{#buttons}}
+                    {{>core/single_button}}
+                {{/buttons}}
+            </div>
+        </div>
+    </div>
+</div>

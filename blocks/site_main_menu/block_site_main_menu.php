@@ -60,6 +60,11 @@ class block_site_main_menu extends block_list {
         $cmnameclass = $format->get_output_classname('content\\cm\\cmname');
         $controlmenuclass = $format->get_output_classname('content\\cm\\controlmenu');
 
+        $badgeattributes = [
+            'class' => 'badge badge-pill badge-warning mt-2',
+            'data-region' => 'visibility'
+        ];
+
         // Extra fast view mode.
         if (!$isediting) {
             $modinfo = get_fast_modinfo($course);
@@ -81,7 +86,7 @@ class block_site_main_menu extends block_list {
                         $badges = html_writer::tag(
                             'span',
                             get_string('hiddenfromstudents'),
-                            ['class' => 'badge badge-pill badge-warning mt-2']
+                            $badgeattributes
                         );
                     }
 
@@ -89,7 +94,7 @@ class block_site_main_menu extends block_list {
                         $badges = html_writer::tag(
                             'span',
                             get_string('hiddenoncoursepage'),
-                            ['class' => 'badge badge-pill badge-warning mt-2']
+                            $badgeattributes
                         );
                     }
 
@@ -99,7 +104,8 @@ class block_site_main_menu extends block_list {
                             'activity-basis d-flex align-items-center');
                         $content = html_writer::div(
                             $activitybasis . $badges,
-                            'contentwithoutlink activity-item activity'
+                            'contentwithoutlink activity-item activity',
+                            ['data-activityname' => $cm->name]
                         );
                     } else {
                         $cmname = new $cmnameclass($format, $cm->get_section_info(), $cm);
@@ -108,7 +114,8 @@ class block_site_main_menu extends block_list {
                             'activity-basis d-flex align-items-center');
                         $content = html_writer::div(
                             $activitybasis . $badges,
-                            'activity-item activity'
+                            'activity-item activity',
+                            ['data-activityname' => $cm->name]
                         );
                     }
 
@@ -190,7 +197,7 @@ class block_site_main_menu extends block_list {
                         $badges = html_writer::tag(
                             'span',
                             get_string('hiddenfromstudents'),
-                            ['class' => 'badge badge-pill badge-warning mt-2']
+                            $badgeattributes
                         );
                     }
 
@@ -198,7 +205,7 @@ class block_site_main_menu extends block_list {
                         $badges = html_writer::tag(
                             'span',
                             get_string('hiddenoncoursepage'),
-                            ['class' => 'badge badge-pill badge-warning mt-2']
+                            $badgeattributes
                         );
                     }
 
@@ -211,7 +218,8 @@ class block_site_main_menu extends block_list {
                             'activity-basis d-flex align-items-center');
                         $content = html_writer::div(
                             $activitybasis . $badges,
-                            'contentwithoutlink activity-item activity'
+                            'contentwithoutlink activity-item activity',
+                            ['data-activityname' => $mod->name]
                         );
                     } else {
                         $cmname = new $cmnameclass($format, $mod->get_section_info(), $mod);
@@ -223,7 +231,8 @@ class block_site_main_menu extends block_list {
                             'activity-basis d-flex align-items-center');
                         $content = html_writer::div(
                             $activitybasis . $badges,
-                            'activity-item activity'
+                            'activity-item activity',
+                            ['data-activityname' => $mod->name]
                         );
                     }
                     $this->content->items[] = html_writer::div($content, 'main-menu-content');

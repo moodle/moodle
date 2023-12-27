@@ -77,7 +77,7 @@ class overrides_actions implements renderable, templatable {
             $label = get_string('addnewuseroverride', 'quiz');
         }
 
-        $addoverridebutton = new \single_button($addoverrideurl, $label, 'get', true);
+        $addoverridebutton = new \single_button($addoverrideurl, $label, 'get', \single_button::BUTTON_PRIMARY);
         if (!$this->addenabled) {
             $addoverridebutton->disabled = true;
         }

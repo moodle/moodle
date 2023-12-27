@@ -16,6 +16,7 @@
 
 namespace mod_choice;
 
+use core_external\external_api;
 use externallib_advanced_testcase;
 use mod_choice_external;
 
@@ -71,7 +72,7 @@ class externallib_test extends externallib_advanced_testcase {
         choice_user_submit_response($myanswer, $choice, $student1->id, $course, $cm);
         $results = mod_choice_external::get_choice_results($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
 
         // Create an array with optionID as Key.
         $resultsarr = array();
@@ -87,7 +88,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($student2);
         $results = mod_choice_external::get_choice_results($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
         // We do not retrieve any response!
         foreach ($results['options'] as $option) {
             $this->assertCount(0, $option['userresponses']);
@@ -103,7 +104,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $results = mod_choice_external::get_choice_results($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
         // We do not retrieve any response (activity is still open).
         foreach ($results['options'] as $option) {
             $this->assertCount(0, $option['userresponses']);
@@ -115,7 +116,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Now as Stundent2 we will see results!
         $results = mod_choice_external::get_choice_results($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
         // Create an array with optionID as Key.
         $resultsarr = array();
         foreach ($results['options'] as $option) {
@@ -131,7 +132,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->update_record('choice', $choice);
         $results = mod_choice_external::get_choice_results($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_results_returns(), $results);
         // Create an array with optionID as Key.
         $resultsarr = array();
         // Does not show any user response!
@@ -177,7 +178,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $results = mod_choice_external::get_choice_options($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
         // We should retrieve all options.
         $this->assertCount(count($possibleoptions), $results['options']);
 
@@ -188,7 +189,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $results = mod_choice_external::get_choice_options($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
         // We should retrieve no options.
         $this->assertCount(0, $results['options']);
         $this->assertEquals($notopenyet, $results['warnings'][0]['warningcode']);
@@ -198,7 +199,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->update_record('choice', $choice);
         $results = mod_choice_external::get_choice_options($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
         // We should retrieve all options.
         $this->assertCount(count($possibleoptions), $results['options']);
 
@@ -225,7 +226,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $results = mod_choice_external::get_choice_options($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
         // We should retrieve all options.
         $this->assertCount(count($possibleoptions), $results['options']);
         foreach ($results['options'] as $option) {
@@ -245,7 +246,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->update_record('choice', $choice);
         $results = mod_choice_external::get_choice_options($choice->id);
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::get_choice_options_returns(), $results);
         // We should retrieve no options.
         $this->assertCount(0, $results['options']);
         $this->assertEquals($expired, $results['warnings'][0]['warningcode']);
@@ -282,7 +283,7 @@ class externallib_test extends externallib_advanced_testcase {
         $myresponse = $options[2];
         $results = mod_choice_external::submit_choice_response($choice->id, array($myresponse));
         // We need to execute the return values cleaning process to simulate the web service server.
-        $results = \external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
         $myanswers = $DB->get_records('choice_answers', array('choiceid' => $choice->id, 'userid' => $student1->id));
         $myanswer = reset($myanswers);
         $this->assertEquals($results['answers'][0]['id'], $myanswer->id);
@@ -331,7 +332,7 @@ class externallib_test extends externallib_advanced_testcase {
         $sink = $this->redirectEvents();
 
         $result = mod_choice_external::view_choice($choice->id);
-        $result = \external_api::clean_returnvalue(mod_choice_external::view_choice_returns(), $result);
+        $result = external_api::clean_returnvalue(mod_choice_external::view_choice_returns(), $result);
 
         $events = $sink->get_events();
         $this->assertCount(1, $events);
@@ -377,7 +378,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($student1);
         $choices = mod_choice_external::get_choices_by_courses(array());
-        $choices = \external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
+        $choices = external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
         $this->assertCount(1, $choices['choices']);
         $this->assertEquals('First IMSCP', $choices['choices'][0]['name']);
         // As Student you cannot see some IMSCP properties like 'section'.
@@ -386,7 +387,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Student1 is not enrolled in this Course.
         // The webservice will give a warning!
         $choices = mod_choice_external::get_choices_by_courses(array($course2->id));
-        $choices = \external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
+        $choices = external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
         $this->assertCount(0, $choices['choices']);
         $this->assertEquals(1, $choices['warnings'][0]['warningcode']);
 
@@ -394,7 +395,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setAdminUser();
         // As Admin we can see this IMSCP.
         $choices = mod_choice_external::get_choices_by_courses(array($course2->id));
-        $choices = \external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
+        $choices = external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
         $this->assertCount(1, $choices['choices']);
         $this->assertEquals('Second IMSCP', $choices['choices'][0]['name']);
         // As an Admin you can see some IMSCP properties like 'section'.
@@ -408,7 +409,7 @@ class externallib_test extends externallib_advanced_testcase {
         accesslib_clear_all_caches_for_unit_testing();
 
         $choices = mod_choice_external::get_choices_by_courses(array($course1->id));
-        $choices = \external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
+        $choices = external_api::clean_returnvalue(mod_choice_external::get_choices_by_courses_returns(), $choices);
         $this->assertFalse(isset($choices['choices'][0]['timeopen']));
     }
 
@@ -442,7 +443,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->setUser($student);
         $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
-        $results = \external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
 
         $myresponses = array_keys(choice_get_my_response($choice));
 
@@ -467,7 +468,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Reset time close. We should be able now to delete all the responses.
         $DB->set_field('choice', 'timeclose', 0, array('id' => $choice->id));
         $results = mod_choice_external::delete_choice_responses($choice->id, array($myresponses[0], $myresponses[1]));
-        $results = \external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
 
         $this->assertTrue($results['status']);
         $this->assertCount(0, $results['warnings']);
@@ -476,12 +477,12 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Submit again the responses.
         $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
-        $results = \external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
 
         $myresponses = array_keys(choice_get_my_response($choice));
         // Delete only one response.
         $results = mod_choice_external::delete_choice_responses($choice->id, array($myresponses[0]));
-        $results = \external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
         $this->assertTrue($results['status']);
         $this->assertCount(0, $results['warnings']);
         // Now, in the DB 1 response still.
@@ -490,7 +491,7 @@ class externallib_test extends externallib_advanced_testcase {
         // Delete the remaining response, passing 2 invalid responses ids.
         $results = mod_choice_external::delete_choice_responses($choice->id, array($myresponses[1], $myresponses[0] + 2,
                                                                 $myresponses[0] + 3));
-        $results = \external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
         $this->assertTrue($results['status']);
         // 2 warnings, 2 invalid responses.
         $this->assertCount(2, $results['warnings']);
@@ -501,7 +502,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($student);
         // Submit again the responses.
         $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
-        $results = \external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
         $studentresponses = array_keys(choice_get_my_response($choice));
 
         $this->setAdminUser();
@@ -509,7 +510,7 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->set_field('choice', 'timeclose', time() - DAYSECS, array('id' => $choice->id));
 
         $results = mod_choice_external::delete_choice_responses($choice->id, array($studentresponses[0], $studentresponses[1]));
-        $results = \external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
 
         $this->assertTrue($results['status']);
         $this->assertCount(0, $results['warnings']);
@@ -518,12 +519,12 @@ class externallib_test extends externallib_advanced_testcase {
         $this->setUser($student);
         $DB->set_field('choice', 'timeclose', 0, array('id' => $choice->id));
         $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
-        $results = \external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
 
         // Test admin try to delete his own responses (he didn't respond so nothing should be deleted).
         $this->setAdminUser();
         $results = mod_choice_external::delete_choice_responses($choice->id);
-        $results = \external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
         $this->assertFalse($results['status']);
         $this->assertCount(0, $results['warnings']);
         $allresponses = choice_get_all_responses($choice);
@@ -531,12 +532,12 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Now admin submit a couple of responses more.
         $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
-        $results = \external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
         $allresponses = choice_get_all_responses($choice);
         $this->assertCount(4, $allresponses);
         // Admin responses are deleted when passing an empty array.
         $results = mod_choice_external::delete_choice_responses($choice->id);
-        $results = \external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
         $this->assertTrue($results['status']);
         $this->assertCount(0, $results['warnings']);
         $allresponses = choice_get_all_responses($choice);
@@ -544,7 +545,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Now admin will delete all the other users responses.
         $results = mod_choice_external::delete_choice_responses($choice->id, array_keys($allresponses));
-        $results = \external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
 
         $this->assertTrue($results['status']);
         $this->assertCount(0, $results['warnings']);
@@ -553,7 +554,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Admin try do delete an invalid response.
         $results = mod_choice_external::delete_choice_responses($choice->id, array(-1));
-        $results = \external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
 
         $this->assertFalse($results['status']);
         $this->assertCount(1, $results['warnings']);
@@ -565,11 +566,11 @@ class externallib_test extends externallib_advanced_testcase {
         $DB->set_field('choice', 'allowupdate', 1, array('id' => $choice->id));
         $DB->set_field('choice', 'timeclose', 0, array('id' => $choice->id));
         $results = mod_choice_external::submit_choice_response($choice->id, array($options[1], $options[2]));
-        $results = \external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::submit_choice_response_returns(), $results);
 
         // Delete all responses.
         $results = mod_choice_external::delete_choice_responses($choice->id);
-        $results = \external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
+        $results = external_api::clean_returnvalue(mod_choice_external::delete_choice_responses_returns(), $results);
 
         $this->assertTrue($results['status']);
         $this->assertCount(0, $results['warnings']);

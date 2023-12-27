@@ -15,7 +15,7 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/local/movemodal/movesection
+    @template core_courseformat/local/content/movesection
 
     Displays the course index.
 
@@ -42,7 +42,11 @@
     }
 
 }}
-<p data-for="sectionname">{{#str}} movefull, moodle, {{sectiontitle}} {{/str}}:</p>
+{{#information}}
+<p data-for="sectionname">
+    {{information}}:
+</p>
+{{/information}}
 <nav class="collapse-list" id="destination-selector" role="tree">
     {{#sections}}
     <div

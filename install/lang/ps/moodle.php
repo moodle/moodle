@@ -32,3 +32,5 @@ defined('MOODLE_INTERNAL') || die();
 $string['language'] = 'ژبه';
 $string['moodlelogo'] = 'د موډل نښان';
 $string['next'] = 'بل';
+$string['previous'] = 'مخکینۍ';
+$string['reload'] = 'بیا بار کړئ';

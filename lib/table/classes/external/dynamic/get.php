@@ -14,23 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Table external API.
- *
- * @package    core_table
- * @category   external
- * @copyright  2020 Simey Lameze <simey@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_table\external\dynamic;
 
-use external_api;
-use external_function_parameters;
-use external_multiple_structure;
-use external_single_structure;
-use external_value;
-use external_warnings;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
 
 /**
  * Core table external functions.
@@ -91,7 +82,15 @@ class get extends external_api {
                         new external_value(PARAM_RAW, 'Filter value'),
                         'The value to filter on',
                         VALUE_REQUIRED
-                    )
+                    ),
+                    'filteroptions' => new external_multiple_structure(
+                        new external_single_structure([
+                            'name' => new external_value(PARAM_ALPHANUM, 'Name of the filter option', VALUE_REQUIRED),
+                            'value' => new external_value(PARAM_RAW, 'Value of the filter option', VALUE_REQUIRED),
+                        ]),
+                        'Additional options for this filter',
+                        VALUE_OPTIONAL,
+                    ),
                 ]),
                 'The filters that will be applied in the request',
                 VALUE_OPTIONAL
@@ -210,7 +209,7 @@ class get extends external_api {
             throw new \UnexpectedValueException("Table handler class {$tableclass} does not support dynamic updating.");
         }
 
-        $filtersetclass = "{$tableclass}_filterset";
+        $filtersetclass = $tableclass::get_filterset_class();
         if (!class_exists($filtersetclass)) {
             throw new \UnexpectedValueException("The filter specified ({$filtersetclass}) is invalid.");
         }

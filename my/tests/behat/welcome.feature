@@ -29,4 +29,4 @@ Feature: Welcome message
     And I log out
     And I should see "You are not logged in" in the "page-footer" "region"
     And I log in as "admin"
-    Then I should see "Welcome back, Admin!" in the "page-header" "region"
+    Then I should see "Hi, Admin!" in the "page-header" "region"

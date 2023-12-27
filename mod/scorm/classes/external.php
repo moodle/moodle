@@ -25,10 +25,16 @@
  */
 
 use core_course\external\helper_for_get_mods_by_courses;
+use core_external\external_api;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_single_structure;
+use core_external\external_value;
+use core_external\external_warnings;
+use core_external\util;
 
 defined('MOODLE_INTERNAL') || die;
 
-require_once($CFG->libdir . '/externallib.php');
 require_once($CFG->dirroot . '/mod/scorm/lib.php');
 require_once($CFG->dirroot . '/mod/scorm/locallib.php');
 
@@ -94,7 +100,7 @@ class mod_scorm_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.0
      */
     public static function view_scorm_returns() {
@@ -475,11 +481,12 @@ class mod_scorm_external extends external_api {
 
         // Check settings / permissions to view the SCORM.
         scorm_require_available($scorm);
+        $attemptobject = scorm_get_attempt($USER->id, $scorm->id, $params['attempt']);
 
         foreach ($params['tracks'] as $track) {
             $element = $track['element'];
             $value = $track['value'];
-            $trackid = scorm_insert_track($USER->id, $scorm->id, $sco->id, $params['attempt'], $element, $value,
+            $trackid = scorm_insert_track($USER->id, $scorm->id, $sco->id, $attemptobject, $element, $value,
                                             $scorm->forcecompleted);
 
             if ($trackid) {
@@ -674,7 +681,7 @@ class mod_scorm_external extends external_api {
         // Ensure there are courseids to loop through.
         if (!empty($params['courseids'])) {
 
-            list($courses, $warnings) = external_util::validate_courses($params['courseids'], $courses);
+            list($courses, $warnings) = util::validate_courses($params['courseids'], $courses);
 
             // Get the scorms in this course, this function checks users visibility permissions.
             // We can avoid then additional validate_context calls.
@@ -736,9 +743,17 @@ class mod_scorm_external extends external_api {
             }
         }
 
-        $result = array();
-        $result['scorms'] = $returnedscorms;
-        $result['warnings'] = $warnings;
+        $settings = [
+            [
+                'name' => 'scormstandard',
+                'value' => get_config('scorm', 'scormstandard'),
+            ]
+        ];
+        $result = [
+            'scorms'   => $returnedscorms,
+            'options'  => $settings,
+            'warnings' => $warnings
+        ];
         return $result;
     }
 
@@ -806,6 +821,14 @@ class mod_scorm_external extends external_api {
                             'timemodified' => new external_value(PARAM_INT, 'Time of last modification', VALUE_OPTIONAL),
                         ]
                     ), 'SCORM')
+                ),
+                'options' => new external_multiple_structure(
+                    new external_single_structure(
+                        [
+                            'name' => new external_value(PARAM_RAW, 'Options name'),
+                            'value' => new external_value(PARAM_RAW, 'Option value')
+                        ]
+                    ), 'Global SCORM options', VALUE_OPTIONAL
                 ),
                 'warnings' => new external_warnings(),
             )
@@ -879,7 +902,7 @@ class mod_scorm_external extends external_api {
     /**
      * Returns description of method result value
      *
-     * @return external_description
+     * @return \core_external\external_description
      * @since Moodle 3.1
      */
     public static function launch_sco_returns() {

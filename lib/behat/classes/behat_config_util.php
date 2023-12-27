@@ -552,7 +552,7 @@ class behat_config_util {
                 'extensions' => array(
                     'Behat\MinkExtension' => array(
                         'base_url' => $CFG->behat_wwwroot,
-                        'goutte' => null,
+                        'browserkit_http' => null,
                         'webdriver' => $webdriverwdhost
                     ),
                     'Moodle\BehatExtension' => array(

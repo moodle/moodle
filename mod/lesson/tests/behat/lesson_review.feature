@@ -16,9 +16,19 @@ Feature: In a lesson activity, students can review the answers they gave to ques
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
-    Given the following "activities" exist:
+    And the following "activity" exist:
       | activity   | name             | course | idnumber |
       | lesson     | Test lesson name | C1     | lesson1  |
+    And the following "mod_lesson > pages" exist:
+      | lesson           | qtype     | title                 | content                   |
+      | Test lesson name | numeric   | Hardest question ever | 1 + 1?                    |
+      | Test lesson name | truefalse | Next question         | Paper is made from trees. |
+    And the following "mod_lesson > answers" exist:
+      | page                  | answer | response         | jumpto    | score |
+      | Hardest question ever | 2      | Correct answer   | Next page | 1     |
+      | Hardest question ever | 1      | Incorrect answer | This page | 0     |
+      | Next question         | True   | Correct          | Next page | 1     |
+      | Next question         | False  | Wrong            | This page | 0     |
     And I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
     And I set the following fields to these values:
       | Display ongoing score | Yes |
@@ -29,32 +39,6 @@ Feature: In a lesson activity, students can review the answers they gave to ques
       | Custom scoring | No |
       | Re-takes allowed | Yes |
     And I press "Save and display"
-    And I follow "Add a question page"
-    And I set the field "Select a question type" to "Numerical"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | Hardest question ever |
-      | Page contents | 1 + 1? |
-      | id_answer_editor_0 | 2 |
-      | id_response_editor_0 | Correct answer |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | 1 |
-      | id_response_editor_1 | Incorrect answer |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
-    And I select "Add a question page" from the "qtype" singleselect
-    And I set the field "Select a question type" to "True/false"
-    And I press "Add a question page"
-    And I set the following fields to these values:
-      | Page title | Next question |
-      | Page contents | Paper is made from trees. |
-      | id_answer_editor_0 | True |
-      | id_response_editor_0 | Correct |
-      | id_jumpto_0 | Next page |
-      | id_answer_editor_1 | False |
-      | id_response_editor_1 | Wrong |
-      | id_jumpto_1 | This page |
-    And I press "Save page"
     And I am on the "Test lesson name" "lesson activity" page logged in as student1
     And I should see "You have answered 0 correctly out of 0 attempts."
     And I set the following fields to these values:

@@ -34,6 +34,11 @@ define("LABEL_MAX_NAME_LENGTH", 50);
  * @return string
  */
 function get_label_name($label) {
+    // Return label name if not empty.
+    if ($label->name) {
+        return $label->name;
+    }
+
     $context = context_module::instance($label->coursemodule);
     $intro = format_text($label->intro, $label->introformat, ['filter' => false, 'context' => $context]);
     $name = html_to_text(format_string($intro, true, ['context' => $context]));

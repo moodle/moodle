@@ -121,65 +121,73 @@ class helper_test extends \advanced_testcase {
     }
 
     /**
+     * Count how many questions in the list belong to the given category.
+     *
+     * @param string $categoryid a category id
+     * @param array $questionids list of question ids
+     * @return int
+     */
+    private function count_category_questions(string $categoryid, array $questionids): int {
+        global $DB;
+        $this->assertNotEmpty($questionids);
+        list($insql, $inparams) = $DB->get_in_or_equal($questionids, SQL_PARAMS_NAMED);
+        $sql = "SELECT COUNT(q.id)
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+                  JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+                 WHERE qc.id = :categoryid
+                   AND q.id $insql";
+
+        return $DB->count_records_sql($sql, array_merge(['categoryid' => $categoryid], $inparams));
+    }
+
+    /**
+     * Assert that the given category contains following questions
+     *
+     * @param string $categoryid a category id
+     * @param array $questionids list of question ids
+     * @return void
+     */
+    protected function assert_category_contains_questions(string $categoryid, array $questionids) {
+        // The category need to contain all the questions.
+        $this->assertEquals(count($questionids), $this->count_category_questions($categoryid, $questionids));
+    }
+
+    /**
+     * Assert that the given category does not contain following questions
+     *
+     * @param string $categoryid a category id
+     * @param array $questionids list of question ids
+     * @return void
+     */
+    protected function assert_category_does_not_contain_questions(string $categoryid, array $questionids) {
+        // The category does not contain any question.
+        $this->assertEquals(0, $this->count_category_questions($categoryid, $questionids));
+    }
+
+    /**
      * Test bulk move of questions.
      *
      * @covers ::bulk_move_questions
      */
     public function test_bulk_move_questions() {
+        global $DB;
         $this->helper_setup();
-        // Verify that the questions are available in the current view.
-        $view = new \core_question\local\bank\view($this->contexts, new \moodle_url('/'), $this->course);
-        ob_start();
-        $pagevars = [
-            'qpage' => 0,
-            'qperpage' => DEFAULT_QUESTIONS_PER_PAGE,
-            'cat' => $this->cat->id . ',' . $this->context->id,
-            'recurse' => false,
-            'showhidden' => false,
-            'qbshowtext' => false
-        ];
-        $view->display($pagevars, 'editq');
-        $html = ob_get_clean();
-        $this->assertStringContainsString('Example question', $html);
-        $this->assertStringContainsString('Example question second', $html);
 
         // Get the processed question ids.
         $questionlist = $this->process_question_ids_test();
+        $questionids = array_map('intval', explode(',', $questionlist));
 
+        // Verify that the questions are available in the current view.
+        $this->assert_category_contains_questions($this->cat->id, $questionids);
         helper::bulk_move_questions($questionlist, $this->secondcategory);
 
         // Verify the questions are not in the current category.
-        $view = new \core_question\local\bank\view($this->contexts, new \moodle_url('/'), $this->course);
-        ob_start();
-        $pagevars = [
-            'qpage' => 0,
-            'qperpage' => DEFAULT_QUESTIONS_PER_PAGE,
-            'cat' => $this->cat->id . ',' . $this->context->id,
-            'recurse' => false,
-            'showhidden' => false,
-            'qbshowtext' => false
-        ];
-        $view->display($pagevars, 'editq');
-        $html = ob_get_clean();
-        $this->assertStringNotContainsString('Example question', $html);
-        $this->assertStringNotContainsString('Example question second', $html);
+        $this->assert_category_does_not_contain_questions($this->cat->id, $questionids);
 
         // Verify the questions are in the new category.
-        $view = new \core_question\local\bank\view($this->contexts, new \moodle_url('/'), $this->course);
-        ob_start();
-        $pagevars = [
-            'qpage' => 0,
-            'qperpage' => DEFAULT_QUESTIONS_PER_PAGE,
-            'cat' => $this->secondcategory->id . ',' . $this->context->id,
-            'category' => $this->secondcategory->id . ',' . $this->context->id,
-            'recurse' => false,
-            'showhidden' => false,
-            'qbshowtext' => false
-        ];
-        $view->display($pagevars, 'editq');
-        $html = ob_get_clean();
-        $this->assertStringContainsString('Example question', $html);
-        $this->assertStringContainsString('Example question second', $html);
+        $this->assert_category_contains_questions($this->secondcategory->id, $questionids);
     }
 
     /**

@@ -33,7 +33,7 @@ use core_xapi\local\statement\item_verb;
 use core_xapi\local\statement\item_activity;
 use externallib_advanced_testcase;
 use stdClass;
-use external_api;
+use core_external\external_api;
 
 defined('MOODLE_INTERNAL') || die();
 

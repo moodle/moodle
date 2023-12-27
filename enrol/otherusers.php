@@ -98,7 +98,7 @@ echo $OUTPUT->header();
 // Check we have a search button to render.
 $searchbuttonrender = null;
 if ($searchbutton = $table->get_user_search_button()) {
-    $searchbutton->primary = true;
+    $searchbutton->type = single_button::BUTTON_PRIMARY;
     $searchbuttonrender = $OUTPUT->render($searchbutton);
 }
 

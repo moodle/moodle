@@ -56,16 +56,6 @@ class comments_viewed extends \core\event\comments_viewed {
     }
 
     /**
-     * Return the legacy event log data.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return(array($this->courseid, 'wiki', 'comments',
-            'comments.php?pageid=' . $this->objectid, $this->objectid, $this->contextinstanceid));
-    }
-
-    /**
      * Get URL related to the action.
      *
      * @return \moodle_url

@@ -28,9 +28,9 @@ use core_question\local\bank\plugin_features_base;
  */
 class plugin_feature extends plugin_features_base {
 
-    public function get_question_columns($qbank): array {
+    public function get_question_actions($qbank): array {
         return [
-            new export_xml_action_column($qbank)
+            new export_xml_action($qbank)
         ];
     }
 

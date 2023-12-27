@@ -250,6 +250,18 @@ class cache_config_testing extends cache_config_writer {
     }
 
     /**
+     * Hacks the in-memory configuration for a store.
+     *
+     * @param string $store Name of store to edit e.g. 'default_application'
+     * @param array $configchanges List of config changes
+     */
+    public function phpunit_edit_store_config(string $store, array $configchanges): void {
+        foreach ($configchanges as $name => $value) {
+            $this->configstores[$store]['configuration'][$name] = $value;
+        }
+    }
+
+    /**
      * Forcefully adds a session store.
      *
      * @param string $name

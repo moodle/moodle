@@ -1,0 +1,23 @@
+{
+    "name": "lbuchs/webauthn",
+    "description": "A simple PHP WebAuthn (FIDO2) server library",
+    "keywords": [
+        "webauthn", "authentication"
+    ],
+    "homepage": "https://github.com/lbuchs/webauthn",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lukas Buchs",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php" : ">=8.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "lbuchs\\WebAuthn\\": "src"
+        }
+    }
+}

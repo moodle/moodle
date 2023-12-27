@@ -116,6 +116,7 @@ if ($form->is_cancelled()) {
     $event->trigger();
 
     $newbadge = new badge($newid);
+    core_tag_tag::set_item_tags('core_badges', 'badge', $newid, $PAGE->context, $data->tags);
     badges_process_badge_image($newbadge, $form->save_temp_file('image'));
     // If a user can configure badge criteria, they will be redirected to the criteria page.
     if (has_capability('moodle/badges:configurecriteria', $PAGE->context)) {

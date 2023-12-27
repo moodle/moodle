@@ -51,7 +51,11 @@ $strdata = get_string('modulename','data');
 $strdataplural  = get_string('modulenameplural','data');
 
 $PAGE->navbar->add($strdata, new moodle_url('/mod/data/index.php', array('id'=>$course->id)));
-$PAGE->set_title($strdata);
+$titleparts = [
+    $strdataplural,
+    format_string($course->fullname),
+];
+$PAGE->set_title(implode(moodle_page::TITLE_SEPARATOR, $titleparts));
 $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 echo $OUTPUT->heading($strdataplural, 2);

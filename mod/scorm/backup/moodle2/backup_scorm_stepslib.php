@@ -141,7 +141,12 @@ class backup_scorm_activity_structure_step extends backup_activity_structure_ste
 
         // All the rest of elements only happen if we are including user info
         if ($userinfo) {
-            $scotrack->set_source_table('scorm_scoes_track', array('scoid' => backup::VAR_PARENTID), 'id ASC');
+            $sql = 'SELECT v.id, a.userid, a.attempt, e.element, v.value, v.timemodified
+                    FROM {scorm_attempt} a
+                    JOIN {scorm_scoes_value} v ON v.attemptid = a.id
+                    JOIN {scorm_element} e ON e.id = v.elementid
+                    WHERE v.scoid = :scoid';
+            $scotrack->set_source_sql($sql, ['scoid' => backup::VAR_PARENTID], 'id ASC');
         }
 
         // Define id annotations

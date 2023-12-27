@@ -41,8 +41,8 @@ class helper {
      * Store an H5P file.
      *
      * @param factory $factory The \core_h5p\factory object
-     * @param stored_file $file Moodle file instance
-     * @param stdClass $config Button options config
+     * @param \stored_file $file Moodle file instance
+     * @param \stdClass $config Button options config
      * @param bool $onlyupdatelibs Whether new libraries can be installed or only the existing ones can be updated
      * @param bool $skipcontent Should the content be skipped (so only the libraries will be saved)?
      *
@@ -66,6 +66,32 @@ class helper {
             if (!empty($h5pvalidator->h5pC->mainJsonData['title'])) {
                 $content['title'] = $h5pvalidator->h5pC->mainJsonData['title'];
             }
+
+            // If exists, add the metadata from 'h5p.json' to avoid loosing this information.
+            $data = $h5pvalidator->h5pC->mainJsonData;
+            if (!empty($data)) {
+                // The metadata fields are defined in 'joubel/core/h5p-metadata.class.php'.
+                $metadatafields = [
+                    'title',
+                    'a11yTitle',
+                    'changes',
+                    'authors',
+                    'source',
+                    'license',
+                    'licenseVersion',
+                    'licenseExtras',
+                    'authorComments',
+                    'yearFrom',
+                    'yearTo',
+                    'defaultLanguage',
+                ];
+                $content['metadata'] = array_reduce($metadatafields, function ($array, $field) use ($data) {
+                    if (array_key_exists($field, $data)) {
+                        $array[$field] = $data[$field];
+                    }
+                    return $array;
+                }, []);
+            }
             $h5pstorage->savePackage($content, null, $skipcontent, $options);
 
             return $h5pstorage->contentId;
@@ -77,10 +103,10 @@ class helper {
     /**
      * Get the error messages stored in our H5P framework.
      *
-     * @param stdClass $messages The error, exception and info messages, raised while preparing and running an H5P content.
+     * @param \stdClass $messages The error, exception and info messages, raised while preparing and running an H5P content.
      * @param factory $factory The \core_h5p\factory object
      *
-     * @return stdClass with framework error messages.
+     * @return \stdClass with framework error messages.
      */
     public static function get_messages(\stdClass $messages, factory $factory): \stdClass {
         $core = $factory->get_core();
@@ -198,7 +224,7 @@ class helper {
      * @param string $filepath The filepath of the file
      * @param  int   $userid  The author of the file
      * @param  \context $context The context where the file will be created
-     * @return stored_file The file created
+     * @return \stored_file The file created
      */
     public static function create_fake_stored_file_from_path(string $filepath, int $userid = 0,
             \context $context = null): \stored_file {
@@ -314,18 +340,20 @@ class helper {
     /**
      * Get the settings needed by the H5P library.
      *
+     * @param string|null $component
      * @return array The settings.
      */
-    public static function get_core_settings(): array {
+    public static function get_core_settings(?string $component = null): array {
         global $CFG, $USER;
 
         $basepath = $CFG->wwwroot . '/';
         $systemcontext = context_system::instance();
 
-        // Generate AJAX paths.
-        $ajaxpaths = [];
-        $ajaxpaths['xAPIResult'] = '';
-        $ajaxpaths['contentUserData'] = '';
+        // H5P doesn't currently support xAPI State. It implements a mechanism in contentUserDataAjax() in h5p.js to update user
+        // data. However, in our case, we're overriding this method to call the xAPI State web services.
+        $ajaxpaths = [
+            'contentUserData' => '',
+        ];
 
         $factory = new factory();
         $core = $factory->get_core();
@@ -336,13 +364,17 @@ class helper {
             $usersettings['name'] = fullname($USER, has_capability('moodle/site:viewfullnames', $systemcontext));
             $usersettings['id'] = $USER->id;
         }
+        $savefreq = false;
+        if ($component !== null && get_config($component, 'enablesavestate')) {
+            $savefreq = get_config($component, 'savestatefreq');
+        }
         $settings = array(
             'baseUrl' => $basepath,
             'url' => "{$basepath}pluginfile.php/{$systemcontext->instanceid}/core_h5p",
             'urlLibraries' => "{$basepath}pluginfile.php/{$systemcontext->id}/core_h5p/libraries",
             'postUserStatistics' => false,
             'ajax' => $ajaxpaths,
-            'saveFreq' => false,
+            'saveFreq' => $savefreq,
             'siteUrl' => $CFG->wwwroot,
             'l10n' => array('H5P' => $core->getLocalization()),
             'user' => $usersettings,
@@ -360,13 +392,14 @@ class helper {
     /**
      * Get the core H5P assets, including all core H5P JavaScript and CSS.
      *
+     * @param string|null $component
      * @return Array core H5P assets.
      */
-    public static function get_core_assets(): array {
-        global $CFG, $PAGE;
+    public static function get_core_assets(?string $component = null): array {
+        global $PAGE;
 
         // Get core settings.
-        $settings = self::get_core_settings();
+        $settings = self::get_core_settings($component);
         $settings['core'] = [
             'styles' => [],
             'scripts' => []

@@ -1,4 +1,4 @@
-@core @core_completion
+@core @core_completion @javascript
 Feature: Show activity completion status or activity completion configuration on the course page
   In order to understand the configuration or status of an activity's completion
   As a user
@@ -38,16 +38,16 @@ Feature: Show activity completion status or activity completion configuration on
 
   Scenario: Show completion configuration to editing teachers
     Given I am on the "Course 1" course page logged in as teacher1
-    And the manual completion button for "Test forum name" should be disabled
+    And "Test forum name" should have the "Mark as done" completion condition
     And "Test assignment name" should have the "View" completion condition
     And there should be no completion information shown for "Test quiz name"
     And I am on "Course 1" course homepage with editing mode on
-    And the manual completion button for "Test forum name" should be disabled
+    And "Test forum name" should have the "Mark as done" completion condition
     And "Test assignment name" should have the "View" completion condition
     And there should be no completion information shown for "Test quiz name"
 
   Scenario: Show completion configuration to non-editing teachers
     Given I am on the "Course 1" course page logged in as teacher2
-    And the manual completion button for "Test forum name" should be disabled
+    And "Test forum name" should have the "Mark as done" completion condition
     And "Test assignment name" should have the "View" completion condition
     And there should be no completion information shown for "Test quiz name"

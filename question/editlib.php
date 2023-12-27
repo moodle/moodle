@@ -23,8 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-
-use core_question\bank\search\category_condition;
+use core\output\datafilter;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -196,23 +195,14 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
     $params['category'] = optional_param('category', null, PARAM_SEQUENCE);
     $params['qperpage'] = optional_param('qperpage', null, PARAM_INT);
 
-    // Question table sorting options.
-    for ($i = 1; $i <= core_question\local\bank\view::MAX_SORTS; $i++) {
-        $param = 'qbs' . $i;
-        if ($sort = optional_param($param, '', PARAM_TEXT)) {
-            $params[$param] = $sort;
-        } else {
-            break;
-        }
-    }
-
     // Display options.
-    $params['recurse'] = optional_param('recurse',    null, PARAM_BOOL);
-    $params['showhidden'] = optional_param('showhidden', null, PARAM_BOOL);
-    $params['qbshowtext'] = optional_param('qbshowtext', null, PARAM_INT);
+    $params['filter'] = optional_param('filter',    null, PARAM_RAW);
+
     // Category list page.
     $params['cpage'] = optional_param('cpage', null, PARAM_INT);
-    $params['qtagids'] = optional_param_array('qtagids', null, PARAM_INT);
+
+    // Sort data.
+    $params['sortdata'] = optional_param_array('sortdata', [], PARAM_INT);
 
     $PAGE->set_pagelayout('admin');
 
@@ -235,9 +225,6 @@ function question_edit_setup($edittab, $baseurl, $requirecmid = false, $unused =
  *      'cat' => PARAM_SEQUENCE,
  *      'category' => PARAM_SEQUENCE,
  *      'qperpage' => PARAM_INT,
- *      'recurse' => PARAM_INT,
- *      'showhidden' => PARAM_INT,
- *      'qbshowtext' => PARAM_INT,
  *      'cpage' => PARAM_INT,
  *      'recurse' => PARAM_BOOL,
  *      'showhidden' => PARAM_BOOL,
@@ -263,8 +250,8 @@ function question_build_edit_resources($edittab, $baseurl, $params,
     $thispageurl->remove_all_params(); // We are going to explicity add back everything important - this avoids unwanted params from being retained.
 
     $cleanparams = [
-        'qsorts' => [],
-        'qtagids' => []
+        'sortdata' => [],
+        'filter' => null
     ];
     $paramtypes = [
         'cmid' => PARAM_INT,
@@ -273,13 +260,7 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         'cat' => PARAM_SEQUENCE,
         'category' => PARAM_SEQUENCE,
         'qperpage' => PARAM_INT,
-        'recurse' => PARAM_INT,
-        'showhidden' => PARAM_INT,
-        'qbshowtext' => PARAM_INT,
         'cpage' => PARAM_INT,
-        'recurse' => PARAM_BOOL,
-        'showhidden' => PARAM_BOOL,
-        'qbshowtext' => PARAM_INT,
     ];
 
     foreach ($paramtypes as $name => $type) {
@@ -290,8 +271,15 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         }
     }
 
-    if (!empty($params['qtagids'])) {
-        $cleanparams['qtagids'] = clean_param_array($params['qtagids'], PARAM_INT);
+    if (!empty($params['filter'])) {
+        if (!is_array($params['filter'])) {
+            $params['filter'] = json_decode($params['filter'], true);
+        }
+        $cleanparams['filter'] = $params['filter'];
+    }
+
+    if (isset($params['sortdata'])) {
+        $cleanparams['sortdata'] = clean_param_array($params['sortdata'], PARAM_INT);
     }
 
     $cmid = $cleanparams['cmid'];
@@ -300,15 +288,7 @@ function question_build_edit_resources($edittab, $baseurl, $params,
     $cat = $cleanparams['cat'] ?: 0;
     $category = $cleanparams['category'] ?: 0;
     $qperpage = $cleanparams['qperpage'];
-    $recurse = $cleanparams['recurse'];
-    $showhidden = $cleanparams['showhidden'];
-    $qbshowtext = $cleanparams['qbshowtext'];
     $cpage = $cleanparams['cpage'] ?: 1;
-    $recurse = $cleanparams['recurse'];
-    $showhidden = $cleanparams['showhidden'];
-    $qbshowtext = $cleanparams['qbshowtext'];
-    $qsorts = $cleanparams['qsorts'];
-    $qtagids = $cleanparams['qtagids'];
 
     if (is_null($cmid) && is_null($courseid)) {
         throw new \moodle_exception('Must provide a cmid or courseid');
@@ -318,14 +298,19 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         list($module, $cm) = get_module_from_cmid($cmid);
         $courseid = $cm->course;
         $thispageurl->params(compact('cmid'));
-        require_login($courseid, false, $cm);
         $thiscontext = context_module::instance($cmid);
     } else {
         $module = null;
         $cm = null;
         $thispageurl->params(compact('courseid'));
-        require_login($courseid, false);
         $thiscontext = context_course::instance($courseid);
+    }
+
+    if (defined('AJAX_SCRIPT') && AJAX_SCRIPT) {
+        // For AJAX, we don't need to set up the course page for output.
+        require_login();
+    } else {
+        require_login($courseid, false, $cm);
     }
 
     if ($thiscontext){
@@ -353,19 +338,6 @@ function question_build_edit_resources($edittab, $baseurl, $params,
 
     if (strpos($baseurl, '/question/') === 0) {
         navigation_node::override_active_url($thispageurl);
-    }
-
-    // This need to occur after the override_active_url call above because
-    // these values change on the page request causing the URLs to mismatch
-    // when trying to work out the active node.
-    for ($i = 1; $i <= core_question\local\bank\view::MAX_SORTS; $i++) {
-        $param = 'qbs' . $i;
-        if (isset($params[$param])) {
-            $value = clean_param($params[$param], PARAM_TEXT);
-        } else {
-            break;
-        }
-        $thispageurl->param($param, $value);
     }
 
     if ($pagevars['qpage'] > -1) {
@@ -399,21 +371,26 @@ function question_build_edit_resources($edittab, $baseurl, $params,
         $pagevars['cat'] = "{$category->id},{$category->contextid}";
     }
 
-    // Display options.
-    $pagevars['recurse']    = question_set_or_get_user_preference('recurse', $recurse, 1, $thispageurl);
-    $pagevars['showhidden'] = question_set_or_get_user_preference('showhidden', $showhidden, 0, $thispageurl);
-    $pagevars['qbshowtext'] = question_set_or_get_user_preference('qbshowtext', $qbshowtext, 0, $thispageurl);
-
     // Category list page.
     $pagevars['cpage'] = $cpage;
     if ($pagevars['cpage'] != 1){
         $thispageurl->param('cpage', $pagevars['cpage']);
     }
 
-    $pagevars['qtagids'] = $qtagids;
-    foreach ($pagevars['qtagids'] as $index => $qtagid) {
-        $thispageurl->param("qtagids[{$index}]", $qtagid);
+    if ($cleanparams['filter']) {
+        $pagevars['filter'] = $cleanparams['filter'];
+        $thispageurl->param('filter', json_encode($cleanparams['filter']));
     }
+    $pagevars['tabname'] = $edittab;
+
+    // Sort parameters.
+    $pagevars['sortdata'] = $cleanparams['sortdata'];
+    foreach ($pagevars['sortdata'] as $sortname => $sortorder) {
+        $thispageurl->param('sortdata[' . $sortname . ']', $sortorder);
+    }
+
+    // Enforce ALL as the only allowed top-level join type, so we can't bypass filtering by category.
+    $pagevars['jointype'] = datafilter::JOINTYPE_ALL;
 
     return array($thispageurl, $contexts, $cmid, $cm, $module, $pagevars);
 }

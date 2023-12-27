@@ -32,19 +32,27 @@ defined('MOODLE_INTERNAL') || die;
 /**
  * The gradebook simple view - initial view to select your search options
  *
+ * @deprecated since Moodle 4.3
  * @package   gradereport_singleview
  * @copyright 2014 Moodle Pty Ltd (http://moodle.com)
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class select extends screen {
 
+    /** @var \stdClass course data. */
+    public $item;
+
     /**
      * Initialise this screen
      *
+     * @deprecated since Moodle 4.3
      * @param bool $selfitemisempty Has an item been selected (will be false)
      */
     public function init($selfitemisempty = false) {
         global $DB;
+
+        debugging('The function ' . __FUNCTION__ . '() is deprecated as part of the deprecation process of the ' .
+            '\gradereport_singleview\local\screen\select class which is no longer used.', DEBUG_DEVELOPER);
 
         $roleids = explode(',', get_config('moodle', 'gradebookroles'));
 
@@ -63,19 +71,27 @@ class select extends screen {
     /**
      * Get the type of items on this screen, not valid so return false.
      *
+     * @deprecated since Moodle 4.3
      * @return string|null
      */
     public function item_type(): ?string {
+        debugging('The function ' . __FUNCTION__ . '() is deprecated as part of the deprecation process of the ' .
+            '\gradereport_singleview\local\screen\select class which is no longer used.', DEBUG_DEVELOPER);
+
         return false;
     }
 
     /**
      * Return the HTML for the page.
      *
+     * @deprecated since Moodle 4.3
      * @return string
      */
     public function html(): string {
         global $OUTPUT, $COURSE;
+
+        debugging('The function ' . __FUNCTION__ . '() is deprecated as part of the deprecation process of the ' .
+            '\gradereport_singleview\local\screen\select class which is no longer used.', DEBUG_DEVELOPER);
 
         if ($this->itemid === null) {
             $userlink = new \moodle_url('/grade/report/singleview/index.php', ['id' => $COURSE->id, 'item' => 'user_select']);
@@ -97,7 +113,7 @@ class select extends screen {
         $types = gradereport_singleview\report\singleview::valid_screens();
 
         foreach ($types as $type) {
-            $classname = "gradereport_singleview\\local\\screen\\${type}";
+            $classname = "gradereport_singleview\\local\\screen\\{$type}";
 
             $screen = new $classname($this->courseid, null, $this->groupid);
 
@@ -134,17 +150,27 @@ class select extends screen {
 
     /**
      * Should we show the next prev selector?
+     *
+     * @deprecated since Moodle 4.3
      * @return bool
      */
     public function supports_next_prev(): bool {
+        debugging('The function ' . __FUNCTION__ . '() is deprecated as part of the deprecation process of the ' .
+            '\gradereport_singleview\local\screen\select class which is no longer used.', DEBUG_DEVELOPER);
+
         return false;
     }
 
     /**
      * Should we show the base singlereport group selector?
+     *
+     * @deprecated since Moodle 4.3
      * @return bool
      */
     public function display_group_selector(): bool {
+        debugging('The function ' . __FUNCTION__ . '() is deprecated as part of the deprecation process of the ' .
+            '\gradereport_singleview\local\screen\select class which is no longer used.', DEBUG_DEVELOPER);
+
         if ($this->itemid === null) {
             return false;
         }
@@ -154,18 +180,26 @@ class select extends screen {
     /**
      * Get the heading for the screen.
      *
+     * @deprecated since Moodle 4.3
      * @return string
      */
     public function heading(): string {
+        debugging('The function ' . __FUNCTION__ . '() is deprecated as part of the deprecation process of the ' .
+            '\gradereport_singleview\local\screen\select class which is no longer used.', DEBUG_DEVELOPER);
+
         return ' ';
     }
 
     /**
      * Does this screen support paging?
      *
+     * @deprecated since Moodle 4.3
      * @return bool
      */
     public function supports_paging(): bool {
+        debugging('The function ' . __FUNCTION__ . '() is deprecated as part of the deprecation process of the ' .
+            '\gradereport_singleview\local\screen\select class which is no longer used.', DEBUG_DEVELOPER);
+
         return false;
     }
 }

@@ -138,7 +138,7 @@ class helper {
         }
         $params = array();
         if (!empty($search)) {
-            list($filtersql, $params) = users_search_sql($search, 'u', true, $extrafields);
+            list($filtersql, $params) = users_search_sql($search, 'u', USER_SEARCH_CONTAINS, $extrafields);
             $filtersql .= ' AND ';
         } else {
             $filtersql = '';

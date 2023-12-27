@@ -60,7 +60,7 @@ class lock_config {
             $dbtype = clean_param($DB->get_dbfamily(), PARAM_ALPHA);
 
             // DB Specific lock factory is preferred - should support auto-release.
-            $lockfactoryclass = "\\core\\lock\\${dbtype}_lock_factory";
+            $lockfactoryclass = "\\core\\lock\\{$dbtype}_lock_factory";
             if (!class_exists($lockfactoryclass)) {
                 $lockfactoryclass = '\core\lock\file_lock_factory';
             }
@@ -93,7 +93,7 @@ class lock_config {
         }
 
         // If tracking performance, insert a timing wrapper to keep track of lock delays.
-        if ((defined('MDL_PERF') && MDL_PERF) || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
+        if (MDL_PERF || (!empty($CFG->perfdebug) && $CFG->perfdebug > 7)) {
             $wrapper = new timing_wrapper_lock_factory($type, $lockfactory);
             $lockfactory = $wrapper;
         }

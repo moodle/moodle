@@ -79,6 +79,12 @@ class flexible_table {
     var $column_suppress = array();
     var $column_nosort   = array('userpic');
     private $column_textsort = array();
+
+    /**
+     * @var array The sticky attribute of each table column.
+     */
+    protected $columnsticky = [];
+
     /** @var boolean Stores if setup has already been called on this flixible table. */
     var $setup           = false;
     var $baseurl         = NULL;
@@ -151,6 +157,7 @@ class flexible_table {
      */
     var $started_output = false;
 
+    /** @var table_dataformat_export_format */
     var $exportclass = null;
 
     /**
@@ -158,16 +165,16 @@ class flexible_table {
      */
     private $prefs = array();
 
-    /** @var $sheettitle */
+    /** @var string $sheettitle */
     protected $sheettitle;
 
-    /** @var $filename */
+    /** @var string $filename */
     protected $filename;
 
     /** @var array $hiddencolumns List of hidden columns. */
     protected $hiddencolumns;
 
-    /** @var $resetting bool Whether the table preferences is resetting. */
+    /** @var bool $resetting Whether the table preferences is resetting. */
     protected $resetting;
 
     /**
@@ -231,8 +238,8 @@ class flexible_table {
 
     /**
      * Get, and optionally set, the export class.
-     * @param $exportclass (optional) if passed, set the table to use this export class.
-     * @return table_default_export_format_parent the export class in use (after any set).
+     * @param table_dataformat_export_format $exportclass (optional) if passed, set the table to use this export class.
+     * @return table_dataformat_export_format the export class in use (after any set).
      */
     function export_class_instance($exportclass = null) {
         if (!is_null($exportclass)) {
@@ -440,6 +447,17 @@ class flexible_table {
     }
 
     /**
+     * Sets a sticky attribute to a column.
+     * @param string $column Column name
+     * @param bool $sticky
+     */
+    public function column_sticky(string $column, bool $sticky = true): void {
+        if (isset($this->columnsticky[$column])) {
+            $this->columnsticky[$column] = $sticky == true ? ' sticky-column' : '';
+        }
+    }
+
+    /**
      * Sets the given $attributes to $this->columnsattributes.
      * Column attributes will be added to every cell in the column.
      *
@@ -477,6 +495,7 @@ class flexible_table {
         $this->columns = array();
         $this->column_style = array();
         $this->column_class = array();
+        $this->columnsticky = [];
         $this->columnsattributes = [];
         $colnum = 0;
 
@@ -484,6 +503,7 @@ class flexible_table {
             $this->columns[$column]         = $colnum++;
             $this->column_style[$column]    = array();
             $this->column_class[$column]    = '';
+            $this->columnsticky[$column]    = '';
             $this->columnsattributes[$column] = [];
             $this->column_suppress[$column] = false;
         }
@@ -542,7 +562,6 @@ class flexible_table {
     /**
      * Must be called after table is defined. Use methods above first. Cannot
      * use functions below till after calling this method.
-     * @return type?
      */
     function setup() {
 
@@ -577,7 +596,7 @@ class flexible_table {
     /**
      * Get the order by clause from the session or user preferences, for the table with id $uniqueid.
      * @param string $uniqueid the identifier for a table.
-     * @return SQL fragment that can be used in an ORDER BY clause.
+     * @return string SQL fragment that can be used in an ORDER BY clause.
      */
     public static function get_sort_for_table($uniqueid) {
         global $SESSION;
@@ -600,7 +619,7 @@ class flexible_table {
     /**
      * Prepare an an order by clause from the list of columns to be sorted.
      * @param array $cols column name => SORT_ASC or SORT_DESC
-     * @return SQL fragment that can be used in an ORDER BY clause.
+     * @return string SQL fragment that can be used in an ORDER BY clause.
      */
     public static function construct_order_by($cols, $textsortcols=array()) {
         global $DB;
@@ -621,7 +640,7 @@ class flexible_table {
     }
 
     /**
-     * @return SQL fragment that can be used in an ORDER BY clause.
+     * @return string SQL fragment that can be used in an ORDER BY clause.
      */
     public function get_sql_sort() {
         return self::construct_order_by($this->get_sort_columns(), $this->column_textsort);
@@ -1160,7 +1179,7 @@ class flexible_table {
             }
 
             $attributes = [
-                'class' => "cell c{$index}" . $this->column_class[$column],
+                'class' => "cell c{$index}" . $this->column_class[$column] . $this->columnsticky[$column],
                 'id' => "{$rowid}_c{$index}",
                 'style' => $this->make_styles_string($this->column_style[$column]),
             ];
@@ -1342,7 +1361,7 @@ class flexible_table {
             }
 
             $attributes = array(
-                'class' => 'header c' . $index . $this->column_class[$column],
+                'class' => 'header c' . $index . $this->column_class[$column] . $this->columnsticky[$column],
                 'scope' => 'col',
             );
             if ($this->headers[$index] === NULL) {
@@ -1991,6 +2010,15 @@ class flexible_table {
     }
 
     /**
+     * Get the class used as a filterset.
+     *
+     * @return string
+     */
+    public static function get_filterset_class(): string {
+        return static::class . '_filterset';
+    }
+
+    /**
      * Attempt to guess the base URL.
      */
     public function guess_base_url(): void {
@@ -2274,10 +2302,10 @@ class table_dataformat_export_format extends table_default_export_format_parent 
     /** @var \core\dataformat\base $dataformat */
     protected $dataformat;
 
-    /** @var $rownum */
+    /** @var int $rownum */
     protected $rownum = 0;
 
-    /** @var $columns */
+    /** @var array $columns */
     protected $columns;
 
     /**

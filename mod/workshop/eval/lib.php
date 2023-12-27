@@ -31,6 +31,9 @@ require_once($CFG->dirroot . '/lib/formslib.php');
  */
 abstract class workshop_evaluation {
 
+    /** @var workshop the parent workshop instance */
+    protected $workshop;
+
     /**
      * Calculates grades for assessment and updates 'gradinggrade' fields in 'workshop_assessments' table
      *

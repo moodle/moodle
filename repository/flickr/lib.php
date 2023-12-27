@@ -151,7 +151,7 @@ class repository_flickr extends repository {
      * @return bool
      */
     public function global_search() {
-        if (empty($this->token)) {
+        if (empty($this->accesstoken)) {
             return false;
         } else {
             return true;

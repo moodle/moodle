@@ -28,7 +28,7 @@ Feature: tool_monitor_subscriptions
     And I press "Add a new rule"
     And I set the following fields to these values:
       | name                 | New rule course level                             |
-      | plugin               | Core                                              |
+      | plugin               | Subsystem (core)                                  |
       | eventname            | Course viewed                                     |
       | id_description       | I want a rule to monitor when a course is viewed. |
       | frequency            | 1                                                 |
@@ -39,7 +39,7 @@ Feature: tool_monitor_subscriptions
     And I press "Add a new rule"
     And I set the following fields to these values:
       | name                 | New rule site level                               |
-      | plugin               | Core                                              |
+      | plugin               | Subsystem (core)                                  |
       | eventname            | Course viewed                                     |
       | id_description       | I want a rule to monitor when a course is viewed. |
       | frequency            | 1                                                 |

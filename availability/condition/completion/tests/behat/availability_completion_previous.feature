@@ -97,7 +97,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     When I open "Page2" actions menu
     And I click on "Edit settings" "link" in the "Page2" activity
     And I set the following fields to these values:
-      | Completion tracking | Do not indicate activity completion |
+      | None | 1 |
     And I press "Save and return to course"
     When I turn editing mode off
     Then I should see "Not available unless: The activity Page1 is marked complete" in the "region-main" "region"
@@ -197,7 +197,7 @@ Feature: Confirm that availability_completion works with previous activity setti
     And I open "Page3" actions menu
     And I click on "Edit settings" "link" in the "Page3" activity
     And I set the following fields to these values:
-      | Completion tracking | Do not indicate activity completion |
+      | None | 1 |
     And I press "Save and return to course"
 
     When I turn editing mode off

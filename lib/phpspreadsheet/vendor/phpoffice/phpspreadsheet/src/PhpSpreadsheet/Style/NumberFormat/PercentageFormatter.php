@@ -6,6 +6,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class PercentageFormatter extends BaseFormatter
 {
+    /** @param float|int $value */
     public static function format($value, string $format): string
     {
         if ($format === NumberFormat::FORMAT_PERCENTAGE) {
@@ -31,7 +32,7 @@ class PercentageFormatter extends BaseFormatter
         }
         // Number of digits to display before the decimal
         if (preg_match('/([#0,]+)\.?/u', $format, $matches)) {
-            $firstZero = preg_replace('/^[#,]*/', '', $matches[1]);
+            $firstZero = preg_replace('/^[#,]*/', '', $matches[1]) ?? '';
             $wholePartSize = max($wholePartSize, strlen($firstZero));
         }
 

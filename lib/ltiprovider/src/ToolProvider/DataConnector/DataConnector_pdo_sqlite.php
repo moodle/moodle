@@ -18,6 +18,7 @@ use PDO;
  */
 
 
+#[\AllowDynamicProperties]
 class DataConnector_pdo_sqlite extends DataConnector_pdo
 {
 

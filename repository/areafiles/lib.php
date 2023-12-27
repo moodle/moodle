@@ -89,8 +89,8 @@ class repository_areafiles extends repository {
                     'children' => array(),
                     'datemodified' => $file->get_timemodified(),
                     'datecreated' => $file->get_timecreated(),
-                    'icon' => $OUTPUT->image_url(file_folder_icon(24))->out(false),
-                    'thumbnail' => $OUTPUT->image_url(file_folder_icon(90))->out(false)
+                    'icon' => $OUTPUT->image_url(file_folder_icon())->out(false),
+                    'thumbnail' => $OUTPUT->image_url(file_folder_icon())->out(false)
                 );
                 $ret['list'][] = $node;
                 $ret['path'] = $retpath; // Show path if subfolders exist.
@@ -107,8 +107,8 @@ class repository_areafiles extends repository {
                 'license' => $file->get_license(),
                 'isref' => $file->is_external_file(),
                 'iscontrolledlink' => $file->is_controlled_link(),
-                'icon' => $OUTPUT->image_url(file_file_icon($file, 24))->out(false),
-                'thumbnail' => $OUTPUT->image_url(file_file_icon($file, 90))->out(false)
+                'icon' => $OUTPUT->image_url(file_file_icon($file))->out(false),
+                'thumbnail' => $OUTPUT->image_url(file_file_icon($file))->out(false)
             );
             if ($file->get_status() == 666) {
                 $node['originalmissing'] = true;

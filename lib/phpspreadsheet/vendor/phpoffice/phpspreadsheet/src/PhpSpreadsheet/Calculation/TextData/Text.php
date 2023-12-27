@@ -5,6 +5,7 @@ namespace PhpOffice\PhpSpreadsheet\Calculation\TextData;
 use PhpOffice\PhpSpreadsheet\Calculation\ArrayEnabled;
 use PhpOffice\PhpSpreadsheet\Calculation\Calculation;
 use PhpOffice\PhpSpreadsheet\Calculation\Functions;
+use PhpOffice\PhpSpreadsheet\Calculation\Information\ErrorValue;
 
 class Text
 {
@@ -28,7 +29,7 @@ class Text
 
         $value = Helpers::extractString($value);
 
-        return mb_strlen($value ?? '', 'UTF-8');
+        return mb_strlen($value, 'UTF-8');
     }
 
     /**
@@ -58,12 +59,12 @@ class Text
     }
 
     /**
-     * RETURNSTRING.
+     * T.
      *
      * @param mixed $testValue Value to check
      *                         Or can be an array of values
      *
-     * @return null|array|string
+     * @return array|string
      *         If an array of values is passed for the argument, then the returned result
      *            will also be an array with matching dimensions
      */
@@ -77,7 +78,7 @@ class Text
             return $testValue;
         }
 
-        return null;
+        return '';
     }
 
     /**
@@ -192,7 +193,7 @@ class Text
         if (is_array($delimiter) && count($valueSet) > 1) {
             $quotedDelimiters = array_map(
                 function ($delimiter) {
-                    return preg_quote($delimiter ?? '');
+                    return preg_quote($delimiter ?? '', '/');
                 },
                 $valueSet
             );
@@ -201,7 +202,7 @@ class Text
             return '(' . $delimiters . ')';
         }
 
-        return '(' . preg_quote(Functions::flattenSingleValue($delimiter)) . ')';
+        return '(' . preg_quote(/** @scrutinizer ignore-type */ Functions::flattenSingleValue($delimiter), '/') . ')';
     }
 
     private static function matchFlags(bool $matchMode): string
@@ -232,7 +233,7 @@ class Text
     private static function formatValueMode0($cellValue): string
     {
         if (is_bool($cellValue)) {
-            return ($cellValue) ? Calculation::$localeBoolean['TRUE'] : Calculation::$localeBoolean['FALSE'];
+            return Calculation::getLocaleBoolean($cellValue ? 'TRUE' : 'FALSE');
         }
 
         return (string) $cellValue;
@@ -243,10 +244,10 @@ class Text
      */
     private static function formatValueMode1($cellValue): string
     {
-        if (is_string($cellValue) && Functions::isError($cellValue) === false) {
+        if (is_string($cellValue) && ErrorValue::isError($cellValue) === false) {
             return Calculation::FORMULA_STRING_QUOTE . $cellValue . Calculation::FORMULA_STRING_QUOTE;
         } elseif (is_bool($cellValue)) {
-            return ($cellValue) ? Calculation::$localeBoolean['TRUE'] : Calculation::$localeBoolean['FALSE'];
+            return Calculation::getLocaleBoolean($cellValue ? 'TRUE' : 'FALSE');
         }
 
         return (string) $cellValue;

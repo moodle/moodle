@@ -1,0 +1,5 @@
+This files describes API changes in /mod/folder/*,
+information provided here is intended especially for developers.
+
+=== 4.3 ===
+  * htmllize_tree() method has been deprecated. Use renderable_tree_elements() instead.

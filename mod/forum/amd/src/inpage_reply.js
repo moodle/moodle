@@ -85,7 +85,7 @@ define([
     };
 
     /**
-     * Register the event listeners for the submit button of the in page reply.
+     * Register the event listeners for the submit/cancel buttons of the in page reply.
      *
      * @param {Object} root The discussion container element.
      */
@@ -187,6 +187,13 @@ define([
                         allButtons.prop('disabled', false);
                         return Notification.exception(error);
                     });
+            }
+        });
+
+        root.on('click', Selectors.post.inpageCancelButton, function() {
+            // Tell formchangechecker to reset the form state.
+            if (typeof M.core_formchangechecker !== 'undefined') {
+                M.core_formchangechecker.reset_form_dirty_state();
             }
         });
     };

@@ -23,14 +23,20 @@
  */
 namespace core\plugininfo;
 
-use moodle_url, part_of_admin_tree, admin_settingpage, core_plugin_manager;
-
-defined('MOODLE_INTERNAL') || die();
+use admin_settingpage;
+use core_plugin_manager;
+use moodle_url;
+use part_of_admin_tree;
 
 /**
  * Class for question types
  */
 class qtype extends base {
+
+    public static function plugintype_supports_disabling(): bool {
+        return true;
+    }
+
     /**
      * Finds all enabled plugins, the result may include missing plugins.
      * @return array|null of enabled plugins $pluginname=>$pluginname, null means unknown
@@ -129,6 +135,7 @@ class qtype extends base {
 
     public function load_settings(part_of_admin_tree $adminroot, $parentnodename, $hassiteconfig) {
         global $CFG, $USER, $DB, $OUTPUT, $PAGE; // In case settings.php wants to refer to them.
+        /** @var \admin_root $ADMIN */
         $ADMIN = $adminroot; // May be used in settings.php.
         $plugininfo = $this; // Also can be used inside settings.php.
         $qtype = $this;      // Also can be used inside settings.php.

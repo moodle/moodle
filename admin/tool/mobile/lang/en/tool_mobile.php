@@ -32,6 +32,11 @@ $string['autologinkeygenerationlockout'] = 'Auto-login key generation is blocked
 $string['autologinmintimebetweenreq'] = 'Minimum time between auto-login requests';
 $string['autologinmintimebetweenreq_desc'] = 'The minimum time between auto-login requests from the mobile app. If app users are frequently asked to enter their credentials when viewing content embedded from the site, then set a lower value.';
 $string['autologinnotallowedtoadmins'] = 'Auto-login is not allowed for site admins.';
+$string['autologout'] = 'Enforce auto logout for your users';
+$string['autologout_desc'] = 'For security reasons, you can enforce automatic logout for your users when they leave or close the app, or it goes to background. Users will have to log in again when they return to the app.';
+$string['autologoutcustom'] = 'Custom time after users leave or close the app';
+$string['autologoutinmediate'] = 'Immediately after users leave or close the app';
+$string['autologouttime'] = 'Auto logout timer';
 $string['cachedef_plugininfo'] = 'This stores the list of plugins with mobile addons';
 $string['cachedef_subscriptiondata'] = 'This stores the Moodle app subscription information.';
 $string['clickheretolaunchtheapp'] = 'Click here if the app does not open automatically.';
@@ -151,9 +156,3 @@ $string['privacy:metadata:core_userkey'] = 'User\'s keys used to create auto-log
 $string['responsivemainmenuitems'] = 'Responsive menu items';
 $string['switchaccount'] = 'Switch account';
 $string['viewqrcode'] = 'View QR code';
-
-// Deprecated since Moodle 3.10.
-$string['mobileappconnected'] = 'Mobile app connected';
-
-// Deprecated since Moodle 3.11.
-$string['openusingembeddedbrowser'] = 'Open using embedded browser';

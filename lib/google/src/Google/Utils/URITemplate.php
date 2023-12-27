@@ -19,6 +19,7 @@
  * Implementation of levels 1-3 of the URI Template spec.
  * @see http://tools.ietf.org/html/rfc6570
  */
+#[AllowDynamicProperties]
 class Google_Utils_URITemplate
 {
   const TYPE_MAP = "1";

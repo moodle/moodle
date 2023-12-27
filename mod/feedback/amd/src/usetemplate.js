@@ -23,7 +23,7 @@
 
 import ModalForm from 'core_form/modalform';
 import Notification from 'core/notification';
-import {get_string as getString} from 'core/str';
+import {getString} from 'core/str';
 
 const selectors = {
     modaltrigger: '[data-action="usetemplate"]',

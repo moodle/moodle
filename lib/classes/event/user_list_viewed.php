@@ -80,15 +80,6 @@ class user_list_viewed extends base {
         return new \moodle_url('/user/index.php', array('id' => $this->courseid));
     }
 
-    /**
-     * Returns array of parameters to be passed to legacy add_to_log() function.
-     *
-     * @return array
-     */
-    protected function get_legacy_logdata() {
-        return array($this->courseid, 'user', 'view all', 'index.php?id=' . $this->courseid, '');
-    }
-
     public static function get_objectid_mapping() {
         return array('db' => 'course', 'restore' => 'course');
     }
