@@ -28508,42 +28508,6 @@ span.editinstructions .alert-link {
   color: #00171b;
 }
 
-/* Course drag and drop upload styles */
-#dndupload-status {
-  position: fixed;
-  left: 0;
-  width: 40%;
-  margin: 0 30%;
-  padding: 6px;
-  text-align: center;
-  z-index: 1;
-  border: 0 solid transparent;
-  color: #00434e;
-  background-color: #cce6ea;
-  border-color: #b8dce2;
-}
-#dndupload-status hr {
-  border-top-color: #a6d3db;
-}
-#dndupload-status .alert-link {
-  color: #00171b;
-}
-
-.dndupload-preview {
-  padding: 1rem;
-  background-color: #0f6cbf;
-  color: #fff;
-  text-align: center;
-  font-size: 1.171875rem;
-  max-width: 600px;
-  margin: 0 auto;
-  border-radius: 0.5rem;
-}
-
-.dndupload-hidden {
-  display: none;
-}
-
 /* COURSES LISTINGS AND COURSE SUMMARY */
 #page-course-pending .singlebutton,
 #page-course-index .singlebutton,
@@ -29188,27 +29152,6 @@ span.editinstructions .alert-link {
 .course-section .section_goto .icon {
   font-size: 1.171875rem;
   color: #0f6cbf;
-}
-.course-section.dndupload-dropzone {
-  border: 2px dashed #0f6cbf;
-  padding-left: 2px;
-  padding-right: 2px;
-  position: relative;
-}
-.course-section.dndupload-dropzone .dndupload-preview-overlay {
-  background-color: #fff;
-  opacity: 0.8;
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-.course-section.dndupload-dropzone .dndupload-preview-wrapper {
-  position: absolute;
-  top: 0;
-  padding: 2rem;
-  width: 100%;
 }
 
 /* Re-style ordered list in course content */
