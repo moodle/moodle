@@ -1397,6 +1397,7 @@ $string['tasklockcleanuptask'] = 'Clean up ad hoc task metadata';
 $string['taskadmintitle'] = 'Tasks';
 $string['taskanalyticscleanup'] = 'Analytics cleanup';
 $string['taskautomatedbackup'] = 'Automated backups';
+$string['taskautomatedbackup_report'] = 'Automated backups report';
 $string['taskbackupcleanup'] = 'Clean backup tables, logs and files';
 $string['taskbadgescron'] = 'Award badges';
 $string['taskbadgesmessagecron'] = 'Background processing for sending badges notifications';
