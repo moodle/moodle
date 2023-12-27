@@ -186,14 +186,24 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
     /**
      * Override parent method of the same, to ensure that any columns with custom sort fields are accounted for
      *
+     * Because the base table_sql has "special" handling of fullname columns {@see table_sql::contains_fullname_columns}, we need
+     * to handle that here to ensure that any that are being sorted take priority over reportbuilders own aliases of the same
+     * columns. This prevents them appearing multiple times in a query, which SQL Server really doesn't like
+     *
      * @return string
      */
     public function get_sql_sort() {
         $columnsbyalias = $this->report->get_active_columns_by_alias();
         $columnsortby = [];
 
+        // First pass over sorted columns, to extract all the fullname fields from table_sql.
+        $sortedcolumns = $this->get_sort_columns();
+        $sortedcolumnsfullname = array_filter($sortedcolumns, static function(string $alias): bool {
+            return !preg_match('/^c[\d]+_/', $alias);
+        }, ARRAY_FILTER_USE_KEY);
+
         // Iterate over all sorted report columns, replace with columns own fields if applicable.
-        foreach ($this->get_sort_columns() as $alias => $order) {
+        foreach ($sortedcolumns as $alias => $order) {
             $column = $columnsbyalias[$alias] ?? null;
 
             // If the column is not being aggregated and defines custom sort fields, then use them.
@@ -207,6 +217,14 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
                 $columnsortby[$alias] = $order;
             }
         }
+
+        // Now ensure that any fullname sorted columns have duplicated aliases removed.
+        $columnsortby = array_filter($columnsortby, static function(string $alias) use ($sortedcolumnsfullname): bool {
+            if (preg_match('/^c[\d]+_(?<column>.*)$/', $alias, $matches)) {
+                return !array_key_exists($matches['column'], $sortedcolumnsfullname);
+            }
+            return true;
+        }, ARRAY_FILTER_USE_KEY);
 
         return static::construct_order_by($columnsortby);
     }
