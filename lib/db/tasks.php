@@ -448,4 +448,13 @@ $tasks = array(
         'month' => '*',
         'disabled' => true,
     ],
+    [
+        'classname' => 'core\task\automated_backup_report_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
 );

@@ -32,9 +32,28 @@ trait task_trait {
      */
     protected function execute_task(string $taskclass): void {
         // Run the scheduled task.
-        ob_start();
+        $this->start_output_buffering();
         $task = manager::get_scheduled_task($taskclass);
         $task->execute();
+        $this->stop_output_buffering();
+    }
+
+    /**
+     * Helper to start output buffering.
+     */
+    protected function start_output_buffering(): void {
+        ob_start();
+    }
+
+    /**
+     * Helper to stop output buffering.
+     *
+     * @return string|null The output buffer contents or null if output buffering is not active.
+     */
+    protected function stop_output_buffering(): ?string {
+        $output = ob_get_contents();
         ob_end_clean();
+
+        return $output;
     }
 }
