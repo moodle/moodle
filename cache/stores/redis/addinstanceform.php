@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/cache/forms.php');
+require_once($CFG->dirroot . '/cache/forms.php');
 
 /**
  * Form for adding instance of Redis Cache Store.
@@ -39,7 +39,12 @@ class cachestore_redis_addinstance_form extends cachestore_addinstance_form {
     protected function configuration_definition() {
         $form = $this->_form;
 
-        $form->addElement('text', 'server', get_string('server', 'cachestore_redis'), array('size' => 24));
+        $form->addElement('advcheckbox', 'clustermode', get_string('clustermode', 'cachestore_redis'), '',
+            cache_helper::is_cluster_available() ? '' : 'disabled');
+        $form->addHelpButton('clustermode', 'clustermode', 'cachestore_redis');
+        $form->setType('clustermode', PARAM_BOOL);
+
+        $form->addElement('textarea', 'server', get_string('server', 'cachestore_redis'), ['cols' => 6, 'rows' => 10]);
         $form->setType('server', PARAM_TEXT);
         $form->addHelpButton('server', 'server', 'cachestore_redis');
         $form->addRule('server', get_string('required'), 'required');
