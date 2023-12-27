@@ -346,7 +346,9 @@ $CFG->admin = 'admin';
 //
 //   Redis session handler (requires redis server and redis extension):
 //      $CFG->session_handler_class = '\core\session\redis';
-//      $CFG->session_redis_host = '127.0.0.1';
+//      $CFG->session_redis_host = '127.0.0.1';  or...              // If there is only one host, use the single Redis connection.
+//      $CFG->session_redis_host = '127.0.0.1:7000,127.0.0.1:7001'; // If there are multiple hosts (separated by a comma),
+//                                                                  // use the Redis cluster connection.
 //      Use TLS to connect to Redis. An array of SSL context options. Usually:
 //      $CFG->session_redis_encrypt = ['cafile' => '/path/to/ca.crt']; or...
 //      $CFG->session_redis_encrypt = ['verify_peer' => false, 'verify_peer_name' => false];
