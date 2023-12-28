@@ -27,7 +27,7 @@ Feature: Display and choose from the available activities in course
   Scenario: The teacher can choose to add an activity from the activity items in the activity chooser
     Given I click on "Add an activity or resource" "button" in the "Topic 4" "section"
     When I click on "Add a new Assignment" "link" in the "Add an activity or resource" "dialogue"
-    Then I should see "Adding a new Assignment"
+    Then I should see "New Assignment"
     And I set the following fields to these values:
       | Assignment name | Test Assignment Topic 4 |
     And I press "Save and return to course"
@@ -37,7 +37,7 @@ Feature: Display and choose from the available activities in course
     Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"
     When I click on "Information about the Assignment activity" "button" in the "Add an activity or resource" "dialogue"
     When I click on "Add a new Assignment" "link" in the "help" "core_course > Activity chooser screen"
-    Then I should see "Adding a new Assignment"
+    Then I should see "New Assignment"
 
   Scenario: Show summary
     Given I click on "Add an activity or resource" "button" in the "Topic 1" "section"

@@ -85,15 +85,7 @@ if (!empty($add)) {
 
     $sectionname = get_section_name($course, $cw);
     $fullmodulename = get_string('modulename', $module->name);
-
-    if ($data->section && $course->format != 'site') {
-        $heading = new stdClass();
-        $heading->what = $fullmodulename;
-        $heading->to   = $sectionname;
-        $pageheading = get_string('addinganewto', 'moodle', $heading);
-    } else {
-        $pageheading = get_string('addinganew', 'moodle', $fullmodulename);
-    }
+    $pageheading = $pagetitle = get_string('addinganew', 'moodle', $fullmodulename);
     $navbaraddition = $pageheading;
 
 } else if (!empty($update)) {
@@ -123,15 +115,8 @@ if (!empty($add)) {
 
     $sectionname = get_section_name($course, $cw);
     $fullmodulename = get_string('modulename', $module->name);
-
-    if ($data->section && $course->format != 'site') {
-        $heading = new stdClass();
-        $heading->what = $fullmodulename;
-        $heading->in   = $sectionname;
-        $pageheading = get_string('updatingain', 'moodle', $heading);
-    } else {
-        $pageheading = get_string('updatinga', 'moodle', $fullmodulename);
-    }
+    $pageheading = get_string('editsettings', 'moodle');
+    $pagetitle = get_string('edita', 'moodle', $fullmodulename);
     $navbaraddition = null;
 
 } else {
@@ -207,10 +192,6 @@ if ($mform->is_cancelled()) {
     exit;
 
 } else {
-
-    $streditinga = get_string('editinga', 'moodle', $fullmodulename);
-    $strmodulenameplural = get_string('modulenameplural', $module->name);
-
     if (!empty($cm->id)) {
         $context = context_module::instance($cm->id);
     } else {
@@ -218,7 +199,10 @@ if ($mform->is_cancelled()) {
     }
 
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_title($streditinga);
+    if ($course->id !== $SITE->id) {
+        $pagetitle = $pagetitle . moodle_page::TITLE_SEPARATOR . $course->shortname;
+    }
+    $PAGE->set_title($pagetitle);
     $PAGE->set_cacheable(false);
 
     if (isset($navbaraddition)) {
@@ -227,12 +211,7 @@ if ($mform->is_cancelled()) {
     $PAGE->activityheader->disable();
 
     echo $OUTPUT->header();
-
-    if (get_string_manager()->string_exists('modulename_help', $module->name)) {
-        echo $OUTPUT->heading_with_help($pageheading, 'modulename', $module->name, 'monologo');
-    } else {
-        echo $OUTPUT->heading_with_help($pageheading, '', $module->name, 'monologo');
-    }
+    echo $OUTPUT->heading_with_help($pageheading, '', $module->name, 'monologo');
 
     $mform->display();
 

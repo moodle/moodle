@@ -24,4 +24,4 @@ Feature: Edit format course to Single Activity format
     And I press "Update format"
     Then I should see "Forum" in the "Type of activity" "field"
     And I press "Save and display"
-    And I should see "Adding a new Forum"
+    And I should see "New Forum"

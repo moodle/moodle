@@ -33,4 +33,4 @@ Feature: Courses can be created in Single Activity mode
     Then I should see "Quiz" in the "Type of activity" "field"
     And I should not see "Forum" in the "Type of activity" "field"
     And I press "Save and display"
-    And I should see "Adding a new Quiz"
+    And I should see "New Quiz"

@@ -40,7 +40,7 @@ Feature: Course activity controls works as expected
     And <belowpage> "section" <should_see_other_sections> exist
     And I open "Test forum name 1" actions menu
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
-    And I should see "Updating Forum"
+    And I should see "Edit settings"
     And I should see "Display description on course page"
     And I set the following fields to these values:
       | Forum name | Just to check that I can edit the name |
@@ -107,7 +107,7 @@ Feature: Course activity controls works as expected
     And I press "Yes"
     And <belowpage> "section" <should_see_other_sections> exist
     And I click on "Edit settings" "link" in the "Test forum name 1" activity
-    And I should see "Updating Forum"
+    And I should see "Edit settings"
     And I should see "Display description on course page"
     And I press "Save and return to course"
     And <belowpage> "section" <should_see_other_sections> exist

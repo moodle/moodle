@@ -119,3 +119,8 @@ backupcourse,core_backup
 linkcoursesections,core_admin
 linkcoursesections_help,core_admin
 showallusers,core
+updatinga,core
+updatingain,core
+addnew,core
+addinganewto,core
+editinga,core

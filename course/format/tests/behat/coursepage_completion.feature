@@ -155,7 +155,7 @@ Feature: Course page activities completion
     But I am on "C1" course homepage with editing mode on
     And I click on "Edit conditions" "link" in the "Activity sample" "core_courseformat > Activity completion"
     And I should see "Activity sample" in the "page-header" "region"
-    And I should see "Updating: Assignment"
+    And I should see "Edit settings"
     And I should see "Activity completion"
 
   Scenario: Completion dialog shows warning message if there are no criterias
