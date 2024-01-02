@@ -3682,5 +3682,27 @@ privatefiles,moodle|/user/files.php';
     // Automatically generated Moodle v4.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+
+    if ($oldversion < 2023100902.01) {
+        $sqllike = $DB->sql_like('filtercondition', '?');
+        $params[] = '%includesubcategories%';
+
+        $sql = "SELECT qsr.* FROM {question_set_references} qsr WHERE $sqllike";
+        $results = $DB->get_recordset_sql($sql, $params);
+        foreach ($results as $result) {
+            $filtercondition = json_decode($result->filtercondition);
+            if (isset($filtercondition->filter->category->includesubcategories)) {
+                $filtercondition->filter->category->filteroptions =
+                    ['includesubcategories' => $filtercondition->filter->category->includesubcategories];
+                unset($filtercondition->filter->category->includesubcategories);
+                $result->filtercondition = json_encode($filtercondition);
+                $DB->update_record('question_set_references', $result);
+            }
+        }
+        $results->close();
+
+        upgrade_main_savepoint(true, 2023100902.01);
+    }
+
     return true;
 }
