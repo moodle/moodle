@@ -920,5 +920,26 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2023122100.01);
     }
 
+    if ($oldversion < 2023122100.02) {
+        $sqllike = $DB->sql_like('filtercondition', '?');
+        $params[] = '%includesubcategories%';
+
+        $sql = "SELECT qsr.* FROM {question_set_references} qsr WHERE $sqllike";
+        $results = $DB->get_recordset_sql($sql, $params);
+        foreach ($results as $result) {
+            $filtercondition = json_decode($result->filtercondition);
+            if (isset($filtercondition->filter->category->includesubcategories)) {
+                $filtercondition->filter->category->filteroptions =
+                    ['includesubcategories' => $filtercondition->filter->category->includesubcategories];
+                unset($filtercondition->filter->category->includesubcategories);
+                $result->filtercondition = json_encode($filtercondition);
+                $DB->update_record('question_set_references', $result);
+            }
+        }
+        $results->close();
+
+        upgrade_main_savepoint(true, 2023122100.02);
+    }
+
     return true;
 }

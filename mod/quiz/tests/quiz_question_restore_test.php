@@ -16,6 +16,8 @@
 
 namespace mod_quiz;
 
+use core_question\question_reference_manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -558,6 +560,12 @@ class quiz_question_restore_test extends \advanced_testcase {
             $this->assertArrayHasKey('filter', $filterconditions);
             $this->assertArrayHasKey('category', $filterconditions['filter']);
             $this->assertArrayHasKey('qtagids', $filterconditions['filter']);
+            $this->assertArrayHasKey('filteroptions', $filterconditions['filter']['category']);
+            $this->assertArrayHasKey('includesubcategories', $filterconditions['filter']['category']['filteroptions']);
+
+            // MDL-79708: Bad filter conversion check.
+            $this->assertArrayNotHasKey('includesubcategories', $filterconditions['filter']['category']);
+
             $this->assertArrayNotHasKey('questioncategoryid', $filterconditions);
             $this->assertArrayNotHasKey('tags', $filterconditions);
             $expectedtags = \core_tag_tag::get_by_name_bulk(1, ['foo', 'bar']);
@@ -567,6 +575,18 @@ class quiz_question_restore_test extends \advanced_testcase {
             $this->assertEquals($expectedcategory->id, $filterconditions['filter']['category']['values'][0]);
             $expectedcat = implode(',', [$expectedcategory->id, $expectedcategory->contextid]);
             $this->assertEquals($expectedcat, $filterconditions['cat']);
+
+            // MDL-79708: Try to convert already converted filter.
+            $filterconditionsold = $filterconditions;
+            $filterconditions = question_reference_manager::convert_legacy_set_reference_filter_condition($filterconditions);
+            // Check that the filtercondition didn't change.
+            $this->assertEquals($filterconditionsold, $filterconditions);
+
+            // MDL-79708: Try to convert a filter with previously bad conversion.
+            $filterconditions['filter']['category']['includesubcategories'] = 0;
+            unset($filterconditions['filter']['category']['filteroptions']);
+            $filterconditions = question_reference_manager::convert_legacy_set_reference_filter_condition($filterconditions);
+            $this->assertEquals($filterconditionsold, $filterconditions);
         }
     }
 }
