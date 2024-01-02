@@ -897,5 +897,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2023121800.02);
     }
 
+    if ($oldversion < 2023122100.01) {
+
+        // Define field component to be added to course_sections.
+        $table = new xmldb_table('course_sections');
+        $field = new xmldb_field('component', XMLDB_TYPE_CHAR, '100', null, null, null, null, 'availability');
+
+        // Conditionally launch add field component.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Define field itemid to be added to course_sections.
+        $field = new xmldb_field('itemid', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'component');
+
+        // Conditionally launch add field itemid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023122100.01);
+    }
+
     return true;
 }

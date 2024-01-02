@@ -46,6 +46,7 @@ always linked because a new page, section.php, has been created to display any s
   - course/format/renderer.php
   - course/format/topics/renderer.php
   - course/format/weeks/renderer.php
+* New core_courseformat\sectiondelegate class. The class can be extended by plugins to take control of a course section.
 
 === 4.3 ===
 * New core_courseformat\output\activitybadge class that can be extended by any module to display content near the activity name.

@@ -1629,6 +1629,8 @@ class restore_section_structure_step extends restore_structure_step {
                             $data, true);
                 }
             }
+            $section->component = $data->component ?? null;
+            $section->itemid = $data->itemid ?? null;
             $newitemid = $DB->insert_record('course_sections', $section);
             $section->id = $newitemid;
 

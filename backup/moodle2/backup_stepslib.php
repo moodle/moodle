@@ -400,9 +400,14 @@ class backup_section_structure_step extends backup_structure_step {
 
         // Define each element separated
 
-        $section = new backup_nested_element('section', array('id'), array(
+        $section = new backup_nested_element(
+            'section',
+            ['id'],
+            [
                 'number', 'name', 'summary', 'summaryformat', 'sequence', 'visible',
-                'availabilityjson', 'timemodified'));
+                'availabilityjson', 'component', 'itemid', 'timemodified',
+            ]
+        );
 
         // attach format plugin structure to $section element, only one allowed
         $this->add_plugin_structure('format', $section, false);
