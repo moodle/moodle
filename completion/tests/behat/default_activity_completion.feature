@@ -29,7 +29,7 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I set the field "Course completion tertiary navigation" to "Default activity completion"
     And I click on "Expand Assignment" "button"
     And I set the following fields to these values:
-      | Add requirements          | 1 |
+      | id_completion_assign_2    | 1 |
       | completionview_assign     | 1 |
       | completionusegrade_assign | 1 |
       | completionsubmit_assign   | 1 |
