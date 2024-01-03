@@ -336,8 +336,9 @@ define(['jquery', 'core/notification', 'core/str', 'core/form-autocomplete',
         } else {
             select.attr('data-selected', userid);
 
-            if (!isNaN(useridnumber) && useridnumber > 0) {
-                $(document).trigger('user-changed', userid);
+            // If we have some filtered users, and userid is specified, then trigger change.
+            if (this._filteredUsers.length > 0 && !isNaN(useridnumber) && useridnumber > 0) {
+                $(document).trigger('user-changed', useridnumber);
             }
         }
     };
