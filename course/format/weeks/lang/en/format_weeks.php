@@ -30,6 +30,7 @@ $string['hidefromothers'] = 'Hide';
 $string['page-course-view-weeks'] = 'Any course main page in weekly sections format';
 $string['page-course-view-weeks-x'] = 'Any course page in weekly sections format';
 $string['pluginname'] = 'Weekly sections';
+$string['plugin_description'] = 'The course is divided into sections corresponding to each week, beginning from the course start date.';
 $string['privacy:metadata'] = 'The Weekly sections format plugin does not store any personal data.';
 $string['indentation'] = 'Allow indentation on course page';
 $string['indentation_help'] = 'Allow teachers, and other users with the manage activities capability, to indent items on the course page.';

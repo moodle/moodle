@@ -132,3 +132,4 @@ topicshow,core
 topichide,core
 summary_help,core
 editsummary,core
+format_help,core

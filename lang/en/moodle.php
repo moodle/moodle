@@ -935,12 +935,6 @@ $string['forgotten'] = 'Forgotten your username or password?';
 $string['forgottenduplicate'] = 'The email address is shared by several accounts, please enter username instead';
 $string['forgotteninvalidurl'] = 'Invalid password reset URL';
 $string['format'] = 'Format';
-$string['format_help'] = 'The course format determines the layout of the course page.
-
-* Single activity - The course contains only one activity or resource.
-* Social - A forum is displayed on the course page.
-* Custom sections - The course is divided into customisable sections.
-* Weekly sections - The course is divided into sections corresponding to each week, beginning from the course start date.';
 $string['formathtml'] = 'HTML format';
 $string['formatmarkdown'] = 'Markdown format';
 $string['formatplain'] = 'Plain text format';
@@ -2501,3 +2495,9 @@ $string['topicshow'] = 'Show this topic to {$a}';
 $string['topichide'] = 'Hide this topic from {$a}';
 $string['summary_help'] = 'The idea of a summary is a short text to prepare students for the activities within the topic or week. The text is shown on the course page under the section name.';
 $string['editsummary'] = 'Edit summary';
+$string['format_help'] = 'The course format determines the layout of the course page.
+
+* Single activity - The course contains only one activity or resource.
+* Social - The course is centred around a main forum on the course page. Additional activities and resources can be added using the Social activities block.
+* Custom sections - The course is divided into customisable sections.
+* Weekly sections - The course is divided into sections corresponding to each week, beginning from the course start date.';

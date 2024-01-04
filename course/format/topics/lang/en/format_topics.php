@@ -27,6 +27,7 @@ $string['hidefromothers'] = 'Hide';
 $string['page-course-view-topics'] = 'Any course main page in custom sections format';
 $string['page-course-view-topics-x'] = 'Any course page in custom sections format';
 $string['pluginname'] = 'Custom sections';
+$string['plugin_description'] = 'The course is divided into customisable sections.';
 $string['privacy:metadata'] = 'The Custom sections format plugin does not store any personal data.';
 $string['indentation'] = 'Allow indentation on course page';
 $string['indentation_help'] = 'Allow teachers, and other users with the manage activities capability, to indent items on the course page.';

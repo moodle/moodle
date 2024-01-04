@@ -120,12 +120,28 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
         $mform->addHelpButton('defaults[enddate]', 'enddate');
 
         $courseformats = get_sorted_course_formats(true);
-        $formcourseformats = array();
+        $formcourseformats = new core\output\choicelist();
+        $formcourseformats->set_allow_empty(false);
         foreach ($courseformats as $courseformat) {
-            $formcourseformats[$courseformat] = get_string('pluginname', "format_$courseformat");
+            $definition = [];
+            $component = "format_$courseformat";
+            if (get_string_manager()->string_exists('plugin_description', $component)) {
+                $definition['description'] = get_string('plugin_description', $component);
+            }
+            $formcourseformats->add_option(
+                $courseformat,
+                get_string('pluginname', "format_$courseformat"),
+                [
+                    'description' => $definition,
+                ],
+            );
         }
-        $mform->addElement('select', 'defaults[format]', get_string('format'), $formcourseformats);
-        $mform->addHelpButton('defaults[format]', 'format');
+        $mform->addElement(
+            'choicedropdown',
+            'defaults[format]',
+            get_string('format'),
+            $formcourseformats,
+        );
         $mform->setDefault('defaults[format]', $courseconfig->format);
 
         if (!empty($CFG->allowcoursethemes)) {
