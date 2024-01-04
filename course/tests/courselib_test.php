@@ -7389,35 +7389,6 @@ class courselib_test extends advanced_testcase {
     }
 
     /**
-     * Test the course_update_communication_instance_data() function.
-     *
-     * @covers ::course_update_communication_instance_data
-     */
-    public function test_course_update_communication_instance_data(): void {
-        $this->resetAfterTest();
-        $course = $this->getDataGenerator()->create_course();
-
-        // Set some data to update with.
-        $data = new stdClass();
-        $data->instanceid = $course->id;
-        $data->fullname = 'newname';
-
-        // These should not be the same yet.
-        $this->assertNotEquals($course->fullname, $data->fullname);
-
-        // Use the callback function to update the course with the data.
-        component_callback(
-            'core_course',
-            'update_communication_instance_data',
-            [$data]
-        );
-
-        // Get the course and check it was updated.
-        $course = get_course($course->id);
-        $this->assertEquals($course->fullname, $data->fullname);
-    }
-
-    /**
      * Test course_section_view() function
      *
      * @covers ::course_section_view
