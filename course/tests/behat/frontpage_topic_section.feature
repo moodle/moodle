@@ -24,7 +24,7 @@ Feature: Site home topic section
     And I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I click on "Edit summary" "link" in the "region-main" "region"
+    And I click on "Edit" "link" in the "region-main" "region"
     And I click on "Custom" "checkbox"
     And I set the field "New value for Section name" to "New section name"
     When I press "Save changes"
@@ -37,8 +37,8 @@ Feature: Site home topic section
     Given I log in as "admin"
     And I am on site homepage
     And I turn editing mode on
-    And I click on "Edit summary" "link" in the "region-main" "region"
-    And I set the field "Summary" to "New section description"
+    And I click on "Edit" "link" in the "region-main" "region"
+    And I set the field "Description" to "New section description"
     When I press "Save changes"
     And I should see "New section description" in the "region-main" "region"
     Then I turn editing mode off

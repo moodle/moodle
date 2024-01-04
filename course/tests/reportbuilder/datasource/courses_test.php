@@ -155,7 +155,7 @@ class courses_test extends core_reportbuilder_testcase {
         $this->assertStringContainsString($course->shortname, $courserow[5]);
         $this->assertStringContainsString($course->idnumber, $courserow[6]);
         $this->assertEquals(format_text($course->summary, $course->summaryformat), $courserow[7]);
-        $this->assertEquals('Topics format', $courserow[8]);
+        $this->assertEquals('Custom sections', $courserow[8]);
         $this->assertEquals(userdate($course->startdate), $courserow[9]);
         $this->assertEmpty($courserow[10]);
         $this->assertEquals('Yes', $courserow[11]);

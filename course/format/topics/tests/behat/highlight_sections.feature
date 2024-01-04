@@ -45,5 +45,5 @@ Feature: Sections can be highlighted
     And I click on "Highlight" "link" in the "Topic 3" "section"
     And I should see "Highlighted" in the "Topic 3" "section"
     When I open section "3" edit menu
-    And I click on "Remove highlight" "link" in the "Topic 3" "section"
+    And I click on "Unhighlight" "link" in the "Topic 3" "section"
     Then I should not see "Highlighted" in the "Topic 3" "section"

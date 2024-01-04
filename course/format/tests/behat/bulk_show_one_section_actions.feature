@@ -31,25 +31,25 @@ Feature: Bulk course section actions one section per page
     And I should see "0 selected" in the "sticky-footer" "region"
 
   Scenario: Bulk section edit is only available when multiple sections are displayed
-    Given I click on "Select topic Topic 1" "checkbox"
+    Given I click on "Select section Topic 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
     And I click on "Close bulk actions" "button" in the "sticky-footer" "region"
     # Move to single topic page.
     And I open section "1" edit menu
     When I click on "View" "link" in the "Topic 1" "section"
     And I click on "Bulk actions" "button"
-    Then "Select topic Topic 1" "checkbox" should not exist
+    Then "Select section Topic 1" "checkbox" should not exist
 
   Scenario: Bulk availability sections in one section per page
     Given I should not see "Hidden from students" in the "Activity sample 1" "activity"
     And I should not see "Hidden from students" in the "Activity sample 2" "activity"
     And I should not see "Hidden from students" in the "Topic 1" "section"
     And I should not see "Hidden from students" in the "Topic 2" "section"
-    And I click on "Select topic Topic 1" "checkbox"
+    And I click on "Select section Topic 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
-    And I click on "Topics availability" "button" in the "sticky-footer" "region"
-    And I click on "Hide on course page" "radio" in the "Topic availability" "dialogue"
-    When I click on "Apply" "button" in the "Topic availability" "dialogue"
+    And I click on "Sections availability" "button" in the "sticky-footer" "region"
+    And I click on "Hide on course page" "radio" in the "Section availability" "dialogue"
+    When I click on "Apply" "button" in the "Section availability" "dialogue"
     And I should see "Hidden from students" in the "Activity sample 1" "activity"
     And I should see "Hidden from students" in the "Activity sample 2" "activity"
     And I should see "Hidden from students" in the "Topic 1" "section"
@@ -65,10 +65,10 @@ Feature: Bulk course section actions one section per page
     And I should see "Activity sample 2" in the "Topic 1" "section"
     And I should see "Activity sample 3" in the "Topic 2" "section"
     And I should see "Activity sample 4" in the "Topic 2" "section"
-    And I click on "Select topic Topic 1" "checkbox"
+    And I click on "Select section Topic 1" "checkbox"
     And I should see "1 selected" in the "sticky-footer" "region"
-    When I click on "Delete topics" "button" in the "sticky-footer" "region"
-    And I click on "Delete" "button" in the "Delete topic?" "dialogue"
+    When I click on "Delete sections" "button" in the "sticky-footer" "region"
+    And I click on "Delete" "button" in the "Delete section?" "dialogue"
     Then I should see "Topic 1" in the "region-main" "region"
     And I should see "Topic 2" in the "region-main" "region"
     And I should see "Topic 3" in the "region-main" "region"
@@ -79,14 +79,14 @@ Feature: Bulk course section actions one section per page
     And I should see "Activity sample 4" in the "Topic 1" "section"
     And I should see "0 selected" in the "sticky-footer" "region"
 
-  Scenario: Bulk move topics in one section per page
-    Given I set the field "Edit topic name" in the "Topic 2" "section" to "Move one"
-    And I set the field "Edit topic name" in the "Topic 3" "section" to "Move two"
-    And I click on "Select topic Move one" "checkbox"
-    And I click on "Select topic Move two" "checkbox"
+  Scenario: Bulk move sections in one section per page
+    Given I set the field "Edit section name" in the "Topic 2" "section" to "Move one"
+    And I set the field "Edit section name" in the "Topic 3" "section" to "Move two"
+    And I click on "Select section Move one" "checkbox"
+    And I click on "Select section Move two" "checkbox"
     And I should see "2 selected" in the "sticky-footer" "region"
-    When I click on "Move topics" "button" in the "sticky-footer" "region"
-    And I click on "General" "link" in the "Move selected topics" "dialogue"
+    When I click on "Move sections" "button" in the "sticky-footer" "region"
+    And I click on "General" "link" in the "Move selected sections" "dialogue"
     # Check activities are moved with the topics.
     Then I should see "Activity sample 1" in the "Topic 3" "section"
     And I should see "Activity sample 2" in the "Topic 3" "section"
