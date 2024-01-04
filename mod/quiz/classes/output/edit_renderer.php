@@ -1234,8 +1234,6 @@ class edit_renderer extends \plugin_renderer_base {
                 'edittitleinstructions',
                 'emptydragdropregion',
                 'hide',
-                'markedthistopic',
-                'markthistopic',
                 'move',
                 'movecontent',
                 'moveleft',

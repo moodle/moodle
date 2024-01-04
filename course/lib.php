@@ -3128,8 +3128,6 @@ function include_course_ajax($course, $usedmodules = array(), $enabledmodules = 
             'groupsnone',
             'groupsvisible',
             'groupsseparate',
-            'markthistopic',
-            'markedthistopic',
             'movesection',
             'movecoursemodule',
             'movecoursesection',
