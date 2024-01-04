@@ -59,7 +59,6 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                 ;
 
                 $params = array('quizid' => $quizid);
-
                 $auto_proctor_activated = $DB->get_records_sql($sql, $params);
 
                 if ($auto_proctor_activated){
@@ -68,7 +67,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                     echo 'console.log("AP ACTIVATED");';
                     echo '</script>';
 
-                    // Retrieve the user ID
+                    // Get the user ID
                     $userid = $USER->id;
 
                     // Check if the user has an ongoing quiz attempt
@@ -123,12 +122,12 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             'consent_tab_switching' => 0, // Check for consent_tab_switching equal to 0
                         ));
 
-                        $given_consent_tab_switching = $DB->get_record('auto_proctor_session_consent_tb', array(
-                            'userid' => $userid,
-                            'quizid' => $quizid,
-                            'attempt' => $attemptValue,
-                            'consent_tab_switching' => 1, // Check for consent_tab_switching equal to 0
-                        ));
+                        // $given_consent_tab_switching = $DB->get_record('auto_proctor_session_consent_tb', array(
+                        //     'userid' => $userid,
+                        //     'quizid' => $quizid,
+                        //     'attempt' => $attemptValue,
+                        //     'consent_tab_switching' => 1, // Check for consent_tab_switching equal to 1
+                        // ));
 
                         if($consent_tab_switching){
                             // // Redirect to prompt page
@@ -138,72 +137,49 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             // echo '  window.location.href = "' . $CFG->wwwroot . '/local/auto_proctor/prompts.php?attempt=' . $attemptValue . '";';
                             // echo '}';
 
-                            $consent_tab_switching->consent_tab_switching = 1;
-                            $DB->update_record('auto_proctor_session_consent_tb', $consent_tab_switching);
-
                             // Prompt to consent screen sharing
-                            // echo 'console.log("Prompt");';
-                            // echo 'var consent = confirm("Do you want to share your screen?");';
-                            // echo 'if (consent) {';
-                            // echo "
-                            
-                            // let tabActive = true;
-
-                            // // Function to handle tab/window focus
-                            // function handleFocus() {
-                            //     if (!tabActive) {
-                            //     // Tab/Window is switching back
-                            //     console.log('Tab switched back');
-                            //     tabActive = true;
-                            //     }
-                            // }
-
-                            // // Function to handle tab/window blur
-                            // function handleBlur() {
-                            //     // Tab/Window is switching away
-                            //     console.log('Tab switched away');
-                            //     tabActive = false;
-                            // }
-
-                            // // Attach event listeners
-                            // window.addEventListener('focus', handleFocus);
-                            // window.addEventListener('blur', handleBlur);
-                            // ";
-                            
-                            // echo '}';
-
-                            // New consent prompt
                             echo "let screenShared = false;";
                             echo "let screenStream = null;";
                             echo "let videoElement;";
+                            echo "let stopsSharing = false;";
 
                             // Function to handle screen sharing
                             echo "function startScreenSharing() {";
-                            echo "navigator.mediaDevices.getDisplayMedia({ video: true })";
-                            echo".then(stream => {";
-                                // Display the stream in a video element
-                                echo "videoElement = document.createElement('video');";
-                                echo "videoElement.srcObject = stream;";
-                                echo "videoElement.autoplay = true;";
-                                //document.getElementById('sharedScreenContainer').appendChild(videoElement);
+                                echo "navigator.mediaDevices.getDisplayMedia({ video: true })";
+                                echo".then(stream => {";
+                                    // Display the stream in a video element
+                                    echo "videoElement = document.createElement('video');";
+                                    echo "videoElement.srcObject = stream;";
+                                    echo "videoElement.autoplay = true;";
+                                    //document.getElementById('sharedScreenContainer').appendChild(videoElement);
 
-                                // Set the shared screen as the focused tab
-                                echo "screenStream = stream;";
-                                echo "screenShared = true;";
+                                    // Set the shared screen as the focused tab
+                                    echo "screenStream = stream;";
+                                    echo "screenShared = true;";
 
-                                // Attach event listeners for different scenarios
-                                echo "document.addEventListener('visibilitychange', handleVisibilityChange);";
-                                echo "window.addEventListener('focus', handleTabSwitch);";
-                                echo "window.addEventListener('blur', handleTabSwitch);";
-                                $consent = 1;
-                                echo 'console.log(' . json_encode($consent) . ');';
-                                echo "})";
-                                echo ".catch(error => {";
-                                echo "console.error('Error starting screen sharing:', error);";
-                                $consent = 0;
-                                echo 'console.log(' . json_encode($consent) . ');';
+                                    // Attach an event listener to detect when the screen sharing is stopped
+                                    echo "screenStream.getVideoTracks()[0].onended = () => {
+                                        console.log('Screen sharing stopped by the student.');
+                                        stopsSharing = true;
+                                    };";
+                                    
 
-                            echo "});";
+                                    // Attach event listeners for different scenarios
+                                    echo "document.addEventListener('visibilitychange', handleVisibilityChange);";
+                                    echo "window.addEventListener('focus', handleTabSwitch);";
+                                    echo "window.addEventListener('blur', handleTabSwitch);";
+                                    $consent = 1;
+                                    $consent_tab_switching->consent_tab_switching = 1;
+                                    $DB->update_record('auto_proctor_session_consent_tb', $consent_tab_switching);
+                                    echo 'console.log(' . json_encode($consent) . ');';
+                                    echo "})";
+                                    echo ".catch(error => {";
+                                    echo "console.error('Error starting screen sharing:', error);";
+                                    $consent = 0;
+                                    $consent_tab_switching->consent_tab_switching = 0;
+                                    $DB->update_record('auto_proctor_session_consent_tb', $consent_tab_switching);
+                                    echo 'console.log(' . json_encode($consent) . ');';
+                                    echo "});";
                             echo "}";
 
                             // Function to capture and save the screen
@@ -242,21 +218,21 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
                             // Function to handle tab switch events
                             echo "function handleTabSwitch() {";
-                            echo "if (document.hasFocus()) {";
-                                echo "console.log('Tab switched back to focus');";
-                            echo "} else {";
-                                echo "console.log('Tab switched');";
-                                // If the screen is shared, capture the shared screen
-                                echo "if (screenShared) {";
-                                echo "captureAndSaveScreen();";
+                                echo "if (document.hasFocus()) {";
+                                    echo "console.log('Tab switched back to focus');";
+                                echo "} else {";
+                                    echo "console.log('Tab switched');";
+                                    // If the screen is shared, capture the shared screen
+                                    echo "if (screenShared && !stopsSharing) {";
+                                        echo "captureAndSaveScreen();";
+                                    echo "}";
                                 echo "}";
-                            echo "}";
                             echo "}";
 
                             // Function to handle document visibility change
                             echo "function handleVisibilityChange() {";
                             // If the document is not visible, capture the shared screen
-                            echo "if (document.visibilityState === 'hidden' && screenShared) {";
+                            echo "if (document.visibilityState === 'hidden' && screenShared && !stopsSharing) {";
                                 echo "captureAndSaveScreen();";
                             echo "}";
                             echo "}";
@@ -270,33 +246,33 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             echo 'console.log("Not prompt");';
                         }
 
-                        if($given_consent_tab_switching){
-                            echo "
+                        // if($given_consent_tab_switching){
+                        //     echo "
                             
-                            let tabActive = true;
+                        //     let tabActive = true;
 
-                            // Function to handle tab/window focus
-                            function handleFocus() {
-                                if (!tabActive) {
-                                // Tab/Window is switching back
-                                console.log('Tab switched back');
-                                tabActive = true;
-                                }
-                            }
+                        //     // Function to handle tab/window focus
+                        //     function handleFocus() {
+                        //         if (!tabActive) {
+                        //         // Tab/Window is switching back
+                        //         console.log('Tab switched back');
+                        //         tabActive = true;
+                        //         }
+                        //     }
 
-                            // Function to handle tab/window blur
-                            function handleBlur() {
-                                // Tab/Window is switching away
-                                console.log('Tab switched away');
-                                tabActive = false;
-                            }
+                        //     // Function to handle tab/window blur
+                        //     function handleBlur() {
+                        //         // Tab/Window is switching away
+                        //         console.log('Tab switched away');
+                        //         tabActive = false;
+                        //     }
 
-                            // Attach event listeners
-                            window.addEventListener('focus', handleFocus);
-                            window.addEventListener('blur', handleBlur);
-                            ";
+                        //     // Attach event listeners
+                        //     window.addEventListener('focus', handleFocus);
+                        //     window.addEventListener('blur', handleBlur);
+                        //     ";
                             
-                        }
+                        // }
                     }
 
                     echo '</script>';

@@ -64,5 +64,27 @@
             <KEY NAME="fk_auto_proctor_tab_switching_report_tb_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
         </KEYS>
         </TABLE>
+
+        <!-- ACTIVITY REPORT -->
+        <TABLE NAME="auto_proctor_tab_activity_report_tb" COMMENT="captured tab switching evidence">
+        <FIELDS>
+            <!-- Define id as an auto-increment key -->
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="event_datetime" TYPE="timestamp" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" SEQUENCE="false"/>
+            <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="activity_type" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="evidence" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        </FIELDS>
+        <KEYS>
+            <!-- Define id as the primary key -->
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <!-- Define quizid as a foreign key -->
+            <KEY NAME="fk_auto_proctor_tab_switching_report_tb_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_tab_switching_report_tb_quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_tab_switching_report_tb_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
+        </KEYS>
+        </TABLE>
   </TABLES>
 </XMLDB>
