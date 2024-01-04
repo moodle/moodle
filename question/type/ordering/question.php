@@ -789,6 +789,7 @@ class qtype_ordering_question extends question_graded_automatically {
      *
      * @param int|null $type
      * @return array|string array if $type is not specified and single string if $type is specified
+     * @codeCoverageIgnore
      */
     public static function get_select_types(int $type = null): array|string {
         $plugin = 'qtype_ordering';
@@ -805,6 +806,7 @@ class qtype_ordering_question extends question_graded_automatically {
      *
      * @param int|null $type
      * @return array|string array if $type is not specified and single string if $type is specified
+     * @codeCoverageIgnore
      */
     public static function get_layout_types(int $type = null): array|string {
         $plugin = 'qtype_ordering';
@@ -820,6 +822,7 @@ class qtype_ordering_question extends question_graded_automatically {
      *
      * @param int|null $type
      * @return array|string array if $type is not specified and single string if $type is specified
+     * @codeCoverageIgnore
      */
     public static function get_grading_types(int $type = null): array|string {
         $plugin = 'qtype_ordering';
@@ -846,6 +849,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param string|null $style The specific numbering style to retrieve.
      * @return array|string Numbering style(s).
      *                      The keys are style identifiers, and the values are the corresponding language strings.
+     * @codeCoverageIgnore
      */
     public static function get_numbering_styles(string $style = null): array|string {
         $plugin = 'qtype_ordering';

@@ -44,20 +44,23 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
      * @param int $gradingtype Grading type.
      * @param string $layouttype The type of the layout.
      * @param array $expected The expected exported data.
+     * @param int $selecttype The type of the select.
      * @return void
      * @covers ::export_for_template
      */
-    public function test_export_for_template(array $answeritems, int $gradingtype, string $layouttype, array $expected): void {
+    public function test_export_for_template(array $answeritems, int $gradingtype, string $layouttype, array $expected, int $selecttype): void {
         global $PAGE;
-
+        $this->resetAfterTest();
         $question = test_question_maker::make_question('ordering');
+        // Options need to be set before starting the attempt otherwise they are not passed along.
         $question->options->layouttype = $layouttype === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
             qtype_ordering_question::LAYOUT_VERTICAL;
+        $question->options->gradingtype = $gradingtype;
+        $question->options->selecttype = $selecttype;
         $qa = new \testable_question_attempt($question, 0);
         $step = new \question_attempt_step();
         $qa->add_step($step);
         $question->start_attempt($step, 1);
-        $question->options->gradingtype = $gradingtype;
 
         $keys = implode(',', array_keys($answeritems));
         $values = array_values($answeritems);
@@ -71,7 +74,16 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
         $specificgradedetailfeedback = new specific_grade_detail_feedback($qa);
         $actual = $specificgradedetailfeedback->export_for_template($renderer);
 
-        $this->assertEquals($expected, $actual);
+        if ($selecttype === qtype_ordering_question::SELECT_ALL) {
+            $this->assertEquals($expected, $actual);
+        } else {
+            // Since the order of the scores is random or contiguous, we need to check the score details separately.
+            $this->assertEquals($expected['showpartialwrong'], $actual['showpartialwrong']);
+            $this->assertEquals($expected['gradingtype'], $actual['gradingtype']);
+            $this->assertEquals($expected['orderinglayoutclass'], $actual['orderinglayoutclass']);
+            $this->assertEquals($expected['totalmaxscore'], $actual['totalmaxscore']);
+            $this->assertArrayHasKey('scoredetails', $actual);
+        }
     }
 
     /**
@@ -91,6 +103,7 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
                 [
                     'showpartialwrong' => false,
                 ],
+                qtype_ordering_question::SELECT_ALL,
             ],
             'Partially correct question attempt (horizontal layout). Relative to ALL the previous and next items' => [
                 [13 => 'Modular', 14 => 'Object', 15 => 'Oriented', 17 => 'Learning', 16 => 'Dynamic', 18 => 'Environment'],
@@ -112,6 +125,7 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
                         ['score' => 5, 'maxscore' => 5, 'percent' => 100],
                     ],
                 ],
+                qtype_ordering_question::SELECT_ALL,
             ],
             'Incorrect question attempt (horizontal layout). Relative to ALL the previous and next items' => [
                 [14 => 'Object', 16 => 'Dynamic', 13 => 'Modular', 17 => 'Learning', 18 => 'Environment', 15 => 'Oriented'],
@@ -133,6 +147,7 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
                         ['score' => 2, 'maxscore' => 5, 'percent' => 40],
                     ],
                 ],
+                qtype_ordering_question::SELECT_ALL,
             ],
             'Incorrect question attempt (vertical layout). Grading type: Relative to the next item (excluding last)' => [
                 [14 => 'Object', 16 => 'Dynamic', 13 => 'Modular', 17 => 'Learning', 18 => 'Environment', 15 => 'Oriented'],
@@ -154,6 +169,73 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
                         ['score' => 0, 'maxscore' => 1, 'percent' => 0.0],
                     ],
                 ],
+                qtype_ordering_question::SELECT_ALL,
+            ],
+            'Incorrect question attempt (vertical layout). Grading type: GRADING_LONGEST_ORDERED_SUBSET' => [
+                [14 => 'Object', 16 => 'Dynamic', 13 => 'Modular', 17 => 'Learning', 18 => 'Environment', 15 => 'Oriented'],
+                qtype_ordering_question::GRADING_LONGEST_ORDERED_SUBSET,
+                'vertical',
+                [
+                    'showpartialwrong' => 1,
+                    'gradingtype' => 'Grading type: Longest ordered subset',
+                    'orderinglayoutclass' => 'vertical',
+                    'gradedetails' => 67.0,
+                    'totalscore' => 4,
+                    'totalmaxscore' => 6,
+                    'scoredetails' => [
+                        ['score' => 1, 'maxscore' => 1, 'percent' => 100.0],
+                        ['score' => 1, 'maxscore' => 1, 'percent' => 100.0],
+                        ['score' => 0, 'maxscore' => 1, 'percent' => 0.0],
+                        ['score' => 1, 'maxscore' => 1, 'percent' => 100.0],
+                        ['score' => 1, 'maxscore' => 1, 'percent' => 100.0],
+                        ['score' => 0, 'maxscore' => 1, 'percent' => 0.0],
+                    ],
+                ],
+                qtype_ordering_question::SELECT_ALL,
+            ],
+            'Incorrect question attempt (SELECT_RANDOM). Grading type: GRADING_ABSOLUTE_POSITION' => [
+                [14 => 'Object', 16 => 'Dynamic', 13 => 'Modular', 17 => 'Learning', 18 => 'Environment', 15 => 'Oriented'],
+                qtype_ordering_question::GRADING_ABSOLUTE_POSITION,
+                'vertical',
+                [
+                    'showpartialwrong' => 1,
+                    'gradingtype' => 'Grading type: Absolute position',
+                    'orderinglayoutclass' => 'vertical',
+                    'gradedetails' => 0,
+                    'totalscore' => 0,
+                    'totalmaxscore' => 3,
+                    'scoredetails' => [
+                        ['score' => 0, 'maxscore' => 1, 'percent' => 0.0],
+                        ['score' => 0, 'maxscore' => 1, 'percent' => 0.0],
+                        ['score' => 0, 'maxscore' => 1, 'percent' => 0.0],
+                        ['score' => 'No score', 'maxscore' => null, 'percent' => 0],
+                        ['score' => 'No score', 'maxscore' => null, 'percent' => 0],
+                        ['score' => 'No score', 'maxscore' => null, 'percent' => 0],
+                    ],
+                ],
+                qtype_ordering_question::SELECT_RANDOM,
+            ],
+            'Incorrect question attempt (SELECT_CONTIGUOUS). Grading type: GRADING_ABSOLUTE_POSITION' => [
+                [14 => 'Object', 16 => 'Dynamic', 13 => 'Modular', 17 => 'Learning', 18 => 'Environment', 15 => 'Oriented'],
+                qtype_ordering_question::GRADING_ABSOLUTE_POSITION,
+                'vertical',
+                [
+                    'showpartialwrong' => 1,
+                    'gradingtype' => 'Grading type: Absolute position',
+                    'orderinglayoutclass' => 'vertical',
+                    'gradedetails' => 0,
+                    'totalscore' => 0,
+                    'totalmaxscore' => 3,
+                    'scoredetails' => [
+                        ['score' => 0, 'maxscore' => 1, 'percent' => 0],
+                        ['score' => 1, 'maxscore' => 1, 'percent' => 100.0],
+                        ['score' => 0, 'maxscore' => 1, 'percent' => 0],
+                        ['score' => 'No score', 'maxscore' => null, 'percent' => 0],
+                        ['score' => 'No score', 'maxscore' => null, 'percent' => 0],
+                        ['score' => 'No score', 'maxscore' => null, 'percent' => 0],
+                    ],
+                ],
+                qtype_ordering_question::SELECT_CONTIGUOUS,
             ],
         ];
     }

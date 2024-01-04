@@ -555,6 +555,15 @@ class question_test extends \advanced_testcase {
             )
         );
         $this->assertEquals($expected, $actual);
+
+        // Confirm that if a passed array contains an item that does not exist in the question, it is ignored.
+        $actual = $question->summarise_response(
+            qtype_ordering_test_helper::get_response(
+                $question,
+                ['notexist']
+            )
+        );
+        $this->assertEquals('', $actual);
     }
 
     public function test_initialise_question_instance(): void {
@@ -575,6 +584,10 @@ class question_test extends \advanced_testcase {
         } else if ($question->options->layouttype === 1) {
             $this->assertEquals('horizontal', $question->get_ordering_layoutclass());
         }
+        // Confirm that if an invalid layouttype is set, an empty string is returned.
+        $question->options->layouttype = 3;
+        $error = $question->get_ordering_layoutclass();
+        $this->assertEquals('', $error);
     }
 
     public function test_get_next_answerids(): void {
@@ -794,5 +807,15 @@ class question_test extends \advanced_testcase {
             ['_currentresponse' => '25,23,27,26,28,24', '_correctresponse' => '23,24,25,26,27,28'],
             $newq->update_attempt_state_data_for_new_version($oldstep, $question)
         );
+    }
+
+    public function test_helpers(): void {
+        $question = test_question_maker::make_question('ordering');
+        $this->assertEquals(true, $question->is_complete_response([]));
+        $this->assertEquals(true, $question->is_gradable_response([]));
+        $this->assertEquals('', $question->get_validation_error([]));
+
+        $this->expectException(\coding_exception::class);
+        qtype_ordering_question::get_types(['foo', 'bar', 'baz'], 'notexist');
     }
 }
