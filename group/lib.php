@@ -126,6 +126,13 @@ function groups_add_member($grouporid, $userorid, $component=null, $itemid=0) {
     $event->add_record_snapshot('groups', $group);
     $event->trigger();
 
+    // Dispatch the hook for a user added to the group.
+    $hook = new \core_group\hook\after_group_membership_added(
+        groupinstance: $group,
+        userids: [$userid],
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
     return true;
 }
 
@@ -232,6 +239,13 @@ function groups_remove_member($grouporid, $userorid) {
     $event->add_record_snapshot('groups', $group);
     $event->trigger();
 
+    // Dispatch the hook for a user removed from the group.
+    $hook = new \core_group\hook\after_group_membership_removed(
+        groupinstance: $group,
+        userids: [$userid],
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
     return true;
 }
 
@@ -322,6 +336,12 @@ function groups_create_group($data, $editform = false, $editoroptions = false) {
     $event = \core\event\group_created::create($params);
     $event->add_record_snapshot('groups', $group);
     $event->trigger();
+
+    // Dispatch the hook for post group creation actions.
+    $hook = new \core_group\hook\after_group_created(
+        groupinstance: $group,
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
     return $group->id;
 }
@@ -511,6 +531,12 @@ function groups_update_group($data, $editform = false, $editoroptions = false) {
     $event->add_record_snapshot('groups', $group);
     $event->trigger();
 
+    // Dispatch the hook for post group update actions.
+    $hook = new \core_group\hook\after_group_updated(
+        groupinstance: $group,
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
     return true;
 }
 
@@ -615,6 +641,12 @@ function groups_delete_group($grouporid) {
     $event = \core\event\group_deleted::create($params);
     $event->add_record_snapshot('groups', $group);
     $event->trigger();
+
+    // Dispatch the hook for post group delete actions.
+    $hook = new \core_group\hook\after_group_deleted(
+        groupinstance: $group,
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
     return true;
 }
