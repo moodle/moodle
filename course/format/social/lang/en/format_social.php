@@ -25,6 +25,6 @@
 
 $string['numberdiscussions'] = 'Number of discussions';
 $string['numberdiscussions_help'] = 'This setting specifies how many discussions should be displayed.';
-$string['pluginname'] = 'Social format';
+$string['pluginname'] = 'Social';
 $string['sectionname'] = 'section';
 $string['privacy:metadata'] = 'The Social format plugin does not store any personal data.';

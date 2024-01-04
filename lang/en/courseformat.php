@@ -22,6 +22,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addsection'] = 'Add section';
 $string['availability_show'] = 'Show on course page';
 $string['availability_show_help'] = 'Available to students (subject to any access restrictions which may be set).';
 $string['availability_hide'] = 'Hide on course page';

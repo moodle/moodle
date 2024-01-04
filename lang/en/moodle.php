@@ -547,7 +547,7 @@ $string['deletecheckfiles'] = 'Are you absolutely sure you want to delete these 
 $string['deletecheckfull'] = 'Are you absolutely sure you want to completely delete the user {$a}, including their enrolments, activity and other user data?';
 $string['deletecheckwarning'] = 'You are about to delete these files';
 $string['deletepicture'] = 'Delete picture';
-$string['deletesection'] = 'Delete section';
+$string['deletesection'] = 'Delete';
 $string['deleteselected'] = 'Delete selected';
 $string['deleteselectedkey'] = 'Delete selected key';
 $string['deletingcourse'] = 'Deleting {$a}';
@@ -630,7 +630,7 @@ $string['editorpreferences'] = 'Editor preferences';
 $string['editorresettodefaults'] = 'Reset to default values';
 $string['editorsettings'] = 'Editor settings';
 $string['editorshortcutkeys'] = 'Editor shortcut keys';
-$string['editsection'] = 'Edit section';
+$string['editsection'] = 'Edit settings';
 $string['editsectionname'] = 'Edit section name';
 $string['editsummary'] = 'Edit summary';
 $string['edittitle'] = 'Edit title';
@@ -938,10 +938,10 @@ $string['forgotteninvalidurl'] = 'Invalid password reset URL';
 $string['format'] = 'Format';
 $string['format_help'] = 'The course format determines the layout of the course page.
 
-* Single activity format - For displaying a single activity or resource (such as a Quiz or SCORM package) on the course page
-* Social format - A forum is displayed on the course page
-* Topics format - The course page is organised into topic sections
-* Weekly format - The course page is organised into weekly sections, with the first week starting on the course start date';
+* Single activity - The course contains only one activity or resource.
+* Social - A forum is displayed on the course page.
+* Custom sections - The course is divided into customisable sections.
+* Weekly sections - The course is divided into sections corresponding to each week, beginning from the course start date.';
 $string['formathtml'] = 'HTML format';
 $string['formatmarkdown'] = 'Markdown format';
 $string['formatplain'] = 'Plain text format';
@@ -1045,7 +1045,7 @@ $string['hideshowblocks'] = 'Hide or show blocks';
 $string['hidepopoverwindow'] = 'Hide popover window';
 $string['highlight'] = 'Highlight';
 $string['highlighted'] = 'Highlighted';
-$string['highlightoff'] = 'Remove highlight';
+$string['highlightoff'] = 'Unhighlight';
 $string['hits'] = 'Hits';
 $string['hitsoncourse'] = 'Hits on {$a->coursename} by {$a->username}';
 $string['hitsoncoursetoday'] = 'Today\'s hits on {$a->coursename} by {$a->username}';
@@ -1981,6 +1981,7 @@ $string['secs'] = 'secs';
 $string['section'] = 'Section';
 $string['sectionactionnotsupported'] = 'Section action "{$a}" is not supported here';
 $string['sectionname'] = 'Section name';
+$string['sectionoutline'] = 'Section outline';
 $string['sections'] = 'Sections';
 $string['seealsostats'] = 'See also: stats';
 $string['select'] = 'Select';
@@ -2092,7 +2093,7 @@ $string['sitepartlist'] = 'You do not have the required permissions to view the 
 $string['sitepartlist0'] = 'You must be a site teacher to be allowed to see the site participants list';
 $string['sitepartlist1'] = 'You must be a teacher to be allowed to see the site participants list';
 $string['sites'] = 'Sites';
-$string['sitesection'] = 'Include a topic section';
+$string['sitesection'] = 'Add custom content';
 $string['sitesettings'] = 'Site settings';
 $string['siteteachers'] = 'Site teachers';
 $string['size'] = 'Size';
