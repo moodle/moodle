@@ -522,6 +522,7 @@ class main implements renderable, templatable {
                     $quickstartbutton = new \single_button(
                         new \moodle_url($quickstarturl, ['lang' => current_language()]),
                         get_string('viewquickstart', 'block_myoverview'),
+                        'get',
                     );
                     $buttons = [$quickstartbutton->export_for_template($output)];
                 }
