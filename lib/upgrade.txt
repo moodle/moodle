@@ -20,6 +20,7 @@ information provided here is intended especially for developers.
 * The options for `format_string()`, and `format_text()` are now checked for incorrectly passed context objects.
   Please note that this was never an accepted value but previously failed silently.
 * The current page language is available in new `core/config` language property for Javascript modules
+* The `html_writer::select_time` method has a `$timezone` parameter to use when formatting the time parameter
 * The following functions have been added to adhoc_task class:
     - retry_until_success(): Used to indicate if the task should be re-run if it fails
       By default, tasks will be retried until they succeed, other tasks can override this method to change this behaviour.
