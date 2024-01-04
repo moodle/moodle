@@ -111,7 +111,7 @@ class processor {
     /**
      * Update the communication instance with any changes.
      *
-     * @param null|int $active Active state of the instance (processor::PROVIDER_ACTIVE or processor::PROVIDER_INACTIVE)
+     * @param null|string $active Active state of the instance (processor::PROVIDER_ACTIVE or processor::PROVIDER_INACTIVE)
      * @param null|string $roomname The room name
      */
     public function update_instance(
@@ -487,6 +487,15 @@ class processor {
      */
     public function get_room_name(): ?string {
         return $this->instancedata->roomname;
+    }
+
+    /**
+     * Get provider active status.
+     *
+     * @return int
+     */
+    public function get_provider_status(): int {
+        return $this->instancedata->active;
     }
 
     /**

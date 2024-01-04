@@ -118,9 +118,9 @@ class api {
     /**
      * Return the underlying communication processor object.
      *
-     * @return processor
+     * @return ?processor
      */
-    public function get_processor(): processor {
+    public function get_processor(): ?processor {
         return $this->communication;
     }
 
@@ -406,22 +406,131 @@ class api {
     }
 
     /**
+     * Configure the room and membership by provider selected for the communication instance.
+     *
+     * This method will add a task to the queue to configure the room and membership by comparing the change of provider.
+     * There are some major cases to consider for this method to allow minimum duplication when this api is used.
+     * Some of the major cases are:
+     * 1. If the communication instance is not created at all, then create it and add members.
+     * 2. If the current provider is none and the new provider is also none, then nothing to do.
+     * 3. If the current and existing provider is the same, don't need to do anything.
+     * 4. If provider set to none, remove all the members.
+     * 5. If previous provider was not none and current provider is not none, but a different provider, remove members and add
+     * for the new one.
+     * 6. If previous provider was none and current provider is not none, don't need to remove, just
+     * update the selected provider and add users to that provider. Do not queue the task to add members to room as the room
+     * might not have created yet. The add room task adds the task to add members to room anyway.
+     * 7. If it's a new provider, never used/created, now create the room after considering all these cases for a new provider.
+     *
+     * @param string $provider The provider name
+     * @param \stdClass $instance The instance object
+     * @param string $communicationroomname The communication room name
+     * @param array $users The user ids to add to the room
+     * @param null|\stored_file $instanceimage The stored file for the avatar
+     */
+    public function configure_room_and_membership_by_provider(
+        string $provider,
+        stdClass $instance,
+        string $communicationroomname,
+        array $users,
+        ?\stored_file $instanceimage = null,
+    ): void {
+        // If the current provider is inactive and the new provider is also none, then nothing to do.
+        if (
+            $this->communication !== null &&
+            $this->communication->get_provider_status() === processor::PROVIDER_INACTIVE &&
+            $provider === processor::PROVIDER_NONE
+        ) {
+            return;
+        }
+
+        // If provider set to none, remove all the members.
+        if (
+            $this->communication !== null &&
+            $this->communication->get_provider_status() === processor::PROVIDER_ACTIVE &&
+            $provider === processor::PROVIDER_NONE
+        ) {
+            $this->remove_all_members_from_room();
+            $this->update_room(
+                active: processor::PROVIDER_INACTIVE,
+                communicationroomname: $communicationroomname,
+                avatar: $instanceimage,
+                instance: $instance,
+            );
+            return;
+        }
+
+        if (
+            // If previous provider was active and not none and current provider is not none, but a different provider,
+            // remove members and de-activate the previous provider.
+            $this->communication !== null &&
+            $this->communication->get_provider_status() === processor::PROVIDER_ACTIVE &&
+            $provider !== $this->get_provider()
+        ) {
+            $this->remove_all_members_from_room();
+            // Now deactivate the previous provider.
+            $this->update_room(
+                active: processor::PROVIDER_INACTIVE,
+                communicationroomname: $communicationroomname,
+                avatar: $instanceimage,
+                instance: $instance,
+            );
+        }
+
+        // Now re-init the constructor for the new provider.
+        $this->__construct(
+            context: $this->context,
+            component: $this->component,
+            instancetype: $this->instancetype,
+            instanceid: $this->instanceid,
+            provider: $provider,
+        );
+
+        // If it's a new provider, never used/created, now create the room.
+        if ($this->communication === null) {
+            $this->create_and_configure_room(
+                communicationroomname: $communicationroomname,
+                avatar: $instanceimage,
+                instance: $instance,
+            );
+            $queue = false;
+        } else {
+            // Otherwise update the room.
+            $this->update_room(
+                active: processor::PROVIDER_ACTIVE,
+                communicationroomname: $communicationroomname,
+                avatar: $instanceimage,
+                instance: $instance,
+            );
+            $queue = true;
+        }
+
+        // Now add the members.
+        $this->add_members_to_room(
+            userids: $users,
+            queue: $queue,
+        );
+
+    }
+
+    /**
      * Create a communication ad-hoc task for create operation.
      * This method will add a task to the queue to create the room.
      *
      * @param string $communicationroomname The communication room name
      * @param null|\stored_file $avatar The stored file for the avatar
      * @param \stdClass|null $instance The actual instance object
+     * @param bool $queue Whether to queue the task or not
      */
     public function create_and_configure_room(
         string $communicationroomname,
         ?\stored_file $avatar = null,
         ?\stdClass $instance = null,
+        bool $queue = true,
     ): void {
         if ($this->provider === processor::PROVIDER_NONE || $this->provider === '') {
             return;
         }
-
         // Create communication record.
         $this->communication = processor::create_instance(
             context: $this->context,
@@ -442,6 +551,11 @@ class api {
             $this->set_avatar($avatar);
         }
 
+        // Nothing else to do if the queue is false.
+        if (!$queue) {
+            return;
+        }
+
         // Add ad-hoc task to create the provider room.
         create_and_configure_room_task::queue(
             $this->communication,
@@ -456,13 +570,19 @@ class api {
      * @param null|string $communicationroomname The communication room name
      * @param null|\stored_file $avatar The stored file for the avatar
      * @param \stdClass|null $instance The actual instance object
+     * @param bool $queue Whether to queue the task or not
      */
     public function update_room(
         ?int $active = null,
         ?string $communicationroomname = null,
         ?\stored_file $avatar = null,
         ?\stdClass $instance = null,
+        bool $queue = true,
     ): void {
+        if (!$this->communication) {
+            return;
+        }
+
         // If the provider is none, we don't need to do anything from room point of view.
         if ($this->communication->get_provider() === processor::PROVIDER_NONE) {
             return;
@@ -502,6 +622,11 @@ class api {
         // Update the avatar.
         // If the value is `null`, then unset the avatar.
         $this->set_avatar($avatar);
+
+        // Nothing else to do if the queue is false.
+        if (!$queue) {
+            return;
+        }
 
         // Always queue a room update, even if none of the above standard fields have changed.
         // It is possible for providers to have custom fields that have been updated.
@@ -614,6 +739,35 @@ class api {
     }
 
     /**
+     * Remove all users from the room.
+     *
+     * @param bool $queue Whether to queue the task or not
+     */
+    public function remove_all_members_from_room(bool $queue = true): void {
+        // No communication object? something not done right.
+        if (!$this->communication) {
+            return;
+        }
+
+        if ($this->communication->get_provider() === processor::PROVIDER_NONE) {
+            return;
+        }
+
+        // This provider does not manage users? No action required.
+        if (!$this->communication->supports_user_features()) {
+            return;
+        }
+
+        $this->communication->add_delete_user_flag($this->communication->get_all_userids_for_instance());
+
+        if ($queue) {
+            remove_members_from_room::queue(
+                $this->communication
+            );
+        }
+    }
+
+    /**
      * Display the communication room status notification.
      */
     public function show_communication_room_status_notification(): void {
@@ -626,20 +780,23 @@ class api {
             return;
         }
 
-        $roomstatus = $this->get_communication_room_url() ? 'ready' : 'pending';
+        $roomstatus = $this->get_communication_room_url()
+            ? constants::COMMUNICATION_STATUS_READY
+            : constants::COMMUNICATION_STATUS_PENDING;
         $pluginname = get_string('pluginname', $this->get_provider());
         $message = get_string('communicationroom' . $roomstatus, 'communication', $pluginname);
 
+        // We only show the ready notification once per user.
+        // We check this with a custom user preference.
+        $roomreadypreference = "{$this->component}_{$this->instancetype}_{$this->instanceid}_room_ready";
+
         switch ($roomstatus) {
-            case 'pending':
+            case constants::COMMUNICATION_STATUS_PENDING:
                 \core\notification::add($message, \core\notification::INFO);
+                unset_user_preference($roomreadypreference);
                 break;
 
-            case 'ready':
-                // We only show the ready notification once per user.
-                // We check this with a custom user preference.
-                $roomreadypreference = "{$this->component}_{$this->instancetype}_{$this->instanceid}_room_ready";
-
+            case constants::COMMUNICATION_STATUS_READY:
                 if (empty(get_user_preferences($roomreadypreference))) {
                     \core\notification::add($message, \core\notification::SUCCESS);
                     set_user_preference($roomreadypreference, true);
