@@ -53,17 +53,35 @@ class graphlib_test extends \basic_testcase {
                         -1, -1, -1, -1, -1, -1
                     ],
                     'strpreferred' => 'Preferred',
+                    'strimagine' => 'Imagine',
+                    'buckets3' => [
+                        1,
+                        2.75,
+                        0.5,
+                        3.5,
+                        1.25,
+                        3,
+                    ],
                     'stdev1' => [
                         0.82915619758885, 1.1180339887499, 1.1180339887499, 1.1180339887499, 1.1180339887499, 1.1180339887499
                     ],
                     'stdev2' => [
                         0, 0, 0, 0, 0, 0
                     ],
+                    'stdev3' => [
+                        0.92915619758885,
+                        2.1180339887499,
+                        2.1180339887499,
+                        2.1180339887499,
+                        2.1180339887499,
+                        2.1180339887499,
+                    ],
                     'options' => [
                         'Almost never', 'Seldom', 'Sometimes', 'Often', 'Almost always'
                     ],
                     'maxbuckets1' => 2.5,
-                    'maxbuckets2' => -1
+                    'maxbuckets2' => -1,
+                    'maxbuckets3' => 3.5,
                 ]
             ]
         ];
@@ -81,6 +99,7 @@ class graphlib_test extends \basic_testcase {
         $graph = new \graph(300, 200);
         ob_start();
         $graph->parameter['title'] = strip_tags(format_string($mock['survey_name'], true));
+        $graph->parameter['zero_axis'] = 'black';
         $graph->x_data = $mock['names'];
         $graph->y_data['answers1'] = $mock['buckets1'];
         $graph->y_format['answers1'] = array('colour' => 'ltblue', 'line' => 'line', 'point' => 'square',
@@ -88,24 +107,53 @@ class graphlib_test extends \basic_testcase {
         $graph->y_data['answers2'] = $mock['buckets2'];
         $graph->y_format['answers2'] = array('colour' => 'ltorange', 'line' => 'line', 'point' => 'square',
                 'shadow_offset' => 4, 'legend' => $mock['strpreferred']);
+        $graph->y_data['answers3'] = $mock['buckets3'];
+        $graph->y_format['answers3'] = [
+            'colour' => 'ltred',
+            'line' => 'brush',
+            'point' => 'square',
+            'shadow_offset' => 4,
+            'legend' => $mock['stractual'],
+        ];
         $graph->y_data['stdev1'] = $mock['stdev1'];
         $graph->y_format['stdev1'] = array('colour' => 'ltltblue', 'bar' => 'fill',
                 'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.3);
         $graph->y_data['stdev2'] = $mock['stdev2'];
         $graph->y_format['stdev2'] = array('colour' => 'ltltorange', 'bar' => 'fill',
                 'shadow_offset' => '4', 'legend' => 'none', 'bar_size' => 0.2);
+        $graph->y_data['stdev3'] = $mock['stdev3'];
+        $graph->y_format['stdev3'] = [
+            'colour' => 'ltred',
+            'bar' => 'fill',
+            'shadow_offset' => '4',
+            'legend' => 'none',
+            'bar_size' => 0.2,
+        ];
         $graph->offset_relation['stdev1'] = 'answers1';
         $graph->offset_relation['stdev2'] = 'answers2';
+        $graph->offset_relation['stdev3'] = 'answers3';
         $graph->parameter['legend'] = 'outside-top';
         $graph->parameter['legend_border'] = 'black';
         $graph->parameter['legend_offset'] = 4;
         $graph->y_tick_labels = $mock['options'];
-        if (($mock['maxbuckets1'] > 0.0) && ($mock['maxbuckets2'] > 0.0)) {
-            $graph->y_order = array('stdev1', 'answers1', 'stdev2', 'answers2');
+        if (($mock['maxbuckets1'] > 0.0) && ($mock['maxbuckets2'] > 0.0) && ($mock['maxbuckets3'] > 0.0)) {
+            $graph->y_order = [
+                'stdev1',
+                'answers1',
+                'stdev2',
+                'answers2',
+                'stdev3',
+                'answers3',
+            ];
         } else if ($mock['maxbuckets1'] > 0.0) {
             $graph->y_order = array('stdev1', 'answers1');
-        } else {
+        } else if ($mock['maxbuckets2'] > 0.0) {
             $graph->y_order = array('stdev2', 'answers2');
+        } else {
+            $graph->y_order = [
+                'stdev3',
+                'answers3',
+            ];
         }
         $graph->parameter['y_max_left'] = 4;
         $graph->parameter['y_axis_gridlines'] = 5;
