@@ -537,15 +537,20 @@ class graph {
       $colour = $this->parameter['zero_axis'];
       if ($colour == 'none') return;
       // draw zero axis on left hand side
-      $this->calculated['zero_axis'] = round($this->calculated['boundary_box']['top']  + ($this->calculated['y_axis_left']['max'] * $this->calculated['y_axis_left']['factor']));
+      $this->calculated['zero_axis'] = (int) round(
+        $this->calculated['boundary_box']['top'] +
+        ($this->calculated['y_axis_left']['max'] * $this->calculated['y_axis_left']['factor'])
+      );
       ImageLine($this->image, $this->calculated['boundary_box']['left'], $this->calculated['zero_axis'], $this->calculated['boundary_box']['right'], $this->calculated['zero_axis'], $this->colour[$colour]);
     }
-
     function draw_zero_axis_right() {
       $colour = $this->parameter['zero_axis'];
       if ($colour == 'none') return;
       // draw zero axis on right hand side
-      $this->calculated['zero_axis'] = round($this->calculated['boundary_box']['top']  + ($this->calculated['y_axis_right']['max'] * $this->calculated['y_axis_right']['factor']));
+      $this->calculated['zero_axis'] = (int) round(
+        $this->calculated['boundary_box']['top'] +
+        ($this->calculated['y_axis_right']['max'] * $this->calculated['y_axis_right']['factor'])
+      );
       ImageLine($this->image, $this->calculated['boundary_box']['left'], $this->calculated['zero_axis'], $this->calculated['boundary_box']['right'], $this->calculated['zero_axis'], $this->colour[$colour]);
     }
 
@@ -1807,9 +1812,9 @@ class graph {
     }
 
     function draw_brush($x, $y, $size, $type, $colour) {
-      $x = round($x);
-      $y = round($y);
-      $half = round($size / 2);
+      $x = (int) round($x);
+      $y = (int) round($y);
+      $half = (int) round($size / 2);
       switch ($type) {
         case 'circle':
           ImageArc($this->image, $x, $y, $size, $size, 0, 360, $this->colour[$colour]);
