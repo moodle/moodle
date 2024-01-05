@@ -985,7 +985,8 @@ function print_grade_page_head(int $courseid, string $active_type, ?string $acti
         $renderer = $PAGE->get_renderer('core_grades');
         // If the user is viewing their own grade report, no need to show the "Message"
         // and "Add to contact" buttons in the user heading.
-        $showuserbuttons = $user->id != $USER->id;
+        $showuserbuttons = $user->id != $USER->id && !empty($CFG->messaging) &&
+            has_capability('moodle/site:sendmessage', $PAGE->context);
         $output = $renderer->user_heading($user, $courseid, $showuserbuttons);
     } else if (!empty($heading)) {
         $output = $OUTPUT->heading($heading);
