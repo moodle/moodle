@@ -118,14 +118,12 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                     // Check if the user has an ongoing quiz attempt
                     $quizattempt = $DB->get_record('quiz_attempts', array('userid' => $userid, 'quiz' => $quizid, 'state' => 'inprogress'));
 
-                    //echo '<script type="text/javascript">';
-                    echo '<script>console.log(' . json_encode(['userid' => $userid, 'quizid' => $quizid]) . ');</script>';
-
                     // Check if $quizattempt is not empty before logging
                     if (!empty($quizattempt)) {
 
                         // Get attempt number
                         $attemptValue = $quizattempt->attempt;
+                        echo '<script>console.log(' . json_encode(['userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue]) . ');</script>';
 
                         // AJAX
                         // if (isset($_POST['screen_status'])) {
@@ -164,118 +162,137 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             // Prompt to consent screen sharing
                             echo"
                             let screenShared = false;
-                            let monitorTab = true;
                             let screenStream = null;
                             let videoElement;
                             let stopsSharing = false;
 
-                            document.addEventListener('visibilitychange', handleVisibilityChange);
+                            //document.addEventListener('visibilitychange', handleVisibilityChange);
 
-                            function handleVisibilityChange() {
-                                if (document.visibilityState === 'hidden') {
-                                    if (screenShared && !stopsSharing) {
-                                        // Send an AJAX request to your server to indicate screen sharing                                     
-                                        captureAndSaveScreen();
-                                    }
-                                }
-                            }
-                            ";
-
-                            if ($PAGE->cm->modname === 'quiz' && $PAGE->pagetype === 'mod-quiz-summary') {
-                                echo "console.error('On summary - modname: " . $PAGE->cm->modname . ", pagetype: " . $PAGE->pagetype . "');";
-                            } else {
-                                echo "console.log('Not on summary - modname: " . $PAGE->cm->modname . ", pagetype: " . $PAGE->pagetype . "');";
-                            }
+                            // function handleVisibilityChange() {
+                            //     if (document.visibilityState === 'hidden' && !document.hasFocus()) {
+                            //         if (screenShared && !stopsSharing) {
+                            //             // Send an AJAX request to your server to indicate screen sharing                                     
+                            //             captureAndSaveScreen();
+                            //         }
+                            //     }
+                            // }
                             
-                            echo"
-                            
-                                function startScreenSharing() {
-                                    navigator.mediaDevices.getDisplayMedia({ video: true })
-                                        .then(stream => {
-                                            videoElement = document.createElement('video');
-                                            videoElement.srcObject = stream;
-                                            videoElement.autoplay = true;
+                            function startScreenSharing() {
+                                navigator.mediaDevices.getDisplayMedia({ video: true })
+                                    .then(stream => {
+                                        videoElement = document.createElement('video');
+                                        videoElement.srcObject = stream;
+                                        videoElement.autoplay = true;
 
-                                            screenStream = stream;
-                                            screenShared = true;
+                                        screenStream = stream;
+                                        screenShared = true;
 
-                                            screenStream.getVideoTracks()[0].onended = () => {
-                                                stopsSharing = true;
-                                                console.log('Screen sharing stopped by the student.');
-                                                // Send an AJAX request to your server to indicate screen sharing stopped
-                                                sendScreenSharingStatus(2); // stops sharing
-                                            };
+                                        screenStream.getVideoTracks()[0].onended = () => {
+                                            stopsSharing = true;
+                                            console.log('Screen sharing stopped by the student.');
+                                            // Send an AJAX request to your server to indicate screen sharing stopped
+                                            //sendScreenSharingStatus(2); // stops sharing
+                                            captureAndSaveScreen('stops_sharing_screen');
+                                        };
 
-                                            captureAndSaveScreen(); // Capture the shared screen
-                                            sendScreenSharingStatus(1); // shared screen
-                                            console.log('Consent:', 1);
-                                        })
-                                        .catch(error => {
-                                            console.error('Error starting screen sharing:', error);
-                                            // Send an AJAX request to your server to indicate screen sharing error
-                                            sendScreenSharingStatus(0); // 0 indicates screen sharing stopped
-                                        });
+                                        captureAndSaveScreen('shared_screen'); // Capture the shared screen
+                                        //sendScreenSharingStatus(1); // shared screen
+                                        console.log('Consent:', 1);
+                                    })
+                                    .catch(error => {
+                                        console.error('Error starting screen sharing:', error);
+                                        // Send an AJAX request to your server to indicate screen sharing error
+                                        //sendScreenSharingStatus(0); // 0 indicates screen sharing stopped
+                                        captureAndSaveScreen('did_not_share_screen');
+                                    });
                                     
-                                        document.addEventListener('visibilitychange', handleVisibilityChange);
-                                        window.addEventListener('focus', handleTabSwitch);
-                                        window.addEventListener('blur', handleTabSwitch);
-                                }
-                            ";
+                                    //document.addEventListener('visibilitychange', handleVisibilityChange);
+                                    window.addEventListener('focus', handleTabSwitch);
+                                    window.addEventListener('blur', handleTabSwitch);
+                            }
                             
-                            
-                            echo"
                             function handleTabSwitch() {
                                 if (document.hasFocus()) {
                                     console.log('Tab switched back to focus');
                                 } else {
                                     console.log('Tab switched');
-                                    if(monitorTab){
-                                        sendScreenSharingStatus(3);
-                                        if (screenShared && !stopsSharing) {
-                                            // Capture and save the shared screen when the tab is switched
-                                            captureAndSaveScreen();
-                                        }
+                                    if (screenShared && !stopsSharing) {
+                                        // Capture and save the shared screen when the tab is switched
+                                        captureAndSaveScreen('tab_switch');
+                                    }
+                                    else{
+                                        //sendScreenSharingStatus(3);
+                                        captureAndSaveScreen('tab_switch_screen_not_shared');
                                     }
                                         
                                 }
                             }
 
-                            function sendScreenSharingStatus(screen_status) {
+                            function sendScreenSharingStatus(screen_status, filename, activity_type) {
                                 // Send an AJAX request to your server to record screen sharing status
                                 console.log('Sending screen_status:', screen_status);
                                 var xhr = new XMLHttpRequest();
                                 xhr.open('POST', '" . $CFG->wwwroot . "/local/auto_proctor/save_activity.php', true); // Replace with the actual path
                                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                                xhr.send('screen_status=' + screen_status + '&userid=' + ". $userid ." + '&quizid=' + ". $quizid ." + '&quizattempt=' + ". $attemptValue .");
+                                xhr.send('screen_status=' + screen_status + '&userid=' + ". $userid ." + '&quizid=' + ". $quizid ." + '&quizattempt=' + ". $attemptValue ." + '&filename=' + encodeURIComponent(filename) + '&activity_type=' + activity_type);
+                            }
+
+                            function generateTimestamp() {
+                                const now = new Date();
+                                const options = {
+                                    year: 'numeric',
+                                    month: '2-digit',
+                                    day: '2-digit',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    second: '2-digit',
+                                    hour12: true,
+                                    timeZoneName: 'short',
+                                };
+
+                                const formatter = new Intl.DateTimeFormat('en-US', options);
+                                const timestamp = formatter.format(now);
+
+                                return { timestamp, milliseconds: now.getMilliseconds() };
                             }
                             
 
-                            function captureAndSaveScreen() {
-                                setTimeout(() => {
-                                    const canvas = document.createElement('canvas');
-                                    canvas.width = videoElement.videoWidth;
-                                    canvas.height = videoElement.videoHeight;
-                                    const ctx = canvas.getContext('2d');
-                                    ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-
-                                    const dataUrl = canvas.toDataURL('image/png');
-
-                                    fetch('" . $CFG->wwwroot . "/local/auto_proctor/save_capture.php', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/x-www-form-urlencoded',
-                                        },
-                                        body: 'dataUri=' + encodeURIComponent(dataUrl),
-                                    })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        console.log('Screen captured and saved as: ' + data.filename);
-                                    })
-                                    .catch(error => {
-                                        console.error('Error saving screen capture:', error);
-                                    });
-                                }, 500);
+                            function captureAndSaveScreen(evidence_name_type) {
+                                if (evidence_name_type !== 'tab_switch_screen_not_shared' && evidence_name_type !== 'did_not_share_screen' && evidence_name_type !== 'stops_sharing_screen'){
+                                    setTimeout(() => {
+                                        const canvas = document.createElement('canvas');
+                                        canvas.width = videoElement.videoWidth;
+                                        canvas.height = videoElement.videoHeight;
+                                        const ctx = canvas.getContext('2d');
+                                        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                                
+                                        const { timestamp, milliseconds } = generateTimestamp();
+                                        const filename = 'EVD_' + timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type + '.png'; // Custom filename with evidenceType
+                                
+                                        const dataUrl = canvas.toDataURL('image/png');
+                                
+                                        fetch('" . $CFG->wwwroot . "/local/auto_proctor/save_capture.php', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/x-www-form-urlencoded',
+                                            },
+                                            body: 'dataUri=' + encodeURIComponent(dataUrl) + '&filename=' + encodeURIComponent(filename),
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            console.log('Screen captured and saved as: ' + data.filename);
+                                            sendScreenSharingStatus(4, filename, evidence_name_type);
+                                        })
+                                        .catch(error => {
+                                            console.error('Error saving screen capture:', error);
+                                        });
+                                    }, 500);
+                                }
+                                else{
+                                    sendScreenSharingStatus(4, 0,evidence_name_type);
+                                }
                             }
+                                                                       
 
                             // Start screen sharing when the script is loaded
                             startScreenSharing();";

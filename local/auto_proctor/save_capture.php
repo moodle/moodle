@@ -26,6 +26,7 @@ require_once(__DIR__ . '/../../config.php');
 
 // Get the data URI from the POST request
 $dataUri = $_POST['dataUri'];
+$generated_filename = $_POST['filename'];
 
 // Remove the "data:image/png;base64," prefix
 $data = base64_decode(preg_replace('#^data:image/png;base64,#', '', $dataUri));
@@ -39,7 +40,7 @@ if (!file_exists($folderPath)) {
 }
 
 // Generate a unique filename (e.g., based on timestamp)
-$filename = $folderPath . 'capture_' . time() . '.png';
+$filename = $folderPath . $generated_filename;
 
 // Save the file
 file_put_contents($filename, $data);
