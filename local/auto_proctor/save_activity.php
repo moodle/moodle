@@ -24,8 +24,8 @@ require_once(__DIR__ . '/../../config.php');
 
 global $DB, $PAGE, $USER, $CFG;
 
-if (isset($_POST['screen_status'])) {
-    $screen_status = intval($_POST['screen_status']); // Ensure it's an integer
+if (isset($_POST['screen_activity'])) {
+    $screen_activity = intval($_POST['screen_activity']); // Ensure it's an integer
     $userid = $_POST['userid'];
     $quizid = $_POST['quizid'];
     $quizattempt = $_POST['quizattempt'];
@@ -33,26 +33,26 @@ if (isset($_POST['screen_status'])) {
 
     switch ($activity_type) {
         case 'did_not_share_screen':
-            $activity_type = 0;
-            break;
-        case 'shared_screen':
             $activity_type = 1;
             break;
-        case 'stops_sharing_screen':
+        case 'shared_screen':
             $activity_type = 2;
             break;
-        case 'tab_switch':
+        case 'stops_sharing_screen':
             $activity_type = 3;
             break;
+        case 'tab_switch':
+            $activity_type = 4;
+            break;
         case 'tab_switch_screen_not_shared':
-            $activity_type = 3;
+            $activity_type = 5;
             break;
         // default:
             
         //     break;
     }
 
-    if($activity_type === 1 || $activity_type === 3){
+    if($activity_type === 2 || $activity_type === 4){
         if (isset($_POST['filename'])){
             $filename = $_POST['filename'];
 
@@ -66,11 +66,11 @@ if (isset($_POST['screen_status'])) {
 
             //echo json_encode(['message' => 'Received screen status: ' . $status]);
             echo '<script>console.log("sdfds");</script>';
-            echo '<script>console.log(' . json_encode(['screen_status' => $screen_status]) . ');</script>';
+            echo '<script>console.log(' . json_encode(['screen_activity' => $screen_activity]) . ');</script>';
             exit(); // Terminate the script after sending the response
         }
     }
-    if($activity_type === 0 || $activity_type === 3 || $activity_type === 2){
+    if($activity_type === 1 || $activity_type === 3 || $activity_type === 5){
         $insertData = new stdClass();
         $insertData->userid = $userid;
         $insertData->quizid = $quizid;
@@ -80,7 +80,7 @@ if (isset($_POST['screen_status'])) {
 
         //echo json_encode(['message' => 'Received screen status: ' . $status]);
         echo '<script>console.log("sdfds");</script>';
-        echo '<script>console.log(' . json_encode(['screen_status' => $screen_status]) . ');</script>';
+        echo '<script>console.log(' . json_encode(['screen_activity' => $screen_activity]) . ');</script>';
         exit(); // Terminate the script after sending the response
     }
 }
