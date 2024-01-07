@@ -150,6 +150,14 @@ $(document).ready(function () {
                             // }
                             
     function startScreenSharing() {
+        // Check if user device has mutiple monitor
+        if (window.screen.isExtended){
+            console.log('Multiple screen');
+        }
+        else{
+            console.log('Single screen');
+        }
+        
         navigator.mediaDevices.getDisplayMedia({ video: true })
             .then(stream => {
             videoElement = document.createElement('video');
