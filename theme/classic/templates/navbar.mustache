@@ -44,7 +44,7 @@
             <img src="{{output.get_compact_logo_url}}" class="logo mr-1" alt="{{sitename}}">
         {{/ output.should_display_navbar_logo }}
         {{^ output.should_display_navbar_logo }}
-            {{{ sitename }}}
+            <span class="sitename">{{{ sitename }}}</span>
         {{/ output.should_display_navbar_logo }}
     </a>
 
