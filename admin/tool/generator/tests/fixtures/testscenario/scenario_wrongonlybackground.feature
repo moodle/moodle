@@ -9,4 +9,3 @@ Feature: Invalid texting because background is not compatible
       | activity | name              | intro                       | course  | idnumber | section | visible |
       | assign   | Activity sample 1 | Test assignment description | C1      | sample1  | 1       | 1       |
       | assign   | Activity sample 2 | Test assignment description | C1      | sample2  | 1       | 0       |
-  
