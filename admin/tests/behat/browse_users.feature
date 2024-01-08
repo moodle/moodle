@@ -195,3 +195,29 @@ Feature: An administrator can browse user accounts
     Then I should see "Username"
     And I should see "User picture"
     And I should see "Additional names"
+
+  @javascript
+  Scenario: Browse user list as a person with limited capabilities
+    Given the following "users" exist:
+      | username | firstname | lastname | email               |
+      | manager  | Max       | Manager  | manager@example.com |
+    And the following "roles" exist:
+      | name           | shortname | description      | archetype |
+      | Custom manager | custom1   | My custom role 1 |           |
+    And the following "permission overrides" exist:
+      | capability             | permission | role    | contextlevel | reference |
+      | moodle/site:configview | Allow      | custom1 | System       |           |
+      | moodle/user:update     | Allow      | custom1 | System       |           |
+    And the following "role assigns" exist:
+      | user    | role    | contextlevel | reference |
+      | manager | custom1 | System       |           |
+    When I log in as "manager"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I click on "User One" "checkbox"
+    And the "Bulk user actions" select box should contain "Confirm"
+    And the "Bulk user actions" select box should not contain "Delete"
+    And I set the field "Bulk user actions" to "Force password change"
+    And I should see "Are you absolutely sure you want to force a password change to User One ?"
+    And I press "Yes"
+    And I press "Continue"
+    And I should see "Browse list of users"

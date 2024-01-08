@@ -64,6 +64,8 @@ information provided here is intended especially for developers.
   - $numtasks
   - $mode
 * Removed \zip_writer::sanitise_filepath and \zipwriter::sanitise_filename as they are now automatically sanitised in the zipstream.
+* Plugins implementing callback `bulk_user_actions()` should be aware that bulk user actions can be executed
+  from /admin/user.php as well as from the bulk actions page. The 'returnurl' parameter will be passed in the request.
 
 === 4.3 ===
 

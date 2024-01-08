@@ -67,6 +67,13 @@ class users extends system_report {
         $this->add_base_fields("{$entityuseralias}.id, {$entityuseralias}.confirmed, {$entityuseralias}.mnethostid,
             {$entityuseralias}.suspended, {$entityuseralias}.username, " . implode(', ', $fullnamefields));
 
+        if ($this->get_parameter('withcheckboxes', false, PARAM_BOOL)) {
+            $canviewfullnames = has_capability('moodle/site:viewfullnames', \context_system::instance());
+            $this->set_checkbox_toggleall(static function(\stdClass $row) use ($canviewfullnames): array {
+                return [$row->id, fullname($row, $canviewfullnames)];
+            });
+        }
+
         $paramguest = database::generate_param_name();
         $this->add_base_condition_sql("{$entityuseralias}.deleted <> 1 AND {$entityuseralias}.id <> :{$paramguest}",
             [$paramguest => $CFG->siteguest]);

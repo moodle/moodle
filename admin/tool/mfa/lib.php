@@ -112,6 +112,9 @@ function tool_mfa_after_config(): void {
  * @return array
  */
 function tool_mfa_bulk_user_actions(): array {
+    if (!has_capability('moodle/site:config', context_system::instance())) {
+        return [];
+    }
     return [
         'tool_mfa_reset_factors' => new action_link(
             new moodle_url('/admin/tool/mfa/reset_factor.php'),

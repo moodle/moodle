@@ -31,6 +31,9 @@ class user_bulk_cohortadd_form extends moodleform {
         $mform = $this->_form;
         $cohorts = $this->_customdata;
 
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+
         $mform->addElement('select', 'cohort', get_string('cohort', 'core_cohort'), $cohorts);
         $mform->addRule('cohort', get_string('required'), 'required', null, 'client');
 

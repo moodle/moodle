@@ -101,6 +101,24 @@ Feature: Add cohorts of users
     And the "Current users" select box should not contain "First User (first@example.com)"
 
   @javascript
+  Scenario: Add users to a cohort using a user list bulk action
+    When I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I click on "Third User" "checkbox"
+    And I click on "Forth User" "checkbox"
+    And I set the field "Bulk user actions" to "Add to cohort"
+    And I set the field "Cohort" to "Test cohort name [333]"
+    And I press "Add to cohort"
+    And I should see "Browse list of users"
+    And I navigate to "Users > Accounts > Cohorts" in site administration
+    Then the following should exist in the "reportbuilder-table" table:
+      | Name              | Cohort size  |
+      | Test cohort name  | 2            |
+    And I press "Assign" action in the "Test cohort name" report row
+    And the "Current users" select box should contain "Third User (third@example.com)"
+    And the "Current users" select box should contain "Forth User (forth@example.com)"
+    And the "Current users" select box should not contain "First User (first@example.com)"
+
+  @javascript
   Scenario: Edit cohort name in-place
     When I navigate to "Users > Accounts > Cohorts" in site administration
     And I set the field "Edit cohort name" to "Students cohort"
