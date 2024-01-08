@@ -72,14 +72,11 @@ $string['search:activity'] = 'Book - resource information';
 $string['search:chapter'] = 'Book - chapters';
 $string['showchapter'] = 'Show chapter "{$a}"';
 $string['subchapter'] = 'Subchapter';
-$string['navimages'] = 'Images';
 $string['navoptions'] = 'Available options for navigational links';
 $string['navoptions_desc'] = 'Options for displaying navigation on the book pages';
 $string['navstyle'] = 'Style of navigation';
 $string['navstyle_help'] = '* Images - Icons are used for navigation
 * Text - Chapter titles are used for navigation';
-$string['navtext'] = 'Text';
-$string['navtoc'] = 'TOC Only';
 $string['nocontent'] = 'No content has been added to this book yet.';
 $string['numbering'] = 'Chapter formatting';
 $string['numbering_help'] = '* None - Chapter and subchapter titles have no formatting
@@ -117,3 +114,8 @@ $string['subplugintype_booktool_plural'] = 'Book tools';
 $string['removeallbooktags'] = 'Remove all book tags';
 $string['tagarea_book_chapters'] = 'Book chapters';
 $string['tagsdeleted'] = 'Book tags have been deleted';
+
+// Deprecated since Moodle 4.4.
+$string['navimages'] = 'Images';
+$string['navtext'] = 'Text';
+$string['navtoc'] = 'TOC Only';

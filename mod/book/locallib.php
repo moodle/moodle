@@ -40,16 +40,6 @@ define('BOOK_NUM_BULLETS',  '2');
 define('BOOK_NUM_INDENTED', '3');
 
 /**
- * The following defines are used to define the navigation style used within a book.
- * BOOK_LINK_TOCONLY    Only the table of contents is shown, in a side region.
- * BOOK_LINK_IMAGE      Arrows link to previous/next/exit pages, in addition to the TOC.
- * BOOK_LINK_TEXT       Page names and arrows link to previous/next/exit pages, in addition to the TOC.
- */
-define ('BOOK_LINK_TOCONLY', '0');
-define ('BOOK_LINK_IMAGE', '1');
-define ('BOOK_LINK_TEXT', '2');
-
-/**
  * Preload book chapters and fix toc structure if necessary.
  *
  * Returns array of chapters with standard 'pagenum', 'id, pagenum, subchapter, title, content, contentformat, hidden'
