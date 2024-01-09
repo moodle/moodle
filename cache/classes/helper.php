@@ -759,18 +759,27 @@ class cache_helper {
                     debugging('Cache stores used for session definitions should ideally be searchable.', DEBUG_DEVELOPER);
                     continue;
                 }
-                // Get all of the keys.
-                $keys = $store->find_by_prefix(cache_session::KEY_PREFIX);
-                $todelete = array();
+                // Get all of the last access keys.
+                $keys = $store->find_by_prefix(cache_session::LASTACCESS);
+                $todelete = [];
                 foreach ($store->get_many($keys) as $key => $value) {
-                    if (strpos($key, cache_session::KEY_PREFIX) !== 0 || !is_array($value) || !isset($value['lastaccess'])) {
-                        continue;
+                    $expiresvalue = 0;
+                    if ($value instanceof cache_ttl_wrapper) {
+                        $expiresvalue = $value->data;
+                    } else if ($value instanceof cache_cached_object) {
+                        $expiresvalue = $value->restore_object();
+                    } else {
+                        $expiresvalue = $value;
                     }
-                    if ((int)$value['lastaccess'] < $purgetime || true) {
-                        $todelete[] = $key;
+                    $expires = (int) $expiresvalue;
+
+                    if ($expires > 0 && $expires < $purgetime) {
+                        $prefix = substr($key, strlen(cache_session::LASTACCESS));
+                        $foundbyprefix = $store->find_by_prefix($prefix);
+                        $todelete = array_merge($todelete, [$key], $foundbyprefix);
                     }
                 }
-                if (count($todelete)) {
+                if ($todelete) {
                     $outcome = (int)$store->delete_many($todelete);
                     if ($output) {
                         $strdef = s($definition->get_id());
