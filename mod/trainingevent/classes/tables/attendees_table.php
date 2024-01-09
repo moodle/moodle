@@ -143,4 +143,42 @@ class attendees_table extends table_sql {
 
         return $gradehtml;
     }
+
+    /**
+     * Generate the display of the user's lastname
+     * @param object $user the table row being output.
+     * @return string HTML content to go inside the td.
+     */
+    public function col_department($row) {
+        global $CFG, $DB;
+
+        $userdepartments = $DB->get_records_sql("select d.* FROM {department} d JOIN {company_users} cu ON (d.id = cu.departmentid)
+                                                 WHERE cu.userid = :userid
+                                                 AND cu.companyid = :companyid",
+                                                 ['userid' => $row->id,
+                                                  'companyid' => $row->companyid]);
+        $count = count($userdepartments);
+        $current = 1;
+        $returnstr = "";
+        if ($count > 5) {
+            $returnstr = "<details><summary>" . get_string('show') . "</summary>";
+        }
+
+        $first = true;
+        foreach($userdepartments as $department) {
+            $returnstr .= format_string($department->name);
+
+            if ($current < $count) {
+                $returnstr .= ",<br>";
+            }
+            $current++;
+        }
+
+        if ($count > 5) {
+            $returnstr .= "</details>";
+        }
+
+        return $returnstr;
+    }
+
 }

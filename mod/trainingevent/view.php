@@ -1308,12 +1308,67 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 }
             }
 
+            // Do we have any additional reporting fields?
+            $extrafields = array();
+            if (!empty($CFG->iomad_report_fields)) {
+                $companyrec = $DB->get_record('company', array('id' => $location->companyid));
+                foreach (explode(',', $CFG->iomad_report_fields) as $extrafield) {
+                    $extrafields[$extrafield] = new stdclass();
+                    $extrafields[$extrafield]->name = $extrafield;
+                    if (strpos($extrafield, 'profile_field') !== false) {
+                        // Its an optional profile field.
+                        $profilefield = $DB->get_record('user_info_field', array('shortname' => str_replace('profile_field_', '', $extrafield)));
+                        if ($profilefield->categoryid == $companyrec->profileid ||
+                            !$DB->get_record('company', array('profileid' => $profilefield->categoryid))) {
+                            $extrafields[$extrafield]->title = $profilefield->name;
+                            $extrafields[$extrafield]->fieldid = $profilefield->id;
+                        } else {
+                            unset($extrafields[$extrafield]);
+                        }
+                    } else {
+                        $extrafields[$extrafield]->title = get_string($extrafield);
+                    }
+                }
+            }
+
             $table = new \mod_trainingevent\tables\attendees_table('trainingeventattendees');
             $table->is_downloading($download, format_string($event->name) . ' ' . get_string('attendance', 'local_report_attendance'), 'trainingevent_attendees123');
             $headers = [get_string('fullname'),
+                        get_string('department', 'block_iomad_company_admin'),
                         get_string('email')];
             $columns = ['fullname',
+                        'department',
                         'email'];
+
+            $selectsql = "DISTINCT u.*, " . $location->companyid . " AS companyid";
+            $fromsql = " {user} u
+                         JOIN {trainingevent_users} teu ON (u.id = teu.userid)";
+            $wheresql = "teu.trainingeventid = :event
+                         AND u.id IN (".$allowedlist.")
+                         AND teu.waitlisted = :waitlisted"; 
+            $sqlparams = ['waitlisted' => $waitingoption,
+                          'event' => $event->id];
+
+            if (!empty($extrafields)) {
+                foreach ($extrafields as $extrafield) {
+                    $headers[] = $extrafield->title;
+                    $columns[] = $extrafield->name;
+                    if (!empty($extrafield->fieldid)) {
+                        // Its a profile field.
+                        // Skip it this time as these may not have data.
+                    } else {
+                        $selectsql .= ", u." . $extrafield->name;
+                    }
+                }
+                foreach ($extrafields as $extrafield) {
+                    if (!empty($extrafield->fieldid)) {
+                        // Its a profile field.
+                        $selectsql .= ", P" . $extrafield->fieldid . ".data AS " . $extrafield->name;
+                        $fromsql .= " LEFT JOIN {user_info_data} P" . $extrafield->fieldid . " ON (u.id = P" . $extrafield->fieldid . ".userid AND P".$extrafield->fieldid . ".fieldid = :p" . $extrafield->fieldid . "fieldid )";
+                        $sqlparams["p".$extrafield->fieldid."fieldid"] = $extrafield->fieldid;
+                    }
+                }
+            }
 
             if (has_capability('mod/trainingevent:add', $context)) {
                 $headers[] = get_string('event', 'trainingevent');
@@ -1327,15 +1382,6 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 $headers[] = get_string('grade', 'grades');
                 $columns[] = 'grade';
             }
-
-            $selectsql = "DISTINCT u.*";
-            $fromsql = " {user} u
-                         JOIN {trainingevent_users} teu ON (u.id = teu.userid)";
-            $wheresql = "teu.trainingeventid = :event
-                         AND u.id IN (".$allowedlist.")
-                         AND teu.waitlisted = :waitlisted"; 
-            $sqlparams = ['waitlisted' => $waitingoption,
-                          'event' => $event->id];
 
             $table->set_sql($selectsql, $fromsql, $wheresql, $sqlparams);
             $table->define_baseurl(new moodle_url('/mod/trainingevent/view.php',
