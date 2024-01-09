@@ -1,0 +1,7 @@
+issueNumber: MDL-80519
+notes:
+  theme_boost:
+    - message: >-
+        Added new bs4-compat SCSS file (initially deprecated) to help
+        third-party plugins the migration process from BS4 to BS5
+      type: deprecated

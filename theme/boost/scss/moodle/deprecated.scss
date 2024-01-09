@@ -46,3 +46,6 @@
     @include deprecated-styles();
     display: none;
 }
+
+// TODO: MDL-84465 Final deprecation in 6.0. Remove this line when the Bootstrap 4 backward compatibility period ends.
+@import "bs4-compat";
