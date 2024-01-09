@@ -33,7 +33,8 @@ Feature: Admin can set Recover grades default setting
     And I navigate to course participants
     And I click on "Unenrol" "icon" in the "Student One" "table_row"
     And I click on "Unenrol" "button" in the "Unenrol" "dialogue"
-    And I press "Enrol users"
+    # The button at the top is hidden by the un-enrolment confirmation dialogue so the button at the bottom is clicked instead.
+    And I click on "Enrol users" "button" in the "div.justify-content-end .enrolusersbutton" "css_element"
     And I set the field "Select users" to "student1"
     # Confirm the "Recover user's old grades if possible" checkbox state based on Recover grades default setting
     When I click on "Show more..." "link"
