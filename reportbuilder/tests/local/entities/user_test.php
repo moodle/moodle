@@ -73,6 +73,7 @@ class user_test extends advanced_testcase {
      */
     public function get_name_fields_select_provider(): array {
         return [
+            ['firstname', ['firstname']],
             ['firstname lastname', ['firstname', 'lastname']],
             ['firstname middlename lastname', ['firstname', 'middlename', 'lastname']],
             ['alternatename lastname firstname', ['alternatename', 'lastname', 'firstname']],
@@ -94,10 +95,15 @@ class user_test extends advanced_testcase {
 
         set_config('alternativefullnameformat', $fullnamedisplay);
 
+        // As a user without permission to view all fields we always get the standard ones.
         $fields = user::get_name_fields_select('u');
         $user = $DB->get_record_sql("SELECT {$fields} FROM {user} u WHERE username = :username", ['username' => 'admin']);
+        $this->assertEquals(['firstname', 'lastname'], array_keys((array) $user));
 
-        // Ensure we received back all name fields.
+        // As the admin we get all name fields from alternativefullnameformat.
+        $this->setAdminUser();
+        $fields = user::get_name_fields_select('u');
+        $user = $DB->get_record_sql("SELECT {$fields} FROM {user} u WHERE username = :username", ['username' => 'admin']);
         $this->assertEquals($expecteduserfields, array_keys((array) $user));
     }
 }
