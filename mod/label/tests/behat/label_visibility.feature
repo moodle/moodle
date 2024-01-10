@@ -11,7 +11,7 @@ Feature: Check label visibility works
       | Test | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher | Teacher | Frist | teacher1@example.com |
+      | teacher | Teacher | First | teacher1@example.com |
       | student | Student | First | student1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
