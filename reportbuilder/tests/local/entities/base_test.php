@@ -78,6 +78,24 @@ class base_test extends advanced_testcase {
     }
 
     /**
+     * Test getting all table aliases
+     */
+    public function test_get_table_aliases(): void {
+        $entity = new base_test_entity();
+
+        [
+            'mytable' => $mytablealias,
+            'myothertable' => $myothertablealias,
+        ] = $entity->get_table_aliases();
+
+        $this->assertMatchesRegularExpression('/^rbalias(\d+)$/', $mytablealias);
+        $this->assertMatchesRegularExpression('/^rbalias(\d+)$/', $myothertablealias);
+
+        // They must differ.
+        $this->assertNotEquals($mytablealias, $myothertablealias);
+    }
+
+    /**
      * Test setting table alias
      */
     public function test_set_table_alias(): void {
@@ -108,8 +126,10 @@ class base_test extends advanced_testcase {
             'mytable' => 'newalias',
             'myothertable' => 'newalias2',
         ]);
-        $this->assertEquals('newalias', $entity->get_table_alias('mytable'));
-        $this->assertEquals('newalias2', $entity->get_table_alias('myothertable'));
+        $this->assertEquals([
+            'mytable' => 'newalias',
+            'myothertable' => 'newalias2',
+        ], $entity->get_table_aliases());
     }
 
     /**
