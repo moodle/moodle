@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="lib/db" VERSION="20231219" COMMENT="XMLDB file for core Moodle tables"
+<XMLDB PATH="lib/db" VERSION="20240110" COMMENT="XMLDB file for core Moodle tables"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../lib/xmldb/xmldb.xsd"
 >
@@ -756,6 +756,8 @@
       </KEYS>
       <INDEXES>
         <INDEX NAME="useridfrom" UNIQUE="false" FIELDS="useridfrom" COMMENT="The useridfrom would normally be a foreign key to the users table. But it can also contain some extra negative values with special semantics (-10 or -20 for no-reply or support user). Therefore we can't make it a foreign key and the index must be created explicitly."/>
+        <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated" COMMENT="Index on timecreated to speed up deletion of expired notifications."/>
+        <INDEX NAME="timeread" UNIQUE="false" FIELDS="timeread" COMMENT="Index on timeread to speed up deletion of read notifications."/>
       </INDEXES>
     </TABLE>
     <TABLE NAME="message_contacts" COMMENT="Maintains lists of contacts between users">

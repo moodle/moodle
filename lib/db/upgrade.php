@@ -941,5 +941,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2023122100.02);
     }
 
+    if ($oldversion < 2024010400.01) {
+
+        // Define index timecreated (not unique) to be added to notifications.
+        $table = new xmldb_table('notifications');
+        $createdindex = new xmldb_index('timecreated', XMLDB_INDEX_NOTUNIQUE, ['timecreated']);
+
+        // Conditionally launch add index timecreated.
+        if (!$dbman->index_exists($table, $createdindex)) {
+            $dbman->add_index($table, $createdindex);
+        }
+
+        // Define index timeread (not unique) to be added to notifications.
+        $readindex = new xmldb_index('timeread', XMLDB_INDEX_NOTUNIQUE, ['timeread']);
+
+        // Conditionally launch add index timeread.
+        if (!$dbman->index_exists($table, $readindex)) {
+            $dbman->add_index($table, $readindex);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024010400.01);
+    }
+
     return true;
 }
