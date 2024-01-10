@@ -348,7 +348,7 @@ if (!$users) {
             continue; // Do not dispaly dummy new user and guest here.
         }
 
-        if (has_capability('mod/trainingevent:add', $context) && ($location->isvirtual || $attending < $location->capacity)) {
+        if (has_capability('mod/trainingevent:add', $context) && ($location->isvirtual || $attending < $event->coursecapacity)) {
             $enrolmentbutton = $output->single_button(new moodle_url("/mod/trainingevent/view.php",
                                                                       array('id' => $cm->id,
                                                                             'chosenevent' => $event->id,
