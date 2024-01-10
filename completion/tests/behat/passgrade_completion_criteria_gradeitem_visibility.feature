@@ -10,7 +10,7 @@ Feature: Students will be shown relevant completion state based on grade item vi
       | Course 1 | C1        | 0        | 1                |
     And the following "users" exist:
       | username | firstname | lastname | email                |
-      | teacher1 | Teacher   | Frist    | teacher1@example.com |
+      | teacher1 | Teacher   | First    | teacher1@example.com |
       | student1 | Student   | First    | student1@example.com |
       | student2 | Student   | Second   | student2@example.com |
     And the following "course enrolments" exist:
