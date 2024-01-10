@@ -8,6 +8,10 @@ information provided here is intended especially for developers.
 * The external function core_course::get_courses_by_field now returns the communication tool configuration for the course.
   - communicationroomname: the room name
   - communicationroomurl: the tool url
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `course_purge_section_cache`
+  - `course_purge_module_cache`
+  - `get_array_of_activities`
 
 === 4.3 ===
 * The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used

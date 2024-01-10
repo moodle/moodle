@@ -14,6 +14,9 @@ Information provided here is intended especially for developers.
   for validation.
 * The function get_gradable_users() in grade/lib.php has extra param now to retrieve only active enrolments.
 * A new webservice core_grades_get_gradable_users has been added to retrieve gradable users for a course.
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `grade_print_tabs`
+  - `print_grade_plugin_selector`
 
 === 4.3 ===
 * The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.

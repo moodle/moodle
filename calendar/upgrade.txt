@@ -1,6 +1,11 @@
 This files describes API changes in /calendar/* ,
 information provided here is intended especially for developers.
 
+=== 4.4 ===
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `calendar_process_subscription_row`
+  - `calendar_import_icalendar_events`
+
 === 4.3 ===
 * The `navigation` property has been removed from `\core_calendar\external\day_exporter` as it is not being used by any of the
   calendar templates.
