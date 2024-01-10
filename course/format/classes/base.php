@@ -523,7 +523,7 @@ abstract class base {
     /**
      * Returns the display name of the given section that the course prefers.
      *
-     * @param int|stdClass $section Section object from database or just field course_sections.section
+     * @param int|stdClass|section_info $section Section object from database or just field course_sections.section
      * @return string Display name that the course format prefers, e.g. "Topic 2"
      */
     public function get_section_name($section) {
@@ -1526,18 +1526,22 @@ abstract class base {
      *
      * Do not call this function directly, instead call course_delete_section()
      *
-     * @param int|stdClass|section_info $section
+     * @param int|stdClass|section_info $sectionornum
      * @param bool $forcedeleteifnotempty if set to false section will not be deleted if it has modules in it.
      * @return bool whether section was deleted
      */
-    public function delete_section($section, $forcedeleteifnotempty = false) {
+    public function delete_section($sectionornum, $forcedeleteifnotempty = false) {
         global $DB;
         if (!$this->uses_sections()) {
             // Not possible to delete section if sections are not used.
             return false;
         }
-        if (!is_object($section)) {
-            $section = $DB->get_record('course_sections', array('course' => $this->get_courseid(), 'section' => $section),
+        if (is_object($sectionornum)) {
+            $section = $sectionornum;
+        } else {
+            $section = $DB->get_record(
+                'course_sections',
+                ['course' => $this->get_courseid(), 'section' => $sectionornum],
                 'id,section,sequence,summary');
         }
         if (!$section || !$section->section) {

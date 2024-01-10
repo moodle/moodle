@@ -23,6 +23,7 @@ use coding_exception;
 use context_course;
 use context_module;
 use course_modinfo;
+use core_courseformat\formatactions;
 use moodle_exception;
 use moodle_url;
 use Exception;
@@ -1110,6 +1111,123 @@ class modinfolib_test extends advanced_testcase {
                 'expectexception' => true,
             ],
         ];
+    }
+
+    /**
+     * Test get_section_info_by_component method
+     *
+     * @covers \course_modinfo::get_section_info_by_component
+     * @dataProvider get_section_info_by_component_provider
+     *
+     * @param string $component the component name
+     * @param int $itemid the section number
+     * @param int $strictness the search strict mode
+     * @param bool $expectnull if the function will return a null
+     * @param bool $expectexception if the function will throw an exception
+     */
+    public function test_get_section_info_by_component(
+        string $component,
+        int $itemid,
+        int $strictness,
+        bool $expectnull,
+        bool $expectexception
+    ): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+
+        formatactions::section($course)->create_delegated('mod_forum', 42);
+
+        $modinfo = get_fast_modinfo($course);
+
+        if ($expectexception) {
+            $this->expectException(moodle_exception::class);
+        }
+
+        $section = $modinfo->get_section_info_by_component($component, $itemid, $strictness);
+
+        if ($expectnull) {
+            $this->assertNull($section);
+        } else {
+            $this->assertEquals($component, $section->component);
+            $this->assertEquals($itemid, $section->itemid);
+        }
+    }
+
+    /**
+     * Data provider for test_get_section_info_by_component().
+     *
+     * @return array
+     */
+    public static function get_section_info_by_component_provider(): array {
+        return [
+            'Valid component and itemid' => [
+                'component' => 'mod_forum',
+                'itemid' => 42,
+                'strictness' => IGNORE_MISSING,
+                'expectnull' => false,
+                'expectexception' => false,
+            ],
+            'Invalid component' => [
+                'component' => 'mod_nonexisting',
+                'itemid' => 42,
+                'strictness' => IGNORE_MISSING,
+                'expectnull' => true,
+                'expectexception' => false,
+            ],
+            'Invalid itemid' => [
+                'component' => 'mod_forum',
+                'itemid' => 0,
+                'strictness' => IGNORE_MISSING,
+                'expectnull' => true,
+                'expectexception' => false,
+            ],
+            'Invalid component and itemid' => [
+                'component' => 'mod_nonexisting',
+                'itemid' => 0,
+                'strictness' => IGNORE_MISSING,
+                'expectnull' => true,
+                'expectexception' => false,
+            ],
+            'Invalid component must exists' => [
+                'component' => 'mod_nonexisting',
+                'itemid' => 42,
+                'strictness' => MUST_EXIST,
+                'expectnull' => true,
+                'expectexception' => true,
+            ],
+            'Invalid itemid must exists' => [
+                'component' => 'mod_forum',
+                'itemid' => 0,
+                'strictness' => MUST_EXIST,
+                'expectnull' => true,
+                'expectexception' => true,
+            ],
+            'Invalid component and itemid must exists' => [
+                'component' => 'mod_nonexisting',
+                'itemid' => 0,
+                'strictness' => MUST_EXIST,
+                'expectnull' => false,
+                'expectexception' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Test has_delegated_sections method
+     *
+     * @covers \course_modinfo::has_delegated_sections
+     */
+    public function test_has_delegated_sections(): void {
+        $this->resetAfterTest();
+        $course = $this->getDataGenerator()->create_course(['numsections' => 1]);
+
+        $modinfo = get_fast_modinfo($course);
+        $this->assertFalse($modinfo->has_delegated_sections());
+
+        formatactions::section($course)->create_delegated('mod_forum', 42);
+
+        $modinfo = get_fast_modinfo($course);
+        $this->assertTrue($modinfo->has_delegated_sections());
     }
 
     /**

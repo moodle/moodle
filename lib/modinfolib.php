@@ -88,6 +88,12 @@ class course_modinfo {
     private $sectioninfobyid;
 
     /**
+     * Index of delegated sections (indexed by component and itemid)
+     * @var array
+     */
+    private $delegatedsections;
+
+    /**
      * User ID
      * @var int
      */
@@ -351,6 +357,36 @@ class course_modinfo {
     }
 
     /**
+     * Gets data about specific delegated section.
+     * @param string $component Component name
+     * @param int $itemid Item id
+     * @param int $strictness Use MUST_EXIST to throw exception if it doesn't
+     * @return section_info|null Information for numbered section or null if not found
+     */
+    public function get_section_info_by_component(
+        string $component,
+        int $itemid,
+        int $strictness = IGNORE_MISSING
+    ): ?section_info {
+        if (!isset($this->delegatedsections[$component][$itemid])) {
+            if ($strictness === MUST_EXIST) {
+                throw new moodle_exception('sectionnotexist');
+            } else {
+                return null;
+            }
+        }
+        return $this->delegatedsections[$component][$itemid];
+    }
+
+    /**
+     * Check if the course has delegated sections.
+     * @return bool
+     */
+    public function has_delegated_sections(): bool {
+        return !empty($this->delegatedsections);
+    }
+
+    /**
      * Static cache for generated course_modinfo instances
      *
      * @see course_modinfo::instance()
@@ -582,11 +618,18 @@ class course_modinfo {
         // Expand section objects
         $this->sectioninfobynum = [];
         $this->sectioninfobyid = [];
+        $this->delegatedsections = [];
         foreach ($coursemodinfo->sectioncache as $data) {
             $sectioninfo = new section_info($data, $data->section, null, null,
                 $this, null);
             $this->sectioninfobynum[$data->section] = $sectioninfo;
             $this->sectioninfobyid[$data->id] = $sectioninfo;
+            if (!empty($sectioninfo->component)) {
+                if (!isset($this->delegatedsections[$sectioninfo->component])) {
+                    $this->delegatedsections[$sectioninfo->component] = [];
+                }
+                $this->delegatedsections[$sectioninfo->component][$sectioninfo->itemid] = $sectioninfo;
+            }
         }
         ksort($this->sectioninfobynum);
     }
