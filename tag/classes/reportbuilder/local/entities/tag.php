@@ -24,7 +24,7 @@ use html_writer;
 use lang_string;
 use stdClass;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\{boolean_select, date, tags};
+use core_reportbuilder\local\filters\{boolean_select, date, number, tags};
 use core_reportbuilder\local\helpers\format;
 use core_reportbuilder\local\report\{column, filter};
 
@@ -177,6 +177,17 @@ class tag extends base {
             ->set_is_sortable(true, ["{$tagalias}.flag"])
             ->add_callback([format::class, 'boolean_as_text']);
 
+        // Flag count.
+        $columns[] = (new column(
+            'flagcount',
+            new lang_string('flagcount', 'core_tag'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_INTEGER)
+            ->add_fields("{$tagalias}.flag")
+            ->set_is_sortable(true);
+
         // Time modified.
         $columns[] = (new column(
             'timemodified',
@@ -227,6 +238,16 @@ class tag extends base {
             new lang_string('flagged', 'core_tag'),
             $this->get_entity_name(),
             "CASE WHEN {$tagalias}.flag > 0 THEN 1 ELSE {$tagalias}.flag END"
+        ))
+            ->add_joins($this->get_joins());
+
+        // Flag count.
+        $filters[] = (new filter(
+            number::class,
+            'flagcount',
+            new lang_string('flagcount', 'core_tag'),
+            $this->get_entity_name(),
+            "{$tagalias}.flag"
         ))
             ->add_joins($this->get_joins());
 
