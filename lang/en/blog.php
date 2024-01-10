@@ -86,6 +86,7 @@ $string['entrybodyonlydesc'] = 'Entry description';
 $string['entryerrornotyours'] = 'This entry is not yours';
 $string['entrysaved'] = 'Your entry has been saved';
 $string['entrytitle'] = 'Entry title';
+$string['entrytitlewithlink'] = 'Entry title with link';
 $string['eventblogentriesviewed'] = 'Blog entries viewed';
 $string['eventblogassociationadded'] = 'Blog association created';
 $string['eventblogassociationdeleted'] = 'Blog association deleted';

@@ -125,6 +125,7 @@ class blogs_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Blogs', 'source' => blogs::class, 'default' => 0]);
 
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'blog:titlewithlink']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'blog:body']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'blog:attachment']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'blog:publishstate']);
@@ -146,6 +147,7 @@ class blogs_test extends core_reportbuilder_testcase {
         $this->assertCount(1, $content);
 
         [
+            $link,
             $body,
             $attachment,
             $publishstate,
@@ -156,6 +158,8 @@ class blogs_test extends core_reportbuilder_testcase {
             $commenter,
         ] = array_values($content[0]);
 
+        $this->assertEquals("<a href=\"https://www.example.com/moodle/blog/index.php?entryid={$blog->id}\">{$blog->subject}</a>",
+            $link);
         $this->assertStringContainsString('Horses', $body);
         $this->assertStringContainsString('hello.txt', $attachment);
         $this->assertEquals('Draft', $publishstate);

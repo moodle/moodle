@@ -21,7 +21,9 @@ namespace core_blog\reportbuilder\local\entities;
 use blog_entry_attachment;
 use context_system;
 use core_collator;
+use html_writer;
 use lang_string;
+use moodle_url;
 use stdClass;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\{boolean_select, date, select, text};
@@ -102,6 +104,23 @@ class blog extends base {
             ->add_fields("{$postalias}.subject")
             ->set_is_sortable(true);
 
+        // Title with link.
+        $columns[] = (new column(
+            'titlewithlink',
+            new lang_string('entrytitlewithlink', 'core_blog'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$postalias}.subject, {$postalias}.id")
+            ->set_is_sortable(true)
+            ->add_callback(static function(?string $subject, stdClass $post): string {
+                if ($subject === null) {
+                    return '';
+                }
+                return html_writer::link(new moodle_url('/blog/index.php', ['entryid' => $post->id]), $subject);
+            });
+
         // Body.
         $summaryfieldsql = "{$postalias}.summary";
         if ($DB->get_dbfamily() === 'oracle') {
@@ -117,7 +136,7 @@ class blog extends base {
             ->set_type(column::TYPE_LONGTEXT)
             ->add_field($summaryfieldsql, 'summary')
             ->add_fields("{$postalias}.summaryformat, {$postalias}.id")
-            ->add_callback(static function(?string $summary, stdClass $blog): string {
+            ->add_callback(static function(?string $summary, stdClass $post): string {
                 global $CFG;
                 require_once("{$CFG->libdir}/filelib.php");
 
@@ -127,9 +146,9 @@ class blog extends base {
 
                 // All blog files are stored in system context.
                 $context = context_system::instance();
-                $summary = file_rewrite_pluginfile_urls($summary, 'pluginfile.php', $context->id, 'blog', 'post', $blog->id);
+                $summary = file_rewrite_pluginfile_urls($summary, 'pluginfile.php', $context->id, 'blog', 'post', $post->id);
 
-                return format_text($summary, $blog->summaryformat, ['context' => $context->id]);
+                return format_text($summary, $post->summaryformat, ['context' => $context->id]);
             });
 
         // Attachment.
