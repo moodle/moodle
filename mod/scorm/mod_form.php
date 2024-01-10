@@ -340,7 +340,7 @@ class mod_scorm_mod_form extends moodleform_mod {
                     $cvalues[$key] = 1;
                 }
             }
-        } else if (empty($this->_instance)) {
+        } else if (empty($this->_instance) && !array_key_exists('completionstatusrequired', $defaultvalues)) {
             // When in add mode, set a default completion rule that requires the SCORM's status be set to "Completed".
             $cvalues[4] = 1;
         }
