@@ -85,7 +85,7 @@ function mycourses_get_my_completion($sort = 'coursefullname', $dir = 'ASC') {
     // First we discount everything else we have in progress.
     $myusedcourses = array();
     foreach ($myinprogress as $id => $inprogress) {
-        $myinprogress[$id]->coursefullname = format_string($inprogress->coursefullname);
+        $myinprogress[$id]->coursefullname = format_string($inprogress->coursefullname, true, ['context' => context_course::instance($inprogress->courseid)]);
         $myusedcourses[$inprogress->courseid] = $inprogress->courseid;
         if (empty($inprogress->hasgrade)) {
             $myinprogress[$id]->finalgrade = "";
@@ -123,11 +123,11 @@ function mycourses_get_my_completion($sort = 'coursefullname', $dir = 'ASC') {
                                                         $inprogresssql",
                                                         array('enrol' => 'self'));
         foreach ($companyselfenrolcourses as $companyselfenrolcourse) {
-            $companyselfenrolcourse->coursefullname = format_string($companyselfenrolcourse->coursefullname);
+            $companyselfenrolcourse->coursefullname = format_string($companyselfenrolcourse->coursefullname, true, ['context' => context_course::instance($companyselfenrolcourse->courseid)]);
             $myavailablecourses[$companyselfenrolcourse->coursefullname] = $companyselfenrolcourse;
         }
         foreach ($sharedselfenrolcourses as $sharedselfenrolcourse) {
-            $sharedselfenrolcourse->coursefullname = format_string($sharedselfenrolcourse->coursefullname);
+            $sharedselfenrolcourse->coursefullname = format_string($sharedselfenrolcourse->coursefullname, true, ['context' => context_course::instance($sharedselfenrolcourse->courseid)]);
             $myavailablecourses[$sharedselfenrolcourse->coursefullname] = $sharedselfenrolcourse;
         }
         // Check if there are any courses from 'blanket' licenses.
@@ -149,13 +149,13 @@ function mycourses_get_my_completion($sort = 'coursefullname', $dir = 'ASC') {
                 }
             }
             foreach ($blanketcourses as $blanketcourse) {
-                $blanketcourse->fullname = format_string($blanketcourse->coursefullname);
+                $blanketcourse->fullname = format_string($blanketcourse->coursefullname, true, ['context' => context_course::instance($blanketcourse->courseid)]);
                 $myavailablecourses[$blanketcourse->coursefullname] = $blanketcourse;
             }
         }
     }
     foreach($mynotstartedlicense as $licensedcourse) {
-        $licensedcourse->coursefullname = format_string($licensedcourse->coursefullname);
+        $licensedcourse->coursefullname = format_string($licensedcourse->coursefullname, true, ['context' => context_course::instance($licensedcourse->courseid)]);
         $myavailablecourses[$licensedcourse->coursefullname] = $licensedcourse;
     }
 
@@ -193,7 +193,9 @@ function mycourses_get_my_archive($sort = 'coursefullname', $dir = 'ASC') {
 
     // Deal with completed course scores and links for certificates.
     foreach ($myarchive as $id => $archive) {
-	$myarchive[$id]->coursefullname = format_string($archive->coursefullname);
+       $myarchive[$id]->coursefullname = format_string($archive->coursefullname, true, ['context' => context_course::instance($archive->courseid)]);
+       $certstring = '';
+
         // Deal with the iomadcertificate info.
         if ($hasiomadcertificate) {
             if ($iomadcertificateinfo = $DB->get_record('iomadcertificate',
