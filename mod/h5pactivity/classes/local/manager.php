@@ -165,14 +165,21 @@ class manager {
     /**
      * Check if tracking is enabled in a particular h5pactivity for a specific user.
      *
-     * @param stdClass|null $user user record (default $USER)
      * @return bool if tracking is enabled in this activity
      */
-    public function is_tracking_enabled(stdClass $user = null): bool {
+    public function is_tracking_enabled(): bool {
+        return $this->instance->enabletracking;
+    }
+
+    /**
+     * Check if the user has permission to submit a particular h5pactivity for a specific user.
+     *
+     * @param stdClass|null $user user record (default $USER)
+     * @return bool if the user has permission to submit in this activity
+     */
+    public function can_submit(stdClass $user = null): bool {
         global $USER;
-        if (!$this->instance->enabletracking) {
-            return false;
-        }
+
         if (empty($user)) {
             $user = $USER;
         }

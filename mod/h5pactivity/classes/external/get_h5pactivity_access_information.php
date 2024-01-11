@@ -75,7 +75,7 @@ class get_h5pactivity_access_information extends external_api {
             $field = 'can' . str_replace('mod/h5pactivity:', '', $capname);
             // For mod/h5pactivity:submit we need to check if tracking is enabled in the h5pactivity for the current user.
             if ($field == 'cansubmit') {
-                $result[$field] = $manager->is_tracking_enabled();
+                $result[$field] = $manager->is_tracking_enabled() && $manager->can_submit();
             } else {
                 $result[$field] = has_capability($capname, $context);
             }
