@@ -4617,12 +4617,26 @@ function complete_user_login($user, array $extrauserinfo = []) {
         $ismoodleapp = false;
         $useragent = \core_useragent::get_user_agent_string();
 
-        // Schedule adhoc task to sent a login notification to the user.
-        $task = new \core\task\send_login_notifications();
-        $task->set_userid($USER->id);
-        $task->set_custom_data(compact('ismoodleapp', 'useragent', 'loginip', 'logintime'));
-        $task->set_component('core');
-        \core\task\manager::queue_adhoc_task($task);
+        $sitepreferences = get_message_output_default_preferences();
+        // Check if new login notification is disabled at system level.
+        $newlogindisabled = $sitepreferences->moodle_newlogin_disable ?? 0;
+        // Check if message providers (web, email, mobile) are enabled at system level.
+        $msgproviderenabled = isset($sitepreferences->message_provider_moodle_newlogin_enabled);
+        // Get message providers enabled for a user.
+        $userpreferences = get_user_preferences('message_provider_moodle_newlogin_enabled');
+        // Check if notification processor plugins (web, email, mobile) are enabled at system level.
+        $msgprocessorsready = !empty(get_message_processors(true));
+        // If new login notification is enabled at system level then go for other conditions check.
+        $newloginenabled = $newlogindisabled ? 0 : ($userpreferences != 'none' && $msgproviderenabled);
+
+        if ($newloginenabled && $msgprocessorsready) {
+            // Schedule adhoc task to send a login notification to the user.
+            $task = new \core\task\send_login_notifications();
+            $task->set_userid($USER->id);
+            $task->set_custom_data(compact('ismoodleapp', 'useragent', 'loginip', 'logintime'));
+            $task->set_component('core');
+            \core\task\manager::queue_adhoc_task($task);
+        }
     }
 
     // Queue migrating the messaging data, if we need to.
