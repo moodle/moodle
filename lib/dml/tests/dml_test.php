@@ -42,7 +42,7 @@ defined('MOODLE_INTERNAL') || die();
  * @category   test
  * @copyright  2008 Nicolas Connault
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \moodle_database
+ * @covers \moodle_database
  */
 class dml_test extends \database_driver_testcase {
 
@@ -2077,6 +2077,32 @@ EOD;
         $DB->insert_record($tablename, array('course' => 3));
 
         $this->assertEquals(3, $DB->get_field_sql("SELECT course FROM {{$tablename}} WHERE id = ?", array(1)));
+    }
+
+    public function test_get_fieldset() {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $tablename = $table->getName();
+
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $dbman->create_table($table);
+
+        $DB->insert_record($tablename, ['course' => 1]);
+        $DB->insert_record($tablename, ['course' => 1]);
+        $DB->insert_record($tablename, ['course' => 2]);
+        $DB->insert_record($tablename, ['course' => 1]);
+
+        $fieldset = $DB->get_fieldset($tablename, 'id', ['course' => 1]);
+        $this->assertIsArray($fieldset);
+
+        $this->assertCount(3, $fieldset);
+        $this->assertEquals(1, $fieldset[0]);
+        $this->assertEquals(2, $fieldset[1]);
+        $this->assertEquals(4, $fieldset[2]);
     }
 
     public function test_get_fieldset_select() {

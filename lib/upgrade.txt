@@ -25,6 +25,7 @@ information provided here is intended especially for developers.
       By default, tasks will be retried until they succeed, other tasks can override this method to change this behaviour.
     - set_attempts_available(): Used to set the number of attempts available for the task
     - get_attempts_available(): Used to get the number of attempts available for the task.
+* There is a new DML method $DB->get_fieldset. For some reason, this did not exist even though get_fieldset_select etc. did.
 
 === 4.3 ===
 
