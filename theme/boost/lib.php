@@ -64,7 +64,7 @@ function theme_boost_get_extra_scss($theme) {
     }
 
     // Always return the background image with the scss when we have it.
-    return !empty($theme->settings->scss) ? $theme->settings->scss . ' ' . $content : $content;
+    return !empty($theme->settings->scss) ? "{$theme->settings->scss}  \n  {$content}" : $content;
 }
 
 /**
