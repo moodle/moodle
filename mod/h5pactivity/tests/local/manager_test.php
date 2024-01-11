@@ -61,15 +61,19 @@ class manager_test extends \advanced_testcase {
     }
 
     /**
-     * Test for is_tracking_enabled.
+     * Test for is_tracking_enabled and can_submit methods.
      *
+     * @covers ::is_tracking_enabled
+     * @covers ::can_submit
      * @dataProvider is_tracking_enabled_data
      * @param bool $login if the user is logged in
      * @param string $role user role in course
      * @param int $enabletracking if tracking is enabled
-     * @param bool $expected expected result
+     * @param bool $expectedtracking expected result for is_tracking_enabled()
+     * @param bool $expectedsubmit expected result for can_submit()
      */
-    public function test_is_tracking_enabled(bool $login, string $role, int $enabletracking, bool $expected) {
+    public function test_is_tracking_enabled_and_can_submit(bool $login, string $role, int $enabletracking, bool $expectedtracking,
+            bool $expectedsubmit): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -87,39 +91,40 @@ class manager_test extends \advanced_testcase {
         }
 
         $manager = manager::create_from_instance($activity);
-        $this->assertEquals($expected, $manager->is_tracking_enabled($param));
+        $this->assertEquals($expectedtracking, $manager->is_tracking_enabled());
+        $this->assertEquals($expectedsubmit, $manager->can_submit($param));
     }
 
     /**
-     * Data provider for is_tracking_enabled.
+     * Data provider for test_is_tracking_enabled_and_can_submit.
      *
      * @return array
      */
     public function is_tracking_enabled_data(): array {
         return [
             'Logged student, tracking enabled' => [
-                true, 'student', 1, true
+                true, 'student', 1, true, true,
             ],
             'Logged student, tracking disabled' => [
-                true, 'student', 0, false
+                true, 'student', 0, false, true,
             ],
             'Logged teacher, tracking enabled' => [
-                true, 'editingteacher', 1, false
+                true, 'editingteacher', 1, true, false,
             ],
             'Logged teacher, tracking disabled' => [
-                true, 'editingteacher', 0, false
+                true, 'editingteacher', 0, false, false,
             ],
             'No logged student, tracking enabled' => [
-                true, 'student', 1, true
+                true, 'student', 1, true, true,
             ],
             'No logged student, tracking disabled' => [
-                true, 'student', 0, false
+                true, 'student', 0, false, true,
             ],
             'No logged teacher, tracking enabled' => [
-                true, 'editingteacher', 1, false
+                true, 'editingteacher', 1, true, false,
             ],
             'No logged teacher, tracking disabled' => [
-                true, 'editingteacher', 0, false
+                true, 'editingteacher', 0, false, false,
             ],
         ];
     }
