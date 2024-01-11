@@ -91,12 +91,12 @@ function xmldb_main_upgrade($oldversion) {
 
     // Always keep this upgrade step with version being the minimum
     // allowed version to upgrade from (v4.1.2 right now).
-    if ($oldversion < 2021112802) {
+    if ($oldversion < 2022112802) {
         // Just in case somebody hacks upgrade scripts or env, we really can not continue.
         echo("You need to upgrade to 4.1.2 or higher first!\n");
         exit(1);
         // Note this savepoint is 100% unreachable, but needed to pass the upgrade checks.
-        upgrade_main_savepoint(true, 2021112802);
+        upgrade_main_savepoint(true, 2022112802);
     }
 
     // Automatically generated Moodle v4.1.0 release upgrade line.
