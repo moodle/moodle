@@ -50,6 +50,7 @@ $string['filetypesnotall'] = 'It is not allowed to select \'All file types\' her
 $string['filetypesnotallowed'] = 'These file types are not allowed here: {$a}';
 $string['filetypesothers'] = 'Other files';
 $string['filetypesunknown'] = 'Unknown file types: {$a}';
+$string['formactions'] = 'Form actions';
 $string['general'] = 'General';
 $string['hideadvanced'] = 'Hide advanced';
 $string['hour'] = 'Hour';

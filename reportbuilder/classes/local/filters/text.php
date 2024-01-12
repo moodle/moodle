@@ -92,7 +92,8 @@ class text extends base {
         $elements['value'] = $mform->createElement('text', $this->name . '_value',
             get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()));
 
-        $mform->addElement('group', $this->name . '_group', '', $elements, '', false);
+        $mform->addGroup($elements, $this->name . '_group', $this->get_header(), '', false)
+            ->setHiddenLabel(true);
 
         $mform->setType($this->name . '_value', PARAM_RAW);
         $mform->hideIf($this->name . '_value', $this->name . '_operator', 'eq', self::ANY_VALUE);

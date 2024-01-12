@@ -95,7 +95,8 @@ class duration extends base {
         $mform->setDefault("{$this->name}_unit", 1);
         $mform->hideIf("{$this->name}_unit", "{$this->name}_operator", 'eq', self::DURATION_ANY);
 
-        $mform->addGroup($elements, "{$this->name}_group", '', '', false);
+        $mform->addGroup($elements, "{$this->name}_group", $this->get_header(), '', false)
+            ->setHiddenLabel(true);
     }
 
     /**
