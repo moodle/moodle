@@ -372,7 +372,8 @@ class user extends base {
 
         // Create a dummy user object containing all name fields.
         $dummyuser = (object) array_combine($namefields, $namefields);
-        $dummyfullname = fullname($dummyuser, true);
+        $viewfullnames = has_capability('moodle/site:viewfullnames', context_system::instance());
+        $dummyfullname = fullname($dummyuser, $viewfullnames);
 
         // Extract any name fields from the fullname format in the order that they appear.
         $matchednames = array_values(order_in_string($namefields, $dummyfullname));
