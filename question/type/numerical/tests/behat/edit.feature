@@ -55,3 +55,32 @@ Feature: Test editing a Numerical question
     Then the following fields match these values:
       | id_answer_0    | 0.00000123456789 |
       | id_tolerance_1 | 0.0000123456789  |
+
+  Scenario: Edit a Numerical question with optional units
+    When I am on the "Numerical for editing" "core_question > edit" page logged in as teacher
+    # Edit the existing numerical question, add in the optional units.
+    And I set the following fields to these values:
+      | Question text    | What's $500 in Php? <img src="/lib/tests/fixtures/gd-logo.png" alt="aaa" width="100" height="75"/>            |
+      | Default mark     | 1                                                                                                             |
+      | General feedback | The correct answer is Php27950 <img src="/lib/tests/fixtures/gd-logo.png" alt="aaa" width="100" height="75"/> |
+      | id_unitrole      | Units are optional. If a unit is entered, it is used to convert the response to Unit 1 before grading.        |
+      | id_unitsleft     | on the left, for example $1.00 or £1.00                                                                       |
+      | id_answer_0      | 27950                                                                                                         |
+      | id_tolerance_0   | 0                                                                                                             |
+      | id_fraction_0    | 100%                                                                                                          |
+      | id_unit_0        | Php                                                                                                           |
+      | id_multiplier_0  | 55.9                                                                                                          |
+    And I press "submitbutton"
+    And I choose "Edit question" action for "Numerical for editing" in the question bank
+    # Confirm that the numerical question is updated accordingly.
+    Then the following fields match these values:
+      | Question text    | What's $500 in Php? <img src="/lib/tests/fixtures/gd-logo.png" alt="aaa" width="100" height="75"/>            |
+      | Default mark     | 1                                                                                                             |
+      | General feedback | The correct answer is Php27950 <img src="/lib/tests/fixtures/gd-logo.png" alt="aaa" width="100" height="75"/> |
+      | id_unitrole      | Units are optional. If a unit is entered, it is used to convert the response to Unit 1 before grading.        |
+      | id_unitsleft     | on the left, for example $1.00 or £1.00                                                                       |
+      | id_answer_0      | 27950                                                                                                         |
+      | id_tolerance_0   | 0                                                                                                             |
+      | id_fraction_0    | 100%                                                                                                          |
+      | id_unit_0        | Php                                                                                                           |
+      | id_multiplier_0  | 55.9                                                                                                          |
