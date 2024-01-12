@@ -261,7 +261,7 @@ abstract class user_selector_base {
             $multiselect = 'multiple="multiple" ';
         }
         $output = '<div class="userselector" id="' . $this->name . '_wrapper">' . "\n" .
-                '<select name="' . $name . '" id="' . $this->name . '" ' .
+                '<select name="' . $name . '" id="' . $this->name . '" aria-live="polite" ' .
                 $multiselect . 'size="' . $this->rows . '" class="form-control no-overflow">' . "\n";
 
         // Populate the select.
