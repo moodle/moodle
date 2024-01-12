@@ -31,7 +31,7 @@ $addons = [
             'coursebigbluebuttonbn' => [ // Handler unique name (can be anything).
                 'displaydata' => [
                     'title' => 'pluginname',
-                    'icon' => $CFG->wwwroot . '/mod/bigbluebuttonbn/pix/monologo.png',
+                    'icon' => $CFG->wwwroot . '/mod/bigbluebuttonbn/pix/monologo.svg',
                     'class' => '',
                 ],
                 'delegate' => 'CoreCourseModuleDelegate', // Delegate (where to display the link to the add-on).

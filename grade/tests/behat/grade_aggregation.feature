@@ -9,13 +9,18 @@ Feature: We can use calculated grade totals
       | fullname | shortname | category | groupmode |
       | Course 1 | C1 | 0 | 1 |
     And the following "users" exist:
-      | username | firstname | lastname | email | idnumber |
-      | teacher1 | Teacher | 1 | teacher1@example.com | t1 |
-      | student1 | Student | 1 | student1@example.com | s1 |
+      | username | firstname | lastname | email                | idnumber |
+      | teacher1 | Teacher   | 1        | teacher1@example.com | t1       |
+      | student1 | Student   | 1        | student1@example.com | s1       |
+      # Additional students must be enrolled in the course to ensure that the action menu for hiding grades is displayed correctly.
+      | student2 | Student   | 2        | student2@example.com | s2       |
+      | student3 | Student   | 3        | student3@example.com | s3       |
     And the following "course enrolments" exist:
-      | user | course | role |
-      | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+      | student1 | C1     | student        |
+      | student2 | C1     | student        |
+      | student3 | C1     | student        |
     And the following "grade categories" exist:
       | fullname         | course |
       | Sub category 1   | C1     |

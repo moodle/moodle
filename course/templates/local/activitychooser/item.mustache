@@ -35,7 +35,7 @@
     <div class="optioninfo card-body d-flex flex-column text-center p-1" data-region="chooser-option-info-container">
         <a class="d-flex flex-column justify-content-between flex-fill" href="{{link}}" title="{{#str}} addnew, moodle, {{title}} {{/str}}" tabindex="-1" data-action="add-chooser-option">
             <div class="optionicon mt-2 mb-1 mx-auto icon-no-margin modicon_{{name}} activityiconcontainer smaller
-                    {{^branded}} {{purpose}}{{/branded}}">
+                    {{purpose}} {{#branded}}isbranded{{/branded}}">
                 {{{icon}}}
             </div>
             <div class="optionname clamp-2">{{title}}</div>

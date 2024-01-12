@@ -97,7 +97,7 @@ class tool_types extends base {
 
                 $iconurl = $data->icon ?: $OUTPUT->image_url('monologo', 'lti')->out();
                 $iconclass = $data->icon ? ' nofilter' : '';
-                $iconcontainerclass = 'activityiconcontainer smaller content';
+                $iconcontainerclass = 'activityiconcontainer smaller';
                 $name = $data->name;
                 $img = \html_writer::img($iconurl, get_string('courseexternaltooliconalt', 'mod_lti', $name),
                     ['class' => 'activityicon' . $iconclass]);

@@ -66,7 +66,7 @@ function lti_supports($feature) {
         case FEATURE_SHOW_DESCRIPTION:
             return true;
         case FEATURE_MOD_PURPOSE:
-            return MOD_PURPOSE_CONTENT;
+            return MOD_PURPOSE_OTHER;
 
         default:
             return null;

@@ -35,8 +35,8 @@
 {{#url}}
     {{#uservisible}}
         <a href="{{url}}"
-            class="activity-icon activityiconcontainer smaller {{^branded}}{{purpose}}{{/branded}} btn btn-link courseicon align-self-start mr-2"
-            {{#showtooltip}}data-toggle="tooltip" title="{{{pluginname}}}" data-placement="top"{{/showtooltip}} {{branded}}
+            class="activity-icon activityiconcontainer smaller {{purpose}} {{#branded}}isbranded{{/branded}} btn btn-link courseicon align-self-start mr-2"
+            {{#showtooltip}}data-toggle="tooltip" title="{{{pluginname}}}" data-placement="top"{{/showtooltip}}
         >
             <img src="{{{icon}}}" class="activityicon {{iconclass}}"
                  alt="{{#cleanstr}} activityicon, moodle, {{{pluginname}}} {{/cleanstr}}"
@@ -44,7 +44,7 @@
         </a>
     {{/uservisible}}
     {{^uservisible}}
-        <div class="activity-icon activityiconcontainer smaller {{^branded}}{{purpose}}{{/branded}} courseicon align-self-start mr-2">
+        <div class="activity-icon activityiconcontainer smaller {{purpose}} {{#branded}}isbranded{{/branded}} courseicon align-self-start mr-2">
             <img src="{{{icon}}}" class="activityicon {{iconclass}}"
                  alt="{{#cleanstr}} activityicon, moodle, {{{pluginname}}} {{/cleanstr}}"
             >

@@ -230,7 +230,7 @@ if ($mform->is_cancelled()) {
     $PAGE->activityheader->disable();
 
     echo $OUTPUT->header();
-    echo $OUTPUT->heading_with_help($pageheading, '', $module->name, 'monologo');
+    echo $OUTPUT->heading_with_help($pageheading, '', $module->name);
 
     $mform->display();
 

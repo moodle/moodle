@@ -65,7 +65,7 @@ function h5pactivity_supports(string $feature) {
         case FEATURE_BACKUP_MOODLE2:
             return true;
         case FEATURE_MOD_PURPOSE:
-            return MOD_PURPOSE_CONTENT;
+            return MOD_PURPOSE_INTERACTIVECONTENT;
         default:
             return null;
     }
