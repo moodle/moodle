@@ -82,12 +82,24 @@ class tool_filetypes_test extends advanced_testcase {
     }
 
     /**
-     * Test get_file_icons() function to confirm no file icons are removed/added by mistake.
+     * Test get_file_icons() function to confirm no file icons are removed by mistake.
      *
      * @covers ::get_file_icons
      */
     public function test_get_file_icons() {
         $icons = utils::get_file_icons();
-        $this->assertCount(31, $icons);
+        $filetypes = core_filetypes::get_types();
+
+        $requiredicons = array_column($filetypes, 'icon');
+        $requireduniqueicons = array_unique($requiredicons);
+
+        // The 'folder' icon is not a file, however the test validates no
+        // file icons are removed by mistake from the directory pix/f.
+        // Adding the folder icon manually completes the scope of this test.
+        $requireduniqueicons[] = 'folder';
+
+        foreach ($requireduniqueicons as $requiredicon) {
+            $this->assertArrayHasKey($requiredicon, $icons, "Icon '$requiredicon' is missing.");
+        }
     }
 }
