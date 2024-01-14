@@ -164,19 +164,27 @@ class course_group_users_form extends moodleform {
         $mform->addElement('html', '
               </td>
               <td id="buttonscell">
-                      <input name="add" id="add" type="submit" value="' .
-                       $output->larrow().'&nbsp;'.get_string('add') .
-                       '" title="'.get_string('add') .'" /><br />');
+              <p class="arrow_button">
+                  <input name="add" id="add" type="submit" value="' .
+                   $output->larrow().'&nbsp;'.get_string('add') .
+                   '" title="'.get_string('add') .'" 
+                   class="btn btn-secondary"/><br />
+                  <input name="move" id="move" type="submit" value="' .
+                   $output->larrow().'&nbsp;'.get_string('move') .
+                   '" title="'.get_string('move') .'" 
+                   class="btn btn-secondary"/><br />');
 
         if (!$this->isdefault) {
 
             $mform->addElement('html', '
-                      <input name="remove" id="remove" type="submit" value="' .
-                       get_string('remove') . '&nbsp;' . $output->rarrow() .
-                       '" title="'.get_string('remove') .'" /><br>');
+                  <input name="remove" id="remove" type="submit" value="' .
+                   get_string('remove') . '&nbsp;' . $output->rarrow() .
+                   '" title="'.get_string('remove') .'" 
+                   class="btn btn-secondary" /><br>');
         }
 
         $mform->addElement('html', '
+              </p>
               </td>
               <td id="potentialcell">');
 
@@ -195,28 +203,38 @@ class course_group_users_form extends moodleform {
         global $DB, $CFG;
 
         $this->create_user_selectors();
+        $moving = false;
 
-        // Process incoming enrolments.
+        // Process incoming moves..
+        if (optional_param('move', false, PARAM_BOOL) && confirm_sesskey()) {
+            $userstoassign = $this->potentialusers->get_selected_users();
+            $moving = true;
+        }
+
+        // Process incoming adds.
         if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
             $userstoassign = $this->potentialusers->get_selected_users();
-            if (!empty($userstoassign)) {
+            $moving = false;
+        }
 
-                foreach ($userstoassign as $adduser) {
-                    $allow = true;
+        // Do the work.
+        if (!empty($userstoassign)) {
 
-                    // Check the userid is valid.
-                    if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
-                        print_error('invaliduserdepartment', 'block_iomad_company_management');
-                    }
+            foreach ($userstoassign as $adduser) {
+                $allow = true;
 
-                    if ($allow) {
-                        company_user::assign_group($adduser, $this->courseid, $this->groupid);
-                    }
+                // Check the userid is valid.
+                if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
+                    print_error('invaliduserdepartment', 'block_iomad_company_management');
                 }
 
-                $this->potentialusers->invalidate_selected_users();
-                $this->currentusers->invalidate_selected_users();
+                if ($allow) {
+                    company_user::assign_group($adduser, $this->courseid, $this->groupid, $moving);
+                }
             }
+
+            $this->potentialusers->invalidate_selected_users();
+            $this->currentusers->invalidate_selected_users();
         }
 
         // Process incoming unenrolments.

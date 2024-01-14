@@ -771,7 +771,7 @@ class company_user {
      * @param id $groupid
      * @return void
      */
-    public static function assign_group($user, $courseid, $groupid) {
+    public static function assign_group($user, $courseid, $groupid, $move=true) {
         global $DB;
 
         // Deal with any licenses.
@@ -779,10 +779,13 @@ class company_user {
             $DB->set_field('companylicense_users', 'groupid', $groupid, array('id' => $licenseinfo->id));
         }
 
-        // Clear down the user from all of the other course groups.
-        $currentgroups = groups_get_all_groups($courseid);
-        foreach ($currentgroups as $group) {
-            groups_remove_member($group->id, $user->id);
+        // Are we adding to another group or moving to another group
+        if ($move) {
+            // Clear down the user from all of the other course groups.
+            $currentgroups = groups_get_all_groups($courseid);
+            foreach ($currentgroups as $group) {
+                groups_remove_member($group->id, $user->id);
+            }
         }
 
         // Add them to the selected group.
@@ -801,15 +804,29 @@ class company_user {
 
         groups_remove_member($groupid, $user->id);
 
-        // Get the company group.
-        $companygroup = company::get_company_group($companyid, $courseid);
+        // Get the company object.
+        $company = new company($companyid);
 
-        // Add them to the selected group.
-        groups_add_member($companygroup->id, $user->id);
+        // Check if the user already belongs to one of the company groups or not still.
+        $companygroups = $company->get_course_groups_menu($courseid);
+        if ($currentgroups = $DB->get_records_sql("SELECT id FROM {groups_members}
+                                                   WHERE userid = :userid
+                                                   AND groupid IN (:groups)",
+                                                   ['userid' => $user->id,
+                                                    'groups' => implode(',',array_keys($companygroups))])) {
+            return;
+        } else {
 
-        // Deal with any licenses.
-        if ($licenseinfo = $DB->get_record('companylicense_users', array('licensecourseid' => $courseid, 'userid' => $user->id))) {
-            $DB->set_field('companylicense_users', 'groupid', $companygroup->id, array('id' => $licenseinfo->id));
+            // Get the company group.
+            $companygroup = company::get_company_group($companyid, $courseid);
+
+            // Add them to the selected group.
+            groups_add_member($companygroup->id, $user->id);
+
+            // Deal with any licenses.
+            if ($licenseinfo = $DB->get_record('companylicense_users', array('licensecourseid' => $courseid, 'userid' => $user->id))) {
+                $DB->set_field('companylicense_users', 'groupid', $companygroup->id, array('id' => $licenseinfo->id));
+            }
         }
     }
 

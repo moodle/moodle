@@ -253,18 +253,6 @@ border-radius: 10px;
     color: #d30000;
 }
 
-.companymanagertable p.arrow_button #remove,
-.companycourseuserstable p.arrow_button #remove,
-.companycoursegroupstable p.arrow_button #remove,
-.companycoursetable p.arrow_button #remove,
-.companygroupuserstable p.arrow_button #remove,
-.companylicenseuserstable p.arrow_button #remove,
-.companytemplatetable p.arrow_button #remove,
-.companyframeworktable p.arrow_button #remove,
-.companyuserstable p.arrow_button #remove {
-    margin: 0;
-}
-
 #page-blocks-iomad_company_admin-editusers #mform1 {
     display: flex;
     padding-top: 5px;
@@ -380,4 +368,19 @@ border-radius: 10px;
 
 #page-blocks-iomad_company_admin-classroom_list > #page-wrapper > nav > div.primary-navigation > nav {
     opacity: 1;
+}
+
+.companymanagertable p.arrow_button input,
+.companycourseuserstable p.arrow_button input,
+.companycoursegroupstable p.arrow_button input,
+.companycoursetable p.arrow_button input,
+.companygroupuserstable p.arrow_button input,
+.companylicenseuserstable p.arrow_button input,
+.companytemplatetable p.arrow_button input,
+.companyframeworktable p.arrow_button input,
+.companyuserstable p.arrow_button input {
+    width: auto;
+    min-width: 80%;
+    margin: 0 auto;
+    display: block;
 }
