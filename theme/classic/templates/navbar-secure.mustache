@@ -29,22 +29,24 @@
     }
 }}
 <nav class="fixed-top navbar navbar-bootswatch navbar-expand moodle-has-zindex">
-    {{# output.should_display_navbar_logo }}
-        <span class="logo d-none d-sm-inline">
-            <img src="{{output.get_compact_logo_url}}" alt="{{sitename}}">
-        </span>
-    {{/ output.should_display_navbar_logo }}
-    <span class="site-name d-none d-md-inline">{{{ sitename }}}</span>
+    <div class="container-fluid">
+        {{# output.should_display_navbar_logo }}
+            <span class="logo d-none d-sm-inline">
+                <img src="{{output.get_compact_logo_url}}" alt="{{sitename}}">
+            </span>
+        {{/ output.should_display_navbar_logo }}
+        <span class="site-name d-none d-md-inline">{{{ sitename }}}</span>
 
-    {{# output.secure_layout_language_menu }}
-    <ul class="navbar-nav d-none d-md-flex">
-        <!-- language_menu -->
-        {{{ . }}}
-    </ul>
-    {{/ output.secure_layout_language_menu }}
-    {{# output.secure_layout_login_info }}
-    <div class="ml-auto">
-        {{{ . }}}
+        {{# output.secure_layout_language_menu }}
+        <ul class="navbar-nav d-none d-md-flex">
+            <!-- language_menu -->
+            {{{ . }}}
+        </ul>
+        {{/ output.secure_layout_language_menu }}
+        {{# output.secure_layout_login_info }}
+        <div class="ml-auto">
+            {{{ . }}}
+        </div>
+        {{/ output.secure_layout_login_info }}
     </div>
-    {{/ output.secure_layout_login_info }}
 </nav>
