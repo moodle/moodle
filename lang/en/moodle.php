@@ -1308,6 +1308,7 @@ $string['messageprovider:coursecontentupdated'] = 'Course content changes';
 $string['messageprovider:courserequestapproved'] = 'Course creation request approval notification';
 $string['messageprovider:courserequested'] = 'Course creation request notification';
 $string['messageprovider:courserequestrejected'] = 'Course creation request rejection notification';
+$string['messageprovider:enrolcoursewelcomemessage'] = 'Welcome message for new course enrolments';
 $string['messageprovider:errors'] = 'Important errors with the site';
 $string['messageprovider:errors_help'] = 'These are important errors that an administrator should know about.';
 $string['messageprovider:gradenotifications'] = 'Grade notifications';

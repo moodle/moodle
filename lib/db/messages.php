@@ -216,4 +216,13 @@ $messageproviders = array (
             'email' => MESSAGE_FORCED,
         ],
     ],
+
+    // Course welcome message.
+    'enrolcoursewelcomemessage' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 );
