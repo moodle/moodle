@@ -181,10 +181,10 @@ class renderer_base {
     public function render_from_template($templatename, $context) {
         $mustache = $this->get_mustache();
 
-        try {
+        if ($mustache->hasHelper('uniqid')) {
             // Grab a copy of the existing helper to be restored later.
             $uniqidhelper = $mustache->getHelper('uniqid');
-        } catch (Mustache_Exception_UnknownHelperException $e) {
+        } else {
             // Helper doesn't exist.
             $uniqidhelper = null;
         }
