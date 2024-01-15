@@ -2681,7 +2681,9 @@ function get_formatted_help_string($identifier, $component, $ajax = false, $a = 
 
         $helplink = $identifier . '_link';
         if ($sm->string_exists($helplink, $component)) {  // Link to further info in Moodle docs.
-            $link = get_string($helplink, $component);
+            // The link is stored in a language file but should not be translated, use value for English.
+            $link = $sm->get_string($helplink, $component, null, 'en');
+            // The text 'More help' should be in the current language.
             $linktext = get_string('morehelp');
 
             $data->doclink = new stdClass();
