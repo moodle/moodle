@@ -3571,4 +3571,65 @@ abstract class enrol_plugin {
         // Plugins can override this if they can uniquely identify an instance.
         return null;
     }
+
+    /**
+     * Get the "from" contact which the message will be sent from.
+     *
+     * @param int $sendoption send email from constant ENROL_SEND_EMAIL_FROM_*
+     * @param context $context where the user will be fetched from.
+     * @return null|stdClass the contact user object.
+     */
+    public function get_welcome_message_contact(
+        int $sendoption,
+        context $context,
+    ): ?stdClass {
+        global $CFG;
+
+        $acceptedsendoptions = [
+            ENROL_DO_NOT_SEND_EMAIL,
+            ENROL_SEND_EMAIL_FROM_COURSE_CONTACT,
+            ENROL_SEND_EMAIL_FROM_KEY_HOLDER,
+            ENROL_SEND_EMAIL_FROM_NOREPLY,
+        ];
+        if (!in_array($sendoption, $acceptedsendoptions)) {
+            throw new coding_exception('Invalid send option');
+        }
+        if ($sendoption === ENROL_DO_NOT_SEND_EMAIL) {
+            return null;
+        }
+        $contact = null;
+        // Send as the first user assigned as the course contact.
+        if ($sendoption === ENROL_SEND_EMAIL_FROM_COURSE_CONTACT) {
+            $rusers = [];
+            if (!empty($CFG->coursecontact)) {
+                $croles = explode(',', $CFG->coursecontact);
+                [$sort, $sortparams] = users_order_by_sql('u');
+                // We only use the first user.
+                $i = 0;
+                do {
+                    $userfieldsapi = \core_user\fields::for_name();
+                    $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
+                    $rusers = get_role_users($croles[$i], $context, true, 'u.id,  u.confirmed, u.username, '. $allnames . ',
+                    u.email, r.sortorder, ra.id', 'r.sortorder, ra.id ASC, ' . $sort, null, '', '', '', '', $sortparams);
+                    $i++;
+                } while (empty($rusers) && !empty($croles[$i]));
+            }
+            if ($rusers) {
+                $contact = array_values($rusers)[0];
+            }
+        } else if ($sendoption === ENROL_SEND_EMAIL_FROM_KEY_HOLDER) {
+            // Send as the first user with enrol/self:holdkey capability assigned in the course.
+            [$sort] = users_order_by_sql('u');
+            $keyholders = get_users_by_capability($context, 'enrol/self:holdkey', 'u.*', $sort);
+            if (!empty($keyholders)) {
+                $contact = array_values($keyholders)[0];
+            }
+        }
+
+        if ($sendoption === ENROL_SEND_EMAIL_FROM_NOREPLY) {
+            $contact = core_user::get_noreply_user();
+        }
+
+        return $contact;
+    }
 }

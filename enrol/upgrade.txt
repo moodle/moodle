@@ -13,6 +13,8 @@ information provided here is intended especially for developers.
  plugin since it is already supported in CSV course upload. For self enrolment plugin, find_instance() returns first
  available instance in the course.
 * A sesskey is no longer passed to the enrol/test_settings.php page so it can no longer be required in test_settings().
+* enrol_self_plugin::get_welcome_email_contact() has been deprecated.
+  Please use enrol_plugin::get_welcome_message_contact() instead.
 
 === 4.3 ===
 
