@@ -36,19 +36,19 @@
 {{/ core_courseformat/local/content/section/bulkselect }}
 {{/sectionbulk}}
 {{#headerdisplaymultipage}}
-    <h3 id="sectionid-{{id}}-title" class="sectionname">
+    <h3 id="sectionid-{{id}}-title" class="h4 sectionname">
         {{{title}}}
     </h3>
 {{/headerdisplaymultipage}}
 {{^headerdisplaymultipage}}
     {{#sitehome}}
-        <h2 id="sectionid-{{id}}-title" class="sectionname">
+        <h2 id="sectionid-{{id}}-title" class="h3 sectionname">
             {{{title}}}
         </h2>
     {{/sitehome}}
     {{^sitehome}}
         {{#displayonesection}}
-            <h3 id="sectionid-{{id}}-title" class="sectionname">
+            <h3 id="sectionid-{{id}}-title" class="h4 sectionname mb-0">
                 {{{title}}}
             </h3>
         {{/displayonesection}}
@@ -61,7 +61,7 @@
                     id="collapssesection{{num}}"
                     aria-expanded="{{^contentcollapsed}}true{{/contentcollapsed}}{{#contentcollapsed}}false{{/contentcollapsed}}"
                     aria-controls="coursecontentcollapse{{num}}"
-                    class="btn btn-icon mr-1 icons-collapse-expand justify-content-center
+                    class="btn btn-icon mr-3 icons-collapse-expand justify-content-center
                         {{#contentcollapsed}} collapsed {{/contentcollapsed}}"
                     aria-label="{{name}}">
                 <span class="expanded-icon icon-no-margin p-2" title="{{#str}} collapse, core {{/str}}">
@@ -72,7 +72,7 @@
                     <span class="dir-ltr-hide">{{#pix}} t/collapsedchevron_rtl, core {{/pix}}</span>
                 </span>
                 </a>
-                <h3 class="sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
+                <h3 class="h4 sectionname course-content-item d-flex align-self-stretch align-items-center mb-0"
                     id="sectionid-{{id}}-title" data-for="section_title" data-id="{{id}}" data-number="{{num}}">
                     {{{title}}}
                 </h3>
