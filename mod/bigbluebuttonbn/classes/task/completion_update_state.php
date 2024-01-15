@@ -17,6 +17,7 @@
 namespace mod_bigbluebuttonbn\task;
 
 use core\task\adhoc_task;
+use core_user;
 use mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy;
 
 /**
@@ -33,6 +34,24 @@ class completion_update_state extends adhoc_task {
     public function execute() {
         // Get the custom data.
         $data = $this->get_custom_data();
+
+        // Ensure the customdata structure is corect.
+        if (empty($data->bigbluebuttonbn->id) || empty($data->userid)) {
+            throw new \coding_exception("Task customdata was missing bigbluebuttonbn->id or userid");
+        }
+
+        // If coursemodule does not exist, ignore (likely has been deleted).
+        if (get_coursemodule_from_instance('bigbluebuttonbn', $data->bigbluebuttonbn->id) === false) {
+            mtrace("Course module does not exist, ignoring.");
+            return;
+        }
+
+        // If user does not exist, ignore (likely has been deleted).
+        if (core_user::get_user($data->userid) === false) {
+            mtrace("User does not exist, ignoring.");
+            return;
+        }
+
         mtrace("Task completion_update_state running for user {$data->userid}");
 
         // Process the completion.
