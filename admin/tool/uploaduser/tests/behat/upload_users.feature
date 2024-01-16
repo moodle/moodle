@@ -296,3 +296,25 @@ Feature: Upload users
     And I navigate to "Users > Accounts > Browse list of users" in site administration
     And I should see "Bilbo Baggins"
     And I should not see "Frodo Baggins"
+
+  @javascript
+  Scenario: Create a new user when matching them on email where where the username already exists
+    Given the following "users" exist:
+      | username | firstname | lastname | email               |
+      | bilbob   | Samwise   | Gamgee   | samwise@example.com |
+      | frodob   | Frodeo    | Baspins  | frodo@example.com   |
+    And I log in as "admin"
+    And I navigate to "Users > Accounts > Upload users" in site administration
+    When I upload "lib/tests/fixtures/upload_users_email_matching.csv" file to "File" filemanager
+    And I press "Upload users"
+    Then I should see "Upload users preview"
+    And I set the following fields to these values:
+      | Upload type            | Add new and update existing users |
+      | Existing user details  | Override with file                |
+      | Match on email address | Yes                               |
+    And I press "Upload users"
+    And I should see "User not added - username already exists under a different email"
+    And I press "Continue"
+    And I navigate to "Users > Accounts > Browse list of users" in site administration
+    And I should see "Samwise Gamgee"
+    And I should see "Frodo Baggins"
