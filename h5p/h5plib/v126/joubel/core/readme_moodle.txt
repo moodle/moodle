@@ -3,6 +3,9 @@ H5P PHP library
 
 Downloaded last release from:  https://github.com/h5p/h5p-php-library/tags
 
+When no new tags are released, a specific commit can also be used. In that case, the version number used in the thirdpartylibs.xml
+will be <branch name>-<commit hash>. For instance, master-f3579c0.
+
 Import procedure:
  * Remove the content in this folder (but the readme_moodle.txt)
  * Copy all the files from the folder repository in this directory.
@@ -13,6 +16,11 @@ Removed:
  * .travis.yml
 
 Changed:
+ 0. Open the new version of joubel/core/h5p.classes.php and at the beginning of the H5PCore class (around line 2082), check the
+ value of the coreApi minor and major versions. If they are different from the values in the current Moodle version, instead of
+ upgrading the library in the current h5plib_vxxx, a new h5plib_vX.Y should be released (as it was done in MDL-80544). The new
+ h5plib module should be named taking into account that X is the coreApi.majorVersion and Y is the coreApi.minorVersion.
+
  1. Replace the $_SESSION references with $SESSION. That implies that the information is saved to backends, so only the Moodle one
     should be used by core (core should be free from $_SESSION and always use $SESSION).
     More specifically, in h5p.classes.php file, into hashToken() method:
@@ -50,9 +58,3 @@ instance, if a new method is added to h5p-file-storage.interface.php, it should 
     // End of Moodle patch.
 
     var options = {
-
-Notes:
- * 2023-05-10 To avoid PHP 8.2 deprecations, please apply below patches:
-   - https://github.com/h5p/h5p-php-library/pull/146
-   - https://github.com/h5p/h5p-php-library/pull/148
-   See MDL-78147 for more details.
