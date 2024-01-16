@@ -1,9 +1,4 @@
 <?php
-
-namespace Moodle;
-
-use ZipArchive;
-
 /**
  * Interface defining functions the h5p library needs the framework to implement
  */
@@ -1655,13 +1650,11 @@ class H5PStorage {
         H5PMetadata::boolifyAndEncodeSettings($library['metadataSettings']) :
         NULL;
 
-      // MOODLE PATCH: The library needs to be saved in database first before creating the files, because the libraryid is used
-      // as itemid for the files.
-      // Update our DB
-      $this->h5pF->saveLibraryData($library, $new);
-
       // Save library folder
       $this->h5pC->fs->saveLibrary($library);
+
+      // Update our DB
+      $this->h5pF->saveLibraryData($library, $new);
 
       // Remove cached assets that uses this library
       if ($this->h5pC->aggregateAssets && isset($library['libraryId'])) {
@@ -1865,7 +1858,7 @@ Class H5PExport {
 
     foreach(array('authors', 'source', 'license', 'licenseVersion', 'licenseExtras' ,'yearFrom', 'yearTo', 'changes', 'authorComments', 'defaultLanguage') as $field) {
       if (isset($content['metadata'][$field]) && $content['metadata'][$field] !== '') {
-        if (($field !== 'authors' && $field !== 'changes') || (count($content['metadata'][$field]) > 0)) {
+        if (($field !== 'authors' && $field !== 'changes') || (!empty($content['metadata'][$field]))) {
           $h5pJson[$field] = json_decode(json_encode($content['metadata'][$field], TRUE));
         }
       }
@@ -2079,7 +2072,7 @@ class H5PCore {
 
   public static $coreApi = array(
     'majorVersion' => 1,
-    'minorVersion' => 25
+    'minorVersion' => 26
   );
   public static $styles = array(
     'styles/h5p.css',
@@ -2135,7 +2128,7 @@ class H5PCore {
     self::DISABLE_COPYRIGHT => self::DISPLAY_OPTION_COPYRIGHT
   );
 
-  /** @var string To file storage directory. */
+  /** @var string */
   public $url;
 
   /** @var int evelopment mode. */
@@ -2155,7 +2148,7 @@ class H5PCore {
    *
    * @param H5PFrameworkInterface $H5PFramework
    *  The frameworks implementation of the H5PFrameworkInterface
-   * @param string|H5PFileStorage $path H5P file storage directory or class.
+   * @param string|\H5PFileStorage $path H5P file storage directory or class.
    * @param string $url To file storage directory.
    * @param string $language code. Defaults to english.
    * @param boolean $export enabled?
@@ -2163,7 +2156,7 @@ class H5PCore {
   public function __construct(H5PFrameworkInterface $H5PFramework, $path, $url, $language = 'en', $export = FALSE) {
     $this->h5pF = $H5PFramework;
 
-    $this->fs = ($path instanceof H5PFileStorage ? $path : new H5PDefaultStorage($path));
+    $this->fs = ($path instanceof \H5PFileStorage ? $path : new \H5PDefaultStorage($path));
 
     $this->url = $url;
     $this->exportEnabled = $export;
@@ -3330,23 +3323,21 @@ class H5PCore {
    * @return string
    */
   private static function hashToken($action, $time_factor) {
-    global $SESSION;
-
-    if (!isset($SESSION->h5p_token)) {
+    if (!isset($_SESSION['h5p_token'])) {
       // Create an unique key which is used to create action tokens for this session.
       if (function_exists('random_bytes')) {
-        $SESSION->h5p_token = base64_encode(random_bytes(15));
+        $_SESSION['h5p_token'] = base64_encode(random_bytes(15));
       }
       else if (function_exists('openssl_random_pseudo_bytes')) {
-        $SESSION->h5p_token = base64_encode(openssl_random_pseudo_bytes(15));
+        $_SESSION['h5p_token'] = base64_encode(openssl_random_pseudo_bytes(15));
       }
       else {
-        $SESSION->h5p_token = uniqid('', TRUE);
+        $_SESSION['h5p_token'] = uniqid('', TRUE);
       }
     }
 
     // Create hash and return
-    return substr(hash('md5', $action . $time_factor . $SESSION->h5p_token), -16, 13);
+    return substr(hash('md5', $action . $time_factor . $_SESSION['h5p_token']), -16, 13);
   }
 
   /**
@@ -3819,7 +3810,7 @@ class H5PCore {
         $this->h5pF->setErrorMessage($this->h5pF->t('Content is not shared on the H5P OER Hub.'));
         return NULL;
       }
-      throw new Exception($this->h5pF->t('Connecting to the content hub failed, please try again later.'));
+      throw new Exception($this->h5pF->t("Couldn't communicate with the H5P Hub. Please try again later."));
     }
 
     $hub_content = json_decode($response['data'])->data;
@@ -3967,6 +3958,7 @@ class H5PCore {
     }
 
     if (empty($siteUuid) || empty($secret)) {
+      $this->h5pF->setErrorMessage($this->h5pF->t('Missing Site UUID or Hub Secret. Please check your Hub registration.'));
       return false;
     }
 
@@ -3986,6 +3978,7 @@ class H5PCore {
     }
 
     if ($accountInfo['status'] !== 200) {
+      $this->h5pF->setErrorMessage($this->h5pF->t('Unable to retrieve HUB account information. Please contact support.'));
       return false;
     }
 
@@ -4077,7 +4070,7 @@ class H5PCore {
       || $registration['status'] !== 200
     ) {
       return [
-        'message'     => 'Registration failed.',
+        'message'     => 'Unable to register the account. Please contact support team.',
         'status_code' => 422,
         'error_code'  => 'REGISTRATION_FAILED',
         'success'     => FALSE,
