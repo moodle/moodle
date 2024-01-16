@@ -2124,6 +2124,35 @@ H5P.trim = function (value) {
 };
 
 /**
+ * Recursive function that detects deep empty structures.
+ *
+ * @param {*} value
+ * @returns {bool}
+ */
+H5P.isEmpty = value => {
+  if (!value && value !== 0 && value !== false) {
+    return true; // undefined, null, NaN and empty strings.
+  }
+  else if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      if (!H5P.isEmpty(value[i])) {
+        return false; // Array contains a non-empty value
+      }
+    }
+    return true; // Empty array
+  }
+  else if (typeof value === 'object') {
+    for (let prop in value) {
+      if (value.hasOwnProperty(prop) && !H5P.isEmpty(value[prop])) {
+        return false; // Object contains a non-empty value
+      }
+    }
+    return true; // Empty object
+  }
+  return false;
+};
+
+/**
  * Check if JavaScript path/key is loaded.
  *
  * @param {string} path
@@ -2344,11 +2373,6 @@ H5P.createTitle = function (rawTitle, maxLength) {
       done('Not signed in.');
       return;
     }
-    // Moodle patch to let override this method.
-    if (H5P.contentUserDataAjax !== undefined) {
-      return H5P.contentUserDataAjax(contentId, dataType, subContentId, done, data, preload, invalidate, async);
-    }
-    // End of Moodle patch.
 
     var options = {
       url: H5PIntegration.ajax.contentUserData.replace(':contentId', contentId).replace(':dataType', dataType).replace(':subContentId', subContentId ? subContentId : 0),
