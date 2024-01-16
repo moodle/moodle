@@ -171,9 +171,9 @@ class api {
      *
      * Parameter $options may have any of these fields:
      * [
-     *     'ids' => new external_multiple_structure(new external_value(PARAM_INTEGER, 'id of a course in the hub course
+     *     'ids' => new external_multiple_structure(new external_value(PARAM_INT, 'id of a course in the hub course
      *          directory'), 'ids of course', VALUE_OPTIONAL),
-     *     'sitecourseids' => new external_multiple_structure(new external_value(PARAM_INTEGER, 'id of a course in the
+     *     'sitecourseids' => new external_multiple_structure(new external_value(PARAM_INT, 'id of a course in the
      *          site'), 'ids of course in the site', VALUE_OPTIONAL),
      *     'coverage' => new external_value(PARAM_TEXT, 'coverage', VALUE_OPTIONAL),
      *     'licenceshortname' => new external_value(PARAM_ALPHANUMEXT, 'licence short name', VALUE_OPTIONAL),
@@ -185,7 +185,7 @@ class api {
      *          ratingaverage', VALUE_OPTIONAL),
      *     'givememore' => new external_value(PARAM_INT, 'next range of result - range size being set by the hub
      *          server ', VALUE_OPTIONAL),
-     *     'allsitecourses' => new external_value(PARAM_INTEGER,
+     *     'allsitecourses' => new external_value(PARAM_INT,
      *          'if 1 return all not visible and visible courses whose siteid is the site
      *          matching token. Only courses of this site are returned.
      *          givememore parameter is ignored if this param = 1.
@@ -194,7 +194,7 @@ class api {
      *
      * Each course in the returned array of courses will have fields:
      * [
-     *     'id' => new external_value(PARAM_INTEGER, 'id'),
+     *     'id' => new external_value(PARAM_INT, 'id'),
      *     'fullname' => new external_value(PARAM_TEXT, 'course name'),
      *     'shortname' => new external_value(PARAM_TEXT, 'course short name'),
      *     'description' => new external_value(PARAM_TEXT, 'course description'),
@@ -211,7 +211,7 @@ class api {
      *     'audience' => new external_value(PARAM_ALPHA, 'audience'),
      *     'educationallevel' => new external_value(PARAM_ALPHA, 'educational level'),
      *     'creatornotes' => new external_value(PARAM_RAW, 'creator notes'),
-     *     'creatornotesformat' => new external_value(PARAM_INTEGER, 'notes format'),
+     *     'creatornotesformat' => new external_value(PARAM_INT, 'notes format'),
      *     'demourl' => new external_value(PARAM_URL, 'demo URL', VALUE_OPTIONAL),
      *     'courseurl' => new external_value(PARAM_URL, 'course URL', VALUE_OPTIONAL),
      *     'backupsize' => new external_value(PARAM_INT, 'course backup size in bytes', VALUE_OPTIONAL),
@@ -305,7 +305,7 @@ class api {
      *     'audience' => new external_value(PARAM_ALPHA, 'audience'),
      *     'educationallevel' => new external_value(PARAM_ALPHA, 'educational level'),
      *     'creatornotes' => new external_value(PARAM_RAW, 'creator notes'),
-     *     'creatornotesformat' => new external_value(PARAM_INTEGER, 'notes format'),
+     *     'creatornotesformat' => new external_value(PARAM_INT, 'notes format'),
      *     'demourl' => new external_value(PARAM_URL, 'demo URL', VALUE_OPTIONAL),
      *     'courseurl' => new external_value(PARAM_URL, 'course URL', VALUE_OPTIONAL),
      *     'enrollable' => new external_value(PARAM_BOOL, 'is the course enrollable', VALUE_DEFAULT, 0),

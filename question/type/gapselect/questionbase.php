@@ -222,7 +222,7 @@ abstract class qtype_gapselect_question_base extends question_graded_automatical
     public function get_expected_data() {
         $vars = array();
         foreach ($this->places as $place => $notused) {
-            $vars[$this->field($place)] = PARAM_INTEGER;
+            $vars[$this->field($place)] = PARAM_INT;
         }
         return $vars;
     }

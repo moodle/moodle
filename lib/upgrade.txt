@@ -26,6 +26,11 @@ information provided here is intended especially for developers.
     - set_attempts_available(): Used to set the number of attempts available for the task
     - get_attempts_available(): Used to get the number of attempts available for the task.
 * There is a new DML method $DB->get_fieldset. For some reason, this did not exist even though get_fieldset_select etc. did.
+* Deprecated PARAM_ types with the exception of PARAM_CLEAN now emit a deprecation exception. These were all deprecated in Moodle 2.0.
+* A new \core\deprecated attribute can be used to more clearly describe deprecated methods.
+* A new \core\deprecation class can be used to inspect for deprecated attributes:
+  - `\core\deprecation::is_deprecated(example::class);`
+  - `\core\deprecation::emit_deprecation_if_present([self::class, 'some_method']);`
 
 === 4.3 ===
 

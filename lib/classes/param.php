@@ -220,18 +220,36 @@ enum param: string {
      * It was one of the first types, that is why it is abused so much ;-)
      * @deprecated since 2.0
      */
+    #[deprecated(
+        'param::CLEAN',
+        since: '2.0',
+        reason: 'Please use a more specific type of parameter',
+        emit: false,
+    )]
     case CLEAN = 'clean';
 
     /**
      * PARAM_INTEGER - deprecated alias for PARAM_INT
      * @deprecated since 2.0
      */
+    #[deprecated(
+        'param::INTEGER',
+        since: '2.0',
+        reason: 'Alias for INT',
+        final: true,
+    )]
     case INTEGER = 'integer';
 
     /**
      * PARAM_NUMBER - deprecated alias of PARAM_FLOAT
      * @deprecated since 2.0
      */
+    #[deprecated(
+        'param::NUMBER',
+        since: '2.0',
+        reason: 'Alias for FLOAT',
+        final: true,
+    )]
     case NUMBER = 'number';
 
     /**
@@ -239,6 +257,12 @@ enum param: string {
      * NOTE: originally alias for PARAM_ALPHANUMEXT
      * @deprecated since 2.0
      */
+    #[deprecated(
+        'param::ACTION',
+        since: '2.0',
+        reason: 'Alias for PARAM_ALPHANUMEXT',
+        final: true,
+    )]
     case ACTION = 'action';
 
     /**
@@ -246,12 +270,24 @@ enum param: string {
      * NOTE: originally alias for PARAM_APLHA
      * @deprecated since 2.0
      */
+    #[deprecated(
+        'param::FORMAT',
+        since: '2.0',
+        reason: 'Alias for PARAM_ALPHANUMEXT',
+        final: true,
+    )]
     case FORMAT = 'format';
 
     /**
      * PARAM_MULTILANG - deprecated alias of PARAM_TEXT.
      * @deprecated since 2.0
      */
+    #[deprecated(
+        'param::MULTILANG',
+        since: '2.0',
+        reason: 'Alias for PARAM_TEXT',
+        final: true,
+    )]
     case MULTILANG = 'multilang';
 
     /**
@@ -334,11 +370,14 @@ enum param: string {
      * $selectedgradeitem = param::INT->clean($selectedgradeitem);
      * </code>
      *
-     * @param mixed $param the variable we are cleaning
+     * @param mixed $value the value to clean 
      * @return mixed
      * @throws coding_exception
      */
     public function clean(mixed $value): mixed {
+        // Check and emit a deprecation notice if required.
+        deprecation::emit_deprecation_if_present($this);
+
         if (is_array($value)) {
             throw new coding_exception('clean() can not process arrays, please use clean_array() instead.');
         } else if (is_object($value)) {
@@ -1278,5 +1317,14 @@ enum param: string {
         } else {
             return '';
         }
+    }
+
+    /**
+     * Whether the parameter is deprecated.
+     *
+     * @return bool
+     */
+    public function is_deprecated(): bool {
+        return deprecation::is_deprecated($this);
     }
 }

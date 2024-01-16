@@ -1508,7 +1508,7 @@ class mod_workshop_external extends external_api {
                     $data->feedbackauthor_editor['text'] = $wsdata['value'];
                     break;
                 case 'feedbackauthorformat':
-                    $data->feedbackauthor_editor['format'] = clean_param($wsdata['value'], PARAM_FORMAT);
+                    $data->feedbackauthor_editor['format'] = clean_param($wsdata['value'], PARAM_ALPHANUMEXT);
                     break;
                 case 'feedbackauthorinlineattachmentsid':
                     $data->feedbackauthor_editor['itemid'] = clean_param($wsdata['value'], PARAM_INT);

@@ -73,6 +73,8 @@ define('HOURMINS', 60);
 
 // We currently include \core\param manually here to avoid broken upgrades.
 // This may change after the next LTS release as LTS releases require the previous LTS release.
+require_once(__DIR__ . '/classes/deprecation.php');
+require_once(__DIR__ . '/classes/deprecated.php');
 require_once(__DIR__ . '/classes/param.php');
 
 /**
