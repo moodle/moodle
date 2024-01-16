@@ -1,0 +1,13 @@
+@import 'variables';
+
+// This styling is here for backwards compatibility between releases, and can be removed later
+
+/*
+ START HFP-409
+ @deprecated (can be removed after May 2017)
+ Styling that lets old vtabs styling work with the editor upgrade, in Dec 2016 release
+*/
+.h5p-vtab-wrapper > .h5p-vtab-forms .h5p-remove:after {
+  color: $form-border-color;
+}
+/* END HFP-409 */
