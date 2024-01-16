@@ -4,7 +4,7 @@
     <location>joubel/core</location>
     <name>h5p-php-library</name>
     <description>The general H5P library.</description>
-    <version>moodle-1.23</version>
+    <version>1.26</version>
     <license>GPL</license>
     <licenseversion>3.0+</licenseversion>
     <repository>https://github.com/h5p/h5p-php-library/</repository>
