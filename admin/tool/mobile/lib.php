@@ -25,33 +25,6 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Callback to add head elements.
- *
- * @return str valid html head content
- * @since  Moodle 3.3
- */
-function tool_mobile_before_standard_html_head() {
-    global $CFG, $PAGE;
-    $output = '';
-    // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
-    if (!empty($CFG->enablemobilewebservice)) {
-        $mobilesettings = get_config('tool_mobile');
-        if (!empty($mobilesettings->enablesmartappbanners)) {
-            if (!empty($mobilesettings->iosappid)) {
-                $output .= '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ';
-                $output .= 'app-argument=' . $PAGE->url->out() . '"/>';
-            }
-
-            if (!empty($mobilesettings->androidappid)) {
-                $mobilemanifesturl = "$CFG->wwwroot/$CFG->admin/tool/mobile/mobile.webmanifest.php";
-                $output .= '<link rel="manifest" href="'.$mobilemanifesturl.'" />';
-            }
-        }
-    }
-    return $output;
-}
-
-/**
  * Generate the app download url to promote moodle mobile.
  *
  * @return moodle_url|void App download moodle_url object or return if setuplink is not set.
