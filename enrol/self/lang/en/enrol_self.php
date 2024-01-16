@@ -30,14 +30,15 @@ $string['cohortonly'] = 'Only cohort members';
 $string['cohortonly_help'] = 'Self enrolment may be restricted to members of a specified cohort only. Note that changing this setting has no effect on existing enrolments.';
 $string['confirmbulkdeleteenrolment'] = 'Are you sure you want to delete these user enrolments?';
 $string['customwelcomemessage'] = 'Custom welcome message';
-$string['customwelcomemessage_help'] = 'A custom welcome message may be added as plain text or Moodle-auto format, including HTML tags and multi-lang tags.
-
-The following placeholders may be included in the message:
-
-* Course name {$a->coursename}
-* Link to user\'s profile page {$a->profileurl}
-* User email {$a->email}
-* User fullname {$a->fullname}';
+$string['customwelcomemessage_help'] = 'Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:
+<br>
+* Course name {$a->coursename}<br>
+* Link to user\'s profile page {$a->profileurl}<br>
+* User email {$a->email}<br>
+* User fullname {$a->fullname}<br>
+* User first name {$a->firstname}<br>
+* User last name {$a->lastname}<br>
+* User course role {$a->courserole}<br>';
 $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during self enrolment';
 $string['deleteselectedusers'] = 'Delete selected user enrolments';

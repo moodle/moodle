@@ -2404,7 +2404,7 @@ $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
 
 If you have not done so already, you should edit your profile page so that we can learn more about you:
 
-  {$a->profileurl}';
+<a href="{$a->profileurl}">{$a->profileurl}<a>';
 $string['whatforlink'] = 'What do you want to do with the link?';
 $string['whatforpage'] = 'What do you want to do with the text?';
 $string['whatisyourage'] = 'What is your age?';

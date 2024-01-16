@@ -135,6 +135,7 @@ class enrol_manual_plugin extends enrol_plugin {
             'expirynotify'    => $expirynotify,
             'notifyall'       => $expirynotify == 2 ? 1 : 0,
             'expirythreshold' => $this->get_config('expirythreshold', 86400),
+            'customint1' => $this->get_config('sendcoursewelcomemessage'),
         );
         return $this->add_instance($course, $fields);
     }
@@ -604,6 +605,62 @@ class enrol_manual_plugin extends enrol_plugin {
         $mform->addHelpButton('expirythreshold', 'expirythreshold', 'core_enrol');
         $mform->disabledIf('expirythreshold', 'expirynotify', 'eq', 0);
 
+        // Course welcome message.
+        $mform->addElement(
+            'select',
+            'customint1',
+            get_string(
+                identifier: 'sendcoursewelcomemessage',
+                component: 'core_enrol',
+            ),
+            enrol_send_welcome_email_options(),
+        );
+        $mform->addHelpButton(
+            elementname: 'customint1',
+            identifier: 'sendcoursewelcomemessage',
+            component: 'core_enrol',
+        );
+
+        $options = [
+            'cols' => '60',
+            'rows' => '8',
+        ];
+        $mform->addElement(
+            'textarea',
+            'customtext1',
+            get_string(
+                identifier: 'customwelcomemessage',
+                component: 'core_enrol',
+            ),
+            $options,
+        );
+        $mform->setDefault('customtext1', get_string('customwelcomemessageplaceholder', 'core_enrol'));
+        $mform->hideIf(
+            elementname: 'customtext1',
+            dependenton: 'customint1',
+            condition: 'eq',
+            value: ENROL_DO_NOT_SEND_EMAIL,
+        );
+
+        // Static form elements cannot be hidden by hideIf() so we need to add a dummy group.
+        // See: https://tracker.moodle.org/browse/MDL-66251.
+        $group[] = $mform->createElement(
+            'static',
+            'customwelcomemessage_extra_help',
+            null,
+            get_string(
+                identifier: 'customwelcomemessage_help',
+                component: 'core_enrol',
+            ),
+        );
+        $mform->addGroup($group, 'group_customwelcomemessage_extra_help', '', ' ', false);
+        $mform->hideIf(
+            elementname: 'group_customwelcomemessage_extra_help',
+            dependenton: 'customint1',
+            condition: 'eq',
+            value: ENROL_DO_NOT_SEND_EMAIL,
+        );
+
         if (enrol_accessing_via_instance($instance)) {
             $warntext = get_string('instanceeditselfwarningtext', 'core_enrol');
             $mform->addElement('static', 'selfwarn', get_string('instanceeditselfwarning', 'core_enrol'), $warntext);
@@ -688,6 +745,16 @@ class enrol_manual_plugin extends enrol_plugin {
             'expirynotify' => 0,
             'expirythreshold' => 0,
         ];
+    }
+
+    /**
+     * Returns defaults for new instances.
+     *
+     * @return array
+     */
+    public function get_instance_defaults(): array {
+        $fields['customint1'] = $this->get_config('sendcoursewelcomemessage');
+        return $fields;
     }
 }
 

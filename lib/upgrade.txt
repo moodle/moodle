@@ -138,6 +138,7 @@ information provided here is intended especially for developers.
   - Deprecation: Cannot use the "Test" suffix on abstract test case classes. Proceed to
     rename them to end with "TestCase" instead.
 * There is a new method called enrol_plugin::get_welcome_message_contact() that returns the contact details for the course welcome message.
+* There is a new method called enrol_plugin::send_course_welcome_message_to_user() that sends the course welcome message to a user.
 
 === 4.3 ===
 
