@@ -164,7 +164,7 @@ class adhoc_task_test extends \advanced_testcase {
             return: 'attemptsavailable',
             conditions: ['id' => $taskid1]
         );
-        $this->assertNull(actual: $attemptsavailable);
+        $this->assertEquals(expected: manager::MAX_RETRY, actual: $attemptsavailable);
 
         // Get the task from the scheduler, execute it, and mark it as failed.
         $task = manager::get_next_adhoc_task(timestart: $now);
@@ -178,7 +178,7 @@ class adhoc_task_test extends \advanced_testcase {
             return: 'attemptsavailable',
             conditions: ['id' => $taskid1]
         );
-        $this->assertNull(actual: $attemptsavailable);
+        $this->assertEquals(expected: manager::MAX_RETRY - 1, actual: $attemptsavailable);
 
         // Create a no-retry adhoc task.
         $now = time();
