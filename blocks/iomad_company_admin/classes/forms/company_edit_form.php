@@ -39,7 +39,7 @@ class company_edit_form extends \company_moodleform {
     protected $companyrecord;
 
     public function __construct($actionurl, $isadding, $companyid, $companyrecord, $firstcompany = false, $parentcompanyid = 0, $child = false) {
-        global $DB;
+        global $DB, $CFG;
 
         $this->isadding = $isadding;
         $this->companyid = $companyid;
@@ -53,7 +53,7 @@ class company_edit_form extends \company_moodleform {
         }
         $this->child = $child;
         if (empty($this->companyrecord->theme)) {
-            $this->companyrecord->theme = 'iomadboost';
+            $this->companyrecord->theme = $CFG->theme;
         }
         if ($parentcompanyid) {
             $this->parentcompany = $DB->get_record('company', ['id' => $parentcompanyid], '*', MUST_EXIST);
