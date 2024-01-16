@@ -604,9 +604,21 @@ abstract class base {
      * Some formats has the hability to swith from one section to multiple sections per page.
      *
      * @param int $singlesection zero for all sections or a section number
+     * @deprecated Since 4.4. Use set_sectionnum instead.
+     * @todo MDL-80116 This will be deleted in Moodle 4.8.
      */
     public function set_section_number(int $singlesection): void {
-        $this->singlesection = $singlesection;
+
+        debugging(
+            'The method core_courseformat\base::set_section_number() has been deprecated, please use set_sectionnum() instead.',
+            DEBUG_DEVELOPER
+        );
+
+        if ($singlesection === 0) {
+            // Convert zero to null, to guarantee all the sections are displayed.
+            $singlesection = null;
+        }
+        $this->set_sectionnum($singlesection);
     }
 
     /**
@@ -652,8 +664,21 @@ abstract class base {
      * multiple sections.
      *
      * @return int zero for all sections or the sectin number
+     * @deprecated Since 4.4. Use get_sectionnum instead.
+     * @todo MDL-80116 This will be deleted in Moodle 4.8.
      */
     public function get_section_number(): int {
+
+        debugging(
+            'The method core_courseformat\base::get_section_number() has been deprecated, please use get_sectionnum() instead.',
+            DEBUG_DEVELOPER
+        );
+
+        if ($this->singlesection === null) {
+            // Convert null to zero, to guarantee all the sections are displayed.
+            return 0;
+        }
+
         return $this->singlesection;
     }
 
@@ -847,7 +872,7 @@ abstract class base {
             ['sesskey' => sesskey(), $nonajaxaction => $cm->id]
         );
         if (!is_null($this->get_sectionid())) {
-            $nonajaxurl->param('sr', $this->get_section_number());
+            $nonajaxurl->param('sr', $this->get_sectionnum());
         }
         return $nonajaxurl;
     }
@@ -1882,8 +1907,8 @@ abstract class base {
             $section = $modinfo->get_section_info($section->section);
         }
 
-        if ($sr) {
-            $this->set_section_number($sr);
+        if (!is_null($sr)) {
+            $this->set_sectionnum($sr);
         }
 
         switch($action) {

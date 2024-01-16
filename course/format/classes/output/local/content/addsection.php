@@ -153,7 +153,7 @@ class addsection implements named_templatable, renderable {
 
         $params = ['courseid' => $course->id, 'insertsection' => 0, 'sesskey' => sesskey()];
 
-        $singlesection = $this->format->get_section_number();
+        $singlesection = $this->format->get_sectionnum();
         if ($singlesection) {
             $params['sectionreturn'] = $singlesection;
         }

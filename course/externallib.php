@@ -3639,8 +3639,8 @@ class core_course_external extends external_api {
         $coursecontext = context_course::instance($course->id);
         self::validate_context($modcontext);
         $format = course_get_format($course);
-        if ($sectionreturn) {
-            $format->set_section_number($sectionreturn);
+        if (!is_null($sectionreturn)) {
+            $format->set_sectionnum($sectionreturn);
         }
         $renderer = $format->get_renderer($PAGE);
 
@@ -3767,8 +3767,8 @@ class core_course_external extends external_api {
         self::validate_context(context_course::instance($course->id));
 
         $format = course_get_format($course);
-        if ($sectionreturn) {
-            $format->set_section_number($sectionreturn);
+        if (!is_null($sectionreturn)) {
+            $format->set_sectionnum($sectionreturn);
         }
         $renderer = $format->get_renderer($PAGE);
 

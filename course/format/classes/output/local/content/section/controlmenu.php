@@ -124,7 +124,7 @@ class controlmenu implements named_templatable, renderable {
         $format = $this->format;
         $section = $this->section;
         $course = $format->get_course();
-        $sectionreturn = !is_null($format->get_sectionid()) ? $format->get_section_number() : null;
+        $sectionreturn = !is_null($format->get_sectionid()) ? $format->get_sectionnum() : null;
         $user = $USER;
 
         $usecomponents = $format->supports_components();

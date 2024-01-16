@@ -47,6 +47,9 @@ always linked because a new page, section.php, has been created to display any s
   - course/format/topics/renderer.php
   - course/format/weeks/renderer.php
 * New core_courseformat\sectiondelegate class. The class can be extended by plugins to take control of a course section.
+* The methods core_courseformat\base::set_section_number() and core_courseformat\base:: get_section_number() have been deprecated
+and replaced by core_courseformat\base::set_sectionnum() and core_courseformat\base::get_sectionnum(). The new methods use the null
+value when all the sections must be displayed (instead of 0). That way, section 0 (General), can be displayed on a single page too.
 
 === 4.3 ===
 * New core_courseformat\output\activitybadge class that can be extended by any module to display content near the activity name.

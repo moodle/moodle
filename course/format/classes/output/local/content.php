@@ -99,7 +99,7 @@ class content implements named_templatable, renderable {
 
         // The single section format has extra navigation.
         if ($this->format->get_sectionid()) {
-            $singlesectionnum = $this->format->get_section_number();
+            $singlesectionnum = $this->format->get_sectionnum();
             if (!$PAGE->theme->usescourseindex) {
                 $sectionnavigation = new $this->sectionnavigationclass($format, $singlesectionnum);
                 $data->sectionnavigation = $sectionnavigation->export_for_template($output);
