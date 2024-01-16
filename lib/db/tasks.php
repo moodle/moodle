@@ -457,4 +457,13 @@ $tasks = array(
         'dayofweek' => 'R',
         'month' => '*',
     ],
+    [
+        'classname' => 'core\task\automated_backup_report_task',
+        'blocking' => 0,
+        'minute' => '*',
+        'hour' => '*',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*',
+    ],
 );

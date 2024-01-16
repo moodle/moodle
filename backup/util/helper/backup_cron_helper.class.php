@@ -137,9 +137,11 @@ abstract class backup_cron_automated_helper {
             $rs->close();
 
             // Send email to admin if necessary.
-            if ($emailpending) {
-                self::send_backup_status_to_admin($admin);
-            }
+            set_config(
+                'backup_auto_emailpending',
+                $emailpending ? 1 : 0,
+                'backup',
+            );
         } finally {
             // Everything is finished release lock.
             $lock->release();
@@ -188,7 +190,7 @@ abstract class backup_cron_automated_helper {
      * @param stdClass $admin
      * @return array
      */
-    private static function send_backup_status_to_admin($admin) {
+    public static function send_backup_status_to_admin($admin) {
         global $DB, $CFG;
 
         mtrace("Sending email to admin");
@@ -386,7 +388,22 @@ abstract class backup_cron_automated_helper {
             'courseid' => $backupcourse->courseid,
             'adminid' => $admin->id
         ));
-        \core\task\manager::queue_adhoc_task($asynctask);
+        $taskid = \core\task\manager::queue_adhoc_task($asynctask);
+
+        // Get the queued tasks.
+        $queuedtasks = [];
+        if ($value = get_config('backup', 'backup_auto_adhoctasks')) {
+            $queuedtasks = explode(',', $value);
+        }
+        if ($taskid) {
+            $queuedtasks[] = (int) $taskid;
+        }
+        // Save the queued tasks.
+        set_config(
+            'backup_auto_adhoctasks',
+            implode(',', $queuedtasks),
+            'backup',
+        );
 
         $backupcourse->laststatus = self::BACKUP_STATUS_QUEUED;
         $DB->update_record('backup_courses', $backupcourse);

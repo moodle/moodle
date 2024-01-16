@@ -16,6 +16,7 @@
 
 namespace tool_dataprivacy\task;
 
+use core\task\task_trait;
 use tool_dataprivacy\api;
 
 defined('MOODLE_INTERNAL') || die();
@@ -29,6 +30,8 @@ require_once(__DIR__ . '/../data_privacy_testcase.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class task_test extends \data_privacy_testcase {
+
+    use task_trait;
 
     /**
      * Test tearDown.
@@ -214,18 +217,5 @@ class task_test extends \data_privacy_testcase {
         // The user should only have the existing cancelled delete data request.
         $this->assertCount(1, \tool_dataprivacy\api::get_data_requests($user->id,
                 [api::DATAREQUEST_STATUS_CANCELLED], [api::DATAREQUEST_TYPE_DELETE]));
-    }
-
-    /**
-     * Helper to execute a particular task.
-     *
-     * @param string $task The task.
-     */
-    private function execute_task($task) {
-        // Run the scheduled task.
-        ob_start();
-        $task = \core\task\manager::get_scheduled_task($task);
-        $task->execute();
-        ob_end_clean();
     }
 }
