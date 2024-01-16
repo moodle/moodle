@@ -94,6 +94,13 @@ class report_log_renderable implements renderable {
     public $tablelog;
 
     /**
+     * @var array group ids
+     * @deprecated since Moodle 4.4 - please do not use this public property
+     * @todo MDL-81155 remove this property as it is not used anymore.
+     */
+    public $grouplist;
+
+    /**
      * Constructor.
      *
      * @param string $logreader (optional)reader pluginname from which logs will be fetched.
@@ -343,30 +350,35 @@ class report_log_renderable implements renderable {
     }
 
     /**
-     * Return list of groups.
+     * Return list of groups that are used in this course. This is done when groups are used in the course
+     * and the user is allowed to see all groups or groups are visible anyway. If groups are used but the
+     * mode is separate groups and the user is not allowed to see all groups, the list contains the groups
+     * only, where the user is member.
+     * If the course uses no groups, the list is empty.
      *
      * @return array list of groups.
      */
     public function get_group_list() {
+        global $USER;
 
         // No groups for system.
         if (empty($this->course)) {
-            return array();
+            return [];
         }
 
         $context = context_course::instance($this->course->id);
-        $groups = array();
         $groupmode = groups_get_course_groupmode($this->course);
-        if (($groupmode == VISIBLEGROUPS) ||
-                ($groupmode == SEPARATEGROUPS and has_capability('moodle/site:accessallgroups', $context))) {
-            // Get all groups.
-            if ($cgroups = groups_get_all_groups($this->course->id)) {
-                foreach ($cgroups as $cgroup) {
-                    $groups[$cgroup->id] = $cgroup->name;
-                }
-            }
+        $grouplist = [];
+        $userid = $groupmode == SEPARATEGROUPS ? $USER->id : 0;
+        if (has_capability('moodle/site:accessallgroups', $context)) {
+            $userid = 0;
         }
-        return $groups;
+        $cgroups = groups_get_all_groups($this->course->id, $userid);
+        if (!empty($cgroups)) {
+            $grouplist = array_column($cgroups, 'name', 'id');
+        }
+        $this->grouplist = $grouplist; // Keep compatibility with MDL-41465.
+        return $grouplist;
     }
 
     /**
@@ -383,11 +395,33 @@ class report_log_renderable implements renderable {
         }
         $context = context_course::instance($courseid);
         $limitfrom = empty($this->showusers) ? 0 : '';
-        $limitnum  = empty($this->showusers) ? COURSE_MAX_USERS_PER_DROPDOWN + 1 : '';
+        $limitnum = empty($this->showusers) ? COURSE_MAX_USERS_PER_DROPDOWN + 1 : '';
         $userfieldsapi = \core_user\fields::for_name();
-        $courseusers = get_enrolled_users($context, '', $this->groupid, 'u.id, ' .
-                $userfieldsapi->get_sql('u', false, '', '', false)->selects,
-                null, $limitfrom, $limitnum);
+
+        // Get the groups of that course that the user can see.
+        $groups = $this->get_group_list();
+        $groupids = array_keys($groups);
+        // Now doublecheck the value of groupids and deal with special case like USERWITHOUTGROUP.
+        $groupmode = groups_get_course_groupmode($this->course);
+        if (
+            has_capability('moodle/site:accessallgroups', $context)
+            || $groupmode != SEPARATEGROUPS
+            || empty($groupids)
+        ) {
+            $groupids[] = USERSWITHOUTGROUP;
+        }
+        // First case, the user has selected a group and user is in this group.
+        if ($this->groupid > 0) {
+            if (!isset($groups[$this->groupid])) {
+                // The user is not in this group, so we will ignore the group selection.
+                $groupids = 0;
+            } else {
+                $groupids = [$this->groupid];
+            }
+        }
+        $courseusers = get_enrolled_users($context, '', $groupids, 'u.id, ' .
+            $userfieldsapi->get_sql('u', false, '', '', false)->selects,
+            null, $limitfrom, $limitnum);
 
         if (count($courseusers) < COURSE_MAX_USERS_PER_DROPDOWN && !$this->showusers) {
             $this->showusers = 1;
