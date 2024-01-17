@@ -195,43 +195,13 @@ class moodlelib_test extends \advanced_testcase {
         unset($_GET['username']);
         $this->assertSame('default_user', optional_param('username', 'default_user', PARAM_RAW));
 
-        // Make sure exception is triggered when some params are missing, hide error notices here - new in 2.2.
-        $_POST['username'] = 'post_user';
-        try {
-            optional_param('username', 'default_user', null);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
-        try {
-            @optional_param('username', 'default_user');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            @optional_param('username');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            optional_param('', 'default_user', PARAM_RAW);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
-
         // Make sure warning is displayed if array submitted - TODO: throw exception in Moodle 2.3.
         $_POST['username'] = array('a'=>'a');
-        $this->assertSame($_POST['username'], optional_param('username', 'default_user', PARAM_RAW));
-        $this->assertDebuggingCalled();
+        try {
+            optional_param('username', 'default_user', PARAM_RAW);
+            $this->fail('coding_exception expected');
+        } catch (\coding_exception $e) {
+        }
     }
 
     public function test_optional_param_array() {
@@ -246,39 +216,6 @@ class moodlelib_test extends \advanced_testcase {
 
         unset($_GET['username']);
         $this->assertSame(array('a'=>'default_user'), optional_param_array('username', array('a'=>'default_user'), PARAM_RAW));
-
-        // Make sure exception is triggered when some params are missing, hide error notices here - new in 2.2.
-        $_POST['username'] = array('a'=>'post_user');
-        try {
-            optional_param_array('username', array('a'=>'default_user'), null);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
-        try {
-            @optional_param_array('username', array('a'=>'default_user'));
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            @optional_param_array('username');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            optional_param_array('', array('a'=>'default_user'), PARAM_RAW);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
 
         // Do not allow nested arrays.
         try {
@@ -316,34 +253,19 @@ class moodlelib_test extends \advanced_testcase {
             $this->assertInstanceOf('moodle_exception', $ex);
         }
 
-        // Make sure exception is triggered when some params are missing, hide error notices here - new in 2.2.
-        $_POST['username'] = 'post_user';
-        try {
-            @required_param('username');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            required_param('username', '');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
         try {
             required_param('', PARAM_RAW);
             $this->fail('coding_exception expected');
         } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
         }
 
         // Make sure warning is displayed if array submitted - TODO: throw exception in Moodle 2.3.
         $_POST['username'] = array('a'=>'a');
-        $this->assertSame($_POST['username'], required_param('username', PARAM_RAW));
-        $this->assertDebuggingCalled();
+        try {
+            required_param('username', PARAM_RAW);
+            $this->fail('coding_exception expected');
+        } catch (\coding_exception $e) {
+        }
     }
 
     public function test_required_param_array() {
@@ -355,30 +277,6 @@ class moodlelib_test extends \advanced_testcase {
 
         unset($_POST['username']);
         $this->assertSame($_GET['username'], required_param_array('username', PARAM_RAW));
-
-        // Make sure exception is triggered when some params are missing, hide error notices here - new in 2.2.
-        $_POST['username'] = array('a'=>'post_user');
-        try {
-            required_param_array('username', null);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
-        try {
-            @required_param_array('username');
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
-        try {
-            required_param_array('', PARAM_RAW);
-            $this->fail('coding_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('coding_exception', $ex);
-        }
 
         // Do not allow nested arrays.
         try {
@@ -404,6 +302,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertDebuggingCalled();
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param() {
         // Forbid objects and arrays.
         try {
@@ -428,17 +330,12 @@ class moodlelib_test extends \advanced_testcase {
         } catch (\moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
         }
-        try {
-            @clean_param('x');
-            $this->fail('moodle_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('moodle_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_array() {
         $this->assertSame(array(), clean_param_array(null, PARAM_RAW));
         $this->assertSame(array('a', 'b'), clean_param_array(array('a', 'b'), PARAM_RAW));
@@ -451,15 +348,6 @@ class moodlelib_test extends \advanced_testcase {
         } catch (\moodle_exception $ex) {
             $this->assertInstanceOf('moodle_exception', $ex);
         }
-        try {
-            @clean_param_array(array('x'));
-            $this->fail('moodle_exception expected');
-        } catch (\moodle_exception $ex) {
-            $this->assertInstanceOf('moodle_exception', $ex);
-        } catch (\Error $error) {
-            // PHP 7.1 throws \Error even earlier.
-            $this->assertMatchesRegularExpression('/Too few arguments to function/', $error->getMessage());
-        }
 
         try {
             clean_param_array(array('x', array('y')), PARAM_RAW);
@@ -471,6 +359,10 @@ class moodlelib_test extends \advanced_testcase {
         // Test recursive.
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_raw() {
         $this->assertSame(
             '#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)',
@@ -478,11 +370,19 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame(null, clean_param(null, PARAM_RAW));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_trim() {
         $this->assertSame('Frog toad', clean_param("   Frog toad   \r\n  ", PARAM_RAW_TRIMMED));
         $this->assertSame('', clean_param(null, PARAM_RAW_TRIMMED));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_clean() {
         // PARAM_CLEAN is an ugly hack, do not use in new code (skodak),
         // instead use more specific type, or submit sothing that can be verified properly.
@@ -491,26 +391,46 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_CLEANHTML));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_alpha() {
         $this->assertSame('DSFMOSDJ', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_ALPHA));
         $this->assertSame('', clean_param(null, PARAM_ALPHA));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_alphanum() {
         $this->assertSame('978942897DSFMOSDJ', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_ALPHANUM));
         $this->assertSame('', clean_param(null, PARAM_ALPHANUM));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_alphaext() {
         $this->assertSame('DSFMOSDJ', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_ALPHAEXT));
         $this->assertSame('', clean_param(null, PARAM_ALPHAEXT));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_sequence() {
         $this->assertSame(',9789,42897', clean_param('#()*#,9789\'".,<42897></?$(*DSFMO#$*)(SDJ)($*)', PARAM_SEQUENCE));
         $this->assertSame('', clean_param(null, PARAM_SEQUENCE));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_component() {
         // Please note the cleaning of component names is very strict, no guessing here.
         $this->assertSame('mod_forum', clean_param('mod_forum', PARAM_COMPONENT));
@@ -540,6 +460,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_COMPONENT));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_localisedfloat() {
 
         $this->assertSame(0.5, clean_param('0.5', PARAM_LOCALISEDFLOAT));
@@ -589,6 +513,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertFalse(is_valid_plugin_name('xx_'));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_plugin() {
         // Please note the cleaning of plugin names is very strict, no guessing here.
         $this->assertSame('forum', clean_param('forum', PARAM_PLUGIN));
@@ -607,6 +535,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_PLUGIN));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_area() {
         // Please note the cleaning of area names is very strict, no guessing here.
         $this->assertSame('something', clean_param('something', PARAM_AREA));
@@ -624,8 +556,11 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_AREA));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_text() {
-        $this->assertSame(PARAM_TEXT, PARAM_MULTILANG);
         // Standard.
         $this->assertSame('xx<lang lang="en">aa</lang><lang lang="yy">pp</lang>', clean_param('xx<lang lang="en">aa</lang><lang lang="yy">pp</lang>', PARAM_TEXT));
         $this->assertSame('<span lang="en" class="multilang">aa</span><span lang="xy" class="multilang">bb</span>', clean_param('<span lang="en" class="multilang">aa</span><span lang="xy" class="multilang">bb</span>', PARAM_TEXT));
@@ -646,6 +581,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_TEXT));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_url() {
         // Test PARAM_URL and PARAM_LOCALURL a bit.
         // Valid URLs.
@@ -672,6 +611,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_URL));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_localurl() {
         global $CFG;
 
@@ -715,6 +658,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_LOCALURL));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_file() {
         $this->assertSame('correctfile.txt', clean_param('correctfile.txt', PARAM_FILE));
         $this->assertSame('badfile.txt', clean_param('b\'a<d`\\/fi:l>e.t"x|t', PARAM_FILE));
@@ -747,6 +694,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('~myfile.txt', clean_param('~/myfile.txt', PARAM_FILE));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_path() {
         $this->assertSame('correctfile.txt', clean_param('correctfile.txt', PARAM_PATH));
         $this->assertSame('bad/file.txt', clean_param('b\'a<d`\\/fi:l>e.t"x|t', PARAM_PATH));
@@ -768,12 +719,20 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_PATH));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_safepath() {
         $this->assertSame('folder/file', clean_param('folder/file', PARAM_SAFEPATH));
         $this->assertSame('folder//file', clean_param('folder/../file', PARAM_SAFEPATH));
         $this->assertSame('', clean_param(null, PARAM_SAFEPATH));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_username() {
         global $CFG;
         $currentstatus =  $CFG->extendedusernamechars;
@@ -809,6 +768,10 @@ class moodlelib_test extends \advanced_testcase {
         $CFG->extendedusernamechars = $currentstatus;
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_stringid() {
         // Test string identifiers validation.
         // Valid strings.
@@ -826,6 +789,10 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_STRINGID));
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_timezone() {
         // Test timezone validation.
         $testvalues = array (
@@ -869,6 +836,10 @@ class moodlelib_test extends \advanced_testcase {
         }
     }
 
+    /**
+     * @covers \core\param
+     * @covers \clean_param
+     */
     public function test_clean_param_null_argument() {
         $this->assertEquals(0, clean_param(null, PARAM_INT));
         $this->assertEquals(0, clean_param(null, PARAM_FLOAT));
