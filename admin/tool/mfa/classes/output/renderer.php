@@ -333,8 +333,8 @@ class renderer extends \plugin_renderer_base {
 
         // Auth rows.
         $authtypes = get_enabled_auth_plugins(true);
-        $row = [];
         foreach ($authtypes as $authtype) {
+            $row = [];
             $row[] = \html_writer::tag('b', $authtype);
 
             // Setup the overall totals columns.
