@@ -57,14 +57,29 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                     WHERE quizid = :quizid
                     AND (monitor_tab_switching = 1 OR monitor_camera = 1 OR monitor_microphone = 1)"
                 ;
-
                 $params = array('quizid' => $quizid);
                 $auto_proctor_activated = $DB->get_records_sql($sql, $params);
 
+                // Select monitor_tab_switching state
+                $sql = "SELECT *
+                    FROM {auto_proctor_quiz_tb}
+                    WHERE quizid = :quizid
+                    AND (monitor_tab_switching = 1)"
+                ;
+
+                $monitor_tab_switching_activated = $DB->get_records_sql($sql, $params);
+
+                // Select monitor_microphone state
+                $sql = "SELECT *
+                    FROM {auto_proctor_quiz_tb}
+                    WHERE quizid = :quizid
+                    AND (monitor_microphone = 1)"
+                ;
+
+                $monitor_tab_microphone_activated = $DB->get_records_sql($sql, $params);
+
                 if ($auto_proctor_activated){
-                    echo '<script type="text/javascript">';
-                    echo 'console.log("AP ACTIVATED");';
-                    echo '</script>';
+                    echo '<script type="text/javascript"> console.log("AP ACTIVATED"); </script>';
 
                     // Get the user ID
                     $userid = $USER->id;
@@ -74,157 +89,158 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
                     // Check if $quizattempt is not empty before logging
                     if (!empty($quizattempt)) {
-
+                        
                         // Get attempt number
                         $attemptValue = $quizattempt->attempt;
                         echo '<script>console.log(' . json_encode(['userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue]) . ');</script>';
 
                         // In line js code for backup
-                        // echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
-                        // echo '<script type="text/javascript">';
-                        //     // TAB_SWITCHING ====================================================================================
+                            // echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
+                            // echo '<script type="text/javascript">';
+                            //     // TAB_SWITCHING ====================================================================================
 
-                        //     echo 'console.log("Prompt");';
+                            //     echo 'console.log("Prompt");';
 
-                        //     // Prompt to consent screen sharing
-                        //     echo"
-                        //     let screenShared = false;
-                        //     let screenStream = null;
-                        //     let videoElement;
-                        //     let stopsSharing = false;
+                            //     // Prompt to consent screen sharing
+                            //     echo"
+                            //     let screenShared = false;
+                            //     let screenStream = null;
+                            //     let videoElement;
+                            //     let stopsSharing = false;
 
-                        //     //document.addEventListener('visibilitychange', handleVisibilityChange);
+                            //     //document.addEventListener('visibilitychange', handleVisibilityChange);
 
-                        //     // function handleVisibilityChange() {
-                        //     //     if (document.visibilityState === 'hidden' && !document.hasFocus()) {
-                        //     //         if (screenShared && !stopsSharing) {
-                        //     //             // Send an AJAX request to your server to indicate screen sharing                                     
-                        //     //             captureAndSaveScreen();
-                        //     //         }
-                        //     //     }
-                        //     // }
-                            
-                        //     function startScreenSharing() {
-                        //         navigator.mediaDevices.getDisplayMedia({ video: true })
-                        //             .then(stream => {
-                        //                 videoElement = document.createElement('video');
-                        //                 videoElement.srcObject = stream;
-                        //                 videoElement.autoplay = true;
+                            //     // function handleVisibilityChange() {
+                            //     //     if (document.visibilityState === 'hidden' && !document.hasFocus()) {
+                            //     //         if (screenShared && !stopsSharing) {
+                            //     //             // Send an AJAX request to your server to indicate screen sharing                                     
+                            //     //             captureAndSaveScreen();
+                            //     //         }
+                            //     //     }
+                            //     // }
+                                
+                            //     function startScreenSharing() {
+                            //         navigator.mediaDevices.getDisplayMedia({ video: true })
+                            //             .then(stream => {
+                            //                 videoElement = document.createElement('video');
+                            //                 videoElement.srcObject = stream;
+                            //                 videoElement.autoplay = true;
 
-                        //                 screenStream = stream;
-                        //                 screenShared = true;
+                            //                 screenStream = stream;
+                            //                 screenShared = true;
 
-                        //                 screenStream.getVideoTracks()[0].onended = () => {
-                        //                     stopsSharing = true;
-                        //                     console.log('Screen sharing stopped by the student.');
-                        //                     // Send an AJAX request to your server to indicate screen sharing stopped
-                        //                     //sendScreenSharingStatus(2); // stops sharing
-                        //                     captureAndSaveScreen('stops_sharing_screen');
-                        //                 };
+                            //                 screenStream.getVideoTracks()[0].onended = () => {
+                            //                     stopsSharing = true;
+                            //                     console.log('Screen sharing stopped by the student.');
+                            //                     // Send an AJAX request to your server to indicate screen sharing stopped
+                            //                     //sendScreenSharingStatus(2); // stops sharing
+                            //                     captureAndSaveScreen('stops_sharing_screen');
+                            //                 };
 
-                        //                 captureAndSaveScreen('shared_screen'); // Capture the shared screen
-                        //                 //sendScreenSharingStatus(1); // shared screen
-                        //                 console.log('Consent:', 1);
-                        //             })
-                        //             .catch(error => {
-                        //                 console.error('Error starting screen sharing:', error);
-                        //                 // Send an AJAX request to your server to indicate screen sharing error
-                        //                 //sendScreenSharingStatus(0); // 0 indicates screen sharing stopped
-                        //                 captureAndSaveScreen('did_not_share_screen');
-                        //             });
-                                    
-                        //             //document.addEventListener('visibilitychange', handleVisibilityChange);
-                        //             window.addEventListener('focus', handleTabSwitch);
-                        //             window.addEventListener('blur', handleTabSwitch);
-                        //     }
-                            
-                        //     function handleTabSwitch() {
-                        //         if (document.hasFocus()) {
-                        //             console.log('Tab switched back to focus');
-                        //         } else {
-                        //             console.log('Tab switched');
-                        //             if (screenShared && !stopsSharing) {
-                        //                 // Capture and save the shared screen when the tab is switched
-                        //                 captureAndSaveScreen('tab_switch');
-                        //             }
-                        //             else{
-                        //                 //sendScreenSharingStatus(3);
-                        //                 captureAndSaveScreen('tab_switch_screen_not_shared');
-                        //             }
+                            //                 captureAndSaveScreen('shared_screen'); // Capture the shared screen
+                            //                 //sendScreenSharingStatus(1); // shared screen
+                            //                 console.log('Consent:', 1);
+                            //             })
+                            //             .catch(error => {
+                            //                 console.error('Error starting screen sharing:', error);
+                            //                 // Send an AJAX request to your server to indicate screen sharing error
+                            //                 //sendScreenSharingStatus(0); // 0 indicates screen sharing stopped
+                            //                 captureAndSaveScreen('did_not_share_screen');
+                            //             });
                                         
-                        //         }
-                        //     }
-
-                        //     function sendScreenSharingStatus(screen_status, filename, activity_type) {
-                        //         // Send an AJAX request to your server to record screen sharing status
-                        //         console.log('Sending screen_status:', screen_status);
-                        //         var xhr = new XMLHttpRequest();
-                        //         xhr.open('POST', '" . $CFG->wwwroot . "/local/auto_proctor/save_activity.php', true); // Replace with the actual path
-                        //         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                        //         xhr.send('screen_status=' + screen_status + '&userid=' + ". $userid ." + '&quizid=' + ". $quizid ." + '&quizattempt=' + ". $attemptValue ." + '&filename=' + encodeURIComponent(filename) + '&activity_type=' + activity_type);
-                        //     }
-
-                        //     function generateTimestamp() {
-                        //         const now = new Date();
-                        //         const options = {
-                        //             year: 'numeric',
-                        //             month: '2-digit',
-                        //             day: '2-digit',
-                        //             hour: '2-digit',
-                        //             minute: '2-digit',
-                        //             second: '2-digit',
-                        //             hour12: true,
-                        //             timeZoneName: 'short',
-                        //         };
-
-                        //         const formatter = new Intl.DateTimeFormat('en-US', options);
-                        //         const timestamp = formatter.format(now);
-
-                        //         return { timestamp, milliseconds: now.getMilliseconds() };
-                        //     }
-                            
-
-                        //     function captureAndSaveScreen(evidence_name_type) {
-                        //         if (evidence_name_type !== 'tab_switch_screen_not_shared' && evidence_name_type !== 'did_not_share_screen' && evidence_name_type !== 'stops_sharing_screen'){
-                        //             setTimeout(() => {
-                        //                 const canvas = document.createElement('canvas');
-                        //                 canvas.width = videoElement.videoWidth;
-                        //                 canvas.height = videoElement.videoHeight;
-                        //                 const ctx = canvas.getContext('2d');
-                        //                 ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                            //             //document.addEventListener('visibilitychange', handleVisibilityChange);
+                            //             window.addEventListener('focus', handleTabSwitch);
+                            //             window.addEventListener('blur', handleTabSwitch);
+                            //     }
                                 
-                        //                 const { timestamp, milliseconds } = generateTimestamp();
-                        //                 const filename = 'EVD_' + timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type + '.png'; // Custom filename with evidenceType
-                                
-                        //                 const dataUrl = canvas.toDataURL('image/png');
-                                
-                        //                 fetch('" . $CFG->wwwroot . "/local/auto_proctor/save_capture.php', {
-                        //                     method: 'POST',
-                        //                     headers: {
-                        //                         'Content-Type': 'application/x-www-form-urlencoded',
-                        //                     },
-                        //                     body: 'dataUri=' + encodeURIComponent(dataUrl) + '&filename=' + encodeURIComponent(filename),
-                        //                 })
-                        //                 .then(response => response.json())
-                        //                 .then(data => {
-                        //                     console.log('Screen captured and saved as: ' + data.filename);
-                        //                     sendScreenSharingStatus(4, filename, evidence_name_type);
-                        //                 })
-                        //                 .catch(error => {
-                        //                     console.error('Error saving screen capture:', error);
-                        //                 });
-                        //             }, 500);
-                        //         }
-                        //         else{
-                        //             sendScreenSharingStatus(4, 0,evidence_name_type);
-                        //         }
-                        //     }
-                                                                       
+                            //     function handleTabSwitch() {
+                            //         if (document.hasFocus()) {
+                            //             console.log('Tab switched back to focus');
+                            //         } else {
+                            //             console.log('Tab switched');
+                            //             if (screenShared && !stopsSharing) {
+                            //                 // Capture and save the shared screen when the tab is switched
+                            //                 captureAndSaveScreen('tab_switch');
+                            //             }
+                            //             else{
+                            //                 //sendScreenSharingStatus(3);
+                            //                 captureAndSaveScreen('tab_switch_screen_not_shared');
+                            //             }
+                                            
+                            //         }
+                            //     }
 
-                        //     // Start screen sharing when the script is loaded
-                        //     startScreenSharing();";
-                        // echo '</script>';
+                            //     function sendScreenSharingStatus(screen_status, filename, activity_type) {
+                            //         // Send an AJAX request to your server to record screen sharing status
+                            //         console.log('Sending screen_status:', screen_status);
+                            //         var xhr = new XMLHttpRequest();
+                            //         xhr.open('POST', '" . $CFG->wwwroot . "/local/auto_proctor/save_activity.php', true); // Replace with the actual path
+                            //         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                            //         xhr.send('screen_status=' + screen_status + '&userid=' + ". $userid ." + '&quizid=' + ". $quizid ." + '&quizattempt=' + ". $attemptValue ." + '&filename=' + encodeURIComponent(filename) + '&activity_type=' + activity_type);
+                            //     }
 
+                            //     function generateTimestamp() {
+                            //         const now = new Date();
+                            //         const options = {
+                            //             year: 'numeric',
+                            //             month: '2-digit',
+                            //             day: '2-digit',
+                            //             hour: '2-digit',
+                            //             minute: '2-digit',
+                            //             second: '2-digit',
+                            //             hour12: true,
+                            //             timeZoneName: 'short',
+                            //         };
+
+                            //         const formatter = new Intl.DateTimeFormat('en-US', options);
+                            //         const timestamp = formatter.format(now);
+
+                            //         return { timestamp, milliseconds: now.getMilliseconds() };
+                            //     }
+                                
+
+                            //     function captureAndSaveScreen(evidence_name_type) {
+                            //         if (evidence_name_type !== 'tab_switch_screen_not_shared' && evidence_name_type !== 'did_not_share_screen' && evidence_name_type !== 'stops_sharing_screen'){
+                            //             setTimeout(() => {
+                            //                 const canvas = document.createElement('canvas');
+                            //                 canvas.width = videoElement.videoWidth;
+                            //                 canvas.height = videoElement.videoHeight;
+                            //                 const ctx = canvas.getContext('2d');
+                            //                 ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+                                    
+                            //                 const { timestamp, milliseconds } = generateTimestamp();
+                            //                 const filename = 'EVD_' + timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type + '.png'; // Custom filename with evidenceType
+                                    
+                            //                 const dataUrl = canvas.toDataURL('image/png');
+                                    
+                            //                 fetch('" . $CFG->wwwroot . "/local/auto_proctor/save_capture.php', {
+                            //                     method: 'POST',
+                            //                     headers: {
+                            //                         'Content-Type': 'application/x-www-form-urlencoded',
+                            //                     },
+                            //                     body: 'dataUri=' + encodeURIComponent(dataUrl) + '&filename=' + encodeURIComponent(filename),
+                            //                 })
+                            //                 .then(response => response.json())
+                            //                 .then(data => {
+                            //                     console.log('Screen captured and saved as: ' + data.filename);
+                            //                     sendScreenSharingStatus(4, filename, evidence_name_type);
+                            //                 })
+                            //                 .catch(error => {
+                            //                     console.error('Error saving screen capture:', error);
+                            //                 });
+                            //             }, 500);
+                            //         }
+                            //         else{
+                            //             sendScreenSharingStatus(4, 0,evidence_name_type);
+                            //         }
+                            //     }
+                                                                        
+
+                            //     // Start screen sharing when the script is loaded
+                            //     startScreenSharing();";
+                            // echo '</script>';
+
+                        
                         // Pass necessarry value to js file in form of json
                         $jsdata = array(
                             'wwwroot' => $CFG->wwwroot,
@@ -237,9 +253,16 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                         echo 'var jsdata = ' . json_encode($jsdata) . ';';
                         echo '</script>';
 
-                        echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
-                        echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
-                        echo '<script src="' . $CFG->wwwroot . '/local/auto_proctor/monitor_tab.js"></script>';
+                        if ($monitor_tab_switching_activated){
+                            echo '<script type="text/javascript"> console.log("MONITOR TAB ACTIVATED"); </script>';
+                            echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
+                            echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
+                            echo '<script src="' . $CFG->wwwroot . '/local/auto_proctor/monitor_tab.js"></script>';
+                        }
+
+                        if ($monitor_tab_microphone_activated){
+                            echo '<script type="text/javascript"> console.log("MONITOR MICROPHONE ACTIVATED"); </script>';
+                        }
                     }
                 }
 
