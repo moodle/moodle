@@ -17,6 +17,9 @@ abstract class AbstractMessageValidator implements IMessageValidator
 
     abstract public static function validate(array $jwtBody): void;
 
+    /**
+     * @throws LtiException
+     */
     public static function validateGenericMessage(array $jwtBody): void
     {
         if (empty($jwtBody['sub'])) {

@@ -40,7 +40,7 @@ class LtiCourseGroupsService extends LtiAbstractService
         return $this->getAll($request, 'sets');
     }
 
-    public function getGroupsBySet()
+    public function getGroupsBySet(): array
     {
         $groups = $this->getGroups();
         $sets = $this->getSets();

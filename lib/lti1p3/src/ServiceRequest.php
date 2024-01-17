@@ -34,20 +34,20 @@ class ServiceRequest implements IServiceRequest
 
     // NRPS
     public const TYPE_GET_MEMBERSHIPS = 'get_memberships';
-    private $method;
-    private $url;
-    private $type;
     private $body;
     private $payload;
     private $accessToken;
     private $contentType = 'application/json';
     private $accept = 'application/json';
 
-    public function __construct(string $method, string $url, $type = self::UNSUPPORTED)
-    {
-        $this->method = $method;
-        $this->url = $url;
-        $this->type = $type;
+    // Other
+    private $maskResponseLogs = false;
+
+    public function __construct(
+        private string $method,
+        private string $url,
+        private string $type = self::TYPE_UNSUPPORTED
+    ) {
     }
 
     public function getMethod(): string
@@ -116,6 +116,18 @@ class ServiceRequest implements IServiceRequest
     public function setContentType(string $contentType): IServiceRequest
     {
         $this->contentType = $contentType;
+
+        return $this;
+    }
+
+    public function getMaskResponseLogs(): bool
+    {
+        return $this->maskResponseLogs;
+    }
+
+    public function setMaskResponseLogs(bool $shouldMask): IServiceRequest
+    {
+        $this->maskResponseLogs = $shouldMask;
 
         return $this;
     }

@@ -12,6 +12,9 @@ class SubmissionReviewMessageValidator extends AbstractMessageValidator
         return LtiConstants::MESSAGE_TYPE_SUBMISSIONREVIEW;
     }
 
+    /**
+     * @throws LtiException
+     */
     public static function validate(array $jwtBody): void
     {
         static::validateGenericMessage($jwtBody);
