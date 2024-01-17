@@ -1,0 +1,335 @@
+<?php
+// This file is part of Moodle - http://moodle.org/
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+namespace core_courseformat\local;
+
+use section_info;
+use stdClass;
+use core\event\course_section_deleted;
+
+/**
+ * Section course format actions.
+ *
+ * @package    core_courseformat
+ * @copyright  2023 Ferran Recio <ferran@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class sectionactions extends baseactions {
+    /**
+     * Create a course section using a record object.
+     *
+     * If $fields->section is not set, the section is added to the end of the course.
+     *
+     * @param stdClass $fields the fields to set on the section
+     * @param bool $skipcheck the position check has already been made and we know it can be used
+     * @return stdClass the created section record
+     */
+    protected function create_from_object(stdClass $fields, bool $skipcheck = false): stdClass {
+        global $DB;
+        [
+            'position' => $position,
+            'lastsection' => $lastsection,
+        ] = $this->calculate_positions($fields, $skipcheck);
+
+        // First add section to the end.
+        $sectionrecord = (object) [
+            'course' => $this->course->id,
+            'section' => $lastsection + 1,
+            'summary' => $fields->summary ?? '',
+            'summaryformat' => $fields->summaryformat ?? FORMAT_HTML,
+            'sequence' => '',
+            'name' => $fields->name ?? null,
+            'visible' => $fields->visible ?? 1,
+            'availability' => null,
+            'component' => $fields->component ?? null,
+            'itemid' => $fields->itemid ?? null,
+            'timemodified' => time(),
+        ];
+        $sectionrecord->id = $DB->insert_record("course_sections", $sectionrecord);
+
+        // Now move it to the specified position.
+        if ($position > 0 && $position <= $lastsection) {
+            move_section_to($this->course, $sectionrecord->section, $position, true);
+            $sectionrecord->section = $position;
+        }
+
+        \core\event\course_section_created::create_from_section($sectionrecord)->trigger();
+
+        rebuild_course_cache($this->course->id, true);
+        return $sectionrecord;
+    }
+
+    /**
+     * Calculate the position and lastsection values.
+     *
+     * Each section number must be unique inside a course. However, the section creation is not always
+     * explicit about the final position. By default, regular sections are created at the last position.
+     * However, delegated section can alter that order, because all delegated sections should have higher
+     * numbers. Apart, restore operations can also create sections with a forced specific number.
+     *
+     * This method returns what is the best position for a new section data and, also, what is the current
+     * last section number. The last section is needed to decide if the new section must be moved or not after
+     * insertion.
+     *
+     * @param stdClass $fields the fields to set on the section
+     * @param bool $skipcheck the position check has already been made and we know it can be used
+     * @return array with the new section position (position key) and the course last section value (lastsection key)
+     */
+    private function calculate_positions($fields, $skipcheck): array {
+        if (!isset($fields->section)) {
+            $skipcheck = false;
+        }
+        if ($skipcheck) {
+            return [
+                'position' => $fields->section,
+                'lastsection' => $fields->section - 1,
+            ];
+        }
+
+        $lastsection = $this->get_last_section_number();
+        if (!empty($fields->component)) {
+            return [
+                'position' => $fields->section ?? $lastsection + 1,
+                'lastsection' => $lastsection,
+            ];
+        }
+        return [
+            'position' => $fields->section ?? $this->get_last_section_number(false) + 1,
+            'lastsection' => $lastsection,
+        ];
+    }
+
+    /**
+     * Get the last section number in the course.
+     * @param bool $includedelegated whether to include delegated sections
+     * @return int
+     */
+    protected function get_last_section_number(bool $includedelegated = true): int {
+        global $DB;
+
+        $delegtadefilter = $includedelegated ? '' : ' AND component IS NULL';
+
+        return (int) $DB->get_field_sql(
+            'SELECT max(section) from {course_sections} WHERE course = ?' . $delegtadefilter,
+            [$this->course->id]
+        );
+    }
+
+    /**
+     * Create a delegated section.
+     *
+     * @param string $component the name of the plugin
+     * @param int|null $itemid the id of the delegated section
+     * @param stdClass|null $fields the fields to set on the section
+     * @return section_info the created section
+     */
+    public function create_delegated(
+        string $component,
+        ?int $itemid = null,
+        ?stdClass $fields = null
+    ): section_info {
+        $record = ($fields) ? clone $fields : new stdClass();
+        $record->component = $component;
+        $record->itemid = $itemid;
+
+        $record = $this->create_from_object($record);
+        return $this->get_section_info($record->id);
+    }
+
+    /**
+     * Creates a course section and adds it to the specified position
+     *
+     * This method returns a section record, not a section_info object. This prevents the regeneration
+     * of the modinfo object each time we create a section.
+     *
+     * If position is greater than number of existing sections, the section is added to the end.
+     * This will become sectionnum of the new section. All existing sections at this or bigger
+     * position will be shifted down.
+     *
+     * @param int $position The position to add to, 0 means to the end.
+     * @param bool $skipcheck the check has already been made and we know that the section with this position does not exist
+     * @return stdClass created section object)
+     */
+    public function create(int $position = 0, bool $skipcheck = false): stdClass {
+        $record = (object) [
+            'section' => $position,
+        ];
+        return $this->create_from_object($record, $skipcheck);
+    }
+
+    /**
+     * Create course sections if they are not created yet.
+     * @param int[] $sectionnums the section numbers to create
+     * @return bool whether any section was created
+     */
+    public function create_if_missing(array $sectionnums): bool {
+        $result = false;
+        $modinfo = get_fast_modinfo($this->course);
+        // Ensure we add the sections in order.
+        sort($sectionnums);
+        // Delegated sections must be displaced when creating a regular section.
+        $skipcheck = !$modinfo->has_delegated_sections();
+
+        $sections = $modinfo->get_section_info_all();
+        foreach ($sectionnums as $sectionnum) {
+            if (isset($sections[$sectionnum]) && empty($sections[$sectionnum]->component)) {
+                continue;
+            }
+            $this->create($sectionnum, $skipcheck);
+            $result = true;
+        }
+        return $result;
+    }
+
+    /**
+     * Delete a course section.
+     * @param section_info $sectioninfo the section to delete.
+     * @param bool $forcedeleteifnotempty whether to force section deletion if it contains modules.
+     * @param bool $async whether or not to try to delete the section using an adhoc task. Async also depends on a plugin hook.
+     * @return bool whether section was deleted
+     */
+    public function delete(section_info $sectioninfo, bool $forcedeleteifnotempty = true, bool $async = false): bool {
+        // Check the 'course_module_background_deletion_recommended' hook first.
+        // Only use asynchronous deletion if at least one plugin returns true and if async deletion has been requested.
+        // Both are checked because plugins should not be allowed to dictate the deletion behaviour, only support/decline it.
+        // It's up to plugins to handle things like whether or not they are enabled.
+        if ($async && $pluginsfunction = get_plugins_with_function('course_module_background_deletion_recommended')) {
+            foreach ($pluginsfunction as $plugintype => $plugins) {
+                foreach ($plugins as $pluginfunction) {
+                    if ($pluginfunction()) {
+                        return $this->delete_async($sectioninfo, $forcedeleteifnotempty);
+                    }
+                }
+            }
+        }
+
+        return $this->delete_format_data(
+            $sectioninfo,
+            $forcedeleteifnotempty,
+            $this->get_delete_event($sectioninfo)
+        );
+    }
+
+    /**
+     * Get the event to trigger when deleting a section.
+     * @param section_info $sectioninfo the section to delete.
+     * @return course_section_deleted the event to trigger
+     */
+    protected function get_delete_event(section_info $sectioninfo): course_section_deleted {
+        global $DB;
+        // Section record is needed for the event snapshot.
+        $sectionrecord = $DB->get_record('course_sections', ['id' => $sectioninfo->id]);
+
+        $format = course_get_format($this->course);
+        $sectionname = $format->get_section_name($sectioninfo);
+        $context = \context_course::instance($this->course->id);
+        $event = course_section_deleted::create(
+            [
+                'objectid' => $sectioninfo->id,
+                'courseid' => $this->course->id,
+                'context' => $context,
+                'other' => [
+                    'sectionnum' => $sectioninfo->section,
+                    'sectionname' => $sectionname,
+                ],
+            ]
+        );
+        $event->add_record_snapshot('course_sections', $sectionrecord);
+        return $event;
+    }
+
+    /**
+     * Delete a course section.
+     * @param section_info $sectioninfo the section to delete.
+     * @param bool $forcedeleteifnotempty whether to force section deletion if it contains modules.
+     * @param course_section_deleted $event the event to trigger
+     * @return bool whether section was deleted
+     */
+    protected function delete_format_data(
+        section_info $sectioninfo,
+        bool $forcedeleteifnotempty,
+        course_section_deleted $event
+    ): bool {
+        $format = course_get_format($this->course);
+        $result = $format->delete_section($sectioninfo, $forcedeleteifnotempty);
+        if ($result) {
+            $event->trigger();
+        }
+        rebuild_course_cache($this->course->id, true);
+        return $result;
+    }
+
+
+
+    /**
+     * Course section deletion, using an adhoc task for deletion of the modules it contains.
+     * 1. Schedule all modules within the section for adhoc removal.
+     * 2. Move all modules to course section 0.
+     * 3. Delete the resulting empty section.
+     *
+     * @param section_info $sectioninfo the section to schedule for deletion.
+     * @param bool $forcedeleteifnotempty whether to force section deletion if it contains modules.
+     * @return bool true if the section was scheduled for deletion, false otherwise.
+     */
+    protected function delete_async(section_info $sectioninfo, bool $forcedeleteifnotempty = true): bool {
+        global $DB, $USER;
+
+        if (!$forcedeleteifnotempty && (!empty($sectioninfo->sequence) || !empty($sectioninfo->summary))) {
+            return false;
+        }
+
+        // Event needs to be created before the section activities are moved to section 0.
+        $event = $this->get_delete_event($sectioninfo);
+
+        $affectedmods = $DB->get_records_select(
+            'course_modules',
+            'course = ? AND section = ? AND deletioninprogress <> ?',
+            [$this->course->id, $sectioninfo->id, 1],
+            '',
+            'id'
+        );
+
+        // Flag those modules having no existing deletion flag. Some modules may have been
+        // scheduled for deletion manually, and we don't want to create additional adhoc deletion
+        // tasks for these. Moving them to section 0 will suffice.
+        $DB->set_field(
+            'course_modules',
+            'deletioninprogress',
+            '1',
+            ['course' => $this->course->id, 'section' => $sectioninfo->id]
+        );
+
+        // Move all modules to section 0.
+        $sectionzero = $DB->get_record('course_sections', ['course' => $this->course->id, 'section' => '0']);
+        $modules = $DB->get_records('course_modules', ['section' => $sectioninfo->id], '');
+        foreach ($modules as $mod) {
+            moveto_module($mod, $sectionzero);
+        }
+
+        $removaltask = new \core_course\task\course_delete_modules();
+        $data = [
+            'cms' => $affectedmods,
+            'userid' => $USER->id,
+            'realuserid' => \core\session\manager::get_realuser()->id,
+        ];
+        $removaltask->set_custom_data($data);
+        \core\task\manager::queue_adhoc_task($removaltask);
+
+        // Ensure we have the latest section info.
+        $sectioninfo = $this->get_section_info($sectioninfo->id);
+        return $this->delete_format_data($sectioninfo, $forcedeleteifnotempty, $event);
+    }
+}

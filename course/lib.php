@@ -26,6 +26,7 @@ defined('MOODLE_INTERNAL') || die;
 
 use core_course\external\course_summary_exporter;
 use core_courseformat\base as course_format;
+use core_courseformat\formatactions;
 use core\output\local\action_menu\subpanel as action_menu_subpanel;
 
 require_once($CFG->libdir.'/completionlib.php');
@@ -541,42 +542,7 @@ function add_course_module($mod) {
  * @return stdClass created section object
  */
 function course_create_section($courseorid, $position = 0, $skipcheck = false) {
-    global $DB;
-    $courseid = is_object($courseorid) ? $courseorid->id : $courseorid;
-
-    // Find the last sectionnum among existing sections.
-    if ($skipcheck) {
-        $lastsection = $position - 1;
-    } else {
-        $lastsection = (int)$DB->get_field_sql('SELECT max(section) from {course_sections} WHERE course = ?', [$courseid]);
-    }
-
-    // First add section to the end.
-    $cw = new stdClass();
-    $cw->course   = $courseid;
-    $cw->section  = $lastsection + 1;
-    $cw->summary  = '';
-    $cw->summaryformat = FORMAT_HTML;
-    $cw->sequence = '';
-    $cw->name = null;
-    $cw->visible = 1;
-    $cw->availability = null;
-    $cw->component = null;
-    $cw->itemid = null;
-    $cw->timemodified = time();
-    $cw->id = $DB->insert_record("course_sections", $cw);
-
-    // Now move it to the specified position.
-    if ($position > 0 && $position <= $lastsection) {
-        $course = is_object($courseorid) ? $courseorid : get_course($courseorid);
-        move_section_to($course, $cw->section, $position, true);
-        $cw->section = $position;
-    }
-
-    core\event\course_section_created::create_from_section($cw)->trigger();
-
-    rebuild_course_cache($courseid, true);
-    return $cw;
+    return formatactions::section($courseorid)->create($position, $skipcheck);
 }
 
 /**
@@ -590,14 +556,7 @@ function course_create_sections_if_missing($courseorid, $sections) {
     if (!is_array($sections)) {
         $sections = array($sections);
     }
-    $existing = array_keys(get_fast_modinfo($courseorid)->get_section_info_all());
-    if ($newsections = array_diff($sections, $existing)) {
-        foreach ($newsections as $sectionnum) {
-            course_create_section($courseorid, $sectionnum, true);
-        }
-        return true;
-    }
-    return false;
+    return formatactions::section($courseorid)->create_if_missing($sections);
 }
 
 /**
@@ -1278,61 +1237,18 @@ function move_section_to($course, $section, $destination, $ignorenumsections = f
  * check if section can actually be deleted.
  *
  * @param int|stdClass $course
- * @param int|stdClass|section_info $section
+ * @param int|stdClass|section_info $sectionornum
  * @param bool $forcedeleteifnotempty if set to false section will not be deleted if it has modules in it.
  * @param bool $async whether or not to try to delete the section using an adhoc task. Async also depends on a plugin hook.
  * @return bool whether section was deleted
  */
-function course_delete_section($course, $section, $forcedeleteifnotempty = true, $async = false) {
-    global $DB;
-
-    // Prepare variables.
-    $courseid = (is_object($course)) ? $course->id : (int)$course;
-    $sectionnum = (is_object($section)) ? $section->section : (int)$section;
-    $section = $DB->get_record('course_sections', array('course' => $courseid, 'section' => $sectionnum));
-    if (!$section) {
-        // No section exists, can't proceed.
+function course_delete_section($course, $sectionornum, $forcedeleteifnotempty = true, $async = false) {
+    $sectionnum = (is_object($sectionornum)) ? $sectionornum->section : (int)$sectionornum;
+    $sectioninfo = get_fast_modinfo($course)->get_section_info($sectionnum);
+    if (!$sectioninfo) {
         return false;
     }
-
-    // Check the 'course_module_background_deletion_recommended' hook first.
-    // Only use asynchronous deletion if at least one plugin returns true and if async deletion has been requested.
-    // Both are checked because plugins should not be allowed to dictate the deletion behaviour, only support/decline it.
-    // It's up to plugins to handle things like whether or not they are enabled.
-    if ($async && $pluginsfunction = get_plugins_with_function('course_module_background_deletion_recommended')) {
-        foreach ($pluginsfunction as $plugintype => $plugins) {
-            foreach ($plugins as $pluginfunction) {
-                if ($pluginfunction()) {
-                    return course_delete_section_async($section, $forcedeleteifnotempty);
-                }
-            }
-        }
-    }
-
-    $format = course_get_format($course);
-    $sectionname = $format->get_section_name($section);
-
-    // Delete section.
-    $result = $format->delete_section($section, $forcedeleteifnotempty);
-
-    // Trigger an event for course section deletion.
-    if ($result) {
-        $context = context_course::instance($courseid);
-        $event = \core\event\course_section_deleted::create(
-            array(
-                'objectid' => $section->id,
-                'courseid' => $courseid,
-                'context' => $context,
-                'other' => array(
-                    'sectionnum' => $section->section,
-                    'sectionname' => $sectionname,
-                )
-            )
-        );
-        $event->add_record_snapshot('course_sections', $section);
-        $event->trigger();
-    }
-    return $result;
+    return formatactions::section($course)->delete($sectioninfo, $forcedeleteifnotempty, $async);
 }
 
 /**
@@ -1346,75 +1262,14 @@ function course_delete_section($course, $section, $forcedeleteifnotempty = true,
  * @return bool true if the section was scheduled for deletion, false otherwise.
  */
 function course_delete_section_async($section, $forcedeleteifnotempty = true) {
-    global $DB, $USER;
-
-    // Objects only, and only valid ones.
-    if (!is_object($section) || empty($section->id)) {
+    if (!is_object($section) || empty($section->id) || empty($section->course)) {
         return false;
     }
-
-    // Does the object currently exist in the DB for removal (check for stale objects).
-    $section = $DB->get_record('course_sections', array('id' => $section->id));
-    if (!$section || !$section->section) {
-        // No section exists, or the section is 0. Can't proceed.
+    $sectioninfo = get_fast_modinfo($section->course)->get_section_info_by_id($section->id);
+    if (!$sectioninfo) {
         return false;
     }
-
-    // Check whether the section can be removed.
-    if (!$forcedeleteifnotempty && (!empty($section->sequence) || !empty($section->summary))) {
-        return false;
-    }
-
-    $format = course_get_format($section->course);
-    $sectionname = $format->get_section_name($section);
-
-    // Flag those modules having no existing deletion flag. Some modules may have been scheduled for deletion manually, and we don't
-    // want to create additional adhoc deletion tasks for these. Moving them to section 0 will suffice.
-    $affectedmods = $DB->get_records_select('course_modules', 'course = ? AND section = ? AND deletioninprogress <> ?',
-                                            [$section->course, $section->id, 1], '', 'id');
-    $DB->set_field('course_modules', 'deletioninprogress', '1', ['course' => $section->course, 'section' => $section->id]);
-
-    // Move all modules to section 0.
-    $modules = $DB->get_records('course_modules', ['section' => $section->id], '');
-    $sectionzero = $DB->get_record('course_sections', ['course' => $section->course, 'section' => '0']);
-    foreach ($modules as $mod) {
-        moveto_module($mod, $sectionzero);
-    }
-
-    // Create and queue an adhoc task for the deletion of the modules.
-    $removaltask = new \core_course\task\course_delete_modules();
-    $data = array(
-        'cms' => $affectedmods,
-        'userid' => $USER->id,
-        'realuserid' => \core\session\manager::get_realuser()->id
-    );
-    $removaltask->set_custom_data($data);
-    \core\task\manager::queue_adhoc_task($removaltask);
-
-    // Delete the now empty section, passing in only the section number, which forces the function to fetch a new object.
-    // The refresh is needed because the section->sequence is now stale.
-    $result = $format->delete_section($section->section, $forcedeleteifnotempty);
-
-    // Trigger an event for course section deletion.
-    if ($result) {
-        $context = \context_course::instance($section->course);
-        $event = \core\event\course_section_deleted::create(
-            array(
-                'objectid' => $section->id,
-                'courseid' => $section->course,
-                'context' => $context,
-                'other' => array(
-                    'sectionnum' => $section->section,
-                    'sectionname' => $sectionname,
-                )
-            )
-        );
-        $event->add_record_snapshot('course_sections', $section);
-        $event->trigger();
-    }
-    rebuild_course_cache($section->course, true);
-
-    return $result;
+    return formatactions::section($section->course)->delete_async($sectioninfo, $forcedeleteifnotempty);
 }
 
 /**

@@ -12,6 +12,9 @@ information provided here is intended especially for developers.
   - `course_purge_section_cache`
   - `course_purge_module_cache`
   - `get_array_of_activities`
+* New format actions classes. Those classes will eventually replace all course/lib.php content editing functions.
+  All new methods are distributed in three classes formats can extend. Method can be accessed using static
+  methods (see doc block of core_courseformat\formatactions for more information).
 
 === 4.3 ===
 * The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used
