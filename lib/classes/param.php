@@ -376,7 +376,7 @@ enum param: string {
      * $selectedgradeitem = param::INT->clean($selectedgradeitem);
      * </code>
      *
-     * @param mixed $value the value to clean 
+     * @param mixed $value the value to clean
      * @return mixed
      * @throws coding_exception
      */
