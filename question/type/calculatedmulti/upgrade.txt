@@ -1,0 +1,5 @@
+This file describes API changes in /question/type/calculatedmulti/*.
+
+=== 4.4 ===
+* Calculated multichoice question options now have the possibility to have full HTML (and MathJax) support in choices the same
+  as normal multichoice question options.
