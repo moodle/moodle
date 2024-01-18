@@ -10,6 +10,8 @@ information provided here is intended especially for developers.
 * The group element has a new method `getAttributesForFormElement` which should be used in conjunction
   with `createFormElement` to ensure that all elements within the group have unique IDs
 * New method `setHiddenLabel` added to the group form element type
+* The deprecated `moodle-core-formchangechecker` YUI module and legacy `M.core_formchangechecker` have been
+  removed and can no longer be used
 
 === 4.3 ===
 
