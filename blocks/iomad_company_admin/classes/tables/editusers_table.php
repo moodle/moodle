@@ -76,7 +76,7 @@ class editusers_table extends table_sql {
     public function col_department($row) {
         global $DB, $USER, $company, $OUTPUT;
 
-        $userdepartments = isset($this->alldepartments[$row->id]) ? $this->alldepartments[$row->id] : [];
+        $userdepartments = array_keys($DB->get_records('company_users', ['companyid' => $company->id, 'userid' => $row->id], '', 'departmentid'));
         if (empty($USER->editing) || $row->managertype == 1) {
             $count = count($userdepartments);
             $current = 1;
@@ -133,7 +133,7 @@ class editusers_table extends table_sql {
             return $returnstr;
         } else {
             // Can't be a company manager if you are in more than one department or the department you are in is not the top level department.
-            $userdepartments = isset($this->alldepartments[$row->id]) ? $this->alldepartments[$row->id] : [];
+            $userdepartments = array_keys($DB->get_records('company_users', ['companyid' => $company->id, 'userid' => $row->id], '', 'departmentid'));
             $usertypeselect = $this->usertypeselect;
             if (count($userdepartments) > 1 ||
                 $userdepartments[0] != $this->parentlevel->id) {
@@ -418,16 +418,6 @@ class editusers_table extends table_sql {
         $this->assignabledepartments = company::array_flatten(company::get_department_list($departmenttree[0]));
 
         $this->departmentsmenu = $DB->get_records_menu('department', ['company' => $companyid], 'name', 'id,name');
-        $users = $DB->get_records_sql("SELECT DISTINCT userid 
-                                       FROM {company_users}
-                                       WHERE companyid = :companyid",
-                                       ['companyid' => $companyid]);
-        $alldepartments = [];
-        foreach($users as $user) {
-            $userdepartments = $DB->get_records('company_users', ['companyid' => $companyid, 'userid' => $user->userid], 'departmentid', 'departmentid');
-            $alldepartments[$user->userid] = array_keys($userdepartments);
-        }
-        $this->alldepartments = $alldepartments;
 
         // Deal with role selector.
         $this->usertypeselect = ['0' => get_string('user', 'block_iomad_company_admin')];
