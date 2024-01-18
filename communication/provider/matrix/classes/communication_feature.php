@@ -190,6 +190,24 @@ class communication_feature implements
     }
 
     public function update_room_membership(array $userids): void {
+
+        // Filter out any users that are not room members yet.
+        $response = $this->matrixapi->get_room_members(
+            roomid: $this->get_room_id(),
+        );
+        $body = self::get_body($response);
+
+        if (isset($body->joined)) {
+            foreach ($userids as $key => $userid) {
+                $matrixuserid = matrix_user_manager::get_matrixid_from_moodle(
+                    userid: $userid,
+                );
+                if (!array_key_exists($matrixuserid, (array) $body->joined)) {
+                    unset($userids[$key]);
+                }
+            }
+        }
+
         $this->set_matrix_power_levels();
         // Mark the users as synced for the updated members.
         $this->processor->mark_users_as_synced($userids);
@@ -580,6 +598,12 @@ class communication_feature implements
         $currentpowerlevels = $this->get_current_powerlevel_data();
         $currentuserpowerlevels = (array) $currentpowerlevels->users ?? [];
 
+        // Ensure each user entry is an array.
+        $currentuserpowerlevels = array_map(
+            fn ($user) => (array) $user,
+            $currentuserpowerlevels,
+        );
+
         // Get all the current users who need to be in the room.
         $userlist = $this->processor->get_all_userids_for_instance();
 
@@ -638,7 +662,10 @@ class communication_feature implements
     private function get_users_with_custom_power_level(array $users): array {
         return array_filter(
             $users,
-            function ($level): bool {
+            function ($user): bool {
+                // Isolate the level value.
+                $level = array_values($user);
+                $level = reset($level);
                 switch ($level) {
                     case matrix_constants::POWER_LEVEL_DEFAULT:
                     case matrix_constants::POWER_LEVEL_MOODLE_SITE_ADMIN:
