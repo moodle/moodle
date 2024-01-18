@@ -27,6 +27,7 @@
  *
  * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @codeCoverageIgnore For old Moodle sites in which upgrades are always risky.
  */
 class moodle1_qtype_ordering_handler extends moodle1_qtype_handler {
 

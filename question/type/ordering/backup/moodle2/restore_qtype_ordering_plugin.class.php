@@ -85,6 +85,7 @@ class restore_qtype_ordering_plugin extends restore_qtype_plugin {
      *
      * @param object $state
      * @return string|false
+     * @codeCoverageIgnore Restoring from 2.0 is risky business and hopefully not needed.
      */
     public function recode_legacy_state_answer($state): string|false {
         $answer = $state->answer;

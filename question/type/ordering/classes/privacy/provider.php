@@ -31,6 +31,7 @@ class provider implements \core_privacy\local\metadata\null_provider {
      * file to explain why this plugin stores no data.
      *
      * @return string
+     * @codeCoverageIgnore A null provider so no special handling for us.
      */
     public static function get_reason(): string {
         return 'privacy:metadata';

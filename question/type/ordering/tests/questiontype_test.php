@@ -24,22 +24,30 @@
 
 namespace qtype_ordering;
 
+use core_question_generator;
 use qtype_ordering;
-use test_question_maker;
-use qtype_ordering_edit_form;
 use qtype_ordering_test_helper;
+use qtype_ordering_edit_form;
+use qtype_ordering_question;
+use test_question_maker;
 use question_bank;
 use question_possible_response;
-use qtype_ordering_question;
-use core_question_generator;
+
+use qformat_gift;
+use question_check_specified_fields_expectation;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
-require_once($CFG->dirroot . '/question/type/ordering/questiontype.php');
 require_once($CFG->dirroot . '/question/type/edit_question_form.php');
+require_once($CFG->dirroot . '/question/type/ordering/questiontype.php');
 require_once($CFG->dirroot . '/question/type/ordering/edit_ordering_form.php');
+
+require_once($CFG->libdir . '/questionlib.php');
+require_once($CFG->dirroot . '/question/format.php');
+require_once($CFG->dirroot . '/question/format/gift/format.php');
+require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 
 /**
  * Unit tests for the ordering question type class.
@@ -48,16 +56,43 @@ require_once($CFG->dirroot . '/question/type/ordering/edit_ordering_form.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \qtype_ordering
  */
-class questiontype_test extends \advanced_testcase {
+class questiontype_test extends \question_testcase {
     /** @var qtype_ordering instance of the question type class to test. */
     protected $qtype;
 
+    /** @var object Default import object to compare against. */
+    protected $expectedimportobj;
+
     protected function setUp(): void {
         $this->qtype = new qtype_ordering();
+        $this->expectedimportobj = (object) [
+            'qtype' => 'ordering',
+            'idnumber' => 'myid',
+            'name' => 'Moodle',
+            'length' => 1,
+            'penalty' => 0.3333333,
+            'questiontext' => 'Put these words in order.',
+            'questiontextformat' => 1,
+            'generalfeedback' => 'The correct answer is "Modular Object Oriented Dynamic Learning Environment".',
+            'generalfeedbackformat' => 1,
+            'defaultmark' => 1,
+        ];
     }
 
     protected function tearDown(): void {
         $this->qtype = null;
+        $this->expectedimportobj = null;
+    }
+
+    /**
+     * Asserts that two XML strings are the same, ignoring differences in line endings.
+     *
+     * @param string $expectedxml
+     * @param string $xml
+     */
+    public function assert_same_xml(string $expectedxml, string $xml): void {
+        $this->assertEquals(str_replace("\r\n", "\n", $expectedxml),
+            str_replace("\r\n", "\n", $xml));
     }
 
     public function test_name(): void {
@@ -214,5 +249,100 @@ class questiontype_test extends \advanced_testcase {
         $expected = 'III';
         $actual = $this->qtype->get_numberingstyle($questiondata);
         $this->assertEquals($expected, $actual);
+    }
+
+    public function test_xml_import(): void {
+        $this->resetAfterTest();
+        // Import a question from XML
+        $xml = file_get_contents(__DIR__ . '/fixtures/testimport.moodle.xml');
+        $xmldata = xmlize($xml);
+        $format = new \qformat_xml();
+        $imported = $format->try_importing_using_qtypes(
+            $xmldata['question'], null, null, 'ordering');
+
+        $this->assert(new question_check_specified_fields_expectation($this->expectedimportobj), $imported);
+    }
+
+    public function test_xml_import_empty(): void {
+        $this->resetAfterTest();
+        // Import a question from XML
+        $xml = file_get_contents(__DIR__ . '/fixtures/testimportempty.moodle.xml');
+        $xmldata = xmlize($xml);
+        $format = new \qformat_xml();
+        $imported = $format->try_importing_using_qtypes(
+            $xmldata['question'], null, null, 'ordering');
+
+        $this->expectedimportobj->name = 'Put these words in order.';
+
+        $this->assert(new question_check_specified_fields_expectation($this->expectedimportobj), $imported);
+    }
+
+    public function test_xml_import_long(): void {
+        $this->resetAfterTest();
+        // Import a question from XML
+        $xml = file_get_contents(__DIR__ . '/fixtures/testimportlong.moodle.xml');
+        $xmldata = xmlize($xml);
+        $format = new \qformat_xml();
+        $imported = $format->try_importing_using_qtypes(
+            $xmldata['question'], null, null, 'ordering');
+
+        $this->expectedimportobj->name = 'Moodle Moodle Moodle Moodle Moodle Moodle ...';
+
+        $this->assert(new question_check_specified_fields_expectation($this->expectedimportobj), $imported);
+    }
+
+    public function test_xml_export(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category();
+        $question = $generator->create_question('ordering', 'moodle',
+            ['category' => $category->id, 'idnumber' => 'myid']);
+
+        // Export it.
+        $questiondata = question_bank::load_question_data($question->id);
+        // Add some feedback to ensure it comes through the export.
+        foreach ($questiondata->options->answers as $answer) {
+            $answer->feedback = $answer->answer . ' is correct.';
+            $answer->feedbackformat = FORMAT_HTML;
+            $answer->feedbackfiles = 0;
+        }
+
+        $exporter = new \qformat_xml();
+        $xml = $exporter->writequestion($questiondata);
+
+        $expectedxml = file_get_contents(__DIR__ . '/fixtures/testexport.moodle.xml');
+
+        $this->assert_same_xml($expectedxml, $xml);
+    }
+
+    public function test_gift_import(): void {
+        $this->resetAfterTest();
+        // Import a question from GIFT
+        $gift = file_get_contents(__DIR__ . '/fixtures/testimport.gift.txt');
+        $format = new qformat_gift();
+        $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
+        $imported = $format->readquestion($lines);
+
+        // TODO - MDL-XXXXX format_gift: Set ID & tags from comment for third parties.
+        // $this->assert(new question_check_specified_fields_expectation($this->expectedimportobj), $imported);
+    }
+
+    public function test_gift_export(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $generator->create_question_category();
+        $question = $generator->create_question('ordering', 'moodle',
+            ['category' => $category->id, 'idnumber' => 'myid']);
+
+        // Export it.
+        $questiondata = question_bank::load_question_data($question->id);
+
+        $exporter = new qformat_gift();
+        $gift = $exporter->writequestion($questiondata);
+
+        $expectedgift = file_get_contents(__DIR__ . '/fixtures/testexport.gift.txt');
+
+        // TODO - MDL-XXXXX format_gift: Set ID & tags from comment for third parties.
+        // $this->assertEquals($expectedgift, $gift);
     }
 }

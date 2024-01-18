@@ -398,12 +398,12 @@ class qtype_ordering extends question_type {
      * Import question from GIFT format
      *
      * @param array $lines
-     * @param stdClass $question
+     * @param stdClass|null $question
      * @param qformat_gift $format
      * @param string|null $extra (optional, default=null)
      * @return stdClass|bool Question instance
      */
-    public function import_from_gift(array $lines, stdClass $question, qformat_gift $format, string $extra = null): bool|stdClass {
+    public function import_from_gift(array $lines, ?stdClass $question, qformat_gift $format, string $extra = null): bool|stdClass {
         global $CFG;
         require_once($CFG->dirroot.'/question/type/ordering/question.php');
 
