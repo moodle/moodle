@@ -43,8 +43,10 @@ class permission_test extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        // User with permission.
-        $this->setAdminUser();
+        // User with default permission.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
         try {
             permission::require_can_view_reports_list();
         } catch (Throwable $exception) {
@@ -52,15 +54,53 @@ class permission_test extends advanced_testcase {
         }
 
         // User without permission.
-        $user = $this->getDataGenerator()->create_user();
-        $this->setUser($user);
-
         $userrole = $DB->get_field('role', 'id', ['shortname' => 'user']);
         unassign_capability('moodle/reportbuilder:view', $userrole, context_system::instance());
 
         $this->expectException(report_access_exception::class);
         $this->expectExceptionMessage('You cannot view this report');
         permission::require_can_view_reports_list();
+    }
+
+    /**
+     * Data provider for {@see test_require_can_view_reports_list_with_capability}
+     *
+     * @return array[]
+     */
+    public static function require_can_view_reports_list_with_capability_provider(): array {
+        return [
+            ['moodle/reportbuilder:edit'],
+            ['moodle/reportbuilder:editall'],
+            ['moodle/reportbuilder:viewall'],
+        ];
+    }
+
+    /**
+     * Test that viewing reports list observes capability to do so
+     *
+     * @param string $capability
+     *
+     * @dataProvider require_can_view_reports_list_with_capability_provider
+     */
+    public function test_require_can_view_reports_list_with_capability(string $capability): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user']);
+
+        // Remove default capability, allow additional.
+        unassign_capability('moodle/reportbuilder:view', $userrole, context_system::instance());
+        assign_capability($capability, CAP_ALLOW, $userrole, context_system::instance());
+
+        try {
+            permission::require_can_view_reports_list();
+        } catch (Throwable $exception) {
+            $this->fail($exception->getMessage());
+        }
     }
 
     /**
@@ -81,8 +121,6 @@ class permission_test extends advanced_testcase {
      * Test whether user can view specific report
      */
     public function test_require_can_view_report(): void {
-        global $DB;
-
         $this->resetAfterTest();
 
         /** @var core_reportbuilder_generator $generator */
@@ -101,12 +139,54 @@ class permission_test extends advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
 
-        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user']);
-        unassign_capability('moodle/reportbuilder:view', $userrole, context_system::instance());
-
         $this->expectException(report_access_exception::class);
         $this->expectExceptionMessage('You cannot view this report');
         permission::require_can_view_report($report);
+    }
+
+    /**
+     * Data provider for {@see test_require_can_view_report_with_capability}
+     *
+     * @return array[]
+     */
+    public static function require_can_view_report_with_capability_provider(): array {
+        return [
+            ['moodle/reportbuilder:editall'],
+            ['moodle/reportbuilder:viewall'],
+        ];
+    }
+
+    /**
+     * Test whether user can view specific report when they have capability to view all reports
+     *
+     * @param string $capability
+     *
+     * @dataProvider require_can_view_report_with_capability_provider
+     */
+    public function test_require_can_view_report_with_capability(string $capability): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        // Admin creates a report, no audience.
+        $this->setAdminUser();
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Admin report', 'source' => users::class]);
+
+        // Switch to new user, assign capability.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user']);
+        assign_capability($capability, CAP_ALLOW, $userrole, context_system::instance());
+
+        try {
+            permission::require_can_view_report($report);
+        } catch (Throwable $exception) {
+            $this->fail($exception->getMessage());
+        }
     }
 
     /**
