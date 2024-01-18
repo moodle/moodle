@@ -386,3 +386,26 @@ $card-gutter : $card-deck-margin * 2;
         }
     }
 }
+
+//
+// Block add button
+//
+.block-add {
+    @include alert-variant($primary-light-background, $primary-light-border, $primary);
+    @include border-radius();
+    width: 100%;
+    border-width: $border-width;
+    .pluscontainer {
+        border: $border-width solid $primary-light-border;
+        border-radius: 50%;
+        width: map-get($iconsizes, 5);
+        height: map-get($iconsizes, 5);
+    }
+    &:hover {
+        cursor: pointer;
+        background-color: $primary-light-background;
+        .activity-add-text {
+            text-decoration: underline;
+        }
+    }
+}

@@ -58,13 +58,10 @@
     }
 }}
 {{#editing}}
-    <div class="divider divider-plus bulk-hidden" data-action="insert-before-{{activityname}}">
-        {{> core_course/activitychooserbuttonactivity}}
-    </div>
+    {{< core_courseformat/local/content/divider}}
+        {{$content}}{{> core_course/activitychooserbuttonactivity}}{{/content}}
+    {{/ core_courseformat/local/content/divider}}
 {{/editing}}
-
-<hr class="my-2">
-
 <div class="activity-item focus-control {{#modstealth}}hiddenactivity{{/modstealth}}{{!
         }}{{#modhiddenfromstudents}}hiddenactivity{{/modhiddenfromstudents}}{{!
         }}{{#modinline}}activityinline{{/modinline}}" data-activityname="{{activityname}}" data-region="activity-card">

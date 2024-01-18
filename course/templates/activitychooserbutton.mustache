@@ -29,12 +29,16 @@
         "sectionreturn": 0
     }
 }}
-<button class="btn btn-link text-decoration-none section-modchooser section-modchooser-link activity-add bulk-hidden d-flex align-items-center p-3 mt-3"
-     data-action="open-chooser"
-     data-sectionid="{{sectionid}}"
-     {{#sectionreturn}}data-sectionreturnid="{{.}}"{{/sectionreturn}}>
-    <span class="pluscontainer icon-no-margin icon-size-3 d-flex p-2 mr-2">
-        {{#pix}} t/add, core {{/pix}}
-    </span>
-    <span class="activity-add-text">{{#str}}addresourceoractivity, core{{/str}}</span>
-</button>
+{{< core_courseformat/local/content/divider}}
+    {{$extraclasses}}always-visible my-3{{/extraclasses}}
+    {{$content}}
+        <button class="btn add-content section-modchooser section-modchooser-link d-flex justify-content-center align-items-center py-1 px-2"
+            data-action="open-chooser"
+            data-sectionid="{{sectionid}}"
+            {{#sectionreturn}}data-sectionreturnid="{{.}}"{{/sectionreturn}}
+        >
+            {{#pix}} t/add, core {{/pix}}
+            <span class="activity-add-text pr-1">{{#str}}addresourceoractivity, core{{/str}}</span>
+        </button>
+    {{/content}}
+{{/ core_courseformat/local/content/divider}}

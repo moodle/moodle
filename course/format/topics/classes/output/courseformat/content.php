@@ -37,11 +37,9 @@ use renderer_base;
 class content extends content_base {
 
     /**
-     * @var bool Topic format has add section after each topic.
-     *
-     * The responsible for the buttons is core_courseformat\output\local\content\section.
+     * @var bool Topic format has also add section after each topic.
      */
-    protected $hasaddsection = false;
+    protected $hasaddsection = true;
 
     /**
      * Export this data so it can be used as the context for a mustache template (core/inplace_editable).

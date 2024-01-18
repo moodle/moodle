@@ -79,12 +79,13 @@ Feature: Sections can be edited and deleted in custom sections format
 
   @javascript
   Scenario: Adding sections at the end of a custom sections format
-    When I click on "Add section" "link" in the "Topic 5" "section"
+    When I click on "Add section" "link" in the "course-addsection" "region"
     Then I should see "Topic 6" in the "Topic 6" "section"
     And I should see "Test choice name" in the "Topic 5" "section"
 
   @javascript
   Scenario: Adding sections between topics in custom sections format
+    Given I hover over the "Add section" "link" in the "Topic 4" "section"
     When I click on "Add section" "link" in the "Topic 4" "section"
     Then I should see "Topic 6" in the "Topic 6" "section"
     And I should not see "Test choice name" in the "Topic 5" "section"
@@ -92,7 +93,7 @@ Feature: Sections can be edited and deleted in custom sections format
 
   @javascript
   Scenario: Add a topic and then add an activity in it
-    When I click on "Add section" "link" in the "Topic 5" "section"
+    When I click on "Add section" "link" in the "course-addsection" "region"
     And I add an assign activity to course "Course 1" section "6" and I fill the form with:
       | Assignment name | Very new activity |
       | Description     | Test              |

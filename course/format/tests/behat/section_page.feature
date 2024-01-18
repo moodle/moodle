@@ -84,3 +84,8 @@ Feature: Single section course page
     And I am on "Course 1" course homepage
     And I navigate to "Reports > Live logs" in current page administration
     And I should see "Section viewed"
+
+  Scenario: The add section button is not displayed in the single section page
+    Given I turn editing mode on
+    When I click on "View" "link" in the "Topic 1" "section"
+    Then "Add section" "link" should not exist in the "region-main" "region"
