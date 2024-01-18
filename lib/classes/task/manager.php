@@ -1412,7 +1412,7 @@ class manager {
             2 => ['pipe', 'w'], // STDERR.
         ];
         flush();
-        $process = proc_open($command, $descriptorspec, $pipes, realpath('./'), []);
+        $process = proc_open($command, $descriptorspec, $pipes, realpath('./'));
         if (is_resource($process)) {
             while ($s = fgets($pipes[1])) {
                 mtrace($s, '');
