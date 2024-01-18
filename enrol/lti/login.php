@@ -77,10 +77,10 @@ if (empty($_REQUEST['client_id']) && !empty($_REQUEST['id'])) {
 }
 
 // Now, do the OIDC login.
-LtiOidcLogin::new(
+$redirecturl = LtiOidcLogin::new(
     new issuer_database(new application_registration_repository(), new deployment_repository()),
     new launch_cache_session(),
     new lti_cookie()
-)
-    ->doOidcLoginRedirect($targetlinkuri)
-    ->doRedirect();
+)->getRedirectUrl($targetlinkuri, $_REQUEST);
+
+redirect($redirecturl);
