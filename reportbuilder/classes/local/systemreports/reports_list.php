@@ -281,7 +281,12 @@ class reports_list extends system_report {
         $this->add_action((new action(
             new moodle_url('#'),
             new pix_icon('t/delete', ''),
-            ['data-action' => 'report-delete', 'data-report-id' => ':id', 'data-report-name' => ':name'],
+            [
+                'data-action' => 'report-delete',
+                'data-report-id' => ':id',
+                'data-report-name' => ':name',
+                'class' => 'text-danger',
+            ],
             false,
             new lang_string('deletereport', 'core_reportbuilder')
         ))

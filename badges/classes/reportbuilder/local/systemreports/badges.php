@@ -258,7 +258,7 @@ class badges extends system_report {
                 'id' => ':courseid',
             ]),
             new pix_icon('t/delete', '', 'core'),
-            [],
+            ['class' => 'text-danger'],
             false,
             new lang_string('delete', 'core')
         ))->add_callback(static function(stdclass $row): bool {

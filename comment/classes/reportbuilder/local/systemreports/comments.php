@@ -116,7 +116,7 @@ class comments extends system_report {
         $this->add_action(new action(
             new moodle_url('#'),
             new pix_icon('t/delete', ''),
-            ['data-action' => 'comment-delete', 'data-comment-id' => ':id'],
+            ['data-action' => 'comment-delete', 'data-comment-id' => ':id', 'class' => 'text-danger'],
             false,
             new lang_string('delete')
         ));

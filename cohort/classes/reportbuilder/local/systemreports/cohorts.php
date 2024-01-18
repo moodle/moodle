@@ -239,7 +239,7 @@ class cohorts extends system_report {
         $this->add_action((new action(
             new moodle_url('/cohort/edit.php', ['id' => ':id', 'delete' => 1, 'returnurl' => $returnurl]),
             new pix_icon('t/delete', '', 'core'),
-            [],
+            ['class' => 'text-danger'],
             false,
             new lang_string('delete')
         ))->add_callback(function(stdClass $row): bool {
