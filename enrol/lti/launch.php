@@ -68,7 +68,7 @@ $cookie = new lti_cookie();
 $serviceconnector = new LtiServiceConnector($sesscache, new http_client());
 if ($idtoken) {
     $messagelaunch = LtiMessageLaunch::new($issdb, $sesscache, $cookie, $serviceconnector)
-        ->validate();
+        ->initialize($_POST);
 }
 if ($launchid) {
     $messagelaunch = LtiMessageLaunch::fromCache($launchid, $issdb, $sesscache, $serviceconnector);
