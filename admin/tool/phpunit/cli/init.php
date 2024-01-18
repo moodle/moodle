@@ -1,5 +1,5 @@
 <?php
-// This file is part of Moodle - http://moodle.org/
+// This file is part of Moodle - https://moodle.org/
 //
 // Moodle is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -12,18 +12,18 @@
 // GNU General Public License for more details.
 //
 // You should have received a copy of the GNU General Public License
-// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+// along with Moodle.  If not, see <https://www.gnu.org/licenses/>.
 
 /**
  * All in one init script - PHP version.
  *
  * @package    tool_phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    die; // no access from web!
+    die; // No access from web!
 }
 
 // Force OPcache reset if used, we do not want any stale caches
@@ -99,10 +99,7 @@ if ($code != 0) {
 chdir(__DIR__);
 $output = null;
 exec("php util.php --diag", $output, $code);
-if ($code == 0) {
-    // everything is ready
-
-} else if ($code == PHPUNIT_EXITCODE_INSTALL) {
+if ($code == PHPUNIT_EXITCODE_INSTALL) {
     passthru("php util.php --install", $code);
     if ($code != 0) {
         exit($code);
@@ -115,7 +112,7 @@ if ($code == 0) {
         exit($code);
     }
 
-} else {
+} else if ($code != 0) {
     echo implode("\n", $output)."\n";
     exit($code);
 }
