@@ -131,13 +131,34 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
                 $this->is_readonly()
             );
         } else {
-            return new text_attribute(
+            $textattribute = new text_attribute(
                 $this->get_name(),
                 $this->get_value(),
                 $this->get_label(),
                 $this->is_disabled(),
                 $this->is_readonly()
             );
+
+            // Set min/max attributes, if applicable.
+            $textattribute->set_type('number');
+            $gradeitem = $this->grade->grade_item;
+            $decimals = $gradeitem->get_decimals();
+
+            // Min attribute.
+            $minvalue = null;
+            if (isset($gradeitem->grademin)) {
+                $minvalue = format_float($gradeitem->grademin, $decimals);
+            }
+            $textattribute->set_min($minvalue);
+
+            // Max attribute.
+            $maxvalue = null;
+            if (isset($gradeitem->grademax)) {
+                $maxvalue = format_float($gradeitem->grademax, $decimals);
+            }
+            $textattribute->set_max($maxvalue);
+
+            return $textattribute;
         }
     }
 
