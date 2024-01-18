@@ -26,11 +26,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use enrol_lti\local\ltiadvantage\lib\lti_cookie;
 use enrol_lti\local\ltiadvantage\lib\issuer_database;
 use enrol_lti\local\ltiadvantage\lib\launch_cache_session;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
 use enrol_lti\local\ltiadvantage\repository\deployment_repository;
-use Packback\Lti1p3\ImsStorage\ImsCookie;
 use Packback\Lti1p3\LtiOidcLogin;
 
 require_once(__DIR__."/../../config.php");
@@ -80,7 +80,7 @@ if (empty($_REQUEST['client_id']) && !empty($_REQUEST['id'])) {
 LtiOidcLogin::new(
     new issuer_database(new application_registration_repository(), new deployment_repository()),
     new launch_cache_session(),
-    new ImsCookie()
+    new lti_cookie()
 )
     ->doOidcLoginRedirect($targetlinkuri)
     ->doRedirect();

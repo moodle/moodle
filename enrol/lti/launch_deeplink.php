@@ -29,12 +29,12 @@
  */
 
 use core\http_client;
+use enrol_lti\local\ltiadvantage\lib\lti_cookie;
 use enrol_lti\local\ltiadvantage\lib\issuer_database;
 use enrol_lti\local\ltiadvantage\lib\launch_cache_session;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
 use enrol_lti\local\ltiadvantage\repository\deployment_repository;
 use enrol_lti\local\ltiadvantage\repository\published_resource_repository;
-use Packback\Lti1p3\ImsStorage\ImsCookie;
 use Packback\Lti1p3\LtiMessageLaunch;
 use Packback\Lti1p3\LtiServiceConnector;
 
@@ -58,7 +58,7 @@ if (empty($idtoken) && empty($launchid)) {
 // First launch from the platform: get launch data and cache it in case the user's not authenticated.
 $sesscache = new launch_cache_session();
 $issdb = new issuer_database(new application_registration_repository(), new deployment_repository());
-$cookie = new ImsCookie();
+$cookie = new lti_cookie();
 $serviceconnector = new LtiServiceConnector($sesscache, new http_client());
 if ($idtoken) {
     $messagelaunch = LtiMessageLaunch::new($issdb, $sesscache, $cookie, $serviceconnector)

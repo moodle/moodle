@@ -23,12 +23,12 @@
  */
 
 use core\http_client;
+use enrol_lti\local\ltiadvantage\lib\lti_cookie;
 use enrol_lti\local\ltiadvantage\lib\launch_cache_session;
 use enrol_lti\local\ltiadvantage\lib\issuer_database;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
 use enrol_lti\local\ltiadvantage\repository\deployment_repository;
 use enrol_lti\local\ltiadvantage\repository\published_resource_repository;
-use Packback\Lti1p3\ImsStorage\ImsCookie;
 use Packback\Lti1p3\LtiDeepLinkResource;
 use Packback\Lti1p3\LtiLineitem;
 use Packback\Lti1p3\LtiMessageLaunch;
@@ -47,7 +47,7 @@ $grades = optional_param_array('grades', [], PARAM_INT);
 
 $sesscache = new launch_cache_session();
 $issdb = new issuer_database(new application_registration_repository(), new deployment_repository());
-$cookie = new ImsCookie();
+$cookie = new lti_cookie();
 $serviceconnector = new LtiServiceConnector($sesscache, new http_client());
 $messagelaunch = LtiMessageLaunch::fromCache($launchid, $issdb, $sesscache, $serviceconnector);
 
