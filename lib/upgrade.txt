@@ -38,6 +38,7 @@ information provided here is intended especially for developers.
 * There is a new DML method $DB->get_fieldset. For some reason, this did not exist even though get_fieldset_select etc. did.
 * The following callbacks have been migrated to hooks:
   - before_standard_html_head() -> core\hook\output\before_standard_head_html_generation
+  - bulk_user_actions() -> core_user\hook\extend_bulk_user_actions
 * Deprecated PARAM_ types with the exception of PARAM_CLEAN now emit a deprecation exception. These were all deprecated in Moodle 2.0.
 * A new \core\attribute\deprecated attribute can be used to more clearly describe deprecated methods.
 * A new \core\deprecation class can be used to inspect for deprecated attributes:
