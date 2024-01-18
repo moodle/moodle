@@ -205,7 +205,7 @@ class condition extends \core_availability\condition {
 
         // List users for this course who match the condition.
         if ($this->companyid) {
-            $DB->get_records_sql("
+            $companyusers = $DB->get_records_sql("
                     SELECT DISTINCT cu.userid
                       FROM {company_users} cu
                       JOIN {user_enrolments} ue ON ue.userid = cu.userid
