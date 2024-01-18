@@ -29,7 +29,8 @@ use enrol_lti\local\ltiadvantage\lib\issuer_database;
 use enrol_lti\local\ltiadvantage\repository\application_registration_repository;
 use enrol_lti\local\ltiadvantage\repository\deployment_repository;
 use enrol_lti\local\ltiadvantage\repository\published_resource_repository;
-use Packback\Lti1p3\LtiDeepLinkResource;
+use Packback\Lti1p3\DeepLinkResources\Resource;
+use Packback\Lti1p3\LtiConstants;
 use Packback\Lti1p3\LtiLineitem;
 use Packback\Lti1p3\LtiMessageLaunch;
 use Packback\Lti1p3\LtiServiceConnector;
@@ -64,7 +65,7 @@ $resources = $resourcerepo->find_all_by_ids_for_user($modules, $USER->id);
 $contentitems = [];
 foreach ($resources as $resource) {
 
-    $contentitem = LtiDeepLinkResource::new()
+    $contentitem = Resource::new()
         ->setUrl($CFG->wwwroot . '/enrol/lti/launch.php')
         ->setCustomParams(['id' => $resource->get_uuid()])
         ->setTitle($resource->get_name());
@@ -91,5 +92,13 @@ $PAGE->set_url($url);
 $PAGE->set_pagelayout('popup');
 echo $OUTPUT->header();
 $dl = $messagelaunch->getDeepLink();
-$dl->outputResponseForm($contentitems);
+
+$formactionurl = $messagelaunch->getLaunchData()[LtiConstants::DL_DEEP_LINK_SETTINGS]['deep_link_return_url'];
+echo <<<HTML
+<form id="auto_submit" action="{$formactionurl}" method="POST">
+    <input type="hidden" name="JWT" value="{$messagelaunch->getDeepLink()->getResponseJwt($contentitems)}" />
+    <input type="submit" name="Go" />
+</form>
+<script>document.getElementById('auto_submit').submit();</script>
+HTML;
 
