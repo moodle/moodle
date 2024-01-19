@@ -500,12 +500,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <input type="checkbox" id="microphone" class="mr-2">
                             <label for="microphone" class="text-gray-900">Enable Microphone</label>
                         </div>
-                        <p class="text-sm text-gray-600 mb-4">Detect when the background noise is loud</p>
-                    </div>
-                    <!-- Quiz Title Input with adjusted styling -->
-                    <div class="mb-4">
-                        <label for="testTitle" class="font-semibold text-sm">Test Title</label>
-                        <input type="text" id="testTitle" class="border border-gray-300 rounded-md p-1 w-full mt-1" placeholder="QUIZ NAME" required>
+                        <p class="text-sm text-gray-600 mb-5">Detect when the background noise is loud</p>
                     </div>
                     <!-- Save and Cancel buttons -->
                     <div class="flex justify-start">
