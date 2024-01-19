@@ -1,5 +1,10 @@
 This file describes API changes in the quiz code.
 
+=== 4.2.7 ===
+* There is a new function qbank_helper::get_version_information_for_questions_in_attempt to efficiently
+  check whether each question in an attempt is using the latest versions. This is used by re-grading,
+  replacing some old code there, and to update teacher previews automatically.
+
 === 4.2.6 ===
 * quiz_settings::no_review_message now takes a new argument $attemptsubmittime for the time when the quiz attempt was
   submitted. It is strongly recommended that you always pass that.
