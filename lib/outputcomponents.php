@@ -4954,6 +4954,8 @@ class action_menu_link extends action_link implements renderable {
 
     /**
      * The number of instances of this action menu link (and its subclasses).
+     *
+     * @deprecated since Moodle 4.4.
      * @var int
      */
     protected static $instance = 1;
@@ -4982,7 +4984,6 @@ class action_menu_link extends action_link implements renderable {
      */
     public function export_for_template(renderer_base $output) {
         $data = parent::export_for_template($output);
-        $data->instance = self::$instance++;
 
         // Ignore what the parent did with the attributes, except for ID and class.
         $data->attributes = [];
