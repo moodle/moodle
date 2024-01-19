@@ -271,19 +271,6 @@ All rights reserved.</copyright>
     <customised/>
   </library>
   <library>
-    <location>horde</location>
-    <name>Horde</name>
-    <description>Library used by the inbound e-mail handling system.</description>
-    <license>LGPL/BSD</license>
-    <version>5.2.23</version>
-    <licenseversion>2.1</licenseversion>
-    <repository>https://github.com/horde/base</repository>
-    <copyrights>
-      <copyright>Horde LLC</copyright>
-    </copyrights>
-    <customised/>
-  </library>
-  <library>
     <location>requirejs</location>
     <name>RequireJS</name>
     <description>RequireJS is a JavaScript file and module loader.</description>
