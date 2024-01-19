@@ -210,3 +210,23 @@ Feature: Attempt a quiz
     And I follow "Finish review"
     And I should not see "Re-attempt quiz"
     And I should see "No more attempts are allowed"
+
+  @javascript
+  Scenario: Student still sees the same version after the question is edited.
+    Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Attempt quiz"
+    And I should see "First question"
+    And I click on "False" "radio" in the "First question" "question"
+    And I press "Finish attempt ..."
+    And I log out
+    And I am on the "Quiz 1" "mod_quiz > View" page logged in as "admin"
+    And I press "Preview quiz"
+    And I click on "Edit question" "link" in the "First question" "question"
+    And I set the field "Question text" to "First question version 2"
+    And I press "id_submitbutton"
+    And I should see "v2 (latest)" in the "First question" "question"
+    And I log out
+    When I am on the "Quiz 1" "mod_quiz > View" page logged in as "student"
+    And I press "Continue your attempt"
+    Then I should see "First question"
+    And I should not see "First question version 2"
