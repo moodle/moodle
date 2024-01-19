@@ -26,27 +26,32 @@ use core\deprecated;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-#[deprecated('Deprecated class')]
+#[deprecated('not_deprecated_class')]
 class deprecated_class {
     protected string $notdeprecatedproperty = 'Not deprecated property';
 
-    #[deprecated('Deprecated property')]
+    #[deprecated('$this->notdeprecatedproperty')]
     protected string $deprecatedproperty = 'Deprecated property';
 
     const NOT_DEPRECATED_CONST = 'Not deprecated const';
 
-    #[deprecated('Deprecated const')]
+    #[deprecated('not_deprecated_class::NEW_CONSTANT')]
     const DEPRECATED_CONST = 'Deprecated const';
 
-    public function not_deprecated_method() {}
+    public function not_deprecated_method() {
+    }
 
-    #[deprecated('Deprecated method')]
-    public function deprecated_method() {}
+    #[deprecated(replacement: null, mdl: 'MDL-80677')]
+    public function deprecated_method() {
+    }
 }
 
-class not_deprecated_class {}
+class not_deprecated_class {
+}
 
-function not_deprecated_function() {}
+function not_deprecated_function() {
+}
 
-#[deprecated('Deprecated function')]
-function deprecated_function() {}
+#[deprecated('not_deprecated_class::not_deprecated_method()')]
+function deprecated_function() {
+}

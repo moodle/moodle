@@ -16,8 +16,6 @@
 
 namespace core;
 
-use Attribute;
-
 /**
  * Attribute to describe a deprecated item.
  *
@@ -25,15 +23,13 @@ use Attribute;
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[Attribute]
-class deprecated {
+class deprecated_with_reference extends deprecated {
     /**
-     * A deprecated item.
+     * A deprecated item which also includes a reference to the owning feature.
      *
-     * This attribute can be applied to any function, class, method, constant, property, enum, etc.
+     * This attribute is not expected to be used more generally. It is an internal feature.
      *
-     * Note: The mere presence of the attribute does not do anything. It must be checked by some part of the code.
-     *
+     * @param string $owner The code which owns the usage
      * @param null|string $replacement Any replacement for the deprecated thing
      * @param null|string $since When it was deprecated
      * @param null|string $reason Why it was deprecated
@@ -42,17 +38,21 @@ class deprecated {
      * @param bool $emit Whether to emit a deprecation warning
      */
     public function __construct(
-        public readonly ?string $replacement,
-        public readonly ?string $since = null,
-        public readonly ?string $reason = null,
-        public readonly ?string $mdl = null,
-        public readonly bool $final = false,
-        public readonly bool $emit = true,
+        public readonly string $owner,
+        ?string $replacement,
+        ?string $since,
+        ?string $reason,
+        ?string $mdl,
+        bool $final,
+        bool $emit,
     ) {
-        if ($replacement === null && $reason === null && $mdl === null) {
-            throw new \coding_exception(
-                'A deprecated item which is not deprecated must provide a reason, or an issue number.',
-            );
-        }
+        parent::__construct(
+            replacement: $replacement,
+            since: $since,
+            reason: $reason,
+            mdl: $mdl,
+            final: $final,
+            emit: $emit,
+        );
     }
 }

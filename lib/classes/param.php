@@ -222,9 +222,9 @@ enum param: string {
      * @deprecated since 2.0
      */
     #[deprecated(
-        'param::CLEAN',
+        replacement: 'a more specific type of parameter',
         since: '2.0',
-        reason: 'Please use a more specific type of parameter',
+        reason: 'The CLEAN param type is too generic to perform satisfactory validation',
         emit: false,
     )]
     case CLEAN = 'clean';
@@ -234,7 +234,7 @@ enum param: string {
      * @deprecated since 2.0
      */
     #[deprecated(
-        'param::INTEGER',
+        replacement: 'param::INT',
         since: '2.0',
         reason: 'Alias for INT',
         final: true,
@@ -246,7 +246,7 @@ enum param: string {
      * @deprecated since 2.0
      */
     #[deprecated(
-        'param::NUMBER',
+        replacement: 'param::FLOAT',
         since: '2.0',
         reason: 'Alias for FLOAT',
         final: true,
@@ -259,7 +259,7 @@ enum param: string {
      * @deprecated since 2.0
      */
     #[deprecated(
-        'param::ACTION',
+        replacement: 'param::ALPHANUMEXT',
         since: '2.0',
         reason: 'Alias for PARAM_ALPHANUMEXT',
         final: true,
@@ -272,7 +272,7 @@ enum param: string {
      * @deprecated since 2.0
      */
     #[deprecated(
-        'param::FORMAT',
+        replacement: 'param::ALPHANUMEXT',
         since: '2.0',
         reason: 'Alias for PARAM_ALPHANUMEXT',
         final: true,
@@ -284,7 +284,7 @@ enum param: string {
      * @deprecated since 2.0
      */
     #[deprecated(
-        'param::MULTILANG',
+        replacement: 'param::TEXT',
         since: '2.0',
         reason: 'Alias for PARAM_TEXT',
         final: true,
@@ -303,7 +303,7 @@ enum param: string {
      * @deprecated since 2.0
      */
     #[deprecated(
-        'param::CLEANFILE',
+        replacement: 'param::FILE',
         since: '2.0',
         reason: 'Alias for PARAM_FILE',
     )]

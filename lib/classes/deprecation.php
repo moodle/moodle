@@ -49,10 +49,7 @@ class deprecation {
 
             if (function_exists($reference)) {
                 // The reference looks to be a global function.
-                $ref = new \ReflectionFunction($reference);
-                if ($attributes = $ref->getAttributes(deprecated::class)) {
-                    return $attributes[0]->newInstance();
-                }
+                return self::get_attribute(new \ReflectionFunction($reference), $reference);
             }
 
             return null;
@@ -86,6 +83,32 @@ class deprecation {
     }
 
     /**
+     * Get a deprecation attribute from a reflector.
+     *
+     * @param \Reflector $ref The reflector
+     * @param string $owner A descriptor of the owner of the thing that is deprecated
+     * @return null|deprecated_with_reference
+     */
+    protected static function get_attribute(
+        \Reflector $ref,
+        string $owner,
+    ): ?deprecated_with_reference {
+        if ($attributes = $ref->getAttributes(deprecated::class)) {
+            $attribute = $attributes[0]->newInstance();
+            return new deprecated_with_reference(
+                owner: $owner,
+                replacement: $attribute->replacement,
+                since: $attribute->since,
+                reason: $attribute->reason,
+                mdl: $attribute->mdl,
+                final: $attribute->final,
+                emit: $attribute->emit,
+            );
+        }
+        return null;
+    }
+
+    /**
      * Check if a reference is deprecated.
      *
      * @param array|string|object $reference
@@ -107,47 +130,44 @@ class deprecation {
     }
 
     /**
-     * Fetch a deprecation attribute from a reflected object.
+     * Fetch a referenced deprecation attribute from a reflected object.
      *
      * @param \ReflectionClass $rc The reflected object
      * @param null|string $name The name of the thing to check for deprecation
-     * @return null|deprecated
+     * @return null|deprecated_with_reference
      */
     protected static function from_reflected_object(
         \ReflectionClass $rc,
         ?string $name,
-    ): ?deprecated {
+    ): ?deprecated_with_reference {
         if ($name === null) {
             // No name specified. This may be a deprecated class.
-            if ($attributes = $rc->getAttributes(deprecated::class)) {
-                return $attributes[0]->newInstance();
-            }
-            return null;
+            return self::get_attribute($rc, $rc->name);
         }
 
         if ($rc->hasConstant($name)) {
             // This class has a constant with the specified name.
             // Note: This also applies to enums.
-            $ref = $rc->getReflectionConstant($name);
-            if ($attributes = $ref->getAttributes(deprecated::class)) {
-                return $attributes[0]->newInstance();
-            }
+            return self::get_attribute(
+                $rc->getReflectionConstant($name),
+                "{$rc->name}::{$name}",
+            );
         }
 
         if ($rc->hasMethod($name)) {
             // This class has a method with the specified name.
-            $ref = $rc->getMethod($name);
-            if ($attributes = $ref->getAttributes(deprecated::class)) {
-                return $attributes[0]->newInstance();
-            }
+            return self::get_attribute(
+                $rc->getMethod($name),
+                "{$rc->name}::{$name}",
+            );
         }
 
         if ($rc->hasProperty($name)) {
             // This class has a property with the specified name.
-            $ref = $rc->getProperty($name);
-            if ($attributes = $ref->getAttributes(deprecated::class)) {
-                return $attributes[0]->newInstance();
-            }
+            return self::get_attribute(
+                $rc->getProperty($name),
+                "{$rc->name}::{$name}",
+            );
         }
 
         return null;
@@ -157,10 +177,19 @@ class deprecation {
      * Get a string describing the deprecation.
      *
      * @param deprecated $attribute
+     * @param string $owner
      * @return string
      */
-    public static function get_deprecation_string(deprecated $attribute): string {
-        $output = "Deprecation: {$attribute->descriptor} has been deprecated";
+    public static function get_deprecation_string(
+        deprecated $attribute,
+    ): string {
+        $output = "Deprecation:";
+
+        if ($attribute instanceof deprecated_with_reference) {
+            $output .= " {$attribute->owner}";
+        }
+        $output .= " has been deprecated";
+
         if ($attribute->since) {
             $output .= " since {$attribute->since}";
         }
@@ -187,7 +216,9 @@ class deprecation {
      *
      * @param deprecated $attribute
      */
-    public static function emit_deprecation_notice(deprecated $attribute): void {
+    protected static function emit_deprecation_notice(
+        deprecated $attribute,
+    ): void {
         if (!$attribute->emit) {
             return;
         }
