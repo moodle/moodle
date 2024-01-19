@@ -258,7 +258,10 @@ class core_course_external extends external_api {
 
                         $modcontext = context_module::instance($cm->id);
 
-                        //common info (for people being able to see the module or availability dates)
+                        $isbrandedfunction = $cm->modname.'_is_branded';
+                        $isbranded = function_exists($isbrandedfunction) ? $isbrandedfunction() : false;
+
+                        // Common info (for people being able to see the module or availability dates).
                         $module['id'] = $cm->id;
                         $module['name'] = \core_external\util::format_string($cm->name, $modcontext);
                         $module['instance'] = $cm->instance;
@@ -267,6 +270,7 @@ class core_course_external extends external_api {
                         $module['modplural'] = (string) $cm->modplural;
                         $module['modicon'] = $cm->get_icon_url()->out(false);
                         $module['purpose'] = plugin_supports('mod', $cm->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
+                        $module['branded'] = $isbranded;
                         $module['indent'] = $cm->indent;
                         $module['onclick'] = $cm->onclick;
                         $module['afterlink'] = $cm->afterlink;
@@ -463,6 +467,8 @@ class core_course_external extends external_api {
                                     'modicon' => new external_value(PARAM_URL, 'activity icon url'),
                                     'modname' => new external_value(PARAM_PLUGIN, 'activity module type'),
                                     'purpose' => new external_value(PARAM_ALPHA, 'the module purpose'),
+                                    'branded' => new external_value(PARAM_BOOL, 'Whether the module is branded or not',
+                                        VALUE_OPTIONAL),
                                     'modplural' => new external_value(PARAM_TEXT, 'activity module plural name'),
                                     'availability' => new external_value(PARAM_RAW, 'module availability settings', VALUE_OPTIONAL),
                                     'indent' => new external_value(PARAM_INT, 'number of identation in the site'),

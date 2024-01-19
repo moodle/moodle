@@ -78,6 +78,8 @@ class cmicon implements named_templatable, renderable {
 
         $iconurl = $mod->get_icon_url();
         $iconclass = $iconurl->get_param('filtericon') ? '' : 'nofilter';
+        $isbrandedfunction = $mod->modname.'_is_branded';
+        $isbranded = function_exists($isbrandedfunction) ? $isbrandedfunction() : false;
         $data = [
             'uservisible' => $mod->uservisible,
             'url' => $mod->url,
@@ -87,6 +89,7 @@ class cmicon implements named_templatable, renderable {
             'pluginname' => get_string('pluginname', 'mod_' . $mod->modname),
             'showtooltip' => $this->format->show_editor(),
             'purpose' => plugin_supports('mod', $mod->modname, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER),
+            'branded' => $isbranded,
         ];
 
         return $data;

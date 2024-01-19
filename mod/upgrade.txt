@@ -1,6 +1,10 @@
 This files describes API changes in /mod/* - activity modules,
 information provided here is intended especially for developers.
 
+=== 4.4 ===
+* There is a new callback, <modname>_is_branded, which, by default, returns false. It needs to be implemented by modules that
+  want their logo to be displayed as it is (so without applying any filter to colour them based on their main purpose).
+
 === 4.2 ===
 * The mod_assignment plugin has been completely removed from core.
   It has been moved to github repository https://github.com/moodlehq/moodle-mod_assignment.

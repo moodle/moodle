@@ -1164,6 +1164,7 @@ class externallib_test extends externallib_advanced_testcase {
             'showdate' => 1,
         ];
         $resource = self::getDataGenerator()->create_module('resource', $record);
+        $h5pactivity = self::getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
 
         // We first run the test as admin.
         $this->setAdminUser();
@@ -1195,6 +1196,7 @@ class externallib_test extends externallib_advanced_testcase {
                         MOD_PURPOSE_OTHER
                     ), $module['purpose']
                 );
+                $this->assertFalse($module['branded']);
                 $testexecuted = $testexecuted + 2;
             } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
                 $cm = $modinfo->cms[$labelcm->id];
@@ -1205,7 +1207,6 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertEquals(context_module::instance($labelcm->id)->id, $module['contextid']);
                 $this->assertTrue($module['noviewlink']);
                 $this->assertNotEmpty($module['description']);  // Label always prints the description.
-                $testexecuted = $testexecuted + 1;
                 $this->assertEquals(
                     plugin_supports(
                         'mod',
@@ -1214,11 +1215,12 @@ class externallib_test extends externallib_advanced_testcase {
                         MOD_PURPOSE_OTHER
                     ), $module['purpose']
                 );
+                $this->assertFalse($module['branded']);
+                $testexecuted = $testexecuted + 1;
             } else if ($module['id'] == $datacm->id and $module['modname'] == 'data') {
                 $this->assertStringContainsString('customcompletionrules', $module['customdata']);
                 $this->assertFalse($module['noviewlink']);
                 $this->assertArrayNotHasKey('description', $module);
-                $testexecuted = $testexecuted + 1;
                 $this->assertEquals(
                     plugin_supports(
                         'mod',
@@ -1227,12 +1229,13 @@ class externallib_test extends externallib_advanced_testcase {
                         MOD_PURPOSE_OTHER
                     ), $module['purpose']
                 );
+                $this->assertFalse($module['branded']);
+                $testexecuted = $testexecuted + 1;
             } else if ($module['instance'] == $resource->id && $module['modname'] == 'resource') {
                 // Resources have both, afterlink for the size and the update date and activitybadge for the file type.
                 $this->assertStringContainsString('32 bytes', $module['afterlink']);
                 $this->assertEquals('TXT', $module['activitybadge']['badgecontent']);
                 $this->assertEquals('badge-none', $module['activitybadge']['badgestyle']);
-                $testexecuted = $testexecuted + 1;
                 $this->assertEquals(
                     plugin_supports(
                         'mod',
@@ -1241,6 +1244,19 @@ class externallib_test extends externallib_advanced_testcase {
                         MOD_PURPOSE_OTHER
                     ), $module['purpose']
                 );
+                $this->assertFalse($module['branded']);
+                $testexecuted = $testexecuted + 1;
+            } else if ($module['instance'] == $h5pactivity->id && $module['modname'] == 'h5pactivity') {
+                $this->assertEquals(
+                    plugin_supports(
+                        'mod',
+                        'h5pactivity',
+                        FEATURE_MOD_PURPOSE,
+                        MOD_PURPOSE_OTHER
+                    ), $module['purpose']
+                );
+                $this->assertTrue($module['branded']);
+                $testexecuted = $testexecuted + 1;
             }
         }
         foreach ($sections[2]['modules'] as $module) {
@@ -1253,10 +1269,10 @@ class externallib_test extends externallib_advanced_testcase {
         $CFG->forum_allowforcedreadtracking = 0;    // Recover original value.
         forum_tp_count_forum_unread_posts($forumcm, $course, true);    // Reset static cache for further tests.
 
-        $this->assertEquals(6, $testexecuted);
+        $this->assertEquals(7, $testexecuted);
         $this->assertEquals(0, $sections[0]['section']);
 
-        $this->assertCount(7, $sections[0]['modules']);
+        $this->assertCount(8, $sections[0]['modules']);
         $this->assertCount(1, $sections[1]['modules']);
         $this->assertCount(1, $sections[2]['modules']);
         $this->assertCount(1, $sections[3]['modules']); // One module for the section with availability restrictions.

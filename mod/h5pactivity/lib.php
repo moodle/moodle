@@ -871,3 +871,13 @@ function h5pactivity_extend_settings_navigation(settings_navigation $settingsnav
             settings_navigation::TYPE_SETTING, '', 'attemptsreport');
     }
 }
+
+/**
+ * Whether the activity is branded.
+ * This information is used, for instance, to decide if a filter should be applied to the icon or not.
+ *
+ * @return bool True if the activity is branded, false otherwise.
+ */
+function h5pactivity_is_branded(): bool {
+    return true;
+}
