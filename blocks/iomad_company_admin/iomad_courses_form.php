@@ -42,6 +42,8 @@ $notifyperiod = optional_param('notifyperiod', 0, PARAM_INTEGER);
 $expireafter = optional_param('expireafter', 0, PARAM_INTEGER);
 $hasgrade = optional_param('hasgrade', 1, PARAM_INTEGER);
 $deleteid = optional_param('deleteid', 0, PARAM_INT);
+$hideid = optional_param('hideid', 0, PARAM_INT);
+$showid = optional_param('showid', 0, PARAM_INT);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 $edit = optional_param('edit', -1, PARAM_BOOL);
 
@@ -181,6 +183,28 @@ if (!empty($deleteid)) {
         die;
     }
 }
+// Hide/show courses.
+if(!empty($hideid) && iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {    
+    if (!$course = $DB->get_record('course', array('id' => $hideid))) {
+        print_error('invalidcourse');
+    }
+    if (confirm_sesskey()) {
+    	  $record = get_course($hideid);
+        $course = new core_course_list_element($record);
+        \core_course\management\helper::action_course_hide($course);
+    }
+}
+if(!empty($showid) && iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+    if (!$course = $DB->get_record('course', array('id' => $showid))) {
+        print_error('invalidcourse');
+    } 
+    if (confirm_sesskey()) {
+    	  $record = get_course($showid);
+        $course = new core_course_list_element($record);
+        \core_course\management\helper::action_course_show($course);
+    }
+}
+
 $baseurl = new moodle_url(basename(__FILE__), $params);
 $returnurl = $baseurl;
 
@@ -255,6 +279,7 @@ $selectsql = "ic.id,
               ic.expireafter,
               ic.warnnotstarted,
               ic.hasgrade,
+              c.visible,
               '$companyid' AS companyid
               $autoselect";
 $fromsql = "{iomad_courses} ic JOIN {course} c ON (ic.courseid = c.id) $autofrom ";
@@ -266,7 +291,6 @@ $tableheaders = [
     get_string('company', 'block_iomad_company_admin'),
     get_string('course'),
     get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
-    get_string('shared', 'block_iomad_company_admin')  . $OUTPUT->help_icon('shared', 'block_iomad_company_admin'),
     get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
     get_string('expireafter', 'block_iomad_company_admin') . $OUTPUT->help_icon('expireafter', 'block_iomad_company_admin'),
     get_string('warnexpire', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnexpire', 'block_iomad_company_admin'),
@@ -277,7 +301,6 @@ $tableheaders = [
 $tablecolumns = ['company',
                  'coursename',
                  'licensed',
-                 'shared',
                  'validlength',
                  'expireafter',
                  'warnexpire',
@@ -288,6 +311,16 @@ $tablecolumns = ['company',
 if (!empty($companyid) && $companyid != "none") {
     $tableheaders[] = get_string('autocourses', 'block_iomad_company_admin');
     $tablecolumns[] = 'autoenrol';
+}
+// Is the user a company manager? If not show course sharing details, otherwise keep these hidden
+if (iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)) {
+    $tableheaders[] = get_string('shared', 'block_iomad_company_admin')  . $OUTPUT->help_icon('shared', 'block_iomad_company_admin');
+    $tablecolumns[] = 'shared';	
+}
+// If not editing, show course visibility. Otherwise use the actions column
+if (empty($USER->editing) || !empty($USER->editing) && !has_capability('moodle/course:visibility',  $systemcontext)){
+    $tableheaders[] = get_string('coursevisibility');
+    $tablecolumns[] = 'coursevisibility';
 }
 
 // Can we manage the courses or just see them?

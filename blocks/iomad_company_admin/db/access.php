@@ -309,6 +309,24 @@ $capabilities = array(
             'clientadministrator' => CAP_ALLOW
         ),
     ),
+    
+    'block/iomad_company_admin:hideshowcourses' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+    
+    'block/iomad_company_admin:hideshowallcourses' => array(
+
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
 
     'block/iomad_company_admin:managecourses' => array(
 
