@@ -34,6 +34,11 @@ $AP_records = $DB->get_records($AP_tb);
 $quiz_tb = 'quiz';
 $quiz_records = $DB->get_records($quiz_tb);
 
+// Convert PHP array/object to JSON for JavaScript
+$quiz_records_json = json_encode($quiz_records);
+
+echo "<script>console.log($quiz_records_json);</script>";
+
 
 // Enabling auto-proctor features
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -609,34 +614,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 </tr>
                                             </thead>
                                             <tbody class="bg-white ">
-                                                <tr>
-                                                    <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
-                                                        <h1>TEST NAME #1</h1>
-                                                        <span class="font-normal text-[10px] text-center">
-                                                            <a href="" class="">SHARE</a>
-                                                            <a href="" class="pl-10">PREVIEW</a>
-                                                        </span>
-                                                    </td>
-                                                    <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
+                                                <?php
+                                                foreach ($quiz_records as $quiz_record) {
+                                                    $timestamp = $quiz_record->timecreated;
+                                                    $formatted_date = date("d M Y", $timestamp);
 
-                                                    </td>
-                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                        08 Dec 2023
-                                                    </td>
-                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                        course 1
-                                                    </td>
-                                                    <td class=" whitespace-nowrap">
-                                                        <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
-                                                            <a href="quizSetting.php">SETTINGS</a>
-                                                        </span>
-                                                        <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
-                                                            <a href="">RESULTS</a>
-                                                        </span>
-                                                    </td>
-                                                </tr>
+                                                    // Select monitor_microphone state
+                                                    $course_id = $quiz_record->course;
+                                                    $sql = "SELECT shortname
+                                                        FROM {course}
+                                                        WHERE id = :course_id;
+                                                        "
+                                                    ;
+
+                                                    $params = array('course_id' => $course_id);
+                                                    $course_name = $DB->get_field_sql($sql, $params);
+
+                                                    $quiz_id = $quiz_record->id;
+                                                    echo
+                                                        '<tr>
+                                                            <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
+                                                                <h1>'. $quiz_record->name .'</h1>
+                                                                <span class="font-normal text-[10px] text-center">
+                                                                    <a href="" class="">SHARE</a>
+                                                                    <a href="" class="pl-10">PREVIEW</a>
+                                                                </span>
+                                                            </td>
+                                                            <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
+
+                                                            </td>
+                                                            <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                                '. $formatted_date .'
+                                                            </td>
+                                                            <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                                '. $course_name .'
+                                                            </td>
+                                                            <td class=" whitespace-nowrap">
+                                                                <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
+                                                                    <a href="quizSetting.php?quiz_id='. $quiz_id .'&course_name='. $course_name .'">SETTINGS</a>
+                                                                </span>
+                                                                <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
+                                                                    <a href="">RESULTS</a>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    ';
+                                                }
+                                                ?>
                                                 <!-- 2 -->
-                                                <tr class="bg-gray-100">
+                                                <!-- <tr class="bg-gray-100">
                                                     <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
                                                         <h1>TEST NAME #2</h1>
                                                         <span class="font-normal text-[10px] text-center">
@@ -661,9 +687,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                             <a href="">RESULTS</a>
                                                         </span>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                                 <!-- 3 -->
-                                                <tr>
+                                                <!-- <tr>
                                                     <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
                                                         <h1>TEST NAME #3</h1>
                                                         <span class="font-normal text-[10px] text-center">
@@ -688,9 +714,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                             <a href="quizSetting.php">RESULTS</a>
                                                         </span>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                                 <!-- 4 -->
-                                                <tr class="bg-gray-100">
+                                                <!-- <tr class="bg-gray-100">
                                                     <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
                                                         <h1>TEST NAME #4A</h1>
                                                         <span class="font-normal text-[10px] text-center">
@@ -715,7 +741,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                             <a href="">RESULTS</a>
                                                         </span>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                             </tbody>
                                         </table>
                                     </div>

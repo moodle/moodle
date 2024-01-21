@@ -26,6 +26,7 @@ require_login();
 // Get the global $DB object
 global $DB;
 
+
 // Retrieve all records from AP Table
 $AP_tb = 'auto_proctor_quiz_tb';
 $AP_records = $DB->get_records($AP_tb);
@@ -34,132 +35,51 @@ $AP_records = $DB->get_records($AP_tb);
 $quiz_tb = 'quiz';
 $quiz_records = $DB->get_records($quiz_tb);
 
+// Initialize var quiz_is and course_name
+if (isset($_GET['quiz_id']) && isset($_GET['course_name'])){
+  $quiz_id = $_GET['quiz_id'];
+  $course_name = $_GET['course_name'];
+}
 
 // Enabling auto-proctor features
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  foreach ($quiz_records as $quiz_record) {
-    $monitor_tab_switching = 'enable_tab_switching_' . $quiz_record->id;
-    $monitor_camera = 'enable_camera_' . $quiz_record->id;
-    $monitor_microphone = 'enable_microphone_' . $quiz_record->id;
+if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['save_btn'])) {
+  $quiz_id = $_GET['quiz_id'];
 
-    // Monitor tab switching
-    if (isset($_POST[$monitor_tab_switching])) {
-      $quizId = $quiz_record->id;
-
-      // Get monitor_tab_switching activation value
-      $field_monitor_tab_switching = 'monitor_tab_switching';
-      $field_value_monitor_tab_switching = $DB->get_field($AP_tb, $field_monitor_tab_switching, array('quizid' => $quizId));
-
-      // If activated, then activate, and vice versa
-      $new_field_value = ($field_value_monitor_tab_switching == 0) ? 1 : 0;
+    // If save button was clicked
+    // If the box is checked, update the AP feature field to 1 in the AP table; if it's not checked, update it to 0.
+    if(isset($_GET['save_btn'])){
+      
+      // Monitor tab switching ==========================================================================
+      $new_field_value_tab_switching = isset($_GET['enable_monitor_tab_switching']) ? 1 : 0;
 
       // Update the auto_proctor_quiz_tb table with new value
-      $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_tab_switching = :new_field_value WHERE quizid = :quizid";
-      $params = array('quizid' => $quizId, 'new_field_value' => $new_field_value);
+      $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_tab_switching = :new_field_value WHERE quizid = :quiz_id";
+      $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_tab_switching);
       $DB->execute($sql, $params);
 
-      // Redirect to the same page after processing the form to prevent the form being submitted every refresh
-      header("Location: {$_SERVER['PHP_SELF']}");
-      exit;
-    }
-
-    // Monitor camera
-    if (isset($_POST[$monitor_camera])) {
-      $quizId = $quiz_record->id;
-
-      // Get monitor_tab_switching activation value
-      $field_monitor_camera = 'monitor_camera';
-      $field_value_monitor_camera = $DB->get_field($AP_tb, $field_monitor_camera, array('quizid' => $quizId));
-
-      // If activated, then activate, and vice versa
-      $new_field_value = ($field_value_monitor_camera == 0) ? 1 : 0;
+      // Monitor camera =================================================================================
+      $new_field_value_camera = isset($_GET['enable_monitor_camera']) ? 1 : 0;
 
       // Update the auto_proctor_quiz_tb table with new value
-      $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_camera= :new_field_value WHERE quizid = :quizid";
-      $params = array('quizid' => $quizId, 'new_field_value' => $new_field_value);
+      $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_camera = :new_field_value WHERE quizid = :quiz_id";
+      $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_camera);
       $DB->execute($sql, $params);
 
-      // Redirect to the same page after processing the form to prevent the form being submitted every refresh
-      header("Location: {$_SERVER['PHP_SELF']}");
-      exit;
-    }
-
-    // Monitor microphone
-    if (isset($_POST[$monitor_microphone])) {
-      $quizId = $quiz_record->id;
-
-      // Get monitor_tab_switching activation value
-      $field_monitor_microphone = 'monitor_microphone';
-      $field_value_monitor_microphone = $DB->get_field($AP_tb, $field_monitor_microphone, array('quizid' => $quizId));
-
-      // If activated, then activate, and vice versa
-      $new_field_value = ($field_value_monitor_microphone == 0) ? 1 : 0;
+      // Monitor Microphone =============================================================================
+      $new_field_value_camera = isset($_GET['enable_monitor_microphone']) ? 1 : 0;
 
       // Update the auto_proctor_quiz_tb table with new value
-      $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_microphone= :new_field_value WHERE quizid = :quizid";
-      $params = array('quizid' => $quizId, 'new_field_value' => $new_field_value);
+      $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_microphone = :new_field_value WHERE quizid = :quiz_id";
+      $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_camera);
       $DB->execute($sql, $params);
 
-      // Redirect to the same page after processing the form to prevent the form being submitted every refresh
-      header("Location: {$_SERVER['PHP_SELF']}");
-      exit;
+      // Unset the save btn
+      unset($_GET['save_btn']);
     }
-  }
 }
 //echo $OUTPUT->header(); // Output header
 ?>
 
-<!-- Design here, make sure any additional files are in the auto_proctor folder - Angel-->
-<!-- <!DOCTYPE html>
-<html lang="en"> -->
-
-<!-- <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto-Proctor Dashboard</title>
-
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
-<!-- <script src="https://cdn.tailwindcss.com"></script> -->
-
-<!-- </head> -->
-
-<!-- <body> -->
-
-<!-- <?php
-      // Display the results in an HTML table
-      // echo '<form method="post">';
-      // echo '<table border="1">';
-      // echo '<thead>
-      // <tr>
-      // <th>Quiz ID</th>
-      // <th>Course ID</th>
-      // <th>Quiz Name</th>
-      //     <th></th>
-      //     <th></th>
-      //     <th></th>
-      // </tr>
-      // </thead>';
-
-      // echo '<tbody>';
-      // foreach ($quiz_records as $quiz_record) {
-      //     echo '<tr>';
-      //     echo '<td>' . $quiz_record->id . '</td>';
-      //     echo '<td>' . $quiz_record->course . '</td>';
-      //     echo '<td>' . $quiz_record->name . '</td>';
-      //     echo '<td><button type="submit" name="enable_tab_switching_' . $quiz_record->id . '">Monitor Tab Switching</button></td>';
-      //     echo '<td><button type="submit" name="enable_camera_' . $quiz_record->id . '">Monitor Camera</button></td>';
-      //     echo '<td><button type="submit" name="enable_microphone_' . $quiz_record->id . '">Monitor Microphone</button></td>';
-      //     echo '</tr>';
-      // }
-      //         echo '</tbody>';
-      //         echo '</table>';
-      //         echo '</form>';
-      //         
-      // 
-
-      ?>
-// </body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -469,7 +389,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </ol>
               </nav>
               <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl ">Test Settings</h1>
-              <span class="text-base font-normal text-gray-500 ">Change the settings for QUIZ NAME #1</span>
+              <span class="text-base font-normal text-gray-500 ">Change the settings for <?php echo $course_name; ?></span>
             </div>
             <hr class="border-b border-gray-400  ">
           </div>
@@ -481,32 +401,73 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="w-full mb-1">
                 <div class="p-6 rounded-md">
                     <h2 class="text-xl font-semibold mb-4 text-gray-900">Proctoring Settings</h2>
-                    <div class="mb-4">
-                        <h3 class="text-sm mb-4 text-gray-900">What gets tracked</h3>
-                        <!-- Checkbox for Enable Tab Switching -->
-                        <div class="flex items-center mb-2">
-                            <input type="checkbox" id="tabSwitching" class="mr-2">
-                            <label for="tabSwitching" class="text-gray-900">Enable Tab Switching</label>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-4">Take screenshot when the test taker switches tabs or applications</p>
-                        <!-- Checkbox for Enable Camera -->
-                        <div class="flex items-center mb-2">
-                            <input type="checkbox" id="camera" class="mr-2">
-                            <label for="camera" class="text-gray-900">Enable Camera</label>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-4">Take photo when no face is visible or multiple faces are visible</p>
-                        <!-- Checkbox for Enable Microphone -->
-                        <div class="flex items-center mb-2">
-                            <input type="checkbox" id="microphone" class="mr-2">
+                    <form method = "GET" action="quizSettings.php">
+                      <div class="mb-4">
+                          <h3 class="text-sm mb-4 text-gray-900">What gets tracked</h3>
+
+                          <!-- Checkbox for Enable Tab Switching -->
+                          <div class="flex items-center mb-2">
+                              <input type="checkbox" id="tabSwitching" name  = "enable_monitor_tab_switching" value = "1" class="mr-2"
+                              <?php
+                                // Get monitor_tab_switching activation value
+                                // If the activation value is 1, then check the box.
+                                $field_monitor_tab_switching = 'monitor_tab_switching';
+                                $field_value_monitor_tab_switching = $DB->get_field($AP_tb, $field_monitor_tab_switching, array('quizid' => $quiz_id));
+
+                                  if($field_value_monitor_tab_switching == 1){
+                                    echo "checked";
+                                  }    
+                                echo '>';
+                              ?>
+                              <label for="tabSwitching" class="text-gray-900">Enable Tab Switching</label>
+                          </div>
+                          <p class="text-sm text-gray-600 mb-4">Take screenshot when the test taker switches tabs or applications</p>
+
+                          <!-- Checkbox for Enable Camera -->
+                          <div class="flex items-center mb-2">
+                              <input type="checkbox" id="camera" name  = "enable_monitor_camera" value = "1" class="mr-2"
+                              <?php
+                                // Get monitor_camera activation value
+                                // If the activation value is 1, then check the box.
+                                $field_monitor_camera = 'monitor_camera';
+                                $field_value_monitor_camera = $DB->get_field($AP_tb, $field_monitor_camera, array('quizid' => $quiz_id));   
+
+                                if($field_value_monitor_camera == 1){
+                                  echo "checked";
+                                }
+                                echo '>';
+                              ?>
+                              <label for="camera" class="text-gray-900">Enable Camera</label>
+                          </div>
+                          <p class="text-sm text-gray-600 mb-4">Take photo when no face is visible or multiple faces are visible</p>
+
+                          <!-- Checkbox for Enable Microphone -->
+                          <div class="flex items-center mb-2">
+                            <input type="checkbox" id="microphone" class="mr-2" name  = "enable_monitor_microphone" value = "1" 
+                            <?php
+                                // Get monitor_microphone activation value
+                                // If the activation value is 1, then check the box.
+                                $field_monitor_microphone = 'monitor_microphone';
+                                $field_value_monitor_microphone = $DB->get_field($AP_tb, $field_monitor_microphone, array('quizid' => $quiz_id));   
+
+                                if($field_value_monitor_microphone == 1){
+                                  echo "checked";
+                                }
+                              echo '>';
+                            ?>
                             <label for="microphone" class="text-gray-900">Enable Microphone</label>
-                        </div>
-                        <p class="text-sm text-gray-600 mb-5">Detect when the background noise is loud</p>
-                    </div>
-                    <!-- Save and Cancel buttons -->
-                    <div class="flex justify-start">
-                        <button class="bg-[#0061A8] text-white px-4 py-2 rounded-md mr-2">Save</button>
+                          </div>
+                          <p class="text-sm text-gray-600 mb-5">Detect when the background noise is loud</p>
+                      </div>
+                      <!-- Pass the quiz id in form for processing in the database -->
+                      <input type="hidden" name="quiz_id" value="<?php echo $quiz_id; ?>" />
+                      <input type="hidden" name="course_name" value="<?php echo $course_name; ?>" />
+                      <!-- Save and Cancel buttons -->
+                      <div class="flex justify-start">
+                        <button class="bg-[#0061A8] text-white px-4 py-2 rounded-md mr-2" name = "save_btn">Save</button>
                         <button class="bg-gray-300 text-black px-4 py-2 rounded-md">Cancel</button>
-                    </div>
+                      </div>
+                    </form>
                 </div>
             </div>
         </div>
