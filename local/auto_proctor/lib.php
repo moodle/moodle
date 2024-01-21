@@ -29,13 +29,15 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
     //     return;
     // }
 
-    // Adding the auto-proctor in navigation bar ==================================
+    if (isloggedin() && has_capability('moodle/course:manageactivities', context_system::instance())) {
+        // Adding the auto-proctor in navigation bar ==================================
         $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/auto_proctor_dashboard.php');
         $main_node->nodetype = 1;
         $main_node->collapse = false;
         $main_node->forceopen = true;
         $main_node->isexpandable = false;
         $main_node->showinflatnavigation = true;
+    } 
 
 
     // Capture student quiz attempt ========================================
