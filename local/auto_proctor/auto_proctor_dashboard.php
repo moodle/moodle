@@ -34,132 +34,13 @@ $AP_records = $DB->get_records($AP_tb);
 $quiz_tb = 'quiz';
 $quiz_records = $DB->get_records($quiz_tb);
 
+// Convert PHP array/object to JSON for JavaScript
+$quiz_records_json = json_encode($quiz_records);
 
-// Enabling auto-proctor features
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    foreach ($quiz_records as $quiz_record) {
-        $monitor_tab_switching = 'enable_tab_switching_' . $quiz_record->id;
-        $monitor_camera = 'enable_camera_' . $quiz_record->id;
-        $monitor_microphone = 'enable_microphone_' . $quiz_record->id;
+echo "<script>console.log($quiz_records_json);</script>";
 
-        // Monitor tab switching
-        if (isset($_POST[$monitor_tab_switching])) {
-            $quizId = $quiz_record->id;
-
-            // Get monitor_tab_switching activation value
-            $field_monitor_tab_switching = 'monitor_tab_switching';
-            $field_value_monitor_tab_switching = $DB->get_field($AP_tb, $field_monitor_tab_switching, array('quizid' => $quizId));
-
-            // If activated, then activate, and vice versa
-            $new_field_value = ($field_value_monitor_tab_switching == 0) ? 1 : 0;
-
-            // Update the auto_proctor_quiz_tb table with new value
-            $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_tab_switching = :new_field_value WHERE quizid = :quizid";
-            $params = array('quizid' => $quizId, 'new_field_value' => $new_field_value);
-            $DB->execute($sql, $params);
-
-            // Redirect to the same page after processing the form to prevent the form being submitted every refresh
-            header("Location: {$_SERVER['PHP_SELF']}");
-            exit;
-        }
-
-        // Monitor camera
-        if (isset($_POST[$monitor_camera])) {
-            $quizId = $quiz_record->id;
-
-            // Get monitor_tab_switching activation value
-            $field_monitor_camera = 'monitor_camera';
-            $field_value_monitor_camera = $DB->get_field($AP_tb, $field_monitor_camera, array('quizid' => $quizId));
-
-            // If activated, then activate, and vice versa
-            $new_field_value = ($field_value_monitor_camera == 0) ? 1 : 0;
-
-            // Update the auto_proctor_quiz_tb table with new value
-            $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_camera= :new_field_value WHERE quizid = :quizid";
-            $params = array('quizid' => $quizId, 'new_field_value' => $new_field_value);
-            $DB->execute($sql, $params);
-
-            // Redirect to the same page after processing the form to prevent the form being submitted every refresh
-            header("Location: {$_SERVER['PHP_SELF']}");
-            exit;
-        }
-
-        // Monitor microphone
-        if (isset($_POST[$monitor_microphone])) {
-            $quizId = $quiz_record->id;
-
-            // Get monitor_tab_switching activation value
-            $field_monitor_microphone = 'monitor_microphone';
-            $field_value_monitor_microphone = $DB->get_field($AP_tb, $field_monitor_microphone, array('quizid' => $quizId));
-
-            // If activated, then activate, and vice versa
-            $new_field_value = ($field_value_monitor_microphone == 0) ? 1 : 0;
-
-            // Update the auto_proctor_quiz_tb table with new value
-            $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_microphone= :new_field_value WHERE quizid = :quizid";
-            $params = array('quizid' => $quizId, 'new_field_value' => $new_field_value);
-            $DB->execute($sql, $params);
-
-            // Redirect to the same page after processing the form to prevent the form being submitted every refresh
-            header("Location: {$_SERVER['PHP_SELF']}");
-            exit;
-        }
-    }
-}
 //echo $OUTPUT->header(); // Output header
 ?>
-
-<!-- Design here, make sure any additional files are in the auto_proctor folder - Angel-->
-<!-- <!DOCTYPE html>
-<html lang="en"> -->
-
-<!-- <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto-Proctor Dashboard</title>
-
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script> -->
-<!-- <script src="https://cdn.tailwindcss.com"></script> -->
-
-<!-- </head> -->
-
-<!-- <body> -->
-
-<!-- <?php
-        // Display the results in an HTML table
-        // echo '<form method="post">';
-        // echo '<table border="1">';
-        // echo '<thead>
-        // <tr>
-        // <th>Quiz ID</th>
-        // <th>Course ID</th>
-        // <th>Quiz Name</th>
-        //     <th></th>
-        //     <th></th>
-        //     <th></th>
-        // </tr>
-        // </thead>';
-
-        // echo '<tbody>';
-        // foreach ($quiz_records as $quiz_record) {
-        //     echo '<tr>';
-        //     echo '<td>' . $quiz_record->id . '</td>';
-        //     echo '<td>' . $quiz_record->course . '</td>';
-        //     echo '<td>' . $quiz_record->name . '</td>';
-        //     echo '<td><button type="submit" name="enable_tab_switching_' . $quiz_record->id . '">Monitor Tab Switching</button></td>';
-        //     echo '<td><button type="submit" name="enable_camera_' . $quiz_record->id . '">Monitor Camera</button></td>';
-        //     echo '<td><button type="submit" name="enable_microphone_' . $quiz_record->id . '">Monitor Microphone</button></td>';
-        //     echo '</tr>';
-        // }
-        //         echo '</tbody>';
-        //         echo '</table>';
-        //         echo '</form>';
-        //         
-        // 
-
-        ?>
-// </body>
-</html> -->
 <!DOCTYPE html>
 <html lang="en">
 
@@ -411,12 +292,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="flex-1 px-3 space-y-1 bg-gray-800 divide-y divide-gray-200 ">
                         <ul class="pb-2 space-y-2">
                             <li>
-                                <button type="button" class="flex items-center w-full p-2 text-base text-gray-50 transition duration-75 rounded-lg group hover:bg-gray-100 hover:text-gray-700" aria-controls="dropdown-layouts" data-collapse-toggle="dropdown-layouts">
-                                    <svg class="flex-shrink-0 w-6 h-6 text-gray-100 transition duration-75 group-hover:text-gray-900 " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                        <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
-                                    </svg>
-                                    <span class="flex-1 ml-3 text-left whitespace-nowrap" sidebar-toggle-item>Home</span>
-                                </button>
+                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/auto_proctor_dashboard.php'?>">
+                                    <button type="button" class="flex items-center w-full p-2 text-base text-gray-50 transition duration-75 rounded-lg group hover:bg-gray-100 hover:text-gray-700" aria-controls="dropdown-layouts" data-collapse-toggle="dropdown-layouts">
+                                        <svg class="flex-shrink-0 w-6 h-6 text-gray-100 transition duration-75 group-hover:text-gray-900 " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
+                                        </svg>
+                                        <span class="flex-1 ml-3 text-left whitespace-nowrap" sidebar-toggle-item>Home</span>
+                                    </button>
+                                </a>
                             </li>
                             <li>
                                 <button type="button" class="flex items-center w-full p-2 text-base text-gray-50 transition duration-75 rounded-lg group hover:bg-gray-100 hover:text-gray-700" aria-controls="dropdown-crud" data-collapse-toggle="dropdown-crud">
@@ -609,34 +492,55 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 </tr>
                                             </thead>
                                             <tbody class="bg-white ">
-                                                <tr>
-                                                    <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
-                                                        <h1>TEST NAME #1</h1>
-                                                        <span class="font-normal text-[10px] text-center">
-                                                            <a href="" class="">SHARE</a>
-                                                            <a href="" class="pl-10">PREVIEW</a>
-                                                        </span>
-                                                    </td>
-                                                    <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
+                                                <?php
+                                                foreach ($quiz_records as $quiz_record) {
+                                                    $timestamp = $quiz_record->timecreated;
+                                                    $formatted_date = date("d M Y", $timestamp);
 
-                                                    </td>
-                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                        08 Dec 2023
-                                                    </td>
-                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                        course 1
-                                                    </td>
-                                                    <td class=" whitespace-nowrap">
-                                                        <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
-                                                            <a href="quizSetting.php">SETTINGS</a>
-                                                        </span>
-                                                        <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
-                                                            <a href="">RESULTS</a>
-                                                        </span>
-                                                    </td>
-                                                </tr>
+                                                    // Select monitor_microphone state
+                                                    $course_id = $quiz_record->course;
+                                                    $sql = "SELECT shortname
+                                                        FROM {course}
+                                                        WHERE id = :course_id;
+                                                        "
+                                                    ;
+
+                                                    $params = array('course_id' => $course_id);
+                                                    $course_name = $DB->get_field_sql($sql, $params);
+
+                                                    $quiz_id = $quiz_record->id;
+                                                    echo
+                                                        '<tr>
+                                                            <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
+                                                                <h1>'. $quiz_record->name .'</h1>
+                                                                <span class="font-normal text-[10px] text-center">
+                                                                    <a href="" class="">SHARE</a>
+                                                                    <a href="" class="pl-10">PREVIEW</a>
+                                                                </span>
+                                                            </td>
+                                                            <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
+
+                                                            </td>
+                                                            <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                                '. $formatted_date .'
+                                                            </td>
+                                                            <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                                '. $course_name .'
+                                                            </td>
+                                                            <td class=" whitespace-nowrap">
+                                                                <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
+                                                                    <a href="quizSetting.php?quiz_id='. $quiz_id .'&course_name='. $course_name .'">SETTINGS</a>
+                                                                </span>
+                                                                <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
+                                                                    <a href="">RESULTS</a>
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    ';
+                                                }
+                                                ?>
                                                 <!-- 2 -->
-                                                <tr class="bg-gray-100">
+                                                <!-- <tr class="bg-gray-100">
                                                     <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
                                                         <h1>TEST NAME #2</h1>
                                                         <span class="font-normal text-[10px] text-center">
@@ -661,9 +565,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                             <a href="">RESULTS</a>
                                                         </span>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                                 <!-- 3 -->
-                                                <tr>
+                                                <!-- <tr>
                                                     <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
                                                         <h1>TEST NAME #3</h1>
                                                         <span class="font-normal text-[10px] text-center">
@@ -688,9 +592,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                             <a href="quizSetting.php">RESULTS</a>
                                                         </span>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                                 <!-- 4 -->
-                                                <tr class="bg-gray-100">
+                                                <!-- <tr class="bg-gray-100">
                                                     <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
                                                         <h1>TEST NAME #4A</h1>
                                                         <span class="font-normal text-[10px] text-center">
@@ -715,7 +619,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                             <a href="">RESULTS</a>
                                                         </span>
                                                     </td>
-                                                </tr>
+                                                </tr> -->
                                             </tbody>
                                         </table>
                                     </div>
