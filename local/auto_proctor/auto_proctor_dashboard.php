@@ -23,6 +23,16 @@
 
 require_once(__DIR__ . '/../../config.php'); // Setup moodle global variable also
 require_login();
+
+// Ensure that user is not a student
+// If student then redirect it to dashboard/my page
+if (!(isloggedin() && has_capability('moodle/course:manageactivities', context_system::instance()))) {
+    $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
+    header("Location: $previous_page");
+    exit();
+}
+
+
 // Get the global $DB object
 global $DB;
 
