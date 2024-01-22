@@ -2193,7 +2193,8 @@ class grade_structure {
                         }
 
                         $url = new moodle_url('/mod/' . $itemmodule . '/grade.php', $args);
-                        $title = get_string('advancedgrading', 'gradereport_grader', $itemmodule);
+                        $title = get_string('advancedgrading', 'gradereport_grader',
+                            get_string('pluginname', "mod_{$itemmodule}"));
                         $gpr->add_url_params($url);
                         return html_writer::link($url, $title,
                             ['class' => 'dropdown-item', 'aria-label' => $title, 'role' => 'menuitem']);
