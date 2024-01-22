@@ -45,7 +45,7 @@ Feature: Restore Moodle 2 course backups
     And I should not see "Topic 16"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And the field "id_format" matches value "Topics format"
+    And the field "id_format" matches value "Custom sections"
     And I press "Cancel"
 
   @javascript
@@ -86,26 +86,26 @@ Feature: Restore Moodle 2 course backups
     And I should see "Test forum name"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And the field "id_format" matches value "Topics format"
+    And the field "id_format" matches value "Custom sections"
     And I set the following fields to these values:
-      | id_startdate_day | 1 |
-      | id_startdate_month | January |
-      | id_startdate_year | 2020 |
-      | id_format | Weekly format |
-      | id_enddate_enabled | 0 |
+      | id_startdate_day   | 1               |
+      | id_startdate_month | January         |
+      | id_startdate_year  | 2020            |
+      | id_format          | Weekly sections |
+      | id_enddate_enabled | 0               |
     And I press "Save and display"
     And I should see "1 January - 7 January"
     And I should see "Test forum name"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And the field "id_format" matches value "Weekly format"
+    And the field "id_format" matches value "Weekly sections"
     And I set the following fields to these values:
-      | id_format | Social format |
+      | id_format | Social |
     And I press "Save and display"
     And I should see "An open forum for chatting about anything you want to"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    And the field "id_format" matches value "Social format"
+    And the field "id_format" matches value "Social"
     And I press "Cancel"
 
   @javascript
@@ -118,7 +118,7 @@ Feature: Restore Moodle 2 course backups
       | Schema | Overwrite course configuration | Yes |
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    Then the field "id_format" matches value "Topics format"
+    Then the field "id_format" matches value "Custom sections"
     And the field "Course layout" matches value "Show one section per page"
     And the field "Course short name" matches value "C1_1"
     And I press "Cancel"
@@ -140,7 +140,7 @@ Feature: Restore Moodle 2 course backups
       | Schema | Overwrite course configuration | No |
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    Then the field "id_format" matches value "Topics format"
+    Then the field "id_format" matches value "Custom sections"
     And the field "Course short name" matches value "C2"
     And the field "Course layout" matches value "Show all sections on one page"
     And I press "Cancel"
@@ -164,7 +164,7 @@ Feature: Restore Moodle 2 course backups
       | Schema | Overwrite course configuration | Yes |
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    Then the field "id_format" matches value "Topics format"
+    Then the field "id_format" matches value "Custom sections"
     And the field "Course layout" matches value "Show one section per page"
     And the field "Course short name" matches value "C1_1"
     And I press "Cancel"
@@ -188,7 +188,7 @@ Feature: Restore Moodle 2 course backups
       | Schema | Overwrite course configuration | No |
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    Then the field "id_format" matches value "Topics format"
+    Then the field "id_format" matches value "Custom sections"
     And the field "Course short name" matches value "C2"
     And the field "Course layout" matches value "Show all sections on one page"
     And I press "Cancel"
@@ -212,7 +212,7 @@ Feature: Restore Moodle 2 course backups
       | Schema | Overwrite course configuration | No |
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
-    Then the field "id_format" matches value "Topics format"
+    Then the field "id_format" matches value "Custom sections"
     And the field "Course short name" matches value "C4"
     And the field "Course layout" matches value "Show all sections on one page"
     And I press "Cancel"

@@ -221,23 +221,40 @@ class course_edit_form extends moodleform {
         $mform->addElement('header', 'courseformathdr', get_string('type_format', 'plugin'));
 
         $courseformats = get_sorted_course_formats(true);
-        $formcourseformats = array();
+        $formcourseformats = new core\output\choicelist();
+        $formcourseformats->set_allow_empty(false);
         foreach ($courseformats as $courseformat) {
-            $formcourseformats[$courseformat] = get_string('pluginname', "format_$courseformat");
+            $definition = [];
+            $component = "format_$courseformat";
+            if (get_string_manager()->string_exists('plugin_description', $component)) {
+                $definition['description'] = get_string('plugin_description', $component);
+            }
+            $formcourseformats->add_option(
+                $courseformat,
+                get_string('pluginname', "format_$courseformat"),
+                [
+                    'description' => $definition,
+                ],
+            );
         }
         if (isset($course->format)) {
-            $course->format = course_get_format($course)->get_format(); // replace with default if not found
+            $course->format = course_get_format($course)->get_format(); // Replace with default if not found.
             if (!in_array($course->format, $courseformats)) {
-                // this format is disabled. Still display it in the dropdown
-                $formcourseformats[$course->format] = get_string('withdisablednote', 'moodle',
-                        get_string('pluginname', 'format_'.$course->format));
+                // This format is disabled. Still display it in the dropdown.
+                $formcourseformats->add_option(
+                    $course->format,
+                    get_string('withdisablednote', 'moodle', get_string('pluginname', 'format_'.$course->format)),
+                );
             }
         }
 
-        $mform->addElement('select', 'format', get_string('format'), $formcourseformats, [
-            'data-formatchooser-field' => 'selector',
-        ]);
-        $mform->addHelpButton('format', 'format');
+        $mform->addElement(
+            'choicedropdown',
+            'format',
+            get_string('format'),
+            $formcourseformats,
+            ['data-formatchooser-field' => 'selector'],
+        );
         $mform->setDefault('format', $courseconfig->format);
 
         // Button to update format-specific options on format change (will be hidden by JavaScript).

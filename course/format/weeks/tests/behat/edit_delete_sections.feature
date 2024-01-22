@@ -1,8 +1,8 @@
 @format @format_weeks
-Feature: Sections can be edited and deleted in weeks format
+Feature: Sections can be edited and deleted in weekly sections format
   In order to rearrange my course contents
   As a teacher
-  I need to edit and Delete weeks
+  I need to edit and delete sections
 
   Background:
     Given the following "users" exist:
@@ -41,7 +41,7 @@ Feature: Sections can be edited and deleted in weeks format
 
   Scenario: Edit section summary in weeks format
     When I edit the section "2" and I fill the form with:
-      | Summary | Welcome to section 2 |
+      | Description | Welcome to section 2 |
     Then I should see "Welcome to section 2" in the "8 May - 14 May" "section"
 
   Scenario: Edit section default name in weeks format
@@ -54,7 +54,7 @@ Feature: Sections can be edited and deleted in weeks format
 
   @javascript
   Scenario: Inline edit section name in weeks format
-    When I set the field "Edit week name" in the "1 May - 7 May" "section" to "Midterm evaluation"
+    When I set the field "Edit section name" in the "1 May - 7 May" "section" to "Midterm evaluation"
     Then I should not see "1 May - 7 May" in the "region-main" "region"
     And "New name for week" "field" should not exist
     And I should see "Midterm evaluation" in the "Midterm evaluation" "section"

@@ -98,7 +98,7 @@ Feature: Apply tour filters to a tour
       | Description        | My first tour     |
       | Apply to URL match | /course/view.php% |
       | Tour is enabled    | 1                 |
-      | Course format      | Weekly format     |
+      | Course format      | Weekly sections   |
     And I add steps to the "First tour" tour:
       | targettype                | Title   | id_content                   | Content type   |
       | Display in middle of page | Welcome | Welcome to your course tour. | Manual |

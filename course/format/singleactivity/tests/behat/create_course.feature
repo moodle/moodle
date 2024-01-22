@@ -28,7 +28,7 @@ Feature: Courses can be created in Single Activity mode
     And I set the following fields to these values:
       | Course full name  | My first course |
       | Course short name | myfirstcourse |
-      | Format | Single activity format |
+      | Format | Single activity |
     And I press "Update format"
     Then I should see "Quiz" in the "Type of activity" "field"
     And I should not see "Forum" in the "Type of activity" "field"

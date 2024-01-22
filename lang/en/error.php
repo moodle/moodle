@@ -111,7 +111,6 @@ $string['cannotinsertrecord'] = 'Could not insert new record ID {$a}';
 $string['cannotmailconfirm'] = 'Error sending password change confirmation email';
 $string['cannotmanualctrack'] = 'Activity does not provide manual completion tracking';
 $string['cannotmapfield'] = 'Mapping collision detected - two fields maps to the same grade item {$a}';
-$string['cannotmarktopic'] = 'Could not mark that topic for this course';
 $string['cannotmigratedatacomments'] = 'Cannot migrate data module comments';
 $string['cannotmodulename'] = 'Cannot get the module name in build navigation';
 $string['cannotmoduletype'] = 'Cannot get the module type in build navigation';
@@ -587,7 +586,6 @@ $string['unknowncourserequest'] = 'Unknown course request';
 $string['unknownevent'] = 'Unknown event';
 $string['unknownfiletype'] = 'Error unknown filtertype';
 $string['unknowngroup'] = 'Unknown group "{$a}"';
-$string['unknownhelp'] = 'Unknown help topic {$a}';
 $string['unknownjsinrequirejs'] = 'Cannot find JavaScript library {$a}.';
 $string['unknownmodulename'] = 'Unknown module name for form';
 $string['unknownrole'] = 'Unknown role "{$a}"';
@@ -654,3 +652,7 @@ $string['cannotswitcheditmodeon'] = 'Could not switch edit mode on';
 // Deprecated since Moodle 4.3.
 $string['prefixtoolong'] = '<p>Error: database table prefix is too long ({$a->dbfamily})</p>
 <p>The site administrator must fix this problem. Maximum length for table prefixes in {$a->dbfamily} is {$a->maxlength} characters.</p>';
+
+// Deprecated since Moodle 4.4.
+$string['cannotmarktopic'] = 'Could not mark that section for this course';
+$string['unknownhelp'] = 'Unknown help section {$a}';

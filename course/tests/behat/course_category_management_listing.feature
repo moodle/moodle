@@ -30,7 +30,7 @@ Feature: Course category management interface performs as expected
       | Cat 1 | 0 | CAT1 |
     And the following "courses" exist:
       | fullname | shortname | category | format |
-      | Course 1 | C1 | CAT1 | topics |
+      | Course 1 | C1        | CAT1     | topics |
 
     And I log in as "admin"
     And I go to the courses management page
@@ -69,7 +69,7 @@ Feature: Course category management interface performs as expected
     And I should see "Course 1" in the "#course-detail h3" "css_element"
     And I should see "C1" in the "#course-detail .shortname" "css_element"
     And I should see "Course 1" in the "#course-detail .fullname" "css_element"
-    And I should see "Topics" in the "#course-detail .format" "css_element"
+    And I should see "Custom sections" in the "#course-detail .format" "css_element"
     And I should see "Cat 1" in the "#course-detail .category" "css_element"
 
   Scenario: Test displaying of sub categories

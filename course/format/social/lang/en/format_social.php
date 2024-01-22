@@ -25,6 +25,7 @@
 
 $string['numberdiscussions'] = 'Number of discussions';
 $string['numberdiscussions_help'] = 'This setting specifies how many discussions should be displayed.';
-$string['pluginname'] = 'Social format';
+$string['pluginname'] = 'Social';
+$string['plugin_description'] = 'The course is centred around a main forum on the course page. Additional activities and resources can be added using the Social activities block.';
 $string['sectionname'] = 'section';
 $string['privacy:metadata'] = 'The Social format plugin does not store any personal data.';

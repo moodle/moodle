@@ -27,7 +27,7 @@ Feature: Duplicate a section
 
   @javascript
   Scenario: Duplicate a named section
-    Given I set the field "Edit topic name" in the "Topic 1" "section" to "New name"
+    Given I set the field "Edit section name" in the "Topic 1" "section" to "New name"
     And I should see "New name" in the "New name" "section"
     When I open section "1" edit menu
     And I click on "Duplicate" "link" in the "New name" "section"

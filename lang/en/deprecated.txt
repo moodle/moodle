@@ -119,3 +119,17 @@ backupcourse,core_backup
 linkcoursesections,core_admin
 linkcoursesections_help,core_admin
 showallusers,core
+cannotmarktopic,core_error
+unknownhelp,core_error
+markedthistopic,core
+markthistopic,core
+socialheadline,core
+weekhide,core
+weeklyoutline,core
+weekshow,core
+topicoutline,core
+topicshow,core
+topichide,core
+summary_help,core
+editsummary,core
+format_help,core

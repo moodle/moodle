@@ -57,11 +57,8 @@ $table = new html_table();
 $table->attributes['class'] = 'generaltable mod_index';
 
 $align = ['center', 'left'];
-if ($course->format == 'weeks') {
-    $table->head  = [get_string('week'), get_string('name')];
-    $table->align = ['center', 'left'];
-} else if ($course->format == 'topics') {
-    $table->head  = [get_string('topic'), get_string('name')];
+if ($course->format == 'weeks' || $course->format == 'topics') {
+    $table->head  = [get_string('section'), get_string('name')];
     $table->align = ['center', 'left'];
 } else {
     $table->head  = [get_string('name')];

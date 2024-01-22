@@ -15,40 +15,24 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component Topics course format.
+ * Strings for component Custom sections course format.
  *
  * @package   format_topics
  * @copyright 1999 onwards Martin Dougiamas  {@link http://moodle.com}
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['addsections'] = 'Add topic';
-$string['currentsection'] = 'This topic';
-$string['deletesection'] = 'Delete topic';
-$string['editsection'] = 'Edit topic';
-$string['editsectionname'] = 'Edit topic name';
-$string['hidefromothers'] = 'Hide topic';
-$string['newsectionname'] = 'New name for topic {$a}';
-$string['page-course-view-topics'] = 'Any course main page in topics format';
-$string['page-course-view-topics-x'] = 'Any course page in topics format';
-$string['pluginname'] = 'Topics format';
-$string['privacy:metadata'] = 'The Topics format plugin does not store any personal data.';
+$string['currentsection'] = 'Current section';
+$string['hidefromothers'] = 'Hide';
+$string['page-course-view-topics'] = 'Any course main page in custom sections format';
+$string['page-course-view-topics-x'] = 'Any course page in custom sections format';
+$string['pluginname'] = 'Custom sections';
+$string['plugin_description'] = 'The course is divided into customisable sections.';
+$string['privacy:metadata'] = 'The Custom sections format plugin does not store any personal data.';
 $string['indentation'] = 'Allow indentation on course page';
 $string['indentation_help'] = 'Allow teachers, and other users with the manage activities capability, to indent items on the course page.';
 $string['section_highlight_feedback'] = 'Section {$a->name} is highlighted.';
 $string['section_unhighlight_feedback'] = 'Highlight removed from section {$a->name}.';
 $string['section0name'] = 'General';
-$string['sectionavailability_title'] = 'Topic availability';
-$string['sectiondelete_title'] = 'Delete topic?';
-$string['sectionmove_title'] = 'Move topic';
 $string['sectionname'] = 'Topic';
-$string['sectionsavailability'] = 'Topics availability';
-$string['sectionsavailability_title'] = 'Topics availability';
-$string['sectionsdelete'] = 'Delete topics';
-$string['sectionsdelete_info'] = 'This will delete {$a->count} topics and all the activities they contain.';
-$string['sectionsdelete_title'] = 'Delete selected topics?';
-$string['sectionsmove'] = 'Move topics';
-$string['sectionsmove_info'] = 'Move {$a} topics after';
-$string['sectionsmove_title'] = 'Move selected topics';
-$string['selectsection'] = 'Select topic {$a}';
-$string['showfromothers'] = 'Show topic';
+$string['showfromothers'] = 'Show';

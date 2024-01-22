@@ -26,7 +26,7 @@ Feature: The maximum number of weeks/topics in a course can be configured
       | Course full name | New course fullname |
       | Course short name | New course shortname |
       | Number of sections | 90 |
-      | Format | Topics format |
+      | Format | Custom sections |
     And I should see "Topic 90"
 
   @javascript
@@ -42,5 +42,5 @@ Feature: The maximum number of weeks/topics in a course can be configured
       | Course full name | New course fullname |
       | Course short name | New course shortname |
       | Number of sections | 0 |
-      | Format | Topics format |
+      | Format | Custom sections |
     And I should not see "Topic 1"

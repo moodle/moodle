@@ -20,7 +20,7 @@ Feature: Edit format course to Single Activity format
     And I set the following fields to these values:
       | Course full name  | My first course |
       | Course short name | myfirstcourse |
-      | Format | Single activity format |
+      | Format | Single activity |
     And I press "Update format"
     Then I should see "Forum" in the "Type of activity" "field"
     And I press "Save and display"

@@ -446,7 +446,7 @@ class behat_course extends behat_base {
 
         $this->execute('behat_general::should_exist_in_the', ['Highlighted', 'text', $xpath, 'xpath_element']);
         // The important checking, we can not check the img.
-        $this->execute('behat_general::should_exist_in_the', ['Remove highlight', 'link', $xpath, 'xpath_element']);
+        $this->execute('behat_general::should_exist_in_the', ['Unhighlight', 'link', $xpath, 'xpath_element']);
     }
 
     /**

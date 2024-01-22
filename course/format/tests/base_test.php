@@ -508,14 +508,20 @@ class base_test extends advanced_testcase {
      * @param string $key the string key
      * @param string|null $data any string data
      * @param array|null $expectedstring the expected string (null for exception)
+     * @param string $courseformat the course format
      */
-    public function test_get_format_string(string $key, ?string $data, ?array $expectedstring) {
+    public function test_get_format_string(
+        string $key,
+        ?string $data,
+        ?array $expectedstring,
+        string $courseformat = 'topics'
+    ): void {
         global $DB;
 
         $this->resetAfterTest();
 
         $generator = $this->getDataGenerator();
-        $course = $generator->create_course(['format' => 'topics']);
+        $course = $generator->create_course(['format' => $courseformat]);
 
         if ($expectedstring) {
             $expected = get_string($expectedstring[0], $expectedstring[1], $expectedstring[2]);
@@ -535,9 +541,10 @@ class base_test extends advanced_testcase {
     public function get_format_string_provider(): array {
         return [
             'Existing in format lang' => [
-                'key' => 'sectionsdelete',
+                'key' => 'addsection',
                 'data' => null,
-                'expectedstring' => ['sectionsdelete', 'format_topics', null],
+                'expectedstring' => ['addsection', 'format_weeks', null],
+                'courseformat' => 'weeks',
             ],
             'Not existing in format lang' => [
                 'key' => 'bulkedit',
@@ -545,9 +552,9 @@ class base_test extends advanced_testcase {
                 'expectedstring' => ['bulkedit', 'core_courseformat', null],
             ],
             'Existing in format lang with data' => [
-                'key' => 'selectsection',
+                'key' => 'section_highlight_feedback',
                 'data' => 'Example',
-                'expectedstring' => ['selectsection', 'format_topics', 'Example'],
+                'expectedstring' => ['section_highlight_feedback', 'format_topics', 'Example'],
             ],
             'Not existing in format lang with data' => [
                 'key' => 'bulkselection',
