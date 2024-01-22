@@ -298,7 +298,7 @@ class report_loglive_table_log extends table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-
+        global $USER;
         $joins = array();
         $params = array();
 
@@ -306,6 +306,23 @@ class report_loglive_table_log extends table_sql {
         if (!empty($this->filterparams->courseid)) {
             $joins[] = "courseid = :courseid";
             $params['courseid'] = $this->filterparams->courseid;
+            // If we are in a course, then let's check what logs we can see.
+            $course = get_course($this->filterparams->courseid);
+            $groupmode = groups_get_course_groupmode($course);
+            $context = context_course::instance($this->filterparams->courseid);
+            $userid = 0;
+            if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
+                $userid = $USER->id;
+            }
+            $cgroups = groups_get_all_groups($this->filterparams->courseid, $userid);
+            $cgroups = array_keys($cgroups);
+            if ($groupmode != SEPARATEGROUPS || has_capability('moodle/site:accessallgroups', $context) || empty($cgroups)) {
+                $cgroups[] = USERSWITHOUTGROUP;
+            }
+            // If that's the case, limit the users to be in the groups only, defined by the filter.
+            [$groupmembersql, $groupmemberparams] = groups_get_members_ids_sql($cgroups, $context);
+            $joins[] = "userid IN ($groupmembersql)";
+            $params = array_merge($params, $groupmemberparams);
         }
 
         if (!empty($this->filterparams->date)) {
