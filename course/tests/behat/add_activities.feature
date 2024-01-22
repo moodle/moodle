@@ -20,7 +20,7 @@ Feature: Add activities to courses
       | Allow comments on entries | Yes                       |
       | Force language            | English                   |
     And I turn editing mode off
-    Then I should not see "Adding a new"
+    Then I should not see "New"
     And I turn editing mode on
     And I open "Test name" actions menu
     And I click on "Edit settings" "link" in the "Test name" activity

@@ -62,10 +62,8 @@ $string['addedtogroup'] = 'Added to group "{$a}"';
 $string['addedtogroupnot'] = 'Not added to group "{$a}"';
 $string['addedtogroupnotenrolled'] = 'Not added to group "{$a}", because not enrolled in course';
 $string['addfilehere'] = 'Drop files here to add them at the bottom of this section';
-$string['addinganew'] = 'Adding a new {$a}';
+$string['addinganew'] = 'New {$a}';
 $string['additionalcustomnav'] = 'Additional custom navigation';
-$string['addnew'] = 'Add a new {$a}';
-$string['addinganewto'] = 'Adding a new {$a->what} to {$a->to}';
 $string['addingdatatoexisting'] = 'Adding data to existing';
 $string['additionalnames'] = 'Additional names';
 $string['addlinkhere'] = 'Add link here';
@@ -614,7 +612,6 @@ $string['editcoursesettings'] = 'Edit course settings';
 $string['editsettings'] = 'Edit settings';
 $string['editfiles'] = 'Edit files';
 $string['editgroupprofile'] = 'Edit group profile';
-$string['editinga'] = 'Editing {$a}';
 $string['editingteachershort'] = 'Editor';
 $string['editmode'] = 'Edit mode';
 $string['editlock'] = 'This value cannot be edited!';
@@ -2306,8 +2303,6 @@ $string['updatemyprofile'] = 'Update profile';
 $string['updatesevery'] = 'Updates every {$a} seconds';
 $string['updatethis'] = 'Update this {$a}';
 $string['updatethiscourse'] = 'Update this course';
-$string['updatinga'] = 'Updating: {$a}';
-$string['updatingain'] = 'Updating {$a->what} in {$a->in}';
 $string['upload'] = 'Upload';
 $string['uploadafile'] = 'Upload a file';
 $string['uploadcantwrite'] = 'Failed to write file to disk';
@@ -2501,3 +2496,8 @@ $string['format_help'] = 'The course format determines the layout of the course 
 * Social - The course is centred around a main forum on the course page. Additional activities and resources can be added using the Social activities block.
 * Custom sections - The course is divided into customisable sections.
 * Weekly sections - The course is divided into sections corresponding to each week, beginning from the course start date.';
+$string['addnew'] = 'Add a new {$a}';
+$string['addinganewto'] = 'Adding a new {$a->what} to {$a->to}';
+$string['editinga'] = 'Editing {$a}';
+$string['updatinga'] = 'Updating: {$a}';
+$string['updatingain'] = 'Updating {$a->what} in {$a->in}';

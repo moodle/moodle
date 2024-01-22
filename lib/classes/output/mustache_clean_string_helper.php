@@ -53,7 +53,7 @@ class mustache_clean_string_helper {
      *
      * {{#cleanstr}}activity{{/cleanstr}}
      * {{#cleanstr}}actionchoice, core, {{#str}}delete{{/str}}{{/cleanstr}} (Together with the str helper)
-     * {{#cleanstr}}addinganewto, core, {"what":"This", "to":"That"}{{/cleanstr}} (Complex $a)
+     * {{#cleanstr}}uploadrenamedchars, core, {"oldname":"Old", "newname":"New"}{{/cleanstr}} (Complex $a)
      *
      * The args are comma separated and only the first is required.
      * The last is a $a argument for get string. For complex data here, use JSON.

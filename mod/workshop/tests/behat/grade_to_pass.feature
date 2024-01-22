@@ -33,7 +33,7 @@ Feature: Setting grades to pass via workshop editing form
       | activity | course | name             | submissiongradepass | gradinggradepass | submissiontypetextavailable |
       | workshop | c1     | Another workshop | 42                  | 10.1             | 0                           |
     When I am on the "Course1" course page logged in as teacher1
-    Then I should not see "Adding a new Workshop"
+    Then I should not see "New Workshop"
     And I am on the "Another workshop" "workshop activity editing" page
     And the field "Submission grade to pass" matches value "42.00"
     And the field "Assessment grade to pass" matches value "10.10"
@@ -53,7 +53,7 @@ Feature: Setting grades to pass via workshop editing form
     When I am on the "Another awesome workshop" "workshop activity editing" page logged in as teacher1
     And I set the field "Assessment grade to pass" to "You shall not pass!"
     And I press "Save and return to course"
-    Then I should see "Updating Workshop in Topic 1"
+    Then I should see "Edit settings"
     And I should see "You must enter a number here"
 
   Scenario: Adding a new workshop with invalid value of a grade to pass
@@ -63,7 +63,7 @@ Feature: Setting grades to pass via workshop editing form
     When I am on the "Almost awesome workshop" "workshop activity editing" page logged in as teacher1
     And I set the field "Assessment grade to pass" to "10000000"
     And I press "Save and return to course"
-    Then I should see "Updating Workshop in Topic 1"
+    Then I should see "Edit settings"
     And I should see "The grade to pass can not be greater than the maximum possible grade"
 
   Scenario: Emptying grades to pass fields sets them to zero
@@ -74,14 +74,14 @@ Feature: Setting grades to pass via workshop editing form
     And I set the field "Submission grade to pass" to "59.99"
     And I set the field "Assessment grade to pass" to "0.000"
     And I press "Save and return to course"
-    And I should not see "Updating Workshop in Topic 1"
+    And I should not see "Edit settings"
     And I am on the "Super awesome workshop" "workshop activity editing" page
     And the field "Submission grade to pass" matches value "59.99"
     And the field "Assessment grade to pass" matches value "0.00"
     When I set the field "Submission grade to pass" to ""
     And I set the field "Assessment grade to pass" to ""
     And I press "Save and display"
-    Then I should not see "Adding a new Workshop"
+    Then I should not see "New Workshop"
     And I am on the "Super awesome workshop" "workshop activity editing" page
     And the field "Submission grade to pass" matches value "0.00"
     And the field "Assessment grade to pass" matches value "0.00"

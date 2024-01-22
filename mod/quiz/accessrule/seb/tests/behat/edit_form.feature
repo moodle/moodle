@@ -50,13 +50,13 @@ Feature: Safe Exam Browser settings in quiz edit form
     # Create the quiz.
     When I add a "Quiz" to section "0" and I fill the form with:
       | Name | My quiz |
-    Then I should not see "Adding a new Quiz"
+    Then I should not see "New Quiz"
     # Edit the quiz.
     And I open "My quiz" actions menu
     And I click on "Edit settings" "link" in the "My quiz" activity
     And I set the field "Name" to "My quiz edited"
     And I press "Save and return to course"
-    And I should not see "Updating: Quiz"
+    And I should not see "Edit settings"
 
   Scenario: SEB settings if using No SEB
     Given the following "quizaccess_seb > seb templates" exist:

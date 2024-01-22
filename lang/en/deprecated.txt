@@ -133,3 +133,8 @@ topichide,core
 summary_help,core
 editsummary,core
 format_help,core
+addnew,core
+addinganewto,core
+editinga,core
+updatinga,core
+updatingain,core
