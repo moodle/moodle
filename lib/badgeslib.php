@@ -149,7 +149,8 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $userfrom->firstname = !empty($CFG->badges_defaultissuername) ? $CFG->badges_defaultissuername : $admin->firstname;
     $userfrom->maildisplay = true;
 
-    $issuedlink = html_writer::link(new moodle_url('/badges/badge.php', array('hash' => $issued)), $badge->name);
+    $badgeurl = new moodle_url('/badges/badge.php', ['hash' => $issued]);
+    $issuedlink = html_writer::link($badgeurl, $badge->name);
     $userto = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
 
     $params = new stdClass();
@@ -167,6 +168,8 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
     $eventdata->userfrom          = $userfrom;
     $eventdata->userto            = $userto;
     $eventdata->notification      = 1;
+    $eventdata->contexturl        = $badgeurl;
+    $eventdata->contexturlname    = $badge->name;
     $eventdata->subject           = $badge->messagesubject;
     $eventdata->fullmessage       = $plaintext;
     $eventdata->fullmessageformat = FORMAT_HTML;
@@ -209,6 +212,8 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
         $eventdata->userfrom          = $userfrom;
         $eventdata->userto            = $creator;
         $eventdata->notification      = 1;
+        $eventdata->contexturl        = $badgeurl;
+        $eventdata->contexturlname    = $badge->name;
         $eventdata->subject           = $creatorsubject;
         $eventdata->fullmessage       = html_to_text($creatormessage);
         $eventdata->fullmessageformat = FORMAT_HTML;
