@@ -19,6 +19,7 @@ namespace core;
 /**
  * Test core_user class.
  *
+ * @covers \core_user
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -281,6 +282,36 @@ class user_test extends \advanced_testcase {
         $this->assertCount(0, $result);
         $result = \core_user::search('house@x.x');
         $this->assertCount(1, $result);
+    }
+
+    /**
+     * The search function had a bug where it failed if you have no identify fields (or only custom
+     * ones).
+     */
+    public function test_search_no_identity_fields(): void {
+        self::init_search_tests();
+
+        // Set no user identity fields.
+        set_config('showuseridentity', '');
+
+        // Set up course for test with teacher in.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $teacher = $generator->create_user(['firstname' => 'Alberto', 'lastname' => 'Unwin',
+            'email' => 'a.unwin@x.x']);
+        $generator->enrol_user($teacher->id, $course->id, 'teacher');
+
+        // Admin user has site-wide permissions, this uses one variant of the query.
+        $this->setAdminUser();
+        $result = \core_user::search('Al');
+        $this->assertCount(1, $result);
+        $this->assertEquals('Alberto', $result[0]->firstname);
+
+        // Teacher has course-wide permissions, this uses another variant.
+        $this->setUser($teacher);
+        $result = \core_user::search('Al');
+        $this->assertCount(1, $result);
+        $this->assertEquals('Alberto', $result[0]->firstname);
     }
 
     /**
