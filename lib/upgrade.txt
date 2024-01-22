@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.2.6 ===
+
+* The `html_writer::select_time` method has a `$timezone` parameter to use when formatting the time parameter
+
 === 4.2.5 ===
 
 * The current page language is available in new `core/config` language property for Javascript modules
