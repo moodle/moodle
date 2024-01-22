@@ -387,6 +387,7 @@ $string['reportbuilder:edit'] = 'Edit your own custom reports';
 $string['reportbuilder:editall'] = 'Edit all custom reports';
 $string['reportbuilder:scheduleviewas'] = 'Schedule reports to be viewed as other users';
 $string['reportbuilder:view'] = 'View custom reports';
+$string['reportbuilder:viewall'] = 'View all custom reports';
 $string['resetrole'] = 'Reset';
 $string['resettingrole'] = 'Resetting role \'{$a}\'';
 $string['restore:configure'] = 'Configure restore options';
