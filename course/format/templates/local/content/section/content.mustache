@@ -106,19 +106,21 @@
     {{/ core_courseformat/local/content/section/badges }}
 </div>
 {{#collapsemenu}}
-<div class="flex-fill d-flex justify-content-end mr-2 align-self-start mt-2">
-    <a
-        id="collapsesections"
-        class="section-collapsemenu"
-        href="#"
-        aria-expanded="true"
-        role="button"
-        data-toggle="toggleall"
-    >
-        <span class="collapseall text-nowrap">{{#str}}collapseall{{/str}}</span>
-        <span class="expandall text-nowrap">{{#str}}expandall{{/str}}</span>
-    </a>
+    {{^displayonesection}}
+    <div class="flex-fill d-flex justify-content-end mr-2 align-self-start mt-2">
+        <a
+            id="collapsesections"
+            class="section-collapsemenu"
+            href="#"
+            aria-expanded="true"
+            role="button"
+            data-toggle="toggleall"
+        >
+            <span class="collapseall text-nowrap">{{#str}}collapseall{{/str}}</span>
+            <span class="expandall text-nowrap">{{#str}}expandall{{/str}}</span>
+        </a>
     </div>
+    {{/displayonesection}}
 {{/collapsemenu}}
 {{#controlmenu}}
     {{$ core_courseformat/local/content/section/controlmenu }}

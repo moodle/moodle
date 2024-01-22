@@ -37,7 +37,6 @@ use moodle_exception;
 use coding_exception;
 use moodle_url;
 use lang_string;
-use completion_info;
 use core_external\external_api;
 use stdClass;
 use cache;
@@ -78,8 +77,10 @@ abstract class base {
     protected $course = false;
     /** @var array caches format options, please use course_format::get_format_options() */
     protected $formatoptions = array();
-    /** @var int the section number in single section format, zero for multiple section formats. */
-    protected $singlesection = 0;
+    /** @var int|null the section number in single section format, null for multiple section formats. */
+    protected $singlesection = null;
+    /** @var int|null the sectionid when a single section is selected, null when multiple sections are displayed. */
+    protected $singlesectionid = null;
     /** @var course_modinfo the current course modinfo, please use course_format::get_modinfo() */
     private $modinfo = null;
     /** @var array cached instances */
@@ -565,10 +566,94 @@ abstract class base {
      *
      * Some formats has the hability to swith from one section to multiple sections per page.
      *
+     * @param int|null $sectionid null for all sections or a sectionid.
+     */
+    public function set_sectionid(?int $sectionid): void {
+        if ($sectionid === null) {
+            $this->singlesection = null;
+            $this->singlesectionid = null;
+            return;
+        }
+
+        $modinfo = get_fast_modinfo($this->courseid);
+        $sectioninfo = $modinfo->get_section_info_by_id($sectionid);
+        if ($sectioninfo === null) {
+            throw new coding_exception('Invalid sectionid: '. $sectionid);
+        }
+
+        $this->singlesection = $sectioninfo->section;
+        $this->singlesectionid = $sectionid;
+    }
+
+    /**
+     * Get if the current format instance will show multiple sections or an individual one.
+     *
+     * Some formats has the hability to swith from one section to multiple sections per page,
+     * output components will use this method to know if the current display is a single or
+     * multiple sections.
+     *
+     * @return int|null null for all sections or the sectionid.
+     */
+    public function get_sectionid(): ?int {
+        return $this->singlesectionid;
+    }
+
+    /**
+     * Set if the current format instance will show multiple sections or an individual one.
+     *
+     * Some formats has the hability to swith from one section to multiple sections per page.
+     *
      * @param int $singlesection zero for all sections or a section number
+     * @deprecated Since 4.4. Use set_sectionnum instead.
+     * @todo MDL-80116 This will be deleted in Moodle 4.8.
      */
     public function set_section_number(int $singlesection): void {
-        $this->singlesection = $singlesection;
+
+        debugging(
+            'The method core_courseformat\base::set_section_number() has been deprecated, please use set_sectionnum() instead.',
+            DEBUG_DEVELOPER
+        );
+
+        if ($singlesection === 0) {
+            // Convert zero to null, to guarantee all the sections are displayed.
+            $singlesection = null;
+        }
+        $this->set_sectionnum($singlesection);
+    }
+
+    /**
+     * Set the current section number to display.
+     * Some formats has the hability to swith from one section to multiple sections per page.
+     *
+     * @since Moodle 4.4
+     * @param int|null $sectionnum null for all sections or a sectionid.
+     */
+    public function set_sectionnum(?int $sectionnum): void {
+        if ($sectionnum === null) {
+            $this->singlesection = null;
+            $this->singlesectionid = null;
+            return;
+        }
+
+        $modinfo = get_fast_modinfo($this->courseid);
+        $sectioninfo = $modinfo->get_section_info($sectionnum);
+        if ($sectioninfo === null) {
+            throw new coding_exception('Invalid sectionnum: '. $sectionnum);
+        }
+
+        $this->singlesection = $sectionnum;
+        $this->singlesectionid = $sectioninfo->id;
+    }
+
+    /**
+     * Get the current section number to display.
+     * Some formats has the hability to swith from one section to multiple sections per page.
+     *
+     * @since Moodle 4.4
+     * @return int|null the current section number or null when there is no single section.
+     */
+    public function get_sectionnum(): ?int {
+        return $this->singlesection;
     }
 
     /**
@@ -579,8 +664,21 @@ abstract class base {
      * multiple sections.
      *
      * @return int zero for all sections or the sectin number
+     * @deprecated Since 4.4. Use get_sectionnum instead.
+     * @todo MDL-80116 This will be deleted in Moodle 4.8.
      */
     public function get_section_number(): int {
+
+        debugging(
+            'The method core_courseformat\base::get_section_number() has been deprecated, please use get_sectionnum() instead.',
+            DEBUG_DEVELOPER
+        );
+
+        if ($this->singlesection === null) {
+            // Convert null to zero, to guarantee all the sections are displayed.
+            return 0;
+        }
+
         return $this->singlesection;
     }
 
@@ -773,7 +871,9 @@ abstract class base {
             '/course/mod.php',
             ['sesskey' => sesskey(), $nonajaxaction => $cm->id]
         );
-        $nonajaxurl->param('sr', $this->get_section_number());
+        if (!is_null($this->get_sectionid())) {
+            $nonajaxurl->param('sr', $this->get_sectionnum());
+        }
         return $nonajaxurl;
     }
 
@@ -1807,8 +1907,8 @@ abstract class base {
             $section = $modinfo->get_section_info($section->section);
         }
 
-        if ($sr) {
-            $this->set_section_number($sr);
+        if (!is_null($sr)) {
+            $this->set_sectionnum($sr);
         }
 
         switch($action) {

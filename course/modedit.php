@@ -39,8 +39,15 @@ $sectionreturn = optional_param('sr', null, PARAM_INT);
 $beforemod = optional_param('beforemod', 0, PARAM_INT);
 $showonly = optional_param('showonly', '', PARAM_TAGLIST); // Settings group to show expanded and hide the rest.
 
+// Force it to be null if it's not a valid section number.
+if ($sectionreturn < 0) {
+    $sectionreturn = null;
+}
+
 $url = new moodle_url('/course/modedit.php');
-$url->param('sr', $sectionreturn);
+if (!is_null($sectionreturn)) {
+    $url->param('sr', $sectionreturn);
+}
 if (!empty($return)) {
     $url->param('return', $return);
 }
@@ -76,7 +83,9 @@ if (!empty($add)) {
 
     list($module, $context, $cw, $cm, $data) = prepare_new_moduleinfo_data($course, $add, $section);
     $data->return = 0;
-    $data->sr = $sectionreturn;
+    if (!is_null($sectionreturn)) {
+        $data->sr = $sectionreturn;
+    }
     $data->add = $add;
     $data->beforemod = $beforemod;
     if (!empty($type)) { //TODO: hopefully will be removed in 2.0
@@ -115,7 +124,9 @@ if (!empty($add)) {
 
     list($cm, $context, $module, $data, $cw) = get_moduleinfo_data($cm, $course);
     $data->return = $return;
-    $data->sr = $sectionreturn;
+    if (!is_null($sectionreturn)) {
+        $data->sr = $sectionreturn;
+    }
     $data->update = $update;
     if (!empty($showonly)) {
         $data->showonly = $showonly;
@@ -173,7 +184,11 @@ if ($mform->is_cancelled()) {
         $activityurl = new moodle_url("/mod/$module->name/view.php", $urlparams);
         redirect($activityurl);
     } else {
-        redirect(course_get_url($course, $cw->section, array('sr' => $sectionreturn)));
+        $options = [];
+        if (!is_null($sectionreturn)) {
+            $options['sr'] = $sectionreturn;
+        }
+        redirect(course_get_url($course, $cw->section, $options));
     }
 } else if ($fromform = $mform->get_data()) {
     // Mark that this is happening in the front-end UI. This is used to indicate that we are able to
@@ -193,7 +208,11 @@ if ($mform->is_cancelled()) {
             $url = $fromform->gradingman->get_management_url($url);
         }
     } else {
-        $url = course_get_url($course, $cw->section, array('sr' => $sectionreturn));
+        $options = [];
+        if (!is_null($sectionreturn)) {
+            $options['sr'] = $sectionreturn;
+        }
+        $url = course_get_url($course, $cw->section, $options);
     }
 
     // If we need to regrade the course with a progress bar as a result of updating this module,

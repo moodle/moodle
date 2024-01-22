@@ -76,7 +76,7 @@ export default class Component extends BaseComponent {
         this.sections = {};
         this.cms = {};
         // The page section return.
-        this.sectionReturn = descriptor.sectionReturn ?? 0;
+        this.sectionReturn = descriptor.sectionReturn ?? null;
         this.debouncedReloads = new Map();
     }
 
@@ -433,7 +433,7 @@ export default class Component extends BaseComponent {
      */
     _refreshCourseSectionlist({element}) {
         // If we have a section return means we only show a single section so no need to fix order.
-        if (this.reactive.sectionReturn != 0) {
+        if (this.reactive.sectionReturn !== null) {
             return;
         }
         const sectionlist = element.sectionlist ?? [];
@@ -541,7 +541,7 @@ export default class Component extends BaseComponent {
                 {
                     id: cmId,
                     courseid: Config.courseId,
-                    sr: this.reactive.sectionReturn ?? 0,
+                    sr: this.reactive.sectionReturn ?? null,
                 }
             );
             promise.then((html, js) => {
@@ -608,7 +608,7 @@ export default class Component extends BaseComponent {
                 {
                     id: element.id,
                     courseid: Config.courseId,
-                    sr: this.reactive.sectionReturn ?? 0,
+                    sr: this.reactive.sectionReturn ?? null,
                 }
             );
             promise.then((html, js) => {

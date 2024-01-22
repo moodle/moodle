@@ -124,7 +124,7 @@ class format_weeks extends core_courseformat\base {
      */
     public function get_view_url($section, $options = array()) {
         $course = $this->get_course();
-        if (array_key_exists('sr', $options)) {
+        if (array_key_exists('sr', $options) && !is_null($options['sr'])) {
             $sectionno = $options['sr'];
         } else if (is_object($section)) {
             $sectionno = $section->section;

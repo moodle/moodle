@@ -94,14 +94,14 @@ class content implements named_templatable, renderable {
             'initialsection' => $initialsection,
             'sections' => $sections,
             'format' => $format->get_format(),
-            'sectionreturn' => 0,
+            'sectionreturn' => null,
         ];
 
         // The single section format has extra navigation.
-        $singlesection = $this->format->get_section_number();
-        if ($singlesection) {
+        if ($this->format->get_sectionid()) {
+            $singlesectionnum = $this->format->get_sectionnum();
             if (!$PAGE->theme->usescourseindex) {
-                $sectionnavigation = new $this->sectionnavigationclass($format, $singlesection);
+                $sectionnavigation = new $this->sectionnavigationclass($format, $singlesectionnum);
                 $data->sectionnavigation = $sectionnavigation->export_for_template($output);
 
                 $sectionselector = new $this->sectionselectorclass($format, $sectionnavigation);
@@ -109,7 +109,7 @@ class content implements named_templatable, renderable {
             }
             $data->hasnavigation = true;
             $data->singlesection = array_shift($data->sections);
-            $data->sectionreturn = $singlesection;
+            $data->sectionreturn = $singlesectionnum;
         }
 
         if ($this->hasaddsection) {
@@ -181,10 +181,10 @@ class content implements named_templatable, renderable {
      * @return section_info[] an array of section_info to display
      */
     private function get_sections_to_display(course_modinfo $modinfo): array {
-        $singlesection = $this->format->get_section_number();
-        if ($singlesection) {
+        $singlesectionid = $this->format->get_sectionid();
+        if ($singlesectionid) {
             return [
-                $modinfo->get_section_info($singlesection),
+                $modinfo->get_section_info_by_id($singlesectionid),
             ];
         }
 

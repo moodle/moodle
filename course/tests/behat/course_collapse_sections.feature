@@ -32,18 +32,18 @@ Feature: Collapse course sections
       | teacher1 | C1     | editingteacher |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    When I edit the section "4"
+    And I hide section "5"
+    And I edit the section "4"
     And I expand all fieldsets
     And I press "Add restriction..."
     And I click on "Date" "button" in the "Add restriction..." "dialogue"
     And I set the field "direction" to "until"
     And I set the field "x[year]" to "2013"
     And I press "Save changes"
-    And I hide section "5"
 
   @javascript
   Scenario: No chevron on site home
-    Given the following activity" exists:
+    Given the following "activity" exists:
       | activity | forum                              |
       | course   | Acceptance test site               |
       | section  | 1                                  |

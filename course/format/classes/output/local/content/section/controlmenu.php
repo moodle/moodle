@@ -124,7 +124,7 @@ class controlmenu implements named_templatable, renderable {
         $format = $this->format;
         $section = $this->section;
         $course = $format->get_course();
-        $sectionreturn = $format->get_section_number();
+        $sectionreturn = !is_null($format->get_sectionid()) ? $format->get_sectionnum() : null;
         $user = $USER;
 
         $usecomponents = $format->supports_components();
@@ -144,15 +144,16 @@ class controlmenu implements named_templatable, renderable {
         ];
 
         if (!$isstealth && has_capability('moodle/course:update', $coursecontext, $user)) {
-            if ($section->section > 0
-                && get_string_manager()->string_exists('editsection', 'format_'.$format->get_format())) {
+            $params = ['id' => $section->id];
+            $params['sr'] = $section->section;
+            if (get_string_manager()->string_exists('editsection', 'format_'.$format->get_format())) {
                 $streditsection = get_string('editsection', 'format_'.$format->get_format());
             } else {
                 $streditsection = get_string('editsection');
             }
 
             $controls['edit'] = [
-                'url'   => new moodle_url('/course/editsection.php', ['id' => $section->id, 'sr' => $sectionreturn]),
+                'url'   => new moodle_url('/course/editsection.php', $params),
                 'icon' => 'i/settings',
                 'name' => $streditsection,
                 'pixattr' => ['class' => ''],
@@ -162,6 +163,9 @@ class controlmenu implements named_templatable, renderable {
             $duplicatesectionurl = clone($baseurl);
             $duplicatesectionurl->param('section', $section->section);
             $duplicatesectionurl->param('duplicatesection', $section->section);
+            if (!is_null($sectionreturn)) {
+                $duplicatesectionurl->param('sr', $sectionreturn);
+            }
             $controls['duplicate'] = [
                 'url' => $duplicatesectionurl,
                 'icon' => 't/copy',
@@ -267,14 +271,17 @@ class controlmenu implements named_templatable, renderable {
                 } else {
                     $strdelete = get_string('deletesection');
                 }
+                $params = [
+                    'id' => $section->id,
+                    'delete' => 1,
+                    'sesskey' => sesskey(),
+                ];
+                if (!is_null($sectionreturn)) {
+                    $params['sr'] = $sectionreturn;
+                }
                 $url = new moodle_url(
                     '/course/editsection.php',
-                    [
-                        'id' => $section->id,
-                        'sr' => $sectionreturn,
-                        'delete' => 1,
-                        'sesskey' => sesskey(),
-                    ]
+                    $params,
                 );
                 $controls['delete'] = [
                     'url' => $url,

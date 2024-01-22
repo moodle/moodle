@@ -868,7 +868,9 @@ abstract class moodleform_mod extends moodleform {
         $mform->addElement('hidden', 'return', 0);
         $mform->setType('return', PARAM_BOOL);
 
-        $mform->addElement('hidden', 'sr', 0);
+        // The section number where to return: -1 means no section (0 can't be used because it is a valid section number and
+        // null can't be used because it's converted to 0).
+        $mform->addElement('hidden', 'sr', -1);
         $mform->setType('sr', PARAM_INT);
 
         $mform->addElement('hidden', 'beforemod', 0);

@@ -36,7 +36,7 @@ $show = optional_param('show', 0, PARAM_INT);
 $duplicatesection = optional_param('duplicatesection', 0, PARAM_INT);
 $idnumber = optional_param('idnumber', '', PARAM_RAW);
 $sectionid = optional_param('sectionid', 0, PARAM_INT);
-$section = optional_param('section', 0, PARAM_INT);
+$section = optional_param('section', null, PARAM_INT);
 $expandsection = optional_param('expandsection', -1, PARAM_INT);
 $move = optional_param('move', 0, PARAM_INT);
 $marker = optional_param('marker', -1 , PARAM_INT);
@@ -62,7 +62,7 @@ $urlparams = ['id' => $course->id];
 if ($sectionid) {
     $section = $DB->get_field('course_sections', 'section', ['id' => $sectionid, 'course' => $course->id], MUST_EXIST);
 }
-if ($section) {
+if (!is_null($section)) {
     $urlparams['section'] = $section;
 }
 if ($expandsection !== -1) {

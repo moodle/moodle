@@ -28,11 +28,16 @@ require_once("lib.php");
 require_once($CFG->libdir . '/formslib.php');
 
 $id = required_param('id', PARAM_INT);    // course_sections.id
-$sectionreturn = optional_param('sr', 0, PARAM_INT);
+$sectionreturn = optional_param('sr', null, PARAM_INT);
 $deletesection = optional_param('delete', 0, PARAM_BOOL);
 $showonly = optional_param('showonly', 0, PARAM_TAGLIST);
 
-$params = ['id' => $id, 'sr' => $sectionreturn];
+$returnparams = [];
+$params = ['id' => $id];
+if (!is_null($sectionreturn)) {
+    $params['sr'] = $sectionreturn;
+    $returnparams['sr'] = $sectionreturn;
+}
 if (!empty($showonly)) {
     $params['showonly'] = $showonly;
 }
@@ -51,7 +56,7 @@ $sectioninfo = get_fast_modinfo($course)->get_section_info($sectionnum);
 
 // Deleting the section.
 if ($deletesection) {
-    $cancelurl = course_get_url($course, $sectioninfo, array('sr' => $sectionreturn));
+    $cancelurl = course_get_url($course, $sectioninfo, $returnparams);
     if (course_can_delete_section($course, $sectioninfo)) {
         $confirm = optional_param('confirm', false, PARAM_BOOL) && confirm_sesskey();
         if (!$confirm && optional_param('sesskey', null, PARAM_RAW) !== null &&
@@ -61,7 +66,7 @@ if ($deletesection) {
         }
         if ($confirm) {
             course_delete_section($course, $sectioninfo, true, true);
-            $courseurl = course_get_url($course, $sectioninfo->section - 1, array('sr' => $sectionreturn));
+            $courseurl = course_get_url($course, $sectioninfo->section - 1, $returnparams);
             redirect($courseurl);
         } else {
             if (get_string_manager()->string_exists('deletesection', 'format_' . $course->format)) {
@@ -123,7 +128,7 @@ if (!empty($showonly)) {
 
 if ($mform->is_cancelled()){
     // Form cancelled, return to course.
-    redirect(course_get_url($course, $section, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $section, $returnparams));
 } else if ($data = $mform->get_data()) {
     // Data submitted and validated, update and return to course.
 
@@ -139,7 +144,7 @@ if ($mform->is_cancelled()){
     course_update_section($course, $section, $data);
 
     $PAGE->navigation->clear_cache();
-    redirect(course_get_url($course, $section, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $section, $returnparams));
 }
 
 // The edit form is displayed for the first time or if there was validation error on the previous step.

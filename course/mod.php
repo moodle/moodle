@@ -51,7 +51,15 @@ foreach (compact('indent','update','hide','show','copy','moveto','movetosection'
         $url->param($key, $value);
     }
 }
-$url->param('sr', $sectionreturn);
+// Force it to be null if it's not a valid section number.
+if ($sectionreturn < 0) {
+    $sectionreturn = null;
+}
+$urloptions = [];
+if (!is_null($sectionreturn)) {
+    $url->param('sr', $sectionreturn);
+    $urloptions['sr'] = $sectionreturn;
+}
 if ($add !== '') {
     $url->param('add', $add);
 }
@@ -73,26 +81,42 @@ if (!empty($add)) {
     $returntomod = optional_param('return', 0, PARAM_BOOL);
     $beforemod   = optional_param('beforemod', 0, PARAM_INT);
 
+    $params = [
+        'add' => $add,
+        'type' => $type,
+        'course' => $id,
+        'section' => $section,
+        'return' => $returntomod,
+        'beforemod' => $beforemod,
+    ];
+    if (!is_null($sectionreturn)) {
+        $params['sr'] = $sectionreturn;
+    }
+
     redirect(
         new moodle_url(
             '/course/modedit.php',
-            [
-                'add' => $add,
-                'type' => $type,
-                'course' => $id,
-                'section' => $section,
-                'return' => $returntomod,
-                'sr' => $sectionreturn,
-                'beforemod' => $beforemod,
-            ]
+            $params,
         )
     );
 
 } else if (!empty($update)) {
     $cm = get_coursemodule_from_id('', $update, 0, true, MUST_EXIST);
     $returntomod = optional_param('return', 0, PARAM_BOOL);
-    redirect("$CFG->wwwroot/course/modedit.php?update=$update&return=$returntomod&sr=$sectionreturn");
 
+    $params = [
+        'update' => $update,
+        'return' => $returntomod,
+    ];
+    if (!is_null($sectionreturn)) {
+        $params['sr'] = $sectionreturn;
+    }
+    redirect(
+        new moodle_url(
+            '/course/modedit.php',
+            $params,
+        )
+    );
 } else if (!empty($duplicate) and confirm_sesskey()) {
      $cm     = get_coursemodule_from_id('', $duplicate, 0, true, MUST_EXIST);
      $course = $DB->get_record('course', array('id' => $cm->course), '*', MUST_EXIST);
@@ -101,9 +125,9 @@ if (!empty($add)) {
     $modcontext = context_module::instance($cm->id);
     require_capability('moodle/course:manageactivities', $modcontext);
 
-     // Duplicate the module.
-     $newcm = duplicate_module($course, $cm);
-     redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
+    // Duplicate the module.
+    $newcm = duplicate_module($course, $cm);
+    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
 
 } else if (!empty($delete)) {
     $cm     = get_coursemodule_from_id('', $delete, 0, true, MUST_EXIST);
@@ -113,13 +137,19 @@ if (!empty($add)) {
     $modcontext = context_module::instance($cm->id);
     require_capability('moodle/course:manageactivities', $modcontext);
 
-    $return = course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn));
+    $return = course_get_url($course, $cm->sectionnum, $urloptions);
 
     if (!$confirm or !confirm_sesskey()) {
         $fullmodulename = get_string('modulename', $cm->modname);
 
-        $optionsyes = array('confirm'=>1, 'delete'=>$cm->id, 'sesskey'=>sesskey(), 'sr' => $sectionreturn);
-
+        $optionsyes = [
+            'confirm' => 1,
+            'delete' => $cm->id,
+            'sesskey' => sesskey(),
+        ];
+        if (!is_null($sectionreturn)) {
+            $optionsyes['sr'] = $sectionreturn;
+        }
         $strdeletecheck = get_string('deletecheck', '', $fullmodulename);
         $strparams = (object)array('type' => $fullmodulename, 'name' => $cm->name);
         $strdeletechecktypename = get_string('deletechecktypename', '', $strparams);
@@ -183,7 +213,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     unset($USER->activitycopyname);
     unset($USER->activitycopysectionreturn);
 
-    redirect(course_get_url($course, $section->section, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $section->section, $urloptions));
 
 } else if (!empty($indent) and confirm_sesskey()) {
     $id = required_param('id', PARAM_INT);
@@ -208,7 +238,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     // Rebuild invalidated module cache.
     rebuild_course_cache($cm->course, false, true);
 
-    redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
 
 } else if (!empty($hide) and confirm_sesskey()) {
     $cm     = get_coursemodule_from_id('', $hide, 0, true, MUST_EXIST);
@@ -222,7 +252,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (set_coursemodule_visible($cm->id, 0)) {
         \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
     }
-    redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
 
 } else if (!empty($stealth) and confirm_sesskey()) {
     list($course, $cm) = get_course_and_cm_from_cmid($stealth);
@@ -243,7 +273,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     if (set_coursemodule_visible($cm->id, 1)) {
         \core\event\course_module_updated::create_from_cm($cm)->trigger();
     }
-    redirect(course_get_url($course, $section->section, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $section->section, $urloptions));
 
 } else if ($groupmode > -1 and confirm_sesskey()) {
     $id = required_param('id', PARAM_INT);
@@ -258,7 +288,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
 
     set_coursemodule_groupmode($cm->id, $groupmode);
     \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
-    redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
 
 } else if (!empty($copy) and confirm_sesskey()) { // value = course module
     $cm     = get_coursemodule_from_id('', $copy, 0, true, MUST_EXIST);
@@ -276,7 +306,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     $USER->activitycopyname          = $cm->name;
     $USER->activitycopysectionreturn = $sectionreturn;
 
-    redirect(course_get_url($course, $section->section, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $section->section, $urloptions));
 
 } else if (!empty($cancelcopy) and confirm_sesskey()) { // value = course module
 
@@ -289,7 +319,7 @@ if ((!empty($movetosection) or !empty($moveto)) and confirm_sesskey()) {
     unset($USER->activitycopycourse);
     unset($USER->activitycopyname);
     unset($USER->activitycopysectionreturn);
-    redirect(course_get_url($course, $cm->sectionnum, array('sr' => $sectionreturn)));
+    redirect(course_get_url($course, $cm->sectionnum, $urloptions));
 } else {
     throw new \moodle_exception('unknowaction');
 }

@@ -82,7 +82,7 @@ class header implements named_templatable, renderable {
             $data->title = $output->section_title_without_link($section, $course);
             $data->sitehome = true;
         } else {
-            if ($format->get_section_number() === 0) {
+            if (is_null($format->get_sectionid())) {
                 // All sections are displayed.
                 if (!$data->editing) {
                     $data->title = $output->section_title($section, $course);
@@ -114,7 +114,7 @@ class header implements named_templatable, renderable {
         $data->name = get_section_name($course, $section);
         $data->selecttext = $format->get_format_string('selectsection', $data->name);
 
-        if (!$format->get_section_number()) {
+        if (!$format->get_sectionnum()) {
             $data->sectionbulk = true;
         }
 

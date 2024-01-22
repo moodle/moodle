@@ -131,7 +131,7 @@ class format_site extends course_format {
      *
      * @return int
      */
-    public function get_section_number(): int {
+    public function get_sectionnum(): int {
         return 1;
     }
 }
@@ -219,8 +219,8 @@ function core_courseformat_output_fragment_cmitem($args): string {
     }
 
     $format = course_get_format($course);
-    if (!empty($args['sr'])) {
-        $format->set_section_number($args['sr']);
+    if (!is_null($args['sr'])) {
+        $format->set_sectionnum($args['sr']);
     }
     $renderer = $format->get_renderer($PAGE);
     $section = $cm->get_section_info();
@@ -246,8 +246,8 @@ function core_courseformat_output_fragment_section($args): string {
     }
 
     $format = course_get_format($course);
-    if (!empty($args['sr'])) {
-        $format->set_section_number($args['sr']);
+    if (!is_null($args['sr'])) {
+        $format->set_sectionnum($args['sr']);
     }
 
     $modinfo = $format->get_modinfo();

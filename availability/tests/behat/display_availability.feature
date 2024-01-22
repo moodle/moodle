@@ -126,7 +126,8 @@ Feature: display_availability
     And I press "Save changes"
 
     # Section 2 is the same but hidden from students
-    When I edit the section "2"
+    And I am on "Course 1" course homepage
+    And I edit the section "2"
     And I expand all fieldsets
     And I press "Add restriction..."
     And I click on "Date" "button" in the "Add restriction..." "dialogue"

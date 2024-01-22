@@ -159,7 +159,7 @@ class bulkedittools implements named_templatable, renderable {
         global $USER;
         $format = $this->format;
         $context = $format->get_context();
-        $sectionreturn = $format->get_section_number();
+        $sectionreturn = $format->get_sectionnum();
         $user = $USER;
 
         $controls = [];
