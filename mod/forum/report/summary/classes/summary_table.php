@@ -736,7 +736,7 @@ class summary_table extends table_sql {
                 $orderby = " ORDER BY {$sort}";
             }
         } else {
-            $selectfields = 'COUNT(u.id)';
+            $selectfields = 'COUNT(DISTINCT u.id)';
         }
 
         $sql = "SELECT {$selectfields}
