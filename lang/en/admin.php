@@ -516,6 +516,7 @@ $string['defaultuserroleid'] = 'Default role for all users';
 $string['deleteincompleteusers'] = 'Delete incomplete users after';
 $string['deleteunconfirmed'] = 'Delete not fully setup users after';
 $string['deleteuser'] = 'Delete user';
+$string['deleteduserx'] = 'Deleted user {$a}';
 $string['density'] = 'Density';
 $string['denyemailaddresses'] = 'Denied email domains';
 $string['devlibdirpresent'] = 'Directories with development libraries, especially <em>/vendor</em> and <em>/node_modules</em>, should not be present on public sites. See the <a href="{$a->moreinfourl}">security overview report</a> for more details.';

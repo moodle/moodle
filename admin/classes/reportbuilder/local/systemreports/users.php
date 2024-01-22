@@ -28,6 +28,7 @@ use core_reportbuilder\local\report\action;
 use core_reportbuilder\local\report\filter;
 use core_reportbuilder\system_report;
 use core_role\reportbuilder\local\entities\role;
+use core_user\fields;
 use lang_string;
 use moodle_url;
 use pix_icon;
@@ -62,8 +63,9 @@ class users extends system_report {
         $this->add_entity($entityuser);
 
         // Any columns required by actions should be defined here to ensure they're always available.
+        $fullnamefields = array_map(fn($field) => "{$entityuseralias}.{$field}", fields::get_name_fields());
         $this->add_base_fields("{$entityuseralias}.id, {$entityuseralias}.confirmed, {$entityuseralias}.mnethostid,
-            {$entityuseralias}.suspended, {$entityuseralias}.username");
+            {$entityuseralias}.suspended, {$entityuseralias}.username, " . implode(', ', $fullnamefields));
 
         $paramguest = database::generate_param_name();
         $this->add_base_condition_sql("{$entityuseralias}.deleted <> 1 AND {$entityuseralias}.id <> :{$paramguest}",
@@ -332,10 +334,32 @@ class users extends system_report {
         $this->add_action((new action(
             new moodle_url('/admin/user.php', ['delete' => ':id', 'sesskey' => sesskey()]),
             new pix_icon('t/delete', ''),
-            ['class' => 'text-danger'],
+            [
+                'class' => 'text-danger',
+                'data-modal' => 'confirmation',
+                'data-modal-title-str' => json_encode(['deleteuser', 'admin']),
+                'data-modal-content-str' => ':deletestr',
+                'data-modal-yes-button-str' => json_encode(['delete', 'core']),
+                'data-modal-destination' => ':deleteurl',
+
+            ],
             false,
             new lang_string('delete', 'moodle'),
         ))->add_callback(static function(\stdclass $row) use ($USER, $contextsystem): bool {
+
+            // Populate deletion modal attributes.
+            $row->deletestr = json_encode([
+                'deletecheckfull',
+                'moodle',
+                fullname($row, true),
+            ]);
+
+            $row->deleteurl = (new moodle_url('/admin/user.php', [
+                'delete' => $row->id,
+                'confirm' => md5($row->id),
+                'sesskey' => sesskey(),
+            ]))->out(false);
+
             return has_capability('moodle/user:delete', $contextsystem) &&
                 !is_mnet_remote_user($row) && $row->id != $USER->id && !is_siteadmin($row);
         }));

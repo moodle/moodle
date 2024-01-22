@@ -89,10 +89,10 @@
             echo $OUTPUT->confirm(get_string('deletecheckfull', '', "'$fullname'"), $deletebutton, $returnurl);
             echo $OUTPUT->footer();
             die;
-        } else if (data_submitted()) {
+        } else {
             if (delete_user($user)) {
                 \core\session\manager::gc(); // Remove stale sessions.
-                redirect($returnurl);
+                redirect($returnurl, get_string('deleteduserx', 'admin', fullname($user, true)));
             } else {
                 \core\session\manager::gc(); // Remove stale sessions.
                 echo $OUTPUT->header();
