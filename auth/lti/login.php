@@ -72,8 +72,9 @@ if ($newaccount) {
     } else {
         // Create a new account and link it, logging the user in.
         $auth = get_auth_plugin('lti');
-        $newuser = $auth->find_or_create_user_from_launch($launchdata, true);
+        $newuser = $auth->find_or_create_user_from_launch($launchdata);
         complete_user_login($newuser);
+        $auth->update_user_account($newuser, $launchdata, $launchdata['iss']);
 
         $PAGE->set_context(context_system::instance());
         $PAGE->set_url(new moodle_url('/auth/lti/login.php'));
