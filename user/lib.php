@@ -186,8 +186,6 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
         unset($user->calendartype);
     }
 
-    $user->timemodified = time();
-
     // Validate user data object.
     $uservalidation = core_user::validate($user);
     if ($uservalidation !== true) {
@@ -197,17 +195,37 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
         }
     }
 
-    $DB->update_record('user', $user);
+    $currentrecord = $DB->get_record('user', ['id' => $user->id]);
+    $changedattributes = [];
+    foreach ($user as $attributekey => $attributevalue) {
+        // We explicitly want to ignore 'timemodified' attribute for checking, if an update is needed.
+        if (!property_exists($currentrecord, $attributekey) || $attributekey === 'timemodified') {
+            continue;
+        }
+        if ($currentrecord->{$attributekey} != $attributevalue) {
+            $changedattributes[$attributekey] = $attributevalue;
+        }
+    }
+    if (!empty($changedattributes)) {
+        $changedattributes['timemodified'] = time();
+        $updaterecord = (object) $changedattributes;
+        $updaterecord->id = $currentrecord->id;
+        $DB->update_record('user', $updaterecord);
+    }
 
     if ($updatepassword) {
-        // Get full user record.
-        $updateduser = $DB->get_record('user', array('id' => $user->id));
+        // If there have been changes, update user record with changed attributes.
+        if (!empty($changedattributes)) {
+            foreach ($changedattributes as $attributekey => $attributevalue) {
+                $currentrecord->{$attributekey} = $attributevalue;
+            }
+        }
 
         // If password was set, then update its hash.
         if (isset($passwd)) {
-            $authplugin = get_auth_plugin($updateduser->auth);
+            $authplugin = get_auth_plugin($currentrecord->auth);
             if ($authplugin->can_change_password()) {
-                $authplugin->user_update_password($updateduser, $passwd);
+                $authplugin->user_update_password($currentrecord, $passwd);
             }
         }
     }
