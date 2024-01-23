@@ -21,8 +21,7 @@ Feature: Private rule sets
       | Group A | C1     | GA       | 0          |
       | Group B | C1     | GB       | 1          |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Page" to section "1"
+    And I add a page activity to course "Course 1" section "1"
     And I expand all fieldsets
 
   Scenario: Add restriction with visible condition (must match), display option should be active
