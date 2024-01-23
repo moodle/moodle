@@ -1566,7 +1566,7 @@ abstract class webservice_base_server extends webservice_server {
         $rs->close();
 
         // Generate the virtual class name.
-        $classname = $this->get_unique_classname('wevservice_virtual_class');
+        $classname = $this->get_unique_classname('webservices_virtual_class');
         $this->serviceclass = $classname;
 
         // Get the list of all available external functions.
@@ -1615,7 +1615,7 @@ EOD;
         $fieldsstr = implode("\n", $fields);
 
         // We do this after the call to get_phpdoc_type() to avoid duplicate class creation.
-        $classname = $this->get_unique_classname('wevservices_struct_class');
+        $classname = $this->get_unique_classname('webservices_struct_class');
         $code = <<<EOD
 /**
  * Virtual struct class for web services for user id $USER->id in context {$this->restricted_context->id}.
