@@ -89,7 +89,7 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
         }
 
         $secrets = !empty($migrationclaiminfo['signing_secret']) ? [$migrationclaiminfo['signing_secret']] : [];
-        return $auth->find_or_create_user_from_launch($mockjwt, false, $secrets);
+        return $auth->find_or_create_user_from_launch($mockjwt, $secrets);
     }
 
     /**
