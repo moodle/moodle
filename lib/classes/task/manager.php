@@ -1088,6 +1088,17 @@ class manager {
 
         $delay = $task->get_fail_delay();
 
+        if ($delay > 0) {
+            // If the task has a fail delay, it's already run at least once.
+            // We need to check if the task should be retried or not.
+            $taskcustomdata = $task->get_custom_data();
+            if ($taskcustomdata && isset($taskcustomdata->noretry) && $taskcustomdata->noretry) {
+                // The task has been marked as not retrying, so we can mark it as completed and delete it.
+                self::adhoc_task_complete($task);
+                return;
+            }
+        }
+
         // Reschedule task with exponential fall off for failing tasks.
         if (empty($delay)) {
             $delay = 60;

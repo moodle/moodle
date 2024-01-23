@@ -107,6 +107,25 @@ class adhoc_test4_task extends adhoc_test_task {
 class adhoc_test5_task extends adhoc_test_task {
 }
 
+/**
+ * Test adhoc-task with no-retry customdata.
+ *
+ * @copyright  2023 Huong Nguyen <huongnv13@gmail.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class adhoc_test6_task extends adhoc_test_task {
+    /**
+     * Execute.
+     *
+     * @return void
+     */
+    public function execute(): void {
+        // Something wrong happened, do not retry.
+        $this->set_custom_data((object) ['noretry' => true]);
+    }
+
+}
+
 class scheduled_test_task extends \core\task\scheduled_task {
     public function get_name() {
         return "Test task";
