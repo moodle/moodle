@@ -96,8 +96,7 @@ Feature: Settings form fields disabled if not required
   @javascript
   Scenario: Depending on whether there is a close date, some review options are disabled.
     When I log in as "teacher"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Quiz" to section "1"
+    And I add a quiz activity to course "Course 1" section "1"
     And I expand all fieldsets
     And I set the field "Name" to "Test quiz"
     Then the "id_attemptclosed" "checkbox" should be disabled

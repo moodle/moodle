@@ -12,8 +12,7 @@ Feature: Submission types
 
   @javascript
   Scenario: Test workshop settings validation
-    Given I am on "Test" course homepage with editing mode on
-    And I add a "Workshop" to section "0"
+    Given I add a workshop activity to course "Test" section "0"
     When I set the following fields to these values:
       | Workshop name               | Test workshop |
       | submissiontypetextavailable | 0             |

@@ -37,7 +37,7 @@ Feature: Inline editing H5P content
       | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     # Create an H5P activity with a link to the content-bank file.
-    And I add a "H5P" to section "1"
+    And I add an h5pactivity activity to course "Course 1" section "1"
     And I set the following fields to these values:
       | Name                       | H5P package added as link to content bank |
       | Description                | Description                                 |
@@ -99,7 +99,7 @@ Feature: Inline editing H5P content
       | unaddableblocks | | theme_boost|
     And I add the "Navigation" block if not present
     # Create an H5P activity with a copy to the content-bank file.
-    And I add a "H5P" to section "1"
+    And I add an h5pactivity activity to course "Course 1" section "1"
     And I set the following fields to these values:
       | Name                       | H5P package added as copy to content bank |
       | Description                | Description                                 |
@@ -157,8 +157,7 @@ Feature: Inline editing H5P content
     And I upload "h5p/tests/fixtures/greeting-card.h5p" file to "Files" filemanager
     And I click on "Save changes" "button"
     # Create an H5P activity with a private user file.
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "H5P" to section "1"
+    And I add an h5pactivity activity to course "Course 1" section "1"
     And I set the following fields to these values:
       | Name                       | H5P package added as private user file      |
       | Description                | Description                                 |

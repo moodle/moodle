@@ -1,4 +1,4 @@
-@mod @mod_assign @core_outcome @javascript
+@mod @mod_assign @core_outcome
 Feature: Outcome grading
   In order to give an outcome to my student
   As a teacher
@@ -31,10 +31,10 @@ Feature: Outcome grading
     And I click on "#add" "css_element"
     And I log out
 
+  @javascript
   Scenario: Giving an outcome to a student
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
+    And I add a assign activity to course "Course 1" section "1" and I fill the form with:
       | Assignment name                     | Test assignment name        |
       | ID number                           | Test assignment name        |
       | Description                         | Test assignment description |
@@ -57,6 +57,7 @@ Feature: Outcome grading
     Then I should see "Outcome Test: Excellent" in the "Student 0" "table_row"
     And I should not see "Outcome Test: Excellent" in the "Student 1" "table_row"
 
+  @javascript
   Scenario: Giving an outcome to a group submission
     Given the following "users" exist:
       | username | firstname | lastname | email |
@@ -72,8 +73,7 @@ Feature: Outcome grading
       | student0 | G1    |
       | student1 | G1    |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Assignment" to section "1" and I fill the form with:
+    And I add a assign activity to course "Course 1" section "1" and I fill the form with:
       | Assignment name                     | Test assignment name        |
       | Description                         | Test assignment description |
       | ID number                           | Test assignment name        |

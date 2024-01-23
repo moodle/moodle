@@ -18,11 +18,9 @@ Feature: Restrict activities availability
       | activity | course | name           |
       | chat     | C1     | Test chat name |
 
-  @javascript
   Scenario: Activities can be added with the default permissions
     Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    When I add a "Glossary" to section "1" and I fill the form with:
+    When I add a glossary activity to course "Course 1" section "1" and I fill the form with:
       | Name | Test glossary name |
       | Description | Test glossary description |
     Then I should see "Test glossary name"

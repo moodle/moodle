@@ -22,7 +22,7 @@ Feature: Content-Item support
   Scenario: Tool that supports Deep Linking should be able to configure a tool via the Select content button
     Given I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    When I add a "Teaching Tool 1" to section "1"
+    When I add a "Teaching Tool 1" to section "1" using the activity chooser
     Then "Select content" "button" should be visible
     And the "Select content" "button" should be enabled
 

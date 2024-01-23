@@ -19,7 +19,7 @@ Feature: Set up attempt grading options into H5P activity
       | moodle/h5p:updatelibraries | Allow      | editingteacher | System       |           |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "H5P" to section "1"
+    And I add an h5pactivity activity to course "Course 1" section "1"
 
   Scenario: Default values should have tracking and grading
     When the field "Type" matches value "Point"

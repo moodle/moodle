@@ -18,8 +18,7 @@ Feature: Add forum activities and discussions
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "1" and I fill the form with:
+    And I add a forum activity to course "Course 1" section "1" and I fill the form with:
       | Forum name | Test forum name |
       | Forum type | Standard forum for general use |
       | Description | Test forum description |
@@ -43,14 +42,12 @@ Feature: Add forum activities and discussions
     And I follow "Edit"
     And the field "Attachment" matches value "empty.txt"
 
-  @javascript
   Scenario: Test forum settings validation
     Given the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
     And I log in as "admin"
-    And I am on "Course 1" course homepage with editing mode on
-    And I add a "Forum" to section "0" and I fill the form with:
+    And I add a forum activity to course "Course 1" section "0" and I fill the form with:
       | Forum name | Test forum |
       | Forum type | single     |
       | Group mode | 1          |

@@ -255,10 +255,10 @@ Feature: Manage course tools
       | Course Tool 1 | Example description | https://example.com/tool | C1     |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Teaching Tool 1" to section "1"
+    And I add a "Teaching Tool 1" to section "1" using the activity chooser
     And I set the field "Activity name" to "Test tool activity 1"
     And I press "Save and return to course"
-    And I add a "Course Tool 1" to section "1"
+    And I add a "Course Tool 1" to section "1" using the activity chooser
     And I set the field "Activity name" to "Course tool activity 1"
     And I press "Save and return to course"
     And I navigate to "LTI External tools" in current page administration
@@ -266,7 +266,7 @@ Feature: Manage course tools
     And I click on "Show in activity chooser" "field" in the "Teaching Tool 2" "table_row"
     And I click on "Don't show in activity chooser" "field" in the "Course Tool 1" "table_row"
     And I am on "Course 1" course homepage
-    And I add a "Teaching Tool 2" to section "1"
+    And I add a "Teaching Tool 2" to section "1" using the activity chooser
     And I set the field "Activity name" to "Test tool activity 2"
     And I press "Save and return to course"
     When I backup "Course 1" course using this options:

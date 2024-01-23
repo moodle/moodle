@@ -9,11 +9,9 @@ Feature: hideIf functionality in forms
       | fullname | shortname |
       | Course 1 | C1        |
     And I log in as "admin"
-    And I am on "Course 1" course homepage
-    And I turn editing mode on
 
   Scenario: When 'eq' hideIf conditions are not met, the relevant elements are shown
-    When I add a "Assignment" to section "1"
+    When I add an assign activity to course "Course 1" section "1"
     And I expand all fieldsets
     And I set the field "Students submit in groups" to "Yes"
     Then I should see "Require group to make submission"
@@ -21,7 +19,7 @@ Feature: hideIf functionality in forms
     And I should see "Grouping for student groups"
 
   Scenario: When 'eq' hideIf conditions are met, the relevant elements are hidden
-    When I add a "Assignment" to section "1"
+    When I add a assign activity to course "Course 1" section "1"
     And I expand all fieldsets
     And I set the field "Students submit in groups" to "No"
     Then I should not see "Require group to make submission"

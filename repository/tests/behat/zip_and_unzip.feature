@@ -11,7 +11,7 @@ Feature: Zip folders and unzip compressed files
       | Course 1 | C1 | 0 |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
-    And I add a "Folder" to section "0"
+    And I add a folder activity to course "Course 1" section "0"
     And I set the following fields to these values:
       | Name | Folder resource |
       | Description | The description |
