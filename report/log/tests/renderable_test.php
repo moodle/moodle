@@ -380,4 +380,61 @@ class renderable_test extends \advanced_testcase {
         $groups = $renderable->get_group_list();
         $this->assertCount($expectedcount, $groups);
     }
+
+    /**
+     * Test table_log
+     *
+     * @param int $courseindex
+     * @param string $username
+     * @param array $expectedusers
+     * @param string|null $groupname
+     * @covers       \report_log_renderable::get_user_list
+     * @dataProvider get_user_visibility_list_provider
+     * @return void
+     */
+    public function test_get_table_logs(int $courseindex, string $username, array $expectedusers, ?string $groupname = null): void {
+        global $DB, $PAGE;
+        $this->preventResetByRollback(); // This is to ensure that we can actually trigger event and record them in the log store.
+        // Configure log store.
+        set_config('enabled_stores', 'logstore_standard', 'tool_log');
+        $manager = get_log_manager(true);
+        $DB->delete_records('logstore_standard_log');
+
+        foreach ($this->courses as $course) {
+            foreach ($this->users as $user) {
+                $eventdata = [
+                    'context' => context_course::instance($course->id),
+                    'userid' => $user->id,
+                ];
+                $event = \core\event\course_viewed::create($eventdata);
+                $event->trigger();
+            }
+        }
+        $stores = $manager->get_readers();
+        $store = $stores['logstore_standard'];
+        // Build the report.
+        $currentuser = $this->users[$username];
+        $this->setUser($currentuser->id);
+        $groupid = 0;
+        if ($groupname) {
+            $groupid = $this->groupsbycourse[$courseindex][$groupname]->id;
+        }
+        $PAGE->set_url('/report/log/index.php?id=' . $this->courses[$courseindex]->id);
+        $renderable = new \report_log_renderable("", (int) $this->courses[$courseindex]->id, 0, 0, '', $groupid);
+        $renderable->setup_table();
+        $table = $renderable->tablelog;
+        $store->flush();
+        $table->query_db(100);
+        $usernames = [];
+        foreach ($table->rawdata as $event) {
+            if (get_class($event) !== \core\event\course_viewed::class) {
+                continue;
+            }
+            $user = core_user::get_user($event->userid, '*', MUST_EXIST);
+            $usernames[] = $user->username;
+        }
+        sort($expectedusers);
+        sort($usernames);
+        $this->assertEquals($expectedusers, $usernames);
+    }
 }
