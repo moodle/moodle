@@ -24,7 +24,7 @@ Feature: Embed videos without the media filter
 
   @javascript
   Scenario: Add a video as a File resource. Make sure media filters work
-    When I add a "File" to section "1"
+    When I add a "File" to section "1" using the activity chooser
     And I set the following fields to these values:
       | Name | Video File |
       | Description | Example of a video file |
