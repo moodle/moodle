@@ -61,3 +61,10 @@ Feature: Authentication
     When I am on site homepage
     Then the page should meet "wcag143" accessibility standards
     And the page should meet accessibility standards with "wcag143" extra tests
+
+  Scenario: Alternate login URL can be bypassed
+    Given the following config values are set as admin:
+        | alternateloginurl | https://www.google.com/ |
+    And I am on site homepage
+    When I visit "/login/index.php?loginredirect=0"
+    Then I should see "Log in to Acceptance test site"
