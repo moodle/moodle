@@ -35,6 +35,7 @@ define([
     'core_calendar/selectors',
     'core/config',
     'core/url',
+    'core/str',
 ],
 function(
     $,
@@ -47,6 +48,7 @@ function(
     CalendarSelectors,
     Config,
     Url,
+    Str,
 ) {
 
     var SELECTORS = {
@@ -59,7 +61,9 @@ function(
         CALENDAR_MONTH_WRAPPER: ".calendarwrapper",
         TODAY: '.today',
         DAY_NUMBER_CIRCLE: '.day-number-circle',
-        DAY_NUMBER: '.day-number'
+        DAY_NUMBER: '.day-number',
+        SCREEN_READER_ANNOUNCEMENTS: '.calendar-announcements',
+        CURRENT_MONTH: '.calendar-controls .current'
     };
 
     /**
@@ -152,6 +156,12 @@ function(
         // When an event is successfully moved we should updated the UI.
         body.on(CalendarEvents.eventMoved, function() {
             CalendarViewManager.reloadCurrentMonth(root);
+        });
+        // Announce the newly loaded month to screen readers.
+        body.on(CalendarEvents.monthChanged, root, async function() {
+            const monthName = body.find(SELECTORS.CURRENT_MONTH).text();
+            const monthAnnoucement = await Str.get_string('newmonthannouncement', 'calendar', monthName);
+            body.find(SELECTORS.SCREEN_READER_ANNOUNCEMENTS).html(monthAnnoucement);
         });
 
         CalendarCrud.registerEditListeners(root, eventFormModalPromise);
