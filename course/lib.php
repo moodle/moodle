@@ -2485,6 +2485,11 @@ function update_course($data, $editoroptions = NULL) {
         $DB->delete_records('course_format_options',
                 array('courseid' => $course->id, 'format' => $oldcourse->format));
     }
+
+    // Delete theme usage cache if the theme has been changed.
+    if (isset($data->theme) && ($data->theme != $oldcourse->theme)) {
+        theme_delete_used_in_context_cache($data->theme, $oldcourse->theme);
+    }
 }
 
 /**

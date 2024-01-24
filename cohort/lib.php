@@ -101,6 +101,15 @@ function cohort_update_cohort($cohort) {
     if (empty($CFG->allowcohortthemes) && isset($cohort->theme)) {
         unset($cohort->theme);
     }
+
+    // Delete theme usage cache if the theme has been changed.
+    if (isset($cohort->theme)) {
+        $oldcohort = $DB->get_record('cohort', ['id' => $cohort->id]);
+        if ($cohort->theme != $oldcohort->theme) {
+            theme_delete_used_in_context_cache($cohort->theme, $oldcohort->theme);
+        }
+    }
+
     $cohort->timemodified = time();
 
     // Update custom fields if there are any of them in the form.

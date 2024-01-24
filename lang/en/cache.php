@@ -96,6 +96,7 @@ $string['cachedef_grade_letters'] = 'Grade letter queries';
 $string['cachedef_string'] = 'Language string cache';
 $string['cachedef_tags'] = 'Tags collections and areas';
 $string['cachedef_temp_tables'] = 'Temporary tables cache';
+$string['cachedef_theme_usedincontext'] = 'A theme has been used in context to override the default theme';
 $string['cachedef_userselections'] = 'Data used to persist user selections throughout Moodle';
 $string['cachedef_user_favourite_course_content_items'] = 'User\'s starred items';
 $string['cachedef_user_group_groupings'] = 'User\'s groupings and groups per course';

@@ -27,7 +27,8 @@
         "current": true,
         "actionurl": "http://moodlesite/admin/themeselector.php",
         "sesskey": "123XYZ",
-        "settingsurl": "http://moodlesite/admin/settings.php?section=themesettingboost"
+        "settingsurl": "http://moodlesite/admin/settings.php?section=themesettingboost",
+        "reporturl": "http://moodlesite/report/themeusage/index.php?themechoice=boost"
     }
 }}
 <div class="card dashboard-card" role="listitem" id="theme-card-{{choose}}" aria-labelledby="theme-name-{{choose}} {{#current}}current-theme-{{choose}}{{/current}}">
@@ -53,6 +54,16 @@
                     <i class="icon fa fa-info-circle m-0" aria-hidden="true"></i>
                     <span class="sr-only">{{#str}}previewthemename, moodle, {{name}}{{/str}}</span>
                 </button>
+                {{#reporturl}}
+                    <a
+                        href="{{reporturl}}"
+                        id="theme-usage-report-{{choose}}"
+                        class="btn btn-link p-0 ml-2"
+                        title="{{#str}}themeusagereportname, admin, {{name}}{{/str}}">
+                        <i class="icon fa fa-area-chart m-0" aria-hidden="true"></i>
+                        <span class="sr-only">{{#str}}themeusagereportname, admin, {{name}}{{/str}}</span>
+                    </a>
+                {{/reporturl}}
                 {{#settingsurl}}
                     <a
                         href="{{settingsurl}}"

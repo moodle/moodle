@@ -301,6 +301,33 @@ function theme_set_designer_mod($state) {
 }
 
 /**
+ * Purge theme used in context caches.
+ */
+function theme_purge_used_in_context_caches() {
+    \cache::make('core', 'theme_usedincontext')->purge();
+}
+
+/**
+ * Delete theme used in context cache for a particular theme.
+ *
+ * When switching themes, both old and new theme caches are deleted.
+ * This gives the query the opportunity to recache accurate results for both themes.
+ *
+ * @param string $newtheme The incoming new theme.
+ * @param string $oldtheme The theme that was already set.
+ */
+function theme_delete_used_in_context_cache(string $newtheme, string $oldtheme): void {
+    if ((strlen($newtheme) > 0) && (strlen($oldtheme) > 0)) {
+        // Theme -> theme.
+        \cache::make('core', 'theme_usedincontext')->delete($oldtheme);
+        \cache::make('core', 'theme_usedincontext')->delete($newtheme);
+    } else {
+        // No theme -> theme, or theme -> no theme.
+        \cache::make('core', 'theme_usedincontext')->delete($newtheme . $oldtheme);
+    }
+}
+
+/**
  * This class represents the configuration variables of a Moodle theme.
  *
  * All the variables with access: public below (with a few exceptions that are marked)

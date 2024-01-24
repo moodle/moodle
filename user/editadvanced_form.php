@@ -241,6 +241,14 @@ class user_editadvanced_form extends moodleform {
             }
         }
 
+        // User changing their preferred theme will delete the cache for this theme.
+        if ($mform->elementExists('theme') && $mform->isSubmitted()) {
+            $theme = $mform->getSubmitValue('theme');
+            if (!empty($user) && ($theme != $user->theme)) {
+                theme_delete_used_in_context_cache($theme, $user->theme);
+            }
+        }
+
         // Next the customisable profile fields.
         profile_definition_after_data($mform, $userid);
     }
