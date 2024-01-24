@@ -89,3 +89,24 @@ Feature: Verify activity group mode interface.
     And I open "Activity sample" actions menu
     And I choose "Group mode > Separate groups" in the open action menu
     And "Separate groups" "icon" should exist in the "Activity sample" "core_courseformat > Activity groupmode"
+
+  @javascript
+  Scenario: Teacher cannot see Group mode submenu for an activity when group mode has been forced
+    Given the following "course" exists:
+      | fullname       | Course 2 |
+      | shortname      | C2       |
+      | category       | 0        |
+      | numsections    | 3        |
+      | groupmode      | 1        |
+      | groupmodeforce | 1        |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C2     | editingteacher |
+    And the following "activities" exist:
+      | activity | name            | intro                  | course | idnumber | section |
+      | forum    | Activity sample | Test forum description | C2     | sample   | 1       |
+    And I am on the "C2" "Course" page logged in as "teacher1"
+    And I turn editing mode on
+    When I open "Activity sample" actions menu
+    Then "Group mode" "link" should not exist in the "Activity sample" "activity"
+    And "Separate groups" "button" should not exist in the "Activity sample" "core_courseformat > Activity groupmode"
