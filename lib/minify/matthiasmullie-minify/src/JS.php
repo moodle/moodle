@@ -198,28 +198,7 @@ class JS extends Minify
      */
     protected function stripComments()
     {
-        // PHP only supports $this inside anonymous functions since 5.4
-        $minifier = $this;
-        $callback = function ($match) use ($minifier) {
-            if (
-                substr($match[2], 0, 1) === '!' ||
-                strpos($match[2], '@license') !== false ||
-                strpos($match[2], '@preserve') !== false
-            ) {
-                // preserve multi-line comments that start with /*!
-                // or contain @license or @preserve annotations
-                $count = count($minifier->extracted);
-                $placeholder = '/*' . $count . '*/';
-                $minifier->extracted[$placeholder] = $match[0];
-
-                return $match[1] . $placeholder . $match[3];
-            }
-
-            return $match[1] . $match[3];
-        };
-
-        // multi-line comments
-        $this->registerPattern('/(\n?)\/\*(.*?)\*\/(\n?)/s', $callback);
+        $this->stripMultilineComments();
 
         // single-line comments
         $this->registerPattern('/\/\/.*$/m', '');
