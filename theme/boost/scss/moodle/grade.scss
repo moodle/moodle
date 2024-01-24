@@ -543,12 +543,15 @@
         }
 
         tr.lastrow {
-            position: sticky;
-            // Hack used by the observer to help detecting when the sticky 'Overall average' row is pinned. */
-            bottom: -1px;
 
-            &.pinned {
-                z-index: 4;
+            &:not(.userrow) {
+                position: sticky;
+                // Hack used by the observer to help detecting when the sticky last row is pinned. */
+                bottom: -1px;
+
+                &.pinned {
+                    z-index: 4;
+                }
             }
 
             td,

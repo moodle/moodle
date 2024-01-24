@@ -29,7 +29,7 @@ const SELECTORS = {
     TABLEHEADER: 'th.header',
     BEHAT: 'body.behat-site',
     USERDROPDOWN: '.userrow th .dropdown',
-    AVERAGEROWHEADER: '.lastrow th',
+    LASTROW: '.lastrow',
 };
 
 /**
@@ -43,14 +43,19 @@ export const init = () => {
         // The closest heading element has sticky positioning which affects the stacking context in this case.
         e.target.closest(SELECTORS.TABLEHEADER).classList.toggle('actions-menu-active');
     });
-    // Register an observer that will bump up the z-index value of the average overall row when it's pinned to prevent
-    // the row being cut-off by the user column cells or other components within the report table that have higher
-    // z-index values.
-    const observer = new IntersectionObserver(
-        ([e]) => e.target.closest('tr').classList.toggle('pinned', e.intersectionRatio < 1),
-        {threshold: [1]}
-    );
-    observer.observe(document.querySelector(SELECTORS.AVERAGEROWHEADER));
+
+    const lastRow = document.querySelector(SELECTORS.LASTROW);
+    // Ensure that the last row is not a user row before defining the intersection observer.
+    if (!lastRow.classList.contains('userrow')) {
+        // Register an observer that will bump up the z-index value of the last row when it's pinned to prevent the row
+        // being cut-off by the user column cells or other components within the report table that have higher z-index
+        // values.
+        const observer = new IntersectionObserver(
+            ([e]) => e.target.classList.toggle('pinned', e.intersectionRatio < 1),
+            {threshold: [1]}
+        );
+        observer.observe(lastRow);
+    }
 
     if (!document.querySelector(SELECTORS.BEHAT)) {
         const grader = document.querySelector(SELECTORS.GRADEPARENT);
