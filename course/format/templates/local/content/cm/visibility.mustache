@@ -67,7 +67,7 @@
     <div class="activity-badges my-1" data-region="visibility">
     {{#dropwdown}}
         {{< core/local/dropdown/status}}
-            {{$ buttonclasses }} badge badge-pill badge-secondary dropdown-toggle border-0 {{/ buttonclasses }}
+            {{$ buttonclasses }} badge rounded-pill bg-secondary text-dark dropdown-toggle border-0 {{/ buttonclasses }}
         {{/ core/local/dropdown/status}}
     {{/dropwdown}}
     </div>
@@ -75,12 +75,12 @@
 {{^isInteractive}}
     {{#modhiddenfromstudents}}
         <div class="activity-badges my-1 d-flex align-self-start align-items-center" data-region="visibility">
-            <span class="badge badge-pill badge-secondary">{{#pix}}i/show, core{{/pix}}{{#str}}hiddenfromstudents{{/str}}</span>
+            <span class="badge rounded-pill bg-secondary text-dark">{{#pix}}i/show, core{{/pix}}{{#str}}hiddenfromstudents{{/str}}</span>
         </div>
     {{/modhiddenfromstudents}}
     {{#modstealth}}
         <div class="activity-badges my-1 d-flex align-self-start align-items-center" data-region="visibility">
-            <span class="badge badge-pill badge-secondary">{{#pix}}t/stealth, core{{/pix}}{{#str}}hiddenoncoursepage{{/str}}</span>
+            <span class="badge rounded-pill bg-secondary text-dark">{{#pix}}t/stealth, core{{/pix}}{{#str}}hiddenoncoursepage{{/str}}</span>
         </div>
     {{/modstealth}}
 {{/isInteractive}}

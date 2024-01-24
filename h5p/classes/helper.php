@@ -302,10 +302,10 @@ class helper {
         string $statusaction = ''): array {
 
         $statusclasses = array(
-            TEXTFILTER_DISABLED => 'badge badge-danger',
-            TEXTFILTER_OFF => 'badge badge-warning',
-            0 => 'badge badge-danger',
-            TEXTFILTER_ON => 'badge badge-success',
+            TEXTFILTER_DISABLED => 'badge bg-danger text-white',
+            TEXTFILTER_OFF => 'badge bg-warning text-dark',
+            0 => 'badge bg-danger text-white',
+            TEXTFILTER_ON => 'badge bg-success text-white',
         );
 
         $statuschoices = array(

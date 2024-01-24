@@ -152,9 +152,9 @@ class page_managedocs_list implements renderable, templatable {
         $version->statustext = get_string('status' . $status, 'tool_policy');
 
         if ($status == policy_version::STATUS_ACTIVE) {
-            $version->statustext = html_writer::span($version->statustext, 'badge badge-success');
+            $version->statustext = html_writer::span($version->statustext, 'badge bg-success text-white');
         } else if ($status == policy_version::STATUS_DRAFT) {
-            $version->statustext = html_writer::span($version->statustext, 'badge badge-warning');
+            $version->statustext = html_writer::span($version->statustext, 'badge bg-warning text-dark');
         } else {
             $version->statustext = html_writer::span($version->statustext, 'label');
         }

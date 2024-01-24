@@ -309,7 +309,7 @@
                     {{/readonly}}
                     <div class="ml-auto d-flex flex-column">
                         {{#haswordcount}}
-                            <span class="ml-auto badge badge-light">
+                            <span class="ml-auto badge bg-light text-dark">
                                 {{#str}} numwords, core, {{wordcount}} {{/str}}
                             </span>
                         {{/haswordcount}}
@@ -346,7 +346,7 @@
                     {{/readonly}}
                 {{/isdeleted}}
                 {{#discussionlocked}}
-                    <div><span class="badge badge-danger mt-2">{{#str}} locked, mod_forum {{/str}}</span></div>
+                    <div><span class="badge bg-danger text-white mt-2">{{#str}} locked, mod_forum {{/str}}</span></div>
                 {{/discussionlocked}}
             {{/footer}}
         </div>

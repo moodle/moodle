@@ -1815,7 +1815,7 @@ function print_object($item, array $expandclasses = ['/./'], bool $textonly = fa
                 $out .= '[' . get_class($item) . ']';
             } else {
                 // Objects display the class name as a badge. Content goes within a <dl>.
-                $badge = html_writer::span(get_class($item), 'badge badge-primary');
+                $badge = html_writer::span(get_class($item), 'badge bg-primary text-white');
                 $out .= html_writer::tag('h5', $badge);
                 $out .= html_writer::start_tag('dl', ['class' => 'row']);
                 $dl = true;
@@ -1832,7 +1832,7 @@ function print_object($item, array $expandclasses = ['/./'], bool $textonly = fa
                 $out .= $arrayinfo;
             } else {
                 // Arrays show the same as objects but the badge is grey.
-                $badge = html_writer::span($arrayinfo, 'badge badge-secondary');
+                $badge = html_writer::span($arrayinfo, 'badge bg-secondary text-dark');
                 // Decide if there will be a <dl> tag - only if there is some content.
                 $dl = count($item) > 0;
                 $attributes = [];

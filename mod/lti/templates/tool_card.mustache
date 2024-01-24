@@ -100,10 +100,10 @@
         <div class="tool-card-header">
             <div class="tool-card-subheader">
                 <div class="badge
-                            {{#state.pending}}badge-info{{/state.pending}}
-                            {{#state.configured}}badge-success{{/state.configured}}
-                            {{#state.rejected}}badge-danger{{/state.rejected}}
-                            {{#state.unknown}}badge-warning{{/state.unknown}}">
+                            {{#state.pending}}bg-info text-white{{/state.pending}}
+                            {{#state.configured}}bg-success text-white{{/state.configured}}
+                            {{#state.rejected}}bg-danger text-white{{/state.rejected}}
+                            {{#state.unknown}}bg-warning text-dark{{/state.unknown}}">
                     {{state.text}}
                 </div>
                 <div class="tool-card-actions float-sm-right">

@@ -41,23 +41,24 @@ class renderer extends \plugin_renderer_base {
 
         switch ($state) {
             case factor::STATE_PASS:
-                return html_writer::tag('span', get_string('state:pass', 'tool_mfa'), ['class' => 'badge badge-success']);
+                return html_writer::tag('span', get_string('state:pass', 'tool_mfa'), ['class' => 'badge bg-success text-white']);
 
             case factor::STATE_FAIL:
-                return html_writer::tag('span', get_string('state:fail', 'tool_mfa'), ['class' => 'badge badge-danger']);
+                return html_writer::tag('span', get_string('state:fail', 'tool_mfa'), ['class' => 'badge bg-danger text-white']);
 
             case factor::STATE_NEUTRAL:
-                return html_writer::tag('span', get_string('state:neutral', 'tool_mfa'), ['class' => 'badge badge-warning']);
+                return html_writer::tag('span', get_string('state:neutral', 'tool_mfa'),
+                    ['class' => 'badge bg-warning text-dark']);
 
             case factor::STATE_UNKNOWN:
                 return html_writer::tag('span', get_string('state:unknown', 'tool_mfa'),
-                        ['class' => 'badge badge-secondary']);
+                    ['class' => 'badge bg-secondary text-dark']);
 
             case factor::STATE_LOCKED:
-                return html_writer::tag('span', get_string('state:locked', 'tool_mfa'), ['class' => 'badge badge-error']);
+                return html_writer::tag('span', get_string('state:locked', 'tool_mfa'), ['class' => 'badge bg-danger text-white']);
 
             default:
-                return html_writer::tag('span', get_string('pending', 'tool_mfa'), ['class' => 'badge badge-secondary']);
+                return html_writer::tag('span', get_string('pending', 'tool_mfa'), ['class' => 'badge bg-secondary text-dark']);
         }
     }
 

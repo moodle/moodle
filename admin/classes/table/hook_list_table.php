@@ -273,7 +273,7 @@ class hook_list_table extends flexible_table {
             if (is_array($tag)) {
                 return $this->get_tag(...$tag);
             }
-            return $this->get_tag($tag, 'badge badge-info');
+            return $this->get_tag($tag, 'badge bg-info text-white');
         }, $tags);
 
         return implode("\n", $taglist);

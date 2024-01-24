@@ -30,24 +30,24 @@
     }
 }}
 {{#editing}}
-    <span class="badge badge-pill badge-primary order-1 {{^iscurrent}}d-none{{/iscurrent}}" data-type="iscurrent">
+    <span class="badge rounded-pill bg-primary text-white order-1 {{^iscurrent}}d-none{{/iscurrent}}" data-type="iscurrent">
         {{ highlightedlabel }}
     </span>
-    <span class="badge badge-pill badge-warning order-2 {{^hiddenfromstudents}}d-none{{/hiddenfromstudents}}" data-type="hiddenfromstudents">
+    <span class="badge rounded-pill bg-warning text-dark order-2 {{^hiddenfromstudents}}d-none{{/hiddenfromstudents}}" data-type="hiddenfromstudents">
         {{#str}}hiddenfromstudents{{/str}}
     </span>
-    <span class="badge badge-pill badge-secondary order-3 {{^notavailable}}d-none{{/notavailable}}">
+    <span class="badge rounded-pill bg-secondary text-dark order-3 {{^notavailable}}d-none{{/notavailable}}">
         {{#str}}notavailable{{/str}}
     </span>
 {{/editing}}
 {{^editing}}
     {{#iscurrent}}
-        <span class="badge badge-pill badge-primary order-1">{{ highlightedlabel }}</span>
+        <span class="badge rounded-pill bg-primary text-white order-1">{{ highlightedlabel }}</span>
     {{/iscurrent}}
     {{#hiddenfromstudents}}
-        <span class="badge badge-pill badge-warning order-2">{{#str}}hiddenfromstudents{{/str}}</span>
+        <span class="badge rounded-pill bg-warning text-dark order-2">{{#str}}hiddenfromstudents{{/str}}</span>
     {{/hiddenfromstudents}}
     {{#notavailable}}
-        <span class="badge badge-pill badge-secondary order-3">{{#str}}notavailable{{/str}}</span>
+        <span class="badge rounded-pill bg-secondary text-dark order-3">{{#str}}notavailable{{/str}}</span>
     {{/notavailable}}
 {{/editing}}

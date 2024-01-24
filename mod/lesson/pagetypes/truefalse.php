@@ -260,7 +260,7 @@ class lesson_page_type_truefalse extends lesson_page {
         foreach ($answers as $answer) {
             $answer = parent::rewrite_answers_urls($answer);
             $answertext = format_text($answer->answer, $answer->answerformat, $formattextdefoptions);
-            $correctresponsetext = html_writer::div(get_string('correctresponse', 'lesson'), 'badge badge-success');
+            $correctresponsetext = html_writer::div(get_string('correctresponse', 'lesson'), 'badge bg-success text-white');
             if ($this->properties->qoption) {
                 if ($useranswer == null) {
                     $userresponse = array();
