@@ -27668,7 +27668,15 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .dashboard-card-deck 
   height: 0;
 }
 .path-course-view .block.block_calendar_month .maincalendar .calendarwrapper .arrow_text {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .path-course-view .block.block_calendar_month .footer .bottom .footer-link {
   display: block;
