@@ -96,6 +96,12 @@ class data extends persistent {
                         'default' => FORMAT_MOODLE,
                         'optional' => true
                 ],
+                'valuetrust' => [
+                    'type' => PARAM_BOOL,
+                    'null' => NULL_NOT_ALLOWED,
+                    'default' => false,
+                    'optional' => true,
+                ],
                 'contextid'      => [
                         'type'     => PARAM_INT,
                         'optional' => false,

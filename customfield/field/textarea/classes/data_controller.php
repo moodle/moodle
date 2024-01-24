@@ -93,17 +93,21 @@ class data_controller extends \core_customfield\data_controller {
         if (!$this->get('id')) {
             $this->data->set('value', '');
             $this->data->set('valueformat', FORMAT_MOODLE);
+            $this->data->set('valuetrust', false);
             $this->save();
         }
 
         if (array_key_exists('text', $fromform)) {
             $textoptions = $this->value_editor_options();
+            $context = $textoptions['context'];
+
             $data = (object) ['field_editor' => $fromform];
-            $data = file_postupdate_standard_editor($data, 'field', $textoptions, $textoptions['context'],
+            $data = file_postupdate_standard_editor($data, 'field', $textoptions, $context,
                 'customfield_textarea', 'value', $this->get('id'));
+
             $this->data->set('value', $data->field);
             $this->data->set('valueformat', $data->fieldformat);
-
+            $this->data->set('valuetrust', trusttext_trusted($context));
             $this->save();
         }
     }
@@ -118,18 +122,19 @@ class data_controller extends \core_customfield\data_controller {
      */
     public function instance_form_before_set_data(\stdClass $instance) {
         $textoptions = $this->value_editor_options();
+        $context = $textoptions['context'];
         if ($this->get('id')) {
             $text = $this->get('value');
             $format = $this->get('valueformat');
-            $temp = (object)['field' => $text, 'fieldformat' => $format];
-            file_prepare_standard_editor($temp, 'field', $textoptions, $textoptions['context'], 'customfield_textarea',
+            $temp = (object) ['field' => $text, 'fieldformat' => $format, 'fieldtrust' => trusttext_trusted($context)];
+            file_prepare_standard_editor($temp, 'field', $textoptions, $context, 'customfield_textarea',
                 'value', $this->get('id'));
             $value = $temp->field_editor;
         } else {
             $text = $this->get_field()->get_configdata_property('defaultvalue');
             $format = $this->get_field()->get_configdata_property('defaultvalueformat');
-            $temp = (object)['field' => $text, 'fieldformat' => $format];
-            file_prepare_standard_editor($temp, 'field', $textoptions, $textoptions['context'], 'customfield_textarea',
+            $temp = (object) ['field' => $text, 'fieldformat' => $format, 'fieldtrust' => trusttext_trusted($context)];
+            file_prepare_standard_editor($temp, 'field', $textoptions, $context, 'customfield_textarea',
                 'defaultvalue', $this->get_field()->get('id'));
             $value = $temp->field_editor;
         }
@@ -194,14 +199,20 @@ class data_controller extends \core_customfield\data_controller {
             $context = $this->get_context();
             $processed = file_rewrite_pluginfile_urls($value, 'pluginfile.php',
                 $context->id, 'customfield_textarea', 'value', $dataid);
-            $value = format_text($processed, $this->get('valueformat'), ['context' => $context]);
+            $value = format_text($processed, $this->get('valueformat'), [
+                'context' => $context,
+                'trusted' => $this->get('valuetrust'),
+            ]);
         } else {
-            $fieldid = $this->get_field()->get('id');
-            $configcontext = $this->get_field()->get_handler()->get_configuration_context();
+            $field = $this->get_field();
+
+            $context = $field->get_handler()->get_configuration_context();
             $processed = file_rewrite_pluginfile_urls($value, 'pluginfile.php',
-                $configcontext->id, 'customfield_textarea', 'defaultvalue', $fieldid);
-            $valueformat = $this->get_field()->get_configdata_property('defaultvalueformat');
-            $value = format_text($processed, $valueformat, ['context' => $configcontext]);
+                $context->id, 'customfield_textarea', 'defaultvalue', $field->get('id'));
+            $value = format_text($processed, $field->get_configdata_property('defaultvalueformat'), [
+                'context' => $context,
+                'trusted' => true,
+            ]);
         }
 
         return $value;

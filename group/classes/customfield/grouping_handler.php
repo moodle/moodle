@@ -148,6 +148,7 @@ class grouping_handler extends handler {
                     'type' => $data->get_field()->get('type'),
                     'value' => $data->get_value(),
                     'valueformat' => $data->get('valueformat'),
+                    'valuetrust' => $data->get('valuetrust'),
                     'groupingid' => $data->get('instanceid'),
                 ];
             }
@@ -176,6 +177,7 @@ class grouping_handler extends handler {
                     $d->set($d->datafield(), $data['value']);
                     $d->set('value', $data['value']);
                     $d->set('valueformat', $data['valueformat']);
+                    $d->set('valuetrust', !empty($data['valuetrust']));
                     $d->set('contextid', $context->id);
                     $d->save();
                 }

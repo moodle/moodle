@@ -167,7 +167,7 @@ class custom_fields {
                 $selectfields = "{$customdatatablealias}.id, {$customdatatablealias}.contextid";
                 if ($datafield === 'value') {
                     // We will take the format into account when displaying the individual values.
-                    $selectfields .= ", {$customdatatablealias}.valueformat";
+                    $selectfields .= ", {$customdatatablealias}.valueformat, {$customdatatablealias}.valuetrust";
                 }
 
                 $columns[] = (new column(

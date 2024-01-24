@@ -72,6 +72,7 @@ class provider implements
                 'charvalue' => 'privacy:metadata:customfield_data:charvalue',
                 'value' => 'privacy:metadata:customfield_data:value',
                 'valueformat' => 'privacy:metadata:customfield_data:valueformat',
+                'valuetrust' => 'privacy:metadata:customfield_data:valuetrust',
                 'timecreated' => 'privacy:metadata:customfield_data:timecreated',
                 'timemodified' => 'privacy:metadata:customfield_data:timemodified',
                 'contextid' => 'privacy:metadata:customfield_data:contextid',
@@ -485,7 +486,10 @@ class provider implements
         $record->timecreated = \core_privacy\local\request\transform::datetime($record->timecreated);
         $record->timemodified = \core_privacy\local\request\transform::datetime($record->timemodified);
         unset($record->contextid);
-        $record->value = format_text($record->value, $record->valueformat, ['context' => $context]);
+        $record->value = format_text($record->value, $record->valueformat, [
+            'context' => $context,
+            'trusted' => $record->valuetrust,
+        ]);
         writer::with_context($context)->export_data($subcontext, $record);
     }
 }

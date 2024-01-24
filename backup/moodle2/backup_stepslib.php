@@ -477,7 +477,7 @@ class backup_course_structure_step extends backup_structure_step {
 
         $customfields = new backup_nested_element('customfields');
         $customfield = new backup_nested_element('customfield', array('id'), array(
-          'shortname', 'type', 'value', 'valueformat'
+            'shortname', 'type', 'value', 'valueformat', 'valuetrust',
         ));
 
         $courseformatoptions = new backup_nested_element('courseformatoptions');
@@ -1361,7 +1361,7 @@ class backup_groups_structure_step extends backup_structure_step {
 
         $groupcustomfields = new backup_nested_element('groupcustomfields');
         $groupcustomfield = new backup_nested_element('groupcustomfield', ['id'], [
-            'shortname', 'type', 'value', 'valueformat', 'groupid']);
+            'shortname', 'type', 'value', 'valueformat', 'valuetrust', 'groupid']);
 
         $members = new backup_nested_element('group_members');
 
@@ -1376,7 +1376,7 @@ class backup_groups_structure_step extends backup_structure_step {
 
         $groupingcustomfields = new backup_nested_element('groupingcustomfields');
         $groupingcustomfield = new backup_nested_element('groupingcustomfield', ['id'], [
-            'shortname', 'type', 'value', 'valueformat', 'groupingid']);
+            'shortname', 'type', 'value', 'valueformat', 'valuetrust', 'groupingid']);
 
         $groupinggroups = new backup_nested_element('grouping_groups');
 

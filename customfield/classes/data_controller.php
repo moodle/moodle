@@ -354,7 +354,10 @@ abstract class data_controller {
         } else if ($this->datafield() === 'decvalue') {
             return (float)$value;
         } else if ($this->datafield() === 'value') {
-            return format_text($value, $this->get('valueformat'), ['context' => $this->get_context()]);
+            return format_text($value, $this->get('valueformat'), [
+                'context' => $this->get_context(),
+                'trusted' => $this->get('valuetrust'),
+            ]);
         } else {
             return format_string($value, true, ['context' => $this->get_context()]);
         }

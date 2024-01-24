@@ -110,10 +110,17 @@ class field_controller extends \core_customfield\field_controller {
     public function value_editor_options(\context $context = null) {
         global $CFG;
         require_once($CFG->libdir.'/formslib.php');
+
         if (!$context) {
             $context = $this->get_handler()->get_configuration_context();
         }
-        return ['maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes' => $CFG->maxbytes, 'context' => $context];
+
+        return [
+            'context' => $context,
+            'trusttext' => true,
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'maxbytes' => $CFG->maxbytes,
+        ];
     }
 
     /**
