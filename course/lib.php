@@ -1810,7 +1810,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
     }
 
     // Groupmode.
-    if ($courseformat->show_groupmode($mod) && $usecomponents) {
+    if ($courseformat->show_groupmode($mod) && $usecomponents  && !$mod->coursegroupmodeforce) {
         $groupmodeclass = $courseformat->get_output_classname('content\\cm\\groupmode');
         /** @var core_courseformat\output\local\content\cm\groupmode */
         $groupmode = new $groupmodeclass($courseformat, $sectioninfo, $mod);

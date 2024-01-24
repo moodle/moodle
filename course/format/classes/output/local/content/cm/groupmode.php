@@ -74,7 +74,8 @@ class groupmode implements named_templatable, renderable {
         if (!$this->format->show_groupmode($this->mod)) {
             return null;
         }
-        if ($this->format->show_editor() && $this->format->supports_components()) {
+        $usecomponents = $this->format->supports_components();
+        if ($this->format->show_editor() && $usecomponents && !$this->mod->coursegroupmodeforce) {
             return $this->build_editor_data($output);
         }
         // If the group mode is not editable, the no groups badge is not displayed.
