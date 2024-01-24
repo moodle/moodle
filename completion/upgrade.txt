@@ -7,6 +7,9 @@ information provided here is intended especially for developers.
 * The following previously deprecated methods have been removed and can no longer be used:
   - `core_course_bulk_activity_completion_renderer::navigation`
   - `core_completion\manager::get_available_completion_tabs`
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `completion_info::display_help_icon`
+  - `completion_info::print_help_icon`
 
 === 4.3 ===
 * A trait class, core_completion/form/form_trait has been added to reuse code for adding and validation completion settings to any

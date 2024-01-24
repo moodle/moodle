@@ -321,35 +321,17 @@ class completion_info {
     }
 
     /**
-     * Displays the 'Your progress' help icon, if completion tracking is enabled.
-     * Just prints the result of display_help_icon().
-     *
      * @deprecated since Moodle 2.0 - Use display_help_icon instead.
      */
     public function print_help_icon() {
-        debugging('The function print_help_icon() is deprecated, please do not use it anymore.',
-            DEBUG_DEVELOPER);
-        print $this->display_help_icon();
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
-     * Returns the 'Your progress' help icon, if completion tracking is enabled.
-     *
-     * @return string HTML code for help icon, or blank if not needed
      * @deprecated since Moodle 4.0 - The 'Your progress' info isn't displayed any more.
      */
     public function display_help_icon() {
-        global $PAGE, $OUTPUT, $USER;
-        debugging('The function display_help_icon() is deprecated, please do not use it anymore.',
-        DEBUG_DEVELOPER);
-        $result = '';
-        if ($this->is_enabled() && !$PAGE->user_is_editing() && $this->is_tracked_user($USER->id) && isloggedin() &&
-                !isguestuser()) {
-            $result .= html_writer::tag('div', get_string('yourprogress','completion') .
-                    $OUTPUT->help_icon('completionicons', 'completion'), array('id' => 'completionprogressid',
-                    'class' => 'completionprogress'));
-        }
-        return $result;
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
