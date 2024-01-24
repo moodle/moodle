@@ -257,4 +257,100 @@ class message_test extends \advanced_testcase {
         $this->assertSame('[Prefix Text] '. get_string('unreadnewmessage', 'message', fullname($user1)), $email->subject);
         $sink->clear();
     }
+
+    /**
+     * Test get_messages_by_component method.
+     *
+     * @covers \phpunit_message_sink::get_messages_by_component
+     * @covers \phpunit_message_sink::get_messages_by_component_and_type
+     */
+    public function test_get_messages_by_component(): void {
+        $this->resetAfterTest();
+
+        // Create users.
+        $admin = get_admin();
+        $user = $this->getDataGenerator()->create_user();
+        // Create course.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Redirect messages.
+        $sink = $this->redirectMessages();
+
+        // Create the first message.
+        // This message will belong to mod_forum component.
+        $message1 = new \core\message\message();
+        $message1->courseid = $course->id;
+        $message1->component = 'mod_forum';
+        $message1->name = 'posts';
+        $message1->userfrom = $admin;
+        $message1->userto = $user;
+        $message1->subject = 'Test message 1';
+        $message1->fullmessage = 'Message body 1';
+        $message1->fullmessageformat = FORMAT_MARKDOWN;
+        $message1->fullmessagehtml = '<p>Message body 1</p>';
+        $message1->smallmessage = 'Small message 1';
+        $message1->notification = 1;
+        message_send($message1);
+
+        // Create the second message.
+        // This message will belong to core component.
+        $message2 = new \core\message\message();
+        $message2->courseid = $course->id;
+        $message2->component = 'moodle';
+        $message2->name = 'instantmessage';
+        $message2->userfrom = $admin;
+        $message2->userto = $user;
+        $message2->subject = 'Test message 2';
+        $message2->fullmessage = 'Message body 2';
+        $message2->fullmessageformat = FORMAT_MARKDOWN;
+        $message2->fullmessagehtml = '<p>Message body 2</p>';
+        $message2->smallmessage = 'Small message 2';
+        $message2->notification = 1;
+        message_send($message2);
+
+        // Create the third message.
+        // This message will belong to core component but different name.
+        $message3 = new \core\message\message();
+        $message3->courseid = SITEID;
+        $message3->component = 'moodle';
+        $message3->name = 'messagecontactrequests';
+        $message3->userfrom = $admin;
+        $message3->userto = $user;
+        $message3->subject = 'Test message 3';
+        $message3->fullmessage = 'Message body 3';
+        $message3->fullmessageformat = FORMAT_MARKDOWN;
+        $message3->fullmessagehtml = '<p>Message body 3</p>';
+        $message3->smallmessage = 'Small message 3';
+        $message3->notification = 1;
+        message_send($message3);
+
+        // Sink should contain three messages.
+        $this->assertCount(3, $sink->get_messages());
+        // Sink should contain one message for mod_forum component.
+        $messages = $sink->get_messages_by_component('mod_forum');
+        $this->assertCount(1, $messages);
+        $message = reset($messages);
+        $this->assertSame($message1->component, $message->component);
+        $this->assertSame($message1->name, $message->eventtype);
+        $this->assertSame($message1->subject, $message->subject);
+        // Sink should contain two messages for core component.
+        $messages = $sink->get_messages_by_component('core');
+        $this->assertCount(2, $messages);
+        foreach ($messages as $message) {
+            $expectedmessage = $message->eventtype == 'messagecontactrequests' ? $message3 : $message2;
+            $this->assertSame($expectedmessage->component, $message->component);
+            $this->assertSame($expectedmessage->name, $message->eventtype);
+            $this->assertSame($expectedmessage->subject, $message->subject);
+        }
+        // Sink should contain one message for core component with type is messagecontactrequests.
+        $messages = $sink->get_messages_by_component_and_type('core', 'messagecontactrequests');
+        $this->assertCount(1, $messages);
+        $message = reset($messages);
+        $this->assertSame($message3->component, $message->component);
+        $this->assertSame($message3->name, $message->eventtype);
+        $this->assertSame($message3->subject, $message->subject);
+
+        // Clear sink.
+        $sink->clear();
+    }
 }
