@@ -406,7 +406,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['save_btn'])) {
                     <form method = "GET" action="quizSettings.php">
                       <div class="mb-4">
                           <h3 class="text-sm mb-4 text-gray-900">What gets tracked</h3>
-
                           <!-- Checkbox for Enable Tab Switching -->
                           <div class="flex items-center mb-2">
                               <input type="checkbox" id="tabSwitching" name  = "enable_monitor_tab_switching" value = "1" class="mr-2"
@@ -460,7 +459,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['save_btn'])) {
                             <label for="microphone" class="text-gray-900">Enable Microphone</label>
                           </div>
                           <p class="text-sm text-gray-600 mb-5">Detect when the background noise is loud</p>
-                      </div>
+
+                          <!-- Checkbox for Enable Strict Mode -->
+                          <div class="flex items-center mb-2">
+                              <input type="checkbox" id="strictMode" class="mr-2" name="enable_strict_mode" value="1">
+                              <label for="strictMode" class="text-gray-900">Enable Strict Mode</label>
+                          </div>
+                          <p class="text-sm text-gray-600 mb-5">Enabling this option enforces proctoring. If a student
+                              disagrees with tracking, the quiz will automatically end.</p>
+                        </div>
+
                       <!-- Pass the quiz id in form for processing in the database -->
                       <input type="hidden" name="quiz_id" value="<?php echo $quiz_id; ?>" />
                       <input type="hidden" name="course_name" value="<?php echo $course_name; ?>" />
