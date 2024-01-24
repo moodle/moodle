@@ -35900,11 +35900,11 @@ p.arrow_button {
 .path-grade-report-grader .gradeparent tr.userrow th.actions-menu-active {
   z-index: 3;
 }
-.path-grade-report-grader .gradeparent tr.lastrow {
+.path-grade-report-grader .gradeparent tr.lastrow:not(.userrow) {
   position: sticky;
   bottom: -1px;
 }
-.path-grade-report-grader .gradeparent tr.lastrow.pinned {
+.path-grade-report-grader .gradeparent tr.lastrow:not(.userrow).pinned {
   z-index: 4;
 }
 .path-grade-report-grader .gradeparent tr.lastrow td,

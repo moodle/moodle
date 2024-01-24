@@ -30,7 +30,7 @@ const SELECTORS = {
     TABLEHEADER: 'th.header',
     BEHAT: 'body.behat-site',
     USERDROPDOWN: '.userrow th .dropdown',
-    AVERAGEROWHEADER: '.lastrow th',
+    LASTROW: '.lastrow',
 };
 
 /**
@@ -45,12 +45,12 @@ export const init = () => {
         e.target.closest(SELECTORS.TABLEHEADER).classList.toggle('actions-menu-active');
     });
 
-    defineAverageRowIntersectionObserver(true);
+    defineLastRowIntersectionObserver(true);
     // Add an event listener to the sticky footer toggled event to re-define the average row intersection observer
     // accordingly. This is needed as on narrow screens when scrolling vertically the sticky footer is enabled and
     // disabled dynamically.
     document.addEventListener(stickyFooterEvents.stickyFooterStateChanged, (e) => {
-        defineAverageRowIntersectionObserver(e.detail.enabled);
+        defineLastRowIntersectionObserver(e.detail.enabled);
     });
 
     if (!document.querySelector(SELECTORS.BEHAT)) {
@@ -74,22 +74,31 @@ export const init = () => {
 };
 
 /**
- * Define the intersection observer that will make sure that the average overall row is properly pinned.
+ * Define the intersection observer that will make sure that the last row is properly pinned.
+ *
+ * In certain scenarios, such as when both 'Overall average' and 'Range' are set not to be shown in the Grader report,
+ * a user row will end up being the last row in the Grader report table. In this particular case, we want to avoid
+ * pinning the last row.
  *
  * @param {boolean} stickyFooterEnabled Whether the page shows a sticky footer or not.
  */
-const defineAverageRowIntersectionObserver = (stickyFooterEnabled) => {
-    const stickyFooterHeight = stickyFooterEnabled ? document.querySelector(stickyFooterSelectors.STICKYFOOTER).offsetHeight : null;
-    // Register an observer that will bump up the z-index value of the average overall row when it's pinned to prevent
-    // the row being cut-off by the user column cells or other components within the report table that have higher
-    // z-index values. If the page has a sticky footer, we need to make sure that the bottom root margin of the observer
-    // subtracts the height of the sticky footer to prevent the row being cut-off by the footer.
-    const intersectionObserver = new IntersectionObserver(
-        ([e]) => e.target.closest('tr').classList.toggle('pinned', e.intersectionRatio < 1),
-        {
-            rootMargin: stickyFooterHeight ? `0px 0px -${stickyFooterHeight}px 0px` : "0px",
-            threshold: [1]
-        }
-    );
-    intersectionObserver.observe(document.querySelector(SELECTORS.AVERAGEROWHEADER));
+const defineLastRowIntersectionObserver = (stickyFooterEnabled) => {
+    const lastRow = document.querySelector(SELECTORS.LASTROW);
+    // Ensure that the last row is not a user row before defining the intersection observer.
+    if (!lastRow.classList.contains('userrow')) {
+        const stickyFooterHeight = stickyFooterEnabled ?
+            document.querySelector(stickyFooterSelectors.STICKYFOOTER).offsetHeight : null;
+        // Register an observer that will bump up the z-index value of the last row when it's pinned to prevent the row
+        // being cut-off by the user column cells or other components within the report table that have higher z-index
+        // values. If the page has a sticky footer, we need to make sure that the bottom root margin of the observer
+        // subtracts the height of the sticky footer to prevent the row being cut-off by the footer.
+        const intersectionObserver = new IntersectionObserver(
+            ([e]) => e.target.classList.toggle('pinned', e.intersectionRatio < 1),
+            {
+                rootMargin: stickyFooterHeight ? `0px 0px -${stickyFooterHeight}px 0px` : "0px",
+                threshold: [1]
+            }
+        );
+        intersectionObserver.observe(lastRow);
+    }
 };
