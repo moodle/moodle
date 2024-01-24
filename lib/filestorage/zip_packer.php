@@ -502,8 +502,8 @@ class zip_packer extends file_packer {
                 $content = '';
                 while (!feof($fz)) {
                     $content .= fread($fz, 262143);
-                    $realfilesize += strlen($content); // Current file size.
-                    $totalsizebytes += strlen($content);
+                    $realfilesize = strlen($content); // Current file size.
+                    $totalsizebytes = strlen($content);
                     if ($realfilesize > $size ||
                             ($areamaxbytes != FILE_AREA_MAX_BYTES_UNLIMITED && $totalsizebytes > $areamaxbytes)) {
                         $processed[0] = 'cannotunzipquotaexceeded';
