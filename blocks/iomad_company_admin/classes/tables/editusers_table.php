@@ -422,7 +422,7 @@ class editusers_table extends table_sql {
         // Deal with role selector.
         $this->usertypeselect = ['0' => get_string('user', 'block_iomad_company_admin')];
         if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $context)) {
-            $this->usertypeselect[11] = get_string('companymanager', 'block_iomad_company_admin');
+            $this->usertypeselect[10] = get_string('companymanager', 'block_iomad_company_admin');
         }
         if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $context)) {
             $this->usertypeselect[21] = get_string('departmentmanager', 'block_iomad_company_admin');
