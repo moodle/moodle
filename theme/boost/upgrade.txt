@@ -4,6 +4,7 @@ information provided here is intended especially for theme designers.
 === 4.4 ===
 * Bootstrap badge color helper clases (badge-[primary|secondary|...]) are no longer used, use bg-[primary|secondary|...] instead.
 * Bootstrap badge-pill is no longer used, use rounded-pill instead.
+* The bootstrap ´.media´ helper class has been replaced with utility classes (´d-flex´, ´flex-shrink-´, ´flex-grow-´, ...)
 
 === 4.3 ===
 * The $activity-iconcontainer-height and $activity-iconcontainer-width variables have been changed from 50px to 52px.

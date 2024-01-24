@@ -55,21 +55,19 @@
     {{/activityicon}}
 
     {{! Name & Badge}}
-    <div class="activity-name-area activity-instance d-flex flex-column mr-2 ">
-        <div class="activitytitle media {{textclasses}} modtype_{{modname}} position-relative align-self-start">
-            <div class="media-body align-self-center">
-                <div class="activityname">
-                    {{#activityname}}
-                        {{$ core/inplace_editable }}
-                            {{> core/inplace_editable }}
-                        {{/ core/inplace_editable }}
-                    {{/activityname}}
-                    {{#activitybadge}}
-                        {{$ core_courseformat/local/content/cm/activitybadge }}
-                            {{> core_courseformat/local/content/cm/activitybadge }}
-                        {{/ core_courseformat/local/content/cm/activitybadge }}
-                    {{/activitybadge}}
-                </div>
+    <div class="activity-name-area activity-instance d-flex flex-column mr-2">
+        <div class="activitytitle {{textclasses}} modtype_{{modname}} position-relative align-self-start">
+            <div class="activityname">
+                {{#activityname}}
+                    {{$ core/inplace_editable }}
+                        {{> core/inplace_editable }}
+                    {{/ core/inplace_editable }}
+                {{/activityname}}
+                {{#activitybadge}}
+                    {{$ core_courseformat/local/content/cm/activitybadge }}
+                        {{> core_courseformat/local/content/cm/activitybadge }}
+                    {{/ core_courseformat/local/content/cm/activitybadge }}
+                {{/activitybadge}}
             </div>
         </div>
     </div>

@@ -38,17 +38,17 @@
     }
 
 }}
-<ul class="tag_feed media-list">
+<ul class="tag_feed">
     {{#items}}
-        <li class="media">
+        <li class="d-flex mb-1">
             {{#img}}
-                <div class="itemimage">
+                <div class="flex-shrink-0">
                     {{{img}}}
                 </div>
             {{/img}}
-            <div class="media-body">
+            <div class="flex-grow-1 px-2">
                 {{#heading}}
-                    <div class="media-heading">
+                    <div class="item-heading">
                         {{{heading}}}
                     </div>
                 {{/heading}}
