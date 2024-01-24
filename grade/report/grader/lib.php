@@ -676,7 +676,10 @@ class grade_report_grader extends grade_report {
             $fieldheader->scope = 'col';
             $fieldheader->header = true;
 
-            $collapsecontext = ['field' => $field, 'name' => $field];
+            $collapsecontext = [
+                'field' => $field,
+                'name' => \core_user\fields::get_display_name($field),
+            ];
 
             $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
             // Need to wrap the button into a div with our hooking element for user items, gradeitems already have this.
