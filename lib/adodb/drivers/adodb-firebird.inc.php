@@ -483,14 +483,14 @@ class ADODB_firebird extends ADOConnection {
 	}
 
 	/**
-	* Return the query id.
-	*
-	* @param string|array $sql
-	* @param array $iarr
-	*
-	* @return bool|object
-	*/
-	function _query($sql, $iarr = false)
+	 * Execute a query.
+	 *
+	 * @param string|array $sql        Query to execute.
+	 * @param array        $inputarr   An optional array of parameters.
+	 *
+	 * @return object|bool Query identifier or true if execution successful, false if failed.
+	 */
+	function _query($sql, $inputarr = false)
 	{
 		if (!$this->isConnected()) {
 			return false;
@@ -512,8 +512,8 @@ class ADODB_firebird extends ADOConnection {
 			$fn = 'fbird_query';
 			$args = [$conn, $sql];
 		}
-		if (is_array($iarr)) {
-			$args = array_merge($args, $iarr);
+		if (is_array($inputarr)) {
+			$args = array_merge($args, $inputarr);
 		}
 		$ret = call_user_func_array($fn, $args);
 

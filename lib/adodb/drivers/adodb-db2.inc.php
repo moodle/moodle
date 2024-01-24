@@ -1568,7 +1568,7 @@ See http://msdn.microsoft.com/library/default.asp?url=/library/en-us/db2/htm/db2
 	 *
 	 * @return mixed				either the queryID or false
 	 */
-	function _query(&$sql,$inputarr=false)
+	function _query($sql, $inputarr = false)
 	{
 		$db2Options = array();
 		/*

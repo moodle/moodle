@@ -2,6 +2,8 @@
 /**
  * ADOdb Date Library.
  *
+ * @deprecated 5.22.6 Use 64-bit PHP native functions instead.
+ *
  * PHP native date functions use integer timestamps for computations.
  * Because of this, dates are restricted to the years 1901-2038 on Unix
  * and 1970-2038 on Windows due to integer overflow for dates beyond
