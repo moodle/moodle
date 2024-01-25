@@ -22,19 +22,36 @@
  */
 
 require_once(__DIR__ . '/../../config.php'); // Setup moodle global variable also
+
 require_login();
 
-// Ensure that user is not a student
-// If student then redirect it to dashboard/my page
-if (!(isloggedin() && has_capability('moodle/course:manageactivities', context_system::instance()))) {
+global $DB, $USER;
+
+$user_id = $USER->id;
+
+$manages_a_course = $DB->get_record_sql(
+    'SELECT * FROM {role_assignments} WHERE userid = ? AND roleid IN (?, ?)',
+    [
+        $user_id,
+        3,
+        4,
+    ]
+);
+
+if(!$manages_a_course){
     $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
     header("Location: $previous_page");
     exit();
 }
 
 
-// Get the global $DB object
-global $DB;
+
+
+
+
+
+
+
 
 // Retrieve all records from AP Table
 $AP_tb = 'auto_proctor_quiz_tb';
