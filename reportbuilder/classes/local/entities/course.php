@@ -143,6 +143,8 @@ class course extends base {
             'theme' => new lang_string('forcetheme'),
             'enablecompletion' => new lang_string('enablecompletion', 'completion'),
             'downloadcontent' => new lang_string('downloadcoursecontent', 'course'),
+            'timecreated' => new lang_string('timecreated', 'core_reportbuilder'),
+            'timemodified' => new lang_string('timemodified', 'core_reportbuilder'),
         ];
     }
 
@@ -177,6 +179,8 @@ class course extends base {
                 break;
             case 'startdate':
             case 'enddate':
+            case 'timecreated':
+            case 'timemodified':
                 $fieldtype = column::TYPE_TIMESTAMP;
                 break;
             case 'summary':
