@@ -97,9 +97,6 @@ class admin_uploaduser_form2 extends moodleform {
         $columns = $this->_customdata['columns'];
         $data    = $this->_customdata['data'];
 
-        // I am the template user, why should it be the administrator? we have roles now, other ppl may use this script ;-)
-        $templateuser = $USER;
-
         // upload settings and file
         $mform->addElement('header', 'settingsheader', get_string('settings'));
 
@@ -276,30 +273,19 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setDefault('autosubscribe', core_user::get_property_default('autosubscribe'));
 
         $mform->addElement('text', 'city', get_string('city'), 'maxlength="120" size="25"');
-        $mform->setType('city', PARAM_TEXT);
-        if (empty($CFG->defaultcity)) {
-            $mform->setDefault('city', $templateuser->city);
-        } else {
-            $mform->setDefault('city', core_user::get_property_default('city'));
-        }
+        $mform->setType('city', core_user::get_property_type('city'));
+        $mform->setDefault('city', core_user::get_property_default('city'));
 
-        $choices = get_string_manager()->get_list_of_countries();
-        $choices = array(''=>get_string('selectacountry').'...') + $choices;
-        $mform->addElement('select', 'country', get_string('selectacountry'), $choices);
-        if (empty($CFG->country)) {
-            $mform->setDefault('country', $templateuser->country);
-        } else {
-            $mform->setDefault('country', core_user::get_property_default('country'));
-        }
+        $mform->addElement('select', 'country', get_string('selectacountry'), core_user::get_property_choices('country'));
+        $mform->setDefault('country', core_user::get_property_default('country') ?: '');
         $mform->setAdvanced('country');
 
-        $choices = core_date::get_list_of_timezones($templateuser->timezone, true);
-        $mform->addElement('select', 'timezone', get_string('timezone'), $choices);
-        $mform->setDefault('timezone', $templateuser->timezone);
+        $mform->addElement('select', 'timezone', get_string('timezone'), core_date::get_list_of_timezones(null, true));
+        $mform->setDefault('timezone', core_user::get_property_default('timezone'));
         $mform->setAdvanced('timezone');
 
-        $mform->addElement('select', 'lang', get_string('preferredlanguage'), get_string_manager()->get_list_of_translations());
-        $mform->setDefault('lang', $templateuser->lang);
+        $mform->addElement('select', 'lang', get_string('preferredlanguage'), core_user::get_property_choices('lang'));
+        $mform->setDefault('lang', core_user::get_property_default('lang'));
         $mform->setAdvanced('lang');
 
         $editoroptions = array('maxfiles'=>0, 'maxbytes'=>0, 'trusttext'=>false, 'forcehttps'=>false);
@@ -313,25 +299,23 @@ class admin_uploaduser_form2 extends moodleform {
         $mform->setForceLtr('idnumber');
 
         $mform->addElement('text', 'institution', get_string('institution'), 'maxlength="255" size="25"');
-        $mform->setType('institution', PARAM_TEXT);
-        $mform->setDefault('institution', $templateuser->institution);
+        $mform->setType('institution', core_user::get_property_type('institution'));
 
         $mform->addElement('text', 'department', get_string('department'), 'maxlength="255" size="25"');
-        $mform->setType('department', PARAM_TEXT);
-        $mform->setDefault('department', $templateuser->department);
+        $mform->setType('department', core_user::get_property_type('department'));
 
         $mform->addElement('text', 'phone1', get_string('phone1'), 'maxlength="20" size="25"');
-        $mform->setType('phone1', PARAM_NOTAGS);
+        $mform->setType('phone1', core_user::get_property_type('phone1'));
         $mform->setAdvanced('phone1');
         $mform->setForceLtr('phone1');
 
         $mform->addElement('text', 'phone2', get_string('phone2'), 'maxlength="20" size="25"');
-        $mform->setType('phone2', PARAM_NOTAGS);
+        $mform->setType('phone2', core_user::get_property_type('phone2'));
         $mform->setAdvanced('phone2');
         $mform->setForceLtr('phone2');
 
         $mform->addElement('text', 'address', get_string('address'), 'maxlength="255" size="25"');
-        $mform->setType('address', PARAM_TEXT);
+        $mform->setType('address', core_user::get_property_type('address'));
         $mform->setAdvanced('address');
 
         // Next the profile defaults
