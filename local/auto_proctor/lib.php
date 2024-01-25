@@ -24,24 +24,28 @@ require_once(__DIR__ . '/../../config.php');
 
 function local_auto_proctor_extend_navigation(global_navigation $navigation){
     
-    // Acces control for admin only
-    // if(!has_capability('moodle/site:config', context_system::instance())){
-    //     return;
-    // }
+    global $DB, $PAGE, $COURSE, $USER, $CFG;
 
-    if (isloggedin() && has_capability('moodle/course:manageactivities', context_system::instance())) {
-        // Adding the auto-proctor in navigation bar ==================================
-        $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/auto_proctor_dashboard.php');
-        $main_node->nodetype = 1;
-        $main_node->collapse = false;
-        $main_node->forceopen = true;
-        $main_node->isexpandable = false;
-        $main_node->showinflatnavigation = true;
-    } 
+    // Get all course id
+    $all_course_id = $DB->get_records_sql('SELECT id FROM {course}');
+
+    // Loop through course IDs and check if the user manages any courses.
+    // If the user manages a course, add the 'Auto Proctor Dashboard' button to the navigation bar.
+    foreach ($all_course_id as $course_id) {
+        if (has_capability('moodle/course:manageactivities', context_course::instance($course_id->id), $USER->id)) {
+            // Adding the auto-proctor in navigation bar ==================================
+            $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/auto_proctor_dashboard.php');
+            $main_node->nodetype = 1;
+            $main_node->collapse = false;
+            $main_node->forceopen = true;
+            $main_node->isexpandable = false;
+            $main_node->showinflatnavigation = true;
+            break;
+        }
+    }
 
 
     // Capture student quiz attempt ========================================
-        global $DB, $PAGE, $USER, $CFG;
 
         // Check if the current page is a quiz attempt
         if ($PAGE->cm && $PAGE->cm->modname === 'quiz' && $PAGE->cm->instance && $PAGE->pagetype !== 'mod-quiz-summary') {
