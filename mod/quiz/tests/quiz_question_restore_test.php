@@ -17,6 +17,7 @@
 namespace mod_quiz;
 
 use core_question\question_reference_manager;
+use mod_quiz\question\display_options;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -238,6 +239,8 @@ class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test pre 4.0 quiz restore for regular questions.
      *
+     * Also, for efficiency, tests restore of the review options.
+     *
      * @covers ::process_quiz_question_legacy_instance
      */
     public function test_pre_4_quiz_restore_for_regular_questions() {
@@ -263,6 +266,12 @@ class quiz_question_restore_test extends \advanced_testcase {
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
         $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
         $structure = structure::create_for_quiz($quizobj);
+
+        // Verify the restored review options setting.
+        $this->assertEquals(display_options::DURING |
+                    display_options::IMMEDIATELY_AFTER |
+                    display_options::LATER_WHILE_OPEN |
+                    display_options::AFTER_CLOSE, $quizobj->get_quiz()->reviewmaxmarks);
 
         // Are the correct slots returned?
         $slots = $structure->get_slots();

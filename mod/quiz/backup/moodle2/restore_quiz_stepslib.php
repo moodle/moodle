@@ -189,14 +189,6 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                     ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_SCORES ?
                             display_options::AFTER_CLOSE : 0);
 
-            if (!isset($data->reviewmaxmarks)) {
-                $data->reviewmaxmarks =
-                        display_options::DURING |
-                        display_options::IMMEDIATELY_AFTER |
-                        display_options::LATER_WHILE_OPEN |
-                        display_options::AFTER_CLOSE;
-            }
-
             $data->reviewmarks =
                     display_options::DURING |
                     ($oldreview & QUIZ_OLD_IMMEDIATELY & QUIZ_OLD_SCORES ?
@@ -244,6 +236,15 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
                             display_options::LATER_WHILE_OPEN : 0) |
                     ($oldreview & QUIZ_OLD_CLOSED & QUIZ_OLD_OVERALLFEEDBACK ?
                             display_options::AFTER_CLOSE : 0);
+        }
+
+        // New setting in 4.3 needs to be set if not in the backup.
+        if (!isset($data->reviewmaxmarks)) {
+            $data->reviewmaxmarks =
+                    display_options::DURING |
+                    display_options::IMMEDIATELY_AFTER |
+                    display_options::LATER_WHILE_OPEN |
+                    display_options::AFTER_CLOSE;
         }
 
         // The old popup column from from <= 2.1 need to be mapped to
