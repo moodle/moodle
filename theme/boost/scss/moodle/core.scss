@@ -2579,11 +2579,6 @@ $picker-emojis-per-row: 7 !default;
             line-height: $picker-emoji-button-size;
             font-size: $picker-emoji-button-font-size;
             overflow: hidden;
-
-            @include hover-focus {
-                color: inherit;
-                text-decoration: none;
-            }
         }
     }
 
@@ -2900,7 +2895,8 @@ body.dragging {
 .collapse-list {
     .collapse-list-item {
         padding: $collapse-list-item-padding-y $collapse-list-item-padding-x;
-        @include hover-focus() {
+        &:hover,
+        &:focus {
             background-color: $collapse-list-item-hover-bg;
             border-color: $collapse-list-item-hover-border;
         }

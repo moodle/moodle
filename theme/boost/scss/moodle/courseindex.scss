@@ -13,7 +13,8 @@ $courseindex-item-radius: $border-radius !default;
 $courseindex-item-current: $primary !default;
 
 @mixin courseindex-item-hover() {
-    @include hover-focus() {
+    &:hover,
+    &:focus {
         color: $courseindex-link-hover-color;
 
         .courseindex-link,
@@ -60,7 +61,8 @@ $courseindex-item-current: $primary !default;
         .courseindex-link,
         .courseindex-chevron {
             color: $courseindex-link-color;
-            @include hover-focus() {
+            &:hover,
+            &:focus {
                 color: $courseindex-link-hover-color;
                 text-decoration: none;
             }
@@ -112,8 +114,8 @@ $courseindex-item-current: $primary !default;
             a {
                 color: $courseindex-link-color-selected;
             }
-
-            @include hover-focus() {
+            &:hover,
+            &:focus {
                 background-color: darken($courseindex-item-page-bg, 7.5%);
                 color: darken($courseindex-link-color-selected, 10%);
                 .courseindex-link,

@@ -25449,10 +25449,6 @@ input[disabled] {
   font-size: 24px;
   overflow: hidden;
 }
-.emoji-picker .picker-row .emoji-button:hover, .emoji-picker .picker-row .emoji-button:focus {
-  color: inherit;
-  text-decoration: none;
-}
 .emoji-picker .emoji-preview {
   height: 40px;
   font-size: 40px;
@@ -26999,9 +26995,6 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   width: 36px;
   padding: 0;
   border-radius: 50%;
-}
-.block .block-cards .btn.btn-link.btn-icon:hover, .block .block-cards .btn.btn-link.btn-icon:focus {
-  background-color: #e9ecef;
 }
 
 .dashboard-card-deck.one-row {
@@ -31602,9 +31595,6 @@ a.ygtvspacer:hover {
   padding: 0;
   border-radius: 50%;
   flex-shrink: 0;
-}
-.message-app .btn.btn-link.btn-icon:hover, .message-app .btn.btn-link.btn-icon:focus {
-  background-color: #e9ecef;
 }
 .message-app .btn.btn-link.btn-icon.icon-size-0 {
   height: 20px !important; /* stylelint-disable-line declaration-no-important */
@@ -38814,14 +38804,4 @@ body {
 }
 .btn-outline-warning:not(:disabled):not(.disabled):active:focus, .btn-outline-warning:not(:disabled):not(.disabled).active:focus, .show > .btn-outline-warning.dropdown-toggle:focus {
   box-shadow: 0 0 0 0.2rem rgba(166, 103, 14, 0.5);
-}
-
-.bg-gray {
-  background-color: #e9ecef !important;
-}
-
-a.bg-gray:hover, a.bg-gray:focus,
-button.bg-gray:hover,
-button.bg-gray:focus {
-  background-color: #cbd3da !important;
 }

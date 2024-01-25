@@ -134,7 +134,9 @@ body:not(.jsenabled) .langmenu:hover > .dropdown-menu,
 // Dont allow z-index creep anywhere.
 .page-item {
     &.active .page-link {
-        @include plain-hover-focus {
+        &,
+        &:hover,
+        &:focus {
             z-index: inherit;
         }
     }

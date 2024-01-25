@@ -41,7 +41,7 @@
         }
     }
     tbody tr {
-        @include hover {
+        &:hover {
             color: $table-hover-color;
             background-color: $table-hover-bg;
             &.dimmed_text {

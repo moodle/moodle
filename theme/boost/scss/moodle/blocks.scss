@@ -144,10 +144,6 @@ $card-gutter : $card-deck-margin * 2;
         width: 36px;
         padding: 0;
         border-radius: 50%;
-
-        @include hover-focus {
-            background-color: $gray-200;
-        }
     }
 }
 
@@ -268,7 +264,8 @@ $card-gutter : $card-deck-margin * 2;
     }
 
     a.dashboard-card {
-        @include hover-focus {
+        &:hover,
+        &:focus {
             text-decoration: none;
             h6 {
                 text-decoration: underline;

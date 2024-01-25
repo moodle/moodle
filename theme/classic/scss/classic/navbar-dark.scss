@@ -13,7 +13,8 @@ $nabvar-bg-color: $dark !default;
     a.dropdown-toggle,
     a .usertext {
         color: $navbar-dark-active-color;
-        @include hover-focus {
+        &:hover,
+        &:focus {
             color: $navbar-dark-hover-color;
         }
 

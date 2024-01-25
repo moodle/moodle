@@ -5,6 +5,18 @@ information provided here is intended especially for theme designers.
 * Bootstrap badge color helper clases (badge-[primary|secondary|...]) are no longer used, use bg-[primary|secondary|...] instead.
 * Bootstrap badge-pill is no longer used, use rounded-pill instead.
 * The bootstrap ´.media´ helper class has been replaced with utility classes (´d-flex´, ´flex-shrink-´, ´flex-grow-´, ...)
+* The following bootstrap mixins that will be deprecated in BS5 have been replaced with their CSS code:
+  - hover, hover-focus, plain-hover-focus and hover-focus-active
+  - float-left, float-right and float-none
+  - nav-divider
+  - img-retina
+  - text-hide
+  - invisible
+  - form-control-focus
+  - text-emphasis-variant
+  - size
+  - make-container-max-widths
+  - g-variant and bg-gradient-variant
 
 === 4.3 ===
 * The $activity-iconcontainer-height and $activity-iconcontainer-width variables have been changed from 50px to 52px.
