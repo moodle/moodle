@@ -56,8 +56,9 @@ if (!empty($oauthsso) && is_enabled_auth('oauth2')) {
 
 // Check if the plugin is properly configured.
 $typeoflogin = get_config('tool_mobile', 'typeoflogin');
-if (empty($SESSION->justloggedin) and
-        $typeoflogin != tool_mobile\api::LOGIN_VIA_BROWSER and
+if (empty($SESSION->justloggedin) &&
+        !is_enabled_auth('oauth2') &&
+        $typeoflogin != tool_mobile\api::LOGIN_VIA_BROWSER &&
         $typeoflogin != tool_mobile\api::LOGIN_VIA_EMBEDDED_BROWSER) {
     throw new moodle_exception('pluginnotenabledorconfigured', 'tool_mobile');
 }
