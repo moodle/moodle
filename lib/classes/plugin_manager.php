@@ -1550,7 +1550,7 @@ class core_plugin_manager {
 
         $provider = \core\update\checker::instance();
 
-        if (!$provider->enabled() or during_initial_install()) {
+        if (!$provider->enabled() || $component === '' || during_initial_install()) {
             return null;
         }
 
