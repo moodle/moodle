@@ -440,8 +440,11 @@ class checker {
 
         $pluginman = \core_plugin_manager::instance();
         foreach ($pluginman->get_plugins() as $type => $plugins) {
+            // Iterate over installed plugins and determine which are non-standard and eligible for update checks. Note that we
+            // disregard empty component names here, to ensure we only request valid data from the update site (in the case of an
+            // improperly removed plugin containing sub-plugins, we would get an empty value here for each sub-plugin).
             foreach ($plugins as $plugin) {
-                if (!$plugin->is_standard()) {
+                if ($plugin->component !== '' && !$plugin->is_standard()) {
                     $this->currentplugins[$plugin->component] = $plugin->versiondisk;
                 }
             }
