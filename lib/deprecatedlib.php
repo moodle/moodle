@@ -2080,11 +2080,9 @@ function get_records_csv() {
 
 /**
  * @deprecated since Moodle 3.2
- * @see download_as_dataformat (lib/dataformatlib.php)
  */
 function put_records_csv() {
-    throw new coding_exception('put_records_csv() can not be used anymore. Please use ' .
-        'lib/dataformatlib.php download_as_dataformat() instead.');
+    throw new coding_exception(__FUNCTION__ . '() has been removed, please use \core\dataformat::download_data() instead');
 }
 
 /**
@@ -2720,6 +2718,12 @@ function plagiarism_get_form_elements_module() {
     );
 }
 
+/**
+ * @deprecated Since Moodle 3.9 - MDL-68500 please use {@see \core\dataformat::download_data}
+ */
+function download_as_dataformat() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed, please use \core\dataformat::download_data() instead');
+}
 
 /**
  * @deprecated since Moodle 3.10
