@@ -72,4 +72,10 @@ class sectiondelegate_test extends \advanced_testcase {
         $this->assertInstanceOf('\test_component\courseformat\sectiondelegate', sectiondelegate::instance($sectioninfos[2]));
         $this->assertNull(sectiondelegate::instance($sectioninfos[3]));
     }
+
+    public function test_has_delegate_class(): void {
+        $this->assertFalse(sectiondelegate::has_delegate_class('missing_component'));
+        $this->assertFalse(sectiondelegate::has_delegate_class('mod_label'));
+        $this->assertTrue(sectiondelegate::has_delegate_class('test_component'));
+    }
 }

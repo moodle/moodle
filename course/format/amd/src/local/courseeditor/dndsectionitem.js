@@ -121,6 +121,10 @@ export default class extends BaseComponent {
     validateDropData(dropdata) {
         // Course module validation.
         if (dropdata?.type === 'cm') {
+            // Prevent content loops with subsections.
+            if (this.section?.component && dropdata?.delegatesection === true) {
+                return false;
+            }
             // The first section element is already there so we can ignore it.
             const firstcmid = this.section?.cmlist[0];
             return dropdata.id !== firstcmid;

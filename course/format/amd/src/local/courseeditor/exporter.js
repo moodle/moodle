@@ -144,6 +144,7 @@ export default class {
             id: cminfo.id,
             name: cminfo.name,
             sectionid: cminfo.sectionid,
+            delegatesection: cminfo.delegatesection,
             nextcmid,
         };
     }

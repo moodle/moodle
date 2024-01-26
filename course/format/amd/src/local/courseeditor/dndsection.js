@@ -115,8 +115,11 @@ export default class extends BaseComponent {
         if (dropdata?.type === 'files') {
             return true;
         }
-        // We accept any course module.
+        // We accept any course module unless it can form a subsection loop.
         if (dropdata?.type === 'cm') {
+            if (this.section?.component && dropdata?.delegatesection === true) {
+                return false;
+            }
             return true;
         }
         // We accept any section but yourself and the next one.
