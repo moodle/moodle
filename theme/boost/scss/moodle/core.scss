@@ -730,77 +730,14 @@ table.mod_index {
 .completion-expired .completion-expected {
     font-weight: bold;
 }
+
 /**
 * Tags
 */
-img.user-image {
-    height: 100px;
-    width: 100px;
-}
 
 #tag-search-box {
     text-align: center;
     margin: 10px auto;
-}
-
-.path-tag .tag-index-items .tagarea {
-    border: 1px solid $tags-tagarea-border-color;
-    border-radius: 4px;
-    padding: 10px;
-    margin-top: 10px;
-}
-
-.path-tag .tag-index-items .tagarea h3 {
-    display: block;
-    padding: 3px 0 10px 0;
-    margin: 0;
-    font-size: 1.1em;
-    font-weight: bold;
-    line-height: 20px;
-    color: $tags-tagarea-title-color;
-    text-shadow: 0 1px 0 $tags-tagarea-title-text-shadow-color;
-    text-transform: uppercase;
-    word-wrap: break-word;
-    border-bottom: solid 1px $tags-tagarea-title-border-color;
-    margin-bottom: 10px;
-}
-
-.path-tag .tagarea .controls,
-.path-tag .tagarea .taggeditems {
-    @include clearfix();
-}
-
-.path-tag .tagarea .controls,
-.path-tag .tag-backtoallitems {
-    text-align: center;
-}
-
-.path-tag .tagarea .controls .gotopage.nextpage {
-    float: right;
-}
-
-.path-tag .tagarea .controls .gotopage.prevpage {
-    float: left;
-}
-
-.path-tag .tagarea .controls .exclusivemode {
-    display: inline-block;
-}
-
-.path-tag .tagarea .controls.controls-bottom {
-    margin-top: 5px;
-}
-
-.path-tag .tagarea .controls .gotopage.nextpage::after {
-    padding-right: 5px;
-    padding-left: 5px;
-    content: "»";
-}
-
-.path-tag .tagarea .controls .gotopage.prevpage::before {
-    padding-right: 5px;
-    padding-left: 5px;
-    content: "«";
 }
 
 span.flagged-tag,
@@ -810,189 +747,159 @@ tr.flagged-tag a {
     color: map-get($theme-colors, 'warning');
 }
 
-.tag-management-table td,
-.tag-management-table th {
-    vertical-align: middle;
-    padding: 4px;
-}
-
-.tag-management-table .inplaceeditable.inplaceeditingon input {
-    width: 150px;
+.tag-management-table {
+    td,
+    th {
+        vertical-align: middle;
+        padding: 4px;
+    }
+    .inplaceeditable.inplaceeditingon input {
+        width: 150px;
+    }
 }
 
 .path-admin-tag .addstandardtags {
     float: right;
-
     img {
         margin: 0 5px;
     }
 }
 
-.path-tag .tag-relatedtags {
-    padding-top: 10px;
+.path-tag {
+    .tag-relatedtags {
+        padding-top: 10px;
+    }
+    .tag-management-box {
+        text-align: right;
+    }
+    .tag-index-toc {
+        padding: 10px;
+        text-align: center;
+    }
+    .tag-index-toc li {
+        margin-left: 5px;
+        margin-right: 5px;
+    }
+    .tag-management-box li {
+        margin-left: 5px;
+        margin-right: 5px;
+        a {
+            background-repeat: no-repeat;
+            background-position: left;
+            padding-left: 17px;
+        }
+        a.edittag {
+            background-image: url([[pix:moodle|i/settings]]);
+        }
+        a.flagasinappropriate {
+            background-image: url([[pix:moodle|i/flagged]]);
+        }
+        a.removefrommyinterests {
+            background-image: url([[pix:moodle|t/delete]]);
+        }
+        a.addtomyinterests {
+            background-image: url([[pix:moodle|t/add]]);
+        }
+    }
+    .tag-backtoallitems {
+        text-align: center;
+    }
+    .tag-index-items .tagarea {
+        border: 1px solid $tags-tagarea-border-color;
+        border-radius: 4px;
+        padding: 10px;
+        margin-top: 10px;
+        h3 {
+            display: block;
+            padding: 3px 0 10px 0;
+            margin: 0;
+            font-size: 1.1em;
+            font-weight: bold;
+            line-height: 20px;
+            color: $tags-tagarea-title-color;
+            text-shadow: 0 1px 0 $tags-tagarea-title-text-shadow-color;
+            text-transform: uppercase;
+            word-wrap: break-word;
+            border-bottom: solid 1px $tags-tagarea-title-border-color;
+            margin-bottom: 10px;
+        }
+        .taggeditems {
+            @include clearfix();
+        }
+        .controls {
+            @include clearfix();
+            text-align: center;
+            &.controls-bottom {
+                margin-top: 5px;
+            }
+            .gotopage.nextpage {
+                float: right;
+            }
+            .gotopage.prevpage {
+                float: left;
+            }
+            .exclusivemode {
+                display: inline-block;
+            }
+            .gotopage.prevpage::before {
+                padding-right: 5px;
+                padding-left: 5px;
+                content: "«";
+            }
+            .gotopage.nextpage::after {
+                padding-right: 5px;
+                padding-left: 5px;
+                content: "»";
+            }
+        }
+    }
 }
 
-.path-tag .tag-management-box {
-    text-align: right;
-}
-
-.path-tag .tag-index-toc {
-    padding: 10px;
-    text-align: center;
-}
-
-.path-tag .tag-index-toc li,
-.path-tag .tag-management-box li {
-    margin-left: 5px;
-    margin-right: 5px;
-}
-
-.path-tag .tag-management-box li a.edittag {
-    background-image: url([[pix:moodle|i/settings]]);
-}
-
-.path-tag .tag-management-box li a.flagasinappropriate {
-    background-image: url([[pix:moodle|i/flagged]]);
-}
-
-.path-tag .tag-management-box li a.removefrommyinterests {
-    background-image: url([[pix:moodle|t/delete]]);
-}
-
-.path-tag .tag-management-box li a.addtomyinterests {
-    background-image: url([[pix:moodle|t/add]]);
-}
-
-.path-tag .tag-management-box li a {
-    background-repeat: no-repeat;
-    background-position: left;
-    padding-left: 17px;
-}
-
-.tag_feed img {
-    max-height: 35px;
-    max-width: 35px;
-}
-
-.tag_feed .muted a {
-    color: $text-muted;
+.tag_feed {
+    img {
+        max-height: 35px;
+        max-width: 35px;
+    }
+    .muted a {
+        color: $text-muted;
+    }
 }
 
 .tag_cloud {
     text-align: center;
+    .inline-list li {
+        padding: 0 0.2em;
+    }
+    .tag_overflow {
+        margin-top: 1em;
+        font-style: italic;
+    }
+    // Generate a series of .s# rule declarations based on the number of tag sizes.
+    @for $i from 0 through 20 {
+        .s#{$i} {
+            font-size: (0.7 + ($i * 0.1)) * 1em;
+        }
+    }
 }
 
-.tag_cloud .inline-list li {
-    padding: 0 0.2em;
-}
-
-.tag_cloud .tag_overflow {
-    margin-top: 1em;
-    font-style: italic;
-}
-
-.tag_cloud .s20 {
-    font-size: 2.7em;
-}
-
-.tag_cloud .s19 {
-    font-size: 2.6em;
-}
-
-.tag_cloud .s18 {
-    font-size: 2.5em;
-}
-
-.tag_cloud .s17 {
-    font-size: 2.4em;
-}
-
-.tag_cloud .s16 {
-    font-size: 2.3em;
-}
-
-.tag_cloud .s15 {
-    font-size: 2.2em;
-}
-
-.tag_cloud .s14 {
-    font-size: 2.1em;
-}
-
-.tag_cloud .s13 {
-    font-size: 2em;
-}
-
-.tag_cloud .s12 {
-    font-size: 1.9em;
-}
-
-.tag_cloud .s11 {
-    font-size: 1.8em;
-}
-
-.tag_cloud .s10 {
-    font-size: 1.7em;
-}
-
-.tag_cloud .s9 {
-    font-size: 1.6em;
-}
-
-.tag_cloud .s8 {
-    font-size: 1.5em;
-}
-
-.tag_cloud .s7 {
-    font-size: 1.4em;
-}
-
-.tag_cloud .s6 {
-    font-size: 1.3em;
-}
-
-.tag_cloud .s5 {
-    font-size: 1.2em;
-}
-
-.tag_cloud .s4 {
-    font-size: 1.1em;
-}
-
-.tag_cloud .s3 {
-    font-size: 1em;
-}
-
-.tag_cloud .s2 {
-    font-size: 0.9em;
-}
-
-.tag_cloud .s1 {
-    font-size: 0.8em;
-}
-
-.tag_cloud .s0 {
-    font-size: 0.7em;
-}
-
-.tag_list ul {
-    display: inline;
-}
-
-.tag_list.hideoverlimit .overlimit {
-    display: none;
-}
-
-.tag_list .tagmorelink {
-    display: none;
-}
-
-.tag_list.hideoverlimit .tagmorelink {
-    display: inline;
-}
-
-.tag_list.hideoverlimit .taglesslink {
-    display: none;
+.tag_list {
+    ul {
+        display: inline;
+    }
+    .tagmorelink {
+        display: none;
+    }
+    &.hideoverlimit {
+        .overlimit {
+            display: none;
+        }
+        .tagmorelink {
+            display: inline;
+        }
+        .taglesslink {
+            display: none;
+        }
+    }
 }
 
 /**
