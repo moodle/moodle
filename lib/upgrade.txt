@@ -137,6 +137,7 @@ information provided here is intended especially for developers.
     because there aren't cases in core.
   - Deprecation: Cannot use the "Test" suffix on abstract test case classes. Proceed to
     rename them to end with "TestCase" instead.
+* A new hook called after_failed_task_max_delay has been created. This hook will be triggered when an Ad-hoc or Scheduled task reaches its maximum failure delay.
 
 === 4.3 ===
 
