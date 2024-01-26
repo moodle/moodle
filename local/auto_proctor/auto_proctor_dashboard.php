@@ -27,44 +27,74 @@ require_login();
 
 global $DB, $USER;
 
+// Get user user id
 $user_id = $USER->id;
 
-$manages_a_course = $DB->get_record_sql(
+// Check if the user has a managing role, such as an editing teacher or teacher.
+// Only users with those roles are allowed to create or modify a quiz.
+$managing_context = $DB->get_records_sql(
     'SELECT * FROM {role_assignments} WHERE userid = ? AND roleid IN (?, ?)',
     [
         $user_id,
-        3,
-        4,
+        3, // Editing Teacehr
+        4, // Teacher
     ]
 );
 
-if(!$manages_a_course){
+// If a user does not have a course management role, there is no reason for them to access the Auto Proctor Dashboard.
+// The user will be redirected to the normal dashboard.
+if(!$managing_context){
     $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
     header("Location: $previous_page");
     exit();
 }
 
+// Now, we will retrieve all the context IDs for the instances or context that the user manages.
 
+// Array for the course IDs we will retrieve.
+$course_ids = array();
 
+// Loop through the context that the user manages
+foreach ($managing_context as $context) {
 
+    // Get the context id of the context
+    $context_id = $context->contextid;
+    echo "<script>console.log('Managing Course ID: ', " . json_encode($context_id) . ");</script>";
 
+    // Get instance id of the context from contex table
+    $sql = "SELECT instanceid
+    FROM {context}
+    WHERE id= :id"
+    ;
+    $instance_ids = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
 
+    echo "<script>console.log('instance id: ', " . json_encode($instance_ids) .");</script>";
 
+    // Push the instance_ids into the $course_ids array
+    $course_ids = array_merge($course_ids, $instance_ids);
+}
 
+echo "<script>console.log('All Course IDs: ', " . json_encode($course_ids) . ");</script>";
 
+// Array for all the quizzes of the course that the user manages.
+$managing_quizzes = array();
 
-// Retrieve all records from AP Table
-$AP_tb = 'auto_proctor_quiz_tb';
-$AP_records = $DB->get_records($AP_tb);
+// Ensuring that the user is managing a course.
+if (!empty($course_ids)) {
 
-// Retrieve all records from quiz Table
-$quiz_tb = 'quiz';
-$quiz_records = $DB->get_records($quiz_tb);
+    // Creating a placeholder for each element in $course_ids for the query
+    $placeholders = implode(', ', array_fill(0, count($course_ids), '?'));
+
+    // Constructing the SQL query
+    $sql = "SELECT * FROM {quiz} WHERE course IN ($placeholders)";
+
+    // Retrieve all the quizzes where the course is equal to the course IDs obtained earlier or the course IDs of the courses managed by the user.
+    $managing_quizzes = $DB->get_records_sql($sql, $course_ids);
+};
 
 // Convert PHP array/object to JSON for JavaScript
-$quiz_records_json = json_encode($quiz_records);
+echo "<script>console.log('Auto Proctor Records: ', " . json_encode($managing_quizzes) . ");</script>";
 
-echo "<script>console.log($quiz_records_json);</script>";
 
 //echo $OUTPUT->header(); // Output header
 ?>
@@ -520,7 +550,7 @@ echo "<script>console.log($quiz_records_json);</script>";
                                             </thead>
                                             <tbody class="bg-white ">
                                                 <?php
-                                                foreach ($quiz_records as $quiz_record) {
+                                                foreach ($managing_quizzes as $quiz_record) {
                                                     $timestamp = $quiz_record->timecreated;
                                                     $formatted_date = date("d M Y", $timestamp);
 
