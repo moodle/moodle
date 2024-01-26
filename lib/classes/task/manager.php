@@ -229,6 +229,9 @@ class manager {
             $record->nextruntime = time() - 1;
         }
 
+        // Set the time the task was created.
+        $record->timecreated = time();
+
         // Check if the same task is already scheduled.
         if ($checkforexisting && self::task_is_scheduled($task)) {
             return false;
@@ -307,7 +310,6 @@ class manager {
         $record->faildelay = $task->get_fail_delay();
         $record->customdata = $task->get_custom_data_as_string();
         $record->userid = $task->get_userid();
-        $record->timecreated = time();
         $record->timestarted = $task->get_timestarted();
         $record->hostname = $task->get_hostname();
         $record->pid = $task->get_pid();
