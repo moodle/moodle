@@ -101,9 +101,14 @@ class footer_options_exporter extends exporter {
         $values->footerlinks = [];
 
         if ($this->showfullcalendarlink) {
+            if ($this->calendar->courseid !== SITEID) {
+                $linkname = get_string('coursecalendar', 'calendar', 'Course');
+            } else {
+                $linkname = get_string('fullcalendar', 'calendar');
+            }
             $values->footerlinks[] = (object)[
                 'url' => $this->get_calendar_url(),
-                'linkname' => get_string('fullcalendar', 'calendar'),
+                'linkname' => $linkname,
             ];
         }
 
@@ -148,6 +153,7 @@ class footer_options_exporter extends exporter {
         $url = new moodle_url('/calendar/view.php', [
             'view' => 'month',
             'time' => $this->calendar->time,
+            'course' => $this->calendar->courseid,
         ]);
 
         return $url->out(false);

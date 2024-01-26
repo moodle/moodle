@@ -330,7 +330,8 @@ class page_requirements_manager {
                 'contextid'             => $contextid,
                 'contextInstanceId'     => (int) $contextinstanceid,
                 'langrev'               => get_string_manager()->get_revision(),
-                'templaterev'           => $this->get_templaterev()
+                'templaterev'           => $this->get_templaterev(),
+                'siteId'                => (int) SITEID,
             );
             if ($CFG->debugdeveloper) {
                 $this->M_cfg['developerdebug'] = true;

@@ -80,8 +80,7 @@ Feature: Enable the calendar block in a course and test it's functionality
     And I press "Save and display"
     And I turn editing mode on
     And I add the "Calendar" block
-    And I click on "Full calendar" "link"
-    And I set the field "course" to "C1"
+    And I click on "Course calendar" "link"
     And I create a calendar event:
       | Type of event | group       |
       | Group         | Group 1     |
