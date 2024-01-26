@@ -16,9 +16,9 @@
 
 namespace factor_sms\local\smsgateway;
 
-use factor_sms\admin_settings_aws_region;
+use core\aws\admin_settings_aws_region;
+use core\aws\aws_helper;
 use factor_sms\event\sms_sent;
-use factor_sms\local\aws_helper;
 
 /**
  * AWS SNS SMS Gateway class
@@ -122,9 +122,6 @@ class aws_sns implements gateway_interface {
      * @return void
      */
     public static function add_settings(\admin_settingpage $settings): void {
-        global $CFG;
-
-        require_once($CFG->dirroot . '/admin/tool/mfa/factor/sms/classes/admin_settings_aws_region.php');
         $settings->add(new \admin_setting_configcheckbox('factor_sms/usecredchain',
             get_string('settings:aws:usecredchain', 'factor_sms'), '', 0));
 
