@@ -93,4 +93,8 @@ $callbacks = [
         'hook' => \core_enrol\hook\before_user_enrolment_remove::class,
         'callback' => \core_communication\hook_listener::class . '::remove_communication_membership_for_unenrolled_user',
     ],
+    [
+        'hook' => \core\hook\task\after_failed_task_max_delay::class,
+        'callback' => core\task\failed_task_callbacks::class . '::send_failed_task_max_delay_message',
+    ],
 ];

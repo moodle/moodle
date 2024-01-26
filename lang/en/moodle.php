@@ -893,6 +893,11 @@ $string['explanationdigitalminor'] = 'This information is required to determine 
 $string['extendperiod'] = 'Extended period';
 $string['favourites'] = 'Starred';
 $string['failedloginattempts'] = '{$a->attempts} failed logins since your last login';
+$string['failedtaskbody'] = '<p>Hi {$a->firstname},</p>
+<p>The task <b>{$a->taskname}</b> has failed multiple times and requires attention.</p>
+<p><a href="{$a->link}">See task</a></p>';
+$string['failedtasksubject'] = 'Task failed: {$a}';
+$string['failedtaskcontexturlname'] = 'Status report';
 $string['feedback'] = 'Feedback';
 $string['file'] = 'File';
 $string['fileexists'] = 'There is already a file called {$a}';
