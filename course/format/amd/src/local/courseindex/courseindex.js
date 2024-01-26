@@ -293,10 +293,10 @@ export default class Component extends BaseComponent {
      * Refresh the section list.
      *
      * @param {object} param
-     * @param {Object} param.element
+     * @param {Object} param.state
      */
-    _refreshCourseSectionlist({element}) {
-        const sectionlist = element.sectionlist ?? [];
+    _refreshCourseSectionlist({state}) {
+        const sectionlist = this.reactive.getExporter().listedSectionIds(state);
         this._fixOrder(this.element, sectionlist, this.sections);
     }
 

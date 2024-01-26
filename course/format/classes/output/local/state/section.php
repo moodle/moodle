@@ -89,6 +89,8 @@ class section implements renderable {
             'contentcollapsed' => $contentcollapsed,
             'hasrestrictions' => $this->get_has_restrictions(),
             'bulkeditable' => $this->is_bulk_editable(),
+            'component' => $section->component,
+            'itemid' => $section->itemid,
         ];
 
         if (empty($modinfo->sections[$section->section])) {
