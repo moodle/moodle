@@ -111,6 +111,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(1, $siteinfo['downloadfiles']);
         $this->assertEquals(1, $siteinfo['uploadfiles']);
 
+        $this->assertCount(12, $siteinfo['advancedfeatures']);
         foreach ($siteinfo['advancedfeatures'] as $feature) {
             if ($feature['name'] == 'mnet_dispatcher_mode') {
                 if ($CFG->mnet_dispatcher_mode == 'off') {
@@ -118,6 +119,9 @@ class externallib_test extends externallib_advanced_testcase {
                 } else {
                     $this->assertEquals(1, $feature['value']);
                 }
+            } else if ($feature['name'] == 'enablecompetencies') {
+                $expected = (!empty(get_config('core_competency', 'enabled'))) ? 1 : 0;
+                $this->assertEquals($expected, $feature['value']);
             } else {
                 $this->assertEquals($CFG->{$feature['name']}, $feature['value']);
             }
