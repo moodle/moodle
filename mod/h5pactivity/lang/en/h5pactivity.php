@@ -146,4 +146,5 @@ $string['tracking_messages'] = 'Some H5P provide attempt tracking data for advan
 $string['true'] = 'True';
 $string['usecontentbank'] = 'Use the <a href="{$a}" target="_blank">content bank (opens in new window)</a> to manage your H5P files';
 $string['view'] = 'View';
+$string['viewattempts'] = 'View attempts ({$a})';
 $string['view_report'] = 'View report';

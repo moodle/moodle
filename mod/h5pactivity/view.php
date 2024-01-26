@@ -87,9 +87,20 @@ if (!$manager->can_submit()) {
         }
         echo $OUTPUT->notification($message, \core\output\notification::NOTIFY_WARNING);
     }
-
 }
 
-echo player::display($fileurl, $config, true, 'mod_h5pactivity', true);
+$extraactions = [];
+
+if ($manager->can_view_all_attempts() && $manager->is_tracking_enabled()) {
+    $extraactions[] = new action_link(
+        new moodle_url('/mod/h5pactivity/report.php', ['id' => $cm->id]),
+        get_string('viewattempts', 'mod_h5pactivity', $manager->count_attempts()),
+        null,
+        null,
+        new pix_icon('i/chartbar', '', 'core')
+    );
+}
+
+echo player::display($fileurl, $config, true, 'mod_h5pactivity', true, $extraactions);
 
 echo $OUTPUT->footer();

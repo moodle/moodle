@@ -158,11 +158,17 @@ class player {
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      * @param string $component optional moodle component to sent xAPI tracking
      * @param bool $displayedit Whether the edit button should be displayed below the H5P content.
+     * @param \action_link[] $extraactions Extra actions to display above the H5P content.
      *
      * @return string The embedable code to display a H5P file.
      */
-    public static function display(string $url, \stdClass $config, bool $preventredirect = true,
-            string $component = '', bool $displayedit = false): string {
+    public static function display(
+        string $url, \stdClass $config,
+        bool $preventredirect = true,
+        string $component = '',
+        bool $displayedit = false,
+        array $extraactions = [],
+    ): string {
         global $OUTPUT, $CFG;
 
         $params = [
@@ -192,6 +198,10 @@ class player {
             }
         }
 
+        $template->extraactions = [];
+        foreach ($extraactions as $action) {
+            $template->extraactions[] = $action->export_for_template($OUTPUT);
+        }
         $result = $OUTPUT->render_from_template('core_h5p/h5pembed', $template);
         $result .= self::get_resize_code();
         return $result;
