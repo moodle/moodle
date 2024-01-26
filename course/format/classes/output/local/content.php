@@ -187,7 +187,6 @@ class content implements named_templatable, renderable {
                 $modinfo->get_section_info_by_id($singlesectionid),
             ];
         }
-
-        return $modinfo->get_section_info_all();
+        return $modinfo->get_listed_section_info_all();
     }
 }

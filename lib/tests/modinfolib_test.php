@@ -1040,6 +1040,35 @@ class modinfolib_test extends advanced_testcase {
     }
 
     /**
+     * Test for get_listed_section_info_all method.
+     * @covers \course_modinfo::get_listed_section_info_all
+     * @covers \course_modinfo::get_section_info_all
+     */
+    public function test_get_listed_section_info_all(): void {
+        $this->resetAfterTest();
+
+        // Create a course with 4 sections.
+        $course = $this->getDataGenerator()->create_course(['numsections' => 3]);
+
+        $listed = get_fast_modinfo($course)->get_section_info_all();
+        $this->assertCount(4, $listed);
+
+        // Generate some delegated sections (not listed).
+        formatactions::section($course)->create_delegated('mod_label', 0);
+        formatactions::section($course)->create_delegated('mod_label', 1);
+
+        $this->assertCount(6, get_fast_modinfo($course)->get_section_info_all());
+
+        $result = get_fast_modinfo($course)->get_listed_section_info_all();
+
+        $this->assertCount(4, $result);
+        $this->assertEquals($listed[0]->id, $result[0]->id);
+        $this->assertEquals($listed[1]->id, $result[1]->id);
+        $this->assertEquals($listed[2]->id, $result[2]->id);
+        $this->assertEquals($listed[3]->id, $result[3]->id);
+    }
+
+    /**
      * Test test_get_section_info_by_id method
      *
      * @dataProvider get_section_info_by_id_provider
@@ -1524,5 +1553,23 @@ class modinfolib_test extends advanced_testcase {
         $this->assertInstanceOf('\test_component\courseformat\sectiondelegate', $sectioninfos[2]->get_component_instance());
         $this->assertEquals('test_component', $sectioninfos[2]->component);
         $this->assertEquals(1, $sectioninfos[2]->itemid);
+    }
+
+    /**
+     * Test for section_info is_delegated.
+     * @covers \section_info::is_delegated
+     */
+    public function test_is_delegated(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
+
+        formatactions::section($course)->create_delegated('mod_label', 0);
+
+        $modinfo = get_fast_modinfo($course->id);
+        $sectioninfos = $modinfo->get_section_info_all();
+
+        $this->assertFalse($sectioninfos[1]->is_delegated());
+        $this->assertTrue($sectioninfos[2]->is_delegated());
     }
 }
