@@ -50,28 +50,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['save_btn'])) {
     if(isset($_GET['save_btn'])){
       
       // Monitor tab switching ==========================================================================
-      $new_field_value_tab_switching = isset($_GET['enable_monitor_tab_switching']) ? 1 : 0;
+        $new_field_value_tab_switching = isset($_GET['enable_monitor_tab_switching']) ? 1 : 0;
 
-      // Update the auto_proctor_quiz_tb table with new value
-      $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_tab_switching = :new_field_value WHERE quizid = :quiz_id";
-      $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_tab_switching);
-      $DB->execute($sql, $params);
+        // Update the auto_proctor_quiz_tb table with new value
+        $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_tab_switching = :new_field_value WHERE quizid = :quiz_id";
+        $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_tab_switching);
+        $DB->execute($sql, $params);
 
       // Monitor camera =================================================================================
-      $new_field_value_camera = isset($_GET['enable_monitor_camera']) ? 1 : 0;
+        $new_field_value_camera = isset($_GET['enable_monitor_camera']) ? 1 : 0;
 
-      // Update the auto_proctor_quiz_tb table with new value
-      $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_camera = :new_field_value WHERE quizid = :quiz_id";
-      $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_camera);
-      $DB->execute($sql, $params);
+        // Update the auto_proctor_quiz_tb table with new value
+        $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_camera = :new_field_value WHERE quizid = :quiz_id";
+        $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_camera);
+        $DB->execute($sql, $params);
 
       // Monitor Microphone =============================================================================
-      $new_field_value_camera = isset($_GET['enable_monitor_microphone']) ? 1 : 0;
+        $new_field_value_microphone = isset($_GET['enable_monitor_microphone']) ? 1 : 0;
 
-      // Update the auto_proctor_quiz_tb table with new value
-      $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_microphone = :new_field_value WHERE quizid = :quiz_id";
-      $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_camera);
-      $DB->execute($sql, $params);
+        // Update the auto_proctor_quiz_tb table with new value
+        $sql = "UPDATE {auto_proctor_quiz_tb} SET monitor_microphone = :new_field_value WHERE quizid = :quiz_id";
+        $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_microphone);
+        $DB->execute($sql, $params);
+
+      // Strict Mode ====================================================================================
+        $new_field_value_strict = isset($_GET['enable_strict_mode']) ? 1 : 0;
+
+        // Update the auto_proctor_quiz_tb table with new value
+        $sql = "UPDATE {auto_proctor_quiz_tb} SET strict_mode = :new_field_value WHERE quizid = :quiz_id";
+        $params = array('quiz_id' => $quiz_id, 'new_field_value' => $new_field_value_strict);
+        $DB->execute($sql, $params);
 
       // Unset the save btn
       unset($_GET['save_btn']);
@@ -462,7 +470,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['save_btn'])) {
 
                           <!-- Checkbox for Enable Strict Mode -->
                           <div class="flex items-center mb-2">
-                              <input type="checkbox" id="strictMode" class="mr-2" name="enable_strict_mode" value="1">
+                              <input type="checkbox" id="strictMode" class="mr-2" name="enable_strict_mode" value="1"
+                              <?php
+                                // Get monitor_microphone activation value
+                                // If the activation value is 1, then check the box.
+                                $field_strict_mode = 'strict_mode';
+                                $field_value_strict_mode = $DB->get_field($AP_tb, $field_strict_mode, array('quizid' => $quiz_id));   
+
+                                if($field_value_strict_mode == 1){
+                                  echo "checked";
+                                }
+                              echo '>';
+                              ?>
                               <label for="strictMode" class="text-gray-900">Enable Strict Mode</label>
                           </div>
                           <p class="text-sm text-gray-600 mb-5">Enabling this option enforces proctoring. If a student
