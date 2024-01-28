@@ -3750,6 +3750,11 @@ function core_course_core_calendar_get_valid_event_timestart_range(\calendar_eve
 function core_course_drawer(): string {
     global $PAGE;
 
+    // If the course index is explicitly set and if it should be hidden.
+    if ($PAGE->get_show_course_index() === false) {
+        return '';
+    }
+
     // Only add course index on non-site course pages.
     if (!$PAGE->course || $PAGE->course->id == SITEID) {
         return '';
