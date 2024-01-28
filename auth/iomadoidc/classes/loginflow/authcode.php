@@ -51,14 +51,26 @@ class authcode extends base {
      * @return array Array of IdPs.
      */
     public function loginpage_idp_list($wantsurl) {
+        global $CFG;
+
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         if (!auth_iomadoidc_is_setup_complete()) {
             return [];
         }
 
-        if (!empty($this->config->customicon)) {
-            $icon = new pix_icon('0/customicon', get_string('pluginname', 'auth_iomadoidc'), 'auth_iomadoidc');
+        $configname = "customicon" . $postfix;
+        if (!empty($this->config->$configname)) {
+            $icon = new pix_icon('0/'.$configname, get_string('pluginname', 'auth_iomadoidc'), 'auth_iomadoidc');
         } else {
-            $icon = (!empty($this->config->icon)) ? $this->config->icon : 'auth_iomadoidc:o365';
+            $configname = "icon" . $postfix;
+            $icon = (!empty($this->config->$configname)) ? $this->config->$configname : 'auth_iomadoidc:o365';
             $icon = explode(':', $icon);
             if (isset($icon[1])) {
                 [$iconcomponent, $iconkey] = $icon;
@@ -68,12 +80,13 @@ class authcode extends base {
             }
             $icon = new pix_icon($iconkey, get_string('pluginname', 'auth_iomadoidc'), $iconcomponent);
         }
+        $opname = "opname" . $postfix;
 
         return [
             [
                 'url' => new moodle_url('/auth/iomadoidc/'),
                 'icon' => $icon,
-                'name' => strip_tags(format_text($this->config->opname)),
+                'name' => strip_tags(format_text($this->config->$opname)),
             ]
         ];
     }

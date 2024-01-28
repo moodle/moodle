@@ -73,7 +73,7 @@ if (!empty($action)) {
     $PAGE->set_pagelayout('standard');
     $USER->editing = false;
     $authconfig = get_config('auth_iomadoidc');
-    $confname = "opname$postfix";
+    $configname = "opname$postfix";
     $opname = (!empty($authconfig->$configname)) ? $authconfig->$configname : get_string('pluginname', 'auth_iomadoidc');
 
     $ucptitle = get_string('ucp_title', 'auth_iomadoidc', $opname);
