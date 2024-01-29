@@ -18,6 +18,7 @@ namespace core;
 
 use coding_exception;
 use core_text;
+use core\ip_utils;
 use invalid_parameter_exception;
 use moodle_exception;
 
@@ -992,27 +993,7 @@ enum param: string {
      */
     protected function clean_param_value_host(mixed $param): string {
         // Allow FQDN or IPv4 dotted quad.
-        $param = preg_replace('/[^\.\d\w-]/', '', (string)$param);
-        // Match ipv4 dotted quad.
-        if (preg_match('/(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/', $param, $match)) {
-            // Confirm values are ok.
-            if (
-                $match[0] > 255
-                || $match[1] > 255
-                || $match[3] > 255
-                || $match[4] > 255
-            ) {
-                // Hmmm, what kind of dotted quad is this?
-                $param = '';
-            }
-        } else if (
-            preg_match('/^[\w\d\.-]+$/', $param) // Dots, hyphens, numbers.
-            && !preg_match('/^[\.-]/', $param) // No leading dots/hyphens.
-            && !preg_match('/[\.-]$/', $param) // No trailing dots/hyphens.
-        ) {
-            // All is ok - $param is respected.
-        } else {
-            // All is not ok...
+        if (!ip_utils::is_domain_name($param) && !ip_utils::is_ipv4_address($param)) {
             $param = '';
         }
         return $param;
