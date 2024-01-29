@@ -11,7 +11,7 @@
         "@babel/eslint-plugin": "7.19.1",
         "@babel/preset-env": "7.16.11",
         "@xmldom/xmldom": "^0.8.7",
-        "ajv": "8.10.0",
+        "ajv": "^8.12.0",
         "async": "3.2.3",
         "babel-plugin-system-import-transformer": "^4.0.0",
         "babel-plugin-transform-es2015-modules-amd-lazy": "2.0.1",
@@ -2277,9 +2277,9 @@
       }
     },
     "node_modules/ajv": {
-      "version": "8.10.0",
-      "resolved": "https://registry.npmjs.org/ajv/-/ajv-8.10.0.tgz",
-      "integrity": "sha512-bzqAEZOjkrUMl2afH8dknrq5KEk2SrwdBROR+vH1EKVQTqaUbJVPdc/gEdggTMM0Se+s+Ja4ju4TlNcStKl2Hw==",
+      "version": "8.12.0",
+      "resolved": "https://registry.npmjs.org/ajv/-/ajv-8.12.0.tgz",
+      "integrity": "sha512-sRu1kpcO9yLtYxBKvqfTeh9KzZEwO3STyX1HT+4CaDzC6HpTGYhIhPIzj9XuKU7KYDwnaeh5hcOwjy1QuJzBPA==",
       "dev": true,
       "dependencies": {
         "fast-deep-equal": "^3.1.1",
