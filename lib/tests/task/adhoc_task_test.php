@@ -305,7 +305,7 @@ class adhoc_task_test extends \advanced_testcase {
         // Update the time of the task2 to be older more than 2 days.
         $DB->set_field(
             table: 'task_adhoc',
-            newfield: 'timestarted',
+            newfield: 'firststartingtime',
             newvalue: time() - (DAYSECS * 2) - 10, // Plus 10 seconds to make sure it is older than 2 days.
             conditions: ['id' => $taskid2],
         );
@@ -322,7 +322,7 @@ class adhoc_task_test extends \advanced_testcase {
         // Update the time of the task1 to be older than the cleanup time.
         $DB->set_field(
             table: 'task_adhoc',
-            newfield: 'timestarted',
+            newfield: 'firststartingtime',
             newvalue: time() - $CFG->task_adhoc_failed_retention - 10, // Plus 10 seconds to make sure it is older than the retention time.
             conditions: ['id' => $taskid1],
         );

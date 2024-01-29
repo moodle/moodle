@@ -1820,7 +1820,7 @@ class manager {
             $CFG->task_adhoc_failed_retention : static::ADHOC_TASK_FAILED_RETENTION;
         $DB->delete_records_select(
             table: 'task_adhoc',
-            select: 'attemptsavailable = 0 AND timestarted < :time',
+            select: 'attemptsavailable = 0 AND firststartingtime < :time',
             params: ['time' => time() - $difftime],
         );
     }
