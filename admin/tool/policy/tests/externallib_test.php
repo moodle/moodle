@@ -239,4 +239,161 @@ class externallib_test extends externallib_advanced_testcase {
         $this->expectException(\required_capability_exception::class);
         $sitepolicymanager->accept();
     }
+
+    /**
+     * Test for external function get_user_acceptances().
+     */
+    public function test_external_get_user_acceptances() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->sitepolicyhandler = 'tool_policy';
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Create optional policy.
+        $formdata = api::form_policydoc_data(new \tool_policy\policy_version(0));
+        $formdata->name = 'Test optional policy';
+        $formdata->revision = 'v1';
+        $formdata->optional = 1;
+        $formdata->summary_editor = ['text' => 'summary', 'format' => FORMAT_HTML, 'itemid' => 0];
+        $formdata->content_editor = ['text' => 'content', 'format' => FORMAT_HTML, 'itemid' => 0];
+        $optionalpolicy = api::form_policydoc_add($formdata);
+        api::make_current($optionalpolicy->get('id'));
+
+        $policies = \tool_policy\external\get_user_acceptances::execute();
+        $policies = \core_external\external_api::clean_returnvalue(
+            \tool_policy\external\get_user_acceptances::execute_returns(), $policies);
+
+        $this->assertCount(2, $policies['policies']);
+        $this->assertCount(0, $policies['warnings']);
+        foreach ($policies['policies'] as $policy) {
+            if ($policy['versionid'] == $this->policy2->get('id')) {
+                $this->assertEquals($this->policy2->get('name'), $policy['name']);
+                $this->assertEquals(0, $policy['optional']);
+            } else {
+                $this->assertEquals($optionalpolicy->get('name'), $policy['name']);
+                $this->assertEquals(1, $policy['optional']);
+            }
+            $this->assertNotContains('acceptance', $policy);    // Nothing accepted yet.
+        }
+
+        // Get other user acceptances.
+        $this->parent->policyagreed = 1;
+        $this->setUser($this->parent);
+        $policies = \tool_policy\external\get_user_acceptances::execute($this->child->id);
+        $policies = \core_external\external_api::clean_returnvalue(
+            \tool_policy\external\get_user_acceptances::execute_returns(), $policies);
+        $this->assertCount(2, $policies['policies']);
+
+        // Get other user acceptances without permission.
+        $this->expectException(\required_capability_exception::class);
+        $policies = \tool_policy\external\get_user_acceptances::execute($user->id);
+    }
+
+    /**
+     * Test for external function set_acceptances_status().
+     */
+    public function test_external_set_acceptances_status() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->sitepolicyhandler = 'tool_policy';
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Create optional policy.
+        $formdata = api::form_policydoc_data(new \tool_policy\policy_version(0));
+        $formdata->name = 'Test optional policy';
+        $formdata->revision = 'v1';
+        $formdata->optional = 1;
+        $formdata->summary_editor = ['text' => 'summary', 'format' => FORMAT_HTML, 'itemid' => 0];
+        $formdata->content_editor = ['text' => 'content', 'format' => FORMAT_HTML, 'itemid' => 0];
+        $optionalpolicy = api::form_policydoc_add($formdata);
+        api::make_current($optionalpolicy->get('id'));
+
+        // Accept all the policies.
+        $ids = [['versionid' => $this->policy2->get('id'), 'status' => 1], ['versionid' => $optionalpolicy->get('id'), 'status' => 1]];
+
+        $policies = \tool_policy\external\set_acceptances_status::execute($ids);
+        $policies = \core_external\external_api::clean_returnvalue(
+            \tool_policy\external\set_acceptances_status::execute_returns(), $policies);
+
+        $this->assertEquals(1, $policies['policyagreed']);
+        $this->assertCount(0, $policies['warnings']);
+
+        $policies = \tool_policy\external\get_user_acceptances::execute();
+        $policies = \core_external\external_api::clean_returnvalue(
+            \tool_policy\external\get_user_acceptances::execute_returns(), $policies);
+
+        $this->assertCount(2, $policies['policies']);
+        foreach ($policies['policies'] as $policy) {
+            $this->assertEquals(1, $policy['acceptance']['status']);    // Check all accepted.
+        }
+
+        // Decline optional only.
+        $policies = \tool_policy\external\set_acceptances_status::execute([['versionid' => $optionalpolicy->get('id'), 'status' => 0]]);
+        $policies = \core_external\external_api::clean_returnvalue(
+            \tool_policy\external\set_acceptances_status::execute_returns(), $policies);
+
+        $this->assertEquals(1, $policies['policyagreed']);
+        $this->assertCount(0, $policies['warnings']);
+
+        $policies = \tool_policy\external\get_user_acceptances::execute();
+        $policies = \core_external\external_api::clean_returnvalue(
+            \tool_policy\external\get_user_acceptances::execute_returns(), $policies);
+
+        $this->assertCount(2, $policies['policies']);
+        foreach ($policies['policies'] as $policy) {
+            if ($policy['versionid'] == $this->policy2->get('id')) {
+                $this->assertEquals(1, $policy['acceptance']['status']);    // Still accepted.
+            } else {
+                $this->assertEquals(0, $policy['acceptance']['status']);    // Not accepted.
+            }
+        }
+
+        // Parent & child case now. Accept the optional ONLY on behalf of someone else.
+        $this->parent->policyagreed = 1;
+        $this->setUser($this->parent);
+        $policies = \tool_policy\external\set_acceptances_status::execute([['versionid' => $optionalpolicy->get('id'), 'status' => 1]], $this->child->id);
+        $policies = \core_external\external_api::clean_returnvalue(
+            \tool_policy\external\set_acceptances_status::execute_returns(), $policies);
+
+        $this->assertEquals(0, $policies['policyagreed']);  // Mandatory missing.
+        $this->assertCount(0, $policies['warnings']);
+
+        $policies = \tool_policy\external\get_user_acceptances::execute($this->child->id);
+        $policies = \core_external\external_api::clean_returnvalue(
+            \tool_policy\external\get_user_acceptances::execute_returns(), $policies);
+
+        $this->assertCount(2, $policies['policies']);
+        foreach ($policies['policies'] as $policy) {
+            if ($policy['versionid'] == $this->policy2->get('id')) {
+                $this->assertNotContains('acceptance', $policy);    // Not yet accepted.
+            } else {
+                $this->assertEquals(1, $policy['acceptance']['status']);    // Accepted.
+            }
+        }
+
+        // Try to accept on behalf of other user with no permissions.
+        $this->expectException(\required_capability_exception::class);
+        $policies = \tool_policy\external\set_acceptances_status::execute([['versionid' => $optionalpolicy->get('id'), 'status' => 1]], $user->id);
+    }
+
+    /**
+     * Test for external function set_acceptances_status decline mandatory.
+     */
+    public function test_external_set_acceptances_status_decline_mandatory() {
+        global $CFG;
+
+        $this->resetAfterTest(true);
+        $CFG->sitepolicyhandler = 'tool_policy';
+        $this->parent->policyagreed = 1;
+        $this->setUser($this->parent);
+
+        $this->expectException(\moodle_exception::class);
+        $this->expectExceptionMessage(get_string('errorpolicyversioncompulsory', 'tool_policy'));
+        $ids = [['versionid' => $this->policy2->get('id'), 'status' => 0]];
+        $policies = \tool_policy\external\set_acceptances_status::execute($ids, $this->child->id);
+    }
 }
