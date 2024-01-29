@@ -62,6 +62,7 @@ $string['blockperiod_help'] = 'Students can be blocked from posting more than a 
 $string['blockperioddisabled'] = 'Don\'t block';
 $string['blogforum'] = 'Standard forum displayed in a blog-like format';
 $string['bynameondate'] = 'by {$a->name} - {$a->date}';
+$string['cachedef_forum_count_discussions'] = 'Forum discussions count';
 $string['cachedef_forum_is_tracked'] = 'Forum tracking status for user';
 $string['calendardue'] = '{$a} is due';
 $string['cancelreply'] = 'Cancel reply';
