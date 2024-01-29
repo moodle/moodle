@@ -69,8 +69,117 @@ if ($timetorestrict) {
 }
 $starredonly = optional_param('starredonly', false, PARAM_BOOL); // Include only favourites.
 
+$params = [
+    'id' => $id,
+    'perpage' => $perpage,
+];
+
+if ($search !== '') {
+    $params['search'] = $search;
+}
+
+if ($page) {
+    $params['page'] = $page;
+}
+
+if ($showform) {
+    $params['showform'] = $showform;
+}
+
+if ($user !== '') {
+    $params['user'] = $user;
+}
+
+if ($userid) {
+    $params['userid'] = $userid;
+}
+
+if ($forumid) {
+    $params['forumid'] = $forumid;
+}
+
+if ($subject !== '') {
+    $params['subject'] = $subject;
+}
+
+if ($phrase !== '') {
+    $params['phrase'] = $phrase;
+}
+
+if ($words !== '') {
+    $params['words'] = $words;
+}
+
+if ($fullwords !== '') {
+    $params['fullwords'] = $fullwords;
+}
+
+if ($notwords !== '') {
+    $params['notwords'] = $notwords;
+}
+
+if ($timefromrestrict) {
+    $params['timefromrestrict'] = $timefromrestrict;
+}
+
+if ($fromday) {
+    $params['fromday'] = $fromday;
+}
+
+if ($fromhour) {
+    $params['fromhour'] = $fromhour;
+}
+
+if ($fromminute) {
+    $params['fromminute'] = $fromminute;
+}
+
+if ($frommonth) {
+    $params['frommonth'] = $frommonth;
+}
+
+if ($fromyear) {
+    $params['fromyear'] = $fromyear;
+}
+
+if ($datefrom) {
+    $params['datefrom'] = $datefrom;
+}
+
+if ($timetorestrict) {
+    $params['timetorestrict'] = $timetorestrict;
+}
+
+if ($today) {
+    $params['today'] = $today;
+}
+
+if ($tohour) {
+    $params['tohour'] = $tohour;
+}
+
+if ($tominute) {
+    $params['tominute'] = $tominute;
+}
+
+if ($tomonth) {
+    $params['tomonth'] = $tomonth;
+}
+
+if ($toyear) {
+    $params['toyear'] = $toyear;
+}
+
+if ($dateto) {
+    $params['dateto'] = $dateto;
+}
+
+if ($starredonly) {
+    $params['starredonly'] = $starredonly;
+}
+
 $PAGE->set_pagelayout('standard');
-$PAGE->set_url($FULLME); //TODO: this is very sloppy --skodak
+$PAGE->set_url(new moodle_url('/mod/forum/search.php', $params));
 $PAGE->set_secondary_active_tab("coursehome");
 
 if (empty($search)) {   // Check the other parameters instead
