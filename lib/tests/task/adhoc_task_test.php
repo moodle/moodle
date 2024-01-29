@@ -731,6 +731,74 @@ class adhoc_task_test extends \advanced_testcase {
     }
 
     /**
+     * Test adhoc task with the first starting time.
+     *
+     * @covers ::queue_adhoc_task
+     * @covers ::get_next_adhoc_task
+     * @covers ::adhoc_task_starting
+     * @covers ::adhoc_task_failed
+     */
+    public function test_adhoc_task_get_first_starting_time(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $now = time();
+
+        // Create an adhoc task.
+        $task = new adhoc_test_task();
+        // Queue it.
+        $taskid = manager::queue_adhoc_task(task: $task);
+
+        // Get the firststartingtime value.
+        $firststartingtime = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'firststartingtime',
+            conditions: ['id' => $taskid],
+        );
+        $this->assertNull($firststartingtime);
+
+        // This will make sure that the task will be started after the $now value.
+        sleep(3);
+
+        // Get the task from the scheduler.
+        $task = manager::get_next_adhoc_task(timestart: $now);
+        // Mark the task as starting.
+        manager::adhoc_task_starting($task);
+        // Execute the task.
+        $task->execute();
+        // Mark the task as failed.
+        manager::adhoc_task_failed(task: $task);
+
+        // Get the firststartingtime value.
+        $origintimestarted = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'firststartingtime',
+            conditions: ['id' => $taskid],
+        );
+        $this->assertNotNull($origintimestarted);
+        $this->assertGreaterThan($now, $origintimestarted);
+
+        // Get the task from the scheduler.
+        $task = manager::get_next_adhoc_task(timestart: $now + 86400);
+        // Mark the task as starting.
+        manager::adhoc_task_starting($task);
+        // Execute the task.
+        $task->execute();
+        // Mark the task as failed.
+        manager::adhoc_task_failed(task: $task);
+
+        // Get the firststartingtime value.
+        $firststartingtime = $DB->get_field(
+            table: 'task_adhoc',
+            return: 'firststartingtime',
+            conditions: ['id' => $taskid],
+        );
+
+        // The firststartingtime value should not be changed.
+        $this->assertEquals($origintimestarted, $firststartingtime);
+    }
+
+    /**
      * Test get_concurrency_limit() method to return 0 by default.
      *
      * @covers \core\task\adhoc_task::get_concurrency_limit
