@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \quiz_statistics_report
  */
-class test_quiz_statistics_report extends \advanced_testcase {
+class quiz_statistics_report_test extends \advanced_testcase {
 
     use \quiz_question_helper_test_trait;
 
@@ -56,14 +56,28 @@ class test_quiz_statistics_report extends \advanced_testcase {
      *
      * This allows us to create a lock in our test code that will block a lock request
      * on the same key in code under test.
-     *
-     * @return void
      */
-    public static function setUpBeforeClass(): void {
+    public function setUp(): void {
         global $CFG;
         self::$lockdb = \moodle_database::get_driver_instance($CFG->dbtype, $CFG->dblibrary);
         self::$lockdb->connect($CFG->dbhost, $CFG->dbuser, $CFG->dbpass, $CFG->dbname, $CFG->prefix, $CFG->dboptions);
-        $lockfactory = \core\lock\lock_config::get_lock_factory('quiz_statistics_get_stats');
+
+        $lockfactoryclass = \core\lock\lock_config::get_lock_factory_class();
+        $lockfactory = new $lockfactoryclass('quiz_statistics_get_stats');
+
+        // Iterate lock factory hierarchy to see if it contains a 'db' property we can use.
+        $reflectionclass = new \ReflectionClass($lockfactory);
+        while ($reflectionclass) {
+            if ($reflectionhasdb = $reflectionclass->hasProperty('db')) {
+                break;
+            }
+            $reflectionclass = $reflectionclass->getParentClass();
+        }
+
+        if (!$reflectionhasdb) {
+            $this->markTestSkipped('Test lock factory should be a db type');
+        }
+
         $reflectiondb = new \ReflectionProperty($lockfactory, 'db');
         $reflectiondb->setAccessible(true);
         $reflectiondb->setValue($lockfactory, self::$lockdb);
@@ -72,10 +86,8 @@ class test_quiz_statistics_report extends \advanced_testcase {
 
     /**
      * Dispose of the extra DB connection and lock factory.
-     *
-     * @return void
      */
-    public static function tearDownAfterClass(): void {
+    public function tearDown(): void {
         self::$lockdb->dispose();
         self::$lockdb = null;
         self::$lockfactory = null;
