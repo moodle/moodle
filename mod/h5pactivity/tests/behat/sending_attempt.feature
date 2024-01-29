@@ -28,14 +28,12 @@ Feature: Do a H5P attempt
 
   Scenario: View an H5P as a teacher
     When I am on the "Awesome H5P package" "h5pactivity activity" page logged in as teacher1
-    And I wait until the page is ready
-    Then I should see "This content is displayed in preview mode"
+    Then I should see "You are in preview mode."
 
   @javascript
   Scenario: Do an attempt and check on course log report
     When I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I wait until the page is ready
-    And I should not see "This content is displayed in preview mode"
+    And I should not see "You are in preview mode."
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Correct one" "text" in the ".h5p-question-content" "css_element"
@@ -50,8 +48,7 @@ Feature: Do a H5P attempt
   @javascript
   Scenario: Do various attempts and check them with the attempts and user grades reports
     Given I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
-    And I wait until the page is ready
-    And I should not see "This content is displayed in preview mode"
+    And I should not see "You are in preview mode."
     And I switch to "h5p-player" class iframe
     And I switch to "h5p-iframe" class iframe
     And I click on "Wrong one" "text" in the ".h5p-question-content" "css_element"
