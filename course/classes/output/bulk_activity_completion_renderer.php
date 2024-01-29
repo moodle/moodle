@@ -14,13 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains renderers for the bulk activity completion stuff.
- *
- * @package core_course
- * @copyright 2017 Adrian Greeve
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
+use core_completion\manager;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -96,7 +90,18 @@ class core_course_bulk_activity_completion_renderer extends plugin_renderer_base
                     );
                     $module->modulecollapsed = true;
                 }
-                $module->formhtml = $modform->render();
+
+                $moduleform = manager::get_module_form($module->name, $course);
+                if ($moduleform) {
+                    $module->formhtml = $modform->render();
+                } else {
+                    // If the module form is not available, then display a message.
+                    $module->formhtml = $this->output->notification(
+                        get_string('incompatibleplugin', 'completion'),
+                        \core\output\notification::NOTIFY_INFO,
+                        false
+                    );
+                }
             }
         }
         $data->issite = $course->id == SITEID;
