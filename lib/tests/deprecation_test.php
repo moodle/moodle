@@ -227,26 +227,47 @@ class deprecation_test extends \advanced_testcase {
             [\core\fixtures\not_deprecated_class::class, false],
             [[\core\fixtures\not_deprecated_class::class], false],
 
-            // Class properties.
+            // Class properties in a deprecated class.
             [\core\fixtures\deprecated_class::class . '::deprecatedproperty', true],
             [[\core\fixtures\deprecated_class::class, 'deprecatedproperty'], true],
 
-            [\core\fixtures\deprecated_class::class . '::notdeprecatedproperty', false],
-            [[\core\fixtures\deprecated_class::class, 'notdeprecatedproperty'], false],
+            [\core\fixtures\deprecated_class::class . '::notdeprecatedproperty', true],
+            [[\core\fixtures\deprecated_class::class, 'notdeprecatedproperty'], true],
 
-            // Class constants.
+            // Class constants in a deprecated class.
             [\core\fixtures\deprecated_class::class . '::DEPRECATED_CONST', true],
             [[\core\fixtures\deprecated_class::class, 'DEPRECATED_CONST'], true],
 
-            [\core\fixtures\deprecated_class::class . '::NOT_DEPRECATED_CONST', false],
-            [[\core\fixtures\deprecated_class::class, 'NOT_DEPRECATED_CONST'], false],
+            [\core\fixtures\deprecated_class::class . '::NOT_DEPRECATED_CONST', true],
+            [[\core\fixtures\deprecated_class::class, 'NOT_DEPRECATED_CONST'], true],
 
-            // Class methods.
+            // Class methods in a deprecated class.
             [\core\fixtures\deprecated_class::class . '::deprecated_method', true],
             [[\core\fixtures\deprecated_class::class, 'deprecated_method'], true],
 
-            [\core\fixtures\deprecated_class::class . '::not_deprecated_method', false],
-            [[\core\fixtures\deprecated_class::class, 'not_deprecated_method'], false],
+            [\core\fixtures\deprecated_class::class . '::not_deprecated_method', true],
+            [[\core\fixtures\deprecated_class::class, 'not_deprecated_method'], true],
+
+            // Class properties in a not-deprecated class.
+            [\core\fixtures\not_deprecated_class::class . '::deprecatedproperty', true],
+            [[\core\fixtures\not_deprecated_class::class, 'deprecatedproperty'], true],
+
+            [\core\fixtures\not_deprecated_class::class . '::notdeprecatedproperty', false],
+            [[\core\fixtures\not_deprecated_class::class, 'notdeprecatedproperty'], false],
+
+            // Class constants in a not-deprecated class.
+            [\core\fixtures\not_deprecated_class::class . '::DEPRECATED_CONST', true],
+            [[\core\fixtures\not_deprecated_class::class, 'DEPRECATED_CONST'], true],
+
+            [\core\fixtures\not_deprecated_class::class . '::NOT_DEPRECATED_CONST', false],
+            [[\core\fixtures\not_deprecated_class::class, 'NOT_DEPRECATED_CONST'], false],
+
+            // Class methods in a not-deprecated class.
+            [\core\fixtures\not_deprecated_class::class . '::deprecated_method', true],
+            [[\core\fixtures\not_deprecated_class::class, 'deprecated_method'], true],
+
+            [\core\fixtures\not_deprecated_class::class . '::not_deprecated_method', false],
+            [[\core\fixtures\not_deprecated_class::class, 'not_deprecated_method'], false],
 
             // Non-existent class.
             ['non_existent_class', false],
@@ -261,6 +282,70 @@ class deprecation_test extends \advanced_testcase {
             // Deprecated global function.
             ['core\fixtures\deprecated_function', true],
             ['core\fixtures\not_deprecated_function', false],
+        ];
+    }
+
+    /**
+     * @dataProvider deprecated_ownership_provider
+     */
+    public function test_deprecated_class(
+        array $reference,
+        string $expectedowner,
+    ): void {
+        require_once(dirname(__FILE__) . '/fixtures/deprecated_fixtures.php');
+
+        // All attributes for any part of a deprecated class should belong to the deprecated class.
+        $this->assertEquals(
+            $expectedowner,
+            deprecation::from($reference)->owner,
+        );
+    }
+
+    public static function deprecated_ownership_provider(): array {
+        return [
+            // Any part of a deprecated class will emit the deprecation for the class as a whole.
+            [
+                [\core\fixtures\deprecated_class::class],
+                \core\fixtures\deprecated_class::class,
+            ],
+            [
+                [\core\fixtures\deprecated_class::class, 'deprecatedproperty'],
+                \core\fixtures\deprecated_class::class,
+            ],
+            [
+                [\core\fixtures\deprecated_class::class, 'notdeprecatedproperty'],
+                \core\fixtures\deprecated_class::class,
+            ],
+            [
+                [\core\fixtures\deprecated_class::class, 'deprecated_method'],
+                \core\fixtures\deprecated_class::class,
+            ],
+            [
+                [\core\fixtures\deprecated_class::class, 'not_deprecated_method'],
+                \core\fixtures\deprecated_class::class,
+            ],
+            [
+                [\core\fixtures\deprecated_class::class, 'DEPRECATED_CONST'],
+                \core\fixtures\deprecated_class::class,
+            ],
+            [
+                [\core\fixtures\deprecated_class::class, 'NOT_DEPRECATED_CONST'],
+                \core\fixtures\deprecated_class::class,
+            ],
+
+            // A non-deprecated class will emit just for that feature.
+            [
+                [\core\fixtures\not_deprecated_class::class, 'deprecatedproperty'],
+                \core\fixtures\not_deprecated_class::class . '::deprecatedproperty',
+            ],
+            [
+                [\core\fixtures\not_deprecated_class::class, 'deprecated_method'],
+                \core\fixtures\not_deprecated_class::class . '::deprecated_method',
+            ],
+            [
+                [\core\fixtures\not_deprecated_class::class, 'DEPRECATED_CONST'],
+                \core\fixtures\not_deprecated_class::class . '::DEPRECATED_CONST',
+            ],
         ];
     }
 }

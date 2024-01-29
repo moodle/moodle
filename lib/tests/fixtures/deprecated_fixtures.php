@@ -47,6 +47,22 @@ class deprecated_class {
 }
 
 class not_deprecated_class {
+    protected string $notdeprecatedproperty = 'Not deprecated property';
+
+    #[deprecated('$this->notdeprecatedproperty')]
+    protected string $deprecatedproperty = 'Deprecated property';
+
+    const NOT_DEPRECATED_CONST = 'Not deprecated const';
+
+    #[deprecated('self::NOT_DEPRECATED_CONST')]
+    const DEPRECATED_CONST = 'Deprecated const';
+
+    public function not_deprecated_method() {
+    }
+
+    #[deprecated('$this->not_deprecated_method()')]
+    public function deprecated_method() {
+    }
 }
 
 function not_deprecated_function() {

@@ -140,9 +140,10 @@ class deprecation {
         \ReflectionClass $rc,
         ?string $name,
     ): ?deprecated_with_reference {
-        if ($name === null) {
-            // No name specified. This may be a deprecated class.
-            return self::get_attribute($rc, $rc->name);
+        // Check if the class itself is deprecated first.
+        $classattribute = self::get_attribute($rc, $rc->name);
+        if ($classattribute || $name === null) {
+            return $classattribute;
         }
 
         if ($rc->hasConstant($name)) {
