@@ -21,7 +21,7 @@ Feature: Duplicate and delete a h5pactivity
       | h5pactivity | C1     | H5P Activity 1 | h5p/tests/fixtures/filltheblanks.h5p |
     And I am on the "H5P Activity 1" "h5pactivity activity" page logged in as teacher1
     # Initial confirmation that no error occurs when viewing h5p activity
-    And I should see "This content is displayed in preview mode. No attempt tracking will be stored."
+    And I should see "You are in preview mode."
     And I am on "Course 1" course homepage with editing mode on
     # Duplicate the h5p activity
     When I duplicate "H5P Activity 1" activity
@@ -29,7 +29,7 @@ Feature: Duplicate and delete a h5pactivity
     Then I should see "H5P Activity 1 (copy)"
     And I am on the "H5P Activity 1 (copy)" "h5pactivity activity" page
     # Confirm there are no errors when viewing duplicate h5p activity
-    And I should see "This content is displayed in preview mode. No attempt tracking will be stored."
+    And I should see "You are in preview mode."
     And I am on the "Course 1" course page
     # Delete the duplicate h5p activity
     And I delete "H5P Activity 1 (copy)" activity
@@ -37,4 +37,4 @@ Feature: Duplicate and delete a h5pactivity
     And I should not see "H5P Activity 1 (copy)"
     And I am on the "H5P Activity 1" "h5pactivity activity" page
     # Confirm there are no errors on the original h5p activity after deleting the duplicate
-    And I should see "This content is displayed in preview mode. No attempt tracking will be stored."
+    And I should see "You are in preview mode."

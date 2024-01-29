@@ -99,7 +99,7 @@ class handler extends handler_base {
 
         $manager = manager::create_from_coursemodule($cm);
 
-        if (!$manager->is_tracking_enabled($user)) {
+        if (!($manager->is_tracking_enabled() && $manager->can_submit($user))) {
             return null;
         }
 
@@ -174,10 +174,10 @@ class handler extends handler_base {
             return false;
         }
 
-        // If tracking is not enabled, the state won't be considered valid.
+        // If tracking is not enabled or the user can't submit, the state won't be considered valid.
         $manager = manager::create_from_coursemodule($cm);
         $user = $state->get_user();
-        if (!$manager->is_tracking_enabled($user)) {
+        if (!($manager->is_tracking_enabled() && $manager->can_submit($user))) {
             return false;
         }
 
