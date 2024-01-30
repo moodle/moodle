@@ -103,6 +103,7 @@ module.exports = grunt => {
         // The queue runner will run the next `size` items in the queue.
         const runQueue = (size = 1) => {
             queue.splice(0, size).forEach(resolve => {
+                grunt.log.debug(`Item resolved. Kicking off next one.`);
                 resolve();
             });
         };
@@ -112,15 +113,17 @@ module.exports = grunt => {
 
             // The options hook is run in parallel.
             // We can return an unresolved Promise which is queued for later resolution.
-            options: async() => {
+            options: async(options) => {
                 return new Promise(resolve => {
                     queue.push(resolve);
                     startQueue();
+                    return options;
                 });
             },
 
             // When an item in the queue completes, start the next item in the queue.
-            buildEnd: () => {
+            generateBundle: (options, bundle) => {
+                grunt.log.debug(`Finished output phase for ${Object.keys(bundle).join(', ')}`);
                 runQueue();
             },
         };
