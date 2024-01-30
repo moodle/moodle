@@ -78,7 +78,8 @@ class visibility implements named_templatable, renderable {
         }
         $format = $this->format;
         // In rare legacy cases, the section could be stealth (orphaned) but they are not editable.
-        if (!$format->show_editor()) {
+        if (!$format->show_editor()
+            || !has_capability('moodle/course:activityvisibility', $this->mod->context)) {
             return $this->build_static_data($output);
         } else {
             return $this->build_editor_data($output);
