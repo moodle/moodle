@@ -76,7 +76,7 @@ function xmldb_label_upgrade($oldversion) {
         $params = ['tofind' => '%@@PLUGINFILE@@%'];
         $total = $DB->count_records_select('label', $select, $params);
         if ($total > 0) {
-            $labels = $DB->get_recordset_select('label', $select, $params, 'id, name, intro');
+            $labels = $DB->get_recordset_select('label', $select, $params, '', 'id, name, intro');
 
             // Show a progress bar.
             $pbar = new progress_bar('upgrademodlabelpluginfile', 500, true);
