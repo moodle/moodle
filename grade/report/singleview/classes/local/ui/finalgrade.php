@@ -113,6 +113,8 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
      * @return element
      */
     public function determine_format(): element {
+        global $CFG;
+
         if ($this->grade->grade_item->load_scale()) {
             $scale = $this->grade->grade_item->load_scale();
 
@@ -153,7 +155,7 @@ class finalgrade extends grade_attribute_format implements unique_value, be_disa
 
             // Max attribute.
             $maxvalue = null;
-            if (isset($gradeitem->grademax)) {
+            if (isset($gradeitem->grademax) && empty($CFG->unlimitedgrades)) {
                 $maxvalue = format_float($gradeitem->grademax, $decimals);
             }
             $textattribute->set_max($maxvalue);
