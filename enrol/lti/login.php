@@ -26,6 +26,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use auth_lti\local\ltiadvantage\utility\cookie_helper;
 use enrol_lti\local\ltiadvantage\lib\lti_cookie;
 use enrol_lti\local\ltiadvantage\lib\issuer_database;
 use enrol_lti\local\ltiadvantage\lib\launch_cache_session;
@@ -74,6 +75,19 @@ if (!in_array($targetlinkuri, $validuris)) {
 global $_REQUEST;
 if (empty($_REQUEST['client_id']) && !empty($_REQUEST['id'])) {
     $_REQUEST['client_id'] = $_REQUEST['id'];
+}
+
+// Before beginning the OIDC authentication, ensure the MoodleSession cookie can be used. Browser-specific steps may need to be
+// taken to set cookies in 3rd party contexts. Skip the check if the user is already auth'd. This means that either cookies aren't
+// an issue in the current browser/launch context.
+if (!isloggedin()) {
+    cookie_helper::do_cookie_check(new moodle_url('/enrol/lti/login.php', [
+        'iss' => $iss,
+        'login_hint' => $loginhint,
+        'target_link_uri' => $targetlinkuri,
+        'lti_message_hint' => $ltimessagehint,
+        'client_id' => $_REQUEST['client_id'],
+    ]));
 }
 
 // Now, do the OIDC login.
