@@ -45,5 +45,13 @@
   },
   "engines": {
     "node": ">=20.11.0 <21"
-  }
+  },
+  "browserslist": [
+    ">0.3%",
+    "last 2 versions",
+    "not ie >= 0",
+    "not op_mini all",
+    "not Opera > 0",
+    "not dead"
+  ]
 }
