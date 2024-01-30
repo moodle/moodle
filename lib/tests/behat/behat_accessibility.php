@@ -191,10 +191,10 @@ EOF;
         if (empty($standardtags)) {
             $standardtags = [
                 // Meet WCAG 2.1 A requirements.
-                'wcag2a',
+                'wcag21a',
 
                 // Meet WCAG 2.1 AA requirements.
-                'wcag2aa',
+                'wcag21aa',
 
                 // Meet Section 508 requirements.
                 // See https://www.epa.gov/accessibility/what-section-508 for detail.
@@ -203,7 +203,7 @@ EOF;
                 // Ensure that ARIA attributes are correctly defined.
                 'cat.aria',
 
-                // Requiremetns for sensory and visual cues.
+                // Requirements for sensory and visual cues.
                 // These largely related to viewport scale and zoom functionality.
                 'cat.sensory-and-visual-cues',
 
