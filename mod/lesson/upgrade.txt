@@ -1,5 +1,9 @@
 This files describes API changes in the lesson code.
 
+=== 4.4 ===
+
+* The deprecated `lesson_add_header_buttons` method has been removed
+
 === 4.0 ===
 * Deprecated the function lesson_add_header_buttons in favour of tertiary navigation.
 

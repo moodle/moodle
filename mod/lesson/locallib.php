@@ -568,37 +568,6 @@ function lesson_menu_block_contents($cmid, $lesson) {
 }
 
 /**
- * Adds header buttons to the page for the lesson
- *
- * @deprecated since Moodle 4.0 in favour of tertiary navigation.
- * @todo MDL-73545 This will be deleted in Moodle 4.4
- * @param object $cm
- * @param object $context
- * @param bool $extraeditbuttons
- * @param int $lessonpageid
- */
-function lesson_add_header_buttons($cm, $context, $extraeditbuttons=false, $lessonpageid=null) {
-    global $CFG, $PAGE, $OUTPUT;
-
-    debugging('lesson_add_header_buttons() is deprecated in favour of tertiary navigation.', DEBUG_DEVELOPER);
-
-    if (has_capability('mod/lesson:edit', $context) && $extraeditbuttons) {
-        if ($lessonpageid === null) {
-            throw new \moodle_exception('invalidpageid', 'lesson');
-        }
-        if (!empty($lessonpageid) && $lessonpageid != LESSON_EOL) {
-            $url = new moodle_url('/mod/lesson/editpage.php', array(
-                'id'       => $cm->id,
-                'pageid'   => $lessonpageid,
-                'edit'     => 1,
-                'returnto' => $PAGE->url->out_as_local_url(false)
-            ));
-            $PAGE->set_button($OUTPUT->single_button($url, get_string('editpagecontent', 'lesson')));
-        }
-    }
-}
-
-/**
  * This is a function used to detect media types and generate html code.
  *
  * @global object $CFG

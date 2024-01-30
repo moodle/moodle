@@ -29,3 +29,10 @@ function lesson_get_completion_state() {
     $completionclass = \mod_lesson\completion\custom_completion::class;
     throw new coding_exception(__FUNCTION__ . "() has been removed, please use the '{$completionclass}' class instead");
 }
+
+/**
+ * @deprecated since Moodle 4.0
+ */
+function lesson_add_header_buttons() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed');
+}
