@@ -24,31 +24,95 @@
 require_once(__DIR__ . '/../../config.php'); // Setup moodle global variable also
 require_login();
 // Get the global $DB object
-global $DB, $PAGE;
+global $DB, $PAGE, $USER, $CFG;
 
 require_once($CFG->libdir . '/outputrenderers.php');
 
 // Get required parameters
-$attemptId = optional_param('attempt', 0, PARAM_INT);
 $PAGE->set_context(context_system::instance());
 $PAGE->set_url(new moodle_url(url:'/local/auto_proctor/prompts.php')); // Set url
 
-// Check if consent was given
-$consent = optional_param('consent', 0, PARAM_INT);
-if ($consent) {
-    // Perform actions when consent is given, e.g., update a database or set a session variable
-    // Replace the following line with your actual logic
-    echo '<p>Consent given. Implement your logic here.</p>';
-} else {
-    // Display a message or additional options if consent is not given
-    echo '<button onclick="giveConsent()">Give Consent</button>';
-}
+// Retrieve the data from the URL parameter
+$data_param = optional_param('data', '', PARAM_RAW);
 
-// Add JavaScript function to give consent and redirect
-echo '<script>
-    function giveConsent() {
-        // Assuming $attemptId is the attempt identifier
-        window.location.href = "' . $CFG->wwwroot . '/local/auto_proctor/prompts.php?attempt=' . $attemptId . '&consent=1";
-    }
-</script>';
+// Decode the JSON data
+$jsdata = json_decode(urldecode($data_param), true);
+
+// Access the values
+$wwwroot = $jsdata['wwwroot'];
+$userid = $jsdata['userid'];
+$quizid = $jsdata['quizid'];
+$quizattempt = $jsdata['quizattempt'];
+$quizattempturl = $jsdata['quizattempturl'];
+
+
+// ====== DEBUUGING PURPOSE
+// echo "<script>";
+// echo
+// "
+//         console.log('wwwroot: ', ". json_encode($wwwroot) .");
+//         console.log('userid', $userid);
+//         console.log('quizid', $quizid);
+//         console.log('quizattempt', $quizattempt);
+//         console.log('quizattempturl: ', ". json_encode($quizattempturl) .");
+// ";
+// echo "</script>";
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROMPTS</title>
+</head>
+<body>
+<script>
+    // Display a dialog box with "Yes" and "No" options
+    var userResponse = confirm("Do you consent to share your screen for proctoring purposes?");
+
+    // If aggreed sharing screen
+    if (userResponse) {
+        var screenshare_consent = 2;
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', <?php echo json_encode($wwwroot . '/local/auto_proctor/save_consent.php'); ?>, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        // ==== DEBUGGING =====
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.log('POST request successful');
+                    window.location.href = <?php echo json_encode($quizattempturl); ?>;
+                    // You can add further actions if needed
+                } else {
+                    console.error('POST request failed with status: ' + xhr.status);
+                    // Handle the error or provide feedback to the user
+                }
+            }
+        };
+        xhr.send('userid=' + <?php echo $userid; ?> + '&quizid=' + <?php echo $quizid; ?> + '&quizattempt=' + <?php echo $quizattempt; ?> + '&screenshare_consent=' + screenshare_consent + '&quizattempturl=' + <?php echo json_encode($quizattempturl); ?>);
+    }
+    else{
+        var screenshare_consent = 1;
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', <?php echo json_encode($wwwroot . '/local/auto_proctor/save_consent.php'); ?>, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        // ==== DEBUGGING =====
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.log('POST request successful');
+                    window.location.href = <?php echo json_encode($quizattempturl); ?>;
+                    // You can add further actions if needed
+                } else {
+                    console.error('POST request failed with status: ' + xhr.status);
+                    // Handle the error or provide feedback to the user
+                }
+            }
+        };
+        xhr.send('userid=' + <?php echo $userid; ?> + '&quizid=' + <?php echo $quizid; ?> + '&quizattempt=' + <?php echo $quizattempt; ?> + '&screenshare_consent=' + screenshare_consent + '&quizattempturl=' + <?php echo json_encode($quizattempturl); ?>);
+    }
+</script>
+</body>
+</html>

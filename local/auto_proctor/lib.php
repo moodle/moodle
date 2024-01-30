@@ -84,6 +84,20 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
                 $monitor_tab_microphone_activated = $DB->get_records_sql($sql, $params);
 
+                // Select strict_mode state
+                $sql = "SELECT strict_mode
+                    FROM {auto_proctor_quiz_tb}
+                    WHERE quizid = :quizid
+                    AND (strict_mode = 1)"
+                ;
+
+                $strict_mode_activated = $DB->get_fieldset_sql($sql, $params);
+
+
+                // Get the course module ID
+                $cm = get_coursemodule_from_instance('quiz', $quizid, $course->id);
+                $cmid = $cm->id;
+
                 if ($auto_proctor_activated){
                     echo '<script type="text/javascript"> console.log("AP ACTIVATED"); </script>';
 
@@ -100,152 +114,8 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                         $attemptValue = $quizattempt->attempt;
                         echo '<script>console.log(' . json_encode(['userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue]) . ');</script>';
 
-                        // In line js code for backup
-                            // echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
-                            // echo '<script type="text/javascript">';
-                            //     // TAB_SWITCHING ====================================================================================
-
-                            //     echo 'console.log("Prompt");';
-
-                            //     // Prompt to consent screen sharing
-                            //     echo"
-                            //     let screenShared = false;
-                            //     let screenStream = null;
-                            //     let videoElement;
-                            //     let stopsSharing = false;
-
-                            //     //document.addEventListener('visibilitychange', handleVisibilityChange);
-
-                            //     // function handleVisibilityChange() {
-                            //     //     if (document.visibilityState === 'hidden' && !document.hasFocus()) {
-                            //     //         if (screenShared && !stopsSharing) {
-                            //     //             // Send an AJAX request to your server to indicate screen sharing                                     
-                            //     //             captureAndSaveScreen();
-                            //     //         }
-                            //     //     }
-                            //     // }
-                                
-                            //     function startScreenSharing() {
-                            //         navigator.mediaDevices.getDisplayMedia({ video: true })
-                            //             .then(stream => {
-                            //                 videoElement = document.createElement('video');
-                            //                 videoElement.srcObject = stream;
-                            //                 videoElement.autoplay = true;
-
-                            //                 screenStream = stream;
-                            //                 screenShared = true;
-
-                            //                 screenStream.getVideoTracks()[0].onended = () => {
-                            //                     stopsSharing = true;
-                            //                     console.log('Screen sharing stopped by the student.');
-                            //                     // Send an AJAX request to your server to indicate screen sharing stopped
-                            //                     //sendScreenSharingStatus(2); // stops sharing
-                            //                     captureAndSaveScreen('stops_sharing_screen');
-                            //                 };
-
-                            //                 captureAndSaveScreen('shared_screen'); // Capture the shared screen
-                            //                 //sendScreenSharingStatus(1); // shared screen
-                            //                 console.log('Consent:', 1);
-                            //             })
-                            //             .catch(error => {
-                            //                 console.error('Error starting screen sharing:', error);
-                            //                 // Send an AJAX request to your server to indicate screen sharing error
-                            //                 //sendScreenSharingStatus(0); // 0 indicates screen sharing stopped
-                            //                 captureAndSaveScreen('did_not_share_screen');
-                            //             });
-                                        
-                            //             //document.addEventListener('visibilitychange', handleVisibilityChange);
-                            //             window.addEventListener('focus', handleTabSwitch);
-                            //             window.addEventListener('blur', handleTabSwitch);
-                            //     }
-                                
-                            //     function handleTabSwitch() {
-                            //         if (document.hasFocus()) {
-                            //             console.log('Tab switched back to focus');
-                            //         } else {
-                            //             console.log('Tab switched');
-                            //             if (screenShared && !stopsSharing) {
-                            //                 // Capture and save the shared screen when the tab is switched
-                            //                 captureAndSaveScreen('tab_switch');
-                            //             }
-                            //             else{
-                            //                 //sendScreenSharingStatus(3);
-                            //                 captureAndSaveScreen('tab_switch_screen_not_shared');
-                            //             }
-                                            
-                            //         }
-                            //     }
-
-                            //     function sendScreenSharingStatus(screen_status, filename, activity_type) {
-                            //         // Send an AJAX request to your server to record screen sharing status
-                            //         console.log('Sending screen_status:', screen_status);
-                            //         var xhr = new XMLHttpRequest();
-                            //         xhr.open('POST', '" . $CFG->wwwroot . "/local/auto_proctor/save_activity.php', true); // Replace with the actual path
-                            //         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-                            //         xhr.send('screen_status=' + screen_status + '&userid=' + ". $userid ." + '&quizid=' + ". $quizid ." + '&quizattempt=' + ". $attemptValue ." + '&filename=' + encodeURIComponent(filename) + '&activity_type=' + activity_type);
-                            //     }
-
-                            //     function generateTimestamp() {
-                            //         const now = new Date();
-                            //         const options = {
-                            //             year: 'numeric',
-                            //             month: '2-digit',
-                            //             day: '2-digit',
-                            //             hour: '2-digit',
-                            //             minute: '2-digit',
-                            //             second: '2-digit',
-                            //             hour12: true,
-                            //             timeZoneName: 'short',
-                            //         };
-
-                            //         const formatter = new Intl.DateTimeFormat('en-US', options);
-                            //         const timestamp = formatter.format(now);
-
-                            //         return { timestamp, milliseconds: now.getMilliseconds() };
-                            //     }
-                                
-
-                            //     function captureAndSaveScreen(evidence_name_type) {
-                            //         if (evidence_name_type !== 'tab_switch_screen_not_shared' && evidence_name_type !== 'did_not_share_screen' && evidence_name_type !== 'stops_sharing_screen'){
-                            //             setTimeout(() => {
-                            //                 const canvas = document.createElement('canvas');
-                            //                 canvas.width = videoElement.videoWidth;
-                            //                 canvas.height = videoElement.videoHeight;
-                            //                 const ctx = canvas.getContext('2d');
-                            //                 ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-                                    
-                            //                 const { timestamp, milliseconds } = generateTimestamp();
-                            //                 const filename = 'EVD_' + timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type + '.png'; // Custom filename with evidenceType
-                                    
-                            //                 const dataUrl = canvas.toDataURL('image/png');
-                                    
-                            //                 fetch('" . $CFG->wwwroot . "/local/auto_proctor/save_capture.php', {
-                            //                     method: 'POST',
-                            //                     headers: {
-                            //                         'Content-Type': 'application/x-www-form-urlencoded',
-                            //                     },
-                            //                     body: 'dataUri=' + encodeURIComponent(dataUrl) + '&filename=' + encodeURIComponent(filename),
-                            //                 })
-                            //                 .then(response => response.json())
-                            //                 .then(data => {
-                            //                     console.log('Screen captured and saved as: ' + data.filename);
-                            //                     sendScreenSharingStatus(4, filename, evidence_name_type);
-                            //                 })
-                            //                 .catch(error => {
-                            //                     console.error('Error saving screen capture:', error);
-                            //                 });
-                            //             }, 500);
-                            //         }
-                            //         else{
-                            //             sendScreenSharingStatus(4, 0,evidence_name_type);
-                            //         }
-                            //     }
-                                                                        
-
-                            //     // Start screen sharing when the script is loaded
-                            //     startScreenSharing();";
-                            // echo '</script>';
-
+                        // Get current url
+                        $quizattempturl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
                         
                         // Pass necessarry value to js file in form of json
                         $jsdata = array(
@@ -253,22 +123,104 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             'userid' => $userid,
                             'quizid' => $quizid,
                             'quizattempt' => $attemptValue,
+                            'quizattempturl' => $quizattempturl,
                         );
 
+                        // Send to prompts.php
+                        // Convert the array to JSON
+                        $jsdata_json = json_encode($jsdata);
+
+                        // Send to monitor_tab.js
                         echo '<script>';
                         echo 'var jsdata = ' . json_encode($jsdata) . ';';
                         echo '</script>';
 
-                        if ($monitor_tab_switching_activated){
-                            echo '<script type="text/javascript"> console.log("MONITOR TAB ACTIVATED"); </script>';
-                            echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
-                            echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
-                            echo '<script src="' . $CFG->wwwroot . '/local/auto_proctor/monitor_tab.js"></script>';
+                        // Check if monitor tab switching is activated
+                        if ($monitor_tab_switching_activated) {
+                        
+                            // Check if there existing is existing screen_share proctoring consent record
+                            $sql = "SELECT screenshare_consent
+                                FROM {auto_proctor_proctoring_session_tb}
+                                WHERE userid = :userid
+                                AND quizid = :quizid
+                                AND attempt = :attempt"
+                            ;
+                            $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
+                            $screenshare_consent = $DB->get_records_sql($sql, $params);
+
+                            // If there is no session record
+                            // Inset new session
+                            if (empty($screenshare_consent)) {
+                                $insertData = new stdClass();
+                                $insertData->userid = $userid;
+                                $insertData->quizid = $quizid;
+                                $insertData->attempt = $attemptValue;
+                                $insert_new_session = $DB->insert_record('auto_proctor_proctoring_session_tb', $insertData);
+
+                                echo "<script> console.log('no recorded session'); </script>";
+                            }
+
+                            // Select the screen_share proctoring consent value
+                            $sql = "SELECT screenshare_consent
+                                FROM {auto_proctor_proctoring_session_tb}
+                                WHERE userid = :userid
+                                AND quizid = :quizid
+                                AND attempt = :attempt"
+                            ;
+                            $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
+                            $screenshare_consent = $DB->get_fieldset_sql($sql, $params);
+
+                            // 0 not yet prompted the consent modal
+                            // 1 = did not agree to consent
+                            // 2 = agreed to consent
+
+                            // If not yet prompted then redirect to prompts page
+                            if ($screenshare_consent[0] == 0) {
+                                //redirect($CFG->wwwroot . '/mod/quiz/view.php?id=' . $quizid);
+                                redirect($CFG->wwwroot . '/local/auto_proctor/prompts.php?data=' . urlencode($jsdata_json));
+                                echo "<script> console.log('consent is 0'); </script>";
+                            }
+
+                            // If did not agreed to consent
+                            if ($screenshare_consent[0] == 1){
+                                
+                                // Checl if strict mode was activated
+                                // If yes then redirect it to quiz attempt review page
+                                if ($strict_mode_activated[0] == 1){
+
+                                    // Delete current session
+                                    $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
+                                    $DB->delete_records('auto_proctor_proctoring_session_tb', $params);
+
+                                    redirect($CFG->wwwroot . '/mod/quiz/view.php?id=' . $cmid);
+                                    //echo "<script>console.log(". $CFG->wwwroot . '/mod/quiz/view.php?id=' . $quizid .");</script>";
+                                }
+                                // If not activated then redirect to quiz
+                            }
+
+                            // If agreed to consent
+                            // Then prompt the screen sharing for proctoring
+                            else if ($screenshare_consent[0] == 2){
+                                // AP prompt to share screen
+                                echo '<script type="text/javascript"> console.log("MONITOR TAB ACTIVATED"); </script>';
+                                echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
+                                echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
+                                echo '<script src="' . $CFG->wwwroot . '/local/auto_proctor/monitor_tab.js"></script>';
+                            }
                         }
 
-                        if ($monitor_tab_microphone_activated){
-                            echo '<script type="text/javascript"> console.log("MONITOR MICROPHONE ACTIVATED"); </script>';
-                        }
+
+                        // if ($monitor_tab_switching_activated) {
+                        //     echo '<script type="text/javascript"> console.log("MONITOR TAB ACTIVATED"); </script>';
+                        //     echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
+                        //     echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
+                        //     echo '<script src="' . $CFG->wwwroot . '/local/auto_proctor/monitor_tab.js"></script>';
+                        // }
+
+
+                        // if ($monitor_tab_microphone_activated){
+                        //     echo '<script type="text/javascript"> console.log("MONITOR MICROPHONE ACTIVATED"); </script>';
+                        // }
                     }
                 }
 
