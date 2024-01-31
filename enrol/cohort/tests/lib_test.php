@@ -246,7 +246,11 @@ class lib_test extends \advanced_testcase {
         $enrolmentdata = [
             'customint1' => $cohort1->id,
             'cohortidnumber' => $cohort1->idnumber,
+            'courseid' => $course->id,
+            'id' => null,
+            'status' => ENROL_INSTANCE_ENABLED,
         ];
+        $enrolmentdata = $cohortplugin->fill_enrol_custom_fields($enrolmentdata, $course->id);
         $error = $cohortplugin->validate_plugin_data_context($enrolmentdata, $course->id);
         $this->assertNull($error);
     }
@@ -313,6 +317,7 @@ class lib_test extends \advanced_testcase {
      */
     public function test_validate_enrol_plugin_data() {
         $this->resetAfterTest();
+        $this->setAdminUser();
 
         $cat = $this->getDataGenerator()->create_category();
         $cat1 = $this->getDataGenerator()->create_category(['parent' => $cat->id]);

@@ -1108,13 +1108,13 @@ class plugin_test extends \advanced_testcase {
         $enrolmentdata = $metaplugin->fill_enrol_custom_fields($enrolmentdata, $course1->id);
         $this->assertArrayHasKey('customint1', $enrolmentdata);
         $this->assertEquals($course2->id, $enrolmentdata['customint1']);
-        $this->assertArrayNotHasKey('customint2', $enrolmentdata);
+        $this->assertNull($enrolmentdata['customint2']);
 
         $enrolmentdata['metacoursename'] = 'notexist';
         $enrolmentdata = $metaplugin->fill_enrol_custom_fields($enrolmentdata, $course1->id);
         $this->assertArrayHasKey('customint1', $enrolmentdata);
         $this->assertFalse($enrolmentdata['customint1']);
-        $this->assertArrayNotHasKey('customint2', $enrolmentdata);
+        $this->assertNull($enrolmentdata['customint2']);
 
         $enrolmentdata['metacoursename'] = $course2->shortname;
 

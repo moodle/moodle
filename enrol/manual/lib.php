@@ -675,6 +675,20 @@ class enrol_manual_plugin extends enrol_plugin {
         }
         return $instance;
     }
+
+    /**
+     * Fill custom fields data for a given enrolment plugin.
+     *
+     * @param array $enrolmentdata enrolment data.
+     * @param int $courseid Course ID.
+     * @return array Updated enrolment data with custom fields info.
+     */
+    public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid): array {
+        return $enrolmentdata + [
+            'expirynotify' => 0,
+            'expirythreshold' => 0,
+        ];
+    }
 }
 
 /**
