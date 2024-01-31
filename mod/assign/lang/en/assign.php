@@ -475,7 +475,9 @@ $string['reopenuntilpassincompatiblewithblindmarking'] = 'Reopen until pass opti
 $string['requiresubmissionstatement'] = 'Require that students accept the submission statement';
 $string['requiresubmissionstatement_help'] = 'Require that students accept the submission statement for all submissions to this assignment.';
 $string['requireallteammemberssubmit'] = 'Require all group members submit';
-$string['requireallteammemberssubmit_help'] = 'If enabled, all members of the student group must click the submit button for this assignment before the group submission will be considered as submitted. If disabled, the group submission will be considered as submitted as soon as any member of the student group clicks the submit button.';
+$string['requireallteammemberssubmit_help'] = 'This setting must be used together with the \'Require students to click the submit button\' in Submission settings.
+
+If enabled, all group members must click the submit button for the group submission to be considered as submitted. If disabled, any group member can click the submit button.';
 $string['recordid'] = 'Identifier';
 $string['removesubmission'] = 'Remove submission';
 $string['removesubmissionforstudent'] = 'Remove submission for student: (id={$a->id}, fullname={$a->fullname}).';
