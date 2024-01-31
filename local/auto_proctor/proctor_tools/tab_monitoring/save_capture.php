@@ -20,7 +20,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @var stdClass $plugin
 */
-require_once(__DIR__ . '/../../config.php');
+require_once(__DIR__ . '/../../../../config.php');
 
 // PHP script to handle saving the screen capture
 
@@ -32,7 +32,7 @@ $generated_filename = $_POST['filename'];
 $data = base64_decode(preg_replace('#^data:image/png;base64,#', '', $dataUri));
 
 // Specify the folder for saving captures
-$folderPath = 'screen_capture_evidence/';
+$folderPath = '../evidences/screen_capture_evidence/';
 
 // Ensure the folder exists
 if (!file_exists($folderPath)) {

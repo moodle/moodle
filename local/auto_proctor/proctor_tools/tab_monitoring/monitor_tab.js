@@ -216,7 +216,7 @@ $(document).ready(function () {
         // Send an AJAX request to your server to record screen sharing status
         console.log('Sending screen_activity:', screen_activity);
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/save_activity.php', true); // Replace with the actual path
+        xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/tab_monitoring/save_activity.php', true); // Replace with the actual path
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.send('screen_activity=' + screen_activity + '&userid=' + jsdata.userid + '&quizid=' + jsdata.quizid + '&quizattempt=' + jsdata.quizattempt + '&filename=' + encodeURIComponent(filename) + '&activity_type=' + activity_type);
     }
@@ -254,7 +254,7 @@ $(document).ready(function () {
                                 
             const dataUrl = canvas.toDataURL('image/png');
                                 
-            fetch(jsdata.wwwroot + '/local/auto_proctor/save_capture.php', {
+            fetch(jsdata.wwwroot + '/local/auto_proctor/proctor_tools/tab_monitoring/save_capture.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
