@@ -47,6 +47,7 @@ $drawer-bg: darken($body-bg, 5%) !default;
     [data-region="drawer"] {
         padding: $drawer-padding-x $drawer-padding-y;
     }
+    .jsenabled .popover-process-monitor,
     .jsenabled .btn-footer-popover,
     .jsenabled .btn-footer-communication {
         @include transition(0.2s);
