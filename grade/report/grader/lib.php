@@ -881,7 +881,7 @@ class grade_report_grader extends grade_report {
                         $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
                     }
                     $headerlink = grade_helper::get_element_header($element, true,
-                        true, false, false, true, $sortlink);
+                        true, false, false, true);
 
                     $itemcell = new html_table_cell();
                     $itemcell->attributes['class'] = $type . ' ' . $catlevel .
@@ -1949,9 +1949,7 @@ class grade_report_grader extends grade_report {
         $requirednames = order_in_string(\core_user\fields::get_name_fields(), $nameformat);
         if (!empty($requirednames)) {
             foreach ($requirednames as $name) {
-                $arrows['studentname'] .= html_writer::link(
-                    new moodle_url($this->baseurl, array('sortitemid' => $name)), get_string($name)
-                );
+                $arrows['studentname'] .= get_string($name);
                 if ($this->sortitemid == $name) {
                     $sortlink->param('sortitemid', $name);
                     if ($this->sortorder == 'ASC') {
@@ -1975,10 +1973,8 @@ class grade_report_grader extends grade_report {
             if (preg_match(\core_user\fields::PROFILE_FIELD_REGEX, $field)) {
                 $attributes['data-collapse-name'] = \core_user\fields::get_display_name($field);
             }
-            $fieldlink = html_writer::link(new moodle_url($this->baseurl, ['sortitemid' => $field]),
-                \core_user\fields::get_display_name($field), $attributes);
-            $arrows[$field] = $fieldlink;
 
+            $arrows[$field] = html_writer::span(\core_user\fields::get_display_name($field), '', $attributes);
             if ($field == $this->sortitemid) {
                 $sortlink->param('sortitemid', $field);
 

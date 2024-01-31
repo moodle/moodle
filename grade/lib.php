@@ -4088,21 +4088,15 @@ abstract class grade_helper {
     }
 
     /**
-     * Returns a link to grading page if grade.php exists in the module or link to activity
+     * Returns a link to activity
      *
      * @param array $element An array representing an element in the grade_tree
-     *
-     * @return string|null link to grading page|activity or null if not found
+     * @return moodle_url|null link to activity or null if not found
      */
-    public static function get_activity_link(array $element): ?string {
-        global $CFG;
-        /** @var array static cache of the grade.php file existence flags */
-        static $hasgradephp = [];
-
+    public static function get_activity_link(array $element): ?moodle_url {
         $itemtype = $element['object']->itemtype;
         $itemmodule = $element['object']->itemmodule;
         $iteminstance = $element['object']->iteminstance;
-        $itemnumber = $element['object']->itemnumber;
 
         // Links only for module items that have valid instance, module and are
         // called from grade_tree with valid modinfo.
@@ -4123,23 +4117,6 @@ abstract class grade_helper {
             return null;
         }
 
-        if (!array_key_exists($itemmodule, $hasgradephp)) {
-            if (file_exists($CFG->dirroot . '/mod/' . $itemmodule . '/grade.php')) {
-                $hasgradephp[$itemmodule] = true;
-            } else {
-                $hasgradephp[$itemmodule] = false;
-            }
-        }
-
-        // If module has grade.php, link to that, otherwise view.php.
-        if ($hasgradephp[$itemmodule]) {
-            $args = ['id' => $cm->id, 'itemnumber' => $itemnumber];
-            if (isset($element['userid'])) {
-                $args['userid'] = $element['userid'];
-            }
-            return new moodle_url('/mod/' . $itemmodule . '/grade.php', $args);
-        } else {
-            return new moodle_url('/mod/' . $itemmodule . '/view.php', ['id' => $cm->id]);
-        }
+        return new moodle_url('/mod/' . $itemmodule . '/view.php', ['id' => $cm->id]);
     }
 }
