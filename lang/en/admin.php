@@ -504,7 +504,7 @@ $string['debugsqltrace_desc'] = 'If enabled, a partial or full PHP stack trace i
 $string['debugstringids'] = 'Show origin of languages strings';
 $string['debugstringids_desc'] = 'If enabled, language string components and identifiers are displayed when ?strings=1 or &strings=1 is appended to the page URL.';
 $string['debugtemplateinfo'] = 'Show template information';
-$string['debugtemplateinfo_desc'] = 'If enabled, templates used for rendering are shown as comments in the page HTML. Use for temporary debugging only, as it produces HTML validation errors and could break some page scripts.';
+$string['debugtemplateinfo_desc'] = 'If enabled, templates used for rendering are shown as comments in the page HTML. After changing the setting, you need to purge caches. Use for temporary debugging only, as it produces HTML validation errors and can break page scripts. It can also break core functionality!';
 $string['debugvalidators'] = 'Show validator links';
 $string['defaultcity'] = 'Default city';
 $string['defaultcity_help'] = 'A city entered here will be the default city when creating new user accounts.';
@@ -1581,7 +1581,7 @@ $string['userimagesdisabled'] = 'Profile user images are disabled';
 $string['userlist'] = 'Browse list of users';
 $string['userdefaultpreferences'] = 'User default preferences';
 $string['userfiltersdefault'] = 'Default user filters';
-$string['userfiltersdefault_desc'] = 'Choose the filters you want to display on the \'Bulk user actions\' page. To select multiple filters, hold down the Ctrl key. Filters not selected will still be accessible through the \'Show more\' link';
+$string['userfiltersdefault_desc'] = 'Choose the filters you want to display on the \'Bulk user actions\' page. To select multiple filters, hold down the Ctrl key. Filters not selected will still be available via the \'Show more\' link.';
 $string['usermanagement'] = 'User management';
 $string['userpreference'] = 'User preference';
 $string['userpolicies'] = 'User policies';
