@@ -29905,12 +29905,14 @@ span.editinstructions .alert-link {
   [data-region=drawer] {
     padding: 20px 20px;
   }
+  .jsenabled .popover-process-monitor,
   .jsenabled .btn-footer-popover,
   .jsenabled .btn-footer-communication {
     transition: 0.2s;
   }
 }
 @media (min-width: 576px) and (prefers-reduced-motion: reduce) {
+  .jsenabled .popover-process-monitor,
   .jsenabled .btn-footer-popover,
   .jsenabled .btn-footer-communication {
     transition: none;
@@ -37069,7 +37071,7 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
     margin-right: 315px;
     padding-right: 1rem;
   }
-  .jsenabled #page.drawers.show-drawer-right .btn-footer-popover, .jsenabled #page.drawers.show-drawer-right .btn-footer-communication {
+  .jsenabled #page.drawers.show-drawer-right .popover-process-monitor, .jsenabled #page.drawers.show-drawer-right .btn-footer-popover, .jsenabled #page.drawers.show-drawer-right .btn-footer-communication {
     right: calc(315px + 2rem);
   }
 }
