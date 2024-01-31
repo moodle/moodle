@@ -15,19 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Link to CSV course upload.
+ * Capability definitions for tool_uploadcourse.
  *
  * @package    tool_uploadcourse
- * @copyright  2011 Piers Harding
+ * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$ADMIN->add('courses',
-    new admin_externalpage('tooluploadcourse',
-        get_string('uploadcourses', 'tool_uploadcourse'),
-        "$CFG->wwwroot/$CFG->admin/tool/uploadcourse/index.php",
-        'tool/uploadcourse:use'
-    )
-);
+$capabilities = [
+    'tool/uploadcourse:use' => [
+        'riskbitmask' => RISK_SPAM,
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COURSECAT,
+        'archetypes' => [
+            'manager' => CAP_ALLOW,
+        ],
+    ],
+];

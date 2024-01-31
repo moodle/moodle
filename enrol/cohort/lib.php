@@ -620,15 +620,19 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @return lang_string|null Error
      */
     public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null) : ?lang_string {
-        $error = null;
         if (isset($enrolmentdata['customint1'])) {
             $cohortid = $enrolmentdata['customint1'];
             $coursecontext = \context_course::instance($courseid);
             if (!cohort_get_cohort($cohortid, $coursecontext)) {
-                $error = new lang_string('contextcohortnotallowed', 'cohort', $enrolmentdata['cohortidnumber']);
+                return new lang_string('contextcohortnotallowed', 'cohort', $enrolmentdata['cohortidnumber']);
             }
         }
-        return $error;
+        $enrolmentdata += [
+            'customint1' => null,
+            'customint2' => null,
+            'roleid' => 0,
+        ];
+        return parent::validate_plugin_data_context($enrolmentdata, $courseid);
     }
 
     /**

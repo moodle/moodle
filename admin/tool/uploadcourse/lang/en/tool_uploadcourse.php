@@ -67,6 +67,8 @@ $string['coursetemplatename'] = 'Restore from this course after upload';
 $string['coursetemplatename_help'] = 'Enter an existing course shortname to use as a template for the creation of all courses.';
 $string['coursetorestorefromdoesnotexist'] = 'The course to restore from does not exist';
 $string['courseupdated'] = 'Course updated';
+$string['courseuploadnotallowed'] = 'No permission to upload courses in category: {$a}';
+$string['courseuploadupdatenotallowed'] = "Course with this shortname exists and you don't have permission to use upload course tool to update it";
 $string['createall'] = 'Create all, increment shortname if needed';
 $string['createnew'] = 'Create new courses only, skip existing ones';
 $string['createorupdate'] = 'Create new courses, or update existing ones';
@@ -128,6 +130,7 @@ $string['updatemodedoessettonothing'] = 'Update mode does not allow anything to 
 $string['updateonly'] = 'Only update existing courses';
 $string['updatewithdataordefaults'] = 'Update with CSV data and defaults';
 $string['updatewithdataonly'] = 'Update with CSV data only';
+$string['uploadcourse:use'] = 'Use upload course tool';
 $string['uploadcourses'] = 'Upload courses';
 $string['uploadcourses_help'] = 'Courses may be uploaded via text file. The format of the file should be as follows:
 

@@ -468,7 +468,10 @@ class enrol_meta_plugin extends enrol_plugin {
         } else if (isset($enrolmentdata['groupname'])) {
             $enrolmentdata['customint2'] = groups_get_group_by_name($courseid, $enrolmentdata['groupname']);
         }
-        return $enrolmentdata;
+        return $enrolmentdata + [
+            'customint1' => null,
+            'customint2' => null,
+        ];
     }
 
     /**

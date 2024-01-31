@@ -35,6 +35,7 @@ class processor_test extends \advanced_testcase {
     public function test_basic() {
         global $DB;
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $content = array(
             "shortname,fullname,summary",
@@ -134,6 +135,7 @@ class processor_test extends \advanced_testcase {
     public function test_shortname_template() {
         global $DB;
         $this->resetAfterTest(true);
+        $this->setAdminUser();
 
         $content = array(
             "shortname,fullname,summary,idnumber",

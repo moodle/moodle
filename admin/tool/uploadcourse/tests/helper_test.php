@@ -381,12 +381,15 @@ class helper_test extends \advanced_testcase {
 
         $c1 = $this->getDataGenerator()->create_category(array('idnumber' => 'C1'));
         $c2 = $this->getDataGenerator()->create_category(array('idnumber' => 'C2'));
+        $c3 = $this->getDataGenerator()->create_category(['idnumber' => 'C3', 'visible' => false]);
 
         // Doubled for cache check.
         $this->assertEquals($c1->id, tool_uploadcourse_helper::resolve_category_by_idnumber('C1'));
         $this->assertEquals($c1->id, tool_uploadcourse_helper::resolve_category_by_idnumber('C1'));
         $this->assertEquals($c2->id, tool_uploadcourse_helper::resolve_category_by_idnumber('C2'));
         $this->assertEquals($c2->id, tool_uploadcourse_helper::resolve_category_by_idnumber('C2'));
+        $this->assertEmpty(tool_uploadcourse_helper::resolve_category_by_idnumber('C3'));
+        $this->assertEmpty(tool_uploadcourse_helper::resolve_category_by_idnumber('C3'));
         $this->assertEmpty(tool_uploadcourse_helper::resolve_category_by_idnumber('DoesNotExist'));
         $this->assertEmpty(tool_uploadcourse_helper::resolve_category_by_idnumber('DoesNotExist'));
     }
@@ -436,8 +439,8 @@ class helper_test extends \advanced_testcase {
 
         // Hidden parent.
         $path = array('Cat 2', 'Cat 2.1', 'Cat 2.1.2');
-        $this->assertEquals($cat2_1_2->id, tool_uploadcourse_helper::resolve_category_by_path($path));
-        $this->assertEquals($cat2_1_2->id, tool_uploadcourse_helper::resolve_category_by_path($path));
+        $this->assertEmpty(tool_uploadcourse_helper::resolve_category_by_path($path));
+        $this->assertEmpty(tool_uploadcourse_helper::resolve_category_by_path($path));
 
         // Does not exist.
         $path = array('No cat 3', 'Cat 1.2');

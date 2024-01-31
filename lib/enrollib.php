@@ -2707,6 +2707,9 @@ abstract class enrol_plugin {
     /**
      * Check if enrolment plugin is supported in csv course upload.
      *
+     * If supported, plugins are also encouraged to override methods:
+     * {@see self::fill_enrol_custom_fields()}, {@see self::validate_plugin_data_context()}
+     *
      * @return bool
      */
     public function is_csv_upload_supported(): bool {
@@ -3485,7 +3488,10 @@ abstract class enrol_plugin {
     /**
      * Fill custom fields data for a given enrolment plugin.
      *
-     * @param array $enrolmentdata enrolment data.
+     * For example: resolve linked entities from the idnumbers (cohort, role, group, etc.)
+     * Also fill the default values that are not specified.
+     *
+     * @param array $enrolmentdata enrolment data received in CSV file in tool_uploadcourse
      * @param int $courseid Course ID.
      * @return array Updated enrolment data with custom fields info.
      */
@@ -3514,11 +3520,31 @@ abstract class enrol_plugin {
     /**
      * Check if plugin custom data is allowed in relevant context.
      *
+     * This is called from the tool_uploadcourse if the plugin supports instance creation in
+     * upload course ({@see self::is_csv_upload_supported()})
+     *
+     * The fallback is to call the edit_instance_validation() but it will be better if the plugins
+     * implement this method to return better error messages.
+     *
      * @param array $enrolmentdata enrolment data to validate.
      * @param int|null $courseid Course ID.
      * @return lang_string|null Error
      */
     public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null) : ?lang_string {
+        if ($courseid) {
+            $enrolmentdata += ['courseid' => $courseid, 'id' => 0, 'status' => ENROL_INSTANCE_ENABLED];
+            $instance = (object)[
+                'id' => null,
+                'courseid' => $courseid,
+                'status' => $enrolmentdata['status'],
+                'type' => $this->get_name(),
+            ];
+            $formerrors = $this->edit_instance_validation($enrolmentdata, [], $instance, context_course::instance($courseid));
+            if (!empty($formerrors)) {
+                $errors = array_map(fn($key) => "{$key}: {$formerrors[$key]}", array_keys($formerrors));
+                return new lang_string('errorcannotcreateorupdateenrolment', 'tool_uploadcourse', $errors);
+            }
+        }
         return null;
     }
 
