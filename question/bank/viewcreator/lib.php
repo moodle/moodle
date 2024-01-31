@@ -30,10 +30,35 @@
  * @return string
  */
 function qbank_viewcreator_edit_form_display($question): string {
-    global $DB, $PAGE;
+    global $DB, $PAGE, $OUTPUT;
+    $question = question_bank::load_question($question->id);
+
     $versiondata = [];
-    $questionversion = $DB->get_record('question_versions', ['questionid' => $question->id])->version;
-    $versiondata['versionnumber'] = $questionversion;
+    $versioninfo = new \core_question\output\question_version_info($question, true);
+    $versiondata['versionnumber'] = $versioninfo->export_for_template($OUTPUT)['versioninfo'];
+
+    // Currently the history only display the question versions for just only default category.
+    // To display question in the other category.
+    // So we need to add filter param so that we can display the question in different category.
+    $filterparam = json_encode([
+        'category' => [
+            'jointype' => 1,
+            'values' => [$question->category],
+            'filteroptions' => ['includesubcategories' => false],
+        ],
+    ]);
+    // We need a return url param so that click close button on history page should redirect back to edit question page.
+    // Set params filter to returnurl so that when we use the move feature  It will not cause any error.
+    $returnurl = $PAGE->url;
+    $returnurl->param('filter', $filterparam);
+    $versiondata['historyurl'] = new moodle_url('/question/bank/history/history.php', [
+        'entryid' => $question->questionbankentryid,
+        'returnurl' => $returnurl,
+        'courseid' => $PAGE->course->id,
+        'filter' => $filterparam,
+        'cmid' => $PAGE->url->param('cmid'),
+    ]);
+
     if (!empty($question->createdby)) {
         $a = new stdClass();
         $a->time = userdate($question->timecreated);

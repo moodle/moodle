@@ -54,7 +54,8 @@ Feature: Question bank Modified by column
     And I press "Apply filters"
     And I should see "First question"
     And I choose "Edit question" action for "First question" in the question bank
-    And I should see "Version 1"
+    And "History" "link" should exist
+    And I should see "v1 (latest)"
     And I set the field "id_name" to "Renamed question v2"
     And I set the field "id_questiontext" to "edited question"
     And I press "id_submitbutton"
@@ -65,7 +66,7 @@ Feature: Question bank Modified by column
     And I set the field "Category" to "Test questions"
     And I press "Apply filters"
     And I choose "Edit question" action for "Renamed question v2" in the question bank
-    Then I should see "Version 2"
+    Then I should see "v2 (latest)"
     And I set the field "id_name" to "Renamed question v3"
     And I set the field "id_questiontext" to "edited question v3"
     And I press "id_submitbutton"
