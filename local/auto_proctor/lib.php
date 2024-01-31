@@ -34,7 +34,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
     foreach ($all_course_id as $course_id) {
         if (has_capability('moodle/course:manageactivities', context_course::instance($course_id->id), $USER->id)) {
             // Adding the auto-proctor in navigation bar ==================================
-            $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/auto_proctor_dashboard.php');
+            $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/ui/auto_proctor_dashboard.php');
             $main_node->nodetype = 1;
             $main_node->collapse = false;
             $main_node->forceopen = true;
@@ -177,7 +177,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             // If not yet prompted then redirect to prompts page
                             if ($screenshare_consent[0] == 0) {
                                 //redirect($CFG->wwwroot . '/mod/quiz/view.php?id=' . $quizid);
-                                redirect($CFG->wwwroot . '/local/auto_proctor/prompts.php?data=' . urlencode($jsdata_json));
+                                redirect($CFG->wwwroot . '/local/auto_proctor/ui/prompts.php?data=' . urlencode($jsdata_json));
                                 echo "<script> console.log('consent is 0'); </script>";
                             }
 
@@ -205,7 +205,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                                 echo '<script type="text/javascript"> console.log("MONITOR TAB ACTIVATED"); </script>';
                                 echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
                                 echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
-                                echo '<script src="' . $CFG->wwwroot . '/local/auto_proctor/monitor_tab.js"></script>';
+                                echo '<script src="' . $CFG->wwwroot . '/local/auto_proctor/proctor_tools/tab_monitoring/monitor_tab.js"></script>';
                             }
                         }
 

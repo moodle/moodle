@@ -21,7 +21,7 @@
  * @var stdClass $plugin
  */
 
-require_once(__DIR__ . '/../../config.php'); // Setup moodle global variable also
+require_once(__DIR__ . '/../../../config.php'); // Setup moodle global variable also
 
 require_login();
 

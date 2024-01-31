@@ -21,7 +21,7 @@
  * @var stdClass $plugin
 */
 
-require_once(__DIR__ . '/../../config.php'); // Setup moodle global variable also
+require_once(__DIR__ . '/../../../config.php'); // Setup moodle global variable also
 require_login();
 // Get the global $DB object
 global $DB, $PAGE, $USER, $CFG;
@@ -75,7 +75,7 @@ $quizattempturl = $jsdata['quizattempturl'];
         var screenshare_consent = 2;
         
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', <?php echo json_encode($wwwroot . '/local/auto_proctor/save_consent.php'); ?>, true);
+        xhr.open('POST', <?php echo json_encode($wwwroot . '/local/auto_proctor/proctor_tools/tab_monitoring/save_consent.php'); ?>, true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         // ==== DEBUGGING =====
         xhr.onreadystatechange = function () {
@@ -96,7 +96,7 @@ $quizattempturl = $jsdata['quizattempturl'];
         var screenshare_consent = 1;
         
         var xhr = new XMLHttpRequest();
-        xhr.open('POST', <?php echo json_encode($wwwroot . '/local/auto_proctor/save_consent.php'); ?>, true);
+        xhr.open('POST', <?php echo json_encode($wwwroot . '/local/auto_proctor/proctor_tools/tab_monitoring/save_consent.php'); ?>, true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         // ==== DEBUGGING =====
         xhr.onreadystatechange = function () {
