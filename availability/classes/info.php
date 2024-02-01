@@ -298,6 +298,7 @@ abstract class info {
             // So instead use the numbers (cmid) from the tag.
             $htmlname = preg_replace('~[^0-9]~', '', $name);
         }
+        $htmlname = html_to_text($htmlname, 75, false);
         $info = 'Error processing availability data for &lsquo;' . $htmlname
                  . '&rsquo;: ' . s($e->a);
         debugging($info, DEBUG_DEVELOPER);
@@ -740,11 +741,14 @@ abstract class info {
         $info = preg_replace_callback('~<AVAILABILITY_CMNAME_([0-9]+)/>~',
                 function($matches) use($modinfo, $context) {
                     $cm = $modinfo->get_cm($matches[1]);
-                    if ($cm->has_view() and $cm->get_user_visible()) {
+                    $modulename = format_string($cm->get_name(), true, ['context' => $context]);
+                    // We make sure that we add a data attribute to the name so we can change it later if the
+                    // original module name changes.
+                    if ($cm->has_view() && $cm->get_user_visible()) {
                         // Help student by providing a link to the module which is preventing availability.
-                        return \html_writer::link($cm->get_url(), format_string($cm->get_name(), true, ['context' => $context]));
+                        return \html_writer::link($cm->get_url(), $modulename, ['data-cm-name-for' => $cm->id]);
                     } else {
-                        return format_string($cm->get_name(), true, ['context' => $context]);
+                        return \html_writer::span($modulename, '', ['data-cm-name-for' => $cm->id]);
                     }
                 }, $info);
         $info = preg_replace_callback('~<AVAILABILITY_FORMAT_STRING>(.*?)</AVAILABILITY_FORMAT_STRING>~s',
