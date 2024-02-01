@@ -70,10 +70,9 @@ class content_notification_task extends adhoc_task {
 
             \core\cron::setup_user($user, $course);
 
+            // Ensure that the activity is available/visible to the user.
             $cm = get_fast_modinfo($course)->cms[$cm->id];
-
-            if (!$cm->uservisible && !$cm->is_visible_on_course_page()) {
-                // User can't access or see the activity in the course page.
+            if (!\core_availability\info_module::is_user_visible($cm, $user->id, false)) {
                 $this->log("Ignoring user {$user->id} (no permissions to see the module)", 1);
                 continue;
             }
