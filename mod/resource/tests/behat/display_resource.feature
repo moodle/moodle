@@ -1,4 +1,4 @@
-@mod @mod_resource @_file_upload
+@mod @mod_resource
 Feature: Teacher can specify different display options for the resource
   In order to provide more information about a file
   As a teacher
@@ -17,12 +17,11 @@ Feature: Teacher can specify different display options for the resource
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity | course | name   | defaultfilename                            | uploaded |
-      | resource | C1     | Myfile | mod/resource/tests/fixtures/samplefile.txt | 1        |
+      | activity | course | name   | intro        | defaultfilename                            | uploaded |
+      | resource | C1     | Myfile | My cool file | mod/resource/tests/fixtures/samplefile.txt | 1        |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
 
-  @javascript
   Scenario: Specifying no additional display options for a file resource
     When I am on the "Myfile" "resource activity editing" page
     And I set the following fields to these values:
@@ -34,7 +33,6 @@ Feature: Teacher can specify different display options for the resource
     And I am on "Course 1" course homepage
     And ".activity.resource .resourcelinkdetails" "css_element" should not exist
 
-  @javascript
   Scenario Outline: Specifying different display options for a file resource
     When I am on the "Myfile" "resource activity editing" page
     And I set the following fields to these values:
@@ -50,7 +48,6 @@ Feature: Teacher can specify different display options for the resource
     And I <seesize> see "6 bytes" in the ".activity.resource .resourcelinkdetails" "css_element"
     And I <seetype> see "TXT" in the ".activity.resource .activitybadge" "css_element"
     And I <seedate> see "Uploaded" in the ".activity.resource .resourcelinkdetails" "css_element"
-
     Examples:
       | showsize | showtype | showdate | seesize    | seetype    | seedate    |
       | 1        | 0        | 0        | should     | should not | should not |
@@ -59,6 +56,22 @@ Feature: Teacher can specify different display options for the resource
       | 1        | 0        | 1        | should     | should not | should     |
       | 0        | 1        | 1        | should not | should     | should     |
       | 1        | 1        | 1        | should     | should     | should     |
+
+  Scenario Outline: Specify different display options for an embedded file resource
+    When I am on the "Myfile" "resource activity editing" page
+    And I set the following fields to these values:
+      | display                      | Embed      |
+      | Show type                    | <showtype> |
+      | Display resource description | <showdesc> |
+    And I press "Save and display"
+    Then I <seetype> see "TXT" in the "region-main" "region"
+    And I <seedesc> see "My cool file" in the "region-main" "region"
+    Examples:
+      | showtype | showdesc | seetype    | seedesc    |
+      | 1        | 0        | should     | should not |
+      | 1        | 1        | should     | should     |
+      | 0        | 1        | should not | should     |
+      | 0        | 0        | should not | should not |
 
   Scenario: Specifying only show type for a file resource
     When I am on the "Myfile" "resource activity editing" page
