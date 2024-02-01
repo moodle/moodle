@@ -124,6 +124,7 @@ class upgrade_recordings_task_test extends advanced_testcase {
         foreach ($matchesarray as $matches) {
             $this->expectOutputRegex('/' . implode('.*', $matches) . '/s');
         }
+        $this->resetDebugging(); // We might have debugging message that are sent by get_from_meetingid and can ignore them.
     }
 
     /**
@@ -186,6 +187,7 @@ class upgrade_recordings_task_test extends advanced_testcase {
         foreach ($matchesarray as $matches) {
             $this->expectOutputRegex('/' . implode('.*', $matches) . '/s');
         }
+        $this->resetDebugging(); // We might have debugging message that are sent by get_from_meetingid and can ignore them.
     }
 
     /**
