@@ -24,7 +24,7 @@ require_once(__DIR__ . '/../../../../config.php');
 
 global $DB, $PAGE, $USER, $CFG;
  
-if(isset($_POST['quizattempt'])){
+if(isset($_POST['screenshare_consent'])){
     echo "<script>console.log('sent');</script>";
     $userid = $_POST['userid'];
     $quizid = $_POST['quizid'];
