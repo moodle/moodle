@@ -45,31 +45,27 @@ class min_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         // Test subjects.
+        $this->getDataGenerator()->create_user(['firstname' => 'Admin', 'suspended' => 1]);
         $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'suspended' => 1]);
-        $this->getDataGenerator()->create_user(['firstname' => 'Bob', 'suspended' => 0]);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
-        // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
-
-        // This is the column we'll aggregate.
+        // Report columns, aggregated/sorted by user suspended.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname']);
         $generator->create_column([
-            'reportid' => $report->get('id'), 'uniqueidentifier' => 'user:suspended', 'aggregation' => min::get_class_name()]
-        );
+            'reportid' => $report->get('id'),
+            'uniqueidentifier' => 'user:suspended',
+            'aggregation' => min::get_class_name(),
+            'sortenabled' => 1,
+            'sortdirection' => SORT_DESC,
+        ]);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
-            [
-                'c0_firstname' => 'Admin',
-                'c1_suspended' => 'No',
-            ],
-            [
-                'c0_firstname' => 'Bob',
-                'c1_suspended' => 'No',
-            ],
-        ], $content);
+            ['Bob', 'Yes'],
+            ['Admin', 'No'],
+        ], array_map('array_values', $content));
     }
 }

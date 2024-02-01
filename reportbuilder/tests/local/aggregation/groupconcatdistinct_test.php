@@ -67,28 +67,22 @@ class groupconcatdistinct_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
 
-        // First column, sorted.
-        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname', 'sortenabled' => 1]);
-
-        // This is the column we'll aggregate.
+        // Report columns, aggregated/sorted by user lastname.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'user:firstname']);
         $generator->create_column([
             'reportid' => $report->get('id'),
             'uniqueidentifier' => 'user:lastname',
             'aggregation' => groupconcatdistinct::get_class_name(),
+            'sortenabled' => 1,
+            'sortdirection' => SORT_ASC,
         ]);
 
-        // Assert lastname column was aggregated, and sorted predictably.
+        // Assert lastname column was aggregated, and itself also sorted predictably.
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertEquals([
-            [
-                'c0_firstname' => 'Admin',
-                'c1_lastname' => 'User',
-            ],
-            [
-                'c0_firstname' => 'Bob',
-                'c1_lastname' => 'Apple, Banana',
-            ],
-        ], $content);
+            ['Bob', 'Apple, Banana'],
+            ['Admin', 'User'],
+        ], array_map('array_values', $content));
     }
 
     /**
