@@ -47,9 +47,13 @@ class QuizProctor {
                 echo "<script>console.log('quizid: ', $quizid);</script>";
                 echo "<script>console.log('userid: ', $userid);</script>";
                 echo "<script>console.log('course: ', " . json_encode($course) .");</script>";
-            } else {
+            }
+            else{
                 $this->deleteProctoringSession($userid);
             }
+        }
+        else{
+            $this->deleteProctoringSession($userid);
         }
     }
 
@@ -220,7 +224,7 @@ class QuizProctor {
         }
     }
 
-    private function deleteProctoringSession($userid) {
+    public function deleteProctoringSession($userid) {
         // Delete current session
         $params = array('userid' => $userid);
         $this->DB->delete_records('auto_proctor_proctoring_session_tb', $params);
@@ -265,6 +269,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
     $quizProctor = new QuizProctor($PAGE, $DB, $CFG, $USER, $COURSE);
     $quizProctor->captureQuizAttempt($USER->id, $COURSE);
+    //$quizProctor->deleteProctoringSession($USER->id);
         
 }
 
