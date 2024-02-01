@@ -79,7 +79,6 @@ $PAGE->set_url('/report/log/user.php', array('id' => $user->id, 'course' => $cou
 $PAGE->navigation->extend_for_user($user);
 $PAGE->navigation->set_userid_for_parent_checks($user->id); // see MDL-25805 for reasons and for full commit reference for reversal when fixed.
 $PAGE->set_title("$course->shortname: $stractivityreport");
-$PAGE->navbar->add(get_string('alllogs'));
 
 // Create the appropriate breadcrumb.
 $navigationnode = array(
