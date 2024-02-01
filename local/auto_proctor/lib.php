@@ -29,6 +29,9 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
     // Get all course id
     $all_course_id = $DB->get_records_sql('SELECT id FROM {course}');
 
+    // Get the user ID
+    $userid = $USER->id;
+
     // Loop through course IDs and check if the user manages any courses.
     // If the user manages a course, add the 'Auto Proctor Dashboard' button to the navigation bar.
     foreach ($all_course_id as $course_id) {
@@ -47,6 +50,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
     // Capture student quiz attempt ========================================
 
+    
         // Check if the current page is a quiz attempt
         if ($PAGE->cm && $PAGE->cm->modname === 'quiz' && $PAGE->cm->instance && $PAGE->pagetype !== 'mod-quiz-summary') {
             $quizid = $PAGE->cm->instance;
@@ -101,9 +105,6 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                 if ($auto_proctor_activated){
                     echo '<script type="text/javascript"> console.log("AP ACTIVATED"); </script>';
 
-                    // Get the user ID
-                    $userid = $USER->id;
-
                     // Check if the user has an ongoing quiz attempt
                     $quizattempt = $DB->get_record('quiz_attempts', array('userid' => $userid, 'quiz' => $quizid, 'state' => 'inprogress'));
 
@@ -124,6 +125,8 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             'quizid' => $quizid,
                             'quizattempt' => $attemptValue,
                             'quizattempturl' => $quizattempturl,
+                            'cmid' => $cmid,
+                            'strict_mode_activated' => $strict_mode_activated,
                         );
 
                         // Send to prompts.php
@@ -201,7 +204,6 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                             // If agreed to consent
                             // Then prompt the screen sharing for proctoring
                             else if ($screenshare_consent[0] == 2){
-                                // AP prompt to share screen
                                 echo '<script type="text/javascript"> console.log("MONITOR TAB ACTIVATED"); </script>';
                                 echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
                                 echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
@@ -224,6 +226,12 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
                     }
                 }
 
+            }
+            // Delete all proctoring session
+            else{
+                // Delete current session
+                $params = array('userid' => $userid);
+                $DB->delete_records('auto_proctor_proctoring_session_tb', $params);
             }
         }
         
