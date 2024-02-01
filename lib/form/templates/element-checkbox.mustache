@@ -31,6 +31,9 @@
                         aria-describedby="{{element.id}}_description"
                     {{/text}}
                 {{/error}}
+                {{#required}}
+                   aria-required="true"
+                {{/required}}
                 {{#element.frozen}}
                     disabled
                 {{/element.frozen}}

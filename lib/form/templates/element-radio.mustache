@@ -30,7 +30,8 @@
                         {{#element.frozen}}disabled{{/element.frozen}}
                         {{#error}}{{#element.checked}}
                             autofocus aria-describedby="{{element.iderror}}"
-                        {{/element.checked}}{{/error}} {{{element.attributes}}} >
+                        {{/element.checked}}{{/error}}
+                        {{#required}}aria-required="true"{{/required}} {{{element.attributes}}} >
                     {{#text}}
                         {{{.}}}
                     {{/text}}
