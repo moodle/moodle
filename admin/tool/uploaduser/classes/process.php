@@ -1384,8 +1384,14 @@ class process {
                 }
             }
         }
+
+        // Warn user about invalid data values.
         if (($invalid = \core_user::validate($user)) !== true) {
-            $this->upt->track('status', get_string('invaliduserdata', 'tool_uploaduser', s($user->username)), 'warning');
+            $listseparator = get_string('listsep', 'langconfig') . ' ';
+            $this->upt->track('status', get_string('invaliduserdatavalues', 'tool_uploaduser', [
+                'username' => s($user->username),
+                'values' => implode($listseparator, array_keys($invalid)),
+            ]), 'warning');
         }
     }
 

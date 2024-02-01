@@ -50,6 +50,7 @@ The example text file may also be used for testing, as you are able to preview u
 $string['infoprefix'] = 'Info:';
 $string['invalidupdatetype'] = 'This option cannot be selected with the chosen upload type.';
 $string['invaliduserdata'] = 'Invalid data detected for user {$a} and it has been automatically cleaned.';
+$string['invaliduserdatavalues'] = 'Invalid data detected for user \'{$a->username}\' ({$a->values}), which has been automatically cleaned.';
 $string['invalidtheme'] = 'Theme "{$a}" is not installed and will be ignored.';
 $string['linex'] = 'Line {$a}';
 $string['matchemail'] = 'Match on email address';
