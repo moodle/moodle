@@ -851,6 +851,7 @@ $string['eventname'] = 'Event name';
 $string['eventrecentactivityviewed'] = 'Recent activity viewed';
 $string['eventsearchindexed'] = 'Search data indexed';
 $string['eventsearchresultsviewed'] = 'Search results viewed';
+$string['eventsectionviewed'] = 'Section viewed';
 $string['eventunknownlogged'] = 'Unknown event';
 $string['eventurlblocked'] = 'The URL was blocked';
 $string['eventusercreated'] = 'User created';
