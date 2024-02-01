@@ -214,7 +214,7 @@ class flexible_table {
      * for you (even if the param is '', which means no download this time.
      * Also you can call this method with no params to get the current set
      * download type.
-     * @param string $download type of dataformat for export.
+     * @param string|null $download type of dataformat for export.
      * @param string $filename filename for downloads without file extension.
      * @param string $sheettitle title for downloaded data.
      * @return string download dataformat type.
