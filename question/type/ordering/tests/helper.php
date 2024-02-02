@@ -64,7 +64,7 @@ class qtype_ordering_test_helper extends question_test_helper {
         ];
         $q->layouttype = qtype_ordering_question::LAYOUT_HORIZONTAL;
         $q->selecttype = qtype_ordering_question::SELECT_ALL;
-        $q->selectcount = 0;
+        $q->selectcount = qtype_ordering_question::MIN_SUBSET_ITEMS;
         $q->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $q->showgrading = true;
         $q->numberingstyle = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
@@ -126,7 +126,7 @@ class qtype_ordering_test_helper extends question_test_helper {
 
         $form->layouttype = qtype_ordering_question::LAYOUT_HORIZONTAL;
         $form->selecttype = qtype_ordering_question::SELECT_ALL;
-        $form->selectcount = 0;
+        $form->selectcount = qtype_ordering_question::MIN_SUBSET_ITEMS;
         $form->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $form->showgrading = true;
         $form->numberingstyle = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
@@ -170,7 +170,7 @@ class qtype_ordering_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_fields($questiondata->options);
         $questiondata->options->layouttype = qtype_ordering_question::LAYOUT_HORIZONTAL;
         $questiondata->options->selecttype = qtype_ordering_question::SELECT_ALL;
-        $questiondata->options->selectcount = 0;
+        $questiondata->options->selectcount = qtype_ordering_question::MIN_SUBSET_ITEMS;
         $questiondata->options->gradingtype = qtype_ordering_question::GRADING_RELATIVE_ALL_PREVIOUS_AND_NEXT;
         $questiondata->options->showgrading = true;
         $questiondata->options->numberingstyle = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;

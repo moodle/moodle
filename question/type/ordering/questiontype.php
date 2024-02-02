@@ -513,7 +513,8 @@ class qtype_ordering extends question_type {
         $question->qtype = 'ordering';
 
         // Set "selectcount" field from $selectcount.
-        if (is_numeric($selectcount) && $selectcount > 2 && $selectcount <= count($answers)) {
+        if (is_numeric($selectcount) && $selectcount >= qtype_ordering_question::MIN_SUBSET_ITEMS &&
+                $selectcount <= count($answers)) {
             $selectcount = intval($selectcount);
         } else {
             $selectcount = min(6, count($answers));
@@ -843,10 +844,10 @@ class qtype_ordering extends question_type {
         };
 
         // Set "selectcount" option - this used to be ($count - 2).
-        if (is_numeric($selectcount)) {
+        if (is_numeric($selectcount) && $selectcount >= qtype_ordering_question::MIN_SUBSET_ITEMS) {
             $question->selectcount = intval($selectcount);
         } else {
-            $question->selectcount = 3; // Default!
+            $question->selectcount = qtype_ordering_question::MIN_SUBSET_ITEMS; // Default!
         }
 
         // Set "gradingtype" option.

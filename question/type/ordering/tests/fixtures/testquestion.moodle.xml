@@ -25,7 +25,7 @@
     <idnumber>dd1</idnumber>
     <layouttype>HORIZONTAL</layouttype>
     <selecttype>ALL</selecttype>
-    <selectcount>0</selectcount>
+    <selectcount>2</selectcount>
     <gradingtype>ABSOLUTE_POSITION</gradingtype>
     <showgrading>SHOW</showgrading>
     <correctfeedback format="html">

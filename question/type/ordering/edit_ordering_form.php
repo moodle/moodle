@@ -98,14 +98,14 @@ class qtype_ordering_edit_form extends question_edit_form {
         // Field for selectcount.
         $name = 'selectcount';
         $label = get_string($name, $plugin);
-        $options = [0 => get_string('all')];
-        for ($i = 3; $i <= 20; $i++) {
-            $options[$i] = $i;
-        }
-        $mform->addElement('select', $name, $label, $options);
-        $mform->disabledIf($name, 'selecttype', 'eq', 0);
+
+        $mform->addElement('text', $name, $label, ['size' => 2]);
+        $mform->setDefault($name, qtype_ordering_question::MIN_SUBSET_ITEMS);
+        $mform->setType($name, PARAM_INT);
+        // Hide the field if 'Item selection type' is set to select all items.
+        $mform->hideIf($name, 'selecttype', 'eq', qtype_ordering_question::SELECT_ALL);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, 6);
+        $mform->addRule($name, null, 'numeric', null, 'client');
 
         // Field for gradingtype.
         $name = 'gradingtype';
@@ -133,13 +133,12 @@ class qtype_ordering_edit_form extends question_edit_form {
         $elements = [];
         $options = [];
 
-        $name = 'answerheader';
-        $label = get_string($name, $plugin);
-        $elements[] = $mform->createElement('header', $name, $label);
-        $options[$name] = ['expanded' => true];
+        $mform->addElement('header', 'answersheader', get_string('draggableitems', $plugin));
+        $mform->setExpanded('answersheader', true);
 
         $name = 'answer';
-        $elements[] = $mform->createElement('editor', $name, $label, $this->get_editor_attributes(), $this->get_editor_options());
+        $elements[] = $mform->createElement('editor', $name, get_string('draggableitemno', $plugin),
+            $this->get_editor_attributes(), $this->get_editor_options());
         $elements[] = $mform->createElement('submit', $name . 'removeeditor', get_string('removeeditor', $plugin),
             ['onclick' => 'skipClientValidation = true;']);
         $options[$name] = ['type' => PARAM_RAW];
@@ -372,7 +371,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $names = [
             'layouttype' => qtype_ordering_question::LAYOUT_VERTICAL,
             'selecttype' => qtype_ordering_question::SELECT_ALL,
-            'selectcount' => 0, // 0 means ALL.
+            'selectcount' => qtype_ordering_question::MIN_SUBSET_ITEMS,
             'gradingtype' => qtype_ordering_question::GRADING_ABSOLUTE_POSITION,
             'showgrading' => 1,  // 1 means SHOW.
             'numberingstyle' => qtype_ordering_question::NUMBERING_STYLE_DEFAULT,
@@ -418,6 +417,12 @@ class qtype_ordering_edit_form extends question_edit_form {
         $errors = [];
         $plugin = 'qtype_ordering';
 
+        $minsubsetitems = qtype_ordering_question::MIN_SUBSET_ITEMS;
+        // Make sure the entered size of the subset is no less than the defined minimum.
+        if ($data['selecttype'] != qtype_ordering_question::SELECT_ALL && $data['selectcount'] < $minsubsetitems) {
+            $errors['selectcount'] = get_string('notenoughsubsetitems', $plugin, $minsubsetitems);
+        }
+
         // Identify duplicates and report as an error.
         $answers = [];
         $answercount = 0;
@@ -428,9 +433,9 @@ class qtype_ordering_edit_form extends question_edit_form {
             if ($answer = trim($answer)) {
                 if (in_array($answer, $answers)) {
                     $i = array_search($answer, $answers);
-                    $item = get_string('answerheader', $plugin);
+                    $item = get_string('draggableitemno', $plugin);
                     $item = str_replace('{no}', $i + 1, $item);
-                    $item = html_writer::link("#id_answerheader_$i", $item);
+                    $item = html_writer::link("#id_answer_$i", $item);
                     $a = (object) ['text' => $answer, 'item' => $item];
                     $errors["answer[$answercount]"] = get_string('duplicatesnotallowed', $plugin, $a);
                 } else {

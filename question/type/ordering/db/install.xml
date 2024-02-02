@@ -7,7 +7,7 @@
         <FIELD NAME="questionid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="layouttype" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Layout type - horizontal or vertical"/>
         <FIELD NAME="selecttype" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Select type - all, random etc."/>
-        <FIELD NAME="selectcount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="The number to select."/>
+        <FIELD NAME="selectcount" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="2" SEQUENCE="false" COMMENT="The number to select."/>
         <FIELD NAME="gradingtype" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Which grading strategy to use. One of the GRADING_... constants."/>
         <FIELD NAME="showgrading" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Should details of the grading calculation be shown to students."/>
         <FIELD NAME="numberingstyle" TYPE="char" LENGTH="10" NOTNULL="true" DEFAULT="none" SEQUENCE="false" COMMENT="Indicates whether and how choices should be numbered."/>

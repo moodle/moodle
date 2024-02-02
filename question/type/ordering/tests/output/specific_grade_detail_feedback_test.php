@@ -203,7 +203,7 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
                     'orderinglayoutclass' => 'vertical',
                     'gradedetails' => 0,
                     'totalscore' => 0,
-                    'totalmaxscore' => 3,
+                    'totalmaxscore' => 2,
                     'scoredetails' => [
                         ['score' => 0, 'maxscore' => 1, 'percent' => 0.0],
                         ['score' => 0, 'maxscore' => 1, 'percent' => 0.0],
@@ -225,7 +225,7 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
                     'orderinglayoutclass' => 'vertical',
                     'gradedetails' => 0,
                     'totalscore' => 0,
-                    'totalmaxscore' => 3,
+                    'totalmaxscore' => 2,
                     'scoredetails' => [
                         ['score' => 0, 'maxscore' => 1, 'percent' => 0],
                         ['score' => 1, 'maxscore' => 1, 'percent' => 100.0],

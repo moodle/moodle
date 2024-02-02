@@ -27,7 +27,6 @@ $string['addmultipleanswers'] = 'Add {$a} more items';
 $string['addsingleanswer'] = 'Add one more item';
 $string['allornothing'] = 'All or nothing';
 $string['answer'] = 'Item text';
-$string['answerheader'] = 'Draggable item {no}';
 
 $string['correctorder'] = 'The correct order for these items is as follows:';
 
@@ -35,6 +34,8 @@ $string['defaultanswerformat'] = 'Default answer format';
 $string['defaultquestionname'] = 'Drag the following items into the correct order.';
 
 $string['duplicatesnotallowed'] = 'Duplication of draggable items is not allowed. The string "{$a->text}" is already used in {$a->item}.';
+$string['draggableitems'] = 'Draggable items';
+$string['draggableitemno'] = 'Draggable item {no}';
 $string['editingordering'] = 'Editing ordering question';
 
 $string['gradedetails'] = 'Grade details';
@@ -79,6 +80,7 @@ $string['longestorderedsubset'] = 'Longest ordered subset';
 $string['noresponsedetails'] = 'Sorry, no details of the response to this question are available.';
 $string['noscore'] = 'No score';
 $string['notenoughanswers'] = 'Ordering questions must have more than {$a} answers.';
+$string['notenoughsubsetitems'] = 'A subset must have at least {$a} items.';
 
 $string['numberingstyle'] = 'Number the choices?';
 $string['numberingstylenone'] = 'No numbering';

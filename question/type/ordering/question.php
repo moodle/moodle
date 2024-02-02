@@ -45,6 +45,9 @@ class qtype_ordering_question extends question_graded_automatically {
     /** Show answers in one horizontal line */
     const LAYOUT_HORIZONTAL = 1;
 
+    /** The minimum number of items to create a subset */
+    const MIN_SUBSET_ITEMS = 2;
+
     /** Default value for numberingstyle */
     const NUMBERING_STYLE_DEFAULT = 'none';
 
@@ -137,7 +140,7 @@ class qtype_ordering_question extends question_graded_automatically {
 
         // Sanitize "selectcount".
         $selectcount = $this->selectcount;
-        $selectcount = max(3, $selectcount);
+        $selectcount = max(self::MIN_SUBSET_ITEMS, $selectcount);
         $selectcount = min($countanswers, $selectcount);
 
         // Ensure consistency between "selecttype" and "selectcount".

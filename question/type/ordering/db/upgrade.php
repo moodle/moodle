@@ -326,7 +326,46 @@ function xmldb_qtype_ordering_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023092911, 'qtype', 'ordering');
     }
 
+    if ($oldversion < 2024040401) {
+        // The option to set "All" for the subset size ('selectcount') setting is no longer supported, therefore we need
+        // to update all data that references this option.
+
+        // The 'selectcount' column from the 'qtype_ordering_options' table currently defines "0" as its default value.
+        // This value ("0") used to represent the removed "All" option for the 'selectcount' setting, therefore we need
+        // to update this to a new default of "2" which is the minimum number of items required to create a subset.
+        $table = new xmldb_table('qtype_ordering_options');
+        $field = new xmldb_field('selectcount');
+        $field->set_attributes(XMLDB_TYPE_INTEGER, '4', null, XMLDB_NOTNULL, null, 2);
+        $dbman->change_field_default($table, $field);
+
+        // We need to find all ordering question configurations that currently store the unsupported "0" (all) option
+        // for the 'selectcount' setting and the total number of answers that are related to each of these ordering
+        // questions.
+        $sql = "SELECT qoo.*, COUNT(DISTINCT(qa.id)) AS answerscount
+                FROM {qtype_ordering_options} qoo
+                JOIN {question_answers} qa ON qa.question = qoo.questionid
+                WHERE selectcount = :selectcount
+                GROUP BY qoo.id";
+        $questionoptions = $DB->get_recordset_sql($sql, ['selectcount' => 0]);
+        foreach($questionoptions as $questionoption) {
+            // Update the value of the 'selectcount' configuration option for the current ordering question and set it
+            // to the total number of answers related to this question. This way, we are making sure that the original
+            // behavior is preserved and all existing items (answers) related to the question will be included in the
+            // subset.
+            $questionoption->selectcount = $questionoption->answerscount;
+            unset($questionoption->answerscount);
+            $DB->update_record('qtype_ordering_options', $questionoption);
+        }
+        $questionoptions->close();
+
+        // Currently, a 'qtype_ordering_selectcount' user preference is set (or updated, if it already exists) each time
+        // a new ordering question is created. If there are user preferences that store the removed "0" (all) option, they
+        // need to be updated. In this case, replace it with "2" (minimum number of items required to create a subset).
+        $DB->set_field('user_preferences', 'value', 2,
+            ['name' => 'qtype_ordering_selectcount', 'value' => 0]);
+
+        upgrade_plugin_savepoint(true, 2024040401, 'qtype', 'ordering');
+    }
+
     return true;
 }
-
-
