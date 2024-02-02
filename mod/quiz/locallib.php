@@ -1126,7 +1126,7 @@ function quiz_attempt_state($quiz, $attempt) {
         return display_options::DURING;
     } else if ($quiz->timeclose && time() >= $quiz->timeclose) {
         return display_options::AFTER_CLOSE;
-    } else if (time() < $attempt->timefinish + 120) {
+    } else if (time() < $attempt->timefinish + quiz_attempt::IMMEDIATELY_AFTER_PERIOD) {
         return display_options::IMMEDIATELY_AFTER;
     } else {
         return display_options::LATER_WHILE_OPEN;
