@@ -6443,7 +6443,7 @@ class moodle_database_for_testing extends moodle_database {
     public function update_record($table, $dataobject, $bulk=false) {}
     public function set_field_select($table, $newfield, $newvalue, $select, array $params=null) {}
     public function delete_records_select($table, $select, array $params=null) {}
-    public function sql_concat() {}
+    public function sql_concat(...$arr) {}
     public function sql_concat_join($separator="' '", $elements=array()) {}
     public function sql_group_concat(string $field, string $separator = ', ', string $sort = ''): string {
         return '';
