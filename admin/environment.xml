@@ -3939,6 +3939,7 @@
       <VENDOR name="oracle" version="19" />
     </DATABASE>
     <PHP version="8.0.0" level="required">
+      <RESTRICT function="restrict_php_version_83" message="unsupportedphpversion83" />
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
@@ -4128,6 +4129,7 @@
       <VENDOR name="oracle" version="19" />
     </DATABASE>
     <PHP version="8.0.0" level="required">
+      <RESTRICT function="restrict_php_version_83" message="unsupportedphpversion83" />
     </PHP>
     <PCREUNICODE level="optional">
       <FEEDBACK>
