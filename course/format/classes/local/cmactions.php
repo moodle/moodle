@@ -16,6 +16,8 @@
 
 namespace core_courseformat\local;
 
+
+use course_modinfo;
 /**
  * Course module course format actions.
  *
@@ -24,5 +26,59 @@ namespace core_courseformat\local;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class cmactions extends baseactions {
-    // All course module actions will go here.
+    /**
+     * Rename a course module.
+     * @param int $cmid the course module id.
+     * @param string $name the new name.
+     * @return bool true if the course module was renamed, false otherwise.
+     */
+    public function rename(int $cmid, string $name): bool {
+        global $CFG, $DB;
+        require_once($CFG->libdir . '/gradelib.php');
+
+        $paramcleaning = empty($CFG->formatstringstriptags) ? PARAM_CLEANHTML : PARAM_TEXT;
+        $name = clean_param($name, $paramcleaning);
+
+        if (empty($name)) {
+            return false;
+        }
+        if (\core_text::strlen($name) > 255) {
+            throw new \moodle_exception('maximumchars', 'moodle', '', 255);
+        }
+
+        // The name is stored in the activity instance record.
+        // However, events, gradebook and calendar API uses a legacy
+        // course module data extraction from the DB instead of a section_info.
+        $cm = get_coursemodule_from_id('', $cmid, 0, false, MUST_EXIST);
+
+        if ($name === $cm->name) {
+            return false;
+        }
+
+        $DB->update_record(
+            $cm->modname,
+            (object)[
+                'id' => $cm->instance,
+                'name' => $name,
+                'timemodified' => time(),
+            ]
+        );
+        $cm->name = $name;
+
+        \core\event\course_module_updated::create_from_cm($cm)->trigger();
+
+        course_modinfo::purge_course_module_cache($cm->course, $cm->id);
+        rebuild_course_cache($cm->course, false, true);
+
+        // Attempt to update the grade item if relevant.
+        $grademodule = $DB->get_record($cm->modname, ['id' => $cm->instance]);
+        $grademodule->cmidnumber = $cm->idnumber;
+        $grademodule->modname = $cm->modname;
+        grade_update_mod_grades($grademodule);
+
+        // Update calendar events with the new name.
+        course_module_update_calendar_events($cm->modname, $grademodule, $cm);
+
+        return true;
+    }
 }
