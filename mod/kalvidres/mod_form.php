@@ -38,7 +38,6 @@ class mod_kalvidres_mod_form extends moodleform_mod {
     public function definition() {
         global $CFG, $COURSE, $PAGE;
 
-        $PAGE->requires->css('/mod/kalvidres/styles.css');
         $pageclass = 'kaltura-kalvidres-body';
         $PAGE->add_body_class($pageclass);
 
