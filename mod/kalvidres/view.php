@@ -66,6 +66,7 @@ $event->trigger();
 $completion = new completion_info($course);
 $completion->set_module_viewed($cm);
 
+$PAGE->requires->css('/mod/kalvidres/styles.css');
 echo $OUTPUT->header();
 
 $renderer = $PAGE->get_renderer('mod_kalvidres');
