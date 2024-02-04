@@ -71,7 +71,6 @@ class grading_actionmenu implements templatable, renderable {
             $downloadall = (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'downloadall']))->out(false);
         }
         return [
-            'back' => (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid]))->out(false),
             'downloadall' => $downloadall
         ];
     }

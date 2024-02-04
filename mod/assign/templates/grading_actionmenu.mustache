@@ -27,16 +27,12 @@
 
     Example context (json):
     {
-        "back": "https://moodle.org",
         "downloadall": "https://moodle.org"
     }
 
 }}
 <div class="container-fluid tertiary-navigation">
     <div class="row">
-        <div class="navitem">
-            <a class="btn btn-secondary" href="{{back}}">{{#str}}back, mod_assign{{/str}}</a>
-        </div>
         {{#downloadall}}
         <div class="navitem ml-sm-auto">
             <a class="btn btn-secondary" href="{{downloadall}}">{{#str}}downloadall, mod_assign{{/str}}</a>
