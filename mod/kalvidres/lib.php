@@ -177,6 +177,8 @@ function kalvidres_supports($feature) {
             return true;
         case FEATURE_SHOW_DESCRIPTION:
             return true;
+        case FEATURE_MOD_PURPOSE:
+            return MOD_PURPOSE_CONTENT;
         default:
             return null;
     }
