@@ -4549,62 +4549,71 @@ function get_complete_user_data($field, $value, $mnethostid = null, $throwexcept
  * Validate a password against the configured password policy
  *
  * @param string $password the password to be checked against the password policy
- * @param string $errmsg the error message to display when the password doesn't comply with the policy.
- * @param stdClass $user the user object to perform password validation against. Defaults to null if not provided.
- * @param ?array $errorsarray array of errors with string identifiers.
+ * @param string|null $errmsg the error message to display when the password doesn't comply with the policy.
+ * @param stdClass|null $user the user object to perform password validation against. Defaults to null if not provided.
  *
  * @return bool true if the password is valid according to the policy. false otherwise.
  */
-function check_password_policy($password, &$errmsg, $user = null, ?array &$errorsarray = null) {
+function check_password_policy(string $password, ?string &$errmsg, ?stdClass $user = null) {
+    global $CFG;
+    if (!empty($CFG->passwordpolicy) && !isguestuser($user)) {
+        $errors = get_password_policy_errors($password, $user);
+
+        foreach ($errors as $error) {
+            $errmsg .= '<div>' . $error . '</div>';
+        }
+    }
+
+    return $errmsg == '';
+}
+
+/**
+ * Validate a password against the configured password policy.
+ * Note: This function is unaffected by whether the password policy is enabled or not.
+ *
+ * @param string $password the password to be checked against the password policy
+ * @param stdClass|null $user the user object to perform password validation against. Defaults to null if not provided.
+ *
+ * @return string[] Array of error messages.
+ */
+function get_password_policy_errors(string $password, ?stdClass $user = null) : array {
     global $CFG;
 
-    if (!empty($CFG->passwordpolicy) && !isguestuser($user)) {
-        $errmsg = '';
-        if (core_text::strlen($password) < $CFG->minpasswordlength) {
-            $errmsg .= '<div>'. get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength) .'</div>';
-            $errorsarray = ($errorsarray !== null) ? [...$errorsarray, 'errorminpasswordlength'] : null;
-        }
-        if (preg_match_all('/[[:digit:]]/u', $password, $matches) < $CFG->minpassworddigits) {
-            $errmsg .= '<div>'. get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits) .'</div>';
-            $errorsarray = ($errorsarray !== null) ? [...$errorsarray, 'errorminpassworddigits'] : null;
-        }
-        if (preg_match_all('/[[:lower:]]/u', $password, $matches) < $CFG->minpasswordlower) {
-            $errmsg .= '<div>'. get_string('errorminpasswordlower', 'auth', $CFG->minpasswordlower) .'</div>';
-            $errorsarray = ($errorsarray !== null) ? [...$errorsarray, 'errorminpasswordlower'] : null;
-        }
-        if (preg_match_all('/[[:upper:]]/u', $password, $matches) < $CFG->minpasswordupper) {
-            $errmsg .= '<div>'. get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper) .'</div>';
-            $errorsarray = ($errorsarray !== null) ? [...$errorsarray, 'errorminpasswordupper'] : null;
-        }
-        if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
-            $errmsg .= '<div>'. get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum) .'</div>';
-            $errorsarray = ($errorsarray !== null) ? [...$errorsarray, 'errorminpasswordnonalphanum'] : null;
-        }
-        if (!check_consecutive_identical_characters($password, $CFG->maxconsecutiveidentchars)) {
-            $errmsg .= '<div>'. get_string('errormaxconsecutiveidentchars', 'auth', $CFG->maxconsecutiveidentchars) .'</div>';
-            $errorsarray = ($errorsarray !== null) ? [...$errorsarray, 'errormaxconsecutiveidentchars'] : null;
-        }
+    $errors = [];
 
-        // Fire any additional password policy functions from plugins.
-        // Plugin functions should output an error message string or empty string for success.
-        $pluginsfunction = get_plugins_with_function('check_password_policy');
-        foreach ($pluginsfunction as $plugintype => $plugins) {
-            foreach ($plugins as $pluginfunction) {
-                $pluginerr = $pluginfunction($password, $user);
-                if ($pluginerr) {
-                    $errmsg .= '<div>'. $pluginerr .'</div>';
-                }
+    if (core_text::strlen($password) < $CFG->minpasswordlength) {
+        $errors[] = get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength);
+    }
+    if (preg_match_all('/[[:digit:]]/u', $password, $matches) < $CFG->minpassworddigits) {
+        $errors[] = get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits);
+    }
+    if (preg_match_all('/[[:lower:]]/u', $password, $matches) < $CFG->minpasswordlower) {
+        $errors[] = get_string('errorminpasswordlower', 'auth', $CFG->minpasswordlower);
+    }
+    if (preg_match_all('/[[:upper:]]/u', $password, $matches) < $CFG->minpasswordupper) {
+        $errors[] = get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper);
+    }
+    if (preg_match_all('/[^[:upper:][:lower:][:digit:]]/u', $password, $matches) < $CFG->minpasswordnonalphanum) {
+        $errors[] = get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum);
+    }
+    if (!check_consecutive_identical_characters($password, $CFG->maxconsecutiveidentchars)) {
+        $errors[] = get_string('errormaxconsecutiveidentchars', 'auth', $CFG->maxconsecutiveidentchars);
+    }
+
+    // Fire any additional password policy functions from plugins.
+    // Plugin functions should output an error message string or empty string for success.
+    $pluginsfunction = get_plugins_with_function('check_password_policy');
+    foreach ($pluginsfunction as $plugintype => $plugins) {
+        foreach ($plugins as $pluginfunction) {
+            $pluginerr = $pluginfunction($password, $user);
+            if ($pluginerr) {
+                $errors[] = $pluginerr;
             }
         }
     }
 
-    if ($errmsg == '') {
-        return true;
-    } else {
-        return false;
-    }
+    return $errors;
 }
-
 
 /**
  * When logging in, this function is run to set certain preferences for the current SESSION.

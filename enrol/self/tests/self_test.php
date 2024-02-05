@@ -1143,4 +1143,86 @@ class self_test extends \advanced_testcase {
         $this->assertEquals($instanceid1->id, $actual->id);
     }
 
+    /**
+     * Test the behaviour of validate_enrol_plugin_data().
+     *
+     * @covers ::validate_enrol_plugin_data
+     */
+    public function test_validate_enrol_plugin_data(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        // Test in course with groups.
+        $course = self::getDataGenerator()->create_course(['groupmode' => SEPARATEGROUPS, 'groupmodeforce' => 1]);
+
+        $selfplugin = enrol_get_plugin('self');
+
+        $selfplugin->set_config('usepasswordpolicy', false);
+        $enrolmentdata = [];
+        $errors = $selfplugin->validate_enrol_plugin_data($enrolmentdata);
+        $this->assertEmpty($errors);
+
+        // Now enable some controls, and check that the policy responds with policy text.
+        $selfplugin->set_config('usepasswordpolicy', true);
+        $CFG->minpasswordlength = 8;
+        $CFG->minpassworddigits = 1;
+        $CFG->minpasswordlower = 1;
+        $CFG->minpasswordupper = 1;
+        $CFG->minpasswordnonalphanum = 1;
+        $CFG->maxconsecutiveidentchars = 1;
+        $errors = $selfplugin->validate_enrol_plugin_data($enrolmentdata);
+        // If password is omitted it will be autocreated so nothing to validate.
+        $this->assertEmpty($errors);
+
+        $enrolmentdata = ['password' => 'test'];
+        $errors = $selfplugin->validate_enrol_plugin_data($enrolmentdata);
+        $this->assertCount(4, $errors);
+        $this->assertEquals(get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength), $errors['enrol_self0']);
+        $this->assertEquals(get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits), $errors['enrol_self1']);
+        $this->assertEquals(get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper), $errors['enrol_self2']);
+        $this->assertEquals(get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum), $errors['enrol_self3']);
+
+        $enrolmentdata = ['password' => 'Testingtest123@'];
+        $errors = $selfplugin->validate_enrol_plugin_data($enrolmentdata);
+        $this->assertEmpty($errors);
+
+        $this->getDataGenerator()->create_group(['courseid' => $course->id, 'enrolmentkey' => 'Abirvalg123@']);
+        $instance = $selfplugin->find_instance([], $course->id);
+        $instance->customint1 = 1;
+        $selfplugin->update_instance($instance, $instance);
+        $enrolmentdata = ['password' => 'Abirvalg123@'];
+        $errors = $selfplugin->validate_enrol_plugin_data($enrolmentdata, $course->id);
+        $this->assertArrayHasKey('errorpasswordmatchesgroupkey', $errors);
+    }
+
+    /**
+     * Test the behaviour of update_enrol_plugin_data().
+     *
+     * @covers ::update_enrol_plugin_data
+     */
+    public function test_update_enrol_plugin_data(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $manualplugin = enrol_get_plugin('self');
+
+        $admin = get_admin();
+        $this->setUser($admin);
+
+        $enrolmentdata = [];
+
+        $cat = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['category' => $cat->id, 'shortname' => 'ANON']);
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'self'], '*', MUST_EXIST);
+
+        $expectedinstance = $instance;
+        $modifiedinstance = $manualplugin->update_enrol_plugin_data($course->id, $enrolmentdata, $instance);
+        $this->assertEquals($expectedinstance, $modifiedinstance);
+
+        $enrolmentdata['password'] = 'test';
+        $expectedinstance->password = 'test';
+        $modifiedinstance = $manualplugin->update_enrol_plugin_data($course->id, $enrolmentdata, $instance);
+        $this->assertEquals($expectedinstance, $modifiedinstance);
+    }
+
 }
