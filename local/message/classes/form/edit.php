@@ -32,7 +32,7 @@ class edit extends moodleform {
         $mform = $this->_form; // Don't forget the underscore!
 
         // Add elements to your form.
-        $mform->addElement('text', 'messagetext', get_string('message_text', 'local_message'));
+        $mform->addElement('text', 'messagetext', get_string('message_text', 'loca l_message'));
 
         // Set type of element.
         $mform->setType('messagetext', PARAM_NOTAGS);
