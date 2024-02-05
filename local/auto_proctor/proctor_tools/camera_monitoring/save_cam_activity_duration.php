@@ -22,9 +22,34 @@
 */
 require_once(__DIR__ . '/../../../../config.php');
 
+global $DB, $PAGE, $USER, $CFG;
+
 if (isset($_POST['filename'])) {
     $filename = $_POST['filename'];
     $duration = $_POST['duration']; // Ensure it's an integer
+    $userid = $_POST['userid'];
+    $quizid = $_POST['quizid'];
+    $quizattempt = $_POST['quizattempt'];
+
+    $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $quizattempt, 'filename' => $filename);
+
+    $update_data = new stdClass();
+    $update_data->duration = $duration;
+
+    // Build the raw SQL update query
+    $sql = "UPDATE {auto_proctor_activity_report_tb}
+            SET duration = :duration
+            WHERE userid = :userid
+            AND quizid = :quizid
+            AND attempt = :attempt
+            AND evidence = :filename";
+
+    // Add the screenshare_consent value to the parameters array
+    $params['duration'] = $update_data->duration;
+
+    // Execute the raw SQL query
+    $update_duration = $DB->execute($sql, $params);
+
     
     echo "filename: " . $filename;
     echo "</br>";

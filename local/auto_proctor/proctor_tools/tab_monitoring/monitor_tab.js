@@ -137,7 +137,7 @@ $(document).ready(function () {
             ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
                                 
             const { timestamp, milliseconds } = generateTimestamp();
-            const filename = 'EVD_USER_' + jsdata.userid + '_' + timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type + '.png'; // Custom filename with evidenceType
+            const filename = 'EVD_USER_' + jsdata.userid + '_QUIZ_' + jsdata.quizid + '_ATTEMPT_' + jsdata.quizattempt + '_' + timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type + '.png'; // Custom filename with evidenceType
                                 
             const dataUrl = canvas.toDataURL('image/png');
                                 
