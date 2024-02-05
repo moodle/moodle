@@ -33,33 +33,32 @@ class renderer extends \plugin_renderer_base {
      * @return string the html.
      */
     public function render_account_binding_options_page(int $provisioningmode): string {
+
         $formaction = new \moodle_url('/auth/lti/login.php');
         $notification = new notification(get_string('firstlaunchnotice', 'auth_lti'), \core\notification::INFO, false);
-        $noauthnotice = new notification(get_string('firstlaunchnoauthnotice', 'auth_lti', get_docs_url('Publish_as_LTI_tool')),
-            \core\notification::WARNING, false);
         $cancreateaccounts = !get_config('moodle', 'authpreventaccountcreation');
         if ($provisioningmode == \auth_plugin_lti::PROVISIONING_MODE_PROMPT_EXISTING_ONLY) {
             $cancreateaccounts = false;
         }
 
-        $accountinfo = ['isloggedin' => isloggedin()];
+        $accountinfo = [];
         if (isloggedin()) {
             global $USER;
-            $accountinfo = array_merge($accountinfo, [
+            $accountinfo = [
                 'firstname' => $USER->firstname,
                 'lastname' => $USER->lastname,
                 'email' => $USER->email,
                 'picturehtml' => $this->output->user_picture($USER,  ['size' => 35, 'class' => 'round']),
-            ]);
+            ];
         }
 
         $context = [
+            'isloggedin' => isloggedin(),
             'info' => $notification->export_for_template($this),
             'formaction' => $formaction->out(),
             'sesskey' => sesskey(),
             'accountinfo' => $accountinfo,
             'cancreateaccounts' => $cancreateaccounts,
-            'noauthnotice' => $noauthnotice->export_for_template($this)
         ];
         return parent::render_from_template('auth_lti/local/ltiadvantage/login', $context);
     }
