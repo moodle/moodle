@@ -216,8 +216,6 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
         }
     }
 
-    $user->timemodified = time();
-
     // Validate user data object.
     $uservalidation = core_user::validate($user);
     if ($uservalidation !== true) {
