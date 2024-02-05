@@ -127,6 +127,13 @@ foreach ($themes as $themename => $themedir) {
         $themedata['settingsurl'] = $settingsurl;
     }
 
+    // Link to the theme usage report if override enabled and it is being used in at least one context.
+    if (\core\output\theme_usage::is_theme_used_in_any_context($themename) === \core\output\theme_usage::THEME_IS_USED) {
+        $reporturl = new moodle_url($CFG->wwwroot . '/report/themeusage/index.php');
+        $reporturl->params(['themechoice' => $themename]);
+        $themedata['reporturl'] = $reporturl->out(false);
+    }
+
     $data[$index] = $themedata;
     $index++;
 }

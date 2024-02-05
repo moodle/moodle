@@ -209,6 +209,15 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
         unset($user->calendartype);
     }
 
+    // Delete theme usage cache if the theme has been changed.
+    if (isset($user->theme)) {
+        if ($user->theme != $currentrecord->theme) {
+            theme_delete_used_in_context_cache($user->theme, $currentrecord->theme);
+        }
+    }
+
+    $user->timemodified = time();
+
     // Validate user data object.
     $uservalidation = core_user::validate($user);
     if ($uservalidation !== true) {

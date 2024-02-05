@@ -628,6 +628,14 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
             fix_course_sortorder();
         }
 
+        // Delete theme usage cache if the theme has been changed.
+        if (isset($data->theme)) {
+            $oldcategory = $DB->get_record('course_categories', ['id' => $data->id]);
+            if ($data->theme != $oldcategory->theme) {
+                theme_delete_used_in_context_cache($data->theme, (string)$oldcategory->theme);
+            }
+        }
+
         $newcategory->timemodified = time();
 
         $categorycontext = $this->get_context();

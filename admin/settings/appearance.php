@@ -293,14 +293,27 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
         new lang_string('configthemedesignermode', 'admin'), 0);
     $setting->set_updatedcallback('theme_reset_all_caches');
     $temp->add($setting);
-    $temp->add(new admin_setting_configcheckbox('allowuserthemes', new lang_string('allowuserthemes', 'admin'),
-        new lang_string('configallowuserthemes', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('allowcoursethemes', new lang_string('allowcoursethemes', 'admin'),
-        new lang_string('configallowcoursethemes', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('allowcategorythemes',  new lang_string('allowcategorythemes', 'admin'),
-        new lang_string('configallowcategorythemes', 'admin'), 0));
-    $temp->add(new admin_setting_configcheckbox('allowcohortthemes',  new lang_string('allowcohortthemes', 'admin'),
-        new lang_string('configallowcohortthemes', 'admin'), 0));
+
+    $setting = new admin_setting_configcheckbox('allowuserthemes', new lang_string('allowuserthemes', 'admin'),
+        new lang_string('configallowuserthemes', 'admin'), 0);
+    $setting->set_updatedcallback('theme_purge_used_in_context_caches');
+    $temp->add($setting);
+
+    $setting = new admin_setting_configcheckbox('allowcoursethemes', new lang_string('allowcoursethemes', 'admin'),
+        new lang_string('configallowcoursethemes', 'admin'), 0);
+    $setting->set_updatedcallback('theme_purge_used_in_context_caches');
+    $temp->add($setting);
+
+    $setting = new admin_setting_configcheckbox('allowcategorythemes',  new lang_string('allowcategorythemes', 'admin'),
+        new lang_string('configallowcategorythemes', 'admin'), 0);
+    $setting->set_updatedcallback('theme_purge_used_in_context_caches');
+    $temp->add($setting);
+
+    $setting = new admin_setting_configcheckbox('allowcohortthemes',  new lang_string('allowcohortthemes', 'admin'),
+        new lang_string('configallowcohortthemes', 'admin'), 0);
+    $setting->set_updatedcallback('theme_purge_used_in_context_caches');
+    $temp->add($setting);
+
     $temp->add(new admin_setting_configcheckbox('allowthemechangeonurl',  new lang_string('allowthemechangeonurl', 'admin'),
         new lang_string('configallowthemechangeonurl', 'admin'), 0));
     $temp->add(new admin_setting_configcheckbox('allowuserblockhiding', new lang_string('allowuserblockhiding', 'admin'),

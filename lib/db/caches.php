@@ -609,4 +609,13 @@ $definitions = array(
             'changesincourse',
         ],
     ],
+
+    // A theme has been used in context to override the default theme.
+    // Applies to user, cohort, category and course.
+    'theme_usedincontext' => [
+        'mode' => cache_store::MODE_APPLICATION,
+        'simplekeys' => true,
+        'simpledata' => true,
+        'staticacceleration' => true,
+    ],
 );
