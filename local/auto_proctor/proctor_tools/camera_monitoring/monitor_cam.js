@@ -1,39 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-</head>
+$(document).ready(function () {
+    let videoElement;
+        //const canvasElement = document.getElementsByClassName('output_canvas')[0];
 
-<body>
-    <div class="container">
-        <video class="input_video"></video>
-        <div id="promptMessage"></div>
+        //const promptMessageElement = document.getElementById('promptMessage');
 
-        <div id="pitchAngle"></div> 
-        <div id="yawAngle"></div> 
-        <div id="rollAngle"></div>
-        <div id="gazeDirection"></div> 
-        <div id="timer"></div> 
-
-        <div id="capturedContainer"></div>
-    </div>
-
-    <script type="module">
-        //const videoElement = document.getElementsByClassName('input_video')[0];
-        let videoElement;
-        const canvasElement = document.getElementsByClassName('output_canvas')[0];
-
-        const promptMessageElement = document.getElementById('promptMessage');
-
-        const pitchAngleElement = document.getElementById('pitchAngle');
-        const yawAngleElement = document.getElementById('yawAngle');
-        const rollAngleElement = document.getElementById('rollAngle');
-        const gazeDirectionElement = document.getElementById('gazeDirection');
+        // const pitchAngleElement = document.getElementById('pitchAngle');
+        // const yawAngleElement = document.getElementById('yawAngle');
+        // const rollAngleElement = document.getElementById('rollAngle');
+        // const gazeDirectionElement = document.getElementById('gazeDirection');
 
         let susCounter = 0;
         let duration;
@@ -103,6 +77,7 @@
 
                         if (yawAngle > 15 || yawAngle < -10 || pitchAngle > 10 || pitchAngle < -10) {
                             gazeDirection = "sus";
+                            console.log('sus');
                             promptMessage = "Please position yourself at the center and face forward towards the camera.";
                             susMovement('suspicious_movement');
                         }
@@ -114,20 +89,20 @@
                         }
 
                         // Display the angles
-                        promptMessageElement.innerHTML = `Prompt Message: ${promptMessage}`;
-                        pitchAngleElement.innerHTML = `Pitch Angle: ${pitchAngle.toFixed(2)}`;
-                        yawAngleElement.innerHTML = `Yaw Angle: ${yawAngle.toFixed(2)}`;
-                        rollAngleElement.innerHTML = `Roll Angle: ${rollAngle.toFixed(2)}`;
-                        gazeDirectionElement.innerHTML = `Gaze Direction: ${gazeDirection}`;
+                        // promptMessageElement.innerHTML = `Prompt Message: ${promptMessage}`;
+                        // pitchAngleElement.innerHTML = `Pitch Angle: ${pitchAngle.toFixed(2)}`;
+                        // yawAngleElement.innerHTML = `Yaw Angle: ${yawAngle.toFixed(2)}`;
+                        // rollAngleElement.innerHTML = `Roll Angle: ${rollAngle.toFixed(2)}`;
+                        // gazeDirectionElement.innerHTML = `Gaze Direction: ${gazeDirection}`;
                     }
                 }
                 else if (faceCount > 1) {
-                    gazeDirectionElement.innerHTML = `Gaze Direction: Multiple face detected`;
+                    //gazeDirectionElement.innerHTML = `Gaze Direction: Multiple face detected`;
                     susMovement('multiple_face');
 
                 }
                 else {
-                    gazeDirectionElement.innerHTML = `Gaze Direction: No face detected`;
+                    //gazeDirectionElement.innerHTML = `Gaze Direction: No face detected`;
                     susMovement('no_face');
                 }
                 
@@ -147,7 +122,7 @@
 
         // Function to update the timer display
         function updateTimer(seconds, milliseconds) {
-            document.getElementById('timer').textContent = seconds + '.' +milliseconds;
+            //document.getElementById('timer').textContent = seconds + '.' +milliseconds;
             duration = seconds + '.' + milliseconds;
         }
 
@@ -190,8 +165,8 @@
             filename = 'EVD_USER_' +timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type +'.png'; // Custom filename with evidenceType
                                 
             const dataUrl = canvas.toDataURL('image/png');
-                                
-            fetch('http://localhost/monitor_camera/save_cam_capture.php', {
+            
+            fetch('http://localhost/e-RTU/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_capture.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -207,7 +182,7 @@
                 .catch(error => {
                     console.error('Error saving screen capture:', error);
                 });
-            }, 500);
+            }, 200);
 
         }
 
@@ -233,7 +208,7 @@
         // Save in database
         function sendActivityRecord(evidence_name_type) {
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://localhost/monitor_camera/save_cam_activity.php', true); // Replace with the actual path
+            xhr.open('POST', 'http://localhost/e-RTU/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_activity.php', true); // Replace with the actual path
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             // ==== DEBUGGING =====
             xhr.onreadystatechange = function () {
@@ -253,7 +228,7 @@
             console.log('duration: ', duration);
 
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://localhost/monitor_camera/save_cam_activity_duration.php', true); // Replace with the actual path
+            xhr.open('POST', 'http://localhost/e-RTU/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_activity_duration.php', true); // Replace with the actual path
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             // ==== DEBUGGING =====
             xhr.onreadystatechange = function () {
@@ -286,14 +261,4 @@
             minTrackingConfidence: 0.5
         });
         faceMesh.onResults(onResults);
-        
-        // const camera = new Camera(videoElement, {onFrame: async () => {
-        //     await faceMesh.send({image: videoElement});
-        //     },
-        //     width: 1280,
-        //     height: 720
-        // });
-        // camera.start();
-    </script>
-</body>
-</html>
+});
