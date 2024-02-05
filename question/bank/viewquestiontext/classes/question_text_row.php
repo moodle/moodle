@@ -55,8 +55,8 @@ class question_text_row extends row_base {
 
     protected function display_content($question, $rowclasses): void {
         if ($this->plain) {
-            $text = question_utils::to_plain_text($question->questiontext,
-                    $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]);
+            $text = s(question_utils::to_plain_text($question->questiontext,
+                    $question->questiontextformat, ['noclean' => true, 'para' => false, 'filter' => false]));
         } else {
             $text = question_rewrite_question_preview_urls($question->questiontext, $question->id,
                     $question->contextid, 'question', 'questiontext', $question->id,
