@@ -273,7 +273,8 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
-        $attemptobj->process_finish($starttime, false);
+        $attemptobj->process_submit($starttime, false);
+        $attemptobj->process_grade_submission($starttime);
 
         // Fetch the contexts - no context should be returned.
         $this->setUser();
@@ -456,7 +457,8 @@ final class provider_test extends \core_privacy\tests\provider_testcase {
 
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_finish($starttime, false);
+        $attemptobj->process_submit($starttime, false);
+        $attemptobj->process_grade_submission($starttime);
 
         $this->setUser();
 

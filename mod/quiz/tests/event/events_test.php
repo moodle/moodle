@@ -118,21 +118,51 @@ final class events_test extends \advanced_testcase {
 
     public function test_attempt_submitted(): void {
 
-        list($quizobj, $quba, $attempt) = $this->prepare_quiz_data();
+        [$quizobj, , $attempt] = $this->prepare_quiz_data();
         $attemptobj = quiz_attempt::create($attempt->id);
 
         // Catch the event.
         $sink = $this->redirectEvents();
 
         $timefinish = time();
-        $attemptobj->process_finish($timefinish, false);
+        $attemptobj->process_submit($timefinish, false);
+        $events = $sink->get_events();
+        $sink->close();
+
+        // Validate the event.
+        $this->assertCount(1, $events);
+        $event = $events[0];
+        $this->assertInstanceOf('\mod_quiz\event\attempt_submitted', $event);
+        $this->assertEquals('quiz_attempts', $event->objecttable);
+        $this->assertEquals($quizobj->get_context(), $event->get_context());
+        $this->assertEquals($attempt->userid, $event->relateduserid);
+        $this->assertEquals(null, $event->other['submitterid']); // Should be the user, but PHP Unit complains...
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * The \mod_quiz\event\attempt_graded event should be fired when an attempt is graded.
+     *
+     * @return void
+     * @covers \mod_quiz\quiz_attempt::process_grade_submission
+     */
+    public function test_attempt_graded(): void {
+
+        [$quizobj, , $attempt] = $this->prepare_quiz_data();
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $timefinish = time();
+        $attemptobj->process_submit($timefinish, false);
+
+        // Catch the event.
+        $sink = $this->redirectEvents();
+        $attemptobj->process_grade_submission($timefinish);
         $events = $sink->get_events();
         $sink->close();
 
         // Validate the event.
         $this->assertCount(3, $events);
         $event = $events[2];
-        $this->assertInstanceOf('\mod_quiz\event\attempt_submitted', $event);
+        $this->assertInstanceOf('\mod_quiz\event\attempt_graded', $event);
         $this->assertEquals('quiz_attempts', $event->objecttable);
         $this->assertEquals($quizobj->get_context(), $event->get_context());
         $this->assertEquals($attempt->userid, $event->relateduserid);

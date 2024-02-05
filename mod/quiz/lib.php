@@ -524,9 +524,10 @@ function quiz_get_user_attempts($quizids, $userid, $status = 'finished', $includ
             break;
 
         case 'finished':
-            $statuscondition = ' AND state IN (:state1, :state2)';
+            $statuscondition = ' AND state IN (:state1, :state2, :state3)';
             $params['state1'] = quiz_attempt::FINISHED;
             $params['state2'] = quiz_attempt::ABANDONED;
+            $params['state3'] = quiz_attempt::SUBMITTED;
             break;
 
         case 'unfinished':

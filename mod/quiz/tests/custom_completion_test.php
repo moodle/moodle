@@ -132,7 +132,8 @@ final class custom_completion_test extends advanced_testcase {
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
     }
 
     /**

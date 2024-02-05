@@ -55,7 +55,7 @@ final class restore_date_test extends \restore_date_testcase {
         $quba = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
         $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
         quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timestamp);
-        quiz_attempt_save_started($quizobj, $quba, $attempt);
+        quiz_attempt_save_started($quizobj, $quba, $attempt, $timestamp);
 
         // Quiz grade.
         $grade = new \stdClass();

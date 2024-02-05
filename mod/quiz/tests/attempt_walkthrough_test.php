@@ -129,21 +129,30 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
 
         // Re-load quiz attempt data.
         $attemptobj = quiz_attempt::create($attempt->id);
 
         // Check that results are stored as expected.
         $this->assertEquals(1, $attemptobj->get_attempt_number());
-        $this->assertEquals(3, $attemptobj->get_sum_marks());
-        $this->assertEquals(true, $attemptobj->is_finished());
+        $this->assertEquals(false, $attemptobj->is_finished());
         $this->assertEquals($timenow, $attemptobj->get_submitted_date());
         $this->assertEquals($user1->id, $attemptobj->get_userid());
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
         $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
+        // Check we don't have grades yet.
+        $this->assertEmpty(quiz_get_user_grades($quiz, $user1->id));
+        $this->assertNull($attemptobj->get_sum_marks());
+
+        // Now grade the submission.
+        $attemptobj->process_grade_submission($timenow);
+        $attemptobj = quiz_attempt::create($attempt->id);
 
         // Check quiz grades.
+        $this->assertEquals(true, $attemptobj->is_finished());
+        $this->assertEquals(3, $attemptobj->get_sum_marks());
+
         $grades = quiz_get_user_grades($quiz, $user1->id);
         $grade = array_shift($grades);
         $this->assertEquals(100.0, $grade->rawgrade);
@@ -412,19 +421,30 @@ final class attempt_walkthrough_test extends \advanced_testcase {
             $attemptobj = quiz_attempt::create($attempt->id);
             $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
             $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
-            $attemptobj->process_finish($timenow, false);
+            $attemptobj->process_submit($timenow, false);
 
             // Re-load quiz attempt data.
             $attemptobj = quiz_attempt::create($attempt->id);
 
             // Check that results are stored as expected.
             $this->assertEquals(1, $attemptobj->get_attempt_number());
-            $this->assertEquals(4, $attemptobj->get_sum_marks());
-            $this->assertEquals(true, $attemptobj->is_finished());
+            $this->assertEquals(false, $attemptobj->is_finished());
             $this->assertEquals($timenow, $attemptobj->get_submitted_date());
             $this->assertEquals($user1->id, $attemptobj->get_userid());
             $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
             $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
+
+            // Check we don't have grades yet.
+            $this->assertEmpty(quiz_get_user_grades($quiz, $user1->id));
+            $this->assertNull($attemptobj->get_sum_marks());
+
+            // Now grade the submission.
+            $attemptobj->process_grade_submission($timenow);
+            $attemptobj = quiz_attempt::create($attempt->id);
+
+            // Check quiz grades.
+            $this->assertEquals(true, $attemptobj->is_finished());
+            $this->assertEquals(4, $attemptobj->get_sum_marks());
 
             // Check quiz grades.
             $grades = quiz_get_user_grades($quiz, $user1->id);
@@ -510,20 +530,30 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
         $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
 
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
 
         // Re-load quiz attempt data.
         $attemptobj = quiz_attempt::create($attempt->id);
 
         // Check that results are stored as expected.
         $this->assertEquals(1, $attemptobj->get_attempt_number());
-        $this->assertEquals(1, $attemptobj->get_sum_marks());
-        $this->assertEquals(true, $attemptobj->is_finished());
+        $this->assertEquals(false, $attemptobj->is_finished());
         $this->assertEquals($timenow, $attemptobj->get_submitted_date());
         $this->assertEquals($user1->id, $attemptobj->get_userid());
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
         $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
 
+        // Check we don't have grades yet.
+        $this->assertEmpty(quiz_get_user_grades($this->quizwithvariants, $user1->id));
+        $this->assertNull($attemptobj->get_sum_marks());
+
+        // Now grade the submission.
+        $attemptobj->process_grade_submission($timenow);
+        $attemptobj = quiz_attempt::create($attempt->id);
+
+        // Check quiz grades.
+        $this->assertEquals(true, $attemptobj->is_finished());
+        $this->assertEquals(1, $attemptobj->get_sum_marks());
         // Check quiz grades.
         $grades = quiz_get_user_grades($this->quizwithvariants, $user1->id);
         $grade = array_shift($grades);
@@ -641,22 +671,27 @@ final class attempt_walkthrough_test extends \advanced_testcase {
 
         // Verify this was logged correctly - there are some gradebook events between the two we want to check.
         $events = $sink->get_events();
-        $this->assertGreaterThanOrEqual(2, $events);
+        $this->assertGreaterThanOrEqual(3, $events);
 
+        $attempturl = new moodle_url(
+            '/mod/quiz/review.php',
+            ['attempt' => $attemptobj->get_attemptid()],
+        );
         $reopenedevent = array_shift($events);
         $this->assertInstanceOf('\mod_quiz\event\attempt_reopened', $reopenedevent);
         $this->assertEquals($attemptobj->get_context(), $reopenedevent->get_context());
-        $this->assertEquals(
-            new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
-            $reopenedevent->get_url()
-        );
 
-        $submittedevent = array_pop($events);
+        $this->assertEquals($attempturl, $reopenedevent->get_url());
+
+        $submittedevent = array_shift($events);
         $this->assertInstanceOf('\mod_quiz\event\attempt_submitted', $submittedevent);
         $this->assertEquals($attemptobj->get_context(), $submittedevent->get_context());
-        $this->assertEquals(
-            new moodle_url('/mod/quiz/review.php', ['attempt' => $attemptobj->get_attemptid()]),
-            $submittedevent->get_url()
-        );
+
+        $this->assertEquals($attempturl, $submittedevent->get_url());
+
+        $gradedevent = array_pop($events);
+        $this->assertInstanceOf('\mod_quiz\event\attempt_graded', $gradedevent);
+        $this->assertEquals($attemptobj->get_context(), $gradedevent->get_context());
+        $this->assertEquals($attempturl, $gradedevent->get_url());
     }
 }

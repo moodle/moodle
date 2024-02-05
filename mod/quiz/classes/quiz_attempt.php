@@ -53,10 +53,14 @@ use stdClass;
  */
 class quiz_attempt {
 
+    /** @var string to identify the "not started" state, when an attempt has been pre-generated. */
+    const NOT_STARTED = 'notstarted';
     /** @var string to identify the in progress state. */
     const IN_PROGRESS = 'inprogress';
     /** @var string to identify the overdue state. */
     const OVERDUE     = 'overdue';
+    /** @var string to identify the submitted state, when an attempt is awaiting grading. */
+    const SUBMITTED = 'submitted';
     /** @var string to identify the finished state. */
     const FINISHED    = 'finished';
     /** @var string to identify the abandoned state. */
@@ -1648,7 +1652,8 @@ class quiz_attempt {
         // Transition to the appropriate state.
         switch ($this->quizobj->get_quiz()->overduehandling) {
             case 'autosubmit':
-                $this->process_finish($timestamp, false, $studentisonline ? $timestamp : $timeclose, $studentisonline);
+                $this->process_submit($timestamp, false, $studentisonline ? $timestamp : $timeclose, $studentisonline);
+                $this->process_grade_submission($studentisonline ? $timestamp : $timeclose);
                 return;
 
             case 'graceperiod':
@@ -1805,8 +1810,36 @@ class quiz_attempt {
      * @param ?int $timefinish if set, use this as the finish time for the attempt.
      *      (otherwise use $timestamp as the finish time as well).
      * @param bool $studentisonline is the student currently interacting with Moodle?
+     * @deprecated since Moodle 5.0 MDL-68806 use process_submit() and process_grade_submission() instead
+     * @todo Final deprecation in Moodle 6.0 MDL-80956
      */
     public function process_finish($timestamp, $processsubmitted, $timefinish = null, $studentisonline = false) {
+        debugging('quiz_attempt::process_finish is deprecated. Please use quiz_attempt::process_submit to store ' .
+                'answers and mark an attempt submitted, and quiz_attempt::process_grade_submission to do automatic grading.');
+        $this->process_submit($timestamp, $processsubmitted, $timefinish, $studentisonline);
+        $this->process_grade_submission($timefinish ?? $timestamp);
+    }
+
+    /**
+     * Submit the attempt.
+     *
+     * The separate $timefinish argument should be used when the quiz attempt
+     * is being processed asynchronously (for example when cron is submitting
+     * attempts where the time has expired).
+     *
+     * @param int $timestamp the time to record as last modified time.
+     * @param bool $processsubmitted if true, and question responses in the current
+     *      POST request are stored to be graded, before the attempt is finished.
+     * @param ?int $timefinish if set, use this as the finish time for the attempt.
+     *      (otherwise use $timestamp as the finish time as well).
+     * @param bool $studentisonline is the student currently interacting with Moodle?
+     */
+    public function process_submit(
+        int $timestamp,
+        bool $processsubmitted,
+        ?int $timefinish = null,
+        bool $studentisonline = false
+    ): void {
         global $DB;
 
         $transaction = $DB->start_delegated_transaction();
@@ -1814,7 +1847,6 @@ class quiz_attempt {
         if ($processsubmitted) {
             $this->quba->process_all_actions($timestamp);
         }
-        $this->quba->finish_all_questions($timestamp);
 
         question_engine::save_questions_usage_by_activity($this->quba);
 
@@ -1822,15 +1854,44 @@ class quiz_attempt {
 
         $this->attempt->timemodified = $timestamp;
         $this->attempt->timefinish = $timefinish ?? $timestamp;
+        $this->attempt->state = self::SUBMITTED;
+        $this->attempt->timecheckstate = null;
+
+        $DB->update_record('quiz_attempts', $this->attempt);
+
+        if (!$this->is_preview()) {
+            // Trigger event.
+            $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp, $studentisonline);
+            \core\hook\manager::get_instance()->dispatch(new attempt_state_changed($originalattempt, $this->attempt));
+        }
+
+        $transaction->allow_commit();
+    }
+
+    /**
+     * Perform automatic grading for a submitted attempt.
+     *
+     * @param int $timestamp the time to record as last modified time.
+     */
+    public function process_grade_submission(int $timestamp): void {
+        global $DB;
+
+        $transaction = $DB->start_delegated_transaction();
+        $this->quba->finish_all_questions($timestamp);
+        question_engine::save_questions_usage_by_activity($this->quba);
+
+        $originalattempt = clone $this->attempt;
+
+        $this->attempt->timemodified = $timestamp;
+
         $this->attempt->sumgrades = $this->quba->get_total_mark();
         $this->attempt->state = self::FINISHED;
-        $this->attempt->timecheckstate = null;
-        $this->attempt->gradednotificationsenttime = null;
 
-        if (!$this->requires_manual_grading() ||
-                !has_capability('mod/quiz:emailnotifyattemptgraded', $this->get_quizobj()->get_context(),
-                        $this->get_userid())) {
-            $this->attempt->gradednotificationsenttime = $this->attempt->timefinish;
+        if (
+            !$this->requires_manual_grading() ||
+            !has_capability('mod/quiz:emailnotifyattemptgraded', $this->get_quizobj()->get_context(), $this->get_userid())
+        ) {
+            $this->attempt->gradednotificationsenttime = $timestamp;
         }
 
         $DB->update_record('quiz_attempts', $this->attempt);
@@ -1839,7 +1900,7 @@ class quiz_attempt {
             $this->recompute_final_grade();
 
             // Trigger event.
-            $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp, $studentisonline);
+            $this->fire_state_transition_event('\mod_quiz\event\attempt_graded', $timestamp, false);
 
             di::get(hook\manager::class)->dispatch(new attempt_state_changed($originalattempt, $this->attempt));
             // Tell any access rules that care that the attempt is over.
@@ -1947,7 +2008,8 @@ class quiz_attempt {
         di::get(hook\manager::class)->dispatch(new attempt_state_changed($originalattempt, $this->attempt));
         $timeclose = $this->get_access_manager($timestamp)->get_end_time($this->attempt);
         if ($timeclose && $timestamp > $timeclose) {
-            $this->process_finish($timestamp, false, $timeclose);
+            $this->process_submit($timestamp, false, $timeclose);
+            $this->process_grade_submission($timeclose);
         }
 
         $transaction->allow_commit();
@@ -2158,7 +2220,8 @@ class quiz_attempt {
                     // late to be processed, record the close time, to reduce confusion.
                     $finishtime = $timeclose;
                 }
-                $this->process_finish($timenow, !$toolate, $finishtime, true);
+                $this->process_submit($timenow, !$toolate, $finishtime, true);
+                $this->process_grade_submission($finishtime);
             }
 
         } catch (question_out_of_sequence_exception $e) {

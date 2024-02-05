@@ -193,7 +193,8 @@ final class lib_test extends \advanced_testcase {
         quiz_attempt_save_started($quizobj1a, $quba1a, $attempt);
         $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_submitted_actions($timenow, false, [1 => ['answer' => '3.14']]);
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         // User 2 goes overdue in quiz 1.
         $attempt = quiz_create_attempt($quizobj1b, 1, false, $timenow, false, $u2->id);
@@ -231,7 +232,8 @@ final class lib_test extends \advanced_testcase {
         quiz_start_new_attempt($quizobj2a, $quba2a, $attempt, 2, $timenow);
         quiz_attempt_save_started($quizobj2a, $quba2a, $attempt);
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         $quba2a = \question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj2a->get_context());
         $quba2a->set_preferred_behaviour($quizobj2a->get_quiz()->preferredbehaviour);
@@ -689,7 +691,8 @@ final class lib_test extends \advanced_testcase {
 
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_OPEN);
@@ -744,7 +747,8 @@ final class lib_test extends \advanced_testcase {
 
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         // Create a calendar event.
         $event = $this->create_action_event($course->id, $quiz->id, QUIZ_EVENT_TYPE_OPEN);

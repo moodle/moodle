@@ -373,7 +373,8 @@ final class datalib_reporting_queries_test extends \qbehaviour_walkthrough_test_
         // Submit attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_submitted_actions($timenow, false);
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         // Calculate the statistics.
         $this->expectOutputRegex('~.*Calculations completed.*~');

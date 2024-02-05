@@ -1015,7 +1015,8 @@ class behat_mod_quiz extends behat_question_base {
 
         $attempts = quiz_get_user_attempts($quizid, $user->id, 'unfinished', true);
         $attemptobj = quiz_attempt::create(key($attempts));
-        $attemptobj->process_finish(time(), true);
+        $attemptobj->process_submit(time(), true);
+        $attemptobj->process_grade_submission(time());
 
         $this->set_user();
     }

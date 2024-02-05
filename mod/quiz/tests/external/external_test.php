@@ -206,7 +206,8 @@ final class external_test extends externallib_advanced_testcase {
                 $attemptobj->process_submitted_actions(time(), false, $tosubmit);
 
                 // Finish the attempt.
-                $attemptobj->process_finish(time(), false);
+                $attemptobj->process_submit(time(), false);
+                $attemptobj->process_grade_submission(time());
             }
             return [$quiz, $context, $quizobj, $attempt, $attemptobj, $quba];
         } else {
@@ -661,7 +662,8 @@ final class external_test extends externallib_advanced_testcase {
         $attemptobj->process_submitted_actions($timenow, false, [1 => ['answer' => '3.14']]);
 
         // Finish the attempt.
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         $result = mod_quiz_external::get_user_best_grade($quizapi1->id);
         $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
@@ -723,7 +725,8 @@ final class external_test extends externallib_advanced_testcase {
         $attemptobj->process_submitted_actions($timenow, false, [1 => ['answer' => '3.14']]);
 
         // Finish the attempt.
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         $result = mod_quiz_external::get_user_best_grade($quizapi2->id);
         $result = external_api::clean_returnvalue(mod_quiz_external::get_user_best_grade_returns(), $result);
@@ -809,7 +812,8 @@ final class external_test extends externallib_advanced_testcase {
 
         // Now, finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         $expected = [
             "someoptions" => [
@@ -1026,7 +1030,8 @@ final class external_test extends externallib_advanced_testcase {
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attemptid);
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         // We should be able to start a new attempt.
         $result = mod_quiz_external::start_attempt($quiz->id, [["name" => "quizpassword", "value" => 'abc']]);
@@ -1127,7 +1132,8 @@ final class external_test extends externallib_advanced_testcase {
 
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
-        $attemptobj->process_finish(time(), false);
+        $attemptobj->process_submit(time(), false);
+        $attemptobj->process_grade_submission(time());
 
         try {
             testable_mod_quiz_external::validate_attempt($params, false);
@@ -1233,7 +1239,8 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
 
         // Finish previous attempt.
-        $attemptobj->process_finish(time(), false);
+        $attemptobj->process_submit(time(), false);
+        $attemptobj->process_grade_submission(time());
 
         // Now we should receive the question state.
         $result = mod_quiz_external::get_attempt_review($attempt->id, 1);
@@ -2126,7 +2133,8 @@ final class external_test extends externallib_advanced_testcase {
         // Finish the attempt.
         $attemptobj = quiz_attempt::create($attempt->id);
         $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
-        $attemptobj->process_finish($timenow, false);
+        $attemptobj->process_submit($timenow, false);
+        $attemptobj->process_grade_submission($timenow);
 
         // Can we start a new attempt? We shall not!
         $result = mod_quiz_external::get_attempt_access_information($quiz->id, $attempt->id);

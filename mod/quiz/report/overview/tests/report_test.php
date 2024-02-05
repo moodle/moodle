@@ -109,7 +109,8 @@ final class report_test extends \advanced_testcase {
             [$quiz, $student1, 2, 5.0,  quiz_attempt::FINISHED],
             [$quiz, $student1, 3, 8.0,  quiz_attempt::FINISHED],
             [$quiz, $student1, 4, null, quiz_attempt::ABANDONED],
-            [$quiz, $student1, 5, null, quiz_attempt::IN_PROGRESS],
+            [$quiz, $student1, 5, null, quiz_attempt::SUBMITTED],
+            [$quiz, $student1, 6, null, quiz_attempt::IN_PROGRESS],
             [$quiz, $student2, 1, null, quiz_attempt::ABANDONED],
             [$quiz, $student2, 2, null, quiz_attempt::ABANDONED],
             [$quiz, $student2, 3, 7.0,  quiz_attempt::FINISHED],
@@ -143,11 +144,29 @@ final class report_test extends \advanced_testcase {
                     // Do nothing.
                     break;
 
+                case quiz_attempt::SUBMITTED:
+                    // Save answers but do not grade attempt.
+                    $attemptobj->process_submitted_actions(
+                        $timestart + 300,
+                        false,
+                        [
+                            1 => ['answer' => 'My essay by ' . $student->firstname, 'answerformat' => FORMAT_PLAIN],
+                        ]
+                    );
+                    $attemptobj->process_submit($timestart + 600, false);
+                    break;
+
                 case quiz_attempt::FINISHED:
                     // Save answer and finish attempt.
-                    $attemptobj->process_submitted_actions($timestart + 300, false, [
-                            1 => ['answer' => 'My essay by ' . $student->firstname, 'answerformat' => FORMAT_PLAIN]]);
-                    $attemptobj->process_finish($timestart + 600, false);
+                    $attemptobj->process_submitted_actions(
+                        $timestart + 300,
+                        false,
+                        [
+                            1 => ['answer' => 'My essay by ' . $student->firstname, 'answerformat' => FORMAT_PLAIN],
+                        ]
+                    );
+                    $attemptobj->process_submit($timestart + 600, false);
+                    $attemptobj->process_grade_submission($timestart + 600);
 
                     // Manually grade it.
                     $quba = $attemptobj->get_question_usage();
@@ -207,7 +226,7 @@ final class report_test extends \advanced_testcase {
         $this->assertArrayHasKey($student1->id . '#3', $table->rawdata);
         $this->assertEquals(1, $table->rawdata[$student1->id . '#3']->gradedattempt);
         $this->assertArrayHasKey($student1->id . '#3', $table->rawdata);
-        $this->assertEquals(0, $table->rawdata[$student1->id . '#5']->gradedattempt);
+        $this->assertEquals(0, $table->rawdata[$student1->id . '#6']->gradedattempt);
         $this->assertArrayHasKey($student2->id . '#3', $table->rawdata);
         $this->assertEquals(1, $table->rawdata[$student2->id . '#3']->gradedattempt);
         $this->assertArrayHasKey($student3->id . '#0', $table->rawdata);
@@ -361,7 +380,8 @@ final class report_test extends \advanced_testcase {
         $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
         $attemptobj = quiz_attempt::create($attempt->id);
         $attemptobj->process_submitted_actions(time(), false, [1 => ['answer' => 'toad']]);
-        $attemptobj->process_finish(time(), false);
+        $attemptobj->process_submit(time(), false);
+        $attemptobj->process_grade_submission(time());
 
         // We should be using 'always latest' version, which is currently v2, so should be right.
         $this->assertEquals(10, $attemptobj->get_question_usage()->get_total_mark());
