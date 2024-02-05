@@ -247,10 +247,10 @@ class tool_uploadcourse_course {
      * Log an error
      *
      * @param string $code error code.
-     * @param lang_string $message error message.
+     * @param string $message error message.
      * @return void
      */
-    protected function error($code, lang_string $message) {
+    protected function error($code, string $message) {
         if (array_key_exists($code, $this->errors)) {
             throw new coding_exception('Error code already defined');
         }
