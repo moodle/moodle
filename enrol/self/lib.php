@@ -1015,18 +1015,19 @@ class enrol_self_plugin extends enrol_plugin {
 
         if ($checkpassword) {
             $require = $this->get_config('requirepassword');
-            $policy  = $this->get_config('usepasswordpolicy');
+            $policy = $this->get_config('usepasswordpolicy');
             if ($require and trim($data['password']) === '') {
                 $errors['password'] = get_string('required');
-            } else if (!empty($data['password']) && $policy) {
-                $errmsg = '';
-                if (!check_password_policy($data['password'], $errmsg)) {
-                    $errors['password'] = $errmsg;
+            } else if (!empty($data['password'])) {
+                if ($policy) {
+                    $errmsg = '';
+                    if (!check_password_policy($data['password'], $errmsg)) {
+                        $errors['password'] = $errmsg;
+                    }
                 }
-            } else if (!empty($data['password']) && $data['customint1'] &&
-                    enrol_self_check_group_enrolment_key($data['courseid'], $data['password'])) {
-
-                $errors['password'] = get_string('passwordmatchesgroupkey', 'enrol_self');
+                if ($data['customint1'] && enrol_self_check_group_enrolment_key($instance->courseid, $data['password'])) {
+                    $errors['password'] = get_string('passwordmatchesgroupkey', 'enrol_self');
+                }
             }
         }
 
