@@ -949,7 +949,7 @@ class completion_info {
      * Resetting state of manual tickbox has same result as deleting state for
      * it.
      *
-     * @param stcClass|cm_info $cm Activity
+     * @param stdClass|cm_info $cm Activity
      */
     public function reset_all_state($cm) {
         global $DB;
@@ -991,7 +991,7 @@ class completion_info {
      *   fill the cache, retrieves information from the entire course not just for
      *   this one activity
      * @param int $userid User ID or 0 (default) for current user
-     * @param null $unused This parameter has been deprecated since 4.0 and should not be used anymore.
+     * @param mixed $unused This parameter has been deprecated since 4.0 and should not be used anymore.
      * @return object Completion data. Record from course_modules_completion plus other completion statuses such as
      *                  - Completion status for 'must-receive-grade' completion rule.
      *                  - Custom completion statuses defined by the activity module plugin.
@@ -1443,7 +1443,7 @@ class completion_info {
      * @param int $start User to start at if paging (optional)
      * @param context $extracontext If set, includes extra user information fields
      *   as appropriate to display for current user in this context
-     * @return stdClass with ->total and ->start (same as $start) and ->users;
+     * @return array with ->total and ->start (same as $start) and ->users;
      *   an array of user objects (like mdl_user id, firstname, lastname)
      *   containing an additional ->progress array of coursemoduleid => completionstate
      */
@@ -1495,7 +1495,7 @@ class completion_info {
      *
      * @param stdClass|cm_info $cm Course-module for item that owns grade
      * @param grade_item $item Grade item
-     * @param stdClass $grade
+     * @param stdClass|grade_grade $grade
      * @param bool $deleted
      * @param bool $isbulkupdate If bulk grade update is happening.
      */
@@ -1590,7 +1590,6 @@ class completion_info {
      * This is to be used only for system errors (things that shouldn't happen)
      * and not user-level errors.
      *
-     * @global type $CFG
      * @param string $error Error string (will not be displayed to user unless debugging is enabled)
      * @throws moodle_exception Exception with the error string as debug info
      */

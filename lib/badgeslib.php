@@ -236,7 +236,7 @@ function badges_notify_badge_award(badge $badge, $userid, $issued, $filepathhash
 /**
  * Caclulates date for the next message digest to badge creators.
  *
- * @param in $schedule Type of message schedule BADGE_MESSAGE_DAILY|BADGE_MESSAGE_WEEKLY|BADGE_MESSAGE_MONTHLY.
+ * @param int $schedule Type of message schedule BADGE_MESSAGE_DAILY|BADGE_MESSAGE_WEEKLY|BADGE_MESSAGE_MONTHLY.
  * @return int Timestamp for next cron
  */
 function badges_calculate_message_schedule($schedule) {
@@ -598,7 +598,7 @@ function print_badge_image(badge $badge, stdClass $context, $size = 'small') {
  * @param int $badgeid ID of the original badge.
  * @param int $userid ID of badge recipient (optional).
  * @param boolean $pathhash Return file pathhash instead of image url (optional).
- * @return string|url Returns either new file path hash or new file URL
+ * @return string|moodle_url|null Returns either new file path hash or new file URL
  */
 function badges_bake($hash, $badgeid, $userid = 0, $pathhash = false) {
     global $CFG, $USER;
@@ -1221,7 +1221,6 @@ function badges_external_delete_mappings($sitebackpackid) {
  * @param integer $sitebackpackid The site backpack to connect to.
  * @param string $type The type of this remote object.
  * @param string $internalid The id for this object on the Moodle site.
- * @return boolean
  */
 function badges_external_delete_mapping($sitebackpackid, $type, $internalid) {
     global $DB;
@@ -1471,7 +1470,7 @@ function badges_verify_backpack(int $backpackid) {
  * @param stdClass $backpack The Badgr backpack we are pushing to
  * @param string $type The type of object we are dealing with either Issuer, Assertion OR Badge.
  * @param string $externalid The externalid as provided by the backpack
- * @return string The public URL to access Badgr objects
+ * @return ?string The public URL to access Badgr objects
  */
 function badges_generate_badgr_open_url($backpack, $type, $externalid) {
     if (badges_open_badges_backpack_api($backpack->id) == OPEN_BADGES_V2) {

@@ -269,8 +269,8 @@ class dml_transaction_exception extends dml_exception {
 
     /**
      * Constructor
-     * @param array $debuginfo Optional debugging information.
-     * @param moodle_transaction $transaction The instance of the transaction.(Optional)
+     * @param ?string $debuginfo Optional debugging information.
+     * @param ?moodle_transaction $transaction The instance of the transaction.(Optional)
      */
     function __construct($debuginfo=null, $transaction=null) {
         $this->transaction = $transaction; // TODO: MDL-20625 use the info from $transaction for debugging purposes

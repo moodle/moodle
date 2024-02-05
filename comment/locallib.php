@@ -242,7 +242,7 @@ class comment_manager {
      * @param  stdClass $context   context object
      * @param  string $component   component name
      * @param  int $since          the time to check
-     * @param  stdClass $cm        course module object
+     * @param  stdClass|\cm_info|null $cm course module object
      * @return array list of comments db records since the given timelimit
      * @since Moodle 3.2
      */

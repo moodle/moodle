@@ -31,8 +31,6 @@ defined('MOODLE_INTERNAL') || die();
  * @param stdClass $user user object
  * @param bool $iscurrentuser is the user viewing profile, current user ?
  * @param stdClass $course course object
- *
- * @return bool
  */
 function core_myprofile_navigation(core_user\output\myprofile\tree $tree, $user, $iscurrentuser, $course) {
     global $CFG, $USER, $DB, $PAGE, $OUTPUT;

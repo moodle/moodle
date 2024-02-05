@@ -159,6 +159,7 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
      * @param     string $event Name of event
      * @param     mixed $arg event arguments
      * @param     mixed $caller calling object
+     * @return    ?bool
      */
     public function onQuickFormEvent($event, $arg, &$caller) {
         $this->setMoodleForm($caller);

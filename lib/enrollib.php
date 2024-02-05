@@ -137,7 +137,7 @@ function enrol_get_plugins($enabled) {
 /**
  * Returns instance of enrol plugin
  * @param  string $name name of enrol plugin ('manual', 'guest', ...)
- * @return enrol_plugin
+ * @return ?enrol_plugin
  */
 function enrol_get_plugin($name) {
     global $CFG;
@@ -1476,7 +1476,7 @@ function is_enrolled(context $context, $user = null, $withcapability = '', $only
  * @param string|array $capability optional, may include a capability name, or array of names.
  *      If an array is provided then this is the equivalent of a logical 'OR',
  *      i.e. the user needs to have one of these capabilities.
- * @param int|array $groupids The groupids, 0 or [] means all groups and USERSWITHOUTGROUP no group
+ * @param int|array|null $groupids The groupids, 0 or [] means all groups and USERSWITHOUTGROUP no group
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
@@ -1528,7 +1528,7 @@ function get_enrolled_with_capabilities_join(context $context, $prefix = '', $ca
  *
  * @param context $context
  * @param string $withcapability
- * @param int|array $groupids The groupids, 0 or [] means all groups and USERSWITHOUTGROUP no group
+ * @param int|array|null $groupids The groupids, 0 or [] means all groups and USERSWITHOUTGROUP no group
  * @param bool $onlyactive consider only active enrolments in enabled plugins and time restrictions
  * @param bool $onlysuspended inverse of onlyactive, consider only suspended enrolments
  * @param int $enrolid The enrolment ID. If not 0, only users enrolled using this enrolment method will be returned.
@@ -1963,7 +1963,6 @@ abstract class enrol_plugin {
      * Sets plugin config value
      * @param  string $name name of config
      * @param  string $value string config value, null means delete
-     * @return string value
      */
     public function set_config($name, $value) {
         $pluginname = $this->get_name();
@@ -2428,7 +2427,7 @@ abstract class enrol_plugin {
     /**
      * Returns link to page which may be used to add new instance of enrolment plugin in course.
      * @param int $courseid
-     * @return moodle_url page url
+     * @return ?moodle_url page url
      */
     public function get_newinstance_link($courseid) {
         // override for most plugins, check if instance already exists in cases only one instance is supported
@@ -2469,7 +2468,7 @@ abstract class enrol_plugin {
      * Does the access control tests automatically.
      *
      * @param object $instance
-     * @return moodle_url
+     * @return ?moodle_url
      */
     public function get_manual_enrol_link($instance) {
         return NULL;
@@ -2479,7 +2478,7 @@ abstract class enrol_plugin {
      * Returns list of unenrol links for all enrol instances in course.
      *
      * @param stdClass $instance
-     * @return moodle_url or NULL if self unenrolment not supported
+     * @return ?moodle_url or NULL if self unenrolment not supported
      */
     public function get_unenrolself_link($instance) {
         global $USER, $CFG, $DB;
@@ -2665,7 +2664,7 @@ abstract class enrol_plugin {
      * Not all plugins support this.
      *
      * @param object $course
-     * @return int id of new instance or null if no default supported
+     * @return ?int id of new instance or null if no default supported
      */
     public function add_default_instance($course) {
         return null;

@@ -265,7 +265,7 @@ class grade_grade extends grade_object {
     /**
      * Loads the grade_item object referenced by $this->itemid and saves it as $this->grade_item for easy access
      *
-     * @return grade_item The grade_item instance referenced by $this->itemid
+     * @return ?grade_item The grade_item instance referenced by $this->itemid
      */
     public function load_grade_item() {
         if (empty($this->itemid)) {
@@ -449,7 +449,7 @@ class grade_grade extends grade_object {
     /**
      * Returns timestamp when last graded, null if no grade present
      *
-     * @return int
+     * @return ?int
      */
     public function get_dategraded() {
         //TODO: HACK - create new fields (MDL-31379)
@@ -712,7 +712,7 @@ class grade_grade extends grade_object {
      * @param float $source_max
      * @param float $target_min
      * @param float $target_max
-     * @return float Converted value
+     * @return ?float Converted value
      */
     public static function standardise_score($rawgrade, $source_min, $source_max, $target_min, $target_max) {
         if (is_null($rawgrade)) {
@@ -743,7 +743,7 @@ class grade_grade extends grade_object {
      *
      * @param array $dependson Array to flatten
      * @param array $dependencydepth Array of itemids => depth. Initially these should be all set to 1.
-     * @return array Flattened array
+     * @return bool|null
      */
     protected static function flatten_dependencies_array(&$dependson, &$dependencydepth) {
         // Flatten the nested dependencies - this will handle recursion bombs because it removes duplicates.
@@ -1030,7 +1030,7 @@ class grade_grade extends grade_object {
      * Returns true if the grade's value is superior or equal to the grade item's gradepass value, false otherwise.
      *
      * @param grade_item $grade_item An optional grade_item of which gradepass value we can use, saves having to load the grade_grade's grade_item
-     * @return bool
+     * @return ?bool
      */
     public function is_passed($grade_item = null) {
         if (empty($grade_item)) {

@@ -372,7 +372,7 @@ class navigation_node implements renderable {
      *
      * @param string $text
      * @param moodle_url|action_link|string $action
-     * @param int $type
+     * @param ?int $type
      * @param string $shorttext
      * @param string|int $key
      * @param pix_icon $icon
@@ -443,7 +443,7 @@ class navigation_node implements renderable {
      * use the get method instead.
      *
      * @param int|string $key The key of the node we are looking for
-     * @param int $type One of navigation_node::TYPE_*
+     * @param ?int $type One of navigation_node::TYPE_*
      * @return navigation_node|false
      */
     public function find($key, $type) {
@@ -1165,7 +1165,7 @@ class navigation_node_collection implements IteratorAggregate, Countable {
      *
      * @param string|int $key The key of the node we want to find.
      * @param int $type One of navigation_node::TYPE_*.
-     * @return navigation_node|null
+     * @return navigation_node|null|false
      */
     public function get($key, $type=null) {
         if ($type !== null) {
@@ -1969,7 +1969,7 @@ class global_navigation extends navigation_node {
      * @param int $categoryid The category id to load or null/0 to load all base level categories
      * @param bool $showbasecategories If set to true all base level categories will be loaded as well
      *        as the requested category and any parent categories.
-     * @return navigation_node|void returns a navigation node if a category has been loaded.
+     * @return true|void
      */
     protected function load_all_categories($categoryid = self::LOAD_ROOT_CATEGORIES, $showbasecategories = false) {
         global $CFG, $DB;
@@ -3205,7 +3205,7 @@ class global_navigation extends navigation_node {
      * may be of more use to you.
      *
      * @param string|int $key The key of the node you wish to receive.
-     * @param int $type One of navigation_node::TYPE_*
+     * @param ?int $type One of navigation_node::TYPE_*
      * @return navigation_node|false
      */
     public function find($key, $type) {
@@ -3656,7 +3656,7 @@ class navbar extends navigation_node {
         global $CFG;
         if (during_initial_install()) {
             $this->duringinstall = true;
-            return false;
+            return;
         }
         $this->page = $page;
         $this->text = get_string('home');
@@ -4174,7 +4174,7 @@ class flat_navigation extends navigation_node_collection {
      */
     public function __construct(moodle_page &$page) {
         if (during_initial_install()) {
-            return false;
+            return;
         }
         debugging("Flat navigation has been deprecated in favour of primary/secondary navigation concepts");
         $this->page = $page;
@@ -4327,7 +4327,7 @@ class settings_navigation extends navigation_node {
      */
     public function __construct(moodle_page &$page) {
         if (during_initial_install()) {
-            return false;
+            return;
         }
         $this->page = $page;
         // Initialise the main navigation. It is most important that this is done

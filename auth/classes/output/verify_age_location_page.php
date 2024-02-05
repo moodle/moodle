@@ -40,7 +40,7 @@ require_once($CFG->libdir.'/formslib.php');
  */
 class verify_age_location_page implements renderable, templatable {
 
-    /** @var mform The form object */
+    /** @var \moodleform The form object */
     protected $form;
 
     /** @var string Error message */
@@ -49,7 +49,7 @@ class verify_age_location_page implements renderable, templatable {
     /**
      * Constructor
      *
-     * @param mform $form The form object
+     * @param \moodleform $form The form object
      * @param string $errormessage The error message.
      */
     public function __construct($form, $errormessage = null) {
@@ -61,7 +61,7 @@ class verify_age_location_page implements renderable, templatable {
      * Export the page data for the mustache template.
      *
      * @param renderer_base $output renderer to be used to render the page elements.
-     * @return stdClass
+     * @return \stdClass
      */
     public function export_for_template(renderer_base $output) {
         global $SITE;

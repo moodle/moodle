@@ -42,14 +42,14 @@ defined('MOODLE_INTERNAL') || die();
 class xml_format_exception extends moodle_exception {
     /** @var string */
     public $errorstring;
-    /** @var char */
+    /** @var string */
     public $char;
     /**
      * Constructor function
      *
      * @param string $errorstring Errorstring
      * @param int $line Linenumber
-     * @param char $char Errorcharacter
+     * @param string $char Errorcharacter
      * @param string $link Link
      */
     public function __construct($errorstring, $line, $char, $link = '') {
@@ -188,7 +188,7 @@ class core_xml_parser {
      * @param string $encoding Specify an OUTPUT encoding. If not specified, it defaults to UTF-8.
      * @param bool $reporterrors if set to true, then a {@link xml_format_exception}
      *      exception will be thrown if the XML is not well-formed. Otherwise errors are ignored.
-     * @return array representation of the parsed XML.
+     * @return array|false representation of the parsed XML.
      */
     public function parse($data, $whitespace = 1, $encoding = 'UTF-8', $reporterrors = false) {
         $data = trim($data);

@@ -494,7 +494,7 @@ class help_icon implements renderable, templatable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
-     * @return array
+     * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
         global $CFG;
@@ -1135,7 +1135,7 @@ class single_select implements renderable, templatable {
      * @param string $name name of selection field - the changing parameter in url
      * @param array $options list of options
      * @param string $selected selected element
-     * @param array $nothing
+     * @param ?array $nothing
      * @param string $formid
      */
     public function __construct(moodle_url $url, $name, array $options, $selected = '', $nothing = array('' => 'choosedots'), $formid = null) {
@@ -1438,7 +1438,7 @@ class url_select implements renderable, templatable {
      * Clean a URL.
      *
      * @param string $value The URL.
-     * @return The cleaned URL.
+     * @return string The cleaned URL.
      */
     protected function clean_url($value) {
         global $CFG;
@@ -1849,7 +1849,7 @@ class html_writer {
      * Generates random html element id.
      *
      * @staticvar int $counter
-     * @staticvar type $uniq
+     * @staticvar string $uniq
      * @param string $base A string fragment that will be included in the random ID.
      * @return string A unique ID
      */
@@ -1941,7 +1941,7 @@ class html_writer {
      *                array(1=>'One', '--1uniquekey'=>array('More'=>array(2=>'Two', 3=>'Three')))
      * @param string $name name of select element
      * @param string|array $selected value or array of values depending on multiple attribute
-     * @param array|bool $nothing add nothing selected option, or false of not added
+     * @param array|bool|null $nothing add nothing selected option, or false of not added
      * @param array $attributes html select element attributes
      * @return string HTML fragment
      */
@@ -3771,7 +3771,7 @@ class custom_menu_item implements renderable, templatable {
      * Export this data so it can be used as the context for a mustache template.
      *
      * @param renderer_base $output Used to do a final render of any components that need to be rendered for export.
-     * @return array
+     * @return stdClass
      */
     public function export_for_template(renderer_base $output) {
         $syscontext = context_system::instance();
@@ -4482,7 +4482,7 @@ class action_menu implements renderable, templatable {
     /**
      * Adds an action to this action menu.
      *
-     * @param action_menu_link|pix_icon|subpanel|string $action
+     * @param action_link|pix_icon|subpanel|string $action
      */
     public function add($action) {
 

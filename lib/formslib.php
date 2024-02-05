@@ -1519,7 +1519,7 @@ abstract class moodleform {
      * @param array  $simulatedsubmitteddata       An associative array of form values (same format as $_POST).
      * @param array  $simulatedsubmittedfiles      An associative array of files uploaded (same format as $_FILES). Can be omitted.
      * @param string $method                       'post' or 'get', defaults to 'post'.
-     * @param null   $formidentifier               the default is to use the class name for this class but you may need to provide
+     * @param ?string $formidentifier               the default is to use the class name for this class but you may need to provide
      *                                              a different value here for some forms that are used more than once on the
      *                                              same page.
      */

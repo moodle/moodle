@@ -558,7 +558,7 @@ class theme_config {
     public $doctype = 'html5';
 
     /**
-     * @var string requiredblocks If set to a string, will list the block types that cannot be deleted. Defaults to
+     * @var string|false requiredblocks If set to a string, will list the block types that cannot be deleted. Defaults to
      *                                   navigation and settings.
      */
     public $requiredblocks = false;
@@ -1686,7 +1686,7 @@ class theme_config {
      * the stylesheet for the theme. It will look at parents themes and check the
      * SCSS properties there.
      *
-     * @return False when SCSS is not used.
+     * @return array|false False when SCSS is not used.
      *         An array with the import paths, and the path to the SCSS file or Closure as second.
      */
     public function get_scss_property() {
@@ -1927,7 +1927,7 @@ class theme_config {
     /**
      * Flip a stylesheet to RTL.
      *
-     * @param Object $csstree The parsed CSS tree structure to flip.
+     * @param mixed $csstree The parsed CSS tree structure to flip.
      * @return void
      */
     protected function rtlize($csstree) {
@@ -2120,7 +2120,7 @@ class theme_config {
      *
      * @param string $image name of image, may contain relative path
      * @param string $component
-     * @param bool $svg|null Should SVG images also be looked for? If null, falls back to auto-detection of browser support
+     * @param bool|null $svg Should SVG images also be looked for? If null, falls back to auto-detection of browser support
      * @return string full file path
      */
     public function resolve_image_location($image, $component, $svg = false) {
@@ -2368,7 +2368,7 @@ class theme_config {
      * @param string $themename
      * @param stdClass $settings from config_plugins table
      * @param boolean $parentscheck true to also check the parents.    .
-     * @return stdClass The theme configuration
+     * @return ?stdClass The theme configuration
      */
     private static function find_theme_config($themename, $settings, $parentscheck = true) {
         // We have to use the variable name $THEME (upper case) because that
@@ -2691,7 +2691,7 @@ class xhtml_container_stack {
      * warning will be output.
      *
      * @param string $type The type of container.
-     * @return string the HTML required to close the container.
+     * @return ?string the HTML required to close the container.
      */
     public function pop($type) {
         if (empty($this->opencontainers)) {

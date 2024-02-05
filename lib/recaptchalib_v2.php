@@ -144,7 +144,7 @@ function recaptcha_get_challenge_html($apiurl, $pubkey, $lang = null, bool $comp
  * @param string $privkey The private key for reCAPTCHA
  * @param string $remoteip The user's IP
  * @param string $response The response from reCAPTCHA
- * @return ReCaptchaResponse
+ * @return array
  */
 function recaptcha_check_response($verifyurl, $privkey, $remoteip, $response) {
     global $CFG;

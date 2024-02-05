@@ -97,7 +97,6 @@ abstract class base {
      *
      * @param string $format
      * @param int $courseid
-     * @return course_format
      */
     protected function __construct($format, $courseid) {
         $this->format = $format;
@@ -315,7 +314,7 @@ abstract class base {
      * Returns a record from course database table plus additional fields
      * that course format defines
      *
-     * @return stdClass
+     * @return ?stdClass
      */
     public function get_course() {
         global $DB;
@@ -503,7 +502,7 @@ abstract class base {
      *
      * @param int|stdClass $section either section number (field course_section.section) or row from course_section table
      * @param int $strictness
-     * @return section_info
+     * @return ?section_info
      */
     final public function get_section($section, $strictness = IGNORE_MISSING) {
         if (is_object($section)) {
@@ -791,7 +790,7 @@ abstract class base {
      *
      * Used in course/rest.php
      *
-     * @return array This will be passed in ajax respose
+     * @return ?array This will be passed in ajax respose
      */
     public function ajax_section_move() {
         return null;
@@ -902,7 +901,7 @@ abstract class base {
      * Also note that if $navigation->includesectionnum is not null, the section with this relative
      * number needs is expected to be loaded
      *
-     * @param global_navigation $navigation
+     * @param \global_navigation $navigation
      * @param navigation_node $node The course node within the navigation
      */
     public function extend_course_navigation($navigation, navigation_node $node) {
@@ -1138,7 +1137,7 @@ abstract class base {
      *
      * This function is called from course_edit_form::definition_after_data()
      *
-     * @param MoodleQuickForm $mform form the elements are added to
+     * @param \MoodleQuickForm $mform form the elements are added to
      * @param bool $forsection 'true' if this is a section edit form, 'false' if this is course edit form
      * @return array array of references to the added form elements
      */
@@ -1368,7 +1367,7 @@ abstract class base {
      * @param array $customdata the array with custom data to be passed to the form
      *     /course/editsection.php passes section_info object in 'cs' field
      *     for filling availability fields
-     * @return moodleform
+     * @return \moodleform
      */
     public function editsection_form($action, $customdata = array()) {
         global $CFG;
@@ -1414,7 +1413,7 @@ abstract class base {
      * Return instance of format_FORMATNAME_XXX in this function, the appropriate method from
      * plugin renderer will be called
      *
-     * @return null|renderable null for no output or object with data for plugin renderer
+     * @return null|\renderable null for no output or object with data for plugin renderer
      */
     public function course_header() {
         return null;
@@ -1426,7 +1425,7 @@ abstract class base {
      *
      * See course_format::course_header() for usage
      *
-     * @return null|renderable null for no output or object with data for plugin renderer
+     * @return null|\renderable null for no output or object with data for plugin renderer
      */
     public function course_footer() {
         return null;
@@ -1437,7 +1436,7 @@ abstract class base {
      *
      * See course_format::course_header() for usage
      *
-     * @return null|renderable null for no output or object with data for plugin renderer
+     * @return null|\renderable null for no output or object with data for plugin renderer
      */
     public function course_content_header() {
         return null;
@@ -1448,7 +1447,7 @@ abstract class base {
      *
      * See course_format::course_header() for usage
      *
-     * @return null|renderable null for no output or object with data for plugin renderer
+     * @return null|\renderable null for no output or object with data for plugin renderer
      */
     public function course_content_footer() {
         return null;
@@ -1458,7 +1457,7 @@ abstract class base {
      * Returns instance of page renderer used by this plugin
      *
      * @param moodle_page $page
-     * @return renderer_base
+     * @return \renderer_base
      */
     public function get_renderer(moodle_page $page) {
         try {
@@ -1788,7 +1787,7 @@ abstract class base {
      * @param stdClass $section
      * @param string $itemtype
      * @param mixed $newvalue
-     * @return \core\output\inplace_editable
+     * @return ?\core\output\inplace_editable
      */
     public function inplace_editable_update_section_name($section, $itemtype, $newvalue) {
         if ($itemtype === 'sectionname' || $itemtype === 'sectionnamenl') {
@@ -1812,7 +1811,7 @@ abstract class base {
      * moodlecourse/courseduration setting. Course formats like format_weeks for
      * example can overwrite this method and return a value based on their internal options.
      *
-     * @param moodleform $mform
+     * @param \MoodleQuickForm $mform
      * @param array $fieldnames The form - field names mapping.
      * @return int
      */
@@ -1855,7 +1854,7 @@ abstract class base {
     /**
      * Get the start date value from the course settings page form.
      *
-     * @param moodleform $mform
+     * @param \MoodleQuickForm $mform
      * @param array $fieldnames The form - field names mapping.
      * @return int
      */

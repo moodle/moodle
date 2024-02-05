@@ -128,7 +128,7 @@ abstract class moodle_database {
     /** @var cache_application for column info */
     protected $metacache;
 
-    /** @var cache_request for column info on temp tables */
+    /** @var cache_application|cache_session|cache_store for column info on temp tables */
     protected $metacachetemp;
 
     /** @var bool flag marking database instance as disposed */
@@ -188,7 +188,7 @@ abstract class moodle_database {
      * @param string $type Database driver's type. (eg: mysqli, pgsql, mssql, sqldrv, oci, etc.)
      * @param string $library Database driver's library (native, pdo, etc.)
      * @param bool $external True if this is an external database.
-     * @return moodle_database driver object or null if error, for example of driver object see {@link mysqli_native_moodle_database}
+     * @return ?moodle_database driver object or null if error, for example of driver object see {@see mysqli_native_moodle_database}
      */
     public static function get_driver_instance($type, $library, $external = false) {
         global $CFG;
@@ -380,7 +380,7 @@ abstract class moodle_database {
     /**
      * Returns transaction trace for debugging purposes.
      * @private to be used by core only
-     * @return array or null if not in transaction.
+     * @return ?array or null if not in transaction.
      */
     public function get_transaction_start_backtrace() {
         if (!$this->transactions) {

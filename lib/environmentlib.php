@@ -895,7 +895,7 @@ function environment_check_php($version, $env_select) {
  * Looks for buggy PCRE implementation, we need unicode support in Moodle...
  * @param string $version xml version we are going to use to test this server
  * @param int|string $env_select one of ENV_SELECT_NEWER | ENV_SELECT_DATAROOT | ENV_SELECT_RELEASE decide xml to use. String means plugin name.
- * @return stdClass results encapsulated in one environment_result object, null if irrelevant
+ * @return ?environment_results results encapsulated in one environment_result object, null if irrelevant
  */
 function environment_check_pcre_unicode($version, $env_select) {
     $result = new environment_results('pcreunicode');
@@ -1102,8 +1102,8 @@ function environment_check_database($version, $env_select) {
  * such bypass functions are able to directly handling the result object
  * although it should be only under exceptional conditions.
  *
- * @param string xmldata containing the bypass data
- * @param object result object to be updated
+ * @param array $xml xml containing the bypass data
+ * @param environment_results $result object to be updated
  * @return void
  */
 function process_environment_bypass($xml, &$result) {
@@ -1143,8 +1143,8 @@ function process_environment_bypass($xml, &$result) {
  * such restrict functions are able to directly handling the result object
  * although it should be only under exceptional conditions.
  *
- * @param string xmldata containing the restrict data
- * @param object result object to be updated
+ * @param array $xml xmldata containing the restrict data
+ * @param environment_results $result object to be updated
  * @return void
  */
 function process_environment_restrict($xml, &$result) {
@@ -1180,8 +1180,8 @@ function process_environment_restrict($xml, &$result) {
  *
  * @uses INCORRECT_FEEDBACK_FOR_REQUIRED
  * @uses INCORRECT_FEEDBACK_FOR_OPTIONAL
- * @param string xmldata containing the feedback data
- * @param object reult object to be updated
+ * @param array $xml xmldata containing the feedback data
+ * @param environment_results $result object to be updated
  */
 function process_environment_messages($xml, &$result) {
 

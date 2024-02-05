@@ -37,7 +37,7 @@ class file_exception extends moodle_exception {
      * Constructor
      *
      * @param string $errorcode error code
-     * @param stdClass $a Extra words and phrases that might be required in the error string
+     * @param mixed $a Extra words and phrases that might be required in the error string
      * @param string $debuginfo optional debugging information
      */
     function __construct($errorcode, $a=NULL, $debuginfo = NULL) {
@@ -129,7 +129,7 @@ class file_reference_exception extends file_exception {
     /**
      * Constructor.
      *
-     * @param int $repositoryid the id of the repository that provides the referenced file
+     * @param ?int $repositoryid the id of the repository that provides the referenced file
      * @param string $reference the information for the repository to locate the file
      * @param int|null $referencefileid the id of the record in {files_reference} if known
      * @param int|null $fileid the id of the referrer's record in {files} if known

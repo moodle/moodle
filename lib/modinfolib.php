@@ -350,7 +350,7 @@ class course_modinfo {
      * Gets data about specific numbered section.
      * @param int $sectionnumber Number (not id) of section
      * @param int $strictness Use MUST_EXIST to throw exception if it doesn't
-     * @return section_info Information for numbered section or null if not found
+     * @return ?section_info Information for numbered section or null if not found
      */
     public function get_section_info($sectionnumber, $strictness = IGNORE_MISSING) {
         if (!array_key_exists($sectionnumber, $this->sectioninfobynum)) {
@@ -1991,7 +1991,7 @@ class cm_info implements IteratorAggregate {
      * Returns a localised human-readable name of the module type.
      *
      * @param bool $plural If true, the function returns the plural form of the name.
-     * @return lang_string
+     * @return ?lang_string
      */
     public function get_module_type_name($plural = false) {
         $modnames = get_module_types_names($plural);
@@ -2312,9 +2312,9 @@ class cm_info implements IteratorAggregate {
      * Constructor should not be called directly; use {@link get_fast_modinfo()}
      *
      * @param course_modinfo $modinfo Parent object
-     * @param stdClass $notused1 Argument not used
+     * @param mixed $notused1 Argument not used
      * @param stdClass $mod Module object from the modinfo field of course table
-     * @param stdClass $notused2 Argument not used
+     * @param mixed $notused2 Argument not used
      */
     public function __construct(course_modinfo $modinfo, $notused1, $mod, $notused2) {
         $this->modinfo = $modinfo;
@@ -3245,10 +3245,10 @@ class section_info implements IteratorAggregate {
      * Constructs object from database information plus extra required data.
      * @param object $data Array entry from cached sectioncache
      * @param int $number Section number (array key)
-     * @param int $notused1 argument not used (informaion is available in $modinfo)
-     * @param int $notused2 argument not used (informaion is available in $modinfo)
+     * @param mixed $notused1 argument not used (informaion is available in $modinfo)
+     * @param mixed $notused2 argument not used (informaion is available in $modinfo)
      * @param course_modinfo $modinfo Owner (needed for checking availability)
-     * @param int $notused3 argument not used (informaion is available in $modinfo)
+     * @param mixed $notused3 argument not used (informaion is available in $modinfo)
      */
     public function __construct($data, $number, $notused1, $notused2, $modinfo, $notused3) {
         global $CFG;
@@ -3339,7 +3339,7 @@ class section_info implements IteratorAggregate {
      * or availability information or additional properties added by course format
      *
      * @param string $name name of the property
-     * @return bool
+     * @return mixed
      */
     public function __get($name) {
         if (isset(self::$standardproperties[$name])) {

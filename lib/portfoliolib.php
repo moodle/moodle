@@ -1045,7 +1045,7 @@ function portfolio_expected_time_db($recordcount) {
  * Function to send portfolio report to admins
  *
  * @param array $insane array of insane plugins
- * @param array $instances (optional) if reporting instances rather than whole plugins
+ * @param bool $instances (optional) if reporting instances rather than whole plugins
  */
 function portfolio_insane_notify_admins($insane, $instances=false) {
 

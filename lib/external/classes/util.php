@@ -462,7 +462,7 @@ class util {
      *
      * @param string|null $content The string to be filtered. Should be plain text, expect
      * possibly for multilang tags.
-     * @param context $context The id of the context for the string or the context (affects filters).
+     * @param int|context $context The id of the context for the string or the context (affects filters).
      * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
      * @param array $options options array/object or courseid
      * @return string text

@@ -929,10 +929,10 @@ class block_manager {
      * and incremented by the position of the block in the $blocks array
      *
      * @param array $blocks array with array keys the region names, and values an array of block names.
-     * @param string $pagetypepattern optional. Passed to {@link add_block()}
-     * @param string $subpagepattern optional. Passed to {@link add_block()}
-     * @param boolean $showinsubcontexts optional. Passed to {@link add_block()}
-     * @param integer $weight optional. Determines the starting point that the blocks are added in the region.
+     * @param string|null $pagetypepattern optional. Passed to {@see self::add_block()}
+     * @param string|null $subpagepattern optional. Passed to {@see self::add_block()}
+     * @param bool $showinsubcontexts optional. Passed to {@see self::add_block()}
+     * @param int $weight optional. Determines the starting point that the blocks are added in the region.
      */
     public function add_blocks($blocks, $pagetypepattern = NULL, $subpagepattern = NULL, $showinsubcontexts=false, $weight=0) {
         $initialweight = $weight;
@@ -2128,7 +2128,7 @@ function block_instance_by_id($blockinstanceid) {
  * @param string $blockname the name of the block.
  * @param stdClass $instance block_instances DB table row (optional).
  * @param moodle_page $page the page this block is appearing on.
- * @return block_base the requested block instance.
+ * @return block_base|false the requested block instance.
  */
 function block_instance($blockname, $instance = NULL, $page = NULL) {
     if(!block_load_class($blockname)) {
@@ -2389,7 +2389,7 @@ function mod_page_type_list($pagetype, $parentcontext = null, $currentcontext = 
  * Return a {@link block_contents} representing the add a new block UI, if
  * this user is allowed to see it.
  *
- * @return block_contents an appropriate block_contents, or null if the user
+ * @return ?block_contents an appropriate block_contents, or null if the user
  * cannot add any blocks here.
  */
 function block_add_block_ui($page, $output) {
@@ -2601,7 +2601,7 @@ function blocks_set_visibility($instance, $page, $newvisibility) {
  *
  * @param $int blockid block type id. If null, an array of all block types is returned.
  * @param bool $notusedanymore No longer used.
- * @return array|object row from block table, or all rows.
+ * @return array|object|false row from block table, or all rows.
  */
 function blocks_get_record($blockid = NULL, $notusedanymore = false) {
     global $PAGE;
