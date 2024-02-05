@@ -515,11 +515,7 @@ class enrol_cohort_plugin extends enrol_plugin {
     public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null): array {
         global $DB;
 
-        $errors = [];
-        if (!enrol_is_enabled('cohort')) {
-            $errors['plugindisabled'] =
-                new lang_string('plugindisabled', 'enrol_cohort');
-        }
+        $errors = parent::validate_enrol_plugin_data($enrolmentdata, $courseid);
 
         if (isset($enrolmentdata['addtogroup'])) {
             $addtogroup = $enrolmentdata['addtogroup'];
