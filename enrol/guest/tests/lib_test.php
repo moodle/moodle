@@ -27,6 +27,77 @@ namespace enrol_guest;
 class lib_test extends \advanced_testcase {
 
     /**
+     * Test the behaviour of validate_enrol_plugin_data().
+     *
+     * @covers ::validate_enrol_plugin_data
+     */
+    public function test_validate_enrol_plugin_data(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+
+        $guestplugin = enrol_get_plugin('guest');
+
+        $guestplugin->set_config('usepasswordpolicy', false);
+        $enrolmentdata = [];
+        $errors = $guestplugin->validate_enrol_plugin_data($enrolmentdata);
+        $this->assertEmpty($errors);
+
+        // Now enable some controls, and check that the policy responds with policy text.
+        $guestplugin->set_config('usepasswordpolicy', true);
+        $CFG->minpasswordlength = 8;
+        $CFG->minpassworddigits = 1;
+        $CFG->minpasswordlower = 1;
+        $CFG->minpasswordupper = 1;
+        $CFG->minpasswordnonalphanum = 1;
+        $CFG->maxconsecutiveidentchars = 1;
+        $errors = $guestplugin->validate_enrol_plugin_data($enrolmentdata);
+        // If password is omitted it will be autocreated so nothing to validate.
+        $this->assertEmpty($errors);
+
+        $enrolmentdata = ['password' => 'test'];
+        $errors = $guestplugin->validate_enrol_plugin_data($enrolmentdata);
+        $this->assertCount(4, $errors);
+        $this->assertEquals(get_string('errorminpasswordlength', 'auth', $CFG->minpasswordlength), $errors['enrol_guest0']);
+        $this->assertEquals(get_string('errorminpassworddigits', 'auth', $CFG->minpassworddigits), $errors['enrol_guest1']);
+        $this->assertEquals(get_string('errorminpasswordupper', 'auth', $CFG->minpasswordupper), $errors['enrol_guest2']);
+        $this->assertEquals(get_string('errorminpasswordnonalphanum', 'auth', $CFG->minpasswordnonalphanum), $errors['enrol_guest3']);
+
+        $enrolmentdata = ['password' => 'Testingtest123@'];
+        $errors = $guestplugin->validate_enrol_plugin_data($enrolmentdata);
+        $this->assertEmpty($errors);
+    }
+
+    /**
+     * Test the behaviour of update_enrol_plugin_data().
+     *
+     * @covers ::update_enrol_plugin_data
+     */
+    public function test_update_enrol_plugin_data(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $manualplugin = enrol_get_plugin('guest');
+
+        $admin = get_admin();
+        $this->setUser($admin);
+
+        $enrolmentdata = [];
+
+        $cat = $this->getDataGenerator()->create_category();
+        $course = $this->getDataGenerator()->create_course(['category' => $cat->id, 'shortname' => 'ANON']);
+        $instance = $DB->get_record('enrol', ['courseid' => $course->id, 'enrol' => 'guest'], '*', MUST_EXIST);
+
+        $expectedinstance = $instance;
+        $modifiedinstance = $manualplugin->update_enrol_plugin_data($course->id, $enrolmentdata, $instance);
+        $this->assertEquals($expectedinstance, $modifiedinstance);
+
+        $enrolmentdata['password'] = 'test';
+        $expectedinstance->password = 'test';
+        $modifiedinstance = $manualplugin->update_enrol_plugin_data($course->id, $enrolmentdata, $instance);
+        $this->assertEquals($expectedinstance, $modifiedinstance);
+    }
+
+    /**
      * Test the behaviour of find_instance().
      *
      * @covers ::find_instance
