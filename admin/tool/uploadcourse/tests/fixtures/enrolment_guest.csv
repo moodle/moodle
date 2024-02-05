@@ -1,0 +1,4 @@
+shortname,fullname,category_idnumber,enrolment_1,enrolment_1_role,enrolment_1_password
+C1,Course 1,CAT1,guest,student,test
+C2,Course 2,CAT1,guest,student,
+C3,Course 3,CAT1,guest,student,Test123@
