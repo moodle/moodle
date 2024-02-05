@@ -622,4 +622,16 @@ class quiz_settings {
 
         return $questiontypes;
     }
+
+    /**
+     * Returns an override manager instance with context and quiz loaded.
+     *
+     * @return \mod_quiz\local\override_manager
+     */
+    public function get_override_manager(): \mod_quiz\local\override_manager {
+        return new \mod_quiz\local\override_manager(
+            quiz: $this->quiz,
+            context: $this->context
+        );
+    }
 }

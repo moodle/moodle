@@ -311,3 +311,37 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
             return $maxattempt;
     }
 }
+
+/**
+ * Deletes a quiz override from the database and clears any corresponding calendar events
+ *
+ * @deprecated since Moodle 4.4
+ * @todo MDL-80944 Final deprecation in Moodle 4.8
+ * @param stdClass $quiz The quiz object.
+ * @param int $overrideid The id of the override being deleted
+ * @param bool $log Whether to trigger logs.
+ * @return bool true on success
+ */
+function quiz_delete_override($quiz, $overrideid, $log = true) {
+    debugging('quiz_delete_override is deprecated. Please use override_manager::delete_override_by_id instead.', DEBUG_DEVELOPER);
+    $quizsettings = quiz_settings::create($quiz->id);
+    $quizsettings->get_override_manager()->delete_overrides_by_id(
+        ids: [$overrideid],
+        shouldlog: $log,
+    );
+}
+
+/**
+ * Deletes all quiz overrides from the database and clears any corresponding calendar events
+ *
+ * @deprecated since Moodle 4.4
+ * @todo MDL-80944 Final deprecation in Moodle 4.8
+ * @param stdClass $quiz The quiz object.
+ * @param bool $log Whether to trigger logs.
+ */
+function quiz_delete_all_overrides($quiz, $log = true) {
+    debugging('quiz_delete_all_overrides is deprecated. Please use override_manager::delete_all_overrides instead.',
+        DEBUG_DEVELOPER);
+    $quizsettings = quiz_settings::create($quiz->id);
+    $quizsettings->get_override_manager()->delete_all_overrides(shouldlog: $log);
+}

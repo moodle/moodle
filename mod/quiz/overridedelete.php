@@ -38,11 +38,12 @@ $quiz = $quizobj->get_quiz();
 $cm = $quizobj->get_cm();
 $course = $quizobj->get_course();
 $context = $quizobj->get_context();
+$manager = $quizobj->get_override_manager();
 
 require_login($course, false, $cm);
 
 // Check the user has the required capabilities to modify an override.
-require_capability('mod/quiz:manageoverrides', $context);
+$manager->require_manage_capability();
 
 if ($override->groupid) {
     if (!groups_group_visible($override->groupid, $course, $cm)) {
@@ -65,11 +66,7 @@ if (!empty($override->userid)) {
 // If confirm is set (PARAM_BOOL) then we have confirmation of intention to delete.
 if ($confirm) {
     require_sesskey();
-
-    // Set the course module id before calling quiz_delete_override().
-    $quiz->cmid = $cm->id;
-    quiz_delete_override($quiz, $override->id);
-
+    $manager->delete_overrides(overrides: [$override]);
     redirect($cancelurl);
 }
 

@@ -64,6 +64,11 @@ class overrides implements \cache_data_source {
     public function load_for_cache($key) {
         global $DB;
 
+        // Ignore getting data if this is a cache invalidation - {@see \cache_helper::purge_by_event()}.
+        if ($key == 'lastinvalidation') {
+            return null;
+        }
+
         [$quizid, $ug, $ugid] = explode('_', $key);
         $quizid = (int) $quizid;
 
