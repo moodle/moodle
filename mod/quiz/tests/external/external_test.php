@@ -845,6 +845,83 @@ class external_test extends externallib_advanced_testcase {
     }
 
     /**
+     * Test get_combined_review_options when the user has an override.
+     *
+     * @covers ::get_combined_review_options
+     * @covers ::get_combined_review_options_parameters
+     * @covers ::get_combined_review_options_returns
+     */
+    public function test_get_combined_review_options_with_overrides(): void {
+        global $DB;
+
+        // Create a closed quiz with review marks only when quiz is closed.
+        list($quiz, $context, $quizobj) = $this->create_quiz_with_questions(true, true, 'deferredfeedback', false, [
+            'timeclose' => time() - HOURSECS,
+            'marksduring' => 0,
+            'marksimmediately' => 0,
+            'marksopen' => 0,
+            'marksclosed' => 1,
+        ]);
+
+        // Check that the student can see the marks because the quiz is closed.
+        $this->setUser($this->student);
+
+        $expected = [
+            "someoptions" => [
+                ["name" => "feedback", "value" => 1],
+                ["name" => "generalfeedback", "value" => 1],
+                ["name" => "rightanswer", "value" => 1],
+                ["name" => "overallfeedback", "value" => 1],
+                ["name" => "marks", "value" => 2],
+            ],
+            "alloptions" => [
+                ["name" => "feedback", "value" => 1],
+                ["name" => "generalfeedback", "value" => 1],
+                ["name" => "rightanswer", "value" => 1],
+                ["name" => "overallfeedback", "value" => 1],
+                ["name" => "marks", "value" => 2],
+            ],
+            "warnings" => [],
+        ];
+
+        $result = mod_quiz_external::get_combined_review_options($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+
+        $this->assertEquals($expected, $result);
+
+        // Add an override for the student to increase the close time.
+        $DB->insert_record('quiz_overrides', [
+            'quiz' => $quiz->id,
+            'userid' => $this->student->id,
+            'timeclose' => time() + HOURSECS,
+        ]);
+
+        // Check that now the marks option has changed.
+        $expected = [
+            "someoptions" => [
+                ["name" => "feedback", "value" => 1],
+                ["name" => "generalfeedback", "value" => 1],
+                ["name" => "rightanswer", "value" => 1],
+                ["name" => "overallfeedback", "value" => 1],
+                ["name" => "marks", "value" => 1],
+            ],
+            "alloptions" => [
+                ["name" => "feedback", "value" => 1],
+                ["name" => "generalfeedback", "value" => 1],
+                ["name" => "rightanswer", "value" => 1],
+                ["name" => "overallfeedback", "value" => 1],
+                ["name" => "marks", "value" => 1],
+            ],
+            "warnings" => [],
+        ];
+
+        $result = mod_quiz_external::get_combined_review_options($quiz->id);
+        $result = external_api::clean_returnvalue(mod_quiz_external::get_combined_review_options_returns(), $result);
+
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test start_attempt
      */
     public function test_start_attempt() {
