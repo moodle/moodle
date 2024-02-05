@@ -22,22 +22,35 @@
 */
 require_once(__DIR__ . '/../../../../config.php');
 
+global $DB, $PAGE, $USER, $CFG;
+
 if (isset($_POST['evidence_name_type'])) {
     $filename = $_POST['filename'];
-    $evidence_name_type = $_POST['evidence_name_type']; // Ensure it's an integer
+    $activity_type = $_POST['evidence_name_type']; // Ensure it's an integer
+    $userid = $_POST['userid'];
+    $quizid = $_POST['quizid'];
+    $quizattempt = $_POST['quizattempt'];
 
-    switch ($evidence_name_type) {
+    switch ($activity_type) {
         case 'no_face':
-            $evidence_name_type = 7;
+            $activity_type = 7;
             break;
         case 'multiple_face':
-            $evidence_name_type = 8;
+            $activity_type = 8;
             break;
         case 'suspicious_movement':
-            $evidence_name_type = 9;
+            $activity_type = 9;
             break;
         // default:
     }
+
+    $insertData = new stdClass();
+    $insertData->userid = $userid;
+    $insertData->quizid = $quizid;
+    $insertData->attempt = $quizattempt; // Assuming 'attempt' is a field in 'auto_proctor_activity_report_tb'
+    $insertData->evidence = $filename;
+    $insertData->activity_type = $activity_type; // You need to set the appropriate value for 'activity_type'
+    $DB->insert_record('auto_proctor_activity_report_tb', $insertData);
     
     echo "evdtype: " . $evidence_name_type;
     echo "</br>";

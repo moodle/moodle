@@ -155,7 +155,7 @@ class QuizProctor {
                     // Convert the array to JSON
                     $jsdata_json = json_encode($jsdata);
 
-                    // Send to monitor_tab.js
+                    // Send to js files
                     echo '<script>';
                     echo 'var jsdata = ' . json_encode($jsdata) . ';';
                     echo '</script>';

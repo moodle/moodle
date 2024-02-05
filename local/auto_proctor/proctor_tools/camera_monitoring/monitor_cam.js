@@ -121,25 +121,25 @@ $(document).ready(function () {
         }
 
         // Function to update the timer display
-        function updateTimer(seconds, milliseconds) {
+        function updateTimer(milliseconds) {
             //document.getElementById('timer').textContent = seconds + '.' +milliseconds;
-            duration = seconds + '.' + milliseconds;
+            duration = milliseconds;
         }
 
         // Function to start the timer
         function startTimer() {
-            let seconds = 0;
+            //let seconds = 0;
             let milliseconds = 0;
-            updateTimer(seconds, milliseconds);
+            updateTimer(milliseconds);
 
             // Update the timer every 10 milliseconds
             intervalId = setInterval(function () {
                 milliseconds += 10;
-                if (milliseconds >= 1000) {
-                    seconds++;
-                    milliseconds = 0;
-                }
-            updateTimer(seconds, milliseconds);
+                // if (milliseconds >= 1000) {
+                //     seconds++;
+                //     milliseconds = 0;
+                // }
+            updateTimer(milliseconds);
             }, 10);
         }
         function stopTimer() {
@@ -162,11 +162,11 @@ $(document).ready(function () {
             // capturedContainer.appendChild(canvas);
                                 
             const { timestamp, milliseconds } = generateTimestamp();
-            filename = 'EVD_USER_' +timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type +'.png'; // Custom filename with evidenceType
+            filename = 'EVD_USER_' + jsdata.userid + '_QUIZ_' + jsdata.quizid + '_ATTEMPT_' + jsdata.quizattempt + '_' +timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type +'.png'; // Custom filename with evidenceType
                                 
             const dataUrl = canvas.toDataURL('image/png');
             
-            fetch('http://localhost/e-RTU/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_capture.php', {
+            fetch(jsdata.wwwroot +'/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_capture.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -208,7 +208,7 @@ $(document).ready(function () {
         // Save in database
         function sendActivityRecord(evidence_name_type) {
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://localhost/e-RTU/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_activity.php', true); // Replace with the actual path
+            xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_activity.php', true); // Replace with the actual path
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             // ==== DEBUGGING =====
             xhr.onreadystatechange = function () {
@@ -221,14 +221,14 @@ $(document).ready(function () {
                     }
                 }
             };
-            xhr.send('evidence_name_type=' + evidence_name_type + '&filename=' + filename);
+            xhr.send('evidence_name_type=' + evidence_name_type + '&filename=' + filename + '&userid=' + jsdata.userid + '&quizid=' + jsdata.quizid + '&quizattempt=' + jsdata.quizattempt);
         }
         // Update the filename for the recent activity
         function updateDuration(){
             console.log('duration: ', duration);
 
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://localhost/e-RTU/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_activity_duration.php', true); // Replace with the actual path
+            xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_activity_duration.php', true); // Replace with the actual path
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             // ==== DEBUGGING =====
             xhr.onreadystatechange = function () {
@@ -241,7 +241,7 @@ $(document).ready(function () {
                     }
                 }
             };
-            xhr.send('filename=' + filename + '&duration=' + duration);
+            xhr.send('filename=' + filename + '&duration=' + duration + '&userid=' + jsdata.userid + '&quizid=' + jsdata.quizid + '&quizattempt=' + jsdata.quizattempt);
         }
 
         
