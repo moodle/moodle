@@ -3,7 +3,7 @@ $dataUri = $_POST['dataUri'];
 $filename = $_POST['filename'];
 
 // Specify the folder for saving captures
-$folderPath = 'camera_capture_evidence'; // Removed leading slash
+$folderPath = '../evidences/camera_capture_evidence'; // Removed leading slash
 
 // Ensure the folder exists
 if (!file_exists($folderPath)) {

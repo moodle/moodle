@@ -90,6 +90,15 @@ class QuizProctor {
 
         $monitor_tab_switching_activated = $this->DB->get_records_sql($sql, $params);
 
+        // Select monitor_camera_switching state
+        $sql = "SELECT *
+            FROM {auto_proctor_quiz_tb}
+            WHERE quizid = :quizid
+            AND (monitor_camera = 1)"
+        ;
+
+        $monitor_camera_activated = $this->DB->get_records_sql($sql, $params);
+
         // Select monitor_microphone state
         $sql = "SELECT *
             FROM {auto_proctor_quiz_tb}
@@ -222,6 +231,18 @@ class QuizProctor {
                             echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
                             echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/tab_monitoring/monitor_tab.js"></script>';
                         }
+                    }
+
+                    // Check if monitor camera is activated
+                    if ($monitor_camera_activated){
+                        echo '<script type="text/javascript"> console.log("MONITOR CAMERA ACTIVATED"); </script>';
+                        echo '<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>';
+                        echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
+                        echo '<script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>';
+                        echo '<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>';
+                        echo '<script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>';
+                        echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
+                        echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/camera_monitoring/monitor_cam.js"></script>';
                     }
                 }
             }
