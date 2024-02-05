@@ -3962,7 +3962,7 @@ class curl {
         $event->trigger();
     }
 
-     /**
+    /**
      * HTTP HEAD method
      *
      * @see request()

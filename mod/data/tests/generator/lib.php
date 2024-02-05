@@ -85,7 +85,7 @@ class mod_data_generator extends testing_module_generator {
     /**
      * Creates a field for a mod_data instance.
      *
-     * @param stdClass|array $record
+     * @param stdClass $record
      * @param stdClass|null $data
      * @return data_field_base
      */
