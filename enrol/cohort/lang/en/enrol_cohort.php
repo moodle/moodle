@@ -29,9 +29,11 @@ $string['cohort:unenrol'] = 'Unenrol suspended users';
 $string['defaultgroupnametext'] = '{$a->name} cohort {$a->increment}';
 $string['enrolcohortsynctask'] = 'Cohort enrolment sync task';
 $string['instanceexists'] = 'Cohort is already synchronised with selected role';
-$string['plugindisabled'] = 'Cohort sync plugin is disabled';
 $string['pluginname'] = 'Cohort sync';
 $string['pluginname_desc'] = 'Cohort enrolment plugin synchronises cohort members with course participants.';
 $string['status'] = 'Active';
 $string['creategroup'] = 'Create new group';
 $string['privacy:metadata:core_group'] = 'Enrol cohort plugin can create a new group or use an existing group to add all the members of the cohort.';
+
+// Deprecated since Moodle 4.5.
+$string['plugindisabled'] = 'Cohort sync plugin is disabled';
