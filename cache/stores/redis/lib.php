@@ -20,6 +20,8 @@ use core_cache\key_aware_cache_interface;
 use core_cache\lockable_cache_interface;
 use core_cache\searchable_cache_interface;
 use core_cache\store;
+use core\clock;
+use core\di;
 
 /**
  * Redis Cache Store
@@ -141,6 +143,9 @@ class cachestore_redis extends store implements
     /** @var ?array Array of current locks, or null if we haven't registered shutdown function */
     protected $currentlocks = null;
 
+    /** @var clock */
+    private readonly clock $clock;
+
     /**
      * Determines if the requirements for this type of store are met.
      *
@@ -215,6 +220,7 @@ class cachestore_redis extends store implements
             $this->locktimeout = (int)$configuration['locktimeout'];
         }
         $this->redis = $this->new_redis($configuration);
+        $this->clock = di::get(clock::class);
     }
 
     /**
@@ -659,24 +665,39 @@ class cachestore_redis extends store implements
      * @return bool True if the lock was acquired, false if it was not.
      */
     public function acquire_lock($key, $ownerid) {
-        $clock = \core\di::get(\core\clock::class);
-        $timelimit = $clock->time() + $this->lockwait;
+        $timelimit = $this->clock->time() + $this->lockwait;
+        $startlocktime = $this->clock->time();
+
         do {
-            // If the key doesn't already exist, grab it and return true.
-            if ($this->redis->setnx($key, $ownerid)) {
-                // Ensure Redis deletes the key after a bit in case something goes wrong.
-                $this->redis->expire($key, $this->locktimeout);
-                // If we haven't got it already, better register a shutdown function.
-                if ($this->currentlocks === null) {
-                    core_shutdown_manager::register_function([$this, 'shutdown_release_locks']);
-                    $this->currentlocks = [];
+            // Lock already exists, wait 1 second then retry.
+            $haslock = $this->redis->set($key, $ownerid, ['nx', 'ex' => $this->locktimeout]);
+            if (!$haslock) {
+                if ($this->clock->time() < $startlocktime + 5) {
+                    // We want a random delay to stagger the polling load. Ideally, this delay should be a fraction
+                    // of the average response time. If it is too small we will poll too much and if it is too
+                    // large we will waste time waiting for no reason. 100ms is the default starting point.
+                    $delay = rand(100, 110);
+                } else {
+                    // If we don't get a lock within 5 seconds then there must be a very long-lived process holding the lock
+                    // so throttle back to just polling roughly once a second.
+                    $delay = rand(1000, 1100);
                 }
-                $this->currentlocks[$key] = $ownerid;
-                return true;
+
+                usleep($delay * 1000);
+                continue;
             }
-            // Wait 1 second then retry.
-            sleep(1);
-        } while ($clock->time() < $timelimit);
+
+            // If we haven't got it already, better register a shutdown function.
+            if ($this->currentlocks === null) {
+                core_shutdown_manager::register_function([$this, 'shutdown_release_locks']);
+                $this->currentlocks = [];
+            }
+
+            $this->currentlocks[$key] = $ownerid;
+
+            return true;
+        } while ($this->clock->time() < $timelimit);
+
         return false;
     }
 

@@ -155,10 +155,10 @@ final class store_test extends \cachestore_tests {
         $before = microtime(true);
         $this->assertFalse($store->acquire_lock('lock', '456'));
         $after = microtime(true);
-        $this->assertEqualsWithDelta(2, $after - $before, 0.5);
+        $this->assertEqualsWithDelta(2, $after - $before, 1);
 
-        // Wait another 2 seconds and then it should be able to get the lock because of timeout.
-        sleep(2);
+        // Wait another 3 seconds and then it should be able to get the lock because of timeout.
+        sleep(3);
         $this->assertTrue($store->acquire_lock('lock', '456'));
         $this->assertTrue($store->check_lock_state('lock', '456'));
 
