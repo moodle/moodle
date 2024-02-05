@@ -30,7 +30,7 @@ import * as ModalEvents from 'core/modal_events';
 const SELECTORS = {
     ADD_TO_QUIZ_CONTAINER: 'td.addtoquizaction',
     ANCHOR: 'a[href]',
-    PREVIEW_CONTAINER: 'td.previewaction',
+    PREVIEW_CONTAINER: 'td.previewquestionaction',
     ADD_QUESTIONS_FORM: 'form#questionsubmit',
     SORTERS: '.sorters',
 };
@@ -120,36 +120,6 @@ export default class ModalQuizQuestionBank extends Modal {
     }
 
     /**
-     * Open a popup window to show the preview of the question.
-     *
-     * @method handlePreviewContainerEvent
-     * @param {event} e A JavaScript event
-     * @param {object} anchorElement The anchor element that was triggered
-     */
-    handlePreviewContainerEvent(e, anchorElement) {
-        const popupOptions = [
-            'height=600',
-            'width=800',
-            'top=0',
-            'left=0',
-            'menubar=0',
-            'location=0',
-            'scrollbars',
-            'resizable',
-            'toolbar',
-            'status',
-            'directories=0',
-            'fullscreen=0',
-            'dependent',
-        ];
-        window.openpopup(e, {
-            url: anchorElement.attr('href'),
-            name: 'questionpreview',
-            options: popupOptions.join(',')
-        });
-    }
-
-    /**
      * Set up all of the event handling for the modal.
      *
      * @method registerEventListeners
@@ -181,7 +151,6 @@ export default class ModalQuizQuestionBank extends Modal {
 
             // If the anchor element was a preview question link.
             if (anchorElement.closest(SELECTORS.PREVIEW_CONTAINER).length) {
-                this.handlePreviewContainerEvent(e, anchorElement);
                 return;
             }
 
