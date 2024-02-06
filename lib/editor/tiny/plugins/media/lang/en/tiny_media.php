@@ -30,12 +30,6 @@ $string['addsource_help'] = 'You are recommended to provide an alternative media
 $string['addsource'] = 'Add alternative source';
 $string['addsubtitlestrack'] = 'Add subtitle track';
 $string['advancedsettings'] = 'Advanced settings';
-$string['alignment_bottom'] = 'Bottom';
-$string['alignment_left'] = 'Left';
-$string['alignment_middle'] = 'Middle';
-$string['alignment_right'] = 'Right';
-$string['alignment_top'] = 'Top';
-$string['alignment'] = 'Alignment';
 $string['audio'] = 'Audio';
 $string['audiosourcelabel'] = 'Audio source URL';
 $string['autoplay'] = 'Play automatically';
@@ -103,3 +97,11 @@ $string['videoheight'] = 'Video height';
 $string['videosourcelabel'] = 'Video source URL';
 $string['videowidth'] = 'Video width';
 $string['width'] = 'Width';
+
+// Deprecated since Moodle 4.4.
+$string['alignment'] = 'Alignment';
+$string['alignment_bottom'] = 'Bottom';
+$string['alignment_left'] = 'Left';
+$string['alignment_middle'] = 'Middle';
+$string['alignment_right'] = 'Right';
+$string['alignment_top'] = 'Top';

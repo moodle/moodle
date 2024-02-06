@@ -21,7 +21,14 @@
 
     Example context (json):
     {
-
+        "elementid": "exampleId",
+        "src": "https://moodle.org/logo.png",
+        "alt": "Image description",
+        "presentation": true,
+        "width": 600,
+        "height": 400,
+        "customStyle": "",
+        "haspreview": true
     }
 }}
 {{< core/modal }}
@@ -84,14 +91,6 @@
                         <label class="form-check-label" for="{{elementid}}_tiny_image_constrain">{{#str}} constrain, tiny_media {{/str}}</label>
                     </div>
                 </div>
-            </div>
-            <div class="d-flex flex-wrap align-items-center mb-1">
-                <label for="{{elementid}}_tiny_image_alignment" class="mb-0">{{#str}} alignment, tiny_media {{/str}}</label>
-                <select class="custom-select tiny_image_alignment ml-2" id="{{elementid}}_tiny_image_alignment">
-                    {{#alignoptions}}
-                        <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
-                    {{/alignoptions}}
-                </select>
             </div>
             <input type="hidden" class="tiny_image_customstyle" value="{{customStyle}}"/>
             <br/>
