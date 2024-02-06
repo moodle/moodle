@@ -808,4 +808,11 @@ All rights reserved.</copyright>
       <licenseversion>3-Clause</licenseversion>
       <repository>https://github.com/nikic/FastRoute</repository>
   </library>
+  <library>
+      <location>spatie/php-cloneable</location>
+      <name>PHP Cloneable</name>
+      <version>1.0.2</version>
+      <license>MIT</license>
+      <repository>https://github.com/spatie/php-cloneable</repository>
+  </library>
 </libraries>
