@@ -55,7 +55,7 @@ class datasource_test extends advanced_testcase {
             'All column' => [
                 [],
                 [],
-                30,
+                31,
             ],
             'Include columns (picture, fullname, fullnamewithlink, fullnamewithpicture, fullnamewithpicturelink)' => [
                 ['picture', 'fullname*'],
@@ -65,7 +65,7 @@ class datasource_test extends advanced_testcase {
             'Exclude columns (picture, fullname, fullnamewithlink, fullnamewithpicture, fullnamewithpicturelink)' => [
                 [],
                 ['picture', 'fullname*'],
-                25,
+                26,
             ],
         ];
     }
