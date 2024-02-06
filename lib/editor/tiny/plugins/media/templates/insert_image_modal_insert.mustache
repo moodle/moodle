@@ -27,25 +27,18 @@
 
 }}
 <div class="tiny_image_insert_image">
-    <div class="tiny_image_dropzone mb-1 d-flex align-items-center flex-column justify-content-center border rounded">
+    <div class="tiny_image_dropzone d-flex flex-column justify-content-center">
         {{#showdropzone}}
-            <div class="tiny_image_dropzone_iconlabel text-center" role="button">
-                <!-- Dropzone icon -->
-                <i class="tiny_image_dropzone_icon fa-6x pb-2 text-secondary fa fa-cloud-upload"></i>
-                <!-- Dropzone string -->
-                <div class="tiny_image_dropzone_label lead text-center">
-                    <p class="mb-0">{{#str}} draganddrop, tiny_media {{/str}}</p>
-                </div>
-            </div>
+            <div class="tiny_image_dropzone_container"></div>
             <!-- File input -->
             <input type="file" id="tiny_image_fileinput" accept="image/*" class="d-none">
         {{/showdropzone}}
         {{^showfilepicker}}
-            <div class="tiny_image_dropzone_iconlabel text-center">
+            <div class="text-center">
                 <!-- Dropzone icon -->
-                <i class="tiny_image_dropzone_icon fa-6x pb-2 text-secondary fa fa-cloud"></i>
+                <i class="fa-6x pb-2 text-secondary fa fa-cloud"></i>
                 <!-- Dropzone string -->
-                <div class="tiny_image_dropzone_label lead text-center">
+                <div class="lead text-center">
                     <p class="mb-0">{{#str}} repositorynotpermitted, tiny_media {{/str}}</p>
                 </div>
             </div>

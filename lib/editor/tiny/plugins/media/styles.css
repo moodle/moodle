@@ -34,8 +34,12 @@ iframe.mm_iframe {
     color: red;
 }
 
-.tiny_image_form .tiny_image_dropzone {
-    padding: 1.5rem 1rem;
+.tiny_image_form .tiny_image_dropzone_container {
+    height: 200px;
+}
+
+.tiny_image_form .tiny_image_dropzone_container .dropzone-label {
+    font-size: 1.25rem;
 }
 
 .tiny_image_form .tiny_image_loader_container {
