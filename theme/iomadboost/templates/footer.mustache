@@ -27,18 +27,31 @@
             "has_popover_links": true,
             "services_support": "Services and support",
             "login_info": "You are logged in as cute kitten",
-            "moodle_release": "90210"
+            "moodle_release": "90210",
+            "has_communication_links": true,
+            "communication_url": "https://element:8081/#/room/#yourroom:synapse",
+            "communication_link": "<a href=\"#\">Communication room</a>"
         }
     }
 }}
 
 <footer id="page-footer" class="footer-popover bg-white">
     <div data-region="footer-container-popover">
+        {{#output.has_communication_links}}
+            <button onclick="window.open('{{output.communication_url}}', '_blank', 'noreferrer')" class="btn btn-icon bg-primary text-white icon-no-margin btn-footer-communication" aria-label="{{#str}}communicationroomlink, course{{/str}}">
+                {{#pix}}t/messages-o, core{{/pix}}
+            </button>
+        {{/output.has_communication_links}}
         <button class="btn btn-icon bg-secondary icon-no-margin btn-footer-popover" data-action="footer-popover" aria-label="{{#str}}showfooter, theme_iomadboost{{/str}}">
             {{#pix}}e/question, core{{/pix}}
         </button>
     </div>
     <div class="footer-content-popover container" data-region="footer-content-popover">
+        {{#output.has_communication_links}}
+            <div class="footer-section p-3 border-bottom footer-link-communication">
+                <div class="footer-support-link">{{{ output.communication_link }}}</div>
+            </div>
+        {{/output.has_communication_links}}
         {{# output.has_popover_links }}
             <div class="footer-section p-3 border-bottom">
                 {{# output.page_doc_link }}

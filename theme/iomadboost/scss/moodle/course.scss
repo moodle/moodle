@@ -930,6 +930,9 @@ span.editinstructions {
             border-left: calc(#{$list-group-border-width} + 5px) solid map-get($theme-colors, 'primary');
             padding-left: calc(#{$list-group-item-padding-x} - 5px);
         }
+        &:hover {
+            z-index: 2;
+        }
     }
 
     .item-actions {
@@ -971,7 +974,7 @@ span.editinstructions {
             }
 
             .without-actions {
-                color: #333;
+                color: $course-cat-without-actions-color;
             }
 
             .idnumber {
@@ -1015,7 +1018,7 @@ span.editinstructions {
             .categoryname {
                 display: inline-block;
                 margin-left: 1em;
-                color: #a1a1a8;
+                color: $course-listing-color;
             }
 
             .coursename {
@@ -1047,7 +1050,7 @@ span.editinstructions {
         }
 
         .course-count {
-            color: #a1a1a8;
+            color: $course-listing-color;
             margin-right: 2rem;
             min-width: 3.5em;
             display: inline-block;
@@ -1252,19 +1255,56 @@ span.editinstructions {
     }
 }
 
+// These are the new styles for the renewed course UI in isssue MDL-71691
+// once the old course renderers are removed in MDL-72656, all css related
+// to activities and sections above this commend needs to be reviewed an
+// possibly removed.
+
+/* Variables definition*/
+
 $activity-item-background: theme-color-level('primary', -12) !default;
 $activity-item-border: theme-color-level('primary', -2) !default;
-$activity-item-color: $body-color;
+$activity-item-color: $body-color !default;
 $activity-item-hover: theme-color-level('primary', -12) !default;
+$activity-item-border-radius: 1rem !default;
 $activity-add-hover: theme-color-level('primary', -10) !default;
+
+/* Functions/Mixins definition */
+
+// Activity completion button custom styling mixin.
+@mixin completion-button() {
+    &.btn {
+        @include button-variant($white, $gray-400, $gray-600);
+        min-height: map-get($iconsizes, 5);
+        font-weight: bold;
+        @include border-radius();
+        .icon {
+            font-size: inherit;
+        }
+    }
+    @each $color, $value in $theme-colors {
+        &.btn-#{$color} {
+            $bg-color: theme-color-level($color, $alert-bg-level);
+            @include button-variant($bg-color, $bg-color, $value);
+            color: theme-color-level($color, $alert-color-level);
+            &:hover {
+                color: color-yiq($value);
+            }
+        }
+    }
+}
+
+/* Activity & Block 'add' buttons */
 
 .activity-add,
 .block-add {
-    @include border-radius();
     @include alert-variant($primary-light-background, $primary-light-border, $primary);
     border-width: $border-width;
     .pluscontainer {
         border: $border-width solid $primary-light-border;
+        border-radius: 50%;
+        width: map-get($iconsizes, 5);
+        height: map-get($iconsizes, 5);
     }
     &:hover {
         cursor: pointer;
@@ -1276,9 +1316,28 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     width: 100%;
 }
 
+.block-add {
+    @include border-radius();
+}
+
+.activity-add {
+    @include border-radius($activity-item-border-radius);
+}
+
+/* Add section */
+
 .changenumsections {
     border-top: $border-width solid $primary-light-border;
 }
+
+.add-sections {
+    .icon {
+        margin-right: map-get($spacers, 1);
+        font-size: inherit;
+    }
+}
+
+/* Section Expand all/Collapse all */
 
 .section-collapsemenu {
     .collapseall {
@@ -1300,10 +1359,8 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     }
 }
 
-// These are the new styles for the renewed course UI in isssue MDL-71691
-// once the old course renderers are removed in MDL-72656, all css related
-// to activities and sections above this commend needs to be reviewed an
-// possibly removed.
+/* Course section */
+
 .course-section {
     list-style: none;
     padding-left: 0;
@@ -1327,9 +1384,33 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         }
     }
 
-    .inplaceeditable {
-        display: flex;
-        align-items: center;
+    .summarytext {
+        // Add rounded borders to images.
+        img {
+            @include border-radius($activity-item-border-radius);
+        }
+    }
+
+    // Availability styles for both section and activities.
+    .availabilityinfo {
+        margin-top: map-get($spacers, 2);
+        padding: map-get($spacers, 1) map-get($spacers, 3);
+        background-color: $gray-200;
+        @include font-size($small-font-size);
+        @include border-radius($activity-item-border-radius);
+        .editavailability {
+            a {
+                @include border-radius();
+                font-weight: bold;
+                &:hover {
+                    background-color: $gray-400;
+                }
+                .icon {
+                    font-size: inherit;
+                    margin-right: map-get($spacers, 1);
+                }
+            }
+        }
     }
 
     &.section-summary {
@@ -1376,48 +1457,9 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     }
 }
 
-.description .course-description-item {
-    @include font-size($small-font-size);
+/* Re-style ordered list in course content */
 
-    background-color: $gray-100;
-    padding-left: map-get($spacers, 3);
-    padding-right: map-get($spacers, 3);
-
-    .description-inner {
-        padding-bottom: map-get($spacers, 2);
-        padding-top: map-get($spacers, 2);
-        border-bottom: $border-width solid $border-color;
-
-        p:last-child {
-            padding-bottom: 0;
-            margin-bottom: 0;
-        }
-    }
-
-    &:first-child {
-        margin-top: map-get($spacers, 3);
-        padding-top: map-get($spacers, 3);
-        border-top-left-radius: $border-radius;
-        border-top-right-radius: $border-radius;
-
-        .description-inner {
-            padding-top: 0;
-        }
-    }
-
-    &:last-child {
-        padding-bottom: map-get($spacers, 3);
-        border-bottom-left-radius: $border-radius;
-        border-bottom-right-radius: $border-radius;
-
-        .description-inner {
-            padding-bottom: 0;
-            border-bottom: 0;
-        }
-    }
-}
-
-.course-content .description-inner {
+.course-content .activity-altcontent {
     ul {
         list-style: disc;
         ul {
@@ -1429,12 +1471,11 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     }
 }
 
+/* Activity cards */
+
 .activity-item {
     position: relative;
-
-    @if $enable-rounded {
-        @include border-radius();
-    }
+    @include border-radius($activity-item-border-radius);
 
     &:not(.activityinline) {
         border: $border-width solid $border-color;
@@ -1446,82 +1487,228 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 
     &.hiddenactivity {
         background-color: $gray-100;
-
-        .description .course-description-item,
         .activityiconcontainer,
         .badge {
             mix-blend-mode: multiply;
         }
     }
 
+    // Activity card grid layout.
+    .activity-grid {
+        display: grid;
+        align-items: center;
+        grid-template-columns: min-content 1fr min-content min-content min-content;
+        grid-template-rows: 1fr repeat(5, min-content);
+        grid-template-areas:
+            "icon          name          groupmode      completion    actions"
+            "icon          visibility    groupmode      completion    actions"
+            "icon          dates         groupmode      completion    actions"
+            "altcontent    altcontent    altcontent     altcontent    altcontent"
+            "afterlink     afterlink     afterlink      afterlink     afterlink"
+            "availability  availability  availability   availability  availability";
+        @include media-breakpoint-down(xs) {
+            grid-template-columns: min-content 1fr min-content min-content min-content;
+            grid-template-rows: 1fr repeat(4, min-content);
+            grid-template-areas:
+                "icon          name          actions"
+                "icon          visibility    actions"
+                "dates         dates         dates"
+                "groupmode     groupmode     groupmode"
+                "completion    completion    completion"
+                "altcontent    altcontent    altcontent"
+                "afterlink     afterlink     afterlink"
+                "availability  availability  availability";
+        }
+    }
+    // Activity card specific grid layout for activities without name.
+    .activity-grid.noname-grid {
+        grid-template-columns: min-content min-content 1fr min-content;
+        grid-template-areas:
+            "visibility    groupmode        completion    actions"
+            "altcontent    altcontent       altcontent    altcontent"
+            "afterlink     afterlink        afterlink     afterlink"
+            "availability  availability     availability  availability";
+        @include media-breakpoint-down(xs) {
+            grid-template-columns: 1fr min-content;
+            grid-template-areas:
+                "visibility    actions"
+                "altcontent    altcontent"
+                "groupmode     groupmode"
+                "afterlink     afterlink"
+                "completion    completion"
+                "availability  availability";
+        }
+    }
+
     .activity-actions {
+        grid-area: actions;
         .actions {
             position: relative;
         }
-        .dropdown-toggle::after {
+        // Override '.btn.btn-icon' styles from buttons.scss to make action menu buttons smaller.
+        .action-menu .btn.btn-icon {
+            height: map-get($iconsizes, 5);
+            width: map-get($iconsizes, 5);
+            @include border-radius();
+        }
+    }
+
+    .activity-icon {
+        grid-area: icon;
+    }
+
+    .activity-dates {
+        grid-area: dates;
+        @include font-size($small-font-size);
+        color: $gray-700;
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 0.75rem;
+        @include media-breakpoint-down(xs) {
+            margin-top: map-get($spacers, 2);
+        }
+    }
+    .activity-name-area {
+        grid-area: name;
+        // Prevent bootstrap strech-link from covering the inplace editable button using z-index.
+        .activityname {
+            .afterlink {
+                margin-left: 0.5rem;
+            }
+            .inplaceeditable .quickeditlink {
+                position: relative;
+                z-index: 2;
+                margin-left: 0.5rem;
+            }
+        }
+        .activitybadge {
+            &.badge-none {
+                font-weight: normal;
+                @include font-size($small-font-size);
+                padding: 0;
+            }
+        }
+    }
+
+    .activity-completion {
+        grid-area: completion;
+        justify-self: end;
+        // Re-style completion buttons (mark as done & dropdown).
+        button,
+        a[role="button"] {
+            @include completion-button();
+        }
+        @include media-breakpoint-down(xs) {
+            width: 100%;
+            margin-top: map-get($spacers, 2);
+            button {
+                width: 100%;
+            }
+        }
+        .completion-dialog {
+            color: $gray-700;
+            font-size: $font-size-sm;
+            min-width: 12rem;
+            .icon {
+                font-size: $font-size-sm;
+                width: $font-size-sm;
+                height: $font-size-sm;
+                margin-right: map-get($spacers, 1);
+            }
+            .editcompletion a {
+                @include border-radius();
+                color: $gray-700;
+                font-weight: bold;
+                text-decoration: none;
+                &:hover {
+                    background-color: $gray-200;
+                }
+            }
+        }
+    }
+
+    .activity-groupmode-info {
+        grid-area: groupmode;
+        justify-self: end;
+        .groupmode-information {
+            height: map-get($iconsizes, 5);
+            width: map-get($iconsizes, 5);
+            @include border-radius();
+        }
+        .groupmode-icon-info {
             display: none;
         }
-    }
-
-    .inplaceeditable {
-        display: flex;
-        flex: 0 1 auto;
-        max-width: 100%;
-    }
-
-    /* Prevent bootstrap strech-link from covering the inplace editable button using z-index. */
-    .activityname {
-        .afterlink {
-            margin-left: 0.5rem;
+        @include media-breakpoint-down(xs) {
+            width: 100%;
+            margin-top: map-get($spacers, 2);
+            padding-top: map-get($spacers, 2);
+            border-top: $border-width solid $border-color;
+            .groupmode-information {
+                width: auto;
+                font-size: inherit;
+                padding: 0 map-get($spacers, 2);
+            }
+            .groupmode-icon-info {
+                display: inline;
+            }
+            // Disable v-parent-focus behaviour on small devices to always show the groupmode button.
+            .v-parent-focus {
+                opacity: 1;
+                visibility: visible;
+            }
         }
-        .inplaceeditable .quickeditlink {
-            z-index: 2;
-            margin-left: 0.5rem;
+    }
+
+    .activity-badges {
+        grid-area: visibility;
+        .badge {
+            font-weight: normal;
+            .icon {
+                font-size: 12px;
+                width: 12px;
+                height: 12px;
+            }
         }
     }
 
-    .action-menu-item {
-        display: flex;
-        align-items: center;
+    .activity-altcontent {
+        grid-area: altcontent;
+        margin-top: map-get($spacers, 1);
+        &.activity-description {
+            margin-top: map-get($spacers, 2);
+            padding-top: map-get($spacers, 2);
+            border-top: $border-width solid $border-color;
+            @include font-size($small-font-size);
+        }
+        // Add rounded borders to images.
+        img {
+            @include border-radius($activity-item-border-radius);
+        }
     }
 
-    .action-menu-item .filler {
-        display: none;
+    .activity-availability {
+        grid-area: availability;
+    }
+
+    .activity-afterlink {
+        grid-area: afterlink;
+        margin-top: map-get($spacers, 2);
+        padding-top: map-get($spacers, 2);
+        border-top: $border-width solid $border-color;
     }
 
     .no-overflow {
         width: 100%;
     }
 
-    @include media-breakpoint-down(sm) {
-        .badge {
-            white-space: normal;
-            text-align: left;
-        }
-    }
-
     @include media-breakpoint-up(md) {
-        .automatic-completion-conditions {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-        }
-
         &:not(.activityinline) {
-            padding: map-get($spacers, 4);
-        }
-
-        .activity-info,
-        .activity-actions {
-            margin-left: auto;
-            padding-left: map-get($spacers, 2);
-            align-self: start;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
+            padding: map-get($spacers, 3);
         }
     }
 }
+
+/* Activity card in editing mode */
 
 .editing .activity-item {
     cursor: move;
@@ -1534,7 +1721,6 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     &.selected {
         @include alert-variant($activity-item-hover, $activity-item-border, $activity-item-color);
 
-        .description .course-description-item,
         .activityiconcontainer,
         .badge {
             mix-blend-mode: multiply;
@@ -1546,21 +1732,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     display: none;
 }
 
-.automatic-completion-conditions .badge {
-    font-size: 80%;
-    padding: map-get($spacers, 2);
-    margin-top: map-get($spacers, 1);
-
-    .icon {
-        width: 0.7rem;
-        height: 0.7rem;
-        font-size: 0.7rem;
-    }
-
-    &:first-child {
-        margin-top: 0;
-    }
-}
+/* Activity divider */
 
 .activity:focus-within + .activity div.divider button,
 .course-section-header:focus-within + .content .section .activity:first-child div.divider button,
@@ -1605,6 +1777,8 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     }
 }
 
+/* Bulk editing */
+
 .bulkenabled .bulk-hidden {
     display: none !important; // stylelint-disable-line declaration-no-important
 }
@@ -1623,5 +1797,21 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 @include media-breakpoint-down(sm) {
     .bulkenabled .course-content {
         margin-left: 2rem;
+    }
+}
+
+/* Activity completion */
+
+.defaultactivitycompletion-item {
+    a {
+        color: $black;
+        text-decoration: none;
+        img {
+            filter: invert(25%) sepia(86%) saturate(1158%) hue-rotate(189deg) brightness(104%) contrast(92%);
+        }
+    }
+    .activityicon {
+        width: 32px;
+        height: 32px;
     }
 }

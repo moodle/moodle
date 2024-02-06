@@ -18,9 +18,7 @@
  * An embedded layout for the iomadboost theme.
  *
  * @package   theme_iomadboost
- * @copyright 2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_boost by Frédéric Massart
+ * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

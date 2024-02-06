@@ -1,15 +1,15 @@
-.iomadboostlink, .iomadboostlinkreports {
+.iomadlink, .iomadlinkreports {
   font-family: Ubuntu;
   font-size: 12px;
   font-weight: normal;
   text-align: center;
   line-height: 120%;
 }
-.iomadboostlink a, .iomadboostlinkreports a {
+.iomadlink a, .iomadlinkreports a {
   color: #337ab7;
   padding: 0 10px;
 }
-.iomadboost_block_title {
+.iomad_block_title {
   color: #d30000;
   font-size: 14px;
   text-transform: uppercase;
@@ -32,41 +32,41 @@
     float: right;
     width: 100px;
 }
-#iomadboost_company_selector select {
+#iomad_company_selector select {
   display: inline;
   width: auto;
   margin-left: 10px;
 }
-.iomadboostlink_container {
+.iomadlink_container {
   background-color: #F7F7F7;
   border: 1px solid #DDD;
   margin-bottom: 15px;
 }
 @media (min-width: 992px) {
-  .iomadboostlink_container {
+  .iomadlink_container {
     border-top-color: #F7F7F7;
   }
 }
-.iomadboostlink_container > a {
+.iomadlink_container > a {
   display: block;
   float: left;
   margin: 10px;
   min-height: 155px;
 }
-.iomadboostlink_container .iomadboostlink, .iomadboostlink_container .iomadboostlinkreports {
+.iomadlink_container .iomadlink, .iomadlink_container .iomadlinkreports {
   text-align: center;
 }
-.iomadboostlink_container .iomadboostlink .iomadboosticon, .iomadboostlink_container .iomadboostlink .iomadboosticonreports {
+.iomadlink_container .iomadlink .iomadicon, .iomadlink_container .iomadlink .iomadiconreports {
   display: block;
   position: relative;
   margin: 10px 0;
 }
-.iomadboostlink_container .iomadboostlink .iomadboosticon .fa-topic, .iomadboostlink_container .iomadboostlinkreports .iomadboosticon .fa-topic {
+.iomadlink_container .iomadlink .iomadicon .fa-topic, .iomadlink_container .iomadlinkreports .iomadicon .fa-topic {
   font-size: 54px;
   margin-bottom: 10px;
   color: #666;
 }
-.iomadboostlink_container .iomadboostlink .iomadboosticon .fa-action, .iomadboostlink_container .iomadboostlinkreports .iomadboosticon .fa-action {
+.iomadlink_container .iomadlink .iomadicon .fa-action, .iomadlink_container .iomadlinkreports .iomadicon .fa-action {
   border-radius: 15px;
   color: #FFFFFF;
   background-color: #93d800;
@@ -78,14 +78,14 @@
   position: absolute;
   bottom: 0;
 }
-.iomadboostlink_container .iomadboostlink .linkname, .iomadboostlink_container .iomadboostlinkreports .linkname {
+.iomadlink_container .iomadlink .linkname, .iomadlink_container .iomadlinkreports .linkname {
   display: block;
   width: 100%;
 }
-.block_iomadboost_reports .iomadboostlink_container {
+.block_iomad_reports .iomadlink_container {
   border-top-color: #DDD;
 }
-div.iomadboostlink, div.iomadboostlinkreports {
+div.iomadlink, div.iomadlinkreports {
     min-height: 130px;
     background-color: #ffec70;
     background-color: #ddd;
@@ -99,6 +99,6 @@ div.iomadboostlink, div.iomadboostlinkreports {
     background-color: green;
 }
 
-#page-blocks-iomadboost_company_admin-company_groups_create_form #region-main {
+#page-blocks-iomad_company_admin-company_groups_create_form #region-main {
     height: 100%;
 }
