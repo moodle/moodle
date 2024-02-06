@@ -242,7 +242,7 @@ $string['configdisableuserimages'] = 'Disable the ability for users to change us
 $string['configdisplayloginfailures'] = 'This will display information to users about previous failed logins.';
 $string['configdndallowtextandlinks'] = 'Enable or disable the dragging and dropping of text and links onto a course page, alongside the dragging and dropping of files. Note that the dragging of text into Firefox or between different browsers is unreliable and may result in no data being uploaded, or corrupted text being uploaded.';
 $string['configdoclang'] = 'This language will be used in links for the documentation pages.';
-$string['configdocroot'] = 'Defines the path to Moodle Docs for providing context-specific documentation via \'Help and documentation\' links in the footer of each page. If the field is left blank, links will not be displayed.';
+$string['configdocroot'] = 'Defines the path to Moodle Docs for providing context-specific documentation via \'Documentation for this page\' links in the footer of each page. If the field is left blank, links will not be displayed.';
 $string['configdoctonewwindow'] = 'If enabled, then links to Moodle Docs will be shown in a new window.';
 $string['configduration_low'] = 'This value is too low. The minimum value is {$a}.';
 $string['configduration_high'] = 'This value is too high. The maximum value is {$a}.';
@@ -506,7 +506,7 @@ $string['debugsqltrace_desc'] = 'If enabled, a partial or full PHP stack trace i
 $string['debugstringids'] = 'Show origin of languages strings';
 $string['debugstringids_desc'] = 'If enabled, language string components and identifiers are displayed when ?strings=1 or &strings=1 is appended to the page URL.';
 $string['debugtemplateinfo'] = 'Show template information';
-$string['debugtemplateinfo_desc'] = 'If enabled, templates used for rendering are shown as comments in the page HTML. Use for temporary debugging only, as it produces HTML validation errors and could break some page scripts.';
+$string['debugtemplateinfo_desc'] = 'If enabled, templates used for rendering are shown as comments in the page HTML. After changing the setting, you need to purge caches. Use for temporary debugging only, as it produces HTML validation errors and can break page scripts. It can also break core functionality!';
 $string['debugvalidators'] = 'Show validator links';
 $string['defaultcity'] = 'Default city';
 $string['defaultcity_help'] = 'A city entered here will be the default city when creating new user accounts.';

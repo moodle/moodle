@@ -31,7 +31,7 @@ Feature: Testing multichoice questions in feedback
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - single answer |
       | Multiple choice values | option a\noption b\noption c  |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | this is the first page of the feedback |
     And I select "Add a page break" from the "typ" singleselect
     And I add a "Multiple choice" question to the feedback with:
@@ -40,7 +40,7 @@ Feature: Testing multichoice questions in feedback
       | Multiple choice type | Multiple choice - single answer |
       | Multiple choice values | option d\noption e\noption f  |
       | Required | 1 |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | this is the second page of the feedback |
     And I select "Add a page break" from the "typ" singleselect
     And I add a "Multiple choice" question to the feedback with:
@@ -51,7 +51,7 @@ Feature: Testing multichoice questions in feedback
       | Hide the "Not selected" option | Yes                   |
       | Dependence item                | multichoice2          |
       | Dependence value               | option d              |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | this is the third page of the feedback |
     And I log out
     And I am on the "Learning experience" "feedback activity" page logged in as student1
@@ -171,7 +171,7 @@ Feature: Testing multichoice questions in feedback
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - multiple answers |
       | Multiple choice values | option a\noption b\noption c  |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | this is the first page of the feedback |
     And I select "Add a page break" from the "typ" singleselect
     And I add a "Multiple choice" question to the feedback with:
@@ -180,7 +180,7 @@ Feature: Testing multichoice questions in feedback
       | Multiple choice type | Multiple choice - multiple answers |
       | Multiple choice values | option d\noption e\noption f  |
       | Required | 1 |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | this is the second page of the feedback |
     And I select "Add a page break" from the "typ" singleselect
     And I add a "Multiple choice" question to the feedback with:
@@ -190,7 +190,7 @@ Feature: Testing multichoice questions in feedback
       | Multiple choice values | option g\noption h\noption i  |
       | Dependence item                | multichoice2          |
       | Dependence value               | option d              |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | this is the third page of the feedback |
     And I log out
     # Login as the first student.
@@ -310,7 +310,7 @@ Feature: Testing multichoice questions in feedback
       | Label            | multichoice1                |
       | Multiple choice type | Multiple choice - single answer allowed (drop-down menu) |
       | Multiple choice values | option a\noption b\noption c  |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | this is the first page of the feedback |
     And I select "Add a page break" from the "typ" singleselect
     And I add a "Multiple choice" question to the feedback with:
@@ -319,7 +319,7 @@ Feature: Testing multichoice questions in feedback
       | Multiple choice type | Multiple choice - single answer allowed (drop-down menu) |
       | Multiple choice values | option d\noption e\noption f  |
       | Required | 1 |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | this is the second page of the feedback |
     And I select "Add a page break" from the "typ" singleselect
     And I add a "Multiple choice" question to the feedback with:
@@ -329,7 +329,7 @@ Feature: Testing multichoice questions in feedback
       | Multiple choice values | option g\noption h\noption i  |
       | Dependence item                | multichoice2          |
       | Dependence value               | option d              |
-    And I add a "Label" question to the feedback with:
+    And I add a "Text and media area" question to the feedback with:
       | Contents | this is the third page of the feedback |
     And I log out
     And I am on the "Learning experience" "feedback activity" page logged in as student1
