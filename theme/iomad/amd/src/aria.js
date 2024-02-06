@@ -39,12 +39,15 @@ const dropdownFix = () => {
     };
 
     // Special handling for navigation keys when menu is open.
-    const shiftFocus = element => {
-        const delayedFocus = pendingPromise => {
-            element.focus();
+    const shiftFocus = (element, focusCheck = null) => {
+        const pendingPromise = new Pending('core/aria:delayed-focus');
+        setTimeout(() => {
+            if (!focusCheck || focusCheck()) {
+                element.focus();
+            }
+
             pendingPromise.resolve();
-        };
-        setTimeout(delayedFocus, 50, new Pending('core/aria:delayed-focus'));
+        }, 50);
     };
 
     // Event handling for the dropdown menu button.
@@ -200,7 +203,15 @@ const dropdownFix = () => {
         const trigger = e.target.querySelector('[data-toggle="dropdown"]');
         const focused = document.activeElement != document.body ? document.activeElement : null;
         if (trigger && focused && e.target.contains(focused)) {
-            shiftFocus(trigger);
+            shiftFocus(trigger, () => {
+                if (document.activeElement === document.body) {
+                    // If the focus is currently on the body, then we can safely assume that the focus needs to be updated.
+                    return true;
+                }
+
+                // If the focus is on a child of the clicked element still, then update the focus.
+                return e.target.contains(document.activeElement);
+            });
         }
     });
 };

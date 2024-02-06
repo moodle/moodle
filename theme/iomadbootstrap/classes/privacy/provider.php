@@ -18,9 +18,7 @@
  * Privacy Subsystem implementation for theme_iomadbootstrap.
  *
  * @package   theme_iomadbootstrap
- * @copyright 2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_classic by Bas Brands
+ * @copyright 2018 Bas Brands
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 

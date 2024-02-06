@@ -61,6 +61,9 @@
     {{#courseindex}}
         {{< theme_iomad/drawer }}
             {{$id}}theme_iomad-drawers-courseindex{{/id}}
+            {{$drawerheadercontent}}
+                {{> theme_iomad/courseindexdrawercontrols}}
+            {{/drawerheadercontent}}
             {{$drawerclasses}}drawer drawer-left {{#courseindexopen}}show{{/courseindexopen}}{{/drawerclasses}}
             {{$drawercontent}}
                 {{{courseindex}}}

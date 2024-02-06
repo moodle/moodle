@@ -25,9 +25,7 @@ use core_privacy\local\request\writer;
  * @package    theme_iomad
  * @category   test
  * @covers     \theme_iomad\privacy\provider
- * @copyright 2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_boost by Frédéric Massart
+ * @copyright  2018 Adrian Greeve <adriangreeve.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class provider_test extends \core_privacy\tests\provider_testcase {

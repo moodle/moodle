@@ -23,9 +23,7 @@ require_once(__DIR__ . '/../../../../completion/tests/behat/behat_completion.php
  *
  * @package    theme_iomadbootstrap
  * @category   test
- * @copyright 2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_classic by Bas Brands
+ * @copyright  2021 Mathew May
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class behat_theme_iomadbootstrap_behat_completion extends behat_completion {

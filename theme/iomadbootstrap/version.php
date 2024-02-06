@@ -18,16 +18,14 @@
  * IOMAD Bootstrap theme.
  *
  * @package    theme_iomadbootstrap
- * @copyright 2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_classic by Bas Brands
+ * @copyright  2018 Bas Brands
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 // This line protects the file from being accessed by a URL directly.
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2023042400;
-$plugin->requires = 2023041800;
+$plugin->version = 2023100900;
+$plugin->requires = 2023100400;
 $plugin->component = 'theme_iomadbootstrap';
-$plugin->dependencies = array('theme_boost' => 2023041800);
+$plugin->dependencies = ['theme_boost' => 2023100400];

@@ -130,7 +130,8 @@ $iconsizes: map-merge((
     }
 }
 
-
+// Revisit these styles when MDL-78284 lands with new icons.
+// Icon container will be removed and icons will be used directly.
 .activityiconcontainer {
     width: $activity-iconcontainer-width;
     height: $activity-iconcontainer-height;
@@ -143,12 +144,21 @@ $iconsizes: map-merge((
     .activityicon,
     .icon {
         margin: 0;
+        font-size: $icon-medium-width;
         height: $icon-medium-width;
         width: $icon-medium-height;
     }
     &.small {
         width: $activity-iconcontainer-width - 10px;
         height: $activity-iconcontainer-height - 10px;
+    }
+    &.smaller {
+        width: $activity-iconcontainer-width - 20px;
+        height: $activity-iconcontainer-width - 20px;
+        .activityicon {
+            width: $icon-medium-width;
+            height: $icon-medium-height;
+        }
     }
 }
 

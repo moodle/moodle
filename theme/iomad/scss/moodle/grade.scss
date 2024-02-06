@@ -100,7 +100,7 @@
             overflow: hidden;
             margin: 0.5em;
             padding: 1em;
-            border: 1px solid #aaa;
+            border: 1px solid $grade-manage-action-border-color;
 
             .action-text {
                 position: relative;
@@ -126,7 +126,7 @@
     &.evaluate .criterion .levels .level {
         &:hover,
         &.checked {
-            background: #dff0d8;
+            background: $grade-criterion-level-hover-bg;
         }
         &.checked {
             border: none;
@@ -169,12 +169,12 @@
             padding: $rubricPadding;
 
             &.currentchecked {
-                background: #fff0f0;
+                background: $grade-criterion-level-currentchecked-bg;
             }
 
             &.checked {
-                background: #d0ffd0;
-                border: 1px solid #555;
+                background: $grade-criterion-level-checked-bg;
+                border: 1px solid $grade-criterion-level-checked-border-color;
             }
 
             .delete {
@@ -195,7 +195,7 @@
                     margin: 0;
 
                     &:hover {
-                        background-color: #ddd;
+                        background-color: $grade-criterion-level-delete-bg;
                     }
                 }
             }
@@ -299,6 +299,74 @@
 
 // Set up grades layout.
 .path-grade-edit-tree {
+    .collapse-list {
+
+        .unlist {
+            padding-left: 2rem;
+
+            [data-for="sectionnode"] {
+                &:focus {
+                    > .collapse-list-item:first-child {
+                        background-color: $collapse-list-item-hover-bg;
+                        border-color: $collapse-list-item-hover-border;
+                    }
+                }
+
+                &[data-selected="true"] {
+                    > .collapse-list-item:first-child {
+                        background-color: $collapse-list-item-hover-bg;
+                        border-color: $collapse-list-item-hover-border;
+                        color: $blue;
+                    }
+                }
+
+                .collapse-list-item-content {
+                    &[aria-hidden="true"] {
+                        display: none;
+                    }
+                }
+
+                &[aria-expanded="true"] {
+                    > .collapse-list-item {
+                        .collapsed-icon {
+                            display: none;
+                        }
+                    }
+                }
+
+                &[aria-expanded="false"] {
+                    > .collapse-list-item {
+                        .expanded-icon {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            .collapse-list-item {
+                padding: 0.5rem 1rem;
+                cursor: pointer;
+
+                .collapse-list-item-name {
+                    font-weight: bold;
+                }
+
+                .collapse-list-link {
+                    color: $gray-900;
+                    padding: 0 0.2rem;
+                    margin-right: 0.3rem;
+
+                    i {
+                        font-size: 12px;
+                        width: 12px;
+                        height: 12px;
+                        margin: 0;
+                    }
+                }
+            }
+        }
+    }
+
     .gradetree-wrapper {
         padding: 10px 10px;
         background-color: $gray-100;
@@ -355,10 +423,12 @@
                         vertical-align: middle;
 
                         &.column-name {
-                            padding-left: 38px;
-
                             .small {
                                 font-size: 70%;
+                            }
+
+                            .itemselect {
+                                margin-right: 15px;
                             }
 
                             .itemicon {
@@ -407,7 +477,7 @@
 
                     &.category {
                         td {
-                            background-color: white;
+                            background-color: $grade-table-td-bg;
                             border-top: 1px solid $gray-300;
                             border-bottom: 1px solid $gray-300;
 
@@ -420,13 +490,20 @@
                             }
 
                             &.column-name {
-                                padding-left: 10px;
                                 font-weight: bold;
 
                                 div {
                                     display: flex;
                                     min-height: 30px;
                                     align-items: center;
+
+                                    .form-check {
+                                        padding: 0;
+
+                                        .itemselect {
+                                            margin-right: 5px;
+                                        }
+                                    }
 
                                     a {
                                         &.toggle-category {
@@ -445,7 +522,7 @@
                                                 font-size: 12px;
                                                 width: 12px;
                                                 height: 12px;
-                                                color: #1d2125;
+                                                color: $grade-table-toggle-icon-color;
                                                 margin: 0;
                                             }
                                         }
@@ -457,7 +534,7 @@
 
                     &.item {
                         td {
-                            background-color: white;
+                            background-color: $grade-table-td-bg;
                             border-top: 3px solid $gray-100;
                         }
 
@@ -484,8 +561,8 @@
         }
 
         .badge-light {
-            color: #1d2125;
-            background-color: #ced4da;
+            color: $grade-badge-color;
+            background-color: $grade-badge-bg;
             margin-right: 0.5em;
             margin-bottom: 0.5em;
         }
@@ -528,7 +605,7 @@
 
         tr.heading {
             position: sticky;
-            top: 0;
+            top: $navbar-height;
             z-index: 4;
         }
 
@@ -558,12 +635,7 @@
         }
 
         th.header {
-            @include media-breakpoint-down(sm) {
-                left: 0;
-            }
-            @include media-breakpoint-up(md) {
-                left: -3rem;
-            }
+            left: 0;
             position: sticky;
 
             &#studentheader {
@@ -576,8 +648,14 @@
         }
     }
 
-    .show-drawer-left .gradeparent th.header {
-        left: -1rem;
+    &.hasstickyfooter {
+        .gradeparent {
+            tr.lastrow {
+                // Hack used by the observer to help detecting when the sticky 'Overall average' row is pinned when
+                // sticky footer is present.
+                bottom: calc(#{$stickyfooter-height} - 1px);
+            }
+        }
     }
 }
 
@@ -634,7 +712,6 @@
     }
 }
 
-
 .search-widget {
     .dropdown-menu {
         padding: 0.8rem 1.2rem;
@@ -658,7 +735,7 @@
         .dropdown-item:hover,
         .dropdown-item:active {
             span {
-                color: #fff;
+                color: $grade-search-hover-color;
             }
         }
 
@@ -674,9 +751,21 @@
         }
 
         .unsearchablecontentcontainer {
-            border-top: 1px solid #dee2e6;
+            border-top: 1px solid $grade-search-container-border-color;
             padding-top: 10px;
             font-size: 90%;
         }
     }
+}
+
+#fitem_id_submitbutton {
+    padding-right: 2em;
+}
+
+.gradestatus {
+    padding-top: 10px;
+}
+
+.gradestatus .icon {
+    margin-right: 1rem;
 }

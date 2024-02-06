@@ -15,30 +15,50 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Renderers to align Moodle's HTML with that expected by Bootstrap
- *
- * @package    theme_iomadbootstrap
+ * @package   theme_iomadbootstrap
  * @copyright 2022 Derick Turner
  * @author    Derick Turner
- * @based on theme_classic by Bas Brands
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @based on theme_clean by Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace theme_iomadbootstrap\output;
 
+use coding_exception;
+use html_writer;
+use tabobject;
+use tabtree;
+use custom_menu_item;
+use custom_menu;
+use block_contents;
+use navigation_node;
+use action_link;
+use stdClass;
+use moodle_url;
+use preferences_groups;
+use action_menu;
+use help_icon;
+use single_button;
+use paging_bar;
+use context_course;
+use pix_icon;
+
 defined('MOODLE_INTERNAL') || die;
+
+require_once($CFG->dirroot.'/local/iomad/lib/user.php');
+require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
 
 /**
  * Renderers to align Moodle's HTML with that expected by Bootstrap
  *
- * Note: This class is required to avoid inheriting Boost's core_renderer,
- *       which removes the edit button required by IOMAD Bootstrap.
- *
- * @package    theme_iomadbootstrap
- * @copyright  2018 Bas Brands
+ * @package    theme_boost
+ * @copyright  2012 Bas Brands, www.basbrands.nl
+ * @copyright  2017 Howard Miller
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_renderer extends \core_renderer {
+
+class core_renderer extends \theme_boost\output\core_renderer {
 
     /**
      * The standard tags that should be included in the <head> tag

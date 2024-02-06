@@ -26,9 +26,7 @@ use lang_string;
  * Creates a navbar for iomad that allows easy control of the navbar items.
  *
  * @package    theme_iomad
- * @copyright 2022 Derick Turner
- * @author    Derick Turner
- * @based on theme_boost by Frédéric Massart
+ * @copyright  2021 Adrian Greeve <adrian@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class iomadnavbar implements \renderable {

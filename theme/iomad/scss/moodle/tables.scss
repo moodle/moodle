@@ -24,6 +24,13 @@
     tbody tr:nth-of-type(#{$table-striped-order}) {
         background-color: $table-accent-bg;
     }
+    thead .sticky-column,
+    tbody tr:nth-of-type(even) {
+        background-color: $white;
+    }
+    tbody tr:nth-of-type(#{$table-striped-order}) .sticky-column {
+        background-color: $table-accent-bg;
+    }
     &.table-sm {
         th,
         td {
@@ -39,6 +46,9 @@
                     color: $table-hover-color;
                 }
             }
+            td.sticky-column {
+                background-color: $table-hover-bg;
+            }
         }
     }
 }
@@ -50,6 +60,11 @@ table {
         line-height: 42px;
         text-align: left;
         caption-side: top;
+    }
+    .sticky-column {
+        position: sticky;
+        left: 0;
+        background-color: inherit;
     }
 }
 

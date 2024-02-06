@@ -1,6 +1,10 @@
 This file describes API changes in /theme/iomad
 information provided here is intended especially for theme designers.
 
+=== 4.3 ===
+* The $activity-iconcontainer-height and $activity-iconcontainer-width variables have been changed from 50px to 52px.
+* New SCSS mixin optional_animate to animate an element unless if the user has reduced motion in their preferences.
+
 === 4.0 ===
 * Following the adopted standards, breadcrumbs have been removed for pages that reside on the 1st level within a course
   e.g. participants, grades, settings, reports.
@@ -11,7 +15,7 @@ information provided here is intended especially for theme designers.
   Call this and output it into your templates.
 * In order to view additional custom nodes, leverage the 'get_overflow_menu_data' which returns url_select if there are nodes available.
 * In order for existing themes to leverage the changes in the IOMAD theme, it is recommended to follow the guidelines in the 4.0 docs
-  https://docs.moodle.org/dev/Moodle_4.0_developer_update
+  https://moodledev.io/docs/4.1/devupdate
 
 === 3.7 ===
 

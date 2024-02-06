@@ -13,10 +13,31 @@
     }
 }
 
-.dir-rtl .custom-select {
-    background-position: 0.75rem center;
-}
+.dir-rtl {
+    .custom-select {
+        background-position: 0.75rem center;
+    }
 
-.dir-rtl .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
-    transform: translateX(-($custom-switch-width - $custom-control-indicator-size));
+    .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
+        transform: translateX(-($custom-switch-width - $custom-control-indicator-size));
+    }
+
+    .tooltip {
+        &.bs-tooltip-left,
+        &.bs-tooltip-right {
+            .arrow {
+                transform: rotate(180deg);
+            }
+        }
+
+        &.bs-tooltip-left .arrow {
+            left: auto;
+            right: 0;
+        }
+
+        &.bs-tooltip-right .arrow {
+            left: 0;
+            right: auto;
+        }
+    }
 }
