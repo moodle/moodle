@@ -1,8 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
-=== 4.1.8 ===
+=== 4.1.9
+* New Behat `heading` named selector to more easily assert the presence of H1-H6 elements on the page
 
+=== 4.1.8 ===
 * The current page language is available in new `core/config` language property for Javascript modules
 
 === 4.1.7 ===
