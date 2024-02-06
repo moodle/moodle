@@ -153,7 +153,7 @@ class custom_report_exporter extends persistent_exporter {
 
             // Generate filters form if report contains any filters.
             $filterspresent = !empty($report->get_active_filters());
-            if ($filterspresent) {
+            if ($filterspresent && empty($this->download)) {
                 $filtersform = $this->generate_filters_form()->render();
             }
 
