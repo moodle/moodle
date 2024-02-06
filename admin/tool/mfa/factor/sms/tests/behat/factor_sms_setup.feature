@@ -1,6 +1,6 @@
-@tool_admin_mfa
-Feature: Setup SMS factor in user preferences
-  In order check the setup SMS factor verification
+@tool @tool_mfa @factor_sms
+Feature: Set up SMS factor in user preferences
+  In order check the SMS factor verification
   As an admin
   I want to setup and enable the SMS factor for the current user
 
@@ -12,7 +12,7 @@ Feature: Setup SMS factor in user preferences
       | enabled | 1 | factor_sms |
     When I follow "Preferences" in the user menu
     And I click on "Multi-factor authentication preferences" "link"
-    And I click on "Setup SMS" "button"
+    And I click on "Set up SMS" "button"
 
   Scenario: Phone number setup form validation
     Given I set the field "Mobile number" to "++5555sss"
