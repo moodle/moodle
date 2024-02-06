@@ -69,5 +69,49 @@ class field_class_test extends \advanced_testcase {
                 'emoticons_filter' => ['No emoticons filter :-(', 'No emoticons filter :-(']
         ];
     }
+
+    /**
+     * Test preprocess data validation
+     */
+    public function test_edit_save_data_preprocess(): void {
+        $this->resetAfterTest();
+
+        $fielddata = $this->getDataGenerator()->create_custom_profile_field([
+            'datatype' => 'text',
+            'name' => 'Test',
+            'shortname' => 'test',
+            'param2' => 5, // Max length.
+        ]);
+        $field = new profile_field_text(0, 0, $fielddata);
+
+        $value = $field->edit_save_data_preprocess('ABCDE', new \stdClass());
+        $this->assertEquals('ABCDE', $value);
+
+        // Exceed max length.
+        $value = $field->edit_save_data_preprocess('ABCDEF', new \stdClass());
+        $this->assertEquals('ABCDE', $value);
+    }
+
+    /**
+     * Test external data validation
+     */
+    public function test_convert_external_data(): void {
+        $this->resetAfterTest();
+
+        $fielddata = $this->getDataGenerator()->create_custom_profile_field([
+            'datatype' => 'text',
+            'name' => 'Test',
+            'shortname' => 'test',
+            'param2' => 5, // Max length.
+        ]);
+        $field = new profile_field_text(0, 0, $fielddata);
+
+        $value = $field->convert_external_data('ABCDE');
+        $this->assertEquals('ABCDE', $value);
+
+        // Exceed max length.
+        $value = $field->convert_external_data('ABCDEF');
+        $this->assertNull($value);
+    }
 }
 
