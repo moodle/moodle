@@ -84,6 +84,24 @@ class primary extends view {
         $hook = new \core\hook\navigation\primary_extend($this);
         \core\hook\manager::get_instance()->dispatch($hook);
 
+        // IOMAD.
+        $systemcontext = \context_system::instance();
+        if (\iomad::has_capability('block/iomad_company_admin:companymanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_company_admin:usermanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_commerce:admin_view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_microlearning:view', $systemcontext) ||
+            \iomad::has_capability('block/iomad_reports:view', $systemcontext)) {
+            $this->add(get_string('dashboard', 'block_iomad_company_admin'),
+                       new \moodle_url('/blocks/iomad_company_admin/index.php'),
+                       self::TYPE_SITE_ADMIN,
+                       null,
+                       'ioaddashboardnode',
+                       new \pix_icon('i/dashboard', ''));
+        }
+
         // Search and set the active node.
         $this->set_active_node();
         $this->initialised = true;
