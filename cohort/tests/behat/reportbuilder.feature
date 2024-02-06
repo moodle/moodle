@@ -88,7 +88,7 @@ Feature: Manage custom reports for cohorts
     And I click on "Show/hide 'Sorting'" "button"
     And I click on "Move sorting for column 'Last name'" "button"
     And I click on "To the top of the list" "link" in the "Move sorting for column 'Last name'" "dialogue"
-    And I click on "Enable initial sorting for column Last name" "checkbox"
+    And I click on "Enable initial sorting for column 'Last name'" "checkbox"
     # "New system cohort" has fewer members than "Another one" cohort.
     And "New system cohort" "table_row" should appear before "Another one" "table_row"
     When I click on "Sort column 'Last name' descending" "button"
