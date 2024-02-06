@@ -15,55 +15,47 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A scheduled task for LDAP user sync.
+ * Adhoc task for LDAP user sync.
  *
  * @package    auth_ldap
- * @copyright  2015 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace auth_ldap\task;
 
+use core\task\adhoc_task;
+
 /**
- * A scheduled task class for LDAP user sync.
+ * Adhoc task class for LDAP user sync.
  *
- * @copyright  2015 Vadim Dvorovenko <Vadimon@mail.ru>
+ * @package    auth_ldap
+ * @copyright  Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sync_task extends \core\task\scheduled_task {
+class asynchronous_sync_task extends adhoc_task {
 
     /** @var string Message prefix for mtrace */
     protected const MTRACE_MSG = 'Synced ldap users';
 
     /**
-     * Get a descriptive name for this task (shown to admins).
-     *
-     * @return string
+     * Constructor
      */
-    public function get_name() {
-        return get_string('synctask', 'auth_ldap');
+    public function __construct() {
+        $this->set_blocking(false);
+        $this->set_component('auth_ldap');
     }
 
     /**
      * Run users sync.
      */
     public function execute() {
-        if (is_enabled_auth('ldap')) {
-            /** @var auth_plugin_ldap $auth */
-            $auth = get_auth_plugin('ldap');
-            $count = 0;
-            $auth->sync_users_update_callback(function ($users, $updatekeys) use (&$count) {
-                $asynctask = new asynchronous_sync_task();
-                $asynctask->set_custom_data([
-                    'users' => $users,
-                    'updatekeys' => $updatekeys,
-                ]);
-                \core\task\manager::queue_adhoc_task($asynctask);
+        $data = $this->get_custom_data();
 
-                $count++;
-                mtrace(sprintf(" %s (%d)", self::MTRACE_MSG, $count));
-                sleep(1);
-            });
-        }
+        /** @var auth_plugin_ldap $auth */
+        $auth = get_auth_plugin('ldap');
+        $auth->update_users($data->users, $data->updatekeys);
+
+        mtrace(sprintf(" %s (%d)", self::MTRACE_MSG, count($data->users)));
     }
 }
