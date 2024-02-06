@@ -104,7 +104,12 @@ $editoroptions = array(
 );
 
 $courseformat = course_get_format($course);
-$defaultsectionname = $courseformat->get_default_section_name($section);
+
+if ($sectioninfo->is_delegated()) {
+    $defaultsectionname = $sectioninfo->name;
+} else {
+    $defaultsectionname = $courseformat->get_default_section_name($section);
+}
 
 $customdata = [
     'cs' => $sectioninfo,

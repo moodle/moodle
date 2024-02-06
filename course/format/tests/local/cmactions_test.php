@@ -16,6 +16,8 @@
 
 namespace core_courseformat\local;
 
+use core_courseformat\hook\after_cm_name_edited;
+
 /**
  * Course module format actions class tests.
  *
@@ -190,5 +192,33 @@ final class cmactions_test extends \advanced_testcase {
         // Check that the event data is valid.
         $this->assertInstanceOf('\core\event\course_module_updated', $event);
         $this->assertEquals(\context_module::instance($activity->cmid), $event->get_context());
+    }
+
+    /**
+     * Test renaming an activity triggers the after_cm_name_edited hook.
+     * @covers ::rename
+     */
+    public function test_rename_after_cm_name_edited_hook(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'name' => 'Old name']
+        );
+
+        $executedhook = null;
+
+        $testcallback = function(after_cm_name_edited $hook) use (&$executedhook): void {
+            $executedhook = $hook;
+        };
+        $this->redirectHook(after_cm_name_edited::class, $testcallback);
+
+        $cmactions = new cmactions($course);
+        $result = $cmactions->rename($activity->cmid, 'New name');
+        $this->assertTrue($result);
+
+        $this->assertEquals($activity->cmid, $executedhook->get_cm()->id);
+        $this->assertEquals('New name', $executedhook->get_newname());
     }
 }

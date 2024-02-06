@@ -723,6 +723,15 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
         $cminfo = cm_info::create($cm);
         $completion->reset_all_state($cminfo);
     }
+
+    if ($cm->name != $moduleinfo->name) {
+        $hook = new \core_courseformat\hook\after_cm_name_edited(
+            get_fast_modinfo($course)->get_cm($cm->id),
+            $moduleinfo->name
+        );
+        \core\hook\manager::get_instance()->dispatch($hook);
+    }
+
     $cm->name = $moduleinfo->name;
     \core\event\course_module_updated::create_from_cm($cm, $modcontext)->trigger();
 

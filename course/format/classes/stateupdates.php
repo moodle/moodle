@@ -123,6 +123,12 @@ class stateupdates implements JsonSerializable {
         $currentstate = new $sectionclass($this->format, $section);
 
         $this->add_update('section', $action, $currentstate->export_for_template($this->output));
+
+        // If the section is delegated to a component, give the component oportunity to add updates.
+        $delegated = $section->get_component_instance();
+        if ($delegated) {
+            $delegated->put_section_state_extra_updates($section, $this);
+        }
     }
 
     /**

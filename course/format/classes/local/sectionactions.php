@@ -356,6 +356,9 @@ class sectionactions extends baseactions {
             throw new \moodle_exception('maximumchars', 'moodle', '', 255);
         }
 
+        // If the section is delegated to a component, it may control some section values.
+        $fields = $this->preprocess_delegated_section_fields($sectioninfo, $fields);
+
         if (empty($fields)) {
             return false;
         }
@@ -427,5 +430,23 @@ class sectionactions extends baseactions {
 
         \course_modinfo::purge_course_modules_cache($this->course->id, $cmids);
         rebuild_course_cache($this->course->id, false, true);
+    }
+
+    /**
+     * Preprocess the section fields before updating a delegated section.
+     *
+     * @param section_info $sectioninfo the section info or database record to update.
+     * @param array $fields the fields to update.
+     * @return array the updated fields
+     */
+    protected function preprocess_delegated_section_fields(section_info $sectioninfo, array $fields): array {
+        $delegated = $sectioninfo->get_component_instance();
+        if (!$delegated) {
+            return $fields;
+        }
+        if (array_key_exists('name', $fields)) {
+            $fields['name'] = $delegated->preprocess_section_name($sectioninfo, $fields['name']);
+        }
+        return $fields;
     }
 }

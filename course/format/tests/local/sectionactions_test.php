@@ -862,4 +862,43 @@ class sectionactions_test extends \advanced_testcase {
         $this->assertEquals(0, $cm3->visible);
         $this->assertEquals(1, $cm4->visible);
     }
+
+    /**
+     * Test that the preprocess_section_name method can alter the section rename value.
+     *
+     * @covers ::update
+     * @covers ::preprocess_delegated_section_fields
+     */
+    public function test_preprocess_section_name(): void {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+
+        require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $sectionactions = new sectionactions($course);
+        $section = $sectionactions->create_delegated('test_component', 1);
+
+        $result = $sectionactions->update($section, ['name' => 'new_name']);
+        $this->assertTrue($result);
+
+        $section = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertEquals('new_name_suffix', $section->name);
+
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info_by_id($section->id);
+        $this->assertEquals('new_name_suffix', $sectioninfo->name);
+
+        // Validate null name.
+        $section = $sectionactions->create_delegated('test_component', 1, (object)['name' => 'sample']);
+
+        $result = $sectionactions->update($section, ['name' => null]);
+        $this->assertTrue($result);
+
+        $section = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertEquals('null_name', $section->name);
+
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info_by_id($section->id);
+        $this->assertEquals('null_name', $sectioninfo->name);
+    }
 }

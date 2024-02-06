@@ -383,4 +383,43 @@ class stateupdates_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test components can add data to delegated section state updates.
+     * @covers ::add_section_put
+     */
+    public function test_put_section_state_extra_updates(): void {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+
+        require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
+
+        $course = $this->getDataGenerator()->create_course();
+        $activity = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id]
+        );
+
+        // The test component section delegate will add the activity cm info into the state.
+        $section = formatactions::section($course)->create_delegated('test_component', $activity->cmid);
+
+        $format = course_get_format($course);
+        $updates = new \core_courseformat\stateupdates($format);
+
+        $updates->add_section_put($section->id);
+
+        $data = $updates->jsonSerialize();
+
+        $this->assertCount(2, $data);
+
+        $sectiondata = $data[0];
+        $this->assertEquals('section', $sectiondata->name);
+        $this->assertEquals('put', $sectiondata->action);
+        $this->assertEquals($section->id, $sectiondata->fields->id);
+
+        $cmdata = $data[1];
+        $this->assertEquals('cm', $cmdata->name);
+        $this->assertEquals('put', $cmdata->action);
+        $this->assertEquals($activity->cmid, $cmdata->fields->id);
+    }
 }
