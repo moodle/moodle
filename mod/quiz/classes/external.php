@@ -933,10 +933,13 @@ class mod_quiz_external extends external_api {
                 'hasautosavedstep' => new external_value(PARAM_BOOL, 'whether this question attempt has autosaved data',
                                                             VALUE_OPTIONAL),
                 'flagged' => new external_value(PARAM_BOOL, 'whether the question is flagged or not'),
-                'state' => new external_value(PARAM_ALPHA, 'the state where the question is in.
+                'state' => new external_value(PARAM_ALPHA, 'the state where the question is in terms of correctness.
                     It will not be returned if the user cannot see it due to the quiz display correctness settings.',
                     VALUE_OPTIONAL),
-                'status' => new external_value(PARAM_RAW, 'current formatted state of the question', VALUE_OPTIONAL),
+                'stateclass' => new external_value(PARAM_NOTAGS,
+                    'A machine-readable class name for the state that this question attempt is in, as returned by question_usage_by_activity::get_question_state_class().
+                    Always returned.', VALUE_OPTIONAL),
+                'status' => new external_value(PARAM_RAW, 'Human readable state of the question.', VALUE_OPTIONAL),
                 'blockedbyprevious' => new external_value(PARAM_BOOL, 'whether the question is blocked by the previous question',
                     VALUE_OPTIONAL),
                 'mark' => new external_value(PARAM_RAW, 'the mark awarded.
@@ -970,41 +973,18 @@ class mod_quiz_external extends external_api {
             $qattempt = $attemptobj->get_question_attempt($slot);
             $questiondef = $qattempt->get_question(true);
 
-            // Get response files (for questions like essay that allows attachments).
-            $responsefileareas = [];
-            foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
-                if ($files = $attemptobj->get_question_attempt($slot)->get_last_qt_files($area, $contextid)) {
-                    $responsefileareas[$area]['area'] = $area;
-                    $responsefileareas[$area]['files'] = [];
-
-                    foreach ($files as $file) {
-                        $responsefileareas[$area]['files'][] = [
-                            'filename' => $file->get_filename(),
-                            'fileurl' => $qattempt->get_response_file_url($file),
-                            'filesize' => $file->get_filesize(),
-                            'filepath' => $file->get_filepath(),
-                            'mimetype' => $file->get_mimetype(),
-                            'timemodified' => $file->get_timemodified(),
-                        ];
-                    }
-                }
-            }
-
             // Check display settings for question.
             $settings = $questiondef->get_question_definition_for_external_rendering($qattempt, $displayoptions);
 
+            // Navigation information.
             $question = [
                 'slot' => $slot,
-                'type' => $qtype,
                 'page' => $attemptobj->get_question_page($slot),
                 'questionnumber' => $attemptobj->get_question_number($slot),
                 'flagged' => $attemptobj->is_question_flagged($slot),
-                'html' => $attemptobj->render_question($slot, $review, $renderer) . $PAGE->requires->get_end_code(),
-                'responsefileareas' => $responsefileareas,
                 'sequencecheck' => $qattempt->get_sequence_check_count(),
                 'lastactiontime' => $qattempt->get_last_step()->get_timecreated(),
                 'hasautosavedstep' => $qattempt->has_autosaved_step(),
-                'settings' => !empty($settings) ? json_encode($settings) : null,
             ];
 
             if ($question['questionnumber'] === (string) (int) $question['questionnumber']) {
@@ -1016,6 +996,8 @@ class mod_quiz_external extends external_api {
                 if ($showcorrectness) {
                     $question['state'] = (string) $attemptobj->get_question_state($slot);
                 }
+                // The stateclass is used for CSS classes but also for the lang strings.
+                $question['stateclass'] = $attemptobj->get_question_state_class($slot, $displayoptions->correctness);
                 $question['status'] = $attemptobj->get_question_status($slot, $displayoptions->correctness);
                 $question['blockedbyprevious'] = $attemptobj->is_blocked_by_previous_question($slot);
             }
@@ -1025,9 +1007,44 @@ class mod_quiz_external extends external_api {
             if ($displayoptions->marks >= question_display_options::MARK_AND_MAX) {
                 $question['mark'] = $attemptobj->get_question_mark($slot);
             }
-            if ($attemptobj->check_page_access($attemptobj->get_question_page($slot), false)) {
-                $questions[] = $question;
+
+            // Check access. This is needed especially when sequential navigation is enforced. To prevent the student see "future" questions.
+            $haveaccess = $attemptobj->check_page_access($attemptobj->get_question_page($slot), false);
+            if (!$haveaccess) {
+                $question['type'] = '';
+                $question['html'] = '';
             }
+
+            // For visited pages/questions it is ok to keep data the user already saw.
+            $questionalreadyseen = $attemptobj->get_currentpage() >= $attemptobj->get_question_page($slot);
+
+            // Information when only the user has access to the question at any moment (free navigation) or already seen.
+            if ($haveaccess || $questionalreadyseen) {
+                // Get response files (for questions like essay that allows attachments).
+                $responsefileareas = [];
+                foreach (question_bank::get_qtype($qtype)->response_file_areas() as $area) {
+                    if ($files = $attemptobj->get_question_attempt($slot)->get_last_qt_files($area, $contextid)) {
+                        $responsefileareas[$area]['area'] = $area;
+                        $responsefileareas[$area]['files'] = [];
+
+                        foreach ($files as $file) {
+                            $responsefileareas[$area]['files'][] = [
+                                'filename' => $file->get_filename(),
+                                'fileurl' => $qattempt->get_response_file_url($file),
+                                'filesize' => $file->get_filesize(),
+                                'filepath' => $file->get_filepath(),
+                                'mimetype' => $file->get_mimetype(),
+                                'timemodified' => $file->get_timemodified(),
+                            ];
+                        }
+                    }
+                }
+                $question['type'] = $qtype;
+                $question['html'] = $attemptobj->render_question($slot, $review, $renderer) . $PAGE->requires->get_end_code();
+                $question['responsefileareas'] = $responsefileareas;
+                $question['settings'] = !empty($settings) ? json_encode($settings) : null;
+            }
+            $questions[] = $question;
         }
         return $questions;
     }
@@ -1165,6 +1182,12 @@ class mod_quiz_external extends external_api {
         $result['warnings'] = $warnings;
         $result['questions'] = self::get_attempt_questions_data($attemptobj, false, 'all');
 
+        if ($attemptobj->get_state() == quiz_attempt::IN_PROGRESS && $attemptobj->get_quiz()->navmethod == 'free') {
+            // Only count the unanswered question if the navigation method is set to free.
+            $result['totalunanswered'] = $attemptobj->get_number_of_unanswered_questions();
+        }
+
+
         return $result;
     }
 
@@ -1178,6 +1201,7 @@ class mod_quiz_external extends external_api {
         return new external_single_structure(
             [
                 'questions' => new external_multiple_structure(self::question_structure()),
+                'totalunanswered' => new external_value(PARAM_INT, 'Total unanswered questions.', VALUE_OPTIONAL),
                 'warnings' => new external_warnings(),
             ]
         );
