@@ -24,18 +24,18 @@ Feature: Manage custom report columns sorting
     Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
     # This will be the fallback sort after toggling lastname sorting.
-    And I click on "Enable initial sorting for column First name" "checkbox"
-    When I click on "Enable initial sorting for column Last name" "checkbox"
+    And I click on "Enable initial sorting for column 'First name'" "checkbox"
+    When I click on "Enable initial sorting for column 'Last name'" "checkbox"
     Then I should see "Updated sorting for column 'Last name'"
     And "user02" "table_row" should appear before "user01" "table_row"
-    And I click on "Disable initial sorting for column Last name" "checkbox"
+    And I click on "Disable initial sorting for column 'Last name'" "checkbox"
     And I should see "Updated sorting for column 'Last name'"
     And "user01" "table_row" should appear before "user02" "table_row"
 
   Scenario: Change column sort direction in report
     Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
-    When I click on "Enable initial sorting for column Last name" "checkbox"
+    When I click on "Enable initial sorting for column 'Last name'" "checkbox"
     And I click on "Sort column 'Last name' descending" "button"
     Then I should see "Updated sorting for column 'Last name'"
     And "user01" "table_row" should appear before "user02" "table_row"
@@ -46,8 +46,8 @@ Feature: Manage custom report columns sorting
   Scenario: Change column sort order in report
     Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
-    When I click on "Enable initial sorting for column Last name" "checkbox"
-    And I click on "Enable initial sorting for column First name" "checkbox"
+    When I click on "Enable initial sorting for column 'Last name'" "checkbox"
+    And I click on "Enable initial sorting for column 'First name'" "checkbox"
     And I click on "Move sorting for column 'First name'" "button"
     And I click on "To the top of the list" "link" in the "Move sorting for column 'First name'" "dialogue"
     Then I should see "Updated sorting for column 'First name'"
@@ -58,7 +58,7 @@ Feature: Manage custom report columns sorting
     Given I change window size to "large"
     And I click on "Add column 'Full name'" "link"
     And I click on "Show/hide 'Sorting'" "button"
-    When I click on "Enable initial sorting for column Full name" "checkbox"
+    When I click on "Enable initial sorting for column 'Full name'" "checkbox"
     Then I should see "Updated sorting for column 'Full name'"
     # User1 = Alice Zebra; User2=Zoe Aardvark; User3 = Alice Badger.
     And "user03" "table_row" should appear before "user01" "table_row"
@@ -72,7 +72,7 @@ Feature: Manage custom report columns sorting
     Given I change window size to "large"
     And I click on "Show/hide 'Sorting'" "button"
     # Sort by last name descending.
-    When I click on "Enable initial sorting for column Last name" "checkbox"
+    When I click on "Enable initial sorting for column 'Last name'" "checkbox"
     Then "user02" "table_row" should appear before "user01" "table_row"
     # Switching to preview mode should observe report config.
     And I click on "Switch to preview mode" "button"
