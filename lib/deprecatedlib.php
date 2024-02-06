@@ -222,6 +222,14 @@ function print_arrow() {
 }
 
 /**
+ * @deprecated since Moodle 4.0
+ */
+#[\core\attribute\deprecated('category_action_bar tertiary navigation', since: '4.0', mdl: 'MDL-73462', final: true)]
+function print_course_request_buttons() {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
+
+/**
  * Execute cron tasks
  *
  * @param int|null $keepalive The keepalive time for this cron run.
