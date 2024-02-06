@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/mod/forum/lib.php');
  * @copyright  2012 Mark Nelson <markn@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class externallib_test extends externallib_advanced_testcase {
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Tests set up
@@ -1056,6 +1056,8 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->resetAfterTest(true);
 
+        $clock = $this->mock_clock_with_frozen();
+
         // Set the CFG variable to allow track forums.
         $CFG->forum_trackreadposts = true;
 
@@ -1105,7 +1107,7 @@ class externallib_test extends externallib_advanced_testcase {
         $record->userid = $user1->id;
         $record->forum = $forum1->id;
         $discussion1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record);
-        sleep(1);
+        $clock->bump();
 
         // Add three replies to the discussion 1 from different users.
         $record = new \stdClass();
@@ -1113,16 +1115,16 @@ class externallib_test extends externallib_advanced_testcase {
         $record->parent = $discussion1->firstpost;
         $record->userid = $user2->id;
         $discussion1reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-        sleep(1);
+        $clock->bump();
 
         $record->parent = $discussion1reply1->id;
         $record->userid = $user3->id;
         $discussion1reply2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-        sleep(1);
+        $clock->bump();
 
         $record->userid = $user4->id;
         $discussion1reply3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record);
-        sleep(1);
+        $clock->bump();
 
         // Create discussion2.
         $record2 = new \stdClass();
@@ -1130,7 +1132,7 @@ class externallib_test extends externallib_advanced_testcase {
         $record2->userid = $user1->id;
         $record2->forum = $forum1->id;
         $discussion2 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record2);
-        sleep(1);
+        $clock->bump();
 
         // Add one reply to the discussion 2.
         $record2 = new \stdClass();
@@ -1138,7 +1140,7 @@ class externallib_test extends externallib_advanced_testcase {
         $record2->parent = $discussion2->firstpost;
         $record2->userid = $user2->id;
         $discussion2reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record2);
-        sleep(1);
+        $clock->bump();
 
         // Create discussion 3.
         $record3 = new \stdClass();
@@ -1146,7 +1148,7 @@ class externallib_test extends externallib_advanced_testcase {
         $record3->userid = $user1->id;
         $record3->forum = $forum1->id;
         $discussion3 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_discussion($record3);
-        sleep(1);
+        $clock->bump();
 
         // Add two replies to the discussion 3.
         $record3 = new \stdClass();
@@ -1154,7 +1156,7 @@ class externallib_test extends externallib_advanced_testcase {
         $record3->parent = $discussion3->firstpost;
         $record3->userid = $user2->id;
         $discussion3reply1 = self::getDataGenerator()->get_plugin_generator('mod_forum')->create_post($record3);
-        sleep(1);
+        $clock->bump();
 
         $record3->parent = $discussion3reply1->id;
         $record3->userid = $user3->id;
