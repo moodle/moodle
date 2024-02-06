@@ -690,8 +690,29 @@ class phpunit_util extends testing_util {
         // we need normal debugging outside of tests to find problems in our phpunit integration.
         $backtrace = debug_backtrace();
 
+        // Only for advanced_testcase, database_driver_testcase (and descendants). Others aren't
+        // able to manage the debugging sink, so any debugging has to be output normally and, hopefully,
+        // PHPUnit execution will catch that unexpected output properly.
+        $sinksupport = false;
         foreach ($backtrace as $bt) {
-            if (isset($bt['object']) and is_object($bt['object'])
+            if (isset($bt['object']) && is_object($bt['object'])
+                && (
+                    $bt['object'] instanceof advanced_testcase ||
+                    $bt['object'] instanceof database_driver_testcase)
+            ) {
+                $sinksupport = true;
+                break;
+            }
+        }
+        if (!$sinksupport) {
+            return false;
+        }
+
+        // Verify that we are inside a PHPUnit test (little bit redundant, because
+        // we already have checked above that this is an advanced/database_driver
+        // testcase, but let's keep things double safe for now).
+        foreach ($backtrace as $bt) {
+            if (isset($bt['object']) && is_object($bt['object'])
                     && $bt['object'] instanceof PHPUnit\Framework\TestCase) {
                 $debug = new stdClass();
                 $debug->message = $message;

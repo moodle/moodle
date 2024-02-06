@@ -142,6 +142,13 @@ abstract class database_driver_testcase extends base_testcase {
         try {
             parent::runBare();
 
+            // Deal with any debugging messages.
+            $debugerror = phpunit_util::display_debugging_messages(true);
+            $this->resetDebugging();
+            if (!empty($debugerror)) {
+                trigger_error('Unexpected debugging() call detected.' . "\n" . $debugerror, E_USER_NOTICE);
+            }
+
         } catch (Exception $ex) {
             $e = $ex;
         } catch (Throwable $ex) {
