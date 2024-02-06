@@ -10,6 +10,7 @@ $(document).ready(function () {
         // const gazeDirectionElement = document.getElementById('gazeDirection');
 
         let susCounter = 0;
+        let probSusCounter = 0;
         let duration;
         let intervalId;
         let filename;
@@ -77,15 +78,15 @@ $(document).ready(function () {
 
                         if (yawAngle > 15 || yawAngle < -10 || pitchAngle > 10 || pitchAngle < -10) {
                             gazeDirection = "sus";
-                            console.log('sus');
                             promptMessage = "Please position yourself at the center and face forward towards the camera.";
-                            susMovement('suspicious_movement');
+                            probSusMovement('suspicious_movement');
                         }
 
                         if (gazeDirection === "neutral"){
-                            susMovement('sendTheActivty');
+                            probSusMovement('sendTheActivty');
                             stopTimer();
                             susCounter = 0;
+                            probSusCounter = 0;
                         }
 
                         // Display the angles
@@ -98,25 +99,29 @@ $(document).ready(function () {
                 }
                 else if (faceCount > 1) {
                     //gazeDirectionElement.innerHTML = `Gaze Direction: Multiple face detected`;
-                    susMovement('multiple_face');
+                    probSusMovement('multiple_face');
 
                 }
                 else {
                     //gazeDirectionElement.innerHTML = `Gaze Direction: No face detected`;
-                    susMovement('no_face');
+                    probSusMovement('no_face');
                 }
                 
             }
         }
 
-        function susMovement(evidence_name_type) {
-            if (susCounter === 0 && evidence_name_type !== 'sendTheActivty'){
-                updateDuration();
-                susCounter++;
-                console.log('Counter: ', susCounter);
-                const intervalId = startTimer();
-                captureEvidence(evidence_name_type);
-                console.log('captured');
+        function probSusMovement(evidence_name_type) {
+            probSusCounter++;
+            console.log('sussss', probSusCounter);
+            if (probSusCounter > 10 && evidence_name_type !== 'sendTheActivty'){
+                if (susCounter === 0 && evidence_name_type !== 'sendTheActivty'){
+                    updateDuration();
+                    susCounter++;
+                    console.log('Counter: ', susCounter);
+                    const intervalId = startTimer();
+                    captureEvidence(evidence_name_type);
+                    console.log('captured');
+                }
             }
         }
 
