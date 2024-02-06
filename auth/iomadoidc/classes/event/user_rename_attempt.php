@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Mock IOMADOIDC client used in unit test.
+ * A Moodle user rename attempt event.
  *
  * @package auth_iomadoidc
  * @author James McQuillan <james.mcquillan@remote-learner.net>
@@ -23,29 +23,44 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-namespace auth_iomadoidc\tests;
+namespace auth_iomadoidc\event;
+
+use context_system;
+use core\event\base;
 
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * A mock iomadoidcclient class providing access to all inaccessible properties/methods.
+ * Fired when a user attempts to change their username from the auth_iomadoidc plugin.
  */
-class mockiomadoidcclient extends \auth_iomadoidc\iomadoidcclient {
-    /** @var \auth_iomadoidc\httpclientinterface An HTTP client to use. */
-    public $httpclient;
-
-    /** @var array Array of endpoints. */
-    public $endpoints = [];
+class user_rename_attempt extends base {
+    /**
+     * Return localised event name.
+     *
+     * @return string
+     */
+    public static function get_name() {
+        return get_string('eventuserrenameattempt', 'auth_iomadoidc');
+    }
 
     /**
-     * Stub method to access protected parent method.
+     * Returns non-localised event description with id's for admin use only.
      *
-     * @param bool $promptlogin Whether to prompt for login or use existing session.
-     * @param array $stateparams Parameters to store as state.
-     * @param array $extraparams Additional parameters to send with the IOMADOIDC request.
-     * @return array Array of request parameters.
+     * @return string
      */
-    public function getauthrequestparams($promptlogin = false, array $stateparams = array(), array $extraparams = array()) {
-        return parent::getauthrequestparams($promptlogin, $stateparams);
+    public function get_description() {
+        return "The auth_iomadoidc plugin attempts to change the username of the user with id '$this->userid'.";
+    }
+
+    /**
+     * Init method.
+     *
+     * @return void
+     */
+    protected function init() {
+        $this->context = context_system::instance();
+        $this->data['crud'] = 'u';
+        $this->data['edulevel'] = self::LEVEL_OTHER;
+        $this->data['objecttable'] = 'user';
     }
 }

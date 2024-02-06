@@ -160,7 +160,7 @@ class base {
 
                         if (!isset($userdata['objectId'])) {
                             $objectid = $token->claim('oid');
-                            if (!$objectid) {
+                            if (!empty($objectid)) {
                                 $userdata['objectId'] = $objectid;
                             }
                         }
@@ -234,8 +234,12 @@ class base {
                 }
 
                 if (!isset($userdata['objectId'])) {
+                    // Use 'oid' if available (Azure-specific), or fall back to standard "sub" claim.
                     $objectid = $token->claim('oid');
-                    if (!$objectid) {
+                    if (empty($objectid)) {
+                        $objectid = $token->claim('sub');
+                    }
+                    if (!empty($objectid)) {
                         $userdata['objectId'] = $objectid;
                     }
                 }
@@ -332,9 +336,9 @@ class base {
     }
 
     /**
-     * Handle IOMAD OIDC disconnection from Moodle account.
+     * Handle IOMADOIDC disconnection from Moodle account.
      *
-     * @param bool $justremovetokens If true, just remove the stored IOMAD OIDC tokens for the user, otherwise revert login methods.
+     * @param bool $justremovetokens If true, just remove the stored IOMADOIDC tokens for the user, otherwise revert login methods.
      * @param bool $donotremovetokens If true, do not remove tokens when disconnecting. This migrates from a login account to a
      *                                "linked" account.
      * @param \moodle_url|null $redirect Where to redirect if successful.
@@ -396,8 +400,8 @@ class base {
                 throw new moodle_exception('errornodisconnectionauthmethod', 'auth_iomadoidc');
             }
 
-            // Check to see if the user has a username created by IOMAD OIDC, or a self-created username.
-            // IOMAD OIDC-created usernames are usually very verbose, so we'll allow them to choose a sensible one.
+            // Check to see if the user has a username created by IOMADOIDC, or a self-created username.
+            // IOMADOIDC-created usernames are usually very verbose, so we'll allow them to choose a sensible one.
             // Otherwise, keep their existing username.
             $iomadoidctoken = $DB->get_record('auth_iomadoidc_token', ['userid' => $userrec->id]);
             $ccun = (isset($iomadoidctoken->iomadoidcuniqid) && strtolower($iomadoidctoken->iomadoidcuniqid) === $userrec->username) ? true : false;

@@ -67,7 +67,7 @@ function xmldb_auth_iomadoidc_upgrade($oldversion) {
     }
 
     if ($oldversion < 2015012704) {
-        // Update IOMAD OIDC users.
+        // Update IOMADOIDC users.
         $sql = 'SELECT u.id as userid,
                        u.username as username,
                        tok.id as tokenid,

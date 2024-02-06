@@ -24,7 +24,6 @@
  */
 
 namespace auth_iomadoidc;
-use iomad;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -33,7 +32,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class utils {
     /**
-     * Process an IOMAD OIDC JSON response.
+     * Process an IOMADOIDC JSON response.
      *
      * @param string $response The received JSON.
      * @param array $expectedstructure
@@ -118,18 +117,7 @@ class utils {
      * @param null $debugdata
      */
     public static function debug($message, $where = '', $debugdata = null) {
-        global $CFG;
-
-        // IOMAD
-        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
-        $companyid = iomad::get_my_companyid(context_system::instance(), false);
-        if (!empty($companyid)) {
-            $postfix = "_$companyid";
-        } else {
-            $postfix = "";
-        }
-
-        $debugmode = (bool)get_config('auth_iomadoidc', 'debugmode' . $postfix);
+        $debugmode = (bool)get_config('auth_iomadoidc', 'debugmode');
         if ($debugmode === true) {
             $fullmessage = (!empty($where)) ? $where : 'Unknown function';
             $fullmessage .= ': '.$message;

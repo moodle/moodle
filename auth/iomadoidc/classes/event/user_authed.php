@@ -28,7 +28,7 @@ namespace auth_iomadoidc\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Event fired when a user authenticated with IOMAD OIDC, but does not log in.
+ * Event fired when a user authenticated with IOMADOIDC, but does not log in.
  */
 class user_authed extends \core\event\base {
     /**

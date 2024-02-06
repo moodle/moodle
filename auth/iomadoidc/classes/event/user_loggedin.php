@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * A user uses IOMAD OIDC logged in event.
+ * A user uses IOMADOIDC logged in event.
  *
  * @package auth_iomadoidc
  * @author James McQuillan <james.mcquillan@remote-learner.net>
@@ -28,7 +28,7 @@ namespace auth_iomadoidc\event;
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Fired when a user uses IOMAD OIDC to log in.
+ * Fired when a user uses IOMADOIDC to log in.
  */
 class user_loggedin extends \core\event\base {
     /**

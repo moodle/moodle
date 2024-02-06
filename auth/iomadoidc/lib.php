@@ -36,7 +36,7 @@ CONST AUTH_IOMADOIDC_AAD_ENDPOINT_VERSION_UNKNOWN = 0;
 CONST AUTH_IOMADOIDC_AAD_ENDPOINT_VERSION_1 = 1;
 CONST AUTH_IOMADOIDC_AAD_ENDPOINT_VERSION_2 = 2;
 
-// IOMAD OIDC application authentication method.
+// IOMADOIDC application authentication method.
 CONST AUTH_IOMADOIDC_AUTH_METHOD_SECRET = 1;
 CONST AUTH_IOMADOIDC_AUTH_METHOD_CERTIFICATE = 2;
 
@@ -251,6 +251,7 @@ function auth_iomadoidc_get_remote_fields() {
             'givenName' => get_string('settings_fieldmap_field_givenName', 'auth_iomadoidc'),
             'surname' => get_string('settings_fieldmap_field_surname', 'auth_iomadoidc'),
             'mail' => get_string('settings_fieldmap_field_mail', 'auth_iomadoidc'),
+            'onPremisesSamAccountName' => get_string('settings_fieldmap_field_onPremisesSamAccountName', 'auth_iomadoidc'),
             'streetAddress' => get_string('settings_fieldmap_field_streetAddress', 'auth_iomadoidc'),
             'city' => get_string('settings_fieldmap_field_city', 'auth_iomadoidc'),
             'postalCode' => get_string('settings_fieldmap_field_postalCode', 'auth_iomadoidc'),
