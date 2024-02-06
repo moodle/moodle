@@ -106,12 +106,12 @@ Feature: Add links to TinyMCE
     And I click on "Save changes" "button"
     And I open my profile in edit mode
     And I click on the "Image" button for the "Description" TinyMCE editor
-    And I click on "Browse repositories..." "button" in the "Image properties" "dialogue"
+    And I click on "Browse repositories" "button" in the "Insert image" "dialogue"
     And I select "Private files" repository in file picker
     And I click on "moodle-logo.png" "link"
     And I click on "Select this file" "button"
-    And I set the field "Describe this image for someone who cannot see it" to "It's the Moodle"
-    And I click on "Save image" "button" in the "Image properties" "dialogue"
+    And I set the field "How would you describe this image to someone who can't see it:" to "It's the Moodle"
+    And I click on "Save" "button" in the "Image details" "dialogue"
     And I select the "img" element in position "0" of the "Description" TinyMCE editor
     And I click on the "Link" button for the "Description" TinyMCE editor
     And I set the field "Enter a URL" to "https://moodle.org/"
@@ -132,8 +132,8 @@ Feature: Add links to TinyMCE
     And I click on "Edit profile" "link" in the "region-main" "region"
     And I select the "img" element in position "0" of the "Description" TinyMCE editor
     And I click on the "Image" button for the "Description" TinyMCE editor
-    And the field "Describe this image for someone who cannot see it" matches value "It's the Moodle"
-    And I click on "Close" "button" in the "Image properties" "dialogue"
+    And the field "How would you describe this image to someone who can't see it:" matches value "It's the Moodle"
+    And I click on "Close" "button" in the "Image details" "dialogue"
     And I click on the "Link" button for the "Description" TinyMCE editor
     And the field "Text to display" matches value "Moodle - Open-source learning platform"
     And the field "Enter a URL" matches value "https://moodle.org/"
