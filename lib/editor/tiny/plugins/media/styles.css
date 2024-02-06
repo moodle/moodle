@@ -33,3 +33,11 @@ iframe.mm_iframe {
     font-weight: 600;
     color: red;
 }
+
+.tiny_image_form .tiny_image_dropzone {
+    padding: 1.5rem 1rem;
+}
+
+.tiny_image_form .tiny_image_loader_container {
+    height: 200px;
+}
