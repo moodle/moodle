@@ -122,6 +122,9 @@ class di {
             // Alias the PSR-20 clock interface to the Moodle clock. They are compatible.
             \core\clock::class => fn() => new \core\system_clock(),
             \Psr\Clock\ClockInterface::class => \DI\get(\core\clock::class),
+
+            // Note: libphonenumber PhoneNumberUtil uses a singleton.
+            \libphonenumber\PhoneNumberUtil::class => fn() => \libphonenumber\PhoneNumberUtil::getInstance(),
         ]);
 
         // Add any additional definitions using hooks.

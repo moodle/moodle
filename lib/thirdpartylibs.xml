@@ -815,4 +815,11 @@ All rights reserved.</copyright>
       <license>MIT</license>
       <repository>https://github.com/spatie/php-cloneable</repository>
   </library>
+  <library>
+      <location>giggsey/libphonenumber-for-php-lite</location>
+      <name>libphonenumber for PHP (Lite)</name>
+      <version>8.13.31</version>
+      <license>Apache 2.0</license>
+      <repository>https://github.com/giggsey/libphonenumber-for-php-lite</repository>
+  </library>
 </libraries>
