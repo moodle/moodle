@@ -198,6 +198,7 @@ class company_course_users_form extends moodleform {
         $mform->addElement('html', '
               </td>
               <td id="buttonscell">
+                  <p class="arrow_button">
                       <input name="add" id="add" type="submit" value="&nbsp;' .
                       $output->larrow().'&nbsp;'. get_string('enrol', 'block_iomad_company_admin') .
                        '" title="Enrol" /><br>
@@ -211,6 +212,7 @@ class company_course_users_form extends moodleform {
                       <input name="removeall" id="removeall" type="submit" value="&nbsp;' .
                       $output->rarrow().'&nbsp;'. get_string('unenrolall', 'block_iomad_company_admin') .
                       '" title="Enrolall" /><br>
+                  </p>
               </td>
               <td id="potentialcell">');
 
