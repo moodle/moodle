@@ -399,7 +399,7 @@ function course_integrity_check($courseid, $rawmods = null, $sections = null, $f
 function get_module_types_names($plural = false, $resetcache = false) {
     static $modnames = null;
     global $DB, $CFG;
-    if ($modnames === null || $resetcache) {
+    if ($modnames === null || empty($modnames[0]) || $resetcache) {
         $modnames = array(0 => array(), 1 => array());
         if ($allmods = $DB->get_records("modules")) {
             foreach ($allmods as $mod) {
