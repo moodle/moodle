@@ -1522,6 +1522,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertFalse($completiondata['isautomatic']);
         $this->assertFalse($completiondata['istrackeduser']);
         $this->assertTrue($completiondata['uservisible']);
+        $this->assertFalse($completiondata['isoverallcomplete']);
 
         // Set activity completed.
         core_completion_external::update_activity_completion_status_manually($forumcm->id, true);
@@ -1532,6 +1533,7 @@ class externallib_test extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(core_course_external::get_course_contents_returns(), $result);
 
         $this->assertEquals(COMPLETION_COMPLETE, $result[0]['modules'][0]["completiondata"]['state']);
+        $this->assertTrue($result[0]['modules'][0]["completiondata"]['isoverallcomplete']);
         $this->assertNotEmpty($result[0]['modules'][0]["completiondata"]['timecompleted']);
         $this->assertEmpty($result[0]['modules'][0]["completiondata"]['overrideby']);
 
@@ -1553,6 +1555,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertFalse($completiondata['isautomatic']);
         $this->assertFalse($completiondata['istrackeduser']);
         $this->assertTrue($completiondata['uservisible']);
+        $this->assertFalse($completiondata['isoverallcomplete']);
 
         // Disable completion.
         $CFG->enablecompletion = 0;
@@ -1603,6 +1606,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertFalse($completiondata['istrackeduser']);
         $this->assertTrue($completiondata['uservisible']);
         $this->assertCount(1, $completiondata['details']);
+        $this->assertFalse($completiondata['isoverallcomplete']);
     }
 
     /**

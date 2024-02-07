@@ -349,7 +349,9 @@ class core_completion_external extends external_api {
                                 VALUE_DEFAULT,
                                 []
                             ),
-
+                            'isoverallcomplete' => new external_value(PARAM_BOOL,
+                                'Whether the overall completion state of this course module should be marked as complete or not.',
+                                VALUE_OPTIONAL),
                         ], 'Activity'
                     ), 'List of activities status'
                 ),
