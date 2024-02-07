@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 4.3.3 ===
 
 * The `html_writer::select_time` method has a `$timezone` parameter to use when formatting the time parameter
+* New Behat `heading` named selector to more easily assert the presence of H1-H6 elements on the page
 
 === 4.3.2 ===
 

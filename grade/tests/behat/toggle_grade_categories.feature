@@ -52,7 +52,7 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Course total        |
     And "Collapse" "link" should exist in the "Course" "table_row"
     And "Expand" "link" should exist in the "Category 1" "table_row"
-    And the following should not exist in the "user-grades" table:
+    And the following should not exist in the "setup-grades" table:
       | Test assignment two |
       | Manual grade        |
       | Category 1 total    |
@@ -139,8 +139,6 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Category 1          |
       | Test assignment two |
       | Manual grade        |
-      | Category 1 total    |
-      | Course total        |
     And "Collapse" "link" should exist in the "Course" "table_row"
     And "Collapse" "link" should exist in the "Category 1" "table_row"
     # Collapse the grade category 'Category 1'.
@@ -166,8 +164,6 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Category 1          |
       | Test assignment two |
       | Manual grade        |
-      | Category 1 total    |
-      | Course total        |
     And "Collapse" "link" should exist in the "Course" "table_row"
     And "Collapse" "link" should exist in the "Category 1" "table_row"
     # Collapse again the grade category 'Category 1'.
@@ -182,8 +178,6 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Category 1          |
       | Test assignment two |
       | Manual grade        |
-      | Category 1 total    |
-      | Course total        |
     # Expand the grade category 'Course'. 'Category 1' should be still collapsed.
     And I click on "Expand" "link" in the "Course" "table_row"
     And the following should exist in the "setup-grades" table:
@@ -191,7 +185,6 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Course              |
       | Test assignment one |
       | Category 1          |
-      | Course total        |
     And "Collapse" "link" should exist in the "Course" "table_row"
     And "Expand" "link" should exist in the "Category 1" "table_row"
     And the following should not exist in the "setup-grades" table:
@@ -229,7 +222,6 @@ Feature: Teachers can toggle the visibility of the grade categories in the Grade
       | Course              |
       | Test assignment one |
       | Category 1          |
-      | Course total        |
     And "Collapse" "link" should exist in the "Course" "table_row"
     And "Expand" "link" should exist in the "Category 1" "table_row"
     And the following should not exist in the "setup-grades" table:
