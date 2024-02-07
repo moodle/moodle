@@ -87,7 +87,8 @@ require_sesskey();
 
 // Prepare to handle output via mtrace.
 echo html_writer::start_tag('pre');
-require('lib.php');
+
+require_once("{$CFG->dirroot}/{$CFG->admin}/tool/task/lib.php");
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 
 // Run the specified task (this will output an error if it doesn't exist).
