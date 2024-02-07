@@ -1,5 +1,10 @@
 This files describes API changes for code that uses the user API.
 
+=== 4.4 ===
+
+* The `profile_field_base` class now contains a `show_field_content` method to determine whether the field and
+  content should be shown to the user. Can be overridden in child classes as required
+
 === 4.3 ===
 
 * Added new methods:
