@@ -708,13 +708,7 @@ function user_count_login_failures($user, $reset = true) {
  * @return array
  */
 function user_convert_text_to_menu_items($text, $page) {
-    global $OUTPUT, $CFG;
-
     $lines = explode("\n", $text);
-    $items = array();
-    $lastchild = null;
-    $lastdepth = null;
-    $lastsort = 0;
     $children = array();
     foreach ($lines as $line) {
         $line = trim($line);
@@ -742,8 +736,9 @@ function user_convert_text_to_menu_items($text, $page) {
         // Name processing.
         $namebits = explode(',', $bits[0], 2);
         if (count($namebits) == 2) {
+            $namebits[1] = $namebits[1] ?: 'core';
             // Check the validity of the identifier part of the string.
-            if (clean_param($namebits[0], PARAM_STRINGID) !== '') {
+            if (clean_param($namebits[0], PARAM_STRINGID) !== '' && clean_param($namebits[1], PARAM_COMPONENT) !== '') {
                 // Treat this as a language string.
                 $child->title = get_string($namebits[0], $namebits[1]);
                 $child->titleidentifier = implode(',', $namebits);
