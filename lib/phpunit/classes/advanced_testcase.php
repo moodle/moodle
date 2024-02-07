@@ -64,7 +64,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     final public function runBare(): void {
-        global $DB;
+        global $CFG, $DB;
 
         if (phpunit_util::$lastdbwrites != $DB->perf_get_writes()) {
             // this happens when previous test does not reset, we can not use transactions
@@ -78,21 +78,17 @@ abstract class advanced_testcase extends base_testcase {
         try {
             $this->setCurrentTimeStart();
             parent::runBare();
-            // set DB reference in case somebody mocked it in test
-            $DB = phpunit_util::get_global_backup('DB');
-
-            // Deal with any debugging messages.
-            $debugerror = phpunit_util::display_debugging_messages(true);
-            $this->resetDebugging();
-            if (!empty($debugerror)) {
-                trigger_error('Unexpected debugging() call detected.'."\n".$debugerror, E_USER_NOTICE);
-            }
-
         } catch (Exception $ex) {
             $e = $ex;
         } catch (Throwable $ex) {
             // Engine errors in PHP7 throw exceptions of type Throwable (this "catch" will be ignored in PHP5).
             $e = $ex;
+        } finally {
+            // Reset global state after test and test failure.
+            $CFG = phpunit_util::get_global_backup('CFG');
+            $DB = phpunit_util::get_global_backup('DB');
+            // This is _hacky_. We need to reset the autoloader, and this is the only way to do so right now.
+            (new ReflectionProperty(\core_component::class, 'plugintypes'))->setValue(null, null);
         }
 
         if (isset($e)) {
@@ -101,7 +97,14 @@ abstract class advanced_testcase extends base_testcase {
             throw $e;
         }
 
-        if (!$this->testdbtransaction or $this->testdbtransaction->is_disposed()) {
+        // Deal with any debugging messages.
+        $debugerror = phpunit_util::display_debugging_messages(true);
+        $this->resetDebugging();
+        if (!empty($debugerror)) {
+            trigger_error('Unexpected debugging() call detected.' . "\n" . $debugerror, E_USER_NOTICE);
+        }
+
+        if (!$this->testdbtransaction || $this->testdbtransaction->is_disposed()) {
             $this->testdbtransaction = null;
         }
 
