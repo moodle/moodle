@@ -3406,7 +3406,7 @@ class section_info implements IteratorAggregate {
         }
         $ret['sequence'] = $this->get_sequence();
         $ret['course'] = $this->get_course();
-        $ret = array_merge($ret, course_get_format($this->modinfo->get_course())->get_format_options($this->_sectionnum));
+        $ret = array_merge($ret, course_get_format($this->modinfo->get_course())->get_format_options($this));
         return new ArrayIterator($ret);
     }
 
