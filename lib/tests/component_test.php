@@ -628,54 +628,54 @@ final class component_test extends advanced_testcase {
           'overlap'   => 'lib/tests/fixtures/component/overlap'
         ];
         return [
-          'PSR-0 Classloading - Root' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0_main',
-              'includedfiles' => "{$directory}psr0/main.php",
-          ],
-          'PSR-0 Classloading - Sub namespace - underscores' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0_subnamespace_example',
-              'includedfiles' => "{$directory}psr0/subnamespace/example.php",
-          ],
-          'PSR-0 Classloading - Sub namespace - slashes' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr0\\subnamespace\\slashes',
-              'includedfiles' => "{$directory}psr0/subnamespace/slashes.php",
-          ],
-          'PSR-4 Classloading - Root' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\main',
-              'includedfiles' => "{$directory}psr4/main.php",
-          ],
-          'PSR-4 Classloading - Sub namespace' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\subnamespace\\example',
-              'includedfiles' => "{$directory}psr4/subnamespace/example.php",
-          ],
-          'PSR-4 Classloading - Ensure underscores are not converted to paths' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'psr4\\subnamespace\\underscore_example',
-              'includedfiles' => "{$directory}psr4/subnamespace/underscore_example.php",
-          ],
-          'Overlap - Ensure no unexpected problems with PSR-4 when overlapping namespaces.' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'overlap\\subnamespace\\example',
-              'includedfiles' => "{$directory}overlap/subnamespace/example.php",
-          ],
-          'Overlap - Ensure no unexpected problems with PSR-0 overlapping namespaces.' => [
-              'psr0' => $psr0,
-              'psr4' => $psr4,
-              'classname' => 'overlap_subnamespace_example2',
-              'includedfiles' => "{$directory}overlap/subnamespace/example2.php",
-          ],
+            'PSR-0 Classloading - Root' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0_main',
+                'includedfiles' => "{$directory}psr0/main.php",
+            ],
+            'PSR-0 Classloading - Sub namespace - underscores' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0_subnamespace_example',
+                'includedfiles' => "{$directory}psr0/subnamespace/example.php",
+            ],
+            'PSR-0 Classloading - Sub namespace - slashes' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr0\\subnamespace\\slashes',
+                'includedfiles' => "{$directory}psr0/subnamespace/slashes.php",
+            ],
+            'PSR-4 Classloading - Root' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\main',
+                'includedfiles' => "{$directory}psr4/main.php",
+            ],
+            'PSR-4 Classloading - Sub namespace' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\subnamespace\\example',
+                'includedfiles' => "{$directory}psr4/subnamespace/example.php",
+            ],
+            'PSR-4 Classloading - Ensure underscores are not converted to paths' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'psr4\\subnamespace\\underscore_example',
+                'includedfiles' => "{$directory}psr4/subnamespace/underscore_example.php",
+            ],
+            'Overlap - Ensure no unexpected problems with PSR-4 when overlapping namespaces.' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'overlap\\subnamespace\\example',
+                'includedfiles' => "{$directory}overlap/subnamespace/example.php",
+            ],
+            'Overlap - Ensure no unexpected problems with PSR-0 overlapping namespaces.' => [
+                'psr0' => $psr0,
+                'psr4' => $psr4,
+                'classname' => 'overlap_subnamespace_example2',
+                'includedfiles' => "{$directory}overlap/subnamespace/example2.php",
+            ],
         ];
     }
 
