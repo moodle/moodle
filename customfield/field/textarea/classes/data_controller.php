@@ -88,7 +88,14 @@ class data_controller extends \core_customfield\data_controller {
         if (!property_exists($datanew, $fieldname)) {
             return;
         }
+
+        // Normalise form data, for cases it's come from an external source.
         $fromform = $datanew->$fieldname;
+        if (!is_array($fromform)) {
+            $fromform = ['text' => $fromform];
+            $fromform['format'] = $this->get('id') ? $this->get('valueformat') :
+                $this->get_field()->get_configdata_property('defaultvalueformat');
+        }
 
         if (!$this->get('id')) {
             $this->data->set('value', '');
