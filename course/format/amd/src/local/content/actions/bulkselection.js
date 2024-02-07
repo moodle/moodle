@@ -125,12 +125,12 @@ class BulkSelector {
         }
         return this._getContentCheckboxes(bulk.selectedType).every(bulkSelect => {
             if (bulkSelect.disabled) {
-                return false;
+                return true;
             }
-            // Section zero is never selectale for bulk actions.
+            // Some sections may not be selectale for bulk actions.
             if (bulk.selectedType == 'section') {
                 const section = this.courseEditor.get('section', bulkSelect.dataset.id);
-                if (section.number == 0) {
+                if (!section.bulkeditable) {
                     return true;
                 }
             }
@@ -227,6 +227,12 @@ class BulkSelector {
             if (bulkSelect.disabled) {
                 return true;
             }
+            if (elementType == 'section') {
+                const section = this.courseEditor.get('section', bulkSelect.dataset.id);
+                if (value && !section?.bulkeditable) {
+                    return true;
+                }
+            }
             if (bulkSelect.dataset.id == id || bulkSelect.dataset.id == lastSelectedId) {
                 found++;
             }
@@ -277,7 +283,7 @@ class BulkSelector {
             }
             if (elementType == 'section') {
                 const section = this.courseEditor.get('section', bulkSelect.dataset.id);
-                if (section?.number == 0) {
+                if (value && !section?.bulkeditable) {
                     return;
                 }
             }
