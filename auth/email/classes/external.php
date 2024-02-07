@@ -108,9 +108,7 @@ class auth_email_external extends external_api {
         if (!empty($CFG->country)) {
             $result['country'] = $CFG->country;
         }
-        if (!empty($CFG->extendedusernamechars)) {
-            $result['extendedusernamechars'] = $CFG->extendedusernamechars;
-        }
+        $result['extendedusernamechars'] = !empty($CFG->extendedusernamechars);
 
         if ($fields = profile_get_signup_fields()) {
             $result['profilefields'] = array();

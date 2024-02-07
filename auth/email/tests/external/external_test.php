@@ -74,7 +74,6 @@ class external_test extends externallib_advanced_testcase {
         $CFG->defaultcity = 'Bcn';
         $CFG->country = 'ES';
         $CFG->sitepolicy = 'https://moodle.org';
-        $CFG->extendedusernamechars = true;
 
         $result = auth_email_external::get_signup_settings();
         $result = \core_external\external_api::clean_returnvalue(auth_email_external::get_signup_settings_returns(), $result);
@@ -85,9 +84,10 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($CFG->country, $result['country']);
         $this->assertEquals($CFG->sitepolicy, $result['sitepolicy']);
         $this->assertEquals(print_password_policy(), $result['passwordpolicy']);
-        $this->assertEquals($CFG->extendedusernamechars, $result['extendedusernamechars']);
         $this->assertNotContains('recaptchachallengehash', $result);
         $this->assertNotContains('recaptchachallengeimage', $result);
+        // Check if the extended username chars is returning false when is not set.
+        $this->assertFalse($result['extendedusernamechars']);
 
         // Whip up a array with named entries to easily check against.
         $namedarray = array();
@@ -103,6 +103,11 @@ class external_test extends externallib_advanced_testcase {
 
         $this->assertEquals('text', $namedarray['frogname']['datatype']);
         $this->assertEquals('textarea', $namedarray['sometext']['datatype']);
+
+        $CFG->extendedusernamechars = true;
+        $result = auth_email_external::get_signup_settings();
+        $result = \core_external\external_api::clean_returnvalue(auth_email_external::get_signup_settings_returns(), $result);
+        $this->assertTrue($result['extendedusernamechars']);
     }
 
     /**
