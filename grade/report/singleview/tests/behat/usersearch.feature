@@ -33,35 +33,21 @@ Feature: Within the singleview report, a teacher can search for users.
     And I click on "Users" "link" in the ".page-toggler" "css_element"
 
   Scenario: A teacher can view and trigger the user search
-    # Check the placeholder text
+    # Check the placeholder text (no users are initially shown).
     Given I should see "Search users"
-    # Confirm the search is currently inactive and results are unfiltered.
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
+    And I should see "Search for a user to view all their grades"
     When I set the field "Search users" to "Turtle"
     And I confirm "Turtle Manatee" in "user" search within the gradebook widget exists
     And I confirm "User Example" in "user" search within the gradebook widget does not exist
     And I click on "Turtle Manatee" "list_item"
     # Business case: This will trigger a page reload and can not dynamically update the table.
     And I wait until the page is ready
-    Then the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
+    And "Turtle Manatee" "heading" should exist
+    And "Teacher 1" "heading" should not exist
+    And "Student 1" "heading" should not exist
+    And "User Example" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Dummy User" "heading" should not exist
     And I set the field "Search users" to "Turt"
     And I wait until "Turtle Manatee" "option_role" exists
     And I click on "Clear search input" "button" in the ".user-search" "css_element"
@@ -70,31 +56,23 @@ Feature: Within the singleview report, a teacher can search for users.
   Scenario: A teacher can search the single view report to find specified users
     # Case: Standard search.
     Given I click on "Dummy" in the "user" search widget
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
+    And "Dummy User" "heading" should exist
+    And "Teacher 1" "heading" should not exist
+    And "Student 1" "heading" should not exist
+    And "User Example" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Turtle Manatee" "heading" should not exist
 
     # Case: No users found.
     When I set the field "Search users" to "Plagiarism"
     And I should see "No results for \"Plagiarism\""
     # Table remains unchanged as the user had no results to select from the dropdown.
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Turtle Manatee     |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
+    And "Dummy User" "heading" should exist
+    And "Teacher 1" "heading" should not exist
+    And "Student 1" "heading" should not exist
+    And "User Example" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Turtle Manatee" "heading" should not exist
 
     # Case: Multiple users found and select only one result.
     Then I set the field "Search users" to "User"
@@ -109,16 +87,12 @@ Feature: Within the singleview report, a teacher can search for users.
     And I confirm "User (student4@example.com)" in "user" search within the gradebook widget exists
     And I click on "Dummy User" "list_item"
     And I wait until the page is ready
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Dummy User         |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Turtle Manatee     |
+    And "Dummy User" "heading" should exist
+    And "Teacher 1" "heading" should not exist
+    And "Student 1" "heading" should not exist
+    And "User Example" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Turtle Manatee" "heading" should not exist
 
     # Case: No users enrolled.
     And I am on the "Course 2" "grades > Single view > View" page
@@ -187,23 +161,20 @@ Feature: Within the singleview report, a teacher can search for users.
 
     # Search on the institution field then press enter to show the record set.
     And I set the field "Search users" to "ABC"
-    And I wait until "Turtle Manatee" "list_item" exists
+    And "Turtle Manatee" "list_item" should exist
     And I confirm "Dummy User" in "user" search within the gradebook widget exists
     And I confirm "User Example" in "user" search within the gradebook widget exists
     And I confirm "User Test" in "user" search within the gradebook widget exists
     And I confirm "Student 1" in "user" search within the gradebook widget exists
+    And I press the down key
     And I press the enter key
     And I wait until the page is ready
-    And the following should exist in the "user-grades" table:
-      | -1-                |
-      | Student 1          |
-      | User Example       |
-      | User Test          |
-      | Dummy User         |
-      | Turtle Manatee     |
-    And the following should not exist in the "user-grades" table:
-      | -1-                |
-      | Teacher 1          |
+    And "Student 1" "heading" should exist
+    And "User Example" "heading" should not exist
+    And "User Test" "heading" should not exist
+    And "Dummy User" "heading" should not exist
+    And "Turtle Manatee" "heading" should not exist
+    And "Teacher 1" "heading" should not exist
 
   @accessibility
   Scenario: A teacher can set focus and search using the input are with a keyboard

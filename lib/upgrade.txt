@@ -37,6 +37,7 @@ information provided here is intended especially for developers.
   - `\core\deprecation::is_deprecated(example::class);`
   - `\core\deprecation::emit_deprecation_if_present([self::class, 'some_method']);`
 * Added missing deprecation for PARAM_CLEANFILE which was deprecated in Moodle 2.0.
+* New Behat `heading` named selector to more easily assert the presence of H1-H6 elements on the page
 * Login can now utilise new param 'loginredirect' to indicate when to use value set for $CFG->alternateloginurl.
 * \action_menu_link::$instance has been deprecated as it is no longer used.
 
