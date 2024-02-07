@@ -16,6 +16,7 @@
 
 namespace core_adminpresets;
 
+use moodle_exception;
 use stdClass;
 
 /**
@@ -599,8 +600,26 @@ class manager_test extends \advanced_testcase {
 
         $manager = new manager();
 
-        $this->expectException(\moodle_exception::class);
+        $this->expectException(moodle_exception::class);
+        $this->expectExceptionMessage('Error deleting from database');
         $manager->delete_preset($unexistingid);
+    }
+
+    /**
+     * Test trying to delete the core/pre-defined presets
+     *
+     * @covers ::delete_preset
+     */
+    public function test_delete_preset_core(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $starterpreset = $DB->get_record('adminpresets', ['iscore' => manager::STARTER_PRESET]);
+
+        $this->expectException(moodle_exception::class);
+        $this->expectExceptionMessage('Error deleting from database');
+        (new manager())->delete_preset($starterpreset->id);
     }
 
     /**
