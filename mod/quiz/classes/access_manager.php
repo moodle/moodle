@@ -556,7 +556,7 @@ class access_manager {
                 $this->quizobj->get_quiz(), $when);
 
         if (!$reviewoptions->attempt) {
-            return $output->no_review_message($this->quizobj->cannot_review_message($when, true));
+            return $output->no_review_message($this->quizobj->cannot_review_message($when, true, $attempt->timefinish));
 
         } else {
             return $output->review_link($this->quizobj->review_url($attempt->id),

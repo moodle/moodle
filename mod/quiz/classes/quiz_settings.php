@@ -495,9 +495,15 @@ class quiz_settings {
      * @param int $when One of the display_options::DURING,
      *      IMMEDIATELY_AFTER, LATER_WHILE_OPEN or AFTER_CLOSE constants.
      * @param bool $short if true, return a shorter string.
+     * @param int|null $attemptsubmittime time this attempt was submitted. (Optional, but should be given.)
      * @return string an appropraite message.
      */
-    public function cannot_review_message($when, $short = false) {
+    public function cannot_review_message($when, $short = false, int $attemptsubmittime = null) {
+
+        if ($attemptsubmittime === null) {
+            debugging('It is recommended that you pass $attemptsubmittime to cannot_review_message', DEBUG_DEVELOPER);
+            $attemptsubmittime = time(); // This will be approximately right, which is enough for the one place were it is used.
+        }
 
         if ($short) {
             $langstrsuffix = 'short';
@@ -507,17 +513,30 @@ class quiz_settings {
             $dateformat = '';
         }
 
-        if ($when == display_options::DURING ||
-                $when == display_options::IMMEDIATELY_AFTER) {
-            return '';
+        $reviewfrom = 0;
+        switch ($when) {
+            case display_options::DURING:
+                return '';
+
+            case display_options::IMMEDIATELY_AFTER:
+                if ($this->quiz->reviewattempt & display_options::LATER_WHILE_OPEN) {
+                    $reviewfrom = $attemptsubmittime + quiz_attempt::IMMEDIATELY_AFTER_PERIOD;
+                    break;
+                }
+                // Fall through.
+
+            case display_options::LATER_WHILE_OPEN:
+                if ($this->quiz->timeclose && ($this->quiz->reviewattempt & display_options::AFTER_CLOSE)) {
+                    $reviewfrom = $this->quiz->timeclose;
+                    break;
+                }
+        }
+
+        if ($reviewfrom) {
+            return get_string('noreviewuntil' . $langstrsuffix, 'quiz',
+                    userdate($reviewfrom, $dateformat));
         } else {
-            if ($when == display_options::LATER_WHILE_OPEN && $this->quiz->timeclose &&
-                    $this->quiz->reviewattempt & display_options::AFTER_CLOSE) {
-                return get_string('noreviewuntil' . $langstrsuffix, 'quiz',
-                        userdate($this->quiz->timeclose, $dateformat));
-            } else {
-                return get_string('noreview' . $langstrsuffix, 'quiz');
-            }
+            return get_string('noreview' . $langstrsuffix, 'quiz');
         }
     }
 

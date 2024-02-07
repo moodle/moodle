@@ -1,4 +1,8 @@
-This files describes API changes in the quiz code.
+This file describes API changes in the quiz code.
+
+=== 4.2.6 ===
+* quiz_settings::no_review_message now takes a new argument $attemptsubmittime for the time when the quiz attempt was
+  submitted. It is strongly recommended that you always pass that.
 
 === 4.2.4 ===
 * A quiz_structure_modified callback has been added for quiz_ plugins, called from
