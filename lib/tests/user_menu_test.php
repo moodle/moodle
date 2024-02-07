@@ -41,6 +41,7 @@ class user_menu_test extends \advanced_testcase {
             array('_____', 0, 0),
             array('test', 0, 0),
             array('#Garbage#', 0, 0),
+            array('privatefiles,/user/files.php', 0, 0),
 
             // These are valid but have an invalid string identifiers or components. They will still produce a menu
             // item, and no exception should be thrown.
