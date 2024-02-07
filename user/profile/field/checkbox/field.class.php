@@ -40,6 +40,31 @@ class profile_field_checkbox extends profile_field_base {
     }
 
     /**
+     * Override parent {@see profile_field_base::is_empty} check
+     *
+     * We can't check the "data" property, because if not set by the user then it's populated by "defaultdata" of the field,
+     * which can also be 0 (false) therefore ensuring the parent class check could never return true for this comparison
+     *
+     * @return bool
+     */
+    public function is_empty() {
+        return ($this->userid && !$this->field->hasuserdata);
+    }
+
+    /**
+     * Override parent {@see profile_field_base::show_field_content} check
+     *
+     * We only need to determine whether the field is visible, because we also want to show the "defaultdata" of the field,
+     * even if the user hasn't explicitly filled it in
+     *
+     * @param context|null $context
+     * @return bool
+     */
+    public function show_field_content(?context $context = null): bool {
+        return $this->is_visible($context);
+    }
+
+    /**
      * Display the data for this field
      *
      * @return string HTML.
