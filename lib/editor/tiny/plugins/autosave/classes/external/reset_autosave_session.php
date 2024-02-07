@@ -62,7 +62,6 @@ class reset_autosave_session extends external_api {
         string $pageinstance,
         string $elementid
     ): array {
-        global $DB, $USER;
 
         [
             'contextid' => $contextid,
@@ -77,8 +76,11 @@ class reset_autosave_session extends external_api {
 
         ]);
 
-        $manager = new \tiny_autosave\autosave_manager($contextid, $pagehash, $pageinstance, $elementid);
-        $manager->remove_autosave_record();
+        // May have been called by a non-logged in user.
+        if (isloggedin() && !isguestuser()) {
+            $manager = new \tiny_autosave\autosave_manager($contextid, $pagehash, $pageinstance, $elementid);
+            $manager->remove_autosave_record();
+        }
 
         return [];
     }
