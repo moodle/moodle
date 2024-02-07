@@ -1,4 +1,4 @@
-This files describes API changes in the quiz code.
+This file describes API changes in the quiz code.
 
 === 4.4 ===
 * A quiz_structure_modified callback has been added for quiz_ plugins, called from
@@ -9,6 +9,8 @@ This files describes API changes in the quiz code.
   as returned by question_usage_by_activity::get_question_state_class().
 * External function mod_quiz_external::get_attempt_summary() now returns a new field "totalunanswered", with the total number of
   unanswered questions.
+* quiz_settings::no_review_message now takes a new argument $attemptsubmittime for the time when the quiz attempt was
+  submitted. It is strongly recommended that you always pass that.
 
 === 4.3 ===
 
