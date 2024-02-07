@@ -34,6 +34,7 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
  * @copyright  2015 Juan Leyva <juan@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since      Moodle 2.9
+ * @coversDefaultClass \core_completion_external
  */
 class externallib_test extends externallib_advanced_testcase {
 
@@ -304,6 +305,74 @@ class externallib_test extends externallib_advanced_testcase {
         $result = external_api::clean_returnvalue(
             core_completion_external::get_activities_completion_status_returns(), $result);
         $this->assertCount($numberofcompletions, $result['statuses']);
+    }
+
+    /**
+     * Test get_activities_completion_status with overall completion
+     * @covers ::get_activities_completion_status
+     */
+    public function test_get_activities_completion_status_overall() {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        $student = $this->getDataGenerator()->create_user();
+        $anotherstudent = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1]);
+        \availability_completion\condition::wipe_static_cache();
+
+        // Create assignment with automatic completion and NO passing grade.
+        $assingnopassgrade = $this->getDataGenerator()->create_module('assign',
+            ['course' => $course->id], [
+                'showdescription' => true,
+                'completionview' => 1,
+                'completion' => COMPLETION_TRACKING_AUTOMATIC,
+                'completiongradeitemnumber' => 1,
+            ],
+        );
+        $cmassingnopassgrade = get_coursemodule_from_id('assign', $assingnopassgrade->cmid);
+
+        $this->getDataGenerator()->enrol_user($student->id, $course->id, 'student');
+        $this->getDataGenerator()->enrol_user($anotherstudent->id, $course->id, 'student');
+
+        $completion = new \completion_info($course);
+        $cinfo = new \stdClass();
+        $cinfo->coursemoduleid = $assingnopassgrade->cmid;
+        $cinfo->timemodified = time();
+        $cinfo->viewed = COMPLETION_NOT_VIEWED;
+        $cinfo->overrideby = null;
+
+        // Test student has achieved completion grade and it should pass.
+        $this->setUser($student);
+
+        $cinfo->id = 0;
+        $cinfo->completionstate = COMPLETION_COMPLETE_PASS;
+        $cinfo->userid = $student->id;
+        $completion->internal_set_data($cmassingnopassgrade, $cinfo, true);
+
+        $result = core_completion_external::get_activities_completion_status($course->id, $student->id);
+        $result = external_api::clean_returnvalue(
+            core_completion_external::get_activities_completion_status_returns(), $result);
+
+        $this->assertCount(1, $result['statuses']);
+        $status = reset($result['statuses']);
+        $this->assertEquals(COMPLETION_COMPLETE_PASS, $status['state']);
+
+        // Test student has failed but not passing grade is required for completion so it should pass.
+        $this->setUser($anotherstudent);
+
+        $cinfo->id = 0;
+        $cinfo->completionstate = COMPLETION_COMPLETE_FAIL;
+        $cinfo->userid = $anotherstudent->id;
+        $completion->internal_set_data($cmassingnopassgrade, $cinfo, true);
+
+        $result = core_completion_external::get_activities_completion_status($course->id, $anotherstudent->id);
+        $result = external_api::clean_returnvalue(
+            core_completion_external::get_activities_completion_status_returns(), $result);
+
+        $this->assertCount(1, $result['statuses']);
+        $status = reset($result['statuses']);
+        $this->assertEquals(COMPLETION_COMPLETE, $status['state']);
     }
 
     /**
