@@ -1865,7 +1865,7 @@ Class H5PExport {
 
     foreach(array('authors', 'source', 'license', 'licenseVersion', 'licenseExtras' ,'yearFrom', 'yearTo', 'changes', 'authorComments', 'defaultLanguage') as $field) {
       if (isset($content['metadata'][$field]) && $content['metadata'][$field] !== '') {
-        if (($field !== 'authors' && $field !== 'changes') || (count($content['metadata'][$field]) > 0)) {
+        if (($field !== 'authors' && $field !== 'changes') || (!empty($content['metadata'][$field]))) {
           $h5pJson[$field] = json_decode(json_encode($content['metadata'][$field], TRUE));
         }
       }
@@ -2079,7 +2079,7 @@ class H5PCore {
 
   public static $coreApi = array(
     'majorVersion' => 1,
-    'minorVersion' => 25
+    'minorVersion' => 26
   );
   public static $styles = array(
     'styles/h5p.css',
@@ -2135,7 +2135,7 @@ class H5PCore {
     self::DISABLE_COPYRIGHT => self::DISPLAY_OPTION_COPYRIGHT
   );
 
-  /** @var string To file storage directory. */
+  /** @var string */
   public $url;
 
   /** @var int evelopment mode. */
@@ -3331,7 +3331,6 @@ class H5PCore {
    */
   private static function hashToken($action, $time_factor) {
     global $SESSION;
-
     if (!isset($SESSION->h5p_token)) {
       // Create an unique key which is used to create action tokens for this session.
       if (function_exists('random_bytes')) {
@@ -3819,7 +3818,7 @@ class H5PCore {
         $this->h5pF->setErrorMessage($this->h5pF->t('Content is not shared on the H5P OER Hub.'));
         return NULL;
       }
-      throw new Exception($this->h5pF->t('Connecting to the content hub failed, please try again later.'));
+      throw new Exception($this->h5pF->t("Couldn't communicate with the H5P Hub. Please try again later."));
     }
 
     $hub_content = json_decode($response['data'])->data;
@@ -3967,6 +3966,7 @@ class H5PCore {
     }
 
     if (empty($siteUuid) || empty($secret)) {
+      $this->h5pF->setErrorMessage($this->h5pF->t('Missing Site UUID or Hub Secret. Please check your Hub registration.'));
       return false;
     }
 
@@ -3986,6 +3986,7 @@ class H5PCore {
     }
 
     if ($accountInfo['status'] !== 200) {
+      $this->h5pF->setErrorMessage($this->h5pF->t('Unable to retrieve HUB account information. Please contact support.'));
       return false;
     }
 
@@ -4077,7 +4078,7 @@ class H5PCore {
       || $registration['status'] !== 200
     ) {
       return [
-        'message'     => 'Registration failed.',
+        'message'     => 'Unable to register the account. Please contact support team.',
         'status_code' => 422,
         'error_code'  => 'REGISTRATION_FAILED',
         'success'     => FALSE,
