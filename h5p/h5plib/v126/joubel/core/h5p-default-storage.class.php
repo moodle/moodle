@@ -11,7 +11,7 @@ namespace Moodle;
  * operations using PHP's standard file operation functions.
  *
  * Some implementations of H5P that doesn't use the standard file system will
- * want to create their own implementation of the H5PFileStorage interface.
+ * want to create their own implementation of the H5P\FileStorage interface.
  *
  * @package    H5P
  * @copyright  2016 Joubel AS
@@ -299,7 +299,7 @@ class H5PDefaultStorage implements H5PFileStorage {
    * Save files uploaded through the editor.
    * The files must be marked as temporary until the content form is saved.
    *
-   * @param H5peditorFile $file
+   * @param \H5peditorFile $file
    * @param int $contentid
    */
   public function saveFile($file, $contentId) {

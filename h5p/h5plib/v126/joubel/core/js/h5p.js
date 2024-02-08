@@ -1040,7 +1040,7 @@ H5P.t = function (key, vars, ns) {
  * @param {H5P.jQuery} $element
  *   Which DOM element the dialog should be inserted after.
  * @param {H5P.jQuery} $returnElement
- *   Which DOM element the focus should be moved to on close   
+ *   Which DOM element the focus should be moved to on close
  */
 H5P.Dialog = function (name, title, content, $element, $returnElement) {
   /** @alias H5P.Dialog# */
@@ -1894,7 +1894,7 @@ H5P.MediaCopyright = function (copyright, labels, order, extraFields) {
  * @param {string} source
  * @param {number} width
  * @param {number} height
- * @param {string} alt 
+ * @param {string} alt
  *  alternative text for the thumbnail
  */
 H5P.Thumbnail = function (source, width, height, alt) {
@@ -2121,6 +2121,35 @@ H5P.trim = function (value) {
   // TODO: Only include this or String.trim(). What is best?
   // I'm leaning towards implementing the missing ones: http://kangax.github.io/compat-table/es5/
   // So should we make this function deprecated?
+};
+
+/**
+ * Recursive function that detects deep empty structures.
+ *
+ * @param {*} value
+ * @returns {bool}
+ */
+H5P.isEmpty = value => {
+  if (!value && value !== 0 && value !== false) {
+    return true; // undefined, null, NaN and empty strings.
+  }
+  else if (Array.isArray(value)) {
+    for (let i = 0; i < value.length; i++) {
+      if (!H5P.isEmpty(value[i])) {
+        return false; // Array contains a non-empty value
+      }
+    }
+    return true; // Empty array
+  }
+  else if (typeof value === 'object') {
+    for (let prop in value) {
+      if (value.hasOwnProperty(prop) && !H5P.isEmpty(value[prop])) {
+        return false; // Object contains a non-empty value
+      }
+    }
+    return true; // Empty object
+  }
+  return false;
 };
 
 /**
@@ -2692,7 +2721,7 @@ H5P.createTitle = function (rawTitle, maxLength) {
         }
         return path.substr(0, prefix.length) === prefix ? path : prefix + path;
       }
-      
+
       return path; // Will automatically be looked for in tmp folder
     });
 

@@ -15,10 +15,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Strings for component 'h5p_v124'
+ * Strings for component 'h5p_v126'
  *
- * @package    h5plib_v124
- * @copyright  2019 Andrew Nicols <andrew@nicols.co.uk>
+ * @package    h5plib_v126
+ * @copyright  2024 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -241,6 +241,6 @@ $string['editor:warningnocontenttypesinstalled'] = 'You don\'t have any content 
 $string['editor:warningupdateavailablebody'] = 'Update to the latest version for an improved experience.';
 $string['editor:warningupdateavailabletitle'] = 'A new version of :contentType is available.';
 $string['editor:width'] = 'width';
-$string['pluginname'] = 'H5P framework v1.24';
-$string['pluginname_help'] = 'H5P framework version 1.24.';
-$string['privacy:metadata'] = 'The H5P framework v1.24 does not store any personal data.';
+$string['pluginname'] = 'H5P framework v1.26';
+$string['pluginname_help'] = 'H5P framework version 1.26.';
+$string['privacy:metadata'] = 'The H5P framework v1.26 does not store any personal data.';

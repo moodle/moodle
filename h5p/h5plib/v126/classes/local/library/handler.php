@@ -14,32 +14,23 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Privacy provider implementation for the version 1.24 of the H5P library.
- *
- * @package    h5plib_v124
- * @copyright  2020 Sara Arjona <sara@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-namespace h5plib_v124\privacy;
-
-defined('MOODLE_INTERNAL') || die();
+namespace h5plib_v126\local\library;
 
 /**
- * Privacy provider implementation for the version 1.24 of the H5P library.
+ * Handler for this version of the H5P library.
  *
- * @copyright  2020 Sara Arjona <sara@moodle.com>
+ * @package    h5plib_v126
+ * @copyright  2024 Sara Arjona <sara@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
+class handler extends \core_h5p\local\library\handler {
+
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Get the current version of the H5P core library.
      *
-     * @return  string
+     * @return string
      */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
+    public static function get_h5p_version(): string {
+        return '126';
     }
 }
