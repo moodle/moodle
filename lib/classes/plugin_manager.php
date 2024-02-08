@@ -1909,7 +1909,7 @@ class core_plugin_manager {
             ),
 
             'h5plib' => array(
-                'v124'
+                'v126',
             ),
 
             'local' => array(
