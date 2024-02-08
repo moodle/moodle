@@ -280,7 +280,14 @@ Feature: Within the grader report, test that we can search for users
     # Ensure we can interact with the input & clear search options with the keyboard.
     # Space & Enter have the same handling for triggering the two functionalities.
     And I set the field "Search users" to "User"
-    And I click on ".usersearchwidget [data-action=search]" "css_element"
+    And I wait until "View all results (3)" "option_role" exists
+    # Tab to Clear search input.
+    And I press the tab key
+    And the focused element is "Clear search input" "button"
+    # Tab to View all results.
+    And I press the tab key
+    And the focused element is "View all results (3)" "option_role"
+    # Activate View all results.
     And I press the enter key
     And I wait to be redirected
     And the following should exist in the "user-grades" table:
