@@ -17,6 +17,7 @@
 namespace core\navigation\views;
 
 use navigation_node;
+use iomad;
 
 /**
  * Class primary.
