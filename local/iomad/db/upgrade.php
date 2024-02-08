@@ -2435,5 +2435,67 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023072900, 'local', 'iomad');
     }
 
+    if ($oldversion < 2024020800) {
+
+        $systemcontext = context_system::instance();
+
+        // we may need a bit of extra execution time and memory here
+        core_php_time_limit::raise(HOURSECS);
+        raise_memory_limit(MEMORY_EXTRA);
+
+        // Change all of the system context role assignations to company context instead.
+        $companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'));
+        $companymanagers = $DB->get_records_sql("SELECT cu.* FROM {company_users} cu JOIN {user} u ON (cu.userid = u.id)
+                                                 WHERE cu.managertype = :managertype AND u.deleted = 0", ['managertype' => 1]);
+        $total = count($companymanagers);
+        $progressbar = new progress_bar('assigningcompanymanagers', 500, true);
+        $count = 0;
+        foreach ($companymanagers as $companymanager) {
+            $companycontext = \core\context\company::instance($companymanager->companyid);
+            // Assign role at company level.
+            role_assign($companymanagerrole->id, $companymanager->userid, $companycontext->id);
+            // Remove role at site level. 
+            role_unassign($companymanagerrole->id, $companymanager->userid, $systemcontext->id);
+            $count++;
+            $progressbar->update($count, $total, "Assigning company manager roles to company context -  $count/$total.");
+        }
+
+        $departmentmanagerrole = $DB->get_record('role', array('shortname' => 'companydepartmentmanager'));
+        $departmentmanagers = $DB->get_records_sql("SELECT cu.* FROM {company_users} cu JOIN {user} u ON (cu.userid = u.id)
+                                                    WHERE cu.managertype = :managertype AND u.deleted = 0", ['managertype' => 2]);
+        $total = count($departmentmanagers);
+        $progressbar = new progress_bar('assigningdepartmentmanagers', 500, true);
+        $count = 0;
+        foreach ($departmentmanagers as $departmentmanager) {
+            $companycontext = \core\context\company::instance($departmentmanager->companyid);
+            // Assign role at company level.
+            role_assign($departmentmanagerrole->id, $departmentmanager->userid, $companycontext->id);
+            // Remove role at site level. 
+            role_unassign($departmentmanagerrole->id, $departmentmanager->userid, $systemcontext->id);
+            $count++;
+            $progressbar->update($count, $total, "Assigning department manager roles to company context -  $count/$total.");
+        }
+
+        $companyreporterrole = $DB->get_record('role', array('shortname' => 'companyreporter'));
+        $companyreporters = $DB->get_records_sql("SELECT cu.* FROM {company_users} cu JOIN {user} u ON (cu.userid = u.id)
+                                                  WHERE cu.managertype = :managertype AND u.deleted = 0", ['managertype' => 4]);
+        $total = count($companyreporters);
+        $progressbar = new progress_bar('assigningcompanreporters', 500, true);
+        $count = 0;
+        foreach ($companyreporters as $companyreporter) {
+            $companycontext = \core\context\company::instance($companymanager->companyid);
+            // Assign role at company level.
+            role_assign($companyreporterrole->id, $companyreporter->userid, $companycontext->id);
+            // Remove role at site level. 
+            role_unassign($companyreporterrole->id, $companyreporter->userid, $systemcontext->id);
+            $count++;
+            $progressbar->update($count, $total, "Assigning company report roles to company context -  $count/$total.");
+        }
+
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2024020800, 'local', 'iomad');
+    }
+
     return $result;
 }
