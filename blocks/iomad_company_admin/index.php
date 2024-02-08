@@ -324,5 +324,4 @@ $adminblock = new block_iomad_company_admin\output\adminblock($logourl, $company
 
 echo $output->header();
 echo $renderer->render($adminblock);
-echo "<pre>";print_r($companycontext);echo "</pre>";
 echo $output->footer();
