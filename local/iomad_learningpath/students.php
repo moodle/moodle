@@ -26,16 +26,23 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
 // Security
-$context = context_system::instance();
 require_login();
-iomad::require_capability('local/iomad_learningpath:manage', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/iomad_learningpath:manage', $companycontext);
 
 // Parameters
 $id = required_param('id', PARAM_INT);
 
 // Page boilerplate stuff.
 $url = new moodle_url('/local/iomad_learningpath/students.php', ['id' => $id]);
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('managetitle', 'local_iomad_learningpath'));
@@ -43,15 +50,14 @@ $PAGE->set_heading(get_string('managestudents', 'local_iomad_learningpath'));
 $output = $PAGE->get_renderer('local_iomad_learningpath');
 
 // IOMAD stuff
-$companyid = iomad::get_my_companyid($context);
-$companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
+$companypaths = new local_iomad_learningpath\companypaths($companyid, $systemcontext);
 $path = $companypaths->get_path($id);
 
 // Javascript initialise
 $PAGE->requires->js_call_amd('local_iomad_learningpath/students', 'init', [$companyid, $id]);
 
 // Get renderer for page (and pass data).
-$students_page = new local_iomad_learningpath\output\students_page($context, $path);
+$students_page = new local_iomad_learningpath\output\students_page($companycontext, $path);
 
 echo $OUTPUT->header();
 

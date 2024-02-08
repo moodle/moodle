@@ -30,10 +30,16 @@ $threadid = required_param('threadid', PARAM_INT);
 $deleteid = optional_param('deleteid', 0, PARAM_INT);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_microlearning:edit_threads', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_microlearning:edit_threads', $companycontext);
 
 $threadlist = new moodle_url('/blocks/iomad_microlearning/threads.php');
 
@@ -42,7 +48,7 @@ $linktext = get_string('threadschedule', 'block_iomad_microlearning');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_microlearning/thread_schedule.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -58,9 +64,6 @@ $buttoncaption = get_string('threads', 'block_iomad_microlearning');
 $buttonlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
 $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
 $PAGE->set_button($buttons);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
 
 // Check the thread is valid.
 if (!$threadinfo = $DB->get_record('microlearning_thread', array('id' => $threadid))) {

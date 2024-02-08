@@ -38,10 +38,16 @@ $deleteid = optional_param('deleteid', 0, PARAM_INT);
 $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 $submit = optional_param('submitbutton', '', PARAM_ALPHANUM);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_company_admin:edit_departments', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:edit_departments', $companycontext);
 
 $urlparams = array();
 if ($returnurl) {
@@ -53,17 +59,13 @@ $linktext = get_string('editdepartment', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_departments.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
 
 // Set the page heading.
 $PAGE->set_heading(get_string('companydepartment', 'block_iomad_company_admin'). $company->get_name());

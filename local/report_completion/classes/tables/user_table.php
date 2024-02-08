@@ -43,12 +43,12 @@ class user_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_fullname($row) {
-        global $params;
+        global $params, $companycontext;
 
         $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
         $userurl = '/local/report_users/userdisplay.php';
 
-        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', $companycontext)) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->userid,
                                                    'validonly' => $params['validonly'],
@@ -262,7 +262,7 @@ class user_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_certificate($row) {
-        global $DB, $output, $USER, $CFG;
+        global $DB, $output, $USER, $CFG, $companycontext;
 
         if ($this->is_downloading()) {
             return;
@@ -270,7 +270,7 @@ class user_table extends table_sql {
 
         if (!empty($row->timecompleted) && $certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
             if ($traccertrecs = $DB->get_records('local_iomad_track_certs', array('trackid' => $row->certsource))) {
-                if (empty($USER->editing) || !iomad::has_capability('local/report_users:redocertificates', context_system::instance())) {
+                if (empty($USER->editing) || !iomad::has_capability('local/report_users:redocertificates', $companycontext)) {
                     $coursecontext = context_course::instance($row->courseid);
                     $returntext = "";
                     foreach ($traccertrecs as $traccertrec) {
@@ -345,7 +345,7 @@ class user_table extends table_sql {
             ));
         $delaction = '';
 
-        if (has_capability('local/report_users:deleteentries', context_system::instance())) {
+        if (has_capability('local/report_users:deleteentries', $companycontext)) {
             // Its from the course_completions table.  Check the license type.
             if (empty($row->coursecleared)) {
                 if (empty($USER->editing)) {
@@ -353,31 +353,31 @@ class user_table extends table_sql {
                         $DB->get_record('companylicense',
                                          array('id' => $row->licenseid,
                                                'program' => 1))) {
-                        if (has_capability('local/report_users:clearentries', context_system::instance())) {
+                        if (has_capability('local/report_users:clearentries', $companycontext)) {
                             $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('resetcourse', 'local_report_users') . '</a>';
                         }
                     } else {
                         if (!empty($row->timecompleted)) {
-                            if (has_capability('local/report_users:clearentries', context_system::instance())) {
+                            if (has_capability('local/report_users:clearentries', $companycontext)) {
                                 $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clearcourse', 'local_report_users') . '</a>';
                             }
                         } else if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 1))) {
-                            if (has_capability('local/report_users:deleteentries', context_system::instance())) {
+                            if (has_capability('local/report_users:deleteentries', $companycontext)) {
                                 $delaction .= '<a class="btn btn-danger" href="'.$resetlink.'">' . get_string('resetcourse', 'local_report_users') . '</a>';
                             }
                         } else if ($DB->get_record('companylicense_users', array('userid' => $row->userid, 'licensecourseid' => $row->courseid, 'licenseid' => $row->licenseid, 'issuedate' => $row->licenseallocated, 'isusing' => 0))) {
-                            if (has_capability('local/report_users:deleteentries', context_system::instance())) {
+                            if (has_capability('local/report_users:deleteentries', $companycontext)) {
                                 $delaction .= '<a class="btn btn-danger" href="'.$revokelink.'">' . get_string('revokelicense', 'local_report_users') . '</a>';
                             }
                         } else {
-                            if (has_capability('local/report_users:clearentries', context_system::instance())) {
+                            if (has_capability('local/report_users:clearentries', $companycontext)) {
                                 $delaction .= '<a class="btn btn-danger" href="'.$clearlink.'">' . get_string('clearcourse', 'local_report_users') . '</a>';
                             }
                         }
                     }
                 }
             } else {
-                if (!empty($USER->editing) && iomad::has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
+                if (!empty($USER->editing) && iomad::has_capability('local/report_users:deleteentriesfull', $companycontext)) {
                     $checkboxhtml = "<input type='checkbox' name='purge_entries[]' value=$row->id class='enableentries'>&nbsp";
                     $delaction .= $checkboxhtml . '<a class="btn btn-danger" href="'.$trackonlylink.'">' . get_string('purgerecord', 'local_report_users') . '</a>';
                 }
@@ -530,9 +530,9 @@ class user_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_licensename($row) {
-        global $DB, $departmentid;
+        global $DB, $departmentid, $companycontext;
 
-        if ($this->is_downloading() || !iomad::has_capability('local/report_user_license_allocations:view', context_system::instance())) {
+        if ($this->is_downloading() || !iomad::has_capability('local/report_user_license_allocations:view', $companycontext)) {
             return $row->licensename;
         } else {
             $licenseurl = "/local/report_user_license_allocations/index.php";
@@ -627,7 +627,7 @@ class user_table extends table_sql {
      * This function is not part of the public api.
      */
     function print_headers() {
-        global $CFG, $OUTPUT, $PAGE, $USER;
+        global $CFG, $OUTPUT, $PAGE, $USER, $companycontext;
 
         echo html_writer::start_tag('thead');
         echo html_writer::start_tag('tr');
@@ -684,13 +684,13 @@ class user_table extends table_sql {
                 break;
 
                 case 'certificate':
-                    if (!empty($USER->editing) && iomad::has_capability('local/report_users:redocertificates', context_system::instance())) {
+                    if (!empty($USER->editing) && iomad::has_capability('local/report_users:redocertificates', $companycontext)) {
                         $this->headers[$index] = "<input type='checkbox' name='allthecertificates' id='check_allthecertificates' class='checkbox enableallcertificates'>&nbsp" . $this->headers[$index];
                     }
                 break;
 
                 case 'actions':
-                    if (!empty($USER->editing) && iomad::has_capability('local/report_users:deleteentriesfull', context_system::instance())) {
+                    if (!empty($USER->editing) && iomad::has_capability('local/report_users:deleteentriesfull', $companycontext)) {
                         $this->headers[$index] = "&nbsp<input type='checkbox' name='alltheentries' id='check_alltheentries' class='checkbox enableallentries'>&nbsp" . $this->headers[$index];
                     }
                 break;
@@ -731,5 +731,4 @@ class user_table extends table_sql {
         echo html_writer::end_tag('tr');
         echo html_writer::end_tag('thead');
     }
-
 }

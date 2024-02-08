@@ -31,10 +31,16 @@ $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 $search = optional_param('search', '', PARAM_ALPHANUM);
 $page = optional_param('page', 0, PARAM_INT);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_microlearning:import_threads', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_microlearning:import_threads', $companycontext);
 
 $urlparams = array();
 $urlparams['search'] = $search;
@@ -45,7 +51,7 @@ $linktext = get_string('threads', 'block_iomad_microlearning');
 $threadsurl = new moodle_url('/blocks/iomad_microlearning/threads.php', $urlparams);
 $linkurl = new moodle_url('/blocks/iomad_microlearning/thread_import.php', $urlparams);
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
@@ -61,9 +67,6 @@ $buttoncaption = get_string('threads', 'block_iomad_microlearning');
 $buttonlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
 $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
 $PAGE->set_button($buttons);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
 
 // import any valid threads.
 if ($importid) {

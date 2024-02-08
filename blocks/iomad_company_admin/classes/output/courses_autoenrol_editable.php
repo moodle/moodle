@@ -57,10 +57,10 @@ class courses_autoenrol_editable extends \core\output\inplace_editable {
      * @param \stdClass[] $profileroles The list of roles that should be visible in a users profile.
      * @param \stdClass[] $userroles The list of user roles.
      */
-    public function __construct($company, $context, $course, $currentvalue) {
+    public function __construct($company, $companycontext, $course, $currentvalue) {
 
         // Check capabilities to get editable value.
-        $editable = iomad::has_capability('block/iomad_company_admin:managecourses', $context);
+        $editable = iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext);
 
         // Invent an itemid.
         $itemid = $company->id . ':' . $course->courseid;
@@ -71,7 +71,7 @@ class courses_autoenrol_editable extends \core\output\inplace_editable {
         $this->autoenroloptions = ['0' => get_string('no'),
                                    '1' => get_string('yes')];
 
-        $this->context = $context;
+        $this->context = $companycontext;
 
         parent::__construct('block_iomad_company_admin', 'courses_autoenrol', $itemid, $editable, $value, $value);
 
@@ -116,11 +116,11 @@ class courses_autoenrol_editable extends \core\output\inplace_editable {
         $autoenrol = clean_param($autoenrol, PARAM_INT);
 
         // Check user is enrolled in the course.
-        $context = \context_system::instance();
-        core_external::validate_context($context);
+        $companycontext = \core\context\company::instance($companyid);
+        core_external::validate_context($companycontext);
 
         // Check permissions.
-        iomad::require_capability('block/iomad_company_admin:managecourses', $context);
+        iomad::require_capability('block/iomad_company_admin:managecourses', $companycontext);
 
         if (!$courserec = $DB->get_record('iomad_courses', ['courseid' => $courseid])) {
             throw new coding_exception('Course is not under IOMAD control');
@@ -137,12 +137,12 @@ class courses_autoenrol_editable extends \core\output\inplace_editable {
 
         // Fire an event for this.
         $eventother = ['iomadcourse' => (array) $courserec];
-        $event = \block_iomad_company_admin\event\company_course_updated::create(array('context' => $context,
+        $event = \block_iomad_company_admin\event\company_course_updated::create(array('context' => $companycontext,
                                                                                        'objectid' => $courseid,
                                                                                        'userid' => $USER->id,
                                                                                        'other' => $eventother));
         $event->trigger();
 
-        return new self($company, $context, $courserec, $autoenrol);
+        return new self($company, $companycontext, $courserec, $autoenrol);
     }
 }

@@ -128,17 +128,17 @@ class company {
         global $CFG;
 
         $returnarray = array('0' => get_string('user', 'block_iomad_company_admin'));
-        $systemcontext = context_system::instance();
-        if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $systemcontext)) {
+        $companycontext = \core\context\company::instance($this->id);
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $companycontext)) {
             $returnarray['1'] = get_string('companymanager', 'block_iomad_company_admin');
         }
-        if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $systemcontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $companycontext)) {
             $returnarray['2'] = get_string('departmentmanager', 'block_iomad_company_admin');
         }
-        if (!$CFG->iomad_autoenrol_managers && iomad::has_capability('block/iomad_company_admin:assign_educator', $systemcontext)) {
+        if (!$CFG->iomad_autoenrol_managers && iomad::has_capability('block/iomad_company_admin:assign_educator', $companycontext)) {
             $returnarray['3'] = get_string('educator', 'block_iomad_company_admin');
         }
-        if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $systemcontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $companycontext)) {
             $returnarray['4'] = get_string('companyreporter', 'block_iomad_company_admin');
         }
         return $returnarray;
@@ -467,8 +467,13 @@ class company {
     public static function get_role_templates($companyid = 0) {
         global $DB;
 
-        $context = context_system::instance();
-        if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+        if (empty($companyid)) {
+            $companycontext = context_system::instance();
+        } else {
+            $companycontext = \core\context\company::instance($companyid);
+        }
+
+        if (iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
             $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
         } else {
             $templates = $DB->get_records_sql_menu("SELECT crt.id,crt.name FROM {company_role_templates} crt
@@ -540,7 +545,6 @@ class company {
     public static function get_email_templates($companyid = 0) {
         global $DB;
 
-        $context = context_system::instance();
         $templates = $DB->get_records_menu('email_templateset', array(), 'templatesetname', 'id,templatesetname');
 
         // Add the default.
@@ -798,7 +802,7 @@ class company {
                 $eventother = array('licenseid' => $license->id,
                                     'parentid' => $license->parentid);
 
-                $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
+                $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => \core\context\company::instance($companyid),
                                                                                                 'userid' => $USER->id,
                                                                                                 'objectid' => $license->id,
                                                                                                 'other' => $eventother));
@@ -1033,8 +1037,8 @@ class company {
             return false;
         }
 
-        // Get the system context.
-        $systemcontext = context_system::instance();
+        // Get the company context.
+        $companycontext = \core\context\company::instance($companyid);
 
         // Get the manager roles.
         $companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'));
@@ -1092,9 +1096,9 @@ class company {
                                       ['userid' => $userid,
                                       'companyid' => $companyid])) {
                 // We are demoting a manager type.
-                role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
-                role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
-                role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
+                role_unassign($departmentmanagerrole->id, $userid, $companycontext->id);
+                role_unassign($companyreporterrole->id, $userid, $companycontext->id);
+                role_unassign($companymanagerrole->id, $userid, $companycontext->id);
 
                 // Deal with course permissions.
                 if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
@@ -1143,9 +1147,9 @@ class company {
                 }
             } else if ($managertype == 1) {
                 // Give them the company manager role.
-                role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
-                role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
-                role_assign($companymanagerrole->id, $userid, $systemcontext->id);
+                role_unassign($departmentmanagerrole->id, $userid, $companycontext->id);
+                role_unassign($companyreporterrole->id, $userid, $companycontext->id);
+                role_assign($companymanagerrole->id, $userid, $companycontext->id);
 
                 // Deal with course permissions.
                 if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
@@ -1181,9 +1185,9 @@ class company {
                 }
             } else if ($managertype == 2) {
                 // Give them the department manager role.
-                role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
-                role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
-                role_assign($departmentmanagerrole->id, $userid, $systemcontext->id);
+                role_unassign($companymanagerrole->id, $userid, $companycontext->id);
+                role_unassign($companyreporterrole->id, $userid, $companycontext->id);
+                role_assign($departmentmanagerrole->id, $userid, $companycontext->id);
 
                 // Deal with company course roles.
                 if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
@@ -1211,9 +1215,9 @@ class company {
                 }
             } else if ($managertype == 4 ) {
                 // Give them the company reporter role.
-                role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
-                role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
-                role_assign($companyreporterrole->id, $userid, $systemcontext->id);
+                role_unassign($companymanagerrole->id, $userid, $companycontext->id);
+                role_unassign($departmentmanagerrole->id, $userid, $companycontext->id);
+                role_assign($companyreporterrole->id, $userid, $companycontext->id);
 
                 // Make sure all department records in the company match this.
                 $DB->set_field('company_users', 'managertype', 4, ['companyid' => $companyid, 'userid' => $userid]);
@@ -1241,9 +1245,9 @@ class company {
             if ($managertype != 0) {
                 if ($managertype == 1) {
                     // Give them the company manager role.
-                    role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
-                    role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
-                    role_assign($companymanagerrole->id, $userid, $systemcontext->id);
+                    role_unassign($departmentmanagerrole->id, $userid, $companycontext->id);
+                    role_unassign($companyreporterrole->id, $userid, $companycontext->id);
+                    role_assign($companymanagerrole->id, $userid, $companycontext->id);
 
                     // Deal with course permissions.
                     if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
@@ -1281,9 +1285,9 @@ class company {
                     }
                 } else if ($managertype == 2) {
                     // Give them the department manager role.
-                    role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
-                    role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
-                    role_assign($departmentmanagerrole->id, $userid, $systemcontext->id);
+                    role_unassign($companymanagerrole->id, $userid, $companycontext->id);
+                    role_unassign($companyreporterrole->id, $userid, $companycontext->id);
+                    role_assign($departmentmanagerrole->id, $userid, $companycontext->id);
 
                     // Deal with company course roles.
                     if ($CFG->iomad_autoenrol_managers && !empty($companycourses)) {
@@ -1337,9 +1341,9 @@ class company {
                     }
                 } else if ($managertype == 4 ) {
                     // Give them the company reporter role.
-                    role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
-                    role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
-                    role_assign($companyreporterrole->id, $userid, $systemcontext->id);
+                    role_unassign($companymanagerrole->id, $userid, $companycontext->id);
+                    role_unassign($departmentmanagerrole->id, $userid, $companycontext->id);
+                    role_assign($companyreporterrole->id, $userid, $companycontext->id);
 
                 }
 
@@ -1382,7 +1386,7 @@ class company {
                                         'companyid' => $company->id,
                                         'usertype' => $managertype,
                                         'usertypename' => $managertypes[$managertype]);
-                    $event = \block_iomad_company_admin\event\company_user_unassigned::create(array('context' => $systemcontext,
+                    $event = \block_iomad_company_admin\event\company_user_unassigned::create(array('context' => $companycontext,
                                                                                                     'objectid' => $company->id,
                                                                                                     'userid' => $userid,
                                                                                                     'other' => $eventother));
@@ -1390,9 +1394,9 @@ class company {
                     $event->trigger();
                     return true;
                 } else {
-                    role_unassign($companymanagerrole->id, $userid, $systemcontext->id);
-                    role_unassign($departmentmanagerrole->id, $userid, $systemcontext->id);
-                    role_unassign($companyreporterrole->id, $userid, $systemcontext->id);
+                    role_unassign($companymanagerrole->id, $userid, $companycontext->id);
+                    role_unassign($departmentmanagerrole->id, $userid, $companycontext->id);
+                    role_unassign($companyreporterrole->id, $userid, $companycontext->id);
                 }   
                 if ($user->managertype == 1) {
                     // Deal with child companies.
@@ -1472,7 +1476,7 @@ class company {
                             'usertype' => $managertype,
                             'usertypename' => $managertypes[$managertype],
                             'moved' => $move);
-        $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => $systemcontext,
+        $event = \block_iomad_company_admin\event\company_user_assigned::create(array('context' => $companycontext,
                                                                                       'objectid' => $company->id,
                                                                                       'userid' => $userid,
                                                                                       'other' => $eventother));
@@ -1774,14 +1778,14 @@ class company {
 
         global $DB;
 
-        // Get the system context.
-        $systemcontext = context_system::instance();
+        // Get the company context.
+        $companycontext = \core\context\company::instance($this->id);
 
         // Can the user see the whole department tree?
         if (is_siteadmin() ||
-            iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext) ||
-            iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext) ||
-            iomad::has_capability('block/iomad_company_admin:company_add_child', $systemcontext)) {
+            iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext) ||
+            iomad::has_capability('block/iomad_company_admin:company_add', $companycontext) ||
+            iomad::has_capability('block/iomad_company_admin:company_add_child', $companycontext)) {
 
             $topdepartment = self::get_company_parentnode($this->id);
             return array($topdepartment->id => $topdepartment);
@@ -2494,14 +2498,19 @@ class company {
      **/
     public static function can_manage_department($departmentid) {
         global $DB, $USER;
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments',
-                                    context_system::instance())) {
+
+        // Get the department record.
+        $departmentrec = $DB->get_record('department', array('id' => $departmentid), '*', MUST_EXIST);
+
+        // And the context.
+        $companycontext = \core\context\company::instance($departmentrec->company);
+
+        // Can we manage it?
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
             return true;
-        } else if (!iomad::has_capability('block/iomad_company_admin:edit_departments',
-                                    context_system::instance())) {
+        } else if (!iomad::has_capability('block/iomad_company_admin:edit_departments', $companycontext)) {
             return false;
         } else {
-            $departmentrec = $DB->get_record('department', array('id' => $departmentid));
             $company = new company($departmentrec->company);
             // Get the list of departments at and below the user assignment.
             $userhierarchylevels = $company->get_userlevel($USER);
@@ -3367,7 +3376,7 @@ class company {
 
             // Create an event for this.  This handles the actual lifting.
             $eventother = array('companyid' => $company->id);
-            $event = \block_iomad_company_admin\event\company_terminated::create(array('context' => context_system::instance(),
+            $event = \block_iomad_company_admin\event\company_terminated::create(array('context' => \core\context\company::instance($company->id),
                                                                                        'objectid' => $company->id,
                                                                                        'userid' => $USER->id,
                                                                                        'other' => $eventother));
@@ -3447,10 +3456,9 @@ class company {
     public static function check_valid_user($companyid, $userid, $deparmentid=0) {
         global $DB, $USER;
 
-        $context = context_system::instance();
         // If current user is a site admin or they have appropriate capabilities then they can.
         if (is_siteadmin($USER->id) ||
-            iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            iomad::has_capability('block/iomad_company_admin:company_add', \core\context\company::instance($companyid))) {
             return true;
         }
 
@@ -3529,15 +3537,14 @@ class company {
             return false;
         }
 
-        $context = context_system::instance();
         // If current user is a site admin or they have appropriate capabilities then they can.
         if (is_siteadmin($USER->id) ||
-            iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            iomad::has_capability('block/iomad_company_admin:company_add', \core\context\company::instance($companyid))) {
             return true;
         }
 
         // Get my companyid.
-        $mycompanyid = iomad::get_my_companyid($context);
+        $mycompanyid = iomad::get_my_companyid(context_system::instance());
 
         // If it doesn't match then return false.
         if ($mycompanyid != $companyid) {
@@ -3602,16 +3609,17 @@ class company {
     public static function check_can_manage($userid) {
         global $DB, $USER;
 
-        $context = context_system::instance();
+        // Set the companyid
+        $companyid = iomad::get_my_companyid(context_system::instance());
+
+        // Get the company context.
+        $companycontext = \core\context\company::instance($companyid);
 
         // If this is ourselves or we can see all users then we can see this one.
         if ($USER->id == $userid ||
-            iomad::has_capability('block/iomad_company_admin:editallusers', $context)) {
+            iomad::has_capability('block/iomad_company_admin:editallusers', $companycontext)) {
             return true;
         }
-
-        // Set the companyid
-        $companyid = iomad::get_my_companyid($context);
 
         // Get the list of users.
         $myusers = self::get_my_users($companyid);
@@ -4898,7 +4906,7 @@ class company {
                 $eventother['parentid'] = $licenseid;
                 $eventother['oldcourses'] = json_encode($oldcourses);
 
-                $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
+                $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => \core\context\company::instance($licenserecord->companyid),
                                                                                                 'userid' => $event->userid,
                                                                                                 'objectid' => $child->id,
                                                                                                 'other' => $eventother));

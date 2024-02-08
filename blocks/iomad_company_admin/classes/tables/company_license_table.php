@@ -187,7 +187,7 @@ class company_license_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $OUTPUT, $DB, $USER, $params, $context, $gotchildren, $departmentid;
+        global $OUTPUT, $DB, $USER, $params, $companycontext, $gotchildren, $departmentid;
 
         $stredit   = get_string('edit');
         $strdelete = get_string('delete');
@@ -200,9 +200,9 @@ class company_license_table extends table_sql {
         $allocatebutton = "";
 
     // Set up the edit buttons.
-    if ((iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
-        iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) ||
-        iomad::has_capability('block/iomad_company_admin:split_my_licenses', $context)) &&
+    if ((iomad::has_capability('block/iomad_company_admin:edit_licenses', $companycontext) ||
+        iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $companycontext) ||
+        iomad::has_capability('block/iomad_company_admin:split_my_licenses', $companycontext)) &&
         $row->used < $row->allocation &&
         $gotchildren) {
         $splitbutton = "<a class='btn btn-primary' href='" . new moodle_url('company_license_edit_form.php',
@@ -210,10 +210,10 @@ class company_license_table extends table_sql {
     } else {
         $splitbutton = "";
     }
-        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
-            (iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $context) && !empty($row->parentid))) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $companycontext) ||
+            (iomad::has_capability('block/iomad_company_admin:edit_my_licenses', $companycontext) && !empty($row->parentid))) {
                 // Is this above the user's company allocation?
-                if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context) ||
+                if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $companycontext) ||
                     $DB->get_record_sql("SELECT id FROM {company_users}
                                          WHERE userid = :userid
                                          AND companyid = (
@@ -229,7 +229,7 @@ class company_license_table extends table_sql {
             }
         }
 
-        if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $companycontext)) {
             $allocatebutton = "<a class='btn btn-primary' href='".
                                  new moodle_url('company_license_users_form.php', array('licenseid' => $row->id)) ."'>$strallocate</a>";
         } else {

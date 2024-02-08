@@ -40,8 +40,14 @@ class block_iomad_company_selector extends block_base {
     public function get_content() {
         global $USER, $CFG, $DB, $OUTPUT, $SESSION;
 
+        $systemcontext = context_system::instance();
+        $companycontext = $systemcontext;
+        if (!empty($company)) {
+            $companycontext =  \core\context\company::instance($company);
+        }
+
         // Only display if you have the correct capability.
-        if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+        if (!iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
             return;
         }
 

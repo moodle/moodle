@@ -32,31 +32,29 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_classrooms, PARAM_INT);        // How many per page.
 
-$block = 'block_iomad_company_admin';
+require_login();
 
-// Get the SYSTEM context.
-$context = context_system::instance();
+$systemcontext = context_system::instance();
 
-require_login(); // Adds to $PAGE, creates $OUTPUT.
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
 
 // Correct the navbar.
 // Set the name for the page.
-$linktext = get_string('classrooms', $block);
+$linktext = get_string('classrooms', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/classroom_list.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
-
 // Set the page heading.
-$PAGE->set_heading(get_string('classrooms_for', $block, $company->get_name()));
+$PAGE->set_heading(get_string('classrooms_for', 'block_iomad_company_admin', $company->get_name()));
 $PAGE->navbar->add($linktext, $linkurl);
 
 require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
@@ -70,7 +68,7 @@ $returnurl = $baseurl;
 if ($delete and confirm_sesskey()) {
     // Delete a selected override template, after confirmation.
 
-    iomad::require_capability('block/iomad_company_admin:classrooms_delete', $context);
+    iomad::require_capability('block/iomad_company_admin:classrooms_delete', $companycontext);
 
     $classroom = $DB->get_record('classroom', array('id' => $delete), '*', MUST_EXIST);
 
@@ -104,7 +102,7 @@ if ($delete and confirm_sesskey()) {
 
 // Set up the page buttons.
 $buttons = "";
-if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $context)) {
+if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $companycontext)) {
     $linkurl = new moodle_url('/blocks/iomad_company_admin/classroom_edit_form.php');
     $buttons = $OUTPUT->single_button($linkurl, get_string('classrooms_add', 'block_iomad_company_admin'), 'get');
 }
@@ -114,7 +112,7 @@ $PAGE->set_button($buttons);
 echo $OUTPUT->header();
 
 // Check we can actually do anything on this page.
-iomad::require_capability('block/iomad_company_admin:classrooms', $context);
+iomad::require_capability('block/iomad_company_admin:classrooms', $companycontext);
 
 // Get the number of templates.
 $objectcount = $DB->count_records('classroom', array('companyid' => $companyid));
@@ -134,7 +132,7 @@ if ($classrooms = $DB->get_records('classroom', array('companyid' => $companyid)
     $sesskey = sesskey();
 
     foreach ($classrooms as $classroom) {
-        if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $companycontext)) {
             $deleteurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/classroom_list.php',
                                         ['delete' => $classroom->id,
                                         'sesskeyy' => $sesskey]);
@@ -143,7 +141,7 @@ if ($classrooms = $DB->get_records('classroom', array('companyid' => $companyid)
             $deletebutton = "";
         }
 
-        if (iomad::has_capability('block/iomad_company_admin:classrooms_edit', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:classrooms_edit', $companycontext)) {
             $editurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/classroom_edit_form.php',
                                       ['id' => $classroom->id]);
             $editbutton = "<a href='" . $editurl . "'><i class='icon fa fa-cog fa-fw' title='" . get_string('edit') . "' role='img' aria-label='" . get_string('edit') . "'></i></a>";

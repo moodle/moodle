@@ -65,13 +65,21 @@ $delete = optional_param('delete', 0, PARAM_INT);
 $viewchildren = optional_param('viewchildren', true, PARAM_BOOL);
 $showsummary = optional_param('showsummary', true, PARAM_BOOL);
 
-
-
 require_login();
-$context = context_system::instance();
-iomad::require_capability('local/report_completion:view', $context);
 
-$canseechildren = iomad::has_capability('block/iomad_company_admin:canviewchildren', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+// We need to unset the companyid as we could be looking elsewhere.
+$companyid = optional_param('companyid', $companyid, PARAM_INT);
+
+iomad::require_capability('local/report_completion:view', $companycontext);
+
+$canseechildren = iomad::has_capability('block/iomad_company_admin:canviewchildren', $companycontext);
 
 $params['courseid'] = $courseid;
 if ($firstname) {
@@ -159,9 +167,9 @@ $params['userid'] = $userid;
 if ($edit != -1) {
     $USER->editing = $edit;
 }
-if (!iomad::has_capability('local/report_users:redocertificates', $context) ||
-    !iomad::has_capability('local/report_users:deleteentriesfull', $context) ||
-    !iomad::has_capability('local/report_users:updateentries', $context)) {
+if (!iomad::has_capability('local/report_users:redocertificates', $companycontext) ||
+    !iomad::has_capability('local/report_users:deleteentriesfull', $companycontext) ||
+    !iomad::has_capability('local/report_users:updateentries', $companycontext)) {
     $USER->editing = false;
 }
 
@@ -172,7 +180,7 @@ $url = new moodle_url('/local/report_completion/index.php', array('validonly' =>
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_completion');
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($url, $params);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
@@ -197,13 +205,9 @@ if (empty($courseid)) {
 
 if (!empty($courseid)) {
     $buttoncaption = get_string('pluginname', 'local_report_completion');
-<<<<<<< HEAD
     $buttonparams = $params;
     unset($buttonparams['courseid']);
     $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php", $buttonparams);
-=======
-    $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
->>>>>>> 8d3cfea41a8 (IOMAD: made changes to the navigation in the IOMAD pages for Bootstrap 3 themes / themes without the edit switch so there is now a link to the IOMAD dahboard or other top sections when you are in menu items below them)
     $buttons .= $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
     // Non boost theme edit buttons.
     if ($PAGE->user_allowed_editing()) {
@@ -217,7 +221,7 @@ $data = data_submitted();
 if (!empty($data)) {
     if (!empty($data->redo_selected_certificates) && !empty($data->redo_certificates)) {
         if (!empty($confirm) && confirm_sesskey()) {
-            iomad::require_capability('local/report_users:redocertificates', $context);
+            iomad::require_capability('local/report_users:redocertificates', $companycontext);
             echo $OUTPUT->header();
             foreach($data->redo_certificates as $redocertificate) {
                 if ($trackrec = $DB->get_record('local_iomad_track', array('id' => $redocertificate))) {
@@ -232,7 +236,7 @@ if (!empty($data)) {
             echo $OUTPUT->footer();
             die;
         } else {
-            iomad::require_capability('local/report_users:redocertificates', $context);
+            iomad::require_capability('local/report_users:redocertificates', $companycontext);
             $param_array = array('courseid' => $courseid,
                                  'confirm' => true,
                                  'redo_selected_certificates' => $data->redo_selected_certificates,
@@ -252,7 +256,7 @@ if (!empty($data)) {
         }
     } else if (!empty($data->purge_selected_entries) && !empty($data->purge_entries)) {
         if (!empty($confirm) && confirm_sesskey()) {
-            iomad::require_capability('local/report_users:deleteentriesfull', $context);
+            iomad::require_capability('local/report_users:deleteentriesfull', $companycontext);
             echo $OUTPUT->header();
             foreach($data->purge_entries as $rowid) {
                 local_iomad_track_delete_entry($rowid, true);
@@ -263,7 +267,7 @@ if (!empty($data)) {
             echo $OUTPUT->footer();
             die;
         } else {
-            iomad::require_capability('local/report_users:deleteentriesfull', $context);
+            iomad::require_capability('local/report_users:deleteentriesfull', $companycontext);
             $param_array = $params +
                            array('userid' => $userid,
                                  'confirm' => true,
@@ -286,7 +290,7 @@ if (!empty($data)) {
                !empty($data->origtimeenrolled) ||
                !empty($data->origtimecompleted) ||
                !empty($data->origfinalscore)) {
-        iomad::require_capability('local/report_users:updateentries', $context);
+        iomad::require_capability('local/report_users:updateentries', $companycontext);
         if (!empty($data->licenseallocated)) {
             $data->licenseallocated = clean_param_array($data->licenseallocated, PARAM_INT, true);
         }
@@ -453,14 +457,13 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Set the companyid
 if ($viewchildren && $canseechildren && !empty($departmentid) && company::can_manage_department($departmentid)) {
     $departmentrec = $DB->get_record('department', ['id' => $departmentid]);
-    $realcompanyid = iomad::get_my_companyid($context);
+    $realcompanyid = $companyid;
     $companyid = $departmentrec->company;
-    $realcompany = new company($realcompanyid);
+    $realcompany = $company;
     $selectedcompany = new company($companyid);
 } else {
-    $companyid = iomad::get_my_companyid($context);
     $realcompanyid = $companyid;
-    $realcompany = new company($realcompanyid);
+    $realcompany = $company;
 }
 
 $haschildren = false;
@@ -481,7 +484,7 @@ if ($viewchildren && $canseechildren) {
 $companydepartment = $parentlevel->id;
 
 // Work out where the user sits in the company department tree.
-if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userlevels = array($parentlevel->id => $parentlevel->id);
 } else {
     $userlevels = $company->get_userlevel($USER);
@@ -647,7 +650,7 @@ if (empty($courseid)) {
                                                      WHERE licensed = 1)
                                                   $coursesearchsql",
                                                   $sqlparams));
-    if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context) &&
+    if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $companycontext) &&
         $haslicenses) {
         if ($showcharts) {
             $courseheaders[] = get_string('licenseallocated', 'local_report_user_license_allocations');
@@ -801,7 +804,7 @@ if (empty($courseid)) {
     }
 
     // Set up the initial SQL for the form.
-    $userfields = \core_user\fields::for_name()->with_identity($context)->excluding('id', 'deleted');
+    $userfields = \core_user\fields::for_name()->with_identity($systemcontext)->excluding('id', 'deleted');
     $fieldsql = $userfields->get_sql('u');
     $selectsql = "DISTINCT lit.id,
                   u.id as userid,

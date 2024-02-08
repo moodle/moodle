@@ -34,10 +34,16 @@ $participant = optional_param('participant', 0, PARAM_INT);
 $dodownload = optional_param('dodownload', 0, PARAM_INT);
 $departmentid = optional_param('departmentid', 0, PARAM_INT);
 
-// Check permissions.
 require_login();
-$context = context_system::instance();
-iomad::require_capability('local/report_attendance:view', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/report_attendance:view', $companycontext);
 
 // Url stuff.
 $url = new moodle_url('/local/report_attendance/index.php');
@@ -45,7 +51,7 @@ $dashboardurl = new moodle_url('/blocks/iomad_company_admin/index.php');
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_attendance');
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
@@ -53,9 +59,6 @@ $PAGE->requires->css("/local/report_attendance/styles.css");
 
 // Set the page heading.
 $PAGE->set_heading($strcompletion);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
 
 // Get the associated department id.
 $company = new company($companyid);

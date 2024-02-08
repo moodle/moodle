@@ -52,6 +52,9 @@ if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
 
 require_course_login($course, false, $cm);
 
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+
 // Get the database entry.
 if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
     print_error('noinstance');
@@ -87,7 +90,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             }
         }
 
-        if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+        if (has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);
@@ -102,7 +105,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                            WHERE name = 'trainingevent')", array('eventid' => $event->id));
 
         // What is the users approval level, if any?
-        if (has_capability('block/iomad_company_admin:company_add', context_system::instance()) ||
+        if (has_capability('block/iomad_company_admin:company_add', $companycontext) ||
             $manageruser = $DB->get_records('company_users', array('userid' => $USER->id, 'managertype' => 1))) {
             $myapprovallevel = "company";
         } else if ($manageruser = $DB->get_records('company_users', array('userid' => $USER->id, 'managertype' => 2))) {
@@ -1272,7 +1275,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
             $parentlevel = company::get_company_parentnode($company->id);
             $companydepartment = $parentlevel->id;
 
-            if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+            if (has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
                 $userhierarchylevel = $parentlevel->id;
             } else {
                 $userlevel = $company->get_userlevel($USER);

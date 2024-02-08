@@ -37,9 +37,14 @@ $shopsettingsid = optional_param('shopsettingsid', 0, PARAM_INTEGER);
 $new            = optional_param('createnew', 0, PARAM_INTEGER);
 $default        = optional_param('default', false, PARAM_BOOL);
 
-$context = context_system::instance();
 require_login();
-$PAGE->set_context($context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
 
 $urlparams = [];
 if ($returnurl) {
@@ -50,15 +55,13 @@ $urlparams['default'] = $default;
 $companylist = new moodle_url('/blocks/iomad_commerce/courselist.php', $urlparams);
 
 // Is this the company set of the default set?
-if ($default && iomad::has_capability('block/iomad_commerce:manage_default', $context)) {
+if ($default && iomad::has_capability('block/iomad_commerce:manage_default', $companycontext)) {
     $companyid = 0;
     $companycourses = $DB->get_records_sql_menu("SELECT c.id, c.fullname
                                                  FROM {course} c
                                                  JOIN {iomad_courses} ic ON (c.id = ic.courseid)
                                                  ORDER BY c.fullname");    
 } else {
-    $companyid = iomad::get_my_companyid($context);
-    $company = new company($companyid);
     $companycourses = $company->get_menu_courses(true, false);
 }
 
@@ -87,7 +90,7 @@ if (!$new) {
     $shopsettings->default = $default;
      $shopsettings->currency =  $shopsettings->single_purchase_currency;
 
-    iomad::require_capability('block/iomad_commerce:edit_course', $context);
+    iomad::require_capability('block/iomad_commerce:edit_course', $companycontext);
 } else {
     $isadding = true;
     $shopsettingsid = 0;
@@ -101,7 +104,7 @@ if (!$new) {
         $shopsettings->currency = 'GBP';
     }
 
-    iomad::require_capability('block/iomad_commerce:add_course', $context);
+    iomad::require_capability('block/iomad_commerce:add_course', $companycontext);
 }
 
 // Correct the navbar.
@@ -116,7 +119,7 @@ if ($isadding) {
 }
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -199,4 +202,3 @@ if ($mform->is_cancelled()) {
 
     echo $OUTPUT->footer();
 }
-

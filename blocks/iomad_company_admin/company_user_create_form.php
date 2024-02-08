@@ -38,9 +38,16 @@ $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 $submitbutton = optional_param('submitbutton', null, PARAM_CLEAN);
 $submitandback = optional_param('submitandback', null, PARAM_CLEAN);
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:user_create', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:user_create', $companycontext);
 
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
@@ -56,7 +63,7 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/company_user_create_form.
 $dashboardurl = new moodle_url('/blocks/iomad_company_admin/index.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -68,10 +75,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
 
 // Check if the company has gone over the user quota.
 if (!$company->check_usercount(1)) {
@@ -107,8 +110,6 @@ if ($mform->is_cancelled()) {
     profile_save_data($data);
     \core\event\user_updated::create_from_userid($userid)->trigger();
 
-    $systemcontext = context_system::instance();
-
     // Check if we are assigning a different role to the user.
     if (!empty($data->managertype || !empty($data->educator))) {
         company::upsert_company_user($userid, $companyid, $data->deptid, $data->managertype, $data->educator);
@@ -116,7 +117,7 @@ if ($mform->is_cancelled()) {
 
     // Assign the user to the default company department.
     $parentnode = company::get_company_parentnode($companyid);
-    if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext)) {
+    if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
         $userhierarchylevel = $parentnode->id;
     } else {
         $userlevel = $company->get_userlevel($USER);
@@ -203,4 +204,3 @@ if ($createdok) {
 $mform->display();
 
 echo $output->footer();
-

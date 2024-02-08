@@ -86,14 +86,21 @@ class primary extends view {
 
         // IOMAD.
         $systemcontext = \context_system::instance();
-        if (\iomad::has_capability('block/iomad_company_admin:companymanagement_view', $systemcontext) ||
-            \iomad::has_capability('block/iomad_company_admin:usermanagement_view', $systemcontext) ||
-            \iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $systemcontext) ||
-            \iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $systemcontext) ||
-            \iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $systemcontext) ||
-            \iomad::has_capability('block/iomad_commerce:admin_view', $systemcontext) ||
-            \iomad::has_capability('block/iomad_microlearning:view', $systemcontext) ||
-            \iomad::has_capability('block/iomad_reports:view', $systemcontext)) {
+        $companyid = iomad::get_my_companyid($systemcontext, false);
+        if (!empty($companyid)) {
+            $companycontext = \core\context\company::instance($companyid);
+        } else {
+            $companycontext = $systemcontext;
+        }
+
+        if (\iomad::has_capability('block/iomad_company_admin:companymanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_company_admin:usermanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_commerce:admin_view', $companycontext) ||
+            \iomad::has_capability('block/iomad_microlearning:view', $companycontext) ||
+            \iomad::has_capability('block/iomad_reports:view', $companycontext)) {
             $this->add(get_string('dashboard', 'block_iomad_company_admin'),
                        new \moodle_url('/blocks/iomad_company_admin/index.php'),
                        self::TYPE_SITE_ADMIN,

@@ -36,15 +36,16 @@ $templateid = optional_param('templateid', 0, PARAM_INT);
 $manage = optional_param('manage', 0, PARAM_INT);
 $templatesaved = optional_param('templatesaved', 0, PARAM_INT);
 
+require_login();
+
+$systemcontext = context_system::instance();
+
 // Set the companyid
-// (before output in case it redirects)
-$context = context_system::instance();
-$companyid = iomad::get_my_companyid($context);
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
 $company = new company($companyid);
 
-// access stuff
-require_login();
-iomad::require_capability('block/iomad_company_admin:restrict_capabilities', $context);
+iomad::require_capability('block/iomad_company_admin:restrict_capabilities', $companycontext);
 
 // Set the name for the page.
 if (empty($templateid)) {
@@ -57,7 +58,7 @@ if (empty($templateid)) {
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_capabilities.php', array('templateid' => $templateid));
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);

@@ -50,20 +50,19 @@ class course_group_users_form extends moodleform {
     protected $isdefault = false;
     protected $defaultgroup = array();
 
-    public function __construct($actionurl, $context, $companyid, $departmentid, $courseid, $groupid) {
+    public function __construct($actionurl, $companycontext, $companyid, $departmentid, $courseid, $groupid) {
         global $USER;
 
         $this->selectedcompany = $companyid;
-        $this->context = $context;
+        $this->context = $companycontext;
         $company = new company($this->selectedcompany);
         $this->company = $company;
         $this->courseid = $courseid;
         $this->groupid = $groupid;
         $this->parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $this->parentlevel->id;
-        $context = context_system::instance();
 
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);

@@ -26,18 +26,23 @@ require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 
 use local_report_companies\companyrep;
 
-// Check permissions.
 require_login();
-$context = context_system::instance();
-iomad::require_capability('local/report_companies:view', $context);
-$companyid = optional_param('companyid', 0, PARAM_INT);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/report_companies:view', $companycontext);
 
 // Url stuff.
 $url = new moodle_url('/local/report_companies/index.php', ['companyid' => $companyid]);
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_companies');
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->requires->css("/local/report_companies/styles.css");

@@ -35,9 +35,16 @@ $error = optional_param('error', 0, PARAM_INTEGER);
 $selectedcourses = optional_param_array('courses', array(), PARAM_INT);
 $chosenid = optional_param('chosenid', 0, PARAM_INT);
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:allocate_licenses', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:allocate_licenses', $companycontext);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -46,7 +53,7 @@ $linktext = get_string('company_license_users_title', 'block_iomad_company_admin
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_users_form.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -60,10 +67,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Javascript for fancy select.
 // Parameter is name of proper select form element.
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 'mform1', $departmentid));
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
 
 //  Check the license is valid for this company.
 if (!empty($licenseid) && !company::check_valid_company_license($companyid, $licenseid)) {
@@ -83,7 +86,7 @@ $parentlevel = company::get_company_parentnode($companyid);
 
 $availablewarning = '';
 $licenselist = array();
-if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userhierarchylevel = $parentlevel->id;
     // Get all the licenses.
     $licenses = $DB->get_records('companylicense', array('companyid' => $companyid), 'expirydate DESC', 'id,name,startdate,expirydate');
@@ -103,7 +106,7 @@ if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', cont
 } else {
     $userlevel = $company->get_userlevel($USER);
     $userhierarchylevel = key($userlevel);
-    if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+    if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $companycontext)) {
         $alllicenses = true;
     } else {
         $alllicenses = false;;
@@ -131,7 +134,7 @@ if (empty($departmentid)) {
     $departmentid = $userhierarchylevel;
 }
 
-$usersform = new block_iomad_company_admin\forms\company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output);
+$usersform = new block_iomad_company_admin\forms\company_license_users_form($PAGE->url, $companycontext, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output);
 
 echo $output->header();
 
@@ -176,7 +179,7 @@ if ($usersform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {
         }
 
         // Reload the form.
-        $usersform = new block_iomad_company_admin\forms\company_license_users_form($PAGE->url, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output);
+        $usersform = new block_iomad_company_admin\forms\company_license_users_form($PAGE->url, $companycontext, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output);
         $usersform->get_data();
         echo $usersform->display();
     }

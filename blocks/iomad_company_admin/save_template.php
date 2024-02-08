@@ -33,11 +33,16 @@ require_once(dirname(__FILE__) . '/lib.php');
 // parameters
 $templateid = required_param('templateid', PARAM_INT);
 
-// access stuff
-$context = context_system::instance();
-$companyid = iomad::get_my_companyid($context);
 require_login();
-iomad::require_capability('block/iomad_company_admin:restrict_capabilities', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:restrict_capabilities', $companycontext);
 
 // Set the name for the page.
 $linktext = get_string('savetemplate', 'block_iomad_company_admin');
@@ -45,7 +50,7 @@ $linktext = get_string('savetemplate', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/save_template.php', array('templateid' => $templateid));
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);

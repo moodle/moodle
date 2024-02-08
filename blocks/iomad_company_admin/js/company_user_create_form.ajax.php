@@ -28,38 +28,37 @@ require_once('../lib.php');
 
 $licenseid = required_param('licenseid', PARAM_INT);
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:user_create', $context);
+
+$license = $DB->get_record('companylicense', array('id' => $licenseid), '*', MUST_EXIST);
 
 $return = '';
 
-if ($license = $DB->get_record('companylicense', array('id' => $licenseid))) {
-    if ($license->program) {
-        $type = ' type="hidden"';
-        $liccourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseid));
-        $selected = "selected disabled";
-        $license->used = $license->used / count($liccourses);
-        $license->allocation = $license->allocation / count($liccourses);
-    } else {
-        $selected="";
-    }
-    if ($courses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
-                                              JOIN {course} c ON (clc.courseid = c.id
-                                              AND clc.licenseid = :licenseid)
-                                              ORDER BY c.fullname",
-                                              array('licenseid' => $licenseid))) {
-        $return .= '<select id="licensecourseselector" name="licensecourses[]" multiple="multiple">';
-        $return .= '<optgroup label="'.$license->name.' ('.$license->used.'/'.$license->allocation.')">';
-        foreach ($courses as $id => $course) {
-            $return .= '<option value="'. $id . '" ' . $selected . '>' . $course .'</option>';
-        }
-        $return .= '</optgroup></select>';
-    }
-    if ($license->program) {
-        $return .= "</div>PROGRAM";
-    }
-
+if ($license->program) {
+    $type = ' type="hidden"';
+    $liccourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseid));
+    $selected = "selected disabled";
+    $license->used = $license->used / count($liccourses);
+    $license->allocation = $license->allocation / count($liccourses);
+} else {
+    $selected="";
 }
+
+if ($courses = $DB->get_records_sql_menu("SELECT c.id, c.fullname FROM {companylicense_courses} clc
+                                          JOIN {course} c ON (clc.courseid = c.id
+                                          AND clc.licenseid = :licenseid)
+                                          ORDER BY c.fullname",
+                                          array('licenseid' => $licenseid))) {
+    $return .= '<select id="licensecourseselector" name="licensecourses[]" multiple="multiple">';
+    $return .= '<optgroup label="'.$license->name.' ('.$license->used.'/'.$license->allocation.')">';
+    foreach ($courses as $id => $course) {
+        $return .= '<option value="'. $id . '" ' . $selected . '>' . $course .'</option>';
+    }
+    $return .= '</optgroup></select>';
+}
+if ($license->program) {
+    $return .= "</div>PROGRAM";
+}
+
 echo $return;
 die;

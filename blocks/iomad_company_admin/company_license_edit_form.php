@@ -33,24 +33,24 @@ $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 $parentid = optional_param('parentid', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
 require_login();
 
+$systemcontext = context_system::instance();
+
 // Set the companyid
-$companyid = iomad::get_my_companyid($context);
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
 $company = new company($companyid);
 
 if (empty($parentid)) {
     if (!empty($licenseid) && $company->is_child_license($licenseid)) {
-        iomad::require_capability('block/iomad_company_admin:edit_my_licenses', $context);
+        iomad::require_capability('block/iomad_company_admin:edit_my_licenses', $companycontext);
     } else {
-        iomad::require_capability('block/iomad_company_admin:edit_licenses', $context);
+        iomad::require_capability('block/iomad_company_admin:edit_licenses', $companycontext);
     }
 } else {
-    iomad::require_capability('block/iomad_company_admin:edit_my_licenses', $context);
+    iomad::require_capability('block/iomad_company_admin:edit_my_licenses', $companycontext);
 }
-
-$PAGE->set_context($context);
 
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
@@ -76,7 +76,7 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_edit_form
 $listurl = new moodle_url('/blocks/iomad_company_admin/company_license_list.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -89,7 +89,7 @@ if (!empty($licenseid)) {
 }
 
 // Set up the form.
-$mform = new block_iomad_company_admin\forms\company_license_form($PAGE->url, $context, $companyid, $departmentid, $licenseid, $parentid);
+$mform = new block_iomad_company_admin\forms\company_license_form($PAGE->url, $companycontext, $companyid, $departmentid, $licenseid, $parentid);
 if ($licenseinfo = $DB->get_record('companylicense', array('id' => $licenseid))) {
     if ($currentcourses = $DB->get_records('companylicense_courses', array('licenseid' => $licenseid), null, 'courseid')) {
         foreach ($currentcourses as $currentcourse) {
@@ -195,7 +195,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
                             'parentid' => $data->parentid);
 
         if ($new) {
-            $event = \block_iomad_company_admin\event\company_license_created::create(array('context' => context_system::instance(),
+            $event = \block_iomad_company_admin\event\company_license_created::create(array('context' => $companycontext,
                                                                                             'userid' => $USER->id,
                                                                                             'objectid' => $licenseid,
                                                                                             'other' => $eventother));
@@ -211,7 +211,7 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
             if ($currlicensedata->type != $data->type) {
                 $eventother['educatorchange'] = true;
             }
-            $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => context_system::instance(),
+            $event = \block_iomad_company_admin\event\company_license_updated::create(array('context' => $companycontext,
                                                                                             'userid' => $USER->id,
                                                                                             'objectid' => $licenseid,
                                                                                             'other' => $eventother));

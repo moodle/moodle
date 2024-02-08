@@ -88,12 +88,16 @@ if ($toraw) {
     }
 }
 
+require_login();
+
 $systemcontext = context_system::instance();
-require_login(); // Adds to $PAGE, creates $output.
-iomad::require_capability('local/report_license_usage:view', $systemcontext);
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/report_license_usage:view', $companycontext);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -103,14 +107,14 @@ $linktext = get_string('report_license_usage_title', 'local_report_license_usage
 $linkurl = new moodle_url('/local/report_license_usage/index.php');
 
 // Print the page header.
-$PAGE->set_context($systemcontext);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
-if (iomad::has_capability('local/report_completion:view', $systemcontext)) {
+if (iomad::has_capability('local/report_completion:view', $companycontext)) {
     $buttoncaption = get_string('pluginname', 'local_report_completion');
     $buttonlink = new moodle_url($CFG->wwwroot . "/local/report_completion/index.php");
     $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
@@ -169,7 +173,7 @@ $baseurl = new moodle_url(basename(__FILE__), $urlparams);
 $returnurl = $baseurl;
 
 // Work out where the user sits in the company department tree.
-if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userlevels = array($parentlevel->id => $parentlevel->id);
 } else {
     $userlevels = $company->get_userlevel($USER);

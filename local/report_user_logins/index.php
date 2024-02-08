@@ -45,8 +45,15 @@ $viewchildren = optional_param('viewchildren', true, PARAM_BOOL);
 $showsummary = optional_param('showsummary', true, PARAM_BOOL);
 
 require_login();
+
 $systemcontext = context_system::instance();
-iomad::require_capability('local/report_user_logins:view', $systemcontext);
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/report_user_logins:view', $companycontext);
 
 $canseechildren = true; //iomad::has_capability('block/iomad_company_admin:canviewchildren', $systemcontext);
 
@@ -127,14 +134,13 @@ if ($logintoraw) {
 // Set the companyid
 if ($viewchildren && $canseechildren && !empty($departmentid) && company::can_manage_department($departmentid)) {
     $departmentrec = $DB->get_record('department', ['id' => $departmentid]);
-    $realcompanyid = iomad::get_my_companyid($systemcontext);
+    $realcompanyid = $companyid;
     $companyid = $departmentrec->company;
-    $realcompany = new company($realcompanyid);
+    $realcompany = $company;
     $selectedcompany = new company($companyid);
 } else {
-    $companyid = iomad::get_my_companyid($systemcontext);
     $realcompanyid = $companyid;
-    $realcompany = new company($realcompanyid);
+    $realcompany = $company;
 }
 
 $haschildren = false;
@@ -219,7 +225,7 @@ $url = new moodle_url('/local/report_user_logins/index.php');
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_user_logins');
-$PAGE->set_context($systemcontext);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
@@ -271,7 +277,7 @@ if (!$showsummary && $canseechildren && $viewchildren && $haschildren) {
 }
 
 // Work out where the user sits in the company department tree.
-if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userlevels = array($parentlevel->id => $parentlevel->id);
 } else {
     $userlevels = $company->get_userlevel($USER);

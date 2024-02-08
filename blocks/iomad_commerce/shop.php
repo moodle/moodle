@@ -39,9 +39,14 @@ $linkurl = new moodle_url('/blocks/iomad_commerce/shop.php');
 
 require_login();
 
-// Page stuff.
-$context = context_system::instance();
-$PAGE->set_context($context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -49,8 +54,6 @@ $PAGE->navbar->add($linktext);
 
 $baseurl = new moodle_url('/blocks/iomad_commerce/shop.php', array('sort' => $sort, 'dir' => $dir, 'perpage' => $perpage));
 $returnurl = $baseurl;
-
-$companyid = iomad::get_my_companyid(context_system::instance());
 
 // Display the page header.
 echo $OUTPUT->header();
@@ -145,7 +148,7 @@ echo html_writer::end_tag('div');
 
 // ...***********create course list sql (includes filtering on tags)*****************.
 $typewhere = "";
-if (!iomad::has_capability('block/iomad_commerce:buyinbulk', $context)) {
+if (!iomad::has_capability('block/iomad_commerce:buyinbulk', $companycontext)) {
     $typewhere = " AND css.allow_single_purchase = 1 ";
 }
 
@@ -178,7 +181,7 @@ if ($itemcount) {
 
     foreach ($items as $item) {
         $available = ($item->allow_single_purchase || $item->allow_license_blocks) &&
-                     (iomad::has_capability('block/iomad_commerce:buyitnow', $context) || iomad::has_capability('block/iomad_commerce:buyinbulk', $context));
+                     (iomad::has_capability('block/iomad_commerce:buyitnow', $companycontext) || iomad::has_capability('block/iomad_commerce:buyinbulk', $companycontext));
         $price = \block_iomad_commerce\helper::get_lowest_price_text($item);
         if ($available) {
             if ($item->allow_single_purchase) {

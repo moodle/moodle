@@ -28,9 +28,16 @@ require_once($CFG->libdir . '/formslib.php');
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:company_template', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:company_template', $companycontext);
 
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
@@ -41,13 +48,9 @@ if ($returnurl) {
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_competency_templates_form.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
 
 // Set the name for the page.
 $linktext = get_string('company_templates_for', 'block_iomad_company_admin', $company->get_name());
@@ -56,7 +59,7 @@ $linktext = get_string('company_templates_for', 'block_iomad_company_admin', $co
 $PAGE->set_title($linktext);
 $PAGE->set_heading($linktext);
 
-$mform = new \block_iomad_company_admin\forms\company_competency_templates_form($PAGE->url, $context, $companyid);
+$mform = new \block_iomad_company_admin\forms\company_competency_templates_form($PAGE->url, $companycontext, $companyid);
 
 if ($mform->is_cancelled()) {
     if ($returnurl) {

@@ -31,11 +31,17 @@ $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_companies, PARAM_INT);        // How many per page.
 
-$context = context_system::instance();
 require_login();
 
+$systemcontext = context_system::instance();
+
 // Set the companyid
-$companyid = iomad::get_my_companyid($context);
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+// Check we can actually do anything on this page.
+iomad::require_capability('block/iomad_company_admin:company_view', $companycontext);
 
 // Correct the navbar .
 // Set the name for the page.
@@ -44,7 +50,7 @@ $linktext = get_string('company_list_title', 'block_iomad_company_admin');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_list.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -57,7 +63,7 @@ $returnurl = $baseurl;
 
 if ($delete and confirm_sesskey()) {              // Delete a selected company, after confirmation.
 
-    iomad::require_capability('block/iomad_company_admin:company_delete', $context);
+    iomad::require_capability('block/iomad_company_admin:company_delete', $companycontext);
 
     $company = $DB->get_record('company', array('id' => $delete), '*', MUST_EXIST);
 
@@ -111,9 +117,6 @@ if ($delete and confirm_sesskey()) {              // Delete a selected company, 
 
 echo $OUTPUT->header();
 
-// Check we can actually do anything on this page.
-iomad::require_capability('block/iomad_company_admin:company_view', $context);
-
 // Get the number of companies.
 $objectcount = $DB->count_records('company');
 echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
@@ -149,62 +152,62 @@ if ($companies = company::get_companies_rs($page, $perpage)) {
 
     foreach ($companies as $company) {
         if (company_user::can_see_company($company)) {
-            if (iomad::has_capability('block/iomad_company_admin:company_delete', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:company_delete', $companycontext)) {
                 $deletebutton = "<a href=\"company_list.php?delete=$company->id&amp;sesskey=".sesskey()."\">$strdelete</a>";
             } else {
                 $deletebutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_company_admin:company_edit', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:company_edit', $companycontext)) {
                 $editbutton = "<a href='" . new moodle_url('company_edit_form.php',
                                 array("companyid" => $company->id)) . "'>$stredit</a>";
             } else {
                 $editbutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_company_admin:company_user', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:company_user', $companycontext)) {
                 $usersbutton = "<a href='" . new moodle_url('company_users_form.php',
                                  array("companyid" => $company->id)) . "'>$strusers</a>";
             } else {
                 $usersbutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_company_admin:user_create', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:user_create', $companycontext)) {
                 $newuserbutton = "<a href='" . new moodle_url('company_user_create_form.php',
                                    array("companyid" => $company->id)) . "'>$strnewuser</a>";
             } else {
                 $newuserbutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_company_admin:company_manager', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:company_manager', $companycontext)) {
                 $managersbutton = "<a href='" . new moodle_url('company_managers_form.php',
                                    array("companyid" => $company->id)) . "'>$strmanagers</a>";
             } else {
                 $managersbutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_company_admin:company_course', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:company_course', $companycontext)) {
                 $coursesbutton = "<a href='" . new moodle_url('company_courses_form.php',
                                    array("companyid" => $company->id)) . "'>$strcourses</a>";
             } else {
                 $coursesbutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_company_admin:createcourse', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:createcourse', $companycontext)) {
                 $createcoursebutton = "<a href='" . new moodle_url('company_course_create_form.php',
                                        array("companyid" => $company->id)) . "'>$strcreatecourse</a>";
             } else {
                 $createcoursebutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_company_admin:company_course_users', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:company_course_users', $companycontext)) {
                 $courseusersbutton = "<a href='" . new moodle_url('company_course_users_form.php',
                                       array("companyid" => $company->id)) . "'>$strcourseusers</a>";
             } else {
                 $courseusersbutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_company_admin:user_upload', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:user_upload', $companycontext)) {
                 $downloadbutton = "<a href='" . new moodle_url('user_bulk_download.php',
                                    array("companyid" => $company->id)) . "'>$strusersdownload</a>";
             } else {
@@ -234,7 +237,7 @@ if ($companies = company::get_companies_rs($page, $perpage)) {
     $companies->close();
 }
 
-if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+if (iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
     echo '<div class="buttons">';
 
     echo $OUTPUT->single_button(new moodle_url('company_edit_form.php'),

@@ -59,19 +59,21 @@ if (empty($lang)) {
     }
 }
 
-$context = context_system::instance();
-require_login();
-
 $urlparams = array('templateid' => $templateid, 'templatename' => $templatename);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
 
+require_login();
+
+$systemcontext = context_system::instance();
+
 // Set the companyid
-$companyid = iomad::get_my_companyid($context);
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
 $company = new company($companyid);
 
-iomad::require_capability('local/email:edit', $context);
+iomad::require_capability('local/email:edit', $companycontext);
 
 if (empty($templatesetid)) {
     if (!$templaterecord = $DB->get_record('email_template',['id' => $templateid])) {
@@ -104,7 +106,7 @@ if (!empty($isadding)) {
 }
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->requires->jquery();

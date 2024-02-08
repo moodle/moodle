@@ -36,13 +36,13 @@ class company_managers_form extends moodleform {
     protected $subhierarchieslist = null;
     protected $companydepartment = 0;
 
-    public function __construct($actionurl, $context, $companyid, $deptid, $roleid, $showothermanagers) {
+    public function __construct($actionurl, $companycontext, $companyid, $deptid, $roleid, $showothermanagers) {
         global $USER;
         $this->selectedcompany = $companyid;
-        $this->context = $context;
+        $this->context = $companycontext;
         $this->departmentid = $deptid;
         $this->roletype = $roleid;
-        if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+        if (!iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
             $this->showothermanagers = false;
         } else {
             $this->showothermanagers = $showothermanagers;
@@ -51,7 +51,7 @@ class company_managers_form extends moodleform {
         $company = new company($this->selectedcompany);
         $parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevels = $company->get_userlevel($USER);
@@ -153,7 +153,7 @@ class company_managers_form extends moodleform {
                     if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
                         // The userid may still be valid, but only if we are assigning an external company manager
                         // require permissions, check roletype is manager & the userid is actually a manager in another company
-                        if (!iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance()) && $roletype == 1 &&
+                        if (!iomad::has_capability('block/iomad_company_admin:company_add', $this->context  ) && $roletype == 1 &&
                             $DB->get_record_sql('SELECT id FROM {company_users}
                                                  WHERE
                                                  userid = :userid

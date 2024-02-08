@@ -42,7 +42,7 @@ class user_edit_form extends \moodleform {
     protected $licensecourses = array();
 
     public function __construct($actionurl, $companyid, $departmentid, $licenseid=0) {
-        global $CFG, $USER;
+        global $CFG, $USER, $companycontext;
 
         $this->selectedcompany = $companyid;
         $this->departmentid = $departmentid;
@@ -50,11 +50,12 @@ class user_edit_form extends \moodleform {
         $company = new company($this->selectedcompany);
         $this->company = $company;
         $this->companyname = $company->get_name();
+        $this->companycontext = $companycontext;
         $parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $parentlevel->id;
         $systemcontext = \context_system::instance();
 
-        if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $systemcontext)) {
+        if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $this->companycontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);
@@ -76,9 +77,6 @@ class user_edit_form extends \moodleform {
 
     public function definition() {
         global $CFG, $DB, $output;
-
-        // Get the system context.
-        $systemcontext = \context_system::instance();
 
         $mform =& $this->_form;
 
@@ -153,17 +151,17 @@ class user_edit_form extends \moodleform {
 
         // Add in company/department manager checkboxes.
         $managerarray = array();
-        if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $systemcontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $this->companycontext)) {
             $managerarray['0'] = get_string('user', 'block_iomad_company_admin');
             $managerarray['2'] = get_string('departmentmanager', 'block_iomad_company_admin');
         }
-        if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $systemcontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $this->companycontext)) {
             if (empty($managearray)) {
                 $managerarray['0'] = get_string('user', 'block_iomad_company_admin');
             }
             $managerarray['1'] = get_string('companymanager', 'block_iomad_company_admin');
         }
-        if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $systemcontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $this->companycontext)) {
             if (empty($managearray)) {
                 $managerarray['0'] = get_string('user', 'block_iomad_company_admin');
             }
@@ -215,7 +213,7 @@ class user_edit_form extends \moodleform {
         }
 
         // Deal with licenses.
-        if (\iomad::has_capability('block/iomad_company_admin:allocate_licenses', $systemcontext)) {
+        if (\iomad::has_capability('block/iomad_company_admin:allocate_licenses', $this->companycontext)) {
             $mform->addElement('header', 'licenses', get_string('assignlicenses', 'block_iomad_company_admin'));
             $foundlicenses = $DB->get_records_sql_menu("SELECT id, name FROM {companylicense}
                                                    WHERE expirydate >= :timestamp
@@ -270,7 +268,7 @@ class user_edit_form extends \moodleform {
             }
         }
 
-        if (iomad::has_capability('block/iomad_company_admin:company_course_users', $systemcontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:company_course_users', $this->companycontext)) {
             $mform->addElement('header', 'courses', get_string('assigncourses', 'block_iomad_company_admin'));
             $autooptions = array('multiple' => true,
                                  'noselectionstring' => get_string('none'));

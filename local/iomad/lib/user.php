@@ -208,18 +208,19 @@ class company_user {
 
         // Get the company details for the user.
         $company = company::get_company_byuserid($userid);
-        $context = context_system::instance();
+        $systemcontext = context_system::instance();
+        $companycontext = \core\context\company::instance($company->id);
 
         // Check if the user was a company manager.
         if ($DB->get_records('company_users', array('userid' => $userid, 'managertype' => 1,
                                                     'companyid' => $company->id))) {
             $companymanagerrole = $DB->get_record('role', array('shortname' => 'companymanager'));
-            role_unassign($companymanagerrole->id, $userid, $context->id);
+            role_unassign($companymanagerrole->id, $userid, $companycontext->id);
         }
         if ($DB->get_records('company_users', array('userid' => $userid, 'managertype' => 2,
                                                     'companyid' => $company->id))) {
             $departmentmanagerrole = $DB->get_record('role', array('shortname' => 'departmentmanager'));
-            role_unassign($departmentmanagerrole->id, $userid, $context->id);
+            role_unassign($departmentmanagerrole->id, $userid, $companycontext->id);
         }
 
         // Remove the user from the company.
@@ -243,7 +244,8 @@ class company_user {
 
         // Get the company details for the user.
         $company = company::get_company_byuserid($userid);
-        $context = context_system::instance();
+        $systemcontext = context_system::instance();
+        $companycontext = \core\context\company::instance($company->id);
 
         // Get the users company record.
         $DB->set_field('company_users', 'suspended', 1, array('userid' => $userid,
@@ -655,13 +657,15 @@ class company_user {
     public static function can_see_company( $company ) {
         global $USER;
 
-        $context = context_system::instance();
+        $systemcontext = context_system::instance();
+        $companycontext = \core\context\company::instance($company->id);
+
         if ( !isset($company) ) {
             return true;
         }
 
         if (!isset($USER->profile["company"]) or empty($USER->profile["company"]) or
-            iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
             return true;
         }
 
@@ -1077,7 +1081,7 @@ class iomad_user_filter_form extends moodleform {
     protected $validonly;
 
     public function definition() {
-        global $CFG, $DB, $USER, $SESSION;
+        global $CFG, $DB, $USER, $SESSION, $companycontext;
 
         if (!empty($this->_customdata['useshowall'])) {
             $useshowall = true;
@@ -1217,7 +1221,7 @@ class iomad_user_filter_form extends moodleform {
             $mform->addElement('select', 'usertype', get_string('usertype', 'block_iomad_company_admin'), $usertypearray);
         }
 
-        if (iomad::has_capability('block/iomad_company_admin:viewsuspendedusers', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:viewsuspendedusers', $companycontext)) {
             $mform->addElement('checkbox', 'showsuspended', get_string('show_suspended_users', 'local_iomad'));
         } else {
             $mform->addElement('hidden', 'showsuspended');

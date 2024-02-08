@@ -42,12 +42,12 @@ class users_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_fullname($row) {
-        global $params;
+        global $params, $companycontext;
 
         $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
         $userurl = '/local/report_users/userdisplay.php';
 
-        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', $companycontext)) {
             return "<a href='".
                     new moodle_url($userurl, ['userid' => $row->id]).
                     "'>$name</a>";

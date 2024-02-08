@@ -63,26 +63,29 @@ if ($templateid) {
     $params['templateid'] = $templateid;
 }
 
-$systemcontext = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:managetemplates', $systemcontext);
-$PAGE->set_context($systemcontext);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:managetemplates', $companycontext);
 
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/iomad_templates_form.php');
 $linktext = get_string('iomad_templates_title', 'block_iomad_company_admin');
 
 // Print the page header.
-$PAGE->set_context($systemcontext);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($systemcontext, false);
 
 // Is the users company set and no other company selected?
 if (empty($company) && !empty($companyid)) {

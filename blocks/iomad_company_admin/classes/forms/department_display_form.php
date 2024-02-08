@@ -41,12 +41,12 @@ class department_display_form extends company_moodleform {
 
         $this->selectedcompany = $companyid;
         $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
-        $syscontext = context_system::instance();
+        $this->companycontext = \core\context\company::instance($companyid);
 
         $this->company = new company($this->selectedcompany);
         $parentlevel = company::get_company_parentnode($this->company->id);
         $this->companydepartment = $parentlevel->id;
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $this->companycontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevels = $this->company->get_userlevel($USER);
@@ -59,7 +59,6 @@ class department_display_form extends company_moodleform {
         $this->action = $action;
         $this->parentlevel = $parentlevel->id;
         $this->notice = $notice;
-        $this->syscontext = $syscontext;
 
         parent::__construct($actionurl);
     }
@@ -122,12 +121,12 @@ class department_display_form extends company_moodleform {
                                 get_string('editdepartments', 'block_iomad_company_admin'));
             $buttonarray[] = $mform->createElement('submit', 'delete',
                                 get_string('deletedepartment', 'block_iomad_company_admin'));
-            if (iomad::has_capability('block/iomad_company_admin:export_departments', $this->syscontext)) {
+            if (iomad::has_capability('block/iomad_company_admin:export_departments', $this->companycontext)) {
                 $buttonarray[] = $mform->createElement('submit', 'export',
                                         get_string('exportdepartment', 'block_iomad_company_admin'));
             }
         } else {
-            if (iomad::has_capability('block/iomad_company_admin:import_departments', $this->syscontext)) {
+            if (iomad::has_capability('block/iomad_company_admin:import_departments', $this->companycontext)) {
                 $buttonarray[] = $mform->createElement('submit', 'import',
                                         get_string('importdepartment', 'block_iomad_company_admin'));
             }

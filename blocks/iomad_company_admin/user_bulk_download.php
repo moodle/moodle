@@ -30,11 +30,17 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once('lib.php');
 
 $format = optional_param('format', '', PARAM_ALPHA);
-$companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:user_upload', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:user_upload', $companycontext);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -43,7 +49,7 @@ $linktext = get_string('users_download', 'block_iomad_company_admin');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/user_bulk_download.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -51,17 +57,13 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading($linktext);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
-
 $return = $CFG->wwwroot.'/'.$CFG->admin.'/user/user_bulk.php';
 
 // Deal with the departments.
 $parentlevel = company::get_company_parentnode($companyid);
 $companydepartment = $parentlevel->id;
 
-if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments',$companycontext)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = $company->get_userlevel($USER);

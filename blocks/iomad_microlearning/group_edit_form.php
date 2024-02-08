@@ -33,10 +33,16 @@ require_once(dirname(__FILE__) . '/../../course/lib.php');
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $groupid = optional_param('id', 0, PARAM_INT);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_microlearning:manage_groups', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_microlearning:manage_groups', $companycontext);
 
 $grouplist = new moodle_url('/blocks/iomad_microlearning/groups.php');
 
@@ -49,7 +55,7 @@ if (empty($groupid)) {
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_microlearning/group_edit_form.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -59,9 +65,6 @@ $output = $PAGE->get_renderer('block_iomad_microlearning');
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
 
 // Set up the initial forms.
 $editform = new \block_iomad_microlearning\forms\group_edit_form($PAGE->url, $companyid, $groupid, $output);
@@ -104,4 +107,3 @@ if ($editform->is_cancelled()) {
 
     echo $output->footer();
 }
-

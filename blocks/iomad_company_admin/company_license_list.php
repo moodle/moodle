@@ -34,22 +34,23 @@ $companyid    = optional_param('companyid', 0, PARAM_INTEGER);
 $save         = optional_param('save', 0, PARAM_INTEGER);
 $showexpired  = optional_param('showexpired', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
+require_login();
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
 
 // Correct the navbar.
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_license_list.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
 
 // Set the name for the page.
 $linktext = get_string('company_license_list_title', 'block_iomad_company_admin', $company->get_name());
@@ -63,7 +64,7 @@ $returnurl = $baseurl;
 
 // Get the appropriate company department.
 $companydepartment = company::get_company_parentnode($companyid);
-if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $companycontext)) {
     $departmentid = $companydepartment->id;
 } else {
     $userlevels = $company->get_userlevel($USER);
@@ -73,9 +74,9 @@ if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_sys
 if ($delete and confirm_sesskey()) {              // Delete a selected company, after confirmation.
 
     if ($company->is_child_license($delete)) {
-        iomad::require_capability('block/iomad_company_admin:edit_my_licenses', $context);
+        iomad::require_capability('block/iomad_company_admin:edit_my_licenses', $companycontext);
     } else {
-        iomad::require_capability('block/iomad_company_admin:edit_licenses', $context);
+        iomad::require_capability('block/iomad_company_admin:edit_licenses', $companycontext);
     }
 
     $license = $DB->get_record('companylicense', array('id' => $delete), '*', MUST_EXIST);
@@ -104,7 +105,7 @@ if ($delete and confirm_sesskey()) {              // Delete a selected company, 
         $eventother = array('licenseid' => $license->id,
                             'parentid' => $license->parentid);
 
-        $event = \block_iomad_company_admin\event\company_license_deleted::create(array('context' => context_system::instance(),
+        $event = \block_iomad_company_admin\event\company_license_deleted::create(array('context' => $companycontext,
                                                                                         'userid' => $USER->id,
                                                                                         'objectid' => $license->parentid,
                                                                                         'other' => $eventother));
@@ -117,7 +118,7 @@ if ($delete and confirm_sesskey()) {              // Delete a selected company, 
 echo $OUTPUT->header();
 
 // Check we can actually do anything on this page.
-iomad::require_capability('block/iomad_company_admin:view_licenses', $context);
+iomad::require_capability('block/iomad_company_admin:view_licenses', $companycontext);
 
 flush();
 
@@ -162,7 +163,7 @@ $tablecolumns = array('name',
                       'used',
                       'actions');
 
-if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && $childcompanies = $company->get_child_companies_recursive()) {
+if (iomad::has_capability('block/iomad_company_admin:company_add_child', $companycontext) && $childcompanies = $company->get_child_companies_recursive()) {
     $tableheaders = array_merge(array($strcompany), $tableheaders);
     $tablecolumns = array_merge(array('companyname'), $tablecolumns);
     $showcompanies = true;
@@ -208,7 +209,7 @@ if ($showexpired) {
 }
 echo $OUTPUT->single_button(new moodle_url('company_license_list.php', array('showexpired' => !$showexpired)),
                                             $showexpiredstring);
-if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $context)) {
+if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $companycontext)) {
     echo $OUTPUT->single_button(new moodle_url('company_license_edit_form.php'),
                                                 get_string('licenseaddnew', 'block_iomad_company_admin'), 'get');
 }

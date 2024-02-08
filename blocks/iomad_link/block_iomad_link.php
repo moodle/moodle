@@ -38,7 +38,15 @@ class block_iomad_link extends block_base {
         global $USER, $CFG, $DB, $OUTPUT;
 
         // Only display if you have the correct capability.
-        if (!iomad::has_capability('block/iomad_link:view', context_system::instance())) {
+        $systemcontext = \context_system::instance();
+        $companyid = iomad::get_my_companyid($systemcontext, false);
+        if (!empty($companyid)) {
+            $companycontext = \core\context\company::instance($companyid);
+        } else {
+            $companycontext = $systemcontext;
+        }
+
+        if (!iomad::has_capability('block/iomad_link:view', $companycontext)) {
             return;
         }
 

@@ -26,24 +26,30 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
 // Security
-$context = context_system::instance();
 require_login();
-iomad::require_capability('local/iomad_learningpath:manage', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/iomad_learningpath:manage', $companycontext);
 
 // Parameters
 $id = optional_param('id', 0, PARAM_INT);
 
 // Page boilerplate stuff.
 $url = new moodle_url('/local/iomad_learningpath/editpath.php', ['id' => $id]);
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('managetitle', 'local_iomad_learningpath'));
 $output = $PAGE->get_renderer('local_iomad_learningpath');
 
 // IOMAD stuff
-$companyid = iomad::get_my_companyid($context);
-$companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
+$companypaths = new local_iomad_learningpath\companypaths($companyid, $systemcontext);
 $paths = $companypaths->get_paths();
 $company = new company($companyid);
 $PAGE->set_heading(get_string('pathcompany', 'local_iomad_learningpath', $company->get_name()));
@@ -56,7 +62,7 @@ $companypaths->check_group($id);
 
 // Set up picture draft area
 $picturedraftid = file_get_submitted_draft_itemid('picture');
-file_prepare_draft_area($picturedraftid, $context->id, 'local_iomad_learningpath', 'picture', $id,
+file_prepare_draft_area($picturedraftid, $companycontext->id, 'local_iomad_learningpath', 'picture', $id,
     ['maxfiles' => 1]);
 
 // Form
@@ -80,11 +86,11 @@ if ($form->is_cancelled()) {
     } else {
         $DB->update_record('iomad_learningpath', $path);
     }
-    file_save_draft_area_files($data->picture, $context->id, 'local_iomad_learningpath', 'picture', $id,
+    file_save_draft_area_files($data->picture, $companycontext->id, 'local_iomad_learningpath', 'picture', $id,
         ['maxfiles' => 1]);
 
     // Resize image and create thumbnail
-    $companypaths->process_image($context, $id);
+    $companypaths->process_image($companycontext, $id);
 
     redirect($exiturl);
 }

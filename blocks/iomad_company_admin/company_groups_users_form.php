@@ -45,10 +45,16 @@ if (!empty($groupids)) {
     $groupid = 0;
 }
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_company_admin:assign_groups', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:assign_groups', $companycontext);
 
 $urlparams = array();
 if ($returnurl) {
@@ -61,7 +67,7 @@ $linktext = get_string('assigncoursegroups', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_groups_users_form.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -72,17 +78,14 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Set the page heading.
 $PAGE->set_heading($linktext);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 // Javascript for fancy select.
 // Parameter is name of proper select form element.
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid'));
 
-$courseform = new \block_iomad_company_admin\forms\company_gu_courses_form($PAGE->url, $context, $companyid, $selectedcourse);
+$courseform = new \block_iomad_company_admin\forms\company_gu_courses_form($PAGE->url, $companycontext, $companyid, $selectedcourse);
 $mform = new \block_iomad_company_admin\forms\course_group_user_display_form($PAGE->url, $companyid, $selectedcourse, $output);
 if (!empty($selectedcourse) && !empty($selectedgroup)) {
-    $groupform = new \block_iomad_company_admin\forms\course_group_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourse, $selectedgroup);
+    $groupform = new \block_iomad_company_admin\forms\course_group_users_form($PAGE->url, $companycontext, $companyid, $departmentid, $selectedcourse, $selectedgroup);
 }
 $courseform->set_data(array('selectedcourse' => $selectedcourse));
 $mform->set_data(array('selectedgroup' => $selectedgroup));

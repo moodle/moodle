@@ -34,9 +34,16 @@ if ($roleid != 1) {
     $showothermanagers = false;
 }
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:company_manager', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:company_manager', $companycontext);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -44,7 +51,7 @@ $linktext = get_string('assignmanagers', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_managers_form.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -52,13 +59,9 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading($linktext);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
-
 // Set up the departments stuffs.
 $parentlevel = company::get_company_parentnode($company->id);
-if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = $company->get_userlevel($USER);
@@ -67,8 +70,6 @@ if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', cont
 if ($departmentid == 0) {
     $departmentid = $userhierarchylevel;
 }
-
-$PAGE->set_context($context);
 
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
@@ -112,7 +113,7 @@ $othersselect->label = get_string('showothermanagers', 'block_iomad_company_admi
                        $output->help_icon('showothermanagers', 'block_iomad_company_admin') . '&nbsp';
 
 // Set up the allocation form.
-$managersform = new block_iomad_company_admin\forms\company_managers_form($PAGE->url, $context, $companyid, $departmentid, $roleid, $showothermanagers);
+$managersform = new block_iomad_company_admin\forms\company_managers_form($PAGE->url, $companycontext, $companyid, $departmentid, $roleid, $showothermanagers);
 
 // Change the department for the form.
 if ($departmentid != 0) {
@@ -149,7 +150,7 @@ if ($managersform->is_cancelled()) {
     echo html_writer::end_tag('div');
     echo html_writer::end_tag('div');
 
-    if (iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance()) &&
+    if (iomad::has_capability('block/iomad_company_admin:company_add', $companycontext) &&
         $roleid == 1) {
         echo html_writer::start_tag('div', array('class' => 'iomadclear'));
         echo html_writer::start_tag('div', array('class' => 'fitem'));
@@ -160,5 +161,4 @@ if ($managersform->is_cancelled()) {
 
     echo $managersform->display();
 
-    echo $output->footer();
-}
+    echo $output->footer();}

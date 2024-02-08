@@ -26,6 +26,13 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
 // Security
-$context = context_system::instance();
 require_login();
-iomad::require_capability('local/iomad_learningpath_manage', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/iomad_learningpath_manage', $companycontext);

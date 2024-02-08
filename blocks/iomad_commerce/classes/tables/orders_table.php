@@ -132,10 +132,10 @@ class orders_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $context;
+        global $companycontext;
 
         $stredit   = get_string('edit');
-        if (iomad::has_capability('block/iomad_commerce:admin_view', $context)) {
+        if (iomad::has_capability('block/iomad_commerce:admin_view', $companycontext)) {
             $editbutton = "<a href='" . new moodle_url('edit_order_form.php', array("id" => $row->id)) . "'>
             <i class='icon fa fa-cog fa-fw ' title='$stredit' role='img' aria-label='$stredit'></i></a>";
         } else {

@@ -37,9 +37,14 @@ $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_courses, PARAM_INT);        // How many per page.
 $default      = optional_param('default', 0, PARAM_BOOL);
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
+require_login();
 
-$context = context_system::instance();
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
 
 // Correct the navbar .
 // Set the name for the page.
@@ -52,7 +57,7 @@ if (!$default) {
 $linkurl = new moodle_url('/blocks/iomad_commerce/courselist.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -64,17 +69,15 @@ $baseurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/courselist.php
 $returnurl = $baseurl;
 
 // Is this the company set of the default set?
-if ($default && iomad::has_capability('block/iomad_commerce:manage_default', $context)) {
+if ($default && iomad::has_capability('block/iomad_commerce:manage_default', $companycontext)) {
+    $mycompanyid = $companyid;
     $companyid = 0;
-    $mycompanyid = iomad::get_my_companyid($context);
-} else {
-    $companyid = iomad::get_my_companyid($context);
 }
 
 // Delete a selected product from the shop, after confirmation.
 if ($delete and confirm_sesskey()) {
 
-    iomad::require_capability('block/iomad_commerce:delete_course', $context);
+    iomad::require_capability('block/iomad_commerce:delete_course', $companycontext);
 
     $invoiceableitem = $DB->get_record('course_shopsettings', ['id' => $delete, 'companyid' => $companyid], '*', MUST_EXIST);
 
@@ -110,7 +113,7 @@ if ($delete and confirm_sesskey()) {
 // Import a selected template product to the current company shop.
 if ($import and confirm_sesskey()) {
 
-    iomad::require_capability('block/iomad_commerce:delete_course', $context);
+    iomad::require_capability('block/iomad_commerce:delete_course', $companycontext);
 
     $invoiceableitem = $DB->get_record('course_shopsettings', ['id' => $import, 'companyid' => 0], '*', MUST_EXIST);
 
@@ -142,7 +145,7 @@ if ($import and confirm_sesskey()) {
 // Export a selected product from the current company shop as a template.
 if ($export and confirm_sesskey()) {
 
-    iomad::require_capability('block/iomad_commerce:delete_course', $context);
+    iomad::require_capability('block/iomad_commerce:delete_course', $companycontext);
 
     $invoiceableitem = $DB->get_record('course_shopsettings', ['id' => $export, 'companyid' => $companyid], '*', MUST_EXIST);
 
@@ -194,7 +197,7 @@ if (!\block_iomad_commerce\helper::is_commerce_configured()) {
 }
 
 //  Check we can actually do anything on this page.
-iomad::require_capability('block/iomad_commerce:admin_view', $context);
+iomad::require_capability('block/iomad_commerce:admin_view', $companycontext);
 
 // Get the number of products.
 $objectcount = $DB->count_records('course_shopsettings', ['companyid' => $companyid]);
@@ -219,7 +222,7 @@ if ($courses = $DB->get_recordset_sql('SELECT *
         $table->width = "600px";
 
         foreach ($courses as $course_shopsetting) {
-            if (iomad::has_capability('block/iomad_commerce:delete_course', $context)) {
+            if (iomad::has_capability('block/iomad_commerce:delete_course', $companycontext)) {
                 $deleteurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/courselist.php',
                                             ['delete' => $course_shopsetting->id,
                                              'sesskey' => sesskey(),
@@ -229,7 +232,7 @@ if ($courses = $DB->get_recordset_sql('SELECT *
                 $deletebutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_commerce:hide_course', $context)) {
+            if (iomad::has_capability('block/iomad_commerce:hide_course', $companycontext)) {
                 $strdisplay = $strshow;
                 if ($course_shopsetting->enabled) {
                     $strdisplay = $strhide;
@@ -244,7 +247,7 @@ if ($courses = $DB->get_recordset_sql('SELECT *
                 $hidebutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_commerce:edit_course', $context)) {
+            if (iomad::has_capability('block/iomad_commerce:edit_course', $companycontext)) {
                 $editurl =  new moodle_url('edit_course_shopsettings_form.php',
                                            ["shopsettingsid" => $course_shopsetting->id,
                                             'default' => $default]);
@@ -253,7 +256,7 @@ if ($courses = $DB->get_recordset_sql('SELECT *
                 $editbutton = "";
             }
 
-            if (iomad::has_capability('block/iomad_commerce:manage_default', $context)) {
+            if (iomad::has_capability('block/iomad_commerce:manage_default', $companycontext)) {
                 if ($default) {
                     $importurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/courselist.php',
                                               ['import' => $course_shopsetting->id,
@@ -291,14 +294,14 @@ if ($courses = $DB->get_recordset_sql('SELECT *
 }
 
 echo '<div class="buttons">';
-if (iomad::has_capability('block/iomad_commerce:add_course', $context)) {
+if (iomad::has_capability('block/iomad_commerce:add_course', $companycontext)) {
 
     echo $OUTPUT->single_button(new moodle_url($CFG->wwwroot . '/blocks/iomad_commerce/edit_course_shopsettings_form.php',
                                                ['createnew' => 1,
                                                 'default' => $default]),
                                                 get_string('addnewcourse', 'block_iomad_commerce'));
 }
-if (iomad::has_capability('block/iomad_commerce:manage_default', $context)) {
+if (iomad::has_capability('block/iomad_commerce:manage_default', $companycontext)) {
     if ($default) {
         $defaultstring = get_string('managecompanyproducts', 'block_iomad_commerce');
     } else {

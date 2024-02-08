@@ -70,6 +70,11 @@ if ($email) {
 $params['deptid'] = $departmentid;
 $params['eventid'] = $eventid;
 
+require_login($event->course); // Adds to $PAGE, creates $output.
+
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+
 if (!$event = $DB->get_record('trainingevent', array('id' => $eventid))) {
     print_error('invalid event ID');
 }
@@ -77,10 +82,10 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $eventid))) {
 if (!$cm = get_coursemodule_from_instance('trainingevent', $event->id, $event->course)) {
     print_error('invalid coursemodule ID');
 }
+
 // Page stuff.
 $url = new moodle_url('/course/view.php', array('id' => $event->course));
 $context = context_course::instance($event->course);
-require_login($event->course); // Adds to $PAGE, creates $output.
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_title($event->name);
@@ -112,7 +117,7 @@ if (!empty($departmentid) && !company::check_valid_department($company->id, $dep
     print_error('invaliddepartment', 'block_iomad_company_admin');
 }
 
-if (has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+if (has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = $company->get_userlevel($USER);

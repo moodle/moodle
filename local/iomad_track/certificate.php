@@ -29,10 +29,16 @@ require_once(dirname(__FILE__) . '/../../config.php');
 
 $id = required_param('id', PARAM_INT);
 
-// Security stuff (should) go here
-$systemcontext = context_system::instance();
 require_login();
-iomad::require_capability('local/report_completion:view', $systemcontext);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/report_completion:view', $companycontext);
 
 // Get the details fro db
 $certificate = $DB->get_record('local_iomad_track_certs', array('id' => $id), '*', MUST_EXIST);

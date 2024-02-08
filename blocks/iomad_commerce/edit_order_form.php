@@ -34,10 +34,16 @@ require_once(dirname(__FILE__) . '/../../course/lib.php');
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $invoiceid = required_param('id', PARAM_INTEGER);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_commerce:admin_view', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_commerce:admin_view', $companycontext);
 
 $urlparams = array();
 if ($returnurl) {
@@ -54,7 +60,7 @@ $linktext = get_string('orders', 'block_iomad_commerce');
 $linkurl = new moodle_url('/blocks/iomad_commerce/orderlist.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -68,13 +74,13 @@ if (empty($invoice->paymentid)) {
 } else {
     $payment = $DB->get_record('payments', ['id' => $invoice->paymentid]);
     $invoice->checkout_method = get_string('pluginname', 'paygw_' . $payment->gateway);
-    $accounts = \core_payment\helper::get_payment_accounts_menu(context_system::instance());
+    $accounts = \core_payment\helper::get_payment_accounts_menu($systemcontext);
     $invoice->pp_account = $accounts[$payment->accountid];
 
 }
 
 $showaccount = false;
-if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+if (iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
     $showaccount = true;
 }
 $mform = new \block_iomad_commerce\forms\order_edit_form($PAGE->url, $invoiceid, $showaccount);
@@ -94,4 +100,3 @@ if ($mform->is_cancelled()) {
 
     echo $OUTPUT->footer();
 }
-

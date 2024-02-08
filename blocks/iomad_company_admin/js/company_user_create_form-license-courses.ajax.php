@@ -31,11 +31,7 @@
 require_once(dirname(__FILE__) . '/../../../config.php');
 require_once('../lib.php');
 
-$licenseid = required_param('licenseid', PARAM_INT);
-
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:user_create', $context);
 
 $return = 'none';
 

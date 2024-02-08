@@ -48,10 +48,10 @@ class company_users_licenses_form extends moodleform {
     protected $liccourses = array();
     protected $license = null;
 
-    public function __construct($actionurl, $context, $companyid, $departmentid, $userid, $licenseid) {
+    public function __construct($actionurl, $companycontext, $companyid, $departmentid, $userid, $licenseid) {
         global $USER, $DB;
         $this->selectedcompany = $companyid;
-        $this->context = $context;
+        $this->context = $companycontext;
         $company = new company($this->selectedcompany);
         $this->parentlevel = company::get_company_parentnode($company->id);
         $this->companydepartment = $this->parentlevel->id;
@@ -62,7 +62,7 @@ class company_users_licenses_form extends moodleform {
                                                   WHERE clc.licenseid = :licenseid",
                                                   array('licenseid' => $this->licenseid));
 
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);
@@ -207,11 +207,11 @@ class company_users_licenses_form extends moodleform {
                 $mform->addElement('html', $this->currentcourses->display(true));
 
                 $enrolbuttonshtml = '</td> <td id="buttonscell"><p class="arrow_button">';
-                if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', context_system::instance())) {
+                if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $this->context)) {
                     $enrolbuttonshtml .= '<input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('enrol', 'block_iomad_company_admin') . '"
                                           title="' . get_string('enrol', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />';
                 }
-                if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', context_system::instance())) {
+                if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', $this->context)) {
                     $enrolbuttonshtml .= '<input name="remove" id="remove" type="submit" value="'. get_string('unenrol', 'block_iomad_company_admin').'&nbsp;'.$OUTPUT->rarrow(). '"
                                           title="'. get_string('unenrol', 'block_iomad_company_admin') .'" class="btn btn-secondary"/><br />';
                 }

@@ -29,15 +29,16 @@ require_once($CFG->dirroot.'/local/iomad_track/db/install.php');
 $userid = required_param('userid', PARAM_INT);
 $returnurl = required_param('returnurl', PARAM_RAW);
 
-
-// Check permissions.
 require_login();
-$context = context_system::instance();
-iomad::require_capability('local/report_users:addentry', $context);
+
+$systemcontext = context_system::instance();
 
 // Set the companyid
-$companyid = iomad::get_my_companyid($context);
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
 $company = new company($companyid);
+
+iomad::require_capability('local/report_users:addentry', $companycontext);
 
 $linktext = get_string('user_detail_title', 'local_report_users');
 
@@ -46,7 +47,7 @@ $reporturl = new moodle_url('/local/report_users/index.php');
 $baseurl = new moodle_url('/local/report_users/newentry.php', array('userid' => $userid, 'returnurl' => $returnurl));
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($baseurl);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($linktext);
@@ -54,7 +55,7 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading(get_string('pluginname', 'block_iomad_reports') . " - $linktext");
 $PAGE->navbar->add(get_string('dashboard', 'block_iomad_company_admin'));
-if (iomad::has_capability('local/report_completion:view', $context)) {
+if (iomad::has_capability('local/report_completion:view', $companycontext)) {
     $PAGE->navbar->add(get_string('pluginname', 'local_report_completion'),
                        new moodle_url($CFG->wwwroot . "/local/report_completion/index.php"));
 }

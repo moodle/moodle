@@ -39,7 +39,7 @@ $companyid = optional_param('companyid', 0, PARAM_INT);
 $parentid = optional_param('parentid', 0, PARAM_INT);
 $new = optional_param('createnew', 0, PARAM_INT);
 
-$context = context_system::instance();
+$systemcontext = context_system::instance();
 require_login();
 
 // Correct the navbar.
@@ -54,28 +54,14 @@ if (!$new) {
     }
 }
 
-// Set the url.
-$linkurl = new moodle_url('/blocks/iomad_company_admin/company_edit_form.php', [
-    'returnurl' => $returnurl,
-    'companyid' => $companyid,
-    'parentid' => $parentid,
-    'createnew' => $new,
-]);
-
-$PAGE->set_context($context);
-$PAGE->set_url($linkurl);
-$PAGE->set_pagelayout('base');
-$PAGE->set_title($linktext);
-
-// Set the page heading.
-$PAGE->set_heading($linktext);
-
+// What type of company is this?
 $child = false;
 if (!$new) {
-    iomad::require_capability('block/iomad_company_admin:company_edit', $context);
-
     // Set the companyid
-    $companyid = iomad::get_my_companyid($context);
+    $companyid = iomad::get_my_companyid($systemcontext);
+    $companycontext =  \core\context\company::instance($companyid);
+
+    iomad::require_capability('block/iomad_company_admin:company_edit', $companycontext);
 
     $isadding = false;
     $companyrecord = $DB->get_record('company', array('id' => $companyid), '*', MUST_EXIST);
@@ -94,15 +80,19 @@ if (!$new) {
     $companyrecord->previousroletemplateid = 0;
     $companyrecord->previousemailtemplateid = 0;
     $companyrecord->maxusers = 0;
+    $companycontext = $systemcontext;
     if ($emailtemplateset = $DB->get_record('email_templateset', ['isdefault' => 1])) {
         $companyrecord->emailtemplate = $emailtemplateset->id;
     }
 
-    if (!empty($parentid) && iomad::has_capability('block/iomad_company_admin:company_add_child', $context)) {
+    if (!empty($parentid)) {
+        $companycontext = \core\context\company::instance($parentid);
+        iomad::require_capability('block/iomad_company_admin:company_add_child', $companycontext);
+
         // We are adding a child company.
         $child = true;
         // Can this user manage this parentid?
-        if (!iomad::has_capability('block/iomad_company_admin:company_add', $context) &&
+        if (!iomad::has_capability('block/iomad_company_admin:company_add', $companycontext) &&
             !$DB->get_record('company_users', array('companyid' => $parentid, 'userid' => $USER->id, 'managertype' => 1))) {
             print_error(get_string('invalidcompany', 'block_iomad_company_admin'), 'error', new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php'));
             die;
@@ -139,9 +129,25 @@ if (!$new) {
             unset($SESSION->current_editing_company_data);
         }
     } else {
-        iomad::require_capability('block/iomad_company_admin:company_add', $context);
+        iomad::require_capability('block/iomad_company_admin:company_add', $companycontext);
     }
 }
+
+// Set the url.
+$linkurl = new moodle_url('/blocks/iomad_company_admin/company_edit_form.php', [
+    'returnurl' => $returnurl,
+    'companyid' => $companyid,
+    'parentid' => $parentid,
+    'createnew' => $new,
+]);
+
+$PAGE->set_context($companycontext);
+$PAGE->set_url($linkurl);
+$PAGE->set_pagelayout('base');
+$PAGE->set_title($linktext);
+
+// Set the page heading.
+$PAGE->set_heading($linktext);
 
 // Are there any existing companies?
 $firstcompany = !$DB->record_exists('company', array());
@@ -155,7 +161,7 @@ $companylist = new moodle_url('/blocks/iomad_company_admin/index.php', $urlparam
 // Get the company logos etc.
 $draftcompanylogoid = file_get_submitted_draft_itemid('companylogo');
 file_prepare_draft_area($draftcompanylogoid,
-                        $context->id,
+                        $companycontext->id,
                         'core_admin',
                         'logo' . $companyid, 0,
                         array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
@@ -163,7 +169,7 @@ $companyrecord->companylogo = $draftcompanylogoid;
 
 $draftcompanylogocompactid = file_get_submitted_draft_itemid('companylogocompact');
 file_prepare_draft_area($draftcompanylogocompactid,
-                        $context->id,
+                        $companycontext->id,
                         'core_admin',
                         'logocompact' . $companyid, 0,
                         ['maxfiles' => 1]);
@@ -171,7 +177,7 @@ $companyrecord->companylogocompact = $draftcompanylogocompactid;
 
 $draftcompanyfaviconid = file_get_submitted_draft_itemid('companyfavicon');
 file_prepare_draft_area($draftcompanyfaviconid,
-                        $context->id,
+                        $companycontext->id,
                         'core_admin',
                         'favicon' . $companyid, 0,
                         ['maxfiles' => 1]);
@@ -182,28 +188,28 @@ if (!empty($new) && !empty($parentid)) {
     // Get the parent certificate files as default.
     $draftcompanycertificatesealid = file_get_submitted_draft_itemid('companycertificateseal');
     file_prepare_draft_area($draftcompanycertificatesealid,
-                            $context->id,
+                            $companycontext->id,
                             'local_iomad',
                             'companycertificateseal', $parentid,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
     $companyrecord->companycertificateseal = $draftcompanycertificatesealid;
     $draftcompanycertificatesignatureid = file_get_submitted_draft_itemid('companycertificatesignature');
     file_prepare_draft_area($draftcompanycertificatesignatureid,
-                            $context->id,
+                            $companycontext->id,
                             'local_iomad',
                             'companycertificatesignature', $parentid,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
     $companyrecord->companycertificatesignature = $draftcompanycertificatesignatureid;
     $draftcompanycertificateborderid = file_get_submitted_draft_itemid('companycertificateborder');
     file_prepare_draft_area($draftcompanycertificateborderid,
-                            $context->id,
+                            $companycontext->id,
                             'local_iomad',
                             'companycertificateborder', $parentid,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
     $companyrecord->companycertificateborder = $draftcompanycertificateborderid;
     $draftcompanycertificatewatermarkid = file_get_submitted_draft_itemid('companycertificatewatermark');
     file_prepare_draft_area($draftcompanycertificatewatermarkid,
-                            $context->id,
+                            $companycontext->id,
                             'local_iomad',
                             'companycertificatewatermark', $parentid,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
@@ -253,7 +259,7 @@ if (!empty($new) && !empty($parentid)) {
 
     $draftcompanylogocompactid = file_get_submitted_draft_itemid('companylogocompact');
     file_prepare_draft_area($draftcompanylogocompactid,
-                            $context->id,
+                            $companycontext->id,
                             'core_admin',
                             'logocompact' . $parentid, 0,
                             ['maxfiles' => 1]);
@@ -261,7 +267,7 @@ if (!empty($new) && !empty($parentid)) {
 
     $draftcompanyfaviconid = file_get_submitted_draft_itemid('companyfavicon');
     file_prepare_draft_area($draftcompanyfaviconid,
-                            $context->id,
+                            $companycontext->id,
                             'core_admin',
                             'favicon' . $parentid, 0,
                             ['maxfiles' => 1]);
@@ -269,28 +275,28 @@ if (!empty($new) && !empty($parentid)) {
 } else {
     $draftcompanycertificatesealid = file_get_submitted_draft_itemid('companycertificateseal');
     file_prepare_draft_area($draftcompanycertificatesealid,
-                            $context->id,
+                            $companycontext->id,
                             'local_iomad',
                             'companycertificateseal', $companyid,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
     $companyrecord->companycertificateseal = $draftcompanycertificatesealid;
     $draftcompanycertificatesignatureid = file_get_submitted_draft_itemid('companycertificatesignature');
     file_prepare_draft_area($draftcompanycertificatesignatureid,
-                            $context->id,
+                            $companycontext->id,
                             'local_iomad',
                             'companycertificatesignature', $companyid,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
     $companyrecord->companycertificatesignature = $draftcompanycertificatesignatureid;
     $draftcompanycertificateborderid = file_get_submitted_draft_itemid('companycertificateborder');
     file_prepare_draft_area($draftcompanycertificateborderid,
-                            $context->id,
+                            $companycontext->id,
                             'local_iomad',
                             'companycertificateborder', $companyid,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
     $companyrecord->companycertificateborder = $draftcompanycertificateborderid;
     $draftcompanycertificatewatermarkid = file_get_submitted_draft_itemid('companycertificatewatermark');
     file_prepare_draft_area($draftcompanycertificatewatermarkid,
-                            $context->id,
+                            $companycontext->id,
                             'local_iomad',
                             'companycertificatewatermark', $companyid,
                             array('subdirs' => 0, 'maxbytes' => 15 * 1024, 'maxfiles' => 1));
@@ -359,7 +365,7 @@ if ($mform->is_cancelled()) {
 
         $eventother = array('companyid' => $companyid);
 
-        $event = \block_iomad_company_admin\event\company_created::create(array('context' => context_system::instance(),
+        $event = \block_iomad_company_admin\event\company_created::create(array('context' => $systemcontext,
                                                                                 'userid' => $USER->id,
                                                                                 'objectid' => $companyid,
                                                                                 'other' => $eventother));
@@ -480,7 +486,7 @@ if ($mform->is_cancelled()) {
         $eventother = array('companyid' => $companyid,
                             'oldcompany' => json_encode($oldcompany));
 
-        $event = \block_iomad_company_admin\event\company_updated::create(array('context' => context_system::instance(),
+        $event = \block_iomad_company_admin\event\company_updated::create(array('context' => $companycontext,
                                                                                 'userid' => $USER->id,
                                                                                 'objectid' => $companyid,
                                                                                 'other' => $eventother));
@@ -526,7 +532,7 @@ if ($mform->is_cancelled()) {
     }
 
     // Deal with email templates.
-    if (!empty($data->emailtemplate) && iomad::has_capability('local/email:edit', $context)) {
+    if (!empty($data->emailtemplate) && iomad::has_capability('local/email:edit', $companycontext)) {
         // We need to do something with the email templates.
         $company->apply_email_templates($data->emailtemplate);
     }
@@ -541,14 +547,14 @@ if ($mform->is_cancelled()) {
     $fs = get_file_storage();
     if (!empty($data->companylogo)) {
         file_save_draft_area_files($data->companylogo,
-                                   $context->id,
+                                   $companycontext->id,
                                    'core_admin',
                                    'logo' . $data->id,
                                    0,
                                    ['maxfiles' => 1]);
 
         // Set the plugin config so it can actually be picked up.
-        if ($files = $fs->get_area_files($context->id, 'core_admin', 'logo'. $data->id)) {
+        if ($files = $fs->get_area_files($companycontext->id, 'core_admin', 'logo'. $data->id)) {
             foreach ($files as $file) {
                 if ($file->get_filename() != '.') {
                     break;
@@ -561,14 +567,14 @@ if ($mform->is_cancelled()) {
     }
     if (!empty($data->companylogocompact)) {
         file_save_draft_area_files($data->companylogocompact,
-                                   $context->id,
+                                   $companycontext->id,
                                    'core_admin',
                                    'logocompact' . $data->id,
                                    0,
                                    ['maxfiles' => 1]);
 
         // Set the plugin config so it can actually be picked up.
-        if ($files = $fs->get_area_files($context->id, 'core_admin', 'logocompact'. $data->id)) {
+        if ($files = $fs->get_area_files($companycontext->id, 'core_admin', 'logocompact'. $data->id)) {
             foreach ($files as $file) {
                 if ($file->get_filename() != '.') {
                     break;
@@ -581,14 +587,14 @@ if ($mform->is_cancelled()) {
     }
     if (!empty($data->companyfavicon)) {
         file_save_draft_area_files($data->companyfavicon,
-                                   $context->id,
+                                   $companycontext->id,
                                    'core_admin',
                                    'favicon' . $data->id,
                                    0,
                                    ['maxfiles' => 1]);
 
         // Set the plugin config so it can actually be picked up.
-        if ($files = $fs->get_area_files($context->id, 'core_admin', 'favicon'. $data->id)) {
+        if ($files = $fs->get_area_files($companycontext->id, 'core_admin', 'favicon'. $data->id)) {
             foreach ($files as $file) {
                 if ($file->get_filename() != '.') {
                     break;
@@ -601,7 +607,7 @@ if ($mform->is_cancelled()) {
     }
     if (!empty($data->companycertificateseal)) {
         file_save_draft_area_files($data->companycertificateseal,
-                                   $context->id,
+                                   $companycontext->id,
                                    'local_iomad',
                                    'companycertificateseal',
                                    $data->id,
@@ -609,7 +615,7 @@ if ($mform->is_cancelled()) {
     }
     if (!empty($data->companycertificatesignature)) {
         file_save_draft_area_files($data->companycertificatesignature,
-                                   $context->id,
+                                   $companycontext->id,
                                    'local_iomad',
                                    'companycertificatesignature',
                                    $data->id,
@@ -617,7 +623,7 @@ if ($mform->is_cancelled()) {
     }
     if (!empty($data->companycertificateborder)) {
         file_save_draft_area_files($data->companycertificateborder,
-                                   $context->id,
+                                   $companycontext->id,
                                    'local_iomad',
                                    'companycertificateborder',
                                    $data->id,
@@ -625,7 +631,7 @@ if ($mform->is_cancelled()) {
     }
     if (!empty($data->companycertificatewatermark)) {
         file_save_draft_area_files($data->companycertificatewatermark,
-                                   $context->id,
+                                   $companycontext->id,
                                    'local_iomad',
                                    'companycertificatewatermark',
                                    $data->id,

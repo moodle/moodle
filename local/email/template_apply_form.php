@@ -50,7 +50,6 @@ class template_apply_form extends moodleform {
 
     public function definition() {
         global $CFG, $PAGE, $DB;
-        $context = context_system::instance();
 
         $mform =& $this->_form;
 
@@ -67,8 +66,18 @@ class template_apply_form extends moodleform {
 }
 
 $templatesetid = required_param('templatesetid', PARAM_INTEGER);
-$context = context_system::instance();
+
 require_login();
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+
+
 $templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid));
 
 // Correct the navbar.
@@ -79,7 +88,7 @@ $linktext = get_string('applytemplateset', 'local_email', $templatesetinfo ->tem
 $linkurl = new moodle_url('/local/email/template_apply_form.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -89,7 +98,7 @@ $PAGE->set_heading($linktext);
 
 // Only display if you have the correct capability, or you are not in more than one company.
 // Just display name of current company if no choice.
-if (!iomad::has_capability('block/iomad_company_admin:company_view_all',$context)) {
+if (!iomad::has_capability('block/iomad_company_admin:company_view_all',$systemcontext)) {
     $companies = $DB->get_records_sql_menu("SELECT c.id, c.name
                                             FROM {company} c
                                             JOIN {company_user} cu

@@ -207,7 +207,7 @@ class admin_uploaduser_form2 extends company_moodleform {
      * Form tweaks that depend on current data.
      */
     public function definition_after_data() {
-        global $USER, $SESSION, $DB, $output;
+        global $USER, $SESSION, $DB, $output, $systemcontext, $companycontext;
 
         $mform   =& $this->_form;
         $columns =& $this->_customdata;
@@ -228,7 +228,6 @@ class admin_uploaduser_form2 extends company_moodleform {
         // Get the department list.
         $company = new company($companyid);
         $companymanualcourses = $company->get_menu_courses(true, true);
-        $systemcontext = context_system::instance();
         $parentlevel = company::get_company_parentnode($companyid);
         $this->departmentid = $parentlevel->id;
         $mform->addElement('header', 'advanced');
@@ -248,7 +247,7 @@ class admin_uploaduser_form2 extends company_moodleform {
 
 
         // Deal with licenses.
-        if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $systemcontext)) {
+        if (iomad::has_capability('block/iomad_company_admin:allocate_licenses', $companycontext)) {
             if ($foundlicenses = $DB->get_records_sql_menu("SELECT id, name FROM {companylicense}
                                                    WHERE expirydate >= :timestamp
                                                    AND companyid = :companyid",

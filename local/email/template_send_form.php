@@ -66,7 +66,6 @@ class template_send_form extends moodleform {
 
     public function definition() {
         global $CFG, $PAGE, $DB;
-        $context = context_system::instance();
 
         $mform =& $this->_form;
 
@@ -124,28 +123,22 @@ $templateid = optional_param('templateid', 0, PARAM_INTEGER);
 $templatename = optional_param('templatename', '', PARAM_NOTAGS);
 $new = optional_param('createnew', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
-require_login();
-
 $urlparams = array('templateid' => $templateid, 'templatename' => $templatename);
 if ($returnurl) {
     $urlparams['returnurl'] = $returnurl;
 }
 $templatelist = new moodle_url('/local/email/template_list.php', $urlparams);
 
-// Set the companyid to bypass the company select form if possible.
-if (!empty($SESSION->currenteditingcompany)) {
-    $companyid = $SESSION->currenteditingcompany;
-} else if (!empty($USER->company)) {
-    $companyid = company_user::companyid();
-} else if (!iomad::has_capability('local/email:edit', context_system::instance())) {
-    print_error('There has been a configuration error, please contact the site administrator');
-} else {
-    redirect(new moodle_url('/local/iomad_dashboard/index.php'),
-                            'Please select a company from the dropdown first');
-}
+require_login();
 
-iomad::require_capability('local/email:send', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/email:send', $companycontext);
 
 if ($templateid) {
     $templaterecord = $DB->get_record('email_template',
@@ -165,7 +158,7 @@ $linktext = get_string('send_emails', 'local_email');
 $linkurl = new moodle_url('/local/email/template_edit_form.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
@@ -178,7 +171,7 @@ require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
 // Get the form data.
 
 // Set up the form.
-$mform = new template_send_form($PAGE->url, $context, $companyid, $templateid, $templaterecord);
+$mform = new template_send_form($PAGE->url, $companycontext, $companyid, $templateid, $templaterecord);
 $mform->set_data($templaterecord);
 
 if ($mform->is_cancelled()) {

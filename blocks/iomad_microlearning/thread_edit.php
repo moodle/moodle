@@ -28,10 +28,16 @@ require_once(dirname(__FILE__) . '/../../course/lib.php');
 
 $threadid = optional_param('threadid', 0, PARAM_INT);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_microlearning:edit_threads', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_microlearning:edit_threads', $companycontext);
 
 $threadlist = new moodle_url('/blocks/iomad_microlearning/threads.php');
 
@@ -40,7 +46,7 @@ $linktext = get_string('editthread', 'block_iomad_microlearning');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_microlearning/thread_edit.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -50,10 +56,6 @@ $output = $PAGE->get_renderer('block_iomad_microlearning');
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 
 // Set up the form.
 $editform = new block_iomad_microlearning\forms\thread_edit_form();
@@ -107,7 +109,7 @@ if ($editform->is_cancelled()) {
         // Fire an Event for this.
         $eventother = array('companyid' => $companyid);
 
-        $event = \block_iomad_microlearning\event\thread_created::create(array('context' => context_system::instance(),
+        $event = \block_iomad_microlearning\event\thread_created::create(array('context' => $companycontext,
                                                                                'userid' => $USER->id,
                                                                                'objectid' => $threadid,
                                                                                'other' => $eventother));
@@ -122,7 +124,7 @@ if ($editform->is_cancelled()) {
         // Fire an Event for this.
         $eventother = array('companyid' => $companyid);
 
-        $event = \block_iomad_microlearning\event\thread_updated::create(array('context' => context_system::instance(),
+        $event = \block_iomad_microlearning\event\thread_updated::create(array('context' => $companycontext,
                                                                                'userid' => $USER->id,
                                                                                'objectid' => $threadid,
                                                                                'other' => $eventother));

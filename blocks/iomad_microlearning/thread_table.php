@@ -91,36 +91,35 @@ class block_iomad_microlearning_thread_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $DB, $output;
+        global $DB, $output, $companycontext;
 
         if ($this->is_downloading()) {
             return;
         }
 
         $html = "";
-        $context = context_system::instance();
         $deletelink = new moodle_url('threads.php', array('deleteid' => $row->id, 'sesskey' => sesskey()));
         $clonelink = new moodle_url('threads.php', array('cloneid' => $row->id, 'sesskey' => sesskey()));
         $editlink = new moodle_url('thread_edit.php', array('threadid' => $row->id));
         $nuggetlink = new moodle_url('nuggets.php', array('threadid' => $row->id));
         $userlink = new moodle_url('users.php', array('threadid' => $row->id));
         $schedulelink = new moodle_url('thread_schedule.php', array('threadid' => $row->id));
-        if (iomad::has_capability('block/iomad_microlearning:edit_threads', $context)) {
+        if (iomad::has_capability('block/iomad_microlearning:edit_threads', $companycontext)) {
             $html .= '<a href="' . $editlink . '" title="' . get_string('editthread', 'block_iomad_microlearning') .'"><i class="fa fa-cog"></i></a>&nbsp';
         }
-        if (iomad::has_capability('block/iomad_microlearning:edit_nuggets', $context)) {
+        if (iomad::has_capability('block/iomad_microlearning:edit_nuggets', $companycontext)) {
             $html .= '<a href="' . $nuggetlink . '" title="' . get_string('learningnuggets', 'block_iomad_microlearning') .'"><i class="fa fa-microchip"></i></a>&nbsp';
         }
-        if (iomad::has_capability('block/iomad_microlearning:edit_threads', $context)) {
+        if (iomad::has_capability('block/iomad_microlearning:edit_threads', $companycontext)) {
             $html .= '<a href="' . $schedulelink . '" title="' . get_string('threadschedule', 'block_iomad_microlearning') .'"><i class="fa fa-list-alt"></i></a>&nbsp';
         }
-        if (iomad::has_capability('block/iomad_microlearning:assign_threads', $context)) {
+        if (iomad::has_capability('block/iomad_microlearning:assign_threads', $companycontext)) {
             $html .= '<a href="' . $userlink . '" title="' . get_string('learningusers', 'block_iomad_microlearning') .'"><i class="fa fa-group"></i></a>&nbsp';
         }
-        if (iomad::has_capability('block/iomad_microlearning:thread_clone', $context)) {
+        if (iomad::has_capability('block/iomad_microlearning:thread_clone', $companycontext)) {
             $html .= '<a href="' . $clonelink . '" title="' . get_string('clonethread', 'block_iomad_microlearning') .'"><i class="fa fa-clone"></i></a>';
         }
-        if (iomad::has_capability('block/iomad_microlearning:thread_delete', $context)) {
+        if (iomad::has_capability('block/iomad_microlearning:thread_delete', $companycontext)) {
             $html .= '<a href="' . $deletelink . '" title="' . get_string('deletethread', 'block_iomad_microlearning') .'"><i class="fa fa-times"></i></a>';
         }
 

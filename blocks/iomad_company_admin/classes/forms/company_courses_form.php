@@ -41,10 +41,10 @@ class company_courses_form extends moodleform {
     protected $subhierarchieslist = null;
     protected $companydepartment = 0;
 
-    public function __construct($actionurl, $context, $companyid, $departmentid, $parentlevel) {
+    public function __construct($actionurl, $companycontext, $companyid, $departmentid, $parentlevel) {
         global $USER;
         $this->selectedcompany = $companyid;
-        $this->context = $context;
+        $this->context = $companycontext;
         $this->departmentid = $departmentid;
 
         $options = array('context' => $this->context,
@@ -77,7 +77,6 @@ class company_courses_form extends moodleform {
         // in the process function, the changes get displayed, rather than the lists as they
         // are before processing.
 
-        $context = context_system::instance();
         $company = new company($this->selectedcompany);
         $mform->addElement('hidden', 'deptid', $this->departmentid);
         $mform->setType('deptid', PARAM_INT);
@@ -110,7 +109,7 @@ class company_courses_form extends moodleform {
 
         // Can this user move courses with existing enrollments
         // (which unenrolls those users as a result)?
-        if (iomad::has_capability('block/iomad_company_admin:company_course_unenrol', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:company_course_unenrol', $this->context)) {
             $mform->addElement('html', get_string('unenrollwarning',
                                                   'block_iomad_company_admin'));
             $mform->addElement('checkbox', 'oktounenroll',
@@ -123,8 +122,6 @@ class company_courses_form extends moodleform {
 
     public function process() {
         global $DB;
-
-        $context = context_system::instance();
 
         // Get process ok to unenroll confirmation.
         $oktounenroll = optional_param('oktounenroll', false, PARAM_BOOL);
@@ -162,7 +159,7 @@ class company_courses_form extends moodleform {
                         // oktounenroll true and the company_course_unenrol capability.
                         if (!empty($addcourse->has_enrollments)) {
                             if (iomad::has_capability('block/iomad_company_admin:company_course_unenrol',
-                                                $context) and $oktounenroll) {
+                                                $this->context) and $oktounenroll) {
                                 $this->unenroll_all($addcourse->id);
                                 $company->add_course($addcourse);
                             }
@@ -213,7 +210,7 @@ class company_courses_form extends moodleform {
                         // oktounenroll true and the company_course_unenrol capability.
                         if (!empty($removecourse->has_enrollments)) {
                             if (iomad::has_capability('block/iomad_company_admin:company_course_unenrol',
-                                                $context) and $oktounenroll) {
+                                                $this->context) and $oktounenroll) {
                                 $this->unenroll_all($removecourse->id);
                                 if ($this->departmentid != $this->companydepartment) {
                                     // Dump it into the default company department.

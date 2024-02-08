@@ -33,11 +33,16 @@ require_once(dirname(__FILE__) . '/../../course/lib.php');
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:createcourse', $context);
 
-$PAGE->set_context($context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:createcourse', $companycontext);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -47,16 +52,13 @@ $linktext = get_string('createcourse_title', 'block_iomad_company_admin');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_course_create_form.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
 
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
@@ -172,4 +174,3 @@ if ($mform->is_cancelled()) {
 
     echo $OUTPUT->footer();
 }
-

@@ -305,5 +305,3 @@ class user_editadvanced_form extends moodleform {
         }
     }
 }
-
-

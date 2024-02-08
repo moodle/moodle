@@ -266,7 +266,8 @@ class renderer extends plugin_renderer_base {
     public function display_tree_selector($company, $parentlevel, $linkurl, $urlparams, $departmentid = 0, $addchildcompanies = false) {
         global $DB, $USER;
 
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+        $companycontext = \core\context\company::instance($company->id);
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
             $userlevels = array($parentlevel->id => $parentlevel->id);
         } else {
             $userlevels = $company->get_userlevel($USER);
@@ -311,7 +312,8 @@ class renderer extends plugin_renderer_base {
 
         // Get the available departments.
         $parentlevel = company::get_company_parentnode($company->id);
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+        $companycontext = \core\context\company::instance($company->id);
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
             $userlevels = array($parentlevel->id => $parentlevel->id);
         } else {
             $userlevels = $company->get_userlevel($USER);

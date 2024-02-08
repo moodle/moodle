@@ -41,10 +41,16 @@ $iid         = optional_param('iid', '', PARAM_INT);
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
 $readcount   = optional_param('readcount', 0, PARAM_INT);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('local/iomad_track:importfrommoodle', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/iomad_track:importfrommoodle', $companycontext);
 
 $urlparams = array();
 if ($returnurl) {
@@ -56,7 +62,7 @@ $linktext = get_string('importcompletionrecords', 'local_iomad_track');
 // Set the url.
 $linkurl = new moodle_url('/local/iomad_track/import.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('admin');
 $PAGE->set_title($linktext);
@@ -541,5 +547,3 @@ function validate_uploadcompletion_columns(&$columns) {
 
     return true;
 }
-
-

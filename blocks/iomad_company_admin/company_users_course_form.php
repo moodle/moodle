@@ -31,12 +31,16 @@ $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $userid = required_param('userid', PARAM_INTEGER);
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:company_course_users', $context);
+
+$systemcontext = context_system::instance();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:company_course_users', $companycontext);
 
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
@@ -54,7 +58,7 @@ $linkurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
 $formurl = new moodle_url('/blocks/iomad_company_admin/company_users_course_form.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 
@@ -69,7 +73,7 @@ $linktext = get_string('user_courses_for', 'block_iomad_company_admin', fullname
 $PAGE->set_title($linktext);
 $PAGE->set_heading($linktext);
 
-$coursesform = new \block_iomad_company_admin\forms\company_users_course_form($formurl, $context, $companyid, $departmentid, $userid);
+$coursesform = new \block_iomad_company_admin\forms\company_users_course_form($formurl, $companycontext, $companyid, $departmentid, $userid);
 
 echo $OUTPUT->header();
 

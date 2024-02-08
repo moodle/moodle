@@ -43,12 +43,12 @@ class emails_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_fullname($row) {
-        global $params;
+        global $params, $companycontext;
 
         $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
         $userurl = '/local/report_users/userdisplay.php';
 
-        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', $companycontext)) {
             return "<a href='".
                     new moodle_url($userurl, ['userid' => $row->id]).
                     "'>$name</a>";
@@ -126,10 +126,10 @@ class emails_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_coursename($row) {
-        global $CFG, $DB;
+        global $CFG, $DB, $companycontext;
 
         $courseurl  = '/local/report_completion/index.php';
-        if (!$this->is_downloading() && iomad::has_capability('local/report_completion:view', context_system::instance())) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_completion:view', $companycontext)) {
             return "<a href='".
                     new moodle_url($courseurl, array('courseid' => $row->courseid)).
                     "'>" . format_string($row->coursename, true, 1) . "</a>";
@@ -144,10 +144,9 @@ class emails_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_controls($row) {
-        global $CFG, $output;
+        global $CFG, $output, $companycontext;
 
-        $context = context_system::instance();
-        if (iomad::has_capability('local/report_emails:resend', $context) && !empty($row->sent)) {
+        if (iomad::has_capability('local/report_emails:resend', $companycontext) && !empty($row->sent)) {
             $resendlink = new moodle_url('/local/report_emails/index.php',
                                                 array('emailid' => $row->emailid));
             return $output->single_button($resendlink, get_string('resend', 'local_report_emails'));

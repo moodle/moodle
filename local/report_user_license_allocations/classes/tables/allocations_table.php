@@ -41,12 +41,12 @@ class allocations_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_fullname($row) {
-        global $params;
+        global $params, $companycontext;
 
         $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
         $userurl = '/local/report_users/userdisplay.php';
 
-        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', context_system::instance())) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_users:view', $companycontext)) {
             return "<a href='".
                     new moodle_url($userurl, array('userid' => $row->id,
                                                    'courseid' => $row->courseid)).
@@ -150,7 +150,7 @@ class allocations_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_licensename($row) {
-        global $CFG, $DB;
+        global $CFG, $DB, $companycontext;
 
         if ($row->licenseid == null) {
             $row->licenseid = 0;
@@ -166,7 +166,7 @@ class allocations_table extends table_sql {
                 $row->licensename = "-"; 
             }
         }
-        if (!$this->is_downloading() && iomad::has_capability('local/report_license_usage:view', context_system::instance())) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_license_usage:view', $companycontext)) {
             return  "<a href='".
                     new moodle_url($licenseurl, array('licenseid' => $row->licenseid)).
                     "'>" . format_string($row->licensename) . "</a>";
@@ -184,7 +184,7 @@ class allocations_table extends table_sql {
         global $CFG, $DB;
 
         $courseurl  = '/local/report_completion/index.php';
-        if (!$this->is_downloading() && iomad::has_capability('local/report_completion:view', context_system::instance())) {
+        if (!$this->is_downloading() && iomad::has_capability('local/report_completion:view', $companycontext)) {
             return "<a href='".
                     new moodle_url($courseurl, array('courseid' => $row->courseid)).
                     "'>" . format_string($row->coursename, true, 1) . "</a>";

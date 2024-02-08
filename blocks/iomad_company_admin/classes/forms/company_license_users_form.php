@@ -44,10 +44,10 @@ class company_license_users_form extends \moodleform {
     protected $courseselect = array();
     protected $firstcourseid = 0;
 
-    public function __construct($actionurl, $context, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output, $chosenid=0) {
+    public function __construct($actionurl, $companycontext, $companyid, $licenseid, $departmentid, $selectedcourses, $error, $output, $chosenid=0) {
         global $USER, $DB;
         $this->selectedcompany = $companyid;
-        $this->context = $context;
+        $this->context = $companycontext;
         $company = new \company($this->selectedcompany);
         $this->parentlevel = \company::get_company_parentnode($company->id);
         $this->companydepartment = $this->parentlevel->id;
@@ -82,7 +82,7 @@ class company_license_users_form extends \moodleform {
         $courseselect = array(0 => get_string('all')) + $courseselect;
         $this->courseselect = $courseselect;
 
-        if (\iomad::has_capability('block/iomad_company_admin:allocate_licenses', \context_system::instance())) {
+        if (\iomad::has_capability('block/iomad_company_admin:allocate_licenses', $companycontext)) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);

@@ -409,12 +409,14 @@ class iomad {
     public static function iomad_filter_categories( $categories ) {
         global $DB, $USER;
 
+        $contextsystem = context_system::instance();
+
         // Check if its the client admin.
-        if (self::has_capability('block/iomad_company_admin:company_view_all', context_system::instance()) && empty($userid)) {
+        if (self::has_capability('block/iomad_company_admin:company_view_all', $contextsystem) && empty($userid)) {
             return $categories;
         }
 
-        $companyid = iomad::get_my_companyid(context_system::instance());
+        $companyid = iomad::get_my_companyid($contextsystem);
         $company = $DB->get_record('company', ['id' => $companyid]);
 
         // Get the cache objects.
@@ -521,12 +523,14 @@ class iomad {
     public static function iomad_filter_courses( $courses ) {
         global $DB, $USER;
 
+        $contextsystem = context_system::instance();
+
         // Check if its the client admin.
-        if (self::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+        if (self::has_capability('block/iomad_company_admin:company_view_all', $contextsystem)) {
             return $courses;
         }
-        $context = context_system::instance();
-        $mycompanyid = self::get_my_companyid($context);
+
+        $mycompanyid = self::get_my_companyid($contextsystem);
 
         $iomadcourses = array();
         foreach ($courses as $id => $course) {
@@ -1829,12 +1833,7 @@ class iomad_company_filter_form extends moodleform {
         $mform->setType('name', PARAM_CLEAN);
         $mform->setType('city', PARAM_CLEAN);
         $mform->setType('country', PARAM_CLEAN);
-
-        //if (has_capability('block/iomad_company_admin:suspendedcompanies', context_system::instance())) {
-            $mform->addElement('checkbox', 'showsuspended', get_string('show_suspended_companies', 'local_iomad'));
-        /*} else {
-            $mform->addElement('hidden', 'showsuspended');
-        }*/
+        $mform->addElement('checkbox', 'showsuspended', get_string('show_suspended_companies', 'local_iomad'));
         $mform->setType('showsuspended', PARAM_INT);
 
         $this->add_action_buttons(false, get_string('companyfilter', 'local_iomad'));

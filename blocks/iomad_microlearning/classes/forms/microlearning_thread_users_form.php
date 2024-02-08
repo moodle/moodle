@@ -31,7 +31,7 @@ use \microlearning;
 use \iomad;
 
 class microlearning_thread_users_form extends \company_moodleform {
-    protected $context = null;
+    protected $companycontext = null;
     protected $selectedcompany = 0;
     protected $selectedthread = 0;
     protected $potentialusers = null;
@@ -50,14 +50,13 @@ class microlearning_thread_users_form extends \company_moodleform {
         global $USER, $DB;
         $this->selectedcompany = $companyid;
         $this->selectedthread = $threadid;
-        $this->context = $context;
+        $this->companycontext = $context;
         $company = new \company($this->selectedcompany);
         $this->company = $company;
         $this->parentlevel = \company::get_company_parentnode($company->id);
         $this->companydepartment = $this->parentlevel->id;
-        $context = \context_system::instance();
 
-        if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $context)) {
+        if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
             $userhierarchylevel = $this->parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);
@@ -83,7 +82,7 @@ class microlearning_thread_users_form extends \company_moodleform {
 
     public function create_user_selectors() {
         if (!empty ($this->thread)) {
-            $options = array('context' => $this->context,
+            $options = array('context' => $this->companycontext,
                              'companyid' => $this->selectedcompany,
                              'threadid' => $this->thread->id,
                              'groupid' => $this->groupid,

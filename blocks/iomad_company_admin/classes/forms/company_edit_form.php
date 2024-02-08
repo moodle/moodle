@@ -57,13 +57,21 @@ class company_edit_form extends \company_moodleform {
         }
         if ($parentcompanyid) {
             $this->parentcompany = $DB->get_record('company', ['id' => $parentcompanyid], '*', MUST_EXIST);
+            $this->context = \core\context\company::instance($parentcompanyid);
+        }
+        if (!empty($companyid)) {
+            $this->context = \core\context\company::instance($companyid);
+        }
+        // Default context is system as no company details have been added at all.
+        if (empty($this->context)) {
+            $this->context = context_system::instance();
         }
         parent::__construct($actionurl);
     }
 
     public function definition() {
         global $CFG, $PAGE, $DB;
-        $context = \context_system::instance();
+        $systemcontext = context_system::instance();
 
         $mform = & $this->_form;
 
@@ -163,7 +171,7 @@ class company_edit_form extends \company_moodleform {
         $mform->setDefault('managerdigestday', 0);
         $mform->addHelpButton('managerdigestday', 'managerdigestday', 'block_iomad_company_admin');
 
-        if (iomad::has_capability('local/email:edit', $context)) {
+        if (iomad::has_capability('local/email:edit', $this->context)) {
             // Add in the company email template selector.
             $emailtemplates = \company::get_email_templates($this->companyid);
             if (!empty($emailtemplates[$this->previousemailtemplateid])) {
@@ -215,7 +223,7 @@ class company_edit_form extends \company_moodleform {
         $mform->addElement('select', 'roletemplate', get_string('applyroletemplate', 'block_iomad_company_admin', $templates[$this->previousroletemplateid]), $templates);
         $mform->addHelpButton('roletemplate', 'roletemplate', 'block_iomad_company_admin');
 
-        if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:company_add', $this->context)) {
             // Add in the template selector for the company.
             $templates = $DB->get_records_menu('company_role_templates', array(), 'name', 'id,name');
             $mform->addElement('autocomplete', 'templates', get_string('availabletemplates', 'block_iomad_company_admin'), $templates, array('multiple' => true));
@@ -230,7 +238,7 @@ class company_edit_form extends \company_moodleform {
             $mform->setDefault('parentid', 0);
             $mform->addHelpButton('parentid', 'parentcompany', 'block_iomad_company_admin');
 
-        } else if (iomad::has_capability('block/iomad_company_admin:company_add_child', $context) && !empty($this->parentcompanyid)) {
+        } else if (iomad::has_capability('block/iomad_company_admin:company_add_child', $this->context) && !empty($this->parentcompanyid)) {
             // Add it as a hidden field.
             $mform->addElement('hidden', 'parentid', $this->parentcompanyid);
             if (!empty($this->companyrecord->templates)) {
@@ -249,10 +257,10 @@ class company_edit_form extends \company_moodleform {
         }
 
         // Add the ecommerce selector.
-        if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+        if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $this->context)) {
             $mform->addElement('selectyesno', 'ecommerce', get_string('enableecommerce', 'block_iomad_company_admin'));
             $mform->setDefault('ecommerce', 0);
-            $accounts = \core_payment\helper::get_payment_accounts_menu(context_system::instance());
+            $accounts = \core_payment\helper::get_payment_accounts_menu($systemcontext);
             if (empty($CFG->commerce_enable_external) && !empty($accounts)) {
                 if (empty($this->companyrecord->paymentaccount)) {
                     $usedefaultpaymentaccountvalue = "checked";
@@ -402,14 +410,14 @@ class company_edit_form extends \company_moodleform {
         }
         // Only show the Appearence section if the theme is iomad or you have abilities
         // to change that.
-        if (iomad::has_capability('block/iomad_company_admin:company_edit_appearance', $context) ||
+        if (iomad::has_capability('block/iomad_company_admin:company_edit_appearance', $this->context) ||
              preg_match('/iomad/', $this->companyrecord->theme) || $ischild) {
 
             $mform->addElement('header', 'appearance',
                                     get_string('appearance', 'block_iomad_company_admin'));
 
             // If has the edit all companies capability we want to add a theme selector.
-            if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:company_add', $this->context)) {
 
                 // Get the list of themes.
                 $themes = get_plugin_list('theme');
@@ -507,7 +515,7 @@ class company_edit_form extends \company_moodleform {
         }
 
         // Only show the certificate section if you have capability.
-        if (iomad::has_capability('block/iomad_company_admin:company_edit_certificateinfo', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:company_edit_certificateinfo', $this->context)) {
             $mform->addElement('header', 'certificatedesign', get_string('certificatedesign', 'block_iomad_company_admin'));
 
             $mform->addElement('advcheckbox', 'uselogo', get_string('company_uselogo', 'block_iomad_company_admin'), null, null, array(0,1));

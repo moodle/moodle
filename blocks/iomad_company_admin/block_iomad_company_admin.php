@@ -63,9 +63,7 @@ class block_iomad_company_admin extends block_base {
     private function check_company_status() {
         global $SESSION, $DB, $USER;
 
-        $systemcontext = context_system::instance();
-
-            // Get parameters.
+        // Get parameters.
         $edit = optional_param( 'edit', null, PARAM_BOOL );
         $company = optional_param('company', 0, PARAM_INT);
         $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
@@ -74,8 +72,15 @@ class block_iomad_company_admin extends block_base {
 
         $SESSION->showsuspendedcompanies = $showsuspendedcompanies;
 
+        $systemcontext = context_system::instance();
+        $companycontext = $systemcontext;
+        if (!empty($company)) {
+            $companycontext =  \core\context\company::instance($company);
+        }
+
+
         // Set the session to a user if they are editing a company other than their own.
-        if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)
+        if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)
             || $DB->get_record('company_users', array('managertype' => 1, 'companyid' => $company, 'userid' => $USER->id)))) {
             $SESSION->currenteditingcompany = $company;
         }
@@ -99,6 +104,8 @@ class block_iomad_company_admin extends block_base {
                 $SESSION->currenteditingcompany = $firstcompany->id;
                 $company = $firstcompany->id;
             }
+        } else {
+            $company = $SESSION->currenteditingcompany;
         }
     }
 
@@ -128,8 +135,6 @@ class block_iomad_company_admin extends block_base {
         // Get params and session stuff
         $this->check_company_status();
 
-        $context = context_system::instance();
-
         // Selected tab.
         $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
 
@@ -143,7 +148,7 @@ class block_iomad_company_admin extends block_base {
         }
 
         // If no selected company no point showing tabs.
-        if (!iomad::get_my_companyid(context_system::instance(), false)) {
+        if (!$companyid = iomad::get_my_companyid($systemcontext, false)) {
             $this->content->text = '<div class="alert alert-warning">' . get_string('nocompanyselected', 'block_iomad_company_admin') . '</div>';
             return $this->content;
         }
@@ -153,7 +158,7 @@ class block_iomad_company_admin extends block_base {
         $panes = [];
         $url = $CFG->wwwroot . '/blocks/iomad_company_admin/index.php';
         $selected = true;
-        if (iomad::has_capability('block/iomad_company_admin:companymanagement_view', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:companymanagement_view', $companycontext)) {
             $tabs[] = [
                 'category' => 'CompanyAdmin',
                 'icon' => 'fa-building',
@@ -163,7 +168,7 @@ class block_iomad_company_admin extends block_base {
             $panes[1] = ['category' => 'CompanyAdmin', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
-        if (iomad::has_capability('block/iomad_company_admin:usermanagement_view', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:usermanagement_view', $companycontext)) {
             $tabs[] = [
                 'category' => 'UserAdmin',
                 'icon' => 'fa-user',
@@ -173,7 +178,7 @@ class block_iomad_company_admin extends block_base {
             $panes[2] = ['category' => 'UserAdmin', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
-        if (iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $companycontext)) {
             $tabs[] = [
                 'category' => 'CourseAdmin',
                 'icon' => 'fa-file-text',
@@ -183,7 +188,7 @@ class block_iomad_company_admin extends block_base {
             $panes[3] = ['category' => 'CourseAdmin', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
-        if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $companycontext)) {
             $tabs[] = [
                 'category' => 'LicenseAdmin',
                 'icon' => 'fa-legal',
@@ -193,7 +198,7 @@ class block_iomad_company_admin extends block_base {
             $panes[4] = ['category' => 'LicenseAdmin', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
-        if (iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $companycontext)) {
             $tabs[] = [
                 'category' => 'CompetencyAdmin',
                 'icon' => 'fa-cubes',
@@ -203,7 +208,7 @@ class block_iomad_company_admin extends block_base {
             $panes[5] = ['category' => 'CompetencyAdmin', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
-        if (iomad::has_capability('block/iomad_commerce:admin_view', $context)) {
+        if (iomad::has_capability('block/iomad_commerce:admin_view', $companycontext)) {
             $tabs[] = [
                 'category' => 'ECommerceAdmin',
                 'icon' => 'fa-truck',
@@ -213,7 +218,7 @@ class block_iomad_company_admin extends block_base {
             $panes[6] = ['category' => 'ECommerceAdmin', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
-        if (iomad::has_capability('block/iomad_microlearning:view', $context)) {
+        if (iomad::has_capability('block/iomad_microlearning:view', $companycontext)) {
             $tabs[] = [
                 'category' => 'MicrolearningAdmin',
                 'icon' => 'fa-microchip',
@@ -223,7 +228,7 @@ class block_iomad_company_admin extends block_base {
             $panes[7] = ['category' => 'MicrolearningAdmin', 'items' => [], 'selected' => $selected];
             $selected = false;
         }
-        if (iomad::has_capability('block/iomad_reports:view', $context)) {
+        if (iomad::has_capability('block/iomad_reports:view', $companycontext)) {
             $tabs[] = [
                 'category' => 'Reports',
                 'icon' => 'fa-bar-chart-o',
@@ -247,7 +252,7 @@ class block_iomad_company_admin extends block_base {
             }
 
             // If no capability then move on.
-            if (!iomad::has_capability($menu['cap'], $context)) {
+            if (!iomad::has_capability($menu['cap'], $companycontext)) {
                 continue;
             }
             $somethingtodisplay = true;

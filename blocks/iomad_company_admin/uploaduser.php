@@ -55,9 +55,6 @@ $montharray = array('jan' => '01',
                     'nov' => '11',
                     'dec' => '12');
 
-$context = context_system::instance();
-require_login();
-
 define('UU_ADDNEW', 0);
 define('UU_ADDINC', 1);
 define('UU_ADD_UPDATE', 2);
@@ -72,7 +69,15 @@ $choices = array(UU_ADDNEW    => get_string('uuoptype_addnew', 'tool_uploaduser'
 raise_memory_limit(MEMORY_EXTRA);
 
 require_login();
-iomad::require_capability('block/iomad_company_admin:user_upload', context_system::instance());
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:user_upload',$companycontext);
 
 // Correct the navbar .
 // Set the name for the page.
@@ -81,7 +86,7 @@ $linktext = get_string('uploadusers', 'tool_uploaduser');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/uploaduser.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -97,17 +102,11 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'ini
 // get output renderer
 $output = $PAGE->get_renderer('block_iomad_company_admin');
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 $companyshortname = '';
 if ($companyid ) {
     $company = new company($companyid);
     $companyshortname = $company->get_shortname();
 }
-require_login(null, false); // Adds to $PAGE, creates $output.
-
-$systemcontext = context_system::instance();
 
 $struserrenamed             = get_string('userrenamed', 'tool_uploaduser');
 $strusernotrenamedexists    = get_string('usernotrenamedexists', 'error');

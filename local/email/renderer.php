@@ -54,10 +54,10 @@ class local_email_renderer extends plugin_renderer_base {
         global $DB, $company;
 
         $ntemplates = count($configtemplates);
-        $context = context_system::instance();
+        $companycontext = \core\context\company::instance($companyid);
         $out ="";
 
-        if (iomad::has_capability('local/email:edit', $context)) {
+        if (iomad::has_capability('local/email:edit', $companycontext)) {
             $stredit = get_string('edit');
             $enable = true;
             $strdisable = get_string('disable');
@@ -66,17 +66,17 @@ class local_email_renderer extends plugin_renderer_base {
             $enable = false;
             $strdisable = null;
         }
-        if (iomad::has_capability('local/email:add', $context)) {
+        if (iomad::has_capability('local/email:add', $companycontext)) {
             $stradd = get_string('add_template_button', 'local_email');
         } else {
             $stradd = null;
         }
-        if (iomad::has_capability('local/email:delete', $context)) {
+        if (iomad::has_capability('local/email:delete', $companycontext)) {
             $strdelete = get_string('delete_template_button', 'local_email');
         } else {
             $strdelete = null;
         }
-        if (iomad::has_capability('local/email:send', $context)) {
+        if (iomad::has_capability('local/email:send', $companycontext)) {
             $strsend = get_string('send_button', 'local_email');
         } else {
             $strsend = null;

@@ -41,7 +41,7 @@ class company_license_form extends \company_moodleform {
     protected $free = 0;
 
     public function __construct($actionurl,
-                                $context,
+                                $companycontext,
                                 $companyid,
                                 $departmentid = 0,
                                 $licenseid = 0,
@@ -49,7 +49,7 @@ class company_license_form extends \company_moodleform {
                                 $courses=array()) {
         global $DB, $USER;
         $this->selectedcompany = $companyid;
-        $this->context = $context;
+        $this->context = $companycontext;
         $this->departmentid = $departmentid;
         $this->licenseid = $licenseid;
         $this->parentid = $parentid;
@@ -77,7 +77,7 @@ class company_license_form extends \company_moodleform {
                                                         array('licenseid' => $parentid));
         }
 
-        if (\iomad::has_capability('block/iomad_company_admin:edit_licenses', \context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $companycontext)) {
             $userhierarchylevel = $parentlevel->id;
         } else {
             $userlevel = $company->get_userlevel($USER);

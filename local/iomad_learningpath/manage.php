@@ -26,13 +26,20 @@ require_once(dirname(__FILE__) . '/../../config.php');
 require_once(dirname(__FILE__) . '/lib.php');
 
 // Security
-$context = context_system::instance();
 require_login();
-iomad::require_capability('local/iomad_learningpath:manage', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/iomad_learningpath:manage', $companycontext);
 
 // Page boilerplate stuff.
 $url = new moodle_url('/local/iomad_learningpath/manage.php');
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('managetitle', 'local_iomad_learningpath'));
@@ -41,12 +48,11 @@ $PAGE->requires->js_call_amd('local_iomad_learningpath/manage', 'init');
 $output = $PAGE->get_renderer('local_iomad_learningpath');
 
 // IOMAD stuff
-$companyid = iomad::get_my_companyid($context);
-$companypaths = new local_iomad_learningpath\companypaths($companyid, $context);
+$companypaths = new local_iomad_learningpath\companypaths($companyid, $systemcontext);
 $paths = $companypaths->get_paths();
 
 // Get renderer for page (and pass data).
-$manage_page = new local_iomad_learningpath\output\manage_page($context, $paths);
+$manage_page = new local_iomad_learningpath\output\manage_page($companycontext, $paths);
 
 echo $OUTPUT->header();
 

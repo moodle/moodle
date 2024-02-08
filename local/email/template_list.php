@@ -55,8 +55,6 @@ if ($finished) {
     $templatesetid = 0;
 }
 
-require_login();
-
 // Deal with the default language.
 if (empty($lang)) {
     if (isset($SESSION->lang)) {
@@ -66,22 +64,34 @@ if (empty($lang)) {
     }
 }
 
-$context = context_system::instance();
+require_login();
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+// Check we can actually do anything on this page.
+if (empty($templatesetid)) {
+    iomad::require_capability('local/email:list', $companycontext);
+} else {
+    iomad::require_capability('local/email:templateset_list', $companycontext);
+}
 
 $email = local_email::get_templates();
 
-$block = 'local_email';
-
 // Correct the navbar.
 // Set the name for the page.
-$linktext = get_string('template_list_title', $block);
+$linktext = get_string('template_list_title', 'local_email');
 // Set the url.
 $linkurl = new moodle_url('/local/email/template_list.php');
 $manageurl = new moodle_url('/local/email/template_list.php', ['manage' => 1]);
 $finishedurl = new moodle_url('/local/email/template_list.php', ['manage' => 1, 'finished' => 1]);
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->requires->jquery();
@@ -90,7 +100,7 @@ $PAGE->requires->jquery();
 $output = $PAGE->get_renderer('local_email');
 
 // Set the companyid
-$companyid = iomad::get_my_companyid($context);
+$companyid = iomad::get_my_companyid($companycontext);
 $company = new company($companyid);
 
 // Set the page heading.
@@ -274,12 +284,6 @@ if ($data = $mform->get_data()) {
 
 $buttons = "";
 
-// Check we can actually do anything on this page.
-if (empty($templatesetid)) {
-    iomad::require_capability('local/email:list', $context);
-} else {
-    iomad::require_capability('local/email:templateset_list', $context);
-}
 // Deal with the page buttons.
 if (empty($manage)) {
     $saveurl = new moodle_url('/local/email/template_list.php',
@@ -295,7 +299,7 @@ if (empty($manage)) {
         }
     }
     if (empty($templatesetid)) {
-        if (iomad::has_capability('local/email:templateset_list', $context)) {
+        if (iomad::has_capability('local/email:templateset_list', $companycontext)) {
             $buttons .= $output->single_button($saveurl, get_string('savetemplateset', 'local_email'), 'get');
             $buttons .= $output->single_button($manageurl, get_string('managetemplatesets', 'local_email'), 'get');
             $buttons .= $backbutton;

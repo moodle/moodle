@@ -50,7 +50,10 @@ class block_iomad_html_edit_form extends block_edit_form {
             $mform->addHelpButton('config_classes', 'configclasses', 'block_iomad_html');
         }
 
-        if (iomad::has_capability('block/iomad_company_admin:company_add', context_system::instance())) {
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        $companycontext = \core\context\company::instance($companyid);
+
+        if (iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
             // Deal with the companies
             $companylist = company::get_companies_select(false);
             $companyselect = $mform->addElement('select', 'config_companies', get_string('selectacompany', 'block_iomad_company_selector'), $companylist);

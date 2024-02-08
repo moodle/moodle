@@ -1627,7 +1627,15 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
 
         $ids = $coursecatcache->get($cachekey);
         // IOMAD: only use cache if allowed.
-        if (iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance()) && $ids !== false) {
+        $systemcontext = \context_system::instance();
+        $companyid = iomad::get_my_companyid($systemcontext, false);
+        if (!empty($companyid)) {
+            $companycontext = \core\context\company::instance($companyid);
+        } else {
+            $companycontext = $systemcontext;
+        }
+
+        if (iomad::has_capability('block/iomad_company_admin:company_view_all', $companycontext) && $ids !== false) {
             // We already cached last search result.
             $ids = array_slice($ids, $offset, $limit);
             $courses = array();
@@ -3269,7 +3277,14 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
         }
 
         // IOMAD
-        if (!iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
+        $systemcontext = \context_system::instance();
+        $companyid = iomad::get_my_companyid($systemcontext, false);
+        if (!empty($companyid)) {
+            $companycontext = \core\context\company::instance($companyid);
+        } else {
+            $companycontext = $systemcontext;
+        }
+        if (!iomad::has_capability('block/iomad_company_admin:company_view_all', $companycontext)) {
             return null;
         }
 

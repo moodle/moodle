@@ -32,20 +32,21 @@ use \moodleform;
 
 class group_display_form extends moodleform {
     protected $selectedepartmentdcompany = 0;
-    protected $context = null;
+    protected $companycontext = null;
     protected $company = null;
     protected $parentlevel = 0;
     protected $notice = '';
 
     public function __construct($actionurl, $companyid, $groupid) {
-        global $CFG, $USER;
+        global $CFG, $USER, $companycontext, $systemcontext;
 
         $this->selectedcompany = $companyid;
         $syscontext = context_system::instance();
 
         $this->company = new company($this->selectedcompany);
         $this->groupid = $groupid;
-        $this->syscontext = $syscontext;
+        $this->syscontext = $systemcontext;
+        $this->companycontext = $companycontext;
 
         parent::__construct($actionurl);
     }
@@ -91,12 +92,12 @@ class group_display_form extends moodleform {
                                 get_string('editdepartments', 'block_iomad_company_admin'));
             $buttonarray[] = $mform->createElement('submit', 'delete',
                                 get_string('deletedepartment', 'block_iomad_company_admin'));
-            if (iomad::has_capability('block/iomad_company_admin:export_departments', $this->syscontext)) {
+            if (iomad::has_capability('block/iomad_company_admin:export_departments', $this->companycontext)) {
                 $buttonarray[] = $mform->createElement('submit', 'export',
                                         get_string('exportdepartment', 'block_iomad_company_admin'));
             }
         } else {
-            if (iomad::has_capability('block/iomad_company_admin:import_departments', $this->syscontext)) {
+            if (iomad::has_capability('block/iomad_company_admin:import_departments', $this->companycontext)) {
                 $buttonarray[] = $mform->createElement('submit', 'import',
                                         get_string('importdepartment', 'block_iomad_company_admin'));
             }

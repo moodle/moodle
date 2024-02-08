@@ -109,7 +109,7 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_licensed($row) {
-        global $USER, $systemcontext, $company, $OUTPUT, $DB;
+        global $USER, $companycontext, $company, $OUTPUT, $DB;
         
         // Apply styling if the course is hidden
         if($row->visible == 0) {        
@@ -125,10 +125,10 @@ class iomad_courses_table extends table_sql {
         }
 
         if (!empty($USER->editing) &&
-        iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+        iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
 
             $editable = new \block_iomad_company_admin\output\courses_license_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $row->licensed);
 
@@ -155,7 +155,7 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_autoenrol($row) {
-        global $USER, $systemcontext, $company, $OUTPUT, $DB;
+        global $USER, $companycontext, $company, $OUTPUT, $DB;
 
         $options = [get_string('no'), get_string('yes')];
 
@@ -166,10 +166,10 @@ class iomad_courses_table extends table_sql {
         }
 
         if (!empty($USER->editing) &&
-        iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+        iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
 
             $editable = new \block_iomad_company_admin\output\courses_autoenrol_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $value);
 
@@ -191,17 +191,17 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_shared($row) {
-        global $USER, $systemcontext, $company, $OUTPUT, $DB;
+        global $USER, $companycontext, $company, $OUTPUT, $DB;
 
         $sharedselectoptions = array('0' => get_string('no'),
                                     '1' => get_string('open', 'block_iomad_company_admin'),
                                     '2' => get_string('closed', 'block_iomad_company_admin'));
 
         if (!empty($USER->editing) &&
-        iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+        iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
 
             $editable = new \block_iomad_company_admin\output\courses_shared_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $row->shared);
 
@@ -224,12 +224,12 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_validlength($row) {
-        global $USER, $systemcontext, $company, $OUTPUT;
+        global $USER, $companycontext, $company, $OUTPUT;
 
         if (!empty($USER->editing) &&
-            iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
             $editable = new \block_iomad_company_admin\output\courses_validlength_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $row->validlength);
 
@@ -251,13 +251,13 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_expireafter($row) {
-        global $USER, $systemcontext, $company, $OUTPUT;
+        global $USER, $companycontext, $company, $OUTPUT;
 
         if (!empty($USER->editing) &&
-            iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
 
             $editable = new \block_iomad_company_admin\output\enrolment_expireafter_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $row->expireafter);
 
@@ -279,13 +279,13 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_warnexpire($row) {
-        global $USER, $systemcontext, $company, $OUTPUT;
+        global $USER, $companycontext, $company, $OUTPUT;
 
         if (!empty($USER->editing) &&
-            iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
 
             $editable = new \block_iomad_company_admin\output\courses_warnexpire_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $row->warnexpire);
 
@@ -308,13 +308,13 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_warnnotstarted($row) {
-        global $USER, $systemcontext, $company, $OUTPUT;
+        global $USER, $companycontext, $company, $OUTPUT;
 
         if (!empty($USER->editing) &&
-            iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
 
             $editable = new \block_iomad_company_admin\output\courses_warnnotstarted_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $row->warnnotstarted);
 
@@ -336,13 +336,13 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_warncompletion($row) {
-        global $USER, $systemcontext, $company, $OUTPUT;
+        global $USER, $companycontext, $company, $OUTPUT;
 
         if (!empty($USER->editing) &&
-            iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
 
             $editable = new \block_iomad_company_admin\output\courses_warncompletion_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $row->warncompletion);
 
@@ -364,13 +364,13 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_notifyperiod($row) {
-        global $USER, $systemcontext, $company, $OUTPUT;
+        global $USER, $companycontext, $company, $OUTPUT;
 
         if (!empty($USER->editing) &&
-            iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
 
             $editable = new \block_iomad_company_admin\output\courses_notifyperiod_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $row->notifyperiod);
 
@@ -392,12 +392,12 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_hasgrade($row) {
-        global $USER, $systemcontext, $company, $OUTPUT;
+        global $USER, $companycontext, $company, $OUTPUT;
 
         if (!empty($USER->editing) &&
-            iomad::has_capability('block/iomad_company_admin:managecourses', $systemcontext)) {
+            iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
             $editable = new \block_iomad_company_admin\output\courses_hasgrade_editable($company,
-                                                          $systemcontext,
+                                                          $companycontext,
                                                           $row,
                                                           $row->hasgrade);
 
@@ -451,14 +451,14 @@ class iomad_courses_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $OUTPUT, $DB, $params, $systemcontext, $USER, $company;
+        global $OUTPUT, $DB, $params, $companycontext, $USER, $company;
 
         $actionsoutput = "";
 
         if (!empty($USER->editing)) {
             if ($row->shared == 0 && 
-                (iomad::has_capability('block/iomad_company_admin:deletecourses', $systemcontext) ||
-                iomad::has_capability('block/iomad_company_admin:deletecourses', $systemcontext))) {
+                (iomad::has_capability('block/iomad_company_admin:deletecourses', $companycontext) ||
+                iomad::has_capability('block/iomad_company_admin:deletecourses', $companycontext))) {
                 $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
                 $linkparams = $params;
                 if (!empty($params['coursesearchtext'])) {
@@ -470,7 +470,7 @@ class iomad_courses_table extends table_sql {
                 $actionsoutput = html_writer::start_tag('div');
                 $actionsoutput .= "<a href='$deleteurl'><i class='icon fa fa-trash fa-fw ' title='" . get_string('delete') . "' role='img' aria-label='" . get_string('delete') . "'></i></a>";
     
-            } else if (iomad::has_capability('block/iomad_company_admin:deleteallcourses', $systemcontext)) {
+            } else if (iomad::has_capability('block/iomad_company_admin:deleteallcourses', $companycontext)) {
                 $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";
                 $linkparams = $params;
                 if (!empty($params['coursesearchtext'])) {
@@ -484,8 +484,8 @@ class iomad_courses_table extends table_sql {
             }
 
             // Handle course visibility action
-            if (iomad::has_capability('block/iomad_company_admin:hideshowallcourses', $systemcontext) || 
-            (iomad::has_capability('block/iomad_company_admin:hideshowcourses', $systemcontext) && 
+            if (iomad::has_capability('block/iomad_company_admin:hideshowallcourses', $companycontext) || 
+            (iomad::has_capability('block/iomad_company_admin:hideshowcourses', $companycontext) && 
             $DB->get_record('company_created_courses', ['companyid' => $company->id, 'courseid' => $row->courseid]))) {
                 $linkurl = "/blocks/iomad_company_admin/iomad_courses_form.php";            
                 $linkparams = $params;

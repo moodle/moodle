@@ -33,10 +33,16 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $departmentid = optional_param('departmentid', 0, PARAM_INT);
 $deptid = optional_param('deptid', 0, PARAM_INT);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_company_admin:import_departments', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:import_departments', $companycontext);
 
 $departmentlist = new moodle_url('/blocks/iomad_company_admin/company_departments.php', array('deptid' => $departmentid));
 
@@ -45,7 +51,7 @@ $linktext = get_string('importdepartment', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_department_import_form.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -56,9 +62,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Set the page heading.
 $PAGE->set_heading(get_string('myhome') . " - $linktext");
 $PAGE->navbar->add($linktext, $departmentlist);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
 
 $importform = new \block_iomad_company_admin\forms\company_department_import_form($PAGE->url);
 $errors = "";
@@ -97,4 +100,3 @@ if (!empty($error)) {
 $importform->display();
 
 echo $output->footer();
-

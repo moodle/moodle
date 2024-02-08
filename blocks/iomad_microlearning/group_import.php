@@ -38,10 +38,16 @@ $iid         = optional_param('iid', '', PARAM_INT);
 $previewrows = optional_param('previewrows', 10, PARAM_INT);
 $readcount   = optional_param('readcount', 0, PARAM_INT);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_microlearning:importgroupfromcsv', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_microlearning:importgroupfromcsv', $companycontext);
 
 $urlparams = array();
 if ($returnurl) {
@@ -53,7 +59,7 @@ $linktext = get_string('importusergroups', 'block_iomad_microlearning');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_microlearning/group_import.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -68,8 +74,6 @@ $buttoncaption = get_string('threads', 'block_iomad_microlearning');
 $buttonlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
 $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
 $PAGE->set_button($buttons);
-
-$companyid = iomad::get_my_companyid($context);
 
 // Array of all valid fields for validation.
 $stdfields = array('username', 'email', 'thread', 'group');

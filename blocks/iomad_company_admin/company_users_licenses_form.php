@@ -32,13 +32,16 @@ $departmentid = optional_param('departmentid', 0, PARAM_INTEGER);
 $userid = required_param('userid', PARAM_INTEGER);
 $licenseid = optional_param('licenseid', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:company_license_users', $context);
+
+$systemcontext = context_system::instance();
 
 // Set the companyid
 $companyid = iomad::get_my_companyid($context);
+$companycontext = \core\context\company::instance($companyid);
 $company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:company_license_users', $companycontext);
 
 $urlparams = array('companyid' => $companyid, 'licenseid' => $licenseid);
 if ($returnurl) {
@@ -58,7 +61,7 @@ $returnurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_users_licenses_form.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -70,7 +73,7 @@ $buttonlink = new moodle_url('/blocks/iomad_company_admin/editusers.php');
 $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
 $PAGE->set_button($buttons);
 
-$coursesform = new \block_iomad_company_admin\forms\company_users_licenses_form($PAGE->url, $context, $companyid, $departmentid, $userid, $licenseid);
+$coursesform = new \block_iomad_company_admin\forms\company_users_licenses_form($PAGE->url, $companycontext, $companyid, $departmentid, $userid, $licenseid);
 
 echo $OUTPUT->header();
 
@@ -98,11 +101,11 @@ if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL))
 } else {
     if ($companyid > 0) {
         $coursesform->process();
-        $coursesform = new \block_iomad_company_admin\forms\company_users_licenses_form($PAGE->url, $context, $companyid, $departmentid, $userid, $licenseid);
+        $coursesform = new \block_iomad_company_admin\forms\company_users_licenses_form($PAGE->url, $companycontext, $companyid, $departmentid, $userid, $licenseid);
         // Display the license selector.
         $availablewarning = "";
         $licenselist = array();
-        if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:unallocate_licenses', $companycontext)) {
             $parentlevel = company::get_company_parentnode($companyid);
             $userhierarchylevel = $parentlevel->id;
             // Get all the licenses.

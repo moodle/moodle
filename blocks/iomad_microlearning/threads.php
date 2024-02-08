@@ -34,10 +34,16 @@ $confirm = optional_param('confirm', null, PARAM_ALPHANUM);
 $search = optional_param('search', '', PARAM_ALPHANUM);
 $page = optional_param('page', 0, PARAM_INT);
 
-$context = context_system::instance();
 require_login();
 
-iomad::require_capability('block/iomad_microlearning:edit_threads', $context);
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_microlearning:edit_threads', $companycontext);
 
 $urlparams = array();
 $urlparams['search'] = $search;
@@ -48,7 +54,7 @@ $linktext = get_string('threads', 'block_iomad_microlearning');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_microlearning/threads.php', $urlparams);
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -58,9 +64,6 @@ $output = $PAGE->get_renderer('block_iomad_microlearning');
 
 // Set the page heading.
 $PAGE->set_heading($linktext);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
 
 // Delete any valid threads.
 if ($deleteid) {

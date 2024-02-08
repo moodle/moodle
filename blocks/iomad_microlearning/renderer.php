@@ -36,13 +36,15 @@ class block_iomad_microlearning_renderer extends plugin_renderer_base {
      * Back to list of roles button
      */
     public function threads_list_buttons($link, $link2, $link3, $link4) {
+        global $companycontext;
+
         $out = '<p><a class="btn btn-primary" href="'.$link.'">' . get_string('add') . '</a>';
-        if (iomad::has_capability('block/iomad_microlearning:import_threads', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_microlearning:import_threads', $companycontext)) {
             $out .= '&nbsp<a class="btn btn-primary" href="'.$link2.'">' . get_string('import') . '</a>';
         }
-        if (iomad::has_capability('block/iomad_microlearning:manage_groups', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_microlearning:manage_groups', $companycontext)) {
             $out .= '&nbsp<a class="btn btn-primary" href="'.$link3.'">' . get_string('learninggroups', 'block_iomad_microlearning') . '</a>';
-            if (iomad::has_capability('block/iomad_microlearning:importgroupfromcsv', context_system::instance())) {
+            if (iomad::has_capability('block/iomad_microlearning:importgroupfromcsv', $companycontext)) {
                 $out .= '&nbsp<a class="btn btn-primary" href="'.$link4.'">' . get_string('bulkassigngroups', 'block_iomad_microlearning') . '</a>';
             }
         }

@@ -42,8 +42,14 @@ class block_iomad_welcome extends block_base {
         $this->content->footer = '';
         $this->content->text = '';
 
+        $systemcontext = context_system::instance();
+        $companycontext = $systemcontext;
+        if (!empty($company)) {
+            $companycontext =  \core\context\company::instance($company);
+        }
+
         // Only display if you have the correct capability.
-        if (!iomad::has_capability('block/iomad_welcome:view', context_system::instance())) {
+        if (!iomad::has_capability('block/iomad_welcome:view', $companycontext)) {
             return;
         }
 

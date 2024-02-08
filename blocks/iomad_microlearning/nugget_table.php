@@ -116,17 +116,16 @@ class block_iomad_microlearning_nugget_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $DB, $output;
+        global $DB, $output, $companycontext;
 
         if ($this->is_downloading()) {
             return;
         }
 
         $html = "";
-        $context = context_system::instance();
         $deletelink = new moodle_url('nuggets.php', array('deleteid' => $row->id, 'threadid' => $row->threadid, 'sesskey' => sesskey()));
         $editlink = new moodle_url('nugget_edit.php', array('nuggetid' => $row->id, 'threadid' => $row->threadid));
-        if (iomad::has_capability('block/iomad_microlearning:edit_nuggets', $context)) {
+        if (iomad::has_capability('block/iomad_microlearning:edit_nuggets', $companycontext)) {
             $html = '<a href="' . $editlink . '"><i class="icon fa fa-cog fa-fw " title="' . get_string('edit') . '" aria-label="'. get_string('edit') . '"></i></a>';
             $html .= '<a href="' . $deletelink . '"><i class="icon fa fa-times fa-fw " title="' . get_string('delete') . '" aria-label="'. get_string('delete') . '"></i></a>';
         }

@@ -259,8 +259,8 @@ class helper {
         global $DB, $CFG, $USER;
 
         $shoplink = "";
-        $context = context_system::instance();
-        if (iomad::has_capability('block/iomad_commerce:buyitnow', $context) || iomad::has_capability('block/iomad_commerce:buyinbulk', $context)) {
+        $companycontext = \core\context\company::instance($companyrec->id);
+        if (iomad::has_capability('block/iomad_commerce:buyitnow', $companycontext) || iomad::has_capability('block/iomad_commerce:buyinbulk', $companycontext)) {
             if (!empty($CFG->commerce_enable_external)) {
                 // Get and store a one time token.
                 $token = company_user::generate_token();

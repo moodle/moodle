@@ -29,9 +29,18 @@ $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $companyid = optional_param('companyid', 0, PARAM_INTEGER);
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
 require_login();
-iomad::require_capability('block/iomad_company_admin:company_course', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+$parentlevel = company::get_company_parentnode($companyid);
+$companydepartment = $parentlevel->id;
+
+iomad::require_capability('block/iomad_company_admin:company_course', $companycontext);
 
 $urlparams = array('companyid' => $companyid);
 if ($returnurl) {
@@ -45,22 +54,15 @@ $linktext = get_string('assigncourses', 'block_iomad_company_admin');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_courses_form.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$parentlevel = company::get_company_parentnode($companyid);
-$companydepartment = $parentlevel->id;
-$syscontext = context_system::instance();
-$company = new company($companyid);
-
 // Set the page heading.
 $PAGE->set_heading(get_string('company_courses_for', 'block_iomad_company_admin', $company->get_name()));
 
-if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = $company->get_userlevel($USER);
@@ -75,7 +77,7 @@ $departmentselect = new single_select(new moodle_url($linkurl, $urlparams), 'dep
 $departmentselect->label = get_string('department', 'block_iomad_company_admin') .
                            $OUTPUT->help_icon('department', 'block_iomad_company_admin') . '&nbsp';
 
-$mform = new \block_iomad_company_admin\forms\company_courses_form($PAGE->url, $context, $companyid, $departmentid, $parentlevel);
+$mform = new \block_iomad_company_admin\forms\company_courses_form($PAGE->url, $companycontext, $companyid, $departmentid, $parentlevel);
 
 if ($mform->is_cancelled()) {
     if ($returnurl) {

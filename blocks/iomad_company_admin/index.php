@@ -36,9 +36,13 @@ $noticefail = optional_param('noticefail', '', PARAM_CLEAN);
 $SESSION->showsuspendedcompanies = $showsuspendedcompanies;
 
 $systemcontext = context_system::instance();
+$companycontext = $systemcontext;
+if (!empty($company)) {
+    $companycontext =  \core\context\company::instance($company);
+}
 
 // Set the session to a user if they are editing a company other than their own.
-if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)
+if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)
     || $DB->get_record('company_users', array('managertype' => 1, 'companyid' => $company, 'userid' => $USER->id)))) {
     $SESSION->currenteditingcompany = $company;
 }
@@ -62,10 +66,12 @@ if (empty($SESSION->currenteditingcompany)) {
         $SESSION->currenteditingcompany = $firstcompany->id;
         $company = $firstcompany->id;
     }
+} else {
+    $company = $SESSION->currenteditingcompany;
 }
 
 // Page setup stuff.
-$PAGE->set_context($systemcontext);
+$PAGE->set_context($companycontext);
 $PAGE->set_url(new moodle_url('/blocks/iomad_company_admin/index.php'));
 $PAGE->set_pagelayout('base');
 $PAGE->set_title(get_string('dashboard', 'block_iomad_company_admin'));
@@ -99,7 +105,7 @@ $tabs = [];
 $panes = [];
 $url = '/my';
 $selected = true;
-if (iomad::has_capability('block/iomad_company_admin:companymanagement_view', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:companymanagement_view', $companycontext)) {
     $tabs[] = [
         'category' => 'CompanyAdmin',
         'icon' => 'fa-building',
@@ -109,7 +115,7 @@ if (iomad::has_capability('block/iomad_company_admin:companymanagement_view', $s
     $panes[1] = ['category' => 'CompanyAdmin', 'items' => [], 'selected' => $selected];
     $selected = false;
 }
-if (iomad::has_capability('block/iomad_company_admin:usermanagement_view', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:usermanagement_view', $companycontext)) {
     $tabs[] = [
         'category' => 'UserAdmin',
         'icon' => 'fa-user',
@@ -119,7 +125,7 @@ if (iomad::has_capability('block/iomad_company_admin:usermanagement_view', $syst
     $panes[2] = ['category' => 'UserAdmin', 'items' => [], 'selected' => $selected];
     $selected = false;
 }
-if (iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $companycontext)) {
     $tabs[] = [
         'category' => 'CourseAdmin',
         'icon' => 'fa-file-text',
@@ -129,7 +135,7 @@ if (iomad::has_capability('block/iomad_company_admin:coursemanagement_view', $sy
     $panes[3] = ['category' => 'CourseAdmin', 'items' => [], 'selected' => $selected];
     $selected = false;
 }
-if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $companycontext)) {
     $tabs[] = [
         'category' => 'LicenseAdmin',
         'icon' => 'fa-legal',
@@ -139,7 +145,7 @@ if (iomad::has_capability('block/iomad_company_admin:licensemanagement_view', $s
     $panes[4] = ['category' => 'LicenseAdmin', 'items' => [], 'selected' => $selected];
     $selected = false;
 }
-if (iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:competencymanagement_view', $companycontext)) {
     $tabs[] = [
         'category' => 'CompetencyAdmin',
         'icon' => 'fa-cubes',
@@ -149,7 +155,7 @@ if (iomad::has_capability('block/iomad_company_admin:competencymanagement_view',
     $panes[5] = ['category' => 'CompetencyAdmin', 'items' => [], 'selected' => $selected];
     $selected = false;
 }
-if (iomad::has_capability('block/iomad_commerce:admin_view', $systemcontext)) {
+if (iomad::has_capability('block/iomad_commerce:admin_view', $companycontext)) {
     $tabs[] = [
         'category' => 'ECommerceAdmin',
         'icon' => 'fa-truck',
@@ -159,7 +165,7 @@ if (iomad::has_capability('block/iomad_commerce:admin_view', $systemcontext)) {
     $panes[6] = ['category' => 'ECommerceAdmin', 'items' => [], 'selected' => $selected];
     $selected = false;
 }
-if (iomad::has_capability('block/iomad_microlearning:view', $systemcontext)) {
+if (iomad::has_capability('block/iomad_microlearning:view', $companycontext)) {
     $tabs[] = [
         'category' => 'MicrolearningAdmin',
         'icon' => 'fa-microchip',
@@ -169,7 +175,7 @@ if (iomad::has_capability('block/iomad_microlearning:view', $systemcontext)) {
     $panes[7] = ['category' => 'MicrolearningAdmin', 'items' => [], 'selected' => $selected];
     $selected = false;
 }
-if (iomad::has_capability('block/iomad_reports:view', $systemcontext)) {
+if (iomad::has_capability('block/iomad_reports:view', $companycontext)) {
     $tabs[] = [
         'category' => 'Reports',
         'icon' => 'fa-bar-chart-o',
@@ -202,7 +208,7 @@ foreach ($menus as $key => $menu) {
     }
 
     // If no capability then move on.
-    if (!iomad::has_capability($menu['cap'], $systemcontext)) {
+    if (!iomad::has_capability($menu['cap'], $companycontext)) {
         continue;
     }
     $somethingtodisplay = true;
@@ -319,4 +325,3 @@ $adminblock = new block_iomad_company_admin\output\adminblock($logourl, $company
 echo $output->header();
 echo $renderer->render($adminblock);
 echo $output->footer();
-

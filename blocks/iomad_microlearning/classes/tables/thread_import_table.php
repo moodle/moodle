@@ -109,16 +109,15 @@ class thread_import_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $DB, $output;
+        global $DB, $output, $companycontext;
 
         if ($this->is_downloading()) {
             return;
         }
 
         $html = "";
-        $context = context_system::instance();
         $importlink = new moodle_url('thread_import.php', array('importid' => $row->id, 'sesskey' => sesskey()));
-        if (iomad::has_capability('block/iomad_microlearning:import_threads', $context)) {
+        if (iomad::has_capability('block/iomad_microlearning:import_threads', $companycontext)) {
             $html .= '<a class="btn btn-primary" href="' . $importlink . '" title="' . get_string('import') .'">' . get_string('import') . '</a>';
         }
 

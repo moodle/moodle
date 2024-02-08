@@ -47,10 +47,6 @@ $emailtoraw = optional_param_array('emailtoraw', null, PARAM_INT);
 $confirm = optional_param('confirm', '', PARAM_CLEAN);
 $emailid = optional_param('emailid', 0, PARAM_INT);
 
-require_login($SITE);
-$systemcontext = context_system::instance();
-iomad::require_capability('local/report_emails:view', $systemcontext);
-
 if (!empty($download)) {
     $page = 0;
     $perpage = 0;
@@ -122,8 +118,16 @@ if ($emailtoraw) {
     }
 }
 
+require_login();
+
+$systemcontext = context_system::instance();
+
 // Set the companyid
 $companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('local/report_emails:view', $companycontext);
 
 $fieldnames= array();
 $allfields = array();
@@ -198,7 +202,7 @@ $url = new moodle_url('/local/report_emails/index.php');
 
 // Page stuff:.
 $strcompletion = get_string('pluginname', 'local_report_emails');
-$PAGE->set_context($systemcontext);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($url);
 $PAGE->set_pagelayout('report');
 $PAGE->set_title($strcompletion);
@@ -230,7 +234,7 @@ if ($parentslist = $company->get_parent_companies_recursive()) {
 }
 
 // Work out where the user sits in the company department tree.
-if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+if (\iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userlevels = array($parentlevel->id => $parentlevel->id);
 } else {
     $userlevels = $company->get_userlevel($USER);
@@ -313,8 +317,8 @@ $select->label = get_string('templatetype', 'local_email');
 $select->formid = 'choosetemplate';
 $templateselectoutput = html_writer::tag('div', $output->render($select), array('id' => 'iomad_template_selector'));
 
-if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext) or
-      iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
+if (!(iomad::has_capability('block/iomad_company_admin:editusers', $companycontext) or
+      iomad::has_capability('block/iomad_company_admin:editallusers', $companycontext))) {
     print_error('nopermissions', 'error', '', 'report on users');
 }
 
@@ -407,7 +411,7 @@ if (!$table->is_downloading()) {
             echo $templateselectoutput;
             echo html_writer::end_tag('div');
 
-            if (iomad::has_capability('local/report_emails:resend', $systemcontext)) {
+            if (iomad::has_capability('local/report_emails:resend', $companycontext)) {
                 $params['allemails'] = 'allemails';
                 $resendlink = new moodle_url('/local/report_emails/index.php', $params);
                 echo html_writer::start_tag('div', array('class' => 'reporttablecontrolscontrol'));

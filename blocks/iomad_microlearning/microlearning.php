@@ -31,11 +31,17 @@ $page         = optional_param('page', 0, PARAM_INT);
 $search       = optional_param('search', '', PARAM_CLEAN);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_companies, PARAM_INT);        // How many per page.
 
-$context = context_system::instance();
 require_login();
 
+$systemcontext = context_system::instance();
+
 // Set the companyid
-$companyid = iomad::get_my_companyid($context);
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+// Check we can actually do anything on this page.
+iomad::require_capability('block/iomad_microlearning:thread_view', $companycontext);
 
 // Set the name for the page.
 $linktext = get_string('blocktitle', 'block_iomad_microlearning');
@@ -43,7 +49,7 @@ $linktext = get_string('blocktitle', 'block_iomad_microlearning');
 $linkurl = new moodle_url('/blocks/iomad_microlearning/company_list.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -56,7 +62,7 @@ $returnurl = $baseurl;
 // Are we performing any actions?
 if ($delete and confirm_sesskey()) {
 
-    iomad::require_capability('block/iomad_microlearning:thread_delete', $context);
+    iomad::require_capability('block/iomad_microlearning:thread_delete', $companycontext);
 
     $thread = $DB->get_record('microlearning_thread', array('id' => $delete), '*', MUST_EXIST);
 
@@ -97,12 +103,6 @@ if ($delete and confirm_sesskey()) {
 }
 
 echo $OUTPUT->header();
-
-// Check we can actually do anything on this page.
-iomad::require_capability('block/iomad_microlearning:thread_view', $context);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
 
 // Get the micro learning threads
 $microthreads = microthreads::get_threads($companyid, $search);

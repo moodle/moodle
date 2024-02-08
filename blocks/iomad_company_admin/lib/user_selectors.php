@@ -130,7 +130,7 @@ abstract class company_user_selector_base extends user_selector_base {
         global $DB;
 
         if (empty($this->profilefieldid)) {
-            return users_search_sql($search, $u, $this->searchanywhere, $this->extrafields,
+            return users_search_sql($search, $u, $this->searchtype, $this->extrafields,
                     $this->exclude, $this->validatinguserids);
         } else {
             $wheresqsl = "ui.fieldid = :profilefieldid AND " . $DB->sql_like('ui.data', ":profilesearch", false, false) . " AND ui.data!=''";
@@ -1137,7 +1137,7 @@ class potential_license_user_selector extends company_user_selector_base {
     }
 
     protected function get_license_department_ids() {
-        global $CFG, $DB, $USER;
+        global $CFG, $DB, $USER, $companycontext;
 
         if (!isset( $this->licenseid) ) {
             return array();
@@ -1167,7 +1167,7 @@ class potential_license_user_selector extends company_user_selector_base {
                 $departments = $DB->get_records_sql($sql);
                 $shareddepartment = array();
                 if ($shared) {
-                    if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+                    if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $companycontext)) {
                         // Need to add the top level department.
                         $shareddepartment = company::get_company_parentnode($this->companyid);
                         $departments = $departments + array($shareddepartment->id => $shareddepartment->id);

@@ -30,11 +30,17 @@ require_once($CFG->dirroot."/blocks/iomad_approve_access/lib.php");
 // Set up PAGE stuff.
 require_login();
 
-// Can I do this?
-iomad::require_capability('block/iomad_approve_access:approve', context_system::instance());
+$systemcontext = context_system::instance();
 
-$context = context_system::instance();
-$PAGE->set_context($context);
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+// Can I do this?
+iomad::require_capability('block/iomad_approve_access:approve', $companycontext);
+
+$PAGE->set_context($companycontext);
 $baseurl = new moodle_url('/blocks/iomad_approve_access/approve.php');
 $PAGE->set_url($baseurl);
 $PAGE->set_pagelayout('base');
@@ -44,10 +50,6 @@ $strmanage = get_string('approveusers', 'block_iomad_approve_access');
 
 $PAGE->set_title($strmanage);
 $PAGE->set_heading($strmanage);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
 
 if (is_siteadmin($USER->id)) {
     $approvaltype = 'both';
@@ -289,7 +291,7 @@ if ($data = $callform->get_data()) {
                                 $usergroups = groups_get_user_groups($course->id, $approveuser->id);
                                 $userteachers = [];
                                 foreach ($usergroups as $usergroup => $junk) {
-                                    $userteachers = $userteachers + get_enrolled_users($context, 'mod/trainingevent:viewattendees', $usergroup);
+                                    $userteachers = $userteachers + get_enrolled_users(context_module::instance($cmidinfo->id), 'mod/trainingevent:viewattendees', $usergroup);
                                 } 
                                 foreach ($userteachers as $userteacher) {
                                     EmailTemplate::send('user_signed_up_for_event_teacher', array('course' => $course,

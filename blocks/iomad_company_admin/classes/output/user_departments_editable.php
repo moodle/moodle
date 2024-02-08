@@ -66,13 +66,13 @@ class user_departments_editable extends \core\output\inplace_editable {
      * @param \stdClass[] $profiledepartments The list of departments that should be visible in a users profile.
      * @param \stdClass[] $userdepartments The list of user departments.
      */
-    public function __construct($company, $context, $user, $userdepartments, $departments, $assignabledepartments = null) {
+    public function __construct($company, $companycontext, $user, $userdepartments, $departments, $assignabledepartments = null) {
         if (empty($assignabledepartments)) {
             debugging('Constructor for user_departments_editable now needs to be passed the departments available to the manager');
         }
 
         // Check capabilities to get editable value.
-        $editable = iomad::has_capability('block/iomad_company_admin:editusers', $context);
+        $editable = iomad::has_capability('block/iomad_company_admin:editusers', $companycontext);
 
         // Invent an itemid.
         $itemid = $company->id . ':' . $user->id;
@@ -86,7 +86,7 @@ class user_departments_editable extends \core\output\inplace_editable {
         $this->departments = $departments;
         $this->assignabledepartments = $assignabledepartments;
         $this->viewabledepartments = array_keys($assignabledepartments);
-        $this->context = $context;
+        $this->context = $companycontext;
 
         parent::__construct('block_iomad_company_admin', 'user_departments', $itemid, $editable, $value, $value);
 
@@ -153,11 +153,11 @@ class user_departments_editable extends \core\output\inplace_editable {
         }
 
         // Check user is enrolled in the course.
-        $context = \context_system::instance();
-        core_external::validate_context($context);
+        $companycontext = \core\context\company::instance($companyid);
+        core_external::validate_context($companycontext);
 
         // Check permissions.
-        iomad::require_capability('block/iomad_company_admin:editusers', $context);
+        iomad::require_capability('block/iomad_company_admin:editusers', $companycontext);
 
         if (!$DB->get_records('company_users', ['userid' => $userid, 'companyid' => $companyid])) {
             throw new coding_exception('User does not belong to the company');
@@ -167,7 +167,7 @@ class user_departments_editable extends \core\output\inplace_editable {
         $company = new company($companyid);
         $alldepartments = $DB->get_records('department', ['company' => $companyid]);
         $parentlevel = company::get_company_parentnode($companyid); 
-        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', \context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
             $userlevels = array($parentlevel->id => $parentlevel->id);
         } else {
             $userlevels = $company->get_userlevel($USER);
@@ -238,6 +238,6 @@ class user_departments_editable extends \core\output\inplace_editable {
         }
 
         $user = core_user::get_user($userid);
-        return new self($company, $context, $user, $departmentids, $assignabledepartments, $assignabledepartments);
+        return new self($company, $companycontext, $user, $departmentids, $assignabledepartments, $assignabledepartments);
     }
 }

@@ -40,7 +40,7 @@ class course_group_user_display_form extends company_moodleform {
 
         $this->selectedcompany = $companyid;
         $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
-        $syscontext = context_system::instance();
+        $this->companycontext = \core\context\company::instance($companyid);
 
         $this->company = new company($this->selectedcompany);
         $this->courseid = $courseid;
@@ -84,7 +84,7 @@ class course_group_user_display_form extends company_moodleform {
 
     public function create_user_selectors() {
         if (!empty ($this->course)) {
-            $options = array('context' => $this->context,
+            $options = array('context' => $this->companycontext,
                              'companyid' => $this->selectedcompany,
                              'courseid' => $this->course,
                              'departmentid' => $this->departmentid,

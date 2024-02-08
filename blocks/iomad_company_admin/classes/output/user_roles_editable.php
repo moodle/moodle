@@ -66,13 +66,13 @@ class user_roles_editable extends \core\output\inplace_editable {
      * @param \stdClass[] $profileroles The list of roles that should be visible in a users profile.
      * @param \stdClass[] $userroles The list of user roles.
      */
-    public function __construct($company, $context, $user, $currentvalue, $assignableroles = null) {
+    public function __construct($company, $companycontext, $user, $currentvalue, $assignableroles = null) {
         if (empty($assignableroles)) {
             debugging('Constructor for user_roles_editable now needs to be passed the roles available to the manager');
         }
 
         // Check capabilities to get editable value.
-        $editable = iomad::has_capability('block/iomad_company_admin:company_manager', $context);
+        $editable = iomad::has_capability('block/iomad_company_admin:company_manager', $companycontext);
 
         // Invent an itemid.
         $itemid = $company->id . ':' . $user->id;
@@ -81,7 +81,7 @@ class user_roles_editable extends \core\output\inplace_editable {
 
         // Remember these for the display value.
         $this->assignableroles = $assignableroles;
-        $this->context = $context;
+        $this->context = $companycontext;
 
         parent::__construct('block_iomad_company_admin', 'user_roles', $itemid, $editable, $value, $value);
 
@@ -140,11 +140,11 @@ class user_roles_editable extends \core\output\inplace_editable {
         $user = core_user::get_user($userid);
 
         // Check user is enrolled in the course.
-        $context = \context_system::instance();
-        core_external::validate_context($context);
+        $companycontext = \core\context\company::instance($companyid);
+        core_external::validate_context($companycontext);
 
         // Check permissions.
-        iomad::require_capability('block/iomad_company_admin:editusers', $context);
+        iomad::require_capability('block/iomad_company_admin:editusers', $companycontext);
 
         if (!$DB->get_records('company_users', ['userid' => $userid, 'companyid' => $companyid])) {
             throw new coding_exception('User does not belong to the company');
@@ -155,26 +155,26 @@ class user_roles_editable extends \core\output\inplace_editable {
 
         // Deal with role selector.
         $usertypeselect = ['0' => get_string('user', 'block_iomad_company_admin')];
-        if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $companycontext)) {
             $usertypeselect[11] = get_string('companymanager', 'block_iomad_company_admin');
         }
-        if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $companycontext)) {
             $usertypeselect[21] = get_string('departmentmanager', 'block_iomad_company_admin');
         }
-        if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $companycontext)) {
             $usertypeselect[41] = get_string('companyreporter', 'block_iomad_company_admin');
         }
-        if (!$CFG->iomad_autoenrol_managers && iomad::has_capability('block/iomad_company_admin:assign_educator', $context)) {
+        if (!$CFG->iomad_autoenrol_managers && iomad::has_capability('block/iomad_company_admin:assign_educator', $companycontext)) {
             $usertypeselect[1] = get_string('educator', 'block_iomad_company_admin');
-            if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $companycontext)) {
                 $usertypeselect[10] = get_string('companymanager', 'block_iomad_company_admin');
                 $usertypeselect[11] = get_string('companymanager', 'block_iomad_company_admin') . ' + ' . get_string('educator', 'block_iomad_company_admin');
             }
-            if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $companycontext)) {
                 $usertypeselect[20] = get_string('departmentmanager', 'block_iomad_company_admin');
                 $usertypeselect[21] = get_string('departmentmanager', 'block_iomad_company_admin') . ' + ' . get_string('educator', 'block_iomad_company_admin');
             }
-            if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $context)) {
+            if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $companycontext)) {
                 $usertypeselect[40] = get_string('companyreporter', 'block_iomad_company_admin');
                 $usertypeselect[41] = get_string('companyreporter', 'block_iomad_company_admin') . ' + ' . get_string('educator', 'block_iomad_company_admin');
             }
@@ -225,6 +225,6 @@ class user_roles_editable extends \core\output\inplace_editable {
             company::upsert_company_user($userid, $company->id, $userlevel->departmentid, $managertype, $educator, false);
         }
 
-        return new self($company, $context, $user, $roleid, $usertypeselect);
+        return new self($company, $companycontext, $user, $roleid, $usertypeselect);
     }
 }

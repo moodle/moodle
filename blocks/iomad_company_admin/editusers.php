@@ -87,11 +87,16 @@ if ($departmentid) {
 }
 $params['usertype'] = $usertype;
 
-$systemcontext = context_system::instance();
-
 require_login();
 
-if (!iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)) {
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+if (!iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
     $showall = false;
 }
 if ($showall) {
@@ -109,7 +114,7 @@ $linktext = get_string('edit_users_title', 'block_iomad_company_admin');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/editusers.php');
 
 // Print the page header.
-$PAGE->set_context($systemcontext);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -131,13 +136,7 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'ini
 // Set the page heading.
 $PAGE->set_heading($linktext);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($systemcontext);
-
-require_login(null, false); // Adds to $PAGE, creates $output.
-
 $baseurl = new moodle_url(basename(__FILE__), $params);// Set the companyid
-$companyid = iomad::get_my_companyid($systemcontext);
 
 $returnurl = $baseurl;
 
@@ -151,7 +150,7 @@ $company = new company($companyid);
 $parentlevel = company::get_company_parentnode($company->id);
 $companydepartment = $parentlevel->id;
 
-if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', context_system::instance())) {
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = $company->get_userlevel($USER);
@@ -161,13 +160,13 @@ if ($departmentid == 0) {
     $departmentid = $userhierarchylevel;
 }
 
-if (!(iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
-    or iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext))) {
+if (!(iomad::has_capability('block/iomad_company_admin:editusers', $companycontext)
+    or iomad::has_capability('block/iomad_company_admin:editallusers', $companycontext))) {
     print_error('nopermissions', 'error', '', 'edit/delete users');
 }
 
 // Set up the filter form.
-if (iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
     $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'useshowall' => true, 'addusertype' => true));
 } else {
     $mform = new iomad_user_filter_form(null, array('companyid' => $companyid, 'addusertype' => true));
@@ -303,7 +302,7 @@ if ($confirmuser and confirm_sesskey()) {
     }
 } else if ($delete and confirm_sesskey()) {              // Delete a selected user, after confirmation.
 
-    if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+    if (!iomad::has_capability('block/iomad_company_admin:editusers', $companycontext)) {
         print_error('nopermissions', 'error', '', 'delete a user');
     }
 
@@ -334,7 +333,7 @@ if ($confirmuser and confirm_sesskey()) {
 
         // Create an event for this.
         $eventother = array('userid' => $user->id, 'companyname' => $company->get_name(), 'companyid' => $companyid);
-        $event = \block_iomad_company_admin\event\company_user_deleted::create(array('context' => context_system::instance(),
+        $event = \block_iomad_company_admin\event\company_user_deleted::create(array('context' => $companycontext,
                                                                                      'objectid' => $user->id,
                                                                                      'userid' => $USER->id,
                                                                                      'other' => $eventother));
@@ -346,7 +345,7 @@ if ($confirmuser and confirm_sesskey()) {
 
 } else if ($suspend and confirm_sesskey()) {              // Delete a selected user, after confirmation.
 
-    if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+    if (!iomad::has_capability('block/iomad_company_admin:editusers', $companycontext)) {
         print_error('nopermissions', 'error', '', 'suspend a user');
     }
 
@@ -376,7 +375,7 @@ if ($confirmuser and confirm_sesskey()) {
 
         // Create an event for this.
         $eventother = array('userid' => $user->id, 'companyname' => $company->get_name(), 'companyid' => $companyid);
-        $event = \block_iomad_company_admin\event\company_user_suspended::create(array('context' => context_system::instance(),
+        $event = \block_iomad_company_admin\event\company_user_suspended::create(array('context' => $companycontext,
                                                                                        'objectid' => $user->id,
                                                                                        'userid' => $USER->id,
                                                                                        'other' => $eventother));
@@ -394,7 +393,7 @@ if ($confirmuser and confirm_sesskey()) {
     }
 
     // Unsuspends a selected user, after confirmation.
-    if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+    if (!iomad::has_capability('block/iomad_company_admin:editusers', $companycontext)) {
         print_error('nopermissions', 'error', '', 'suspend a user');
     }
 
@@ -425,7 +424,7 @@ if ($confirmuser and confirm_sesskey()) {
 
         // Create an event for this.
         $eventother = array('userid' => $user->id, 'companyname' => $company->get_name(), 'companyid' => $companyid);
-        $event = \block_iomad_company_admin\event\company_user_unsuspended::create(array('context' => context_system::instance(),
+        $event = \block_iomad_company_admin\event\company_user_unsuspended::create(array('context' => $companycontext,
                                                                                          'objectid' => $user->id,
                                                                                          'userid' => $USER->id,
                                                                                          'other' => $eventother));
@@ -436,7 +435,7 @@ if ($confirmuser and confirm_sesskey()) {
     }
 
 } else if ($acl and confirm_sesskey()) {
-    if (!iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {
+    if (!iomad::has_capability('block/iomad_company_admin:editusers', $companycontext)) {
         // TODO: this should be under a separate capability.
         print_error('nopermissions', 'error', '', 'modify the NMET access control list');
     }
@@ -506,7 +505,7 @@ if (!empty($CFG->iomad_report_fields)) {
 $searchinfo = iomad::get_user_sqlsearch($params, $idlist, $sort, $dir, $departmentid, true, true);
 
 // Get all or company users depending on capability.
-if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:editallusers', $companycontext)) {
     // Make sure we dont display site admins.
     // Set default search to something which cant happen.
     $sqlsearch = " AND u.id NOT IN (" . $CFG->siteadmins . ")";
@@ -534,7 +533,7 @@ if (iomad::has_capability('block/iomad_company_admin:editallusers', $systemconte
         $sqlsearch = " AND 1 = 0";
     }
 
-} else if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)) {   // Check if has role edit company users.
+} else if (iomad::has_capability('block/iomad_company_admin:editusers', $companycontext)) {   // Check if has role edit company users.
 
     // Get users company association.
     $departmentusers = company::get_recursive_department_users($departmentid);
@@ -641,8 +640,8 @@ if ($edit != 1) {
 }
 
 // Can we see the controls?
-if (iomad::has_capability('block/iomad_company_admin:editusers', $systemcontext)
-             || iomad::has_capability('block/iomad_company_admin:editallusers', $systemcontext)) {
+if (iomad::has_capability('block/iomad_company_admin:editusers', $companycontext)
+             || iomad::has_capability('block/iomad_company_admin:editallusers', $companycontext)) {
         $headers[] = '';
         $columns[] = 'actions';
 }

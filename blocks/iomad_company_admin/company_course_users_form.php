@@ -37,7 +37,6 @@ if (empty($courses) && !empty($selectedcourses)) {
     $courses = $selectedcourses;
 }
 
-$context = context_system::instance();
 require_login();
 
 $params = array('companyid' => $companyid,
@@ -64,8 +63,16 @@ $linktext = get_string('company_course_users_title', 'block_iomad_company_admin'
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_course_users_form.php');
 
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+$parentlevel = company::get_company_parentnode($companyid);
+$companydepartment = $parentlevel->id;
+$syscontext = context_system::instance();
+$company = new company($companyid);
+$companycontext = \core\context\company::instance($companyid);
+
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -81,18 +88,11 @@ $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'ini
 $PAGE->navbar->add($linktext, $linkurl);
 
 require_login(null, false); // Adds to $PAGE, creates $output.
-iomad::require_capability('block/iomad_company_admin:company_course_users', $context);
+iomad::require_capability('block/iomad_company_admin:company_course_users', $companycontext);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$parentlevel = company::get_company_parentnode($companyid);
-$companydepartment = $parentlevel->id;
-$syscontext = context_system::instance();
-$company = new company($companyid);
-
-$coursesform = new \block_iomad_company_admin\forms\company_ccu_courses_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses, $parentlevel);
+$coursesform = new \block_iomad_company_admin\forms\company_ccu_courses_form($PAGE->url, $companycontext, $companyid, $departmentid, $selectedcourses, $parentlevel);
 $coursesform->set_data(array('selectedcourses' => $selectedcourses, 'courses' => $courses));
-$usersform = new \block_iomad_company_admin\forms\company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses);
+$usersform = new \block_iomad_company_admin\forms\company_course_users_form($PAGE->url, $companycontext, $companyid, $departmentid, $selectedcourses);
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
@@ -121,7 +121,7 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
                  if (count($courses) > 0) {
                     $usersform->set_course(array($courses));
                     $usersform->process();
-                    $usersform = new \block_iomad_company_admin\forms\company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses);
+                    $usersform = new \block_iomad_company_admin\forms\company_course_users_form($PAGE->url, $companycontext, $companyid, $departmentid, $selectedcourses);
                     $usersform->set_course(array($courses));
                     $usersform->set_data(array('groupid' => $groupid));
                 } else if (!empty($selectedcourses)) {
@@ -131,7 +131,7 @@ if ($coursesform->is_cancelled() || $usersform->is_cancelled() ||
             } else if (count($courses) > 0) {
                 $usersform->set_course(array($courses));
                 $usersform->process();
-                $usersform = new \block_iomad_company_admin\forms\company_course_users_form($PAGE->url, $context, $companyid, $departmentid, $selectedcourses);
+                $usersform = new \block_iomad_company_admin\forms\company_course_users_form($PAGE->url, $companycontext, $companyid, $departmentid, $selectedcourses);
                 $usersform->set_course(array($courses));
                 $usersform->set_data(array('groupid' => $groupid));
                 echo $usersform->display();

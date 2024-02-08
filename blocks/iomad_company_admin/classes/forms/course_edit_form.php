@@ -47,6 +47,7 @@ class course_edit_form extends moodleform {
         $this->context = context_coursecat::instance($CFG->defaultrequestcategory);
         $this->editoroptions = $editoroptions;
         $this->companyrec = $DB->get_record('company', array('id' => $companyid));
+        $this->companycontext = \core\context\company::instance($companyid);
 
         parent::__construct($actionurl);
     }
@@ -76,7 +77,7 @@ class course_edit_form extends moodleform {
         $selectarray[1] = get_string('enrolled', 'block_iomad_company_admin');
 
         // Create course as self enrolable.
-        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', context_system::instance())) {
+        if (iomad::has_capability('block/iomad_company_admin:edit_licenses', $this->companycontext)) {
             $selectarray[2] = get_string('licensedcourse', 'block_iomad_company_admin');
         }
         $select = &$mform->addElement('select', 'selfenrol',

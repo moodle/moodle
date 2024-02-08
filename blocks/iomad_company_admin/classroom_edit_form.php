@@ -33,11 +33,14 @@ require_once('lib.php');
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 $classroomid = optional_param('id', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
 require_login();
 
+$systemcontext = context_system::instance();
+
 // Set the companyid
-$companyid = iomad::get_my_companyid($context);
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
 
 $urlparams = array('id' => $classroomid);
 if ($returnurl) {
@@ -49,21 +52,21 @@ $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->m
 
 if ($classroomid) {
     $isadding = false;
-    $editoroptions['context'] = $context;
-    $editoroptions['subdirs'] = file_area_contains_subdirs($context, 'classroom', 'description', 0);
+    $editoroptions['context'] = $companycontext;
+    $editoroptions['subdirs'] = file_area_contains_subdirs($companycontext, 'classroom', 'description', 0);
 
     $classroomrecord = (object) $DB->get_record('classroom', array('id' => $classroomid), '*', MUST_EXIST);
-    iomad::require_capability('block/iomad_company_admin:classrooms_edit', $context);
-    $classroomrecord = file_prepare_standard_editor($classroomrecord, 'description', $editoroptions, $context, 'block_iomad_company_admin', 'classroom_description', 0);
+    iomad::require_capability('block/iomad_company_admin:classrooms_edit', $companycontext);
+    $classroomrecord = file_prepare_standard_editor($classroomrecord, 'description', $editoroptions, $companycontext, 'block_iomad_company_admin', 'classroom_description', 0);
 
     $title = 'classrooms_edit';
 } else {
-    $editoroptions['context'] = $context;
+    $editoroptions['context'] = $companycontext;
     $editoroptions['subdirs'] = 0;
     $isadding = true;
     $classroomid = 0;
     $classroomrecord = new stdClass;
-    iomad::require_capability('block/iomad_company_admin:classrooms_add', $context);
+    iomad::require_capability('block/iomad_company_admin:classrooms_add', $companycontext);
 
     $title = 'classrooms_add';
 }
@@ -76,7 +79,7 @@ $linktext = get_string($title, 'block_iomad_company_admin');
 $linkurl = new moodle_url('/blocks/iomad_company_admin/classroom_edit_form.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -129,7 +132,7 @@ if ($mform->is_cancelled()) {
     }
 
     // Save the files used in the summary editor and store
-    $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $context, 'block_iomad_company_admin', 'classroom_description', 0);
+    $data = file_postupdate_standard_editor($data, 'description', $editoroptions, $companycontext, 'block_iomad_company_admin', 'classroom_description', 0);
     $DB->set_field('classroom', 'description', $data->description, ['id' => $classroomid]);
     $DB->set_field('classroom', 'descriptionformat', $data->descriptionformat, ['id' => $classroomid]);
 

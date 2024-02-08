@@ -38,8 +38,16 @@ $strdefaultcategory = get_string('profiledefaultcategory', 'admin');
 $strnofields        = get_string('profilenofieldsdefined', 'admin');
 $strcreatefield     = get_string('profilecreatefield', 'admin');
 
-$context = context_system::instance();
 require_login();
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:company_user_profiles', $companycontext);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -47,7 +55,7 @@ $linktext = get_string('companyprofilefields', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_user_profiles.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -55,11 +63,7 @@ $PAGE->set_title($linktext);
 // Set the page heading.
 $PAGE->set_heading($linktext);
 
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-
 // Do we have any actions to perform before printing the header?
-
 switch ($action) {
     case 'movefield':
         $id  = required_param('id', PARAM_INT);
@@ -114,8 +118,6 @@ $context = $PAGE->context;
 
 echo $OUTPUT->header();
 
-iomad::require_capability('block/iomad_company_admin:company_user_profiles', $context);
-
 // Check that we have at least one category defined.
 if ($DB->count_records('user_info_category') == 0) {
     $defaultcategory = new stdClass();
@@ -136,7 +138,7 @@ if (!empty($companyid)) {
     $categories[$company->profileid] = $profileinfo;
 } else {
     // Check if can view every company profile.
-    if (!iomad::has_capability('block/iomad_company_admin:allcompany_user_profiles', $context)) {
+    if (!iomad::has_capability('block/iomad_company_admin:allcompany_user_profiles', $companycontext)) {
         // Get the company from the users profile.
         $categories = $DB->get_records('company', array('id' => $companyid), 'sortorder ASC', 'profileid');
     } else {
@@ -293,4 +295,3 @@ function profile_field_icons($field) {
 
     return $editstr;
 }
-

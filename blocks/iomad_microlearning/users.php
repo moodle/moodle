@@ -36,9 +36,6 @@ $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
 $selectedthread = optional_param('selectedthread', 0, PARAM_INTEGER);
 $groupid = optional_param('groupid', 0, PARAM_INTEGER);
 
-$context = context_system::instance();
-require_login();
-
 $params = array('companyid' => $companyid,
                 'threadid' => $threadid,
                 'groupid' => $groupid,
@@ -54,12 +51,25 @@ if ($threadid) {
     $urlparams['threadid'] = $threadid;
 }
 
+require_login();
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+$parentlevel = company::get_company_parentnode($companyid);
+$companydepartment = $parentlevel->id;
+
+iomad::require_capability('block/iomad_microlearning:assign_threads', $companycontext);
+
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_microlearning/users.php');
 $threadlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 
@@ -69,15 +79,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Javascript for fancy select.
 // Parameter is name of proper select form element followed by 1=submit its form
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
-
-require_login(null, false); // Adds to $PAGE, creates $output.
-iomad::require_capability('block/iomad_microlearning:assign_threads', $context);
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$parentlevel = company::get_company_parentnode($companyid);
-$companydepartment = $parentlevel->id;
-$syscontext = context_system::instance();
-$company = new company($companyid);
 
 // Set the name for the page.
 $linktext = get_string('company_threads_for', 'block_iomad_microlearning', $company->get_name());
@@ -92,7 +93,7 @@ $buttonlink = new moodle_url('/blocks/iomad_microlearning/threads.php');
 $buttons = $OUTPUT->single_button($buttonlink, $buttoncaption, 'get');
 $PAGE->set_button($buttons);
 
-if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $syscontext)) {
+if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $companycontext)) {
     $userhierarchylevel = $parentlevel->id;
 } else {
     $userlevel = $company->get_userlevel($USER);
@@ -100,8 +101,8 @@ if (iomad::has_capability('block/iomad_company_admin:edit_all_departments', $sys
 }
 
 // Set up the forms.
-$threadsform = new block_iomad_microlearning\forms\microlearning_threads_form($PAGE->url, $context, $companyid, $departmentid, $selectedthread, $parentlevel);
-$usersform = new block_iomad_microlearning\forms\microlearning_thread_users_form($PAGE->url, $context, $companyid, $departmentid, $threadid, $groupid);
+$threadsform = new block_iomad_microlearning\forms\microlearning_threads_form($PAGE->url, $companycontext, $companyid, $departmentid, $selectedthread, $parentlevel);
+$usersform = new block_iomad_microlearning\forms\microlearning_thread_users_form($PAGE->url, $companycontext, $companyid, $departmentid, $threadid, $groupid);
 echo $output->header();
 
 // Check the department is valid.
@@ -127,7 +128,7 @@ if ($threadsform->is_cancelled() || $usersform->is_cancelled() ||
                 $thread = $DB->get_record('microlearning_thread', array('id' => $threadid));
                 //$usersform->set_thread(array($thread));
                 $usersform->process();
-                $usersform = new block_iomad_microlearning\forms\microlearning_thread_users_form($PAGE->url, $context, $companyid, $departmentid, $threadid, $groupid);
+                $usersform = new block_iomad_microlearning\forms\microlearning_thread_users_form($PAGE->url, $companycontext, $companyid, $departmentid, $threadid, $groupid);
                 //$usersform->set_thread(array($thread));
             } else if (!empty($selectedthread)) {
                 $usersform->set_thread($selectedthread);
@@ -137,7 +138,7 @@ if ($threadsform->is_cancelled() || $usersform->is_cancelled() ||
             $thread = $DB->get_record('microlearning_thread', array('id' => $threadid));
             //$usersform->set_thread(array($thread));
             $usersform->process();
-            $usersform = new block_iomad_microlearning\forms\microlearning_thread_users_form($PAGE->url, $context, $companyid, $departmentid, $threadid, $groupid);
+            $usersform = new block_iomad_microlearning\forms\microlearning_thread_users_form($PAGE->url, $companycontext, $companyid, $departmentid, $threadid, $groupid);
             //$usersform->set_thread(array($thread));
             echo $usersform->display();
         }

@@ -25,10 +25,17 @@ require_once(dirname(__FILE__) . '/../../config.php'); // Creates $PAGE.
 require_once('lib.php');
 
 $returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
-$context = context_system::instance();
 
 require_login();
-iomad::require_capability('block/iomad_company_admin:company_user', $context);
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($context);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+
+iomad::require_capability('block/iomad_company_admin:company_user', $companycontext);
 
 $urlparams = array();
 if ($returnurl) {
@@ -41,17 +48,13 @@ $linktext = get_string('assignusers', 'block_iomad_company_admin');
 // Set the url..
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_users_form.php');
 
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
 $PAGE->set_heading(get_string('company_users_for', 'block_iomad_company_admin', $company->get_name()));
 
-$usersform = new \block_iomad_company_admin\forms\company_users_form($PAGE->url, $context, $companyid);
+$usersform = new \block_iomad_company_admin\forms\company_users_form($PAGE->url, $companycontext, $companyid);
 
 if ($usersform->is_cancelled()) {
     if ($returnurl) {

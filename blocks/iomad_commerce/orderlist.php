@@ -31,8 +31,14 @@ $page     = optional_param('page', 0, PARAM_INT);
 $perpage  = optional_param('perpage', 30, PARAM_INT);        // How many per page.
 $download = optional_param('download', 0, PARAM_CLEAN);
 
-$context = context_system::instance();
 require_login();
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
 
 // Correct the navbar.
 // Set the name for the page.
@@ -41,7 +47,7 @@ $linktext = get_string('orders', 'block_iomad_commerce');
 $linkurl = new moodle_url('/blocks/iomad_commerce/orderlist.php');
 
 // Print the page header.
-$PAGE->set_context($context);
+$PAGE->set_context($companycontext);
 $PAGE->set_url($linkurl);
 $PAGE->set_pagelayout('base');
 $PAGE->set_title($linktext);
@@ -54,13 +60,11 @@ $baseurl = new moodle_url('/blocks/iomad_commerce/orderlist.php',
                            'dir' => $dir,
                            'perpage' => $perpage]);
 $returnurl = $baseurl;
-$companyid = iomad::get_my_companyid($context);
-$company = new company($companyid);
 
 //  Check we can actually do anything on this page.
-iomad::require_capability('block/iomad_commerce:admin_view', $context);
+iomad::require_capability('block/iomad_commerce:admin_view', $companycontext);
 
-$userfields = \core_user\fields::for_name()->with_identity($context)->excluding('id', 'deleted', 'firstname', 'lastname');
+$userfields = \core_user\fields::for_name()->with_identity($systemcontext)->excluding('id', 'deleted', 'firstname', 'lastname');
 $usersql = $userfields->get_sql('u');
 $selectsql = "i.id,
               i.reference,

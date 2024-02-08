@@ -42,7 +42,7 @@ class course_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_coursename($row) {
-        global $output, $params, $haslicenses;
+        global $output, $params, $haslicenses, $companycontext;
 
         if (!$this->is_downloading()) {
             $params['courseid'] = $row->id;
@@ -51,17 +51,16 @@ class course_table extends table_sql {
             $coursemonthlylink = new moodle_url('/local/report_completion_monthly/index.php', $params);
             $courselicenselink = new moodle_url('/local/report_user_license_allocations/index.php', $params);
             $cell = html_writer::tag('h2', format_string($row->coursename, true, 1));
-            $systemcontext = context_system::instance();
-            if (iomad::has_capability('local/report_users:view', $systemcontext)) {
+            if (iomad::has_capability('local/report_users:view', $companycontext)) {
                 $cell .= $output->single_button($courseuserslink, get_string('usersummary', 'local_report_completion'));
             }
-            if (iomad::has_capability('local/report_completion_monthly:view', $systemcontext)) {
+            if (iomad::has_capability('local/report_completion_monthly:view', $companycontext)) {
                 if (!empty($cell)) {
                     $cell .= "<br>";
                 }
                 $cell .= $output->single_button($coursemonthlylink, get_string('pluginname', 'local_report_completion_monthly'));
             }
-            if (iomad::has_capability('local/report_user_license_allocations:view', $systemcontext) && $haslicenses) {
+            if (iomad::has_capability('local/report_user_license_allocations:view', $companycontext) && $haslicenses) {
                 if (!empty($cell)) {
                     $cell .= "<br>";
                 }
