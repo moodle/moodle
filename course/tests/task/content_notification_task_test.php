@@ -16,7 +16,9 @@
 
 namespace core_course\task;
 
+use availability_date\condition;
 use context_user;
+use core_availability\tree;
 
 /**
  * Contains tests for course related notifications.
@@ -61,10 +63,12 @@ class content_notification_task_test extends \advanced_testcase {
         $url = self::getDataGenerator()->create_module('url', ['course' => $course]);
 
         // Test update.
+        $moduleavailability = tree::get_root_json([condition::get_json(condition::DIRECTION_FROM, time() + HOURSECS)]);
         $moduleinfo = $DB->get_record('course_modules', array('id' => $url->cmid));
         $moduleinfo->modulename = 'url';
         $moduleinfo->coursemodule = $url->cmid;
         $moduleinfo->display = 1;
+        $moduleinfo->availability = json_encode($moduleavailability);
         $moduleinfo->externalurl = '';
         $moduleinfo->update = 1;
         $draftid = 0;
@@ -81,6 +85,23 @@ class content_notification_task_test extends \advanced_testcase {
 
         // Create the module.
         update_module(clone $moduleinfo);   // We use clone to keep the original object untouch for later use.
+
+        // Redirect messages to sink and stop buffer output from CLI task.
+        $sink = $this->redirectMessages();
+        ob_start();
+        $this->runAdhocTasks('\core_course\task\content_notification_task');
+        $output = ob_get_contents();
+        ob_end_clean();
+        $messages = $sink->get_messages();
+        $sink->close();
+
+        // The module isn't available for one hour, there should be no notifications.
+        $this->assertCount(0, $messages);
+
+        // Remove availability condition.
+        $this->setAdminUser();
+        $moduleinfo->availability = null;
+        update_module(clone $moduleinfo);
 
         // Redirect messages to sink and stop buffer output from CLI task.
         $sink = $this->redirectMessages();
