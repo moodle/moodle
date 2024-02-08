@@ -174,13 +174,15 @@ class instance_test extends advanced_testcase {
         $instance = instance::get_from_cmid($cm->id);
         $instance->set_group_id(1);
         logger::log_meeting_joined_event($instance, 1);
-        $logs = $DB->get_records('bigbluebuttonbn_logs',
-            ['courseid' => $course->id, 'bigbluebuttonbnid' => $instance->get_instance_id()], 'timecreated DESC');
-        $log = end($logs);
-        $retrievedinstance = instance::get_from_meetingid(
-            $log->meetingid
-        );
 
+        // Get the meeting ID from the logged "join" event.
+        $meetingid = $DB->get_field('bigbluebuttonbn_logs', 'meetingid', [
+            'courseid' => $course->id,
+            'bigbluebuttonbnid' => $instance->get_instance_id(),
+            'log' => 'Join',
+        ], MUST_EXIST);
+
+        $retrievedinstance = instance::get_from_meetingid($meetingid);
         $this->assertEquals($cm->instance, $retrievedinstance->get_instance_id());
         $this->assertEquals($cm->id, $retrievedinstance->get_cm_id());
     }
