@@ -1,6 +1,11 @@
 This files describes API changes in /enrol/* - plugins,
 information provided here is intended especially for developers.
 
+=== 4.1.9 ===
+
+* Functions core_enrol_external::search_users and course_enrolment_manager::search_users now have extra optional parameter
+  contextid which allows to search users in a specific activity context. When omitted it searches in the whole course.
+
 === 4.1.1 ===
 
 * New is_self_enrol_available() function has been created. Similar to can_self_enrol but without checking user capabilities.
