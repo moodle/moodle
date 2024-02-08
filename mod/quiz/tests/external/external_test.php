@@ -229,6 +229,9 @@ final class external_test extends externallib_advanced_testcase {
         $record = new \stdClass();
         $record->course = $course2->id;
         $record->intro = '<button>Test with HTML allowed.</button>';
+        $timeopen = time() - 1;
+        $record->timeopen = $timeopen;
+        $record->precreateattempts = 1;
         $quiz2 = self::getDataGenerator()->create_module('quiz', $record);
 
         // Execute real Moodle enrolment as we'll call unenrol() method on the instance later.
@@ -258,7 +261,7 @@ final class external_test extends externallib_advanced_testcase {
                                         'browsersecurity', 'delay1', 'delay2', 'showuserpicture', 'showblocks',
                                         'completionattemptsexhausted', 'completionpass', 'autosaveperiod', 'hasquestions',
                                         'overduehandling', 'graceperiod', 'canredoquestions', 'allowofflineattempts'];
-        $managerfields = ['shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet'];
+        $managerfields = ['shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet', 'precreateattempts'];
 
         // Add expected coursemodule and other data.
         $quiz1 = $this->quiz;

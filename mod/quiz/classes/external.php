@@ -145,7 +145,14 @@ class mod_quiz_external extends external_api {
 
                     // Fields only for managers.
                     if (has_capability('moodle/course:manageactivities', $context)) {
-                        $additionalfields = ['shuffleanswers', 'timecreated', 'timemodified', 'password', 'subnet'];
+                        $additionalfields = [
+                            'shuffleanswers',
+                            'timecreated',
+                            'timemodified',
+                            'password',
+                            'subnet',
+                            'precreateattempts',
+                        ];
                         $viewablefields = array_merge($viewablefields, $additionalfields);
                     }
 
@@ -267,6 +274,8 @@ class mod_quiz_external extends external_api {
                             'hasfeedback' => new external_value(PARAM_INT, 'Whether the quiz has any non-blank feedback text',
                                                                 VALUE_OPTIONAL),
                             'hasquestions' => new external_value(PARAM_INT, 'Whether the quiz has questions', VALUE_OPTIONAL),
+                            'precreateattempts' => new external_value(PARAM_INT, 'Whether attempt pre-creation is enabled',
+                                VALUE_OPTIONAL),
                         ]
                     ))
                 ),

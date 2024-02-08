@@ -87,6 +87,28 @@ if ($ADMIN->fulltree) {
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $quizsettings->add($setting);
 
+    // Enable pre-creation of attempts.
+    $setting = new admin_setting_configcheckbox(
+        'quiz/precreateattempts',
+        get_string('precreateattempts', 'quiz'),
+        get_string('precreateattempts_help', 'quiz'),
+        0,
+    );
+    $setting->set_locked_flag_options(admin_setting_flag::ENABLED, true);
+    $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, true);
+    $quizsettings->add($setting);
+
+    // Pre-create attempt period.
+    $precreateoptions = mod_quiz_mod_form::generate_precreate_options();
+    $setting = new admin_setting_configselect(
+        'quiz/precreateperiod',
+        get_string('precreateperiod', 'quiz'),
+        get_string('precreateperiod_desc', 'quiz'),
+        0,
+        $precreateoptions,
+    );
+    $quizsettings->add($setting);
+
     // Minimum grace period used behind the scenes.
     $quizsettings->add(new admin_setting_configduration('quiz/graceperiodmin',
             get_string('graceperiodmin', 'quiz'), get_string('graceperiodmin_desc', 'quiz'),

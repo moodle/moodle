@@ -1057,4 +1057,17 @@ class behat_mod_quiz extends behat_question_base {
             ["//li[contains(@class,'qtype')]//span[@class='slotnumber' and contains(., %locator%)]/.."])
         ];
     }
+
+    /**
+     * Generate pre-created attempts for a quiz.
+     *
+     * @param string $quizname the name of the quiz to create attempts for.
+     * @Given quiz :quizname has pre-created attempts
+     */
+    public function quiz_has_precreated_attempts(string $quizname): void {
+        global $DB;
+
+        $quiz = $DB->get_record('quiz', ['name' => $quizname], 'id, course', MUST_EXIST);
+        \mod_quiz\task\precreate_attempts::precreate_attempts_for_quiz($quiz->id, $quiz->course);
+    }
 }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="mod/quiz/db" VERSION="20230804" COMMENT="XMLDB file for Moodle mod/quiz"
+<XMLDB PATH="mod/quiz/db" VERSION="20240523" COMMENT="XMLDB file for Moodle mod/quiz"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -48,6 +48,7 @@
         <FIELD NAME="completionattemptsexhausted" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="completionminattempts" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="allowofflineattempts" TYPE="int" LENGTH="1" NOTNULL="false" DEFAULT="0" SEQUENCE="false" COMMENT="Whether to allow the quiz to be attempted offline in the mobile app"/>
+        <FIELD NAME="precreateattempts" TYPE="int" LENGTH="1" NOTNULL="false" SEQUENCE="false" COMMENT="Pre-create attempts for this quiz? This setting has no effect unless the precreateperiod config setting is set and unlocked."/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

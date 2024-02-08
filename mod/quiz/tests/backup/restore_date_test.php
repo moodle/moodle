@@ -37,8 +37,16 @@ final class restore_date_test extends \restore_date_testcase {
         global $DB, $USER;
 
         // Create quiz data.
-        $record = ['timeopen' => 100, 'timeclose' => 100, 'timemodified' => 100, 'tiemcreated' => 100, 'questionsperpage' => 0,
-            'grade' => 100.0, 'sumgrades' => 2];
+        $record = [
+            'timeopen' => 100,
+            'timeclose' => 100,
+            'timemodified' => 100,
+            'timecreated' => 100,
+            'questionsperpage' => 0,
+            'grade' => 100.0,
+            'sumgrades' => 2,
+            'precreateattempts' => 1,
+        ];
         list($course, $quiz) = $this->create_course_and_module('quiz', $record);
 
         // Create questions.
@@ -86,6 +94,7 @@ final class restore_date_test extends \restore_date_testcase {
         $this->assertFieldsNotRolledForward($quiz, $newquiz, ['timecreated', 'timemodified']);
         $props = ['timeclose', 'timeopen'];
         $this->assertFieldsRolledForward($quiz, $newquiz, $props);
+        $this->assertEquals($quiz->precreateattempts, $newquiz->precreateattempts);
 
         $newattempt = $DB->get_record('quiz_attempts', ['quiz' => $newquiz->id]);
         $newoverride = $DB->get_record('quiz_overrides', ['quiz' => $newquiz->id]);
