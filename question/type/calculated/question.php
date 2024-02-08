@@ -73,6 +73,12 @@ class qtype_calculated_question extends qtype_numerical_question
             $ans->feedback = $this->vs->replace_expressions_in_text($ans->feedback,
                         $ans->correctanswerlength, $ans->correctanswerformat);
         }
+        // Replace expressions in hints referring MDL-36733.
+        // Calculation through calculation() function in replace_expressions_in_text() function.
+        // Validation through qtype_calculated_find_formula_errors() function in calculate() function.
+        foreach ($this->hints as $hint) {
+            $hint->hint = $this->vs->replace_expressions_in_text($hint->hint);
+        }
     }
 
     public function get_num_variants() {
