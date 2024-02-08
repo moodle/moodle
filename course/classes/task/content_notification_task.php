@@ -52,9 +52,7 @@ class content_notification_task extends adhoc_task {
 
         // Get only active users.
         $coursecontext = \context_course::instance($course->id);
-        $modcontext = \context_module::instance($cm->id);
         $users = get_enrolled_users($coursecontext, '', 0, 'u.*', null, 0, 0, true);
-
         if (empty($users)) {
             return;
         }
@@ -80,9 +78,9 @@ class content_notification_task extends adhoc_task {
             // Get module names in the user's language.
             $modnames = get_module_types_names();
             $a = [
-                'coursename' => format_string(get_course_display_name_for_list($course), true, ['context' => $modcontext]),
+                'coursename' => format_string(get_course_display_name_for_list($course), true, ['context' => $coursecontext]),
                 'courselink' => (new \moodle_url('/course/view.php', ['id' => $course->id]))->out(false),
-                'modulename' => format_string($cm->name, $modcontext->id),
+                'modulename' => $cm->get_formatted_name(),
                 'moduletypename' => $modnames[$cm->modname],
                 'link' => (new \moodle_url('/mod/' . $cm->modname . '/view.php', ['id' => $cm->id]))->out(false),
                 'notificationpreferenceslink' =>
@@ -109,7 +107,7 @@ class content_notification_task extends adhoc_task {
             $eventdata->fullmessagehtml = $messagebody;
             $eventdata->smallmessage = strip_tags($eventdata->fullmessagehtml);
             $eventdata->contexturl = (new \moodle_url('/mod/' . $cm->modname . '/view.php', ['id' => $cm->id]))->out(false);
-            $eventdata->contexturlname = $cm->name;
+            $eventdata->contexturlname = $cm->get_formatted_name();
             $eventdata->notification = 1;
 
             // Add notification custom data.
