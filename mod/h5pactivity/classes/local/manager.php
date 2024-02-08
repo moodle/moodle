@@ -479,7 +479,7 @@ class manager {
             // Ensure user can view the attempt of specific userid, respecting access checks.
             if ($user && $user->id != $USER->id) {
                 $course = get_course($this->coursemodule->course);
-                if ($this->coursemodule->effectivegroupmode == SEPARATEGROUPS && !user_can_view_profile($user, $course)) {
+                if (!groups_user_groups_visible($course, $user->id, $this->coursemodule)) {
                     return null;
                 }
             }
