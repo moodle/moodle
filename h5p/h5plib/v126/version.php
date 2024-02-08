@@ -15,32 +15,15 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Handler for the version 1.24 of the H5P library.
+ * Version information.
  *
- * @package    h5plib_v124
- * @copyright  2019 Sara Arjona <sara@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   h5plib_v126
+ * @copyright 2024 Sara Arjona <sara@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace h5plib_v124\local\library;
 
 defined('MOODLE_INTERNAL') || die();
 
-/**
- * Handler for the version 1.24 of the H5P library.
- *
- * @package    h5plib_v124
- * @copyright  2019 Sara Arjona <sara@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-class handler extends \core_h5p\local\library\handler {
-
-    /**
-     * Get the current version of the H5P core library.
-     *
-     * @return string
-     */
-    public static function get_h5p_version(): string {
-        return '124';
-    }
-}
+$plugin->version   = 2024011600;       // The current module version (Date: YYYYMMDDXX).
+$plugin->requires  = 2023041800;       // Requires this Moodle version.
+$plugin->component = 'h5plib_v126';    // Full name of the plugin (used for diagnostics).
