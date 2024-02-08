@@ -36,11 +36,6 @@ $noticefail = optional_param('noticefail', '', PARAM_CLEAN);
 $SESSION->showsuspendedcompanies = $showsuspendedcompanies;
 
 $systemcontext = context_system::instance();
-$companycontext = $systemcontext;
-if (!empty($company)) {
-    $companycontext =  \core\context\company::instance($company);
-}
-
 // Set the session to a user if they are editing a company other than their own.
 if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)
     || $DB->get_record('company_users', array('managertype' => 1, 'companyid' => $company, 'userid' => $USER->id)))) {
@@ -68,6 +63,11 @@ if (empty($SESSION->currenteditingcompany)) {
     }
 } else {
     $company = $SESSION->currenteditingcompany;
+}
+
+$companycontext = $systemcontext;
+if (!empty($company)) {
+    $companycontext =  \core\context\company::instance($company);
 }
 
 // Page setup stuff.
@@ -324,4 +324,5 @@ $adminblock = new block_iomad_company_admin\output\adminblock($logourl, $company
 
 echo $output->header();
 echo $renderer->render($adminblock);
+echo "<pre>";print_r($companycontext);echo "</pre>";
 echo $output->footer();

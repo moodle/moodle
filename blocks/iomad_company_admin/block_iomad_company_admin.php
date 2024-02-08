@@ -74,10 +74,6 @@ class block_iomad_company_admin extends block_base {
 
         $systemcontext = context_system::instance();
         $companycontext = $systemcontext;
-        if (!empty($company)) {
-            $companycontext =  \core\context\company::instance($company);
-        }
-
 
         // Set the session to a user if they are editing a company other than their own.
         if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)
@@ -147,10 +143,17 @@ class block_iomad_company_admin extends block_base {
             $selectedtab = 1;
         }
 
+        $systemcontext = context_system::instance();
+        $companycontext = $systemcontext;
+
         // If no selected company no point showing tabs.
         if (!$companyid = iomad::get_my_companyid($systemcontext, false)) {
             $this->content->text = '<div class="alert alert-warning">' . get_string('nocompanyselected', 'block_iomad_company_admin') . '</div>';
             return $this->content;
+        }
+
+        if (!empty($companyid)) {
+            $companycontext =  \core\context\company::instance($companyid);
         }
 
         // Build tabs.
