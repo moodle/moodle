@@ -3,6 +3,8 @@ information provided here is intended especially for developers.
 
 === 4.4 ===
 
+* Functions core_enrol_external::search_users and course_enrolment_manager::search_users now have extra optional parameter
+  contextid which allows to search users in a specific activity context. When omitted it searches in the whole course.
 * New find_instance() function has been created. It finds a matching enrolment instance in a given course using provided
  enrolment data (for example cohort idnumber for cohort enrolment). Defaults to null. Override this function in your
  enrolment plugin if you want it to be supported in CSV course upload. Please be aware that sometimes it is not possible
