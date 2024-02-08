@@ -1457,7 +1457,7 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
     }
     // Activity card specific grid layout for activities without name.
     .activity-grid.noname-grid {
-        grid-template-columns: min-content min-content 1fr min-content;
+        grid-template-columns: min-content 1fr min-content min-content;
         grid-template-areas:
             "visibility    groupmode        completion    actions"
             "altcontent    altcontent       altcontent    altcontent"
