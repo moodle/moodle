@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 4.1.12 ===
 
 * Added the ability for unit tests to autoload classes in the `\[component]\tests\` namespace from the `[path/to/component]/tests/classes` directory.
+* Added the `advanced_testcase::load_fixture()` helper to load fixtures from a components `tests/fixtures/` folder.
 
 === 4.1.9 ===
 
