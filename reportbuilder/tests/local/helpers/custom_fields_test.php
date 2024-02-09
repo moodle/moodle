@@ -28,7 +28,7 @@ use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
-use core_course\reportbuilder\datasource\courses;
+use core_course\reportbuilder\datasource\{categories, courses};
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -177,7 +177,7 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Courses', 'source' => courses::class, 'default' => 0]);
 
-        // Add user profile field columns to the report.
+        // Add custom field columns to the report.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_text']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_textarea']);
@@ -195,6 +195,34 @@ class custom_fields_test extends core_reportbuilder_testcase {
             userdate(1669852800),
             'Dog'
         ], array_values($content[0]));
+    }
+
+    /**
+     * Test that adding custom field columns to report returns expected default values for fields
+     */
+    public function test_custom_report_content_column_defaults(): void {
+        $this->resetAfterTest();
+
+        $this->generate_customfields();
+
+        $category = $this->getDataGenerator()->create_category(['name' => 'Zebras']);
+        $course = $this->getDataGenerator()->create_course(['category' => $category->id]);
+
+        /** @var core_reportbuilder_generator $generator */
+        $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
+        $report = $generator->create_report(['name' => 'Categories', 'source' => categories::class, 'default' => 0]);
+
+        // Add custom field columns to the report.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course_category:name',
+            'sortenabled' => 1]);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:fullname']);
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'course:customfield_select']);
+
+        $content = $this->get_custom_report_content($report->get('id'));
+        $this->assertEquals([
+            ['Category 1', '', ''],
+            [$category->name, $course->fullname, 'Cat'],
+        ], array_map('array_values', $content));
     }
 
     /**
