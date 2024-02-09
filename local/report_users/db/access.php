@@ -28,7 +28,7 @@ $capabilities = array(
     'local/report_users:view' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'companymanager' => CAP_ALLOW,
             'companydepartmentmanager' => CAP_ALLOW,
@@ -41,7 +41,7 @@ $capabilities = array(
     'local/report_users:deleteentries' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW,
         ),
@@ -50,7 +50,7 @@ $capabilities = array(
     'local/report_users:deleteentriesfull' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW,
         ),
@@ -59,7 +59,7 @@ $capabilities = array(
     'local/report_users:clearentries' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW,
         ),
@@ -68,7 +68,7 @@ $capabilities = array(
     'local/report_users:addentry' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW,
         ),
@@ -77,7 +77,7 @@ $capabilities = array(
     'local/report_users:redocertificates' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW,
         ),
@@ -86,7 +86,7 @@ $capabilities = array(
     'local/report_users:updateentries' => array(
         'riskbitmask' => RISK_PERSONAL,
         'captype' => 'read',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW,
         ),

@@ -38,7 +38,7 @@ $capabilities = array(
     'block/iomad_microlearning:view' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -47,7 +47,7 @@ $capabilities = array(
     'block/iomad_microlearning:thread_clone' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -56,7 +56,7 @@ $capabilities = array(
     'block/iomad_microlearning:edit_threads' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -65,7 +65,7 @@ $capabilities = array(
     'block/iomad_microlearning:import_threads' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -74,7 +74,7 @@ $capabilities = array(
     'block/iomad_microlearning:edit_nuggets' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -83,7 +83,7 @@ $capabilities = array(
     'block/iomad_microlearning:thread_delete' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -92,7 +92,7 @@ $capabilities = array(
     'block/iomad_microlearning:thread_view' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -101,7 +101,7 @@ $capabilities = array(
     'block/iomad_microlearning:assign_threads' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -110,7 +110,7 @@ $capabilities = array(
     'block/iomad_microlearning:manage_groups' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -119,7 +119,7 @@ $capabilities = array(
     'block/iomad_microlearning:importgroupfromcsv' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),

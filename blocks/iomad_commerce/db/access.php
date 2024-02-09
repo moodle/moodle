@@ -26,19 +26,19 @@ $capabilities = array(
     'block/iomad_commerce:addinstance' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK
+        'contextlevel' => CONTEXT_BLOCK,
     ),
 
     'block/iomad_commerce:myaddinstance' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK
+        'contextlevel' => CONTEXT_BLOCK,
     ),
 
     'block/iomad_commerce:admin_view' => array(
 
         'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -47,7 +47,7 @@ $capabilities = array(
     'block/iomad_commerce:add_course' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -56,7 +56,7 @@ $capabilities = array(
     'block/iomad_commerce:edit_course' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -65,7 +65,7 @@ $capabilities = array(
     'block/iomad_commerce:hide_course' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -74,7 +74,7 @@ $capabilities = array(
     'block/iomad_commerce:buyitnow' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW,
             'companymanager' => CAP_ALLOW
@@ -84,7 +84,7 @@ $capabilities = array(
     'block/iomad_commerce:buyinbulk' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_SYSTEM,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW,
             'companymanager' => CAP_ALLOW
@@ -94,7 +94,7 @@ $capabilities = array(
     'block/iomad_commerce:delete_course' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_COMPANY,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
@@ -103,7 +103,7 @@ $capabilities = array(
     'block/iomad_commerce:manage_default' => array(
 
         'captype' => 'write',
-        'contextlevel' => CONTEXT_BLOCK,
+        'contextlevel' => CONTEXT_SYSTEM,
         'archetypes' => array(
             'clientadministrator' => CAP_ALLOW
         ),
