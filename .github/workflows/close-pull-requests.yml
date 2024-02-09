@@ -8,7 +8,7 @@ on:
 jobs:
   close:
     # Avoid forks to run this job
-    if: github.repository_owner == 'moodlehq'
+    if: github.repository_owner == 'moodle'
     name: Close Pull Requests
     runs-on: ubuntu-latest
     steps:
