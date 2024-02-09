@@ -179,9 +179,13 @@ class custom_fields {
                     ->add_join($this->get_table_join($field))
                     ->add_field($datafieldsql, $datafield)
                     ->add_fields($selectfields)
+                    ->add_field($this->tablefieldalias, 'tablefieldalias')
                     ->set_type($columntype)
                     ->set_is_sortable($columntype !== column::TYPE_LONGTEXT)
                     ->add_callback(static function($value, stdClass $row, field_controller $field): string {
+                        if ($row->tablefieldalias === null) {
+                            return '';
+                        }
                         return (string) data_controller::create(0, $row, $field)->export_value();
                     }, $field)
                     // Important. If the handler implements can_view() function, it will be called with parameter $instanceid=0.
