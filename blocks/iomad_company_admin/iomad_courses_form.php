@@ -28,7 +28,7 @@ require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->dirroot.'/user/filters/lib.php');
 require_once($CFG->dirroot.'/blocks/iomad_company_admin/lib.php');
 
-$companyid    = optional_param('companyid', 0, PARAM_CLEAN);
+$companyid    = optional_param('companyid', 0, PARAM_INTEGER);
 $coursesearch      = optional_param('coursesearch', '', PARAM_CLEAN);// Search string.
 $courseid = optional_param('courseid', 0, PARAM_INTEGER);
 $update = optional_param('update', null, PARAM_ALPHA);
