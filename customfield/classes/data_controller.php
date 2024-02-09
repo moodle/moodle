@@ -200,8 +200,15 @@ abstract class data_controller {
         if (!property_exists($datanew, $elementname)) {
             return;
         }
-        $value = $datanew->$elementname;
-        $this->data->set($this->datafield(), $value);
+        $datafieldvalue = $value = $datanew->{$elementname};
+
+        // For numeric datafields, persistent won't allow empty string, swap for null.
+        $datafield = $this->datafield();
+        if ($datafield === 'intvalue' || $datafield === 'decvalue') {
+            $datafieldvalue = $datafieldvalue === '' ? null : $datafieldvalue;
+        }
+
+        $this->data->set($datafield, $datafieldvalue);
         $this->data->set('value', $value);
         $this->save();
     }
