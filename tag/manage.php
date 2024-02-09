@@ -23,35 +23,21 @@
  */
 
 require_once('../config.php');
-require_once($CFG->libdir.'/tablelib.php');
 require_once('lib.php');
 require_once($CFG->libdir.'/adminlib.php');
 
-define('SHOW_ALL_PAGE_SIZE', 50000);
-define('DEFAULT_PAGE_SIZE', 30);
+use core\context\system;
+use core_reportbuilder\system_report_factory;
+use core_tag\reportbuilder\local\systemreports\tags;
 
-$tagschecked = optional_param_array('tagschecked', array(), PARAM_INT);
 $tagid       = optional_param('tagid', null, PARAM_INT);
 $isstandard  = optional_param('isstandard', null, PARAM_INT);
 $action      = optional_param('action', '', PARAM_ALPHA);
-$perpage     = optional_param('perpage', DEFAULT_PAGE_SIZE, PARAM_INT);
-$page        = optional_param('page', 0, PARAM_INT);
 $tagcollid   = optional_param('tc', 0, PARAM_INT);
-$tagareaid   = optional_param('ta', null, PARAM_INT);
-$filter      = optional_param('filter', '', PARAM_NOTAGS);
 
 $params = array();
-if ($perpage != DEFAULT_PAGE_SIZE) {
-    $params['perpage'] = $perpage;
-}
-if ($page > 0) {
-    $params['page'] = $page;
-}
 if ($tagcollid) {
     $params['tc'] = $tagcollid;
-}
-if ($filter !== '') {
-    $params['filter'] = $filter;
 }
 
 admin_externalpage_setup('managetags', '', $params, '', array('pagelayout' => 'report'));
@@ -66,7 +52,6 @@ if ($tagid) {
     $tagcollid = $tagobject->tagcollid;
 }
 $tagcoll = core_tag_collection::get_by_id($tagcollid);
-$tagarea = core_tag_area::get_by_id($tagareaid);
 $manageurl = new moodle_url('/tag/manage.php');
 if ($tagcoll) {
     // We are inside a tag collection - add it to the breadcrumb.
@@ -125,6 +110,7 @@ switch($action) {
         break;
 
     case 'bulk':
+        $tagschecked = explode(',', optional_param('tagschecked', '', PARAM_SEQUENCE));
         if (optional_param('bulkdelete', null, PARAM_RAW) !== null) {
             if ($tagschecked) {
                 require_sesskey();
@@ -206,70 +192,39 @@ if (!$tagcoll) {
 }
 
 // Tag collection is specified. Manage tags in this collection.
-echo $OUTPUT->heading(core_tag_collection::display_name($tagcoll));
+echo html_writer::div(
+    $OUTPUT->heading(core_tag_collection::display_name($tagcoll)) .
+    html_writer::tag(
+        'button',
+        $OUTPUT->pix_icon('t/add', '') . get_string('addotags', 'core_tag'),
+        [
+            'type' => 'button',
+            'class' => 'btn btn-primary my-auto',
+            'data-action' => 'addstandardtag',
+        ],
+    ),
+    'd-flex justify-content-between mb-2',
+);
 
-$hiddenfields = [
-    (object) ['type' => 'hidden', 'name' => 'tc', 'value' => $tagcollid],
-    (object) ['type' => 'hidden', 'name' => 'perpage', 'value' => $perpage]
-];
+// Render the report.
+$report = system_report_factory::create(tags::class, system::instance(), '', '', 0, ['collection' => $tagcoll->id]);
+echo $report->output();
 
-$otherfields = '';
-if ($filter !== '') {
-    $otherfields = html_writer::link(new moodle_url($PAGE->url, ['filter' => null]),
-        get_string('resetfilter', 'tag'));
-}
-
-$data = [
-    'action' => new moodle_url('/tag/manage.php'),
-    'hiddenfields' => $hiddenfields,
-    'inputname' => 'filter',
-    'searchstring' => get_string('search'),
-    'query' => s($filter),
-    'extraclasses' => 'mb-2',
-    'otherfields' => $otherfields
-];
-echo $OUTPUT->render_from_template('core/search_input', $data);
-
-// Link to add an standard tags.
-$img = $OUTPUT->pix_icon('t/add', '');
-echo '<div class="addstandardtags visibleifjs">' .
-    html_writer::link('#', $img . get_string('addotags', 'tag'), array('data-action' => 'addstandardtag')) .
-    '</div>';
-
-$table = new core_tag_manage_table($tagcollid);
-echo '<form class="tag-management-form" method="post" action="'.$CFG->wwwroot.'/tag/manage.php">';
-echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'tc', 'value' => $tagcollid));
-echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()));
-echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'action', 'value' => 'bulk'));
-echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'perpage', 'value' => $perpage));
-echo html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'page', 'value' => $page));
-echo $table->out($perpage, true);
-
-if ($table->rawdata) {
-    echo html_writer::start_tag('p');
+// Render bulk actions.
+if ($DB->record_exists('tag', [])) {
+    echo '<form class="tag-management-form" method="post" action="' . $PAGE->url->out_omit_querystring() . '">';
+    echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'tc', 'value' => $tagcoll->id]);
+    echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
+    echo html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'action', 'value' => 'bulk']);
     echo html_writer::tag('button', get_string('deleteselected', 'tag'),
             array('id' => 'tag-management-delete', 'type' => 'submit',
                   'class' => 'tagdeleteselected btn btn-secondary', 'name' => 'bulkdelete'));
     echo html_writer::tag('button', get_string('combineselected', 'tag'),
         array('id' => 'tag-management-combine', 'type' => 'submit',
               'class' => 'tagcombineselected btn btn-secondary', 'name' => 'bulkcombine'));
-    echo html_writer::end_tag('p');
+    echo '</form>';
 }
-echo '</form>';
 
-$totalcount = $table->totalcount;
-if ($perpage == SHOW_ALL_PAGE_SIZE) {
-    echo html_writer::start_tag('div', array('id' => 'showall'));
-    $params = array('perpage' => DEFAULT_PAGE_SIZE, 'page' => 0);
-    $url = new moodle_url($PAGE->url, $params);
-    echo html_writer::link($url, get_string('showperpage', '', DEFAULT_PAGE_SIZE));
-    echo html_writer::end_tag('div');
-} else if ($totalcount > 0 and $perpage < $totalcount) {
-    echo html_writer::start_tag('div', array('id' => 'showall'));
-    $params = array('perpage' => SHOW_ALL_PAGE_SIZE, 'page' => 0);
-    $url = new moodle_url($PAGE->url, $params);
-    echo html_writer::link($url, get_string('showall', '', $totalcount));
-    echo html_writer::end_tag('div');
-}
+$PAGE->requires->js_call_amd('core/tag', 'initManagePage');
 
 echo $OUTPUT->footer();
