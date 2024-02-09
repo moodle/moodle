@@ -17,6 +17,7 @@
 namespace mod_quiz\output;
 
 use action_link;
+use core\output\named_templatable;
 use html_writer;
 use mod_quiz\quiz_attempt;
 use moodle_url;
@@ -25,7 +26,6 @@ use question_display_options;
 use renderable;
 use renderer_base;
 use stdClass;
-use templatable;
 use user_picture;
 
 /**
@@ -34,12 +34,13 @@ use user_picture;
  * This is used in places like
  * - at the top of the review attempt page (review.php)
  * - at the top of the review single question page (reviewquestion.php)
+ * - on the quiz entry page (view.php).
  *
  * @package mod_quiz
  * @copyright 2024 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class attempt_summary_information implements renderable, templatable {
+class attempt_summary_information implements renderable, named_templatable {
 
     /** @var array[] The rows of summary data. {@see add_item()} should make the structure clear. */
     protected array $summarydata = [];
@@ -90,7 +91,8 @@ class attempt_summary_information implements renderable, templatable {
      *
      * @param quiz_attempt $attemptobj the attempt to summarise.
      * @param display_options $options options for what can be seen.
-     * @param int $page if specified, the URL of this particular page of the attempt, otherwise
+     * @param int|null $pageforlinkingtootherattempts if null, no links to other attempsts will be created.
+     *      If specified, the URL of this particular page of the attempt, otherwise
      *      the URL will go to the first page.  If -1, deduce $page from $slot.
      * @param bool|null $showall if true, the URL will be to review the entire attempt on one page,
      *      and $page will be ignored. If null, a sensible default will be chosen.
@@ -99,7 +101,7 @@ class attempt_summary_information implements renderable, templatable {
     public static function create_for_attempt(
         quiz_attempt $attemptobj,
         display_options $options,
-        int $page = -1,
+        ?int $pageforlinkingtootherattempts = null,
         ?bool $showall = null,
     ): static {
         global $DB, $USER;
@@ -119,9 +121,9 @@ class attempt_summary_information implements renderable, templatable {
             );
         }
 
-        if ($attemptobj->has_capability('mod/quiz:viewreports')) {
+        if ($pageforlinkingtootherattempts !== null && $attemptobj->has_capability('mod/quiz:viewreports')) {
             $attemptlist = $attemptobj->links_to_other_attempts(
-                $attemptobj->review_url(null, $page, $showall));
+                $attemptobj->review_url(null, $pageforlinkingtootherattempts, $showall));
             if ($attemptlist) {
                 $summary->add_item('attemptlist', get_string('attempts', 'quiz'), $attemptlist);
             }
@@ -238,5 +240,11 @@ class attempt_summary_information implements renderable, templatable {
         }
 
         return $templatecontext;
+    }
+
+    public function get_template_name(\renderer_base $renderer): string {
+        // Only reason we are forced to implement this is that we want the quiz renderer
+        // passed to export_for_template, not a core_renderer.
+        return 'mod_quiz/attempt_summary_information';
     }
 }

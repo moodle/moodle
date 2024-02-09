@@ -889,8 +889,8 @@ class renderer extends plugin_renderer_base {
 
         $output .= $this->view_page_tertiary_nav($viewobj);
         $output .= $this->view_information($quiz, $cm, $context, $viewobj->infomessages);
-        $output .= $this->view_table($quiz, $context, $viewobj);
         $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
+        $output .= $this->render($viewobj->attemptslist);
         $output .= $this->box($this->view_page_buttons($viewobj), 'quizattempt');
         return $output;
     }
@@ -1115,8 +1115,10 @@ class renderer extends plugin_renderer_base {
      * @param stdClass $quiz the quiz settings.
      * @param context_module $context the quiz context.
      * @param view_page $viewobj
+     * @deprecated Since 4.4 please use the {@see list_of_attempts} renderable instead.
      */
     public function view_table($quiz, $context, $viewobj) {
+        debugging('view_table has been deprecated since 4.4 please use the list_of_attempts renderable instead.');
         if (!$viewobj->attempts) {
             return '';
         }

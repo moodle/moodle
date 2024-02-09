@@ -51,5 +51,7 @@ Feature: Several attempts in a quiz
   Scenario: The redo question buttons are visible after 2 attempts are preset for student1.
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "student1"
     Then "Re-attempt quiz" "button" should exist
-    And "1" row "Marks / 2.00" column of "quizattemptsummary" table should contain "1.00"
-    And "2" row "Marks / 2.00" column of "quizattemptsummary" table should contain "0.00"
+    And I should see "Finished" in the "Attempt 1" "list_item"
+    And I should see "1.00/2.00" in the "Attempt 1" "list_item"
+    And I should see "Finished" in the "Attempt 2" "list_item"
+    And I should see "0.00/2.00" in the "Attempt 2" "list_item"

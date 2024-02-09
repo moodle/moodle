@@ -15,6 +15,7 @@ This file describes API changes in the quiz code.
   replaced by review_attempt_summary and filter_review_attempt_summary. This is to support changing the $summarydata argument
   the review_page() method to an instance of a new templateable class attempt_summary_information for displaying this.
   The $summarydata argument of review_question_page has also been changed to an attempt_summary_information.
+* In the renderer, the view_table has been deprecated. Please use the list_of_attempts renderable instead.
 
 === 4.3 ===
 

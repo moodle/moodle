@@ -40,7 +40,7 @@ Feature: Preview a quiz as a teacher
     Then I should see "25.00 out of 100.00"
     And I should see "v1 (latest)" in the "Question 1" "question"
     And I follow "Finish review"
-    And "Review" "link" in the "Preview" "table_row" should be visible
+    And "Review" "link" in the "Attempt 1" "list_item" should be visible
 
   @javascript
   Scenario: Review the quiz attempt with custom decimal separator
@@ -53,7 +53,7 @@ Feature: Preview a quiz as a teacher
     And I should see "25#00 out of 100#00"
     And I should see "Mark 1#00 out of 1#00"
     And I follow "Finish review"
-    And "Review" "link" in the "Preview" "table_row" should be visible
+    And "Review" "link" in the "Attempt 1" "list_item" should be visible
 
   Scenario: Preview the quiz
     Given I am on the "Quiz 1" "mod_quiz > View" page logged in as "teacher"

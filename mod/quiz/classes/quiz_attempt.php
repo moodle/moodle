@@ -593,10 +593,15 @@ class quiz_attempt {
      * The values are arrays with two items, title and content. Each of these
      * will be either a string, or a renderable.
      *
+     * If this method is called before load_questions() is called, then an empty array is returned.
+     *
      * @param question_display_options $options the display options for this quiz attempt at this time.
      * @return array as described above.
      */
     public function get_additional_summary_data(question_display_options $options) {
+        if (!isset($this->quba)) {
+            return [];
+        }
         return $this->quba->get_summary_information($options);
     }
 
