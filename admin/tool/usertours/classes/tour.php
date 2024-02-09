@@ -52,6 +52,12 @@ class tour {
      */
     const TOUR_REQUESTED_BY_USER        = 'tool_usertours_tour_reset_time_';
 
+    /** @var int Whether to show the tour only until it has been marked complete */
+    const SHOW_TOUR_UNTIL_COMPLETE = 1;
+
+    /** @var int Whether to show the tour every time a page matches */
+    const SHOW_TOUR_ON_EACH_PAGE_VISIT = 2;
+
     /**
      * @var $id The tour ID.
      */
@@ -641,6 +647,11 @@ class tour {
             return false;
         }
 
+        if ($this->get_showtourwhen() === self::SHOW_TOUR_ON_EACH_PAGE_VISIT) {
+            // The tour should be shown on every page visit.
+            return true;
+        }
+
         if ($tourcompletiondate = get_user_preferences(self::TOUR_LAST_COMPLETED_BY_USER . $this->get_id(), null)) {
             if ($tourresetdate = get_user_preferences(self::TOUR_REQUESTED_BY_USER . $this->get_id(), null)) {
                 if ($tourresetdate >= $tourcompletiondate) {
@@ -763,6 +774,7 @@ class tour {
      */
     public function prepare_data_for_form() {
         $data = $this->to_record();
+        $data->showtourwhen = $this->get_showtourwhen();
         foreach (configuration::get_defaultable_keys() as $key) {
             $data->$key = $this->get_config($key, configuration::get_default_value($key));
         }
@@ -859,5 +871,30 @@ class tour {
      */
     public function get_display_step_numbers(): bool {
         return $this->displaystepnumbers;
+    }
+
+    /**
+     * Set the value for the when to show the tour.
+     *
+     * @see self::SHOW_TOUR_UNTIL_COMPLETE
+     * @see self::SHOW_TOUR_ON_EACH_PAGE_VISIT
+     *
+     * @param int $value
+     * @return self
+     */
+    public function set_showtourwhen(int $value): tour {
+        return $this->set_config('showtourwhen', $value);
+    }
+
+    /**
+     * When to show the tour.
+     *
+     * @see self::SHOW_TOUR_UNTIL_COMPLETE
+     * @see self::SHOW_TOUR_ON_EACH_PAGE_VISIT
+     *
+     * @return int
+     */
+    public function get_showtourwhen(): int {
+        return $this->get_config('showtourwhen', self::SHOW_TOUR_UNTIL_COMPLETE);
     }
 }

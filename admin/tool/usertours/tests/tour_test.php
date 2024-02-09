@@ -98,6 +98,10 @@ class tour_test extends \advanced_testcase {
                 'config',
                 ['key', 'value'],
             ],
+            'showtourwhen' => [
+                'showtourwhen',
+                [0],
+            ],
         ];
     }
 
@@ -598,30 +602,44 @@ class tour_test extends \advanced_testcase {
                 null,
                 null,
                 null,
+                [],
                 true,
             ],
             'Completed by user before majorupdatetime' => [
                 $time - DAYSECS,
                 null,
                 $time,
+                [],
                 true,
             ],
             'Completed by user since majorupdatetime' => [
                 $time,
                 null,
                 $time - DAYSECS,
+                [],
                 false,
             ],
             'Requested by user before current completion' => [
                 $time,
                 $time - DAYSECS,
-                null,
+                $time - MINSECS,
+                [],
                 false,
             ],
             'Requested by user since completion' => [
                 $time - DAYSECS,
                 $time,
+                'null',
+                [],
+                true,
+            ],
+            'Tour will show on each load' => [
+                $time,
+                $time - DAYSECS,
                 null,
+                [
+                    'showtourwhen' => tour::SHOW_TOUR_ON_EACH_PAGE_VISIT,
+                ],
                 true,
             ],
         ];
@@ -634,9 +652,16 @@ class tour_test extends \advanced_testcase {
      * @param   mixed   $completiondate The user's completion date for this tour
      * @param   mixed   $requesteddate  The user's last requested date for this tour
      * @param   mixed   $updateddate    The date this tour was last updated
+     * @param   mixed   $config         The tour config to apply
      * @param   string  $expectation    The expected tour key
      */
-    public function test_should_show_for_user($completiondate, $requesteddate, $updateddate, $expectation): void {
+    public function test_should_show_for_user(
+        $completiondate,
+        $requesteddate,
+        $updateddate,
+        $config,
+        $expectation,
+    ): void {
         // Uses user preferences so we must be in a user context.
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -644,13 +669,16 @@ class tour_test extends \advanced_testcase {
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
                 'get_id',
-                'get_config',
                 'is_enabled',
             ])
             ->getMock();
 
         $tour->method('is_enabled')
             ->willReturn(true);
+
+        foreach ($config as $key => $value) {
+            $tour->set_config($key, $value);
+        }
 
         $id = rand(1, 100);
         $tour->method('get_id')
@@ -665,9 +693,7 @@ class tour_test extends \advanced_testcase {
         }
 
         if ($updateddate !== null) {
-            $tour->expects($this->once())
-                ->method('get_config')
-                ->willReturn($updateddate);
+            $tour->set_config('majorupdatetime', $updateddate);
         }
 
         $this->assertEquals($expectation, $tour->should_show_for_user());

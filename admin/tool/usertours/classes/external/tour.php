@@ -189,6 +189,7 @@ class tour extends external_api {
         self::validate_context($context);
 
         $tour = tourinstance::instance($params['tourid']);
+
         $tour->mark_user_completed();
 
         \tool_usertours\event\tour_ended::create([
