@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Data generator.
- *
- * @package    core
- * @category   test
- * @copyright  2012 Petr Skoda {@link http://skodak.org}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -357,9 +348,10 @@ EOD;
 
     /**
      * Create a test course
-     * @param array|stdClass $record
+     * @param array|stdClass $record Apart from the course information, the following can be also set:
+     *      'initsections' => bool for section name initialization, renaming them to "Section X". Default value is 0 (false).
      * @param array $options with keys:
-     *      'createsections'=>bool precreate all sections
+     *      'createsections' => bool precreate all sections
      * @return stdClass course record
      */
     public function create_course($record=null, array $options=null) {
@@ -427,10 +419,39 @@ EOD;
             }
         }
 
+        $initsections = !empty($record['initsections']);
+        unset($record['initsections']);
+
         $course = create_course((object)$record);
+        if ($initsections) {
+            $this->init_sections($course);
+        }
         context_course::instance($course->id);
 
         return $course;
+    }
+
+    /**
+     * Initializes sections for a specified course, such as configuring section names for courses using 'Section X'.
+     *
+     * @param stdClass $course The course object.
+     */
+    private function init_sections(stdClass $course): void {
+        global $DB;
+
+        $sections = $DB->get_records('course_sections', ['course' => $course->id], 'section');
+        foreach ($sections as $section) {
+            if ($section->section != 0) {
+                $DB->set_field(
+                    table: 'course_sections',
+                    newfield: 'name',
+                    newvalue: get_string('section', 'core') . ' ' . $section->section,
+                    conditions: [
+                        'id' => $section->id,
+                    ],
+                );
+            }
+        }
     }
 
     /**

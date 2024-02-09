@@ -372,7 +372,7 @@ class search_test extends \advanced_testcase {
         $this->assertEquals($course->id, $doc->get('courseid'));
         $this->assertFalse($doc->is_set('userid'));
         $this->assertEquals(\core_search\manager::NO_OWNER_ID, $doc->get('owneruserid'));
-        $this->assertEquals('Topic 3', $doc->get('title'));
+        $this->assertEquals('New section', $doc->get('title'));
         $this->assertEquals('Kermit', $doc->get('content'));
 
         // Test with user-set title.

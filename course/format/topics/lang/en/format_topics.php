@@ -24,6 +24,8 @@
 
 $string['currentsection'] = 'Current section';
 $string['hidefromothers'] = 'Hide';
+$string['legacysectionname'] = 'Topic';
+$string['newsection'] = 'New section';
 $string['page-course-view-topics'] = 'Any course main page in custom sections format';
 $string['page-course-view-topics-x'] = 'Any course page in custom sections format';
 $string['pluginname'] = 'Custom sections';
@@ -34,5 +36,5 @@ $string['indentation_help'] = 'Allow teachers, and other users with the manage a
 $string['section_highlight_feedback'] = 'Section {$a->name} highlighted.';
 $string['section_unhighlight_feedback'] = 'Highlighting removed from section {$a->name}.';
 $string['section0name'] = 'General';
-$string['sectionname'] = 'Topic';
+$string['sectionname'] = 'Section';
 $string['showfromothers'] = 'Show';
