@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_usertours;
+
 /**
  * Tour class.
  *
@@ -21,21 +23,7 @@
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_usertours;
-
-use tool_usertours\local\clientside_filter\clientside_filter;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Tour class.
- *
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class tour {
-
     /**
      * The tour is currently disabled
      *
@@ -157,7 +145,7 @@ class tour {
         global $DB;
 
         return $this->reload_from_record(
-            $DB->get_record('tool_usertours_tours', array('id' => $id), '*', MUST_EXIST)
+            $DB->get_record('tool_usertours_tours', ['id' => $id], '*', MUST_EXIST)
         );
     }
 
@@ -424,7 +412,7 @@ class tour {
      * @return  object
      */
     public function to_record() {
-        return (object) array(
+        return (object) [
             'id'            => $this->id,
             'name'          => $this->name,
             'description'   => $this->description,
@@ -434,7 +422,7 @@ class tour {
             'endtourlabel'  => $this->endtourlabel,
             'configdata'    => json_encode($this->config),
             'displaystepnumbers' => $this->displaystepnumbers,
-        );
+        ];
     }
 
     /**
@@ -519,7 +507,7 @@ class tour {
      */
     public function get_config($key = null, $default = null) {
         if ($this->config === null) {
-            $this->config = (object) array();
+            $this->config = (object) [];
         }
         if ($key === null) {
             return $this->config;
@@ -545,7 +533,7 @@ class tour {
      */
     public function set_config($key, $value) {
         if ($this->config === null) {
-            $this->config = (object) array();
+            $this->config = (object) [];
         }
         $this->config->$key = $value;
         $this->dirty = true;
@@ -602,7 +590,7 @@ class tour {
         }
 
         // Remove the configuration for the tour.
-        $DB->delete_records('tool_usertours_tours', array('id' => $this->id));
+        $DB->delete_records('tool_usertours_tours', ['id' => $this->id]);
         helper::reset_tour_sortorder();
 
         $this->remove_user_preferences();
@@ -617,11 +605,11 @@ class tour {
      */
     public function reset_step_sortorder() {
         global $DB;
-        $steps = $DB->get_records('tool_usertours_steps', array('tourid' => $this->id), 'sortorder ASC', 'id');
+        $steps = $DB->get_records('tool_usertours_steps', ['tourid' => $this->id], 'sortorder ASC', 'id');
 
         $index = 0;
         foreach ($steps as $step) {
-            $DB->set_field('tool_usertours_steps', 'sortorder', $index, array('id' => $step->id));
+            $DB->set_field('tool_usertours_steps', 'sortorder', $index, ['id' => $step->id]);
             $index++;
         }
 

@@ -14,13 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Selector filter.
- *
- * @package    tool_usertours
- * @copyright  2020 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace tool_usertours\local\clientside_filter;
 
 use stdClass;
@@ -29,6 +22,7 @@ use tool_usertours\tour;
 /**
  * Course filter.
  *
+ * @package    tool_usertours
  * @copyright  2020 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -107,7 +101,7 @@ class cssselector extends clientside_filter {
 
         // Filter values might not exist for tours that were created before this filter existed.
         if (!$filtervalues) {
-            return new stdClass;
+            return new stdClass();
         }
 
         return (object) $filtervalues;

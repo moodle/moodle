@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir . '/formslib.php');
 
-use \tool_usertours\helper;
+use tool_usertours\helper;
 
 /**
  * Form for editing tours.

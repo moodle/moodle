@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The tool_usertours tour_ended event.
- *
- * @package    tool_usertours
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_usertours\event;
-
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * The tool_usertours tour_ended event.
@@ -41,7 +31,6 @@ defined('MOODLE_INTERNAL') || die();
  * }
  */
 class tour_ended extends \core\event\base {
-
     /**
      * Init method.
      */
