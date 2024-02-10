@@ -43,8 +43,11 @@ if (!empty($company)) {
 
 // Set the session to a user if they are editing a company other than their own.
 if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)
-    || $DB->get_record('company_users', array('managertype' => 1, 'companyid' => $company, 'userid' => $USER->id)))) {
+    || $companyuser = $DB->get_record('company_users', array('companyid' => $company, 'userid' => $USER->id)))) {
     $SESSION->currenteditingcompany = $company;
+    if (!empty($companyuser) && $companyuser->managertype == 0) {
+        redirect(new moodle_url('/my'));
+    }
 }
 
 // Check if there are any companies.
