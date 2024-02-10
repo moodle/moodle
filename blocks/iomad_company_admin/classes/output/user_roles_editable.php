@@ -152,6 +152,7 @@ class user_roles_editable extends \core\output\inplace_editable {
 
         // Check that all the roles belong to the company.
         $company = new company($companyid);
+        $parentlevel = company::get_company_parentnode($companyid);
 
         // Deal with role selector.
         $usertypeselect = ['0' => get_string('user', 'block_iomad_company_admin')];
@@ -182,6 +183,14 @@ class user_roles_editable extends \core\output\inplace_editable {
 
         if (!isset($usertypeselect[$roleid])) {
             throw new coding_exception('roles cannot be assigned in this course.');
+        }
+
+        // Remove company manager roles if the user is not elligible.
+        $userdepartments = array_keys($DB->get_records('company_users', ['companyid' => $companyid, 'userid' => $userid], '', 'departmentid'));
+        if (count($userdepartments) > 1 ||
+            $userdepartments[0] != $parentlevel->id) {
+            unset($usertypeselect[10]);
+            unset($usertypeselect[11]);
         }
 
         // Process changes.
