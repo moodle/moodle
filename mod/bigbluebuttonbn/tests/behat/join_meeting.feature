@@ -7,7 +7,7 @@ Feature: Test the ability to run the full meeting lifecycle (start to end)
     And I accept dpa and enable bigbluebuttonbn plugin
     And the following config values are set as admin:
       | bigbluebuttonbn_userlimit_editable | 1 |
-    Given the following course exists:
+    And the following course exists:
       | name      | Test course |
       | shortname | C1          |
     And the following "users" exist:
@@ -32,8 +32,8 @@ Feature: Test the ability to run the full meeting lifecycle (start to end)
   Scenario: Users should be able to join a meeting then end the meeting for themselves and
   return to the meeting page to join again.
     When I am on the "Room recordings" Activity page logged in as traverst
-    Then "Join session" "link" should exist
-    When I click on "Join session" "link"
+    And "Join session" "link" should exist
+    And I click on "Join session" "link"
     And I switch to "bigbluebutton_conference" window
     And I click on "End Meeting" "link"
     # Selenium driver does not like the click action to be done before we
@@ -51,15 +51,15 @@ Feature: Test the ability to run the full meeting lifecycle (start to end)
     And I click on "Join session" "link"
     And I switch to the main window
     And I log out
-    Then I am on the "Room recordings" Activity page logged in as uraverst
+    And I am on the "Room recordings" Activity page logged in as uraverst
     And "Join session" "link" should exist
     And I click on "Join session" "link"
     And I switch to the main window
     And I log out
-    Then I am on the "Room recordings" Activity page logged in as vraverst
-    Then "Join session" "link" should not exist
+    And I am on the "Room recordings" Activity page logged in as vraverst
+    And "Join session" "link" should not exist
     And I should see "The limit of how many users allowed in a session has been reached"
     And I log out
-    Then I am on the "Room recordings" Activity page logged in as admin
-    Then "Join session" "link" should not exist
+    And I am on the "Room recordings" Activity page logged in as admin
+    And "Join session" "link" should not exist
     And I should see "The limit of how many users allowed in a session has been reached"
