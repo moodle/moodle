@@ -155,10 +155,10 @@ Feature: Within the grader report, test that we can open our generic filter drop
     When I press "Apply"
     And the field "Search users" matches value "Student 1"
     Then the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3- |
+      | -1-                | -2-                  | -3- |
       | Student 1          | student1@example.com | -   |
     And the following should not exist in the "user-grades" table:
-      | -1-                | -1-                  | -3- |
+      | -1-                | -2-                  | -3- |
       | Teacher 1          | teacher1@example.com | -   |
       | Dummy User         | student2@example.com | -   |
       | User Example       | student3@example.com | -   |
@@ -168,7 +168,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
     And I select "M" in the "First name" "core_grades > initials bar"
     And I press "Apply"
     And the following should not exist in the "user-grades" table:
-      | -1-                | -1-                  | -3- |
+      | -1-                | -2-                  | -3- |
       | Student 1          | student1@example.com | -   |
       | Teacher 1          | teacher1@example.com | -   |
       | Dummy User         | student2@example.com | -   |
@@ -180,12 +180,12 @@ Feature: Within the grader report, test that we can open our generic filter drop
     Given I set the field "Search users" to "User"
     And I click on "View all results (3)" "option_role"
     And the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3- |
+      | -1-                | -2-                  | -3- |
       | User Example       | student3@example.com | -   |
       | User Test          | student4@example.com | -   |
       | Dummy User         | student2@example.com | -   |
     And the following should not exist in the "user-grades" table:
-      | -1-                | -1-                  | -3- |
+      | -1-                | -2-                  | -3- |
       | Student 1          | student1@example.com | -   |
       | Teacher 1          | teacher1@example.com | -   |
       | Turtle Manatee     | student5@example.com | -   |
@@ -193,10 +193,10 @@ Feature: Within the grader report, test that we can open our generic filter drop
     And I select "E" in the "Last name" "core_grades > initials bar"
     And I press "Apply"
     Then the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3- |
+      | -1-                | -2-                  | -3- |
       | User Example       | student3@example.com | -   |
     And the following should not exist in the "user-grades" table:
-      | -1-                | -1-                  | -3- |
+      | -1-                | -2-                  | -3- |
       | Student 1          | student1@example.com | -   |
       | Teacher 1          | teacher1@example.com | -   |
       | Dummy User         | student2@example.com | -   |
