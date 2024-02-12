@@ -10,6 +10,7 @@ Feature: Single section course page
       | shortname        | C1       |
       | category         | 0        |
       | numsections      | 3        |
+      | initsections     | 1        |
     And the following "activities" exist:
       | activity | name                | course | idnumber | section |
       | assign   | Activity sample 0.1 | C1     | sample1  | 0       |
@@ -30,7 +31,7 @@ Feature: Single section course page
   Scenario: Collapsed sections are always expanded in the single section page
     Given I press "Collapse all"
     And I should not see "Activity sample 1.1" in the "region-main" "region"
-    When I am on the "Course 1 > Topic 1" "course > section" page
+    When I am on the "Course 1 > Section 1" "course > section" page
     Then I should see "Activity sample 1.1"
     And I should see "Activity sample 1.2"
     And I should see "Activity sample 1.3"
@@ -38,7 +39,7 @@ Feature: Single section course page
     And I should not see "Activity sample 2.1" in the "region-main" "region"
 
   Scenario: General section is not displayed in the single section page
-    When I am on the "Course 1 > Topic 1" "course > section" page
+    When I am on the "Course 1 > Section 1" "course > section" page
     Then I should not see "General" in the "#section-1" "css_element"
     And I should not see "Activity sample 0.1" in the "region-main" "region"
     And I should see "Activity sample 1.1"
@@ -51,7 +52,7 @@ Feature: Single section course page
   Scenario: The view action for sections displays the single section page
     Given I turn editing mode on
     And I open section "1" edit menu
-    When I click on "View" "link" in the "Topic 1" "section"
+    When I click on "View" "link" in the "Section 1" "section"
     Then I should not see "General" in the "#section-1" "css_element"
     And I should not see "Activity sample 0.1" in the "region-main" "region"
     And I should see "Activity sample 1.1"
@@ -61,7 +62,7 @@ Feature: Single section course page
     And I should not see "Activity sample 2.1" in the "region-main" "region"
     And I am on "Course 1" course homepage
     And I open section "2" edit menu
-    And I click on "View" "link" in the "Topic 2" "section"
+    And I click on "View" "link" in the "Section 2" "section"
     And I should not see "General" in the "#section-2" "css_element"
     And I should not see "Activity sample 0.1" in the "region-main" "region"
     And I should not see "Activity sample 1.1"

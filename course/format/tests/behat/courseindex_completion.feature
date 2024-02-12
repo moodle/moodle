@@ -28,14 +28,14 @@ Feature: Course index completion icons
   @javascript
   Scenario: Teacher does not see completion icons.
     When I am on the "C1" "Course" page logged in as "teacher1"
-    Then I should see "Topic 1" in the "courseindex-content" "region"
+    Then I should see "New section" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
     And "To do" "icon" should not exist in the "courseindex-content" "region"
 
   @javascript
   Scenario: User should see the completion icons
     When I am on the "C1" "Course" page logged in as "student1"
-    Then I should see "Topic 1" in the "courseindex-content" "region"
+    Then I should see "New section" in the "courseindex-content" "region"
     And I should see "Activity sample 1" in the "courseindex-content" "region"
     And "To do" "icon" should exist in the "courseindex-content" "region"
 

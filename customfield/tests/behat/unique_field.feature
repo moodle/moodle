@@ -57,7 +57,7 @@ Feature: Uniqueness The course custom fields can be mandatory or not
       | Test field | testcontent |
     And I press "Save and display"
     Then I should not see "This value is already used"
-    And I should see "Topic 1"
+    And I should see "New section"
 
   Scenario: A course custom field with unique data must allow empty data
     When I log in as "teacher1"

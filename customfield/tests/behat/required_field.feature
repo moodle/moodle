@@ -55,4 +55,4 @@ Feature: Requiredness The course custom fields can be mandatory or not
     And I navigate to "Settings" in current page administration
     And I press "Save and display"
     Then I should see "Course 1"
-    And I should see "Topic 1"
+    And I should see "New section"

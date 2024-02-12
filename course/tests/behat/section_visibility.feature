@@ -9,9 +9,14 @@ Feature: Show/hide course sections
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | format | hiddensections | enablecompletion | coursedisplay |
-      | Course 1 | C1        | topics | 0              | 1                | 1             |
+    And the following "course" exists:
+      | fullname         | Course 1 |
+      | shortname        | C1       |
+      | format           | topics   |
+      | hiddensections   | 0        |
+      | enablecompletion | 1        |
+      | coursedisplay    | 1        |
+      | initsections     | 1        |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -61,18 +66,18 @@ Feature: Show/hide course sections
     And I set the following fields to these values:
       | Course layout | Show one section per page |
     And I press "Save and display"
-    When I click on "Topic 1" "link" in the "region-main" "region"
-    Then I should see "Topic 2" in the "region-main" "region"
-    And I click on "Topic 2" "link" in the "region-main" "region"
-    And I should see "Topic 1" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
+    When I click on "Section 1" "link" in the "region-main" "region"
+    Then I should see "Section 2" in the "region-main" "region"
+    And I click on "Section 2" "link" in the "region-main" "region"
+    And I should see "Section 1" in the "region-main" "region"
+    And I should see "Section 3" in the "region-main" "region"
     And I am on the "Course 1" course page logged in as student1
-    And I click on "Topic 1" "link" in the "region-main" "region"
-    And I should not see "Topic 2" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
-    And I click on "Topic 3" "link" in the "region-main" "region"
-    And I should not see "Topic 2" in the "region-main" "region"
-    And I should see "Topic 1" in the "region-main" "region"
+    And I click on "Section 1" "link" in the "region-main" "region"
+    And I should not see "Section 2" in the "region-main" "region"
+    And I should see "Section 3" in the "region-main" "region"
+    And I click on "Section 3" "link" in the "region-main" "region"
+    And I should not see "Section 2" in the "region-main" "region"
+    And I should see "Section 1" in the "region-main" "region"
 
   @javascript
   Scenario: Students can not navigate to restricted sections
@@ -87,15 +92,15 @@ Feature: Show/hide course sections
       | cm | Test label |
       | Required completion status | must be marked complete |
     And I press "Save changes"
-    When I click on "Topic 1" "link" in the "region-main" "region"
-    Then I should see "Topic 2" in the "region-main" "region"
-    And I click on "Topic 2" "link" in the "region-main" "region"
-    And I should see "Topic 1" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
+    When I click on "Section 1" "link" in the "region-main" "region"
+    Then I should see "Section 2" in the "region-main" "region"
+    And I click on "Section 2" "link" in the "region-main" "region"
+    And I should see "Section 1" in the "region-main" "region"
+    And I should see "Section 3" in the "region-main" "region"
     And I am on the "Course 1" course page logged in as student1
-    And I click on "Topic 1" "link" in the "region-main" "region"
-    And I should not see "Topic 2" in the "region-main" "region"
-    And I should see "Topic 3" in the "region-main" "region"
-    And I click on "Topic 3" "link" in the "region-main" "region"
-    And I should not see "Topic 2" in the "region-main" "region"
-    And I should see "Topic 1" in the "region-main" "region"
+    And I click on "Section 1" "link" in the "region-main" "region"
+    And I should not see "Section 2" in the "region-main" "region"
+    And I should see "Section 3" in the "region-main" "region"
+    And I click on "Section 3" "link" in the "region-main" "region"
+    And I should not see "Section 2" in the "region-main" "region"
+    And I should see "Section 1" in the "region-main" "region"

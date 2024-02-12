@@ -8,9 +8,13 @@ Feature: Sections can be highlighted
     Given the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | format | coursedisplay | numsections |
-      | Course 1 | C1        | topics | 0             | 5           |
+    And the following "course" exists:
+      | fullname      | Course 1 |
+      | shortname     | C1       |
+      | format        | topics   |
+      | coursedisplay | 0        |
+      | numsections   | 5        |
+      | initsections  | 1        |
     And the following "activities" exist:
       | activity | name                 | intro                       | course | idnumber | section |
       | assign   | Test assignment name | Test assignment description | C1     | assign1  | 0       |
@@ -26,24 +30,24 @@ Feature: Sections can be highlighted
   @javascript
   Scenario: Highlight a section
     When I open section "2" edit menu
-    And I click on "Highlight" "link" in the "Topic 2" "section"
-    Then I should see "Highlighted" in the "Topic 2" "section"
+    And I click on "Highlight" "link" in the "Section 2" "section"
+    Then I should see "Highlighted" in the "Section 2" "section"
 
   @javascript
   Scenario: Highlight a section when another section is already highlighted
     Given I open section "3" edit menu
-    And I click on "Highlight" "link" in the "Topic 3" "section"
-    And I should see "Highlighted" in the "Topic 3" "section"
+    And I click on "Highlight" "link" in the "Section 3" "section"
+    And I should see "Highlighted" in the "Section 3" "section"
     When I open section "2" edit menu
-    And I click on "Highlight" "link" in the "Topic 2" "section"
-    Then I should see "Highlighted" in the "Topic 2" "section"
-    And I should not see "Highlighted" in the "Topic 3" "section"
+    And I click on "Highlight" "link" in the "Section 2" "section"
+    Then I should see "Highlighted" in the "Section 2" "section"
+    And I should not see "Highlighted" in the "Section 3" "section"
 
   @javascript
   Scenario: Unhighlight a section
     Given I open section "3" edit menu
-    And I click on "Highlight" "link" in the "Topic 3" "section"
-    And I should see "Highlighted" in the "Topic 3" "section"
+    And I click on "Highlight" "link" in the "Section 3" "section"
+    And I should see "Highlighted" in the "Section 3" "section"
     When I open section "3" edit menu
-    And I click on "Unhighlight" "link" in the "Topic 3" "section"
-    Then I should not see "Highlighted" in the "Topic 3" "section"
+    And I click on "Unhighlight" "link" in the "Section 3" "section"
+    Then I should not see "Highlighted" in the "Section 3" "section"

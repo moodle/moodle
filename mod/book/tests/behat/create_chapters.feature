@@ -9,9 +9,11 @@ Feature: In a book, create chapters and sub chapters
       | username | firstname | lastname | email |
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
-    And the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1 | topics |
+    And the following "course" exists:
+      | fullname    | Course 1 |
+      | shortname   | C1       |
+      | format      | topics   |
+      | numsections | 1        |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -52,8 +54,8 @@ Feature: In a book, create chapters and sub chapters
     And I should see "2. Dummy second chapter" in the "strong" "css_element"
     And I should not see "Next" in the ".book_content" "css_element"
     And I am on "Course 1" course homepage
-    And I should see "Test book" in the "Topic 1" "section"
-    And I click on "Test book" "link" in the "Topic 1" "section"
+    And I should see "Test book" in the "New section" "section"
+    And I click on "Test book" "link" in the "New section" "section"
     And I should not see "Previous" in the ".book_content" "css_element"
     And I should see "1. Dummy first chapter" in the "strong" "css_element"
     When I click on "Next" "link"

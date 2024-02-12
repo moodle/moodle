@@ -1,8 +1,8 @@
 @core @core_course
-Feature: Site home topic section
+Feature: Site home activities section
   In order to show a display activities in the frontpage
   As an admin
-  I need to edit the frontpage topic section
+  I need to edit the frontpage section
 
   Background:
     Given the following config values are set as admin:
@@ -17,7 +17,7 @@ Feature: Site home topic section
     Then I should see "Frontpage assignment" in the "region-main" "region"
 
   @javascript
-  Scenario: Topic name does appears in frontpage
+  Scenario: Section name does appears in frontpage
     Given the following "activities" exist:
       | activity | course               | section | name                 | intro                  | idnumber |
       | assign   | Acceptance test site | 1       | Frontpage assignment | Assignment description | assign0  |
@@ -33,7 +33,7 @@ Feature: Site home topic section
     And I should see "New section name" in the "region-main" "region"
 
   @javascript
-  Scenario: Topic description appears in the frontpage
+  Scenario: Section description appears in the frontpage
     Given I log in as "admin"
     And I am on site homepage
     And I turn editing mode on

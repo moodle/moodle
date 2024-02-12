@@ -10,15 +10,18 @@ Feature: Teacher can change the course format
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | 1        | teacher1@example.com |
     # Course format is initially set to Custom sections format
-    And the following "courses" exist:
-      | fullname | shortname | format | startdate       |
-      | Course 1 | C1        | topics | ## 1 day ago ## |
+    And the following "course" exists:
+      | fullname     | Course 1        |
+      | shortname    | C1              |
+      | format       | topics          |
+      | startdate    | ## 1 day ago ## |
+      | initsections | 1               |
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
-    # Confirm that course format is Topics
+    # Confirm that course format is Custom sections.
     When I am on the "Course 1" course page logged in as teacher1
-    Then I should see "Topic 1"
+    Then I should see "Section 1"
     And I am on the "Course 1" "course editing" page
     And I expand all fieldsets
     # Fields that appear for Custom sections format exist
@@ -44,7 +47,7 @@ Feature: Teacher can change the course format
     And I press "Save and display"
     # Confirm that course page displays single activity of type Glossary
     And I should see "Browse the glossary using this index"
-    And I should not see "Topic 1"
+    And I should not see "Section 1"
     And I am on the "Course 1" "course editing" page
     And I expand all fieldsets
     # Set course format.

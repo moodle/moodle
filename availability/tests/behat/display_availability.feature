@@ -1,5 +1,5 @@
 @core @core_availability
-Feature: display_availability
+Feature: Display availability for activities and sections
   In order to know which activities are available
   As a user
   I need to see appropriate availability restrictions for activities and sections
@@ -23,9 +23,11 @@ Feature: display_availability
   #   and for each condition type.)
 
   Background:
-    Given the following "courses" exist:
-      | fullname | shortname | format |
-      | Course 1 | C1        | topics |
+    Given the following "course" exists:
+      | fullname       | Course 1 |
+      | shortname      | C1       |
+      | format         | topics   |
+      | initsections   | 1        |
     And the following "users" exist:
       | username |
       | teacher1 |
@@ -93,17 +95,17 @@ Feature: display_availability
 
     # Page 1 display still there but should not be a link.
     Then I should see "Page 1" in the "#section-1" "css_element"
-    And ".activity-instance a" "css_element" should not exist in the "Topic 1" "section"
+    And ".activity-instance a" "css_element" should not exist in the "Section 1" "section"
 
     # Date display should be present.
-    And I should see "Available until" in the "Topic 1" "section"
+    And I should see "Available until" in the "Section 1" "section"
 
     # Page 2 display not there at all
     And I should not see "Page 2" in the "region-main" "region"
 
     # Page 3 display and link
     And I should see "Page 3" in the "region-main" "region"
-    And ".activity-instance a" "css_element" should exist in the "Topic 3" "section"
+    And ".activity-instance a" "css_element" should exist in the "Section 3" "section"
 
   @javascript
   Scenario: Section availability display
@@ -153,7 +155,7 @@ Feature: display_availability
     And I should see "Page 3" in the "region-main" "region"
 
     # Section 1 should be visible and show info.
-    And I should see "Topic 1" in the "region-main" "region"
+    And I should see "Section 1" in the "region-main" "region"
     And I should see "Not available unless" in the "section-1" "core_availability > Section availability"
     And I click on "Show more" "button" in the "section-1" "core_availability > Section availability"
     And I should see "Email address" in the "section-1" "core_availability > Section availability"
@@ -161,4 +163,4 @@ Feature: display_availability
     And I should not see "Email address" in the "section-1" "core_availability > Section availability"
 
     # Section 2 should not be available at all
-    And I should not see "Topic 2" in the "region-main" "region"
+    And I should not see "Section 2" in the "region-main" "region"
