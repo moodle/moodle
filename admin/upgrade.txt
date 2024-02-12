@@ -1,5 +1,10 @@
 This files describes API changes in /admin/*.
 
+=== 4.4 ===
+
+* Grade item setting "Advanced grade item options" (grade_item_advanced) is no longer used and has been removed.
+* Grade category settings no longer have the "Advanced" checkbox. The 'advanced' parameter has been removed.
+
 === 4.3 ===
 
 * Removed admin setting cookiehttponly Moodle now defaults to HTTP only cookies for new installs only.

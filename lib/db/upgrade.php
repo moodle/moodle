@@ -1004,5 +1004,12 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024020200.02);
     }
 
+    if ($oldversion < 2024021500.01) {
+        // Removed advanced grade item settings.
+        unset_config('grade_item_advanced');
+
+        upgrade_main_savepoint(true, 2024021500.01);
+    }
+
     return true;
 }
