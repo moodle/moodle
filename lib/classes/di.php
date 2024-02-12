@@ -111,7 +111,7 @@ class di {
         $builder->addDefinitions([
             // The hook manager should be in the container.
             \core\hook\manager::class => $hookmanager,
-            
+
             // The database.
             \moodle_database::class => $DB,
 
