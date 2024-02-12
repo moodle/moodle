@@ -274,6 +274,8 @@ Feature: Within the grader report, test that we can search for users
     And I press the up key
     And I press the enter key
     And I wait to be redirected
+    # Sometimes with behat we get unattached nodes causing spurious failures.
+    And I wait "1" seconds
     And the following should exist in the "user-grades" table:
       | -1-                |
       | Dummy User         |
@@ -284,6 +286,13 @@ Feature: Within the grader report, test that we can search for users
       | Teacher 1          |
       | Student 1          |
       | Turtle Manatee     |
+    And I set the field "Search users" to "ABC"
+    And I wait until "Turtle Manatee" "option_role" exists
+    And I press the tab key
+    And the focused element is "Clear search input" "button"
+    And I press the enter key
+    And I wait until the page is ready
+    And I confirm "Turtle Manatee" in "user" search within the gradebook widget does not exist
 
   Scenario: Once a teacher searches, it'll apply the currently set filters and inform the teacher as such
     # Set up a basic filtering case.
