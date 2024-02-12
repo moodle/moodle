@@ -83,11 +83,11 @@ Feature: Cohort enrolment management
     And I navigate to course participants
     # Verifies students 1 and 4 are in the cohort and student 2 is not any more.
     And the following should exist in the "participants" table:
-      | First name / Last name | Email address  | Roles   | Groups        |
+      | First name             | Email address  | Roles   | Groups        |
       | Sandra Cole            | s1@example.com | Student | Alpha1 cohort |
       | Jane Doe               | s4@example.com | Student | Alpha1 cohort |
     And the following should not exist in the "participants" table:
-      | First name / Last name | Email address  | Roles   | Groups        |
+      | First name             | Email address  | Roles   | Groups        |
       | John Smith             | s2@example.com | Student | Alpha1 cohort |
 
   @javascript

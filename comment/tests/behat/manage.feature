@@ -17,7 +17,7 @@ Feature: Manage comments made by users
   Scenario: View and filter site comments
     When I navigate to "Reports > Comments" in site administration
     And the following should exist in the "reportbuilder-table" table:
-      | -0-        | Content | Context URL      |
+      | First name | Content | Context URL      |
       | Admin User | Uno     | Course: Course 1 |
       | Admin User | Dos     | Course: Course 1 |
       | Admin User | Tres    | Course: Course 1 |
