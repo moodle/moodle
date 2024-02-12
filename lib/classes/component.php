@@ -117,12 +117,16 @@ class core_component {
             'lib/psr/http-factory/src',
         ],
         'Psr\\EventDispatcher' => 'lib/psr/event-dispatcher/src',
+        'Psr\\Container' => 'lib/psr/container/src',
         'GuzzleHttp\\Psr7' => 'lib/guzzlehttp/psr7/src',
         'GuzzleHttp\\Promise' => 'lib/guzzlehttp/promises/src',
         'GuzzleHttp' => 'lib/guzzlehttp/guzzle/src',
         'Kevinrob\\GuzzleCache' => 'lib/guzzlehttp/kevinrob/guzzlecache/src',
         'Aws' => 'lib/aws-sdk/src',
         'JmesPath' => 'lib/jmespath/src',
+        'Laravel\\SerializableClosure' => 'lib/laravel/serializable-closure/src',
+        'DI' => 'lib/php-di/php-di/src',
+        'Invoker' => 'lib/php-di/invoker/src',
     ];
 
     /**

@@ -111,7 +111,6 @@ if ($grade = $DB->get_record('grade_grades', array('itemid' => $grade_item->id, 
         $grade->feedback  = '';
     } else {
         $options = new stdClass();
-        $options->smiley  = false;
         $options->filter  = false;
         $options->noclean = false;
         $options->para    = false;

@@ -4272,12 +4272,16 @@ abstract class lesson_page extends lesson_base {
                 } else if (!$result->isessayquestion) {
                     $class .= ' incorrect'; // CSS over-ride this if they exist (!important).
                 }
-                $options = new stdClass;
-                $options->noclean = true;
-                $options->para = true;
-                $options->overflowdiv = true;
-                $options->context = $context;
-                $options->attemptid = isset($attempt) ? $attempt->id : null;
+
+                $options = [
+                    'noclean' =>  true,
+                    'para' =>  true,
+                    'overflowdiv' =>  true,
+                    'context' =>  $context,
+                ];
+                $answeroptions = (object) array_merge($options, [
+                    'attemptid' => $attempt->id ?? null,
+                ]);
 
                 $result->feedback .= $OUTPUT->box(format_text($this->get_contents(), $this->properties->contentsformat, $options),
                         'generalbox boxaligncenter py-3');
@@ -4294,7 +4298,7 @@ abstract class lesson_page extends lesson_base {
 
                     foreach ($studentanswerresponse as $answer => $response) {
                         // Add a table row containing the answer.
-                        $studentanswer = $this->format_answer($answer, $context, $result->studentanswerformat, $options);
+                        $studentanswer = $this->format_answer($answer, $context, $result->studentanswerformat, $answeroptions);
                         $table->data[] = array($studentanswer);
                         // If the response exists, add a table row containing the response. If not, add en empty row.
                         if (!empty(trim($response))) {
@@ -4309,7 +4313,7 @@ abstract class lesson_page extends lesson_base {
                     }
                 } else {
                     // Add a table row containing the answer.
-                    $studentanswer = $this->format_answer($result->studentanswer, $context, $result->studentanswerformat, $options);
+                    $studentanswer = $this->format_answer($result->studentanswer, $context, $result->studentanswerformat, $answeroptions);
                     $table->data[] = array($studentanswer);
                     // If the response exists, add a table row containing the response. If not, add en empty row.
                     if (!empty(trim($result->response))) {
@@ -4339,7 +4343,6 @@ abstract class lesson_page extends lesson_base {
      * @return string Returns formatted string
      */
     public function format_answer($answer, $context, $answerformat, $options = []) {
-
         if (is_object($options)) {
             $options = (array) $options;
         }
@@ -4351,6 +4354,9 @@ abstract class lesson_page extends lesson_base {
         if (empty($options['para'])) {
             $options['para'] = true;
         }
+
+        // The attemptid is used by some plugins but is not a valid argument to format_text.
+        unset($options['attemptid']);
 
         return format_text($answer, $answerformat, $options);
     }

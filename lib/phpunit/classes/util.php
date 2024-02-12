@@ -300,6 +300,9 @@ class phpunit_util extends testing_util {
         // Reset user agent.
         core_useragent::instance(true, null);
 
+        // Reset the DI container.
+        \core\di::reset_container();
+
         // verify db writes just in case something goes wrong in reset
         if (self::$lastdbwrites != $DB->perf_get_writes()) {
             error_log('Unexpected DB writes in phpunit_util::reset_all_data()');

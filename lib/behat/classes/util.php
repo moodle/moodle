@@ -429,6 +429,9 @@ class behat_util extends testing_util {
         core_courseformat\base::reset_course_cache(0);
         get_fast_modinfo(0, 0, true);
 
+        // Reset the DI container.
+        \core\di::reset_container();
+
         // Inform data generator.
         self::get_data_generator()->reset();
 

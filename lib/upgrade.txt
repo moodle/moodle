@@ -40,6 +40,14 @@ information provided here is intended especially for developers.
 * New Behat `heading` named selector to more easily assert the presence of H1-H6 elements on the page
 * Login can now utilise new param 'loginredirect' to indicate when to use value set for $CFG->alternateloginurl.
 * \action_menu_link::$instance has been deprecated as it is no longer used.
+* The `format_string()` method has moved to `\core\formatting::format_string()`.
+  The old method will be maintained, but new code should use the new method with first-class parameters.
+* The `format_text()` method has moved to `\core\formatting::format_text()`.
+  The old method will be maintained, but new code should use the new method with first-class parameters.
+* The fourth parameter to `format_text` now emits a deprecation notice.
+  It was originally deprecated in Moodle 2.0.
+* The smiley option for format_text has been removed. It was deprecated in Moodle 2.0.
+* The nocache option for format_text has been removed. It was deprecated in Moodle 2.3.
 
 === 4.3 ===
 
