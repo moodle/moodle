@@ -74,7 +74,7 @@ Feature: Manage and list recordings
     And I click on "OK" "button" in the "Confirm" "dialogue"
     # There is no confirmation dialog when deleting an imported record.
     And I wait until the page is ready
-    Then I should not see "Recording 1"
+    But I should not see "Recording 1"
     And I click on "Import recording links" "button"
     And I select "Test Course 1 (C1)" from the "sourcecourseid" singleselect
     And I select "RoomRecordings" from the "sourcebn" singleselect
@@ -88,31 +88,31 @@ Feature: Manage and list recordings
     And I delete "RoomRecordings" activity
     # The activity is deleted asynchroneously.
     And I run all adhoc tasks
-    Then I am on the "RoomRecordings1" "bigbluebuttonbn activity" page logged in as "admin"
+    And I am on the "RoomRecordings1" "bigbluebuttonbn activity" page logged in as "admin"
     And I click on "Import recording links" "button"
     And I select "Recordings from deleted activities" from the "sourcecourseid" singleselect
     Then I should see "Recording 1"
     And I should see "Recording 2"
     # add the first recording
-    Then I click on "a.action-icon" "css_element" in the "Recording 1" "table_row"
+    And I click on "a.action-icon" "css_element" in the "Recording 1" "table_row"
     # add the second recording
     And I click on "a.action-icon" "css_element" in the "Recording 2" "table_row"
     And I wait until the page is ready
     And I click on "Go back" "button"
     # This should be refactored with the right classes for the table element
     # We use javascript here to create the table so we don't get the same structure.
-    Then "Recording 1" "table_row" should exist
+    And "Recording 1" "table_row" should exist
     And I click on "a[data-action='delete']" "css_element" in the "Recording 1" "table_row"
     And I click on "OK" "button" in the "Confirm" "dialogue"
     # There is no confirmation dialog when deleting an imported record.
     And I wait until the page is ready
-    Then I should not see "Recording 1"
+    But I should not see "Recording 1"
     # Change window size to large to avoid the "Import recording links" button being hidden (random failure).
     And I change window size to "large"
     And I click on "Import recording links" "button"
     And I select "Recordings from deleted activities" from the "sourcecourseid" singleselect
     And I should see "Recording 1"
-    And I should not see "Recording 2"
+    But I should not see "Recording 2"
 
   Scenario: I check that when I disable Import recording feature the import recording link button should not be shown
     Given I log in as "admin"
