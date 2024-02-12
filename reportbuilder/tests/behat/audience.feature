@@ -201,7 +201,7 @@ Feature: Configure access to reports based on intended audience
     And I am on the "My report" "reportbuilder > Editor" page logged in as "admin"
     When I click on the "Access" dynamic tab
     Then the following should exist in the "reportbuilder-table" table:
-      | -0-    | Email address     | Fruit  |
+      | -1-    | Email address     | Fruit  |
       | User 1 | user1@example.com | Apple  |
       | User 2 | user2@example.com | Banana |
       | User 3 | user3@example.com | Banana |
