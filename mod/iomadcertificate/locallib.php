@@ -512,7 +512,7 @@ function iomadcertificate_print_attempts($course, $iomadcertificate, $attempts) 
     $table->attributes = array("style" => "width:20%; margin:auto");
     $gradecolumn = $iomadcertificate->printgrade;
     if ($gradecolumn) {
-        $table->head[] = get_string('grade');
+        $table->head[] = get_string('grade', 'grades');
         $table->align[] = 'center';
         $table->size[] = '';
     }
