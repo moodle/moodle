@@ -994,5 +994,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024020200.01);
     }
 
+    if ($oldversion < 2024020200.02) {
+        // Change default course formats order for sites never changed the default order.
+        if (!get_config('core', 'format_plugins_sortorder')) {
+            set_config('format_plugins_sortorder', 'topics,weeks,singleactivity,social');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024020200.02);
+    }
+
     return true;
 }

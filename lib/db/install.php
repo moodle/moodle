@@ -135,6 +135,7 @@ function xmldb_main_install() {
         'upgrade_extracreditweightsstepignored' => 1, // New installs should not run this upgrade step.
         'upgrade_calculatedgradeitemsignored' => 1, // New installs should not run this upgrade step.
         'upgrade_letterboundarycourses' => 1, // New installs should not run this upgrade step.
+        'format_plugins_sortorder' => 'topics,weeks,singleactivity,social', // Default order for course format plugins.
     );
     foreach($defaults as $key => $value) {
         set_config($key, $value);
