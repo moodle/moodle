@@ -1096,7 +1096,9 @@ class grade_report_grader extends grade_report {
                             // If we're rendering this as a number field, set min/max attributes, if applicable.
                             if ($context->isnumeric) {
                                 $context->minvalue = $item->grademin ?? null;
-                                $context->maxvalue = $item->grademax ?? null;
+                                if (empty($CFG->unlimitedgrades)) {
+                                    $context->maxvalue = $item->grademax ?? null;
+                                }
                             }
 
                             $value = format_float($gradeval, $decimalpoints);
