@@ -27908,11 +27908,6 @@ table.calendartable caption {
   clear: both;
 }
 
-.section-modchooser {
-  clear: both;
-  margin-top: 0.25rem;
-}
-
 .block_tree .tree_item.branch {
   margin-left: 8px;
 }
@@ -27938,22 +27933,6 @@ table.calendartable caption {
   margin-left: 0.2em;
 }
 
-.sitetopic ul.section {
-  margin: 0;
-}
-
-body:not(.editing) .sitetopic ul.section {
-  padding-left: 0;
-}
-body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
-  padding-left: 0;
-}
-
-@media (min-width: 576px) {
-  .course-content ul.section {
-    margin: 1rem;
-  }
-}
 .section .side {
   margin-top: 0.5rem;
 }
@@ -27969,8 +27948,6 @@ body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
   width: 16px;
 }
 .section .activity {
-  list-style: none;
-  padding: 0.25rem 0;
   /* The command block for each activity */
 }
 .section .activity .spinner {
@@ -28054,24 +28031,12 @@ body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
 .editing .section .activity .activityinstance {
   padding-right: 200px;
 }
-.editing .section .activity .editing_move {
-  position: absolute;
-  display: flex;
-  left: 5px;
-  top: 5px;
-}
 .editing .section .activity .mod-indent-outer {
   /**
    * Add appropriate padding such that nothing overlaps the
    * absolute positioned move icon.
    */
   padding-left: 2rem;
-}
-.editing .activity .editing_move_activity {
-  position: absolute;
-  display: flex;
-  left: 5px;
-  top: 5px;
 }
 .editing .course-content .stateready .section .spinner {
   display: none;
@@ -28403,12 +28368,6 @@ body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
   margin-right: 5px;
 }
 
-.path-site li.activity > div:not(.activity-item),
-.path-course-view li.activity > div:not(.activity-item) {
-  position: relative;
-  padding: 0 16px 0 0; /* to accommodate the floated completion icon with highlighting */
-}
-
 .path-course-view li.activity span.autocompletion img {
   vertical-align: text-bottom;
   margin-left: 0;
@@ -28423,11 +28382,6 @@ body:not(.editing) .sitetopic ul.section .label .mod-indent-outer {
 li.section.hidden span.commands a.editing_hide,
 li.section.hidden span.commands a.editing_show {
   cursor: default;
-}
-
-.single-section h3.sectionname {
-  text-align: center;
-  clear: both;
 }
 
 input.titleeditor {
@@ -29039,17 +28993,19 @@ span.editinstructions .alert-link {
 /* Course section */
 .course-section {
   list-style: none;
-  padding-left: 0;
-  border-bottom: 1px solid #dee2e6;
+  padding: 1rem;
+  margin-top: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 1rem;
+}
+.course-section.hidden {
+  background-color: #f8f9fa;
 }
 .course-section .sectionname > a {
   color: #1d2125;
 }
 .course-section .sectionname > a:hover {
   text-decoration: none;
-}
-.course-section:last-child:not(.section-summary) {
-  border-bottom: 0;
 }
 .course-section .sectionbadges .badge {
   margin-left: 0.5rem;
@@ -29081,6 +29037,11 @@ span.editinstructions .alert-link {
   font-size: inherit;
   margin-right: 0.25rem;
 }
+.course-section .action-menu .btn.btn-icon {
+  height: 32px;
+  width: 32px;
+  border-radius: 0.5rem;
+}
 .course-section.section-summary {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -29102,6 +29063,15 @@ span.editinstructions .alert-link {
   color: #0f6cbf;
 }
 
+/* Single section page specific styles */
+.single-section > ul > .course-section {
+  padding: 0;
+  border: none;
+}
+.single-section > ul > .course-section.hidden {
+  background-color: inherit;
+}
+
 /* Re-style ordered list in course content */
 .course-content .activity-altcontent ul {
   list-style: disc;
@@ -29114,16 +29084,20 @@ span.editinstructions .alert-link {
 }
 
 /* Activity cards */
+.activity {
+  list-style: none;
+  position: relative;
+}
+
 .activity-item {
   position: relative;
   border-radius: 1rem;
 }
 .activity-item:not(.activityinline) {
-  border: 1px solid #dee2e6;
-  padding: 1rem;
+  padding: 0.75rem;
 }
 .activity-item.activityinline {
-  padding: 1rem 0;
+  padding: 0.75rem 0;
 }
 .activity-item.hiddenactivity {
   background-color: #f8f9fa;
@@ -29137,7 +29111,7 @@ span.editinstructions .alert-link {
   align-items: center;
   grid-template-columns: min-content 1fr min-content min-content min-content;
   grid-template-rows: 1fr repeat(5, min-content);
-  grid-template-areas: "icon          name          groupmode      completion    actions" "icon          visibility    groupmode      completion    actions" "icon          dates         groupmode      completion    actions" "altcontent    altcontent    altcontent     altcontent    altcontent" "afterlink     afterlink     afterlink      afterlink     afterlink" "availability  availability  availability   availability  availability";
+  grid-template-areas: "icon   name          groupmode      completion    actions" "icon   visibility    groupmode      completion    actions" "icon   dates         groupmode      completion    actions" "icon   altcontent    altcontent     altcontent    altcontent" "icon   afterlink     afterlink      afterlink     afterlink" "icon   availability  availability   availability  availability";
 }
 @media (max-width: 575.98px) {
   .activity-item .activity-grid {
@@ -29161,11 +29135,6 @@ span.editinstructions .alert-link {
 }
 .activity-item .activity-actions .actions {
   position: relative;
-}
-.activity-item .activity-actions .action-menu .btn.btn-icon {
-  height: 32px;
-  width: 32px;
-  border-radius: 0.5rem;
 }
 .activity-item .activity-icon {
   grid-area: icon;
@@ -29716,11 +29685,6 @@ span.editinstructions .alert-link {
 .activity-item .no-overflow {
   width: 100%;
 }
-@media (min-width: 768px) {
-  .activity-item:not(.activityinline) {
-    padding: 1rem;
-  }
-}
 
 /* Activity card in editing mode */
 .editing .activity-item {
@@ -29758,9 +29722,11 @@ span.editinstructions .alert-link {
 }
 
 .activity div.divider {
+  position: absolute;
+  width: 100%;
   height: 2rem;
-  margin-top: -1.25rem;
-  margin-bottom: -0.75rem;
+  margin-top: -1rem;
+  margin-bottom: -1rem;
   z-index: 5;
 }
 .activity div.divider button {
@@ -29820,6 +29786,15 @@ span.editinstructions .alert-link {
 .defaultactivitycompletion-item .activityicon {
   width: 32px;
   height: 32px;
+}
+
+/* Home page course specific styles */
+.sitetopic .activity:first-of-type hr {
+  display: none;
+}
+.sitetopic .section {
+  margin-bottom: 1.5rem;
+  border-radius: 0.5rem;
 }
 
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
