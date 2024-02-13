@@ -26,6 +26,7 @@
 namespace core\task;
 
 use async_helper;
+use cache_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -206,6 +207,9 @@ class asynchronous_copy_task extends adhoc_task {
         if (empty($CFG->keeptempdirectoriesonbackup)) {
             fulldelete($backupbasepath);
         }
+
+        rebuild_course_cache($restorerecord->itemid, true);
+        cache_helper::purge_by_event('changesincourse');
 
         $duration = time() - $started;
         mtrace('Course copy: Copy completed in: ' . $duration . ' seconds');
