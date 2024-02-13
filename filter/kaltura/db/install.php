@@ -25,5 +25,10 @@ function xmldb_filter_kaltura_install() {
     global $CFG;
     require_once("$CFG->libdir/filterlib.php");
 
-    filter_set_global_state('kaltura', TEXTFILTER_ON);
+    // Do not enable the filter when running unit tests because some core
+    // tests expect a specific number of filters enabled.
+    if (!defined('PHPUNIT_TEST') || !PHPUNIT_TEST) {
+        filter_set_global_state('kaltura', TEXTFILTER_ON);
+    }
+
 }
