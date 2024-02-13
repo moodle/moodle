@@ -253,7 +253,7 @@ class questiontype_test extends \question_testcase {
 
     public function test_xml_import(): void {
         $this->resetAfterTest();
-        // Import a question from XML
+        // Import a question from XML.
         $xml = file_get_contents(__DIR__ . '/fixtures/testimport.moodle.xml');
         $xmldata = xmlize($xml);
         $format = new \qformat_xml();
@@ -265,7 +265,7 @@ class questiontype_test extends \question_testcase {
 
     public function test_xml_import_empty(): void {
         $this->resetAfterTest();
-        // Import a question from XML
+        // Import a question from XML.
         $xml = file_get_contents(__DIR__ . '/fixtures/testimportempty.moodle.xml');
         $xmldata = xmlize($xml);
         $format = new \qformat_xml();
@@ -279,7 +279,7 @@ class questiontype_test extends \question_testcase {
 
     public function test_xml_import_long(): void {
         $this->resetAfterTest();
-        // Import a question from XML
+        // Import a question from XML.
         $xml = file_get_contents(__DIR__ . '/fixtures/testimportlong.moodle.xml');
         $xmldata = xmlize($xml);
         $format = new \qformat_xml();
@@ -317,7 +317,7 @@ class questiontype_test extends \question_testcase {
 
     public function test_gift_import(): void {
         $this->resetAfterTest();
-        // Import a question from GIFT
+        // Import a question from GIFT.
         $gift = file_get_contents(__DIR__ . '/fixtures/testimport.gift.txt');
         $format = new qformat_gift();
         $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));

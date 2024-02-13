@@ -29,9 +29,6 @@ use qtype_ordering\output\specific_grade_detail_feedback;
  */
 class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
 
-    // Disable coverage report for most of this file as each method is tested separately and as a while via Behat.
-    // @codeCoverageIgnoreStart
-
     /**
      * Generate the display of the formulation part of the question. This is the
      * area that contains the question text, and the controls for students to
@@ -42,6 +39,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @param question_display_options $options controls what should and should not be displayed.
      * @return string HTML fragment.
      * @throws moodle_exception
+     * @codeCoverageIgnore
      */
     public function formulation_and_controls(question_attempt $qa, question_display_options $options): string {
         $formulationandcontrols = new formulation_and_controls($qa, $options);
@@ -58,6 +56,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @param question_display_options $options Controls what should and should not be displayed.
      * @return string HTML fragment.
      * @throws moodle_exception
+     * @codeCoverageIgnore
      */
     public function feedback(question_attempt $qa, question_display_options $options): string {
         $feedback = new feedback($qa, $options);
@@ -71,6 +70,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @param question_attempt $qa The question attempt to display.
      * @return string Output grade detail of the response.
      * @throws moodle_exception
+     * @codeCoverageIgnore
      */
     public function specific_grade_detail_feedback(question_attempt $qa): string {
         $specificgradedetailfeedback = new specific_grade_detail_feedback($qa);
@@ -84,6 +84,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      *
      * @param question_attempt $qa The question attempt to display.
      * @return string HTML fragment.
+     * @codeCoverageIgnore
      */
     public function specific_feedback(question_attempt $qa): string {
         return $this->combined_feedback($qa);
@@ -97,6 +98,7 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @param question_attempt $qa the question attempt to display.
      * @return string HTML fragment.
      * @throws moodle_exception
+     * @codeCoverageIgnore
      */
     public function correct_response(question_attempt $qa): string {
         $correctresponse = new correct_response($qa);
@@ -112,15 +114,13 @@ class qtype_ordering_renderer extends qtype_with_combined_feedback_renderer {
      * @param question_attempt $qa The question attempt to display.
      * @return string HTML fragment.
      * @throws moodle_exception
+     * @codeCoverageIgnore
      */
     protected function num_parts_correct(question_attempt $qa): string {
         $numpartscorrect = new num_parts_correct($qa);
         return $this->output->render_from_template('qtype_ordering/num_parts_correct',
             $numpartscorrect->export_for_template($this->output));
     }
-
-    // Below this point, is code that will be included in the report as it isn't reported in isolation.
-    // @codeCoverageIgnoreEnd
 
     /**
      * Return an appropriate icon (green tick, red cross, etc.) for a grade.

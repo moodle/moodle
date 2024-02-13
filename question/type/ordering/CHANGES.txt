@@ -6,10 +6,10 @@ Change log for qtype_ordering
  - small fix to download URLs in readme.txt
 
 2023-05-31 (08)
- -  * Fix Behat failure following button change in Moodle master branch 
+ -  * Fix Behat failure following button change in Moodle master branch
 
 2023-04-29 (07)
- -  Co-authored-by: Anupama Sarjoshi <anupama.sarjoshi@open.ac.uk> 
+ -  Co-authored-by: Anupama Sarjoshi <anupama.sarjoshi@open.ac.uk>
 
 2022-09-27 (07)
  - This version works with Moodle 4.0, 4.1 and 4.2.
@@ -48,7 +48,8 @@ Change log for qtype_ordering
  - fix behavior in Adaptive mode, with 'Whether correct' review option enabled
 
 2019-07-31 (93)
- - (github-issue #43 and #44): rename upper case numberstyles to ABCD and IIII in order to differentiate from lower case styles on DBs, such as MySQL, which use case insensitive indexes.
+ - (github-issue #43 and #44): rename upper case numberstyles to ABCD and IIII in order to
+ differentiate from lower case styles on DBs, such as MySQL, which use case insensitive indexes.
 
 2019-07-12 (92)
  - rename 'answernumbering' to 'numberingstyle' and include this field in import/export of xml/gift formats.
@@ -69,13 +70,19 @@ Change log for qtype_ordering
  - fix small typo in language file and optimize logic in form validation
 
 2019-03-05 (87)
- - Qtype ordering should not allow duplicatue items (#40) Thank you Mahmoud Kassaei for your continuing work to improve the Ordering question type
+ - Qtype ordering should not allow duplicatue items (#40)
+ Thank you Mahmoud Kassaei for your continuing work to improve the Ordering question type
 
 2019-02-19 (86)
  - small fix to spelling and whitespace
 
 2019-02-19 (86)
- - qtype_ordering: Ordering codechecker (#39) * Code checker issues on edit_ordering_form.php * function question_register_questiontype() not needed in questiontype.php * Code checker issues in questiontype.php * Code checker issues in question.php * Code checker issues in renderer.php * Code checker issues in version.php
+ - qtype_ordering: Ordering codechecker (#39)
+ * Code checker issues on edit_ordering_form.php *function question_register_questiontype() not needed in questiontype.php
+ * Code checker issues in questiontype.php
+ * Code checker issues in question.php
+ * Code checker issues in renderer.php
+ * Code checker issues in version.php
 
 2019-02-08 (85)
  - Merge pull request #38 from mkassaei/ordering_cleanup Ordering cleanup - thanks Mahmoud Kassaei!
@@ -84,7 +91,8 @@ Change log for qtype_ordering
  - remove deprecated jquery folder and amd/*.js files
 
 2019-01-25 (84)
- - Merge pull request #37 from timhunt/qtype-ordering-js-css New JavaScript implementation - many thanks  to Tim Hunt and Mahmoud Kassei of Open University
+ - Merge pull request #37 from timhunt/qtype-ordering-js-css New JavaScript implementation -
+ many thanks to Tim Hunt and Mahmoud Kassei of Open University
 
 2019-01-08 (83)
  - add showgrading field to backup file
@@ -105,7 +113,8 @@ Change log for qtype_ordering
  - improve logic and of code to get_subset and code to add repeated elements to form
 
 2018-12-15 (78)
- - fix Github issue #35: Clicking Add to add items more than once without saving the question in between has incorrect and unwanted behavior
+ - fix Github issue #35: Clicking Add to add items more than once without saving the question
+ in between has incorrect and unwanted behavior
 
 2018-12-12 (77)
  - rename variables to improve readability of loop that detects ordered subsets
@@ -124,7 +133,8 @@ Change log for qtype_ordering
  - fix detection of Longest ordered/contiguous subset where two or more such subsets exist
 
 2018-11-26 (74)
- - fix indexing of items when "Item selection type" is "Select a contiguous subset of items". The incorrect indexing resulted in less than the exptected number of items being displayed.
+ - fix indexing of items when "Item selection type" is "Select a contiguous subset of items".
+ The incorrect indexing resulted in less than the exptected number of items being displayed.
 
 2018-11-19 (73)
  - update version.php for recent BEHAT modifications
@@ -245,7 +255,8 @@ Change log for qtype_ordering
  - fix handling of unscored items in grading details during review of question attempt
 
 2016-01-01 (36)
- - fix grade calculation for RELATIVE_ONE_PREVIOUS_AND_NEXT and RELATIVE_ALL_PREVIOUS_AND_NEXT, and add grade/score details for less than perfect grades
+ - fix grade calculation for RELATIVE_ONE_PREVIOUS_AND_NEXT and RELATIVE_ALL_PREVIOUS_AND_NEXT,
+ and add grade/score details for less than perfect grades
 
 2015-12-31 (35)
  - finish implementation of new setting, gradingtype, to allow different grading methods for ordering questions

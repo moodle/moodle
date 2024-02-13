@@ -32,8 +32,9 @@ Feature: Preview an Ordering question
     And I drag "Oriented" to space "3" in the ordering question
     And I drag "Dynamic" to space "4" in the ordering question
     And I drag "Learning" to space "5" in the ordering question
+    And I drag "Environment" to space "6" in the ordering question
     And I press "Submit and finish"
-    Then I should see "Correct items: 6"
+    Then I should see "Well done!"
     And I should see "Mark 1.00 out of 1.00"
 
   @javascript
@@ -43,6 +44,7 @@ Feature: Preview an Ordering question
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "id_saverestart"
     And I drag "Modular" to space "1" in the ordering question
+    And I drag "Object" to space "6" in the ordering question
     And I drag "Oriented" to space "4" in the ordering question
     And I drag "Dynamic" to space "3" in the ordering question
     And I drag "Learning" to space "5" in the ordering question
@@ -63,10 +65,11 @@ Feature: Preview an Ordering question
     And I set the field "How questions behave" to "Immediate feedback"
     And I press "id_saverestart"
     And I drag "Modular" to space "1" in the ordering question
-    And I drag "Oriented" to space "4" in the ordering question
-    And I drag "Dynamic" to space "3" in the ordering question
-    And I drag "Learning" to space "5" in the ordering question
     And I drag "Environment" to space "2" in the ordering question
+    And I drag "Dynamic" to space "3" in the ordering question
+    And I drag "Oriented" to space "4" in the ordering question
+    And I drag "Learning" to space "5" in the ordering question
+    And I drag "Object" to space "6" in the ordering question
     And I press "Submit and finish"
     And I should not see "You have 1 item correct."
     And I should not see "You have 5 items partially correct."

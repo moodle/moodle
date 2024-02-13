@@ -40,7 +40,8 @@ class behat_qtype_ordering extends behat_base {
      * @return string the xpath expression.
      */
     protected function item_xpath_by_label(string $label): string {
-        return '//li[@class = "sortableitem" and contains(normalize-space(.), "' . $this->escape($label) . '")]';
+        return "//li[contains(concat(' ', normalize-space(@class), ' '), 'sortableitem') and contains(normalize-space(.), '" .
+            $this->escape($label) . "')]";
     }
 
     /**
@@ -49,7 +50,7 @@ class behat_qtype_ordering extends behat_base {
      * @return string the xpath expression.
      */
     protected function item_xpath_by_position(string $position): string {
-        return '//li[@class = "sortableitem"][' . $position . ']';
+        return "//li[contains(concat(' ', normalize-space(@class), ' '), 'sortableitem')][" . $position . "]";
     }
 
     /**
@@ -67,21 +68,32 @@ class behat_qtype_ordering extends behat_base {
      * @Given /^I drag "(?P<label>[^"]*)" to space "(?P<position>\d+)" in the ordering question$/
      */
     public function i_drag_to_space_in_the_drag_and_drop_into_text_question(string $label, int $position): void {
+
+        $testingpos = $position - 1; // 0-based index.
+
         $generalcontext = behat_context_helper::get('behat_general');
-        // There was a weird issue where drag-drop was not reliable if an item was being
-        // dragged to the same place it already was. So, first drag below the bottom to reliably
-        // move it to the last place.
-        $generalcontext->i_drag_and_i_drop_it_in(
-            $this->item_xpath_by_label($label),
-            'xpath_element',
-            get_string('check', 'question'),
-            'button'
+
+        $this->execute_script("
+                (function() {
+                    var droptarget = document.createElement('li');
+                    droptarget.setAttribute('class', 'dtb');
+                    var items = document.querySelector('.sortablelist');
+                    items.insertBefore(droptarget, items.children[$testingpos]);
+                }())"
         );
+
         $generalcontext->i_drag_and_i_drop_it_in(
             $this->item_xpath_by_label($label),
             'xpath_element',
-            $this->item_xpath_by_position($position),
+            "//li[contains(concat(' ', normalize-space(@class), ' '), 'dtb')]",
             'xpath_element'
+        );
+
+        $this->execute_script("
+                (function() {
+                    var item = document.querySelector('.dtb');
+                    item.parentNode.removeChild(item);
+                }())"
         );
     }
 }

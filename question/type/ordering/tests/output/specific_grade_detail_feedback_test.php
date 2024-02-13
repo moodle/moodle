@@ -48,7 +48,8 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
      * @return void
      * @covers ::export_for_template
      */
-    public function test_export_for_template(array $answeritems, int $gradingtype, string $layouttype, array $expected, int $selecttype): void {
+    public function test_export_for_template(array $answeritems, int $gradingtype, string $layouttype, array $expected,
+            int $selecttype): void {
         global $PAGE;
         $this->resetAfterTest();
         $question = test_question_maker::make_question('ordering');

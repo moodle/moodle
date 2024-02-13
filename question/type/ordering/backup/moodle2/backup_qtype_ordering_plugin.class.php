@@ -55,7 +55,8 @@ class backup_qtype_ordering_plugin extends backup_qtype_plugin {
             'gradingtype', 'showgrading', 'numberingstyle',
             'correctfeedback', 'correctfeedbackformat',
             'incorrectfeedback', 'incorrectfeedbackformat',
-            'partiallycorrectfeedback', 'partiallycorrectfeedbackformat', 'shownumcorrect'];
+            'partiallycorrectfeedback', 'partiallycorrectfeedbackformat', 'shownumcorrect',
+        ];
         $ordering = new backup_nested_element('ordering', ['id'], $fields);
 
         // Now the own qtype tree.

@@ -77,7 +77,10 @@ class formulation_and_controls extends renderable_base {
         }
 
         // In the multi-tries, the highlight response base on the hint highlight option.
-        if ((isset($this->options->highlightresponse) && $this->options->highlightresponse) || !$this->qa->get_state()->is_active()) {
+        if (
+            (isset($this->options->highlightresponse) && $this->options->highlightresponse) ||
+            !$this->qa->get_state()->is_active()
+        ) {
             $data['active'] = false;
         } else if ($this->qa->get_state()->is_active()) {
             $data['active'] = true;

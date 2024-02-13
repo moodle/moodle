@@ -36,7 +36,8 @@ class feedback extends renderable_base {
      * The class constructor.
      *
      * @param question_attempt $qa The question attempt object.
-     * @param question_display_options $options Controls what should and should not be displayed via question_display_options but unit tests are fickle.
+     * @param question_display_options $options Controls what should and should not be displayed
+     * via question_display_options but unit tests are fickle.
      */
     public function __construct(question_attempt $qa, question_display_options $options) {
         parent::__construct($qa);

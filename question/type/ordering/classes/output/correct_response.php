@@ -59,7 +59,7 @@ class correct_response extends renderable_base {
                 $this->qa, 'question', 'answer', $answerid);
 
             $data['correctanswers'][] = [
-                'answertext' => $answertext
+                'answertext' => $answertext,
             ];
         }
 

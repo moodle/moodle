@@ -360,9 +360,11 @@ class qtype_ordering_edit_form extends question_edit_form {
                 $format = $answer->answerformat;
                 $text = file_prepare_draft_area($itemid, $this->context->id, 'question', 'answer',
                     $answerid, $this->editoroptions, $answer->answer);
-                $question->answer[$i] = ['text' => $text,
+                $question->answer[$i] = [
+                    'text' => $text,
                     'format' => $format,
-                    'itemid' => $itemid];
+                    'itemid' => $itemid,
+                ];
             }
             $question->fraction[$i] = ($i + 1);
         }
@@ -446,7 +448,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         }
 
         // If there are no answers provided, show error message under first 2 answer boxes
-        // If only 1 answer provided, show error message under second answer box
+        // If only 1 answer provided, show error message under second answer box.
         if ($answercount < 2) {
             $errors['answer[1]'] = get_string('notenoughanswers', $plugin, 2);
 
@@ -457,8 +459,10 @@ class qtype_ordering_edit_form extends question_edit_form {
 
         // If adding a new ordering question, update defaults.
         if (empty($errors) && empty($data['id'])) {
-            $fields = ['layouttype', 'selecttype', 'selectcount',
-                'gradingtype', 'showgrading', 'numberingstyle'];
+            $fields = [
+                'layouttype', 'selecttype', 'selectcount',
+                'gradingtype', 'showgrading', 'numberingstyle',
+            ];
             foreach ($fields as $field) {
                 if (array_key_exists($field, $data)) {
                     question_bank::get_qtype($this->qtype())->set_default_value($field, $data[$field]);
@@ -541,7 +545,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = $this->get_addcount_options($type);
         $mform->addGroup([
             $mform->createElement('submit', $addtypes, get_string('add')),
-            $mform->createElement('select', $addtypescount, '', $options)
+            $mform->createElement('select', $addtypescount, '', $options),
         ], $addtypesgroup, '', ' ', false);
 
         // Set default value and type of select element.
