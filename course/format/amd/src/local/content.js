@@ -450,14 +450,14 @@ export default class Component extends BaseComponent {
      * Refresh the section list.
      *
      * @param {Object} param
-     * @param {Object} param.element details the update details.
+     * @param {Object} param.state the full state object.
      */
-    _refreshCourseSectionlist({element}) {
+    _refreshCourseSectionlist({state}) {
         // If we have a section return means we only show a single section so no need to fix order.
         if (this.reactive.sectionReturn !== null) {
             return;
         }
-        const sectionlist = element.sectionlist ?? [];
+        const sectionlist = this.reactive.getExporter().listedSectionIds(state);
         const listparent = this.getElement(this.selectors.COURSE_SECTIONLIST);
         // For now section cannot be created at a frontend level.
         const createSection = this._createSectionItem.bind(this);

@@ -172,6 +172,10 @@ class sectionactions extends baseactions {
 
     /**
      * Create course sections if they are not created yet.
+     *
+     * The calculations will ignore sections delegated to components.
+     * If the section is created, all delegated sections will be pushed down.
+     *
      * @param int[] $sectionnums the section numbers to create
      * @return bool whether any section was created
      */

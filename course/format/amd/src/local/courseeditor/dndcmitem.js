@@ -102,7 +102,18 @@ export default class extends BaseComponent {
      * @returns {boolean}
      */
     validateDropData(dropdata) {
-        return dropdata?.type === 'cm';
+        if (dropdata?.type !== 'cm') {
+            return false;
+        }
+        // Prevent delegated sections loops.
+        if (dropdata?.delegatesection === true) {
+            const mycminfo = this.reactive.get('cm', this.id);
+            const mysection = this.reactive.get('section', mycminfo.sectionid);
+            if (mysection?.component !== null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

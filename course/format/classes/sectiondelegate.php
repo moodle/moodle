@@ -49,10 +49,32 @@ abstract class sectiondelegate {
         if (empty($sectioninfo->component)) {
             return null;
         }
-        $classname = $sectioninfo->component . '\courseformat\sectiondelegate';
-        if (!class_exists($classname)) {
+        $classname = self::get_delegate_class_name($sectioninfo->component);
+        if ($classname === null) {
             return null;
         }
         return new $classname($sectioninfo);
+    }
+
+    /**
+     * Return the delgate class name of a plugin, if any.
+     * @param string $pluginname
+     * @return string|null the delegate class name or null if not found.
+     */
+    protected static function get_delegate_class_name(string $pluginname): ?string {
+        $classname = $pluginname . '\courseformat\sectiondelegate';
+        if (!class_exists($classname)) {
+            return null;
+        }
+        return $classname;
+    }
+
+    /**
+     * Check if a plugin has a delegate class.
+     * @param string $pluginname
+     * @return bool
+     */
+    public static function has_delegate_class(string $pluginname): bool {
+        return self::get_delegate_class_name($pluginname) !== null;
     }
 }

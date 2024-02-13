@@ -16,6 +16,8 @@
 
 namespace core_course;
 
+use core_courseformat\formatactions;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -276,4 +278,188 @@ class modlib_test extends \advanced_testcase {
         $this->assertEquals($expectedorder, $modinfo->get_sections()[$sectionnumber]);
     }
 
+    /**
+     * Test for can_add_moduleinfo on a non-existing module.
+     *
+     * @covers \can_add_moduleinfo
+     */
+    public function test_can_add_moduleinfo_invalid_module(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course(
+            ['numsections' => 2, 'enablecompletion' => 1],
+            ['createsections' => true]
+        );
+
+        $modinfo = get_fast_modinfo($course);
+        $section = $modinfo->get_section_info(2);
+
+        $this->setAdminUser();
+
+        $this->expectException(\dml_missing_record_exception::class);
+
+        can_add_moduleinfo($course, 'non-existent-module!', $section->section);
+    }
+
+    /**
+     * Test for can_add_moduleinfo when the user does not have addinstance capability.
+     *
+     * @covers \can_add_moduleinfo
+     */
+    public function test_can_add_moduleinfo_deny_add_instance(): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $course = $this->getDataGenerator()->create_course(
+            ['numsections' => 2, 'enablecompletion' => 1],
+            ['createsections' => true]
+        );
+
+        $modinfo = get_fast_modinfo($course);
+        $section = $modinfo->get_section_info(2);
+
+        // The can_add_moduleinfo uses course_allowed_module to check if the module is allowed in the course.
+        // This method uses capabilities like the specific module addinstance capability.
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher'], '*', MUST_EXIST);
+        role_change_permission(
+            $teacherrole->id,
+            \context_course::instance($course->id),
+            'mod/label:addinstance',
+            CAP_PROHIBIT
+        );
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, 'editingteacher');
+        $this->setUser($user);
+
+        $this->expectException(\moodle_exception::class);
+
+        can_add_moduleinfo($course, 'label', $section->section);
+    }
+
+    /**
+     * Test for can_add_moduleinfo.
+     *
+     * @dataProvider provider_can_add_moduleinfo
+     * @covers \can_add_moduleinfo
+     * @param string $rolename
+     * @param bool $hascapability
+     */
+    public function test_can_add_moduleinfo_capability(string $rolename, bool $hascapability): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $module = $DB->get_record('modules', ['name' => 'label'], '*', MUST_EXIST);
+
+        $course = $this->getDataGenerator()->create_course(
+            ['numsections' => 2, 'enablecompletion' => 1],
+            ['createsections' => true]
+        );
+
+        $modinfo = get_fast_modinfo($course);
+        $section = $modinfo->get_section_info(2);
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $rolename);
+        $this->setUser($user);
+
+        if (!$hascapability) {
+            $this->expectException(\required_capability_exception::class);
+        }
+
+        $result = can_add_moduleinfo($course, 'label', $section->section);
+
+        $this->assertEquals($module, $result[0]);
+        $this->assertEquals(
+            \context_course::instance($course->id),
+            $result[1]
+        );
+        $this->assertEquals($section->id, $result[2]->id);
+    }
+
+    /**
+     * Test for can_add_moduleinfo returns true on a delegate section.
+     *
+     * @dataProvider provider_can_add_moduleinfo
+     * @covers \can_add_moduleinfo
+     * @param string $rolename
+     * @param bool $hascapability
+     */
+    public function test_can_add_moduleinfo_delegate_section(string $rolename, bool $hascapability): void {
+        global $DB;
+        $this->resetAfterTest(true);
+
+        $module = $DB->get_record('modules', ['name' => 'label'], '*', MUST_EXIST);
+
+        $course = $this->getDataGenerator()->create_course(
+            ['numsections' => 2, 'enablecompletion' => 1],
+            ['createsections' => true]
+        );
+
+        $section = formatactions::section($course)->create_delegated('mod_label', 0);
+
+        $modinfo = get_fast_modinfo($course);
+        $this->assertCount(4, $modinfo->get_section_info_all());
+        $this->assertCount(3, $modinfo->get_listed_section_info_all());
+
+        $user = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id, $rolename);
+        $this->setUser($user);
+
+        if (!$hascapability) {
+            $this->expectException(\required_capability_exception::class);
+        }
+
+        $result = can_add_moduleinfo($course, 'label', $section->section);
+
+        $this->assertEquals($module, $result[0]);
+        $this->assertEquals(
+            \context_course::instance($course->id),
+            $result[1]
+        );
+        $this->assertEquals($section->id, $result[2]->id);
+
+        // Validate no section has been created.
+        $modinfo = get_fast_modinfo($course);
+        $this->assertCount(4, $modinfo->get_section_info_all());
+        $this->assertCount(3, $modinfo->get_listed_section_info_all());
+        $this->assertEquals(
+            $section->section,
+            $modinfo->get_section_info_by_id($section->id)->section
+        );
+    }
+
+    /**
+     * Data provider for test_can_add_moduleinfo.
+     * @return array
+     */
+    public static function provider_can_add_moduleinfo(): array {
+        return [
+            'Editing teacher' => [
+                'rolename' => 'editingteacher',
+                'hascapability' => true,
+            ],
+            'Manager' => [
+                'rolename' => 'manager',
+                'hascapability' => true,
+            ],
+            'Course creator' => [
+                'rolename' => 'coursecreator',
+                'hascapability' => false,
+            ],
+            'Non-editing teacher' => [
+                'rolename' => 'teacher',
+                'hascapability' => false,
+            ],
+            'Student' => [
+                'rolename' => 'student',
+                'hascapability' => false,
+            ],
+            'Guest' => [
+                'rolename' => 'guest',
+                'hascapability' => false,
+            ],
+        ];
+    }
 }

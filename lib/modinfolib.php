@@ -316,10 +316,34 @@ class course_modinfo {
 
     /**
      * Gets all sections as array from section number => data about section.
+     *
+     * The method will return all sections of the course, including the ones
+     * delegated to a component.
+     *
      * @return section_info[] Array of section_info objects organised by section number
      */
     public function get_section_info_all() {
         return $this->sectioninfobynum;
+    }
+
+    /**
+     * Gets all sections listed in course page as array from section number => data about section.
+     *
+     * The method is similar to get_section_info_all but filtering all sections delegated to components.
+     *
+     * @return section_info[] Array of section_info objects organised by section number
+     */
+    public function get_listed_section_info_all() {
+        if (empty($this->delegatedsections)) {
+            return $this->sectioninfobynum;
+        }
+        $sections = [];
+        foreach ($this->sectioninfobynum as $section) {
+            if (!$section->is_delegated()) {
+                $sections[$section->section] = $section;
+            }
+        }
+        return $sections;
     }
 
     /**
@@ -3489,6 +3513,14 @@ class section_info implements IteratorAggregate {
         }
         $this->_delegateinstance = sectiondelegate::instance($this);
         return $this->_delegateinstance;
+    }
+
+    /**
+     * Returns true if this section is a delegate to a component.
+     * @return bool
+     */
+    public function is_delegated(): bool {
+        return !empty($this->_component);
     }
 
     /**
