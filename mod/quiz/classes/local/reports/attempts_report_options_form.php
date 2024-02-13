@@ -66,10 +66,14 @@ abstract class attempts_report_options_form extends \moodleform {
         ]);
 
         $stategroup = [
+            $mform->createElement('advcheckbox', 'statenotstarted', '',
+                    get_string('statenotstarted', 'quiz')),
             $mform->createElement('advcheckbox', 'stateinprogress', '',
                     get_string('stateinprogress', 'quiz')),
             $mform->createElement('advcheckbox', 'stateoverdue', '',
                     get_string('stateoverdue', 'quiz')),
+            $mform->createElement('advcheckbox', 'statesubmitted', '',
+                    get_string('statesubmitted', 'quiz')),
             $mform->createElement('advcheckbox', 'statefinished', '',
                     get_string('statefinished', 'quiz')),
             $mform->createElement('advcheckbox', 'stateabandoned', '',
@@ -77,12 +81,17 @@ abstract class attempts_report_options_form extends \moodleform {
         ];
         $mform->addGroup($stategroup, 'stateoptions',
                 get_string('reportattemptsthatare', 'quiz'), [' '], false);
+        $mform->addHelpButton('stateoptions', 'stateoptions', 'quiz');
+        $mform->setDefault('statenotstarted', 1);
         $mform->setDefault('stateinprogress', 1);
         $mform->setDefault('stateoverdue',    1);
+        $mform->setDefault('statesubmitted', 1);
         $mform->setDefault('statefinished',   1);
         $mform->setDefault('stateabandoned',  1);
+        $mform->disabledIf('statenotstarted', 'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
         $mform->disabledIf('stateinprogress', 'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
         $mform->disabledIf('stateoverdue',    'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
+        $mform->disabledIf('statesubmitted', 'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
         $mform->disabledIf('statefinished',   'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
         $mform->disabledIf('stateabandoned',  'attempts', 'eq', attempts_report::ENROLLED_WITHOUT);
 
@@ -126,8 +135,17 @@ abstract class attempts_report_options_form extends \moodleform {
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
 
-        if ($data['attempts'] != attempts_report::ENROLLED_WITHOUT && !(
-                $data['stateinprogress'] || $data['stateoverdue'] || $data['statefinished'] || $data['stateabandoned'])) {
+        if (
+            $data['attempts'] != attempts_report::ENROLLED_WITHOUT &&
+            !(
+                $data['stateinprogress']
+                || $data['stateoverdue']
+                || $data['statefinished']
+                || $data['stateabandoned']
+                || $data['statenotstarted']
+                || $data['statesubmitted']
+            )
+        ) {
             $errors['stateoptions'] = get_string('reportmustselectstate', 'quiz');
         }
 

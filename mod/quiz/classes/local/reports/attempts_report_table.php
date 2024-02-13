@@ -229,7 +229,7 @@ abstract class attempts_report_table extends \table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_timestart($attempt) {
-        if ($attempt->attempt) {
+        if ($attempt->attempt && $attempt->timestart) {
             return userdate($attempt->timestart, $this->strtimeformat);
         } else {
             return  '-';

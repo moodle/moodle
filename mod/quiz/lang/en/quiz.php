@@ -951,10 +951,10 @@ $string['reports'] = 'Reports';
 $string['reportshowonly'] = 'Show only attempts';
 $string['reportshowonlyfinished'] = 'Show at most one finished attempt per user ({$a})';
 $string['reportsimplestat'] = 'Simple statistics';
-$string['reportusersall'] = 'all users who have attempted the quiz';
-$string['reportuserswith'] = 'enrolled users who have attempted the quiz';
-$string['reportuserswithorwithout'] = 'enrolled users who have, or have not, attempted the quiz';
-$string['reportuserswithout'] = 'enrolled users who have not attempted the quiz';
+$string['reportusersall'] = 'all users who have a quiz attempt';
+$string['reportuserswith'] = 'enrolled users who have a quiz attempt';
+$string['reportuserswithorwithout'] = 'enrolled users who have, or do not have, a quiz attempt';
+$string['reportuserswithout'] = 'enrolled users who do not have a quiz attempt';
 $string['reportwhattoinclude'] = 'What to include in the report';
 $string['requirepassword'] = 'Require password';
 $string['requirepassword_help'] = 'If a password is specified, a student must enter it in order to attempt the quiz.';
@@ -1081,8 +1081,18 @@ $string['statefinished'] = 'Finished';
 $string['statefinisheddetails'] = 'Submitted {$a}';
 $string['stateinprogress'] = 'In progress';
 $string['statenotloaded'] = 'The state for question {$a} has not been loaded from the database';
+$string['statenotstarted'] = 'Not started';
+$string['stateoptions'] = 'Attempt state options';
+$string['stateoptions_help'] = '
+* Not started: The attempt was automatically created before the quiz opened. The student has not started the attempt yet.
+* In progress: The student has started the attempt. They still have time to submit it.
+* Overdue: The attempt has been open for longer than the allowed time limit. The student can still submit it within the grade period.
+* Submitted: The student has completed the attempt and submitted their responses. It is queued for automatic marking.
+* Finished: The attempt has been submitted and any automatic marking is complete.
+* Never submitted: The student started the attempt, but did not submit it within the time limit or grace period.';
 $string['stateoverdue'] = 'Overdue';
 $string['stateoverduedetails'] = 'Must be submitted by {$a}';
+$string['statesubmitted'] = 'Submitted';
 $string['status'] = 'Status';
 $string['stoponerror'] = 'Stop on error';
 $string['submission_confirmation'] = 'Submit all your answers and finish?';

@@ -1006,10 +1006,14 @@ function quiz_questions_per_page_options() {
  */
 function quiz_attempt_state_name($state) {
     switch ($state) {
+        case quiz_attempt::NOT_STARTED:
+            return get_string('statenotstarted', 'quiz');
         case quiz_attempt::IN_PROGRESS:
             return get_string('stateinprogress', 'quiz');
         case quiz_attempt::OVERDUE:
             return get_string('stateoverdue', 'quiz');
+        case quiz_attempt::SUBMITTED:
+            return get_string('statesubmitted', 'quiz');
         case quiz_attempt::FINISHED:
             return get_string('statefinished', 'quiz');
         case quiz_attempt::ABANDONED:

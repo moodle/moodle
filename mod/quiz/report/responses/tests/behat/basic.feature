@@ -36,7 +36,7 @@ Feature: Basic use of the Responses report
     When I am on the "Quiz 1" "mod_quiz > Responses report" page logged in as teacher
     Then I should see "Attempts: 0"
     And I should see "Nothing to display"
-    And I set the field "Attempts from" to "enrolled users who have not attempted the quiz"
+    And I set the field "Attempts from" to "enrolled users who have a quiz attempt"
 
   @javascript
   Scenario: Report works when there are attempts
@@ -56,7 +56,7 @@ Feature: Basic use of the Responses report
     Then I should see "Attempts: 1"
     And I should see "Student One"
     And I should not see "Student Two"
-    And I set the field "Attempts from" to "enrolled users who have, or have not, attempted the quiz"
+    And I set the field "Attempts from" to "enrolled users who have, or do not have, a quiz attempt"
     And I set the field "Which tries" to "All tries"
     And I should see "Response 1a"
     And I press "Show report"
@@ -71,5 +71,5 @@ Feature: Basic use of the Responses report
   Scenario: Report does not allow strange combinations of options
     Given I am on the "Quiz 1" "mod_quiz > Responses report" page logged in as teacher
     And the "Which tries" "select" should be enabled
-    When I set the field "Attempts from" to "enrolled users who have not attempted the quiz"
+    When I set the field "Attempts from" to "enrolled users who do not have a quiz attempt"
     Then the "Which tries" "select" should be disabled
