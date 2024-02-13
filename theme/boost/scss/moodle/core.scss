@@ -2835,6 +2835,48 @@ body.dragging {
     cursor: move;
 }
 
+.dropzone-container {
+    cursor: pointer;
+
+    .dropzone {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        border: 2px dashed $filemanager-dnd-border-color;
+        border-radius: 0.5rem;
+
+        &.dragover {
+            border: 2px dashed $filemanager-dnd-upload-over-border-color;
+        }
+    }
+
+    .dropzone-icon {
+        color: $gray-500;
+
+        .icon {
+            font-size: 6em;
+            width: auto;
+            height: auto;
+            max-width: initial;
+            max-height: initial;
+            margin-right: 0;
+        }
+    }
+
+    .dropzone-sr-only-focusable {
+        &:active,
+        &:focus {
+            outline: 0;
+            box-shadow: $input-btn-focus-box-shadow;
+            z-index: $zindex-popover;
+            position: relative;
+            background: $sr-only-active-bg;
+            padding: 7px;
+        }
+    }
+}
+
 // Generic classes reactive components can use.
 
 .overlay-preview {
