@@ -172,6 +172,12 @@ class core_webservice_external extends \core_external\external_api {
             'name' => 'mnet_dispatcher_mode',
             'value' => ($CFG->mnet_dispatcher_mode == 'strict') ? 1 : 0
         );
+        // Competencies.
+        $enablecompetencies = get_config('core_competency', 'enabled');
+        $siteinfo['advancedfeatures'][] = [
+            'name' => 'enablecompetencies',
+            'value' => (!empty($enablecompetencies)) ? 1 : 0,
+        ];
 
         // User can manage own files.
         $siteinfo['usercanmanageownfiles'] = has_capability('moodle/user:manageownfiles', $context);
