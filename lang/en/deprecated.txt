@@ -137,3 +137,4 @@ addinganewto,core
 editinga,core
 updatinga,core
 updatingain,core
+summaryof,core
