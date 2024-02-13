@@ -170,7 +170,7 @@ class reopen_attempt_test extends externallib_advanced_testcase {
             // Attempt goes overdue (e.g. if cron ran).
             $attemptobj->process_abandon($timeclose + 2 * get_config('quiz', 'graceperiodmin'), false);
         } else if ($attemptstate !== quiz_attempt::IN_PROGRESS) {
-            throw new coding_exception('State ' . $attemptstate . ' not currently supported.');
+            throw new coding_exception('Status ' . $attemptstate . ' not currently supported.');
         }
 
         // Set current user to admin before we return.
