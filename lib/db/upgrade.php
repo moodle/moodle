@@ -1093,5 +1093,26 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024022300.02);
     }
 
+    if ($oldversion < 2024030500.01) {
+
+        // Get all "select" custom field shortnames.
+        $fieldshortnames = $DB->get_fieldset('customfield_field', 'shortname', ['type' => 'select']);
+
+        // Ensure any used in custom reports columns are not using integer type aggregation.
+        foreach ($fieldshortnames as $fieldshortname) {
+            $DB->execute("
+                UPDATE {reportbuilder_column}
+                   SET aggregation = NULL
+                 WHERE " . $DB->sql_like('uniqueidentifier', ':uniqueidentifier', false) . "
+                   AND aggregation IN ('avg', 'max', 'min', 'sum')
+            ", [
+                'uniqueidentifier' => '%' . $DB->sql_like_escape(":customfield_{$fieldshortname}"),
+            ]);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024030500.01);
+    }
+
     return true;
 }
