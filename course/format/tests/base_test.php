@@ -880,6 +880,24 @@ class base_test extends advanced_testcase {
         ];
     }
 
+    /**
+     * Test can_sections_be_removed_from_navigation().
+     *
+     * @covers ::can_sections_be_removed_from_navigation
+     */
+    public function test_can_sections_be_removed_from_navigation(): void {
+        $this->resetAfterTest();
+
+        $generator = $this->getDataGenerator();
+
+        $course = $generator->create_course();
+        $format = course_get_format($course);
+        $this->assertFalse($format->can_sections_be_removed_from_navigation());
+
+        $course = $generator->create_course(['format' => 'testformatsections']);
+        $format = course_get_format($course);
+        $this->assertTrue($format->can_sections_be_removed_from_navigation());
+    }
 }
 
 /**
@@ -921,6 +939,10 @@ class format_testformatsections extends core_courseformat\base {
      * @return true
      */
     public function uses_sections() {
+        return true;
+    }
+
+    public function can_sections_be_removed_from_navigation(): bool {
         return true;
     }
 }

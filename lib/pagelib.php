@@ -1422,9 +1422,10 @@ class moodle_page {
      *
      * @param string $heading the main heading that should be displayed at the top of the <body>.
      * @param bool $applyformatting apply format_string() - by default true.
+     * @param bool $clean whether the heading should be cleaned or not when no formatting is applied - by default true.
      */
-    public function set_heading($heading, bool $applyformatting = true) {
-        $this->_heading = $applyformatting ? format_string($heading) : clean_text($heading);
+    public function set_heading($heading, bool $applyformatting = true, bool $clean = true) {
+        $this->_heading = $applyformatting ? format_string($heading) : ($clean ? clean_text($heading) : $heading);
     }
 
     /**

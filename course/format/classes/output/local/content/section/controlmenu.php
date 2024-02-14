@@ -119,7 +119,7 @@ class controlmenu implements named_templatable, renderable {
      * @return array of edit control items
      */
     public function section_control_items() {
-        global $USER;
+        global $USER, $PAGE;
 
         $format = $this->format;
         $section = $this->section;
@@ -135,13 +135,18 @@ class controlmenu implements named_templatable, renderable {
         $baseurl = course_get_url($course, $sectionreturn);
         $baseurl->param('sesskey', sesskey());
 
-        $controls['view'] = [
-            'url'   => new moodle_url('/course/section.php', ['id' => $section->id]),
-            'icon' => 'i/viewsection',
-            'name' => get_string('view'),
-            'pixattr' => ['class' => ''],
-            'attr' => ['class' => 'icon view'],
-        ];
+        $controls = [];
+
+        // Only show the view link if we are not already in the section view page.
+        if ($PAGE->pagetype !== 'section-view-' . $course->format) {
+            $controls['view'] = [
+                'url'   => new moodle_url('/course/section.php', ['id' => $section->id]),
+                'icon' => 'i/viewsection',
+                'name' => get_string('view'),
+                'pixattr' => ['class' => ''],
+                'attr' => ['class' => 'icon view'],
+            ];
+        }
 
         if (!$isstealth && has_capability('moodle/course:update', $coursecontext, $user)) {
             $params = ['id' => $section->id];
@@ -177,6 +182,9 @@ class controlmenu implements named_templatable, renderable {
 
         if ($section->section) {
             $url = clone($baseurl);
+            if (!is_null($sectionreturn)) {
+                $url->param('sectionid', $format->get_sectionid());
+            }
             if (!$isstealth) {
                 if (has_capability('moodle/course:sectionvisibility', $coursecontext, $user)) {
                     $strhidefromothers = get_string('hidefromothers', 'format_' . $course->format);

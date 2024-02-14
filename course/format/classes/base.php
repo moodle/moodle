@@ -2028,4 +2028,14 @@ abstract class base {
     public function get_required_jsfiles(): array {
         return [];
     }
+
+    /**
+     * Determines whether section items can be removed from the navigation, just like the breadcrumb feature seen on activity pages.
+     * By default, it returns false but can be overridden by the course format to change the behaviour.
+     *
+     * @return bool True if sections can be removed, false otherwise.
+     */
+    public function can_sections_be_removed_from_navigation(): bool {
+        return false;
+    }
 }

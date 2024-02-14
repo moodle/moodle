@@ -61,15 +61,14 @@ Feature: Course activity controls works as expected
     And I should see "Edited test forum name 2"
     # General section can't be hidden. Check this part using always the first section.
     And I am on the "Course 1" course page
-    And I open section "1" edit menu
-    And I click on "View" "link" in the <firstsection> "section"
     And I hide section "1"
-    And <belowpage> "section" should not exist
     And section "1" should be hidden
     And all activities in section "1" should be hidden
     And I show section "1"
-    And <belowpage> "section" should not exist
     And section "1" should be visible
+    And I open section "1" edit menu
+    And I click on "View" "link" in the <firstsection> "section"
+    And <belowpage> "section" should not exist
     And the following config values are set as admin:
       | unaddableblocks | | theme_boost|
     And I add the "Section links" block
@@ -129,9 +128,6 @@ Feature: Course activity controls works as expected
     And I should see "Edited test forum name 2"
     # General section can't be hidden. Check this part using always the first section.
     And I am on the "Course 1" course page
-    And I turn editing mode off
-    And I click on <firstsection> "link" in the "region-main" "region"
-    And I turn editing mode on
     And I hide section "1"
     And section "1" should be hidden
     And all activities in section "1" should be hidden

@@ -32,7 +32,7 @@ Feature: Sections can be edited and deleted in weekly sections format
     When I edit the section "0" and I fill the form with:
       | Custom | 1                      |
       | New value for Section name      | This is the general section |
-    Then I should see "This is the general section" in the "This is the general section" "section"
+    Then I should see "This is the general section" in the "page" "region"
 
   Scenario: View the default name of the second section in weeks format
     When I edit the section "2"
@@ -42,14 +42,14 @@ Feature: Sections can be edited and deleted in weekly sections format
   Scenario: Edit section summary in weeks format
     When I edit the section "2" and I fill the form with:
       | Description | Welcome to section 2 |
-    Then I should see "Welcome to section 2" in the "8 May - 14 May" "section"
+    Then I should see "Welcome to section 2" in the "page" "region"
 
   Scenario: Edit section default name in weeks format
     Given I should see "8 May - 14 May" in the "8 May - 14 May" "section"
     When I edit the section "2" and I fill the form with:
       | Custom | 1                  |
       | New value for Section name      | This is the second week |
-    Then I should see "This is the second week" in the "This is the second week" "section"
+    Then I should see "This is the second week" in the "page" "region"
     And I should not see "8 May - 14 May"
 
   @javascript

@@ -28183,10 +28183,6 @@ table.calendartable caption {
   margin-top: 5px;
 }
 
-.course-content .single-section {
-  margin-top: 1em;
-}
-
 .course-content .single-section .section-navigation {
   display: block;
   padding: 0.5em;
@@ -28268,6 +28264,11 @@ table.calendartable caption {
   padding: 0 6px 0;
   text-align: right;
   width: auto;
+}
+
+.course-content .single-section ul.topics li.section,
+.course-content .single-section ul.weeks li.section {
+  padding-top: 0;
 }
 
 @media (max-width: 767.98px) {
@@ -28382,6 +28383,10 @@ table.calendartable caption {
 li.section.hidden span.commands a.editing_hide,
 li.section.hidden span.commands a.editing_show {
   cursor: default;
+}
+
+.single-section-page .header-action {
+  display: inline-block;
 }
 
 input.titleeditor {
