@@ -2709,4 +2709,79 @@ class api_test extends \advanced_testcase {
         $this->assertContains($coursecontext1, $result);
         $this->assertContains($coursecontext2, $result);
     }
+
+    /**
+     * Test api validate_create_data_request.
+     */
+    public function test_validate_create_data_request() {
+        $this->resetAfterTest();
+
+        $systemcontext = \context_system::instance();
+        $user = $this->getDataGenerator()->create_user();
+        // User with permissions for doing requests for others.
+        $requester = $this->getDataGenerator()->create_user();
+        $role = $this->getDataGenerator()->create_role();
+        assign_capability('tool/dataprivacy:makedatarequestsforchildren', CAP_ALLOW, $role, $systemcontext);
+        role_assign($role, $requester->id, \context_user::instance($user->id));
+        // User without permissions for doing requests.
+        $nopermissionuser = $this->getDataGenerator()->create_user();
+        $nopermissionrole = $this->getDataGenerator()->create_role();
+        assign_capability('tool/dataprivacy:requestdelete', CAP_PROHIBIT, $nopermissionrole, \context_user::instance($nopermissionuser->id));
+        assign_capability('tool/dataprivacy:downloadownrequest', CAP_PROHIBIT, $nopermissionrole, \context_user::instance($nopermissionuser->id));
+        assign_capability('tool/dataprivacy:requestdeleteforotheruser', CAP_PROHIBIT, $nopermissionrole, $systemcontext);
+        role_assign($nopermissionrole, $nopermissionuser->id, \context_user::instance($nopermissionuser->id));
+        role_assign($nopermissionrole, $nopermissionuser->id, $systemcontext);
+
+        $this->setUser($user);
+        // All good.
+        $errors = api::validate_create_data_request((object) [
+            'userid' => $user->id,
+            'type' => api::DATAREQUEST_TYPE_EXPORT,
+        ]);
+        $this->assertEmpty($errors);
+
+        // Invalid data request type.
+        $errors = api::validate_create_data_request((object) [
+            'userid' => $user->id,
+            'type' => 1250,
+        ]);
+        $this->assertCount(1, $errors);
+        $this->assertArrayHasKey('errorinvalidrequesttype', $errors);
+
+        // Request already exists.
+        api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT);
+        $errors = api::validate_create_data_request((object) [
+            'userid' => $user->id,
+            'type' => api::DATAREQUEST_TYPE_EXPORT,
+        ]);
+        $this->assertCount(1, $errors);
+        $this->assertArrayHasKey('errorrequestalreadyexists', $errors);
+
+        // No permission to request data deletion for itself.
+        $this->setUser($nopermissionuser);
+        $errors = api::validate_create_data_request((object) [
+            'userid' => $nopermissionuser->id,
+            'type' => api::DATAREQUEST_TYPE_DELETE,
+        ]);
+        $this->assertCount(1, $errors);
+        $this->assertArrayHasKey('errorcannotrequestdeleteforself', $errors);
+
+        // No permission to request data deletion for other.
+        $this->setUser($nopermissionuser);
+        $errors = api::validate_create_data_request((object) [
+            'userid' => $user->id,
+            'type' => api::DATAREQUEST_TYPE_DELETE,
+        ]);
+        $this->assertCount(1, $errors);
+        $this->assertArrayHasKey('errorcannotrequestdeleteforother', $errors);
+
+         // No permission to request data export for itself.
+         $this->setUser($nopermissionuser);
+         $errors = api::validate_create_data_request((object) [
+             'userid' => $nopermissionuser->id,
+             'type' => api::DATAREQUEST_TYPE_EXPORT,
+         ]);
+         $this->assertCount(1, $errors);
+         $this->assertArrayHasKey('errorcannotrequestexportforself', $errors);
+    }
 }
