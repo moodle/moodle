@@ -3330,5 +3330,26 @@ privatefiles,moodle|/user/files.php';
         upgrade_main_savepoint(true, 2023042405.06);
     }
 
+    if ($oldversion < 2023042406.05) {
+
+        // Get all "select" custom field shortnames.
+        $fieldshortnames = $DB->get_fieldset_select('customfield_field', 'shortname', 'type = :type', ['type' => 'select']);
+
+        // Ensure any used in custom reports columns are not using integer type aggregation.
+        foreach ($fieldshortnames as $fieldshortname) {
+            $DB->execute("
+                UPDATE {reportbuilder_column}
+                   SET aggregation = NULL
+                 WHERE " . $DB->sql_like('uniqueidentifier', ':uniqueidentifier', false) . "
+                   AND aggregation IN ('avg', 'max', 'min', 'sum')
+            ", [
+                'uniqueidentifier' => '%' . $DB->sql_like_escape(":customfield_{$fieldshortname}"),
+            ]);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2023042406.05);
+    }
+
     return true;
 }

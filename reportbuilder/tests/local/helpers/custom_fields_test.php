@@ -97,16 +97,23 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $this->assertCount(5, $columns);
         $this->assertContainsOnlyInstancesOf(column::class, $columns);
 
-        [$column0, $column1, $column2, $column3, $column4] = $columns;
-        $this->assertEqualsCanonicalizing(['Text', 'Textarea', 'Checkbox', 'Date', 'Select'], [
-            $column0->get_title(), $column1->get_title(), $column2->get_title(), $column3->get_title(), $column4->get_title()
-        ]);
+        // Column titles.
+        $this->assertEquals(
+            ['Text', 'Textarea', 'Checkbox', 'Date', 'Select'],
+            array_map(fn(column $column) => $column->get_title(), $columns)
+        );
 
-        $this->assertEquals(column::TYPE_TEXT, $column0->get_type());
-        $this->assertEquals('course', $column0->get_entity_name());
-        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $column0->get_joins()[0]);
-        // Column of type TEXT is sortable.
-        $this->assertTrue($column0->get_is_sortable());
+        // Column types.
+        $this->assertEquals(
+            [column::TYPE_TEXT, column::TYPE_LONGTEXT, column::TYPE_BOOLEAN, column::TYPE_TIMESTAMP, column::TYPE_TEXT],
+            array_map(fn(column $column) => $column->get_type(), $columns)
+        );
+
+        // Column sortable.
+        $this->assertEquals(
+            [true, false, true, true, true],
+            array_map(fn(column $column) => $column->get_is_sortable(), $columns)
+        );
     }
 
     /**
@@ -116,12 +123,23 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $customfields = $this->generate_customfields();
-        $columns = $customfields->get_columns();
-        $this->assertCount(1, ($columns[0])->get_joins());
 
-        $customfields->add_join('JOIN {test} t ON t.id = id');
+        // By default, we always join on the customfield data table.
         $columns = $customfields->get_columns();
-        $this->assertCount(2, ($columns[0])->get_joins());
+        $joins = $columns[0]->get_joins();
+
+        $this->assertCount(1, $joins);
+        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $joins[0]);
+
+        // Add additional join.
+        $customfields->add_join('JOIN {test} t ON t.id = id');
+
+        $columns = $customfields->get_columns();
+        $joins = $columns[0]->get_joins();
+
+        $this->assertCount(2, $joins);
+        $this->assertEquals('JOIN {test} t ON t.id = id', $joins[0]);
+        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $joins[1]);
     }
 
     /**
@@ -131,12 +149,17 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $this->resetAfterTest();
 
         $customfields = $this->generate_customfields();
-        $columns = $customfields->get_columns();
-        $this->assertCount(1, ($columns[0])->get_joins());
 
+        // Add additional joins.
         $customfields->add_joins(['JOIN {test} t ON t.id = id', 'JOIN {test2} t2 ON t2.id = id']);
+
         $columns = $customfields->get_columns();
-        $this->assertCount(3, ($columns[0])->get_joins());
+        $joins = $columns[0]->get_joins();
+
+        $this->assertCount(3, $joins);
+        $this->assertEquals('JOIN {test} t ON t.id = id', $joins[0]);
+        $this->assertEquals('JOIN {test2} t2 ON t2.id = id', $joins[1]);
+        $this->assertStringStartsWith('LEFT JOIN {customfield_data}', $joins[2]);
     }
 
     /**
@@ -151,10 +174,11 @@ class custom_fields_test extends core_reportbuilder_testcase {
         $this->assertCount(5, $filters);
         $this->assertContainsOnlyInstancesOf(filter::class, $filters);
 
-        [$filter0, $filter1, $filter2, $filter3, $filter4] = $filters;
-        $this->assertEqualsCanonicalizing(['Text', 'Textarea', 'Checkbox', 'Date', 'Select'], [
-            $filter0->get_header(), $filter1->get_header(), $filter2->get_header(), $filter3->get_header(), $filter4->get_header()
-        ]);
+        // Filter titles.
+        $this->assertEquals(
+            ['Text', 'Textarea', 'Checkbox', 'Date', 'Select'],
+            array_map(fn(filter $filter) => $filter->get_header(), $filters)
+        );
     }
 
     /**
