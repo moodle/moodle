@@ -16,7 +16,9 @@
 
 namespace qtype_calculated;
 
+use qtype_calculated;
 use question_attempt_step;
+use question_bank;
 use question_classified_response;
 use question_display_options;
 use question_state;
@@ -195,5 +197,43 @@ class question_test extends \advanced_testcase {
         $this->assertEquals(0, $options['unitpenalty']);
         $this->assertEquals(qtype_numerical::UNITNONE, $options['unitdisplay']);
         $this->assertEmpty($options['unitsleft']);
+    }
+
+    /**
+     * Test that the grading of negative responses does not show false ERROR.
+     *
+     * @return void
+     * @throws \coding_exception
+     * @throws \dml_exception
+     */
+    public function test_grading_of_negative_responses(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $qtype = new qtype_calculated();
+
+        // Create a question.
+        $q = \test_question_maker::get_question_data('calculated', 'mult');
+        $q->id = 99;
+
+        // Add units for the question. The issue to test only applies if the answer contains a unit string.
+        $units = [];
+        $unit = new \stdClass();
+        $unit->question = $q->id;
+        $unit->multiplier = 1.0;
+        $unit->unit = "cm";
+        $units[] = $unit;
+        $DB->insert_records("question_numerical_units", $units);
+
+        $qtypeobj = question_bank::get_qtype($qtype->name());
+        $fakedata = ["a" => "5.7", "b" => "3.3"];
+
+        $result = $qtype->comment_on_datasetitems($qtypeobj, $q->id, $q->questiontext, $q->options->answers, $fakedata, 1);
+
+        // Make sure "ERROR" is not part of the answers.
+        foreach ($result->stranswers as $answer) {
+            $this->assertFalse(strstr($answer, "ERROR"), "Assert that 'ERROR' is not part of the answer!");
+        }
     }
 }
