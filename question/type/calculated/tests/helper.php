@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  */
 class qtype_calculated_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('sum', 'mult');
+        return ['sum', 'mult'];
     }
 
     /**
@@ -70,15 +70,15 @@ class qtype_calculated_test_helper extends question_test_helper {
         $q->unitdisplay = qtype_numerical::UNITNONE;
         $q->unitgradingtype = 0;
         $q->unitpenalty = 0;
-        $q->ap = new qtype_numerical_answer_processor(array());
+        $q->ap = new qtype_numerical_answer_processor([]);
         $q->synchronised = false;
 
-        $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
-            array('a' => 1, 'b' => 5),
-            array('a' => 3, 'b' => 4),
-            array('a' => 3, 'b' => 0.01416),
-            array('a' => 31, 'b' => 0.01416),
-        ));
+        $q->datasetloader = new qtype_calculated_test_dataset_loader(0, [
+            ['a' => 1, 'b' => 5],
+            ['a' => 3, 'b' => 4],
+            ['a' => 3, 'b' => 0.01416],
+            ['a' => 31, 'b' => 0.01416],
+        ]);
 
         return $q;
     }
@@ -115,7 +115,7 @@ class qtype_calculated_test_helper extends question_test_helper {
             $answer->correctanswerformat = 1;
         }
 
-        $qdata->options->units = array();
+        $qdata->options->units = [];
 
         return $qdata;
     }
@@ -138,24 +138,24 @@ class qtype_calculated_test_helper extends question_test_helper {
         $fromform->unitgradingtypes = '1';
         $fromform->unitsleft = '0';
         $fromform->nounits = 1;
-        $fromform->multiplier = array();
+        $fromform->multiplier = [];
         $fromform->multiplier[0] = '1.0';
         $fromform->synchronize = 0;
         $fromform->answernumbering = 0;
         $fromform->shuffleanswers = 0;
 
         $fromform->noanswers = 6;
-        $fromform->answer = array();
+        $fromform->answer = [];
         $fromform->answer[0] = '{a} + {b}';
         $fromform->answer[1] = '{a} - {b}';
         $fromform->answer[2] = '*';
 
-        $fromform->fraction = array();
+        $fromform->fraction = [];
         $fromform->fraction[0] = '1.0';
         $fromform->fraction[1] = '0.0';
         $fromform->fraction[2] = '0.0';
 
-        $fromform->tolerance = array();
+        $fromform->tolerance = [];
         $fromform->tolerance[0] = 0.001;
         $fromform->tolerance[1] = 0.001;
         $fromform->tolerance[2] = 0;
@@ -172,16 +172,16 @@ class qtype_calculated_test_helper extends question_test_helper {
         $fromform->correctanswerformat[1] = 1;
         $fromform->correctanswerformat[2] = 1;
 
-        $fromform->feedback = array();
-        $fromform->feedback[0] = array();
+        $fromform->feedback = [];
+        $fromform->feedback[0] = [];
         $fromform->feedback[0]['format'] = FORMAT_HTML;
         $fromform->feedback[0]['text'] = 'Very good.';
 
-        $fromform->feedback[1] = array();
+        $fromform->feedback[1] = [];
         $fromform->feedback[1]['format'] = FORMAT_HTML;
         $fromform->feedback[1]['text'] = 'Add. not subtract!';
 
-        $fromform->feedback[2] = array();
+        $fromform->feedback[2] = [];
         $fromform->feedback[2]['format'] = FORMAT_HTML;
         $fromform->feedback[2]['text'] = 'Completely wrong.';
 
@@ -342,9 +342,9 @@ class qtype_calculated_test_helper extends question_test_helper {
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_test_dataset_loader extends qtype_calculated_dataset_loader{
+class qtype_calculated_test_dataset_loader extends qtype_calculated_dataset_loader {
     protected $valuesets;
-    protected $aresynchronised = array();
+    protected $aresynchronised = [];
 
     public function __construct($questionid, array $valuesets) {
         parent::__construct($questionid);
