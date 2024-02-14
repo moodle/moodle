@@ -80,6 +80,9 @@ class users_test extends core_reportbuilder_testcase {
             'interests' => ['Horses'],
         ]);
 
+        $cohort = $this->getDataGenerator()->create_cohort(['name' => 'My cohort']);
+        cohort_add_member($cohort->id, $user->id);
+
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');
         $report = $generator->create_report(['name' => 'Users', 'source' => users::class, 'default' => 0]);
@@ -115,6 +118,9 @@ class users_test extends core_reportbuilder_testcase {
         // Tags.
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:name']);
         $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'tag:namewithlink']);
+
+        // Cohort.
+        $generator->create_column(['reportid' => $report->get('id'), 'uniqueidentifier' => 'cohort:name']);
 
         $content = $this->get_custom_report_content($report->get('id'));
         $this->assertCount(2, $content);
@@ -155,6 +161,7 @@ class users_test extends core_reportbuilder_testcase {
         $this->assertEquals('0.0.0.0', $userrow[24]);
         $this->assertEquals('Horses', $userrow[25]);
         $this->assertStringContainsString('Horses', $userrow[26]);
+        $this->assertEquals($cohort->name, $userrow[27]);
     }
 
     /**
@@ -257,7 +264,6 @@ class users_test extends core_reportbuilder_testcase {
                 'user:address_operator' => text::IS_EQUAL_TO,
                 'user:address_value' => 'Small Farm',
             ], false],
-
             'Filter city' => ['user:city', [
                 'user:city_operator' => text::IS_EQUAL_TO,
                 'user:city_value' => 'Barcelona',
@@ -376,6 +382,16 @@ class users_test extends core_reportbuilder_testcase {
             'Filter tag name not empty' => ['tag:name', [
                 'tag:name_operator' => tags::NOT_EMPTY,
             ], true],
+
+            // Cohort.
+            'Filter cohort name' => ['cohort:name', [
+                'cohort:name_operator' => text::IS_EQUAL_TO,
+                'cohort:name_value' => 'My cohort',
+            ], true],
+            'Filter cohort name (no match)' => ['cohort:name', [
+                'cohort:name_operator' => text::IS_EQUAL_TO,
+                'cohort:name_value' => 'Not my cohort',
+            ], false],
         ];
     }
 
@@ -413,6 +429,9 @@ class users_test extends core_reportbuilder_testcase {
             'interests' => ['Horses'],
             'lastip' => '0.0.0.0',
         ]);
+
+        $cohort = $this->getDataGenerator()->create_cohort(['name' => 'My cohort']);
+        cohort_add_member($cohort->id, $user->id);
 
         /** @var core_reportbuilder_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_reportbuilder');

@@ -57,9 +57,11 @@ abstract class datasource extends base {
     /**
      * Add columns from the given entity name to be available to use in a custom report
      *
+     * Wildcard matching is supported with '*' in both $include and $exclude, e.g. ['customfield*']
+     *
      * @param string $entityname
-     * @param array $include Include only these columns, if omitted then include all
-     * @param array $exclude Exclude these columns, if omitted then exclude none
+     * @param string[] $include Include only these columns, if omitted then include all
+     * @param string[] $exclude Exclude these columns, if omitted then exclude none
      * @throws coding_exception If both $include and $exclude are non-empty
      */
     final protected function add_columns_from_entity(string $entityname, array $include = [], array $exclude = []): void {
@@ -70,13 +72,13 @@ abstract class datasource extends base {
         $entity = $this->get_entity($entityname);
 
         // Retrieve filtered columns from entity, respecting given $include/$exclude parameters.
-        $columns = array_filter($entity->get_columns(), static function(column $column) use ($include, $exclude): bool {
+        $columns = array_filter($entity->get_columns(), function(column $column) use ($include, $exclude): bool {
             if (!empty($include)) {
-                return in_array($column->get_name(), $include);
+                return $this->report_element_search($column->get_name(), $include);
             }
 
             if (!empty($exclude)) {
-                return !in_array($column->get_name(), $exclude);
+                return !$this->report_element_search($column->get_name(), $exclude);
             }
 
             return true;
@@ -188,9 +190,11 @@ abstract class datasource extends base {
     /**
      * Add filters from the given entity name to be available to use in a custom report
      *
+     * Wildcard matching is supported with '*' in both $include and $exclude, e.g. ['customfield*']
+     *
      * @param string $entityname
-     * @param array $include Include only these filters, if omitted then include all
-     * @param array $exclude Exclude these filters, if omitted then exclude none
+     * @param string[] $include Include only these filters, if omitted then include all
+     * @param string[] $exclude Exclude these filters, if omitted then exclude none
      * @throws coding_exception If both $include and $exclude are non-empty
      */
     final protected function add_filters_from_entity(string $entityname, array $include = [], array $exclude = []): void {
@@ -201,13 +205,13 @@ abstract class datasource extends base {
         $entity = $this->get_entity($entityname);
 
         // Retrieve filtered filters from entity, respecting given $include/$exclude parameters.
-        $filters = array_filter($entity->get_filters(), static function(filter $filter) use ($include, $exclude): bool {
+        $filters = array_filter($entity->get_filters(), function(filter $filter) use ($include, $exclude): bool {
             if (!empty($include)) {
-                return in_array($filter->get_name(), $include);
+                return $this->report_element_search($filter->get_name(), $include);
             }
 
             if (!empty($exclude)) {
-                return !in_array($filter->get_name(), $exclude);
+                return !$this->report_element_search($filter->get_name(), $exclude);
             }
 
             return true;
@@ -278,9 +282,11 @@ abstract class datasource extends base {
     /**
      * Add conditions from the given entity name to be available to use in a custom report
      *
+     * Wildcard matching is supported with '*' in both $include and $exclude, e.g. ['customfield*']
+     *
      * @param string $entityname
-     * @param array $include Include only these conditions, if omitted then include all
-     * @param array $exclude Exclude these conditions, if omitted then exclude none
+     * @param string[] $include Include only these conditions, if omitted then include all
+     * @param string[] $exclude Exclude these conditions, if omitted then exclude none
      * @throws coding_exception If both $include and $exclude are non-empty
      */
     final protected function add_conditions_from_entity(string $entityname, array $include = [], array $exclude = []): void {
@@ -291,13 +297,13 @@ abstract class datasource extends base {
         $entity = $this->get_entity($entityname);
 
         // Retrieve filtered conditions from entity, respecting given $include/$exclude parameters.
-        $conditions = array_filter($entity->get_conditions(), static function(filter $condition) use ($include, $exclude): bool {
+        $conditions = array_filter($entity->get_conditions(), function(filter $condition) use ($include, $exclude): bool {
             if (!empty($include)) {
-                return in_array($condition->get_name(), $include);
+                return $this->report_element_search($condition->get_name(), $include);
             }
 
             if (!empty($exclude)) {
-                return !in_array($condition->get_name(), $exclude);
+                return !$this->report_element_search($condition->get_name(), $exclude);
             }
 
             return true;
@@ -384,11 +390,19 @@ abstract class datasource extends base {
      * Adds all columns/filters/conditions from the given entity to the report at once
      *
      * @param string $entityname
+     * @param string[] $limitcolumns Include only these columns
+     * @param string[] $limitfilters Include only these filters
+     * @param string[] $limitconditions Include only these conditions
      */
-    final protected function add_all_from_entity(string $entityname): void {
-        $this->add_columns_from_entity($entityname);
-        $this->add_filters_from_entity($entityname);
-        $this->add_conditions_from_entity($entityname);
+    final protected function add_all_from_entity(
+        string $entityname,
+        array $limitcolumns = [],
+        array $limitfilters = [],
+        array $limitconditions = [],
+    ): void {
+        $this->add_columns_from_entity($entityname, $limitcolumns);
+        $this->add_filters_from_entity($entityname, $limitfilters);
+        $this->add_conditions_from_entity($entityname, $limitconditions);
     }
 
     /**
@@ -407,5 +421,29 @@ abstract class datasource extends base {
      */
     final public static function report_elements_modified(int $reportid): void {
         self::$elementsmodified[$reportid] = microtime(true);
+    }
+
+    /**
+     * Search for given element within list of search items, supporting '*' wildcards
+     *
+     * @param string $element
+     * @param string[] $search
+     * @return bool
+     */
+    private function report_element_search(string $element, array $search): bool {
+        foreach ($search as $item) {
+            // Simple matching.
+            if ($element === $item) {
+                return true;
+            }
+
+            // Wildcard matching.
+            if (strpos($item, '*') !== false) {
+                $pattern = '/^' . str_replace('\*', '.*', preg_quote($item)) . '$/';
+                return (bool) preg_match($pattern, $element);
+            }
+        }
+
+        return false;
     }
 }

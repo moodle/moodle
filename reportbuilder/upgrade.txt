@@ -9,6 +9,9 @@ Information provided here is intended especially for developers.
 * New method `get_table_aliases` in base entity class, for retrieving all table aliases in a single call
 * The database helper `generate_alias[es]` and `generate_param_name[s]` methods now accept an optional `$suffix` argument for
   appending additional string to the generated value
+* The base datasource `add_all_from_entity` method accepts additional parameters to limit which columns, filters and conditions
+  are added. The `add_[columns|filters|conditions]_from_entity` class methods also now support wildcard matching in both `$include`
+  and `$exclude` parameters
 * New report filter types:
   - `filesize` for reports containing filesize data
 
