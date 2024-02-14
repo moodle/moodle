@@ -88,6 +88,17 @@ if (!isloggedin()) {
         'lti_message_hint' => $ltimessagehint,
         'client_id' => $_REQUEST['client_id'],
     ]));
+    if (!cookie_helper::cookies_supported()) {
+        global $OUTPUT, $PAGE;
+        $PAGE->set_context(context_system::instance());
+        $PAGE->set_url(new moodle_url('/enrol/lti/login.php'));
+        $PAGE->set_pagelayout('popup');
+        echo $OUTPUT->header();
+        $renderer = $PAGE->get_renderer('enrol_lti');
+        echo $renderer->render_cookies_required_notice();
+        echo $OUTPUT->footer();
+        die();
+    }
 }
 
 // Now, do the OIDC login.
