@@ -372,6 +372,8 @@ function quiz_attempt_save_started(
     $originalattempt = null;
     if (isset($attempt->id) && $attempt->state === quiz_attempt::NOT_STARTED) {
         $originalattempt = clone $attempt;
+        // In case questions have been edited since attempts were pre-created, update questions now.
+        quiz_attempt::create($attempt->id)->update_questions_to_new_version_if_changed();
         // Update the attempt's state.
         $attempt->state = quiz_attempt::IN_PROGRESS;
         $DB->update_record('quiz_attempts', $attempt);

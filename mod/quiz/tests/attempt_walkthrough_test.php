@@ -694,4 +694,83 @@ final class attempt_walkthrough_test extends \advanced_testcase {
         $this->assertEquals($attemptobj->get_context(), $gradedevent->get_context());
         $this->assertEquals($attempturl, $gradedevent->get_url());
     }
+
+    /**
+     * Create a quiz with questions, pre-create an attempt, edit a question, then begin the attempt.
+     */
+    public function test_quiz_attempt_walkthrough_update_question_after_precreate(): void {
+        global $SITE;
+
+        $this->resetAfterTest(true);
+
+        // Make a quiz.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+
+        $quiz = $quizgenerator->create_instance(
+            [
+                'course' => $SITE->id,
+                'questionsperpage' => 0,
+                'grade' => 100.0,
+                'sumgrades' => 3,
+            ],
+        );
+
+        // Create a couple of questions.
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        $cat = $questiongenerator->create_question_category();
+        $saq = $questiongenerator->create_question('shortanswer', null, ['category' => $cat->id]);
+        $numq = $questiongenerator->create_question('numerical', null, ['category' => $cat->id]);
+        $matchq = $questiongenerator->create_question('match', null, ['category' => $cat->id]);
+        $description = $questiongenerator->create_question('description', null, ['category' => $cat->id]);
+
+        // Add them to the quiz.
+        quiz_add_quiz_question($saq->id, $quiz);
+        quiz_add_quiz_question($numq->id, $quiz);
+        quiz_add_quiz_question($matchq->id, $quiz);
+        quiz_add_quiz_question($description->id, $quiz);
+
+        // Make a user to do the quiz.
+        $user1 = $this->getDataGenerator()->create_user();
+
+        $quizobj = quiz_settings::create($quiz->id, $user1->id);
+
+        // Start the attempt.
+        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
+        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
+
+        $timenow = time();
+        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user1->id);
+
+        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
+        $this->assertEquals('1,2,3,4,0', $attempt->layout);
+
+        quiz_attempt_save_not_started($quba, $attempt);
+
+        $attemptobj = quiz_attempt::create($attempt->id);
+
+        // Update question in quiz.
+        $newsa = $questiongenerator->update_question($saq, null,
+            ['name' => 'This is the second version of shortanswer']);
+        $newnumbq = $questiongenerator->update_question($numq, null,
+            ['name' => 'This is the second version of numerical']);
+        $newmatch = $questiongenerator->update_question($matchq, null,
+            ['name' => 'This is the second version of match']);
+        $newdescription = $questiongenerator->update_question($description, null,
+            ['name' => 'This is the second version of description']);
+
+        $this->assertEquals($saq->id, $attemptobj->get_question_attempt(1)->get_question_id());
+        $this->assertEquals($numq->id, $attemptobj->get_question_attempt(2)->get_question_id());
+        $this->assertEquals($matchq->id, $attemptobj->get_question_attempt(3)->get_question_id());
+        $this->assertEquals($description->id, $attemptobj->get_question_attempt(4)->get_question_id());
+
+        quiz_attempt_save_started($quizobj, $quba, $attempt);
+
+        // Verify that the started attempt contains the new questions.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $this->assertEquals($newsa->id, $attemptobj->get_question_attempt(1)->get_question_id());
+        $this->assertEquals($newnumbq->id, $attemptobj->get_question_attempt(2)->get_question_id());
+        $this->assertEquals($newmatch->id, $attemptobj->get_question_attempt(3)->get_question_id());
+        $this->assertEquals($newdescription->id, $attemptobj->get_question_attempt(4)->get_question_id());
+    }
 }
