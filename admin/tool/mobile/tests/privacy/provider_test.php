@@ -87,7 +87,8 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $context1 = \context_user::instance($user1->id);
         $context2 = \context_user::instance($user2->id);
         $key1 = get_user_key('tool_mobile', $user1->id);
-        $key2 = get_user_key('tool_mobile', $user2->id);
+        $key2 = get_user_key('tool_mobile/qrlogin', $user1->id);
+        $key3 = get_user_key('tool_mobile', $user2->id);
 
         // Ensure only user1 is found in context1.
         $userlist = new \core_privacy\local\request\userlist($context1, $component);
@@ -174,12 +175,15 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $context1 = \context_user::instance($user1->id);
         $context2 = \context_user::instance($user2->id);
         $keyvalue1 = get_user_key('tool_mobile', $user1->id);
-        $keyvalue2 = get_user_key('tool_mobile', $user2->id);
+        $keyvalue2 = get_user_key('tool_mobile/qrlogin', $user1->id);
+        $keyvalue3 = get_user_key('tool_mobile', $user2->id);
         $key1 = $DB->get_record('user_private_key', ['value' => $keyvalue1]);
 
-        // Before deletion, we should have 2 user_private_keys.
+        // Before deletion, we should have 2 user_private_keys for tool_mobile and one for tool_mobile/qrlogin.
         $count = $DB->count_records('user_private_key', ['script' => 'tool_mobile']);
         $this->assertEquals(2, $count);
+        $count = $DB->count_records('user_private_key', ['script' => 'tool_mobile/qrlogin']);
+        $this->assertEquals(1, $count);
 
         // Ensure deleting wrong user in the user context does nothing.
         $approveduserids = [$user2->id];
@@ -197,6 +201,8 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         // Ensure only user1's data is deleted, user2's remains.
         $count = $DB->count_records('user_private_key', ['script' => 'tool_mobile']);
         $this->assertEquals(1, $count);
+        $count = $DB->count_records('user_private_key', ['script' => 'tool_mobile/qrlogin']);
+        $this->assertEquals(0, $count);
 
         $params = ['script' => $component];
         $userid = $DB->get_field_select('user_private_key', 'userid', 'script = :script', $params);

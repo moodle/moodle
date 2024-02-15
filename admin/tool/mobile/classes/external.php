@@ -649,8 +649,8 @@ class external extends external_api {
         api::check_autologin_prerequisites($params['userid']);  // Checks https, avoid site admins using this...
 
         // Validate and delete the key.
-        $key = validate_user_key($params['qrloginkey'], 'tool_mobile', null);
-        delete_user_key('tool_mobile', $params['userid']);
+        $key = validate_user_key($params['qrloginkey'], 'tool_mobile/qrlogin', null);
+        delete_user_key('tool_mobile/qrlogin', $params['userid']);
 
         // Double check key belong to user.
         if ($key->userid != $params['userid']) {

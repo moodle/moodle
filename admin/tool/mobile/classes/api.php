@@ -419,13 +419,13 @@ class api {
     public static function get_qrlogin_key(stdClass $mobilesettings) {
         global $USER;
         // Delete previous keys.
-        delete_user_key('tool_mobile', $USER->id);
+        delete_user_key('tool_mobile/qrlogin', $USER->id);
 
         // Create a new key.
         $iprestriction = !empty($mobilesettings->qrsameipcheck) ? getremoteaddr(null) : null;
         $qrkeyttl = !empty($mobilesettings->qrkeyttl) ? $mobilesettings->qrkeyttl : self::LOGIN_QR_KEY_TTL;
         $validuntil = time() + $qrkeyttl;
-        return create_user_key('tool_mobile', $USER->id, null, $iprestriction, $validuntil);
+        return create_user_key('tool_mobile/qrlogin', $USER->id, null, $iprestriction, $validuntil);
     }
 
     /**
