@@ -28,6 +28,7 @@ This file describes API changes in the quiz code.
   - override_manager::delete_override_by_id
   - override_manager::delete_overrides
   - override_manager::delete_all_overrides
+* There is a new renderable grade_out_of to help with display a nicely formatted "42.00 out of 100.00" with a few variants.
 
 === 4.3 ===
 

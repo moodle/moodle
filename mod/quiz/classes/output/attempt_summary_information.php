@@ -19,6 +19,7 @@ namespace mod_quiz\output;
 use action_link;
 use core\output\named_templatable;
 use html_writer;
+use mod_quiz\output\grades\grade_out_of;
 use mod_quiz\quiz_attempt;
 use moodle_url;
 use mod_quiz\question\display_options;
@@ -178,29 +179,14 @@ class attempt_summary_information implements renderable, named_templatable {
             } else {
                 // Show raw marks only if they are different from the grade (like on the view page).
                 if ($quiz->grade != $quiz->sumgrades) {
-                    $a = new stdClass();
-                    $a->grade = quiz_format_grade($quiz, $attempt->sumgrades);
-                    $a->maxgrade = quiz_format_grade($quiz, $quiz->sumgrades);
                     $summary->add_item('marks', get_string('marks', 'quiz'),
-                            get_string('outofshort', 'quiz', $a));
+                            new grade_out_of($quiz, $attempt->sumgrades, $quiz->sumgrades, grade_out_of::SHORT));
                 }
 
                 // Now the scaled grade.
-                $a = new stdClass();
-                $a->grade = html_writer::tag('b', quiz_format_grade($quiz, $grade));
-                $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
-                if ($quiz->grade != 100) {
-                    // Show the percentage using the configured number of decimal places,
-                    // but without trailing zeroes.
-                    $a->percent = html_writer::tag('b', format_float(
-                            $attempt->sumgrades * 100 / $quiz->sumgrades,
-                            $quiz->decimalpoints, true, true));
-                    $formattedgrade = get_string('outofpercent', 'quiz', $a);
-                } else {
-                    $formattedgrade = get_string('outof', 'quiz', $a);
-                }
                 $summary->add_item('grade', get_string('gradenoun'),
-                    $formattedgrade);
+                    new grade_out_of($quiz, $grade, $quiz->grade,
+                        $quiz->grade == 100 ? grade_out_of::NORMAL : grade_out_of::WITH_PERCENT));
             }
         }
 
@@ -243,7 +229,7 @@ class attempt_summary_information implements renderable, named_templatable {
         return $templatecontext;
     }
 
-    public function get_template_name(\renderer_base $renderer): string {
+    public function get_template_name(renderer_base $renderer): string {
         // Only reason we are forced to implement this is that we want the quiz renderer
         // passed to export_for_template, not a core_renderer.
         return 'mod_quiz/attempt_summary_information';
