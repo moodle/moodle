@@ -545,87 +545,10 @@ class core_badges_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Prints tabs for badge editing.
-     *
-     * @deprecated since Moodle 4.0
-     * @todo MDL-73426 Final deprecation.
-     * @param integer $badgeid The badgeid to edit.
-     * @param context $context The current context.
-     * @param string $current The currently selected tab.
-     * @return string
+     * @deprecated since Moodle 4.0 - Use the manage_badge_action_bar tertiary navigation instead.
      */
-    public function print_badge_tabs($badgeid, $context, $current = 'overview') {
-        global $DB;
-        debugging("print_badge_tabs() is deprecated. " .
-            "This is replaced with the manage_badge_action_bar tertiary navigation.", DEBUG_DEVELOPER);
-
-        $badge = new badge($badgeid);
-        $row = array();
-
-        $row[] = new tabobject('overview',
-                    new moodle_url('/badges/overview.php', array('id' => $badgeid)),
-                    get_string('boverview', 'badges')
-                );
-
-        if (has_capability('moodle/badges:configuredetails', $context)) {
-            $row[] = new tabobject('badge',
-                        new moodle_url('/badges/edit.php', array('id' => $badgeid, 'action' => 'badge')),
-                        get_string('bdetails', 'badges')
-                    );
-        }
-
-        if (has_capability('moodle/badges:configurecriteria', $context)) {
-            $row[] = new tabobject('criteria',
-                        new moodle_url('/badges/criteria.php', array('id' => $badgeid)),
-                        get_string('bcriteria', 'badges')
-                    );
-        }
-
-        if (has_capability('moodle/badges:configuremessages', $context)) {
-            $row[] = new tabobject('message',
-                        new moodle_url('/badges/edit.php', array('id' => $badgeid, 'action' => 'message')),
-                        get_string('bmessage', 'badges')
-                    );
-        }
-
-        if (has_capability('moodle/badges:viewawarded', $context)) {
-            $awarded = $DB->count_records_sql('SELECT COUNT(b.userid)
-                                               FROM {badge_issued} b INNER JOIN {user} u ON b.userid = u.id
-                                               WHERE b.badgeid = :badgeid AND u.deleted = 0', array('badgeid' => $badgeid));
-            $row[] = new tabobject('awards',
-                        new moodle_url('/badges/recipients.php', array('id' => $badgeid)),
-                        get_string('bawards', 'badges', $awarded)
-                    );
-        }
-
-        if (has_capability('moodle/badges:configuredetails', $context)) {
-            $row[] = new tabobject('bendorsement',
-                new moodle_url('/badges/endorsement.php', array('id' => $badgeid)),
-                get_string('bendorsement', 'badges')
-            );
-        }
-
-        if (has_capability('moodle/badges:configuredetails', $context)) {
-            $sql = "SELECT COUNT(br.badgeid)
-                      FROM {badge_related} br
-                     WHERE (br.badgeid = :badgeid OR br.relatedbadgeid = :badgeid2)";
-            $related = $DB->count_records_sql($sql, ['badgeid' => $badgeid, 'badgeid2' => $badgeid]);
-            $row[] = new tabobject('brelated',
-                new moodle_url('/badges/related.php', array('id' => $badgeid)),
-                get_string('brelated', 'badges', $related)
-            );
-        }
-
-        if (has_capability('moodle/badges:configuredetails', $context)) {
-            $alignments = $DB->count_records_sql("SELECT COUNT(bc.id)
-                      FROM {badge_alignment} bc WHERE bc.badgeid = :badgeid", array('badgeid' => $badgeid));
-            $row[] = new tabobject('alignment',
-                new moodle_url('/badges/alignment.php', array('id' => $badgeid)),
-                get_string('balignment', 'badges', $alignments)
-            );
-        }
-
-        echo $this->tabtree($row, $current);
+    public function print_badge_tabs() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
