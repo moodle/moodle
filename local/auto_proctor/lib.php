@@ -244,6 +244,11 @@ class QuizProctor {
                         echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
                         echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/camera_monitoring/monitor_cam.js"></script>';
                     }
+
+                    if ($monitor_tab_microphone_activated){
+                        echo '<script type="text/javascript"> console.log("MONITOR MIC ACTIVATED"); </script>';
+                        echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/microphone_monitoring/monitor_mic.js"></script>';
+                    }
                 }
             }
         }
