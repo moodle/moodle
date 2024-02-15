@@ -40,8 +40,6 @@
                     </svg>
                 </button>
                 
-                
-                
                     <!-- Dropdown menu -->
                     <div id="filter" class="z-10 hidden w-56 p-3 bg-white rounded-lg shadow">
                         <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
@@ -70,12 +68,46 @@
                     </div>
                 </div>
                 <!-- END OF DROPDOWN -->
-                <button data-modal-hide="popup-modal" type="button" class=" text-gray-100 bg-blue-700 hover:bg-[#0061A8] focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-00 focus:z-10">Next</button>
+                <button data-modal-hide="popup-modal" type="button" data-modal-target="cam-view-popup-modal" data-modal-toggle="cam-view-popup-modal" class=" text-gray-100 bg-blue-700 hover:bg-[#0061A8] focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-00 focus:z-10">Next</button>
             </div>
         </div>
     </div>
 </div>
 
+<div id="cam-view-popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-10 py-9 w-full max-w-3xl max-h-full">
+        <div class="relative bg-white rounded-lg shadow">
+            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="p-6 md:p-8  text-center">
+                <h1 class="mb-2 text-2xl font-semibold text-black ">Multiple Cameras Detected</h1>
+
+                <p class="mb-2 text-md font-normal text-gray-700 ">This is what the selected camera is capturing. If you want to use a different camera, go back to previous step and select a different camera.</p>
+            <!-- Modal body -->
+            <div class="p-4 md:p-5 space-y-4">
+                <!-- ADD IMAGE HERE -->
+                <div class="flex justify-center">
+                    <img src="./alv.jpg" alt="Your Image" class="max-w-64 h-auto">
+                </div>
+                <p class="text-base leading-relaxed text-black ">
+                    If you see a completely black screen, it is mostly a camera error. Check your device’s camera.
+                </p>
+            </div>
+            <!-- Modal footer -->
+<!-- Modal footer -->
+<div class="flex justify-between items-center p-4 md:p-5  border-gray-200 rounded-b ">
+    <button data-modal-hide="cam-view-popup-modal" data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-5 focus:outline-none  rounded-lg border border-gray-400 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 ">Previous</button>
+    <button data-modal-hide="medium-modal" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">Next</button>
+</div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
     
 
