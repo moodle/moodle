@@ -64,6 +64,10 @@ class edit_grading_page implements renderable, templatable {
             unset($gradeitem->quizid);
             $gradeitem->displayname = format_string($gradeitem->name);
             $gradeitem->isused = $this->structure->is_grade_item_used($gradeitem->id);
+            $gradeitem->summarks = $gradeitem->isused ?
+                    $this->structure->formatted_grade_item_sum_marks($gradeitem->id) :
+                    '-';
+
             $gradeitems[] = $gradeitem;
 
             $gradeitemchoices[$gradeitem->id] = (object) [
@@ -97,17 +101,18 @@ class edit_grading_page implements renderable, templatable {
                 'displaynumber' => $this->structure->get_displayed_number_for_slot($slot->slot),
                 'displayname' => $editrenderer->get_question_name_for_slot(
                         $this->structure, $slot->slot, $PAGE->url),
+                'maxmark' => $this->structure->formatted_question_grade($slot->slot),
                 'choices' => array_values($choices),
             ];
         }
 
         return [
             'quizid' => $this->structure->get_quizid(),
-            'gradeitems' => $gradeitems,
-            'sections' => array_values($sections),
             'hasgradeitems' => !empty($gradeitems),
-            'nogradeitems' => ['message' => get_string('gradeitemsnoneyet', 'quiz')],
+            'gradeitems' => $gradeitems,
             'hasslots' => $this->structure->has_questions(),
+            'sections' => array_values($sections),
+            'nogradeitems' => ['message' => get_string('gradeitemsnoneyet', 'quiz')],
             'noslots' => ['message' => get_string('gradeitemnoslots', 'quiz')],
         ];
     }

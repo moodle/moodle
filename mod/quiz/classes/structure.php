@@ -1482,6 +1482,25 @@ class structure {
     }
 
     /**
+     * Get the total of marks of all questions assigned to this grade item, formatted for display.
+     *
+     * @param int $gradeitemid id of a quiz grade item belonging to this quiz.
+     * @return string total of marks of all questions assigned to this grade item.
+     */
+    public function formatted_grade_item_sum_marks(int $gradeitemid): string {
+        $this->verify_grade_item_is_ours($gradeitemid);
+
+        $summarks = 0;
+        foreach ($this->slotsinorder as $slot) {
+            if ($slot->quizgradeitemid == $gradeitemid) {
+                $summarks += $slot->maxmark;
+            }
+        }
+
+        return quiz_format_grade($this->get_quiz(), $summarks);
+    }
+
+    /**
      * Create a grade item.
      *
      * The new grade item is added at the end of the order.

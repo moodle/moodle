@@ -30,18 +30,49 @@
 
     Example context (json):
     {
+        "quizid": 42,
+        "hasgradeitems": true,
         "gradeitems": [
             {
                 "id": 123,
                 "sortorder": 1,
                 "name": "Reading & writing",
                 "displayname": "Reading &amp; writing",
+                "summarks": "10.00",
                 "isused": true
             }
         ],
-        "hasgradeitems": true,
+        "hasslots": true,
+        "sections": [
+            {
+                "displayname": "Section title",
+                "slots": [
+                    {
+                        "id": 234,
+                        "displaynumber": "1",
+                        "displayname": "Question name",
+                        "maxmark": "10.00",
+                        "choices": [
+                            {
+                                "id": 0,
+                                "choice": "[none]",
+                                "isselected": false
+                            },
+                            {
+                                "id": 123,
+                                "choice": "Reading &amp; writing",
+                                "isselected": true
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
         "nogradeitems": {
             "message": "This quiz does not yet have any grade items defined."
+        },
+        "noslots": {
+            "message": "No questions have been added to the quiz yet. Please add the questions to the quiz before setting up grading."
         }
     }
 }}
@@ -64,15 +95,16 @@
                 <tr>
                     <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
                     <th scope="col">{{#str}} actions {{/str}}</th>
+                    <th scope="col">{{#str}} totalmarks, quiz {{/str}}</th>
                 </tr>
             </thead>
             <tbody>
                 {{#gradeitems}}
                     <tr data-quiz-grade-item-id="{{id}}">
-                        <th scope="row">
-                            <span class="inplaceeditable inplaceeditable-text"
+                        <th scope="row" class="align-middle py-1">
+                            <span class="inplaceeditable inplaceeditable-text w-100"
                                 data-raw-name="{{name}}" data-edit-label="{{#str}} gradeitemnewname, quiz, {{{displayname}}} {{/str}}">
-                                    <a href="#" class="quickeditlink" data-action-edit="1" title="{{#str}} gradeitemedit, quiz, {{{displayname}}} {{/str}}">
+                                    <a href="#" class="quickeditlink w-100" data-action-edit="1" title="{{#str}} gradeitemedit, quiz, {{{displayname}}} {{/str}}">
                                         <span class="displayvalue">{{{displayname}}}</span>
                                         <span class="quickediticon">
                                             {{#pix}}t/editstring, core{{/pix}}
@@ -80,12 +112,15 @@
                                     </a>
                             </span>
                         </th>
-                        <td class="align-middle">
+                        <td class="align-middle text-center py-1">
                             {{^isused}}
                                 <a href="#" data-action-delete="1">
                                     {{#pix}} t/delete, core, {{#str}} gradeitemdelete, quiz, {{{name}}} {{/str}} {{/pix}}
                                 </a>
                             {{/isused}}
+                        </td>
+                        <td class="align-middle text-right py-1">
+                            {{summarks}}
                         </td>
                     </tr>
                 {{/gradeitems}}
@@ -112,32 +147,33 @@
                 <tr>
                     <th scope="col">{{#str}} qnumberbrief, quiz {{/str}}</th>
                     <th scope="col">{{#str}} question, quiz {{/str}}</th>
+                    <th scope="col">{{#str}} marks, quiz {{/str}}</th>
                     <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
                 </tr>
             </thead>
             <tbody>
                 {{#sections}}
                     <tr class="mod_quiz-new-section">
-                        <td colspan="3">
+                        <td colspan="4">
                             <h4>{{{displayname}}}</h4>
                         </td>
                     </tr>
 
                     {{#slots}}
                         <tr>
-                            <td>{{displaynumber}}</td>
-                            <th scope="row"><label for="grade-item-choice-{{id}}">{{{displayname}}}</label></th>
-                            <td>
+                            <td class="align-middle py-1">{{displaynumber}}</td>
+                            <th scope="row" class="align-middle py-1"><label for="grade-item-choice-{{id}}" class="my-1">{{{displayname}}}</label></th>
+                            <td class="align-middle text-right py-1">{{maxmark}}</td>
+                            <td class="align-middle py-1">
                                 <select id="grade-item-choice-{{id}}" class="form-control" data-slot-id="{{id}}">
                                     {{#choices}}
-                                        <option value="{{id}}"{{#isselected}} selected="selected"{{/isselected}}>{{choice}}</option>
+                                        <option value="{{id}}"{{#isselected}} selected="selected"{{/isselected}}>{{{choice}}}</option>
                                     {{/choices}}
                                 </select>
                             </td>
                         </tr>
                     {{/slots}}
                 {{/sections}}
-
             </tbody>
         </table>
     {{/hasslots}}

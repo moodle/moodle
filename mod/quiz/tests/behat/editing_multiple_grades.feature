@@ -39,13 +39,22 @@ Feature: Setup multiple grades for a quiz
       | Question B | 1    | Intelligence |
       | Question C | 2    | Intuition    |
     When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
+
     Then I should see "Grade items"
+
     And "Delete" "icon" should not exist in the "Intuition" "table_row"
+    And "Intuition" row "Total of marks" column of "mod_quiz-grade-item-list" table should contain "2.00"
     And "Delete" "icon" should not exist in the "Intelligence" "table_row"
+    And "Intelligence" row "Total of marks" column of "mod_quiz-grade-item-list" table should contain "1.00"
     And "Delete" "icon" should exist in the "Unused grade item" "table_row"
+    And "Unused grade item" row "Total of marks" column of "mod_quiz-grade-item-list" table should contain "-"
+
     And the field "Question A" matches value "Intuition"
+    And "1" row "Marks" column of "mod_quiz-slot-list" table should contain "1.00"
     And the field "Question B" matches value "Intelligence"
+    And "2" row "Marks" column of "mod_quiz-slot-list" table should contain "1.00"
     And the field "Question C" matches value "Intuition"
+    And "3" row "Marks" column of "mod_quiz-slot-list" table should contain "1.00"
 
   @javascript
   Scenario: A grade item can be created and renamed
