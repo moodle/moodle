@@ -142,6 +142,75 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 
 <div id="popup-modal" tabindex="-1" class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full flex" aria-modal="true" role="dialog">
 <!-- <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"> -->
+    <div class="relative p-10 py-9 w-full max-w-3xl max-h-full">
+        <div class="relative bg-white rounded-lg shadow">
+            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="p-6 md:p-8  text-center">
+                <h1 class="mb-2 text-2xl font-semibold text-black ">Multiple Cameras Detected</h1>
+
+                <p class="mb-4 text-base font-normal text-gray-700 text-start ">We have detected multiple monitors. Please disconnect the extra monitor (or devices like Chromecast).</p>
+                <p class="mb-8 text-base font-normal text-gray-700 text-start ">IIf you continue without disconnecting, AutoProctor will store details of the device.</p>
+                <button onclick = "haveNotConnMonitor()" id = "have-not-multiple-btn" data-modal-hide="popup-modal" type="button" class="text-white bg-[#6B7280] hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-red-300  font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center me-2">
+                    Haven’t connected Multiple Monitors
+                </button>
+            <!-- Modal body -->
+            <div class="p-4 md:p-5 text-center">
+                <button onclick = "haveRemoveExtMonitor()" id = "have-multiple-btn" data-modal-hide="popup-modal" type="button" class="text-white bg-[#059669] hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-red-300  font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center me-2">
+                    Have removed External Monitor
+                </button>
+                <button onclick = "continueWithMulMonitor()" id = "continue-multiple-btn" data-modal-hide="popup-modal" type="button" class="text-white  bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-200 focus:z-10 ">Continue with Multiple Monitors</button>
+            </div>
+            <!-- Modal footer -->
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="cam-view-popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-10 py-9 w-full max-w-3xl max-h-full">
+        <div class="relative bg-white rounded-lg shadow">
+            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <div class="p-6 md:p-8  text-center">
+                <h1 class="mb-2 text-2xl font-semibold text-black ">Camera View</h1>
+
+                <p class="mb-2 text-md font-normal text-gray-700 ">This is what the selected camera is capturing. If you want to use a different camera, go back to previous step and select a different camera.</p>
+            <!-- Modal body -->
+            <div class="p-4 md:p-5 space-y-4">
+                <!-- ADD IMAGE HERE -->
+                <div class="flex justify-center">
+                    <video id="camera-preview" alt="Your Image" class="max-w-64 h-auto" autoplay style="display:none;"></video>
+                </div>
+                <p class="text-base leading-relaxed text-black ">
+                    If you see a completely black screen, it is mostly a camera error. Check your device’s camera.
+                </p>
+            </div>
+            <!-- Modal footer -->
+<!-- Modal footer -->
+<div class="flex justify-between items-center p-4 md:p-5  border-gray-200 rounded-b ">
+    <button data-modal-hide="cam-view-popup-modal" data-modal-target="cam-select-popup-modal" data-modal-toggle="cam-select-popup-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-5 focus:outline-none  rounded-lg border border-gray-400 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 ">Previous</button>
+    <!-- <button id="nextButton" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center hidden" onclick = "sendSetupData()">Next</button> -->
+    <button onclick = "sendSetupData()" data-modal-hide="cam-select-popup-modal" type="button" data-modal-target="cam-view-popup-modal" data-modal-toggle="cam-view-popup-modal" class=" text-gray-100 bg-blue-700 hover:bg-[#0061A8] focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-00 focus:z-10">Next</button>
+
+</div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="cam-select-popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-12 py-16 w-full max-w-3xl max-h-full">
         <div class="relative bg-white rounded-lg shadow">
             <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
@@ -195,74 +264,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
                     </div>
                 </div>
                 <!-- END OF DROPDOWN -->
-                <button onclick = "startStream()" data-modal-hide="popup-modal" type="button" data-modal-target="cam-view-popup-modal" data-modal-toggle="cam-view-popup-modal" class=" text-gray-100 bg-blue-700 hover:bg-[#0061A8] focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-00 focus:z-10">Next</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="cam-view-popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-10 py-9 w-full max-w-3xl max-h-full">
-        <div class="relative bg-white rounded-lg shadow">
-            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-                <span class="sr-only">Close modal</span>
-            </button>
-            <div class="p-6 md:p-8  text-center">
-                <h1 class="mb-2 text-2xl font-semibold text-black ">Camera View</h1>
-
-                <p class="mb-2 text-md font-normal text-gray-700 ">This is what the selected camera is capturing. If you want to use a different camera, go back to previous step and select a different camera.</p>
-            <!-- Modal body -->
-            <div class="p-4 md:p-5 space-y-4">
-                <!-- ADD IMAGE HERE -->
-                <div class="flex justify-center">
-                    <video id="camera-preview" alt="Your Image" class="max-w-64 h-auto" autoplay style="display:none;"></video>
-                </div>
-                <p class="text-base leading-relaxed text-black ">
-                    If you see a completely black screen, it is mostly a camera error. Check your device’s camera.
-                </p>
-            </div>
-            <!-- Modal footer -->
-<!-- Modal footer -->
-<div class="flex justify-between items-center p-4 md:p-5  border-gray-200 rounded-b ">
-    <button data-modal-hide="cam-view-popup-modal" data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-5 focus:outline-none  rounded-lg border border-gray-400 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 ">Previous</button>
-    <button id="nextButton" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center hidden" onclick = "sendSetupData()">Next</button>
-</div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="multiple-monitor-popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-10 py-9 w-full max-w-3xl max-h-full">
-        <div class="relative bg-white rounded-lg shadow">
-            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-                <span class="sr-only">Close modal</span>
-            </button>
-            <div class="p-6 md:p-8  text-center">
-                <h1 class="mb-2 text-2xl font-semibold text-black ">Multiple Cameras Detected</h1>
-
-                <p class="mb-4 text-base font-normal text-gray-700 text-start ">We have detected multiple monitors. Please disconnect the extra monitor (or devices like Chromecast).</p>
-                <p class="mb-8 text-base font-normal text-gray-700 text-start ">IIf you continue without disconnecting, AutoProctor will store details of the device.</p>
-                <button onclick = "haveNotConnMonitor()" data-modal-hide="popup-modal" type="button" class="text-white bg-[#6B7280] hover:bg-gray-600 focus:ring-4 focus:outline-none focus:ring-red-300  font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center me-2">
-                    Haven’t connected Multiple Monitors
-                </button>
-            <!-- Modal body -->
-            <div class="p-4 md:p-5 text-center">
-                <button onclick = "haveRemoveExtMonitor()" data-modal-hide="popup-modal" type="button" class="text-white bg-[#059669] hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-red-300  font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center me-2">
-                    Have removed External Monitor
-                </button>
-                <button onclick = "continueWithMulMonitor()" data-modal-hide="popup-modal" type="button" class="text-white  bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-200 focus:z-10 ">Continue with Multiple Monitors</button>
-            </div>
-            <!-- Modal footer -->
-
-
+                <button onclick = "startStream()" data-modal-hide="cam-select-popup-modal" type="button" data-modal-target="cam-view-popup-modal" data-modal-toggle="cam-view-popup-modal" class=" text-gray-100 bg-blue-700 hover:bg-[#0061A8] focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-00 focus:z-10">Next</button>
             </div>
         </div>
     </div>
@@ -275,52 +277,48 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
     let chosen_camera_device;
     let multiple_monitor;
     let chosen_monitor_set_up;
+    let monitor_cam = <?php echo $monitor_camera_activated; ?>;
     // Check if window screen is extended
-    if (window.screen.isExtended === true) {
-        console.log('Prompt multiple monitor');
-        multiple_monitor = true;
-        var modalButton = document.createElement('button');
-        modalButton.setAttribute('data-modal-hide', 'cam-view-popup-modal');
-        modalButton.setAttribute('data-modal-target', 'multiple-monitor-popup-modal');
-        modalButton.setAttribute('data-modal-toggle', 'multiple-monitor-popup-modal');
-        modalButton.setAttribute('type', 'button');
-        modalButton.className = "text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center";
-        modalButton.textContent = "Next";
-        modalButton.onclick = sendSetupData;
-        
-        // Replace the original button with the modal button
-        var nextButton = document.getElementById('nextButton');
-        nextButton.parentNode.replaceChild(modalButton, nextButton);
-    } else {
-        console.log('Regular screen');
-        // Show the original button
-        document.getElementById('nextButton').classList.remove('hidden');
-    }
+    var have_not_multiple_btn = document.getElementById('have-not-multiple-btn');
+    var have_multiple_btn = document.getElementById('have-multiple-btn');
+    var continue_multiple_btn = document.getElementById('continue-multiple-btn');
 
-    navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-            videoElement = document.createElement('video');
-            const camera = new Camera(videoElement, {onFrame: async () => {
-                await faceMesh.send({ image: videoElement });
-            },
-            width: 1280,
-            height: 720,
-            });
+    if (monitor_cam === 1) {
+        have_not_multiple_btn.setAttribute('data-modal-target', 'cam-select-popup-modal');
+        have_not_multiple_btn.setAttribute('data-modal-toggle', 'cam-select-popup-modal');
+        have_not_multiple_btn.setAttribute('data-modal-hide', 'popup-modal');
 
-            camera.start();
-            videoElement.srcObject = stream;
-        })
-        .catch((error) => {
-            if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-            // User denied camera access
-            console.error('User denied camera access.');
-                
-            } else {
-                // Other errors
-                console.error('Error accessing camera:', error.message);
+        have_multiple_btn.setAttribute('data-modal-target', 'cam-select-popup-modal');
+        have_multiple_btn.setAttribute('data-modal-toggle', 'cam-select-popup-modal');
+
+        continue_multiple_btn.setAttribute('data-modal-target', 'cam-select-popup-modal');
+        continue_multiple_btn.setAttribute('data-modal-toggle', 'cam-select-popup-modal');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then((stream) => {
+                videoElement = document.createElement('video');
+                const camera = new Camera(videoElement, {onFrame: async () => {
+                    await faceMesh.send({ image: videoElement });
+                },
+                width: 1280,
+                height: 720,
+                });
+
+                camera.start();
+                videoElement.srcObject = stream;
+            })
+            .catch((error) => {
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                // User denied camera access
+                console.error('User denied camera access.');
+                    
+                } else {
+                    // Other errors
+                    console.error('Error accessing camera:', error.message);
+                }
             }
-        }
-    );
+        );
+    }
 
     function startStream() {
         var selectedRadio = document.querySelector('input[name="camera"]:checked');
@@ -354,18 +352,36 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
     }
 
     function haveNotConnMonitor(){
+        var multiple_modal = document.getElementById('popup-modal');
+
+        multiple_modal.setAttribute('class', 'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full');
+        multiple_modal.removeAttribute('aria-modal');
+        multiple_modal.removeAttribute('role');
+
         chosen_monitor_set_up = "have_not_conn_multiple_monitor";
         console.log('sending this: ', chosen_monitor_set_up);
         console.log('redirecting to quiz');
     }
 
     function haveRemoveExtMonitor(){
+        var multiple_modal = document.getElementById('popup-modal');
+
+        multiple_modal.setAttribute('class', 'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full');
+        multiple_modal.removeAttribute('aria-modal');
+        multiple_modal.removeAttribute('role');
+
         chosen_monitor_set_up = "have_remove_external_monitor";
         console.log('sending this: ', chosen_monitor_set_up);
         console.log('redirecting to quiz');
     }
 
     function continueWithMulMonitor(){
+        var multiple_modal = document.getElementById('popup-modal');
+
+        multiple_modal.setAttribute('class', 'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full');
+        multiple_modal.removeAttribute('aria-modal');
+        multiple_modal.removeAttribute('role');
+
         chosen_monitor_set_up = "continue_with multiple_monitor";
         console.log('sending this: ', chosen_monitor_set_up);
         console.log('redirecting to quiz');
