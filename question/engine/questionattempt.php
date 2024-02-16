@@ -900,6 +900,7 @@ class question_attempt {
      */
     public function render($options, $number, $page = null) {
         $this->ensure_question_initialised();
+        $this->set_first_step_timecreated();
         if (is_null($page)) {
             global $PAGE;
             $page = $PAGE;
@@ -1712,6 +1713,22 @@ class question_attempt {
      */
     public function get_steps_with_submitted_response_iterator() {
         return new question_attempt_steps_with_submitted_response_iterator($this);
+    }
+
+    /**
+     * If the first step has a timecreated set to TIMECREATED_ON_FIRST_RENDER, set it to the current time.
+     *
+     * @return void
+     */
+    protected function set_first_step_timecreated(): void {
+        global $DB;
+        $firststep = $this->get_step(0);
+        if ((int)$firststep->get_timecreated() === question_attempt_step::TIMECREATED_ON_FIRST_RENDER) {
+            $timenow = time();
+            $firststep->set_timecreated($timenow);
+            $this->observer->notify_step_modified($firststep, $this, 0);
+            $DB->set_field('question_attempt_steps', 'timecreated', $timenow, ['id' => $firststep->get_id()]);
+        }
     }
 }
 

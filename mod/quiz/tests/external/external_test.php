@@ -1217,7 +1217,7 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEmpty($result['questions'][0]['mark']);
         $this->assertEquals(1, $result['questions'][0]['maxmark']);
         $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
-        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
+        $this->assertEquals(\question_attempt_step::TIMECREATED_ON_FIRST_RENDER, $result['questions'][0]['lastactiontime']);
         $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
 
         // Now try the last page.
@@ -1238,7 +1238,7 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertFalse($result['questions'][0]['flagged']);
         $this->assertEquals(1, $result['questions'][0]['page']);
         $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
-        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
+        $this->assertEquals(\question_attempt_step::TIMECREATED_ON_FIRST_RENDER, $result['questions'][0]['lastactiontime']);
         $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
 
         // Finish previous attempt.
@@ -1356,8 +1356,8 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEmpty($result['questions'][1]['mark']);
         $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
         $this->assertEquals(1, $result['questions'][1]['sequencecheck']);
-        $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
-        $this->assertGreaterThanOrEqual($timenow, $result['questions'][1]['lastactiontime']);
+        $this->assertEquals(\question_attempt_step::TIMECREATED_ON_FIRST_RENDER, $result['questions'][0]['lastactiontime']);
+        $this->assertEquals(\question_attempt_step::TIMECREATED_ON_FIRST_RENDER, $result['questions'][1]['lastactiontime']);
         $this->assertEquals(false, $result['questions'][0]['hasautosavedstep']);
         $this->assertEquals(false, $result['questions'][1]['hasautosavedstep']);
 
@@ -1435,7 +1435,7 @@ final class external_test extends externallib_advanced_testcase {
         $this->assertEquals(1, $result['questions'][0]['sequencecheck']);
         $this->assertEquals(1, $result['questions'][1]['sequencecheck']);
         $this->assertGreaterThanOrEqual($timenow, $result['questions'][0]['lastactiontime']);
-        $this->assertGreaterThanOrEqual($timenow, $result['questions'][1]['lastactiontime']);
+        $this->assertEquals(\question_attempt_step::TIMECREATED_ON_FIRST_RENDER, $result['questions'][1]['lastactiontime']);
         $this->assertEquals(true, $result['questions'][0]['hasautosavedstep']);
         $this->assertEquals(false, $result['questions'][1]['hasautosavedstep']);
 

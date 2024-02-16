@@ -1619,7 +1619,7 @@
         <FIELD NAME="sequencenumber" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Numbers the steps in a question attempt sequentially from 0."/>
         <FIELD NAME="state" TYPE="char" LENGTH="13" NOTNULL="true" SEQUENCE="false" COMMENT="One of the constants defined by the question_state class, giving the state of the question at the end of this step."/>
         <FIELD NAME="fraction" TYPE="number" LENGTH="12" NOTNULL="false" SEQUENCE="false" DECIMALS="7" COMMENT="The grade for this question, when graded out of 1. Needs to be multiplied by question_attempt.maxmark to get the actual mark for the question."/>
-        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time-stamp of the action that lead to this state being created."/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time-stamp of the action that lead to this state being created. If this is -1 (quiz_attempt_step::TIMECREATED_ON_FIRST_RENDER), it will be set the first time the question attempt is rendered."/>
         <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="The user whose action lead to this state being created."/>
       </FIELDS>
       <KEYS>
