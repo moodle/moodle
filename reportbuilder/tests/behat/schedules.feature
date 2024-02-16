@@ -40,7 +40,7 @@ Feature: Manage custom report schedules
     And I set the field "Manually added users: User One, User Two" to "1"
     And I click on "Save" "button" in the "New schedule" "dialogue"
     Then I should see "Schedule created"
-    And the following should exist in the "reportbuilder-table" table:
+    And the following should exist in the "Report schedules" table:
       | Name        | Starting from                           | Time last sent | Modified by |
       | My schedule | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## | Never          | Admin User  |
 
@@ -64,7 +64,7 @@ Feature: Manage custom report schedules
     And I click on the "Schedules" dynamic tab
     When I set the field "Edit schedule name" in the "My schedule" "table_row" to "My renamed schedule"
     And I reload the page
-    Then I should see "My renamed schedule" in the "reportbuilder-table" "table"
+    Then I should see "My renamed schedule" in the "Report schedules" "table"
 
   Scenario: Rename report schedule using filters
     Given the "multilang" filter is "on"
@@ -76,8 +76,8 @@ Feature: Manage custom report schedules
     And I click on the "Schedules" dynamic tab
     When I set the field "Edit schedule name" in the "My schedule" "table_row" to "<span class=\"multilang\" lang=\"en\">English</span><span class=\"multilang\" lang=\"es\">Spanish</span>"
     And I reload the page
-    Then I should see "English" in the "reportbuilder-table" "table"
-    And I should not see "Spanish" in the "reportbuilder-table" "table"
+    Then I should see "English" in the "Report schedules" "table"
+    And I should not see "Spanish" in the "Report schedules" "table"
     # Confirm schedule name is correctly shown in actions.
     And I press "Send schedule" action in the "English" report row
     And I should see "Are you sure you want to queue the schedule 'English' for sending immediately?" in the "Send schedule" "dialogue"
@@ -109,7 +109,7 @@ Feature: Manage custom report schedules
       | All users: All site users | 1       |
     And I click on "Save" "button" in the "Edit schedule details" "dialogue"
     Then I should see "Schedule updated"
-    And the following should exist in the "reportbuilder-table" table:
+    And the following should exist in the "Report schedules" table:
       | Name                | Starting from                           |
       | My updated schedule | ##tomorrow 11:00##%A, %d %B %Y, %H:%M## |
 
