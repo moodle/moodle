@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the main course format out class.
- *
- * @package   core_courseformat
- * @copyright 2020 Ferran Recio <ferran@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_courseformat\output\local;
 
 use core\output\named_templatable;
@@ -39,7 +31,7 @@ use renderable;
 class content implements named_templatable, renderable {
     use courseformat_named_templatable;
 
-    /** @var core_courseformat\base the course format class */
+    /** @var \core_courseformat\base the course format class */
     protected $format;
 
     /** @var string the section format class */

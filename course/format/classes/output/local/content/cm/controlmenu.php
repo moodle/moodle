@@ -65,7 +65,7 @@ class controlmenu implements named_templatable, renderable {
      *
      * @param course_format $format the course format
      * @param section_info $section the section info
-     * @param cm_info $mod the course module ionfo
+     * @param cm_info $mod the course module info
      * @param array $displayoptions optional extra display options
      */
     public function __construct(course_format $format, section_info $section, cm_info $mod, array $displayoptions = []) {
@@ -106,11 +106,11 @@ class controlmenu implements named_templatable, renderable {
     }
 
     /**
-     * Generate the aciton menu element.
+     * Generate the action menu element.
      *
      * This method is public in case some block needs to modify the menu before output it.
      * @param \renderer_base $output typically, the renderer that's calling this function
-     * @return aciton_menu the activity action menu
+     * @return action_menu|null the activity action menu
      */
     public function get_action_menu(\renderer_base $output): ?action_menu {
 
