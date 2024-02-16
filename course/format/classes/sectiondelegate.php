@@ -16,8 +16,12 @@
 
 namespace core_courseformat;
 
+use action_menu;
+use renderer_base;
 use section_info;
 use core_courseformat\stateupdates;
+use core_courseformat\output\local\content\section\controlmenu;
+use core_courseformat\base as course_format;
 
 /**
  * Section delegate base class.
@@ -103,5 +107,21 @@ abstract class sectiondelegate {
      */
     public function put_section_state_extra_updates(section_info $section, stateupdates $updates): void {
         // By default, do nothing.
+    }
+
+    /**
+     * Allow delegate plugin to modify the available section menu.
+     *
+     * @param course_format $format The course format instance.
+     * @param controlmenu $controlmenu The control menu instance.
+     * @param renderer_base $output The renderer instance.
+     * @return action_menu|null The new action menu with the list of edit control items or null if no action menu is available.
+     */
+    public function get_section_action_menu(
+        course_format $format,
+        controlmenu $controlmenu,
+        renderer_base $output,
+    ): ?action_menu {
+        return $controlmenu->get_default_action_menu($output);
     }
 }
