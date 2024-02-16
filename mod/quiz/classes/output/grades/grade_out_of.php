@@ -44,7 +44,8 @@ class grade_out_of implements renderable {
      * @param stdClass $quiz Quiz settings.
      * @param float $grade the mark to show.
      * @param float $maxgrade the total to show it out of.
-     * @param string $style which format to use, grade_out_of::NORMAL, ::SHORT or ::WITH_PERCENT.
+     * @param string|null $name optional, a name for what this grade is.
+     * @param string $style which format to use, grade_out_of::NORMAL (default), ::SHORT or ::WITH_PERCENT.
      */
     public function __construct(
 
@@ -56,6 +57,9 @@ class grade_out_of implements renderable {
 
         /** @var float the total the grade is out of. */
         public float $maxgrade,
+
+        /** @var string|null optional, a name for what this grade is. Must be output via format_string. */
+        public readonly ?string $name = null,
 
         /** @var string The display style, one of the consts above. */
         public readonly string $style = self::NORMAL,

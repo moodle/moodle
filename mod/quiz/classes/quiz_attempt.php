@@ -26,6 +26,7 @@ use core\hook;
 use Exception;
 use html_writer;
 use mod_quiz\hook\attempt_state_changed;
+use mod_quiz\output\grades\grade_out_of;
 use mod_quiz\output\links_to_other_attempts;
 use mod_quiz\output\renderer;
 use mod_quiz\question\bank\qbank_helper;
@@ -77,16 +78,19 @@ class quiz_attempt {
     protected $quba;
 
     /**
-     * @var array of slot information. These objects contain ->slot (int),
-     *      ->requireprevious (bool), ->questionids (int) the original question for random questions,
+     * @var array of slot information. These objects contain ->id (int), ->slot (int),
+     *      ->requireprevious (bool), ->displaynumber (string) and quizgradeitemid (int) from the DB.
+     *      They do not contain page - get that from {@see get_question_page()} -
+     *      or maxmark - get that from $this->quba. It is augmented with
      *      ->firstinsection (bool), ->section (stdClass from $this->sections).
-     *      This does not contain page - get that from {@see get_question_page()} -
-     *      or maxmark - get that from $this->quba.
      */
     protected $slots;
 
     /** @var array of quiz_sections rows, with a ->lastslot field added. */
     protected $sections;
+
+    /** @var grade_calculator instance for this quiz. */
+    protected $gradecalculator;
 
     /** @var array page no => array of slot numbers on the page in order. */
     protected $pagelayout;
@@ -114,9 +118,11 @@ class quiz_attempt {
     public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true) {
         $this->attempt = $attempt;
         $this->quizobj = new quiz_settings($quiz, $cm, $course);
+        $this->gradecalculator = $this->quizobj->get_grade_calculator();
 
         if ($loadquestions) {
             $this->load_questions();
+            $this->gradecalculator->set_slots($this->slots);
         }
     }
 
@@ -181,8 +187,8 @@ class quiz_attempt {
         }
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
-        $this->slots = $DB->get_records('quiz_slots',
-                ['quizid' => $this->get_quizid()], 'slot', 'slot, id, requireprevious, displaynumber');
+        $this->slots = $DB->get_records('quiz_slots', ['quizid' => $this->get_quizid()],
+                'slot', 'slot, id, requireprevious, displaynumber, quizgradeitemid');
         $this->sections = array_values($DB->get_records('quiz_sections',
                 ['quizid' => $this->get_quizid()], 'firstslot'));
 
@@ -476,6 +482,16 @@ class quiz_attempt {
      */
     public function get_currentpage() {
         return $this->attempt->currentpage;
+    }
+
+    /**
+     * Compute the grade and maximum grade for each grade item, for this attempt.
+     *
+     * @return grade_out_of[] the grade for each item where the total grade is not zero.
+     *      ->name will be set to the grade item name. Must be output through {@see format_string()}.
+     */
+    public function get_grade_item_totals(): array {
+        return $this->gradecalculator->compute_grade_item_totals($this->quba);
     }
 
     /**

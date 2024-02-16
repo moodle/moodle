@@ -21,7 +21,9 @@ use core\di;
 use core\hook;
 use mod_quiz\event\quiz_grade_updated;
 use mod_quiz\hook\structure_modified;
+use mod_quiz\output\grades\grade_out_of;
 use question_engine_data_mapper;
+use question_usage_by_activity;
 use stdClass;
 
 /**
@@ -42,6 +44,21 @@ class grade_calculator {
 
     /** @var quiz_settings the quiz for which this instance computes grades. */
     protected $quizobj;
+
+    /**
+     * @var stdClass[]|null quiz_grade_items for this quiz indexed by id, sorted by sortorder.
+     *
+     * Lazy-loaded when needed. See {@see ensure_grade_items_loaded()}.
+     */
+    protected ?array $gradeitems = null;
+
+    /**
+     * @var ?stdClass[]|null quiz_slot for this quiz. Only ->slot and ->quizgradeitemid fields are used.
+     *
+     * This is either set by another class that already has the data, using {@see set_slots()}
+     * or it is lazy-loaded when needed. See {@see ensure_slots_loaded()}.
+     */
+    protected ?array $slots = null;
 
     /**
      * Constructor. Recommended way to get an instance is $quizobj->get_grade_calculator();
@@ -447,5 +464,95 @@ class grade_calculator {
         ])->trigger();
 
         $transaction->allow_commit();
+    }
+
+    /**
+     * Ensure the {@see $gradeitems} field is ready to use.
+     */
+    protected function ensure_grade_items_loaded(): void {
+        global $DB;
+
+        if ($this->gradeitems !== null) {
+            return; // Already done.
+        }
+
+        $this->gradeitems = $DB->get_records('quiz_grade_items',
+            ['quizid' => $this->quizobj->get_quizid()], 'sortorder');
+    }
+
+    /**
+     * Lets other code pass in the slot information, so it does note have to be re-loaded from the DB.
+     *
+     * @param stdClass[] $slots the data from quiz_slots. The only required fields are ->slot and ->quizgradeitemid.
+     */
+    public function set_slots(array $slots): void {
+        global $CFG;
+        $this->slots = $slots;
+
+        if ($CFG->debugdeveloper) {
+            foreach ($slots as $slot) {
+                if (!property_exists($slot, 'slot') || !property_exists($slot, 'quizgradeitemid')) {
+                    debugging('Slot data passed to grade_calculator::set_slots ' .
+                        'must have at least ->slot and ->quizgradeitemid set.', DEBUG_DEVELOPER);
+                    break; // Only necessary to say this once.
+                }
+            }
+        }
+    }
+
+    /**
+     * Ensure the {@see $gradeitems} field is ready to use.
+     */
+    protected function ensure_slots_loaded(): void {
+        global $DB;
+
+        if ($this->slots !== null) {
+            return; // Already done.
+        }
+
+        $this->slots = $DB->get_records('quiz_slots', ['quizid' => $this->quizobj->get_quizid()],
+            'slot', 'slot, id, quizgradeitemid');
+    }
+
+    /**
+     * Compute the grade and maximum grade for each grade item, for this attempt.
+     *
+     * @param question_usage_by_activity $quba usage for the quiz attempt we want to calculate the grades of.
+     * @return grade_out_of[] the grade for each item where the total grade is not zero.
+     *      ->name will be set to the grade item name. Must be output through {@see format_string()}.
+     */
+    public function compute_grade_item_totals(question_usage_by_activity $quba): array {
+        $this->ensure_grade_items_loaded();
+        if (empty($this->gradeitems)) {
+            // No extra grade items.
+            return [];
+        }
+
+        $this->ensure_slots_loaded();
+
+        // Prepare a place to store the results for each grade-item.
+        $grades = [];
+        foreach ($this->gradeitems as $gradeitem) {
+            $grades[$gradeitem->id] = new grade_out_of(
+                $this->quizobj->get_quiz(), 0, 0, name: $gradeitem->name);
+        }
+
+        // Add up the scores.
+        foreach ($this->slots as $slot) {
+            if (!$slot->quizgradeitemid) {
+                continue;
+            }
+            $grades[$slot->quizgradeitemid]->grade += $quba->get_question_mark($slot->slot);
+            $grades[$slot->quizgradeitemid]->maxgrade += $quba->get_question_max_mark($slot->slot);
+        }
+
+        // Remove any grade items where the total is 0.
+        foreach ($grades as $gradeitemid => $grade) {
+            if ($grade->maxgrade < self::ALMOST_ZERO) {
+                unset($grades[$gradeitemid]);
+            }
+        }
+
+        return $grades;
     }
 }
