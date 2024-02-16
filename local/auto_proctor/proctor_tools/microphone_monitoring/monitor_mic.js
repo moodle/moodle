@@ -118,6 +118,13 @@ $(document).ready(function () {
         allowedMic = false;
         sendActivityRecord();
         console.error('Error capturing audio:', err);
+
+        evidence_name_type = 'microphone_permission_denied';
+        sendActivityRecord();
+        if (jsdata.strict_mode_activated == 1){
+            console.log('microphone denied must redirect to review attempt quiz page');
+                window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+        }
     });
 
     function noiseDetected(activity_type){
@@ -174,9 +181,9 @@ $(document).ready(function () {
         xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/microphone_monitoring/save_mic_activity.php', true); // Replace with the actual path
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-        if (!allowedMic){
-            evidence_name_type = 'permission_denied';
-        }
+        // if (!allowedMic){
+        //     evidence_name_type = 'permission_denied';
+        // }
 
         // ==== DEBUGGING =====
         xhr.onreadystatechange = function () {
@@ -210,4 +217,21 @@ $(document).ready(function () {
 
         return { timestamp, milliseconds: now.getMilliseconds() };
     }
+
+    navigator.permissions.query({name: 'microphone'}).then(function(permissionStatus) {
+        console.log('microphone permission state is ', permissionStatus.state);
+        permissionStatus.onchange = function() {
+            console.log('microphone permission state has changed to ', this.state);
+            if (this.state = 'denied'){
+                evidence_name_type = 'microphone_permission_denied_during_quiz';
+                sendActivityRecord();
+
+                // Check if strict mode was activated
+                if (jsdata.strict_mode_activated == 1){
+                    console.log('microphone denied must redirect to review attempt quiz page');
+                    window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                }
+            }
+        };
+    });
 });
