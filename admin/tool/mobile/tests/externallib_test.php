@@ -270,6 +270,18 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(0, $result['warnings']);
         $this->assertEquals($expected, $result['settings']);
 
+        // H5P custom CSS.
+        set_config('h5pcustomcss', '.debug { color: #fab; }', 'core_h5p');
+        \core_h5p\local\library\autoloader::register();
+        \core_h5p\file_storage::generate_custom_styles();
+        $result = external::get_config();
+        $result = external_api::clean_returnvalue(external::get_config_returns(), $result);
+
+        $customcss = \core_h5p\file_storage::get_custom_styles();
+        $expected[] = ['name' => 'h5pcustomcssurl', 'value' => $customcss['cssurl']->out() . '?ver=' . $customcss['cssversion']];
+        $this->assertCount(0, $result['warnings']);
+        $this->assertEquals($expected, $result['settings']);
+
         // Change a value and retrieve filtering by section.
         set_config('commentsperpage', 1);
         $expected[10]['value'] = 1;
