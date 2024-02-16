@@ -48,13 +48,6 @@ abstract class datasource extends base {
     private $activeconditions;
 
     /**
-     * Return user friendly name of the datasource
-     *
-     * @return string
-     */
-    abstract public static function get_name(): string;
-
-    /**
      * Add columns from the given entity name to be available to use in a custom report
      *
      * Wildcard matching is supported with '*' in both $include and $exclude, e.g. ['customfield*']

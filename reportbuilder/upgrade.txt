@@ -9,6 +9,9 @@ Information provided here is intended especially for developers.
 * New method `get_table_aliases` in base entity class, for retrieving all table aliases in a single call
 * The database helper `generate_alias[es]` and `generate_param_name[s]` methods now accept an optional `$suffix` argument for
   appending additional string to the generated value
+* The `get_name` method has been moved to the base report class and can now be implemented for both custom and system reports, it
+  will be used as the caption when rendering tables (which can also be targeted in Behat scenarios)
+* The default value for the filename when calling `set_downloadable` is now taken from calling `get_name` on the current report
 * The base datasource `add_all_from_entity` method accepts additional parameters to limit which columns, filters and conditions
   are added. The `add_[columns|filters|conditions]_from_entity` class methods also now support wildcard matching in both `$include`
   and `$exclude` parameters
