@@ -82,31 +82,31 @@ class QuizProctor {
         $auto_proctor_activated = $this->DB->get_records_sql($sql, $params);
 
         // Select monitor_tab_switching state
-        $sql = "SELECT *
+        $sql = "SELECT monitor_tab_switching
             FROM {auto_proctor_quiz_tb}
-            WHERE quizid = :quizid
-            AND (monitor_tab_switching = 1)"
+            WHERE quizid = :quizid"
         ;
 
-        $monitor_tab_switching_activated = $this->DB->get_records_sql($sql, $params);
+        //$monitor_tab_switching_activated = $this->DB->get_records_sql($sql, $params);
+        $monitor_tab_switching_activated = $this->DB->get_fieldset_sql($sql, $params);
 
-        // Select monitor_camera_switching state
-        $sql = "SELECT *
+        // Select monitor_tab_switching state
+        $sql = "SELECT monitor_camera
             FROM {auto_proctor_quiz_tb}
-            WHERE quizid = :quizid
-            AND (monitor_camera = 1)"
+            WHERE quizid = :quizid"
         ;
 
-        $monitor_camera_activated = $this->DB->get_records_sql($sql, $params);
+        //$monitor_camera_activated = $this->DB->get_records_sql($sql, $params);
+        $monitor_camera_activated = $this->DB->get_fieldset_sql($sql, $params);
 
         // Select monitor_microphone state
-        $sql = "SELECT *
+        $sql = "SELECT monitor_microphone
             FROM {auto_proctor_quiz_tb}
-            WHERE quizid = :quizid
-            AND (monitor_microphone = 1)"
+            WHERE quizid = :quizid"
         ;
 
-        $monitor_tab_microphone_activated = $this->DB->get_records_sql($sql, $params);
+        //$monitor_tab_microphone_activated = $this->DB->get_records_sql($sql, $params);
+        $monitor_microphone_activated = $this->DB->get_fieldset_sql($sql, $params);
 
         // Select strict_mode state
         $sql = "SELECT strict_mode
@@ -149,6 +149,7 @@ class QuizProctor {
                         'quizattempturl' => $quizattempturl,
                         'cmid' => $cmid,
                         'strict_mode_activated' => $strict_mode_activated,
+                        'monitor_camera_activated' => $monitor_camera_activated[0],
                     );
 
                     // Send to prompts.php
@@ -161,7 +162,7 @@ class QuizProctor {
                     echo '</script>';
 
                     // Check if monitor tab switching is activated
-                    if ($monitor_tab_switching_activated) {
+                    if ($monitor_tab_switching_activated[0] == 1) {
                     
                         // Check if there existing is existing screen_share proctoring consent record
                         $sql = "SELECT screenshare_consent
@@ -232,9 +233,11 @@ class QuizProctor {
                             echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/tab_monitoring/monitor_tab.js"></script>';
                         }
                     }
-
+                    echo "<script>console.log('tab: ', " . json_encode($monitor_tab_switching_activated[0]) . ");</script>";
+                    echo "<script>console.log('cam: ', " . json_encode($monitor_camera_activated[0]) . ");</script>";
+                    echo "<script>console.log('mic: ', " . json_encode($monitor_microphone_activated[0]) . ");</script>";
                     // Check if monitor camera is activated
-                    if ($monitor_camera_activated){
+                    if ($monitor_camera_activated[0] == 1){
                         echo '<script type="text/javascript"> console.log("MONITOR CAMERA ACTIVATED"); </script>';
                         echo '<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>';
                         echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
@@ -245,7 +248,7 @@ class QuizProctor {
                         echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/camera_monitoring/monitor_cam.js"></script>';
                     }
 
-                    if ($monitor_tab_microphone_activated){
+                    if ($monitor_microphone_activated[0] == 1){
                         echo '<script type="text/javascript"> console.log("MONITOR MIC ACTIVATED"); </script>';
                         echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/microphone_monitoring/monitor_mic.js"></script>';
                     }

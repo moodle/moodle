@@ -32,14 +32,20 @@ if (isset($_POST['evidence_name_type'])) {
     $quizattempt = $_POST['quizattempt'];
 
     switch ($activity_type) {
-        case 'no_face':
+        case 'camera_permission_denied':
+            $activity_type = 6;
+            break;
+        case 'camera_permission_denied_during_quiz':
             $activity_type = 7;
             break;
-        case 'multiple_face':
+        case 'no_face':
             $activity_type = 8;
             break;
-        case 'suspicious_movement':
+        case 'multiple_face':
             $activity_type = 9;
+            break;
+        case 'suspicious_movement':
+            $activity_type = 10;
             break;
         // default:
     }

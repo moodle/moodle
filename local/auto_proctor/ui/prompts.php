@@ -44,7 +44,7 @@ $userid = $jsdata['userid'];
 $quizid = $jsdata['quizid'];
 $quizattempt = $jsdata['quizattempt'];
 $quizattempturl = $jsdata['quizattempturl'];
-
+$monitor_camera_activated = $jsdata['monitor_camera_activated'];
 
 // ====== DEBUUGING PURPOSE
 // echo "<script>";
@@ -67,6 +67,12 @@ $quizattempturl = $jsdata['quizattempturl'];
 </head>
 <body>
 <script>
+    if (<?php echo $monitor_camera_activated; ?> === 1){
+        console.log('prompt cam');
+    }
+    if (window.screen.isExtended){
+        console.log('prompt multiple monitor');
+    }
     // Display a dialog box with "Yes" and "No" options
     var userResponse = confirm("Do you consent to share your screen for proctoring purposes?");
 

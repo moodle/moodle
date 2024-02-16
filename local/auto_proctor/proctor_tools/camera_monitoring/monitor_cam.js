@@ -39,10 +39,21 @@ $(document).ready(function () {
             if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
             // User denied camera access
             console.error('User denied camera access.');
-            // Handle this situation (e.g., show a message to the user)
+                sendActivityRecord('camera_permission_denied');
+                // Check if strict mode was activated
+                if (jsdata.strict_mode_activated == 1){
+                    console.log('camera denied must redirect to review attempt quiz page');
+                    window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                }
             } else {
-            // Other errors
-            console.error('Error accessing camera:', error.message);
+                // Other errors
+                console.error('Error accessing camera:', error.message);
+                sendActivityRecord('camera_permission_denied');
+                // Check if strict mode was activated
+                if (jsdata.strict_mode_activated == 1){
+                    console.log('camera denied must redirect to review attempt quiz page');
+                    window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                }
             }
         });
 
@@ -266,4 +277,18 @@ $(document).ready(function () {
             minTrackingConfidence: 0.5
         });
         faceMesh.onResults(onResults);
+
+        navigator.permissions.query({name: 'camera'}).then(function(permissionStatus) {
+            console.log('camera permission state is ', permissionStatus.state);
+            permissionStatus.onchange = function() {
+                console.log('camera permission state has changed to ', this.state);
+                if (this.state = 'denied'){
+                    sendActivityRecord('camera_permission_denied_during_quiz');
+                    if (jsdata.strict_mode_activated == 1){
+                        console.log('camera denied must redirect to review attempt quiz page');
+                        window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                    }
+                }
+            };
+        });
 });

@@ -32,11 +32,17 @@ if (isset($_POST['evidence_name_type'])) {
     $quizattempt = $_POST['quizattempt'];
 
     switch ($activity_type) {
-        case 'speech_detected':
+        case 'microphone_permission_denied':
             $activity_type = 11;
             break;
-        case 'loud_noise':
+        case 'microphone_permission_denied_during_quiz':
             $activity_type = 12;
+            break;
+        case 'speech_detected':
+            $activity_type = 13;
+            break;
+        case 'loud_noise':
+            $activity_type = 14;
             break;
         // default:
     }
