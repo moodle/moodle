@@ -35,16 +35,14 @@ class event_handler {
      * @return void
      */
     public static function handle_user_loggedin(user_loggedin $event): void {
-        // The event data isn't important here. The intent of this listener is to ensure that the MoodleSession cookie gets the
-        // 'Partitioned' attribute, when required - an opt-in flag needed to use Chrome's partitioning mechanism, CHIPS. During LTI
-        // auth, the auth class (auth/lti/auth.php) calls complete_user_login(), which generates a new session cookie as part of its
-        // login process. This handler makes sure that this new cookie is intercepted and partitioned, if needed.
+        // The event data isn't important here. The intent of this listener is to ensure that the MoodleSession cookie is set up
+        // properly during LTI launches + login. This means two things:
+        // i) it's set with SameSite=None; Secure; where possible (since OIDC needs HTTPS this will almost always be possible).
+        // ii) it set with the 'Partitioned' attribute, when required.
+        // The former ensures cross-site cookies are sent for embedded launches. The latter is an opt-in flag needed to use Chrome's
+        // partitioning mechanism, CHIPS.
         if (cookie_helper::cookies_supported()) {
-            if (cookie_helper::get_cookies_supported_method() == cookie_helper::COOKIE_METHOD_EXPLICIT_PARTITIONING) {
-                global $CFG;
-                cookie_helper::add_attributes_to_cookie_response_header('MoodleSession' . $CFG->sessioncookie,
-                    ['Partitioned', 'Secure']);
-            }
+            cookie_helper::setup_session_cookie();
         }
     }
 }
