@@ -450,6 +450,9 @@ $string['gradeitemnoslots'] = 'No questions have been added to the quiz yet. Ple
 $string['gradeitems'] = 'Grade items';
 $string['gradeitemsetup'] = 'Quiz grading setup (advanced view)';
 $string['gradeitemsnoneyet'] = 'This quiz does not yet have any grade items defined, just a simple overall score will be used.';
+$string['gradeitemsremoveall'] = 'Reset advanced grading setup';
+$string['gradeitemsremoveallconfirm'] = 'Reset grading setup?';
+$string['gradeitemsremoveallmessage'] = 'This will only clear the advanced grading setup. It will not change which questions are in the quiz.';
 $string['grademethod'] = 'Grading method';
 $string['grademethod_help'] = 'When multiple attempts are allowed, the following methods are available for calculating the final quiz grade:
 

@@ -131,6 +131,10 @@
     <div class="mb-5">
         <button type="button" class="btn btn-secondary" id="mod_quiz-add_grade_item"
                 data-quiz-id="{{quizid}}">{{#str}} additem, grades{{/str}}</button>
+        {{#hasgradeitems}}
+            <button type="button" class="btn btn-danger" id="mod_quiz-grades_reset_all"
+                data-quiz-id="{{quizid}}">{{#str}} gradeitemsremoveall, quiz{{/str}}</button>
+        {{/hasgradeitems}}
     </div>
 
     <h3>{{#str}} gradeitemmarkscheme, quiz {{/str}}</h3>

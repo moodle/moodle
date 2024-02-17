@@ -115,3 +115,36 @@ Feature: Setup multiple grades for a quiz
     And I set the field "Question A" to "[none]"
     And "Delete" "icon" should exist in the "Intuition" "table_row"
     And the field "Question A" matches value "[none]"
+
+  @javascript
+  Scenario: All setup can be reset
+    Given the following "mod_quiz > grade items" exist:
+      | quiz   | name              |
+      | Quiz 1 | Intuition         |
+      | Quiz 1 | Intelligence      |
+      | Quiz 1 | Unused grade item |
+    And quiz "Quiz 1" contains the following questions:
+      | question   | page | grade item   |
+      | Question A | 1    | Intuition    |
+      | Question B | 1    | Intelligence |
+      | Question C | 2    | Intuition    |
+
+    When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
+    And I press "Reset advanced grading setup"
+    And I click on "Reset" "button" in the "Reset grading setup?" "dialogue"
+
+    Then I should see "This quiz does not yet have any grade items defined, just a simple overall score will be used."
+    And the field "Question A" matches value "[none]"
+    And the field "Question B" matches value "[none]"
+    And the field "Question C" matches value "[none]"
+    And I should not see "Reset advanced grading setup"
+
+  @javascript
+  Scenario: Reset all can be cancelled
+    Given the following "mod_quiz > grade items" exist:
+      | quiz   | name              |
+      | Quiz 1 | Intuition         |
+    When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
+    And I press "Reset advanced grading setup"
+    And I click on "Cancel" "button" in the "Reset grading setup?" "dialogue"
+    Then I should see "Intuition"

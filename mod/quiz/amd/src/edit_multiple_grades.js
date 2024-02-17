@@ -39,10 +39,12 @@ const SELECTORS = {
     'gradeItemList': 'table#mod_quiz-grade-item-list',
     'gradeItemSelect': 'select[data-slot-id]',
     'gradeItemSelectId': (id) => 'select#grade-item-choice-' + id,
-    'updateGradeItemLink': (id) => 'tr[data-quiz-grade-item-id="' + id + '"] .quickeditlink',
+    'gradeItemTr': 'table#mod_quiz-grade-item-list tr[data-quiz-grade-item-id]',
     'inplaceEditable': 'span.inplaceeditable',
     'inplaceEditableOn': 'span.inplaceeditable.inplaceeditingon',
+    'resetAllButton': '#mod_quiz-grades_reset_all',
     'slotList': 'table#mod_quiz-slot-list',
+    'updateGradeItemLink': (id) => 'tr[data-quiz-grade-item-id="' + id + '"] .quickeditlink',
 };
 
 /**
@@ -127,17 +129,23 @@ const updateSlotGradeItem = (
  * @param {Object} methodCall a web service call to pass to fetchMany. Must include methodCall.args.quizid.
  * @returns {Promise<Object>} a promise that resolves to the template context required to re-render the page.
  */
-const callServiceAndReturnRenderingData = (methodCall) => {
-    return Promise.all(fetchMany([
-        methodCall,
-        {
+const callServiceAndReturnRenderingData = (methodCall) => callServicesAndReturnRenderingData([methodCall]);
+
+/**
+ * Make a web service call, and also call mod_quiz_get_edit_grading_page_data to get the date to re-render the page.
+ *
+ * @param {Object[]} methodCalls web service calls to pass to fetchMany. Must include methodCalls[0].args.quizid.
+ * @returns {Promise<Object>} a promise that resolves to the template context required to re-render the page.
+ */
+const callServicesAndReturnRenderingData = (methodCalls) => {
+    methodCalls.push({
             methodname: 'mod_quiz_get_edit_grading_page_data',
             args: {
-                quizid: methodCall.args.quizid,
+                quizid: methodCalls[0].args.quizid,
             }
-        },
-    ]))
-    .then(results => JSON.parse(results[1]));
+        });
+    return Promise.all(fetchMany(methodCalls))
+    .then(results => JSON.parse(results.at(-1)));
 };
 
 /**
@@ -258,10 +266,9 @@ const handleGradeItemKeyDown = (e) => {
  * @param {Object} editGradingPageData the template context data required to re-render the page.
  * @returns {Promise<void>} a promise that will resolve when the page is updated.
  */
-const reRenderPage = (editGradingPageData) => {
-    return renderTemplate('mod_quiz/edit_grading_page', editGradingPageData)
+const reRenderPage = (editGradingPageData) =>
+    renderTemplate('mod_quiz/edit_grading_page', editGradingPageData)
         .then((html, js) => replaceNode(document.querySelector(SELECTORS.editingPageContents), html, js || ''));
-};
 
 /**
  * Handle key up in the editable.
@@ -361,16 +368,26 @@ const handleGradeItemClick = (e) => {
 };
 
 /**
- * Handle clicks on the 'Add grade item' table.
+ * Handle clicks on the buttons.
+ *
+ * @param {Event} e click event.
+ */
+
+const handleButtonClick = (e) => {
+    if (e.target.closest(SELECTORS.addGradeItemButton)) {
+        handleAddGradeItemClick(e);
+    }
+    if (e.target.closest(SELECTORS.resetAllButton)) {
+        handleResetAllClick(e);
+    }
+};
+
+/**
+ * Handle clicks on the 'Add grade item' button.
  *
  * @param {Event} e click event.
  */
 const handleAddGradeItemClick = (e) => {
-    // Check the click is on the element of interest.
-    if (!e.target.closest(SELECTORS.addGradeItemButton)) {
-        return;
-    }
-
     e.preventDefault();
     const pending = new Pending('create-quiz-grade-item');
     addIconToContainer(e.target.parentNode, pending);
@@ -388,6 +405,73 @@ const handleAddGradeItemClick = (e) => {
 };
 
 /**
+ * Handle clicks on the reset button - show a confirmation.
+ *
+ * @param {Event} e click event.
+ */
+const handleResetAllClick = (e) => {
+    e.preventDefault();
+    const button = e.target;
+
+    Notification.deleteCancelPromise(
+        getString('gradeitemsremoveallconfirm', 'quiz'),
+        getString('gradeitemsremoveallmessage', 'quiz'),
+        getString('reset'),
+        button
+    ).then(() => reallyResetAll(button))
+    .catch(() => button.focus());
+};
+
+/**
+ * Really reset all if the confirmation is OKed.
+ *
+ * @param {HTMLElement} button the reset button.
+ */
+const reallyResetAll = (button) => {
+    const pending = new Pending('reset-quiz-grading');
+    addIconToContainer(button.parentNode, pending);
+
+    const quizId = button.dataset.quizId;
+
+    let methodCalls = [];
+
+    // Call to clear any assignments of grade items to slots (if required).
+    const slotResets = [...document.querySelectorAll(SELECTORS.gradeItemSelect)].map(
+            (select) => ({
+                id: select.dataset.slotId,
+                quizgradeitemid: 0,
+            }));
+    if (slotResets.length) {
+        methodCalls.push({
+            methodname: 'mod_quiz_update_slots',
+            args: {
+                quizid: quizId,
+                slots: slotResets
+            }
+        });
+    }
+
+    // Request to delete all the grade items.
+    methodCalls.push({
+        methodname: 'mod_quiz_delete_grade_items',
+        args: {
+            quizid: quizId,
+            quizgradeitems: [...document.querySelectorAll(SELECTORS.gradeItemTr)].map((tr) => {
+                return {id: tr.dataset.quizGradeItemId};
+            })
+        }
+    });
+
+    callServicesAndReturnRenderingData(methodCalls)
+        .then(reRenderPage)
+        .then(() => {
+            pending.resolve();
+            document.querySelector(SELECTORS.addGradeItemButton).focus();
+        })
+        .catch(Notification.exception);
+};
+
+/**
  * Replace the container with a new version.
  */
 const registerEventListeners = () => {
@@ -396,7 +480,7 @@ const registerEventListeners = () => {
     document.body.addEventListener('keyup', handleGradeItemKeyUp);
     document.body.addEventListener('focusout', handleGradeItemFocusOut);
 
-    document.body.addEventListener('click', handleAddGradeItemClick);
+    document.body.addEventListener('click', handleButtonClick);
 
     document.body.addEventListener('change', handleSlotGradeItemChanged);
 };
