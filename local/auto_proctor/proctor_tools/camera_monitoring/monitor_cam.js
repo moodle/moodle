@@ -21,41 +21,120 @@ $(document).ready(function () {
         //     width: 1280,
         //     height: 720
         // });
+        const getUserMediaConstraints = (deviceId) => {
+            return {
+                video: {
+                deviceId: deviceId ? { exact: deviceId } : undefined,
+                facingMode: 'user', // Set facingMode if preferred
+                },
+            };
+        };
 
-        navigator.mediaDevices.getUserMedia({ video: true })
-        .then((stream) => {
-            videoElement = document.createElement('video');
-            const camera = new Camera(videoElement, {onFrame: async () => {
-                await faceMesh.send({ image: videoElement });
-            },
-            width: 1280,
-            height: 720,
-            });
+        navigator.mediaDevices.enumerateDevices()
+        .then(function(devices) {
+            devices.forEach(function(device) {
+                if (device.kind === 'videoinput') {
 
-            camera.start();
-            videoElement.srcObject = stream;
-        })
-        .catch((error) => {
-            if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-            // User denied camera access
-            console.error('User denied camera access.');
-                sendActivityRecord('camera_permission_denied');
-                // Check if strict mode was activated
-                if (jsdata.strict_mode_activated == 1){
-                    console.log('camera denied must redirect to review attempt quiz page');
-                    window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                    console.log('avail cam: ', device.deviceId);
+                    //d89b7d58a7f1e6abeec4eb35a2ced3563f221dc27e5fe8043485ab8b5c2101e4
+                    
+
                 }
-            } else {
-                // Other errors
-                console.error('Error accessing camera:', error.message);
-                sendActivityRecord('camera_permission_denied');
-                // Check if strict mode was activated
-                if (jsdata.strict_mode_activated == 1){
-                    console.log('camera denied must redirect to review attempt quiz page');
-                    window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+            });
+        })
+
+        const chosenCameraDevice = JSON.parse(jsdata.chosen_camera_device);
+        var deviceId = chosenCameraDevice.video.deviceId.exact;
+
+        console.log('chosen cam', deviceId);
+
+        window.onload = async function() {
+            const constraints = getUserMediaConstraints(deviceId);
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    
+                    // Create video element dynamically
+                    const video = document.createElement('video');
+                    video.className = 'input_video'; // Add class name
+                    video.srcObject = stream;
+                    video.autoplay = true; // Autoplay
+                    video.playsinline = true; // Ensure playsinline for mobile browsers
+                    video.style.display = 'none';
+                    document.body.appendChild(video); // Append to the document body
+
+                    // When the video stream is loaded, dynamically set the canvas size to match the video stream
+                    // inputVideoElement.addEventListener('loadedmetadata', () => {
+                    //     canvasElement.width = inputVideoElement.videoWidth;
+                    //     canvasElement.height = inputVideoElement.videoHeight;
+                    // });
+
+                    // Apply FaceMesh to the selected camera
+                    const onFrame = async () => {
+                        await faceMesh.send({ image: video });
+                        requestAnimationFrame(onFrame);
+                    };
+                    // Start sending frames to FaceMesh
+                    onFrame();
+
+            } catch (error) {
+                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+                    // User denied camera access
+                    console.error('User denied camera access.');
+                        sendActivityRecord('camera_permission_denied');
+                        // Check if strict mode was activated
+                        if (jsdata.strict_mode_activated == 1){
+                            console.log('camera denied must redirect to review attempt quiz page');
+                            window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                        }
+                    } else {
+                        // Other errors
+                        console.error('Error accessing camera:', error.message);
+                        sendActivityRecord('camera_permission_denied');
+                        // Check if strict mode was activated
+                        if (jsdata.strict_mode_activated == 1){
+                        console.log('camera denied must redirect to review attempt quiz page');
+                        window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                    }
                 }
             }
-        });
+        }
+
+
+        // navigator.mediaDevices.getUserMedia(constraints)
+        // .then((stream) => {
+        //     videoElement = document.createElement('video');
+        //     const camera = new Camera(videoElement, {onFrame: async () => {
+        //         await faceMesh.send({ image: videoElement });
+        //     },
+        //     width: 1280,
+        //     height: 720,
+        //     });
+
+        //     camera.start();
+        //     videoElement.srcObject = stream;
+        // })
+        // .catch((error) => {
+        //     if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        //     // User denied camera access
+        //     console.error('User denied camera access.');
+        //         sendActivityRecord('camera_permission_denied');
+        //         // Check if strict mode was activated
+        //         if (jsdata.strict_mode_activated == 1){
+        //             console.log('camera denied must redirect to review attempt quiz page');
+        //             window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+        //         }
+        //     } else {
+        //         // Other errors
+        //         console.error('Error accessing camera:', error.message);
+        //         sendActivityRecord('camera_permission_denied');
+        //         // Check if strict mode was activated
+        //         if (jsdata.strict_mode_activated == 1){
+        //             console.log('camera denied must redirect to review attempt quiz page');
+        //             window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+        //         }
+        //     }
+        // });
 
 
 
@@ -168,10 +247,10 @@ $(document).ready(function () {
 
             setTimeout(() => {
             const canvas = document.createElement('canvas');
-            canvas.width = videoElement.videoWidth;
-            canvas.height = videoElement.videoHeight;
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
             const ctx = canvas.getContext('2d');
-            ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
             // var capturedContainer = document.getElementById('capturedContainer');
             // capturedContainer.innerHTML = ''; // Clear previous content

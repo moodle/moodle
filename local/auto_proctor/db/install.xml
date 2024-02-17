@@ -56,9 +56,9 @@
             <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
             <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
             <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-            <FIELD NAME="screenshare_consent" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-            <FIELD NAME="camera_consent" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-            <FIELD NAME="microphone_consent" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="camera_device_id" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+            <FIELD NAME="monitor_setup" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="device_type" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         </FIELDS>
         <KEYS>
             <!-- Define id as the primary key -->

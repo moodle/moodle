@@ -9,8 +9,15 @@
 </head>
 
 <body>
+<div id="camera-selection">
+  <select id="camera-selector"></select>
+  <video id="camera-preview" autoplay playsinline></video>
+  <button id="confirm-camera">Select Camera</button>
+  </div>
+
+
     <div class="container">
-        <video class="input_video"></video>
+        <!-- <video class="input_video"></video> -->
         <canvas class="output_canvas" width="1280px" height="720px"></canvas>
         <div id="promptMessage"></div>
 
@@ -148,26 +155,99 @@
             noseAngleDisplay.innerHTML = `Nose Tip to Nose Bridge Angle: ${angleNoseTipBridge.toFixed(2)} degrees<br>`;
             noseAngleDisplay.innerHTML += `Right Ear to Left Ear Angle: ${angleRightEarLeftEar.toFixed(2)} degrees`;
         }
-        
-        const faceMesh = new FaceMesh({locateFile: (file) => {
-            return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
-        }});
 
+        navigator.mediaDevices.enumerateDevices()
+        .then(function(devices) {
+            devices.forEach(function(device) {
+                if (device.kind === 'videoinput') {
+
+                    console.log('avail cam: ', device.deviceId);
+                    //d89b7d58a7f1e6abeec4eb35a2ced3563f221dc27e5fe8043485ab8b5c2101e4
+                    
+
+                }
+            });
+        })
+
+
+        const getUserMediaConstraints = (deviceId) => {
+            return {
+                video: {
+                deviceId: deviceId ? { exact: deviceId } : undefined,
+                facingMode: 'user', // Set facingMode if preferred
+                },
+            };
+        };
+
+        const cameraSelector = document.getElementById('camera-selector');
+        const cameraPreview = document.getElementById('camera-preview');
+        const confirmButton = document.getElementById('confirm-camera');
+
+
+            navigator.mediaDevices.enumerateDevices()
+            .then(devices => {
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+                videoDevices.forEach(device => {
+                const option = document.createElement('option');
+                option.value = device.deviceId;
+                option.textContent = device.label || `Camera ${videoDevices.indexOf(device) + 1}`;
+                cameraSelector.appendChild(option);
+                });
+
+                // // Set initial camera (optional)
+                // cameraSelector.value = '657b358df7650e0d57bb4a73e9f2b1b7a4f1b17c9c7ff0d9c83d6a04981626ac';
+            })
+            .catch(error => {
+                console.error('Error listing devices:', error);
+            });
+
+            var deviceId = 'd89b7d58a7f1e6abeec4eb35a2ced3563f221dc27e5fe8043485ab8b5c2101e4';
+
+            window.onload = async function() {
+                const constraints = getUserMediaConstraints(deviceId);
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                    
+                    // Create video element dynamically
+                    const inputVideoElement = document.createElement('video');
+                    inputVideoElement.className = 'input_video'; // Add class name
+                    inputVideoElement.srcObject = stream;
+                    inputVideoElement.autoplay = true; // Autoplay
+                    inputVideoElement.playsinline = true; // Ensure playsinline for mobile browsers
+                    document.body.appendChild(inputVideoElement); // Append to the document body
+
+                    // When the video stream is loaded, dynamically set the canvas size to match the video stream
+                    inputVideoElement.addEventListener('loadedmetadata', () => {
+                        canvasElement.width = inputVideoElement.videoWidth;
+                        canvasElement.height = inputVideoElement.videoHeight;
+                    });
+
+                    // Apply FaceMesh to the selected camera
+                    const onFrame = async () => {
+                        await faceMesh.send({ image: inputVideoElement });
+                        requestAnimationFrame(onFrame);
+                    };
+                    // Start sending frames to FaceMesh
+                    onFrame();
+                } catch (error) {
+                    console.error('Error accessing camera:', error);
+                }
+            }
+
+        // FaceMesh setup (same as before)
+        const faceMesh = new FaceMesh({ locateFile: (file) => {
+            return `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`;
+        } });
         faceMesh.setOptions({
-            maxNumFaces: 1,
-            refineLandmarks: true,
-            minDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5
+                maxNumFaces: 1,
+                refineLandmarks: true,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
         });
         faceMesh.onResults(onResults);
-        
-        const camera = new Camera(videoElement, {onFrame: async () => {
-            await faceMesh.send({image: videoElement});
-            },
-            width: 1280,
-            height: 720
-        });
-        camera.start();
+
     </script>
 </body>
 </html>
