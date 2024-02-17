@@ -201,7 +201,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 <div class="flex justify-between items-center p-4 md:p-5  border-gray-200 rounded-b ">
     <button data-modal-hide="cam-view-popup-modal" data-modal-target="cam-select-popup-modal" data-modal-toggle="cam-select-popup-modal" type="button" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-5 focus:outline-none  rounded-lg border border-gray-400 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 ">Previous</button>
     <!-- <button id="nextButton" type="button" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center hidden" onclick = "sendSetupData()">Next</button> -->
-    <button onclick = "sendSetupData()" data-modal-hide="cam-select-popup-modal" type="button" data-modal-target="cam-view-popup-modal" data-modal-toggle="cam-view-popup-modal" class=" text-gray-100 bg-blue-700 hover:bg-[#0061A8] focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-00 focus:z-10">Next</button>
+    <button onclick = "sendSessionSetupData()" data-modal-hide="cam-select-popup-modal" type="button" data-modal-target="cam-view-popup-modal" data-modal-toggle="cam-view-popup-modal" class=" text-gray-100 bg-blue-700 hover:bg-[#0061A8] focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-00 focus:z-10">Next</button>
 
 </div>
 
@@ -274,16 +274,17 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 <div id = "backdrop" modal-backdrop class="bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40"></div>
 
 <script>
-    let chosen_camera_device;
+    let chosen_camera_device = null;
     let multiple_monitor;
     let chosen_monitor_set_up;
-    let monitor_cam = <?php echo $monitor_camera_activated; ?>;
+    let monitor_camera_activated = <?php echo $monitor_camera_activated; ?>;
     // Check if window screen is extended
     var have_not_multiple_btn = document.getElementById('have-not-multiple-btn');
     var have_multiple_btn = document.getElementById('have-multiple-btn');
     var continue_multiple_btn = document.getElementById('continue-multiple-btn');
 
-    if (monitor_cam === 1) {
+    // If monitoring camera is activated
+    if (monitor_camera_activated === 1) {
         have_not_multiple_btn.setAttribute('data-modal-target', 'cam-select-popup-modal');
         have_not_multiple_btn.setAttribute('data-modal-toggle', 'cam-select-popup-modal');
         have_not_multiple_btn.setAttribute('data-modal-hide', 'popup-modal');
@@ -332,8 +333,10 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
         var constraints = {
             video: { deviceId: { exact: deviceId } }
         };
-        chosen_camera_device = constraints
-        console.log(chosen_camera_device); 
+
+        // Chosen camera device
+        chosen_camera_device = JSON.stringify(constraints);
+        console.log('chosen cam: ', chosen_camera_device); 
 
         navigator.mediaDevices.getUserMedia(constraints)
             .then(function(stream) {
@@ -345,10 +348,6 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
                 console.error('Error accessing camera:', err);
                 alert('Error accessing camera: ' + err.message);
         });
-    }
-
-    function sendSetupData(){
-        console.log('sending this: ', chosen_camera_device);
     }
 
     function haveNotConnMonitor(){
@@ -385,6 +384,28 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
         chosen_monitor_set_up = "continue_with multiple_monitor";
         console.log('sending this: ', chosen_monitor_set_up);
         console.log('redirecting to quiz');
+    }
+
+    function sendSessionSetupData(){
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', <?php echo json_encode($wwwroot . '/local/auto_proctor/proctor_tools/proctor_setup/save_proctor_session_setup.php'); ?>, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        // ==== DEBUGGING =====
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200) {
+                    console.log('POST request successful');
+                    if (chosen_camera_device !== null) {
+                        window.location.href = <?php echo json_encode($quizattempturl); ?>;
+                    }
+                    // You can add further actions if needed
+                } else {
+                    console.error('POST request failed with status: ' + xhr.status);
+                    // Handle the error or provide feedback to the user
+                }
+            }
+        };
+        xhr.send('userid=' + <?php echo $userid; ?> + '&quizid=' + <?php echo $quizid; ?> + '&quizattempt=' + <?php echo $quizattempt; ?> + '&quizattempturl=' + <?php echo json_encode($quizattempturl); ?> + '&chosen_camera_device=' + chosen_camera_device);
     }
 
     window.onload = function() {
