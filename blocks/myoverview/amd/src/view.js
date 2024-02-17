@@ -64,6 +64,16 @@ let lastLimit = 0;
 let namespace = null;
 
 /**
+ * Whether the summary display has been loaded.
+ *
+ * If true, this means that courses have been loaded with the summary text.
+ * Otherwise, switching to the summary display mode will require course data to be fetched with the summary text.
+ *
+ * @type {boolean}
+ */
+let summaryDisplayLoaded = false;
+
+/**
  * Get filter values from DOM.
  *
  * @param {object} root The root element for the courses view.
@@ -107,6 +117,7 @@ const getMyCourses = (filters, limit) => {
     };
     if (filters.display === 'summary') {
         params.requiredfields = Repository.SUMMARY_REQUIRED_FIELDS;
+        summaryDisplayLoaded = true;
     } else {
         params.requiredfields = Repository.CARDLIST_REQUIRED_FIELDS;
     }
@@ -133,8 +144,10 @@ const getSearchMyCourses = (filters, limit, searchValue) => {
     };
     if (filters.display === 'summary') {
         params.requiredfields = Repository.SUMMARY_REQUIRED_FIELDS;
+        summaryDisplayLoaded = true;
     } else {
         params.requiredfields = Repository.CARDLIST_REQUIRED_FIELDS;
+        summaryDisplayLoaded = false;
     }
     return Repository.getEnrolledCoursesByTimeline(params);
 };
@@ -846,12 +859,25 @@ export const init = root => {
  */
 export const reset = root => {
     if (loadedPages.length > 0) {
-        loadedPages.forEach((courseList, index) => {
-            let pagedContentPage = getPagedContentContainer(root, index);
-            renderCourses(root, courseList).then((html, js) => {
-                return Templates.replaceNodeContents(pagedContentPage, html, js);
-            }).catch(Notification.exception);
-        });
+        const filters = getFilterValues(root);
+        // If the display mode is changed to 'summary' but the summary display has not been loaded yet,
+        // we need to re-fetch the courses to include the course summary text.
+        if (filters.display === 'summary' && !summaryDisplayLoaded) {
+            const page = document.querySelector(SELECTORS.region.selectBlock);
+            const input = page.querySelector(SELECTORS.region.searchInput);
+            if (input.value !== '') {
+                initializePagedContent(root, searchFunctionalityCurry(), input.value.trim());
+            } else {
+                initializePagedContent(root, standardFunctionalityCurry());
+            }
+        } else {
+            loadedPages.forEach((courseList, index) => {
+                let pagedContentPage = getPagedContentContainer(root, index);
+                renderCourses(root, courseList).then((html, js) => {
+                    return Templates.replaceNodeContents(pagedContentPage, html, js);
+                }).catch(Notification.exception);
+            });
+        }
     } else {
         init(root);
     }
