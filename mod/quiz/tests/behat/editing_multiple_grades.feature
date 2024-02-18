@@ -148,3 +148,24 @@ Feature: Setup multiple grades for a quiz
     And I press "Reset advanced grading setup"
     And I click on "Cancel" "button" in the "Reset grading setup?" "dialogue"
     Then I should see "Intuition"
+
+  @javascript
+  Scenario: Automatically set up one grade item per section
+    Given quiz "Quiz 1" contains the following questions:
+      | question   | page |
+      | Question A | 1    |
+      | Question B | 1    |
+      | Question C | 2    |
+    And quiz "Quiz 1" contains the following sections:
+      | heading   | firstslot | shuffle |
+      | Reading   | 1         | 0       |
+      | Listening | 3         | 0       |
+
+    When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
+    And I press "Setup a grade for each section"
+
+    Then "Reading" "table_row" should exist in the "mod_quiz-grade-item-list" "table"
+    And "Listening" "table_row" should exist in the "mod_quiz-grade-item-list" "table"
+    And the field "Question A" matches value "Reading"
+    And the field "Question B" matches value "Reading"
+    And the field "Question C" matches value "Listening"

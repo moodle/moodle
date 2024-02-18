@@ -295,4 +295,12 @@ $functions = [
         'capabilities' => 'mod/quiz:manage',
         'ajax' => true,
     ],
+
+    'mod_quiz_create_grade_item_per_section' => [
+        'classname' => 'mod_quiz\external\create_grade_item_per_section',
+        'description' => 'For a quiz with no grade items yet, create a grade item for each section, with the questions in that section assigned.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
 ];

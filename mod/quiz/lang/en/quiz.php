@@ -448,6 +448,7 @@ $string['gradeitemnewname'] = 'New name for grade item {$a}';
 $string['gradeitemnoneselected'] = '[none]';
 $string['gradeitemnoslots'] = 'No questions have been added to the quiz yet. Please add the questions to the quiz before setting up grading.';
 $string['gradeitems'] = 'Grade items';
+$string['gradeitemsautosetup'] = 'Setup a grade for each section';
 $string['gradeitemsetup'] = 'Quiz grading setup (advanced view)';
 $string['gradeitemsnoneyet'] = 'This quiz does not yet have any grade items defined, just a simple overall score will be used.';
 $string['gradeitemsremoveall'] = 'Reset advanced grading setup';

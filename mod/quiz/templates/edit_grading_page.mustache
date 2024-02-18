@@ -135,6 +135,12 @@
             <button type="button" class="btn btn-danger" id="mod_quiz-grades_reset_all"
                 data-quiz-id="{{quizid}}">{{#str}} gradeitemsremoveall, quiz{{/str}}</button>
         {{/hasgradeitems}}
+        {{^hasgradeitems}}
+            {{#hasmultiplesections}}
+                <button type="button" class="btn btn-secondary" id="mod_quiz-grades_auto_setup"
+                    data-quiz-id="{{quizid}}">{{#str}} gradeitemsautosetup, quiz{{/str}}</button>
+            {{/hasmultiplesections}}
+        {{/hasgradeitems}}
     </div>
 
     <h3>{{#str}} gradeitemmarkscheme, quiz {{/str}}</h3>

@@ -35,6 +35,7 @@ import {replaceNode} from 'core/templates';
  */
 const SELECTORS = {
     'addGradeItemButton': '#mod_quiz-add_grade_item',
+    'autoSetupButton': '#mod_quiz-grades_auto_setup',
     'editingPageContents': '#edit_grading_page-contents',
     'gradeItemList': 'table#mod_quiz-grade-item-list',
     'gradeItemSelect': 'select[data-slot-id]',
@@ -120,6 +121,21 @@ const updateSlotGradeItem = (
     args: {
         quizid: quizId,
         slots: [{id: slotId, quizgradeitemid: gradeItemId}],
+    }
+});
+
+/**
+ * Call the Ajax service to setup one grade item for each quiz section.
+ *
+ * @param {Number} quizId id of the quiz to update.
+ * @return {Promise} Promise that resolves to the context required to re-render the page.
+ */
+const autoSetupGradeItems = (
+    quizId
+) => callServiceAndReturnRenderingData({
+    methodname: 'mod_quiz_create_grade_item_per_section',
+    args: {
+        quizid: quizId
     }
 });
 
@@ -377,6 +393,9 @@ const handleButtonClick = (e) => {
     if (e.target.closest(SELECTORS.addGradeItemButton)) {
         handleAddGradeItemClick(e);
     }
+    if (e.target.closest(SELECTORS.autoSetupButton)) {
+        handleAutoSetup(e);
+    }
     if (e.target.closest(SELECTORS.resetAllButton)) {
         handleResetAllClick(e);
     }
@@ -400,6 +419,26 @@ const handleAddGradeItemClick = (e) => {
         .then(() => {
             pending.resolve();
             document.querySelector(SELECTORS.addGradeItemButton).focus();
+        })
+        .catch(Notification.exception);
+};
+
+/**
+ * Handle clicks on the reset button - show a confirmation.
+ *
+ * @param {Event} e click event.
+ */
+const handleAutoSetup = (e) => {
+    e.preventDefault();
+    const pending = new Pending('setup-quiz-grade-items');
+
+    const quizId = e.target.dataset.quizId;
+
+    autoSetupGradeItems(quizId)
+        .then(reRenderPage)
+        .then(() => {
+            pending.resolve();
+            document.querySelector(SELECTORS.resetAllButton).focus();
         })
         .catch(Notification.exception);
 };

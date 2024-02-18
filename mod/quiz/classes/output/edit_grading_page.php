@@ -112,6 +112,7 @@ class edit_grading_page implements renderable, templatable {
             'gradeitems' => $gradeitems,
             'hasslots' => $this->structure->has_questions(),
             'sections' => array_values($sections),
+            'hasmultiplesections' => count($sections) > 1,
             'nogradeitems' => ['message' => get_string('gradeitemsnoneyet', 'quiz')],
             'noslots' => ['message' => get_string('gradeitemnoslots', 'quiz')],
         ];

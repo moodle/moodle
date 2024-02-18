@@ -55,8 +55,7 @@ class structure {
     protected $slotsinorder = [];
 
     /**
-     * @var stdClass[] currently a dummy. Holds data that will match the
-     * quiz_sections, once it exists.
+     * @var stdClass[] this quiz's data from the quiz_sections table. Each item has a ->lastslot field too.
      */
     protected $sections = [];
 
@@ -1505,7 +1504,7 @@ class structure {
      *
      * The new grade item is added at the end of the order.
      *
-     * @param stdClass $gradeitemdata must have property name.
+     * @param stdClass $gradeitemdata must have property name - updated with the inserted data (sortorder and id).
      */
     public function create_grade_item(stdClass $gradeitemdata): void {
         global $DB;
