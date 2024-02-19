@@ -10,8 +10,8 @@ Feature: Show/hide course sections
       | teacher1 | Teacher | 1 | teacher1@example.com |
       | student1 | Student | 1 | student1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | format | hiddensections |
-      | Course 1 | C1 | topics | 0                     |
+      | fullname | shortname | format | hiddensections | enablecompletion | coursedisplay |
+      | Course 1 | C1        | topics | 0              | 1                | 1             |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
@@ -76,12 +76,7 @@ Feature: Show/hide course sections
 
   @javascript
   Scenario: Students can not navigate to restricted sections
-    Given I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Course layout | Show one section per page |
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
-    And the following "activities" exist:
+    Given the following "activities" exist:
       | activity | course | section | name       | completion |
       | label    | C1     | 1       | Test label | 1          |
     And I edit the section "2"

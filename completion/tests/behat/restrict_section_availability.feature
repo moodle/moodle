@@ -6,8 +6,8 @@ Feature: Restrict sections availability through completion or grade conditions
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+      | fullname | shortname | category | enablecompletion |
+      | Course 1 | C1        | 0        | 1                |
     And the following "users" exist:
       | username | firstname | lastname | email                |
       | teacher1 | Teacher   | First    | teacher1@example.com |
@@ -23,15 +23,11 @@ Feature: Restrict sections availability through completion or grade conditions
 
   @javascript
   Scenario: Show section greyed-out to student when completion condition is not satisfied
-    Given I log in as "teacher1"
-    And I am on "Course 1" course homepage with editing mode on
-    And I navigate to "Settings" in current page administration
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-    And I press "Save and display"
-    And the following "activities" exist:
+    Given the following "activities" exist:
       | activity | course | section | intro      | completion | idnumber |
       | label    | C1     | 1       | Test label | 1          | 1        |
+    And I log in as "teacher1"
+    And I am on "Course 1" course homepage with editing mode on
     When I edit the section "2"
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
