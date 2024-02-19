@@ -180,6 +180,7 @@ class quiz_overview_report extends attempts_report {
             $this->add_time_columns($columns, $headers);
 
             $this->add_grade_columns($quiz, $options->usercanseegrades, $columns, $headers, false);
+            $this->add_grade_item_columns($options->usercanseegrades, $columns, $headers);
 
             if (!$table->is_downloading() && has_capability('mod/quiz:regrade', $this->context) &&
                     $this->has_regraded_questions($table->sql->from, $table->sql->where, $table->sql->params)) {

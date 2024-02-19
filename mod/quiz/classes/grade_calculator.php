@@ -19,9 +19,11 @@ namespace mod_quiz;
 use coding_exception;
 use core\di;
 use core\hook;
+use core_component;
 use mod_quiz\event\quiz_grade_updated;
 use mod_quiz\hook\structure_modified;
 use mod_quiz\output\grades\grade_out_of;
+use qubaid_condition;
 use question_engine_data_mapper;
 use question_usage_by_activity;
 use stdClass;
@@ -46,7 +48,7 @@ class grade_calculator {
     protected $quizobj;
 
     /**
-     * @var stdClass[]|null quiz_grade_items for this quiz indexed by id, sorted by sortorder.
+     * @var stdClass[]|null quiz_grade_items for this quiz indexed by id, sorted by sortorder, with a maxmark field added.
      *
      * Lazy-loaded when needed. See {@see ensure_grade_items_loaded()}.
      */
@@ -114,7 +116,7 @@ class grade_calculator {
 
         // This class callback is deprecated, and will be removed in Moodle 4.8 (MDL-80327).
         // Use the structure_modified hook instead.
-        $callbackclasses = \core_component::get_plugin_list_with_class('quiz', 'quiz_structure_modified');
+        $callbackclasses = core_component::get_plugin_list_with_class('quiz', 'quiz_structure_modified');
         foreach ($callbackclasses as $callbackclass) {
             component_class_callback($callbackclass, 'callback', [$quiz->id], null, true);
         }
@@ -467,7 +469,7 @@ class grade_calculator {
     }
 
     /**
-     * Ensure the {@see $gradeitems} field is ready to use.
+     * Ensure the {@see grade_calculator::$gradeitems} field is ready to use.
      */
     protected function ensure_grade_items_loaded(): void {
         global $DB;
@@ -476,8 +478,33 @@ class grade_calculator {
             return; // Already done.
         }
 
-        $this->gradeitems = $DB->get_records('quiz_grade_items',
-            ['quizid' => $this->quizobj->get_quizid()], 'sortorder');
+        $this->gradeitems = $DB->get_records_sql("
+            SELECT gi.id,
+                   gi.quizid,
+                   gi.sortorder,
+                   gi.name,
+                   COALESCE(SUM(slot.maxmark), 0) AS maxmark
+
+              FROM {quiz_grade_items} gi
+         LEFT JOIN {quiz_slots} slot ON slot.quizgradeitemid = gi.id
+
+             WHERE gi.quizid = ? AND slot.quizid = ?
+
+          GROUP BY gi.id, gi.quizid, gi.sortorder, gi.name
+
+          ORDER BY gi.sortorder
+            ", [$this->quizobj->get_quizid(), $this->quizobj->get_quizid()]);
+    }
+
+    /**
+     * Get the extra grade items for this quiz.
+     *
+     * Returned objects have fields ->id, ->quizid, ->sortorder, ->name and maxmark.
+     * @return stdClass[] the grade items for this quiz.
+     */
+    public function get_grade_items(): array {
+        $this->ensure_grade_items_loaded();
+        return $this->gradeitems;
     }
 
     /**
@@ -534,7 +561,7 @@ class grade_calculator {
         $grades = [];
         foreach ($this->gradeitems as $gradeitem) {
             $grades[$gradeitem->id] = new grade_out_of(
-                $this->quizobj->get_quiz(), 0, 0, name: $gradeitem->name);
+                $this->quizobj->get_quiz(), 0, $gradeitem->maxmark, name: $gradeitem->name);
         }
 
         // Add up the scores.
@@ -543,7 +570,6 @@ class grade_calculator {
                 continue;
             }
             $grades[$slot->quizgradeitemid]->grade += $quba->get_question_mark($slot->slot);
-            $grades[$slot->quizgradeitemid]->maxgrade += $quba->get_question_max_mark($slot->slot);
         }
 
         // Remove any grade items where the total is 0.
@@ -554,5 +580,40 @@ class grade_calculator {
         }
 
         return $grades;
+    }
+
+    /**
+     * Query the database return the total mark for each grade item for a set of attempts.
+     *
+     * @param qubaid_condition $qubaids which question_usages to computer the total marks for.
+     * @return float[][] Array question_usage.id => quiz_grade_item.id => mark.
+     */
+    public function load_grade_item_totals(qubaid_condition $qubaids): array {
+        global $DB;
+        $dm = new question_engine_data_mapper();
+
+        [$qalatestview, $viewparams] = $dm->question_attempt_latest_state_view('qalatest', $qubaids);
+
+        $totals = $DB->get_records_sql("
+            SELECT " . $DB->sql_concat('qalatest.questionusageid', "'#'", 'slot.quizgradeitemid') . " AS uniquefirstcolumn,
+                   qalatest.questionusageid,
+                   slot.quizgradeitemid,
+                   SUM(qalatest.fraction * qalatest.maxmark) AS summarks
+
+              FROM $qalatestview
+
+              JOIN {quiz_slots} slot ON slot.slot = qalatest.slot
+              JOIN {quiz_grade_items} qgi ON qgi.id = slot.quizgradeitemid
+
+          GROUP BY qalatest.questionusageid, slot.quizgradeitemid
+
+            ", $viewparams);
+
+        $marks = [];
+        foreach ($totals as $total) {
+            $marks[$total->questionusageid][$total->quizgradeitemid] = $total->summarks + 0; // Convert to float with + 0.
+        }
+
+        return $marks;
     }
 }

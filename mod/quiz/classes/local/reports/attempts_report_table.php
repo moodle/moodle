@@ -24,6 +24,7 @@ use coding_exception;
 use context_module;
 use html_writer;
 use mod_quiz\quiz_attempt;
+use mod_quiz\quiz_settings;
 use moodle_url;
 use popup_action;
 use question_state;
@@ -55,8 +56,17 @@ abstract class attempts_report_table extends \table_sql {
      */
     protected $lateststeps = null;
 
+    /**
+     * @var float[][]|null total mark for each grade item. Array question_usage.id => quiz_grade_item.id => mark.
+     * Loaded by {@see load_grade_item_marks()}, if applicable.
+     */
+    protected ?array $gradeitemtotals = null;
+
     /** @var stdClass the quiz settings for the quiz we are reporting on. */
     protected $quiz;
+
+    /** @var quiz_settings quiz settings object for this quiz. Gets set in {@see attempts_report::et_up_table_columns()}. */
+    protected quiz_settings $quizobj;
 
     /** @var context_module the quiz context. */
     protected $context;
@@ -116,6 +126,15 @@ abstract class attempts_report_table extends \table_sql {
         $this->includecheckboxes = $options->checkboxcolumn;
         $this->reporturl = $reporturl;
         $this->options = $options;
+    }
+
+    /**
+     * A way for the report to pass in the quiz settings object. Currently done in {@see attempts_report::set_up_table_columns()}.
+     *
+     * @param quiz_settings $quizobj
+     */
+    public function set_quiz_setting(quiz_settings $quizobj): void {
+        $this->quizobj = $quizobj;
     }
 
     /**
@@ -267,6 +286,33 @@ abstract class attempts_report_table extends \table_sql {
         return $feedback;
     }
 
+    public function other_cols($colname, $attempt) {
+        $gradeitemid = $this->is_grade_item_column($colname);
+
+        if (!$gradeitemid) {
+            return parent::other_cols($colname, $attempt);
+        }
+        if (isset($this->gradeitemtotals[$attempt->usageid][$gradeitemid])) {
+            $grade = quiz_format_grade($this->quiz, $this->gradeitemtotals[$attempt->usageid][$gradeitemid]);
+            return $grade;
+        } else {
+            return '-';
+        }
+    }
+
+    /**
+     * Is this the column key for an extra grade item column?
+     *
+     * @param string $columnname e.g. 'marks123' or 'duration'.
+     * @return int grade item id if this is a column for showing that grade item grade, else, 0.
+     */
+    protected function is_grade_item_column(string $columnname): int {
+        if (preg_match('/^marks(\d+)$/', $columnname, $matches)) {
+            return $matches[1];
+        }
+        return 0;
+    }
+
     public function get_row_class($attempt) {
         if ($this->qmsubselect && $attempt->gradedattempt) {
             return 'gradedattempt';
@@ -382,6 +428,19 @@ abstract class attempts_report_table extends \table_sql {
      */
     protected function load_extra_data() {
         $this->lateststeps = $this->load_question_latest_steps();
+    }
+
+    /**
+     * Load the total mark for each grade item for each attempt.
+     */
+    protected function load_grade_item_marks(): void {
+        if (count($this->rawdata) === 0) {
+            $this->gradeitemtotals = [];
+            return;
+        }
+
+        $this->gradeitemtotals = $this->quizobj->get_grade_calculator()->load_grade_item_totals(
+                $this->get_qubaids_condition());
     }
 
     /**
@@ -590,8 +649,8 @@ abstract class attempts_report_table extends \table_sql {
         }
 
         // This condition roughly filters the list of attempts to be considered.
-        // It is only used in a sub-select to help crappy databases (see MDL-30122)
-        // therefore, it is better to use a very simple join, which may include
+        // It is only used in a sub-select to help database query optimisers (see MDL-30122).
+        // Therefore, it is better to use a very simple  which may include
         // too many records, than to do a super-accurate join.
         $qubaids = new qubaid_join("{quiz_attempts} {$alias}quiza", "{$alias}quiza.uniqueid",
                 "{$alias}quiza.quiz = :{$alias}quizid", ["{$alias}quizid" => $this->sql->params['quizid']]);
@@ -603,6 +662,36 @@ abstract class attempts_report_table extends \table_sql {
         $this->sql->from .= "\nLEFT JOIN $inlineview ON " .
                 "$alias.questionusageid = quiza.uniqueid AND $alias.slot = :{$alias}slot";
         $this->sql->params[$alias . 'slot'] = $slot;
+        $this->sql->params = array_merge($this->sql->params, $viewparams);
+    }
+
+    /**
+     * Add a field marks$gradeitemid to the query, with the total score for that grade item.
+     *
+     * @param int $gradeitemid the grade item to add information for.
+     */
+    protected function add_grade_item_mark(int $gradeitemid): void {
+        $alias = 'gimarks' . $gradeitemid;
+
+        // This condition roughly filters the list of attempts to be considered.
+        // It is only used in a sub-select to help database query optimisers (see MDL-30122).
+        // Therefore, it is better to use a very simple  which may include
+        // too many records, than to do a super-accurate join.
+        $qubaids = new qubaid_join("{quiz_slots} {$alias}slot2", 'quiza.uniqueid',
+                "{$alias}slot2.quizgradeitemid = :{$alias}gradeitemid2", [$alias . 'gradeitemid2' => $gradeitemid]);
+
+        $dm = new question_engine_data_mapper();
+        [$qalatestview, $viewparams] = $dm->question_attempt_latest_state_view($alias, $qubaids);
+
+        $this->sql->fields .= ",\n(
+                SELECT SUM({$alias}.fraction * {$alias}.maxmark) AS summarks
+
+              FROM {quiz_slots} slot
+              JOIN $qalatestview ON {$alias}.slot = slot.slot
+
+              WHERE slot.quizgradeitemid = :{$alias}gradeitemid
+            ) marks$gradeitemid";
+        $this->sql->params[$alias . 'gradeitemid'] = $gradeitemid;
         $this->sql->params = array_merge($this->sql->params, $viewparams);
     }
 
@@ -639,15 +728,30 @@ abstract class attempts_report_table extends \table_sql {
 
     public function query_db($pagesize, $useinitialsbar = true) {
         $doneslots = [];
+        $donegradeitems = [];
         foreach ($this->get_sort_columns() as $column => $notused) {
             $slot = $this->is_latest_step_column($column);
             if ($slot && !in_array($slot, $doneslots)) {
                 $this->add_latest_state_join($slot);
                 $doneslots[] = $slot;
             }
+
+            $gradeitemid = $this->is_grade_item_column($column);
+            if ($gradeitemid && !in_array($gradeitemid, $donegradeitems)) {
+                $this->add_grade_item_mark($gradeitemid);
+                $donegradeitems[] = $gradeitemid;
+            }
         }
 
         parent::query_db($pagesize, $useinitialsbar);
+
+        // Load grade-item totals if required.
+        foreach ($this->columns as $columnname => $notused) {
+            if ($this->is_grade_item_column($columnname)) {
+                $this->load_grade_item_marks();
+                break;
+            }
+        }
 
         if ($this->requires_extra_data()) {
             $this->load_extra_data();
