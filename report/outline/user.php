@@ -188,7 +188,7 @@ foreach ($sections as $i => $section) {
 }
 
 if (!$itemsprinted) {
-    echo $OUTPUT->notification(get_string('nothingtodisplay'));
+    echo $OUTPUT->notification(get_string('nothingtodisplay'), 'info', false);
 }
 
 echo $OUTPUT->footer();

@@ -370,14 +370,14 @@ class summary_table extends table_sql {
     }
 
     /**
-     * Override the default implementation to set a decent heading level.
+     * Override the default implementation to set a notification.
      *
      * @return void.
      */
     public function print_nothing_to_display(): void {
         global $OUTPUT;
 
-        echo $OUTPUT->notification(get_string('nothingtodisplay'), \core\output\notification::NOTIFY_INFO);
+        echo $OUTPUT->notification(get_string('nothingtodisplay'), 'info', false);
     }
 
     /**
