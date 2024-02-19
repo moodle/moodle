@@ -53,6 +53,7 @@ if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', cont
 }
 
 $PAGE->set_course($course);
+$PAGE->set_context($context->get_parent_context());
 $PAGE->set_pagelayout('incourse');
 $PAGE->set_url('/enrol/index.php', array('id'=>$course->id));
 $PAGE->set_secondary_navigation(false);
