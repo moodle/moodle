@@ -188,6 +188,10 @@
     margin: 0.5em 0;
 }
 
+.path-mod-quiz .autosave_info {
+    font-size: small;
+}
+
 .path-mod-quiz .othernav a,
 .path-mod-quiz .othernav input {
     display: block;

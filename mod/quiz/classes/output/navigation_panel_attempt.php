@@ -48,8 +48,15 @@ class navigation_panel_attempt extends navigation_panel_base {
             // Don't link from the summary page to itself.
             return '';
         }
-        return html_writer::link($this->attemptobj->summary_url(),
+
+        // We create a hidden div with an information message in order for the student
+        // to known when their answers have been auto-saved.
+        $html = html_writer::div(get_string('lastautosave', 'quiz', '-'), 'autosave_info', ['hidden' => 'hidden']);
+
+        $html .= html_writer::link($this->attemptobj->summary_url(),
                 get_string('endtest', 'quiz'), ['class' => 'endtestlink aalink']) .
                 $this->render_restart_preview_link($output);
+
+        return $html;
     }
 }
