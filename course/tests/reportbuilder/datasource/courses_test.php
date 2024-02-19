@@ -91,6 +91,7 @@ class courses_test extends core_reportbuilder_testcase {
             'category' => $category->id,
             'fullname' => 'Cats',
             'summary' => 'Course description',
+            'theme' => 'boost',
             'tags' => ['Horses'],
         ]);
 
@@ -171,7 +172,7 @@ class courses_test extends core_reportbuilder_testcase {
         $this->assertEquals('No', $coursegroupmodeforce);
         $this->assertEmpty($courselang);
         $this->assertEmpty($coursecalendar);
-        $this->assertEmpty($coursetheme);
+        $this->assertEquals('Boost', $coursetheme);
         $this->assertEquals('No', $coursecompletion);
         $this->assertEmpty($coursedownload);
         $this->assertEquals(userdate($course->timecreated), $coursetimecreated);

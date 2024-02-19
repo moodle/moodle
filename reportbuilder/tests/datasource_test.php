@@ -55,7 +55,7 @@ class datasource_test extends advanced_testcase {
             'All column' => [
                 [],
                 [],
-                29,
+                30,
             ],
             'Include columns (picture, fullname, fullnamewithlink, fullnamewithpicture, fullnamewithpicturelink)' => [
                 ['picture', 'fullname*'],
@@ -65,7 +65,7 @@ class datasource_test extends advanced_testcase {
             'Exclude columns (picture, fullname, fullnamewithlink, fullnamewithpicture, fullnamewithpicturelink)' => [
                 [],
                 ['picture', 'fullname*'],
-                24,
+                25,
             ],
         ];
     }
@@ -112,7 +112,7 @@ class datasource_test extends advanced_testcase {
             'All filters' => [
                 [],
                 [],
-                27,
+                28,
             ],
             'Include filters (department, phone1, phone2)' => [
                 ['department', 'phone*'],
@@ -122,7 +122,7 @@ class datasource_test extends advanced_testcase {
             'Exclude filters (department, phone1, phone2)' => [
                 [],
                 ['department', 'phone*'],
-                24,
+                25,
             ],
         ];
     }
@@ -169,7 +169,7 @@ class datasource_test extends advanced_testcase {
             'All conditions' => [
                 [],
                 [],
-                27,
+                28,
             ],
             'Include conditions (department, phone1, phone2)' => [
                 ['department', 'phone*'],
@@ -179,7 +179,7 @@ class datasource_test extends advanced_testcase {
             'Exclude conditions (department, phone1, phone2)' => [
                 [],
                 ['department', 'phone*'],
-                24,
+                25,
             ],
         ];
     }

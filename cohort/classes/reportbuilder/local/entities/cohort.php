@@ -22,6 +22,7 @@ use context;
 use context_helper;
 use lang_string;
 use stdClass;
+use theme_config;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\boolean_select;
 use core_reportbuilder\local\filters\date;
@@ -245,7 +246,14 @@ class cohort extends base {
             ->add_joins($this->get_joins())
             ->set_type(column::TYPE_TEXT)
             ->add_fields("{$tablealias}.theme")
-            ->set_is_sortable(true);
+            ->set_is_sortable(true)
+            ->add_callback(static function (?string $theme): string {
+                if ((string) $theme === '') {
+                    return '';
+                }
+
+                return get_string('pluginname', "theme_{$theme}");
+            });
 
         return $columns;
     }
@@ -326,6 +334,22 @@ class cohort extends base {
             $this->get_entity_name(),
             $DB->sql_cast_to_char("{$tablealias}.description")
         ))
+            ->add_joins($this->get_joins());
+
+        // Theme filter.
+        $filters[] = (new filter(
+            select::class,
+            'theme',
+            new lang_string('theme'),
+            $this->get_entity_name(),
+            "{$tablealias}.theme",
+        ))
+            ->set_options_callback(static function(): array {
+                return array_map(
+                    fn(theme_config $theme) => $theme->get_theme_name(),
+                    get_list_of_themes(),
+                );
+            })
             ->add_joins($this->get_joins());
 
         // Visible filter.

@@ -24,9 +24,10 @@ use html_writer;
 use lang_string;
 use moodle_url;
 use stdClass;
+use theme_config;
 use core_course_category;
 use core_reportbuilder\local\entities\base;
-use core_reportbuilder\local\filters\{category, text};
+use core_reportbuilder\local\filters\{category, select, text};
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 
@@ -199,6 +200,24 @@ class course_category extends base {
                 return format_text($description, $category->descriptionformat, ['context' => $context->id]);
             });
 
+        // Theme column.
+        $columns[] = (new column(
+            'theme',
+            new lang_string('theme'),
+            $this->get_entity_name()
+        ))
+            ->add_joins($this->get_joins())
+            ->set_type(column::TYPE_TEXT)
+            ->add_fields("{$tablealias}.theme")
+            ->set_is_sortable(true)
+            ->add_callback(static function (?string $theme): string {
+                if ((string) $theme === '') {
+                    return '';
+                }
+
+                return get_string('pluginname', "theme_{$theme}");
+            });
+
         // Course count column.
         $columns[] = (new column(
             'coursecount',
@@ -252,6 +271,22 @@ class course_category extends base {
             $this->get_entity_name(),
             "{$tablealias}.idnumber"
         ))
+            ->add_joins($this->get_joins());
+
+        // Theme filter.
+        $filters[] = (new filter(
+            select::class,
+            'theme',
+            new lang_string('theme'),
+            $this->get_entity_name(),
+            "{$tablealias}.theme",
+        ))
+            ->set_options_callback(static function(): array {
+                return array_map(
+                    fn(theme_config $theme) => $theme->get_theme_name(),
+                    get_list_of_themes(),
+                );
+            })
             ->add_joins($this->get_joins());
 
         return $filters;
