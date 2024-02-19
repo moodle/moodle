@@ -46,7 +46,7 @@ class behat_accessibility extends behat_base {
      * It is also possible to specify any desired optional tags.
      *
      * The list of available tags can be found at
-     * https://github.com/dequelabs/axe-core/blob/v3.5.5/doc/rule-descriptions.md.
+     * https://github.com/dequelabs/axe-core/blob/v4.8.4/doc/rule-descriptions.md.
      *
      * @Then the page should meet accessibility standards
      * @Then the page should meet accessibility standards with :extratags extra tests
@@ -191,10 +191,10 @@ EOF;
         if (empty($standardtags)) {
             $standardtags = [
                 // Meet WCAG 2.1 A requirements.
-                'wcag2a',
+                'wcag21a',
 
                 // Meet WCAG 2.1 AA requirements.
-                'wcag2aa',
+                'wcag21aa',
 
                 // Meet Section 508 requirements.
                 // See https://www.epa.gov/accessibility/what-section-508 for detail.
@@ -203,7 +203,7 @@ EOF;
                 // Ensure that ARIA attributes are correctly defined.
                 'cat.aria',
 
-                // Requiremetns for sensory and visual cues.
+                // Requirements for sensory and visual cues.
                 // These largely related to viewport scale and zoom functionality.
                 'cat.sensory-and-visual-cues',
 
@@ -217,6 +217,12 @@ EOF;
             'runOnly' => [
                 'type' > 'tag',
                 'values' => array_merge($standardtags, $extratags),
+            ],
+            // TODO: MDL-80831 - Disable the target-size rule for now until we start working towards WCAG 2.2 Level AA compliance.
+            'rules' => [
+                'target-size' => [
+                    'enabled' => false,
+                ],
             ],
         ]);
     }
