@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>roundcube</location>
+        <name>Roundcube Framework</name>
+        <license>GPL</license>
+        <licenseversion>3.0+</licenseversion>
+        <version>1.6.6</version>
+        <repository>https://github.com/roundcube/roundcubemail</repository>
+        <copyrights>
+            <copyright>The Roundcube Dev Team</copyright>
+        </copyrights>
+    </library>
+</libraries>

@@ -88,7 +88,6 @@ class core_component {
     protected static $filestomap = ['lib.php', 'settings.php'];
     /** @var array associative array of PSR-0 namespaces and corresponding paths. */
     protected static $psr0namespaces = [
-        'Horde' => 'lib/horde/framework/Horde',
         'Mustache' => 'lib/mustache/src/Mustache',
         'CFPropertyList' => 'lib/plist/classes/CFPropertyList',
     ];
