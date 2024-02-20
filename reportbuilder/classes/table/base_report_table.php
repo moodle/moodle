@@ -273,7 +273,9 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
 
         $this->wrap_html_start();
 
+        $this->set_caption($this->report::get_name(), ['class' => 'sr-only']);
+
         echo html_writer::start_tag('div');
-        echo html_writer::start_tag('table', $this->attributes);
+        echo html_writer::start_tag('table', $this->attributes) . $this->render_caption();
     }
 }

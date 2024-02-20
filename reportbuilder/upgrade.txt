@@ -1,6 +1,12 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.3.4 ===
+
+* The `get_name` method has been moved to the base report class and can now be implemented for both custom and system reports, it
+  will be used as the caption when rendering tables (which can also be targeted in Behat scenarios)
+* The default value for the filename when calling `set_downloadable` is now taken from calling `get_name` on the current report
+
 === 4.3 ===
 
 * New external methods for retrieving system report data:
