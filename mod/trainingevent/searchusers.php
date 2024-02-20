@@ -104,6 +104,11 @@ echo $output->header();
 // Get the location information.
 $location = $DB->get_record('classroom', array('id' => $event->classroomid));
 
+// Set the capacity for the event if it doesn't already exist.
+if (empty($event->coursecapacity)) {
+    $event->coursecapacity = $location->capacity;
+}
+
 // How many are already attending?
 $attending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
 
