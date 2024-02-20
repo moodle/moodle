@@ -1004,7 +1004,7 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024021500.01);
     }
 
-    if ($oldversion < 2024021500.01) {
+    if ($oldversion < 2024021500.02) {
         // A [name => url] map of new OIDC endpoints to be updated/created.
         $endpointuris = [
             'authorization_endpoint' => 'https://clever.com/oauth/authorize',
@@ -1083,7 +1083,7 @@ function xmldb_main_upgrade($oldversion) {
             $DB->update_record('oauth2_issuer', $cleverservice);
         }
 
-        upgrade_main_savepoint(true, 2024021500.01);
+        upgrade_main_savepoint(true, 2024021500.02);
     }
 
     return true;
