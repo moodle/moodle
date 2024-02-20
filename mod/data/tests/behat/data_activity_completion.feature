@@ -24,6 +24,16 @@ Feature: View activity completion in the database activity
       | section                  | 1             |
       | completionentriesenabled | 1             |
       | completionentries        | 2             |
+    And the following "mod_data > fields" exist:
+      | database | type | name             |
+      | mh1      | text | Instrument types |
+    And the following "mod_data > templates" exist:
+      | database | name            |
+      | mh1      | singletemplate  |
+      | mh1      | listtemplate    |
+      | mh1      | addtemplate     |
+      | mh1      | asearchtemplate |
+      | mh1      | rsstemplate     |
     Given I am on the "Music history" "data activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
@@ -35,16 +45,14 @@ Feature: View activity completion in the database activity
       | Receive a grade          | 1                  |
       | Any grade                | 1                  |
     And I press "Save and display"
-    And I add a "Short text" field to "Music history" database and I fill the form with:
-      | Field name | Instrument types |
     And I log out
 
   Scenario: View automatic completion items as a teacher
-    Given I am on the "Music history" "data activity" page logged in as teacher1
 #   We add an entry to let the user change to a different view.
-    When I add an entry to "Music history" database with:
-      | Instrument types | Drums |
-    And I press "Save"
+    Given the following "mod_data > entries" exist:
+      | database | user     | Instrument types |
+      | mh1      | teacher1 | Drums            |
+    When I am on the "Music history" "data activity" page logged in as teacher1
     Then "Music history" should have the "View" completion condition
     And "Music history" should have the "Make entries: 2" completion condition
     And "Music history" should have the "Receive a grade" completion condition
@@ -58,18 +66,18 @@ Feature: View activity completion in the database activity
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "todo"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
+    And the following "mod_data > entries" exist:
+      | database | user     | Instrument types |
+      | mh1      | student1 | Drums            |
     And I am on "Course 1" course homepage
-    And I add an entry to "Music history" database with:
-      | Instrument types | Drums |
-    And I press "Save"
     # One entry is not enough to mark as complete.
     And the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "todo"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"
+    And the following "mod_data > entries" exist:
+      | database | user     | Instrument types |
+      | mh1      | student1 | Hurdygurdy       |
     And I am on "Course 1" course homepage
-    And I add an entry to "Music history" database with:
-      | Instrument types | Hurdygurdy |
-    And I press "Save"
     Then the "View" completion condition of "Music history" is displayed as "done"
     And the "Make entries: 2" completion condition of "Music history" is displayed as "done"
     And the "Receive a grade" completion condition of "Music history" is displayed as "todo"

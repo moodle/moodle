@@ -6,16 +6,16 @@ Feature: Users can add entries to database activities
 
   Background:
     Given the following "users" exist:
-      | username | firstname | lastname | email |
-      | student1 | Student | 1 | student1@example.com |
-      | teacher1 | Teacher | 1 | teacher1@example.com |
+      | username | firstname | lastname | email                |
+      | student1 | Student   | 1        | student1@example.com |
+      | teacher1 | Teacher   | 1        | teacher1@example.com |
     And the following "courses" exist:
       | fullname | shortname | category |
-      | Course 1 | C1 | 0 |
+      | Course 1 | C1        | 0        |
     And the following "course enrolments" exist:
-      | user | course | role |
+      | user | course | role           |
       | teacher1 | C1 | editingteacher |
-      | student1 | C1 | student |
+      | student1 | C1 | student        |
     And the following "activities" exist:
       | activity | name               | intro | course | idnumber |
       | data     | Test database name | n     | C1     | data1    |
@@ -26,33 +26,35 @@ Feature: Users can add entries to database activities
       | database | type | name              | description              |
       | data1    | text | Test field name   | Test field description   |
       | data1    | text | Test field 2 name | Test field 2 description |
-    When I am on the "Course 1" course page logged in as student1
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student original entry |
-      | Test field 2 name | Student original entry 2 |
-    And I press "Save"
-    Then I should see "Student original entry"
-    And I open the action menu in "#defaulttemplate-single" "css_element"
+    And the following "mod_data > templates" exist:
+      | database | name            |
+      | data1    | singletemplate  |
+      | data1    | listtemplate    |
+      | data1    | addtemplate     |
+      | data1    | asearchtemplate |
+      | data1    | rsstemplate     |
+    And the following "mod_data > entries" exist:
+      | database | user     | Test field name        | Test field 2 name        |
+      | data1    | student1 | Student original entry | Student original entry 2 |
+    And I am on the "data1" Activity page logged in as student1
+    And I open the action menu in "#data-listview-content" "css_element"
     And I choose "Edit" in the open action menu
     And I set the following fields to these values:
-      | Test field name | Student original entry |
-      | Test field 2 name |  |
+      | Test field name   | Student original entry |
+      | Test field 2 name |                        |
     And I press "Save"
     Then I should not see "Student original entry 2"
-    And I open the action menu in "#defaulttemplate-single" "css_element"
+    And I open the action menu in "#data-singleview-content" "css_element"
     And I choose "Edit" in the open action menu
     And I set the following fields to these values:
       | Test field name | Student edited entry |
     And I press "Save"
     And I should see "Student edited entry"
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student second entry |
-    And I press "Save and add another"
-    And the field "Test field name" does not match value "Student second entry"
-    And I add an entry to "Test database name" database with:
-      | Test field name | Student third entry |
-    And I press "Save"
-    And I select "List view" from the "jump" singleselect
+    And the following "mod_data > entries" exist:
+      | database | user     | Test field name        | Test field 2 name |
+      | data1    | student1 | Student second entry   |                   |
+      | data1    | student1 | Student third entry    |                   |
+    And I am on the "data1" Activity page logged in as student1
     And I should see "Student edited entry"
     And I should see "Student second entry"
     And I should see "Student third entry"
@@ -66,34 +68,47 @@ Feature: Users can add entries to database activities
 
   @javascript @editor @editor_atto @atto @atto_h5p
   Scenario: If a new text area entry is added, the filepicker is displayed in the H5P Atto button
-    Given I am on the "Course 1" course page logged in as teacher1
-    And I add a "Text area" field to "Test database name" database and I fill the form with:
-      | Field name | Textarea field name |
-    And I am on "Course 1" course homepage
-    When I add an entry to "Test database name" database with:
-      | Textarea field name | This is the content |
+    Given the following "mod_data > fields" exist:
+      | database | type     | name                |
+      | data1    | textarea | Textarea field name |
+    And the following "mod_data > templates" exist:
+      | database | name            |
+      | data1    | singletemplate  |
+      | data1    | listtemplate    |
+      | data1    | addtemplate     |
+      | data1    | asearchtemplate |
+      | data1    | rsstemplate     |
+    And I am on the "Course 1" course page logged in as teacher1
+    When I click on "Test database name" "link"
+    And I click on "Add entry" "button"
     And I click on "Insert H5P" "button"
     Then I should see "Browse repositories..."
 
   @javascript
   Scenario: If maximum number of entries is set other than None then add entries should be seen only if number of entries is less than it
-    Given I am on the "Test database name" "data activity" page logged in as teacher1
+    Given the following "mod_data > fields" exist:
+      | database | type | name  |
+      | data1    | text | Test1 |
+    And the following "mod_data > templates" exist:
+      | database | name            |
+      | data1    | singletemplate  |
+      | data1    | listtemplate    |
+      | data1    | addtemplate     |
+      | data1    | asearchtemplate |
+      | data1    | rsstemplate     |
+    And the following "mod_data > entries" exist:
+      | database | user     | Test1 |
+      | data1    | student1 | foo   |
+      | data1    | student1 | bar   |
+    And I am on the "Test database name" "data activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And I set the following fields to these values:
       | Maximum number of entries | 2 |
     And I press "Save and display"
-    And I add a "Short text" field to "Test database name" database and I fill the form with:
-      | Field name | Test1 |
     And I log out
-    And I am on the "Test database name" "data activity" page logged in as student1
-    And I press "Add entry"
-    And I set the field "Test1" to "foo"
-    And I press "Save"
-    And I press "Add entry"
-    And I set the field "Test1" to "bar"
-    And I press "Save"
-    And I should not see "Add entry"
+    When I am on the "Test database name" "data activity" page logged in as student1
+    Then I should not see "Add entry"
     And I log out
     And I am on the "Test database name" "data activity" page logged in as teacher1
     And I navigate to "Settings" in current page administration
@@ -107,11 +122,18 @@ Feature: Users can add entries to database activities
 
   @javascript
   Scenario: Guest user cannot add entries to a database
-    Given I am on the "Course 1" "enrolment methods" page logged in as teacher1
+    Given the following "mod_data > fields" exist:
+      | database | type | name                |
+      | data1    | text | Textarea field name |
+    And the following "mod_data > templates" exist:
+      | database | name            |
+      | data1    | singletemplate  |
+      | data1    | listtemplate    |
+      | data1    | addtemplate     |
+      | data1    | asearchtemplate |
+      | data1    | rsstemplate     |
+    And I am on the "Course 1" "enrolment methods" page logged in as teacher1
     And I click on "Enable" "link" in the "Guest access" "table_row"
-    And I am on "Course 1" course homepage
-    And I add a "Text area" field to "Test database name" database and I fill the form with:
-      | Field name | Textarea field name |
     And I log out
     When I am on the "Test database name" "data activity" page logged in as "guest"
     Then I should not see "Add entry"

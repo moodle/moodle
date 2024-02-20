@@ -39,49 +39,6 @@ use Behat\Gherkin\Node\TableNode as TableNode;
 class behat_mod_data extends behat_base {
 
     /**
-     * Adds a new field to a database
-     *
-     * @Given /^I add a "(?P<fieldtype_string>(?:[^"]|\\")*)" field to "(?P<activityname_string>(?:[^"]|\\")*)" database and I fill the form with:$/
-     *
-     * @param string $fieldtype
-     * @param string $activityname
-     * @param TableNode $fielddata
-     */
-    public function i_add_a_field_to_database_and_i_fill_the_form_with($fieldtype, $activityname, TableNode $fielddata) {
-        $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($activityname), 'data activity']);
-
-        $fieldsstr = get_string('fields', 'mod_data');
-
-        $this->execute("behat_navigation::i_navigate_to_in_current_page_administration", $fieldsstr);
-        $this->execute('behat_general::i_click_on', [get_string('newfield', 'mod_data'), "button"]);
-        $this->execute('behat_general::i_click_on_in_the',
-            [$this->escape($fieldtype), "link", "#action_bar", "css_element"]
-        );
-
-        if (!$this->running_javascript()) {
-            $this->execute('behat_general::i_click_on_in_the',
-                array(get_string('go'), "button", ".fieldadd", "css_element")
-            );
-        }
-
-        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $fielddata);
-        $this->execute('behat_forms::press_button', get_string('save'));
-    }
-
-    /**
-     * Adds an entry to a database.
-     *
-     * @Given /^I add an entry to "(?P<activityname_string>(?:[^"]|\\")*)" database with:$/
-     *
-     * @param string $activityname
-     * @param TableNode $entrydata
-     */
-    public function i_add_an_entry_to_database_with($activityname, TableNode $entrydata) {
-        $this->execute('behat_navigation::i_am_on_page_instance', [$this->escape($activityname), 'mod_data > add entry']);
-        $this->execute("behat_forms::i_set_the_following_fields_to_these_values", $entrydata);
-    }
-
-    /**
      * Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
      *
      * Recognised page names are:
