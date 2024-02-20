@@ -432,6 +432,9 @@ class behat_util extends testing_util {
         // Inform data generator.
         self::get_data_generator()->reset();
 
+        // Reset the task manager.
+        \core\task\manager::reset_state();
+
         // Initialise $CFG with default values. This is needed for behat cli process, so we don't have modified
         // $CFG values from the old run. @see set_config.
         self::remove_added_config();
