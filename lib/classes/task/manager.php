@@ -62,6 +62,15 @@ class manager {
     public static $mode;
 
     /**
+     * Reset the state of the task manager.
+     */
+    public static function reset_state(): void {
+        self::$miniqueue = null;
+        self::$numtasks = null;
+        self::$mode = null;
+    }
+
+    /**
      * Given a component name, will load the list of tasks in the db/tasks.php file for that component.
      *
      * @param string $componentname - The name of the component to fetch the tasks for.
