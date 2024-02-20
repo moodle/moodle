@@ -98,11 +98,21 @@
 @media (max-width: 768px) {
     .path-mod-book #mod_book-chaptersnavigation {
         top: calc(100% - 250px);
-        margin: 0;
+        margin: 0 -0.5rem;
+        z-index: 1;
+    }
+
+    .path-mod-book .btn-previous,
+    .path-mod-book .btn-next {
+        opacity: 0.85;
+        border-radius: 25px;
+        padding: 10px;
+        width: 45px;
+        height: 45px;
     }
 
     .path-mod-book .book_content {
-        margin-left: 35px;
-        margin-right: 35px;
+        margin-left: -5px;
+        margin-right: -5px;
     }
 }
