@@ -87,7 +87,7 @@ class data_field_picture extends data_field_base {
             $itemid = file_get_unused_draft_itemid();
         }
         $str = '<div title="' . s($this->field->description) . '">';
-        $str .= '<fieldset><legend><span class="accesshide">'.$this->field->name;
+        $str .= '<fieldset><legend><span class="accesshide">'.s($this->field->name);
 
         if ($this->field->required) {
             $str .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';

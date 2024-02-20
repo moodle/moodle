@@ -71,7 +71,7 @@ class mod_data_export_form extends moodleform {
         $exportfields = [];
         $unsupportedfields = [];
         foreach ($this->_datafields as $field) {
-            $label = get_string('fieldnametype', 'data', (object)['name' => $field->field->name, 'type' => $field->name()]);
+            $label = get_string('fieldnametype', 'data', (object)['name' => s($field->field->name), 'type' => $field->name()]);
             if ($field->text_export_supported()) {
                 $numfieldsthatcanbeselected++;
                 $exportfields[] = $mform->createElement('advcheckbox', 'field_' . $field->field->id, '', $label,
