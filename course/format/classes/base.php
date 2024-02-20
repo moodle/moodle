@@ -1908,9 +1908,13 @@ abstract class base {
         course_update_section($course, $newsection, $newsection);
 
         $modinfo = $this->get_modinfo();
-        foreach ($modinfo->sections[$originalsection->section] as $modnumber) {
-            $originalcm = $modinfo->cms[$modnumber];
-            duplicate_module($course, $originalcm, $newsection->id, false);
+
+        // Duplicate the section modules, should they exist.
+        if (array_key_exists($originalsection->section, $modinfo->sections)) {
+            foreach ($modinfo->sections[$originalsection->section] as $modnumber) {
+                $originalcm = $modinfo->cms[$modnumber];
+                duplicate_module($course, $originalcm, $newsection->id, false);
+            }
         }
 
         return get_fast_modinfo($course)->get_section_info_by_id($newsection->id);
