@@ -240,7 +240,7 @@ switch ($mode) {
                 } else {
                     $fieldtypename = $field->name();
                 }
-                echo $OUTPUT->confirm('<strong>' . $fieldtypename . ': ' . $field->field->name . '</strong><br /><br />' .
+                echo $OUTPUT->confirm('<strong>' . $fieldtypename . ': ' . s($field->field->name) . '</strong><br /><br />' .
                         get_string('confirmdeletefield', 'data'),
                         'field.php?d=' . $data->id . '&mode=delete&fid=' . $fid . '&confirm=1',
                         'field.php?d=' . $data->id,
@@ -410,7 +410,7 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
         $actionmenutemplate = $actionmenu->export_for_template($OUTPUT);
 
         $table->data[] = [
-            $field->field->name,
+            s($field->field->name),
             $fieltypedata,
             $field->field->required ? get_string('yes') : get_string('no'),
             shorten_text($field->field->description, 30),
@@ -435,9 +435,9 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
         echo '<optgroup label="'.get_string('fields', 'data').'">';
         foreach ($fields as $field) {
             if ($data->defaultsort == $field->id) {
-                echo '<option value="'.$field->id.'" selected="selected">'.$field->name.'</option>';
+                echo '<option value="'.$field->id.'" selected="selected">'.s($field->name).'</option>';
             } else {
-                echo '<option value="'.$field->id.'">'.$field->name.'</option>';
+                echo '<option value="'.$field->id.'">'.s($field->name).'</option>';
             }
         }
         echo '</optgroup>';
