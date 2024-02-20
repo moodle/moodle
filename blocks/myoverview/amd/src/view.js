@@ -698,7 +698,6 @@ const initializePagedContent = (root, promiseFunction, inputValue = null) => {
     const pagingLimit = parseInt(root.find(SELECTORS.courseView.region).attr('data-paging'), 10);
     let itemsPerPage = itemsPerPageFunc(pagingLimit, root);
 
-    const filters = getFilterValues(root);
     const config = {...{}, ...DEFAULT_PAGED_CONTENT_CONFIG};
     config.eventNamespace = namespace;
 
@@ -732,6 +731,9 @@ const initializePagedContent = (root, promiseFunction, inputValue = null) => {
                         limit *= 2;
                     }
                 }
+
+                // Get the current applied filters.
+                const filters = getFilterValues(root);
 
                 // Call the curried function that'll handle the course promise and any manipulation of it.
                 promiseFunction(filters, currentPage, pageData, actions, root, promises, limit, inputValue);
