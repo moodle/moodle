@@ -16,6 +16,7 @@ jobs:
         with:
           process-only: prs
           close-pr: true
+          skip-closed-pr-comment: true
           pr-comment: >
              **Please, don't open pull requests via GitHub.**
 
