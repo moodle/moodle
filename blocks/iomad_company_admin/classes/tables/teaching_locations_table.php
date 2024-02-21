@@ -98,7 +98,7 @@ class teaching_locations_table extends table_sql {
         }
 
         if (!empty($row->country)) {
-            return format_string($row->country);
+            return get_string($row->country, 'countries');
         } else {
             return "";
         }
