@@ -22,6 +22,12 @@ information provided here is intended especially for developers.
 * New format actions classes. Those classes will eventually replace all course/lib.php content editing functions.
   All new methods are distributed in three classes formats can extend. Method can be accessed using static
   methods (see doc block of core_courseformat\formatactions for more information).
+* The monologo activity icons have been improved and .png files have been removed (although the API still supports them).
+The background for these icons has been removed and the color is used now for outlining their shapes.
+About the categories supported by the FEATURE_MOD_PURPOSE:
+  * A new category has been added: MOD_PURPOSE_INTERACTIVECONTENT.
+  * The MOD_PURPOSE_INTERFACE category has been deprecated. The styles associated with this category have been removed.
+The colors for all these purposes and the filters applied to outline them are defined in theme/boost/scss/moodle/variables.scss
 
 === 4.3 ===
 * The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used

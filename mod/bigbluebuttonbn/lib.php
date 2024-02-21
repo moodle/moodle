@@ -75,7 +75,7 @@ function bigbluebuttonbn_supports($feature) {
         FEATURE_GRADE_HAS_GRADE => false,
         FEATURE_GRADE_OUTCOMES => false,
         FEATURE_SHOW_DESCRIPTION => true,
-        FEATURE_MOD_PURPOSE => MOD_PURPOSE_OTHER
+        FEATURE_MOD_PURPOSE => MOD_PURPOSE_COMMUNICATION,
     ];
     if (isset($features[(string) $feature])) {
         return $features[$feature];
@@ -768,4 +768,14 @@ function bigbluebuttonbn_course_backend_generator_create_activity(tool_generator
         $backend->dot($i, $number);
     }
     $backend->end_log();
+}
+
+/**
+ * Whether the activity is branded.
+ * This information is used, for instance, to decide if a filter should be applied to the icon or not.
+ *
+ * @return bool True if the activity is branded, false otherwise.
+ */
+function bigbluebuttonbn_is_branded(): bool {
+    return true;
 }

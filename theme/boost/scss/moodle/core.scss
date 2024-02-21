@@ -381,8 +381,8 @@ img.resize {
 }
 /* Icon styles */
 img.activityicon {
-    height: 24px;
-    width: 24px;
+    height: 32px;
+    width: 32px;
     vertical-align: middle;
 }
 
@@ -1540,6 +1540,8 @@ audio.mediaplugin_html5audio {
         .icon {
             height: 2.5rem;
             width: 6rem;
+            max-height: 2.5rem;
+            max-width: 6rem;
             margin-bottom: .6rem;
         }
     }
@@ -2046,6 +2048,10 @@ dd:after {
         select {
             margin-bottom: 0;
         }
+    }
+
+    .quickediticon .icon {
+        font-size: medium;
     }
 
     .quickediticon img {

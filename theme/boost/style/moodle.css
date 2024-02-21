@@ -23270,8 +23270,8 @@ img.resize {
 
 /* Icon styles */
 img.activityicon {
-  height: 24px;
-  width: 24px;
+  height: 32px;
+  width: 32px;
   vertical-align: middle;
 }
 
@@ -24499,6 +24499,8 @@ audio.mediaplugin_html5audio {
 .modchooser .modal-footer .moodlenet-logo .icon {
   height: 2.5rem;
   width: 6rem;
+  max-height: 2.5rem;
+  max-width: 6rem;
   margin-bottom: 0.6rem;
 }
 
@@ -24969,6 +24971,9 @@ dd:after {
 }
 .inplaceeditable.inplaceeditingon select {
   margin-bottom: 0;
+}
+.inplaceeditable .quickediticon .icon {
+  font-size: medium;
 }
 .inplaceeditable .quickediticon img {
   opacity: 0.2;
@@ -26061,9 +26066,8 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
 }
 
 .icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
+  max-width: 24px;
+  max-height: 24px;
   margin: 0;
   padding: 0;
   box-sizing: content-box;
@@ -26073,9 +26077,9 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   margin-right: 0;
 }
 .icon.iconsize-medium {
-  font-size: 24px;
-  width: 24px;
-  height: 24px;
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
 }
 .icon.iconsize-big {
   width: 64px;
@@ -26197,76 +26201,65 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  background-color: #f8f9fa;
   border-radius: 4px;
   padding: 0.7rem;
 }
 .activityiconcontainer .activityicon,
 .activityiconcontainer .icon {
   margin: 0;
-  font-size: 24px;
-  height: 24px;
-  width: 24px;
+  font-size: 32px;
+  height: 32px;
+  width: 32px;
+  max-height: 32px;
+  max-width: 32px;
 }
 .activityiconcontainer.small {
   width: 42px;
   height: 42px;
+  max-width: 42px;
+  max-height: 42px;
 }
 .activityiconcontainer.smaller {
   width: 32px;
   height: 32px;
+  max-width: 32px;
+  max-height: 32px;
 }
 .activityiconcontainer.smaller .activityicon {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
+  max-width: 32px;
+  max-height: 32px;
 }
 
-.activityiconcontainer.administration {
-  background-color: #5d63f6;
-}
-.activityiconcontainer.administration .activityicon:not(.nofilter),
-.activityiconcontainer.administration .icon:not(.nofilter) {
-  filter: brightness(0) invert(1);
+.activityiconcontainer.administration:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.administration:not(.isbranded) .icon:not(.nofilter) {
+  filter: invert(45%) sepia(46%) saturate(3819%) hue-rotate(260deg) brightness(101%) contrast(87%);
 }
 
-.activityiconcontainer.assessment {
-  background-color: #eb66a2;
-}
-.activityiconcontainer.assessment .activityicon:not(.nofilter),
-.activityiconcontainer.assessment .icon:not(.nofilter) {
-  filter: brightness(0) invert(1);
+.activityiconcontainer.assessment:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.assessment:not(.isbranded) .icon:not(.nofilter) {
+  filter: invert(36%) sepia(98%) saturate(6969%) hue-rotate(315deg) brightness(90%) contrast(119%);
 }
 
-.activityiconcontainer.collaboration {
-  background-color: #f7634d;
-}
-.activityiconcontainer.collaboration .activityicon:not(.nofilter),
-.activityiconcontainer.collaboration .icon:not(.nofilter) {
-  filter: brightness(0) invert(1);
+.activityiconcontainer.collaboration:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.collaboration:not(.isbranded) .icon:not(.nofilter) {
+  filter: invert(25%) sepia(54%) saturate(6226%) hue-rotate(245deg) brightness(100%) contrast(102%);
 }
 
-.activityiconcontainer.communication {
-  background-color: #11a676;
-}
-.activityiconcontainer.communication .activityicon:not(.nofilter),
-.activityiconcontainer.communication .icon:not(.nofilter) {
-  filter: brightness(0) invert(1);
+.activityiconcontainer.communication:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.communication:not(.isbranded) .icon:not(.nofilter) {
+  filter: invert(48%) sepia(74%) saturate(4887%) hue-rotate(11deg) brightness(102%) contrast(101%);
 }
 
-.activityiconcontainer.content {
-  background-color: #399be2;
-}
-.activityiconcontainer.content .activityicon:not(.nofilter),
-.activityiconcontainer.content .icon:not(.nofilter) {
-  filter: brightness(0) invert(1);
+.activityiconcontainer.content:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.content:not(.isbranded) .icon:not(.nofilter) {
+  filter: invert(49%) sepia(52%) saturate(4675%) hue-rotate(156deg) brightness(89%) contrast(102%);
 }
 
-.activityiconcontainer.interface {
-  background-color: #a378ff;
-}
-.activityiconcontainer.interface .activityicon:not(.nofilter),
-.activityiconcontainer.interface .icon:not(.nofilter) {
-  filter: brightness(0) invert(1);
+.activityiconcontainer.interactivecontent:not(.isbranded) .activityicon:not(.nofilter),
+.activityiconcontainer.interactivecontent:not(.isbranded) .icon:not(.nofilter) {
+  filter: invert(25%) sepia(63%) saturate(1152%) hue-rotate(344deg) brightness(94%) contrast(91%);
 }
 
 .icon-box {
@@ -26281,17 +26274,17 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
 }
 .icon-box .icon {
   margin: 0;
-  height: 24px;
-  width: 24px;
+  height: 32px;
+  width: 32px;
 }
 
 :root {
-  --activityadministration: #5d63f6;
-  --activityassessment: #eb66a2;
-  --activitycollaboration: #f7634d;
-  --activitycommunication: #11a676;
-  --activitycontent: #399be2;
-  --activityinterface: #a378ff;
+  --activityadministration: invert(45%) sepia(46%) saturate(3819%) hue-rotate(260deg) brightness(101%) contrast(87%);
+  --activityassessment: invert(36%) sepia(98%) saturate(6969%) hue-rotate(315deg) brightness(90%) contrast(119%);
+  --activitycollaboration: invert(25%) sepia(54%) saturate(6226%) hue-rotate(245deg) brightness(100%) contrast(102%);
+  --activitycommunication: invert(48%) sepia(74%) saturate(4887%) hue-rotate(11deg) brightness(102%) contrast(101%);
+  --activitycontent: invert(49%) sepia(52%) saturate(4675%) hue-rotate(156deg) brightness(89%) contrast(102%);
+  --activityinteractivecontent: invert(25%) sepia(63%) saturate(1152%) hue-rotate(344deg) brightness(94%) contrast(91%);
 }
 
 /* admin.less */
@@ -29784,9 +29777,6 @@ span.editinstructions .alert-link {
 .defaultactivitycompletion-item a {
   color: #000;
   text-decoration: none;
-}
-.defaultactivitycompletion-item a img {
-  filter: invert(25%) sepia(86%) saturate(1158%) hue-rotate(189deg) brightness(104%) contrast(92%);
 }
 .defaultactivitycompletion-item .activityicon {
   width: 32px;
@@ -35628,11 +35618,6 @@ p.arrow_button {
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemselect {
   margin-right: 15px;
-}
-.path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-name .itemicon {
-  font-size: 18px;
-  width: 18px;
-  height: 18px;
 }
 .path-grade-edit-tree .gradetree-wrapper .setup-grades.generaltable tr td.column-weight {
   min-width: 15em;

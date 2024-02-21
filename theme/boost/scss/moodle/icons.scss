@@ -5,8 +5,8 @@
 $icon-width: 16px;
 $icon-height: 16px;
 // Size of big icons.
-$icon-medium-width: 24px;
-$icon-medium-height: 24px;
+$icon-medium-width: 32px;
+$icon-medium-height: 32px;
 // Size of big icons.
 $icon-big-width: 64px;
 $icon-big-height: 64px;
@@ -29,9 +29,8 @@ $iconsizes: map-merge((
 // stylelint-enable
 
 .icon {
-    font-size: $icon-height;
-    width: $icon-width;
-    height: $icon-height;
+    max-width: map-get($iconsizes, 4);
+    max-height: map-get($iconsizes, 4);
     margin: 0;
     padding: 0;
     box-sizing: content-box;
@@ -144,7 +143,6 @@ $iconsizes: map-merge((
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    background-color: $gray-100;
     border-radius: 4px;
     padding: 0.7rem;
     .activityicon,
@@ -153,28 +151,37 @@ $iconsizes: map-merge((
         font-size: $icon-medium-width;
         height: $icon-medium-width;
         width: $icon-medium-height;
+        max-height: $icon-medium-width;
+        max-width: $icon-medium-height;
     }
     &.small {
         width: $activity-iconcontainer-width - 10px;
         height: $activity-iconcontainer-height - 10px;
+        max-width: $activity-iconcontainer-width - 10px;
+        max-height: $activity-iconcontainer-height - 10px;
     }
     &.smaller {
         width: $activity-iconcontainer-width - 20px;
         height: $activity-iconcontainer-width - 20px;
+        max-width: $activity-iconcontainer-width - 20px;
+        max-height: $activity-iconcontainer-width - 20px;
         .activityicon {
             width: $icon-medium-width;
             height: $icon-medium-height;
+            max-width: $icon-medium-width;
+            max-height: $icon-medium-height;
         }
     }
 }
 
 @each $type, $value in $activity-icon-colors {
     .activityiconcontainer.#{$type} {
-        background-color: $value;
-        .activityicon,
-        .icon {
-            &:not(.nofilter) {
-                filter: brightness(0) invert(1);
+        &:not(.isbranded) {
+            .activityicon,
+            .icon {
+                &:not(.nofilter) {
+                    filter: $value;
+                }
             }
         }
     }

@@ -72,6 +72,8 @@ class exporters_content_item_test extends \advanced_testcase {
         $this->assertEquals($exporteditem->componentname, $contentitem->get_component_name());
         $this->assertObjectHasAttribute('legacyitem', $exporteditem);
         $this->assertFalse($exporteditem->legacyitem);
+        $this->assertEquals($exporteditem->purpose, $contentitem->get_purpose());
+        $this->assertEquals($exporteditem->branded, $contentitem->is_branded());
     }
 
     /**
