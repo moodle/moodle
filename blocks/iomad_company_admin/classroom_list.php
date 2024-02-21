@@ -41,6 +41,9 @@ $companyid = iomad::get_my_companyid($systemcontext);
 $companycontext = \core\context\company::instance($companyid);
 $company = new company($companyid);
 
+// Check we can actually do anything on this page.
+iomad::require_capability('block/iomad_company_admin:classrooms', $companycontext);
+
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('classrooms', 'block_iomad_company_admin');
@@ -57,13 +60,10 @@ $PAGE->set_title($linktext);
 $PAGE->set_heading(get_string('classrooms_for', 'block_iomad_company_admin', $company->get_name()));
 $PAGE->navbar->add($linktext, $linkurl);
 
-require_login(null, false); // Adds to $PAGE, creates $OUTPUT.
-
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort,
                                                     'dir' => $dir,
                                                     'perpage' => $perpage));
 $returnurl = $baseurl;
-
 
 if ($delete and confirm_sesskey()) {
     // Delete a selected override template, after confirmation.
@@ -99,7 +99,6 @@ if ($delete and confirm_sesskey()) {
     }
 
 }
-
 // Set up the page buttons.
 $buttons = "";
 if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $companycontext)) {
@@ -109,60 +108,45 @@ if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $companyco
 
 $PAGE->set_button($buttons);
 
-echo $OUTPUT->header();
+// Set up the table
+$table = new block_iomad_company_admin\tables\teaching_locations_table('teaching_locations_table');
 
-// Check we can actually do anything on this page.
-iomad::require_capability('block/iomad_company_admin:classrooms', $companycontext);
+$tableheaders = [get_string('name'),
+                 get_string('classroom_capacity', 'block_iomad_company_admin'),
+                 get_string('address'),
+                 get_string('city'),
+                 get_string('country'),
+                 get_string('postcode', 'block_iomad_commerce')];
 
-// Get the number of templates.
-$objectcount = $DB->count_records('classroom', array('companyid' => $companyid));
-echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
+$tablecolumns = ['name',
+                 'capacity',
+                 'address',
+                 'city',
+                 'country',
+                 'postcode'];
 
-flush();
-
-if ($classrooms = $DB->get_records('classroom', array('companyid' => $companyid),
-                                     'name', '*', $page, $perpage)) {
-    $stredit   = get_string('edit');
-    $strdelete = get_string('delete');
-
-    $table = new html_table();
-    $table->head = array ("Name", "Capacity",  "");
-    $table->align = array ("left", "left", "center");
-    $table->width = "95%";
-    $sesskey = sesskey();
-
-    foreach ($classrooms as $classroom) {
-        if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $companycontext)) {
-            $deleteurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/classroom_list.php',
-                                        ['delete' => $classroom->id,
-                                        'sesskeyy' => $sesskey]);
-            $deletebutton = "<a href='" . $deleteurl . "'><i class='icon fa fa-trash fa-fw' title='" . get_string('delete') . "' role='img' aria-label='" . get_string('delete') . "'></i></a>";
-        } else {
-            $deletebutton = "";
-        }
-
-        if (iomad::has_capability('block/iomad_company_admin:classrooms_edit', $companycontext)) {
-            $editurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/classroom_edit_form.php',
-                                      ['id' => $classroom->id]);
-            $editbutton = "<a href='" . $editurl . "'><i class='icon fa fa-cog fa-fw' title='" . get_string('edit') . "' role='img' aria-label='" . get_string('edit') . "'></i></a>";
-        } else {
-            $editbutton = "";
-        }
-
-        // Is it virtual?
-        if (!empty($classroom->isvirtual)) {
-            $classroom->capacity = get_string('virtual', 'block_iomad_company_admin');
-        }
-        $table->data[] = array ($classroom->name,
-                            $classroom->capacity,
-                            $editbutton . "&nbsp" . $deletebutton);
-    }
-
-    if (!empty($table)) {
-        echo html_writer::table($table);
-        echo $OUTPUT->paging_bar($objectcount, $page, $perpage, $baseurl);
-    }
-} else {
-    echo '<div class="alert alert-warning">' . get_string('nolocations', 'block_iomad_company_admin') . '</div>';
+// Are we adding the actions buttons?
+if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $context) ||
+    iomad::has_capability('block/iomad_company_admin:classrooms_edit', $context)) {
+    $tableheaders[] = "";
+    $tablecolumns[] = 'actions';
 }
 
+$table->set_sql("*", "{classroom}", "companyid = :companyid", ['companyid' => $companyid]);
+$table->define_baseurl($baseurl);
+$table->define_columns($tablecolumns);
+$table->define_headers($tableheaders);
+$table->sort_default_column = 'name DESC';
+$table->no_sorting('actions');
+
+if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $context)) {
+    $buttonlink = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/classroom_edit_form.php");
+    $buttoncaption =  get_string('classrooms_add', 'block_iomad_company_admin');
+    $PAGE->set_button($OUTPUT->single_button($buttonlink, $buttoncaption, 'get'));
+}
+
+echo $OUTPUT->header();
+
+$table->out(30, true);
+
+echo $OUTPUT->footer();
