@@ -388,12 +388,20 @@ function trainingevent_user_removed($event) {
         // Check if there is space.
         $attending = $DB->count_records('trainingevent_users', array('trainingeventid' => $trainingevent->id, 'waitlisted' => 0));
         $location = $DB->get_record('classroom', ['id' => $trainingevent->classroomid]);
-        if (empty($trainingevent->coursecapacity)) {
-            $trainingevent->coursecapacity = $location->capacity;
+
+        // Work out how many we can add to the event.
+        if (!empty($trainingevent->coursecapacity)) {
+            $maxcapacity = $trainingevent->coursecapacity;
+        } else {
+            if (empty($location->isvirtual)) {
+                $maxcapacity = $location->capacity;
+            } else {
+                $maxcapacity = 99999999999999999999;
+            }
         }
 
         // Only add someone if there is no capacity or there is still space.
-        if ($location->isvirtual || $attending < $trainingevent->coursecapacity) {
+        if ($attending < $maxcapacity) {
             $waitlistuser = reset($waitlistusers);
             $DB->set_field('trainingevent_users', 'waitlisted', 0, ['id'=>$waitlistuser->id]);
 
