@@ -24,6 +24,7 @@
 
 namespace core_customfield;
 
+use backup_nested_element;
 use core_customfield\output\field_data;
 
 defined('MOODLE_INTERNAL') || die;
@@ -361,6 +362,26 @@ abstract class data_controller {
         } else {
             return format_string($value, true, ['context' => $this->get_context()]);
         }
+    }
+
+    /**
+     * Callback for backup, allowing custom fields to add additional data to the backup.
+     * It is not an abstract method for backward compatibility reasons.
+     *
+     * @param \backup_nested_element $customfieldelement The custom field element to be backed up.
+     */
+    public function backup_define_structure(backup_nested_element $customfieldelement): void {
+    }
+
+    /**
+     * Callback for restore, allowing custom fields to restore additional data from the backup.
+     * It is not an abstract method for backward compatibility reasons.
+     *
+     * @param \restore_structure_step $step The restore step instance.
+     * @param int $newid The new ID for the custom field data after restore.
+     * @param int $oldid The original ID of the custom field data before backup.
+     */
+    public function restore_define_structure(\restore_structure_step $step, int $newid, int $oldid): void {
     }
 
     /**

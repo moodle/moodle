@@ -215,6 +215,8 @@ class course_handler extends \core_customfield\handler {
      *
      * @param \restore_task $task
      * @param array $data
+     *
+     * @return int|void Conditionally returns the ID of the created or updated record.
      */
     public function restore_instance_data_from_backup(\restore_task $task, array $data) {
         $courseid = $task->get_courseid();
@@ -235,7 +237,7 @@ class course_handler extends \core_customfield\handler {
                     $d->set('contextid', $context->id);
                     $d->save();
                 }
-                return;
+                return $d->get('id');
             }
         }
     }

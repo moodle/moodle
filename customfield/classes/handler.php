@@ -24,6 +24,7 @@
 
 namespace core_customfield;
 
+use backup_nested_element;
 use core_customfield\output\field_data;
 use stdClass;
 
@@ -497,6 +498,37 @@ abstract class handler {
     }
 
     /**
+     * Run the custom field backup callback for each controller.
+     *
+     * @param int $instanceid The instance ID.
+     * @param \backup_nested_element $customfieldselement The custom field element to be backed up.
+     */
+    public function backup_define_structure(int $instanceid, backup_nested_element $customfieldselement): void {
+        $datacontrollers = $this->get_instance_data($instanceid);
+
+        foreach ($datacontrollers as $controller) {
+            if ($this->can_backup($controller->get_field(), $instanceid)) {
+                $controller->backup_define_structure($customfieldselement);
+            }
+        }
+    }
+
+    /**
+     * Run the custom field restore callback for each controller.
+     *
+     * @param \restore_structure_step $step The restore step instance.
+     * @param int $newid The new ID for the custom field data after restore.
+     * @param int $oldid The original ID of the custom field data before backup.
+     */
+    public function restore_define_structure(\restore_structure_step $step, int $newid, int $oldid): void {
+        $datacontrollers = $this->get_instance_data($newid);
+
+        foreach ($datacontrollers as $controller) {
+            $controller->restore_define_structure($step, $newid, $oldid);
+        }
+    }
+
+    /**
      * Get raw data associated with all fields current user can view or edit
      *
      * @param int $instanceid
@@ -708,11 +740,12 @@ abstract class handler {
 
     /**
      * Creates or updates custom field data for a instanceid from backup data.
-     *
-     * The handlers have to override it if they support backup
+     * The handlers have to override it if they support backup.
      *
      * @param \restore_task $task
      * @param array $data
+     *
+     * @return int|void Implementations should conditionally return the ID of the created or updated record.
      */
     public function restore_instance_data_from_backup(\restore_task $task, array $data) {
         throw new \coding_exception('Must be implemented in the handler');

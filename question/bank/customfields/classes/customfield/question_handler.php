@@ -303,8 +303,10 @@ class question_handler extends \core_customfield\handler {
      *
      * @param \restore_task $task
      * @param array $data
+     *
+     * @return int|void Conditionally returns the ID of the created or updated record.
      */
-    public function restore_instance_data_from_backup(\restore_task $task, array $data): void {
+    public function restore_instance_data_from_backup(\restore_task $task, array $data) {
 
         $editablefields = $this->get_editable_fields($data['newquestion']);
         $records = api::get_instance_fields_data($editablefields, $data['newquestion']);
@@ -322,7 +324,7 @@ class question_handler extends \core_customfield\handler {
                     $d->set('contextid', $data['fieldcontextid']);
                     $d->save();
                 }
-                return;
+                return $d->get('id');
             }
         }
     }
