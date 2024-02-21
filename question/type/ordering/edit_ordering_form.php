@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Defines the editing form for the ordering question type.
- *
- * @package    qtype_ordering
- * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 // Prevent direct access to this script.
 defined('MOODLE_INTERNAL') || die();
 
@@ -31,8 +23,10 @@ require_once($CFG->dirroot.'/question/type/ordering/question.php');
 /**
  * Ordering editing form definition
  *
+ * @package    qtype_ordering
  * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @codeCoverageIgnore Edit form is covered via behat and mocked in units.
  */
 class qtype_ordering_edit_form extends question_edit_form {
 

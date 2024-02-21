@@ -88,7 +88,7 @@ class specific_grade_detail_feedback extends renderable_base {
                     }
                 }
 
-                if ($totalmaxscore == 0) {
+                if ($question->gradingtype === qtype_ordering_question::GRADING_ALL_OR_NOTHING || $totalmaxscore == 0) {
                     unset($data['scoredetails']); // All or nothing.
                 } else {
                     // Format gradedetails, e.g. 4/6 = 67%.

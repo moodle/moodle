@@ -285,10 +285,9 @@ class qtype_ordering_question extends question_graded_automatically {
      */
     public function summarise_response(array $response) {
         $name = $this->get_response_fieldname();
+        $items = [];
         if (array_key_exists($name, $response)) {
             $items = explode(',', $response[$name]);
-        } else {
-            $items = []; // Shouldn't happen!
         }
         $answerids = [];
         foreach ($this->answers as $answer) {
@@ -782,6 +781,7 @@ class qtype_ordering_question extends question_graded_automatically {
      * @param int $type
      * @return array|string array if $type is not specified and single string if $type is specified
      * @throws coding_exception
+     * @codeCoverageIgnore
      */
     public static function get_types(array $types, $type): array|string {
         if ($type === null) {

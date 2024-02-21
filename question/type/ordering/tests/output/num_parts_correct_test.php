@@ -19,7 +19,6 @@ namespace qtype_ordering\output;
 use advanced_testcase;
 use test_question_maker;
 use qtype_ordering_question;
-use qtype_ordering_test_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -29,13 +28,13 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * A test class used to test specific_grade_detail_feedback.
  *
- * @package    qtype_ordering
- * @copyright  2023 Ilya Tregubov <ilya.a.tregubov@gmail.com.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \qtype_ordering\output\specific_grade_detail_feedback
+ * @package   qtype_ordering
+ * @copyright 2023 Ilya Tregubov <ilya.a.tregubov@gmail.com.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \qtype_ordering\output\renderable_base
+ * @covers    \qtype_ordering\output\num_parts_correct
  */
-class num_parts_correct_test extends advanced_testcase {
-
+final class num_parts_correct_test extends advanced_testcase {
     /**
      * Test the exported data for the template that renders the specific grade detail feedback test to a given question attempt.
      *
@@ -44,7 +43,6 @@ class num_parts_correct_test extends advanced_testcase {
      * @param int $gradingtype Grading type.
      * @param array $expected The expected exported data.
      * @return void
-     * @covers ::export_for_template
      */
     public function test_export_for_template(array $answeritems, int $gradingtype, array $expected): void {
         global $PAGE;
@@ -71,7 +69,7 @@ class num_parts_correct_test extends advanced_testcase {
      *
      * @return array
      */
-    public function export_for_template_provider(): array {
+    public static function export_for_template_provider(): array {
         global $CFG;
         require_once($CFG->dirroot . '/question/type/ordering/question.php');
 

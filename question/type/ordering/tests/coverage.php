@@ -31,7 +31,6 @@ return new class extends phpunit_coverage_info {
 
     /** @var array The list of files relative to the plugin root to include in coverage generation. */
     protected $includelistfiles = [
-        'edit_ordering_form.php',
         'question.php',
         'questiontype.php',
     ];

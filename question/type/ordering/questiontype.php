@@ -34,6 +34,7 @@ class qtype_ordering extends question_type {
     /**
      * @return bool whether the question_answers.answer field needs to have
      * restore_decode_content_links_worker called on it.
+     * @CodeCoverageIgnore
      */
     public function has_html_answers(): bool {
         return true;
@@ -787,11 +788,12 @@ class qtype_ordering extends question_type {
      * Fix empty or long question name
      *
      * @param string $name The name of the question
-     * @param string $defaultname (optional, default='') The default name of the question
-     * @param integer $maxnamelength (optional, default=42) The maximum length of the name
+     * @param string|null $defaultname (optional, default='') The default name of the question
+     * @param int|null $maxnamelength (optional, default=42) The maximum length of the name
      * @return string Fixed name
+     * @throws coding_exception
      */
-    public function fix_questionname(string $name, string $defaultname = '', int $maxnamelength = 42): string {
+    public function fix_questionname(string $name, ?string $defaultname = '', ?int $maxnamelength = 42): string {
         if (trim($name) == '') {
             if ($defaultname) {
                 $name = $defaultname;

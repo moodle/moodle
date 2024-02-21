@@ -14,22 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Behat steps definitions for the ordering question type.
- *
- * @package   qtype_ordering
- * @category  test
- * @copyright 2018 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 // NOTE: no MOODLE_INTERNAL test here, this file may be required by behat before including /config.php.
 
 require_once(__DIR__ . '/../../../../../lib/behat/behat_base.php');
 
 /**
- * Steps definitions related with the ordering question type.
+ * Behat steps definitions for the ordering question type.
  *
+ * @package   qtype_ordering
+ * @category  test
  * @copyright 2018 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

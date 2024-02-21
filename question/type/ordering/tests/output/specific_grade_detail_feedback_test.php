@@ -29,13 +29,13 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * A test class used to test specific_grade_detail_feedback.
  *
- * @package    qtype_ordering
- * @copyright  2023 Ilya Tregubov <ilya.a.tregubov@gmail.com.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \qtype_ordering\output\specific_grade_detail_feedback
+ * @package   qtype_ordering
+ * @copyright 2023 Ilya Tregubov <ilya.a.tregubov@gmail.com.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \qtype_ordering\output\renderable_base
+ * @covers    \qtype_ordering\output\specific_grade_detail_feedback
  */
-class specific_grade_detail_feedback_test extends advanced_testcase {
-
+final class specific_grade_detail_feedback_test extends advanced_testcase {
     /**
      * Test the exported data for the template that renders the specific grade detail feedback test to a given question attempt.
      *
@@ -46,7 +46,6 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
      * @param array $expected The expected exported data.
      * @param int $selecttype The type of the select.
      * @return void
-     * @covers ::export_for_template
      */
     public function test_export_for_template(array $answeritems, int $gradingtype, string $layouttype, array $expected,
             int $selecttype): void {
@@ -82,8 +81,11 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
             $this->assertEquals($expected['showpartialwrong'], $actual['showpartialwrong']);
             $this->assertEquals($expected['gradingtype'], $actual['gradingtype']);
             $this->assertEquals($expected['orderinglayoutclass'], $actual['orderinglayoutclass']);
-            $this->assertEquals($expected['totalmaxscore'], $actual['totalmaxscore']);
-            $this->assertArrayHasKey('scoredetails', $actual);
+            // All or nothing grading type does not have score details.
+            if ($gradingtype !== qtype_ordering_question::GRADING_ALL_OR_NOTHING) {
+                $this->assertEquals($expected['totalmaxscore'], $actual['totalmaxscore']);
+                $this->assertArrayHasKey('scoredetails', $actual);
+            }
         }
     }
 
@@ -92,7 +94,7 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
      *
      * @return array
      */
-    public function export_for_template_provider(): array {
+    public static function export_for_template_provider(): array {
         global $CFG;
         require_once($CFG->dirroot . '/question/type/ordering/question.php');
 
@@ -223,6 +225,28 @@ class specific_grade_detail_feedback_test extends advanced_testcase {
                 [
                     'showpartialwrong' => 1,
                     'gradingtype' => 'Grading type: Absolute position',
+                    'orderinglayoutclass' => 'vertical',
+                    'gradedetails' => 0,
+                    'totalscore' => 0,
+                    'totalmaxscore' => 2,
+                    'scoredetails' => [
+                        ['score' => 0, 'maxscore' => 1, 'percent' => 0],
+                        ['score' => 1, 'maxscore' => 1, 'percent' => 100.0],
+                        ['score' => 0, 'maxscore' => 1, 'percent' => 0],
+                        ['score' => 'No score', 'maxscore' => null, 'percent' => 0],
+                        ['score' => 'No score', 'maxscore' => null, 'percent' => 0],
+                        ['score' => 'No score', 'maxscore' => null, 'percent' => 0],
+                    ],
+                ],
+                qtype_ordering_question::SELECT_CONTIGUOUS,
+            ],
+            'Incorrect question attempt (SELECT_CONTIGUOUS). Grading type: GRADING_ALL_OR_NOTHING' => [
+                [14 => 'Object', 16 => 'Dynamic', 13 => 'Modular', 17 => 'Learning', 18 => 'Environment', 15 => 'Oriented'],
+                qtype_ordering_question::GRADING_ALL_OR_NOTHING,
+                'vertical',
+                [
+                    'showpartialwrong' => 1,
+                    'gradingtype' => 'Grading type: All or nothing',
                     'orderinglayoutclass' => 'vertical',
                     'gradedetails' => 0,
                     'totalscore' => 0,

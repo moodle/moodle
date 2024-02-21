@@ -30,14 +30,15 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Test the feedback exporter.
  *
- * @package    qtype_ordering
- * @copyright  2023 Mathew May <mathew.solutions>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ordering
+ * @copyright 2023 Mathew May <mathew.solutions>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \qtype_ordering\output\renderable_base
+ * @covers    \qtype_ordering\output\feedback
  */
-class feedback_test extends qbehaviour_walkthrough_test_base {
-
-    /** @var array $correctanswers The correct answers for the question, added to quickly reference. */
-    private $correctanswers = [
+final class feedback_test extends qbehaviour_walkthrough_test_base {
+    /** @var array $CORRECTANSWERS The correct answers for the question, added to quickly reference. */
+    const CORRECTANSWERS = [
         0 => [
             'answertext' => 'Modular',
         ],
@@ -61,7 +62,6 @@ class feedback_test extends qbehaviour_walkthrough_test_base {
     /**
      * Test the exported data for the template that renders the feedback test to a given question attempt.
      *
-     * @covers \qtype_ordering\output\feedback::export_for_template()
      * @dataProvider export_for_template_provider
      * @param array $answeritems The array of ordered answers.
      * @param int $gradingtype Grading type.
@@ -119,7 +119,7 @@ class feedback_test extends qbehaviour_walkthrough_test_base {
      *
      * @return array
      */
-    public function export_for_template_provider(): array {
+    public static function export_for_template_provider(): array {
         global $CFG;
         require_once($CFG->dirroot . '/question/type/ordering/question.php');
 
@@ -201,7 +201,7 @@ class feedback_test extends qbehaviour_walkthrough_test_base {
                         'hascorrectresponse' => true,
                         'showcorrect' => true,
                         'orderinglayoutclass' => 'horizontal',
-                        'correctanswers' => $this->correctanswers,
+                        'correctanswers' => self::CORRECTANSWERS,
                     ],
                 ],
             ],
@@ -233,7 +233,7 @@ class feedback_test extends qbehaviour_walkthrough_test_base {
                         'hascorrectresponse' => true,
                         'showcorrect' => true,
                         'orderinglayoutclass' => 'horizontal',
-                        'correctanswers' => $this->correctanswers,
+                        'correctanswers' => self::CORRECTANSWERS,
                     ],
                     'numpartscorrect' => [
                         'numcorrect' => 4,
@@ -298,7 +298,7 @@ class feedback_test extends qbehaviour_walkthrough_test_base {
                         'hascorrectresponse' => true,
                         'showcorrect' => true,
                         'orderinglayoutclass' => 'horizontal',
-                        'correctanswers' => $this->correctanswers,
+                        'correctanswers' => self::CORRECTANSWERS,
                     ],
                 ],
             ],
@@ -358,7 +358,7 @@ class feedback_test extends qbehaviour_walkthrough_test_base {
                         'hascorrectresponse' => true,
                         'showcorrect' => true,
                         'orderinglayoutclass' => 'vertical',
-                        'correctanswers' => $this->correctanswers,
+                        'correctanswers' => self::CORRECTANSWERS,
                     ],
                 ],
             ],

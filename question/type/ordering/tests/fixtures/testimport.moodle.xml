@@ -61,4 +61,10 @@
             <text><![CDATA[Environment is correct.]]></text>
         </feedback>
     </answer>
+    <hint format="html">
+        <text>Hint 1</text>
+    </hint>
+    <hint format="html">
+        <text>Hint 2</text>
+    </hint>
 </question>

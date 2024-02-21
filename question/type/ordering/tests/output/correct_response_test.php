@@ -29,12 +29,13 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * A test class used to test correct_response.
  *
- * @package    qtype_ordering
- * @copyright  2023 Mihail Geshoski <mihail@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \qtype_ordering\output\correct_response
+ * @package   qtype_ordering
+ * @copyright 2023 Mihail Geshoski <mihail@moodle.com>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \qtype_ordering\output\renderable_base
+ * @covers    \qtype_ordering\output\correct_response
  */
-class correct_response_test extends advanced_testcase {
+final class correct_response_test extends advanced_testcase {
     /**
      * Test the exported data for the template that renders the correct response to a given question attempt.
      *
@@ -43,7 +44,6 @@ class correct_response_test extends advanced_testcase {
      * @param string $layouttype The type of the layout.
      * @param array $expected The expected exported data.
      * @return void
-     * @covers ::export_for_template
      */
     public function test_export_for_template(array $currentresponse, string $layouttype, array $expected): void {
         global $PAGE;
@@ -53,6 +53,7 @@ class correct_response_test extends advanced_testcase {
         $question->gradingtype = qtype_ordering_question::GRADING_ABSOLUTE_POSITION;
         $question->layouttype = $layouttype === 'horizontal' ? qtype_ordering_question::LAYOUT_HORIZONTAL :
             qtype_ordering_question::LAYOUT_VERTICAL;
+
         // Create a question attempt.
         $qa = new \testable_question_attempt($question, 0);
         // Create a question attempt step and add it to the question attempt.
@@ -63,6 +64,9 @@ class correct_response_test extends advanced_testcase {
         // attempt step.
         [$fraction, $state] = $question->grade_response(qtype_ordering_test_helper::get_response($question, $currentresponse));
         $qa->get_last_step()->set_state($state);
+        if ($expected['hascorrectresponse'] === false) {
+            $qa->get_question()->correctresponse = 0;
+        }
 
         $renderer = $PAGE->get_renderer('core');
         $correctresponse = new correct_response($qa);
@@ -75,7 +79,7 @@ class correct_response_test extends advanced_testcase {
      *
      * @return array
      */
-    public function export_for_template_provider(): array {
+    public static function export_for_template_provider(): array {
 
         return [
             'Correct question attempt.' => [
@@ -135,6 +139,13 @@ class correct_response_test extends advanced_testcase {
                         ['answertext' => 'Learning'],
                         ['answertext' => 'Environment'],
                     ],
+                ],
+            ],
+            'Correct state not set somehow' => [
+                ['Modular', 'Object', 'Oriented', 'Dynamic', 'Learning', 'Environment'],
+                'horizontal',
+                [
+                    'hascorrectresponse' => false,
                 ],
             ],
         ];

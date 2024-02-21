@@ -1,4 +1,4 @@
-<!-- question: 409000  -->
+<!-- question: 123  -->
   <question type="ordering">
     <name>
       <text>Moodle</text>
@@ -65,4 +65,10 @@
         <text>Environment is correct.</text>
       </feedback>
     </answer>
+    <hint format="html">
+      <text>Hint 1</text>
+    </hint>
+    <hint format="html">
+      <text>Hint 2</text>
+    </hint>
   </question>

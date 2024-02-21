@@ -99,7 +99,9 @@ class formulation_and_controls extends renderable_base {
             foreach ($currentresponse as $position => $answerid) {
 
                 if (!array_key_exists($answerid, $question->answers) || !array_key_exists($position, $correctresponse)) {
-                    continue; // Shouldn't happen !!
+                    // @codeCoverageIgnoreStart
+                    continue; // This shouldn't happen.
+                    // @codeCoverageIgnoreEnd
                 }
 
                 // Format the answer text.

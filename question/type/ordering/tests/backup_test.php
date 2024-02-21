@@ -17,7 +17,6 @@
 namespace qtype_ordering;
 
 use question_bank;
-use test_question_maker;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,11 +31,10 @@ require_once($CFG->dirroot . '/course/externallib.php');
  * @package   qtype_ordering
  * @copyright 2020 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
- * @covers \backup_qtype_ordering_plugin
- * @covers \restore_qtype_ordering_plugin
+ * @covers    \backup_qtype_ordering_plugin
+ * @covers    \restore_qtype_ordering_plugin
  */
-class backup_test extends \advanced_testcase {
-
+final class backup_test extends \advanced_testcase {
     /**
      * Duplicate quiz with a orderinging question, and check it worked.
      */
@@ -54,7 +52,7 @@ class backup_test extends \advanced_testcase {
         $quizcontext = \context_module::instance($quiz->cmid);
 
         $cat = $questiongenerator->create_question_category(['contextid' => $quizcontext->id]);
-        $question = $questiongenerator->create_question('ordering', 'moodle', ['category' => $cat->id]);
+        $question = $questiongenerator->create_question('ordering', 'moodle', ['category' => $cat->id, 'shownumcorrect' => null]);
 
         // Store some counts.
         $numquizzes = count(get_fast_modinfo($course)->instances['quiz']);

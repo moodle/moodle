@@ -17,9 +17,9 @@
 /**
  * Test helper for the ordering question type.
  *
- * @package    qtype_ordering
- * @copyright  2018 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   qtype_ordering
+ * @copyright 2018 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
@@ -36,6 +36,11 @@ require_once($CFG->dirroot . '/question/type/ordering/question.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class qtype_ordering_test_helper extends question_test_helper {
+    /**
+     * Get the question types that this helper can handle.
+     *
+     * @return array the question types.
+     */
     public function get_test_questions(): array {
         return ['moodle'];
     }
@@ -48,6 +53,16 @@ class qtype_ordering_test_helper extends question_test_helper {
     public function make_ordering_question_moodle(): qtype_ordering_question {
         question_bank::load_question_definition_classes('ordering');
         $q = new qtype_ordering_question();
+        $q->hints = [
+            [
+                'text' => 'Hint 1',
+                'format' => FORMAT_HTML,
+            ],
+            [
+                'text' => 'Hint 2',
+                'format' => FORMAT_HTML,
+            ],
+        ];
         test_question_maker::initialise_a_question($q);
         $q->qtype = question_bank::get_qtype('ordering');
         $q->name = 'Moodle';
@@ -144,8 +159,18 @@ class qtype_ordering_test_helper extends question_test_helper {
         test_question_maker::set_standard_combined_feedback_form_data($form);
 
         $form->penalty = '0.3333333';
-        $form->numhints = 0;
-        $form->hint = [];
+        // Build the expected hint base.
+        $form->numhints = 2;
+        $form->hint = [
+            [
+                'text' => 'Hint 1',
+                'format' => FORMAT_HTML,
+            ],
+            [
+                'text' => 'Hint 2',
+                'format' => FORMAT_HTML,
+            ],
+        ];;
 
         $form->qtype = 'ordering';
         return $form;

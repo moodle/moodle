@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the ordering question type class.
- *
- * @package   qtype_ordering
- * @copyright 2018 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace qtype_ordering;
 
 use core_question_generator;
@@ -32,7 +24,7 @@ use qtype_ordering_question;
 use test_question_maker;
 use question_bank;
 use question_possible_response;
-
+use qformat_xml;
 use qformat_gift;
 use question_check_specified_fields_expectation;
 
@@ -52,20 +44,21 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
 /**
  * Unit tests for the ordering question type class.
  *
- * @copyright 20018 The Open University
+ * @package   qtype_ordering
+ * @copyright 2018 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \qtype_ordering
+ * @covers    \qtype_ordering_question
  */
-class questiontype_test extends \question_testcase {
-    /** @var qtype_ordering instance of the question type class to test. */
-    protected $qtype;
+final class questiontype_test extends \question_testcase {
 
-    /** @var object Default import object to compare against. */
-    protected $expectedimportobj;
-
-    protected function setUp(): void {
-        $this->qtype = new qtype_ordering();
-        $this->expectedimportobj = (object) [
+    /**
+     * Define the import object to compare against.
+     *
+     * @return object The expected import object.
+     */
+    private static function expectedimport(): object {
+        return (object) [
             'qtype' => 'ordering',
             'idnumber' => 'myid',
             'name' => 'Moodle',
@@ -77,11 +70,6 @@ class questiontype_test extends \question_testcase {
             'generalfeedbackformat' => 1,
             'defaultmark' => 1,
         ];
-    }
-
-    protected function tearDown(): void {
-        $this->qtype = null;
-        $this->expectedimportobj = null;
     }
 
     /**
@@ -96,11 +84,13 @@ class questiontype_test extends \question_testcase {
     }
 
     public function test_name(): void {
-        $this->assertEquals('ordering', $this->qtype->name());
+        $ordering = new qtype_ordering();
+        $this->assertEquals('ordering', $ordering->name());
     }
 
     public function test_can_analyse_responses(): void {
-        $this->assertTrue($this->qtype->can_analyse_responses());
+        $ordering = new qtype_ordering();
+        $this->assertTrue($ordering->can_analyse_responses());
     }
 
     public function test_question_saving(): void {
@@ -122,8 +112,9 @@ class questiontype_test extends \question_testcase {
         $this->assertTrue($form->is_validated());
 
         $fromform = $form->get_data();
+        $ordering = new qtype_ordering();
 
-        $returnedfromsave = $this->qtype->save_question($questiondata, $fromform);
+        $returnedfromsave = $ordering->save_question($questiondata, $fromform);
         $actualquestiondata = question_bank::load_question_data($returnedfromsave->id);
 
         foreach ($questiondata as $property => $value) {
@@ -156,7 +147,8 @@ class questiontype_test extends \question_testcase {
 
     public function test_get_possible_responses(): void {
         $questiondata = test_question_maker::get_question_data('ordering');
-        $possibleresponses = $this->qtype->get_possible_responses($questiondata);
+        $ordering = new qtype_ordering();
+        $possibleresponses = $ordering->get_possible_responses($questiondata);
         $expectedresponseclasses = [
             'Modular' => [
                     1 => new question_possible_response('Position 1', 0.1666667),
@@ -212,42 +204,44 @@ class questiontype_test extends \question_testcase {
 
     public function test_get_possible_responses_very_long(): void {
         $questiondata = test_question_maker::get_question_data('ordering');
+        $ordering = new qtype_ordering();
         $onehundredchars = str_repeat('1234567890', 9) . '123456789碁';
         // Set one of the answers to over 100 chars, with a multi-byte UTF-8 character at position 100.
         $questiondata->options->answers[13]->answer = $onehundredchars . 'and some more';
-        $possibleresponses = $this->qtype->get_possible_responses($questiondata);
+        $possibleresponses = $ordering->get_possible_responses($questiondata);
         $this->assertArrayHasKey($onehundredchars, $possibleresponses);
     }
 
     public function test_get_numberingstyle(): void {
         $questiondata = test_question_maker::get_question_data('ordering');
+        $ordering = new qtype_ordering();
         $expected = qtype_ordering_question::NUMBERING_STYLE_DEFAULT;
-        $actual = $this->qtype->get_numberingstyle($questiondata);
+        $actual = $ordering->get_numberingstyle($questiondata);
         $this->assertEquals($expected, $actual);
 
         $questiondata->options->numberingstyle = 'abc';
         $expected = 'abc';
-        $actual = $this->qtype->get_numberingstyle($questiondata);
+        $actual = $ordering->get_numberingstyle($questiondata);
         $this->assertEquals($expected, $actual);
 
         $questiondata->options->numberingstyle = 'ABCD';
         $expected = 'ABCD';
-        $actual = $this->qtype->get_numberingstyle($questiondata);
+        $actual = $ordering->get_numberingstyle($questiondata);
         $this->assertEquals($expected, $actual);
 
         $questiondata->options->numberingstyle = '123';
         $expected = '123';
-        $actual = $this->qtype->get_numberingstyle($questiondata);
+        $actual = $ordering->get_numberingstyle($questiondata);
         $this->assertEquals($expected, $actual);
 
         $questiondata->options->numberingstyle = 'iii';
         $expected = 'iii';
-        $actual = $this->qtype->get_numberingstyle($questiondata);
+        $actual = $ordering->get_numberingstyle($questiondata);
         $this->assertEquals($expected, $actual);
 
         $questiondata->options->numberingstyle = 'III';
         $expected = 'III';
-        $actual = $this->qtype->get_numberingstyle($questiondata);
+        $actual = $ordering->get_numberingstyle($questiondata);
         $this->assertEquals($expected, $actual);
     }
 
@@ -256,25 +250,11 @@ class questiontype_test extends \question_testcase {
         // Import a question from XML.
         $xml = file_get_contents(__DIR__ . '/fixtures/testimport.moodle.xml');
         $xmldata = xmlize($xml);
-        $format = new \qformat_xml();
+        $format = new qformat_xml();
         $imported = $format->try_importing_using_qtypes(
             $xmldata['question'], null, null, 'ordering');
 
-        $this->assert(new question_check_specified_fields_expectation($this->expectedimportobj), $imported);
-    }
-
-    public function test_xml_import_empty(): void {
-        $this->resetAfterTest();
-        // Import a question from XML.
-        $xml = file_get_contents(__DIR__ . '/fixtures/testimportempty.moodle.xml');
-        $xmldata = xmlize($xml);
-        $format = new \qformat_xml();
-        $imported = $format->try_importing_using_qtypes(
-            $xmldata['question'], null, null, 'ordering');
-
-        $this->expectedimportobj->name = 'Put these words in order.';
-
-        $this->assert(new question_check_specified_fields_expectation($this->expectedimportobj), $imported);
+        $this->assert(new question_check_specified_fields_expectation(self::expectedimport()), $imported);
     }
 
     public function test_xml_import_long(): void {
@@ -282,13 +262,14 @@ class questiontype_test extends \question_testcase {
         // Import a question from XML.
         $xml = file_get_contents(__DIR__ . '/fixtures/testimportlong.moodle.xml');
         $xmldata = xmlize($xml);
-        $format = new \qformat_xml();
+        $format = new qformat_xml();
         $imported = $format->try_importing_using_qtypes(
             $xmldata['question'], null, null, 'ordering');
 
-        $this->expectedimportobj->name = 'Moodle Moodle Moodle Moodle Moodle Moodle ...';
+        $expected = self::expectedimport();
+        $expected->name = 'Moodle Moodle Moodle Moodle Moodle Moodle Moodle';
 
-        $this->assert(new question_check_specified_fields_expectation($this->expectedimportobj), $imported);
+        $this->assert(new question_check_specified_fields_expectation($expected), $imported);
     }
 
     public function test_xml_export(): void {
@@ -300,6 +281,9 @@ class questiontype_test extends \question_testcase {
 
         // Export it.
         $questiondata = question_bank::load_question_data($question->id);
+        // Force the question id to be 123, to ensure it comes through the export.
+        $questiondata->id = 123;
+        $questiondata->options->numberingstyle = null;
         // Add some feedback to ensure it comes through the export.
         foreach ($questiondata->options->answers as $answer) {
             $answer->feedback = $answer->answer . ' is correct.';
@@ -307,7 +291,7 @@ class questiontype_test extends \question_testcase {
             $answer->feedbackfiles = 0;
         }
 
-        $exporter = new \qformat_xml();
+        $exporter = new qformat_xml();
         $xml = $exporter->writequestion($questiondata);
 
         $expectedxml = file_get_contents(__DIR__ . '/fixtures/testexport.moodle.xml');
@@ -323,8 +307,7 @@ class questiontype_test extends \question_testcase {
         $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
         $imported = $format->readquestion($lines);
 
-        // TODO - MDL-XXXXX format_gift: Set ID & tags from comment for third parties.
-        // $this->assert(new question_check_specified_fields_expectation($this->expectedimportobj), $imported);
+        $this->assert(new question_check_specified_fields_expectation(self::expectedimport()), $imported);
     }
 
     public function test_gift_export(): void {
@@ -336,13 +319,14 @@ class questiontype_test extends \question_testcase {
 
         // Export it.
         $questiondata = question_bank::load_question_data($question->id);
+        // Force the question id to be 123, to ensure it comes through the export.
+        $questiondata->id = 123;
 
         $exporter = new qformat_gift();
         $gift = $exporter->writequestion($questiondata);
 
         $expectedgift = file_get_contents(__DIR__ . '/fixtures/testexport.gift.txt');
 
-        // TODO - MDL-XXXXX format_gift: Set ID & tags from comment for third parties.
-        // $this->assertEquals($expectedgift, $gift);
+        $this->assertEquals($expectedgift, $gift);
     }
 }

@@ -14,20 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Unit tests for the ordering question type.
- *
- * @package   qtype_ordering
- * @copyright 2018 The Open University
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace qtype_ordering;
 
 use test_question_maker;
 use question_state;
-use question_pattern_expectation;
-use stdClass;
 use qtype_ordering_test_helper;
 
 defined('MOODLE_INTERNAL') || die();
@@ -41,11 +31,13 @@ require_once($CFG->dirroot . '/question/type/ddwtos/tests/helper.php');
  *
  * These tests simulate a student's complete interaction with a question.
  *
+ * @package   qtype_ordering
  * @copyright 2018 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \qtype_ordering
+ * @covers    \qtype_ordering_question
  */
-class walkthrough_test extends \qbehaviour_walkthrough_test_base {
+final class walkthrough_test extends \qbehaviour_walkthrough_test_base {
     /**
      * Get the array of post data that will .
      *
