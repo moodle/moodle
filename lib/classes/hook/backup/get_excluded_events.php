@@ -16,8 +16,6 @@
 
 namespace core\hook\backup;
 
-use core\hook\described_hook;
-
 /**
  * Get a list of event names which are excluded to trigger from course changes in automated backup.
  *
@@ -25,30 +23,13 @@ use core\hook\described_hook;
  * @copyright  2023 Tomo Tsuyuki <tomotsuyuki@catalyst-au.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class get_excluded_events implements described_hook {
-
+#[\core\attribute\label('Get a list of event names which are excluded to trigger from course changes in automated backup.')]
+#[\core\attribute\tags('backup')]
+final class get_excluded_events {
     /**
      * @var string[] Array of event names.
      */
     private $events = [];
-
-    /**
-     * Describes the hook purpose.
-     *
-     * @return string
-     */
-    public static function get_hook_description(): string {
-        return 'Get a list of event names which are excluded to trigger from course changes in automated backup.';
-    }
-
-    /**
-     * List of tags that describe this hook.
-     *
-     * @return string[]
-     */
-    public static function get_hook_tags(): array {
-        return ['backup'];
-    }
 
     /**
      * Add an array of event names which are excluded to trigger from course changes in automated backup.

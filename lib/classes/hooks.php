@@ -81,6 +81,14 @@ final class hooks implements \core\hook\discovery_agent {
             if (is_subclass_of($classname, \core\hook\described_hook::class)) {
                 $hooks[$classname]['description'] = $classname::get_hook_description();
                 $hooks[$classname]['tags'] = $classname::get_hook_tags();
+            } else {
+                if ($description = attribute_helper::instance($classname, \core\attribute\label::class)) {
+                    $hooks[$classname]['description'] = (string) $description->label;
+                }
+
+                if ($tags = attribute_helper::instance($classname, \core\attribute\tags::class)) {
+                    $hooks[$classname]['tags'][] = $tags->tags;
+                }
             }
         }
 

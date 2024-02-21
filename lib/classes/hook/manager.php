@@ -16,6 +16,7 @@
 
 namespace core\hook;
 
+use core\attribute_helper;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\EventDispatcher\ListenerProviderInterface;
 use Psr\EventDispatcher\StoppableEventInterface;
@@ -169,6 +170,30 @@ final class manager implements
                 yield $callback;
             }
         }
+    }
+
+    /**
+     * Get the list of callbacks that the given hook class replaces (if any).
+     *
+     * @param string $hookclassname
+     * @return array
+     */
+    public static function get_replaced_callbacks(string $hookclassname): array {
+        if (!class_exists($hookclassname)) {
+            return [];
+        }
+        if (is_subclass_of($hookclassname, \core\hook\deprecated_callback_replacement::class)) {
+            return $hookclassname::get_deprecated_plugin_callbacks();
+        }
+
+        // Ensure that the replaces_callbacks attribute is loaded.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(dirname(__DIR__) . '/attribute/hook/replaces_callbacks.php');
+        if ($replaces = attribute_helper::instance($hookclassname, \core\attribute\hook\replaces_callbacks::class)) {
+            return $replaces->callbacks;
+        }
+
+        return [];
     }
 
     /**
@@ -450,20 +475,9 @@ final class manager implements
     private function fetch_deprecated_callbacks(): void {
         $candidates = self::discover_known_hooks();
 
-        /** @var class-string<deprecated_callback_replacement> $hookclassname */
         foreach (array_keys($candidates) as $hookclassname) {
-            if (!class_exists($hookclassname)) {
-                continue;
-            }
-            if (!is_subclass_of($hookclassname, \core\hook\deprecated_callback_replacement::class)) {
-                continue;
-            }
-            $deprecations = $hookclassname::get_deprecated_plugin_callbacks();
-            if (!$deprecations) {
-                continue;
-            }
-            foreach ($deprecations as $deprecation) {
-                $this->alldeprecations[$deprecation][] = $hookclassname;
+            foreach (self::get_replaced_callbacks($hookclassname) as $replacedcallback) {
+                $this->alldeprecations[$replacedcallback][] = $hookclassname;
             }
         }
     }

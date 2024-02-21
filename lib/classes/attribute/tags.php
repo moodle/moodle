@@ -14,39 +14,24 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\hook\navigation;
-
-use core\hook\stoppable_trait;
-use core\navigation\views\primary;
+namespace core\attribute;
 
 /**
- * Allows plugins to insert nodes into site primary navigation
+ * A set of string tags used to categorise an object.
+ *
+ * Note: These are not the same as the tags API.
  *
  * @package    core
- * @copyright  2023 Marina Glancy
+ * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins to insert nodes into site primary navigation')]
-#[\core\attribute\tags('navigation')]
-class primary_extend implements \Psr\EventDispatcher\StoppableEventInterface {
-    use stoppable_trait;
-
-    /**
-     * Creates new hook.
-     *
-     * @param primary $primaryview Primary navigation view
-     */
+#[\Attribute]
+class tags {
+    /** @var string[] A list of tags */
+    public readonly array $tags;
     public function __construct(
-        public readonly primary $primaryview,
+        ...$tags,
     ) {
-    }
-
-    /**
-     * Primary navigation view
-     *
-     * @return primary
-     */
-    public function get_primaryview(): primary {
-        return $this->primaryview;
+        $this->tags = $tags;
     }
 }
