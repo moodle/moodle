@@ -15,7 +15,7 @@
 }
 
 .behat-site .eupopup-container-bottom {
-    position: relative;
+    position: absolute;
 }
 
 .eupopup-container-bottom {

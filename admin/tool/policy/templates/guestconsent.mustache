@@ -46,43 +46,49 @@
     }
 }}
 
-{{#js}}
+{{#haspolicies}}
+    {{! Only show message if there is some policy related to guests. }}
+    <div {{!
+        }}class="eupopup eupopup-container eupopup-container-block eupopup-container-bottom eupopup-block eupopup-style-compact" {{!
+        }}role="dialog" {{!
+        }}aria-label="{{# str }} acceptancepolicies, tool_policy {{/str}}"{{!
+    }}>
+    </div>
+    <div class="eupopup-markup d-none">
+        <div class="eupopup-head"></div>
+        <div class="eupopup-body">
+            {{# str }} guestconsentmessage, tool_policy {{/ str }}
+            <ul>
+                {{#policies}}
+                    <li>
+                        <a href=\"{{pluginbaseurl}}/view.php?versionid={{id}}{{#returnurl}}&amp;returnurl={{.}}{{/returnurl}} {{!
+                            }}data-action="view-guest" data-versionid="{{id}}" data-behalfid="1">
+                            {{{name}}}
+                        </a>
+                    </li>
+                {{/policies}}
+            </ul>
+        </div>
+        <div class="eupopup-buttons">
+            <a href="#" class="eupopup-button eupopup-button_1">{{# str }} guestconsent:continue, tool_policy {{/ str }}</a>
+        </div>
+        <div class="clearfix"></div>
+        <a href="#" class="eupopup-closebutton">x</a>
+    </div>
 
-require(['jquery', 'tool_policy/jquery-eu-cookie-law-popup', 'tool_policy/policyactions'], function($, Popup, ActionsMod) {
-        // Initialise the guest popup.
-        $(document).ready(function() {
-            // Only show message if there is some policy related to guests.
-            {{#haspolicies}}
-                // Get localised messages.
-                var textmessage = "{{# str }} guestconsentmessage, tool_policy {{/ str }}" +
-                   "<ul>{{#policies}}" +
-                   "<li>" +
-                   "<a href=\"{{pluginbaseurl}}/view.php?versionid={{id}}{{#returnurl}}&amp;returnurl={{.}}{{/returnurl}}\" " +
-                   "   data-action=\"view-guest\" data-versionid=\"{{id}}\" data-behalfid=\"1\" >" +
-                   "{{{name}}}" +
-                   "</a>" +
-                   "</li>" +
-                   "{{/policies}}" +
-                   "</ul>";
-                var continuemessage = "{{# str }} guestconsent:continue, tool_policy {{/ str }}";
-
+    {{#js}}
+        require(['jquery', 'tool_policy/jquery-eu-cookie-law-popup', 'tool_policy/policyactions'], function($, Popup, ActionsMod) {
+            // Initialise the guest popup.
+            $(document).ready(function() {
                 // Initialize popup.
                 $(document.body).addClass('eupopup');
                 if ($(".eupopup").length > 0) {
-                    $(document).euCookieLawPopup().init({
-                        popupPosition: 'bottom',
-                        popupTitle: '',
-                        popupText: textmessage,
-                        buttonContinueTitle: continuemessage,
-                        buttonLearnmoreTitle: '',
-                        compactStyle: true,
-                    });
+                    $(document).euCookieLawPopup().init();
                 }
-            {{/haspolicies}}
 
-            // Initialise the JS for the modal window which displays the policy versions.
-            ActionsMod.init('[data-action="view-guest"]');
+                // Initialise the JS for the modal window which displays the policy versions.
+                ActionsMod.init('[data-action="view-guest"]');
+            });
         });
-});
-
-{{/js}}
+    {{/js}}
+{{/haspolicies}}
