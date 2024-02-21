@@ -113,17 +113,11 @@ $table = new block_iomad_company_admin\tables\teaching_locations_table('teaching
 
 $tableheaders = [get_string('name'),
                  get_string('classroom_capacity', 'block_iomad_company_admin'),
-                 get_string('address'),
-                 get_string('city'),
-                 get_string('country'),
-                 get_string('postcode', 'block_iomad_commerce')];
+                 get_string('address')];
 
 $tablecolumns = ['name',
                  'capacity',
-                 'address',
-                 'city',
-                 'country',
-                 'postcode'];
+                 'address'];
 
 // Are we adding the actions buttons?
 if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $companycontext) ||
@@ -138,6 +132,7 @@ $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
 $table->sort_default_column = 'name DESC';
 $table->no_sorting('actions');
+$table->no_sorting('address');
 
 if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $companycontext)) {
     $buttonlink = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/classroom_edit_form.php");

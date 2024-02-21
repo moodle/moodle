@@ -59,68 +59,20 @@ class teaching_locations_table extends table_sql {
             return get_string('statusna');
         }
 
+        $address = "";
         if (!empty($row->address)) {
-            return format_string($row->address);
-        } else {
-            return "";
+            $address .= "<b>" . get_string('address') . ":</b> " . format_string($row->address) . "<br>";
         }
-    }
-
-    /**
-     * Generate the display of the teaching location city
-     * @param object $row the table row being output.
-     * @return string HTML content to go inside the td.
-     */
-    public function col_city($row) {
-        global $output;
-
-        if (!empty($row->isvirtual)) {
-            return get_string('statusna');
-        }
-
         if (!empty($row->city)) {
-            return format_string($row->city);
-        } else {
-            return "";
+            $address .= "<b>" . get_string('city') . ":</b> " . format_string($row->city) . "<br>";
         }
-    }
-
-    /**
-     * Generate the display of the teaching location country
-     * @param object $row the table row being output.
-     * @return string HTML content to go inside the td.
-     */
-    public function col_country($row) {
-        global $output;
-
-        if (!empty($row->isvirtual)) {
-            return get_string('statusna');
-        }
-
         if (!empty($row->country)) {
-            return get_string($row->country, 'countries');
-        } else {
-            return "";
+            $address .= "<b>" . get_string('country') . ":</b> " . get_string($row->country, 'countries') . "<br>";
         }
-    }
-
-    /**
-     * Generate the display of the teaching location postcode
-     * @param object $row the table row being output.
-     * @return string HTML content to go inside the td.
-     */
-    public function col_postcode($row) {
-        global $output;
-
-        if (!empty($row->isvirtual)) {
-            return get_string('statusna');
-        }
-
         if (!empty($row->postcode)) {
-            return format_string($row->postcode);
-        } else {
-            return "";
+            $address .= "<b>" . get_string('postcode', 'block_iomad_commerce') . ":</b> " . format_string($row->postcode) . "<br>";
         }
+        return $address;
     }
 
     /**
