@@ -873,4 +873,13 @@ class cache_helper {
     public static function result_found($value): bool {
         return $value !== false;
     }
+
+    /**
+     * Checks whether the cluster mode is available in PHP.
+     *
+     * @return bool Return true if the PHP supports redis cluster, otherwise false.
+     */
+    public static function is_cluster_available(): bool {
+        return class_exists('RedisCluster');
+    }
 }
