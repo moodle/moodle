@@ -129,15 +129,13 @@ class attendees_table extends table_sql {
         }
 
         if (has_capability('mod/trainingevent:grade', context_module::instance($id)) && $waitingoption == 0) {
-            $gradehtml = '<form action="view.php" method="get">
-                         <input type="hidden" name="id" value="' . $id . '" />
-                         <input type="hidden" name="userid" value="'.$row->id.'" />
+            $gradehtml = '<input type="hidden" name="id" value="' . $id . '" />
+                         <input type="hidden" name="usergradeusers[]" value="'.$row->id.'" />
                          <input type="hidden" name="action" value="grade" />
                          <input type="hidden" name="view" value="1" />
-                         <input type="text" name="usergrade" id="id_usergrade"
+                         <input type="text" name="usergrades[]" id="id_usergrade"
                                 value="'.$usergradeentry->items[0]->grades[$row->id]->str_grade.'" />
-                         <input type="submit" value="' . get_string('grade', 'grades') . '" />
-                         </form>';
+                         <input type="submit" value="' . get_string('grade', 'grades') . '" />';
 
         }
 
@@ -181,4 +179,20 @@ class attendees_table extends table_sql {
         return $returnstr;
     }
 
+    public function wrap_html_start() {
+        global $params, $id, $waitingoption;
+
+        if (has_capability('mod/trainingevent:grade', context_module::instance($id)) && $waitingoption == 0) {
+            echo '<form action="view.php" method="get">';
+        }
+    }
+
+    public function wrap_html_finish() {
+        global $params, $id, $waitingoption;
+
+        if (has_capability('mod/trainingevent:grade', context_module::instance($id)) && $waitingoption == 0) {
+            echo '<br><input type="submit" value="' . get_string('grade', 'grades') . '" />
+                  </form>';
+        }
+    }
 }

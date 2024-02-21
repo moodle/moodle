@@ -36,7 +36,8 @@ $publish = optional_param('publish', 0, PARAM_INTEGER);
 $download = optional_param('download', 0, PARAM_CLEAN);
 $exportcalendar = optional_param('exportcalendar', null, PARAM_CLEAN);
 $userid = optional_param('userid', 0, PARAM_INTEGER);
-$usergrade = optional_param('usergrade', 0, PARAM_INTEGER);
+$usergrades = optional_param_array('usergrades', 0, PARAM_INTEGER);
+$usergradeusers = optional_param_array('usergradeusers', 0, PARAM_INTEGER);
 $current = optional_param('current', 0, PARAM_INTEGER);
 $chosen = optional_param('chosenevent', 0, PARAM_INTEGER);
 $action = optional_param('action', null, PARAM_ALPHA);
@@ -71,7 +72,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         $context = context_course::instance($event->course);
         require_login($event->course); // Adds to $PAGE, creates $OUTPUT.
         $PAGE->set_url($url);
-        $PAGE->set_pagelayout('standard');
+        $PAGE->set_pagelayout('mod');
         $PAGE->set_title($event->name);
         $PAGE->set_heading($SITE->fullname);
         $PAGE->set_context(context_module::instance($id));
@@ -1023,19 +1024,21 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                 $DB->delete_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
             }
         }
-        if ($action == 'grade' && !empty($userid)) {
-            // Grade the user.
-            $gradegrade = (object) [];
-            $gradegrade->userid = $userid;
-            $gradegrade->rawgrade = $usergrade;
-            $gradegrade->finalgrade = $usergrade;
-            $gradegrade->usermodified = $USER->id;
-            $gradegrade->timemodified = time();
-            $gradeparams['gradetype'] = GRADE_TYPE_VALUE;
-            $gradeparams['grademax']  = 100;
-            $gradeparams['grademin']  = 0;
-            $gradeparams['reset'] = false;
-            grade_update('mod/trainingevent', $event->course, 'mod', 'trainingevent', $event->id, 0, $gradegrade, $gradeparams);
+        if ($action == 'grade' && !empty($usergradeusers)) {
+            foreach ($usergradeusers as $gid => $userid) {
+                // Grade the user.
+                $gradegrade = (object) [];
+                $gradegrade->userid = $userid;
+                $gradegrade->rawgrade = $usergrades[$gid];
+                $gradegrade->finalgrade = $usergrades[$gid];
+                $gradegrade->usermodified = $USER->id;
+                $gradegrade->timemodified = time();
+                $gradeparams['gradetype'] = GRADE_TYPE_VALUE;
+                $gradeparams['grademax']  = 100;
+                $gradeparams['grademin']  = 0;
+                $gradeparams['reset'] = false;
+                grade_update('mod/trainingevent', $event->course, 'mod', 'trainingevent', $event->id, 0, $gradegrade, $gradeparams);
+            }
         }
 
         if ($attendance = (array) $DB->get_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0), null, 'userid')) {
@@ -1400,17 +1403,9 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
             if (!$download) {
                 echo "<h3>".get_string('attendance', 'local_report_attendance')."</h3>";
-                echo html_writer::start_tag('div', array('id' => 'trainingeventattendancetable'));
             }
             $table->out($CFG->iomad_max_list_users, true);
             if (!$download) {
-                echo html_writer::end_tag('div');
-            }
-            if (!$download) {
-
-                if (has_capability('mod/trainingevent:grade', $context)) {
-                    echo '<br><input type="submit" value="' . get_string('grade', 'grades') . '" />';
-                }
                 echo $OUTPUT->footer();
             }
         }
