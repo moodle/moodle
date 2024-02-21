@@ -13,6 +13,8 @@ Information provided here is intended especially for developers.
   are added. The `add_[columns|filters|conditions]_from_entity` class methods also now support wildcard matching in both `$include`
   and `$exclude` parameters
 * New report filter types:
+  - `cohort` for reports containing cohort data
+  - `courserole` for reports showing course enrolments
   - `filesize` for reports containing filesize data
 
 === 4.3 ===
