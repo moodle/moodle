@@ -275,7 +275,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 
 <script>
     let chosen_camera_device = null;
-    let multiple_monitor;
+    //let monitor_setup = null;
     let chosen_monitor_set_up;
     let monitor_camera_activated = <?php echo $monitor_camera_activated; ?>;
     // Check if window screen is extended
@@ -352,6 +352,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 
     function haveNotConnMonitor(){
         var multiple_modal = document.getElementById('popup-modal');
+        monitor_setup = null;
 
         multiple_modal.setAttribute('class', 'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full');
         multiple_modal.removeAttribute('aria-modal');
@@ -364,6 +365,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 
     function haveRemoveExtMonitor(){
         var multiple_modal = document.getElementById('popup-modal');
+        monitor_setup = 
 
         multiple_modal.setAttribute('class', 'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full');
         multiple_modal.removeAttribute('aria-modal');
@@ -381,7 +383,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
         multiple_modal.removeAttribute('aria-modal');
         multiple_modal.removeAttribute('role');
 
-        chosen_monitor_set_up = "continue_with multiple_monitor";
+        chosen_monitor_set_up = "continue_with_multiple_monitor";
         console.log('sending this: ', chosen_monitor_set_up);
         console.log('redirecting to quiz');
     }
@@ -396,7 +398,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
                 if (xhr.status === 200) {
                     console.log('POST request successful');
                     if (chosen_camera_device !== null) {
-                        window.location.href = <?php echo json_encode($quizattempturl); ?>;
+                        //window.location.href = <?php echo json_encode($quizattempturl); ?>;
                     }
                     // You can add further actions if needed
                 } else {
@@ -405,7 +407,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
                 }
             }
         };
-        xhr.send('userid=' + <?php echo $userid; ?> + '&quizid=' + <?php echo $quizid; ?> + '&quizattempt=' + <?php echo $quizattempt; ?> + '&quizattempturl=' + <?php echo json_encode($quizattempturl); ?> + '&chosen_camera_device=' + chosen_camera_device);
+        xhr.send('userid=' + <?php echo $userid; ?> + '&quizid=' + <?php echo $quizid; ?> + '&quizattempt=' + <?php echo $quizattempt; ?> + '&quizattempturl=' + <?php echo json_encode($quizattempturl); ?> + '&chosen_camera_device=' + chosen_camera_device + '&chosen_monitor_set_up=' + chosen_monitor_set_up);
     }
 
     window.onload = function() {
