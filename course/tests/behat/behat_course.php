@@ -162,6 +162,39 @@ class behat_course extends behat_base {
     }
 
     /**
+     *  Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
+     *
+     *  Recognised page names are:
+     *  | Section | coursename > section name | The selected section of the course |
+     *
+     * Examples:
+     *
+     *  When I am on the "Course 1 > Topic 1" "course > section" page logged in as "admin"
+     *
+     * @param string $type
+     * @param string $identifier
+     * @return moodle_url
+     */
+    protected function resolve_page_instance_url(string $type, string $identifier): moodle_url {
+        $type = strtolower($type);
+        switch ($type) {
+            case 'section':
+                $identifiers = explode('>', $identifier);
+                $identifiers = array_map('trim', $identifiers);
+                if (count($identifiers) < 2) {
+                    throw new Exception("The specified section $identifier is not valid and should be coursename > sectionname.");
+                }
+                [$courseidentifier, $sectionidentifier] = $identifiers;
+                $section = $this->get_section_and_course_by_id($courseidentifier, $sectionidentifier);
+                if (!$section) {
+                    throw new Exception("The specified section $identifier does not exist.");
+                }
+                return new moodle_url('/course/section.php', ['id' => $section->id]);
+        }
+        throw new Exception('Unrecognised core page type "' . $type . '."');
+    }
+
+    /**
      * Adds the selected activity/resource filling the form data with the specified field/value pairs.
      *
      * Sections 0 and 1 are also allowed on frontpage.
@@ -2098,5 +2131,34 @@ class behat_course extends behat_base {
         $elementselector = "//div[@data-region='activity-dates']";
         $params = [$elementselector, "xpath_element", $containerselector, "xpath_element"];
         $this->execute("behat_general::should_not_exist_in_the", $params);
+    }
+
+    /**
+     * Get the section id from an identifier.
+     *
+     * The section name and summary are checked.
+     * Note: if the course identifier is not provided, we try to find it through M.cfg.courseId.
+     * so if javascript is disabled, this function will return null.
+     *
+     * @param string $courseidentifier
+     * @param string $sectionidentifier
+     * @return section_info|null section info or null if not found.
+     */
+    protected function get_section_and_course_by_id(string $courseidentifier, string $sectionidentifier): ?section_info {
+        $courseid = $this->get_course_id($courseidentifier);
+        if (!$courseid) {
+            return null;
+        }
+        $courseformat = course_get_format($courseid);
+        $sections = $courseformat->get_sections();
+        foreach ($sections as $section) {
+            $sectionfullname = $courseformat->get_section_name($section);
+            if ($section->name == $sectionidentifier
+                || $sectionfullname == $sectionidentifier
+            ) {
+                return $section;
+            }
+        }
+        return null;
     }
 }
