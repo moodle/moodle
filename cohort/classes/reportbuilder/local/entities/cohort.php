@@ -24,6 +24,7 @@ use lang_string;
 use stdClass;
 use core_reportbuilder\local\entities\base;
 use core_reportbuilder\local\filters\boolean_select;
+use core_reportbuilder\local\filters\cohort as cohort_filter;
 use core_reportbuilder\local\filters\date;
 use core_reportbuilder\local\filters\select;
 use core_reportbuilder\local\filters\text;
@@ -259,6 +260,16 @@ class cohort extends base {
         global $DB;
 
         $tablealias = $this->get_table_alias('cohort');
+
+        // Cohort select filter.
+        $filters[] = (new filter(
+            cohort_filter::class,
+            'cohortselect',
+            new lang_string('selectcohort', 'core_cohort'),
+            $this->get_entity_name(),
+            "{$tablealias}.id"
+        ))
+            ->add_joins($this->get_joins());
 
         // Context filter.
         $filters[] = (new filter(

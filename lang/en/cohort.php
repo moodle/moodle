@@ -78,6 +78,7 @@ $string['privacy:metadata:cohort_members:cohortid'] = 'The ID of the cohort';
 $string['privacy:metadata:cohort_members:timeadded'] = 'The timestamp indicating when the user was added to the cohort';
 $string['privacy:metadata:cohort_members:userid'] = 'The ID of the user which is associated to the cohort';
 $string['removeuserwarning'] = 'Removing users from a cohort may result in unenrolling of users from multiple courses which includes deleting of user settings, grades, group membership and other user information from affected courses.';
+$string['selectcohort'] = 'Select cohort';
 $string['selectfromcohort'] = 'Select members from cohort';
 $string['systemcohorts'] = 'System cohorts';
 $string['unknowncohort'] = 'Unknown cohort ({$a})!';
