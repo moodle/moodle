@@ -49,6 +49,7 @@ class condition_test extends \advanced_testcase {
         $course = $generator->create_course();
         $user = $generator->create_user();
         $generator->enrol_user($user->id, $course->id);
+        $this->setUser($user);
         $info = new \core_availability\mock_info($course, $user->id);
 
         // Make 2 test groups, one in a grouping and one not.
@@ -70,7 +71,7 @@ class condition_test extends \advanced_testcase {
         // Add user to groups and refresh cache.
         groups_add_member($group1, $user);
         groups_add_member($group2, $user);
-        get_fast_modinfo($course->id, 0, true);
+        $info = new \core_availability\mock_info($course, $user->id);
 
         // Recheck.
         $this->assertTrue($cond->is_available(false, $info, true, $user->id));
