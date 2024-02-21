@@ -688,6 +688,17 @@ class process {
                 break;
 
             case UU_USER_ADD_UPDATE:
+                if ($this->get_match_on_email()) {
+                    if ($usersbyname = $DB->get_records('user', ['username' => $user->username])) {
+                        foreach ($usersbyname as $userbyname) {
+                            if (strtolower($userbyname->email) != strtolower($user->email)) {
+                                $this->usersskipped++;
+                                $this->upt->track('status', get_string('usernotaddedusernameexists', 'error'), 'warning');
+                                $skip = true;
+                            }
+                        }
+                    }
+                }
                 break;
 
             case UU_USER_UPDATE:
