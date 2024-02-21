@@ -388,6 +388,9 @@ function trainingevent_user_removed($event) {
         // Check if there is space.
         $attending = $DB->count_records('trainingevent_users', array('trainingeventid' => $trainingevent->id, 'waitlisted' => 0));
         $location = $DB->get_record('classroom', ['id' => $trainingevent->classroomid]);
+        if (empty($trainingevent->coursecapacity)) {
+            $trainingevent->coursecapacity = $location->capacity;
+        }
 
         // Only add someone if there is no capacity or there is still space.
         if ($location->isvirtual || $attending < $trainingevent->coursecapacity) {
