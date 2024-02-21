@@ -613,6 +613,7 @@ $string['usermustbemnet'] = 'Users in the MNET access control list must be remot
 $string['usernamelowercase'] = 'The username must be in lower case';
 $string['usernotaddederror'] = 'User not added - error';
 $string['usernotaddedregistered'] = 'User not added - already registered';
+$string['usernotaddedusernameexists'] = 'User not added - username already exists under a different email';
 $string['usernotavailable'] = 'The details of this user are not available to you';
 $string['usernotdeletedadmin'] = 'User not deleted as administrator accounts cannot be deleted.';
 $string['usernotdeleteddeleted'] = 'This user has already been deleted.';
