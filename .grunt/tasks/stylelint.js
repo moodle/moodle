@@ -29,6 +29,7 @@ module.exports = grunt => {
                     // Use a fully-qualified path.
                     src: files,
                     options: {
+                        quietDeprecationWarnings: true,
                         configOverrides: {
                             rules: {
                                 // These rules have to be disabled in .stylelintrc for scss compat.
@@ -45,7 +46,10 @@ module.exports = grunt => {
         return {
             stylelint: {
                 scss: {
-                    options: {syntax: 'scss'},
+                    options: {
+                        quietDeprecationWarnings: true,
+                        customSyntax: 'postcss-scss',
+                    },
                     src: files,
                 },
             },
