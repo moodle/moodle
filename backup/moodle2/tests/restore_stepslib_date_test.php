@@ -413,7 +413,7 @@ final class restore_stepslib_date_test extends \restore_date_testcase {
         $attemptobj->process_grade_submission($timenow);
 
         $questionattemptstepdates = [];
-        $originaliterator = $quba->get_attempt_iterator();
+        $originaliterator = $attemptobj->get_question_usage()->get_attempt_iterator();
         foreach ($originaliterator as $questionattempt) {
             $questionattemptstepdates[] = ['originaldate' => $questionattempt->get_last_action_time()];
         }
