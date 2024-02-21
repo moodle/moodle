@@ -1984,7 +1984,7 @@ class core_plugin_manager {
                 'calculated', 'calculatedmulti', 'calculatedsimple',
                 'ddimageortext', 'ddmarker', 'ddwtos', 'description',
                 'essay', 'gapselect', 'match', 'missingtype', 'multianswer',
-                'multichoice', 'numerical', 'random', 'randomsamatch',
+                'multichoice', 'numerical', 'ordering', 'random', 'randomsamatch',
                 'shortanswer', 'truefalse'
             ),
 
