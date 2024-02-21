@@ -469,13 +469,9 @@ async function loadCourseHandlerManager(courseId) {
     if (handlerManagers[courseId] !== undefined) {
         return handlerManagers[courseId];
     }
-    try {
-        const handlerManager = new HandlerManager(courseId);
-        await handlerManager.loadHandlers();
-        handlerManagers[courseId] = handlerManager;
-    } catch (error) {
-        throw error;
-    }
+    const handlerManager = new HandlerManager(courseId);
+    await handlerManager.loadHandlers();
+    handlerManagers[courseId] = handlerManager;
     return handlerManagers[courseId];
 }
 
@@ -544,13 +540,8 @@ const queueFileUpload = async function(courseId, sectionId, sectionNum, fileInfo
  */
 export const uploadFilesToCourse = async function(courseId, sectionId, sectionNum, files) {
     // Get the course handlers.
-    let handlerManager;
-    try {
-        handlerManager = await loadCourseHandlerManager(courseId);
-        await loadErrorStrings(courseId);
-    } catch (error) {
-        throw error;
-    }
+    const handlerManager = await loadCourseHandlerManager(courseId);
+    await loadErrorStrings(courseId);
     for (let index = 0; index < files.length; index++) {
         const fileInfo = files[index];
         await queueFileUpload(courseId, sectionId, sectionNum, fileInfo, handlerManager);
