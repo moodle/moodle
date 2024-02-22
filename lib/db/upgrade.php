@@ -1144,5 +1144,15 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024032600.01);
     }
 
+    if ($oldversion < 2024040200.01) {
+        // Enable variables to be set for URL resource.
+        if (!get_config('url', 'allowvariables')) {
+            set_config('allowvariables', true, 'url');
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024040200.01);
+    }
+
     return true;
 }
