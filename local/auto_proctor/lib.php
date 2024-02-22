@@ -49,11 +49,12 @@ class QuizProctor {
                 echo "<script>console.log('course: ', " . json_encode($course) .");</script>";
             }
             else{
-                $this->deleteProctoringSession($userid);
+                $this->refreshProctoringSession($userid);
             }
         }
-        else{
-            $this->deleteProctoringSession($userid);
+
+        else {
+            $this->refreshProctoringSession($userid);
         }
         
     }
@@ -164,6 +165,17 @@ class QuizProctor {
                         echo "<script>console.log('selected record: ', " . json_encode($proctoring_session) . ")</script>";
                     }
 
+                    // Select user's setup status
+                    // To check if the user's finished setting up
+                    $sql = "SELECT prompted_of_modal_setup
+                        FROM {auto_proctor_proctoring_session_tb}
+                        WHERE userid = :userid
+                        AND quizid = :quizid
+                        AND attempt = :attempt"
+                    ;
+                    $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
+                    $prompted_of_modal_setup = $this->DB->get_fieldset_sql($sql, $params);
+
                     // Select user's chosen camera
                     $sql = "SELECT camera_device_id
                         FROM {auto_proctor_proctoring_session_tb}
@@ -174,7 +186,7 @@ class QuizProctor {
                     $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
                     $chosen_camera_device = $this->DB->get_fieldset_sql($sql, $params);
 
-                    echo "<script>console.log('send in monitor cam: ', " . json_encode($chosen_camera_device[0]) . ");</script>";
+                    echo "<script>console.log('prompted_of_modal_setup: ', " . json_encode($prompted_of_modal_setup[0]) . ");</script>";
                     
                     // Pass necessarry value to js file in form of json
                     $jsdata = array(
@@ -186,6 +198,7 @@ class QuizProctor {
                         'cmid' => $cmid,
                         'strict_mode_activated' => $strict_mode_activated,
                         'monitor_camera_activated' => $monitor_camera_activated[0],
+                        'monitor_microphone_activated' => $monitor_microphone_activated[0],
                         'chosen_camera_device' => $chosen_camera_device[0],
                     );
 
@@ -198,94 +211,23 @@ class QuizProctor {
                     echo 'var jsdata = ' . json_encode($jsdata) . ';';
                     echo '</script>';
 
+                    // User has not yet setup the prompt modal setup
+                    if ($prompted_of_modal_setup[0] == 0){
+                        echo "<script>console.log('promptinggggggg');";
+                        $this->redirect($this->CFG->wwwroot . '/local/auto_proctor/ui/prompts.php?data=' . urlencode($jsdata_json));
+                    }
+
 
                     // Check if monitor tab switching is activated
-                    if ($monitor_tab_switching_activated[0] == 1) {
-                    
-                        // ======= THIS IS FORMER SESSION PROCESS
-                        // // Check if there existing is existing screen_share proctoring consent record
-                        // $sql = "SELECT screenshare_consent
-                        //     FROM {auto_proctor_proctoring_session_tb}
-                        //     WHERE userid = :userid
-                        //     AND quizid = :quizid
-                        //     AND attempt = :attempt"
-                        // ;
-                        // $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
-                        // $screenshare_consent = $this->DB->get_records_sql($sql, $params);
-
-                        // // If there is no session record
-                        // // Insert new session
-                        // if (empty($screenshare_consent)) {
-                        //     $insertData = new stdClass();
-                        //     $insertData->userid = $userid;
-                        //     $insertData->quizid = $quizid;
-                        //     $insertData->attempt = $attemptValue;
-                        //     $insert_new_session = $this->DB->insert_record('auto_proctor_proctoring_session_tb', $insertData);
-
-                        //     echo "<script> console.log('no recorded session'); </script>";
-                        // }
-
-                        // // Select the screen_share proctoring consent value
-                        // $sql = "SELECT screenshare_consent
-                        //     FROM {auto_proctor_proctoring_session_tb}
-                        //     WHERE userid = :userid
-                        //     AND quizid = :quizid
-                        //     AND attempt = :attempt"
-                        // ;
-                        // $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
-                        // $screenshare_consent = $this->DB->get_fieldset_sql($sql, $params);
-
-                        // // 0 not yet prompted the consent modal
-                        // // 1 = did not agree to consent
-                        // // 2 = agreed to consent
-
-                        // // If not yet prompted then redirect to prompts page
-                        // if ($screenshare_consent[0] == 0) {
-                        //     //redirect($CFG->wwwroot . '/mod/quiz/view.php?id=' . $quizid);
-                        //     $this->redirect($this->CFG->wwwroot . '/local/auto_proctor/ui/prompts.php?data=' . urlencode($jsdata_json));
-                        //     echo "<script> console.log('consent is 0'); </script>";
-                        // }
-
-                        // // If did not agreed to consent
-                        // if ($screenshare_consent[0] == 1){
-                            
-                            // Checl if strict mode was activated
-                            // If yes then redirect it to quiz attempt review page
-                            // if ($strict_mode_activated[0] == 1){
-
-                            //     // Delete current session
-                            //     $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
-                            //     $this->DB->delete_records('auto_proctor_proctoring_session_tb', $params);
-
-                            //     $this->redirect($this->CFG->wwwroot . '/mod/quiz/view.php?id=' . $cmid);
-                            //     //echo "<script>console.log(". $CFG->wwwroot . '/mod/quiz/view.php?id=' . $quizid .");</script>";
-                            // }
-                            // If not activated then redirect to quiz
-                        //}
-
-                        // If agreed to consent
-                        // Then prompt the screen sharing for proctoring
-                        //else if ($screenshare_consent[0] == 2){
-                            // echo '<script type="text/javascript"> console.log("MONITOR TAB ACTIVATED"); </script>';
-                            // echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
-                            // echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
-                            // echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/tab_monitoring/monitor_tab.js"></script>';
-                        //}
+                    if ($monitor_tab_switching_activated[0] == 1) {                 
+                        echo '<script type="text/javascript"> console.log("MONITOR TAB ACTIVATED"); </script>';
+                        echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
+                        echo '<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>';
+                        echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/tab_monitoring/monitor_tab.js"></script>';
                     }
-                    echo "<script>console.log('tab: ', " . json_encode($monitor_tab_switching_activated[0]) . ");</script>";
-                    echo "<script>console.log('cam: ', " . json_encode($monitor_camera_activated[0]) . ");</script>";
-                    echo "<script>console.log('mic: ', " . json_encode($monitor_microphone_activated[0]) . ");</script>";
+
                     // Check if monitor camera is activated
                     if ($monitor_camera_activated[0] == 1){
-
-                        if ($chosen_camera_device[0] === null){
-                            echo "<script>console.log('camera device null');</script>";
-                            $this->redirect($this->CFG->wwwroot . '/local/auto_proctor/ui/prompts.php?data=' . urlencode($jsdata_json));
-                        }
-                        else {
-                            echo "<script>console.log('selected camera ', " . json_encode($chosen_camera_device[0]) . ")</script>";
-                        }
-                        
                         echo '<script type="text/javascript"> console.log("MONITOR CAMERA ACTIVATED"); </script>';
                         echo '<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>';
                         echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
@@ -298,6 +240,7 @@ class QuizProctor {
 
                     if ($monitor_microphone_activated[0] == 1){
                         echo '<script type="text/javascript"> console.log("MONITOR MIC ACTIVATED"); </script>';
+                        echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
                         echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/microphone_monitoring/monitor_mic.js"></script>';
                     }
                 }
@@ -305,9 +248,19 @@ class QuizProctor {
         }
     }
 
-    public function deleteProctoringSession($userid) {
+    public function refreshProctoringSession($userid) {
+        $update_data = new stdClass();
+        $update_data->prompted_of_modal_setup= 0;
+
         // Delete current session
         $params = array('userid' => $userid);
+
+        $sql = "UPDATE {auto_proctor_proctoring_session_tb}
+        SET prompted_of_modal_setup = :prompted_of_modal_setup
+        WHERE userid = :userid";
+
+        $params['prompted_of_modal_setup'] = $update_data->prompted_of_modal_setup;
+        $this->DB->execute($sql, $params);
         //$this->DB->delete_records('auto_proctor_proctoring_session_tb', $params);
     }
 
@@ -350,7 +303,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
     $quizProctor = new QuizProctor($PAGE, $DB, $CFG, $USER, $COURSE);
     $quizProctor->captureQuizAttempt($USER->id, $COURSE);
-    //$quizProctor->deleteProctoringSession($USER->id);
+    //$quizProctor->refreshProctoringSession($USER->id);
         
 }
 
