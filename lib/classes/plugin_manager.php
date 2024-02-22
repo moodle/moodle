@@ -1720,7 +1720,6 @@ class core_plugin_manager {
         // branch, listed should be no plugins that were removed at 1.9.x - 2.1.x versions as
         // Moodle 2.3 supports upgrades from 2.2.x only.
         $plugins = array(
-            'qformat' => array('blackboard', 'learnwise', 'examview'),
             'assignment' => array('offline', 'online', 'upload', 'uploadsingle'),
             'auth' => array('radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'),
             'block' => array('course_overview', 'messages', 'community', 'participants', 'quiz_results'),
@@ -1731,7 +1730,7 @@ class core_plugin_manager {
             'h5plib' => array('v124'),
             'media' => array('swf'),
             'portfolio' => array('picasa', 'boxnet'),
-            'qformat' => array('webct'),
+            'qformat' => array('blackboard', 'learnwise', 'examview', 'webct'),
             'message' => array('jabber'),
             'mod' => array('assignment'),
             'quizaccess' => array('safebrowser'),
