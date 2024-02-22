@@ -91,18 +91,21 @@ class set_acceptances_status extends external_api {
         }
 
         // Split acceptances.
-        $allcurrentpolicies = api::list_current_versions(policy_version::AUDIENCE_LOGGEDIN);
         $requestedpolicies = $agreepolicies = $declinepolicies = [];
         foreach ($params['policies'] as $policy) {
             $requestedpolicies[$policy['versionid']] = $policy['status'];
         }
 
-        foreach ($allcurrentpolicies as $policy) {
-            if (isset($requestedpolicies[$policy->id])) {
-                if ($requestedpolicies[$policy->id] === 1) {
-                    $agreepolicies[] = $policy->id;
-                } else if ($requestedpolicies[$policy->id] === 0) {
-                    $declinepolicies[] = $policy->id;
+        // Retrieve all  policies and their acceptances.
+        $allpolicies = api::get_policies_with_acceptances($user->id);
+        foreach ($allpolicies as $policy) {
+            foreach ($policy->versions as $version) {
+                if (isset($requestedpolicies[$version->id])) {
+                    if ($requestedpolicies[$version->id] === 1) {
+                        $agreepolicies[] = $version->id;
+                    } else if ($requestedpolicies[$version->id] === 0) {
+                        $declinepolicies[] = $version->id;
+                    }
                 }
             }
         }
