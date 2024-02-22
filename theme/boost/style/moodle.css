@@ -31710,14 +31710,10 @@ a.ygtvspacer:hover {
 .message-app .contact-status {
   position: absolute;
   left: 39px;
-  top: 39px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  top: 34px;
 }
-.message-app .contact-status.online {
-  border: 1px solid #fff;
-  background-color: #357a32;
+.message-app .contact-status.online .icon {
+  color: #357a32;
 }
 .message-app .message p {
   margin: 0;
