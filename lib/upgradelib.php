@@ -1296,7 +1296,9 @@ function external_update_descriptions($component) {
 
         if ($dbfunction->services != $functionservices) {
             // Now, we need to check if services were removed, in that case we need to remove the function from them.
-            $servicesremoved = array_diff(explode(",", $dbfunction->services), explode(",", $functionservices));
+            $oldservices = $dbfunction->services ? explode(',', $dbfunction->services) : [];
+            $newservices = $functionservices ? explode(',', $functionservices) : [];
+            $servicesremoved = array_diff($oldservices, $newservices);
             foreach ($servicesremoved as $removedshortname) {
                 if ($externalserviceid = $DB->get_field('external_services', 'id', array("shortname" => $removedshortname))) {
                     $DB->delete_records('external_services_functions', array('functionname' => $dbfunction->name,
