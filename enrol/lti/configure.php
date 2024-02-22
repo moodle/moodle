@@ -50,7 +50,7 @@ $sesscache = new launch_cache_session();
 $issdb = new issuer_database(new application_registration_repository(), new deployment_repository());
 $cookie = new lti_cookie();
 $serviceconnector = new LtiServiceConnector($sesscache, new http_client());
-$messagelaunch = LtiMessageLaunch::fromCache($launchid, $issdb, $sesscache, $serviceconnector);
+$messagelaunch = LtiMessageLaunch::fromCache($launchid, $issdb, $sesscache, $cookie, $serviceconnector);
 
 if (!$messagelaunch->isDeepLinkLaunch()) {
     throw new coding_exception('Configuration can only be accessed as part of a content item selection deep link '.

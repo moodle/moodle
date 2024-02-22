@@ -115,7 +115,6 @@ class issuer_database implements IDatabase {
         if (!$deployment) {
             return null;
         }
-        return LtiDeployment::new()
-            ->setDeploymentId($deployment->get_deploymentid());
+        return LtiDeployment::new($deployment->get_deploymentid());
     }
 }

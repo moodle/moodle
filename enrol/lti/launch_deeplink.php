@@ -65,7 +65,7 @@ if ($idtoken) {
         ->initialize($_POST);
 }
 if ($launchid) {
-    $messagelaunch = LtiMessageLaunch::fromCache($launchid, $issdb, $sesscache, $serviceconnector);
+    $messagelaunch = LtiMessageLaunch::fromCache($launchid, $issdb, $sesscache, $cookie, $serviceconnector);
 }
 if (empty($messagelaunch)) {
     throw new moodle_exception('Bad launch. Deep linking launch data could not be found');
