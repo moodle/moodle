@@ -2321,10 +2321,10 @@ abstract class moodle_database {
      * This function accepts variable number of string parameters.
      * All strings/fieldnames will used in the SQL concatenate statement generated.
      *
+     * @param string $arr,... expressions to be concatenated.
      * @return string The SQL to concatenate strings passed in.
-     * @uses func_get_args()  and thus parameters are unlimited OPTIONAL number of additional field names.
      */
-    public abstract function sql_concat();
+    public abstract function sql_concat(...$arr);
 
     /**
      * Returns the proper SQL to do CONCAT between the elements passed

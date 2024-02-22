@@ -341,11 +341,10 @@ class sqlite3_pdo_moodle_database extends pdo_moodle_database {
      * Returns the proper SQL to do CONCAT between the elements passed
      * Can take many parameters
      *
-     * @param string $element
+     * @param string $elements,...
      * @return string
      */
-    public function sql_concat() {
-        $elements = func_get_args();
+    public function sql_concat(...$elements) {
         return implode('||', $elements);
     }
 

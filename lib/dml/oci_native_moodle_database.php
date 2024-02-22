@@ -1577,8 +1577,7 @@ class oci_native_moodle_database extends moodle_database {
         }
     }
 
-    public function sql_concat() {
-        $arr = func_get_args();
+    public function sql_concat(...$arr) {
         if (empty($arr)) {
             return " ' ' ";
         }

@@ -326,10 +326,10 @@ abstract class test_moodle_database extends \moodle_database {
 
     /**
      * Default implementation, throws Exception
-     * @return string $sql
+     * @return string $arr,...
      * @throws Exception
      */
-    public function sql_concat() {
+    public function sql_concat(...$arr) {
         throw new Exception("sql_concat() not implemented");
     }
 

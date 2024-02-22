@@ -1508,8 +1508,7 @@ class pgsql_native_moodle_database extends moodle_database {
         return " $fieldname::real ";
     }
 
-    public function sql_concat() {
-        $arr = func_get_args();
+    public function sql_concat(...$arr) {
         $s = implode(' || ', $arr);
         if ($s === '') {
             return " '' ";

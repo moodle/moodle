@@ -1927,12 +1927,11 @@ class mysqli_native_moodle_database extends moodle_database {
      * Returns the proper SQL to do CONCAT between the elements passed
      * Can take many parameters
      *
-     * @param string $str,... 1 or more fields/strings to concat
+     * @param string $arr,... 1 or more fields/strings to concat
      *
      * @return string The concat sql
      */
-    public function sql_concat() {
-        $arr = func_get_args();
+    public function sql_concat(...$arr) {
         $s = implode(', ', $arr);
         if ($s === '') {
             return "''";
