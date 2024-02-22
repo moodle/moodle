@@ -155,7 +155,7 @@ class manager {
             // Ensure that mailboxes exist.
             $this->ensure_mailboxes_exist();
             // Select mailbox.
-            $this->client->select(mailbox: $mailbox);
+            $this->select_mailbox(mailbox: $mailbox);
             return true;
         } else {
             throw new \moodle_exception('imapconnectfailure', 'tool_messageinbound', '', null, 'Could not connect to IMAP server.');
@@ -331,9 +331,11 @@ class manager {
      */
     public function tidy_old_messages(): bool {
         // Grab the new IMAP client.
-        if (!$this->get_imap_client(mailbox: $this->get_confirmation_folder())) {
+        if (!$this->get_imap_client()) {
             return false;
         }
+        // Switch to the confirmation folder.
+        $this->select_mailbox(mailbox: $this->get_confirmation_folder());
 
         // Open the mailbox.
         mtrace("Searching for messages older than 24 hours in the '" .
@@ -1330,6 +1332,17 @@ class manager {
         );
         $messagedata = reset($messages);
         return $messagedata->sequence;
+    }
+
+    /**
+     * Switch mailbox.
+     *
+     * @param string $mailbox The mailbox to switch to.
+     */
+    protected function select_mailbox(
+        string $mailbox,
+    ): void {
+        $this->client->select(mailbox: $mailbox);
     }
 
     /**
