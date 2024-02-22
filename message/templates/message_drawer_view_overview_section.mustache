@@ -54,19 +54,26 @@
                 {{#pix}} t/expanded, core {{/pix}}
             </span>
             <span class="font-weight-bold">{{$title}}{{/title}}</span>
-            <small class="hidden ml-1" data-region="section-total-count-container">
-                (<span aria-hidden="true" data-region="section-total-count">{{count.total}}</span>{{!
-                }}<span class="sr-only">{{#str}} totalconversations, core_message, {{count.total}} {{/str}}</span>)
+            <small
+                class="hidden ml-1"
+                data-region="section-total-count-container" aria-labelledby="{{$region}}{{/region}}-total-count-label"
+            >
+                (<span aria-hidden="true" data-region="section-total-count">{{count.total}}</span>)
+                <span class="sr-only" id="{{$region}}{{/region}}-total-count-label">
+                    {{#str}} totalconversations, core_message, {{count.total}} {{/str}}
+                </span>
             </small>
             <span class="hidden ml-2" data-region="loading-icon-container">
                 {{> core/loading }}
             </span>
             <span
                 class="{{^count.unread}}hidden{{/count.unread}} badge rounded-pill bg-primary text-white ml-auto"
-                data-region="section-unread-count"
+                data-region="section-unread-count-container" aria-labelledby="{{$region}}{{/region}}-unread-count-label"
             >
-                <span aria-hidden="true">{{count.unread}}</span>
-                <span class="sr-only">{{#str}} unreadconversations, core_message, {{count.unread}} {{/str}}</span>
+                <span aria-hidden="true" data-region="section-unread-count">{{count.unread}}</span>
+                <span class="sr-only" id="{{$region}}{{/region}}-unread-count-label">
+                    {{#str}} unreadconversations, core_message, {{count.unread}} {{/str}}
+                </span>
             </span>
         </button>
     </div>
