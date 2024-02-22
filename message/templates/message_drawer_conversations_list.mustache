@@ -54,7 +54,9 @@
             >
         {{/imageurl}}
         {{#showonlinestatus}}
-            <span class="contact-status {{#isonline}}online{{/isonline}}"></span>
+            <span class="contact-status icon-size-2 {{#isonline}}online{{/isonline}}">
+                {{#isonline}} {{#pix}} t/online, core, {{#str}} online, core_message {{/str}} {{/pix}} {{/isonline}}
+            </span>
         {{/showonlinestatus}}
         <div class="w-100 text-truncate ml-2 my-2">
             <div class="d-flex">
