@@ -57,6 +57,10 @@ information provided here is intended especially for developers.
   is applied.
 * The Horde library has been removed from core. It was only used by the tool_messageinbound. Now tool_messageinbound
   uses the new RoundCube library.
+* Visibility of internal properties of the \core\task\manager have been changed from public to protected. These should not have been accessible.
+  - $miniqueue
+  - $numtasks
+  - $mode
 
 === 4.3 ===
 

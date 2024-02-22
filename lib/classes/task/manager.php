@@ -63,17 +63,26 @@ class manager {
     /**
      * @var array A cached queue of adhoc tasks
      */
-    public static $miniqueue;
+    protected static array $miniqueue = [];
 
     /**
      * @var int The last recorded number of unique adhoc tasks.
      */
-    public static $numtasks;
+    protected static int $numtasks = 0;
 
     /**
-     * @var string Used to determine if the adhoc task queue is distributing or filling capacity.
+     * @var null|int Used to determine if the adhoc task queue is distributing or filling capacity.
      */
-    public static $mode;
+    protected static ?int $mode = null;
+
+    /**
+     * Reset the state of the task manager.
+     */
+    public static function reset_state(): void {
+        self::$miniqueue = [];
+        self::$numtasks = 0;
+        self::$mode = null;
+    }
 
     /**
      * Given a component name, will load the list of tasks in the db/tasks.php file for that component.
