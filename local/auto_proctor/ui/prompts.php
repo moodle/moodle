@@ -59,6 +59,38 @@ $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
 // ";
 // echo "</script>";
 ?>
+<script>
+    let chosen_camera_device = null;
+    //let monitor_setup = null;
+    let chosen_monitor_set_up = "single_monitor_detected";
+    let monitor_camera_activated = <?php echo $monitor_camera_activated; ?>;
+    let monitor_microphone_activated = <?php echo $monitor_microphone_activated; ?>;
+
+    var popupModal = document.getElementById("popup-modal");
+    var camSelectPopupModal = document.getElementById("cam-select-popup-modal");
+
+
+    if (monitor_microphone_activated === 1){
+        navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+            // Your code to handle the audio stream
+        })
+        .catch(function(err) {
+            // Your code to handle any errors
+        });
+
+    }
+
+    if (monitor_camera_activated === 1){
+        navigator.mediaDevices.getUserMedia({ audio: true })
+        .then(function(stream) {
+            // Your code to handle the audio stream
+        })
+        .catch(function(err) {
+            // Your code to handle any errors
+        });
+    }
+</script>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -211,14 +243,6 @@ $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
 <div id = "backdrop" modal-backdrop class="bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40"></div>
 
 <script>
-    let chosen_camera_device = null;
-    //let monitor_setup = null;
-    let chosen_monitor_set_up = "single_monitor_detected";
-    let monitor_camera_activated = <?php echo $monitor_camera_activated; ?>;
-    let monitor_microphone_activated = <?php echo $monitor_microphone_activated; ?>;
-
-    var popupModal = document.getElementById("popup-modal");
-    var camSelectPopupModal = document.getElementById("cam-select-popup-modal");
 
     if (!window.screen.isExtended){
         camSelectPopupModal.classList.remove("hidden");

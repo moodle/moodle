@@ -202,7 +202,6 @@ $(document).ready(function () {
 
         function probSusMovement(evidence_name_type) {
             probSusCounter++;
-            console.log('sussss', probSusCounter);
             if (probSusCounter > 10 && evidence_name_type !== 'sendTheActivty'){
                 if (susCounter === 0 && evidence_name_type !== 'sendTheActivty'){
                     updateDuration();
