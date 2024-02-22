@@ -271,9 +271,15 @@ class externallib_test extends externallib_advanced_testcase {
             if ($policy['versionid'] == $this->policy2->get('id')) {
                 $this->assertEquals($this->policy2->get('name'), $policy['name']);
                 $this->assertEquals(0, $policy['optional']);
+                $this->assertTrue($policy['canaccept']);
+                $this->assertFalse($policy['candecline']);  // Cannot decline or revoke mandatory for myself.
+                $this->assertFalse($policy['canrevoke']);
             } else {
                 $this->assertEquals($optionalpolicy->get('name'), $policy['name']);
                 $this->assertEquals(1, $policy['optional']);
+                $this->assertTrue($policy['canaccept']);
+                $this->assertTrue($policy['candecline']);   // Can decline or revoke optional for myself.
+                $this->assertTrue($policy['canrevoke']);
             }
             $this->assertNotContains('acceptance', $policy);    // Nothing accepted yet.
         }
@@ -285,6 +291,18 @@ class externallib_test extends externallib_advanced_testcase {
         $policies = \core_external\external_api::clean_returnvalue(
             \tool_policy\external\get_user_acceptances::execute_returns(), $policies);
         $this->assertCount(2, $policies['policies']);
+        foreach ($policies['policies'] as $policy) {
+            if ($policy['versionid'] == $this->policy2->get('id')) {
+                $this->assertTrue($policy['canaccept']);
+                $this->assertFalse($policy['candecline']);  // Cannot decline mandatory in general.
+                $this->assertTrue($policy['canrevoke']);
+            } else {
+                $this->assertTrue($policy['canaccept']);
+                $this->assertTrue($policy['candecline']);
+                $this->assertTrue($policy['canrevoke']);
+            }
+            $this->assertNotContains('acceptance', $policy);    // Nothing accepted yet.
+        }
 
         // Get other user acceptances without permission.
         $this->expectException(\required_capability_exception::class);
