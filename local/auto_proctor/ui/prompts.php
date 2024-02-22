@@ -45,6 +45,7 @@ $quizid = $jsdata['quizid'];
 $quizattempt = $jsdata['quizattempt'];
 $quizattempturl = $jsdata['quizattempturl'];
 $monitor_camera_activated = $jsdata['monitor_camera_activated'];
+$monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
 
 // ====== DEBUUGING PURPOSE
 // echo "<script>";
@@ -58,70 +59,6 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 // ";
 // echo "</script>";
 ?>
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PROMPTS</title>
-</head>
-<body>
-<script>
-    if (<?php //echo $monitor_camera_activated; ?> === 1){
-        console.log('prompt cam');
-    }
-    if (window.screen.isExtended){
-        console.log('prompt multiple monitor');
-    }
-    // Display a dialog box with "Yes" and "No" options
-    var userResponse = confirm("Do you consent to share your screen for proctoring purposes?");
-
-    // If aggreed sharing screen
-    if (userResponse) {
-        var screenshare_consent = 2;
-        
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', <?php //echo json_encode($wwwroot . '/local/auto_proctor/proctor_tools/tab_monitoring/save_screen_session.php'); ?>, true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        // ==== DEBUGGING =====
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    console.log('POST request successful');
-                    window.location.href = <?php //echo json_encode($quizattempturl); ?>;
-                    // You can add further actions if needed
-                } else {
-                    console.error('POST request failed with status: ' + xhr.status);
-                    // Handle the error or provide feedback to the user
-                }
-            }
-        };
-        xhr.send('userid=' + <?php //echo $userid; ?> + '&quizid=' + <?php //echo $quizid; ?> + '&quizattempt=' + <?php //echo $quizattempt; ?> + '&screenshare_consent=' + screenshare_consent + '&quizattempturl=' + <?php //echo json_encode($quizattempturl); ?>);
-    }
-    else{
-        var screenshare_consent = 1;
-        
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', <?php //echo json_encode($wwwroot . '/local/auto_proctor/proctor_tools/tab_monitoring/save_screen_session.php'); ?>, true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        // ==== DEBUGGING =====
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    console.log('POST request successful');
-                    window.location.href = <?php //echo json_encode($quizattempturl); ?>;
-                    // You can add further actions if needed
-                } else {
-                    console.error('POST request failed with status: ' + xhr.status);
-                    // Handle the error or provide feedback to the user
-                }
-            }
-        };
-        xhr.send('userid=' + <?php //echo $userid; ?> + '&quizid=' + <?php //echo $quizid; ?> + '&quizattempt=' + <?php //echo $quizattempt; ?> + '&screenshare_consent=' + screenshare_consent + '&quizattempturl=' + <?php //echo json_encode($quizattempturl); ?>);
-    }
-</script>
-</body>
-</html> -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -151,7 +88,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
                 <span class="sr-only">Close modal</span>
             </button>
             <div class="p-6 md:p-8  text-center">
-                <h1 class="mb-2 text-2xl font-semibold text-black ">Multiple Cameras Detected</h1>
+                <h1 class="mb-2 text-2xl font-semibold text-black ">Multiple Monitor Detected</h1>
 
                 <p class="mb-4 text-base font-normal text-gray-700 text-start ">We have detected multiple monitors. Please disconnect the extra monitor (or devices like Chromecast).</p>
                 <p class="mb-8 text-base font-normal text-gray-700 text-start ">IIf you continue without disconnecting, AutoProctor will store details of the device.</p>
@@ -276,8 +213,23 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 <script>
     let chosen_camera_device = null;
     //let monitor_setup = null;
-    let chosen_monitor_set_up;
+    let chosen_monitor_set_up = "single_monitor_detected";
     let monitor_camera_activated = <?php echo $monitor_camera_activated; ?>;
+    let monitor_microphone_activated = <?php echo $monitor_microphone_activated; ?>;
+
+    var popupModal = document.getElementById("popup-modal");
+    var camSelectPopupModal = document.getElementById("cam-select-popup-modal");
+
+    if (!window.screen.isExtended){
+        camSelectPopupModal.classList.remove("hidden");
+        camSelectPopupModal.classList.add("flex");
+        camSelectPopupModal.setAttribute("aria-modal", "true");
+        camSelectPopupModal.setAttribute("role", "dialog");
+        
+        popupModal.classList.remove("flex");
+        popupModal.classList.add("hidden");
+    }
+
     // Check if window screen is extended
     var have_not_multiple_btn = document.getElementById('have-not-multiple-btn');
     var have_multiple_btn = document.getElementById('have-multiple-btn');
@@ -361,6 +313,10 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
         chosen_monitor_set_up = "have_not_conn_multiple_monitor";
         console.log('sending this: ', chosen_monitor_set_up);
         console.log('redirecting to quiz');
+
+        if (monitor_microphone_activated === 1 && monitor_camera_activated !== 1){
+            sendSessionSetupData();
+        }
     }
 
     function haveRemoveExtMonitor(){
@@ -374,6 +330,10 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
         chosen_monitor_set_up = "have_remove_external_monitor";
         console.log('sending this: ', chosen_monitor_set_up);
         console.log('redirecting to quiz');
+
+        if (monitor_microphone_activated === 1 && monitor_camera_activated !== 1){
+            sendSessionSetupData();
+        }
     }
 
     function continueWithMulMonitor(){
@@ -386,6 +346,10 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
         chosen_monitor_set_up = "continue_with_multiple_monitor";
         console.log('sending this: ', chosen_monitor_set_up);
         console.log('redirecting to quiz');
+
+        if (monitor_microphone_activated === 1 && monitor_camera_activated !== 1){
+            sendSessionSetupData();
+        }
     }
 
     function sendSessionSetupData(){
@@ -397,9 +361,7 @@ $monitor_camera_activated = $jsdata['monitor_camera_activated'];
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
                     console.log('POST request successful');
-                    if (chosen_camera_device !== null) {
-                        //window.location.href = <?php echo json_encode($quizattempturl); ?>;
-                    }
+                    window.location.href = <?php echo json_encode($quizattempturl); ?>;
                     // You can add further actions if needed
                 } else {
                     console.error('POST request failed with status: ' + xhr.status);

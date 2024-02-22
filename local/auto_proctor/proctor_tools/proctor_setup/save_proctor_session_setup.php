@@ -32,6 +32,7 @@ if(isset($_POST['userid'])){
     $quizattempturl = $_POST['quizattempturl'];
     $chosen_camera_device = $_POST['chosen_camera_device'];
     $chosen_monitor_set_up = $_POST['chosen_monitor_set_up'];
+    $prompted_of_modal_setup = 1;
 
     echo "userid: " . $userid . "</br>";
     echo "quizid: " . $quizid . "</br>";
@@ -41,6 +42,9 @@ if(isset($_POST['userid'])){
     echo "chosen_monitor_set_up: " . $chosen_monitor_set_up . "</br>";
 
     switch ($chosen_monitor_set_up) {
+        case "single_monitor_detected":
+            $chosen_monitor_set_up = 0;
+            break;
         case "have_not_conn_multiple_monitor":
             $chosen_monitor_set_up = 1;
             break;
@@ -62,11 +66,13 @@ if(isset($_POST['userid'])){
     $update_data = new stdClass();
     $update_data->camera_device_id = $chosen_camera_device;
     $update_data->monitor_setup = $chosen_monitor_set_up;
+    $update_data->prompted_of_modal_setup = $prompted_of_modal_setup;
 
     // Build the raw SQL update query
     $sql = "UPDATE {auto_proctor_proctoring_session_tb}
             SET camera_device_id = :camera_device_id,
-            monitor_setup = :monitor_setup
+            monitor_setup = :monitor_setup,
+            prompted_of_modal_setup = :prompted_of_modal_setup
             WHERE userid = :userid
             AND quizid = :quizid
             AND attempt = :attempt";
@@ -74,6 +80,7 @@ if(isset($_POST['userid'])){
     // Add the screenshare_consent value to the parameters array
     $params['camera_device_id'] = $update_data->camera_device_id;
     $params['monitor_setup'] = $update_data->monitor_setup;
+    $params['prompted_of_modal_setup'] = $update_data->prompted_of_modal_setup;
 
     // Execute the raw SQL query
     $update_session_setup = $DB->execute($sql, $params);
