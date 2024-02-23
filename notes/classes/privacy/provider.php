@@ -95,9 +95,16 @@ class provider implements
                   FROM {context} c
             INNER JOIN {post} p ON p.courseid = c.instanceid AND c.contextlevel = :contextcoursewrittenby
                  WHERE p.module = 'notes'
-                   AND p.usermodified = :usermodified
-                 UNION
-                SELECT c.id
+                   AND p.usermodified = :usermodified";
+
+        $params = [
+            'contextcoursewrittenby'  => CONTEXT_COURSE,
+            'usermodified'            => $userid,
+        ];
+
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "SELECT c.id
                   FROM {context} c
             INNER JOIN {post} p ON p.courseid = c.instanceid AND c.contextlevel = :contextcoursewrittenfor
                  WHERE p.module = 'notes'
@@ -105,8 +112,6 @@ class provider implements
                    AND p.publishstate {$publishstatesql}";
 
         $params = [
-            'contextcoursewrittenby'  => CONTEXT_COURSE,
-            'usermodified'            => $userid,
             'contextcoursewrittenfor' => CONTEXT_COURSE,
             'userid'                  => $userid
         ];
