@@ -533,14 +533,8 @@ class qtype_ordering_question extends question_graded_automatically {
         return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
-    // Methods from "question_graded_automatically" class.
-    // See "question/type/questionbase.php".
-
     /**
-     * Check a request for access to a file belonging to a combined feedback field.
-     *
-     * Fix a bug in Moodle 2.9 & 3.0, in which this method does not declare $args,
-     * so trying to use $args[0] always fails and images in feedback are not shown.
+     * Checks whether the user has permission to access a particular file.
      *
      * @param question_attempt $qa the question attempt being displayed.
      * @param question_display_options $options the options that control display of the question.
