@@ -332,13 +332,17 @@ $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
         multiple_modal.removeAttribute('aria-modal');
         multiple_modal.removeAttribute('role');
 
-        chosen_monitor_set_up = "have_not_conn_multiple_monitor";
-        console.log('sending this: ', chosen_monitor_set_up);
-        console.log('redirecting to quiz');
-
-        if (monitor_microphone_activated === 1 && monitor_camera_activated !== 1){
-            sendSessionSetupData();
+        if (confirm("Reload page to update monitor status?")) {
+            location.reload();
         }
+
+        // chosen_monitor_set_up = "have_not_conn_multiple_monitor";
+        // console.log('sending this: ', chosen_monitor_set_up);
+        // console.log('redirecting to quiz');
+
+        // if (monitor_microphone_activated === 1 && monitor_camera_activated !== 1){
+        //     sendSessionSetupData();
+        // }
     }
 
     function haveRemoveExtMonitor(){
@@ -349,13 +353,17 @@ $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
         multiple_modal.removeAttribute('aria-modal');
         multiple_modal.removeAttribute('role');
 
-        chosen_monitor_set_up = "have_remove_external_monitor";
-        console.log('sending this: ', chosen_monitor_set_up);
-        console.log('redirecting to quiz');
-
-        if (monitor_microphone_activated === 1 && monitor_camera_activated !== 1){
-            sendSessionSetupData();
+        if (confirm("Reload page to update monitor status?")) {
+            location.reload();
         }
+
+        // chosen_monitor_set_up = "have_remove_external_monitor";
+        // console.log('sending this: ', chosen_monitor_set_up);
+        // console.log('redirecting to quiz');
+
+        // if (monitor_microphone_activated === 1 && monitor_camera_activated !== 1){
+        //     sendSessionSetupData();
+        // }
     }
 
     function continueWithMulMonitor(){
