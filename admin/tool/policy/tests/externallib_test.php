@@ -359,7 +359,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(0, $policies['warnings']);
 
         // And now accept and old one.
-        $ids = [['versionid' => $optionalpolicy->get('id'), 'status' => 1],];
+        $ids = [['versionid' => $optionalpolicy->get('id'), 'status' => 1, 'note' => 'I accept for me.']];  // The note will be ignored.
         $policies = \tool_policy\external\set_acceptances_status::execute($ids);
         $policies = \core_external\external_api::clean_returnvalue(
             \tool_policy\external\set_acceptances_status::execute_returns(), $policies);
@@ -372,6 +372,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(3, $policies['policies']);
         foreach ($policies['policies'] as $policy) {
             $this->assertEquals(1, $policy['acceptance']['status']);    // Check all accepted.
+            $this->assertEmpty($policy['acceptance']['note']);  // The note was not recorded because it was for itself.
         }
 
         // Decline optional only.
@@ -398,7 +399,9 @@ class externallib_test extends externallib_advanced_testcase {
         // Parent & child case now. Accept the optional ONLY on behalf of someone else.
         $this->parent->policyagreed = 1;
         $this->setUser($this->parent);
-        $policies = \tool_policy\external\set_acceptances_status::execute([['versionid' => $optionalpolicynew->get('id'), 'status' => 1]], $this->child->id);
+        $notetext = 'I accept this on behalf of my child Santiago.';
+        $policies = \tool_policy\external\set_acceptances_status::execute(
+            [['versionid' => $optionalpolicynew->get('id'), 'status' => 1, 'note' => $notetext]], $this->child->id);
         $policies = \core_external\external_api::clean_returnvalue(
             \tool_policy\external\set_acceptances_status::execute_returns(), $policies);
 
@@ -413,8 +416,10 @@ class externallib_test extends externallib_advanced_testcase {
         foreach ($policies['policies'] as $policy) {
             if ($policy['versionid'] == $this->policy2->get('id')) {
                 $this->assertNotContains('acceptance', $policy);    // Not yet accepted.
+                $this->assertArrayNotHasKey('acceptance', $policy);
             } else {
                 $this->assertEquals(1, $policy['acceptance']['status']);    // Accepted.
+                $this->assertEquals($notetext, $policy['acceptance']['note']);
             }
         }
 
