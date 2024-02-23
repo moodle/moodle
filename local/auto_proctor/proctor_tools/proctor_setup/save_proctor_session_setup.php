@@ -32,6 +32,7 @@ if(isset($_POST['userid'])){
     $quizattempturl = $_POST['quizattempturl'];
     $chosen_camera_device = $_POST['chosen_camera_device'];
     $chosen_monitor_set_up = $_POST['chosen_monitor_set_up'];
+    $device_type = $_POST['device_type'];
     $prompted_of_modal_setup = 1;
 
     echo "userid: " . $userid . "</br>";
@@ -40,6 +41,7 @@ if(isset($_POST['userid'])){
     echo "quizattempturl: " . $quizattempturl . "</br>";
     echo "chosen_camera_device: " . $chosen_camera_device . "</br>";
     echo "chosen_monitor_set_up: " . $chosen_monitor_set_up . "</br>";
+    echo "device_type: " . $device_type . "</br>";
 
     switch ($chosen_monitor_set_up) {
         case "single_monitor_detected":
@@ -59,6 +61,21 @@ if(isset($_POST['userid'])){
         //     break;
     }
 
+    switch ($device_type) {
+        case "mobile":
+            $device_type = 1;
+            break;
+        case "tablet":
+            $device_type = 2;
+            break;
+        case "desktop":
+            $device_type = 3;
+            break;
+        // default:
+            
+        //     break;
+    }
+
     echo "monitor_set_up: " . $chosen_monitor_set_up;
 
     $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $quizattempt);
@@ -67,12 +84,14 @@ if(isset($_POST['userid'])){
     $update_data->camera_device_id = $chosen_camera_device;
     $update_data->monitor_setup = $chosen_monitor_set_up;
     $update_data->prompted_of_modal_setup = $prompted_of_modal_setup;
+    $update_data->device_type = $device_type;
 
     // Build the raw SQL update query
     $sql = "UPDATE {auto_proctor_proctoring_session_tb}
             SET camera_device_id = :camera_device_id,
             monitor_setup = :monitor_setup,
-            prompted_of_modal_setup = :prompted_of_modal_setup
+            prompted_of_modal_setup = :prompted_of_modal_setup,
+            device_type = :device_type
             WHERE userid = :userid
             AND quizid = :quizid
             AND attempt = :attempt";
@@ -81,6 +100,7 @@ if(isset($_POST['userid'])){
     $params['camera_device_id'] = $update_data->camera_device_id;
     $params['monitor_setup'] = $update_data->monitor_setup;
     $params['prompted_of_modal_setup'] = $update_data->prompted_of_modal_setup;
+    $params['device_type'] = $update_data->device_type;
 
     // Execute the raw SQL query
     $update_session_setup = $DB->execute($sql, $params);

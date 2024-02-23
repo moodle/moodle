@@ -68,6 +68,7 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css"  rel="stylesheet" />
+    <script src="https://unpkg.com/current-device/umd/current-device.min.js"></script>
 
     <title>Document</title>
 </head>
@@ -218,6 +219,7 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
     let monitor_camera_activated = <?php echo $monitor_camera_activated; ?>;
     let monitor_microphone_activated = <?php echo $monitor_microphone_activated; ?>;
     let monitor_tab_switching_activated = <?php echo $monitor_tab_switching_activated; ?>;
+    let device_type = device.type;
 
     var popupModal = document.getElementById("popup-modal");
     var camSelectPopupModal = document.getElementById("cam-select-popup-modal");
@@ -410,7 +412,7 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
                 }
             }
         };
-        xhr.send('userid=' + <?php echo $userid; ?> + '&quizid=' + <?php echo $quizid; ?> + '&quizattempt=' + <?php echo $quizattempt; ?> + '&quizattempturl=' + <?php echo json_encode($quizattempturl); ?> + '&chosen_camera_device=' + chosen_camera_device + '&chosen_monitor_set_up=' + chosen_monitor_set_up);
+        xhr.send('userid=' + <?php echo $userid; ?> + '&quizid=' + <?php echo $quizid; ?> + '&quizattempt=' + <?php echo $quizattempt; ?> + '&quizattempturl=' + <?php echo json_encode($quizattempturl); ?> + '&chosen_camera_device=' + chosen_camera_device + '&chosen_monitor_set_up=' + chosen_monitor_set_up + '&device_type=' + device_type);
     }
 
     window.onload = function() {
