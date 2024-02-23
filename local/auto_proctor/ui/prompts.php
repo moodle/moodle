@@ -46,6 +46,7 @@ $quizattempt = $jsdata['quizattempt'];
 $quizattempturl = $jsdata['quizattempturl'];
 $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
+$monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
 
 // ====== DEBUUGING PURPOSE
 // echo "<script>";
@@ -216,6 +217,7 @@ $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
     let chosen_monitor_set_up = "single_monitor_detected";
     let monitor_camera_activated = <?php echo $monitor_camera_activated; ?>;
     let monitor_microphone_activated = <?php echo $monitor_microphone_activated; ?>;
+    let monitor_tab_switching_activated = <?php echo $monitor_tab_switching_activated; ?>;
 
     var popupModal = document.getElementById("popup-modal");
     var camSelectPopupModal = document.getElementById("cam-select-popup-modal");
@@ -243,10 +245,15 @@ $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
     }
 
     if (!window.screen.isExtended){
-        camSelectPopupModal.classList.remove("hidden");
-        camSelectPopupModal.classList.add("flex");
-        camSelectPopupModal.setAttribute("aria-modal", "true");
-        camSelectPopupModal.setAttribute("role", "dialog");
+        if (monitor_camera_activated === 1){
+            camSelectPopupModal.classList.remove("hidden");
+            camSelectPopupModal.classList.add("flex");
+            camSelectPopupModal.setAttribute("aria-modal", "true");
+            camSelectPopupModal.setAttribute("role", "dialog");
+        }
+        else{
+            sendSessionSetupData();
+        }
         
         popupModal.classList.remove("flex");
         popupModal.classList.add("hidden");
@@ -378,6 +385,10 @@ $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
         console.log('redirecting to quiz');
 
         if (monitor_microphone_activated === 1 && monitor_camera_activated !== 1){
+            sendSessionSetupData();
+        }
+
+        if (monitor_tab_switching_activated === 1 && monitor_camera_activated !== 1){
             sendSessionSetupData();
         }
     }
