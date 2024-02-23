@@ -200,6 +200,7 @@ class QuizProctor {
                         'monitor_camera_activated' => $monitor_camera_activated[0],
                         'monitor_microphone_activated' => $monitor_microphone_activated[0],
                         'chosen_camera_device' => $chosen_camera_device[0],
+                        'monitor_tab_switching_activated' => $monitor_tab_switching_activated[0],
                     );
 
                     // Send to prompts.php
