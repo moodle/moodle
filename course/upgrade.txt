@@ -28,6 +28,11 @@ About the categories supported by the FEATURE_MOD_PURPOSE:
   * A new category has been added: MOD_PURPOSE_INTERACTIVECONTENT.
   * The MOD_PURPOSE_INTERFACE category has been deprecated. The styles associated with this category have been removed.
 The colors for all these purposes and the filters applied to outline them are defined in theme/boost/scss/moodle/variables.scss
+* New hooks for extending course form:
+ - core_course\hook\after_form_definition
+ - core_course\hook\after_form_definition_after_data
+ - core_course\hook\after_form_validation
+ - core_course\hook\after_form_submission
 
 === 4.3 ===
 * The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used
