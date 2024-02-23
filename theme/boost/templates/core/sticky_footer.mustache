@@ -43,11 +43,7 @@
 }}
 <div
     id="sticky-footer"
-    class="d-flex flex-row align-items-center stickyfooter px-3 py-2 fixed-bottom bg-white border-top {{!
-        }} {{$ stickyclasses }}{{!
-            }}{{# stickyclasses }}{{ stickyclasses }}{{/ stickyclasses }}{{!
-            }}{{^ stickyclasses }}justify-content-end{{/ stickyclasses }}{{!
-        }}{{/ stickyclasses }}"
+    class="stickyfooter bg-white border-top"
     {{$ disable }}
         {{#disable}} data-disable="true" {{/disable}}
     {{/ disable }}
@@ -57,9 +53,18 @@
         {{/extras}}
     {{/ extradata }}
 >
-    {{$ stickycontent }}
-        {{{stickycontent}}}
-    {{/ stickycontent }}
+    <div class="sticky-footer-content-wrapper h-100 d-flex justify-content-center">
+        <div class="sticky-footer-content w-100 d-flex align-items-center px-3 py-2 {{!
+            }} {{$ stickyclasses }}{{!
+                }}{{# stickyclasses }}{{ stickyclasses }}{{/ stickyclasses }}{{!
+                }}{{^ stickyclasses }}justify-content-end{{/ stickyclasses }}{{!
+            }}{{/ stickyclasses }}"
+        >
+            {{$ stickycontent }}
+                {{{stickycontent}}}
+            {{/ stickycontent }}
+        </div>
+    </div>
 </div>
 {{#js}}
 require(['theme_boost/sticky-footer'], function(footer) {
