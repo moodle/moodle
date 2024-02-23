@@ -1,21 +1,9 @@
 $(document).ready(function () {
-    //src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"
 
     let screenShared = null;
     let screenStream = null;
     let videoElement;
     let stopsSharing = false;
-
-                            //document.addEventListener('visibilitychange', handleVisibilityChange);
-
-                            // function handleVisibilityChange() {
-                            //     if (document.visibilityState === 'hidden' && !document.hasFocus()) {
-                            //         if (screenShared && !stopsSharing) {
-                            //             // Send an AJAX request to your server to indicate screen sharing                                     
-                            //             captureAndSaveScreen();
-                            //         }
-                            //     }
-                            // }
                             
     function startScreenSharing() {
         // Check if user device has mutiple monitor
@@ -28,6 +16,12 @@ $(document).ready(function () {
         
         navigator.mediaDevices.getDisplayMedia({ video: true })
             .then(stream => {
+                let displaySurface = stream.getVideoTracks()[0].getSettings().displaySurface;
+                if (displaySurface !== 'monitor') {
+                    if (confirm("You need to share the entire screen.")) {
+                        location.reload();
+                    }
+                }
             videoElement = document.createElement('video');
             videoElement.srcObject = stream;
             videoElement.autoplay = true;

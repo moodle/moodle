@@ -45,12 +45,12 @@ if(isset($_POST['userid'])){
         case "single_monitor_detected":
             $chosen_monitor_set_up = 0;
             break;
-        case "have_not_conn_multiple_monitor":
-            $chosen_monitor_set_up = 1;
-            break;
-        case "have_remove_external_monitor":
-            $chosen_monitor_set_up = 2;
-            break;
+        // case "have_not_conn_multiple_monitor":
+        //     $chosen_monitor_set_up = 1;
+        //     break;
+        // case "have_remove_external_monitor":
+        //     $chosen_monitor_set_up = 2;
+        //     break;
         case "continue_with_multiple_monitor":
             $chosen_monitor_set_up = 3;
             break;
