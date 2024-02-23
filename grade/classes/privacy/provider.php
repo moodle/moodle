@@ -170,39 +170,80 @@ class provider implements
         $sql = "
             SELECT DISTINCT ctx.id
               FROM {context} ctx
-         LEFT JOIN {grade_outcomes_history} goh ON goh.loggeduser = :userid1 AND (
-                   (goh.courseid > 0 AND goh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel1)
-                OR ((goh.courseid IS NULL OR goh.courseid < 1) AND ctx.id = :syscontextid1)
-            )
-         LEFT JOIN {grade_categories_history} gch ON gch.loggeduser = :userid2 AND (
-                   gch.courseid = ctx.instanceid
-               AND ctx.contextlevel = :courselevel2
-            )
-         LEFT JOIN {grade_items_history} gih ON gih.loggeduser = :userid3 AND (
-                   gih.courseid = ctx.instanceid
-               AND ctx.contextlevel = :courselevel3
-            )
-         LEFT JOIN {scale_history} sh
-                ON (sh.userid = :userid4 OR sh.loggeduser = :userid5)
-               AND (
-                       (sh.courseid > 0 AND sh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel4)
-                    OR (sh.courseid = 0 AND ctx.id = :syscontextid2)
-            )
-             WHERE goh.id IS NOT NULL
-                OR gch.id IS NOT NULL
-                OR gih.id IS NOT NULL
-                OR sh.id IS NOT NULL";
+              JOIN {grade_outcomes_history} goh ON goh.loggeduser = :userid1 AND goh.courseid > 0
+               AND goh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel1";
+        $params = [
+            'courselevel1' => CONTEXT_COURSE,
+            'userid1' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {grade_outcomes_history} goh ON goh.loggeduser = :userid1
+               AND (goh.courseid IS NULL OR goh.courseid < 1) AND ctx.id = :syscontextid1";
         $params = [
             'syscontextid1' => SYSCONTEXTID,
-            'syscontextid2' => SYSCONTEXTID,
             'courselevel1' => CONTEXT_COURSE,
-            'courselevel2' => CONTEXT_COURSE,
-            'courselevel3' => CONTEXT_COURSE,
-            'courselevel4' => CONTEXT_COURSE,
             'userid1' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {grade_categories_history} gch ON gch.loggeduser = :userid2
+               AND gch.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel2";
+        $params = [
+            'courselevel2' => CONTEXT_COURSE,
             'userid2' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {grade_items_history} gih ON gih.loggeduser = :userid3
+               AND gih.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel3";
+        $params = [
+            'courselevel3' => CONTEXT_COURSE,
             'userid3' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {scale_history} sh ON sh.userid = :userid4
+               AND sh.courseid > 0 AND sh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel4";
+        $params = [
+            'courselevel4' => CONTEXT_COURSE,
             'userid4' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {scale_history} sh ON sh.loggeduser = :userid5
+               AND sh.courseid > 0 AND sh.courseid = ctx.instanceid AND ctx.contextlevel = :courselevel4";
+        $params = [
+            'courselevel4' => CONTEXT_COURSE,
+            'userid5' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {scale_history} sh ON sh.userid = :userid4 AND sh.courseid = 0 AND ctx.id = :syscontextid2";
+        $params = [
+            'syscontextid2' => SYSCONTEXTID,
+            'userid4' => $userid,
+        ];
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "
+            SELECT DISTINCT ctx.id
+              FROM {context} ctx
+              JOIN {scale_history} sh ON sh.loggeduser = :userid5 AND sh.courseid = 0 AND ctx.id = :syscontextid2";
+        $params = [
+            'syscontextid2' => SYSCONTEXTID,
             'userid5' => $userid,
         ];
         $contextlist->add_from_sql($sql, $params);

@@ -118,9 +118,9 @@ class provider implements
                        (e.courseid = ctx.instanceid AND e.eventtype = 'course' AND ctx.contextlevel = :coursecontext) OR
                        (e.courseid = ctx.instanceid AND e.eventtype = 'group' AND ctx.contextlevel = :groupcontext) OR
                        (e.userid = ctx.instanceid AND e.eventtype = 'user' AND ctx.contextlevel = :usercontext)
-                 WHERE e.userid = :cuserid
-                 UNION
-                SELECT ctx.id
+                 WHERE e.userid = :cuserid";
+        $contextlist->add_from_sql($sql, $params);
+        $sql = "SELECT ctx.id
                   FROM {context} ctx
                   JOIN {course_modules} cm ON cm.id = ctx.instanceid AND ctx.contextlevel = :modulecontext
                   JOIN {modules} m ON m.id = cm.module
