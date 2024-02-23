@@ -45,6 +45,7 @@
     }} role="listbox"{{!
     }} aria-atomic="true"{{!
     }} tabindex="0"{{!
+    }} {{#required}}aria-required="true"{{/required}}{{!
     }} {{#multiple}}aria-multiselectable="true"{{/multiple}}>
     {{> core/form_autocomplete_selection_items }}
 </div>
