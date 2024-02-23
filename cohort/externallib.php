@@ -402,7 +402,7 @@ class core_cohort_external extends external_api {
             $results = cohort_get_cohorts($context->id, $limitfrom, $limitnum, $query);
             $results = $results['cohorts'];
             if (!$context instanceof context_system) {
-                $results = array_merge($results, cohort_get_available_cohorts($context, COHORT_ALL, $limitfrom, $limitnum, $query));
+                $results = $results + cohort_get_available_cohorts($context, COHORT_ALL, $limitfrom, $limitnum, $query);
             }
         } else if ($includes == 'all') {
             $results = cohort_get_all_cohorts($limitfrom, $limitnum, $query);
@@ -414,7 +414,7 @@ class core_cohort_external extends external_api {
         $cohorts = array();
 
         if (!empty($results)) {
-            $cohortids = array_keys($results);
+            $cohortids = array_column($results, 'id');
             $customfieldsdata = self::get_custom_fields_data($cohortids);
         }
 
