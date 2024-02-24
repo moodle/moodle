@@ -38,7 +38,7 @@ $renamedclasses = [
     'mod_quiz_admin_setting_user_image' => 'mod_quiz\admin\user_image_setting',
     'mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_browsersecurity' =>
             'mod_quiz\adminpresets\adminpresets_browser_security_setting',
-    'mod_quiz\adminpresets/adminpresets_mod_quiz_admin_setting_grademethod' =>
+    'mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_grademethod' =>
             'mod_quiz\adminpresets\adminpresets_grade_method_setting',
     'mod_quiz\adminpresets\adminpresets_mod_quiz_admin_setting_overduehandling' =>
             'mod_quiz\adminpresets\adminpresets_overdue_handling_setting',
