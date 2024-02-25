@@ -128,7 +128,6 @@ class QuizProctor {
             // Check if autproctor is activated.
             // To prevent the AP process when AP is deactivated.
             if ($auto_proctor_activated){
-
                 // Get the user's current attempt record
                 // This is for getting the attempt value.
                 $quizattempt = $this->DB->get_record('quiz_attempts', array('userid' => $userid, 'quiz' => $quizid, 'state' => 'inprogress'));
