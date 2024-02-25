@@ -23,9 +23,11 @@
 require_once(__DIR__ . '/../../../../config.php');
 
 global $DB, $PAGE, $USER, $CFG;
- 
+
+// If the setup data was sent from the setup modal,
+// then process the sent data.
 if(isset($_POST['userid'])){
-    echo "<script>console.log('sent');</script>";
+
     $userid = $_POST['userid'];
     $quizid = $_POST['quizid'];
     $quizattempt = $_POST['quizattempt'];
@@ -43,23 +45,25 @@ if(isset($_POST['userid'])){
     echo "chosen_monitor_set_up: " . $chosen_monitor_set_up . "</br>";
     echo "device_type: " . $device_type . "</br>";
 
+    /* MONITOR SETUP GUIDE
+        1 = single monitor detected
+        2 = continue with multiple monitor
+    */
+    
     switch ($chosen_monitor_set_up) {
         case "single_monitor_detected":
-            $chosen_monitor_set_up = 0;
+            $chosen_monitor_set_up = 1;
             break;
-        // case "have_not_conn_multiple_monitor":
-        //     $chosen_monitor_set_up = 1;
-        //     break;
-        // case "have_remove_external_monitor":
-        //     $chosen_monitor_set_up = 2;
-        //     break;
         case "continue_with_multiple_monitor":
-            $chosen_monitor_set_up = 3;
+            $chosen_monitor_set_up = 2;
             break;
-        // default:
-            
-        //     break;
     }
+
+    /* DEVICE TYPE GUIDE
+        1 = mobile
+        2 = tablet
+        3 = desktop
+    */
 
     switch ($device_type) {
         case "mobile":
@@ -71,38 +75,36 @@ if(isset($_POST['userid'])){
         case "desktop":
             $device_type = 3;
             break;
-        // default:
-            
-        //     break;
     }
 
-    echo "monitor_set_up: " . $chosen_monitor_set_up;
+    // Update the quiz proctoring session in session table
 
-    $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $quizattempt);
+        // SQL paramater
+        $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $quizattempt);
 
-    $update_data = new stdClass();
-    $update_data->camera_device_id = $chosen_camera_device;
-    $update_data->monitor_setup = $chosen_monitor_set_up;
-    $update_data->prompted_of_modal_setup = $prompted_of_modal_setup;
-    $update_data->device_type = $device_type;
+        // The data that will be updated.
+        $update_data = new stdClass();
+        $update_data->camera_device_id = $chosen_camera_device;
+        $update_data->monitor_setup = $chosen_monitor_set_up;
+        $update_data->prompted_of_modal_setup = $prompted_of_modal_setup;
+        $update_data->device_type = $device_type;
 
-    // Build the raw SQL update query
-    $sql = "UPDATE {auto_proctor_proctoring_session_tb}
-            SET camera_device_id = :camera_device_id,
-            monitor_setup = :monitor_setup,
-            prompted_of_modal_setup = :prompted_of_modal_setup,
-            device_type = :device_type
-            WHERE userid = :userid
-            AND quizid = :quizid
-            AND attempt = :attempt";
+        $sql = "UPDATE {auto_proctor_proctoring_session_tb}
+                SET camera_device_id = :camera_device_id,
+                monitor_setup = :monitor_setup,
+                prompted_of_modal_setup = :prompted_of_modal_setup,
+                device_type = :device_type
+                WHERE userid = :userid
+                AND quizid = :quizid
+                AND attempt = :attempt";
 
-    // Add the screenshare_consent value to the parameters array
-    $params['camera_device_id'] = $update_data->camera_device_id;
-    $params['monitor_setup'] = $update_data->monitor_setup;
-    $params['prompted_of_modal_setup'] = $update_data->prompted_of_modal_setup;
-    $params['device_type'] = $update_data->device_type;
+        // Add the data that will be updated in parameter.
+        $params['camera_device_id'] = $update_data->camera_device_id;
+        $params['monitor_setup'] = $update_data->monitor_setup;
+        $params['prompted_of_modal_setup'] = $update_data->prompted_of_modal_setup;
+        $params['device_type'] = $update_data->device_type;
 
-    // Execute the raw SQL query
-    $update_session_setup = $DB->execute($sql, $params);
+        // SQL execution
+        $update_session_setup = $DB->execute($sql, $params);
 }
 ?>
