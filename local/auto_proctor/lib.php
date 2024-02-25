@@ -36,23 +36,29 @@ class QuizProctor {
         $this->CFG = $CFG;
     }
 
+    // If the user is on the quiz page.
+    // The quiz attempt page, quiz taking page, and quiz summary page are all considered as quiz pages.
     public function captureQuizAttempt($userid, $course) {
+
+        // This applies when the user is on a quiz attempt page.
         if ($this->isQuizAttempt()) {
             $quizid = $this->PAGE->cm->instance;
             $action = optional_param('attempt', '', PARAM_TEXT);
 
+            // If the user attempts, reattempts, or continue attempt a quiz.
+            // Process the proctoring session.
             if (!empty($action)) {
                 $this->processQuizAttempt($quizid, $userid, $course);
-                echo "<script>console.log('quiz taking', $quizid);</script>";
-                echo "<script>console.log('quizid: ', $quizid);</script>";
-                echo "<script>console.log('userid: ', $userid);</script>";
-                echo "<script>console.log('course: ', " . json_encode($course) .");</script>";
             }
+
+            // Reset the user's proctoring session prompted modal status,
+            // ensuring that the modal will always appear whenever a user attempts, reattempts, or continues an attempt.
             else{
                 $this->refreshProctoringSession($userid);
             }
         }
 
+        // This is applies when the user is not on a quiz page.
         else {
             $this->refreshProctoringSession($userid);
         }
@@ -63,97 +69,92 @@ class QuizProctor {
         return ($this->PAGE->cm && $this->PAGE->cm->modname === 'quiz');
     }
 
+    // For processing proctoring session
     private function processQuizAttempt($quizid, $userid, $course) {
-        // Your existing logic for processing quiz attempt
-        // ...
+    
+        // SQL STATEMENTS
+            // SQL parameter
+            $params = array('quizid' => $quizid);
 
-        // Example: Log information
-        $this->logInformation(['userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue]);
-        
-        // // // Example: Redirect if needed
-        // $this->redirect($redirectUrl);
+            // Check if any of the auto-proctor features are activated.
+            // This selects records that have at least one feature activated.
+                $sql = "SELECT *
+                    FROM {auto_proctor_quiz_tb}
+                    WHERE quizid = :quizid
+                    AND (monitor_tab_switching = 1 OR monitor_camera = 1 OR monitor_microphone = 1)"
+                ;
+                $auto_proctor_activated = $this->DB->get_records_sql($sql, $params);
 
-        // Check if auto-proctor is activated
-        $sql = "SELECT *
-            FROM {auto_proctor_quiz_tb}
-            WHERE quizid = :quizid
-            AND (monitor_tab_switching = 1 OR monitor_camera = 1 OR monitor_microphone = 1)"
-        ;
-        $params = array('quizid' => $quizid);
-        $auto_proctor_activated = $this->DB->get_records_sql($sql, $params);
+            // Select monitor_tab_switching state
+                $sql = "SELECT monitor_tab_switching
+                    FROM {auto_proctor_quiz_tb}
+                    WHERE quizid = :quizid"
+                ;
+                $monitor_tab_switching_activated = $this->DB->get_fieldset_sql($sql, $params);
 
-        // Select monitor_tab_switching state
-        $sql = "SELECT monitor_tab_switching
-            FROM {auto_proctor_quiz_tb}
-            WHERE quizid = :quizid"
-        ;
+            // Select monitor_tab_switching state
+                $sql = "SELECT monitor_camera
+                    FROM {auto_proctor_quiz_tb}
+                    WHERE quizid = :quizid"
+                ;
+                $monitor_camera_activated = $this->DB->get_fieldset_sql($sql, $params);
 
-        //$monitor_tab_switching_activated = $this->DB->get_records_sql($sql, $params);
-        $monitor_tab_switching_activated = $this->DB->get_fieldset_sql($sql, $params);
+            // Select monitor_microphone state
+                $sql = "SELECT monitor_microphone
+                    FROM {auto_proctor_quiz_tb}
+                    WHERE quizid = :quizid"
+                ;
+                $monitor_microphone_activated = $this->DB->get_fieldset_sql($sql, $params);
 
-        // Select monitor_tab_switching state
-        $sql = "SELECT monitor_camera
-            FROM {auto_proctor_quiz_tb}
-            WHERE quizid = :quizid"
-        ;
-
-        //$monitor_camera_activated = $this->DB->get_records_sql($sql, $params);
-        $monitor_camera_activated = $this->DB->get_fieldset_sql($sql, $params);
-
-        // Select monitor_microphone state
-        $sql = "SELECT monitor_microphone
-            FROM {auto_proctor_quiz_tb}
-            WHERE quizid = :quizid"
-        ;
-
-        //$monitor_tab_microphone_activated = $this->DB->get_records_sql($sql, $params);
-        $monitor_microphone_activated = $this->DB->get_fieldset_sql($sql, $params);
-
-        // Select strict_mode state
-        $sql = "SELECT strict_mode
-            FROM {auto_proctor_quiz_tb}
-            WHERE quizid = :quizid
-            AND (strict_mode = 1)"
-        ;
-
-        $strict_mode_activated = $this->DB->get_fieldset_sql($sql, $params);
+            // Select strict_mode state
+                $sql = "SELECT strict_mode
+                    FROM {auto_proctor_quiz_tb}
+                    WHERE quizid = :quizid
+                    AND (strict_mode = 1)"
+                ;
+                $strict_mode_activated = $this->DB->get_fieldset_sql($sql, $params);
 
 
-        // Get the course module ID
+        // Get the course module ID for constructing the URL of the quiz attempt page.
+        // This is for forcefully kicking the user out of the quiz.
+        // A quiz is a module within a course.
         $cm = get_coursemodule_from_instance('quiz', $quizid, $course->id);
         $cmid = $cm->id;
 
-        // Ensure that the AP will not be activated when in quiz summary page
+        // Ensuring that this is not in quiz summary page.
+        // So the AP will not be activated when the user is in a quiz summary page.
         if($this->PAGE->cm->instance && $this->PAGE->pagetype !== 'mod-quiz-summary'){
-            if ($auto_proctor_activated){
-                echo '<script type="text/javascript"> console.log("AP ACTIVATED"); </script>';
 
-                // Check if the user has an ongoing quiz attempt
+            // Check if autproctor is activated.
+            // To prevent the AP process when AP is deactivated.
+            if ($auto_proctor_activated){
+                // Get the user's current attempt record
+                // This is for getting the attempt value.
                 $quizattempt = $this->DB->get_record('quiz_attempts', array('userid' => $userid, 'quiz' => $quizid, 'state' => 'inprogress'));
 
-                // Check if $quizattempt is not empty before logging
+                // Ensuring $quizattempt is not empty before logging
                 if (!empty($quizattempt)) {
-                    
-                    // Get attempt number
+        
+                    // Get attempt value
+                    // For data processing
                     $attemptValue = $quizattempt->attempt;
-                    echo '<script>console.log(' . json_encode(['userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue]) . ');</script>';
 
-                    // Get current url
+                    // Get quiz url
+                    // For quiz redirection from AP setup modal page.
                     $quizattempturl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 
-                    // Check if there existing is existing proctoring consent record
-                    $sql = "SELECT *
-                        FROM {auto_proctor_proctoring_session_tb}
-                        WHERE userid = :userid
-                        AND quizid = :quizid
-                        AND attempt = :attempt"
-                    ;
-                    $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
-                    $proctoring_session = $this->DB->get_records_sql($sql, $params);
+                    // Select existing proctoring session for this quiz and attempt
+                        $sql = "SELECT *
+                            FROM {auto_proctor_proctoring_session_tb}
+                            WHERE userid = :userid
+                            AND quizid = :quizid
+                            AND attempt = :attempt"
+                        ;
+                        $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
+                        $proctoring_session = $this->DB->get_records_sql($sql, $params);
 
-                    // If none then insert new record
+                    // If none then insert new session record
                     if (empty($proctoring_session)){
-                        echo "<script>console.log('insert new record')</script>";
 
                         $insertData = new stdClass();
                         $insertData->userid = $userid;
@@ -161,65 +162,61 @@ class QuizProctor {
                         $insertData->attempt = $attemptValue;
                         $insert_new_session = $this->DB->insert_record('auto_proctor_proctoring_session_tb', $insertData);
                     }
-                    else {
-                        echo "<script>console.log('selected record: ', " . json_encode($proctoring_session) . ")</script>";
-                    }
 
-                    // Select user's setup status
+                    // Select user's prompted_of_modal_setup status
                     // To check if the user's finished setting up
-                    $sql = "SELECT prompted_of_modal_setup
-                        FROM {auto_proctor_proctoring_session_tb}
-                        WHERE userid = :userid
-                        AND quizid = :quizid
-                        AND attempt = :attempt"
-                    ;
-                    $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
-                    $prompted_of_modal_setup = $this->DB->get_fieldset_sql($sql, $params);
+                        $sql = "SELECT prompted_of_modal_setup
+                            FROM {auto_proctor_proctoring_session_tb}
+                            WHERE userid = :userid
+                            AND quizid = :quizid
+                            AND attempt = :attempt"
+                        ;
+                        $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
+                        $prompted_of_modal_setup = $this->DB->get_fieldset_sql($sql, $params);
 
                     // Select user's chosen camera
-                    $sql = "SELECT camera_device_id
-                        FROM {auto_proctor_proctoring_session_tb}
-                        WHERE userid = :userid
-                        AND quizid = :quizid
-                        AND attempt = :attempt"
-                    ;
-                    $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
-                    $chosen_camera_device = $this->DB->get_fieldset_sql($sql, $params);
-
-                    echo "<script>console.log('prompted_of_modal_setup: ', " . json_encode($prompted_of_modal_setup[0]) . ");</script>";
+                    // To be used in monitor camera session
+                        $sql = "SELECT camera_device_id
+                            FROM {auto_proctor_proctoring_session_tb}
+                            WHERE userid = :userid
+                            AND quizid = :quizid
+                            AND attempt = :attempt"
+                        ;
+                        $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $attemptValue);
+                        $chosen_camera_device = $this->DB->get_fieldset_sql($sql, $params);
                     
-                    // Pass necessarry value to js file in form of json
-                    $jsdata = array(
-                        'wwwroot' => $this->CFG->wwwroot,
-                        'userid' => $userid,
-                        'quizid' => $quizid,
-                        'quizattempt' => $attemptValue,
-                        'quizattempturl' => $quizattempturl,
-                        'cmid' => $cmid,
-                        'strict_mode_activated' => $strict_mode_activated,
-                        'monitor_camera_activated' => $monitor_camera_activated[0],
-                        'monitor_microphone_activated' => $monitor_microphone_activated[0],
-                        'chosen_camera_device' => $chosen_camera_device[0],
-                        'monitor_tab_switching_activated' => $monitor_tab_switching_activated[0],
-                    );
+                    // Pass necessarry data value to js files in form of json
+                    // For data processing
+                        $jsdata = array(
+                            'wwwroot' => $this->CFG->wwwroot,
+                            'userid' => $userid,
+                            'quizid' => $quizid,
+                            'quizattempt' => $attemptValue,
+                            'quizattempturl' => $quizattempturl,
+                            'cmid' => $cmid,
+                            'strict_mode_activated' => $strict_mode_activated,
+                            'monitor_camera_activated' => $monitor_camera_activated[0],
+                            'monitor_microphone_activated' => $monitor_microphone_activated[0],
+                            'chosen_camera_device' => $chosen_camera_device[0],
+                            'monitor_tab_switching_activated' => $monitor_tab_switching_activated[0],
+                        );
+                        echo '<script> var jsdata = ' . json_encode($jsdata) . '; </script>';
 
-                    // Send to prompts.php
+                    // Pass necessarry data value to php files in form of json
                     // Convert the array to JSON
-                    $jsdata_json = json_encode($jsdata);
+                        $jsdata_json = json_encode($jsdata);
 
-                    // Send to js files
-                    echo '<script>';
-                    echo 'var jsdata = ' . json_encode($jsdata) . ';';
-                    echo '</script>';
 
-                    // User has not yet setup the prompt modal setup
+                    // Check if user has been prompted of the AP setup modal.
+                    // If not then redirected to prompts page.
+                    // The quiz attempt URL will be sent along with the URL of the prompts page for redirecting back to the quiz.
                     if ($prompted_of_modal_setup[0] == 0){
-                        echo "<script>console.log('promptinggggggg');";
                         $this->redirect($this->CFG->wwwroot . '/local/auto_proctor/ui/prompts.php?data=' . urlencode($jsdata_json));
                     }
 
 
                     // Check if monitor tab switching is activated
+                    // If yes, then provide the link to the tab monitoring feature tool.
                     if ($monitor_tab_switching_activated[0] == 1) {                 
                         echo '<script type="text/javascript"> console.log("MONITOR TAB ACTIVATED"); </script>';
                         echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
@@ -228,6 +225,7 @@ class QuizProctor {
                     }
 
                     // Check if monitor camera is activated
+                    // If yes, then provide the link to the camera monitoring feature tool.
                     if ($monitor_camera_activated[0] == 1){
                         echo '<script type="text/javascript"> console.log("MONITOR CAMERA ACTIVATED"); </script>';
                         echo '<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>';
@@ -239,6 +237,8 @@ class QuizProctor {
                         echo '<script src="' . $this->CFG->wwwroot . '/local/auto_proctor/proctor_tools/camera_monitoring/monitor_cam.js"></script>';
                     }
 
+                    // Check if microphone camera is activated
+                    // If yes, then provide the link to the microphone monitoring feature tool.
                     if ($monitor_microphone_activated[0] == 1){
                         echo '<script type="text/javascript"> console.log("MONITOR MIC ACTIVATED"); </script>';
                         echo '<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>';
@@ -249,11 +249,11 @@ class QuizProctor {
         }
     }
 
+    // Refreshing user's proctoring session prompted_of_modal_setup status
     public function refreshProctoringSession($userid) {
         $update_data = new stdClass();
         $update_data->prompted_of_modal_setup= 0;
 
-        // Delete current session
         $params = array('userid' => $userid);
 
         $sql = "UPDATE {auto_proctor_proctoring_session_tb}
@@ -262,16 +262,10 @@ class QuizProctor {
 
         $params['prompted_of_modal_setup'] = $update_data->prompted_of_modal_setup;
         $this->DB->execute($sql, $params);
-        //$this->DB->delete_records('auto_proctor_proctoring_session_tb', $params);
     }
 
-    private function logInformation($data) {
-        // Log information using echo or any other logging mechanism
-        echo '<script>console.log(' . json_encode($data) . ');</script>';
-    }
-
+    // URL redirection
     private function redirect($url) {
-        // Redirect to the given URL
         redirect($url);
     }
 }
@@ -304,22 +298,17 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
 
     $quizProctor = new QuizProctor($PAGE, $DB, $CFG, $USER, $COURSE);
     $quizProctor->captureQuizAttempt($USER->id, $COURSE);
-    //$quizProctor->refreshProctoringSession($USER->id);
-        
 }
 
 
 // Event observer, this check event happened or created
 class local_auto_proctor_observer {
     
+    // If user created q quiz
     public static function quiz_created($eventdata) {
-        //error_log("Event Data: " . print_r($eventdata, true), 0);
 
         // Check if the created module is a quiz
         if ($eventdata->other['modulename'] === 'quiz') {
-            // Log check
-            error_log("quiz created", 0);
-    
             // Insert data into mdl_auto_proctor_quiz_tb table
             global $DB;
             $quizId = $eventdata->other['instanceid'];

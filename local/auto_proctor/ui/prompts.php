@@ -16,13 +16,14 @@
 
 /**
  * @package     local_auto_proctor
- * @author      Angelica
+ * @author      Renzi, Angelica
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @var stdClass $plugin
 */
 
 require_once(__DIR__ . '/../../../config.php'); // Setup moodle global variable also
 require_login();
+
 // Get the global $DB object
 global $DB, $PAGE, $USER, $CFG;
 
@@ -47,18 +48,6 @@ $quizattempturl = $jsdata['quizattempturl'];
 $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
 $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
-
-// ====== DEBUUGING PURPOSE
-// echo "<script>";
-// echo
-// "
-//         console.log('wwwroot: ', ". json_encode($wwwroot) .");
-//         console.log('userid', $userid);
-//         console.log('quizid', $quizid);
-//         console.log('quizattempt', $quizattempt);
-//         console.log('quizattempturl: ', ". json_encode($quizattempturl) .");
-// ";
-// echo "</script>";
 ?>
 
 <!DOCTYPE html>
@@ -75,10 +64,6 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
 <body class="overflow-hidden">
     
 <!-- MODAL HERE YOU CAN COPY IT PASE IT TO THE MAIN CODE -->
-<!-- <button id = "toggleButton" data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center" type="button">
-    Toggle modal
-</button> -->
-
 <div id="popup-modal" tabindex="-1" class="overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full flex" aria-modal="true" role="dialog">
 <!-- <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"> -->
     <div class="relative p-10 py-9 w-full max-w-3xl max-h-full">
@@ -213,8 +198,33 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
 <div id = "backdrop" modal-backdrop class="bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40"></div>
 
 <script>
+    /*
+        - The multiple monitor modal will always prompt if multiple monitors are detected (window.screen.isExtended). It offers three options or buttons:
+
+            - Haven't connected multiple monitors
+            - Have removed external monitor
+            - Continue with multiple monitors
+        - If the user clicks the 'continue with multiple monitors' button, their choice will be recorded in the database or session setup table, and they will then be redirected to the quiz. However, selecting the other two buttons will refresh the page to apply and detect the latest changes in the device setup.
+
+        - The sending of the data to be processed on the server will be determined by the activated autoproctor feature.
+
+        MODAL SEQUENCE LOGIC:
+
+            SEQUENCE:
+                1. Multiple Monitor Modal
+                2. Camera Select Modal
+                3. Camera View Modal
+
+            LOGIC:
+                - If all autoproctor features are activated, the selected choices in the Monitor Multiple Modal and Camera Select Modal will be prepared to be sent to the server. Clicking the next button in the Camera Preview Modal will then send the data.
+                - If only the tab monitoring is activated and multiple monitors are detected, then selecting 'Continue with multiple monitors' will send the data.
+                - If only the tab monitoring is activated and single monitors are detected, then no modal will be prompted; the monitor setup will be automatically initialized and sent.
+                - If a single monitor is detected, the Camera Select Modal will be prompted, and clicking the 'Next' button in the Camera View will send the data.
+                
+            NOTE: After successfully sending and processing the data on the server, the user will proceed to the quiz.
+    */
+
     let chosen_camera_device = null;
-    //let monitor_setup = null;
     let chosen_monitor_set_up = "single_monitor_detected";
     let monitor_camera_activated = <?php echo $monitor_camera_activated; ?>;
     let monitor_microphone_activated = <?php echo $monitor_microphone_activated; ?>;
@@ -223,50 +233,89 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
 
     var popupModal = document.getElementById("popup-modal");
     var camSelectPopupModal = document.getElementById("cam-select-popup-modal");
-
-
-    if (monitor_microphone_activated === 1){
-        navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(function(stream) {
-            // Your code to handle the audio stream
-        })
-        .catch(function(err) {
-            // Your code to handle any errors
-        });
-
-    }
-
-    if (monitor_camera_activated === 1){
-        navigator.mediaDevices.getUserMedia({ audio: true })
-        .then(function(stream) {
-            // Your code to handle the audio stream
-        })
-        .catch(function(err) {
-            // Your code to handle any errors
-        });
-    }
-
-    if (!window.screen.isExtended){
-        if (monitor_camera_activated === 1){
-            camSelectPopupModal.classList.remove("hidden");
-            camSelectPopupModal.classList.add("flex");
-            camSelectPopupModal.setAttribute("aria-modal", "true");
-            camSelectPopupModal.setAttribute("role", "dialog");
-        }
-        else{
-            sendSessionSetupData();
-        }
-        
-        popupModal.classList.remove("flex");
-        popupModal.classList.add("hidden");
-    }
-
-    // Check if window screen is extended
     var have_not_multiple_btn = document.getElementById('have-not-multiple-btn');
     var have_multiple_btn = document.getElementById('have-multiple-btn');
     var continue_multiple_btn = document.getElementById('continue-multiple-btn');
 
-    // If monitoring camera is activated
+
+    // If microphone monitoring is activated then ask user's mic permission
+        if (monitor_microphone_activated === 1){
+            navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+                // Your code to handle the audio stream
+            })
+            .catch(function(err) {
+                confirm("Please give microphone permission.");
+            });
+
+            // Realtime camera permission checker
+            navigator.permissions.query({name: 'microphone'}).then(function(permissionStatus) {
+                console.log('microphone permission state is ', permissionStatus.state);
+                permissionStatus.onchange = function() {
+                    if (confirm("Reload this page to apply setup changes.")) {
+                        location.reload();
+                    }
+                };
+            });
+        }
+
+    // If camera monitoring is activated then ask user's cam permission
+        if (monitor_camera_activated === 1){
+            navigator.mediaDevices.getUserMedia({ audio: true })
+            .then(function(stream) {
+                // Your code to handle the audio stream
+            })
+            .catch(function(err) {
+                confirm("Please give camera permission.");
+            });
+
+            // Realtime microphone permission checker
+            navigator.permissions.query({name: 'camera'}).then(function(permissionStatus) {
+                console.log('camera permission state is ', permissionStatus.state);
+                permissionStatus.onchange = function() {
+                    if (confirm("Reload this page to apply setup changes.")) {
+                        location.reload();
+                    }
+                };
+            });
+        }
+
+    // The multiple monitor modal defaulted to prompt.
+    // So, if only a single monitor was detected, we hide the multiple monitor modal.
+        if (!window.screen.isExtended){
+
+            // If camera monitoring is activated then we prompt the camera select modal.
+            if (monitor_camera_activated === 1){
+                camSelectPopupModal.classList.remove("hidden");
+                camSelectPopupModal.classList.add("flex");
+                camSelectPopupModal.setAttribute("aria-modal", "true");
+                camSelectPopupModal.setAttribute("role", "dialog");
+            }
+            
+            // If camera monitoring is deactivated and microphone monitoring is activated,
+            // then the data will automatically be sent when microphone permission is granted.
+            if (monitor_camera_activated !== 1 && monitor_microphone_activated === 1){
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                .then(function(stream) {
+                    sendSessionSetupData();
+                })
+                .catch(function(err) {
+                    confirm("Please give microphone permission.");
+                });
+            }
+            
+            // If only the tab monitoring feature is activated, then data will be automatically sent.
+            if (monitor_tab_switching_activated === 1 && monitor_camera_activated !== 1 && monitor_microphone_activated !== 1){
+                sendSessionSetupData();
+            }
+
+            // Hiding the multiple monitor modal.
+            popupModal.classList.remove("flex");
+            popupModal.classList.add("hidden");
+        }
+
+    // If the camera monitoring is activated,
+    // then make the buttons in the multiple monitor modal open the camera select modal.
     if (monitor_camera_activated === 1) {
         have_not_multiple_btn.setAttribute('data-modal-target', 'cam-select-popup-modal');
         have_not_multiple_btn.setAttribute('data-modal-toggle', 'cam-select-popup-modal');
@@ -278,49 +327,53 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
         continue_multiple_btn.setAttribute('data-modal-target', 'cam-select-popup-modal');
         continue_multiple_btn.setAttribute('data-modal-toggle', 'cam-select-popup-modal');
 
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then((stream) => {
-                videoElement = document.createElement('video');
-                const camera = new Camera(videoElement, {onFrame: async () => {
-                    await faceMesh.send({ image: videoElement });
-                },
-                width: 1280,
-                height: 720,
-                });
+        // navigator.mediaDevices.getUserMedia({ video: true })
+        //     .then((stream) => {
+        //         videoElement = document.createElement('video');
+        //         const camera = new Camera(videoElement, {onFrame: async () => {
+        //             await faceMesh.send({ image: videoElement });
+        //         },
+        //         width: 1280,
+        //         height: 720,
+        //         });
 
-                camera.start();
-                videoElement.srcObject = stream;
-            })
-            .catch((error) => {
-                if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-                // User denied camera access
-                console.error('User denied camera access.');
+        //         camera.start();
+        //         videoElement.srcObject = stream;
+        //     })
+        //     .catch((error) => {
+        //         if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        //         // User denied camera access
+        //         console.error('User denied camera access.');
                     
-                } else {
-                    // Other errors
-                    console.error('Error accessing camera:', error.message);
-                }
-            }
-        );
+        //         } else {
+        //             // Other errors
+        //             console.error('Error accessing camera:', error.message);
+        //         }
+        //     }
+        // );
     }
 
+    // Stream the view of selected camera
     function startStream() {
+
+        // Get the selected camera
         var selectedRadio = document.querySelector('input[name="camera"]:checked');
         
+        // If none are selected then, alert the user
         if (!selectedRadio) {
             alert("Please select a camera");
             return;
         }
+
         var deviceId = selectedRadio.value;
-            
         var constraints = {
             video: { deviceId: { exact: deviceId } }
         };
 
-        // Chosen camera device
+        // Get the chosen camera device to send with the data for server processing.
         chosen_camera_device = JSON.stringify(constraints);
-        console.log('chosen cam: ', chosen_camera_device); 
 
+        // Stream the camera view
         navigator.mediaDevices.getUserMedia(constraints)
             .then(function(stream) {
                 var videoElement = document.getElementById('camera-preview');
@@ -333,6 +386,8 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
         });
     }
 
+    // When the user clicks 'haven't connected multiple monitors',
+    // refresh the page to update multiple monitor detection.
     function haveNotConnMonitor(){
         var multiple_modal = document.getElementById('popup-modal');
         monitor_setup = null;
@@ -354,6 +409,8 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
         // }
     }
 
+    // When the user clicks 'haven remove extra monitor',
+    // refresh the page to update multiple monitor detection.
     function haveRemoveExtMonitor(){
         var multiple_modal = document.getElementById('popup-modal');
         monitor_setup = 
@@ -375,16 +432,16 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
         // }
     }
 
+    // When the user clicks 'continue with multiple monitors',
+    // set the chosen_monitor_setup to 'continue_with_multiple_monitor',
+    // which will be sent with the data.
     function continueWithMulMonitor(){
+        chosen_monitor_set_up = "continue_with_multiple_monitor";
         var multiple_modal = document.getElementById('popup-modal');
 
         multiple_modal.setAttribute('class', 'hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full');
         multiple_modal.removeAttribute('aria-modal');
         multiple_modal.removeAttribute('role');
-
-        chosen_monitor_set_up = "continue_with_multiple_monitor";
-        console.log('sending this: ', chosen_monitor_set_up);
-        console.log('redirecting to quiz');
 
         if (monitor_microphone_activated === 1 && monitor_camera_activated !== 1){
             sendSessionSetupData();
@@ -395,11 +452,12 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
         }
     }
 
+    // This is the function that sends the setup data in save_proctor_session_setup.php, 
+    // to be processed and saved in the database.
     function sendSessionSetupData(){
         var xhr = new XMLHttpRequest();
         xhr.open('POST', <?php echo json_encode($wwwroot . '/local/auto_proctor/proctor_tools/proctor_setup/save_proctor_session_setup.php'); ?>, true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        // ==== DEBUGGING =====
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200) {
@@ -415,9 +473,12 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
         xhr.send('userid=' + <?php echo $userid; ?> + '&quizid=' + <?php echo $quizid; ?> + '&quizattempt=' + <?php echo $quizattempt; ?> + '&quizattempturl=' + <?php echo json_encode($quizattempturl); ?> + '&chosen_camera_device=' + chosen_camera_device + '&chosen_monitor_set_up=' + chosen_monitor_set_up + '&device_type=' + device_type);
     }
 
+    // When windows load
     window.onload = function() {
         var filterElement = document.getElementById('filter');
 
+        // Retrieve all available camera devices to display and
+        // make them options in the camera select modal.
         navigator.mediaDevices.enumerateDevices()
         .then(function(devices) {
             devices.forEach(function(device) {
@@ -484,9 +545,6 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
         
     };
 </script>
-    
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
 </body>
 </html>
