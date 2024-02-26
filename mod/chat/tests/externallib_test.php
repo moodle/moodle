@@ -38,6 +38,15 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 class externallib_test extends externallib_advanced_testcase {
 
     /**
+     * Setup testcase.
+     */
+    public function setUp(): void {
+        // Chat module is disabled by default, enable it for testing.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('chat', 1);
+    }
+
+    /**
      * Test login user
      */
     public function test_login_user() {

@@ -158,6 +158,11 @@ class bulk_update_test extends \advanced_testcase {
     protected function create_course_and_modules($modulenames) {
         global $CFG, $PAGE;
 
+        // Chat and Survey modules are disabled by default, enable them for testing.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('chat', 1);
+        $manager::enable_plugin('survey', 1);
+
         $CFG->enablecompletion = true;
         $course = $this->getDataGenerator()->create_course(['enablecompletion' => 1], ['createsections' => true]);
         $PAGE->set_course($course);

@@ -70,6 +70,10 @@ class externallib_test extends externallib_advanced_testcase {
         $this->resetAfterTest();
         $this->setAdminUser();
 
+        // Survey module is disabled by default, enable it for testing.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('survey', 1);
+
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
         $this->survey = $this->getDataGenerator()->create_module('survey', array('course' => $this->course->id));

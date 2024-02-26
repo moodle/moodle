@@ -3189,8 +3189,24 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Create different types of activities.
         $course  = self::getDataGenerator()->create_course();
-        $tocreate = array('assign', 'book', 'choice', 'folder', 'forum', 'glossary', 'imscp', 'label', 'lti', 'page', 'quiz',
-                            'resource', 'scorm', 'survey', 'url', 'wiki');
+        $tocreate = [
+            'assign',
+            'book',
+            'choice',
+            'folder',
+            'forum',
+            'glossary',
+            'imscp',
+            'label',
+            'lesson',
+            'lti',
+            'page',
+            'quiz',
+            'resource',
+            'scorm',
+            'url',
+            'wiki',
+        ];
 
         $modules = array();
         foreach ($tocreate as $modname) {

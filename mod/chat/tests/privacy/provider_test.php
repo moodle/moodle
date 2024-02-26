@@ -52,6 +52,10 @@ class provider_test extends provider_testcase {
         global $PAGE;
         $this->resetAfterTest();
         $PAGE->get_renderer('core');
+
+        // Chat module is disabled by default, enable it for testing.
+        $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
+        $manager::enable_plugin('chat', 1);
     }
 
     public function test_get_contexts_for_userid() {
