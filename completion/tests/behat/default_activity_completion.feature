@@ -175,16 +175,16 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
       | completion_book         | Do not indicate activity completion                 |
     And I click on "Save changes" "button" in the "[data-region='activitycompletion-book']" "css_element"
     And I should see "Changes saved"
-    And I click on "Expand Chat" "button"
+    And I click on "Expand Lesson" "button"
     And I set the following fields to these values:
     # Students must manually mark the activity as done = 1.
-      | id_completion_chat_1         | 1  |
-    And I click on "Save changes" "button" in the "[data-region='activitycompletion-chat']" "css_element"
+      | id_completion_lesson_1         | 1  |
+    And I click on "Save changes" "button" in the "[data-region='activitycompletion-lesson']" "css_element"
     And I should see "Changes saved"
     # Change current page and go back to "Default activity completion", to confirm the form values have been saved properly.
     And I set the field "Course completion tertiary navigation" to "Course completion settings"
     And I set the field "Course completion tertiary navigation" to "Default activity completion"
-    Then the field "id_completion_chat_1" matches value "1"
+    Then the field "id_completion_lesson_1" matches value "1"
     # Check that the rules for book, assignment and forum are still the same.
     And I click on "Expand Book" "button"
     And the field "id_completion_book_0" matches value "1"
@@ -227,4 +227,4 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     Given I am on the "Course 1" course page logged in as teacher1
     When I navigate to "Course completion" in current page administration
     And I set the field "Course completion tertiary navigation" to "Default activity completion"
-    Then "Survey" "text" should appear before "Text and media area" "text"
+    Then "Quiz" "text" should appear before "Text and media area" "text"

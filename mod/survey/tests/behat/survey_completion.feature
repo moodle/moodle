@@ -16,6 +16,7 @@ Feature: A teacher can use activity completion to track a student progress
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And I enable "survey" "mod" plugin
     And I log in as "teacher1"
 
   Scenario: Require survey view

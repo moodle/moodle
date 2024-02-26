@@ -15,8 +15,8 @@ Feature: Force group mode in a course
       | user | course | role |
       | teacher1 | C1 | editingteacher |
     And the following "activities" exist:
-      | activity | course | name      |
-      | chat     | C1     | Chat room |
+      | activity | course | name         |
+      | assign   | C1     | Assignment 1 |
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     And I navigate to "Settings" in current page administration

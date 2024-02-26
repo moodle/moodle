@@ -11,7 +11,7 @@ Feature: Course paged mode information
       | Course 1 | C1        | 0        | <courseformat> | 3           | 1             | <completion>     |
     And the following "activities" exist:
       | activity | course | name         | section | completion   |
-      | chat     | C1     | Chat room    | 1       | <completion> |
+      | assign   | C1     | Assignment   | 1       | <completion> |
       | data     | C1     | Database     | 1       | <completion> |
       | forum    | C1     | First forum  | 1       | <completion> |
       | forum    | C1     | Second forum | 2       | <completion> |
@@ -49,7 +49,7 @@ Feature: Course paged mode information
       | Course 1 | C1        | 0        | <courseformat> | 3           | 1             | <completion>     |
     And the following "activities" exist:
       | activity | course | name         | section | completion   |
-      | chat     | C1     | Chat room    | 1       | <completion> |
+      | assign   | C1     | Assignment   | 1       | <completion> |
       | data     | C1     | Database     | 1       | <completion> |
       | forum    | C1     | First forum  | 1       | <completion> |
       | forum    | C1     | Second forum | 2       | <completion> |

@@ -11,6 +11,7 @@ Feature: The default introduction is displayed when the activity description is 
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher1 | C1 | editingteacher |
+    And I enable "survey" "mod" plugin
     And the following "activities" exist:
       | activity | name             | course | idnumber  | template |
       | survey   | Test survey name | C1     | survey1   | 1        |

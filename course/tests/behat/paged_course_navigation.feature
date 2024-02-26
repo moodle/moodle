@@ -40,8 +40,8 @@ Feature: Course paged mode
       | fullname | shortname | category | format         | coursedisplay | numsections | startdate |
       | Course 1 | C1        | 0        | <courseformat> | 1             | 3           | 0         |
     And the following "activities" exist:
-      | activity | course | name      |
-      | chat     | C1     | Chat room |
+      | activity | course | name       |
+      | assign   | C1     | Assignment |
     When I am on the <courseandsection> "course > section" page logged in as "admin"
     And I turn editing mode on
     And I should see <section1> in the "div.page-context-header" "css_element"

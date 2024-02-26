@@ -4,6 +4,10 @@ Feature: Block activity modules
   As a manager
   I can add activities block in a course or on the frontpage
 
+  Background:
+    Given I enable "chat" "mod" plugin
+    And I enable "survey" "mod" plugin
+
   Scenario: Add activities block on the frontpage
     Given the following "activities" exist:
       | activity   | name                        | intro                              | course               | idnumber    |

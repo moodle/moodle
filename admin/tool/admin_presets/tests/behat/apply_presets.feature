@@ -14,7 +14,7 @@ Feature: I can apply presets
   Scenario: Applying Starter Moodle preset changes status and settings
 #   Checking the settings before applying Full Moodle preset (we're only testing one of each type).
     Given I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And "Disable Chat" "icon" should exist in the "Chat" "table_row"
+    And "Disable Database" "icon" should exist in the "Database" "table_row"
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
@@ -40,9 +40,9 @@ Feature: I can apply presets
     And I should see "Calculated" in the "Setting changes" "table"
     And I should see "Calculated multichoice" in the "Setting changes" "table"
     And I should see "Calculated simple" in the "Setting changes" "table"
-    And I should see "Chat" in the "Setting changes" "table"
-    And "Chat" row "Current value" column of "Setting changes" table should contain "Enabled"
-    And "Chat" row "New value" column of "Setting changes" table should contain "Disabled"
+    And I should see "Database" in the "Setting changes" "table"
+    And "Database" row "Current value" column of "Setting changes" table should contain "Enabled"
+    And "Database" row "New value" column of "Setting changes" table should contain "Disabled"
     And I should see "Cohort sync" in the "Setting changes" "table"
     And I should see "Comments" in the "Setting changes" "table"
     And I should see "Course completion status" in the "Setting changes" "table"
@@ -94,7 +94,7 @@ Feature: I can apply presets
     And I should see "Social activities" in the "Setting changes" "table"
     And I should see "Social" in the "Setting changes" "table"
     And I should see "Starred courses" in the "Setting changes" "table"
-    And I should see "Survey" in the "Setting changes" "table"
+    And I should see "Lesson" in the "Setting changes" "table"
     And I should see "Tags" in the "Setting changes" "table"
     And I should see "URL downloader" in the "Setting changes" "table"
     And I should see "Wiki" in the "Setting changes" "table"
@@ -109,7 +109,7 @@ Feature: I can apply presets
     And the field "Enable badges" matches value "0"
     And the field "Enable competencies" matches value "0"
     And I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And "Disable Chat" "icon" should not exist in the "Chat" "table_row"
+    And "Disable Database" "icon" should not exist in the "Database" "table_row"
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should not exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
