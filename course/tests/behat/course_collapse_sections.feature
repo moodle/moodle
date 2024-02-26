@@ -64,8 +64,7 @@ Feature: Collapse course sections
     And I am on site homepage
     And I turn editing mode on
     And I click on "Edit" "link" in the "region-main" "region"
-    And I click on "Custom" "checkbox"
-    And I set the field "New value for Section name" to "New section name"
+    And I set the field "Section name" to "New section name"
     When I press "Save changes"
     Then "[data-toggle=collapse]" "css_element" should not exist in the "region-main" "region"
 

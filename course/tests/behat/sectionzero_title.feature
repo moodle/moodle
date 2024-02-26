@@ -36,7 +36,6 @@ Feature: Section 0 default/custom title
     And "New name for section" "field" should not exist
     And I set the field "Edit section name" in the "li#section-0" "css_element" to "Edited section 0"
     And I should see "Edited section 0" in the "page" "region"
-    And I edit the section "0" and I fill the form with:
-      | Custom | 0                      |
+    And I set the field "Edit section name" in the "li#section-0" "css_element" to ""
     And I should not see "Edited section 0" in the "page" "region"
     And I should see "General" in the "page" "region"

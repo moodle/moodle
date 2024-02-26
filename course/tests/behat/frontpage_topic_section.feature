@@ -25,8 +25,7 @@ Feature: Site home activities section
     And I am on site homepage
     And I turn editing mode on
     And I click on "Edit" "link" in the "region-main" "region"
-    And I click on "Custom" "checkbox"
-    And I set the field "New value for Section name" to "New section name"
+    And I set the field "Section name" to "New section name"
     When I press "Save changes"
     And I should see "New section name" in the "region-main" "region"
     Then I turn editing mode off
