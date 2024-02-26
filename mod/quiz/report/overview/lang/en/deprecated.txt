@@ -1,0 +1,7 @@
+regradeall,quiz_overview
+regradealldry,quiz_overview
+regradealldrydo,quiz_overview
+regradealldrydogroup,quiz_overview
+regradealldrygroup,quiz_overview
+regradeallgroup,quiz_overview
+regradeselected,quiz_overview

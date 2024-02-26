@@ -101,8 +101,6 @@ Feature: Basic use of the Grades report
 
     # Verify groups are displayed correctly.
     And I set the field "Visible groups" to "English"
-    And "Full regrade for group 'English'" "button" should exist
-    And "Dry run a full regrade for group 'English'" "button" should exist
     And I should see "Number of students in group 'English' achieving grade ranges"
 
   @javascript
