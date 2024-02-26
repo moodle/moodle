@@ -570,7 +570,7 @@ class qtype_ordering_question extends question_graded_automatically {
     }
 
     /**
-     * Convert response data from mform into array
+     * Unpack the students' response into an array which updates the question currentresponse.
      *
      * @param array $response Form data
      */
@@ -586,6 +586,7 @@ class qtype_ordering_question extends question_graded_automatically {
                     }
                 }
             }
+            // Note: TH mentions that this is a bit of a hack.
             $this->currentresponse = $ids;
         }
     }

@@ -721,9 +721,6 @@ class qtype_ordering extends question_type {
         $newquestion = $format->import_headers($data);
         $newquestion->qtype = $questiontype;
 
-        // Fix empty or long question name.
-        $newquestion->name = $this->fix_questionname($newquestion->name, $newquestion->questiontext);
-
         // Extra fields - "selecttype" and "selectcount"
         // (these fields used to be called "logical" and "studentsee").
         if (isset($data['#']['selecttype'])) {
@@ -782,33 +779,6 @@ class qtype_ordering extends question_type {
         }
 
         return $newquestion;
-    }
-
-    /**
-     * Fix empty or long question name
-     *
-     * @param string $name The name of the question
-     * @param string|null $defaultname (optional, default='') The default name of the question
-     * @param int|null $maxnamelength (optional, default=42) The maximum length of the name
-     * @return string Fixed name
-     * @throws coding_exception
-     */
-    public function fix_questionname(string $name, ?string $defaultname = '', ?int $maxnamelength = 42): string {
-        if (trim($name) == '') {
-            if ($defaultname) {
-                $name = $defaultname;
-            } else {
-                $name = get_string('defaultquestionname', 'qtype_ordering');
-            }
-        }
-        if (strlen($name) > $maxnamelength) {
-            $name = substr($name, 0, $maxnamelength);
-            if ($pos = strrpos($name, ' ')) {
-                $name = substr($name, 0, $pos);
-            }
-            $name .= ' ...';
-        }
-        return $name;
     }
 
     /**

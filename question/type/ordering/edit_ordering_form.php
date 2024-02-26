@@ -26,7 +26,6 @@ require_once($CFG->dirroot.'/question/type/ordering/question.php');
  * @package    qtype_ordering
  * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @codeCoverageIgnore Edit form is covered via behat and mocked in units.
  */
 class qtype_ordering_edit_form extends question_edit_form {
 
@@ -92,7 +91,6 @@ class qtype_ordering_edit_form extends question_edit_form {
         // Field for selectcount.
         $name = 'selectcount';
         $label = get_string($name, $plugin);
-
         $mform->addElement('text', $name, $label, ['size' => 2]);
         $mform->setDefault($name, qtype_ordering_question::MIN_SUBSET_ITEMS);
         $mform->setType($name, PARAM_INT);
@@ -117,6 +115,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $mform->addHelpButton($name, $name, $plugin);
         $mform->setDefault($name, $this->get_default_value($name, 1));
 
+        // Field for numberingstyle.
         $name = 'numberingstyle';
         $label = get_string($name, $plugin);
         $options = qtype_ordering_question::get_numbering_styles();
@@ -124,19 +123,18 @@ class qtype_ordering_edit_form extends question_edit_form {
         $mform->addHelpButton($name, $name, $plugin);
         $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::NUMBERING_STYLE_DEFAULT));
 
-        $elements = [];
-        $options = [];
-
         $mform->addElement('header', 'answersheader', get_string('draggableitems', $plugin));
         $mform->setExpanded('answersheader', true);
 
+        // Field for the answers.
+        $elements = [];
+        $options = [];
         $name = 'answer';
         $elements[] = $mform->createElement('editor', $name, get_string('draggableitemno', $plugin),
             $this->get_editor_attributes(), $this->get_editor_options());
         $elements[] = $mform->createElement('submit', $name . 'removeeditor', get_string('removeeditor', $plugin),
             ['onclick' => 'skipClientValidation = true;']);
         $options[$name] = ['type' => PARAM_RAW];
-
         $this->add_repeat_elements($mform, $name, $elements, $options);
 
         // Adjust HTML editor and removal buttons.
@@ -465,17 +463,6 @@ class qtype_ordering_edit_form extends question_edit_form {
         }
 
         return $errors;
-    }
-
-    /**
-     * Given a preference item name, returns the full
-     * preference name of that item for this plugin
-     *
-     * @param string $name Item name
-     * @return string full preference name
-     */
-    protected function get_my_preference_name(string $name): string {
-        return $this->plugin_name()."_$name";
     }
 
     /**

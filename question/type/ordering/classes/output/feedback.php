@@ -21,7 +21,7 @@ use question_attempt;
 use question_display_options;
 
 /**
- * Renderable class for the displaying the feedback.
+ * Collate various sections of displayable feedback for render.
  *
  * @package    qtype_ordering
  * @copyright  2023 Mathew May <mathew.solutions>
@@ -33,7 +33,7 @@ class feedback extends renderable_base {
     protected $options;
 
     /**
-     * The class constructor.
+     * Define the feedback with options for display.
      *
      * @param question_attempt $qa The question attempt object.
      * @param question_display_options $options Controls what should and should not be displayed
@@ -45,7 +45,7 @@ class feedback extends renderable_base {
     }
 
     /**
-     * Export the data for the mustache template.
+     * Build the feedback array which is used to render the feedback.
      *
      * @param renderer_base $output renderer to be used to render the feedback elements.
      * @return array

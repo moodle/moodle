@@ -14,12 +14,10 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /*
- * Generic library to allow things in a vertical list to be re-ordered using drag and drop.
- *
  * To make a set of things draggable, create a new instance of this object passing the
  * necessary config, as explained in the comment on the constructor.
  *
- * @package   qtype_ordering
+ * @package   qtype_ordering\drag_reorder
  * @copyright 2018 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

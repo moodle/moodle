@@ -19,7 +19,7 @@ namespace qtype_ordering\output;
 use qtype_ordering_question;
 
 /**
- * Renderable class for the displaying the grade detail of the response.
+ * Generate the grade feedback when the grading should be shown.
  *
  * @package    qtype_ordering
  * @copyright  2023 Ilya Tregubov <ilya.a.tregubov@gmail.com>
@@ -28,7 +28,7 @@ use qtype_ordering_question;
 class specific_grade_detail_feedback extends renderable_base {
 
     /**
-     * Export the data for the mustache template.
+     * Based on the current state and the question options, generate the feedback.
      *
      * @param \renderer_base $output renderer to be used to render the action bar elements.
      * @return array

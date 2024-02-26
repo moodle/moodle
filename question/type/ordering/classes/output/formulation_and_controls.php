@@ -20,7 +20,7 @@ use question_attempt;
 use question_display_options;
 
 /**
- * Renderable class for the displaying the formulation and controls of the question.
+ * Create the question formulation, controls ready for output.
  *
  * @package    qtype_ordering
  * @copyright  2023 Ilya Tregubov <ilya.a.tregubov@gmail.com>
@@ -32,7 +32,7 @@ class formulation_and_controls extends renderable_base {
     protected $options;
 
     /**
-     * The class constructor.
+     * Construct the rendarable as we also need to pass the question options.
      *
      * @param question_attempt $qa The question attempt object.
      * @param question_display_options $options The question options.
@@ -43,7 +43,7 @@ class formulation_and_controls extends renderable_base {
     }
 
     /**
-     * Export the data for the mustache template.
+     * Export the question based on the question attempt and the question display options.
      *
      * @param \renderer_base $output renderer to be used to render the action bar elements.
      * @return array

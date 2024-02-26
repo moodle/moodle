@@ -17,7 +17,7 @@
 namespace qtype_ordering\output;
 
 /**
- * Renderable class for the description of the correct response to a given question attempt.
+ * Create an array for the correct response based on the question and current step state.
  *
  * @package    qtype_ordering
  * @copyright  2023 Mihail Geshoski <mihail@moodle.com>
@@ -26,7 +26,7 @@ namespace qtype_ordering\output;
 class correct_response extends renderable_base {
 
     /**
-     * Export the data for the mustache template.
+     * Based on the question and step state, create an array for the correct response.
      *
      * @param \renderer_base $output renderer to be used to render the action bar elements.
      * @return array

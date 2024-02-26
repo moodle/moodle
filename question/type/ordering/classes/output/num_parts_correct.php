@@ -17,7 +17,7 @@
 namespace qtype_ordering\output;
 
 /**
- * Renderable class for the statement of how many sub-parts of the question the student got correct|partial|incorrect.
+ * Generate the number of correct, partial, and incorrect parts of the question ready for output
  *
  * @package    qtype_ordering
  * @copyright  2023 Ilya Tregubov <ilya.a.tregubov@gmail.com>
@@ -26,7 +26,7 @@ namespace qtype_ordering\output;
 class num_parts_correct extends renderable_base {
 
     /**
-     * Export the data for the mustache template.
+     * Based on the latest step, get the number of correct, partial, and incorrect parts of the question.
      *
      * @param \renderer_base $output The output renderer.
      * @return array
