@@ -513,6 +513,8 @@ class category_test extends \advanced_testcase {
     }
 
     public function test_get_search_courses() {
+        global $DB;
+
         $cat1 = core_course_category::create(array('name' => 'Cat1'));
         $cat2 = core_course_category::create(array('name' => 'Cat2', 'parent' => $cat1->id));
         $c1 = $this->getDataGenerator()->create_course(array('category' => $cat1->id, 'fullname' => 'Test 3', 'summary' => ' ', 'idnumber' => 'ID3'));
@@ -578,7 +580,8 @@ class category_test extends \advanced_testcase {
         $this->assertEquals(array($c3->id, $c6->id), array_keys($res));
         $this->assertEquals(2, core_course_category::search_courses_count(array('search' => 'Математика'), array()));
 
-        $this->setUser($this->getDataGenerator()->create_user());
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
 
         // Add necessary capabilities.
         $this->assign_capability('moodle/course:create', CAP_ALLOW, \context_coursecat::instance($cat2->id));
@@ -587,6 +590,36 @@ class category_test extends \advanced_testcase {
         $res = core_course_category::search_courses(array('search' => 'test'), array(), $reqcaps);
         $this->assertEquals(array($c8->id, $c5->id), array_keys($res));
         $this->assertEquals(2, core_course_category::search_courses_count(array('search' => 'test'), array(), $reqcaps));
+
+        // We should get no courses here as user is not enrolled to any courses.
+        $res = core_course_category::search_courses([
+            'search' => '',
+            'limittoenrolled' => 1,
+        ]);
+        $this->assertEquals([], $res);
+        $this->assertEquals(0, core_course_category::search_courses_count([
+            'search' => '',
+            'limittoenrolled' => 1,
+        ]));
+
+        $manual = enrol_get_plugin('manual');
+        $teacherrole = $DB->get_record('role', ['shortname' => 'editingteacher']);
+        $enrol = $DB->get_record('enrol', ['courseid' => $c5->id, 'enrol' => 'manual'], '*', MUST_EXIST);
+        $manual->enrol_user($enrol, $user->id, $teacherrole->id);
+
+        // Avoid using the cached values from previous method call.
+        \cache::make('core', 'coursecat')->purge();
+
+        // As the user is now enrolled, we should get this one course.
+        $res = core_course_category::search_courses([
+            'search' => '',
+            'limittoenrolled' => 1,
+        ]);
+        $this->assertEquals([$c5->id], array_keys($res));
+        $this->assertEquals(1, core_course_category::search_courses_count([
+            'search' => '',
+            'limittoenrolled' => 1,
+        ]));
     }
 
     public function test_course_contacts() {
