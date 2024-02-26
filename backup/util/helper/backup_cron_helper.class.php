@@ -798,7 +798,6 @@ abstract class backup_cron_automated_helper {
         global $DB;
         $logmang = get_log_manager();
         $readers = $logmang->get_readers('core\log\sql_reader');
-        $params = array('courseid' => $courseid, 'since' => $since);
 
         // Exclude events defined by hook.
         $hook = new \core_backup\hook\before_course_modified_check();
@@ -806,6 +805,10 @@ abstract class backup_cron_automated_helper {
         $excludedevents = $hook->get_excluded_events();
 
         foreach ($readers as $readerpluginname => $reader) {
+            $params = [
+                'courseid' => $courseid,
+                'since' => $since,
+            ];
             $where = "courseid = :courseid and timecreated > :since and crud <> 'r'";
 
             $excludeevents = [];
