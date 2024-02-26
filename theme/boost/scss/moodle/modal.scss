@@ -23,7 +23,8 @@
 
         // Inherit the opacity when focus is received for better focus outline contrast.
         &:not(:disabled):not(.disabled) {
-            @include hover-focus() {
+            &:hover,
+            &:focus {
                 opacity: inherit;
             }
         }

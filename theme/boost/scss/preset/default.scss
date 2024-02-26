@@ -149,5 +149,3 @@ body {
 .btn-outline-warning {
     @include button-outline-variant($warning-outline);
 }
-
-@include bg-variant(".bg-gray", $gray-200, true);
