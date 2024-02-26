@@ -301,14 +301,12 @@ class helper {
         // Set Activity chooser tabs to the default value ("Starred, Recommended, All, Activities, Resources").
         static::add_item($presetid, 'activitychoosertabmode', '3');
 
-        // Modules: Enable chat, database, external tool (lti), IMS content package (imscp), lesson, SCORM, survey, wiki, workshop.
-        static::add_plugin($presetid, 'mod', 'chat', true);
+        // Modules: Enable database, external tool (lti), IMS content package (imscp), lesson, SCORM, wiki, workshop.
         static::add_plugin($presetid, 'mod', 'data', true);
         static::add_plugin($presetid, 'mod', 'lti', true);
         static::add_plugin($presetid, 'mod', 'imscp', true);
         static::add_plugin($presetid, 'mod', 'lesson', true);
         static::add_plugin($presetid, 'mod', 'scorm', true);
-        static::add_plugin($presetid, 'mod', 'survey', true);
         static::add_plugin($presetid, 'mod', 'wiki', true);
         static::add_plugin($presetid, 'mod', 'workshop', true);
 
