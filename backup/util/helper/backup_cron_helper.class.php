@@ -801,15 +801,15 @@ abstract class backup_cron_automated_helper {
         $params = array('courseid' => $courseid, 'since' => $since);
 
         // Exclude events defined by hook.
-        $hook = new \core\hook\backup\get_excluded_events();
+        $hook = new \core_backup\hook\before_course_modified_check();
         \core\hook\manager::get_instance()->dispatch($hook);
-        $excludedevents = $hook->get_events();
+        $excludedevents = $hook->get_excluded_events();
 
         foreach ($readers as $readerpluginname => $reader) {
             $where = "courseid = :courseid and timecreated > :since and crud <> 'r'";
 
             $excludeevents = [];
-            // Prevent logs of prevous backups causing a false positive.
+            // Prevent logs of previous backups causing a false positive.
             if ($readerpluginname != 'logstore_legacy') {
                 $excludeevents[] = '\core\event\course_backup_created';
             }

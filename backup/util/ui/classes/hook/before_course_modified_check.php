@@ -14,19 +14,18 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\hook\backup;
+namespace core_backup\hook;
 
 use core\hook\described_hook;
 
 /**
  * Get a list of event names which are excluded to trigger from course changes in automated backup.
  *
- * @package    core
+ * @package    core_backup
  * @copyright  2023 Tomo Tsuyuki <tomotsuyuki@catalyst-au.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-final class get_excluded_events implements described_hook {
-
+final class before_course_modified_check implements described_hook {
     /**
      * @var string[] Array of event names.
      */
@@ -58,7 +57,7 @@ final class get_excluded_events implements described_hook {
      * @param string[] $events Array of event name strings
      * @return void
      */
-    public function add_events(array $events): void {
+    public function exclude_events(array $events): void {
         $this->events = array_merge($this->events, $events);
     }
 
@@ -68,7 +67,7 @@ final class get_excluded_events implements described_hook {
      *
      * @return array
      */
-    public function get_events(): array {
+    public function get_excluded_events(): array {
         return $this->events;
     }
 }
