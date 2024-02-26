@@ -20,14 +20,11 @@ Feature: Duplicate a section
 
   @javascript
   Scenario: Duplicate unnamed section
-    Given the following config values are set as admin:
-      | unaddableblocks | | theme_boost|
-    And I am on "Course 1" course homepage with editing mode on
-    And I add the "Section links" block
+    Given I am on "Course 1" course homepage with editing mode on
     When I open section "1" edit menu
     And I click on "Duplicate" "link" in the "New section" "section"
-    # As the section names are the same, the only way to access the section is through the section links block.
-    And I click on "2" "link" in the "Section links" "block"
+    # The duplicated section has section number 2.
+    And I am on the "Course 1 > Section 2" "course > section" page
     Then I should see "Activity sample 1.2"
     And I should see "New section"
 

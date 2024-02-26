@@ -165,11 +165,12 @@ class behat_course extends behat_base {
      *  Convert page names to URLs for steps like 'When I am on the "[identifier]" "[page type]" page'.
      *
      *  Recognised page names are:
-     *  | Section | coursename > section name | The selected section of the course |
+     *  | Section | coursename > section | The selected course section. First it searchs by section name, then by section number. |
      *
      * Examples:
      *
-     *  When I am on the "Course 1 > Topic 1" "course > section" page logged in as "admin"
+     *  When I am on the "Course 1 > Section 1" "course > section" page logged in as "admin"
+     *  When I am on the "Course 1 > Named section" "course > section" page logged in as "admin"
      *
      * @param string $type
      * @param string $identifier
@@ -182,10 +183,16 @@ class behat_course extends behat_base {
                 $identifiers = explode('>', $identifier);
                 $identifiers = array_map('trim', $identifiers);
                 if (count($identifiers) < 2) {
-                    throw new Exception("The specified section $identifier is not valid and should be coursename > sectionname.");
+                    throw new Exception("The specified section $identifier is not valid and should be coursename > section.");
                 }
                 [$courseidentifier, $sectionidentifier] = $identifiers;
+
                 $section = $this->get_section_and_course_by_id($courseidentifier, $sectionidentifier);
+                if (!$section) {
+                    // If section is not found by name, search it by section number.
+                    $sectionno = preg_replace("/^section (\d+)$/i", '$1', $sectionidentifier);
+                    $section = $this->get_section_and_course_by_sectionnum($courseidentifier, (int) $sectionno);
+                }
                 if (!$section) {
                     throw new Exception("The specified section $identifier does not exist.");
                 }
@@ -2137,8 +2144,6 @@ class behat_course extends behat_base {
      * Get the section id from an identifier.
      *
      * The section name and summary are checked.
-     * Note: if the course identifier is not provided, we try to find it through M.cfg.courseId.
-     * so if javascript is disabled, this function will return null.
      *
      * @param string $courseidentifier
      * @param string $sectionidentifier
@@ -2160,5 +2165,21 @@ class behat_course extends behat_base {
             }
         }
         return null;
+    }
+
+    /**
+     * Get the section id from a courseid and a sectionnum.
+     *
+     * @param string $courseidentifier Course identifier.
+     * @param int $sectionnum Section number
+     * @return section_info|null section info or null if not found.
+     */
+    protected function get_section_and_course_by_sectionnum(string $courseidentifier, int $sectionnum): ?section_info {
+        $courseid = $this->get_course_id($courseidentifier);
+        if (!$courseid) {
+            return null;
+        }
+        $courseformat = course_get_format($courseid);
+        return $courseformat->get_section($sectionnum);
     }
 }

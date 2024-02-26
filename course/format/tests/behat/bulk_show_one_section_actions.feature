@@ -36,8 +36,7 @@ Feature: Bulk course section actions one section per page
     And I should see "1 selected" in the "sticky-footer" "region"
     And I click on "Close bulk actions" "button" in the "sticky-footer" "region"
     # Move to single section page.
-    And I open section "1" edit menu
-    When I click on "View" "link" in the "Section 1" "section"
+    When I am on the "C1 > Section 1" "course > section" page
     And I click on "Bulk actions" "button"
     Then "Select section Section 1" "checkbox" should not exist
 
