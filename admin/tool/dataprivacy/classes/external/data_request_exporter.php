@@ -114,6 +114,10 @@ class data_request_exporter extends persistent_exporter {
                 'optional' => true,
                 'default' => false
             ],
+            'downloadlink' => [
+                'type' => PARAM_URL,
+                'optional' => true,
+            ],
         ];
     }
 
@@ -199,6 +203,15 @@ class data_request_exporter extends persistent_exporter {
             case api::DATAREQUEST_STATUS_EXPIRED:
                 $values['statuslabelclass'] = 'bg-secondary text-dark';
                 break;
+        }
+
+        if ($this->persistent->get('status') == api::DATAREQUEST_STATUS_DOWNLOAD_READY) {
+            $usercontext = \context_user::instance($foruserid, IGNORE_MISSING);
+            // If user has permission to view download link, show relevant action item.
+            if ($usercontext && api::can_download_data_request_for_user($foruserid, $requestedbyid)) {
+                $downloadlink = api::get_download_link($usercontext, $this->persistent->get('id'))->url;
+                $values['downloadlink'] = $downloadlink->out(false);
+            }
         }
 
         return $values;
