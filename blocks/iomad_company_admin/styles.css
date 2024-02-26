@@ -384,3 +384,11 @@ border-radius: 10px;
     margin: 0 auto;
     display: block;
 }
+
+#full-company-select > tbody > tr > td {
+    text-align: center;
+}
+
+#page-blocks-iomad_company_admin-fullselect #fgroup_id_searcharray > div.col-md-3.col-form-label.d-flex.pb-0.pr-md-0 {
+    display: none !important;
+}

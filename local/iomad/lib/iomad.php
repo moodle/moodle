@@ -188,7 +188,7 @@ class iomad {
                 }
 
                 $USER->company = $company->get( $fields );
-                $USER->company->logo_filename = $company->get_logo_filename();
+                $USER->company->logo_filename = $company->get_logo_url($company->id);
             }
         }
     }

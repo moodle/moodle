@@ -37,8 +37,6 @@ if (empty($courses) && !empty($selectedcourses)) {
     $courses = $selectedcourses;
 }
 
-require_login();
-
 $params = array('companyid' => $companyid,
                 'courses' => $courses,
                 'deptid' => $departmentid,
@@ -57,19 +55,25 @@ if (!empty($selectedcourses)) {
     foreach ($selectedcourses as $a => $b)
     $urlparams["selectedcourses[$a]"] = $b;
 }
+
+require_login();
+
+$systemcontext = context_system::instance();
+
+// Set the companyid
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
+$company = new company($companyid);
+$parentlevel = company::get_company_parentnode($companyid);
+$companydepartment = $parentlevel->id;
+
+iomad::require_capability('block/iomad_company_admin:company_course_users', $companycontext);
+
 // Correct the navbar.
 // Set the name for the page.
 $linktext = get_string('company_course_users_title', 'block_iomad_company_admin');
 // Set the url.
 $linkurl = new moodle_url('/blocks/iomad_company_admin/company_course_users_form.php');
-
-// Set the companyid
-$companyid = iomad::get_my_companyid($context);
-$parentlevel = company::get_company_parentnode($companyid);
-$companydepartment = $parentlevel->id;
-$syscontext = context_system::instance();
-$company = new company($companyid);
-$companycontext = \core\context\company::instance($companyid);
 
 // Print the page header.
 $PAGE->set_context($companycontext);
@@ -86,9 +90,6 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 // Parameter is name of proper select form element followed by 1=submit its form
 $PAGE->requires->js_call_amd('block_iomad_company_admin/department_select', 'init', array('deptid', 1, optional_param('deptid', 0, PARAM_INT)));
 $PAGE->navbar->add($linktext, $linkurl);
-
-require_login(null, false); // Adds to $PAGE, creates $output.
-iomad::require_capability('block/iomad_company_admin:company_course_users', $companycontext);
 
 $coursesform = new \block_iomad_company_admin\forms\company_ccu_courses_form($PAGE->url, $companycontext, $companyid, $departmentid, $selectedcourses, $parentlevel);
 $coursesform->set_data(array('selectedcourses' => $selectedcourses, 'courses' => $courses));

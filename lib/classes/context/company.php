@@ -178,7 +178,7 @@ class company extends context {
                  WHERE 1=1
                        AND NOT EXISTS (SELECT 'x'
                                          FROM {context} cx
-                                        WHERE u.id = cx.instanceid AND cx.contextlevel=" . self::LEVEL . ")";
+                                        WHERE c.id = cx.instanceid AND cx.contextlevel=" . self::LEVEL . ")";
         $contextdata = $DB->get_recordset_sql($sql);
         foreach ($contextdata as $context) {
             context::insert_context_record(self::LEVEL, $context->id, null);
@@ -193,10 +193,10 @@ class company extends context {
      */
     protected static function get_cleanup_sql() {
         $sql = "
-                  SELECT c.*
-                    FROM {context} c
-         LEFT OUTER JOIN {company} u ON (c.instanceid = u.id)
-                   WHERE u.id IS NULL AND c.contextlevel = " . self::LEVEL . "
+                  SELECT cx.*
+                    FROM {context} cx
+         LEFT OUTER JOIN {company} c ON (cx.instanceid = c.id)
+                   WHERE c.id IS NULL AND cx.contextlevel = " . self::LEVEL . "
                ";
 
         return $sql;

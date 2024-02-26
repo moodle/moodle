@@ -96,7 +96,7 @@ if ($mform->is_cancelled()) {
         $data->companyid = $companyid;
     }
 
-    if (!$userid = company_user::create($data)) {
+    if (!$userid = company_user::create($data, $companyid)) {
         $this->verbose("Error inserting a new user in the database!");
         if (!$this->get('ignore_errors')) {
             die();

@@ -162,6 +162,14 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
+     * Render full_companies_select page
+     * @param full_companies_select $full_companies_select
+     */
+    public function render_full_companies_select(full_companies_select $full_companies_select) {
+        return $this->render_from_template('block_iomad_company_admin/full_companies_select', $full_companies_select->export_for_template($this));
+    }
+
+    /**
      * Render company capabilities roles page
      * @param capabilitiesroles $capabilitiesroles
      */

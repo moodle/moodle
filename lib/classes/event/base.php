@@ -171,7 +171,7 @@ abstract class base implements \IteratorAggregate {
      * @throws \coding_exception
      */
     public static final function create(array $data = null) {
-        global $USER, $CFG;
+        global $USER, $CFG, $SESSION;
 
         $data = (array)$data;
 
@@ -209,6 +209,11 @@ abstract class base implements \IteratorAggregate {
             $event->data['anonymous'] = $data['anonymous'];
         }
         $event->data['anonymous'] = (int)(bool)$event->data['anonymous'];
+
+        // IOMAD
+        if (!empty($SESSION->currenteditingcompany)) {
+            $event->data['companyid'] = $SESSION->currenteditingcompany;
+        }
 
         if (isset($event->context)) {
             if (isset($data['context'])) {

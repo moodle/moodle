@@ -45,6 +45,7 @@ if (!empty($company)) {
 if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)
     || $companyuser = $DB->get_record('company_users', array('companyid' => $company, 'userid' => $USER->id)))) {
     $SESSION->currenteditingcompany = $company;
+    $DB->set_field('company_users', 'lastused', time(), ['userid' => $USER->id, 'companyid' => $company]);
     if (!empty($companyuser) && $companyuser->managertype == 0) {
         redirect(new moodle_url('/my'));
     }

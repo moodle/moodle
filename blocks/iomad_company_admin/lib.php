@@ -282,3 +282,28 @@ function block_iomad_company_admin_pluginfile($course, $birecord_or_cm, $context
         send_file_not_found();
     }
 }
+
+/**
+ * Renders the popup.
+ *
+ * @param renderer_base $renderer
+ * @return string The HTML
+ */
+function block_iomad_company_admin_render_navbar_output(\renderer_base $renderer) {
+    global $USER, $CFG;
+
+    // Early bail out conditions.
+    if (!isloggedin() || isguestuser() || \core_user::awaiting_action()) {
+        return '';
+    }
+
+    $output = '';
+
+    // Add the notifications popover.
+    if ($companyinfo = \company_user::add_user_popup_selector()) {
+        $output .= $renderer->render_from_template('block_iomad_company_admin/company_info_popover', $companyinfo);
+    }
+
+    return $output;
+}
+

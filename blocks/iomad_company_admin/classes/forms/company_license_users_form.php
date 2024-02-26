@@ -322,12 +322,20 @@ class company_license_users_form extends \moodleform {
                         foreach ($courses as $courseid) {
                             $allow = true;
                             if ($allow) {
-                                $recordarray = array('licensecourseid' => $courseid,
-                                                     'userid' => $adduser->id,
-                                                     'timecompleted' => null);
+                                $recordarray = ['licensecourseid' => $courseid,
+                                                'userid' => $adduser->id,
+                                                'companyid' => $this->selectedcompany,
+                                                'timecompleted' => null];
 
                                 // Check if we are not assigning multiple times.
-                                if (!$DB->get_record('companylicense_users', $recordarray)) {
+                                if (!$DB->get_record_sql("SELECT clu.id
+                                                          FROM {companylicense_users} clu
+                                                          JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                                                          WHERE clu.userid = :userid 
+                                                          AND cl.companyid = :companyid
+                                                          AND clu.licensecourseid = :licensecourseid
+                                                          AND clu.timecompleted = :timecompleted",
+                                                         $recordarray)) {
                                     $recordarray['licenseid'] = $this->licenseid;
                                     $recordarray['issuedate'] = time();
                                     $recordarray['isusing'] = 0;

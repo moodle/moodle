@@ -2497,5 +2497,20 @@ function xmldb_local_iomad_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2024020800, 'local', 'iomad');
     }
 
+    if ($oldversion < 2024022500) {
+
+        // Define field lastused to be added to company_users.
+        $table = new xmldb_table('company_users');
+        $field = new xmldb_field('lastused', XMLDB_TYPE_INTEGER, '20', null, null, null, null, 'educator');
+
+        // Conditionally launch add field lastused.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Iomad savepoint reached.
+        upgrade_plugin_savepoint(true, 2024022500, 'local', 'iomad');
+    }
+
     return $result;
 }

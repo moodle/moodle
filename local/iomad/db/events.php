@@ -130,6 +130,7 @@ $observers = array(
         'eventname'   => '\core\event\course_completed',
         'callback'    => 'local_iomad_observer::course_completed',
         'includefile' => '/local/iomad/classes/observer.php',
+        'priority'    => 9999,  // We want the local internal track to fire first.
         'internal'    => false,
     ),
 

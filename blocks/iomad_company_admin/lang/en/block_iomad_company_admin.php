@@ -247,7 +247,7 @@ $string['departmentprofileid_help'] = 'if you have set up self authentication an
 $string['custom1'] = 'Custom 1';
 $string['custom2'] = 'Custom 2';
 $string['custom3'] = 'Custom 3';
-$string['dashboard'] = 'Iomad dashboard';
+$string['dashboard'] = 'IOMAD dashboard';
 $string['datefilter'] = 'Filter by date';
 $string['deleteanddestroycoursesfull'] = 'Are you sure you want to delete course {$a}? Clicking continue will remove all current user enrolments, any license allocations and the course from the company. If you click destroy, it will also remove all of the user reords from the all reports. <b>There is no recovery from this without backup</b>';
 $string['deletecoursesfull'] = 'Are you sure you want to delete course {$a}? Clicking continue will remove all current user enrolments, any license allocations and the course from the company. <b>There is no recovery from this without backup</b>';
@@ -748,7 +748,7 @@ $string['linkcolor'] = 'Link Colour';
 $string['totalusers'] = '{$a} Users';
 
 // Role stuff
-$string['archetypeclientadministrator_role'] = 'Iomad client administrator';
+$string['archetypeclientadministrator_role'] = 'IOMAD client administrator';
 $string['clientadministrator_role'] = 'IOMAD client administrator';
 $string['archetypecompanymanager_role'] = 'Company manager';
 $string['companymanager_role'] = 'Company manager';

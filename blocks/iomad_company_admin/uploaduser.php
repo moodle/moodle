@@ -943,7 +943,7 @@ if (!empty($cancelled)) {
                 } else {
                     $user->preference_auth_forcepasswordchange = false;
                 }
-                $user->id = company_user::create($user);
+                $user->id = company_user::create($user, $companyid);
 
                 // Save the profile information.
                 profile_save_data($user);

@@ -47,19 +47,46 @@ class cron_task extends \core\task\scheduled_task {
         // Are we copying Company to institution?
         if (!empty($CFG->iomad_sync_institution)) {
             mtrace("Copying company shortnames to user institution fields\n");
+            // Get the users in multiple companies
+            $multiusers = $DB->get_records_sql("SELECT userid
+                                                FROM {company_users}
+                                                GROUP BY userid
+                                                HAVING COUNT(companyid) > 1");
+            $multisql = "";
+            $notmultisql = "";
+            if (!empty($multiusers)) {
+                $notmultisql = " AND u.id NOT IN (" . implode(',', array_keys($multiusers)) . ")";
+                $multisql = " WHERE u.id IN (" . implode(',', array_keys($multiusers)) . ")";
+            }
             // Get the users where it's wrong.
             $users = $DB->get_records_sql("SELECT u.*, c.id as companyid
                                            FROM {user} u
                                            JOIN {company_users} cu ON cu.userid = u.id
                                            JOIN {company} c ON cu.companyid = c.id
                                            WHERE u.institution != c.shortname
-                                           AND c.parentid = 0");
+                                           AND c.parentid = 0
+                                           $notmultisql
+                                           ");
             // Get all of the companies.
             $companies = $DB->get_records('company', array(), '', 'id,shortname');
             foreach ($users as $user) {
                 $user->institution = $companies[$user->companyid]->shortname;
                 $DB->update_record('user', $user);
             }
+
+
+            // Deal with those in multiple companies.
+            if (!empty($multiusers)) {
+                $users = $DB->get_records_sql("SELECT DISTINCT u.*
+                                               FROM {user} u
+                                               $multisql");
+                foreach ($users as $user) {
+                    $string = get_string_manager()->get_string('blockmultiple', 'admin', '', $user->lang);
+                    $user->institution = $string;
+                    $DB->update_record('user', $user);
+                }
+            }
+
             $companies = array();
             $users = array();
         }
@@ -68,19 +95,43 @@ class cron_task extends \core\task\scheduled_task {
         if (!empty($CFG->iomad_sync_department)) {
             mtrace("Copying company department name to user department fields\n");
             // Get the users where it's wrong.
-            $users = $DB->get_records_sql("SELECT u.*, d.id as departmentid
+            $multiusers = $DB->get_records_sql("SELECT userid
+                                                FROM {company_users}
+                                                GROUP BY userid
+                                                HAVING COUNT(departmentid) > 1");
+            $notmultisql = "";
+            $multisql = "";
+            if (!empty($multiusers)) {
+                $notmultisql = " AND u.id NOT IN (" . implode(',', array_keys($multiusers)) . ")";
+                $multisql = " WHERE u.id IN (" . implode(',', array_keys($multiusers)) . ")";
+            }
+            $users = $DB->get_records_sql("SELECT DISTINCT u.*, d.id as departmentid
                                            FROM {user} u
                                            JOIN {company_users} cu ON cu.userid = u.id
                                            JOIN {company} c ON cu.companyid = c.id
                                            JOIN {department} d ON cu.departmentid = d.id
                                            WHERE u.department != d.name
-                                           AND c.parentid = 0");
+                                           AND c.parentid = 0
+                                           $notmultisql");
             // Get all of the companies.
             $departments = $DB->get_records('department', array(), '', 'id,name');
             foreach ($users as $user) {
                 $user->department = $departments[$user->departmentid]->name;
                 $DB->update_record('user', $user);
             }
+
+            // Deal with those in multiple departments.
+            if (!empty($multiusers)) {
+                $users = $DB->get_records_sql("SELECT DISTINCT u.*
+                                               FROM {user} u
+                                               $multisql");
+                foreach ($users as $user) {
+                    $string = get_string_manager()->get_string('blockmultiple', 'admin', '', $user->lang);
+                    $user->department = $string;
+                    $DB->update_record('user', $user);
+                }
+            }
+            
             $companies = array();
             $users = array();
         }
@@ -123,7 +174,20 @@ class cron_task extends \core\task\scheduled_task {
             foreach ($userlicenses as $userlicense) {
                 mtrace("Clearing userid $userlicense->userid from courseid $userlicense->licensecourseid");
                 if ($userlicense->isusing == 1) {
-                    \company_user::delete_user_course($userlicense->userid, $userlicense->licensecourseid, 'autodelete');
+                    // Get the corresponding entry from the LIT table.
+                    if ($litrecs = $DB->get_records_select('local_iomad_track',
+                                                           '*',
+                                                           'userid = :userid
+                                                            AND courseid = :courseid
+                                                            AND licenseid =: licenseid
+                                                            AND timecompleted IS NULL',
+                                                           ['userid' => $userlicense->userid,
+                                                            'courseid' => $userlicense->licensecourseid,
+                                                            'licenseid' => $userlicense->licenseid])) {
+                        foreach ($litrecs as $litrec) {
+                            \company_user::delete_user_course($userlicense->userid, $userlicense->licensecourseid, 'autodelete', $litrec->id);
+                        }
+                    }
                 } else {
                     $DB->delete_records('companylicense_users', array('id' => $userlicense->id));
 

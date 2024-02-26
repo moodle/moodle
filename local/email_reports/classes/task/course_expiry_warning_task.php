@@ -216,13 +216,16 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
                            AND u.suspended = 0
                            AND lit.expiredstop = 0
                            AND lit.id IN (
-                               SELECT max(id) FROM {local_iomad_track}
+                               SELECT max(id)
+                               FROM {local_iomad_track}
+                               WHERE courseid = co.id
+                               AND companyid = c.id
                            GROUP BY userid,courseid)";
 
             // Email all of the users
             mtrace("getting expired users");
-            $allusers = $DB->get_records_sql($expiredsql, ['expirycourseid' => $expirycourse->courseid, 'targettime' => $targettime]);
-
+            $allusers = $DB->get_records_sql($expiredsql, ['expirycourseid' => $expirycourse->courseid,
+                                                           'targettime' => $targettime]);
             foreach ($allusers as $compuser) {
                 mtrace("Dealing with user id $compuser->userid");
                 if (!$user = $DB->get_record('user', array('id' => $compuser->userid))) {
@@ -252,6 +255,7 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
                 $event = \block_iomad_company_admin\event\user_course_expired::create(array('context' => context_course::instance($course->id),
                                                                                             'courseid' => $course->id,
                                                                                             'objectid' => $course->id,
+                                                                                            'companyid' => $company->id,
                                                                                             'userid' => $user->id));
                 $event->trigger();
 
@@ -372,5 +376,4 @@ class course_expiry_warning_task extends \core\task\scheduled_task {
 
         mtrace("email reporting course expiry warning task completed at " . date('d M Y h:i:s', time()));
     }
-
 }

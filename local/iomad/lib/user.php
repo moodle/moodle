@@ -40,10 +40,14 @@ class company_user {
      * @param object $data
      * @return userid
      */
-    public static function create( $data ) {
+    public static function create($data, $companyid = 0 ) {
         global $DB, $CFG, $USER;
 
-        if ( $data->companyid ) {
+        if (!empty($companyid)) {
+            $company = new company($companyid);
+            $cshort = $company->get('shortname');
+            $data->company = $cshort;
+        } else if (!empty($data->companyid)) {
             $company = new company($data->companyid);
             $cshort = $company->get('shortname');
             $data->company = $cshort;
@@ -69,96 +73,112 @@ class company_user {
             $user->username = clean_param($user->username, PARAM_USERNAME);
         }
 
+        // Now we have the full new user object - we can check if there are clashes.
+        $clashed = false;
+        if ($existinguser = $DB->get_record('user', ['username' => $user->username])){
+            $clashed = true;
+        } else if (!empty($CFG->allowaccountssameemail) && $existinguser = $DB->get_record('user', ['email' => $user->email])) {
+            $clashed = true;
+        } else if ($existinguser = $DB->get_record('user', ['firstname' => $user->firstname, 'lastname' => $user->lastname, 'email' => $user->email])) {
+            $clashed = true;
+        }
+
         // Deal with the company theme.
         $user->theme = $company->get_theme();
 
-        if ($user->sendnewpasswordemails && !$user->preference_auth_forcepasswordchange) {
-            throw new Exception(get_string('cannotemailnontemporarypasswords', 'local_iomad'));
-        }
+        // Only create the user if there is no clash.
+        if (!$clashed) {
+            if ($user->sendnewpasswordemails && !$user->preference_auth_forcepasswordchange) {
+                throw new Exception(get_string('cannotemailnontemporarypasswords', 'local_iomad'));
+            }
+    
+            /*
+                There are 8 possible combinations of password, sendbyemail and forcepasswordchange
+                fields:
+    
+                pwd     email yes   force change            -> temporary password
+                pwd     email no    force change            -> temporary password
+                pwd     email no    dont force change       -> not a temporary password
+    
+                no pwd  email yes   force change            -> create password -> store temp
+                no pwd  email no    force change            -> create password -> store temp
+                no pwd  email no    dont force change       -> create password -> store temp
+    
+                These two combinations shouldn't happen (caught by form validation and exception above):
+                pwd    email yes dont force change->needs to be stored as temp password -> not secure
+                no pwd email yes dont force change->create password->store temp->not secure
+    
+                The next set of variables ($sendemail, $passwordentered, $createpassword,
+                $forcepasswordchange, $storetemppassword) are used to distinguish between
+                the first 6 combinations and to take appropriate action.
+            */
+    
+            $sendemail = $user->sendnewpasswordemails;
+    
+            // We only need the password if it's an internal plugin.
+            if (empty($user->auth)) {
+                $user->auth = 'manual';
+            }
+    
+            $authplugin = get_auth_plugin($user->auth);
+            if ($authplugin->is_internal()) {
+                $passwordentered = !empty($user->newpassword);
+                $createpassword = !$passwordentered;
+                $forcepasswordchange = $user->preference_auth_forcepasswordchange;
+                // Store temp password unless password was entered and it's not going to be send by
+                // email nor is it going to be forced to change.
+                $storetemppassword = !( $passwordentered && !$sendemail && !$forcepasswordchange );
+    
+                if ($passwordentered) {
+                    $user->password = $user->newpassword;   // Don't hash it, user_create_user will do that.
+                }
+            } else {
+                $createpassword = false;
+                $forcepasswordchange = false;
+                $storetemppassword = false;
+                unset($user->password);
+            }
+    
+            $user->confirmed = 1;
+            $user->mnethostid = $DB->get_field('mnet_application','id',['name'=>'moodle']);
+            $user->maildisplay = 0; // Hide email addresses by default.
+    
+            // Create user record and return id.
+            $id = user_create_user($user);
+            $user->id = $id;
 
-        /*
-            There are 8 possible combinations of password, sendbyemail and forcepasswordchange
-            fields:
-
-            pwd     email yes   force change            -> temporary password
-            pwd     email no    force change            -> temporary password
-            pwd     email no    dont force change       -> not a temporary password
-
-            no pwd  email yes   force change            -> create password -> store temp
-            no pwd  email no    force change            -> create password -> store temp
-            no pwd  email no    dont force change       -> create password -> store temp
-
-            These two combinations shouldn't happen (caught by form validation and exception above):
-            pwd    email yes dont force change->needs to be stored as temp password -> not secure
-            no pwd email yes dont force change->create password->store temp->not secure
-
-            The next set of variables ($sendemail, $passwordentered, $createpassword,
-            $forcepasswordchange, $storetemppassword) are used to distinguish between
-            the first 6 combinations and to take appropriate action.
-        */
-
-        $sendemail = $user->sendnewpasswordemails;
-
-        // We only need the password if it's an internal plugin.
-        if (empty($user->auth)) {
-            $user->auth = 'manual';
-        }
-
-        $authplugin = get_auth_plugin($user->auth);
-        if ($authplugin->is_internal()) {
-            $passwordentered = !empty($user->newpassword);
-            $createpassword = !$passwordentered;
-            $forcepasswordchange = $user->preference_auth_forcepasswordchange;
-            // Store temp password unless password was entered and it's not going to be send by
-            // email nor is it going to be forced to change.
-            $storetemppassword = !( $passwordentered && !$sendemail && !$forcepasswordchange );
-
-            if ($passwordentered) {
-                $user->password = $user->newpassword;   // Don't hash it, user_create_user will do that.
+            // Passwords will be created and sent out on cron.
+            if ($createpassword) {
+                set_user_preference('create_password', 1, $user->id);
+                $user->newpassword = generate_password();
+                if (!empty($CFG->iomad_email_senderisreal)) {
+                    EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER, 'due' => $data->due));
+                } else if (is_siteadmin($USER->id)) {
+                    EmailTemplate::send('user_create', array('user' => $user, 'due' => $data->due));
+                } else {
+                    EmailTemplate::send('user_create',
+                                         array('user' => $user,
+                                               'due' => $data->due,
+                                               'headers' => $headers));
+                }
+                $sendemail = false;
+            }
+            if ($forcepasswordchange) {
+                set_user_preference('auth_forcepasswordchange', 1, $user->id);
+            }
+    
+            if ($createpassword) {
+                $DB->set_field('user', 'password', hash_internal_user_password($user->newpassword),
+                                array('id' => $user->id));
+            }
+    
+            if ($storetemppassword) {
+                // Store password as temporary password, sendemail if necessary.
+                self::store_temporary_password($user, $sendemail, $user->newpassword, false, $data->due);
             }
         } else {
-            $createpassword = false;
-            $forcepasswordchange = false;
-            $storetemppassword = false;
-            unset($user->password);
-        }
-
-        $user->confirmed = 1;
-        $user->mnethostid = $DB->get_field('mnet_application','id',['name'=>'moodle']);
-        $user->maildisplay = 0; // Hide email addresses by default.
-
-        // Create user record and return id.
-        $id = user_create_user($user);
-        $user->id = $id;
-
-        // Passwords will be created and sent out on cron.
-        if ($createpassword) {
-            set_user_preference('create_password', 1, $user->id);
-            $user->newpassword = generate_password();
-            if (!empty($CFG->iomad_email_senderisreal)) {
-                EmailTemplate::send('user_create', array('user' => $user, 'sender' => $USER, 'due' => $data->due));
-            } else if (is_siteadmin($USER->id)) {
-                EmailTemplate::send('user_create', array('user' => $user, 'due' => $data->due));
-            } else {
-                EmailTemplate::send('user_create',
-                                     array('user' => $user,
-                                           'due' => $data->due,
-                                           'headers' => $headers));
-            }
-            $sendemail = false;
-        }
-        if ($forcepasswordchange) {
-            set_user_preference('auth_forcepasswordchange', 1, $user->id);
-        }
-
-        if ($createpassword) {
-            $DB->set_field('user', 'password', hash_internal_user_password($user->newpassword),
-                            array('id' => $user->id));
-        }
-
-        if ($storetemppassword) {
-            // Store password as temporary password, sendemail if necessary.
-            self::store_temporary_password($user, $sendemail, $user->newpassword, false, $data->due);
+            $user = $existinguser;
+            $id = $user->id;
         }
 
         // Attach user to company.
@@ -203,11 +223,15 @@ class company_user {
      * @param int userid
      * @return boolean
      */
-    public static function delete( $userid ) {
+    public static function delete( $userid, $companyid = 0 ) {
         global $DB;
 
         // Get the company details for the user.
-        $company = company::get_company_byuserid($userid);
+        if (empty($companyid)) {
+            $company = company::get_company_byuserid($userid);
+        } else {
+            $company = new company($companyid);
+        }
         $systemcontext = context_system::instance();
         $companycontext = \core\context\company::instance($company->id);
 
@@ -224,14 +248,17 @@ class company_user {
         }
 
         // Remove the user from the company.
-        $DB->delete_records('company_users', array('userid' => $userid));
+        $DB->delete_records('company_users', ['userid' => $userid, 'companyid' => $companyid]);
 
         // Deal with the company theme.
         $DB->set_field('user', 'theme', '', array('id' => $userid));
 
-        // Delete the user.
-        $user = $DB->get_record('user', array('id' => $userid));
-        delete_user($user);
+        // Only really delete the user if they aren't in any other company.
+        if (!$DB->get_records('company_users', ['userid' => $userid])) {
+            // Delete the user.
+            $user = $DB->get_record('user', array('id' => $userid));
+            delete_user($user);
+        }
     }
 
     /**
@@ -239,11 +266,15 @@ class company_user {
      * @param int userid
      * @return boolean
      */
-    public static function suspend( $userid ) {
+    public static function suspend($userid, $companyid = 0) {
         global $DB;
 
         // Get the company details for the user.
-        $company = company::get_company_byuserid($userid);
+        if (empty($companyid)) {
+            $company = company::get_company_byuserid($userid);
+        } else {
+            $company = new company($companyid);
+        }
         $systemcontext = context_system::instance();
         $companycontext = \core\context\company::instance($company->id);
 
@@ -252,8 +283,14 @@ class company_user {
                                                               'companyid' => $company->id));
 
         // Clear up any unused licenses.
-        if ($userlicenses = $DB->get_records('companylicense_users', array('userid' => $userid,
-                                                                       'isusing' => 0))) {
+        if ($userlicenses = $DB->get_records_sql("SELECT clu.*
+                                                  FROM {companylicense_users} clu
+                                                  JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                                                  WHERE cl.companyid = :companyid
+                                                  and clu.userid = :userid
+                                                  AND clu.isusing = 0",
+                                                 ['userid' => $userid,
+                                                  'companyid' => $company->id])) {
             foreach ($userlicenses as $userlicense) {
                 $DB->delete_records('companylicense_users', array('id' => $userlicense->id));
                 if ($licenserecord = $DB->get_record('companylicense', array('id' => $userlicense->licenseid))) {
@@ -264,11 +301,14 @@ class company_user {
             }
         }
 
-        // Mark user as suspended.
-        $DB->set_field('user', 'suspended', 1, array('id' => $userid));
+        // Only really delete the user if they aren't in any other company.
+        if (!$DB->get_records('company_users', ['userid' => $userid])) {
+            // Mark user as suspended.
+            $DB->set_field('user', 'suspended', 1, array('id' => $userid));
 
-        // Log the user out.
-        \core\session\manager::kill_user_sessions($userid);
+            // Log the user out.
+            \core\session\manager::kill_user_sessions($userid);
+        }
     }
 
     /**
@@ -276,11 +316,15 @@ class company_user {
      * @param int userid
      * @return boolean
      */
-    public static function unsuspend( $userid ) {
+    public static function unsuspend($userid, $companyid = 0) {
         global $DB;
 
         // Get the company details for the user.
-        $company = company::get_company_byuserid($userid);
+        if (empty($companyid)) {
+            $company = company::get_company_byuserid($userid);
+        } else {
+            $company = new company($companyid);
+        }
 
         // Get the users company record.
         $DB->set_field('company_users', 'suspended', 0, array('userid' => $userid,
@@ -323,14 +367,18 @@ class company_user {
         }
 
         foreach ($courseids as $courseid) {
+echo "checking if courseid $courseid is valid<br>";
             // Check if the courseid is valid.
             if (empty($courseid)) {
+echo "none<br>";
                 continue;
             }
 
             // Check if course is shared.
             if ($courseinfo = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
                 if ($courseinfo->licensed == 1) {
+echo "Licensed so skipping as we do that elsewhere<br>";
+
                     continue;
                 }
                 if ($courseinfo->shared != 0) {
@@ -338,6 +386,7 @@ class company_user {
                 } else {
                     $shared = false;
                 }
+echo "shared = $shared<br>";
             }
 
             // Do we have course groups?
@@ -366,11 +415,60 @@ class company_user {
                 } else {
                     $timeend = 0;
                 }
-                if (!empty($manualcache[$courseid]->id) && !$DB->get_record('user_enrolments', array('userid' => $user->id, 'enrolid' => $manualcache[$courseid]->id))) {
+                // Is the user currently enrolled?
+                if (!empty($manualcache[$courseid]->id) && !$userenrolment = $DB->get_record('user_enrolments', array('userid' => $user->id, 'enrolid' => $manualcache[$courseid]->id))) {
+echo "Running manual->enrol_user()<br>";
                     $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, ENROL_USER_ACTIVE);
+                } else if ($completedrecords = $DB->get_records_select('local_iomad_track',
+                                                                                "userid = :userid
+                                                                                 AND courseid = :courseid
+                                                                                 AND timecompleted IS NOT NULL
+                                                                                 AND coursecleared = 0
+                                                                                 AND timeenrolled = :timeallocated",
+                                                                                 ['userid' => $user->id,
+                                                                                 'courseid' => $courseid,
+                                                                                 'timeallocated' => $userenrolment->timecreated])) {
+echo "Getting records from LIT as we have have copmpleted all of the other assignations<br>";
+                            // All previous attempts have been completed so enrol again.
+                            foreach ($completedrecords as $completedrecord) {
+                                // Complete any license allocations.
+echo "Dealing with LIT id $completedrecord->id<br>";
+                                if (!empty($completedrecord->licenseid) &&
+                                    $licenserecord = $DB->get_record('companylicense_users', ['userid' => $completedrecord->userid,
+                                                                                              'licensecourseid' => $completedrecord->courseid,
+                                                                                              'licenseid' => $completedrecord->licenseid,
+                                                                                              'issuedate' => $completedrecord->licenseallocated])) {
+                                    if (empty($licenserecord->timecompleted)) {
+echo "Marking clu.id $licenserecord->id as finished with @ $timestart<br>";
+                                        $DB->set_field('companylicense_users', 'timecompleted', $timestart, ['id' => $licenserecord->id]);
+                                    }
+                                }
+                                $DB->set_field('local_iomad_track', 'completedstop', 1, ['id' => $completedrecord->id]);
+                            }
+echo "Clearing down the course</br>";
+                            // Clear them from the course.
+                            company_user::delete_user_course($user->id, $courseid, 'autodelete');
+
+echo "Re-enrolling them on the course</br>";
+                            // Then re-enrol them.
+                            $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, ENROL_USER_ACTIVE);
                 } else {
+$DB->set_debug(false);
+echo "Already got an enrolment - firing event <br>";
                     role_assign($rid, $user->id, context_course::instance($courseid));
+                    // Fire a duplicate enrol event so we can add it to the tracking tables.
+                    $event = \core\event\user_enrolment_created::create(
+                             ['objectid' => $userenrolment->id,
+                              'courseid' => $courseid,
+                              'context' => \context_course::instance($courseid),
+                              'relateduserid' => $user->id,
+                              'other' => ['enrol' => 'manual']
+                             ]
+                            );
+                    $event->trigger();
                 }
+
+                // Is this course shared or does it have default groups?
                 if ($shared || $grouped) {
                     if (!empty($companyid)) {
                         // Did we get passed a group?
@@ -535,7 +633,7 @@ class company_user {
                 $username = clean_param($email, PARAM_USERNAME);
             }
         } else {
-            $username = $email;
+            $username = clean_param($email, PARAM_USERNAME);
         }
 
         return $username;
@@ -839,87 +937,90 @@ class company_user {
      * @param int userid
      * @param int courseid
      */
-    public static function delete_user_course($userid, $courseid, $action = '') {
+    public static function delete_user_course($userid, $courseid, $action = '', $litid = 0) {
         global $DB, $CFG;
 
         try {
             $transaction = $DB->start_delegated_transaction();
 
-            // Remove enrolments
-            $plugins = enrol_get_plugins(true);
-            $instances = enrol_get_instances($courseid, true);
-            foreach ($instances as $instance) {
-                $plugin = $plugins[$instance->enrol];
-                $plugin->unenrol_user($instance, $userid);
-            }
-
-            // Remove completions
-            $DB->delete_records('course_completions', array('userid' => $userid, 'course' => $courseid));
-            $DB->delete_records('course_completion_crit_compl', array('userid' => $userid, 'course' => $courseid));
-            if ($modules = $DB->get_records_sql("SELECT id FROM {course_modules} WHERE course = :course AND completion != 0", array('course' => $courseid))) {
-                foreach ($modules as $module) {
-                    $DB->delete_records('course_modules_completion', array('userid' => $userid, 'coursemoduleid' => $module->id));
+            // Is this a single entry only?
+            if (empty($litid)) {
+                // Remove enrolments
+                $plugins = enrol_get_plugins(true);
+                $instances = enrol_get_instances($courseid, true);
+                foreach ($instances as $instance) {
+                    $plugin = $plugins[$instance->enrol];
+                    $plugin->unenrol_user($instance, $userid);
                 }
-            }
 
-            // Deal with SCORM.
-            if ($scorms = $DB->get_records('scorm', array('course' => $courseid))) {
-                foreach ($scorms as $scorm) {
-                    $DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id));
+                // Remove completions
+                $DB->delete_records('course_completions', array('userid' => $userid, 'course' => $courseid));
+                $DB->delete_records('course_completion_crit_compl', array('userid' => $userid, 'course' => $courseid));
+                if ($modules = $DB->get_records_sql("SELECT id FROM {course_modules} WHERE course = :course AND completion != 0", array('course' => $courseid))) {
+                    foreach ($modules as $module) {
+                        $DB->delete_records('course_modules_completion', array('userid' => $userid, 'coursemoduleid' => $module->id));
+                    }
                 }
-            }
 
-            // Deal with H5P Activity.
-            if ($h5ps = $DB->get_records('h5pactivity', array('course' => $courseid))) {
-                foreach ($h5ps as $h5p) {
-                    if ($attempts = $DB->get_records('h5pactivity_attempts', array('userid' => $userid, 'h5pactivityid' => $h5p->id))) {
-                        foreach ($attempts as $attempt) {
-                            $DB->delete_records('h5pactivity_attempts_results', array('attemptid' => $attempt->id));
-                            $DB->delete_records('h5pactivity_attempts', array('id' => $attempt->id));
+                // Deal with SCORM.
+                if ($scorms = $DB->get_records('scorm', array('course' => $courseid))) {
+                    foreach ($scorms as $scorm) {
+                        //$DB->delete_records('scorm_scoes_track', array('userid' => $userid, 'scormid' => $scorm->id));
+                    }
+                }
+
+                // Deal with H5P Activity.
+                if ($h5ps = $DB->get_records('h5pactivity', array('course' => $courseid))) {
+                    foreach ($h5ps as $h5p) {
+                        if ($attempts = $DB->get_records('h5pactivity_attempts', array('userid' => $userid, 'h5pactivityid' => $h5p->id))) {
+                            foreach ($attempts as $attempt) {
+                                $DB->delete_records('h5pactivity_attempts_results', array('attemptid' => $attempt->id));
+                                $DB->delete_records('h5pactivity_attempts', array('id' => $attempt->id));
+                            }
                         }
                     }
                 }
-            }
 
-            // Remove grades
-            if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
-                foreach ($items as $item) {
-                    $DB->delete_records('grade_grades', array('userid' => $userid, 'itemid' => $item->id));
+                // Remove grades
+                if ($items = $DB->get_records('grade_items', array('courseid' => $courseid))) {
+                    foreach ($items as $item) {
+                        $DB->delete_records('grade_grades', array('userid' => $userid, 'itemid' => $item->id));
+                    }
                 }
-            }
 
-            // Remove quiz entries.
-            if ($quizzes = $DB->get_records('quiz', array('course' => $courseid))) {
-                // We have quiz(zes) so clear them down.
-                foreach ($quizzes as $quiz) {
-                    $DB->delete_records('quiz_attempts', array('quiz' => $quiz->id, 'userid' => $userid));
-                    $DB->delete_records('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid));
-                    $DB->delete_records('quiz_overrides', array('quiz' => $quiz->id, 'userid' => $userid));
+                // Remove quiz entries.
+                if ($quizzes = $DB->get_records('quiz', array('course' => $courseid))) {
+                    // We have quiz(zes) so clear them down.
+                    foreach ($quizzes as $quiz) {
+                        $DB->delete_records('quiz_attempts', array('quiz' => $quiz->id, 'userid' => $userid));
+                        $DB->delete_records('quiz_grades', array('quiz' => $quiz->id, 'userid' => $userid));
+                        $DB->delete_records('quiz_overrides', array('quiz' => $quiz->id, 'userid' => $userid));
+                    }
                 }
-            }
 
-            // Remove certificate info.
-            if ($certificates = $DB->get_records('iomadcertificate', array('course' => $courseid))) {
-                foreach ($certificates as $certificate) {
-                    $DB->delete_records('iomadcertificate_issues', array('iomadcertificateid' => $certificate->id, 'userid' => $userid));
+                // Remove certificate info.
+                if ($certificates = $DB->get_records('iomadcertificate', array('course' => $courseid))) {
+                    foreach ($certificates as $certificate) {
+                        $DB->delete_records('iomadcertificate_issues', array('iomadcertificateid' => $certificate->id, 'userid' => $userid));
+                    }
                 }
-            }
 
-            // Remove feedback info.
-            if ($feedbacks = $DB->get_records('feedback', array('course' => $courseid))) {
-                foreach ($feedbacks as $feedback) {
-                    $DB->delete_records('feedback_completed', array('feedback' => $feedback->id, 'userid' => $userid));
-                    $DB->delete_records('feedback_completedtmp', array('feedback' => $feedback->id, 'userid' => $userid));
+                // Remove feedback info.
+                if ($feedbacks = $DB->get_records('feedback', array('course' => $courseid))) {
+                    foreach ($feedbacks as $feedback) {
+                        $DB->delete_records('feedback_completed', array('feedback' => $feedback->id, 'userid' => $userid));
+                        $DB->delete_records('feedback_completedtmp', array('feedback' => $feedback->id, 'userid' => $userid));
+                    }
                 }
-            }
 
-            // Remove lesson info.
-            if ($lessons = $DB->get_records('lesson', array('course' => $courseid))) {
-                foreach ($lessons as $lesson) {
-                    $DB->delete_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $userid));
-                    $DB->delete_records('lesson_grades', array('lessonid' => $lesson->id, 'userid' => $userid));
-                    $DB->delete_records('lesson_branch', array('lessonid' => $lesson->id, 'userid' => $userid));
-                    $DB->delete_records('lesson_timer', array('lessonid' => $lesson->id, 'userid' => $userid));
+                // Remove lesson info.
+                if ($lessons = $DB->get_records('lesson', array('course' => $courseid))) {
+                    foreach ($lessons as $lesson) {
+                        $DB->delete_records('lesson_attempts', array('lessonid' => $lesson->id, 'userid' => $userid));
+                        $DB->delete_records('lesson_grades', array('lessonid' => $lesson->id, 'userid' => $userid));
+                        $DB->delete_records('lesson_branch', array('lessonid' => $lesson->id, 'userid' => $userid));
+                        $DB->delete_records('lesson_timer', array('lessonid' => $lesson->id, 'userid' => $userid));
+                    }
                 }
             }
 
@@ -940,67 +1041,83 @@ class company_user {
                                  'isusing' => 1);
             }
 
+            // If we were passed a LIT record ID it's only that one.
+            $litparams = [];
+            $litsql = "";
+            if (!empty($litid)) {
+                $litrec = $DB->get_record('local_iomad_track', ['id' => $litid]);
+                $litparams['litid'] = $litid;
+                $params['licenseid'] = $litrec->licenseid;
+                $litsql = "id = :litid AND ";
+            }
+
             // Deal with Iomad track table stuff.
             if ($action == 'delete' || $action == 'revoke') {
                 $DB->delete_records('local_iomad_track', array('userid' => $userid, 'courseid' => $courseid, 'timecompleted' => null));
             } else {
-                $DB->set_field('local_iomad_track', 'coursecleared', 1, array('userid' => $userid, 'courseid' => $courseid));
+                $litparams = $litparams +
+                             ['userid' => $userid,
+                              'courseid' => $courseid];
+                $litsql .= "userid = :userid AND courseid = :courseid AND timecompleted > 0";
+                $DB->set_field_select('local_iomad_track', 'coursecleared', 1, $litsql, $litparams);
             }
             // Fix company licenses
+echo "Clearing down licenses which have been used for courseid $courseid</br>";
             if ($licenses = $DB->get_records('companylicense_users', $params)) {
-                $license = array_pop($licenses);
-                if ($action != 'delete') {
-                    $license->timecompleted = time();
-                    $DB->update_record('companylicense_users', $license);
-                }
-                if ($action == 'clear') {
-                    // Fix the usagecount.
-                    $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
-                    $licenserecord->used = $DB->count_records('companylicense_users', array('licenseid' => $license->licenseid));
-                    $DB->update_record('companylicense', $licenserecord);
-                    if (!empty($CFG->iomad_autoreallocate_licenses)) {
-                        $newlicense = $license;
-                        $newlicense->isusing = 0;
-                        $newlicense->issuedate = time();
-                        $newlicense->timecompleted = null;
-                        if ($licenserecord->used < $licenserecord->allocation && $licenserecord->expirydate > time()) {
-                            $newlicenseid = $DB->insert_record('companylicense_users', (array) $newlicense);
-
-                            // Create an event.
-                            $eventother = array('licenseid' => $licenserecord->id,
-                                                'issuedate' => time(),
-                                                'duedate' => 0);
-                            $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
-                                                                                                          'objectid' => $licenserecord->id,
-                                                                                                          'courseid' => $courseid,
-                                                                                                          'userid' => $userid,
-                                                                                                          'other' => $eventother));
-                            $event->trigger();
-                        } else {
-                            // Can we get a newer license?
-                            if ($newlicense = self::auto_allocate_license($userid, $licenserecord->companyid, $courseid)) {
-
+                foreach ($licenses as $license) {
+                    if ($action != 'delete') {
+                        $license->timecompleted = time();
+                        $DB->update_record('companylicense_users', $license);
+                    }
+                    if ($action == 'clear') {
+                        // Fix the usagecount.
+                        $licenserecord = $DB->get_record('companylicense', array('id' => $license->licenseid));
+                        $licenserecord->used = $DB->count_records('companylicense_users', array('licenseid' => $license->licenseid));
+                        $DB->update_record('companylicense', $licenserecord);
+                        if (!empty($CFG->iomad_autoreallocate_licenses)) {
+                            $newlicense = $license;
+                            $newlicense->isusing = 0;
+                            $newlicense->issuedate = time();
+                            $newlicense->timecompleted = null;
+                            if ($licenserecord->used < $licenserecord->allocation && $licenserecord->expirydate > time()) {
+                                $newlicenseid = $DB->insert_record('companylicense_users', (array) $newlicense);
+    
                                 // Create an event.
-                                $eventother = array('licenseid' => $newlicense->licenseid,
+                                $eventother = array('licenseid' => $licenserecord->id,
                                                     'issuedate' => time(),
                                                     'duedate' => 0);
                                 $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
-                                                                                                              'objectid' => $newlicense->id,
+                                                                                                              'objectid' => $licenserecord->id,
                                                                                                               'courseid' => $courseid,
                                                                                                               'userid' => $userid,
                                                                                                               'other' => $eventother));
                                 $event->trigger();
+                            } else {
+                                // Can we get a newer license?
+                                if ($newlicense = self::auto_allocate_license($userid, $licenserecord->companyid, $courseid)) {
+    
+                                    // Create an event.
+                                    $eventother = array('licenseid' => $newlicense->licenseid,
+                                                        'issuedate' => time(),
+                                                        'duedate' => 0);
+                                    $event = \block_iomad_company_admin\event\user_license_assigned::create(array('context' => context_course::instance($courseid),
+                                                                                                                  'objectid' => $newlicense->id,
+                                                                                                                  'courseid' => $courseid,
+                                                                                                                  'userid' => $userid,
+                                                                                                                  'other' => $eventother));
+                                    $event->trigger();
+                                }
                             }
                         }
                     }
-                }
-                if ($action == 'delete' || $action == 'revoke') {
-                    if ($license->isusing == 0) {
-                        $DB->delete_records('companylicense_users', array('id' => $license->id));
-                        company::update_license_usage($license->id);
-                    } else {
-                        $license->timecompleted = time();
-                        $DB->update_record('companylicense_users', $license);
+                    if ($action == 'delete' || $action == 'revoke') {
+                        if ($license->isusing == 0) {
+                            $DB->delete_records('companylicense_users', array('id' => $license->id));
+                            company::update_license_usage($license->id);
+                        } else {
+                            $license->timecompleted = time();
+                            $DB->update_record('companylicense_users', $license);
+                        }
                     }
                 }
             }
@@ -1062,8 +1179,106 @@ class company_user {
         $DB->insert_record('company_transient_tokens', $newtoken);
         return $generatedtoken;
     }
-}
 
+    /**
+     * Adds to the information metadata created
+     * in the user_get_user_navigation_info() function
+     * in usr/lib.php
+     *
+     * returns passed object $returnobject.
+     *
+     **/
+    public static function add_user_popup_selector() {
+        global $OUTPUT;
+
+        $returnobject = (object) [];
+
+        // Set the companyid
+        $returnobject->companyname = "";
+        $returnobject->companylogo = "";
+        if ($companyid = iomad::get_my_companyid(context_system::instance(), false)) {
+            $company = new company($companyid);
+            $returnobject->companyname = $company->get_name();
+            $returnobject->companylogo = $OUTPUT->get_logo_url(null, 25);
+            $mycompanies = company::get_companies_select(false, false, false, 'cu.lastused DESC, c.name ASC');
+            $returncompanies = [];
+            if (count($mycompanies) > 1) {
+                $returnobject->hasmultiple = true;
+                // Cut back to only show most recent companies.
+                $total = 1;
+                foreach ($mycompanies as $id => $dump) {
+                    if ($id == $companyid) {
+                        continue;
+                    }
+                    $mycompany = (object) [];
+                    $mycompanyobj = new company($id);
+                    $mycompany->name = $mycompanyobj->get_name();
+                    $mycompany->logo = company::get_logo_url($id, null, 25);
+                    $mycompany->switchlink = new moodle_url("/blocks/iomad_company_admin/index.php", ['company' => $id]);
+                    $returncompanies[] = $mycompany;
+                    if ($total >= 10) {
+                        $mycompany = (object) [];
+                        $mycompany->name = get_string('more');
+                        $mycompany->logo = "";
+                        $mycompany->switchlink = new moodle_url('/blocks/iomad_company_admin/fullselect.php');
+                        $returncompanies[] = $mycompany;
+                        break;
+                    }
+                    $total++;
+                }
+            }
+            $returnobject->mycompanies = $returncompanies;
+            return $returnobject;
+        }
+        return false;
+    }
+
+    /**
+     * Gets all of the company details which a user can see,
+     * in the user_get_user_navigation_info() function
+     * in usr/lib.php
+     *
+     * returns passed object $returnobject.
+     *
+     **/
+    public static function get_all_user_companies($search) {
+
+        $returnobject = (object) [];
+
+        // Set the companyid
+        $mycompanies = company::get_companies_select(false, false, false, 'cu.lastused DESC, c.name ASC', $search);
+        $returncompanies = (object) [];
+        $returncompanies->companies = (object) [];    
+        $rows = [];
+        if (count($mycompanies) > 0) {
+            $returnobject->hasmultiple = true;
+            // Cut back to only show most recent companies.
+            $count = 1;
+            $rowcompanies = [];
+            foreach ($mycompanies as $id => $dump) {
+                $mycompany = (object) [];
+                $mycompanyobj = new company($id);
+                $mycompany->name = $mycompanyobj->get_name();
+                $mycompany->logo = company::get_logo_url($id, null, 100);
+                $mycompany->switchlink = new moodle_url("/blocks/iomad_company_admin/index.php", ['company' => $id]);
+                $rowcompanies[] = $mycompany;
+                $count++;
+                if ($count > 4) {
+                    $rows[] = (object) ['cells' => $rowcompanies];
+                    $count=1;
+                    $rowcompanies = [];
+                }
+            }
+            if ($count > 0) {
+                // We have leftovers.
+                $rows[] = (object) ['cells' => $rowcompanies];
+            }
+        }
+        
+        $returncompanies->companies->rows = $rows;
+        return $returncompanies;
+    }
+}
 /**
  * User Filter form used on the Iomad pages.
  *
@@ -1376,7 +1591,7 @@ class iomad_date_filter_form extends moodleform {
 }
 
 /**
- * User Filter form used on the Iomad pages.
+ * course search form used on the Iomad pages.
  *
  */
 class iomad_course_search_form extends moodleform {
@@ -1405,5 +1620,25 @@ class iomad_course_search_form extends moodleform {
         $searcharray[] = $mform->createElement('submit', 'searchbutton', get_string('coursenamesearch', 'block_iomad_company_admin'));
         $mform->addGroup($searcharray, 'searcharray', '', ' ', false);
         $mform->setType('coursesearch', PARAM_CLEAN);
+    }
+}
+
+/**
+ * course search form used on the Iomad pages.
+ *
+ */
+class iomad_company_search_form extends moodleform {
+    protected $params = array();
+
+    public function definition() {
+        global $CFG, $DB, $USER, $SESSION;
+
+        $mform =& $this->_form;
+
+        $sarcharray = array();
+        $searcharray[] = $mform->createElement('text', 'search');
+        $searcharray[] = $mform->createElement('submit', 'searchbutton', get_string('search'));
+        $mform->addGroup($searcharray, 'searcharray', '', ' ', false);
+        $mform->setType('search', PARAM_ALPHANUM);
     }
 }

@@ -329,7 +329,7 @@ if ($confirmuser and confirm_sesskey()) {
         die;
     } else {
         // Actually delete the user.
-        company_user::delete($user->id);
+        company_user::delete($user->id, $companyid);
 
         // Create an event for this.
         $eventother = array('userid' => $user->id, 'companyname' => $company->get_name(), 'companyid' => $companyid);
@@ -371,7 +371,7 @@ if ($confirmuser and confirm_sesskey()) {
         die;
     } else {
         // Actually suspend the user.
-        company_user::suspend($user->id);
+        company_user::suspend($user->id, $companyid);
 
         // Create an event for this.
         $eventother = array('userid' => $user->id, 'companyname' => $company->get_name(), 'companyid' => $companyid);

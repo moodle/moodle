@@ -65,7 +65,14 @@ require_login();
 $systemcontext = context_system::instance();
 
 // Set the companyid
-$companyid = iomad::get_my_companyid($systemcontext);
+$mycompanyid = iomad::get_my_companyid($systemcontext);
+
+// Is the users company set and no other company selected?
+if (empty($companyid) && !empty($mycompanyid)) {
+    $companyid = $mycompanyid;
+    $params['companyid'] = $mycompanyid;
+}
+
 $companycontext = \core\context\company::instance($companyid);
 $company = new company($companyid);
 
@@ -105,14 +112,6 @@ if ($canedit && $PAGE->user_allowed_editing()) {
     $buttons = $OUTPUT->edit_button($PAGE->url);
     $PAGE->set_button($buttons);
 }
-
-// Is the users company set and no other company selected?
-if (empty($companyid) && !empty($mycompanyid)) {
-    $companyid = $mycompanyid;
-    $params['companyid'] = $mycompanyid;
-}
-
-$company = new company($mycompanyid);
 
 // Delete any valid courses.
 if (!empty($deleteid)) {

@@ -52,11 +52,13 @@ function mycourses_get_my_completion($sort = 'coursefullname', $dir = 'ASC') {
                                           JOIN {enrol} e ON (e.id = ue.enrolid AND e.courseid = c.id)
                                           LEFT JOIN {iomad_courses} ic ON (c.id = ic.courseid AND cc.courseid = ic.courseid)
                                           WHERE cc.userid = :userid
+                                          AND cc.companyid = :companyid
                                           $companycoursesql
                                           AND c.visible = 1
                                           AND cc.timecompleted IS NULL
                                           AND ue.timestart != 0",
-                                          array('userid' => $USER->id));
+                                          ['userid' => $USER->id,
+                                           'companyid' => $companyid]);
 
     // We need to de-duplicate this list.
     $recs = [];
@@ -76,10 +78,13 @@ function mycourses_get_my_completion($sort = 'coursefullname', $dir = 'ASC') {
     $mynotstartedlicense = $DB->get_records_sql("SELECT clu.id, clu.userid, clu.licensecourseid as courseid, c.fullname as coursefullname, c.summary as coursesummary, c.visible
                                           FROM {companylicense_users} clu
                                           JOIN {course} c ON (c.id = clu.licensecourseid)
+                                          JOIN {companylicense} cl ON (clu.licenseid = cl.id)
                                           WHERE clu.userid = :userid
+                                          AND cl.companyid = :companyid
                                           AND c.visible = 1
                                           AND clu.isusing = 0",
-                                          array('userid' => $USER->id));
+                                          ['userid' => $USER->id,
+                                           'companyid' => $companyid]);
 
     // Get courses which are available as self sign up and assigned to the company.
     // First we discount everything else we have in progress.
@@ -174,6 +179,8 @@ function mycourses_get_my_completion($sort = 'coursefullname', $dir = 'ASC') {
 function mycourses_get_my_archive($sort = 'coursefullname', $dir = 'ASC') {
     global $DB, $USER, $CFG;
 
+    $companyid = iomad::get_my_companyid(context_system::instance(), false);
+
     // Check if there is a iomadcertificate module.
     if ($certmodule = $DB->get_record('modules', array('name' => 'iomadcertificate'))) {
         $hasiomadcertificate = true;
@@ -187,9 +194,11 @@ function mycourses_get_my_archive($sort = 'coursefullname', $dir = 'ASC') {
                                        FROM {local_iomad_track} cc
                                        JOIN {course} c ON (c.id = cc.courseid)
                                        WHERE cc.userid = :userid
+                                       AND cc.companyid = :companyid
                                        AND c.visible = 1
                                        AND cc.timecompleted > 0",
-                                       array('userid' => $USER->id));
+                                       ['userid' => $USER->id,
+                                        'companyid' => $companyid]);
 
     // Deal with completed course scores and links for certificates.
     foreach ($myarchive as $id => $archive) {

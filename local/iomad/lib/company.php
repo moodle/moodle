@@ -232,19 +232,37 @@ class company {
      * @return string
      *
      */
-    public function get_logo_filename() {
-        global $DB;
+    public static function get_logo_url($companyid, $maxwidth = null, $maxheight = 200) {
+        
+        // Get the company logo config settings.
+        $logo = get_config('core_admin', 'logo'.$companyid);
+        if (!empty($logo)) {
+            // Return the company logo URL.
+            // 200px high is the default image size which should be displayed at 100px in the page to account for retina displays.
+            // It's not worth the overhead of detecting and serving 2 different images based on the device.
 
-        $fs = get_file_storage();
-        $context = context_system::instance();
+            // Hide the requested size in the file path.
+            $filepath = ((int) $maxwidth . 'x' . (int) $maxheight) . '/';
 
-        $files = $fs->get_area_files($context->id, 'theme_iomad', 'logo', $this->id,
-                                     "sortorder, itemid, filepath, filename", false);
+            // Use $CFG->themerev to prevent browser caching when the file changes.
+            return moodle_url::make_pluginfile_url(context_system::instance()->id, 'core_admin', 'logo'.$companyid, $filepath,
+                theme_get_revision(), $logo);
+        } else {
+            // Return the default site logo URL if there is one.
+            $logo = get_config('core_admin', 'logo');
+            if (empty($logo)) {
+                return false;
+            }
 
-        // There should be only one file, but we'll still use a foreach as
-        // the array indexes are based on the hash, just return the first one.
-        foreach ($files as $f) {
-            return $f->get_filename();
+            // 200px high is the default image size which should be displayed at 100px in the page to account for retina displays.
+            // It's not worth the overhead of detecting and serving 2 different images based on the device.
+
+            // Hide the requested size in the file path.
+            $filepath = ((int) $maxwidth . 'x' . (int) $maxheight) . '/';
+
+            // Use $CFG->themerev to prevent browser caching when the file changes.
+            return moodle_url::make_pluginfile_url(context_system::instance()->id, 'core_admin', 'logo', $filepath,
+                theme_get_revision(), $logo);
         }
     }
 
@@ -269,7 +287,7 @@ class company {
      * @return array
      *
      */
-    public static function get_companies_select($showsuspended=false) {
+    public static function get_companies_select($showsuspended=false, $useprepend = true, $showchildren = true, $sort = 'name', $search = '') {
         global $DB, $USER;
 
         // Is this an admin, or a normal user?
@@ -283,20 +301,22 @@ class company {
             if ($showsuspended) {
                 $suspendedsql = '';
             } else {
-                $suspendedsql = "AND suspended = 0";
+                $suspendedsql = "AND c.suspended = 0";
             }
-            $companies = $DB->get_recordset_sql("SELECT * FROM {company}
-                                                 WHERE id IN (
-                                                   SELECT companyid FROM {company_users}
-                                                   WHERE userid = :userid )
-                                                 AND parentid NOT IN (
-                                                   SELECT companyid FROM {company_users}
-                                                   WHERE userid = :userid2 )
+            $searchsql = "";
+            $companiesparams = ['userid' => $USER->id];
+            if (!empty($search)) {
+                $searchsql = "AND " . $DB->sql_like('c.name', ':search', false);
+                $companiesparams['search'] = '%' . $DB->sql_like_escape($search) . '%';
+            }
+            $companies = $DB->get_recordset_sql("SELECT DISTINCT c.*,cu.lastused
+                                                 FROM {company} c
+                                                 JOIN {company_users} cu ON (c.id = cu.companyid)
+                                                 WHERE cu.userid = :userid
+                                                 $searchsql
                                                  $suspendedsql
-                                                 ORDER BY name",
-                                                 ['userid' => $USER->id,
-                                                  'userid2' => $USER->id,
-                                                  'suspended' => $showsuspended]);
+                                                 ORDER BY $sort",
+                                                 $companiesparams);
         }
         $companyselect = array();
         foreach ($companies as $company) {
@@ -305,20 +325,26 @@ class company {
             } else {
                 $companyselect[$company->id] = format_string($company->name . '(S)');
             }
-            $allchildren = self::get_formatted_child_companies_select($company->id);
-            $companyselect = $companyselect + $allchildren;
+            if ($showchildren) {
+                $allchildren = self::get_formatted_child_companies_select($company->id, $useprepend);
+                $companyselect = $companyselect + $allchildren;
+            }
         }
         return $companyselect;
     }
 
-    private static function get_formatted_child_companies_select($companyid, &$companyarray = [], $prepend = "") {
+    private static function get_formatted_child_companies_select($companyid, $useprepend = true, &$companyarray = [], $prepend = "") {
         global $DB;
 
        if ($children = $DB->get_records('company', ['parentid' => $companyid ], 'name', 'id,name,parentid')) {
-           $prepend = "--" . $prepend;
+           if ($useprepend) {
+               $prepend = "--" . $prepend;
+           } else {
+               $prepend = "";
+           }
            foreach ($children as $child) {
                $companyarray[$child->id] = $prepend . format_string($child->name);
-               self::get_formatted_child_companies_select($child->id, $companyarray, $prepend);
+               self::get_formatted_child_companies_select($child->id, $useprepend = true, $companyarray, $prepend);
            }
         }
         return $companyarray;
@@ -1514,9 +1540,21 @@ class company {
         if ($companycourses = $this->get_menu_courses(true, false, false, false)) {
             foreach ($companycourses as $courseid => $name) {
                 $coursecontext = \context_course::instance($courseid);
-                if (is_enrolled($coursecontext, $userid, '', true)) {
-                    // Clear down the user from the course.
-                    company_user::delete_user_course($userid, $courseid, 'autodelete');
+                if ($licrecs = $DB->get_records_select('local_iomad_track',
+                                                       'id',
+                                                       'userid = :userid
+                                                        AND courseid = :courseid
+                                                        AND companyid = :companyid
+                                                        AND coursecleared = 0
+                                                        AND timecompleted > 0',
+                                                       ['userid' => $userid,
+                                                        'companyid' => $this->id,
+                                                        'courseid' => $courseid])) {
+                    // Clear down the user from the courses.
+                    foreach ($licrecs as $licrec) {
+                        // Remove this specific record.
+                        company_user::delete_user_course($userid, $courseid, 'autodelete', $licrec->id);
+                    }
                 }
             }
         }
@@ -3345,9 +3383,19 @@ class company {
                         continue;
                     }
                     // Terminate all of their enrolments.
-                    $usercourses = enrol_get_users_courses($userid);
-                    foreach ($usercourses as $courseid => $usercourse) {
-                        company_user::delete_user_course($userid, $courseid, 'autodelete');
+                    $usercourses = $DB->get_records_select('local_iomad_track',
+                                                           'id',
+                                                           'userid = :userid
+                                                            AND courseid = :courseid
+                                                            AND companyid = :companyid
+                                                            AND coursecleared = 0
+                                                            AND timecompleted > 0',
+                                                           ['userid' => $userid,
+                                                            'companyid' => $this->id,
+                                                            'courseid' => $courseid]);
+                    foreach ($usercourses as $licrec) {
+                        // Remove this specific record.
+                        company_user::delete_user_course($userid, $courseid, 'autodelete', $licrec->id);
                     }
                 }
             }
@@ -3734,7 +3782,7 @@ class company {
                         $errors .= format_string($course->fullname) . " ";
                     }
                 } else {
-                    company_user::enrol($user, array($course->id));
+                    company_user::enrol($user, array($course->id), $this->id);
                 }
             }
         }
@@ -4110,9 +4158,6 @@ class company {
         $userid = $data['relateduserid'];
         $courseid = $data['courseid'];
 
-        // Get the completion record.
-        $completionrec = $DB->get_record('course_completions', array('userid' => $userid, 'course' => $courseid));
-
         // Get the enrolment record as the completion record isn't fully formed at this point.
         if (!$enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                          JOIN {enrol} e ON (ue.enrolid = e.id)
@@ -4127,66 +4172,59 @@ class company {
 
         // Do not send if this is already recorded.
         if (!empty($enrolrec->timestart)) {
-            if ($trackrec = $DB->get_record_sql("SELECT * FROM {local_iomad_track}
-                                    WHERE userid=:userid
-                                    AND courseid = :courseid
-                                    AND timeenrolled > :timelow
-                                    AND timeenrolled < :timehigh",
-                                    array('userid' => $userid,
-                                          'courseid' => $courseid,
-                                          'timelow' => $enrolrec->timestart - 10,
-                                          'timehigh' => $enrolrec->timestart + 10))) {
-                if ($trackrec->timecompleted !=null && (round($trackrec->timecompleted  / 10 ) * 10) != (round($completionrec->timecompleted /10) *10)) {
-                    return true;
-                }
-            }
-        }
+            if ($trackrecs = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
+                                                   WHERE userid=:userid
+                                                   AND courseid = :courseid
+                                                   AND timeenrolled > :timelow
+                                                   AND timeenrolled < :timehigh",
+                                                  ['userid' => $userid,
+                                                   'courseid' => $courseid,
+                                                   'timelow' => $enrolrec->timestart - 10,
+                                                   'timehigh' => $enrolrec->timestart + 10])) {
+                foreach ($trackrecs as $trackrec) {
+                    // Check if this enrolment time has already been processed.
+                    if ($trackrec->timecompleted !=null && (round($trackrec->timecompleted  / 10 ) * 10) != (round($data['timecreated'] /10) *10)) {
+                        // It has - ignore it.
+                        continue;
+                    }
 
-        $course = $DB->get_record('course', array('id' => $courseid));
-        $user = $DB->get_record('user', array('id' => $userid));
-        $companyinfo = self::get_company_byuserid($userid);
-        $company = new company($companyinfo->id);
+                    // Build the emails.
+                    $course = $DB->get_record('course', array('id' => $courseid));
+                    $user = $DB->get_record('user', array('id' => $userid));
+                    $company = new company($trackrec->companyid);
+                    $attachment = null;
+                    if ($trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackrec->id))) {
+                        $fileinfo = $DB->get_record('files', array('itemid' => $trackrec->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
+                        $filedir1 = substr($fileinfo->contenthash,0,2);
+                        $filedir2 = substr($fileinfo->contenthash,2,2);
+                        $attachment->filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
+                        $attachment->filename = $trackfileinfo->filename;
+                    }
 
-        // Deal with attachment.
-        $trackinfos = $DB->get_records_sql('SELECT * FROM {local_iomad_track}
-                                          WHERE userid = :userid
-                                          AND courseid = :courseid
-                                          ORDER BY id DESC',
-                                          array('userid' => $userid, 'courseid' => $courseid), 0, 1);
-        $attachment = new stdclass();
-        $trackinfo = array_pop($trackinfos);
-        if ($trackfileinfo = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackinfo->id))) {
-            $fileinfo = $DB->get_record('files', array('itemid' => $trackinfo->id, 'component' => 'local_iomad_track', 'filename' => $trackfileinfo->filename));
-            $filedir1 = substr($fileinfo->contenthash,0,2);
-            $filedir2 = substr($fileinfo->contenthash,2,2);
-            $attachment->filepath = $CFG->dataroot . '/filedir/' . $filedir1 . '/' . $filedir2 . '/' . $fileinfo->contenthash;
-            $attachment->filename = $trackfileinfo->filename;
-        } else {
-            $attachment = null;
-        }
-
-        $complete = false;
-        if(!empty($trackinfo->licenseid) && $DB->get_record('companylicense', array('id' => $trackinfo->licenseid, 'program' => 1))) {
-            $licenses = $DB->get_records('companylicense_users', array('licenseid' => $trackinfo->licenseid));
-            foreach ($licenses as $license) {
-                if ($license->isusing && $DB->get_record_sql("SELECT id FROM {course_completions}
-                                                              WHERE userid = :userid
-                                                              AND course = :courseid
-                                                              AND timecompleted IS NOT NULL",
-                                                              array('courseid' => $license->licensecourseid,
-                                                                    'userid' => $user->id))) {
-                    $complete = true;
-                } else {
+                    // Initial set up for handling programs.
                     $complete = false;
+                    if(!empty($trackrec->licenseid) && $DB->get_record('companylicense', array('id' => $trackrec->licenseid, 'program' => 1))) {
+                        $licenses = $DB->get_records('companylicense_users', array('licenseid' => $trackrec->licenseid));
+                        foreach ($licenses as $license) {
+                            if ($license->isusing && $DB->get_record_sql("SELECT id FROM {course_completions}
+                                                                          WHERE userid = :userid
+                                                                          AND course = :courseid
+                                                                          AND timecompleted IS NOT NULL",
+                                                                          array('courseid' => $license->licensecourseid,
+                                                                                'userid' => $user->id))) {
+                                $complete = true;
+                            }
+                        }
+                    }
+                    if (!$complete) {
+                        EmailTemplate::send('completion_course_user', array('course' => $course, 'user' => $user, 'company' => $company, 'attachment' => $attachment));
+                        $supervisortemplate = new EmailTemplate('completion_course_supervisor', array('course' => $course, 'user' => $user, 'company' => $company, 'attachment' => $attachment));
+                        $supervisortemplate->email_supervisor();
+                    } else {
+                        EmailTemplate::send('user_programcompleted', array('course' => $course, 'user' => $user, 'company' => $company, 'attachment' => $attachment));
+                    }
                 }
             }
-        }
-        if (!$complete) {
-            EmailTemplate::send('completion_course_user', array('course' => $course, 'user' => $user, 'company' => $company, 'attachment' => $attachment));
-            $supervisortemplate = new EmailTemplate('completion_course_supervisor', array('course' => $course, 'user' => $user, 'company' => $company, 'attachment' => $attachment));
-            $supervisortemplate->email_supervisor();
-        } else {
-            EmailTemplate::send('user_programcompleted', array('course' => $course, 'user' => $user, 'company' => $company, 'attachment' => $attachment));
         }
 
         return true;
@@ -4202,11 +4240,13 @@ class company {
         global $DB, $CFG;
 
         $userid = $event->objectid;
+        $companyid = $event->companyid;
         $user = $DB->get_record('user', array('id' => $userid));
         $user->manager = 'no';
 
         if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
-            if ($company = self::by_userid($userid)) {
+            if (!empty($companyid)) {
+                $company = new company();
                 if (empty($CFG->commerce_admin_enableall) && empty($company->companyrecord->ecommerce)) {
                     return true;
                 }
@@ -4234,32 +4274,37 @@ class company {
 
         $userid = $event->relateduserid;
         $user = $DB->get_record('user', array('id' => $userid));
-        $company = self::get_company_byuserid($user->id);
-        if (empty($company)) {
-            return true;
-        }
 
-        if ($DB->get_record('company_users', array('userid'=> $user->id, 'companyid' => $company->id, 'managertype' => 1))) {
-            $user->manager = 'yes';
-            $user->country = $company->country;
-            $user->city = $company->city;
-            $user->adress = "";
-        } else {
-            $user->manager = 'no';
-        }
-        $user->company = $company->name;
+        // Get all of the companies the user is tied to
+        $usercompanies = $DB->get_records_sql("SELECT DISTINCT c.*
+                                               FROM {company} c 
+                                               JOIN {company_users} cu ON (c.id = cu.companyid)
+                                               WHERE cu.userid = :userid",
+                                               array('userid' => $userid));
 
-        if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
-            if (empty($CFG->commerce_admin_enableall) && empty($company->ecommerce)) {
-                return true;
+        foreach ($usercompanies as $usercompany) {
+            $company = new company($usercompany->id);
+
+
+            if ($DB->get_record('company_users', array('userid'=> $user->id, 'companyid' => $usercompany->id, 'managertype' => 1))) {
+                $user->manager = 'yes';
+                $user->country = $usercompany->country;
+                $user->city = $usercompany->city;
+                $user->adress = "";
+            } else {
+                $user->manager = 'no';
             }
-            if (empty($user->company)) {
-                $user->company = $company->get_name();
-            }
+            $user->company = $company->get_name();
 
-            // Fire off the payload to the external site.
-            require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
-            iomad_commerce::update_user($user, $company->id);
+            if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
+                if (empty($CFG->commerce_admin_enableall) && empty($usercompany->ecommerce)) {
+                    continue;
+                }
+
+                // Fire off the payload to the external site.
+                require_once($CFG->dirroot . '/blocks/iomad_commerce/locallib.php');
+                iomad_commerce::update_user($user, $company->id);
+            }
         }
 
         return true;
@@ -4277,12 +4322,21 @@ class company {
         $userid = $event->objectid;
         $timestamp = time();
 
-        $usercompany = self::by_userid($userid);
-        $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));
         $user = $DB->get_record('user', array('id' => $userid));
-        EmailTemplate::send('user_suspended',
-                             array('company' => $usercompany,
+
+        // Get all of the companies the user is tied to
+        $usercompanies = $DB->get_records_sql("SELECT DISTINCT companyid
+                                               FROM {company_users}
+                                               WHERE userid = :userid",
+                                               array('userid' => $userid));
+
+        foreach ($usercompanies as $usercompany) {
+            $company = new company($usercompany->companyid);
+            company_user::suspend($userid, $usercompany->companyid);
+            EmailTemplate::send('user_suspended',
+                             array('company' => $company,
                                    'user' => $user));
+        }
 
         return true;
     }
@@ -4299,12 +4353,21 @@ class company {
         $userid = $event->objectid;
         $timestamp = time();
 
-        $usercompany = self::by_userid($userid);
-        $usercompanyrec = $DB->get_record('company_users', array('userid' => $userid, 'companyid' => $usercompany->id));
         $user = $DB->get_record('user', array('id' => $userid));
-        EmailTemplate::send('user_unsuspended',
-                             array('company' => $usercompany,
+
+        // Get all of the companies the user is tied to
+        $usercompanies = $DB->get_records_sql("SELECT DISTINCT companyid
+                                               FROM {company_users}
+                                               WHERE userid = :userid",
+                                               array('userid' => $userid));
+
+        foreach ($usercompanies as $usercompany) {
+            $company = new company($usercompany->companyid);
+            company_user::suspend($userid, $usercompany->companyid);
+            EmailTemplate::send('user_unsuspended',
+                             array('company' => $company,
                                    'user' => $user));
+        }
 
         return true;
     }
@@ -4318,9 +4381,16 @@ class company {
     public static function user_enrolment_created(\core\event\user_enrolment_created $event) {
         global $DB, $CFG;
 
+echo "IN company::user_enrolment_created</br>";
         $userid = $event->relateduserid;
         $timestamp = $event->timecreated;
         $courseid = $event->courseid;
+        $companyid = $event->companyid;
+
+        // Were we passed a companyid?
+        if (empty($companyid)) {
+            return true;
+        }
 
         // Is this a shared course?
         if ($DB->get_record('iomad_courses', array('courseid' => $courseid, 'shared' => 0))) {
@@ -4334,15 +4404,8 @@ class company {
             return true;
         }
 
-        // Does the user have a company?
-        $companyrec = self::get_company_byuserid($userid);
-        if (empty($companyrec->id)) {
-            // It doesn't - return.
-            return true;
-        }
-
         // Add the user to the appropriate course group.
-        self::add_user_to_shared_course($courseid, $userid, $companyrec->id);
+        self::add_user_to_shared_course($courseid, $userid, $companyid);
 
         return true;
     }
@@ -4398,6 +4461,7 @@ class company {
         $userid = $event->objectid;
         $timestamp = time();
 
+        // Get all of the companies the user is tied to
         $usercompanies = $DB->get_records_sql("SELECT DISTINCT companyid
                                                FROM {company_users}
                                                WHERE userid = :userid",
@@ -4555,7 +4619,43 @@ class company {
                     }
 
                     if ($licenserecord->type < 2) {
-                        $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
+echo "Checking if user $user->id is enrolled on course $instance->courseid</br>";
+                        if (!is_enrolled(context_course::instance($instance->courseid), $user->id)) {
+echo "They aren't so we will add them</br>";
+                            $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
+                        } else if ($completedrecords = $DB->get_records_select('local_iomad_track',
+                                                                                "userid = :userid
+                                                                                 AND courseid = :courseid
+                                                                                 AND timecompleted IS NOT NULL
+                                                                                 AND coursecleared = 0
+                                                                                 AND licenseallocated != :timeallocated",
+                                                                                 ['userid' => $userid,
+                                                                                 'courseid' => $course->id,
+                                                                                 'timeallocated' => $event->timecreated])) {
+echo "Getting records from LIT as we have have copmpleted all of the other assignations<br>";
+                            // All previous attempts have been completed so enrol again.
+                            foreach ($completedrecords as $completedrecord) {
+                                // Complete any license allocations.
+echo "Dealing with LIT id $completedrecord->id<br>";
+                                if ($licenserecord = $DB->get_record('companylicense_users', ['userid' => $completedrecord->userid,
+                                                                                              'licensecourseid' => $completedrecord->courseid,
+                                                                                              'licenseid' => $completedrecord->licenseid,
+                                                                                              'issuedate' => $completedrecord->licenseallocated])) {
+                                    if (empty($licenserecord->timecompleted)) {
+echo "Marking clu.id $licenserecord->id as finished with @ $timestart<br>";
+                                        $DB->set_field('companylicense_users', 'timecompleted', $timestart, ['id' => $licenserecord->id]);
+                                    }
+                                }
+                                $DB->set_field('local_iomad_track', 'completedstop', 1, ['id' => $completedrecord->id]);
+                            }
+echo "Clearing down the course</br>";
+                            // Clear them from the course.
+                            company_user::delete_user_course($user->id, $course->id, 'autodelete');
+
+echo "Re-enrolling them on the course</br>";
+                            // Then re-enrol them.
+                            $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
+                        } 
                     } else {
                         // Educator role.
                         if ($DB->get_record('iomad_courses', array('courseid' => $course->id, 'shared' => 0))) {
@@ -4952,7 +5052,40 @@ class company {
         $courseid = $event->courseid;
         $action = 'autodelete';
 
-        company_user::delete_user_course($userid, $courseid, $action);
+        $companyid = $event->companyid;
+mtrace("In company user_course_expired");
+        if ($DB->count_records_select('local_iomad_track',
+                                      'userid = :userid
+                                       AND courseid = :courseid
+                                       AND coursecleared = 0
+                                       AND timecompleted IS NULL',
+                                      ['userid' => $userid,
+                                       'courseid' => $courseid]) > 0) {
+mtrace("We got more than one");
+
+
+            // Get the specific record for this company.
+            $licrecs = $DB->get_records_select('local_iomad_track',
+                                               'userid = :userid
+                                                AND courseid = :courseid
+                                                AND companyid = :companyid
+                                                AND coursecleared = 0
+                                                AND timecompleted > 0',
+                                               ['userid' => $userid,
+                                                'companyid' => $companyid,
+                                                'courseid' => $courseid]);
+            foreach ($licrecs as $licrec) {
+mtrace("removing $licrec->id");
+
+                // Remove this specific record.
+                company_user::delete_user_course($userid, $courseid, $action, $licrec->id);
+            }
+        } else {
+mtrace("Only the one - removing them completely");
+            // Delete them.
+            company_user::delete_user_course($userid, $courseid, $action);
+        }
+
 
         return true;
     }

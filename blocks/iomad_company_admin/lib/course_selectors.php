@@ -721,7 +721,15 @@ class current_user_course_selector extends course_selector_base {
             $groupname = get_string('usercourses', 'block_iomad_company_admin');
         }
 
-        if ($coursearray = enrol_get_users_courses($this->user->id, true, null, 'fullname')) {
+        if ($coursearray = $DB->get_records_sql("SELECT DISTINCT c.* 
+                                                 FROM {course} c
+                                                 JOIN {enrol} e ON (c.id = e.courseid)
+                                                 JOIN {user_enrolments} ue ON (e.id = ue.enrolid)
+                                                 JOIN {local_iomad_track} lit ON (e.courseid = lit.courseid AND c.id = lit.courseid AND ue.userid=lit.userid AND ue.timecreated = lit.timeenrolled)
+                                                 WHERE lit.userid = :userid
+                                                 AND lit.companyid = :companyid",
+                                                ['userid' => $this->user->id ,
+                                                 'companyid' => $this->companyid])) {
             // Don't want license courses.
             foreach ($coursearray as $courseid => $coursedata) {
                 if ($DB->get_record('iomad_courses', array('courseid' => $courseid, 'licensed' => 1))) {
@@ -813,7 +821,16 @@ class potential_user_course_selector extends course_selector_base {
             }
             $departmentcondition .= ") ";
         }
-        $currentcourses = enrol_get_users_courses($this->user->id, true, null, 'visible DESC, sortorder ASC');
+        $currentcourses = $DB->get_records_sql("SELECT DISTINCT c.*
+                                                FROM {course} c
+                                                JOIN {enrol} e ON (c.id = e.courseid)
+                                                JOIN {user_enrolments} ue ON (e.id = ue.enrolid)
+                                                JOIN {local_iomad_track} lit ON (e.courseid = lit.courseid AND c.id = lit.courseid AND ue.userid=lit.userid AND ue.timecreated = lit.timeenrolled)
+                                                WHERE lit.userid = :userid
+                                                AND lit.companyid = :companyid
+                                                AND lit.coursecleared = 0",
+                                               ['userid' => $this->user->id ,
+                                                'companyid' => $this->companyid]);
         if (!empty($currentcourses)) {
             $currentcoursesql = "AND c.id not in (".implode(',', array_keys($currentcourses)).")";
         } else {
@@ -1144,6 +1161,7 @@ class potential_user_license_course_selector extends course_selector_base {
         // By default wherecondition retrieves all courses except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'c');
         $params['companyid'] = $this->companyid;
+        $params['licensecompanyid'] = $this->companyid;
         $params['siteid'] = $SITE->id;
         $params['timestamp'] = time();
         $params['userid'] = $this->user->id;
@@ -1168,7 +1186,11 @@ class potential_user_license_course_selector extends course_selector_base {
                         AND c.id NOT IN
                         ( SELECT clu.licensecourseid FROM {companylicense_users} clu
                           WHERE clu.userid = :userid
-                          AND clu.timecompleted IS NULL)";
+                          AND clu.timecompleted IS NULL
+                          AND clu.licenseid IN
+                          ( SELECT id FROM {companylicense} WHERE companyid = :licensecompanyid
+                          )
+                        )";
 
         $order = ' ORDER BY c.fullname ASC';
         if (!$this->is_validating()) {

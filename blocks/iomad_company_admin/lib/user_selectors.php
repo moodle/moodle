@@ -484,6 +484,7 @@ class current_company_course_user_selector extends company_user_selector_base {
                  JOIN {user_enrolments} ue ON (ue.userid = u.id)
                  JOIN {enrol} e ON (ue.enrolid = e.id AND ".$DB->sql_compare_text('e.enrol')."='manual' AND e.status = 0)
                  JOIN {course} c ON (e.courseid = c.id)
+                 JOIN {local_iomad_track} lit ON (c.id = lit.courseid AND e.courseid = lit.courseid AND cu.userid = lit.userid AND ue.userid = lit.userid AND cu.companyid = lit.companyid AND ue.timecreated = lit.timeenrolled)
 
                  WHERE $wherecondition AND u.suspended = 0
                  AND cu.companyid = :companyid
@@ -636,10 +637,12 @@ class potential_company_course_user_selector extends company_user_selector_base 
         } else {
             $usersql = "SELECT ue.userid,count(ue.enrolid) AS enrolcount FROM {user_enrolments} ue
                         JOIN {enrol} e ON (ue.enrolid = e.id AND ".$DB->sql_compare_text('e.enrol')."='manual' AND e.status = 0)
+                        JOIN {local_iomad_track} lit ON (e.courseid = lit.courseid AND ue.userid=lit.userid AND ue.timecreated = lit.timeenrolled)
                         WHERE $coursesql
+                        AND lit.companyid = :companyid
                         GROUP BY ue.userid
                         $countsql";
-            if ($users = $DB->get_records_sql($usersql)) {
+            if ($users = $DB->get_records_sql($usersql, ['companyid' => $this->companyid])) {
                 // Only return the keys (user ids).
                 return array_keys($users);
             } else {
@@ -1111,23 +1114,28 @@ class potential_license_user_selector extends company_user_selector_base {
             return array();
         } else {
             if (!empty($this->selectedcourses) && !in_array(0, $this->selectedcourses)) {
-                $coursesql = " AND licensecourseid IN (" . implode(',', array_values($this->selectedcourses)) . ") ";
-                $countsql = " HAVING count(licensecourseid) = " . count($this->selectedcourses);
+                $coursesql = " AND clu.licensecourseid IN (" . implode(',', array_values($this->selectedcourses)) . ") ";
+                $countsql = " HAVING count(clu.licensecourseid) = " . count($this->selectedcourses);
             } else {
-                $coursesql = " AND licensecourseid IN (" . implode(',', array_keys($this->courses)) . ") ";
-                $countsql = " HAVING count(licensecourseid) = " . count($this->courses);
+                $coursesql = " AND clu.licensecourseid IN (" . implode(',', array_keys($this->courses)) . ") ";
+                $countsql = " HAVING count(clu.licensecourseid) = " . count($this->courses);
             }
             if ($this->program) {
-                $usersql = "select DISTINCT userid from {companylicense_users} where licenseid=".$this->licenseid."
-                            AND timecompleted IS NULL";
+                $usersql = "SELECT DISTINCT clu.userid
+                            FROM {companylicense_users} clu
+                            WHERE clu.licenseid=".$this->licenseid."
+                            AND clu.timecompleted IS NULL";
             } else {
-                $usersql = "SELECT userid,count(licensecourseid) AS coursecount FROM {companylicense_users}
-                            WHERE timecompleted IS NULL
+                $usersql = "SELECT clu.userid,count(clu.licensecourseid) AS coursecount
+                            FROM {companylicense_users} clu
+                            JOIN {companylicense} cl ON (clu.licenseid = cl.id)
+                            WHERE clu.timecompleted IS NULL
+                            AND cl.companyid = :companyid
                             $coursesql
-                            GROUP BY userid
+                            GROUP BY clu.userid
                             $countsql";
             }
-            if ($users = $DB->get_records_sql($usersql)) {
+            if ($users = $DB->get_records_sql($usersql, ['companyid' => $this->companyid])) {
                 // Only return the keys (user ids).
                 return array_keys($users);
             } else {
