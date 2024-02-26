@@ -385,6 +385,8 @@ M.mod_quiz.autosave = {
             M.mod_quiz.timer.updateEndTime(autosavedata.timeleft);
         }
 
+        this.update_saved_time_display();
+
         Y.log('Save completed.', 'debug', 'moodle-mod_quiz-autosave');
         this.save_transaction = null;
 
@@ -415,6 +417,21 @@ M.mod_quiz.autosave = {
             Y.one(this.SELECTORS.CONNECTION_ERROR).show();
             Y.one(this.SELECTORS.CONNECTION_OK).hide();
         }
+    },
+
+    /**
+     * Inform the user that their answers have been saved.
+     *
+     * @method update_saved_time_display
+     */
+    update_saved_time_display: function() {
+        // We fetch the current language's preferred time format from the language pack.
+        var timeFormat = M.util.get_string('strftimedatetimeshortaccurate', 'langconfig');
+        var message = M.util.get_string('lastautosave', 'quiz', Y.Date.format(new Date(), {'format': timeFormat}));
+
+        var infoDiv = Y.one('#mod_quiz_navblock .othernav .autosave_info');
+        infoDiv.set('text', message);
+        infoDiv.show();
     },
 
     is_time_nearly_over: function() {

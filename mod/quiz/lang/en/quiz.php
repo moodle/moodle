@@ -503,6 +503,7 @@ $string['invalidsource'] = 'The source is not accepted as valid.';
 $string['invalidsourcetype'] = 'Invalid source type.';
 $string['invalidstateid'] = 'Invalid state id';
 $string['lastanswer'] = 'Your last answer was';
+$string['lastautosave'] = 'Last saved: {$a}';
 $string['layout'] = 'Layout';
 $string['layoutasshown'] = 'Page layout as shown.';
 $string['layoutasshownwithpages'] = 'Page layout as shown. <small>(Automatic new page every {$a} questions.)</small>';
