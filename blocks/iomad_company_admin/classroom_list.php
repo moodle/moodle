@@ -126,8 +126,8 @@ $tablecolumns = ['name',
                  'postcode'];
 
 // Are we adding the actions buttons?
-if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $context) ||
-    iomad::has_capability('block/iomad_company_admin:classrooms_edit', $context)) {
+if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $companycontext) ||
+    iomad::has_capability('block/iomad_company_admin:classrooms_edit', $companycontext)) {
     $tableheaders[] = "";
     $tablecolumns[] = 'actions';
 }
@@ -139,7 +139,7 @@ $table->define_headers($tableheaders);
 $table->sort_default_column = 'name DESC';
 $table->no_sorting('actions');
 
-if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $context)) {
+if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $companycontext)) {
     $buttonlink = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/classroom_edit_form.php");
     $buttoncaption =  get_string('classrooms_add', 'block_iomad_company_admin');
     $PAGE->set_button($OUTPUT->single_button($buttonlink, $buttoncaption, 'get'));

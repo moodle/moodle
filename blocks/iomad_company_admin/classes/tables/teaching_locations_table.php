@@ -144,19 +144,20 @@ class teaching_locations_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_actions($row) {
-        global $CFG, $OUTPUT, $DB, $USER, $params, $context;
+        global $CFG, $OUTPUT, $DB, $USER, $params, $companycontext;
 
         $deletebutton = "";
         $editbutton = "";
+        $sesskey = sesskey();
 
-        if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $companycontext)) {
             $deleteurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/classroom_list.php',
                                         ['delete' => $row->id,
                                         'sesskeyy' => $sesskey]);
             $deletebutton = "<a href='" . $deleteurl . "'><i class='icon fa fa-trash fa-fw' title='" . get_string('delete') . "' role='img' aria-label='" . get_string('delete') . "'></i></a>";
         }
 
-        if (iomad::has_capability('block/iomad_company_admin:classrooms_edit', $context)) {
+        if (iomad::has_capability('block/iomad_company_admin:classrooms_edit', $companycontext)) {
             $editurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/classroom_edit_form.php',
                                       ['id' => $row->id]);
             $editbutton = "<a href='" . $editurl . "'><i class='icon fa fa-cog fa-fw' title='" . get_string('edit') . "' role='img' aria-label='" . get_string('edit') . "'></i></a>";
