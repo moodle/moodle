@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tool_mobile\local\hooks\output;
+namespace tool_mobile\local\hook\output;
 
 /**
  * Allows plugins to add any elements to the page <head> html tag
@@ -23,14 +23,13 @@ namespace tool_mobile\local\hooks\output;
  * @copyright  2023 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class standard_head_html_prepend {
-
+class before_standard_head_html_generation {
     /**
      * Callback to add head elements.
      *
-     * @param \core\hook\output\standard_head_html_prepend $hook
+     * @param \core\hook\output\before_standard_head_html_generation $hook
      */
-    public static function callback(\core\hook\output\standard_head_html_prepend $hook): void {
+    public static function callback(\core\hook\output\before_standard_head_html_generation $hook): void {
         global $CFG, $PAGE;
         // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
         if (!empty($CFG->enablemobilewebservice)) {
@@ -45,7 +44,7 @@ class standard_head_html_prepend {
 
                 if (!empty($mobilesettings->androidappid)) {
                     $mobilemanifesturl = "$CFG->wwwroot/$CFG->admin/tool/mobile/mobile.webmanifest.php";
-                    $hook->add_html('<link rel="manifest" href="'.$mobilemanifesturl.'" />');
+                    $hook->add_html('<link rel="manifest" href="' . $mobilemanifesturl . '" />');
                 }
             }
         }

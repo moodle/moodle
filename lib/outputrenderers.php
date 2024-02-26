@@ -698,15 +698,13 @@ class core_renderer extends renderer_base {
             $this->page->blocks->ensure_content_created($region, $this);
         }
 
-        $output = '';
-
         // Give plugins an opportunity to add any head elements. The callback
         // must always return a string containing valid html head content.
 
-        $hook = new \core\hook\output\standard_head_html_prepend();
+        $hook = new \core\hook\output\before_standard_head_html_generation();
         \core\hook\manager::get_instance()->dispatch($hook);
         $hook->process_legacy_callbacks();
-        $output .= $hook->get_output();
+        $output = $hook->get_output();
 
         // Allow a url_rewrite plugin to setup any dynamic head content.
         if (isset($CFG->urlrewriteclass) && !isset($CFG->upgraderunning)) {

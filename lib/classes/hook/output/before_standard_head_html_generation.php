@@ -26,7 +26,7 @@ namespace core\hook\output;
 #[\core\attribute\tags('output')]
 #[\core\attribute\label('Allows plugins to add any elements to the page &lt;head&gt; html tag.')]
 #[\core\attribute\hook\replaces_callbacks('before_standard_html_head')]
-class standard_head_html_prepend {
+class before_standard_head_html_generation {
     /** @var string $output Stores results from callbacks */
     private $output = '';
 
