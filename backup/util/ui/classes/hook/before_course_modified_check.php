@@ -51,13 +51,10 @@ final class before_course_modified_check implements described_hook {
 
     /**
      * Add an array of event names which are excluded to trigger from course changes in automated backup.
-     * This is set from plugin hook.
-     * e.g. ['\local_course\event\update', '\local_course\event\sync']
      *
-     * @param string[] $events Array of event name strings
-     * @return void
+     * @param string $events,... Array of event name strings
      */
-    public function exclude_events(array $events): void {
+    public function exclude_events(string ...$events): void {
         $this->events = array_merge($this->events, $events);
     }
 
