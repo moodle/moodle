@@ -211,7 +211,8 @@ foreach ($overrides as $override) {
     }
 
     // Format timelimit.
-    if (isset($override->timelimit)) {
+    $timelimitenabled = get_config('assign', 'enabletimelimit');
+    if ($timelimitenabled && isset($override->timelimit)) {
         $fields[] = get_string('timelimit', 'assign');
         $values[] = $override->timelimit > 0 ? format_time($override->timelimit) : get_string('none', 'assign');
     }
