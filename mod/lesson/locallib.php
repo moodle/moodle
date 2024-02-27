@@ -1063,7 +1063,7 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
             $row = [$studentname];
 
             foreach ($extrafields as $field) {
-                $row[] = $student->$field;
+                $row[] = s($student->$field);
             }
 
             $row[] = $attempts;
