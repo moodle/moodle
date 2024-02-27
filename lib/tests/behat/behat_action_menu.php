@@ -132,8 +132,8 @@ class behat_action_menu extends behat_base {
         if ($this->running_javascript()) {
             // Open the menu by clicking on the trigger.
             $this->execute(
-                'behat_general::i_click_on',
-                [$menu, "NodeElement"]
+                'behat_general::i_click_on_in_the',
+                ['a.dropdown-toggle', 'css_element', $menu, "NodeElement"]
             );
         }
 
