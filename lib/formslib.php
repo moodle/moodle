@@ -2742,9 +2742,6 @@ require([
       }
     }
 
-    document.getElementById(\'' . $elem->_attributes['id'] . '\').addEventListener(\'blur\', function(ev) {
-        ' . $valFunc . '
-    });
     document.getElementById(\'' . $elem->_attributes['id'] . '\').addEventListener(\'change\', function(ev) {
         ' . $valFunc . '
     });
