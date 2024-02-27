@@ -127,7 +127,6 @@ $string['result_other'] = 'Unknown interaction type';
 $string['result_sequencing_choice'] = 'Positions';
 $string['result_sequencing_answer'] = 'Position value';
 $string['result_sequencing_position'] = '#{$a}';
-$string['review_all_attempts'] = 'View all attempts ({$a} submitted)';
 $string['review_mode'] = 'Review attempts';
 $string['review_my_attempts'] = 'View my attempts';
 $string['review_user_attempts'] = 'View user attempts ({$a})';
@@ -147,4 +146,5 @@ $string['tracking_messages'] = 'Some H5P provide attempt tracking data for advan
 $string['true'] = 'True';
 $string['usecontentbank'] = 'Use the <a href="{$a}" target="_blank">content bank (opens in new window)</a> to manage your H5P files';
 $string['view'] = 'View';
+$string['viewattempts'] = 'View attempts ({$a})';
 $string['view_report'] = 'View report';

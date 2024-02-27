@@ -215,6 +215,7 @@ class icon_system_fontawesome extends icon_system_font {
             'core:i/contentbank' => 'fa-paint-brush',
             'core:i/dashboard' => 'fa-tachometer',
             'core:i/categoryevent' => 'fa-cubes',
+            'core:i/chartbar' => 'fa-chart-bar',
             'core:i/course' => 'fa-graduation-cap',
             'core:i/courseevent' => 'fa-graduation-cap',
             'core:i/customfield' => 'fa-hand-o-right',
