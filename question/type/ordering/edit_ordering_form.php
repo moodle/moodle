@@ -58,77 +58,66 @@ class qtype_ordering_edit_form extends question_edit_form {
     }
 
     public function definition_inner($mform): void {
-
-        // Cache this plugins name.
-        $plugin = 'qtype_ordering';
-
         // Field for layouttype.
-        $name = 'layouttype';
-        $label = get_string($name, $plugin);
         $options = qtype_ordering_question::get_layout_types();
-        $mform->addElement('select', $name, $label, $options);
-        $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::LAYOUT_VERTICAL));
+        $mform->addElement('select', 'layouttype', get_string('layouttype', 'qtype_ordering'), $options);
+        $mform->addHelpButton('layouttype', 'layouttype', 'qtype_ordering');
+        $mform->setDefault('layouttype', $this->get_default_value('layouttype', qtype_ordering_question::LAYOUT_VERTICAL));
 
         // Field for selecttype.
-        $name = 'selecttype';
-        $label = get_string($name, $plugin);
         $options = qtype_ordering_question::get_select_types();
-        $mform->addElement('select', $name, $label, $options);
-        $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::SELECT_ALL));
+        $mform->addElement('select', 'selecttype', get_string('selecttype', 'qtype_ordering'), $options);
+        $mform->addHelpButton('selecttype', 'selecttype', 'qtype_ordering');
+        $mform->setDefault('selecttype', $this->get_default_value('selecttype', qtype_ordering_question::SELECT_ALL));
 
         // Field for selectcount.
-        $name = 'selectcount';
-        $label = get_string($name, $plugin);
-        $mform->addElement('text', $name, $label, ['size' => 2]);
-        $mform->setDefault($name, qtype_ordering_question::MIN_SUBSET_ITEMS);
-        $mform->setType($name, PARAM_INT);
+        $mform->addElement('text', 'selectcount', get_string('selectcount', 'qtype_ordering'), ['size' => 2]);
+        $mform->setDefault('selectcount', qtype_ordering_question::MIN_SUBSET_ITEMS);
+        $mform->setType('selectcount', PARAM_INT);
         // Hide the field if 'Item selection type' is set to select all items.
-        $mform->hideIf($name, 'selecttype', 'eq', qtype_ordering_question::SELECT_ALL);
-        $mform->addHelpButton($name, $name, $plugin);
-        $mform->addRule($name, null, 'numeric', null, 'client');
+        $mform->hideIf('selectcount', 'selecttype', 'eq', qtype_ordering_question::SELECT_ALL);
+        $mform->addHelpButton('selectcount', 'selectcount', 'qtype_ordering');
+        $mform->addRule('selectcount', null, 'numeric', null, 'client');
 
         // Field for gradingtype.
-        $name = 'gradingtype';
-        $label = get_string($name, $plugin);
         $options = qtype_ordering_question::get_grading_types();
-        $mform->addElement('select', $name, $label, $options);
-        $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::GRADING_ABSOLUTE_POSITION));
+        $mform->addElement('select', 'gradingtype', get_string('gradingtype', 'qtype_ordering'), $options);
+        $mform->addHelpButton('gradingtype', 'gradingtype', 'qtype_ordering');
+        $mform->setDefault(
+            'gradingtype',
+            $this->get_default_value('gradingtype', qtype_ordering_question::GRADING_ABSOLUTE_POSITION)
+        );
 
         // Field for showgrading.
-        $name = 'showgrading';
-        $label = get_string($name, $plugin);
         $options = [0 => get_string('hide'), 1 => get_string('show')];
-        $mform->addElement('select', $name, $label, $options);
-        $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_default_value($name, 1));
+        $mform->addElement('select', 'showgrading', get_string('showgrading', 'qtype_ordering'), $options);
+        $mform->addHelpButton('showgrading', 'showgrading', 'qtype_ordering');
+        $mform->setDefault('showgrading', $this->get_default_value('showgrading', 1));
 
         // Field for numberingstyle.
-        $name = 'numberingstyle';
-        $label = get_string($name, $plugin);
         $options = qtype_ordering_question::get_numbering_styles();
-        $mform->addElement('select', $name, $label, $options);
-        $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::NUMBERING_STYLE_DEFAULT));
+        $mform->addElement('select', 'numberingstyle', get_string('numberingstyle', 'qtype_ordering'), $options);
+        $mform->addHelpButton('numberingstyle', 'numberingstyle', 'qtype_ordering');
+        $mform->setDefault(
+            'numberingstyle',
+            $this->get_default_value('numberingstyle', qtype_ordering_question::NUMBERING_STYLE_DEFAULT)
+        );
 
-        $mform->addElement('header', 'answersheader', get_string('draggableitems', $plugin));
+        $mform->addElement('header', 'answersheader', get_string('draggableitems', 'qtype_ordering'));
         $mform->setExpanded('answersheader', true);
 
         // Field for the answers.
         $elements = [];
         $options = [];
-        $name = 'answer';
-        $elements[] = $mform->createElement('editor', $name, get_string('draggableitemno', $plugin),
+        $elements[] = $mform->createElement('editor', 'answer', get_string('draggableitemno', 'qtype_ordering'),
             $this->get_editor_attributes(), $this->get_editor_options());
-        $elements[] = $mform->createElement('submit', $name . 'removeeditor', get_string('removeeditor', $plugin),
+        $elements[] = $mform->createElement('submit', 'answer' . 'removeeditor', get_string('removeeditor', 'qtype_ordering'),
             ['onclick' => 'skipClientValidation = true;']);
-        $options[$name] = ['type' => PARAM_RAW];
-        $this->add_repeat_elements($mform, $name, $elements, $options);
+        $options['answer'] = ['type' => PARAM_RAW];
+        $this->add_repeat_elements($mform, 'answer', $elements, $options);
 
         // Adjust HTML editor and removal buttons.
-        $this->adjust_html_editors($mform, $name);
+        $this->adjust_html_editors($mform, 'answer');
 
         // Adding feedback fields (=Combined feedback).
         $this->add_combined_feedback_fields(true);
@@ -370,12 +359,11 @@ class qtype_ordering_edit_form extends question_edit_form {
 
     public function validation($data, $files): array {
         $errors = [];
-        $plugin = 'qtype_ordering';
 
         $minsubsetitems = qtype_ordering_question::MIN_SUBSET_ITEMS;
         // Make sure the entered size of the subset is no less than the defined minimum.
         if ($data['selecttype'] != qtype_ordering_question::SELECT_ALL && $data['selectcount'] < $minsubsetitems) {
-            $errors['selectcount'] = get_string('notenoughsubsetitems', $plugin, $minsubsetitems);
+            $errors['selectcount'] = get_string('notenoughsubsetitems', 'qtype_ordering', $minsubsetitems);
         }
 
         // Identify duplicates and report as an error.
@@ -388,11 +376,11 @@ class qtype_ordering_edit_form extends question_edit_form {
             if ($answer = trim($answer)) {
                 if (in_array($answer, $answers)) {
                     $i = array_search($answer, $answers);
-                    $item = get_string('draggableitemno', $plugin);
+                    $item = get_string('draggableitemno', 'qtype_ordering');
                     $item = str_replace('{no}', $i + 1, $item);
                     $item = html_writer::link("#id_answer_$i", $item);
                     $a = (object) ['text' => $answer, 'item' => $item];
-                    $errors["answer[$answercount]"] = get_string('duplicatesnotallowed', $plugin, $a);
+                    $errors["answer[$answercount]"] = get_string('duplicatesnotallowed', 'qtype_ordering', $a);
                 } else {
                     $answers[] = $answer;
                 }
@@ -403,10 +391,10 @@ class qtype_ordering_edit_form extends question_edit_form {
         // If there are no answers provided, show error message under first 2 answer boxes
         // If only 1 answer provided, show error message under second answer box.
         if ($answercount < 2) {
-            $errors['answer[1]'] = get_string('notenoughanswers', $plugin, 2);
+            $errors['answer[1]'] = get_string('notenoughanswers', 'qtype_ordering', 2);
 
             if ($answercount == 0) {
-                $errors['answer[0]'] = get_string('notenoughanswers', $plugin, 2);
+                $errors['answer[0]'] = get_string('notenoughanswers', 'qtype_ordering', 2);
             }
         }
 
@@ -434,17 +422,13 @@ class qtype_ordering_edit_form extends question_edit_form {
      * @return array (type => description)
      */
     protected function get_addcount_options(string $type, int $max = 10): array {
-
-        // Cache plugin name.
-        $plugin = $this->plugin_name();
-
         // Generate options.
         $options = [];
         for ($i = 1; $i <= $max; $i++) {
             if ($i == 1) {
-                $options[$i] = get_string('addsingle'.$type, $plugin);
+                $options[$i] = get_string('addsingle'.$type, 'qtype_ordering');
             } else {
-                $options[$i] = get_string('addmultiple'.$type.'s', $plugin, $i);
+                $options[$i] = get_string('addmultiple'.$type.'s', 'qtype_ordering', $i);
             }
         }
         return $options;
@@ -461,9 +445,6 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     protected function add_repeat_elements(MoodleQuickForm $mform, string $type, array $elements, array $options): void {
 
-        // Cache plugin name.
-        $plugin = $this->plugin_name();
-
         // Cache element names.
         $types = $type.'s';
         $addtypes = 'add'.$types;
@@ -476,7 +457,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $count = optional_param($addtypescount, self::NUM_ITEMS_ADD, PARAM_INT);
 
         $label = ($count == 1 ? 'addsingle'.$type : 'addmultiple'.$types);
-        $label = get_string($label, $plugin, $count);
+        $label = get_string($label, 'qtype_ordering', $count);
 
         $this->repeat_elements($elements, $repeats, $options, $counttypes, $addtypes, $count, $label, true);
 

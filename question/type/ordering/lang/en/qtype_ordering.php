@@ -99,7 +99,12 @@ $string['pluginname_link'] = 'question/type/ordering';
 $string['pluginnameadding'] = 'Adding an Ordering question';
 $string['pluginnameediting'] = 'Editing an Ordering question';
 $string['pluginnamesummary'] = 'Put jumbled items into a meaningful order.';
-$string['privacy:metadata'] = 'The ordering question type plugin does not store any personal data.';
+$string['privacy:preference:layouttype'] = 'layouttype.';
+$string['privacy:preference:selecttype'] = 'selecttype.';
+$string['privacy:preference:selectcount'] = 'selectcount.';
+$string['privacy:preference:gradingtype'] = 'gradingtype.';
+$string['privacy:preference:showgrading'] = 'showgrading.';
+$string['privacy:preference:numberingstyle'] = 'numberingstyle.';
 
 $string['regradeissuenumitemschanged'] = 'The number of draggable items has changed.';
 $string['relativeallpreviousandnext'] = 'Relative to ALL the previous and next items';

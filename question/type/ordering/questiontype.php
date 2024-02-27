@@ -28,12 +28,6 @@ class qtype_ordering extends question_type {
     /** @var int Number of hints default. */
     const DEFAULT_NUM_HINTS = 2;
 
-    /** @var array Combined feedback fields */
-    public array $feedbackfields = ['correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'];
-
-    /**
-     * @CodeCoverageIgnore
-     */
     public function has_html_answers(): bool {
         return true;
     }
@@ -57,6 +51,16 @@ class qtype_ordering extends question_type {
         }
 
         $this->initialise_combined_feedback($question, $questiondata, true);
+    }
+
+    public function save_defaults_for_new_questions(stdClass $fromform): void {
+        parent::save_defaults_for_new_questions($fromform);
+        $this->set_default_value('layouttype', $fromform->layouttype);
+        $this->set_default_value('selecttype', $fromform->selecttype);
+        $this->set_default_value('selectcount', $fromform->selectcount);
+        $this->set_default_value('gradingtype', $fromform->gradingtype);
+        $this->set_default_value('showgrading', $fromform->showgrading);
+        $this->set_default_value('numberingstyle', $fromform->numberingstyle);
     }
 
     public function save_question_options($question): bool|stdClass {
@@ -440,23 +444,7 @@ class qtype_ordering extends question_type {
             $question->feedbackformat[$i] = FORMAT_MOODLE;
         }
 
-        // Check that the required feedback fields exist.
-        $this->check_ordering_combined_feedback($question);
-
         return $question;
-    }
-
-    /**
-     * Check that the required feedback fields exist
-     *
-     * @param stdClass $question
-     */
-    protected function check_ordering_combined_feedback(stdClass $question): void {
-        foreach ($this->feedbackfields as $field) {
-            if (empty($question->$field)) {
-                $question->$field = ['text' => '', 'format' => FORMAT_MOODLE, 'itemid' => 0, 'files' => null];
-            }
-        }
     }
 
     /**
@@ -637,8 +625,6 @@ class qtype_ordering extends question_type {
 
         $format->import_combined_feedback($newquestion, $data);
         $newquestion->shownumcorrect = $format->getpath($data, ['#', 'shownumcorrect', 0, '#'], null);
-        // Check that the required feedback fields exist.
-        $this->check_ordering_combined_feedback($newquestion);
 
         $format->import_hints($newquestion, $data, true, true);
 
