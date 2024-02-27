@@ -29,9 +29,6 @@ use question_display_options;
  */
 class feedback extends renderable_base {
 
-    /** @var question_display_options $options The question options. */
-    protected $options;
-
     /**
      * Define the feedback with options for display.
      *
@@ -39,17 +36,14 @@ class feedback extends renderable_base {
      * @param question_display_options $options Controls what should and should not be displayed
      * via question_display_options but unit tests are fickle.
      */
-    public function __construct(question_attempt $qa, question_display_options $options) {
+    public function __construct(
+        question_attempt $qa,
+        /** @var question_display_options The question display options. */
+        protected question_display_options $options
+    ) {
         parent::__construct($qa);
-        $this->options = $options;
     }
 
-    /**
-     * Build the feedback array which is used to render the feedback.
-     *
-     * @param renderer_base $output renderer to be used to render the feedback elements.
-     * @return array
-     */
     public function export_for_template(renderer_base $output): array {
         global $PAGE;
 

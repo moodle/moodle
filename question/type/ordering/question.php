@@ -104,22 +104,6 @@ class qtype_ordering_question extends question_graded_automatically {
     /** @var array of scored for every item */
     protected $itemscores = [];
 
-    /**
-     * Start a new attempt at this question, storing any information that will
-     * be needed later in the step.
-     *
-     * This is where the question can do any initialisation required on a
-     * per-attempt basis. For example, this is where the multiple choice
-     * question type randomly shuffles the choices (if that option is set).
-     *
-     * Any information about how the question has been set up for this attempt
-     * should be stored in the $step, by calling $step->set_qt_var(...).
-     *
-     * @param question_attempt_step $step The first step of the {@see question_attempt}
-     *      being started. Can be used to store state.
-     * @param int $variant which variant of this question to start. Will be between
-     *      1 and {@see get_num_variants()} inclusive.
-     */
     public function start_attempt(question_attempt_step $step, $variant) {
         $countanswers = count($this->answers);
 
@@ -168,33 +152,11 @@ class qtype_ordering_question extends question_graded_automatically {
         $step->set_qt_var('_currentresponse', implode(',', $this->currentresponse));
     }
 
-    /**
-     * When an in-progress {@see question_attempt} is re-loaded from the
-     * database, this method is called so that the question can re-initialise
-     * its internal state as needed by this attempt.
-     *
-     * For example, the multiple choice question type needs to set the order
-     * of the choices to the order that was set up when start_attempt was called
-     * originally. All the information required to do this should be in the
-     * $step object, which is the first step of the question_attempt being loaded.
-     *
-     * @param question_attempt_step $step The first step of the {@see question_attempt}
-     *      being loaded.
-     */
     public function apply_attempt_state(question_attempt_step $step) {
         $this->currentresponse = array_filter(explode(',', $step->get_qt_var('_currentresponse')));
         $this->correctresponse = array_filter(explode(',', $step->get_qt_var('_correctresponse')));
     }
 
-    /**
-     * When a question is updated to a new version, this method is called to
-     * check whether the question can be regraded with the new version.
-     *
-     * @param question_definition $otherversion The new version of the question.
-     * @return string|null If the question can be regraded, this method should return null.
-     *      If the question cannot be regraded, this method should return a string
-     *      explaining why not.
-     */
     public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
         $basemessage = parent::validate_can_regrade_with_other_version($otherversion);
         if ($basemessage) {
@@ -208,22 +170,11 @@ class qtype_ordering_question extends question_graded_automatically {
         return null;
     }
 
-    /**
-     * Update the attempt state data for a new version of the question.
-     *
-     * This method is called when a question is updated to a new version, and
-     * the question_attempt_step data needs to be updated to reflect the new
-     * version of the question.
-     *
-     * @param question_attempt_step $oldstep The step data for the old version of the question.
-     * @param question_definition $otherversion The new version of the question.
-     * @return array An array of key-value pairs to be merged into the step data.
-     */
     public function update_attempt_state_data_for_new_version(
-            question_attempt_step $oldstep, question_definition $otherversion) {
-        parent::update_attempt_state_data_for_new_version($oldstep, $otherversion);
+            question_attempt_step $oldstep, question_definition $oldquestion) {
+        parent::update_attempt_state_data_for_new_version($oldstep, $oldquestion);
 
-        $mapping = array_combine(array_keys($otherversion->answers), array_keys($this->answers));
+        $mapping = array_combine(array_keys($oldquestion->answers), array_keys($this->answers));
 
         $oldorder = explode(',', $oldstep->get_qt_var('_currentresponse'));
         $neworder = [];
@@ -243,30 +194,11 @@ class qtype_ordering_question extends question_graded_automatically {
         ];
     }
 
-    /**
-     * What data may be included in the form submission when a student submits
-     * this question in its current state?
-     *
-     * This information is used in calls to optional_param. The parameter name
-     * has {@see question_attempt::get_field_prefix()} automatically prepended.
-     *
-     * @return array|string variable name => PARAM_... constant, or, as a special case
-     *      that should only be used in unavoidable, the constant question_attempt::USE_RAW_DATA
-     *      meaning take all the raw submitted data belonging to this question.
-     */
     public function get_expected_data() {
         $name = $this->get_response_fieldname();
         return [$name => PARAM_TEXT];
     }
 
-    /**
-     * What data would need to be submitted to get this question correct.
-     * If there is more than one correct answer, this method should just
-     * return one possibility. If it is not possible to compute a correct
-     * response, this method should return null.
-     *
-     * @return array|null parameter name => value.
-     */
     public function get_correct_response() {
         $correctresponse = $this->correctresponse;
         foreach ($correctresponse as $position => $answerid) {
@@ -277,12 +209,6 @@ class qtype_ordering_question extends question_graded_automatically {
         return [$name => implode(',', $correctresponse)];
     }
 
-    /**
-     * Produce a plain text summary of a response.
-     *
-     * @param array $response a response, as might be passed to {@see grade_response()}.
-     * @return string a plain text summary of that response, that could be used in reports.
-     */
     public function summarise_response(array $response) {
         $name = $this->get_response_fieldname();
         $items = [];
@@ -306,14 +232,6 @@ class qtype_ordering_question extends question_graded_automatically {
         return implode('; ', array_filter($items));
     }
 
-    /**
-     * Categorise the student's response according to the categories defined by
-     * get_possible_responses.
-     *
-     * @param array $response a response, as might be passed to {@see grade_response()}.
-     * @return array subpartid => {@see question_classified_response} objects.
-     *      returns an empty array if no analysis is possible.
-     */
     public function classify_response(array $response) {
         $this->update_current_response($response);
         $fraction = 1 / count($this->correctresponse);
@@ -349,68 +267,23 @@ class qtype_ordering_question extends question_graded_automatically {
         return $classifiedresponse;
     }
 
-    /**
-     * Used by many of the behaviours, to work out whether the student's
-     * response to the question is complete. That is, whether the question attempt
-     * should move to the COMPLETE or INCOMPLETE state.
-     *
-     * @param array $response responses, as returned by
-     *      {@see question_attempt_step::get_qt_data()}.
-     * @return bool whether this response is a complete answer to this question.
-     */
     public function is_complete_response(array $response) {
         return true;
     }
 
-    /**
-     * Use by many of the behaviours to determine whether the student
-     * has provided enough of an answer for the question to be graded automatically,
-     * or whether it must be considered aborted.
-     *
-     * @param array $response responses, as returned by
-     *      {@see question_attempt_step::get_qt_data()}.
-     * @return bool whether this response can be graded.
-     */
     public function is_gradable_response(array $response) {
         return true;
     }
 
-    /**
-     * In situations where is_gradable_response() returns false, this method
-     * should generate a description of what the problem is.
-     *
-     * @param array $response
-     * @return string the message
-     */
     public function get_validation_error(array $response) {
         return '';
     }
 
-    /**
-     * Use by many of the behaviours to determine whether the student's
-     * response has changed. This is normally used to determine that a new set
-     * of responses can safely be discarded.
-     *
-     * @param array $old the responses previously recorded for this question,
-     *      as returned by {@see question_attempt_step::get_qt_data()}
-     * @param array $new the new responses, in the same format.
-     * @return bool whether the two sets of responses are the same - that is
-     *      whether the new set of responses can safely be discarded.
-     */
     public function is_same_response(array $old, array $new) {
         $name = $this->get_response_fieldname();
         return (isset($old[$name]) && isset($new[$name]) && $old[$name] == $new[$name]);
     }
 
-    /**
-     * Grade a response to the question, returning a fraction between
-     * get_min_fraction() and get_max_fraction(), and the corresponding {@see question_state}
-     * right, partial or wrong.
-     *
-     * @param array $response responses, as returned by
-     *      {@see question_attempt_step::get_qt_data()}.
-     * @return array (float, integer) the fraction, and the state.
-     */
     public function grade_response(array $response) {
         $this->update_current_response($response);
 
@@ -506,17 +379,6 @@ class qtype_ordering_question extends question_graded_automatically {
         ];
     }
 
-    /**
-     * Checks whether the user has permission to access a particular file.
-     *
-     * @param question_attempt $qa the question attempt being displayed.
-     * @param question_display_options $options the options that control display of the question.
-     * @param string $component the name of the component we are serving files for.
-     * @param string $filearea the name of the file area.
-     * @param array $args the remaining bits of the file path.
-     * @param bool $forcedownload whether the user must be forced to download the file.
-     * @return bool true if the user can access this file.
-     */
     public function check_file_access($qa, $options, $component, $filearea, $args, $forcedownload) {
         if ($component == 'question') {
             if ($filearea == 'answer') {
@@ -533,15 +395,6 @@ class qtype_ordering_question extends question_graded_automatically {
         return parent::check_file_access($qa, $options, $component, $filearea, $args, $forcedownload);
     }
 
-    /**
-     * Checks whether the user has permission to access a particular file.
-     *
-     * @param question_attempt $qa the question attempt being displayed.
-     * @param question_display_options $options the options that control display of the question.
-     * @param string $filearea the name of the file area.
-     * @param array $args the remaining bits of the file path.
-     * @return bool whether access to the file should be allowed.
-     */
     protected function check_combined_feedback_file_access($qa, $options, $filearea, $args = null) {
         $state = $qa->get_state();
         if (! $state->is_finished()) {

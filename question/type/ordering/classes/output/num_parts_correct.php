@@ -24,13 +24,6 @@ namespace qtype_ordering\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class num_parts_correct extends renderable_base {
-
-    /**
-     * Based on the latest step, get the number of correct, partial, and incorrect parts of the question.
-     *
-     * @param \renderer_base $output The output renderer.
-     * @return array
-     */
     public function export_for_template(\renderer_base $output): array {
 
         list($numright, $numpartial, $numincorrect) = $this->qa->get_question()->get_num_parts_right(

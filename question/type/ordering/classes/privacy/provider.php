@@ -23,16 +23,9 @@ namespace qtype_ordering\privacy;
  * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @author     rdebleu@eWallah.net
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @codeCoverageIgnore A null provider so no special handling for us.
  */
 class provider implements \core_privacy\local\metadata\null_provider {
-
-    /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
-     *
-     * @return string
-     * @codeCoverageIgnore A null provider so no special handling for us.
-     */
     public static function get_reason(): string {
         return 'privacy:metadata';
     }

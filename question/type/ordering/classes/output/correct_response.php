@@ -24,13 +24,6 @@ namespace qtype_ordering\output;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class correct_response extends renderable_base {
-
-    /**
-     * Based on the question and step state, create an array for the correct response.
-     *
-     * @param \renderer_base $output renderer to be used to render the action bar elements.
-     * @return array
-     */
     public function export_for_template(\renderer_base $output): array {
 
         $data = [];

@@ -50,12 +50,6 @@ class question_hint_ordering extends question_hint_with_parts {
         $this->highlightresponse = $highlightresponse;
     }
 
-    /**
-     * Create a basic hint from a row loaded from the question_hints table in the database.
-     *
-     * @param object $row With property options as well as hint, shownumcorrect and clearwrong set.
-     * @return question_hint_ordering
-     */
     public static function load_from_record($row): question_hint_ordering {
         global $DB;
 

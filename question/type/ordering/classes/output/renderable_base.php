@@ -29,15 +29,14 @@ use question_attempt;
  */
 abstract class renderable_base implements templatable, renderable {
 
-    /** @var question_attempt $qa The question attempt object. */
-    protected $qa;
-
     /**
      * The class constructor.
      *
      * @param question_attempt $qa The question attempt object.
      */
-    public function __construct(question_attempt $qa) {
-        $this->qa = $qa;
+    public function __construct(
+        /** @var question_attempt The question attempt object. */
+        protected question_attempt $qa,
+    ) {
     }
 }

@@ -26,13 +26,6 @@ use qtype_ordering_question;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class specific_grade_detail_feedback extends renderable_base {
-
-    /**
-     * Based on the current state and the question options, generate the feedback.
-     *
-     * @param \renderer_base $output renderer to be used to render the action bar elements.
-     * @return array
-     */
     public function export_for_template(\renderer_base $output): array {
 
         $data = [];

@@ -44,11 +44,6 @@ class qtype_ordering_edit_form extends question_edit_form {
     /** Number of answers to add on demand */
     const NUM_ITEMS_ADD = 1;
 
-    /**
-     * qtype is plugin name without leading "qtype_"
-     *
-     * @return string
-     */
     public function qtype(): string {
         return 'ordering';
     }
@@ -62,11 +57,6 @@ class qtype_ordering_edit_form extends question_edit_form {
         return 'qtype_ordering';
     }
 
-    /**
-     * Add question-type specific form fields.
-     *
-     * @param MoodleQuickForm $mform the form being built.
-     */
     public function definition_inner($mform): void {
 
         // Cache this plugins name.
@@ -275,13 +265,6 @@ class qtype_ordering_edit_form extends question_edit_form {
         }
     }
 
-    /**
-     * Create the form elements required by one hint.
-     *
-     * @param string $withclearwrong Whether this quesiton type uses the 'Clear wrong' option on hints.
-     * @param string $withshownumpartscorrect Whether this quesiton type uses the 'Show num parts correct' option on hints.
-     * @return array Form field elements for one hint.
-     */
     protected function get_hint_fields($withclearwrong = false, $withshownumpartscorrect = false): array {
         $mform = $this->_form;
 
@@ -308,12 +291,6 @@ class qtype_ordering_edit_form extends question_edit_form {
         return [$repeated, $repeatedoptions];
     }
 
-    /**
-     * Perform any preprocessing needed on the data passed to {@see set_data()}
-     * before it is used to initialise the form.
-     * @param object $question the data being passed to the form.
-     * @return stdClass $question the modified data.
-     */
     public function data_preprocessing($question): stdClass {
 
         $question = parent::data_preprocessing($question);
@@ -377,14 +354,6 @@ class qtype_ordering_edit_form extends question_edit_form {
         return $question;
     }
 
-    /**
-     * Perform the necessary preprocessing for the hint fields.
-     *
-     * @param object $question The data being passed to the form.
-     * @param bool $withclearwrong Clear wrong hints.
-     * @param bool $withshownumpartscorrect Show number correct.
-     * @return stdClass The modified data.
-     */
     protected function data_preprocessing_hints($question, $withclearwrong = false, $withshownumpartscorrect = false): stdClass {
         if (empty($question->hints)) {
             return $question;
@@ -399,14 +368,6 @@ class qtype_ordering_edit_form extends question_edit_form {
         return $question;
     }
 
-    /**
-     * Form validation
-     *
-     * @param array $data array of ("fieldname"=>value) of submitted data
-     * @param array $files array of uploaded files "element_name"=>tmp_file_path
-     * @return array of "element_name"=>"error_description" if there are errors,
-     *         or an empty array if everything is OK (true allowed for backwards compatibility too).
-     */
     public function validation($data, $files): array {
         $errors = [];
         $plugin = 'qtype_ordering';

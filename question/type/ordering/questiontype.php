@@ -32,22 +32,12 @@ class qtype_ordering extends question_type {
     public array $feedbackfields = ['correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'];
 
     /**
-     * @return bool whether the question_answers.answer field needs to have
-     * restore_decode_content_links_worker called on it.
      * @CodeCoverageIgnore
      */
     public function has_html_answers(): bool {
         return true;
     }
 
-    /**
-     * If your question type has a table that extends the question table, and
-     * you want the base class to automatically save, backup and restore the extra fields,
-     * override this method to return an array where the first element is the table name,
-     * and the subsequent entries are the column names (apart from id and questionid).
-     *
-     * @return array extra fields
-     */
     public function extra_question_fields(): array {
         return [
             'qtype_ordering_options',
@@ -56,11 +46,6 @@ class qtype_ordering extends question_type {
         ];
     }
 
-    /**
-     * Initialise the common question_definition fields.
-     * @param question_definition $question the question_definition we are creating.
-     * @param object $questiondata the question data loaded from the database.
-     */
     protected function initialise_question_instance(question_definition $question, $questiondata): void {
         global $CFG;
 
@@ -74,15 +59,6 @@ class qtype_ordering extends question_type {
         $this->initialise_combined_feedback($question, $questiondata, true);
     }
 
-    /**
-     * Saves question-type specific options
-     *
-     * This is called by {@see save_question()} to save the question-type specific data
-     *
-     * @param object $question This holds the information from the editing form,
-     *      it is not a standard question object.
-     * @return bool|stdClass $result->error or $result->notice
-     */
     public function save_question_options($question): bool|stdClass {
         global $DB;
 
@@ -227,13 +203,6 @@ class qtype_ordering extends question_type {
         return true;
     }
 
-    /**
-     * Count number of hints on the form.
-     *
-     * @param object $formdata The data from the form.
-     * @param bool $withparts Whether to take into account clearwrong and shownumcorrect options.
-     * @return int Count of hints on the form.
-     */
     protected function count_hints_on_form($formdata, $withparts): int {
         $numhints = parent::count_hints_on_form($formdata, $withparts);
 
@@ -244,69 +213,19 @@ class qtype_ordering extends question_type {
         return $numhints;
     }
 
-    /**
-     * Determine if the hint with specified number is not empty and should be saved.
-     * Overload if you use custom hint controls.
-     *
-     * @param object $formdata the data from the form.
-     * @param int $number number of hint under question.
-     * @param bool $withparts whether to take into account clearwrong and shownumcorrect options.
-     * @return bool is this particular hint data empty.
-     */
     protected function is_hint_empty_in_form_data($formdata, $number, $withparts): bool {
         return parent::is_hint_empty_in_form_data($formdata, $number, $withparts) &&
             empty($formdata->hintoptions[$number]);
     }
 
-    /**
-     * Save additional question type data into the hint optional field.
-     * Overload if you use custom hint information.
-     * @param object $formdata the data from the form.
-     * @param int $number number of hint to get options from.
-     * @param bool $withparts whether question have parts.
-     * @return bool value to save into the options field of question_hints table.
-     */
     protected function save_hint_options($formdata, $number, $withparts): bool {
         return !empty($formdata->hintoptions[$number]);
     }
 
-    /**
-     * Create a question_hint, or an appropriate subclass for this question, from a row loaded from the database.
-     *
-     * @param object $hint The DB row from the question hints table.
-     * @return question_hint_ordering Hints of question from record.
-     */
     protected function make_hint($hint): question_hint_ordering {
         return question_hint_ordering::load_from_record($hint);
     }
 
-    /**
-     * This method should return all the possible types of response that are
-     * recognised for this question.
-     *
-     * The question is modelled as comprising one or more subparts. For each
-     * subpart, there are one or more classes that that students response
-     * might fall into, each of those classes earning a certain score.
-     *
-     * For example, in a shortanswer question, there is only one subpart, the
-     * text entry field. The response the student gave will be classified according
-     * to which of the possible $question->options->answers it matches.
-     *
-     * For the matching question type, there will be one subpart for each
-     * question stem, and for each stem, each of the possible choices is a class
-     * of student's response.
-     *
-     * A response is an object with two fields, ->responseclass is a string
-     * presentation of that response, and ->fraction, the credit for a response
-     * in that class.
-     *
-     * Array keys have no specific meaning, but must be unique, and must be
-     * the same if this function is called repeatedly.
-     *
-     * @param object $questiondata the question definition data.
-     * @return array keys are subquestionid, values are arrays of possible
-     *      responses to that subquestion.
-     */
     public function get_possible_responses($questiondata): array {
         $responseclasses = [];
         $itemcount = count($questiondata->options->answers);
@@ -343,18 +262,6 @@ class qtype_ordering extends question_type {
         return ($value || $value === '0');
     }
 
-    /**
-     * Loads the question type specific options for the question.
-     *
-     * This function loads any question type specific options for the
-     * question from the database into the question object. This information
-     * is placed in the $question->options field. A question type is
-     * free, however, to decide on an internal structure of the options field.
-     * @return bool            Indicates success or failure.
-     * @param object $question The question object for the question. This object
-     *                         should be updated to include the question type
-     *                         specific information (it is passed by reference).
-     */
     public function get_question_options($question): bool {
         global $DB, $OUTPUT;
 
@@ -376,12 +283,6 @@ class qtype_ordering extends question_type {
         return true;
     }
 
-    /**
-     * Deletes the question-type specific data when a question is deleted.
-     *
-     * @param int $questionid The id of question being deleted.
-     * @param int $contextid the context this quesiotn belongs to.
-     */
     public function delete_question($questionid, $contextid): void {
         global $DB;
         $DB->delete_records('qtype_ordering_options', ['questionid' => $questionid]);
@@ -651,14 +552,6 @@ class qtype_ordering extends question_type {
         return $output;
     }
 
-    /**
-     * Exports question to XML format
-     *
-     * @param object $question
-     * @param qformat_xml $format
-     * @param string $extra (optional, default=null)
-     * @return string XML representation of question
-     */
     public function export_to_xml($question, qformat_xml $format, $extra = null): string {
         global $CFG;
         require_once($CFG->dirroot.'/question/type/ordering/question.php');
@@ -696,18 +589,6 @@ class qtype_ordering extends question_type {
         return $output;
     }
 
-    /**
-     * Imports question from the Moodle XML format
-     *
-     * Imports question using information from extra_question_fields function
-     * If some of you fields contains id's you'll need to reimplement this
-     *
-     * @param array $data
-     * @param qtype_ordering $question (or null)
-     * @param qformat_xml $format
-     * @param null $extra (optional, default=null)
-     * @return object|bool New question object
-     */
     public function import_from_xml($data, $question, qformat_xml $format, $extra = null): object|bool {
         global $CFG;
         require_once($CFG->dirroot.'/question/type/ordering/question.php');

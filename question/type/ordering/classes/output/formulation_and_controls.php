@@ -28,26 +28,20 @@ use question_display_options;
  */
 class formulation_and_controls extends renderable_base {
 
-    /** @var question_display_options $options The question options. */
-    protected $options;
-
     /**
      * Construct the rendarable as we also need to pass the question options.
      *
      * @param question_attempt $qa The question attempt object.
      * @param question_display_options $options The question options.
      */
-    public function __construct(question_attempt $qa, question_display_options $options) {
-        $this->options = $options;
+    public function __construct(
+        question_attempt $qa,
+        /** @var question_display_options The question display options. */
+        protected question_display_options $options
+    ) {
         parent::__construct($qa);
     }
 
-    /**
-     * Export the question based on the question attempt and the question display options.
-     *
-     * @param \renderer_base $output renderer to be used to render the action bar elements.
-     * @return array
-     */
     public function export_for_template(\renderer_base $output): array {
         global $PAGE;
 
