@@ -288,6 +288,12 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
         \core\session\manager::apply_concurrent_login_limit($user->id, session_id());
 
+        // IOMAD
+        // Update the company for the user if there is one.
+        if (!empty($SESSION->currenteditingcompany)) {
+            $DB->set_field('company_users', 'lastused', time(), ['userid' => $user->id, 'companyid' => $SESSION->currenteditingcompany]);
+        }
+
         // sets the username cookie
         if (!empty($CFG->nolastloggedin)) {
             // do not store last logged in user in cookie

@@ -777,7 +777,7 @@ function initialise_cfg() {
     }
 
     // IOMAD - Set the theme if the server hostname matches one of ours.
-    if(!CLI_SCRIPT && !during_initial_install()){
+    if(!CLI_SCRIPT) {
         $CFG->wwwrootdefault = $CFG->wwwroot;
 
         // Does this match a company hostname?

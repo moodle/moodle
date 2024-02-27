@@ -931,8 +931,13 @@ if(!CLI_SCRIPT && !during_initial_install()){
             } else {
                 unset($SESSION->theme);
             }
+            if (empty($SESSION->currenteditingcompany)) {
+                $SESSION->currenteditingcompany = $companyrec->id;
+                $SESSION->company = $companyrec;
+            }
             unset($themeconfig);
             unset($urlthemename);
+            unset($companyrec);
         } catch (Exception $e) {
             debugging('Failed to set the theme from the company hostname setting.', DEBUG_DEVELOPER, $e->getTrace());
         }

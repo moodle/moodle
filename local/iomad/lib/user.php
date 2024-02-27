@@ -1199,7 +1199,7 @@ echo "Clearing down licenses which have been used for courseid $courseid</br>";
         if ($companyid = iomad::get_my_companyid(context_system::instance(), false)) {
             $company = new company($companyid);
             $returnobject->companyname = $company->get_name();
-            $returnobject->companylogo = $OUTPUT->get_logo_url(null, 25);
+            $returnobject->companylogo = company::get_logo_url($companyid, null, 25);
             $mycompanies = company::get_companies_select(false, false, false, 'cu.lastused DESC, c.name ASC');
             $returncompanies = [];
             if (count($mycompanies) > 1) {
@@ -1227,6 +1227,7 @@ echo "Clearing down licenses which have been used for courseid $courseid</br>";
                     $total++;
                 }
             }
+
             $returnobject->mycompanies = $returncompanies;
             return $returnobject;
         }
