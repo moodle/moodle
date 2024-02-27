@@ -2787,6 +2787,13 @@ $functions = array(
         'type'        => 'read',
         'services'    => array(MOODLE_OFFICIAL_MOBILE_SERVICE),
     ),
+    'core_filters_get_all_states' => [
+        'classname'   => 'core_filters\external\get_all_states',
+        'description' => 'Retrieve all the filters and their states (including overridden ones in any context).',
+        'type'        => 'read',
+        'services'    => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+
     'core_customfield_delete_field' => array(
         'classname'   => 'core_customfield_external',
         'methodname'  => 'delete_field',

@@ -202,4 +202,57 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals('context', $result['warnings'][0]['item']);
         $this->assertEquals($forum->cmid, $result['warnings'][0]['itemid']);
     }
+
+    /**
+     * Test get_all_states
+     * @covers \core_filters\external\get_all_states::execute
+     */
+    public function test_get_all_states() {
+        $this->resetAfterTest(true);
+        $this->setAdminUser();
+
+        // Get all filters and disable them all globally except for the first.
+        $allfilters = filter_get_all_installed();
+        reset($allfilters);
+        $firstfilter = key($allfilters);
+        foreach ($allfilters as $filter => $filterdata) {
+            if ($filter == $firstfilter) {
+                filter_set_global_state($filter, TEXTFILTER_ON);
+                continue;
+            }
+            filter_set_global_state($filter, TEXTFILTER_DISABLED);
+        }
+
+        // Set some filters at particular levels.
+        $course = self::getDataGenerator()->create_course();
+        filter_set_local_state($firstfilter, \context_course::instance($course->id)->id, TEXTFILTER_ON);
+        $forum = self::getDataGenerator()->create_module('forum', (object) ['course' => $course->id]);
+        filter_set_local_state($firstfilter, \context_module::instance($forum->cmid)->id, TEXTFILTER_OFF);
+
+        $result = get_all_states::execute();
+        $result = external_api::clean_returnvalue(get_all_states::execute_returns(), $result);
+
+        $totalcount = count($allfilters) + 2; // All filters plus two local states.
+        $this->assertCount($totalcount, $result['filters']);
+
+        $customfound = 0;
+        foreach ($result['filters'] as $filter) {
+            if ($filter['contextlevel'] == 'course' && $filter['instanceid'] == $course->id) {
+                $this->assertEquals($firstfilter, $filter['filter']);
+                $this->assertEquals(TEXTFILTER_ON, $filter['state']);
+                $customfound++;
+            } else if ($filter['contextlevel'] == 'module' && $filter['instanceid'] == $forum->cmid) {
+                $this->assertEquals($firstfilter, $filter['filter']);
+                $this->assertEquals(TEXTFILTER_OFF, $filter['state']);
+                $customfound++;
+            } else if ($filter['filter'] == $firstfilter) {
+                $this->assertEquals($firstfilter, $filter['filter']);
+                $this->assertEquals(TEXTFILTER_ON, $filter['state']);
+                $this->assertEquals(1, $filter['sortorder']);
+            } else {
+                $this->assertEquals(TEXTFILTER_DISABLED, $filter['state']);
+            }
+        }
+        $this->assertEquals(2, $customfound);   // Both custom states found.
+    }
 }

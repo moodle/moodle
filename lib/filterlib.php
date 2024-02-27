@@ -1317,6 +1317,16 @@ function filter_get_global_states() {
 }
 
 /**
+ * Retrieve all the filters and their states (including overridden ones in any context).
+ *
+ * @return array filters objects containing filter name, context, active state and sort order.
+ */
+function filter_get_all_states(): array {
+    global $DB;
+    return $DB->get_records('filter_active');
+}
+
+/**
  * Delete all the data in the database relating to a filter, prior to deleting it.
  *
  * @param string $filter The filter name, for example 'tex'.
