@@ -637,6 +637,7 @@ class renderer extends \plugin_renderer_base {
                 'hasadditionalfactors' => $hasadditionalfactors,
                 'additionalfactors' => $alladitionalfactors,
                 'authurl' => $authurl->out(),
+                'sesskey' => sesskey(),
                 'supportlink' => $this->get_support_link(),
                 'disablefactor' => $disablefactor
         ];
