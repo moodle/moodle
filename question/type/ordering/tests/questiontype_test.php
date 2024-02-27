@@ -100,7 +100,6 @@ final class questiontype_test extends \question_testcase {
         $questiondata = test_question_maker::get_question_data('ordering');
         $formdata = test_question_maker::get_question_form_data('ordering');
 
-        /** @var core_question_generator $generator */
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category([]);
 

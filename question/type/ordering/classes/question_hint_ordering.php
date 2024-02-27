@@ -31,7 +31,7 @@ use question_hint_with_parts;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_hint_ordering extends question_hint_with_parts {
-    /** @var bool $highlightresponse Highlight response in the hint options. */
+    /** @var bool Highlight response in the hint options. */
     public bool $highlightresponse;
 
     /**

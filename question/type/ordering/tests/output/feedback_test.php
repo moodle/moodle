@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @covers    \qtype_ordering\output\feedback
  */
 final class feedback_test extends qbehaviour_walkthrough_test_base {
-    /** @var array $CORRECTANSWERS The correct answers for the question, added to quickly reference. */
+    /** @var array The correct answers for the question, added to quickly reference. */
     const CORRECTANSWERS = [
         0 => [
             'answertext' => 'Modular',

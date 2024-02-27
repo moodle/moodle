@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @covers    \qtype_ordering
  */
 final class questionhint_test extends advanced_testcase {
-    /** @var qtype_ordering instance of the question type class to test. */
+    /** @var qtype_ordering Instance of the question type class to test. */
     protected $qtype;
 
     protected function setUp(): void {
