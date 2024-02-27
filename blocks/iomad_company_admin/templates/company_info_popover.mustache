@@ -52,7 +52,10 @@
                aria-expanded="true">
         {{/hasmultiple}}
                 <span class="userbutton">
-                    <img src="{{companylogo}}" alt="companylogo"> {{companyname}}
+                    {{#companylogo}}
+                        <img src="{{companylogo}}" alt="company logo">
+                    {{/companylogo}}
+                    {{companyname}}
                 </span>
         {{#hasmultiple}}
             </a>
@@ -62,7 +65,10 @@
                         <div id="carousel-item-main" class="carousel-item active" role="menu" tabindex="-1" aria-label="Company">
                             {{#mycompanies}}
                                 <a href="{{{switchlink}}}" class="dropdown-item" role="menuitem" tabindex="-1">
-                                    <img src="{{{logo}}}"> {{{name}}}
+                                    {{#logo}}
+                                        <img src="{{{logo}}}">
+                                    {{/logo}}
+                                    {{{name}}}
                                 </a>
                             {{/mycompanies}}
                         </div>
