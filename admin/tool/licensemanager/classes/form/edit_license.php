@@ -94,7 +94,7 @@ class edit_license extends moodleform {
         $mform->addHelpButton('source', 'source', 'tool_licensemanager');
         $mform->addRule('source', get_string('sourcerequirederror', 'tool_licensemanager'), 'required');
 
-        $mform->addElement('date_selector', 'version', get_string('version', 'tool_licensemanager'), get_string('from'));
+        $mform->addElement('date_selector', 'version', get_string('version', 'tool_licensemanager'));
         $mform->addHelpButton('version', 'version', 'tool_licensemanager');
 
         $this->add_action_buttons();

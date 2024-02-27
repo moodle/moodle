@@ -751,11 +751,11 @@ abstract class moodleform_mod extends moodleform {
         $mform->addElement('checkbox', 'ratingtime', get_string('ratingtime', 'rating'));
         $mform->hideIf('ratingtime', $assessedfieldname, 'eq', 0);
 
-        $mform->addElement('date_time_selector', 'assesstimestart', get_string('from'));
+        $mform->addElement('date_time_selector', 'assesstimestart', get_string('fromdate'));
         $mform->hideIf('assesstimestart', $assessedfieldname, 'eq', 0);
         $mform->hideIf('assesstimestart', 'ratingtime');
 
-        $mform->addElement('date_time_selector', 'assesstimefinish', get_string('to'));
+        $mform->addElement('date_time_selector', 'assesstimefinish', get_string('todate'));
         $mform->hideIf('assesstimefinish', $assessedfieldname, 'eq', 0);
         $mform->hideIf('assesstimefinish', 'ratingtime');
 
