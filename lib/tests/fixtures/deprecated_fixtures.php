@@ -16,7 +16,7 @@
 
 namespace core\fixtures;
 
-use core\deprecated;
+use core\attribute\deprecated;
 
 /**
  * A file containing a variety of fixturs for deprecated attribute tests.

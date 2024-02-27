@@ -16,15 +16,18 @@
 
 namespace core;
 
+use core\attribute\deprecated;
+use core\attribute\deprecated_with_reference;
+
 /**
- * Tests for \core\deprecated and \core\deprecation.
+ * Tests for \core\attribute\sdeprecated and \core\deprecation.
  *
  * @package    core
  * @category   test
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \core\deprecated
- * @covers \core\deprecated_with_reference
+ * @covers \core\attribute\deprecated
+ * @covers \core\attribute\deprecated_with_reference
  * @covers \core\deprecation
  */
 class deprecation_test extends \advanced_testcase {

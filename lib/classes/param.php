@@ -18,6 +18,7 @@ namespace core;
 
 use coding_exception;
 use core_text;
+use core\attribute\deprecated;
 use core\ip_utils;
 use invalid_parameter_exception;
 use moodle_exception;

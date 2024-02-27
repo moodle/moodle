@@ -39,7 +39,7 @@ information provided here is intended especially for developers.
 * The following callbacks have been migrated to hooks:
   - before_standard_html_head() -> core\hook\output\standard_head_html_prepend
 * Deprecated PARAM_ types with the exception of PARAM_CLEAN now emit a deprecation exception. These were all deprecated in Moodle 2.0.
-* A new \core\deprecated attribute can be used to more clearly describe deprecated methods.
+* A new \core\attribute\deprecated attribute can be used to more clearly describe deprecated methods.
 * A new \core\deprecation class can be used to inspect for deprecated attributes:
   - `\core\deprecation::is_deprecated(example::class);`
   - `\core\deprecation::emit_deprecation_if_present([self::class, 'some_method']);`

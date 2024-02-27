@@ -16,6 +16,9 @@
 
 namespace core;
 
+use core\attribute\deprecated;
+use core\attribute\deprecated_with_reference;
+
 /**
  * Deprecation utility.
  *
