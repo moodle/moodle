@@ -306,8 +306,6 @@ $string['gradeimport'] = 'Grade import';
 $string['gradeimportfailed'] = 'Grade Import failed during commit. Details:';
 $string['gradeitem'] = 'Grade item';
 $string['gradeitemaddusers'] = 'Exclude from grading';
-$string['gradeitemadvanced'] = 'Advanced grade item options';
-$string['gradeitemadvanced_help'] = 'Select all elements that should be displayed as advanced when editing grade items.';
 $string['gradeitemislocked'] = 'This activity is locked in the gradebook. Changes that are made to grades in this activity will not be copied to the gradebook until it is unlocked.';
 $string['gradeitemlocked'] = 'Grading locked';
 $string['gradeitemminmax'] = 'Min and max grades as specified in grade item settings';
@@ -924,3 +922,5 @@ $string['studentsperpage_help'] = 'This setting determines the number of student
 
 // Deprecated since Moodle 4.4.
 $string['grade'] = 'Grade';
+$string['gradeitemadvanced'] = 'Advanced grade item options';
+$string['gradeitemadvanced_help'] = 'Select all elements that should be displayed as advanced when editing grade items.';
