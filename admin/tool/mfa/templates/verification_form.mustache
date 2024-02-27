@@ -83,6 +83,7 @@
     <div class="d-flex justify-content-center">
         <form id="cancelmfa" method="POST" action="{{{authurl}}}">
             <input type="hidden" id="{{uniqid}}-logout" name="logout" value="true">
+            <input type="hidden" name="sesskey" value="{{sesskey}}">
             <input type="submit" class="btn btn-secondary"
                    name="cancelmfa" id="cancelmfa_button"
                    value="{{#str}} cancellogin, tool_mfa {{/str}}">
