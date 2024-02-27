@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_courseformat/local/content/addsection
+    @template core_courseformat/local/content/section/addsectiondivider
 
-    Displays the add section button inside a course.
+    Displays the add section divider inside a section.
 
     Example context (json):
     {
@@ -25,12 +25,6 @@
         "id": 42,
         "insertafter": true,
         "num": 0,
-        "increase": {
-            "url": "#"
-        },
-        "decrease": {
-            "url": "#"
-        },
         "addsections": {
             "url": "#",
             "title": "Add section",
@@ -39,30 +33,23 @@
     }
 }}
 {{#showaddsection}}
-<div id="course-addsection" class="changenumsections bulk-hidden mt-5">
-    {{#increase}}
-    <a href="{{{url}}}" class="increase-sections">
-        {{#pix}}t/switch_plus, moodle, {{#str}} increasesections, moodle {{/str}}{{/pix}}
-    </a>
-    {{/increase}}
-    {{#decrease}}
-    <a href="{{{url}}}" class="reduce-sections">
-        {{#pix}}t/switch_minus, moodle, {{#str}} reducesections, moodle {{/str}}{{/pix}}
-    </a>
-    {{/decrease}}
+<div class="changenumsections bulk-hidden" data-region="section-addsection">
     {{#addsections}}
-
-    <a href="{{{url}}}"
-        class="btn add-section d-flex justify-content-center align-items-center p-3"
-        data-add-sections="{{title}}"
-        data-new-sections="{{newsection}}"
-        data-action="addSection"
-        {{#insertafter}} data-id="{{id}}" {{/insertafter}}
-    >
-        {{#pix}} t/add, core {{/pix}}
-        {{title}}
-    </a>
-
+    {{< core_courseformat/local/content/divider}}
+        {{$extraclasses}}always-hidden mt-2{{/extraclasses}}
+        {{$content}}
+            <a href="{{{url}}}"
+                class="btn add-content section-modchooser section-modchooser-link activitychooser-button d-flex justify-content-center align-items-center p-1 icon-no-margin"
+                data-add-sections="{{title}}"
+                data-new-sections="{{newsection}}"
+                data-action="addSection"
+                {{#insertafter}} data-id="{{id}}" {{/insertafter}}
+            >
+                {{#pix}} t/add, core {{/pix}}
+                <span class="sr-only">{{title}}</span>
+            </a>
+        {{/content}}
+    {{/ core_courseformat/local/content/divider}}
     {{/addsections}}
 </div>
 {{/showaddsection}}

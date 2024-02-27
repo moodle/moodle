@@ -96,13 +96,23 @@
     data-id="{{id}}"
     data-number="{{num}}"
 >
-    <div class="course-section-header d-flex"
-        data-for="section_title"
-        data-id="{{id}}"
-        data-number="{{num}}"
-    >
-        {{$ core_courseformat/local/content/section/content }}
-            {{> core_courseformat/local/content/section/content }}
-        {{/ core_courseformat/local/content/section/content }}
+    <div class="section-item">
+        <div class="course-section-header d-flex"
+            data-for="section_title"
+            data-id="{{id}}"
+            data-number="{{num}}"
+        >
+            {{$ core_courseformat/local/content/section/content }}
+                {{> core_courseformat/local/content/section/content }}
+            {{/ core_courseformat/local/content/section/content }}
+        </div>
     </div>
+
+    {{#insertafter}}
+        {{#numsections}}
+            {{$ core_courseformat/local/content/addsection}}
+                {{> core_courseformat/local/content/section/addsectiondivider }}
+            {{/ core_courseformat/local/content/addsection}}
+        {{/numsections}}
+    {{/insertafter}}
 </li>

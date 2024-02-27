@@ -27200,6 +27200,34 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .dashboard-card-deck 
   }
 }
 
+.block-add {
+  color: #0f6cbf;
+  background-color: #f5f9fc;
+  border-color: #3584c9;
+  border-radius: 0.5rem;
+  width: 100%;
+  border-width: 1px;
+}
+.block-add hr {
+  border-top-color: #3077b5;
+}
+.block-add .alert-link {
+  color: #0b5190;
+}
+.block-add .pluscontainer {
+  border: 1px solid #3584c9;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+}
+.block-add:hover {
+  cursor: pointer;
+  background-color: #f5f9fc;
+}
+.block-add:hover .activity-add-text {
+  text-decoration: underline;
+}
+
 /* calendar.less */
 .calendar_event_category {
   background-color: #e0cbe0;
@@ -27889,34 +27917,8 @@ table.calendartable caption {
 
 /* course.less */
 /* COURSE CONTENT */
-.section_add_menus {
-  text-align: right;
-  clear: both;
-}
-
 .block_tree .tree_item.branch {
   margin-left: 8px;
-}
-
-.section_add_menus .horizontal div,
-.section_add_menus .horizontal form {
-  display: inline;
-}
-
-.section_add_menus optgroup {
-  font-weight: normal;
-  font-style: italic;
-}
-
-/*rtl:ignore*/
-.section_add_menus .urlselect {
-  text-align: left;
-  margin-left: 0.4em;
-}
-
-/*rtl:ignore*/
-.section_add_menus .urlselect select {
-  margin-left: 0.2em;
 }
 
 .section .side {
@@ -28151,24 +28153,6 @@ table.calendartable caption {
   top: 0;
 }
 
-.course-content .section-summary {
-  border: 1px solid #dee2e6;
-  margin-top: 5px;
-  list-style: none;
-}
-
-.course-content .section-summary .section-title {
-  margin: 2px 5px 10px 5px;
-}
-
-.course-content .section-summary .summarytext {
-  margin: 2px 5px 2px 5px;
-}
-
-.course-content .section-summary .summary {
-  margin-top: 5px;
-}
-
 .course-content .single-section .section-navigation {
   display: block;
   padding: 0.5em;
@@ -28224,11 +28208,6 @@ table.calendartable caption {
   padding: 0;
   margin: 0;
   list-style: none;
-}
-.course-content ul.topics li.section,
-.course-content ul.weeks li.section {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 .course-content ul.topics li.section .content,
 .course-content ul.weeks li.section .content {
@@ -28915,58 +28894,6 @@ span.editinstructions .alert-link {
 
 /* Variables definition*/
 /* Functions/Mixins definition */
-/* Activity & Block 'add' buttons */
-.activity-add,
-.block-add {
-  color: #0f6cbf;
-  background-color: #f5f9fc;
-  border-color: #3584c9;
-  border-width: 1px;
-  width: 100%;
-}
-.activity-add hr,
-.block-add hr {
-  border-top-color: #3077b5;
-}
-.activity-add .alert-link,
-.block-add .alert-link {
-  color: #0b5190;
-}
-.activity-add .pluscontainer,
-.block-add .pluscontainer {
-  border: 1px solid #3584c9;
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-}
-.activity-add:hover,
-.block-add:hover {
-  cursor: pointer;
-  background-color: #cfe2f2;
-}
-.activity-add:hover .activity-add-text,
-.block-add:hover .activity-add-text {
-  text-decoration: underline;
-}
-
-.block-add {
-  border-radius: 0.5rem;
-}
-
-.activity-add {
-  border-radius: 1rem;
-}
-
-/* Add section */
-.changenumsections {
-  border-top: 1px solid #3584c9;
-}
-
-.add-sections .icon {
-  margin-right: 0.25rem;
-  font-size: inherit;
-}
-
 /* Section Expand all/Collapse all */
 .section-collapsemenu .collapseall {
   display: block;
@@ -28984,12 +28911,17 @@ span.editinstructions .alert-link {
 /* Course section */
 .course-section {
   list-style: none;
-  padding: 1rem;
   margin-top: 1rem;
+}
+.editing .course-section {
+  margin-top: 0.5rem;
+}
+.course-section .section-item {
+  padding: 1rem;
   border: 1px solid #dee2e6;
   border-radius: 1rem;
 }
-.course-section.hidden {
+.course-section.hidden .section-item {
   background-color: #f8f9fa;
 }
 .course-section .sectionname > a {
@@ -29033,13 +28965,6 @@ span.editinstructions .alert-link {
   width: 32px;
   border-radius: 0.5rem;
 }
-.course-section.section-summary {
-  padding-left: 1rem;
-  padding-right: 1rem;
-  margin-bottom: 0.5rem;
-  margin-top: 0.5rem;
-  border-radius: 0.5rem;
-}
 .course-section .section-summary-activities .icon {
   width: inherit;
   color: #0f6cbf;
@@ -29054,13 +28979,26 @@ span.editinstructions .alert-link {
   color: #0f6cbf;
 }
 
+.btn.add-section {
+  border-radius: 1rem;
+  border: 2px dashed #dee2e6;
+  color: #0f6cbf;
+  font-size: 0.8203125rem;
+  font-weight: bold;
+}
+.btn.add-section:hover, .btn.add-section:focus {
+  background-color: #f5f9fc;
+  border: 2px solid #0f6cbf;
+  color: #0f6cbf;
+}
+
 /* Single section page specific styles */
-.single-section > ul > .course-section {
+.single-section > ul > .course-section.hidden .section-item {
+  background-color: inherit;
+}
+.single-section > ul > .course-section .section-item {
   padding: 0;
   border: none;
-}
-.single-section > ul > .course-section.hidden {
-  background-color: inherit;
 }
 
 /* Re-style ordered list in course content */
@@ -29078,14 +29016,20 @@ span.editinstructions .alert-link {
 .activity {
   list-style: none;
   position: relative;
+  padding-top: 0.25rem;
+  margin-top: 0.25rem;
+  border-top: 1px solid #dee2e6;
+}
+.editing .activity {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: none;
 }
 
 .activity-item {
   position: relative;
-  border-radius: 1rem;
-}
-.activity-item:not(.activityinline) {
   padding: 0.75rem;
+  background-color: #fff;
 }
 .activity-item.activityinline {
   padding: 0.75rem 0;
@@ -29095,6 +29039,23 @@ span.editinstructions .alert-link {
 }
 .activity-item.hiddenactivity .activityiconcontainer,
 .activity-item.hiddenactivity .badge {
+  mix-blend-mode: multiply;
+}
+.editing .activity-item {
+  cursor: move;
+  border: 2px solid transparent;
+  border-radius: 1rem;
+}
+.editing .activity-item .a {
+  cursor: pointer;
+}
+.editing .activity-item:hover, .editing .activity-item.selected {
+  border: 2px solid #0f6cbf;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+.editing .activity-item:hover .activityiconcontainer,
+.editing .activity-item:hover .badge, .editing .activity-item.selected .activityiconcontainer,
+.editing .activity-item.selected .badge {
   mix-blend-mode: multiply;
 }
 .activity-item .activity-grid {
@@ -29677,95 +29638,110 @@ span.editinstructions .alert-link {
   width: 100%;
 }
 
-/* Activity card in editing mode */
-.editing .activity-item {
-  cursor: move;
-}
-.editing .activity-item .a {
-  cursor: pointer;
-}
-.editing .activity-item:hover, .editing .activity-item.selected {
-  color: #1d2125;
-  background-color: #f5f9fc;
-  border-color: #3584c9;
-}
-.editing .activity-item:hover hr, .editing .activity-item.selected hr {
-  border-top-color: #3077b5;
-}
-.editing .activity-item:hover .alert-link, .editing .activity-item.selected .alert-link {
-  color: #070808;
-}
-.editing .activity-item:hover .activityiconcontainer,
-.editing .activity-item:hover .badge, .editing .activity-item.selected .activityiconcontainer,
-.editing .activity-item.selected .badge {
-  mix-blend-mode: multiply;
-}
-
 .section .draggable .activity-item .dragicon {
   display: none;
 }
 
-/* Activity divider */
-.activity:focus-within + .activity div.divider button,
-.course-section-header:focus-within + .content .section .activity:first-child div.divider button,
-.content .section .activity:focus-within div.divider button {
-  visibility: visible;
-}
-
-.activity div.divider {
-  position: absolute;
-  width: 100%;
-  height: 2rem;
-  margin-top: -1rem;
-  margin-bottom: -1rem;
-  z-index: 5;
-}
-.activity div.divider button {
-  border-radius: 100%;
-  width: 2rem;
-  height: 2rem;
+/* Dividers */
+.divider {
   position: relative;
-  left: 50%;
+}
+.divider hr {
+  width: 100%;
+  margin: 0.5rem 0.25rem;
+  border-top: 2px dashed #dee2e6;
+}
+.divider .divider-content {
   opacity: 0;
   visibility: hidden;
   transition: visibility 0.1s;
-  margin: 0;
-  padding: 0;
-}
-.activity div.divider button i.icon {
-  height: 1.5rem;
-  width: 1.5rem;
-  font-size: 1.5rem;
   position: absolute;
-  left: calc(0.25rem - 1px);
-  top: calc(0.25rem - 0.5px);
+  background: linear-gradient(transparent 40%, #fff 40%, #fff 60%, transparent 60%);
 }
-.activity:not(.dragging) div.divider:hover button, .activity:not(.dragging) div.divider:focus button, .activity:not(.dragging) div.divider:focus-within button {
+.section.hidden .divider .divider-content {
+  background: linear-gradient(transparent 40%, #f8f9fa 40%, #f8f9fa 60%, transparent 60%);
+}
+.divider.always-visible .divider-content {
   opacity: 1;
   visibility: visible;
+}
+.divider.always-hidden hr {
+  opacity: 0;
+  visibility: hidden;
+}
+.divider:hover .divider-content, .divider:focus .divider-content, .divider:focus-within .divider-content {
+  opacity: 1;
+  visibility: visible;
+}
+.divider:hover hr, .divider:focus hr, .divider:focus-within hr {
+  opacity: 1;
+  visibility: visible;
+}
+.divider:has(.btn.add-content:hover) hr {
+  border-color: #0f6cbf;
+}
+
+.activity:focus-within + .activity .divider .divider-content,
+.course-section-header:focus-within + .content .section .activity:first-child .divider .divider-content,
+.content .section .activity:focus-within .divider .divider-content,
+.course-content:focus-within .changenumsections .divider .divider-content {
+  visibility: visible;
+}
+
+.course-content ul.topics > li:last-child .changenumsections {
+  display: none;
+}
+
+.btn.add-content {
+  position: relative;
+  z-index: 1;
+  border-radius: 50rem;
+  font-size: 0.8203125rem;
+  font-weight: bold;
+  color: #083863;
+  background-color: #cfe2f2;
+}
+.btn.add-content:hover, .btn.add-content:focus {
+  color: #fff;
+  background-color: #0f6cbf;
+}
+.btn.add-content .icon {
+  width: 14px;
+  height: 14px;
+  font-size: 14px;
 }
 
 /* Bulk editing */
 .bulkenabled .bulk-hidden {
   display: none !important;
 }
-
-.activity-item .bulkselect {
+.bulkenabled .section:not(:first-child) {
+  margin-top: 1.5rem;
+}
+.bulkenabled .activity {
+  margin-top: 0.5rem;
+  margin-left: 2rem;
+  padding-top: 0.5rem;
+  border-top: 2px dashed #dee2e6;
+}
+.bulkenabled .activity:first-child {
+  margin-top: 1.5rem;
+}
+.bulkenabled .activity-item .bulkselect {
   position: absolute;
   left: -2rem;
 }
-
-.course-section-header .bulkselect {
-  left: -2rem;
+.bulkenabled .course-section-header .bulkselect {
+  left: -2.75rem;
   position: relative;
   width: 0;
 }
-
 @media (max-width: 767.98px) {
   .bulkenabled .course-content {
     margin-left: 2rem;
   }
 }
+
 /* Activity completion */
 .defaultactivitycompletion-item a {
   color: #000;
@@ -29780,7 +29756,7 @@ span.editinstructions .alert-link {
 .sitetopic .activity:first-of-type hr {
   display: none;
 }
-.sitetopic .section {
+.sitetopic .section-item {
   margin-bottom: 1.5rem;
   border-radius: 0.5rem;
 }
