@@ -306,7 +306,7 @@ abstract class grade_export {
     /**
      * Implemented by child class
      */
-    public abstract function print_grades();
+    abstract public function print_grades();
 
     /**
      * Prints preview of exported grades on screen as a feedback mechanism

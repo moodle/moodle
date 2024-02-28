@@ -906,7 +906,7 @@ abstract class question_edit_form extends question_wizard_form {
      * @return the question type name, should be the same as the name() method
      *      in the question type class.
      */
-    public abstract function qtype();
+    abstract public function qtype();
 
     /**
      * Returns an array of editor options with collapsed options turned off.

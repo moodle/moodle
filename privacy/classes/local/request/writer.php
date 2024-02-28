@@ -88,7 +88,7 @@ class writer {
     /**
      * Return an instance of
      */
-    protected static final function instance() {
+    final protected static function instance() {
         if (null === self::$instance) {
             self::$instance = new static();
         }
@@ -99,7 +99,7 @@ class writer {
     /**
      * Reset the writer and content_writer.
      */
-    public static final function reset() {
+    final public static function reset() {
         static::$instance = null;
     }
 

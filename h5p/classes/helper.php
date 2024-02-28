@@ -296,7 +296,7 @@ class helper {
      * @param string $statusaction A link to 'Run now' option for the task
      * @return array
      */
-    static private function convert_info_into_array(string $tool,
+    private static function convert_info_into_array(string $tool,
         \moodle_url $link,
         int $status,
         string $statusaction = ''): array {

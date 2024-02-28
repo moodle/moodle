@@ -214,7 +214,7 @@ class cacheable_object_array extends ArrayObject implements cacheable_object {
      * @return cacheable_object_array
      * @throws coding_exception
      */
-    final static public function wake_from_cache($data) {
+    final public static function wake_from_cache($data) {
         if (!is_array($data)) {
             throw new coding_exception('Invalid data type when reviving cacheable_array data');
         }

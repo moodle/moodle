@@ -208,7 +208,7 @@ abstract class field_controller {
      *
      * @return category_controller
      */
-    public final function get_category(): category_controller {
+    final public function get_category(): category_controller {
         return $this->category;
     }
 
@@ -231,7 +231,7 @@ abstract class field_controller {
      *
      * @return handler
      */
-    public final function get_handler(): handler {
+    final public function get_handler(): handler {
         return $this->get_category()->get_handler();
     }
 
@@ -250,7 +250,7 @@ abstract class field_controller {
      *
      * @param \MoodleQuickForm $mform
      */
-    public abstract function config_form_definition(\MoodleQuickForm $mform);
+    abstract public function config_form_definition(\MoodleQuickForm $mform);
 
     /**
      * Returns the field name formatted according to configuration context.

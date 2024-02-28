@@ -44,7 +44,7 @@ abstract class qtype_gapselect_base extends question_type {
      * @param array $choice the form data relating to this choice.
      * @return string ready to store in the database.
      */
-    protected abstract function choice_options_to_feedback($choice);
+    abstract protected function choice_options_to_feedback($choice);
 
     public function save_question_options($question) {
         global $DB;
@@ -147,7 +147,7 @@ abstract class qtype_gapselect_base extends question_type {
      * @param object $choicedata as loaded from the question_answers table.
      * @return object an appropriate object for representing the choice.
      */
-    protected abstract function make_choice($choicedata);
+    abstract protected function make_choice($choicedata);
 
     protected function initialise_question_instance(question_definition $question, $questiondata) {
         parent::initialise_question_instance($question, $questiondata);
@@ -212,7 +212,7 @@ abstract class qtype_gapselect_base extends question_type {
      * @param string $feedback the data loaded from the database.
      * @return array the choice options.
      */
-    protected abstract function feedback_to_choice_options($feedback);
+    abstract protected function feedback_to_choice_options($feedback);
 
     /**
      * This method gets the choices (answers)

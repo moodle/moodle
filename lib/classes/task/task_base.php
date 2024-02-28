@@ -192,7 +192,7 @@ abstract class task_base {
      * Do the job.
      * Throw exceptions on errors (the job will be retried).
      */
-    public abstract function execute();
+    abstract public function execute();
 
     /**
      * Setter for $timestarted.

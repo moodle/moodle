@@ -386,7 +386,7 @@ abstract class user_selector_base {
      *      that is true, then that option will be displayed greyed out, and
      *      will not be returned by get_selected_users.
      */
-    public abstract function find_users($search);
+    abstract public function find_users($search);
 
     /**
      *

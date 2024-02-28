@@ -42,7 +42,7 @@ abstract class assign_submission_plugin extends assign_plugin {
      *
      * @return string
      */
-    public final function get_subtype() {
+    final public function get_subtype() {
         return 'assignsubmission';
     }
 

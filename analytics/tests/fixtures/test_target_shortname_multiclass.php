@@ -70,7 +70,7 @@ class test_target_shortname_multiclass extends \core_analytics\local\target\disc
      *
      * @return array
      */
-    public static final function get_classes() {
+    final public static function get_classes() {
         return array(0, 1, 2);
     }
 

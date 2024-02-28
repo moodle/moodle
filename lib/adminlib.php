@@ -2023,7 +2023,7 @@ abstract class admin_setting {
      * Returns current value of this setting
      * @return mixed array or string depending on instance, NULL means not set yet
      */
-    public abstract function get_setting();
+    abstract public function get_setting();
 
     /**
      * Returns default setting if exists
@@ -2048,7 +2048,7 @@ abstract class admin_setting {
      * @param mixed $data string or array, must not be NULL
      * @return string empty string if ok, string error message otherwise
      */
-    public abstract function write_setting($data);
+    abstract public function write_setting($data);
 
     /**
      * Return part of form with setting

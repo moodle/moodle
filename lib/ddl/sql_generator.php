@@ -1278,7 +1278,7 @@ abstract class sql_generator {
      * @param xmldb_table|string $table name of table or the table object.
      * @return array of sql statements
      */
-    public abstract function getResetSequenceSQL($table);
+    abstract public function getResetSequenceSQL($table);
 
     /**
      * Given one correct xmldb_table, returns the SQL statements
@@ -1297,7 +1297,7 @@ abstract class sql_generator {
      * @param int $xmldb_decimals The decimal places of precision of the data type.
      * @return string The DB defined data type.
      */
-    public abstract function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null);
+    abstract public function getTypeSQL($xmldb_type, $xmldb_length=null, $xmldb_decimals=null);
 
     /**
      * Returns the code (array of statements) needed to execute extra statements on field rename.
@@ -1328,7 +1328,7 @@ abstract class sql_generator {
      * @param xmldb_table $xmldb_table The xmldb_table object instance.
      * @return array Array of SQL statements to add one comment to the table.
      */
-    public abstract function getCommentSQL($xmldb_table);
+    abstract public function getCommentSQL($xmldb_table);
 
     /**
      * Returns the code (array of statements) needed to execute extra statements on table rename.
@@ -1363,7 +1363,7 @@ abstract class sql_generator {
      *
      * @todo MDL-31147 Moodle 2.1 - Drop getDropDefaultSQL()
      */
-    public abstract function getDropDefaultSQL($xmldb_table, $xmldb_field);
+    abstract public function getDropDefaultSQL($xmldb_table, $xmldb_field);
 
     /**
      * Given one xmldb_table and one xmldb_field, return the SQL statements needed to add its default
@@ -1373,7 +1373,7 @@ abstract class sql_generator {
      * @param xmldb_field $xmldb_field The xmldb_field object instance.
      * @return array Array of SQL statements to create a field's default.
      */
-    public abstract function getCreateDefaultSQL($xmldb_table, $xmldb_field);
+    abstract public function getCreateDefaultSQL($xmldb_table, $xmldb_field);
 
     /**
      * Returns an array of reserved words (lowercase) for this DB

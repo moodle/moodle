@@ -52,7 +52,7 @@ class restore_h5pactivity_activity_task extends restore_activity_task {
      *
      * @return array.
      */
-    static public function define_decode_contents(): array {
+    public static function define_decode_contents(): array {
         $contents = [];
 
         // Define the contents.
@@ -66,7 +66,7 @@ class restore_h5pactivity_activity_task extends restore_activity_task {
      *
      * @return restore_decode_rule[].
      */
-    static public function define_decode_rules(): array {
+    public static function define_decode_rules(): array {
         $rules = [];
 
         $rules[] = new restore_decode_rule('H5PACTIVITYVIEWBYID', '/mod/h5pactivity/view.php?id=$1', 'course_module');
@@ -82,7 +82,7 @@ class restore_h5pactivity_activity_task extends restore_activity_task {
      *
      * @return restore_log_rule[].
      */
-    static public function define_restore_log_rules(): array {
+    public static function define_restore_log_rules(): array {
         $rules = [];
 
         // Define the rules.

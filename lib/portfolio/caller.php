@@ -118,7 +118,7 @@ abstract class portfolio_caller_base {
      * (so for example even if a huge file is being sent,
      * the download portfolio plugin doesn't care )
      */
-    public abstract function expected_time();
+    abstract public function expected_time();
 
     /**
      * Helper method to calculate expected time for multi or single file exports
@@ -138,12 +138,12 @@ abstract class portfolio_caller_base {
     /**
      * Function to build navigation
      */
-    public abstract function get_navigation();
+    abstract public function get_navigation();
 
     /**
      * Helper function to get sha1
      */
-    public abstract function get_sha1();
+    abstract public function get_sha1();
 
     /**
      * Helper function to calculate the sha1 for multi or single file exports
@@ -192,7 +192,7 @@ abstract class portfolio_caller_base {
      * @return bool
      * @throws moodle_exception
      */
-    public final function set($field, &$value) {
+    final public function set($field, &$value) {
         if (property_exists($this, $field)) {
             $this->{$field} =& $value;
             return true;
@@ -208,7 +208,7 @@ abstract class portfolio_caller_base {
      *
      * @param array $config formdata
      */
-    public final function set_export_config($config) {
+    final public function set_export_config($config) {
         $allowed = array_merge(
             array('wait', 'hidewait', 'format', 'hideformat'),
             $this->get_allowed_export_config()
@@ -229,7 +229,7 @@ abstract class portfolio_caller_base {
      * @param string $key the config item to fetch
      * @return null|mixed of export configuration
      */
-    public final function get_export_config($key) {
+    final public function get_export_config($key) {
         $allowed = array_merge(
             array('wait', 'hidewait', 'format', 'hideformat'),
             $this->get_allowed_export_config()
@@ -281,7 +281,7 @@ abstract class portfolio_caller_base {
      * @see copy_existing_file()
      * @see write_new_file()
      */
-    public abstract function prepare_package();
+    abstract public function prepare_package();
 
     /**
      * Helper function to copy files into the temp area
@@ -306,7 +306,7 @@ abstract class portfolio_caller_base {
      *
      * @return array list of formats
      */
-    public final function supported_formats() {
+    final public function supported_formats() {
         $basic = $this->base_supported_formats();
         if (empty($this->supportedformats)) {
             $specific = array();
@@ -331,13 +331,13 @@ abstract class portfolio_caller_base {
     /**
      * This is the "return to where you were" url
      */
-    public abstract function get_return_url();
+    abstract public function get_return_url();
 
     /**
      * Callback to do whatever capability checks required
      * in the caller (called during the export process
      */
-    public abstract function check_permissions();
+    abstract public function check_permissions();
 
     /**
      * Clean name to display to the user about this caller location
@@ -359,7 +359,7 @@ abstract class portfolio_caller_base {
     /**
      * Load data
      */
-    public abstract function load_data();
+    abstract public function load_data();
 
     /**
      * Set up the required files for this export.
@@ -479,7 +479,7 @@ abstract class portfolio_caller_base {
      *
      * @param moodle_page $PAGE global page object
      */
-    public abstract function set_context($PAGE);
+    abstract public function set_context($PAGE);
 }
 
 /**

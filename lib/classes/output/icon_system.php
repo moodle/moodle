@@ -75,7 +75,7 @@ abstract class icon_system {
      * @param string $type Either a specific type, or null to get the default type.
      * @return \core\output\icon_system
      */
-    public final static function instance($type = null) {
+    final public static function instance($type = null) {
         global $PAGE;
 
         if (empty(self::$instance)) {
@@ -107,7 +107,7 @@ abstract class icon_system {
      * @param string $system
      * @return boolean
      */
-    public final static function is_valid_system($system) {
+    final public static function is_valid_system($system) {
         return class_exists($system) && is_a($system, static::class, true);
     }
 
@@ -116,7 +116,7 @@ abstract class icon_system {
      *
      * @return string
      */
-    public abstract function get_amd_name();
+    abstract public function get_amd_name();
 
     /**
      * Render the pix icon according to the icon system.
@@ -125,7 +125,7 @@ abstract class icon_system {
      * @param pix_icon $icon
      * @return string
      */
-    public abstract function render_pix_icon(renderer_base $output, pix_icon $icon);
+    abstract public function render_pix_icon(renderer_base $output, pix_icon $icon);
 
     /**
      * Overridable function to get a mapping of all icons.
@@ -139,7 +139,7 @@ abstract class icon_system {
      * Overridable function to map the icon name to something else.
      * Default is to do no mapping. Map is cached in the singleton.
      */
-    public final function remap_icon_name($iconname, $component) {
+    final public function remap_icon_name($iconname, $component) {
         if ($this->map === null) {
             $this->map = $this->get_icon_name_map();
         }

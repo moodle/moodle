@@ -213,7 +213,7 @@ abstract class backup_block_task extends backup_task {
      * Code the transformations to perform in the block in
      * order to get transportable (encoded) links
      */
-    static public function encode_content_links($content) {
+    public static function encode_content_links($content) {
         throw new coding_exception('encode_content_links() method needs to be overridden in each subclass of backup_block_task');
     }
 }

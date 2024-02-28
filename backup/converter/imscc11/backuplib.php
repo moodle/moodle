@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->dirroot . '/backup/converter/convertlib.php');
 
 class imscc11_export_converter extends base_converter {
-    static public function get_deps() {
+    public static function get_deps() {
         global $CFG;
         require_once($CFG->dirroot . '/backup/util/settings/setting_dependency.class.php');
         return array(

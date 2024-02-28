@@ -4120,7 +4120,7 @@ EOD;
      *     their level. Note that you can as weel specify tabobject::$inactive for separate instances
      * @return string
      */
-    public final function tabtree($tabs, $selected = null, $inactive = null) {
+    final public function tabtree($tabs, $selected = null, $inactive = null) {
         return $this->render(new tabtree($tabs, $selected, $inactive));
     }
 

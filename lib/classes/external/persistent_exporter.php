@@ -65,7 +65,7 @@ abstract class persistent_exporter extends exporter {
      *
      * @return array Keys are the property names, and value their definition.
      */
-    protected final static function define_properties() {
+    final protected static function define_properties() {
         $classname = static::define_class();
         return $classname::properties_definition();
     }

@@ -1067,7 +1067,7 @@ abstract class moodleform {
     /**
      * Form definition. Abstract method - always override!
      */
-    protected abstract function definition();
+    abstract protected function definition();
 
     /**
      * After definition hook.

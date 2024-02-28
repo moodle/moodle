@@ -83,7 +83,7 @@ abstract class handler {
      *
      * @param int $itemid
      */
-    protected final function __construct(int $itemid = 0) {
+    final protected function __construct(int $itemid = 0) {
         if (!preg_match('|^(\w+_[\w_]+)\\\\customfield\\\\([\w_]+)_handler$|', static::class, $matches)) {
             throw new \coding_exception('Handler class name must have format: <PLUGIN>\\customfield\\<AREA>_handler');
         }

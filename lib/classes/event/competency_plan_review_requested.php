@@ -50,7 +50,7 @@ class competency_plan_review_requested extends base {
      * @param plan $plan The plan.
      * @return self
      */
-    public static final function create_from_plan(plan $plan) {
+    final public static function create_from_plan(plan $plan) {
         if (!$plan->get('id')) {
             throw new \coding_exception('The plan ID must be set.');
         }

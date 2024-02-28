@@ -39,7 +39,7 @@ abstract class base_definition {
      * @param issuer $issuer The OAuth issuer the endpoints should be discovered for.
      * @return string The URL of the discovery file, containing the endpoints.
      */
-    public abstract static function get_discovery_endpoint_url(issuer $issuer): string;
+    abstract public static function get_discovery_endpoint_url(issuer $issuer): string;
 
     /**
      * Process the discovery information and create endpoints defined with the expected format.
@@ -48,7 +48,7 @@ abstract class base_definition {
      * @param stdClass $info The discovery information, with the endpoints to process and create.
      * @return void
      */
-    protected abstract static function process_configuration_json(issuer $issuer, stdClass $info): void;
+    abstract protected static function process_configuration_json(issuer $issuer, stdClass $info): void;
 
     /**
      * Process how to map user field information.
@@ -56,7 +56,7 @@ abstract class base_definition {
      * @param issuer $issuer The OAuth issuer the endpoints should be discovered for.
      * @return void
      */
-    protected abstract static function create_field_mappings(issuer $issuer): void;
+    abstract protected static function create_field_mappings(issuer $issuer): void;
 
     /**
      * Self-register the issuer if the 'registration' endpoint exists and client id and secret aren't defined.
@@ -64,7 +64,7 @@ abstract class base_definition {
      * @param issuer $issuer The OAuth issuer to register.
      * @return void
      */
-    protected abstract static function register(issuer $issuer): void;
+    abstract protected static function register(issuer $issuer): void;
 
     /**
      * Create endpoints for this issuer.

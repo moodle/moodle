@@ -83,7 +83,7 @@ abstract class backup_plan_builder {
     /**
      * Dispatches, based on type to specialised builders
      */
-    static public function build_plan($controller) {
+    public static function build_plan($controller) {
 
         $plan = $controller->get_plan();
 
@@ -115,7 +115,7 @@ abstract class backup_plan_builder {
     /**
      * Return one array of supported backup types
      */
-    static public function supported_backup_types() {
+    public static function supported_backup_types() {
         return array(backup::TYPE_1COURSE, backup::TYPE_1SECTION, backup::TYPE_1ACTIVITY);
     }
 
@@ -124,7 +124,7 @@ abstract class backup_plan_builder {
     /**
      * Build one 1-activity backup
      */
-    static protected function build_activity_plan($controller, $id) {
+    protected static function build_activity_plan($controller, $id) {
 
         $plan = $controller->get_plan();
 
@@ -153,7 +153,7 @@ abstract class backup_plan_builder {
     /**
      * Build one 1-section backup
      */
-    static protected function build_section_plan($controller, $id) {
+    protected static function build_section_plan($controller, $id) {
 
         $plan = $controller->get_plan();
 
@@ -175,7 +175,7 @@ abstract class backup_plan_builder {
     /**
      * Build one 1-course backup
      */
-    static protected function build_course_plan($controller, $id) {
+    protected static function build_course_plan($controller, $id) {
 
         $plan = $controller->get_plan();
 

@@ -395,7 +395,7 @@ abstract class administration_helper extends cache_helper {
      * @param array $forminfo empty array to be set by actions.
      * @return array array of form info.
      */
-    public abstract function perform_cache_actions(string $action, array $forminfo): array;
+    abstract public function perform_cache_actions(string $action, array $forminfo): array;
 
     /**
      * This function must be implemented to display the cache admin page.

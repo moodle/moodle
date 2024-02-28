@@ -747,7 +747,7 @@ abstract class repository implements cacheable_object {
      * @return bool true when the user can, otherwise throws an exception.
      * @throws repository_exception when the user does not meet the requirements.
      */
-    public final function check_capability() {
+    final public function check_capability() {
         global $USER;
 
         // The context we are on.
@@ -1843,7 +1843,7 @@ abstract class repository implements cacheable_object {
      * @return bool true if the user can edit the instance.
      * @since Moodle 2.5
      */
-    public final function can_be_edited_by_user() {
+    final public function can_be_edited_by_user() {
         global $USER;
 
         // We need to be able to explore the repository.
@@ -2859,7 +2859,7 @@ abstract class repository implements cacheable_object {
      *
      * @return string repository secret key.
      */
-    final static public function get_secret_key() {
+    final public static function get_secret_key() {
         global $CFG;
 
         if (!isset($CFG->reposecretkey)) {

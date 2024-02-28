@@ -184,7 +184,7 @@ class behat_config_manager {
      *
      * @return string
      */
-    public final static function get_behat_run_config_file_path() {
+    final public static function get_behat_run_config_file_path() {
         return behat_command::get_parent_behat_dir() . '/run_environment.json';
     }
 
@@ -194,7 +194,7 @@ class behat_config_manager {
      * @param string $key Key to store
      * @return string|int|array value which is stored.
      */
-    public final static function get_behat_run_config_value($key) {
+    final public static function get_behat_run_config_value($key) {
         $parallelrunconfigfile = self::get_behat_run_config_file_path();
 
         if (file_exists($parallelrunconfigfile)) {
@@ -214,7 +214,7 @@ class behat_config_manager {
      * @param string $key Key to store
      * @param string|int|array $value to store.
      */
-    public final static function set_behat_run_config_value($key, $value) {
+    final public static function set_behat_run_config_value($key, $value) {
         $parallelrunconfigs = array();
         $parallelrunconfigfile = self::get_behat_run_config_file_path();
 
@@ -232,7 +232,7 @@ class behat_config_manager {
      *
      * @return bool true on success else false.
      */
-    public final static function drop_parallel_site_links() {
+    final public static function drop_parallel_site_links() {
         global $CFG;
 
         // Get parallel test runs.
@@ -264,7 +264,7 @@ class behat_config_manager {
      * @param int $torun last run.
      * @return bool true for sucess, else false.
      */
-    public final static function create_parallel_site_links($fromrun, $torun) {
+    final public static function create_parallel_site_links($fromrun, $torun) {
         global $CFG;
 
         // Create site symlink if necessary.

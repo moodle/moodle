@@ -299,7 +299,7 @@ abstract class data_controller {
      *
      * @return mixed
      */
-    public abstract function get_default_value();
+    abstract public function get_default_value();
 
     /**
      * Returns the value as it is stored in the database or default value if data record is not present
@@ -334,7 +334,7 @@ abstract class data_controller {
      *
      * @param \MoodleQuickForm $mform
      */
-    public abstract function instance_form_definition(\MoodleQuickForm $mform);
+    abstract public function instance_form_definition(\MoodleQuickForm $mform);
 
     /**
      * Returns value in a human-readable format or default value if data record is not present

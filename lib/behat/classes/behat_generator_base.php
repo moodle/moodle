@@ -163,7 +163,7 @@ abstract class behat_generator_base {
      *
      * @return array entity name => information about how to generate.
      */
-    protected abstract function get_creatable_entities(): array;
+    abstract protected function get_creatable_entities(): array;
 
     /**
      * Get the list of available generators for this class.

@@ -417,12 +417,12 @@ abstract class question_qtype_attempt_updater {
         return $state->answer == '';
     }
 
-    public abstract function right_answer();
-    public abstract function response_summary($state);
-    public abstract function was_answered($state);
-    public abstract function set_first_step_data_elements($state, &$data);
-    public abstract function set_data_elements_for_step($state, &$data);
-    public abstract function supply_missing_first_step_data(&$data);
+    abstract public function right_answer();
+    abstract public function response_summary($state);
+    abstract public function was_answered($state);
+    abstract public function set_first_step_data_elements($state, &$data);
+    abstract public function set_data_elements_for_step($state, &$data);
+    abstract public function supply_missing_first_step_data(&$data);
 }
 
 

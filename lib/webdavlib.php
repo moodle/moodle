@@ -1640,7 +1640,7 @@ EOD;
      * @param resource $fp the file handle to write to (or null)
      * @param string &$buffer the buffer to append to (if $fp is null)
      */
-    static private function update_file_or_buffer($chunk, $fp, &$buffer) {
+    private static function update_file_or_buffer($chunk, $fp, &$buffer) {
         if ($fp) {
             fwrite($fp, $chunk);
         } else {

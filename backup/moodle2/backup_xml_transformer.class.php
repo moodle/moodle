@@ -150,7 +150,7 @@ class backup_xml_transformer extends xml_contenttransformer {
         return $content;
     }
 
-    static private function process_filephp_uses($matches) {
+    private static function process_filephp_uses($matches) {
 
         // Replace slashes (plain and encoded) and forcedownload=1 parameter
         $search = array('/', '%2f', '%2F', '?forcedownload=1', '&forcedownload=1', '&amp;forcedownload=1');

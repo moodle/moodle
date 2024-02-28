@@ -384,7 +384,7 @@ class behat_util extends testing_util {
      * Returns the path to the file which specifies if test environment is enabled
      * @return string
      */
-    public final static function get_test_file_path() {
+    final public static function get_test_file_path() {
         return behat_command::get_parent_behat_dir() . '/test_environment_enabled.txt';
     }
 

@@ -48,7 +48,7 @@ class competency_user_evidence_created extends base {
      * @param user_evidence $userevidence The evidence of prior learning.
      * @return self
      */
-    public static final function create_from_user_evidence(user_evidence $userevidence) {
+    final public static function create_from_user_evidence(user_evidence $userevidence) {
         if (!$userevidence->get('id')) {
             throw new \coding_exception('The evidence of prior learning ID must be set.');
         }

@@ -67,7 +67,7 @@ abstract class core_media_player_external extends core_media_player {
      * @param array $options Options array
      * @return string HTML code for embed
      */
-    protected abstract function embed_external(moodle_url $url, $name, $width, $height, $options);
+    abstract protected function embed_external(moodle_url $url, $name, $width, $height, $options);
 
     public function list_supported_urls(array $urls, array $options = array()) {
         // These only work with a SINGLE url (there is no fallback).
