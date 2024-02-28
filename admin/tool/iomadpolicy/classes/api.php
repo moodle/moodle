@@ -293,7 +293,10 @@ class api {
         }
 
         // Get the companyid.
-        if (!$company = company::by_userid($userid)) {
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $company = new company($companyid);
+        } else {
             $company = (object) ['id' => 0];
         }
         if (!empty($company->id) &&
@@ -800,13 +803,15 @@ class api {
         global $DB;
 
         // Get the companyid.
-        if (!$company = company::by_userid($userid)) {
-            $company = (object) ['id' => 0];
-        } else {
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $company = new company($companyid);
             if (!$DB->get_records('tool_iomadpolicy', ['companyid' => $company->id])) {
                 // No company specific policies so we use the default ones.
                 $company->id = 0;
             }
+        } else {
+            $company = (object) ['id' => 0];
         }
 
 
@@ -1074,13 +1079,15 @@ class api {
         }
 
         // Get the companyid.
-        if (!$company = company::by_userid($user->id)) {
-            $company = (object) ['id' => 0];
-                } else {
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $company = new company($companyid);
             if (!$DB->get_records('tool_iomadpolicy', ['companyid' => $company->id])) {
                 // No company specific policies so we use the default ones.
                 $company->id = 0;
             }
+        } else {
+            $company = (object) ['id' => 0];
         }
 
         $sql = "SELECT d.id, v.optional, a.status

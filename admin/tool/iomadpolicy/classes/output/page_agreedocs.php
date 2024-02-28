@@ -105,13 +105,15 @@ class page_agreedocs implements renderable, templatable {
         }
 
         // Get the companyid.
-        if (!$company = company::by_userid($behalfid)) {
-            $company = (object) ['id' => 0];
-                } else {
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $company = new company($companyid);
             if (!$DB->get_records('tool_iomadpolicy', ['companyid' => $company->id])) {
                 // No company specific policies so we use the default ones.
                 $company->id = 0;
             }
+        } else {
+            $company = (object) ['id' => 0];
         }
 
         $this->policies = api::list_current_versions(iomadpolicy_version::AUDIENCE_LOGGEDIN, $company->id);
