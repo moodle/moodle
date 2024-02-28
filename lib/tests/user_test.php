@@ -917,7 +917,8 @@ class user_test extends \advanced_testcase {
         // Display profile picture.
         $context = \context_system::instance();
         // No image, show initials.
-        $this->assertStringContainsString("<span class=\"userinitials size-35\">JD</span></a>",
+        $this->assertStringContainsString(
+            "<span class=\"userinitials size-35\" title=\"John Doe\" aria-label=\"John Doe\" role=\"img\">JD</span></a>",
             $OUTPUT->render(\core_user::get_profile_picture($user1, $context)));
         // With Image.
         $expectedimagesrc = $CFG->wwwroot . '/pluginfile.php/' . \context_user::instance($user2->id)->id .
@@ -927,12 +928,14 @@ class user_test extends \advanced_testcase {
 
         // Display profile picture with options.
         $options = ['size' => 50, 'includefullname' => true];
-        $this->assertStringContainsString("<span class=\"userinitials size-50\">JD</span>John Doe</a>",
+        $this->assertStringContainsString(
+            "<span class=\"userinitials size-50\" title=\"John Doe\" aria-label=\"John Doe\" role=\"img\">JD</span>John Doe</a>",
             $OUTPUT->render(\core_user::get_profile_picture($user1, $context, $options)));
 
         // Display profile picture with options, no link.
         $options = ['link' => false];
-        $this->assertEquals("<span class=\"userinitials size-35\">JD</span>",
+        $this->assertEquals(
+            "<span class=\"userinitials size-35\" title=\"John Doe\" aria-label=\"John Doe\" role=\"img\">JD</span>",
             $OUTPUT->render(\core_user::get_profile_picture($user1, $context, $options)));
     }
 
