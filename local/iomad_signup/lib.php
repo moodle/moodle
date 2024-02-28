@@ -40,9 +40,16 @@ function local_iomad_signup_user_created($user) {
 
     // If the user is already in a company then we do nothing more
     // as this came from the self sign up pages.
-    if ($userrecord = $DB->get_record('company_users', array('userid' => $user->id))) {
+    if ($usercompanies = $DB->get_records_sql("SELECT DISTINCT companyid,id
+                                               FROM {company_users}
+                                               WHERE userid = :userid
+                                               ORDER BY id DESC
+                                               LIMIT 1",
+                                               ['userid' => $user->id])) {
 
+        $userrecord = array_shift($usercompanies);
         $company = new company($userrecord->companyid);
+
         // Deal with any auto enrolments.
         if ($CFG->local_iomad_signup_autoenrol) {
             $company->autoenrol($user);
