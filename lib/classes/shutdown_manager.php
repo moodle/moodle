@@ -148,6 +148,9 @@ class core_shutdown_manager {
     public static function shutdown_handler() {
         global $DB;
 
+        // In case we caught an out of memory shutdown we increase memory limit to unlimited, so we can gracefully shut down.
+        raise_memory_limit(MEMORY_UNLIMITED);
+
         // Always ensure we know who the user is in access logs even if they
         // were logged in a weird way midway through the request.
         set_access_log_user();
