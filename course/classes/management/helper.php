@@ -129,6 +129,12 @@ class helper {
                 'value' => join('<br />', $roledetails)
             );
         }
+
+        $contactsdetails = self::get_contacts_by_role_details($course);
+        if ($contactsdetails) {
+            $details['coursecontact'] = $contactsdetails;
+        }
+
         if ($course->can_review_enrolments()) {
             $enrolmentlines = array();
             $instances = \enrol_get_instances($course->id, true);
@@ -161,6 +167,54 @@ class helper {
             );
         }
         return $details;
+    }
+
+    /**
+     * Returns the course contact details, if any.
+     *
+     * @param \core_course_list_element $course
+     * @return array|null Returns null if there are no contacts, otherwise an array of contact details.
+     */
+    private static function get_contacts_by_role_details(\core_course_list_element $course): ?array {
+        if (!$course->can_access()) {
+            return null;
+        }
+
+        $contactsbyrole = [];
+        foreach ($course->get_course_contacts() as $contact) {
+            $rolenames = array_map(
+                fn($role) => $role->displayname,
+                $contact['roles']
+            );
+            $contacturl = new \moodle_url('/user/view.php', ['id' => $contact['user']->id]);
+            $coursecontact = \html_writer::link($contacturl, $contact['username']);
+
+            foreach ($rolenames as $rolename) {
+                if (!array_key_exists($rolename, $contactsbyrole)) {
+                    $contactsbyrole[$rolename] = [];
+                }
+                $contactsbyrole[$rolename][] = $coursecontact;
+            }
+        }
+        $contactsbyrolelist = [];
+        foreach ($contactsbyrole as $rolename => $contacts) {
+            $contactsbyrolelist[] = get_string(
+                'contactsbyrolelist',
+                'moodle',
+                (object) [
+                    'role' => $rolename,
+                    'contacts' => implode(', ', $contacts),
+                ]
+            );
+        }
+
+        if (empty($contactsbyrolelist)) {
+            return null;
+        }
+        return [
+            'key' => \get_string('coursecontact', 'admin'),
+            'value' => join('<br>', $contactsbyrolelist),
+        ];
     }
 
     /**
