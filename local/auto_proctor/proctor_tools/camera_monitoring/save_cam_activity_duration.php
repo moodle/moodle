@@ -25,18 +25,24 @@ require_once(__DIR__ . '/../../../../config.php');
 global $DB, $PAGE, $USER, $CFG;
 
 if (isset($_POST['filename'])) {
+
+    // Initialize all the necessary details about the record.
     $filename = $_POST['filename'];
-    $duration = $_POST['duration']; // Ensure it's an integer
+    $duration = $_POST['duration'];
     $userid = $_POST['userid'];
     $quizid = $_POST['quizid'];
     $quizattempt = $_POST['quizattempt'];
 
+    // SQL parameter
     $params = array('userid' => $userid, 'quizid' => $quizid, 'attempt' => $quizattempt, 'filename' => $filename);
 
+    // Create update instance
     $update_data = new stdClass();
+
+    // Initialize that the duration will be the value of the fetch duration from the monitor_cam.js.
     $update_data->duration = $duration;
 
-    // Build the raw SQL update query
+    // SQL query
     $sql = "UPDATE {auto_proctor_activity_report_tb}
             SET duration = :duration
             WHERE userid = :userid
@@ -44,10 +50,10 @@ if (isset($_POST['filename'])) {
             AND attempt = :attempt
             AND evidence = :filename";
 
-    // Add the screenshare_consent value to the parameters array
+    // Add the duration in parameter
     $params['duration'] = $update_data->duration;
 
-    // Execute the raw SQL query
+    // Execute the SQL query
     $update_duration = $DB->execute($sql, $params);
 
     
