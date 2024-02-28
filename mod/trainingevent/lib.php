@@ -418,7 +418,7 @@ function trainingevent_user_removed($event) {
             $course = $DB->get_record('course', array('id' => $trainingevent->course));
             $context = context_course::instance($trainingevent->course);
             $user = $DB->get_record('user', ['id' => $waitlistuser->userid]);
-            $usercompany = company::by_userid($user->id);
+            $usercompany = new company($location->companyid);
             $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $trainingevent->startdatetime);
 
             // Send an email as long as it hasn't already started.

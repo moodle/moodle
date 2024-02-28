@@ -66,22 +66,20 @@ class trainingevent_not_selected_task extends \core\task\scheduled_task {
                                          ['time' => $runtime]);
         foreach ($courses as $course) {       
             // Get all of the users on the course who are not already signed up for an event or waiting list.
-            $users = $DB->get_records_sql("SELECT u.* FROM {user} u
+            $users = $DB->get_records_sql("SELECT u.*,v.companyid FROM {user} u
                                            JOIN {user_enrolments} ue ON (ue.userid = u.id)
                                            JOIN {enrol} e ON (ue.enrolid = e.id)
-                                           WHERE e.courseid = :courseid1
+                                           JOIN {trainingevent} t ON (e.courseid = t.course)
+                                           JOIN {classroom} v ON (t.classroomid = v.id)
+                                           LEFT JOIN {trainingevent_users} tu ON (u.id = tu.userid AND ue.userid = tu.userid AND t.id = tu.trainingeventid)
+                                           WHERE e.courseid = :courseid
                                            AND ue.timestart < :warntime
-                                           AND u.id NOT IN (
-                                               SELECT tu.userid FROM {trainingevent_users} tu
-                                               JOIN {trainingevent} t ON (tu.trainingeventid = t.id)
-                                               WHERE t.course = :courseid2
-                                           )",
-                                           ['courseid1' => $course->id,
-                                            'courseid2' => $course->id,
+                                           AND tu.userid IS NULL",
+                                           ['courseid' => $course->id,
                                             'warntime' => $runtime - $course->warnnotstarted * 24 * 60 * 60]);
             foreach ($users as $user) {
                 // Get the user's company.
-                if ($company = company::by_userid($user->id, true)) {
+                if ($company = new company($user->companyid)) {
                     
                     // Get the company template info.
                     // Check against per company template repeat instead.

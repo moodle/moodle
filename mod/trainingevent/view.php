@@ -496,7 +496,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                         ($chosenevent->approvaltype == 1 && $myapprovallevel == "department")) {
 
                         // Get the user's company.
-                        $usercompany = company::by_userid($user->id);
+                        $usercompany = new company($chosenlocation->companyid);
 
                         // Add to the chosen event.
                         if (!$DB->get_record('trainingevent_users', array('userid' => $userid,
@@ -638,7 +638,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                && $myapprovallevel == "department") {
 
                         // Get the user's company.
-                        $usercompany = company::by_userid($user->id);
+                        $usercompany = new company($chosenlocation->companyid);
 
                         // More levels of approval are required.
                         if (!$userbooking = $DB->get_record('block_iomad_approve_access', array('activityid' => $chosenevent->id,
@@ -652,7 +652,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                 print_error('error creating attendance record');
                             } else {
                                 $course = $DB->get_record('course', array('id' => $event->course));
-                                $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $chosenevent->startdatetime);
+                                $chosenlocation->time = date($CFG->iomad_date_format . ' \a\t H:i', $chosenevent->startdatetime);
                                 $user = $DB->get_record('user', array('id' => $userid));
 
                                 // Send an email as long as it hasn't already started.
@@ -666,7 +666,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                                                                                                    'approveuser' => $user,
                                                                                                    'event' => $chosenevent,
                                                                                                    'company' => $usercompany,
-                                                                                                   'classroom' => $location));
+                                                                                                   'classroom' => $chosenlocation));
                                         }
                                     }
                                 }
@@ -769,7 +769,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         if ($action == 'delete' && !empty($userid)) {
 
             // Get the user's company.
-            $usercompany = company::by_userid($userid);
+            $usercompany = new company($location->companyid);
 
             // Remove the userid from the event.
             if ($DB->delete_records('trainingevent_users', array('userid' => $userid, 'trainingeventid' => $event->id))) {
@@ -837,7 +837,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         }
         if ($action == 'add' && !empty($userid)) {
             // Get the user's company.
-            $usercompany = company::by_userid($userid);
+            $usercompany = new company($location->companyid);
 
             $chosenlocation = $DB->get_record('classroom', array('id' => $event->classroomid));
             $alreadyattending = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
