@@ -7,17 +7,15 @@ namespace ZipStream\Exception;
 use ZipStream\Exception;
 
 /**
- * This Exception gets invoked if `fread` fails on a stream.
+ * This Exception gets invoked if a stream can't be read.
  */
 class StreamNotReadableException extends Exception
 {
     /**
-     * Constructor of the Exception
-     *
-     * @param string $fileName - The name of the file which the stream belongs to.
+     * @internal
      */
-    public function __construct(string $fileName)
+    public function __construct()
     {
-        parent::__construct("The stream for $fileName could not be read.");
+        parent::__construct('The stream could not be read.');
     }
 }

@@ -63,6 +63,7 @@ information provided here is intended especially for developers.
   - $miniqueue
   - $numtasks
   - $mode
+* Removed \zip_writer::sanitise_filepath and \zipwriter::sanitise_filename as they are now automatically sanitised in the zipstream.
 
 === 4.3 ===
 
