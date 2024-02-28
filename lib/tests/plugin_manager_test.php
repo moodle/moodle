@@ -702,4 +702,86 @@ final class plugin_manager_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * @dataProvider is_deleted_standard_plugin_provider
+     */
+    public function test_is_deleted_standard_plugin(
+        mixed $type,
+        mixed $name,
+        bool $expected,
+    ): void {
+        $this->assertEquals(
+            $expected,
+            \core_plugin_manager::is_deleted_standard_plugin($type, $name),
+        );
+    }
+
+    public static function is_deleted_standard_plugin_provider(): array {
+        return [
+            // Valid deleted plugin.
+            ['h5plib', 'v124', true],
+            // Valid type, but not a valid plugin.
+            ['h5plib', 'v99', false],
+            // Invalid type.
+            ['marmelade', 'paddington', false],
+        ];
+    }
+
+    public function test_get_deleted_plugins(): void {
+        $plugins = core_plugin_manager::get_deleted_plugins();
+        $this->assertIsArray($plugins);
+
+        // Pick a couple we know should be there.
+        $this->assertContains('h5plib_v124', $plugins);
+        $this->assertNotContains('h5plib_v99', $plugins);
+
+        $this->assertContains('editor_tinymce', $plugins);
+        $this->assertNotContains('editor_tiny', $plugins);
+    }
+
+    public function test_standard_plugins_list_no_type(): void {
+        $plugins = core_plugin_manager::standard_plugins_list('typo');
+        $this->assertFalse($plugins);
+    }
+
+    /**
+     * @dataProvider standard_plugins_list_provider
+     */
+    public function test_standard_plugins_list(
+        string $type,
+        array $expectedplugins,
+    ): void {
+        $plugins = core_plugin_manager::standard_plugins_list($type);
+        $this->assertIsArray($plugins);
+        foreach ($expectedplugins as $expected) {
+            $this->assertContains($expected, $plugins);
+        }
+    }
+
+    public static function standard_plugins_list_provider(): array {
+        return [
+            [
+                'mod',
+                ['forum', 'assign', 'book', 'choice'],
+            ],
+            [
+                'block',
+                ['starredcourses', 'badges'],
+            ],
+            [
+                'tiny',
+                ['autosave', 'h5p'],
+            ],
+        ];
+    }
+
+    public function test_get_standard_plugins(): void {
+        $plugins = core_plugin_manager::get_standard_plugins();
+        $this->assertIsArray($plugins);
+
+        $this->assertContains('mod_forum', $plugins);
+        $this->assertContains('block_badges', $plugins);
+        $this->assertNotContains('marmelade_paddington', $plugins);
+    }
 }

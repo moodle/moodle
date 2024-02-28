@@ -137,6 +137,7 @@ information provided here is intended especially for developers.
     because there aren't cases in core.
   - Deprecation: Cannot use the "Test" suffix on abstract test case classes. Proceed to
     rename them to end with "TestCase" instead.
+* The list of standard, and deleted, plugins is now located as JSON at lib/plugins.json.
 
 === 4.3 ===
 

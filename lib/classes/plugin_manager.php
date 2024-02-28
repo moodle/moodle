@@ -69,6 +69,8 @@ class core_plugin_manager {
 
     /** @var core_plugin_manager holds the singleton instance */
     protected static $singletoninstance;
+    /** @var \stdClass cache of standard plugins */
+    protected static ?\stdClass $standardplugincache = null;
     /** @var array of raw plugins information */
     protected $pluginsinfo = null;
     /** @var array of raw subplugins information */
@@ -119,6 +121,7 @@ class core_plugin_manager {
      * @param bool $phpunitreset
      */
     public static function reset_caches($phpunitreset = false) {
+        static::$standardplugincache = null;
         if ($phpunitreset) {
             static::$singletoninstance = null;
         } else {
@@ -325,6 +328,20 @@ class core_plugin_manager {
         if (empty($skipcache)) {
             $cache->set('present', $this->presentplugins);
         }
+    }
+
+    /**
+     * Load the standard plugin data from the plugins.json file.
+     *
+     * @return \stdClass
+     */
+    protected static function load_standard_plugins(): \stdClass {
+        if (static::$standardplugincache === null) {
+            $data = file_get_contents(dirname(__DIR__) . '/plugins.json');
+            static::$standardplugincache = json_decode($data, false);
+        }
+
+        return static::$standardplugincache;
     }
 
     /**
@@ -1702,377 +1719,76 @@ class core_plugin_manager {
      * @param string $name plugin name
      * @return bool
      */
-    public static function is_deleted_standard_plugin($type, $name) {
+    public static function is_deleted_standard_plugin(
+        string $type,
+        string $name,
+    ): bool {
         // Do not include plugins that were removed during upgrades to versions that are
         // not supported as source versions for upgrade any more. For example, at MOODLE_23_STABLE
         // branch, listed should be no plugins that were removed at 1.9.x - 2.1.x versions as
         // Moodle 2.3 supports upgrades from 2.2.x only.
-        $plugins = [
-            'assignment' => ['offline', 'online', 'upload', 'uploadsingle'],
-            'auth' => ['radius', 'fc', 'nntp', 'pam', 'pop3', 'imap'],
-            'block' => ['course_overview', 'messages', 'community', 'participants', 'quiz_results'],
-            'cachestore' => ['memcache', 'memcached', 'mongodb'],
-            'editor' => ['tinymce'],
-            'enrol' => ['authorize'],
-            'filter' => ['censor'],
-            'h5plib' => ['v124'],
-            'media' => ['swf'],
-            'portfolio' => ['picasa', 'boxnet'],
-            'qformat' => ['blackboard', 'learnwise', 'examview', 'webct'],
-            'message' => ['jabber'],
-            'mod' => ['assignment'],
-            'quizaccess' => ['safebrowser'],
-            'report' => ['search'],
-            'repository' => ['alfresco', 'picasa', 'skydrive', 'boxnet'],
-            'tinymce' => ['dragmath', 'ctrlhelp', 'managefiles', 'moodleemoticon', 'moodleimage',
-                'moodlemedia', 'moodlenolink', 'pdw', 'spellchecker', 'wrap',
-            ],
+        $plugins = static::load_standard_plugins()->deleted;
 
-            'tool' => ['bloglevelupgrade', 'qeupgradehelper', 'timezoneimport', 'assignmentupgrade', 'health'],
-            'theme' => ['bootstrapbase', 'clean', 'more', 'afterburner', 'anomaly', 'arialist', 'base',
-                'binarius', 'boxxie', 'brick', 'canvas', 'formal_white', 'formfactor', 'fusion', 'leatherbound',
-                'magazine', 'mymobile', 'nimble', 'nonzero', 'overlay', 'serenity', 'sky_high', 'splash',
-                'standard', 'standardold',
-            ],
-            'logstore' => ['legacy'],
-            'webservice' => ['amf', 'xmlrpc'],
-        ];
-
-        if (!isset($plugins[$type])) {
-            return false;
+        if (property_exists($plugins, $type)) {
+            return in_array($name, $plugins->$type);
         }
-        return in_array($name, $plugins[$type]);
+
+        return false;
     }
 
     /**
-     * Defines a white list of all plugins shipped in the standard Moodle distribution
+     * Fetches a list of all plugins shipped in the standard Moodle distribution.
      *
-     * @param string $type
+     * If a type is specified but does not exist, a false value is returned.
+     * Otherwise an array of the plugins of the specified type is returned.
+     *
+     * @param null|string $type
      * @return false|array array of standard plugins or false if the type is unknown
      */
-    public static function standard_plugins_list($type) {
+    public static function standard_plugins_list(string $type): array|false {
+        $plugins = static::load_standard_plugins()->standard;
 
-        $standardplugins = [
-
-            'antivirus' => [
-                'clamav',
-            ],
-
-            'atto' => [
-                'accessibilitychecker', 'accessibilityhelper', 'align',
-                'backcolor', 'bold', 'charmap', 'clear', 'collapse', 'emoticon',
-                'equation', 'fontcolor', 'html', 'image', 'indent', 'italic',
-                'link', 'managefiles', 'media', 'noautolink', 'orderedlist',
-                'recordrtc', 'rtl', 'strike', 'subscript', 'superscript', 'table',
-                'title', 'underline', 'undo', 'unorderedlist', 'h5p', 'emojipicker',
-            ],
-
-            'assignsubmission' => [
-                'comments', 'file', 'onlinetext',
-            ],
-
-            'assignfeedback' => [
-                'comments', 'file', 'offline', 'editpdf',
-            ],
-
-            'auth' => [
-                'cas', 'db', 'email', 'ldap', 'lti', 'manual', 'mnet',
-                'nologin', 'none', 'oauth2', 'shibboleth', 'webservice',
-            ],
-
-            'availability' => [
-                'completion', 'date', 'grade', 'group', 'grouping', 'profile',
-            ],
-
-            'block' => [
-                'accessreview', 'activity_modules', 'activity_results', 'admin_bookmarks', 'badges',
-                'blog_menu', 'blog_recent', 'blog_tags', 'calendar_month',
-                'calendar_upcoming', 'comments',
-                'completionstatus', 'course_list', 'course_summary',
-                'feedback', 'globalsearch', 'glossary_random', 'html',
-                'login', 'lp', 'mentees', 'mnet_hosts', 'myoverview', 'myprofile',
-                'navigation', 'news_items', 'online_users',
-                'private_files', 'recent_activity', 'recentlyaccesseditems',
-                'recentlyaccessedcourses', 'rss_client', 'search_forums', 'section_links',
-                'selfcompletion', 'settings', 'site_main_menu',
-                'social_activities', 'starredcourses', 'tag_flickr', 'tag_youtube', 'tags', 'timeline',
-            ],
-
-            'booktool' => [
-                'exportimscp', 'importhtml', 'print',
-            ],
-
-            'cachelock' => [
-                'file',
-            ],
-
-            'cachestore' => [
-                'file', 'session', 'static', 'apcu', 'redis',
-            ],
-
-            'calendartype' => [
-                'gregorian',
-            ],
-
-            'communication' => [
-                'customlink',
-                'matrix',
-            ],
-
-            'contenttype' => [
-                'h5p',
-            ],
-
-            'customfield' => [
-                'checkbox', 'date', 'select', 'text', 'textarea',
-            ],
-
-            'coursereport' => [
-                // Deprecated!
-            ],
-
-            'datafield' => [
-                'checkbox', 'date', 'file', 'latlong', 'menu', 'multimenu',
-                'number', 'picture', 'radiobutton', 'text', 'textarea', 'url',
-            ],
-
-            'dataformat' => [
-                'html', 'csv', 'json', 'excel', 'ods', 'pdf',
-            ],
-
-            'datapreset' => [
-                'imagegallery',
-                'journal',
-                'proposals',
-                'resources',
-            ],
-
-            'fileconverter' => [
-                'unoconv', 'googledrive',
-            ],
-
-            'editor' => [
-                'atto', 'textarea', 'tiny',
-            ],
-
-            'enrol' => [
-                'category', 'cohort', 'database', 'flatfile',
-                'guest', 'imsenterprise', 'ldap', 'lti', 'manual', 'meta', 'mnet',
-                'paypal', 'self', 'fee',
-            ],
-
-            'factor' => [
-                'admin', 'auth', 'capability', 'cohort', 'email', 'grace', 'iprange', 'nosetup', 'role',
-                'token', 'totp', 'webauthn', 'sms',
-            ],
-
-            'filter' => [
-                'activitynames', 'algebra', 'emailprotect',
-                'emoticon', 'displayh5p', 'mathjaxloader', 'mediaplugin', 'multilang', 'tex', 'tidy',
-                'urltolink', 'data', 'glossary', 'codehighlighter',
-            ],
-
-            'format' => [
-                'singleactivity', 'social', 'topics', 'weeks',
-            ],
-
-            'forumreport' => [
-                'summary',
-            ],
-
-            'gradeexport' => [
-                'ods', 'txt', 'xls', 'xml',
-            ],
-
-            'gradeimport' => [
-                'csv', 'direct', 'xml',
-            ],
-
-            'gradereport' => [
-                'grader', 'history', 'outcomes', 'overview', 'user', 'singleview', 'summary',
-            ],
-
-            'gradingform' => [
-                'rubric', 'guide',
-            ],
-
-            'h5plib' => [
-                'v126',
-            ],
-
-            'local' => [
-            ],
-
-            'logstore' => [
-                'database', 'standard',
-            ],
-
-            'ltiservice' => [
-                'gradebookservices', 'memberships', 'profile', 'toolproxy', 'toolsettings', 'basicoutcomes',
-            ],
-
-            'mlbackend' => [
-                'php', 'python',
-            ],
-
-            'media' => [
-                'html5audio', 'html5video', 'videojs', 'vimeo', 'youtube',
-            ],
-
-            'message' => [
-                'airnotifier', 'email', 'popup',
-            ],
-
-            'mnetservice' => [
-                'enrol',
-            ],
-
-            'mod' => [
-                'assign', 'bigbluebuttonbn', 'book', 'chat', 'choice', 'data', 'feedback', 'folder',
-                'forum', 'glossary', 'h5pactivity', 'imscp', 'label', 'lesson', 'lti', 'page',
-                'quiz', 'resource', 'scorm', 'survey', 'url', 'wiki', 'workshop',
-            ],
-
-            'paygw' => [
-                'paypal',
-            ],
-
-            'plagiarism' => [
-            ],
-
-            'portfolio' => [
-                'download', 'flickr', 'googledocs', 'mahara',
-            ],
-
-            'profilefield' => [
-                'checkbox', 'datetime', 'menu', 'social', 'text', 'textarea',
-            ],
-
-            'qbank' => [
-                'bulkmove',
-                'columnsortorder',
-                'comment',
-                'customfields',
-                'deletequestion',
-                'editquestion',
-                'exporttoxml',
-                'exportquestions',
-                'history',
-                'importquestions',
-                'managecategories',
-                'previewquestion',
-                'statistics',
-                'tagquestion',
-                'usage',
-                'viewcreator',
-                'viewquestionname',
-                'viewquestiontext',
-                'viewquestiontype',
-            ],
-
-            'qbehaviour' => [
-                'adaptive', 'adaptivenopenalty', 'deferredcbm',
-                'deferredfeedback', 'immediatecbm', 'immediatefeedback',
-                'informationitem', 'interactive', 'interactivecountback',
-                'manualgraded', 'missing',
-            ],
-
-            'qformat' => [
-                'aiken', 'blackboard_six', 'gift',
-                'missingword', 'multianswer',
-                'xhtml', 'xml',
-            ],
-
-            'qtype' => [
-                'calculated', 'calculatedmulti', 'calculatedsimple',
-                'ddimageortext', 'ddmarker', 'ddwtos', 'description',
-                'essay', 'gapselect', 'match', 'missingtype', 'multianswer',
-                'multichoice', 'numerical', 'random', 'randomsamatch',
-                'shortanswer', 'truefalse',
-            ],
-
-            'quiz' => [
-                'grading', 'overview', 'responses', 'statistics',
-            ],
-
-            'quizaccess' => [
-                'delaybetweenattempts', 'ipaddress', 'numattempts', 'offlineattempts', 'openclosedate',
-                'password', 'seb', 'securewindow', 'timelimit',
-            ],
-
-            'report' => [
-                'backups', 'competency', 'completion', 'configlog', 'courseoverview', 'eventlist',
-                'infectedfiles', 'insights', 'log', 'loglive', 'outline', 'participation', 'progress',
-                'questioninstances', 'security', 'stats', 'status', 'performance', 'usersessions',
-                'themeusage',
-            ],
-
-            'repository' => [
-                'areafiles', 'contentbank', 'coursefiles', 'dropbox', 'equella', 'filesystem',
-                'flickr', 'flickr_public', 'googledocs', 'local', 'merlot', 'nextcloud',
-                'onedrive', 'recent', 's3', 'upload', 'url', 'user', 'webdav',
-                'wikimedia', 'youtube',
-            ],
-
-            'search' => [
-                'simpledb', 'solr',
-            ],
-
-            'scormreport' => [
-                'basic',
-                'interactions',
-                'graphs',
-                'objectives',
-            ],
-
-            'tiny' => [
-                'accessibilitychecker',
-                'autosave',
-                'equation',
-                'h5p',
-                'media',
-                'recordrtc',
-                'link',
-                'html',
-                'noautolink',
-                'premium',
-            ],
-
-            'theme' => [
-                'boost', 'classic',
-            ],
-
-            'tool' => [
-                'admin_presets', 'analytics', 'availabilityconditions', 'behat', 'brickfield', 'capability', 'cohortroles',
-                'componentlibrary', 'customlang', 'dataprivacy', 'dbtransfer', 'filetypes', 'generator', 'httpsreplace', 'innodb',
-                'installaddon', 'langimport', 'licensemanager', 'log', 'lp', 'lpimportcsv', 'lpmigrate', 'messageinbound',
-                'mobile', 'moodlenet', 'multilangupgrade', 'monitor', 'oauth2', 'phpunit', 'policy', 'profiling', 'recyclebin',
-                'replace', 'spamcleaner', 'task', 'templatelibrary', 'uploadcourse', 'uploaduser', 'unsuproles',
-                'usertours', 'xmldb', 'mfa',
-            ],
-
-            'webservice' => [
-                'rest', 'soap',
-            ],
-
-            'workshopallocation' => [
-                'manual', 'random', 'scheduled',
-            ],
-
-            'workshopeval' => [
-                'best',
-            ],
-
-            'workshopform' => [
-                'accumulative', 'comments', 'numerrors', 'rubric',
-            ],
-        ];
-
-        if (isset($standardplugins[$type])) {
-            return $standardplugins[$type];
+        if (property_exists($plugins, $type)) {
+            return (array) $plugins->$type;
         } else {
             return false;
         }
+    }
+
+    /**
+     * Get all standard plugins by their component name.
+     *
+     * @return array
+     */
+    public static function get_standard_plugins(): array {
+        $plugins = static::load_standard_plugins()->standard;
+
+        $result = [];
+        foreach ($plugins as $type => $list) {
+            foreach ($list as $plugin) {
+                $result[] = "{$type}_{$plugin}";
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get all deleted standard plugins by their component name.
+     *
+     * @return array
+     */
+    public static function get_deleted_plugins(): array {
+        $plugins = static::load_standard_plugins()->deleted;
+
+        $result = [];
+        foreach ($plugins as $type => $list) {
+            foreach ($list as $plugin) {
+                $result[] = "{$type}_{$plugin}";
+            }
+        }
+
+        return $result;
     }
 
     /**
