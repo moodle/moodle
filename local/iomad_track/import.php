@@ -235,18 +235,9 @@ if (!empty($fileimport)) {
 
                 // Do we have everything?
                 if (empty(($completionrec->companyid))) {
-                    if (!$company = company::by_userid($completionrec->userid)) {
-                        $upt->track('status', get_string('missingfield', 'error', 'companyid'), 'error');
-                        $upt->track('company', $errorstr, 'error');
-                        $line[] = get_string('missingfield', 'error', 'companyid');
-                        $userserrors++;
-                        $errornum++;
-                        $erroredusers[] = $line;
-                        continue;
-                    } else {
-                        $completionrec->companyid = $company->id;
-                        $upt->track('company', $company->get_name());
-                    }
+                    // Use the one currently selected.
+                    $completionrec->companyid = $company->id;
+                    $upt->track('company', $company->get_name());
                 } else {
                     if (!$usercompany = $DB->get_record('company', array('id', $completionrec->companyid))) {
                         $upt->track('status', get_string('missingfield', 'error', 'companyid'), 'error');
