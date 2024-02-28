@@ -1443,7 +1443,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
         $str = get_strings(
             [
                 'delete', 'move', 'moveright', 'moveleft', 'editsettings',
-                'duplicate', 'availability'
+                'duplicate', 'availability',
             ],
             'moodle'
         );
@@ -1543,14 +1543,9 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
         $availabilityclass = $courseformat->get_output_classname('content\\cm\\visibility');
         /** @var core_courseformat\output\local\content\cm\visibility */
         $availability = new $availabilityclass($courseformat, $sectioninfo, $mod);
-        $availabilitychoice = $availability->get_choice_list();
-        if ($availabilitychoice->count_options() > 1) {
-            $actions['availability'] = new action_menu_subpanel(
-                $str->availability,
-                $availabilitychoice,
-                ['class' => 'editing_availability'],
-                new pix_icon('t/hide', '', 'moodle', array('class' => 'iconsmall'))
-            );
+        $availabilityitem = $availability->get_menu_item();
+        if ($availabilityitem) {
+            $actions['availability'] = $availabilityitem;
         }
     }
 

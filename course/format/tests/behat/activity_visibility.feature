@@ -27,14 +27,14 @@ Feature: Verify activity visibility interface.
   Scenario: Teacher can hide an activity using the actions menu.
     Given I should not see "Hidden from students" in the "Activity sample 1" "activity"
     When I open "Activity sample 1" actions menu
-    And I choose "Availability > Hide on course page" in the open action menu
+    And I choose "Hide" in the open action menu
     Then I should see "Hidden from students" in the "Activity sample 1" "core_courseformat > Activity visibility"
 
   @javascript
   Scenario: Teacher can show an activity using the actions menu.
     Given I should see "Hidden from students" in the "Activity sample 2" "core_courseformat > Activity visibility"
     When I open "Activity sample 2" actions menu
-    And I choose "Availability > Show on course page" in the open action menu
+    And I choose "Show" in the open action menu
     Then I should not see "Hidden from students" in the "Activity sample 2" "activity"
 
   @javascript

@@ -40,7 +40,7 @@ Feature: We can change what we are viewing on the grader report
   Scenario: View and minimise the grader report containing hidden activities
     When I am on "Course 1" course homepage with editing mode on
     And I open "Test assignment name 2" actions menu
-    And I choose "Availability > Hide on course page" in the open action menu
+    And I choose "Hide" in the open action menu
     And I am on "Course 1" course homepage with editing mode off
     And I navigate to "View > Grader report" in the course gradebook
     And I should see "Test assignment name 1" in the "user-grades" "table"
@@ -73,7 +73,7 @@ Feature: We can change what we are viewing on the grader report
   Scenario: Minimise the grader report containing hidden activities without the 'moodle/grade:viewhidden' capability
     Given I am on "Course 1" course homepage with editing mode on
     And I open "Test assignment name 2" actions menu
-    And I choose "Availability > Hide on course page" in the open action menu
+    And I choose "Hide" in the open action menu
     And the following "role capability" exists:
       | role                    | editingteacher |
       | moodle/grade:viewhidden | prevent        |

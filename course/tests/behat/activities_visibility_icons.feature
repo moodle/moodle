@@ -34,13 +34,13 @@ Feature: Toggle activities visibility from the course page
     And I log in as "teacher1"
     And I am on "Course 1" course homepage with editing mode on
     When I open "Test forum name" actions menu
-    And I choose "Availability > Hide on course page" in the open action menu
+    And I choose "Hide" in the open action menu
     Then "Test forum name" activity should be hidden
     And I open "Test forum name" actions menu
-    And I choose "Availability > Show on course page" in the open action menu
+    And I choose "Show" in the open action menu
     And "Test forum name" activity should be visible
     And I open "Test forum name" actions menu
-    And I choose "Availability > Hide on course page" in the open action menu
+    And I choose "Hide" in the open action menu
     And "Test forum name" activity should be hidden
     And I reload the page
     And "Test forum name" activity should be hidden
