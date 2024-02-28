@@ -83,8 +83,13 @@ class company {
         if (!$login && !empty($SESSION->currenteditingcompany)) {
             return new company($SESSION->currenteditingcompany);
         } else {
-            if ($companies = $DB->get_records('company_users', array('userid' => $userid), 'companyid DESC')) {
-                $company = array_pop($companies);
+            if ($companies = $DB->get_records_sql("SELECT DISTINCT companyid,lastused
+                                                   FROM {company_users}
+                                                   WHERE userid = :userid
+                                                   ORDER BY lastused, companyid DESC
+                                                   LIMIT 1",
+                                                  ['userid' => $userid])) {
+                $company = array_shift($companies);
                 return new company($company->companyid);
             } else {
                 return false;
