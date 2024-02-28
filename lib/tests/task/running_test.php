@@ -156,4 +156,64 @@ class running_test extends \advanced_testcase {
         $running = manager::get_running_tasks();
         $this->assertCount(0, $running);
     }
+
+    /**
+     * Test that adhoc tasks are set as failed when shutdown is called during execution.
+     * @covers \core\task\manager::fail_running_task
+     */
+    public function test_adhoc_task_running_will_fail_when_shutdown(): void {
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+
+        $task1 = new adhoc_test_task();
+        $task1->set_next_run_time(time() - 20);
+        manager::queue_adhoc_task($task1);
+
+        $next1 = manager::get_next_adhoc_task(time());
+        \core\task\manager::adhoc_task_starting($next1);
+
+        self::assertEmpty(manager::get_failed_adhoc_tasks());
+
+        // Trigger shutdown handler.
+        \core_shutdown_manager::shutdown_handler();
+
+        $failedtasks = manager::get_failed_adhoc_tasks();
+
+        self::assertCount(1, $failedtasks);
+        self::assertEquals($next1->get_id(), $failedtasks[0]->get_id());
+    }
+
+    /**
+     * Test that scheduled tasks are set as failed when shutdown is called during execution.
+     * @covers \core\task\manager::fail_running_task
+     */
+    public function test_scheduled_task_running_will_fail_when_shutdown(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+        $this->preventResetByRollback();
+
+        // Disable all the tasks, so we can insert our own and be sure it's the only one being run.
+        $DB->set_field('task_scheduled', 'disabled', 1);
+
+        $task1 = new scheduled_test_task();
+        $task1->set_minute('*');
+        $task1->set_next_run_time(time() - HOURSECS);
+        $DB->insert_record('task_scheduled', manager::record_from_scheduled_task($task1));
+
+        $next1 = \core\task\manager::get_next_scheduled_task(time());
+        \core\task\manager::scheduled_task_starting($next1);
+
+        $running = manager::get_running_tasks();
+        $this->assertCount(1, $running);
+
+        // Trigger shutdown handler.
+        \core_shutdown_manager::shutdown_handler();
+
+        $running = manager::get_running_tasks();
+        $this->assertCount(0, $running);
+
+        $scheduledtask1 = manager::get_scheduled_task(scheduled_test_task::class);
+        self::assertGreaterThan($next1->get_fail_delay(), $scheduledtask1->get_fail_delay());
+    }
 }
