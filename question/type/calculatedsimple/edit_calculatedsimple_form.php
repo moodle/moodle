@@ -496,6 +496,11 @@ class qtype_calculatedsimple_edit_form extends qtype_calculated_edit_form {
                         if ($k > 0 ||  $this->outsidelimit || !empty($this->numbererrors)) {
                             $mform->addElement('float', "number[{$j}]", get_string(
                                     'wildcard', 'qtype_calculatedsimple', $datasetdef->name));
+
+                            // Forcing new generated sets of wildcard values into the question edit form,
+                            // so they can be saved.
+                            $mform->setConstant("number[{$j}]", $datasetdef->items[$i]->value);
+
                             $mform->setAdvanced("number[{$j}]", true);
                             if (!empty($this->numbererrors['number['.$j.']'])) {
                                 $mform->addElement('static', "numbercomment[{$j}]", '',
