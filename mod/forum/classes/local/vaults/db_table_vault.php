@@ -65,7 +65,7 @@ abstract class db_table_vault {
      *
      * @return string
      */
-    abstract protected function get_table_alias() : string;
+    abstract protected function get_table_alias(): string;
 
     /**
      * Build the SQL to be used in get_records_sql.
@@ -76,7 +76,7 @@ abstract class db_table_vault {
      * @return string
      */
     abstract protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null,
-        ?int $userid = null) : string;
+        ?int $userid = null): string;
 
     /**
      * Convert the DB records into entities. The list of records will have been
@@ -101,7 +101,7 @@ abstract class db_table_vault {
      *
      * @return array
      */
-    protected function get_preprocessors() : array {
+    protected function get_preprocessors(): array {
         return [];
     }
 
@@ -110,7 +110,7 @@ abstract class db_table_vault {
      *
      * @return moodle_database
      */
-    protected function get_db() : moodle_database {
+    protected function get_db(): moodle_database {
         return $this->db;
     }
 
@@ -119,7 +119,7 @@ abstract class db_table_vault {
      *
      * @return entity_factory
      */
-    protected function get_entity_factory() : entity_factory {
+    protected function get_entity_factory(): entity_factory {
         return $this->entityfactory;
     }
 

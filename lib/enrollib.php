@@ -977,7 +977,7 @@ function enrol_get_users_courses($userid, $onlyactive = false, $fields = null, $
  * @param int $courseid Course id.
  * @return array Array[$userid][$roleid] = role_assignment.
  */
-function enrol_get_course_users_roles(int $courseid) : array {
+function enrol_get_course_users_roles(int $courseid): array {
     global $DB;
 
     $context = context_course::instance($courseid);
@@ -3495,7 +3495,7 @@ abstract class enrol_plugin {
      * @param int $courseid Course ID.
      * @return array Updated enrolment data with custom fields info.
      */
-    public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid) : array {
+    public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid): array {
         return $enrolmentdata;
     }
 
@@ -3506,7 +3506,7 @@ abstract class enrol_plugin {
      * @param int|null $courseid Course ID.
      * @return array Errors
      */
-    public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null) : array {
+    public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null): array {
         $errors = [];
         if (!$this->is_csv_upload_supported()) {
             $errors['errorunsupportedmethod'] =
@@ -3530,7 +3530,7 @@ abstract class enrol_plugin {
      * @param int|null $courseid Course ID.
      * @return lang_string|null Error
      */
-    public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null) : ?lang_string {
+    public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null): ?lang_string {
         if ($courseid) {
             $enrolmentdata += ['courseid' => $courseid, 'id' => 0, 'status' => ENROL_INSTANCE_ENABLED];
             $instance = (object)[
@@ -3555,7 +3555,7 @@ abstract class enrol_plugin {
      * @param int $courseid Course ID.
      * @return stdClass|null Matching instance
      */
-    public function find_instance(array $enrolmentdata, int $courseid) : ?stdClass {
+    public function find_instance(array $enrolmentdata, int $courseid): ?stdClass {
 
         // By default, we assume we can't uniquely identify an instance so better not update any.
         // Plugins can override this if they can uniquely identify an instance.

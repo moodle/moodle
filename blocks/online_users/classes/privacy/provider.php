@@ -46,7 +46,7 @@ class provider implements
      * @param collection $collection Collection of items to add metadata to.
      * @return collection Collection with our added items.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $collection->add_user_preference('block_online_users_uservisibility',
                 'privacy:metadata:preference:uservisibility');

@@ -482,7 +482,7 @@ class meeting {
      * @param object $data
      * @return string
      */
-    public static function meeting_events(instance $instance, object $data):  string {
+    public static function meeting_events(instance $instance, object $data): string {
         $bigbluebuttonbn = $instance->get_instance_data();
         // Validate that the bigbluebuttonbn activity corresponds to the meeting_id received.
         $meetingidelements = explode('[', $data->{'meeting_id'});

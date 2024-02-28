@@ -56,7 +56,7 @@ class provider implements
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through the subsystem.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         // The table 'rating' cotains data that a user has entered.
         // It stores the user-entered rating alongside a mapping to describe what was mapped.
         $collection->add_database_table('rating', [

@@ -768,7 +768,7 @@ function h5pactivity_print_recent_mod_activity(stdClass $activity, int $courseid
  * @param int $courseid Limit the search to this course
  * @return array $recentactivity recent activity in a course.
  */
-function h5pactivity_fetch_recent_activity(array $submissions, int $courseid) : array {
+function h5pactivity_fetch_recent_activity(array $submissions, int $courseid): array {
     global $USER;
 
     $course = get_course($courseid);

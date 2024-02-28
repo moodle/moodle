@@ -39,7 +39,7 @@ use factor_sms\local\aws_helper;
  */
 class aws_helper_test extends \advanced_testcase {
 
-    public function test_get_proxy_string():void {
+    public function test_get_proxy_string(): void {
         global $CFG;
         $this->resetAfterTest();
         // Confirm with no config an empty string is returned.

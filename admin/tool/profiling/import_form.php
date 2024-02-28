@@ -27,7 +27,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/formslib.php');
 
 class profiling_import_form extends moodleform {
-    public function definition () {
+    public function definition() {
         global $CFG;
 
         $mform = $this->_form;

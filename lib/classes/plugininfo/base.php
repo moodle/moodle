@@ -428,7 +428,7 @@ abstract class base {
      * @param int $branch the moodle branch number
      * @return bool true if not incompatible with moodle branch
      */
-    public function is_core_compatible_satisfied(int $branch) : bool {
+    public function is_core_compatible_satisfied(int $branch): bool {
         if (!empty($this->pluginincompatible) && ($branch >= $this->pluginincompatible)) {
             return false;
         } else {

@@ -288,7 +288,7 @@ class gradebookservices_test extends \advanced_testcase {
      */
     private function assert_lineitems(object $course, int $typeid,
             string $label, ?object $ltiinstance, ?string $resourceid, ?string $tag,
-            ?string $subreviewurl = null, ?string $subreviewparams = null) : void {
+            ?string $subreviewurl = null, ?string $subreviewparams = null): void {
         $gbservice = new gradebookservices();
         $gradeitems = $gbservice->get_lineitems($course->id, null, null, null, null, null, $typeid);
 
@@ -347,7 +347,7 @@ class gradebookservices_test extends \advanced_testcase {
      * @return object lti instance created
      */
     private function create_graded_lti(int $typeid, object $course, ?string $resourceid, ?string $tag,
-            ?string $subreviewurl = null, ?string $subreviewparams = null) : object {
+            ?string $subreviewurl = null, ?string $subreviewparams = null): object {
 
         $lti = ['course' => $course->id,
             'typeid' => $typeid,
@@ -369,7 +369,7 @@ class gradebookservices_test extends \advanced_testcase {
       *
       * @return object lti instance created
       */
-    private function create_notgraded_lti(int $typeid, object $course) : object {
+    private function create_notgraded_lti(int $typeid, object $course): object {
 
         $lti = ['course' => $course->id,
             'typeid' => $typeid,
@@ -389,7 +389,7 @@ class gradebookservices_test extends \advanced_testcase {
      *
      */
     private function create_standalone_lineitem(int $courseid, int $typeid, ?string $resourceid,
-            ?string $tag, int $ltiinstanceid = null) : void {
+            ?string $tag, int $ltiinstanceid = null): void {
         $gbservice = new gradebookservices();
         $gbservice->add_standalone_lineitem($courseid,
             "manualtest",

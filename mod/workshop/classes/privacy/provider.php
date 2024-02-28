@@ -57,7 +57,7 @@ class provider implements
      * @param collection $collection Collection of items to add metadata to.
      * @return collection Collection with our added items.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
 
         $collection->add_database_table('workshop_submissions', [
             'workshopid' => 'privacy:metadata:workshopid',
@@ -137,7 +137,7 @@ class provider implements
      * @param int $userid ID of the user.
      * @return contextlist List of contexts containing the user's personal data.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
 
         $contextlist = new contextlist();
         $sql = "SELECT ctx.id

@@ -60,7 +60,7 @@ class provider implements
      * @param collection $collection a reference to the collection to use to store the metadata.
      * @return collection the updated collection of metadata items.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_database_table(
             'customfield_data',
             [
@@ -103,7 +103,7 @@ class provider implements
      * @return contextlist
      */
     public static function get_customfields_data_contexts(string $component, string $area,
-            string $itemidstest = 'IS NOT NULL', string $instanceidstest = 'IS NOT NULL', array $params = []) : contextlist {
+            string $itemidstest = 'IS NOT NULL', string $instanceidstest = 'IS NOT NULL', array $params = []): contextlist {
 
         $sql = "SELECT d.contextid FROM {customfield_category} c
             JOIN {customfield_field} f ON f.categoryid = c.id
@@ -130,7 +130,7 @@ class provider implements
      * @return contextlist
      */
     public static function get_customfields_configuration_contexts(string $component, string $area,
-            string $itemidstest = 'IS NOT NULL', array $params = []) : contextlist {
+            string $itemidstest = 'IS NOT NULL', array $params = []): contextlist {
 
         $sql = "SELECT c.contextid FROM {customfield_category} c
             WHERE c.component = :cfcomponent AND c.area = :cfarea AND c.itemid $itemidstest";
@@ -331,7 +331,7 @@ class provider implements
      * @return array
      * @throws \coding_exception
      */
-    protected static function get_params(string $component, string $area, array $params) : array {
+    protected static function get_params(string $component, string $area, array $params): array {
         if (!empty($params) && (array_keys($params) === range(0, count($params) - 1))) {
             // Argument $params is not an associative array.
             throw new \coding_exception('Argument $params must be an associative array!');

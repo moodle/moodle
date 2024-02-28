@@ -88,7 +88,7 @@ trait quizaccess_seb_test_helper_trait {
      * @param \stdClass $settings Object containing settings.
      * @return \stdClass The modified settings object.
      */
-    protected function strip_all_prefixes(\stdClass $settings) : \stdClass {
+    protected function strip_all_prefixes(\stdClass $settings): \stdClass {
         $newsettings = new \stdClass();
         foreach ($settings as $name => $setting) {
             $newname = preg_replace("/^seb_/", "", $name);
@@ -103,7 +103,7 @@ trait quizaccess_seb_test_helper_trait {
      * @param string $xml
      * @return int The user draftarea id
      */
-    protected function create_test_draftarea_file(string $xml) : int {
+    protected function create_test_draftarea_file(string $xml): int {
         global $USER;
 
         $itemid = 0;
@@ -133,7 +133,7 @@ trait quizaccess_seb_test_helper_trait {
      * @param string $cmid Course module id.
      * @return int Item ID of file.
      */
-    protected function create_module_test_file(string $xml, string $cmid) : int {
+    protected function create_module_test_file(string $xml, string $cmid): int {
         $itemid = 0;
         $fs = get_file_storage();
         $filerecord = [
@@ -280,7 +280,7 @@ trait quizaccess_seb_test_helper_trait {
      *
      * @return \stdClass Settings.
      */
-    protected function get_test_settings(array $settings = []) : \stdClass {
+    protected function get_test_settings(array $settings = []): \stdClass {
         return (object) array_merge([
             'quizid' => 1,
             'cmid' => 1,

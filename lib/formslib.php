@@ -1963,7 +1963,7 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
      *
      * @param boolean $disable default true, controls if the shortforms are disabled.
      */
-    function setDisableShortforms ($disable = true) {
+    function setDisableShortforms($disable = true) {
         $this->_disableShortforms = $disable;
     }
 

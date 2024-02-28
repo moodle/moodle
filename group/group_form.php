@@ -41,7 +41,7 @@ class group_form extends moodleform {
     /**
      * Definition of the form
      */
-    function definition () {
+    function definition() {
         global $USER, $CFG, $COURSE;
         $coursecontext = context_course::instance($COURSE->id);
 

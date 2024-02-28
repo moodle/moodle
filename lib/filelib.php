@@ -848,7 +848,7 @@ function file_get_drafarea_files($draftitemid, $filepath = '/') {
  * @param  string $filepath path for the uploaded files.
  * @return array An array of files associated with this draft item id.
  */
-function file_get_all_files_in_draftarea(int $draftitemid, string $filepath = '/') : array {
+function file_get_all_files_in_draftarea(int $draftitemid, string $filepath = '/'): array {
     $files = [];
     $draftfiles = file_get_drafarea_files($draftitemid, $filepath);
     file_get_drafarea_folders($draftitemid, $filepath, $draftfiles);
@@ -3114,23 +3114,23 @@ function get_moodle_proxy_url() {
  */
 class curl {
     /** @var curl_cache|false Caches http request contents */
-    public  $cache    = false;
+    public $cache    = false;
     /** @var bool Uses proxy, null means automatic based on URL */
-    public  $proxy    = null;
+    public $proxy    = null;
     /** @var string library version */
-    public  $version  = '0.4 dev';
+    public $version  = '0.4 dev';
     /** @var array http's response */
-    public  $response = array();
+    public $response = array();
     /** @var array Raw response headers, needed for BC in download_file_content(). */
     public $rawresponse = array();
     /** @var array http header */
-    public  $header   = array();
+    public $header   = array();
     /** @var array cURL information */
-    public  $info;
+    public $info;
     /** @var string error */
-    public  $error;
+    public $error;
     /** @var int error code */
-    public  $errno;
+    public $errno;
     /** @var bool Perform redirects at PHP level instead of relying on native cURL functionality. Always true now. */
     public $emulateredirects = null;
 

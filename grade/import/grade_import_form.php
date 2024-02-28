@@ -23,7 +23,7 @@ require_once $CFG->libdir.'/formslib.php';
 require_once($CFG->libdir.'/gradelib.php');
 
 class grade_import_form extends moodleform {
-    function definition (){
+    function definition(){
         global $COURSE;
 
         $mform =& $this->_form;
@@ -86,7 +86,7 @@ class grade_import_form extends moodleform {
 
 class grade_import_mapping_form extends moodleform {
 
-    function definition () {
+    function definition() {
         global $CFG, $COURSE;
         $mform =& $this->_form;
 

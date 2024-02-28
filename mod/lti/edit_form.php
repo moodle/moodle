@@ -412,7 +412,7 @@ class mod_lti_edit_types_form extends moodleform {
      * @param int $parentid
      * @return array category tree
      */
-    public function lti_build_category_tree(array $elements, int $parentid = 0) : array {
+    public function lti_build_category_tree(array $elements, int $parentid = 0): array {
         $branch = [];
 
         foreach ($elements as $element) {

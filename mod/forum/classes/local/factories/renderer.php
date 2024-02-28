@@ -116,7 +116,7 @@ class renderer {
         forum_entity $forum,
         discussion_entity $discussion,
         int $displaymode
-    ) : discussion_renderer {
+    ): discussion_renderer {
 
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
         $ratingmanager = $this->managerfactory->get_rating_manager();
@@ -158,7 +158,7 @@ class renderer {
      *
      * @return posts_renderer
      */
-    public function get_posts_renderer() : posts_renderer {
+    public function get_posts_renderer(): posts_renderer {
         return new posts_renderer(
             $this->rendererbase,
             $this->builderfactory->get_exported_posts_builder(),
@@ -173,7 +173,7 @@ class renderer {
      * @param bool $readonly Should the posts include the actions to reply, delete, etc?
      * @return posts_renderer
      */
-    public function get_single_discussion_posts_renderer(int $displaymode = null, bool $readonly = false) : posts_renderer {
+    public function get_single_discussion_posts_renderer(int $displaymode = null, bool $readonly = false): posts_renderer {
         $exportedpostssorter = $this->entityfactory->get_exported_posts_sorter();
 
         switch ($displaymode) {
@@ -312,7 +312,7 @@ class renderer {
      * @param string[] $searchterms The search terms to be highlighted in the posts
      * @return posts_renderer
      */
-    public function get_posts_search_results_renderer(array $searchterms) : posts_renderer {
+    public function get_posts_search_results_renderer(array $searchterms): posts_renderer {
         $urlfactory = $this->urlfactory;
 
         return new posts_renderer(
@@ -387,7 +387,7 @@ class renderer {
      * @param bool $addlinkstocontext Should links to the course, forum, and discussion be included?
      * @return posts_renderer
      */
-    public function get_user_forum_posts_report_renderer(bool $addlinkstocontext) : posts_renderer {
+    public function get_user_forum_posts_report_renderer(bool $addlinkstocontext): posts_renderer {
         $urlfactory = $this->urlfactory;
 
         return new posts_renderer(
@@ -427,7 +427,7 @@ class renderer {
      */
     public function get_discussion_list_renderer(
         forum_entity $forum
-    ) : discussion_list_renderer {
+    ): discussion_list_renderer {
 
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
         $rendererbase = $this->rendererbase;
@@ -482,7 +482,7 @@ class renderer {
     private function get_detailed_discussion_list_renderer(
         forum_entity $forum,
         string $template
-    ) : discussion_list_renderer {
+    ): discussion_list_renderer {
 
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
         $rendererbase = $this->rendererbase;
@@ -559,7 +559,7 @@ class renderer {
      */
     public function get_blog_discussion_list_renderer(
         forum_entity $forum
-    ) : discussion_list_renderer {
+    ): discussion_list_renderer {
         return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/blog_discussion_list');
     }
 
@@ -571,7 +571,7 @@ class renderer {
      */
     public function get_social_discussion_list_renderer(
         forum_entity $forum
-    ) : discussion_list_renderer {
+    ): discussion_list_renderer {
         return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/social_discussion_list');
     }
 
@@ -583,7 +583,7 @@ class renderer {
      */
     public function get_frontpage_news_discussion_list_renderer(
         forum_entity $forum
-    ) : discussion_list_renderer {
+    ): discussion_list_renderer {
         return $this->get_detailed_discussion_list_renderer($forum, 'mod_forum/frontpage_social_discussion_list');
     }
 
@@ -601,7 +601,7 @@ class renderer {
         discussion_entity $discussion,
         bool $hasmultiplediscussions,
         int $displaymode
-    ) : discussion_renderer {
+    ): discussion_renderer {
 
         $capabilitymanager = $this->managerfactory->get_capability_manager($forum);
         $ratingmanager = $this->managerfactory->get_rating_manager();

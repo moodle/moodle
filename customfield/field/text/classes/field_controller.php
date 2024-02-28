@@ -95,7 +95,7 @@ class field_controller extends \core_customfield\field_controller {
      * @param array $files
      * @return array associative array of error messages
      */
-    public function config_form_validation(array $data, $files = array()) : array {
+    public function config_form_validation(array $data, $files = array()): array {
         global $CFG;
         $errors = parent::config_form_validation($data, $files);
 

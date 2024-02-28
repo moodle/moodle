@@ -89,7 +89,7 @@ class discussion_list extends db_table_vault {
      *
      * @return string
      */
-    protected function get_table_alias() : string {
+    protected function get_table_alias(): string {
         return 'd';
     }
 
@@ -98,7 +98,7 @@ class discussion_list extends db_table_vault {
      *
      * @return string
      */
-    protected function get_favourite_alias() : string {
+    protected function get_favourite_alias(): string {
         return 'favalias';
     }
 
@@ -111,7 +111,7 @@ class discussion_list extends db_table_vault {
      *
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, ?string $sortsql = null, ?int $userid = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, ?string $sortsql = null, ?int $userid = null): string {
         $alias = $this->get_table_alias();
 
         $includefavourites = $userid ? true : false;
@@ -192,7 +192,7 @@ class discussion_list extends db_table_vault {
      * @param string|null $wheresql Where conditions for the SQL
      * @return string
      */
-    protected function generate_count_records_sql(string $wheresql = null) : string {
+    protected function generate_count_records_sql(string $wheresql = null): string {
         $alias = $this->get_table_alias();
         $db = $this->get_db();
 
@@ -208,7 +208,7 @@ class discussion_list extends db_table_vault {
      *
      * @return array
      */
-    protected function get_preprocessors() : array {
+    protected function get_preprocessors(): array {
         return array_merge(
             parent::get_preprocessors(),
             [
@@ -251,7 +251,7 @@ class discussion_list extends db_table_vault {
      * @param int|null $sortmethod
      * @return string
      */
-    protected function get_keyfield(?int $sortmethod) : string {
+    protected function get_keyfield(?int $sortmethod): string {
         global $CFG;
 
         switch ($sortmethod) {
@@ -302,7 +302,7 @@ class discussion_list extends db_table_vault {
      * @param int|null $sortmethod
      * @return string
      */
-    protected function get_sort_direction(?int $sortmethod) : string {
+    protected function get_sort_direction(?int $sortmethod): string {
         switch ($sortmethod) {
             case self::SORTORDER_LASTPOST_ASC:
             case self::SORTORDER_CREATED_ASC:
@@ -329,7 +329,7 @@ class discussion_list extends db_table_vault {
      * @param bool|null $includefavourites
      * @return string
      */
-    private function get_sort_order(?int $sortmethod, bool $includefavourites = true) : string {
+    private function get_sort_order(?int $sortmethod, bool $includefavourites = true): string {
 
         $alias = $this->get_table_alias();
         // TODO consider user favourites...

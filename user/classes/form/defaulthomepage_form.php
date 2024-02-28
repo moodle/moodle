@@ -41,7 +41,7 @@ class defaulthomepage_form extends \moodleform {
     /**
      * Define the form.
      */
-    public function definition () {
+    public function definition() {
         global $CFG;
 
         $mform = $this->_form;

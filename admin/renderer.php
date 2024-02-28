@@ -617,7 +617,7 @@ class core_admin_renderer extends plugin_renderer_base {
      * @param bool $croninfrequent
      * @return string HTML to output.
      */
-    public function cron_infrequent_warning(bool $croninfrequent) : string {
+    public function cron_infrequent_warning(bool $croninfrequent): string {
         global $CFG;
 
         if (!$croninfrequent) {

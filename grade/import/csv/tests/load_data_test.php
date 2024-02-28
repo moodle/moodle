@@ -513,7 +513,7 @@ Bobby,Bunce,,"Moodle HQ","Rock on!",student5@example.com,75.00,,75.00,{exportdat
     /*
      * Test importing csv data into the gradebook using "Last downloaded from this course" column and force import option.
      */
-    public function test_force_import_option () {
+    public function test_force_import_option() {
 
         // Need to add users into the system.
         $user = new \stdClass();

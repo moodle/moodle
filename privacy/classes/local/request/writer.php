@@ -55,7 +55,7 @@ class writer {
      *
      * @return  content_writer
      */
-    protected function get_writer_instance() : content_writer {
+    protected function get_writer_instance(): content_writer {
         if (null === $this->realwriter) {
             if (PHPUNIT_TEST) {
                 $this->realwriter = new \core_privacy\tests\request\content_writer(static::instance());
@@ -109,7 +109,7 @@ class writer {
      * @param   \context        $context    The context to apply
      * @return  content_writer              The content_writer
      */
-    public static function with_context(\context $context) : content_writer {
+    public static function with_context(\context $context): content_writer {
         return static::instance()
             ->get_writer_instance()
             ->set_context($context);
@@ -129,7 +129,7 @@ class writer {
         string $key,
         string $value,
         string $description
-    ) : content_writer {
+    ): content_writer {
         return static::with_context(\context_system::instance())
             ->export_user_preference($component, $key, $value, $description);
     }

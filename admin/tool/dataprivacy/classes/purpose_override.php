@@ -88,7 +88,7 @@ class purpose_override extends \core\persistent {
      * @param   purpose $purpose
      * @return  array
      */
-    public static function get_overrides_for_purpose(purpose $purpose) : array {
+    public static function get_overrides_for_purpose(purpose $purpose): array {
         $cache = \cache::make('tool_dataprivacy', 'purpose_overrides');
 
         $overrides = [];

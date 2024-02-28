@@ -44,7 +44,7 @@ class provider implements \core_privacy\local\metadata\provider, user_preference
      * @param  \core_privacy\local\metadata\collection $collection A collection of meta-data.
      * @return \core_privacy\local\metadata\collection Return the collection of meta-data.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_user_preference('block_myoverview_user_sort_preference', 'privacy:metadata:overviewsortpreference');
         $collection->add_user_preference('block_myoverview_user_view_preference', 'privacy:metadata:overviewviewpreference');
         $collection->add_user_preference('block_myoverview_user_grouping_preference',

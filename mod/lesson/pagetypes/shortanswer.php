@@ -385,7 +385,7 @@ class lesson_page_type_shortanswer extends lesson_page {
      * @param stdClass $data The form data to update.
      * @return stdClass The updated fom data.
      */
-    public function update_form_data(stdClass $data) : stdClass {
+    public function update_form_data(stdClass $data): stdClass {
         $answercount = count($this->get_answers());
         // Check for other answer entry.
         $lastanswer = $data->{'answer_editor[' . ($answercount - 1) . ']'};

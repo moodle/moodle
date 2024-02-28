@@ -127,7 +127,7 @@ class submit_tags extends external_api {
     /**
      * Returns description of method result value.
      */
-    public static function  execute_returns() {
+    public static function execute_returns() {
         return new external_single_structure([
                 'status' => new external_value(PARAM_BOOL, 'status: true if success')
         ]);

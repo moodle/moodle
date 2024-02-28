@@ -39,7 +39,7 @@ class tool_uploadcourse_step2_form extends tool_uploadcourse_base_form {
      * The standard form definiton.
      * @return void.
      */
-    public function definition () {
+    public function definition() {
         global $CFG;
 
         $mform   = $this->_form;

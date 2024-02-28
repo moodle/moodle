@@ -61,7 +61,7 @@ class text extends base {
      *
      * @return array of comparison operators
      */
-    private function get_operators() : array {
+    private function get_operators(): array {
         $operators = [
             self::ANY_VALUE => get_string('filterisanyvalue', 'core_reportbuilder'),
             self::CONTAINS => get_string('filtercontains', 'core_reportbuilder'),

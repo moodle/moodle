@@ -75,7 +75,7 @@ class item_verb_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function create_from_id_provider() : array {
+    public function create_from_id_provider(): array {
         return [
             'Fake IRI' => [
                 'cook',
@@ -105,7 +105,7 @@ class item_verb_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_data_provider() : array {
+    public function invalid_data_provider(): array {
         return [
             'Empty or null id' => [
                 '',

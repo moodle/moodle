@@ -51,7 +51,7 @@ class provider implements
      * @param  collection $collection A list of information to add to.
      * @return collection Return the collection after adding to it.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $detail = [
                     'assignment' => 'privacy:metadata:assignmentid',
                     'submission' => 'privacy:metadata:submissionpurpose',

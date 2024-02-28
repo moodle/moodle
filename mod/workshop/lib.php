@@ -1820,7 +1820,7 @@ function mod_workshop_core_calendar_provide_event_action(calendar_event $event,
  * @param stdClass $workshop The module instance to get the range from
  * @return array Returns an array with min and max date.
  */
-function mod_workshop_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $workshop) : array {
+function mod_workshop_core_calendar_get_valid_event_timestart_range(\calendar_event $event, \stdClass $workshop): array {
     $mindate = null;
     $maxdate = null;
 
@@ -1897,7 +1897,7 @@ function mod_workshop_core_calendar_get_valid_event_timestart_range(\calendar_ev
  * @param \calendar_event $event
  * @param stdClass $workshop The module instance to get the range from
  */
-function mod_workshop_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $workshop) : void {
+function mod_workshop_core_calendar_event_timestart_updated(\calendar_event $event, \stdClass $workshop): void {
     global $DB;
 
     $courseid = $event->courseid;
@@ -2187,7 +2187,7 @@ function workshop_check_updates_since(cm_info $cm, $from, $filter = array()) {
  * @param  array  $args The path (the part after the filearea and before the filename).
  * @return array|null The itemid and the filepath inside the $args path, for the defined filearea.
  */
-function mod_workshop_get_path_from_pluginfile(string $filearea, array $args) : ?array {
+function mod_workshop_get_path_from_pluginfile(string $filearea, array $args): ?array {
     if ($filearea !== 'instructauthors' && $filearea !== 'instructreviewers' && $filearea !== 'conclusion') {
         return null;
     }

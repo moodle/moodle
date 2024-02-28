@@ -2024,7 +2024,7 @@ class restore_course_structure_step extends restore_structure_step {
      * @throws base_step_exception
      * @throws dml_exception
      */
-    public function process_course_format_option(array $data) : void {
+    public function process_course_format_option(array $data): void {
         global $DB;
 
         if ($data['sectionid']) {

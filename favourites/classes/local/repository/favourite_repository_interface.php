@@ -35,7 +35,7 @@ interface favourite_repository_interface {
      * @param favourite $item the item to add.
      * @return favourite the item which was added.
      */
-    public function add(favourite $item) : favourite;
+    public function add(favourite $item): favourite;
 
     /**
      * Add all the items in the list to this repository.
@@ -43,7 +43,7 @@ interface favourite_repository_interface {
      * @param array $items the list of items to add.
      * @return array the list of items added to this repository.
      */
-    public function add_all(array $items) : array;
+    public function add_all(array $items): array;
 
     /**
      * Find an item in this repository based on its id.
@@ -51,7 +51,7 @@ interface favourite_repository_interface {
      * @param int $id the id of the item.
      * @return favourite the item.
      */
-    public function find(int $id) : favourite;
+    public function find(int $id): favourite;
 
     /**
      * Find all items in this repository.
@@ -60,7 +60,7 @@ interface favourite_repository_interface {
      * @param int $limitnum optional pagination control for returning a subset comprising this many records.
      * @return array list of all items in this repository.
      */
-    public function find_all(int $limitfrom = 0, int $limitnum = 0) : array;
+    public function find_all(int $limitfrom = 0, int $limitnum = 0): array;
 
     /**
      * Find all items with attributes matching certain values.
@@ -70,7 +70,7 @@ interface favourite_repository_interface {
      * @param int $limitnum optional pagination control for returning a subset comprising this many records.
      * @return array the list of items matching the criteria.
      */
-    public function find_by(array $criteria, int $limitfrom = 0, int $limitnum = 0) : array;
+    public function find_by(array $criteria, int $limitfrom = 0, int $limitnum = 0): array;
 
     /**
      * Check whether an item exists in this repository, based on its id.
@@ -78,7 +78,7 @@ interface favourite_repository_interface {
      * @param int $id the id to search for.
      * @return bool true if the item could be found, false otherwise.
      */
-    public function exists(int $id) : bool;
+    public function exists(int $id): bool;
 
     /**
      * Check whether an item exists in this repository, based on the specified criteria.
@@ -86,14 +86,14 @@ interface favourite_repository_interface {
      * @param array $criteria the list of key/value criteria pairs.
      * @return bool true if the favourite exists, false otherwise.
      */
-    public function exists_by(array $criteria) : bool;
+    public function exists_by(array $criteria): bool;
 
     /**
      * Return the total number of items in this repository.
      *
      * @return int the total number of items.
      */
-    public function count() : int;
+    public function count(): int;
 
     /**
      * Return the number of favourites matching the specified criteria.
@@ -101,7 +101,7 @@ interface favourite_repository_interface {
      * @param array $criteria the list of key/value criteria pairs.
      * @return int the number of favourites matching the criteria.
      */
-    public function count_by(array $criteria) : int;
+    public function count_by(array $criteria): int;
 
     /**
      * Update an item within this repository.
@@ -109,7 +109,7 @@ interface favourite_repository_interface {
      * @param favourite $item the item to update.
      * @return favourite the updated item.
      */
-    public function update(favourite $item) : favourite;
+    public function update(favourite $item): favourite;
 
     /**
      * Delete an item by id.
@@ -137,5 +137,5 @@ interface favourite_repository_interface {
      * @param int $contextid the contextid of the item which was favourited.
      * @return favourite the favourite.
      */
-    public function find_favourite(int $userid, string $component, string $itemtype, int $itemid, int $contextid) : favourite;
+    public function find_favourite(int $userid, string $component, string $itemtype, int $itemid, int $contextid): favourite;
 }

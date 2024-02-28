@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 class cc_label extends entities {
 
-    public function generate_node () {
+    public function generate_node() {
 
         cc2moodle::log_action('Creating Labels mods');
 
@@ -41,7 +41,7 @@ class cc_label extends entities {
         return $response;
     }
 
-    private function create_node_course_modules_mod_label ($sheet_mod_label, $instance) {
+    private function create_node_course_modules_mod_label($sheet_mod_label, $instance) {
         if ($instance['deep'] <= ROOT_DEEP) {
             return '';
         }

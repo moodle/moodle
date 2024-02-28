@@ -91,7 +91,7 @@ class exported_navigation_page implements renderable, templatable {
      * @param renderer_base $output
      * @return array navigation data for the template.
      */
-    public function export_for_template(renderer_base $output) : Array {
+    public function export_for_template(renderer_base $output): Array {
         $data = $this->create_navigation($this->tree);
         return ['navigation' => $data];
     }

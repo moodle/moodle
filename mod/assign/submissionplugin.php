@@ -83,7 +83,7 @@ abstract class assign_submission_plugin extends assign_plugin {
      * @param stdClass $submission - New submission record
      * @return bool
      */
-    public function copy_submission( stdClass $oldsubmission, stdClass $submission) {
+    public function copy_submission(stdClass $oldsubmission, stdClass $submission) {
         return true;
     }
 

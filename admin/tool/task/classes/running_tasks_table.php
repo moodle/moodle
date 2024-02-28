@@ -85,7 +85,7 @@ class running_tasks_table extends \table_sql {
      * @param   \stdClass $row
      * @return  string
      */
-    public function col_classname($row) : string {
+    public function col_classname($row): string {
         $output = $row->classname;
         if ($row->type == 'scheduled') {
             if (class_exists($row->classname)) {
@@ -108,7 +108,7 @@ class running_tasks_table extends \table_sql {
      * @return  string
      * @throws  \coding_exception
      */
-    public function col_type($row) : string {
+    public function col_type($row): string {
         if ($row->type == 'scheduled') {
             $output = \html_writer::span(get_string('scheduled', 'tool_task'), 'badge bg-primary text-white');
         } else if ($row->type == 'adhoc') {
@@ -126,7 +126,7 @@ class running_tasks_table extends \table_sql {
      * @param   \stdClass $row
      * @return  string
      */
-    public function col_time($row) : string {
+    public function col_time($row): string {
         global $OUTPUT;
 
         $taskmethod = "{$row->type}_task_from_record";
@@ -150,7 +150,7 @@ class running_tasks_table extends \table_sql {
      * @param   \stdClass $row
      * @return  string
      */
-    public function col_timestarted($row) : string {
+    public function col_timestarted($row): string {
         return userdate($row->timestarted);
     }
 }

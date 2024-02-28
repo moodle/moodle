@@ -44,7 +44,7 @@ class quarters extends \core_analytics\local\time_splitting\equal_parts {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('timesplitting:quarters');
     }
 

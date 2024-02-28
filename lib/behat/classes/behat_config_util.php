@@ -753,7 +753,7 @@ class behat_config_util {
      * @param bool $verbose If true, outputs information about installed app version
      * @return string List of tags or '' if not supporting mobile
      */
-    protected function get_mobile_version_tags($verbose = true) : string {
+    protected function get_mobile_version_tags($verbose = true): string {
         global $CFG;
 
         if (empty($CFG->behat_ionic_wwwroot)) {
@@ -1501,7 +1501,7 @@ class behat_config_util {
      * @param string $theme theme name.
      * @return  List of contexts
      */
-    protected function get_behat_contexts_for_theme($theme) : array {
+    protected function get_behat_contexts_for_theme($theme): array {
         // If we already have this list then just return. This will not change by run.
         if (!empty($this->themecontexts[$theme])) {
             return $this->themecontexts[$theme];

@@ -368,7 +368,7 @@ class mod_forum_generator extends testing_module_generator {
      * @param int $timecreated The post time created timestamp if it's to be displayed
      * @return string
      */
-    public function get_author_subheading_html(stdClass $exportedauthor, int $timecreated) : string {
+    public function get_author_subheading_html(stdClass $exportedauthor, int $timecreated): string {
         $fullname = $exportedauthor->fullname;
         $profileurl = $exportedauthor->urls['profile'] ?? null;
         $name = $profileurl ? "<a href=\"{$profileurl}\">{$fullname}</a>" : $fullname;

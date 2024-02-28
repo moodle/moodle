@@ -110,7 +110,7 @@ class mock_info_section extends info_section {
      *
      * @param \section_info $section
      */
-    public function set_section (\section_info $section) {
+    public function set_section(\section_info $section) {
         $this->section = $section;
     }
 }

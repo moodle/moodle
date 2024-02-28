@@ -457,7 +457,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array of testing scenarios
      */
-    public function ungraded_counts_hidden_grades_data() : array {
+    public function ungraded_counts_hidden_grades_data(): array {
         return [
             'nohidden' => [
                 'hidden' => false,
@@ -878,7 +878,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array of testing scenarios
      */
-    public function calculate_average_data() : array {
+    public function calculate_average_data(): array {
         return [
             'Non-empty grades' => [
                 'meanselection' => 1,

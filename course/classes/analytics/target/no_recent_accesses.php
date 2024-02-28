@@ -51,7 +51,7 @@ class no_recent_accesses extends course_enrolments {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('target:norecentaccesses', 'course');
     }
 

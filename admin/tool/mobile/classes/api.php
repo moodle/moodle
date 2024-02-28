@@ -781,7 +781,7 @@ class api {
      *
      * @return array Subscription information
      */
-    public static function get_subscription_information() : ?array {
+    public static function get_subscription_information(): ?array {
         global $CFG;
 
         // Use session cache to prevent multiple requests.

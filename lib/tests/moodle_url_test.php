@@ -272,7 +272,7 @@ class moodle_url_test extends \advanced_testcase {
      * @param string $url URL with params to test.
      * @param array $expected The expected result.
      */
-    public function test_moodle_url_export_params_for_template(string $url, array $expected) :void {
+    public function test_moodle_url_export_params_for_template(string $url, array $expected): void {
         // Should return params in the URL.
         $moodleurl = new \moodle_url($url);
         $this->assertSame($expected, $moodleurl->export_params_for_template());
@@ -283,7 +283,7 @@ class moodle_url_test extends \advanced_testcase {
      *
      * @return array[] the array of test data.
      */
-    public function moodle_url_export_params_for_template_provider() :array {
+    public function moodle_url_export_params_for_template_provider(): array {
         $baseurl = "http://example.com";
         return [
                 'With indexed array params' => [

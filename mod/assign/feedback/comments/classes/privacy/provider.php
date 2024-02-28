@@ -52,7 +52,7 @@ class provider implements
      * @param  collection $collection A list of information to add to.
      * @return collection Return the collection after adding to it.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $data = [
             'assignment' => 'privacy:metadata:assignmentid',
             'grade' => 'privacy:metadata:gradepurpose',

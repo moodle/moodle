@@ -609,7 +609,7 @@ function qtype_multianswer_extract_question($text) {
  * @param object $question  The multianswer question to validate as returned by qtype_multianswer_extract_question
  * @return array Array of error messages with questions field names as keys.
  */
-function qtype_multianswer_validate_question(stdClass $question) : array {
+function qtype_multianswer_validate_question(stdClass $question): array {
     $errors = array();
     if (!isset($question->options->questions)) {
         $errors['questiontext'] = get_string('questionsmissing', 'qtype_multianswer');

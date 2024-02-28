@@ -1307,7 +1307,7 @@ EOF;
      *
      * @return string
      */
-    public function get_guest_access_password() : string {
+    public function get_guest_access_password(): string {
         $guestpassword = $this->get_instance_var('guestpassword');
         if (empty($guestpassword)) {
             $this->generate_guest_credentials();
@@ -1321,7 +1321,7 @@ EOF;
      *
      * @return void
      */
-    private function generate_guest_credentials():void {
+    private function generate_guest_credentials(): void {
         global $DB;
         [$this->instancedata->guestlinkuid, $this->instancedata->guestpassword] =
             \mod_bigbluebuttonbn\plugin::generate_guest_meeting_credentials();

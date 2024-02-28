@@ -42,7 +42,7 @@ use core_h5p\local\library\autoloader;
  * @return bool Returns false if we don't find a file.
  */
 function core_h5p_pluginfile($course, $cm, $context, string $filearea, array $args, bool $forcedownload,
-    array $options = []) : bool {
+    array $options = []): bool {
     global $DB;
 
     // Require classes from H5P third party library

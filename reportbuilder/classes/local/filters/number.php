@@ -111,7 +111,7 @@ class number extends base {
      * @param array $values
      * @return array array of two elements - SQL query and named parameters
      */
-    public function get_sql_filter(array $values) : array {
+    public function get_sql_filter(array $values): array {
         $operator = (int) ($values["{$this->name}_operator"] ?? self::ANY_VALUE);
 
         $value1 = $values["{$this->name}_value1"] ?? null;

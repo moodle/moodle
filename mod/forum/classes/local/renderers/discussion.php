@@ -179,7 +179,7 @@ class discussion {
         stdClass $user,
         post_entity $firstpost,
         array $replies
-    ) : string {
+    ): string {
         global $CFG;
 
         $displaymode = $this->displaymode;
@@ -258,7 +258,7 @@ class discussion {
      *
      * @return  stdClass[]
      */
-    private function get_groups_available_in_forum() : array {
+    private function get_groups_available_in_forum(): array {
         $course = $this->forum->get_course_record();
         $coursemodule = $this->forum->get_course_module_record();
 
@@ -271,7 +271,7 @@ class discussion {
      * @param stdClass $user The user viewing the discussion
      * @return array
      */
-    private function get_exported_discussion(stdClass $user) : array {
+    private function get_exported_discussion(stdClass $user): array {
         $discussionexporter = $this->exporterfactory->get_discussion_exporter(
             $user,
             $this->forum,
@@ -289,7 +289,7 @@ class discussion {
      * @param stdClass $user The current user
      * @return string
      */
-    private function get_display_mode_selector_html(int $displaymode, stdClass $user) : string {
+    private function get_display_mode_selector_html(int $displaymode, stdClass $user): string {
         $baseurl = $this->baseurl;
         $select = new single_select(
             $baseurl,
@@ -309,7 +309,7 @@ class discussion {
      *
      * @return string
      */
-    private function get_move_discussion_html() : ?string {
+    private function get_move_discussion_html(): ?string {
         global $DB;
 
         $forum = $this->forum;
@@ -370,7 +370,7 @@ class discussion {
      * @param   stdClass $user The user viewing the discussion
      * @return  string|null
      */
-    private function get_export_discussion_html(stdClass $user) : ?string {
+    private function get_export_discussion_html(stdClass $user): ?string {
         global $CFG;
 
         if (!$this->capabilitymanager->can_export_discussions($user)) {
@@ -389,7 +389,7 @@ class discussion {
      * @param stdClass $user The user viewing the discussion
      * @return string[]
      */
-    private function get_notifications($user) : array {
+    private function get_notifications($user): array {
         $notifications = $this->notifications;
         $discussion = $this->discussion;
         $forum = $this->forum;
@@ -452,7 +452,7 @@ class discussion {
      *
      * @return string
      */
-    private function get_neighbour_links_html() : string {
+    private function get_neighbour_links_html(): string {
         $forum = $this->forum;
         $coursemodule = $forum->get_course_module_record();
         $neighbours = forum_get_discussion_neighbours($coursemodule, $this->discussionrecord, $this->forumrecord);

@@ -529,7 +529,7 @@ class lib_test extends \advanced_testcase {
         $this->assertSame('Updated input for grouping1', $customfield['value']);
     }
 
-    public function test_groups_create_autogroups () {
+    public function test_groups_create_autogroups() {
         global $DB;
         $this->resetAfterTest();
 

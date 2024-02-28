@@ -386,7 +386,7 @@ abstract class backup_helper {
      *
      * @param string $current The current course reuse option where the header is modified
      */
-    public static function print_coursereuse_selector(string $current):void {
+    public static function print_coursereuse_selector(string $current): void {
         global $OUTPUT, $PAGE;
 
         if ($coursereusenode = $PAGE->settingsnav->find('coursereuse', \navigation_node::TYPE_CONTAINER)) {

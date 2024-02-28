@@ -40,7 +40,7 @@ class report_helper {
      * @param string $pluginname The report plugin where the header is modified
      * @return void
      */
-    public static function print_report_selector(string $pluginname):void {
+    public static function print_report_selector(string $pluginname): void {
         global $OUTPUT, $PAGE;
 
         if ($reportnode = $PAGE->settingsnav->find('coursereports', \navigation_node::TYPE_CONTAINER)) {
@@ -98,7 +98,7 @@ class report_helper {
      * @param moodle_url $url The moodle url
      * @return void
      */
-    public static function save_selected_report(int $id, moodle_url $url):void {
+    public static function save_selected_report(int $id, moodle_url $url): void {
         global $USER;
 
         debugging('save_selected_report() has been deprecated because it is no longer used and will be '.

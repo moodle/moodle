@@ -35,7 +35,7 @@ class data_request_test extends data_privacy_testcase {
      *
      * @return  array
      */
-    public function status_state_provider() : array {
+    public function status_state_provider(): array {
         return [
             [
                 'state' => api::DATAREQUEST_STATUS_PENDING,
@@ -138,7 +138,7 @@ class data_request_test extends data_privacy_testcase {
      *
      * @return      array
      */
-    public function non_resettable_provider() : array {
+    public function non_resettable_provider(): array {
         $states = [];
         foreach ($this->status_state_provider() as $thisstatus) {
             if (!$thisstatus['resettable']) {
@@ -221,7 +221,7 @@ class data_request_test extends data_privacy_testcase {
      * @param   int     $status
      * @return  data_request
      */
-    public function create_request_for_user_with_status(int $userid, int $type, int $status) : data_request {
+    public function create_request_for_user_with_status(int $userid, int $type, int $status): data_request {
         $request = new data_request(0, (object) [
                 'userid' => $userid,
                 'type' => $type,

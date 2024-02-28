@@ -422,7 +422,7 @@ class manager {
      * @param int $userid the user id to check ($USER->id if null).
      * @return bool if the user can view the preset.
      */
-    public function can_view_preset (preset $preset, ?int $userid = null): bool {
+    public function can_view_preset(preset $preset, ?int $userid = null): bool {
         global $USER;
         if (!$userid) {
             $userid = $USER->id;

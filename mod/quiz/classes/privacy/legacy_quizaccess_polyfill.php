@@ -43,7 +43,7 @@ trait legacy_quizaccess_polyfill {
      * @param   \stdClass       $user The user to export data for
      * @return  \stdClass       The data to be exported for this access rule.
      */
-    public static function export_quizaccess_user_data(\mod_quiz\quiz_settings $quiz, \stdClass $user) : \stdClass {
+    public static function export_quizaccess_user_data(\mod_quiz\quiz_settings $quiz, \stdClass $user): \stdClass {
         return static::_export_quizaccess_user_data($quiz, $user);
     }
 

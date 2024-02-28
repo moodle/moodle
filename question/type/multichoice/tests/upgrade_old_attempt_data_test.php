@@ -1921,7 +1921,7 @@ public function test_multichoice_deferredfeedback_qsession140() {
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_multichoice_deferredfeedback_qsession4307870 () {
+    public function test_multichoice_deferredfeedback_qsession4307870() {
         $quiz = (object) array(
             'id' => '4070',
             'course' => '5139',

@@ -5026,7 +5026,7 @@ abstract class lesson_page extends lesson_base {
      * @param stdClass $data The form data to update.
      * @return stdClass The updated fom data.
      */
-    public function update_form_data(stdClass $data) : stdClass {
+    public function update_form_data(stdClass $data): stdClass {
         return $data;
     }
 }

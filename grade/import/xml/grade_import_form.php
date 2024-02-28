@@ -22,7 +22,7 @@ if (!defined('MOODLE_INTERNAL')) {
 require_once $CFG->libdir.'/formslib.php';
 
 class grade_import_form extends moodleform {
-    function definition () {
+    function definition() {
         global $COURSE, $USER, $CFG, $DB;
 
         $mform =& $this->_form;

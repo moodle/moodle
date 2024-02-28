@@ -429,7 +429,7 @@ class data_requests_table extends table_sql {
      *
      * @return int The number of data request records.
      */
-    public function get_requests_per_page() : int {
+    public function get_requests_per_page(): int {
         return $this->perpage;
     }
 
@@ -447,7 +447,7 @@ class data_requests_table extends table_sql {
      *
      * @return array The available options for the number of data request to be displayed per page.
      */
-    public function get_requests_per_page_options() : array {
+    public function get_requests_per_page_options(): array {
         return $this->perpageoptions;
     }
 }

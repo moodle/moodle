@@ -37,7 +37,7 @@ class report_helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function data_selected_report():array {
+    public function data_selected_report(): array {
         return [
             ['course_url_id' => [
                 ['url' => '/test', 'id' => 1],
@@ -56,7 +56,7 @@ class report_helper_test extends \advanced_testcase {
      * @dataProvider data_selected_report
      * @param array $courseurlid The array has both course url and course id
      */
-    public function test_save_selected_report(array $courseurlid):void {
+    public function test_save_selected_report(array $courseurlid): void {
         global $USER;
 
         $url1 = new moodle_url($courseurlid[0]['url']);

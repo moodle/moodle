@@ -62,7 +62,7 @@ class url {
      * @param int $courseid The course id
      * @return moodle_url
      */
-    public function get_course_url_from_courseid(int $courseid) : moodle_url {
+    public function get_course_url_from_courseid(int $courseid): moodle_url {
         return new moodle_url('/course/view.php', [
             'id' => $courseid,
         ]);
@@ -74,7 +74,7 @@ class url {
      * @param forum_entity $forum The forum entity
      * @return moodle_url
      */
-    public function get_course_url_from_forum(forum_entity $forum) : moodle_url {
+    public function get_course_url_from_forum(forum_entity $forum): moodle_url {
         return $this->get_course_url_from_courseid($forum->get_course_id());
     }
 
@@ -84,7 +84,7 @@ class url {
      * @param forum_entity $forum The forum entity
      * @return moodle_url
      */
-    public function get_discussion_create_url(forum_entity $forum) : moodle_url {
+    public function get_discussion_create_url(forum_entity $forum): moodle_url {
         return new moodle_url('/mod/forum/post.php', [
             'forum' => $forum->get_id(),
         ]);
@@ -99,7 +99,7 @@ class url {
      * @return moodle_url
      */
     public function get_forum_view_url_from_forum(forum_entity $forum, ?int $pageno = null,
-            ?int $sortorder = null) : moodle_url {
+            ?int $sortorder = null): moodle_url {
 
         return $this->get_forum_view_url_from_course_module_id($forum->get_course_module_record()->id, $pageno, $sortorder);
     }
@@ -113,7 +113,7 @@ class url {
      * @return moodle_url
      */
     public function get_forum_view_url_from_course_module_id(int $coursemoduleid, ?int $pageno = null,
-            ?int $sortorder = null) : moodle_url {
+            ?int $sortorder = null): moodle_url {
 
         $url = new moodle_url('/mod/forum/view.php', [
             'id' => $coursemoduleid,
@@ -136,7 +136,7 @@ class url {
      * @param int $discussionid The discussion id
      * @return moodle_url
      */
-    public function get_discussion_view_url_from_discussion_id(int $discussionid) : moodle_url {
+    public function get_discussion_view_url_from_discussion_id(int $discussionid): moodle_url {
         return new moodle_url('/mod/forum/discuss.php', [
             'd' => $discussionid
         ]);
@@ -148,7 +148,7 @@ class url {
      * @param discussion_entity $discussion The discussion
      * @return moodle_url
      */
-    public function get_discussion_view_url_from_discussion(discussion_entity $discussion) : moodle_url {
+    public function get_discussion_view_url_from_discussion(discussion_entity $discussion): moodle_url {
         return $this->get_discussion_view_url_from_discussion_id($discussion->get_id());
     }
 
@@ -187,7 +187,7 @@ class url {
      * @param post_entity $post The post
      * @return moodle_url
      */
-    public function get_discussion_view_url_from_post(post_entity $post) : moodle_url {
+    public function get_discussion_view_url_from_post(post_entity $post): moodle_url {
         return $this->get_discussion_view_url_from_discussion_id($post->get_discussion_id());
     }
 
@@ -198,7 +198,7 @@ class url {
      * @param int $postid The post id
      * @return moodle_url
      */
-    public function get_view_post_url_from_post_id(int $discussionid, int $postid) : moodle_url {
+    public function get_view_post_url_from_post_id(int $discussionid, int $postid): moodle_url {
         $url = $this->get_discussion_view_url_from_discussion_id($discussionid);
         $url->set_anchor('p' . $postid);
         return $url;
@@ -210,7 +210,7 @@ class url {
      * @param post_entity $post The post
      * @return moodle_url
      */
-    public function get_view_post_url_from_post(post_entity $post) : moodle_url {
+    public function get_view_post_url_from_post(post_entity $post): moodle_url {
         return $this->get_view_post_url_from_post_id($post->get_discussion_id(), $post->get_id());
     }
 
@@ -222,7 +222,7 @@ class url {
      * @param int $postid The post id
      * @return moodle_url
      */
-    public function get_view_isolated_post_url_from_post_id(int $discussionid, int $postid) : moodle_url {
+    public function get_view_isolated_post_url_from_post_id(int $discussionid, int $postid): moodle_url {
         $url = $this->get_discussion_view_url_from_discussion_id($discussionid);
         $url->params(['parent' => $postid]);
         return $url;
@@ -235,7 +235,7 @@ class url {
      * @param post_entity $post The post
      * @return moodle_url
      */
-    public function get_view_isolated_post_url_from_post(post_entity $post) : moodle_url {
+    public function get_view_isolated_post_url_from_post(post_entity $post): moodle_url {
         return $this->get_view_isolated_post_url_from_post_id($post->get_discussion_id(), $post->get_id());
     }
 
@@ -246,7 +246,7 @@ class url {
      * @param post_entity $post The post
      * @return moodle_url
      */
-    public function get_edit_post_url_from_post(forum_entity $forum, post_entity $post) : moodle_url {
+    public function get_edit_post_url_from_post(forum_entity $forum, post_entity $post): moodle_url {
         if ($forum->get_type() == 'single' && !$post->has_parent()) {
             return new moodle_url('/course/modedit.php', [
                 'update' => $forum->get_course_module_record()->id,
@@ -266,7 +266,7 @@ class url {
      * @param post_entity $post The post
      * @return moodle_url
      */
-    public function get_split_discussion_at_post_url_from_post(post_entity $post) : moodle_url {
+    public function get_split_discussion_at_post_url_from_post(post_entity $post): moodle_url {
         return new moodle_url('/mod/forum/post.php', [
             'prune' => $post->get_id()
         ]);
@@ -278,7 +278,7 @@ class url {
      * @param post_entity $post The post
      * @return moodle_url
      */
-    public function get_delete_post_url_from_post(post_entity $post) : moodle_url {
+    public function get_delete_post_url_from_post(post_entity $post): moodle_url {
         return new moodle_url('/mod/forum/post.php', [
             'delete' => $post->get_id()
         ]);
@@ -290,7 +290,7 @@ class url {
      * @param post_entity $post The post
      * @return moodle_url
      */
-    public function get_reply_to_post_url_from_post(post_entity $post) : moodle_url {
+    public function get_reply_to_post_url_from_post(post_entity $post): moodle_url {
         return new moodle_url('/mod/forum/post.php#mformforum', [
             'reply' => $post->get_id()
         ]);
@@ -302,7 +302,7 @@ class url {
      * @param post_entity $post The post
      * @return moodle_url
      */
-    public function get_export_post_url_from_post(post_entity $post) : ?moodle_url {
+    public function get_export_post_url_from_post(post_entity $post): ?moodle_url {
         global $CFG;
 
         require_once($CFG->libdir . '/portfoliolib.php');
@@ -325,7 +325,7 @@ class url {
      * @param int $displaymode The display mode to show the forum in after marking as read
      * @return moodle_url
      */
-    public function get_mark_post_as_read_url_from_post(post_entity $post, int $displaymode = FORUM_MODE_THREADED) : moodle_url {
+    public function get_mark_post_as_read_url_from_post(post_entity $post, int $displaymode = FORUM_MODE_THREADED): moodle_url {
         $params = [
             'd' => $post->get_discussion_id(),
             'postid' => $post->get_id(),
@@ -350,7 +350,7 @@ class url {
      * @param int $displaymode The display mode to show the forum in after marking as unread
      * @return moodle_url
      */
-    public function get_mark_post_as_unread_url_from_post(post_entity $post, int $displaymode = FORUM_MODE_THREADED) : moodle_url {
+    public function get_mark_post_as_unread_url_from_post(post_entity $post, int $displaymode = FORUM_MODE_THREADED): moodle_url {
         $params = [
             'd' => $post->get_discussion_id(),
             'postid' => $post->get_id(),
@@ -375,7 +375,7 @@ class url {
      * @param stored_file $attachment
      * @return moodle_url|null
      */
-    public function get_export_attachment_url_from_post_and_attachment(post_entity $post, stored_file $attachment) : ?moodle_url {
+    public function get_export_attachment_url_from_post_and_attachment(post_entity $post, stored_file $attachment): ?moodle_url {
         global $CFG;
 
         require_once($CFG->libdir . '/portfoliolib.php');
@@ -397,7 +397,7 @@ class url {
      * @param int $courseid The course id
      * @return moodle_url
      */
-    public function get_author_profile_url(author_entity $author, int $courseid) : moodle_url {
+    public function get_author_profile_url(author_entity $author, int $courseid): moodle_url {
         return new moodle_url('/user/view.php', [
             'id' => $author->get_id(),
             'course' => $courseid
@@ -417,7 +417,7 @@ class url {
         author_entity $author,
         int $authorcontextid = null,
         int $size = 100
-    ) : moodle_url {
+    ): moodle_url {
         global $PAGE;
 
         $datamapper = $this->legacydatamapperfactory->get_author_data_mapper();
@@ -435,7 +435,7 @@ class url {
      * @param \stdClass $group The group
      * @return moodle_url
      */
-    public function get_author_group_url(\stdClass $group) : moodle_url {
+    public function get_author_group_url(\stdClass $group): moodle_url {
         return new moodle_url('/user/index.php', [
                 'id' => $group->courseid,
                 'group' => $group->id
@@ -451,7 +451,7 @@ class url {
     public function get_mark_discussion_as_read_url_from_discussion(
         forum_entity $forum,
         discussion_entity $discussion
-    ) : moodle_url {
+    ): moodle_url {
         return new moodle_url('/mod/forum/markposts.php', [
             'f' => $discussion->get_forum_id(),
             'd' => $discussion->get_id(),
@@ -467,7 +467,7 @@ class url {
      * @param forum_entity $forum The forum that the discussions belong to
      * @return moodle_url
      */
-    public function get_mark_all_discussions_as_read_url(forum_entity $forum) : moodle_url {
+    public function get_mark_all_discussions_as_read_url(forum_entity $forum): moodle_url {
         return new moodle_url('/mod/forum/markposts.php', [
             'f' => $forum->get_id(),
             'mark' => 'read',
@@ -482,7 +482,7 @@ class url {
      * @param discussion_entity $discussion The discussion
      * @return moodle_url
      */
-    public function get_discussion_subscribe_url(discussion_entity $discussion) : moodle_url {
+    public function get_discussion_subscribe_url(discussion_entity $discussion): moodle_url {
         return new moodle_url('/mod/forum/subscribe.php', [
             'sesskey' => sesskey(),
             'id' => $discussion->get_forum_id(),
@@ -497,7 +497,7 @@ class url {
      * @return moodle_url
      * @throws \moodle_exception
      */
-    public function get_pin_discussion_url_from_discussion(discussion_entity $discussion) : moodle_url {
+    public function get_pin_discussion_url_from_discussion(discussion_entity $discussion): moodle_url {
         return new moodle_url('discuss.php', [
             'sesskey' => sesskey(),
             'd' => $discussion->get_id(),

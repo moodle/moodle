@@ -232,7 +232,7 @@ class fetch_test extends advanced_testcase {
     /**
      * Executes the fetch method with the given users and returns the result.
      */
-    private function execute_and_assert_fetch ($forum, $options, $scale, $fetcheruser, $grader, $gradeduser) {
+    private function execute_and_assert_fetch($forum, $options, $scale, $fetcheruser, $grader, $gradeduser) {
 
         $this->setUser($grader);
 

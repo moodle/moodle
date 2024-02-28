@@ -53,7 +53,7 @@ class approved_userlist extends userlist_base {
      * @param   userlist        $userlist The source list
      * @return  approved_userlist   The newly created approved userlist.
      */
-    public static function create_from_userlist(userlist $userlist) : approved_userlist {
+    public static function create_from_userlist(userlist $userlist): approved_userlist {
         $newlist = new static($userlist->get_context(), $userlist->get_component(), $userlist->get_userids());
 
         return $newlist;

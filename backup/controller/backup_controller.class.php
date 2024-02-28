@@ -380,7 +380,7 @@ class backup_controller extends base_controller {
      * @return bool
      * @throws dml_exception
      */
-    protected function get_include_files_default() : bool {
+    protected function get_include_files_default(): bool {
         // We normally include files.
         $includefiles = true;
 

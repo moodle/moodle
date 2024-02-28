@@ -540,7 +540,7 @@ class mysql_sql_generator extends sql_generator {
      * @param xmldb_table $xmldb_table The xmldb_table object instance.
      * @return array Array of SQL statements to add one comment to the table.
      */
-    function getCommentSQL ($xmldb_table) {
+    function getCommentSQL($xmldb_table) {
         $comment = '';
 
         if ($xmldb_table->getComment()) {

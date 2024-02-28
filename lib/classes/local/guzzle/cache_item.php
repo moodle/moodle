@@ -114,7 +114,7 @@ class cache_item {
      *
      * @return bool True if the request resulted in a cache hit. False otherwise.
      */
-    public function is_hit():bool {
+    public function is_hit(): bool {
         if (!$this->ishit) {
             return false;
         }

@@ -97,7 +97,7 @@ abstract class assign_feedback_plugin extends assign_plugin {
      * @param stdClass $grade The assign_grades object from the db
      * @return array
      */
-    public function files_for_gradebook(stdClass $grade) : array {
+    public function files_for_gradebook(stdClass $grade): array {
         return [];
     }
 

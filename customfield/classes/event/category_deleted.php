@@ -53,7 +53,7 @@ class category_deleted extends \core\event\base {
      * @param category_controller $category
      * @return category_deleted
      */
-    public static function create_from_object(category_controller $category) : category_deleted {
+    public static function create_from_object(category_controller $category): category_deleted {
         $eventparams = [
             'objectid' => $category->get('id'),
             'context'  => $category->get_handler()->get_configuration_context(),

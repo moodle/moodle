@@ -49,7 +49,7 @@ class no_student extends \core_analytics\local\indicator\binary {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('indicator:nostudent', 'moodle');
     }
 

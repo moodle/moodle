@@ -60,7 +60,7 @@ class helper {
      * @param string $phonenumber from the given user input
      * @return bool
      */
-    public static function is_valid_phonenumber(string $phonenumber) : bool {
+    public static function is_valid_phonenumber(string $phonenumber): bool {
         $phonenumber = self::format_number($phonenumber);
         return (preg_match("/^\+[1-9]\d{1,14}$/", $phonenumber)) ? true : false;
     }

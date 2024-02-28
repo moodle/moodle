@@ -42,7 +42,7 @@ class extract_context {
      * @param stdClass[] $records The list of records which have context properties
      * @return context[] List of contexts matching the records.
      */
-    public function execute(array $records) : array {
+    public function execute(array $records): array {
         return array_map(function($record) {
             $contextid = $record->ctxid;
             context_helper::preload_from_record($record);

@@ -475,7 +475,7 @@ class user extends grade_report {
      *
      * @return bool
      */
-    public function fill_table():bool {
+    public function fill_table(): bool {
         $this->fill_table_recursive($this->gtree->top_element);
         return true;
     }

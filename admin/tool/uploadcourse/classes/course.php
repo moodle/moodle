@@ -1199,7 +1199,7 @@ class tool_uploadcourse_course {
      * @param int $roleid Role ID.
      * @return bool
      */
-    protected function validate_role_context(int $courseid, int $roleid) : bool {
+    protected function validate_role_context(int $courseid, int $roleid): bool {
         if (empty($this->assignableroles[$courseid])) {
             $coursecontext = \context_course::instance($courseid);
             $this->assignableroles[$courseid] = get_assignable_roles($coursecontext, ROLENAME_SHORT);
@@ -1216,7 +1216,7 @@ class tool_uploadcourse_course {
      * @param int $roleid Role ID.
      * @return bool
      */
-    protected function validate_role_context_level(int $roleid) : bool {
+    protected function validate_role_context_level(int $roleid): bool {
         if (empty($this->contextlevels[$roleid])) {
             $this->contextlevels[$roleid] = get_role_contextlevels($roleid);
         }

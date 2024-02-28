@@ -608,7 +608,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->manual_grade('Comment', '10.1', FORMAT_HTML);
     }
 
-    public function test_manual_graded_displays_proper_comment_format () {
+    public function test_manual_graded_displays_proper_comment_format() {
 
         global $PAGE;
 

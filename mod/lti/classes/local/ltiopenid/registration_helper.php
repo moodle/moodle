@@ -443,7 +443,7 @@ class registration_helper {
      *
      * @return mixed Tool Proxy details
      */
-    public function get_tool_proxy(int $proxyid) : array {
+    public function get_tool_proxy(int $proxyid): array {
         return lti_get_tool_proxy($proxyid);
     }
 }

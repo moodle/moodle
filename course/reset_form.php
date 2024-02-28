@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/course/lib.php');
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class course_reset_form extends moodleform {
-    function definition (){
+    function definition(){
         global $CFG, $COURSE, $DB;
 
         $mform =& $this->_form;

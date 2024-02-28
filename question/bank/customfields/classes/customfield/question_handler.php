@@ -55,7 +55,7 @@ class question_handler extends \core_customfield\handler {
      * @param int $itemid Always zero.
      * @return \qbank_customfields\customfield\question_handler
      */
-    public static function create(int $itemid = 0) : \core_customfield\handler {
+    public static function create(int $itemid = 0): \core_customfield\handler {
         if (static::$singleton === null) {
             self::$singleton = new static(0);
         }
@@ -78,7 +78,7 @@ class question_handler extends \core_customfield\handler {
      *
      * @return bool true if the current can configure custom fields, false otherwise
      */
-    public function can_configure() : bool {
+    public function can_configure(): bool {
         return has_capability('qbank/customfields:configurecustomfields', $this->get_configuration_context());
     }
 
@@ -89,7 +89,7 @@ class question_handler extends \core_customfield\handler {
      * @param int $instanceid id of the question to test edit permission
      * @return bool true if the current can edit custom fields, false otherwise
      */
-    public function can_edit(field_controller $field, int $instanceid = 0) : bool {
+    public function can_edit(field_controller $field, int $instanceid = 0): bool {
         if ($instanceid) {
             $context = $this->get_instance_context($instanceid);
         } else {
@@ -107,7 +107,7 @@ class question_handler extends \core_customfield\handler {
      * @param int $instanceid id of the question to test edit permission
      * @return bool true if the current can edit custom fields, false otherwise
      */
-    public function can_view(field_controller $field, int $instanceid) : bool {
+    public function can_view(field_controller $field, int $instanceid): bool {
         $visibility = $field->get_configdata_property('visibility');
         if ($visibility == self::NOTVISIBLE) {
             return false;
@@ -128,7 +128,7 @@ class question_handler extends \core_customfield\handler {
      * @param \context $context The context the field is being displayed in.
      * @return bool true if the current can edit custom fields, false otherwise.
      */
-    public function can_view_type(field_controller $field, \context $context) : bool {
+    public function can_view_type(field_controller $field, \context $context): bool {
         $visibility = $field->get_configdata_property('visibility');
         if ($visibility == self::NOTVISIBLE) {
             return false;
@@ -155,7 +155,7 @@ class question_handler extends \core_customfield\handler {
      *
      * @return \context
      */
-    protected function get_parent_context() : \context {
+    protected function get_parent_context(): \context {
         if ($this->parentcontext) {
             return $this->parentcontext;
         } else {
@@ -168,7 +168,7 @@ class question_handler extends \core_customfield\handler {
      *
      * @return \context the context for configuration
      */
-    public function get_configuration_context() : \context {
+    public function get_configuration_context(): \context {
         return \context_system::instance();
     }
 
@@ -177,7 +177,7 @@ class question_handler extends \core_customfield\handler {
      *
      * @return \moodle_url The URL to configure custom fields for this component
      */
-    public function get_configuration_url() : \moodle_url {
+    public function get_configuration_url(): \moodle_url {
         return new \moodle_url('/question/customfield.php');
     }
 
@@ -188,7 +188,7 @@ class question_handler extends \core_customfield\handler {
      * @return \context the context for the given record
      * @throws \coding_exception
      */
-    public function get_instance_context(int $instanceid = 0) : \context {
+    public function get_instance_context(int $instanceid = 0): \context {
         if ($instanceid > 0) {
             $questiondata = \question_bank::load_question_data($instanceid);
             $contextid = $questiondata->contextid;
@@ -248,7 +248,7 @@ class question_handler extends \core_customfield\handler {
      * @param object $fielddata The field data used for display.
      * @return string The HTML to display in the table column.
      */
-    public function display_custom_field_table(object $fielddata) : string {
+    public function display_custom_field_table(object $fielddata): string {
         global $PAGE;
 
         $output = $PAGE->get_renderer('qbank_customfields');
@@ -263,7 +263,7 @@ class question_handler extends \core_customfield\handler {
      * @param array $catfielddata Array of categories and field names and values.
      * @return string The HTML to display.
      */
-    public function display_custom_categories_fields(array $catfielddata) : string {
+    public function display_custom_categories_fields(array $catfielddata): string {
         global $PAGE;
         $output = $PAGE->get_renderer('qbank_customfields');
 

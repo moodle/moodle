@@ -235,7 +235,7 @@ abstract class scanner {
      *
      * @return array
      */
-    public function get_messages() : array {
+    public function get_messages(): array {
         return $this->messages;
     }
 

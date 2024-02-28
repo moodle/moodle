@@ -42,7 +42,7 @@ class user_profile_set extends \core_analytics\local\indicator\linear {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('indicator:completeduserprofile');
     }
 

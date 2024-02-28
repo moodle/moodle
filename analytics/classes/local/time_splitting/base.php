@@ -77,7 +77,7 @@ abstract class base {
      *
      * @return \lang_string
      */
-    public static abstract function get_name() : \lang_string;
+    public static abstract function get_name(): \lang_string;
 
     /**
      * Returns the time splitting method id.

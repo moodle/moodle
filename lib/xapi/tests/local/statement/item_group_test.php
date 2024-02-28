@@ -143,7 +143,7 @@ class item_group_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_data_provider() : array {
+    public function invalid_data_provider(): array {
         return [
             'Wrong objecttype' => [
                 'Invalid', true, true

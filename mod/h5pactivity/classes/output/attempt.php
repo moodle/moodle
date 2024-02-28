@@ -177,7 +177,7 @@ class attempt implements renderable, templatable {
      * @param stdClass $duration object with (h)hours, (m)minutes and (s)seconds
      * @return string the long format duration
      */
-    private function format_duration (stdClass $duration): string {
+    private function format_duration(stdClass $duration): string {
         $result = [];
         if ($duration->h) {
             $result[] = get_string('numhours', 'moodle', $duration->h);
@@ -199,7 +199,7 @@ class attempt implements renderable, templatable {
      * @param stdClass $duration object with (h)hours, (m)minutes and (s)seconds
      * @return string the short format duration
      */
-    private function format_duration_short (stdClass $duration): string {
+    private function format_duration_short(stdClass $duration): string {
         $result = [];
         if ($duration->h || $duration->m) {
             $result[] = ($duration->h * 60 + $duration->m)."'";
@@ -219,7 +219,7 @@ class attempt implements renderable, templatable {
      * @param int $seconds number of second
      * @return stdClass with (h)hours, (m)minutes and (s)seconds
      */
-    private function extract_duration (int $seconds): stdClass {
+    private function extract_duration(int $seconds): stdClass {
         $h = floor($seconds / 3600);
         $m = floor(($seconds - $h * 3600) / 60);
         $s = $seconds - ($h * 3600 + $m * 60);

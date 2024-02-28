@@ -46,7 +46,7 @@ class test_timesplitting_upcoming_seconds extends \core_analytics\local\time_spl
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('error');
     }
 }

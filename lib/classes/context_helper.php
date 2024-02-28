@@ -51,7 +51,7 @@ abstract class context_helper extends context {
     /**
      * Initialise context levels, call before using self::$alllevels.
      */
-    private static function init_levels():void {
+    private static function init_levels(): void {
         global $CFG;
 
         if (isset(self::$alllevels)) {

@@ -212,7 +212,7 @@ class manager {
      * @param \core\task\adhoc_task $task - The new adhoc task information to store.
      * @since Moodle 3.7
      */
-    public static function reschedule_or_queue_adhoc_task(adhoc_task $task) : void {
+    public static function reschedule_or_queue_adhoc_task(adhoc_task $task): void {
         global $DB;
 
         if ($existingrecord = self::get_queued_adhoc_task_record($task)) {
@@ -1523,7 +1523,7 @@ class manager {
      *
      * @return bool
      */
-    public static function is_runnable():bool {
+    public static function is_runnable(): bool {
         return self::find_php_cli_path() !== false;
     }
 

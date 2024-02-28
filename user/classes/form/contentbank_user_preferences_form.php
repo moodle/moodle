@@ -34,7 +34,7 @@ class contentbank_user_preferences_form extends \moodleform {
     /**
      * Define the form.
      */
-    public function definition () {
+    public function definition() {
         global $CFG, $USER;
 
         $mform = $this->_form;

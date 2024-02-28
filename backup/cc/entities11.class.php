@@ -34,7 +34,7 @@ class entities11 extends entities {
         return $response;
     }
 
-    protected function get_all_files () {
+    protected function get_all_files() {
         global $CFG;
         $all_files = array();
         $xpath = cc2moodle::newx_path(cc112moodle::$manifest, cc112moodle::$namespaces);

@@ -39,7 +39,7 @@ class tool_uploadcourse_step1_form extends tool_uploadcourse_base_form {
      * The standard form definiton.
      * @return void
      */
-    public function definition () {
+    public function definition() {
         $mform = $this->_form;
 
         $mform->addElement('header', 'generalhdr', get_string('general'));

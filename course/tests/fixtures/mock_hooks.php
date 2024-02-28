@@ -76,7 +76,7 @@ namespace core_course\test {
          *
          * @return bool
          */
-        public static function get_can_course_category_delete_return() : bool {
+        public static function get_can_course_category_delete_return(): bool {
             return self::$cancoursecategorydelete;
         }
 
@@ -94,7 +94,7 @@ namespace core_course\test {
          *
          * @return bool
          */
-        public static function get_can_course_category_delete_move_return() : bool {
+        public static function get_can_course_category_delete_move_return(): bool {
             return self::$cancoursecategorydeletemove;
         }
 
@@ -112,7 +112,7 @@ namespace core_course\test {
          *
          * @return string
          */
-        public static function get_get_course_category_contents_return() : string {
+        public static function get_get_course_category_contents_return(): string {
             return self::$getcoursecategorycontents;
         }
 

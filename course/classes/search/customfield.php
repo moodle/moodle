@@ -194,7 +194,7 @@ class customfield extends \core_search\base {
      * @param \core_search\document $doc
      * @return \core_search\document_icon
      */
-    public function get_doc_icon(\core_search\document $doc) : \core_search\document_icon {
+    public function get_doc_icon(\core_search\document $doc): \core_search\document_icon {
         return new \core_search\document_icon('i/customfield');
     }
 

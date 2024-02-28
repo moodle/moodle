@@ -44,7 +44,7 @@ class helper {
      * @throws \dml_exception if the conversation doesn't exist.
      */
     public static function send_fake_message_to_conversation(\stdClass $userfrom, int $convid, string $message = 'Hello world!',
-            int $time = null) : int {
+            int $time = null): int {
         global $DB;
         $conversationrec = $DB->get_record('message_conversations', ['id' => $convid], 'id', MUST_EXIST);
         $conversationid = $conversationrec->id;

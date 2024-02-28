@@ -943,7 +943,7 @@ class repository_nextcloud extends repository {
      * @param stored_file $file
      * @return bool true if synced successfully else false if not ready to sync or reference link not set
      */
-    public function sync_reference(stored_file $file):bool {
+    public function sync_reference(stored_file $file): bool {
         global $CFG;
 
         if ($file->get_referencelastsync() + DAYSECS > time()) {

@@ -112,7 +112,7 @@ class auth_plugin_nologin extends auth_plugin_base {
      * @param stdClass $user A user object
      * @return string[] An array of strings with keys subject and message
      */
-    public function get_password_change_info(stdClass $user) : array {
+    public function get_password_change_info(stdClass $user): array {
         $site = get_site();
 
         $data = new stdClass();

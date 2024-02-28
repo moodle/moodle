@@ -46,7 +46,7 @@ class provider implements
      * @param  collection $collection The initialised item collection to add items to.
      * @return collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         // User preferences shared between different scorm reports.
         $collection->add_user_preference('scorm_report_pagesize', 'privacy:metadata:preference:scorm_report_pagesize');
 

@@ -113,7 +113,7 @@ class behat_gradereport_grader extends behat_base {
      * @param string $student
      * @return string
      */
-    protected function get_user_selector(string $student) : string {
+    protected function get_user_selector(string $student): string {
 
         $userid = $this->get_user_id($student);
         return "//table[@id='user-grades']//*[@data-type='user'][@data-id='" . $userid . "']";

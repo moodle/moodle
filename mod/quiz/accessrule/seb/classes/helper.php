@@ -66,7 +66,7 @@ class helper {
      * @param string $sebconfig
      * @return bool
      */
-    public static function is_valid_seb_config(string $sebconfig) : bool {
+    public static function is_valid_seb_config(string $sebconfig): bool {
         $result = true;
 
         set_error_handler(function($errno, $errstr, $errfile, $errline ){
@@ -93,7 +93,7 @@ class helper {
      * @param int|null $expiretime  Unix timestamp
      * @return array
      */
-    public static function get_seb_file_headers(int $expiretime = null) : array {
+    public static function get_seb_file_headers(int $expiretime = null): array {
         if (is_null($expiretime)) {
             $expiretime = time();
         }
@@ -113,7 +113,7 @@ class helper {
      * @param string $cmid The course module ID for a quiz with config.
      * @return string SEB config string.
      */
-    public static function get_seb_config_content(string $cmid) : string {
+    public static function get_seb_config_content(string $cmid): string {
         // Try and get the course module.
         $cm = get_coursemodule_from_id('quiz', $cmid, 0, false, MUST_EXIST);
 

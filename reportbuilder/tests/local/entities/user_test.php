@@ -52,7 +52,7 @@ class user_test extends advanced_testcase {
     /**
      * Test getting all user identity columns
      */
-    public function test_get_identity_columns() : void {
+    public function test_get_identity_columns(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -99,7 +99,7 @@ class user_test extends advanced_testcase {
     /**
      * Test getting all user identity filters
      */
-    public function test_get_identity_filters() : void {
+    public function test_get_identity_filters(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

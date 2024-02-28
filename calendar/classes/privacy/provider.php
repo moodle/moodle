@@ -54,7 +54,7 @@ class provider implements
      * @param  collection $collection A collection of meta data items to be added to.
      * @return  collection Returns the collection of metadata.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         // The calendar 'event' table contains user data.
         $collection->add_database_table(
             'event',
@@ -94,7 +94,7 @@ class provider implements
      * @param   int $userid The user to search.
      * @return  contextlist   $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
 
         // Calendar Events can exist at Site, Course Category, Course, Course Group, User, or Course Modules contexts.

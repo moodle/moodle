@@ -113,7 +113,7 @@ class item_activity_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function create_from_id_provider() : array {
+    public function create_from_id_provider(): array {
         return [
             'Fake IRI with no definition' => [
                 'paella', false,
@@ -155,7 +155,7 @@ class item_activity_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_data_provider() : array {
+    public function invalid_data_provider(): array {
         return [
             'Invalid Avtivity objectType' => [
                 'Invalid Type!', iri::generate('paella', 'activity'),

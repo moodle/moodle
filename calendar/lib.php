@@ -1121,7 +1121,7 @@ class calendar_information {
      *                                  If a courseid is specified, this value is ignored.
      * @return  calendar_information
      */
-    public static function create($time, int $courseid, int $categoryid = null) : calendar_information {
+    public static function create($time, int $courseid, int $categoryid = null): calendar_information {
         $calendar = new static(0, 0, 0, $time);
         if ($courseid != SITEID && !empty($courseid)) {
             // Course ID must be valid and existing.

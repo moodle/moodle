@@ -241,7 +241,7 @@ class repository_flickr_public extends repository {
         return $this->print_login();
     }
 
-    public function license4moodle ($license_id) {
+    public function license4moodle($license_id) {
         $license = array(
             '0' => 'allrightsreserved',
             '1' => 'cc-nc-sa',

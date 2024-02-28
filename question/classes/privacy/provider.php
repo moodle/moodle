@@ -73,7 +73,7 @@ class provider implements
      * @param   collection  $items  The collection to add metadata to.
      * @return  collection  The array of metadata
      */
-    public static function get_metadata(collection $items) : collection {
+    public static function get_metadata(collection $items): collection {
         // Other tables link against it.
 
         // The 'question_usages' table does not contain any user data.
@@ -335,7 +335,7 @@ class provider implements
      * @param   int             $userid The user to search.
      * @return  contextlist     $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
 
         // A user may have created or updated a question.
@@ -390,7 +390,7 @@ class provider implements
      * @param   int             $userid     The user to search.
      * @return  \qubaid_join
      */
-    public static function get_related_question_usages_for_user(string $prefix, string $component, string $joinfield, int $userid) : \qubaid_join {
+    public static function get_related_question_usages_for_user(string $prefix, string $component, string $joinfield, int $userid): \qubaid_join {
         return new \qubaid_join("
                 JOIN {question_usages} {$prefix}_qu ON {$prefix}_qu.id = {$joinfield}
                  AND {$prefix}_qu.component = :{$prefix}_usagecomponent

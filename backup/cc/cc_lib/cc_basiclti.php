@@ -60,45 +60,45 @@ class basicltil1_resurce_file extends general_cc_file {
     public function set_description($description) {
         $this->description = self::safexml($description);
     }
-    public function set_launch_url ($url) {
+    public function set_launch_url($url) {
         $this->launch_url = $url;
     }
-    public function set_secure_launch_url ($url) {
+    public function set_secure_launch_url($url) {
         $this->secure_launch_url = $url;
     }
-    public function set_launch_icon ($icon) {
+    public function set_launch_icon($icon) {
         $this->icon = $icon;
     }
-    public function set_secure_launch_icon ($icon) {
+    public function set_secure_launch_icon($icon) {
         $this->secure_icon = $icon;
     }
-    public function set_vendor_code ($code) {
+    public function set_vendor_code($code) {
         $this->vendor_code = $code;
         $this->vendor = true;
     }
-    public function set_vendor_name ($name) {
+    public function set_vendor_name($name) {
         $this->vendor_name = self::safexml($name);
         $this->vendor = true;
     }
-    public function set_vendor_description ($desc) {
+    public function set_vendor_description($desc) {
         $this->vendor_description = self::safexml($desc);
         $this->vendor = true;
     }
-    public function set_vendor_url ($url) {
+    public function set_vendor_url($url) {
         $this->vendor_url = $url;
         $this->vendor = true;
     }
-    public function set_vendor_contact ($email) {
+    public function set_vendor_contact($email) {
         $this->vendor_contact = array('email' => $email);
         $this->vendor = true;
     }
-    public function add_custom_property ($property, $value) {
+    public function add_custom_property($property, $value) {
         $this->custom_properties[$property] = $value;
     }
-    public function add_extension ($extension, $value) {
+    public function add_extension($extension, $value) {
         $this->extension_properties[$extension] = $value;
     }
-    public function set_extension_platform ($value) {
+    public function set_extension_platform($value) {
         $this->extension_platform = $value;
     }
 

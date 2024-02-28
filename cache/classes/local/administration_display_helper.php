@@ -440,7 +440,7 @@ class administration_display_helper extends \core_cache\administration_helper {
      *
      * @return array an array of the form to display to the user, and the page title.
      */
-    public function action_addstore() : array {
+    public function action_addstore(): array {
         global $PAGE;
         $storepluginsummaries = $this->get_store_plugin_summaries();
 

@@ -357,7 +357,7 @@ class manager {
      *
      * @return \core_analytics\local\target\base[]
      */
-    public static function get_all_targets() : array {
+    public static function get_all_targets(): array {
         if (self::$alltargets !== null) {
             return self::$alltargets;
         }
@@ -909,7 +909,7 @@ class manager {
      * @param array $model Model declaration
      * @return string complying with PARAM_ALPHANUM rules and starting with an 'id' prefix
      */
-    public static function model_declaration_identifier(array $model) : string {
+    public static function model_declaration_identifier(array $model): string {
         return 'id'.sha1(serialize($model));
     }
 

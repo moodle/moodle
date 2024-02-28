@@ -63,7 +63,7 @@ class entity {
         context $context,
         stdClass $coursemodule,
         stdClass $course
-    ) : forum_entity {
+    ): forum_entity {
         // Note: cm_info::create loads a cm_info in the context of the current user which
         // creates hidden dependency on the logged in user (very bad) however it's the best
         // option to load some data we need which doesn't require the logged in user.
@@ -114,7 +114,7 @@ class entity {
      * @param stdClass $record Discussion record
      * @return discussion_entity
      */
-    public function get_discussion_from_stdclass(stdClass $record) : discussion_entity {
+    public function get_discussion_from_stdclass(stdClass $record): discussion_entity {
         return new discussion_entity(
             $record->id,
             $record->course,
@@ -139,7 +139,7 @@ class entity {
      * @param stdClass $record The post record
      * @return post_entity
      */
-    public function get_post_from_stdclass(stdClass $record) : post_entity {
+    public function get_post_from_stdclass(stdClass $record): post_entity {
         return new post_entity(
             $record->id,
             $record->discussion,
@@ -168,7 +168,7 @@ class entity {
      * @param stdClass $record The user record
      * @return author_entity
      */
-    public function get_author_from_stdclass(stdClass $record) : author_entity {
+    public function get_author_from_stdclass(stdClass $record): author_entity {
         return new author_entity(
             $record->id,
             $record->picture,
@@ -199,7 +199,7 @@ class entity {
         stdClass $firstpost,
         stdClass $firstpostauthor,
         stdClass $latestpostauthor
-    ) : discussion_summary_entity {
+    ): discussion_summary_entity {
 
         $firstpostauthorentity = $this->get_author_from_stdclass($firstpostauthor);
         return new discussion_summary_entity(
@@ -216,7 +216,7 @@ class entity {
      * @param array $records A list of read receipt records.
      * @return post_read_receipt_collection_entity
      */
-    public function get_post_read_receipt_collection_from_stdclasses(array $records) : post_read_receipt_collection_entity {
+    public function get_post_read_receipt_collection_from_stdclasses(array $records): post_read_receipt_collection_entity {
         return new post_read_receipt_collection_entity($records);
     }
 
@@ -225,7 +225,7 @@ class entity {
      *
      * @return sorter_entity
      */
-    public function get_posts_sorter() : sorter_entity {
+    public function get_posts_sorter(): sorter_entity {
         return new sorter_entity(
             // Get id function for a post_entity.
             function(post_entity $post) {
@@ -243,7 +243,7 @@ class entity {
      *
      * @return sorter_entity
      */
-    public function get_exported_posts_sorter() : sorter_entity {
+    public function get_exported_posts_sorter(): sorter_entity {
         return new sorter_entity(
             // Get id function for an exported post.
             function(stdClass $post) {

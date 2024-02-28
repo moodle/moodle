@@ -531,7 +531,7 @@ class quiz_settings_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function bad_browser_exam_key_provider() : array {
+    public function bad_browser_exam_key_provider(): array {
         return [
             'Short string' => ['fdsf434r',
                     'A key should be a 64-character hex string.'],
@@ -547,7 +547,7 @@ class quiz_settings_test extends \advanced_testcase {
      *
      * @return array Test data.
      */
-    public function filter_rules_provider() : array {
+    public function filter_rules_provider(): array {
         return [
             'enabled simple expessions' => [
                 (object) [

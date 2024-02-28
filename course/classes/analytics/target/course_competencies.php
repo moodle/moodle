@@ -49,7 +49,7 @@ class course_competencies extends course_enrolments {
      * @param int $courseid The course id.
      * @return int Number of competencies assigned to the course.
      */
-    protected function get_num_competencies_in_course ($courseid) {
+    protected function get_num_competencies_in_course($courseid) {
 
         if (!isset($this->coursecompetencies[$courseid])) {
             $ccs = \core_competency\api::count_competencies_in_course($courseid);
@@ -68,7 +68,7 @@ class course_competencies extends course_enrolments {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('target:coursecompetencies', 'course');
     }
 

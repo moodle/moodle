@@ -134,7 +134,7 @@ class externallib_test extends externallib_advanced_testcase {
         return $event->create($prop);
     }
 
-    public function test_create_calendar_events () {
+    public function test_create_calendar_events() {
         global $DB, $USER;
 
         $this->setAdminUser();

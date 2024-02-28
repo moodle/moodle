@@ -512,7 +512,7 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @param int|null $courseid Course ID.
      * @return array Errors
      */
-    public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null) : array {
+    public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null): array {
         global $DB;
 
         $errors = [];
@@ -591,7 +591,7 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @param int $courseid Course ID.
      * @return array Updated enrolment data with custom fields info.
      */
-    public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid) : array {
+    public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid): array {
         global $DB;
 
         if (isset($enrolmentdata['cohortidnumber'])) {
@@ -619,7 +619,7 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @param int|null $courseid Course ID.
      * @return lang_string|null Error
      */
-    public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null) : ?lang_string {
+    public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null): ?lang_string {
         if (isset($enrolmentdata['customint1'])) {
             $cohortid = $enrolmentdata['customint1'];
             $coursecontext = \context_course::instance($courseid);
@@ -667,7 +667,7 @@ class enrol_cohort_plugin extends enrol_plugin {
      * @param int $courseid Course ID.
      * @return stdClass|null Matching instance
      */
-    public function find_instance(array $enrolmentdata, int $courseid) : ?stdClass {
+    public function find_instance(array $enrolmentdata, int $courseid): ?stdClass {
         global $DB;
         $instances = enrol_get_instances($courseid, false);
 

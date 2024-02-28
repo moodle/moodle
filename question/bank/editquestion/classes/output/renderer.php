@@ -43,7 +43,7 @@ class renderer extends \plugin_renderer_base {
      * @param \renderable $qbankchooser The chooser.
      * @return string
      */
-    public function render_qbank_chooser (\renderable $qbankchooser) {
+    public function render_qbank_chooser(\renderable $qbankchooser) {
         return $this->render_from_template('qbank_editquestion/qbank_chooser', $qbankchooser->export_for_template($this));
     }
 
@@ -55,7 +55,7 @@ class renderer extends \plugin_renderer_base {
      * @deprecated since Moodle 4.3. Use {@see add_new_question} renderable instead
      * @todo Final deprecation in Moodle 4.7
      */
-    public function render_create_new_question_button ($addquestiondata) {
+    public function render_create_new_question_button($addquestiondata) {
         debugging('render_create_new_question_button() is deprecated. '
                 . 'Pass the add_new_question renderable to render() instead.');
         return $this->render_from_template('qbank_editquestion/add_new_question', $addquestiondata);

@@ -168,7 +168,7 @@ class api {
      *
      * @return array An array of the DPO role shortnames
      */
-    public static function get_dpo_role_names() : array {
+    public static function get_dpo_role_names(): array {
         global $DB;
 
         $dporoleids = self::get_assigned_privacy_officer_roles();
@@ -524,7 +524,7 @@ class api {
      * @param   array   $userids
      * @return  array
      */
-    public static function find_ongoing_request_types_for_users(array $userids) : array {
+    public static function find_ongoing_request_types_for_users(array $userids): array {
         global $DB;
 
         if (empty($userids)) {
@@ -1201,7 +1201,7 @@ class api {
      * @return  contextlist_collection  The collection of approved_contextlist objects.
      */
     public static function get_approved_contextlist_collection_for_collection(contextlist_collection $collection,
-            \stdClass $foruser, int $type) : contextlist_collection {
+            \stdClass $foruser, int $type): contextlist_collection {
 
         // Create the approved contextlist collection object.
         $approvedcollection = new contextlist_collection($collection->get_userid());
@@ -1326,7 +1326,7 @@ class api {
      * @param   \DateInterval   $interval
      * @return  string
      */
-    public static function format_retention_period(\DateInterval $interval) : string {
+    public static function format_retention_period(\DateInterval $interval): string {
         // It is one or another.
         if ($interval->y) {
             $formattedtime = get_string('numyears', 'moodle', $interval->format('%y'));

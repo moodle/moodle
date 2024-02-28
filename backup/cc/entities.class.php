@@ -154,7 +154,7 @@ class entities {
         return $result;
     }
 
-    public function include_titles ($html) {
+    public function include_titles($html) {
 
         $document = $this->load_html($html);
 
@@ -181,7 +181,7 @@ class entities {
         return $html;
     }
 
-    public function get_external_xml ($identifier) {
+    public function get_external_xml($identifier) {
 
         $xpath = cc2moodle::newx_path(cc2moodle::$manifest, cc2moodle::$namespaces);
 
@@ -227,7 +227,7 @@ class entities {
         }
     }
 
-    protected function get_all_files () {
+    protected function get_all_files() {
         global $CFG;
 
         $all_files = array();
@@ -316,7 +316,7 @@ class entities {
         return $html;
     }
 
-    public function generate_random_string ($length = 6) {
+    public function generate_random_string($length = 6) {
 
         $response = '';
         $source = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';

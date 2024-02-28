@@ -46,7 +46,7 @@ class category extends persistent {
      *
      * @return array
      */
-    protected static function define_properties() : array {
+    protected static function define_properties(): array {
         return array(
                 'name' => [
                         'type' => PARAM_TEXT,

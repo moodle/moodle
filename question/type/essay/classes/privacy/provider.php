@@ -49,7 +49,7 @@ class provider implements
      * @param   collection     $collection The initialised collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_user_preference('qtype_essay_defaultmark', 'privacy:preference:defaultmark');
         $collection->add_user_preference('qtype_essay_responseformat', 'privacy:preference:responseformat');
         $collection->add_user_preference('qtype_essay_responserequired', 'privacy:preference:responserequired');

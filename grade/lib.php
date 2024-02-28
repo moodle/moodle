@@ -1606,7 +1606,7 @@ class grade_structure {
      * @param grade_grade $grade A grade_grade object
      * @return string
      */
-    public function get_grade_action_menu(grade_grade $grade) : string {
+    public function get_grade_action_menu(grade_grade $grade): string {
         global $OUTPUT;
 
         $menuitems = [];

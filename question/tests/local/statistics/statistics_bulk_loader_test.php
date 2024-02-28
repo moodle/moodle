@@ -341,8 +341,8 @@ class statistics_bulk_loader_test extends advanced_testcase {
         array $expectedquiz1facilities,
         array $quiz2attempts,
         array $expectedquiz2facilities,
-        array $expectedaveragefacilities)
-    : void {
+        array $expectedaveragefacilities
+    ): void {
         $this->resetAfterTest();
 
         list($quiz1, $quiz2, $questions) = $this->prepare_and_submit_quizzes($quiz1attempts, $quiz2attempts);

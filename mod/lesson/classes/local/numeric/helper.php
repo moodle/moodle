@@ -60,7 +60,7 @@ class helper {
      * @param string|number $value The value to be formatted
      * @return string $formattedvalue Formatted value OR $value if not numeric
      */
-    public static function lesson_format_numeric_value($value) : string {
+    public static function lesson_format_numeric_value($value): string {
         $formattedvalue = $value;
         if (strpos($value, ':')) {
             list($min, $max) = explode(':', $value);

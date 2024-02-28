@@ -1041,7 +1041,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_enrolled_users_with_capability
      */
-    public function test_get_enrolled_users_with_capability_with_parameters () {
+    public function test_get_enrolled_users_with_capability_with_parameters() {
         $capability = 'moodle/course:viewparticipants';
         $data = $this->get_enrolled_users_with_capability_setup($capability);
 

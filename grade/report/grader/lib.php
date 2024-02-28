@@ -766,7 +766,7 @@ class grade_report_grader extends grade_report {
      * @param boolean $displayaverages whether to display average rows in the table
      * @return array Array of html_table_row objects
      */
-    public function get_right_rows(bool $displayaverages) : array {
+    public function get_right_rows(bool $displayaverages): array {
         global $CFG, $USER, $OUTPUT, $DB, $PAGE;
 
         $rows = [];

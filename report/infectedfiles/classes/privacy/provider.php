@@ -48,7 +48,7 @@ class provider implements
      * @param collection $collection the collection object to add data to.
      * @return collection The populated collection.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         $collection->add_database_table(
             'infected_files',
             [
@@ -68,7 +68,7 @@ class provider implements
      * @param int $userid The userid to get contexts for.
      * @return request\contextlist the context list for the user.
      */
-    public static function get_contexts_for_userid(int $userid) : request\contextlist {
+    public static function get_contexts_for_userid(int $userid): request\contextlist {
         $contextlist = new request\contextlist();
 
         // The system context is the only context where information is stored.

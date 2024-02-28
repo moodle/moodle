@@ -51,7 +51,7 @@ class message_deleted extends base {
      * @param int $muaid The id in the message_user_actions table.
      * @return message_deleted
      */
-    public static function create_from_ids(int $userid, int $userdeleting, int $messageid, int $muaid) : message_deleted {
+    public static function create_from_ids(int $userid, int $userdeleting, int $messageid, int $muaid): message_deleted {
         // We set the userid to the user who deleted the message, nothing to do
         // with whether or not they sent or received the message.
         $event = self::create(array(

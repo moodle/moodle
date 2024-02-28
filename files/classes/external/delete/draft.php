@@ -52,7 +52,7 @@ class draft extends external_api {
      * @return external_function_parameters
      * @since Moodle 3.10
      */
-    public static function execute_parameters() : external_function_parameters {
+    public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters (
             [
                 'draftitemid' => new external_value(PARAM_INT, 'Item id of the draft file area'),
@@ -76,7 +76,7 @@ class draft extends external_api {
      * @return array of warnings and parent paths of the files deleted
      * @since Moodle 3.10
      */
-    public static function execute(int $draftitemid, array $files) : array {
+    public static function execute(int $draftitemid, array $files): array {
         global $CFG, $USER;
         require_once($CFG->dirroot . '/repository/lib.php');
 
@@ -103,7 +103,7 @@ class draft extends external_api {
      * @return external_single_structure
      * @since Moodle 3.10
      */
-    public static function execute_returns() : external_single_structure {
+    public static function execute_returns(): external_single_structure {
         return new external_single_structure(
             [
                 'parentpaths' => new external_multiple_structure(

@@ -33,7 +33,7 @@ class mod_survey_renderer extends plugin_renderer_base {
      * @param \mod_survey\output\actionbar $actionbar Data for the template
      * @return bool|string rendered HTML string from the template.
      */
-    public function response_actionbar( \mod_survey\output\actionbar $actionbar) {
+    public function response_actionbar(\mod_survey\output\actionbar $actionbar) {
         return $this->render_from_template('mod_survey/response_action_bar', $actionbar->export_for_template($this));
     }
 }

@@ -500,7 +500,7 @@ class test_capability_manager extends capability_manager {
      * @param post_entity $post The post
      * @return bool
      */
-    public function can_view_post(\stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function can_view_post(\stdClass $user, discussion_entity $discussion, post_entity $post): bool {
         return $this->view;
     }
 
@@ -512,7 +512,7 @@ class test_capability_manager extends capability_manager {
      * @param post_entity $post The post
      * @return bool
      */
-    public function can_edit_post(\stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function can_edit_post(\stdClass $user, discussion_entity $discussion, post_entity $post): bool {
         return $this->edit;
     }
 
@@ -526,7 +526,7 @@ class test_capability_manager extends capability_manager {
      * @return bool
      */
     public function can_delete_post(\stdClass $user, discussion_entity $discussion, post_entity $post,
-                                    bool $hasreplies = false) : bool {
+                                    bool $hasreplies = false): bool {
         return $this->delete;
     }
 
@@ -538,7 +538,7 @@ class test_capability_manager extends capability_manager {
      * @param post_entity $post The post
      * @return bool
      */
-    public function can_split_post(\stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function can_split_post(\stdClass $user, discussion_entity $discussion, post_entity $post): bool {
         return $this->split;
     }
 
@@ -550,7 +550,7 @@ class test_capability_manager extends capability_manager {
      * @param post_entity $post The post
      * @return bool
      */
-    public function can_reply_to_post(\stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function can_reply_to_post(\stdClass $user, discussion_entity $discussion, post_entity $post): bool {
         return $this->reply;
     }
 
@@ -561,7 +561,7 @@ class test_capability_manager extends capability_manager {
      * @param post_entity $post The post
      * @return bool
      */
-    public function can_export_post(\stdClass $user, post_entity $post) : bool {
+    public function can_export_post(\stdClass $user, post_entity $post): bool {
         return $this->export;
     }
 
@@ -571,7 +571,7 @@ class test_capability_manager extends capability_manager {
      * @param \stdClass $user The user
      * @return bool
      */
-    public function can_manually_control_post_read_status(\stdClass $user) : bool {
+    public function can_manually_control_post_read_status(\stdClass $user): bool {
         return $this->controlreadstatus;
     }
 
@@ -581,7 +581,7 @@ class test_capability_manager extends capability_manager {
      * @param post_entity $post
      * @return bool
      */
-    public function can_reply_privately_to_post(\stdClass $user, post_entity $post) : bool {
+    public function can_reply_privately_to_post(\stdClass $user, post_entity $post): bool {
         return $this->canreplyprivatelytopost;
     }
 
@@ -590,7 +590,7 @@ class test_capability_manager extends capability_manager {
      * @param \stdClass $user
      * @return bool
      */
-    public function can_self_enrol(\stdClass $user) : bool {
+    public function can_self_enrol(\stdClass $user): bool {
         return $this->canenrol;
     }
 }

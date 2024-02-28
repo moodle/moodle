@@ -183,7 +183,7 @@ class persistent_test extends advanced_testcase {
     /**
      * Test creating persistent instance by specifying record ID in constructor
      */
-    public function test_constructor() : void {
+    public function test_constructor(): void {
         $persistent = (new core_testable_persistent(0, (object) [
             'idnumber' => '123',
             'sortorder' => 1,

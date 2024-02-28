@@ -58,7 +58,7 @@ class approved_contextlist extends contextlist_base {
      * @param   \stdClass       $user The user record.
      * @return  $this
      */
-    protected function set_user(\stdClass $user) : approved_contextlist {
+    protected function set_user(\stdClass $user): approved_contextlist {
         $this->user = $user;
 
         return $this;
@@ -69,7 +69,7 @@ class approved_contextlist extends contextlist_base {
      *
      * @return  \stdClass
      */
-    public function get_user() : \stdClass {
+    public function get_user(): \stdClass {
         return $this->user;
     }
 }

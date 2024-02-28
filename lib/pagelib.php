@@ -2360,7 +2360,7 @@ class moodle_page {
      *
      * @param string $html The HTML to add.
      */
-    public function add_header_action(string $html) : void {
+    public function add_header_action(string $html): void {
         $this->_headeractions[] = $html;
     }
 
@@ -2369,7 +2369,7 @@ class moodle_page {
      *
      * @return string[]
      */
-    public function get_header_actions() : array {
+    public function get_header_actions(): array {
         return $this->_headeractions;
     }
 
@@ -2379,7 +2379,7 @@ class moodle_page {
      *
      * @param bool $value If the settings should be in the header.
      */
-    public function set_include_region_main_settings_in_header_actions(bool $value) : void {
+    public function set_include_region_main_settings_in_header_actions(bool $value): void {
         $this->_regionmainsettingsinheader = $value;
     }
 
@@ -2389,7 +2389,7 @@ class moodle_page {
      *
      * @return bool
      */
-    public function include_region_main_settings_in_header_actions() : bool {
+    public function include_region_main_settings_in_header_actions(): bool {
         return $this->_regionmainsettingsinheader;
     }
 
@@ -2428,7 +2428,7 @@ class moodle_page {
      *
      * @param string $navkey the key of the secondary nav node to be activated.
      */
-    public function set_secondary_active_tab(string $navkey) : void {
+    public function set_secondary_active_tab(string $navkey): void {
         $this->_activekeysecondary = $navkey;
     }
 

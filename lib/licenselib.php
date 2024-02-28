@@ -247,7 +247,7 @@ class license_manager {
      *
      * @throws \moodle_exception if attempting to use invalid direction value.
      */
-    static public function change_license_sortorder(int $direction, string $licenseshortname) : void {
+    static public function change_license_sortorder(int $direction, string $licenseshortname): void {
 
         if ($direction != self::LICENSE_MOVE_UP && $direction != self::LICENSE_MOVE_DOWN) {
             throw new coding_exception(

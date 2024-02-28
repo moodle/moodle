@@ -34,7 +34,7 @@ class adhocqueue extends check {
      * Return result
      * @return result
      */
-    public function get_result() : result {
+    public function get_result(): result {
         global $DB, $CFG;
 
         $stats = $DB->get_record_sql('

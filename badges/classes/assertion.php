@@ -336,7 +336,7 @@ class core_badges_assertion {
      * @param array $json for assertion, badges, issuer.
      * @param string $type Content type.
      */
-    protected function embed_data_badge_version2 (&$json, $type = OPEN_BADGES_V2_TYPE_ASSERTION) {
+    protected function embed_data_badge_version2(&$json, $type = OPEN_BADGES_V2_TYPE_ASSERTION) {
         // Specification Version 2.0.
         if ($this->_obversion >= OPEN_BADGES_V2) {
             $badge = new badge($this->_data->id);

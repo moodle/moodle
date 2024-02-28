@@ -137,7 +137,7 @@ class quiz_statistics_table extends flexible_table {
     /**
      * Open a div tag to wrap statistics table.
      */
-    public function  wrap_html_start() {
+    public function wrap_html_start() {
         // Horrible Moodle 2.0 wide-content work-around.
         if (!$this->is_downloading()) {
             echo html_writer::start_tag('div', ['id' => 'tablecontainer',

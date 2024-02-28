@@ -177,7 +177,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @param string $name Callback function name.
      * @return [callable] $pluginfunctions
      */
-    public function get_plugins_callback_function(string $name) : array {
+    public function get_plugins_callback_function(string $name): array {
         $pluginfunctions = [];
         if ($pluginsfunction = get_plugins_with_function($name)) {
             foreach ($pluginsfunction as $plugintype => $plugins) {
@@ -766,7 +766,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @throws dml_exception
      * @throws moodle_exception
      */
-    private static function get_cached_cat_tree() : ?array {
+    private static function get_cached_cat_tree(): ?array {
         $coursecattreecache = cache::make('core', 'coursecattree');
         $all = $coursecattreecache->get('all');
         if ($all !== false) {
@@ -804,7 +804,7 @@ class core_course_category implements renderable, cacheable_object, IteratorAggr
      * @throws dml_exception
      * @throws moodle_exception
      */
-    private static function rebuild_coursecattree_cache_contents() : array {
+    private static function rebuild_coursecattree_cache_contents(): array {
         global $DB;
         $sql = "SELECT cc.id, cc.parent, cc.visible
                 FROM {course_categories} cc

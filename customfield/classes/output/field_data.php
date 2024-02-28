@@ -63,7 +63,7 @@ class field_data implements \renderable, \templatable {
      *
      * @return string
      */
-    public function get_type() : string {
+    public function get_type(): string {
         return $this->data->get_field()->get('type');
     }
 
@@ -72,7 +72,7 @@ class field_data implements \renderable, \templatable {
      *
      * @return string
      */
-    public function get_shortname() : string {
+    public function get_shortname(): string {
         return $this->data->get_field()->get('shortname');
     }
 
@@ -81,7 +81,7 @@ class field_data implements \renderable, \templatable {
      *
      * @return string
      */
-    public function get_name() : string {
+    public function get_name(): string {
         return $this->data->get_field()->get_formatted_name();
     }
 
@@ -90,7 +90,7 @@ class field_data implements \renderable, \templatable {
      *
      * @return data_controller
      */
-    public function get_data_controller() : data_controller {
+    public function get_data_controller(): data_controller {
         return $this->data;
     }
 

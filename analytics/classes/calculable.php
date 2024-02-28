@@ -79,7 +79,7 @@ abstract class calculable {
      *
      * @return \lang_string
      */
-    public static abstract function get_name() : \lang_string;
+    public static abstract function get_name(): \lang_string;
 
     /**
      * The class id is the calculable class full qualified class name.

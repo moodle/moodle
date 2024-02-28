@@ -2079,7 +2079,7 @@ function get_next_version(int $questionbankentryid): int {
  * @param string $questionbankentryid Entry to check against.
  * @return bool
  */
-function is_latest(string $version, string $questionbankentryid) : bool {
+function is_latest(string $version, string $questionbankentryid): bool {
     global $DB;
 
     $sql = 'SELECT MAX(version) AS max

@@ -91,7 +91,7 @@ class question_category_list extends moodle_list {
     /**
      * Set the array of records of list items.
      */
-    public function get_records() : void {
+    public function get_records(): void {
         $this->records = helper::get_categories_for_contexts($this->context->id, $this->sortby);
     }
 
@@ -102,7 +102,7 @@ class question_category_list extends moodle_list {
      * @param \list_item $item The item which its top level parent is going to be returned.
      * @return int
      */
-    public function get_top_level_parent_id($item) : int {
+    public function get_top_level_parent_id($item): int {
         // Put the item at the highest level it can go.
         $topcategory = question_get_top_category($item->item->contextid, true);
         return $topcategory->id;
@@ -117,7 +117,7 @@ class question_category_list extends moodle_list {
      * @param integer $movedown id of item to move down
      * @return void
      */
-    public function process_actions($left, $right, $moveup, $movedown) : void {
+    public function process_actions($left, $right, $moveup, $movedown): void {
         $category = new stdClass();
         if (!empty($left)) {
             // Moved Left (In to another category).

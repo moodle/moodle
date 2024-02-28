@@ -47,7 +47,7 @@ interface content_writer {
      * @param   \context        $context    The context to use
      * @return  content_writer
      */
-    public function set_context(\context $context) : content_writer ;
+    public function set_context(\context $context): content_writer ;
 
     /**
      * Export the supplied data within the current context, at the supplied subcontext.
@@ -56,7 +56,7 @@ interface content_writer {
      * @param   \stdClass       $data       The data to be exported
      * @return  content_writer
      */
-    public function export_data(array $subcontext, \stdClass $data) : content_writer ;
+    public function export_data(array $subcontext, \stdClass $data): content_writer ;
 
     /**
      * Export metadata about the supplied subcontext.
@@ -69,7 +69,7 @@ interface content_writer {
      * @param   string          $description    The description of the value.
      * @return  content_writer
      */
-    public function export_metadata(array $subcontext, string $name, $value, string $description) : content_writer ;
+    public function export_metadata(array $subcontext, string $name, $value, string $description): content_writer ;
 
     /**
      * Export a piece of related data.
@@ -79,7 +79,7 @@ interface content_writer {
      * @param   \stdClass       $data       The related data to export.
      * @return  content_writer
      */
-    public function export_related_data(array $subcontext, $name, $data) : content_writer ;
+    public function export_related_data(array $subcontext, $name, $data): content_writer ;
 
     /**
      * Export a piece of data in a custom format.
@@ -89,7 +89,7 @@ interface content_writer {
      * @param   string          $filecontent    The content to be exported.
      * @return  content_writer
      */
-    public function export_custom_file(array $subcontext, $filename, $filecontent) : content_writer ;
+    public function export_custom_file(array $subcontext, $filename, $filecontent): content_writer ;
 
     /**
      * Prepare a text area by processing pluginfile URLs within it.
@@ -101,7 +101,7 @@ interface content_writer {
      * @param   string          $text       The text to be processed
      * @return  string                      The processed string
      */
-    public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text) : string;
+    public function rewrite_pluginfile_urls(array $subcontext, $component, $filearea, $itemid, $text): string;
 
     /**
      * Export all files within the specified component, filearea, itemid combination.
@@ -112,7 +112,7 @@ interface content_writer {
      * @param   string          $itemid     Which item those files belong to.
      * @return  content_writer
      */
-    public function export_area_files(array $subcontext, $component, $filearea, $itemid) : content_writer ;
+    public function export_area_files(array $subcontext, $component, $filearea, $itemid): content_writer ;
 
     /**
      * Export the specified file in the target location.
@@ -121,7 +121,7 @@ interface content_writer {
      * @param   \stored_file    $file       The file to be exported.
      * @return  content_writer
      */
-    public function export_file(array $subcontext, \stored_file $file) : content_writer ;
+    public function export_file(array $subcontext, \stored_file $file): content_writer ;
 
     /**
      * Export the specified user preference.
@@ -132,12 +132,12 @@ interface content_writer {
      * @param   string          $description    A description of the value
      * @return  content_writer
      */
-    public function export_user_preference(string $component, string $key, string $value, string $description) : content_writer ;
+    public function export_user_preference(string $component, string $key, string $value, string $description): content_writer ;
 
     /**
      * Perform any required finalisation steps and return the location of the finalised export.
      *
      * @return  string
      */
-    public function finalise_content() : string ;
+    public function finalise_content(): string ;
 }

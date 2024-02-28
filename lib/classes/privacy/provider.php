@@ -52,7 +52,7 @@ class provider implements
      * @param  collection $collection A list of information about this component
      * @return collection The collection object filled out with information about this component.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         // Except for moodlenet_share_progress, these tables are really data about site configuration and not user data.
 
         // The config_log includes information about which user performed a configuration change.
@@ -151,7 +151,7 @@ class provider implements
      * @param   int $userid The user to search.
      * @return  contextlist $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $contextlist = new contextlist();
 
         // MoodleNet share progress uses the user context.

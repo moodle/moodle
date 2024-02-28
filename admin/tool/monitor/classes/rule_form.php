@@ -40,7 +40,7 @@ class rule_form extends \moodleform {
      * Mform class definition
      *
      */
-    public function definition () {
+    public function definition() {
         global $PAGE;
 
         $mform = $this->_form;

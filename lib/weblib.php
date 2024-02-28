@@ -904,7 +904,7 @@ class moodle_url {
      *
      * @return bool True if URL is relative to $CFG->wwwroot; otherwise, false.
      */
-    public function is_local_url() : bool {
+    public function is_local_url(): bool {
         global $CFG;
 
         $url = $this->out();

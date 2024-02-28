@@ -1213,7 +1213,7 @@ abstract class base {
      * @param int|null $sectionid null if it is course format option
      * @return array array of options that have valid values
      */
-    protected function validate_format_options(array $rawdata, int $sectionid = null) : array {
+    protected function validate_format_options(array $rawdata, int $sectionid = null): array {
         if (!$sectionid) {
             $allformatoptions = $this->course_format_options(true);
         } else {
@@ -1237,7 +1237,7 @@ abstract class base {
      * @param array $data data to insert/update
      * @return array array of options that have valid values
      */
-    public function validate_course_format_options(array $data) : array {
+    public function validate_course_format_options(array $data): array {
         return $this->validate_format_options($data);
     }
 

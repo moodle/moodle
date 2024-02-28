@@ -77,7 +77,7 @@ class category_controller {
      * @throws \moodle_exception
      * @throws \coding_exception
      */
-    public static function create(int $id, \stdClass $record = null, handler $handler = null) : category_controller {
+    public static function create(int $id, \stdClass $record = null, handler $handler = null): category_controller {
         global $DB;
         if ($id && $record) {
             // This warning really should be in persistent as well.
@@ -180,7 +180,7 @@ class category_controller {
      *
      * @return handler
      */
-    public function get_handler() : handler {
+    public function get_handler(): handler {
         if ($this->handler === null) {
             $this->handler = handler::get_handler($this->get('component'), $this->get('area'), $this->get('itemid'));
         }
@@ -224,7 +224,7 @@ class category_controller {
      *
      * @return string
      */
-    public function get_formatted_name() : string {
+    public function get_formatted_name(): string {
         $context = $this->get_handler()->get_configuration_context();
         return format_string($this->get('name'), true, ['context' => $context]);
     }
