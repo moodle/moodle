@@ -25,20 +25,21 @@ require_once(__DIR__ . '/../../../../config.php');
 $dataUri = $_POST['dataUri'];
 $filename = $_POST['filename'];
 
-// Specify the folder for saving captures
-$folderPath = '../evidences/camera_capture_evidence/'; // Removed leading slash
+// The destination folder for saving the captured image from the camera.
+// DIRECTTORY PATH: auto_proctor/proctor_tools/evidences/camera_capture_evidence
+$folderPath = '../evidences/camera_capture_evidence/';
 
-// Ensure the folder exists
+// Ensuring that the folder exists
 if (!file_exists($folderPath)) {
     mkdir($folderPath, 0777, true);
 }
 
-// Decode the dataUri
+// Since we converted the picture to a data URL, 
+// decode the dataURI to be a picture.
 $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $dataUri));
 
-// Save the file
+// Save the file in the designated folder
 file_put_contents($folderPath . '/' . $filename, $data); // Concatenated folderPath with filename
 
-// Respond with the filename for any further use
 echo json_encode(['filename' => $filename]);
 ?>

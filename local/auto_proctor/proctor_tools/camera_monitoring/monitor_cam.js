@@ -1,26 +1,72 @@
 $(document).ready(function () {
+    /*
+        We stream the chosen device camera and send its frames to the FaceMesh model for face detection.
+
+        FACE DETECTION
+            - Count detected faces; when multiple faces are detected, then probSusMovement('multiple_face'); if no faces are detected, then probSusMovement('no_face').
+            - If a single face is detected, then get the return facelandmark and retrieve the landmark of noseTip, noseBridge, rightEar, leftEar, and chin.
+            - Landmark consist of x, y, z coordinates.
+            - Using the retrieved landmarks, compute the Euler angle, pitch, and yaw.
+            - When pitch and yaw go out of range for a neutral head pose, then it is considered a suspicious movement.
+            - When suspicious movement is detected then probSusMovement('suspicious_movement').
+            - If movement is in a range for a neutral head pose, then sendDuration(), stop timer for the previous detected activity, reset probSusCounter and susCounter.
+
+            probSusMovement(evidence_name_type)
+                - Iterate probSusCounter
+                - When probSusCounter is greater than 10 and susCounter is 0, then reset or set sendDurationCounter to 0,
+                iterate susCounter, start timer for the duration, and capture camera captureEvidence(evidence_name_type).
+                
+                NOTE: The value of evidence_name_type in captureEvidence(evidence_name_type) came from the probSusMovement(evidence_name_type).
+
+        UPDATING CAPTURED ACTIVITY DURATION
+
+            sendDuration()
+            - If sendDurationCounter is 0 then iterate sendDurationCounter and updateDuration() for the previous detected activity.
+
+            updateDuration()
+            - Sends the value of duration variable in server along with the userid, quizid, quizattempt, and filename to update the duration of the previous detected activity in activity_report_table.
+
+            updateTimer(milliseconds)
+            - This function sets the duration variable with the value of miliseconds variable.
+
+            startTimer()
+            - This function set or reset the miliseconds to 0.
+            - Iterate miliseconds by 10 every 10 miliseconds, then updateTimer(milliseconds).
+
+            stopTimer()
+            - Clear intervalId.
+
+        CAMERA CAPTURE
+
+            captureEvidence(evidence_name_type)
+
+                CAPTURING:
+                    - Generate timestamp by generateTimestamp(), destruct the return value of the function into two constant variables: timestamp and milliseconds.
+                    - Generate unique filename compose of userid, quizid, quizattempt, with timestamp and miliseconds.
+                    - Create canvas element for capturing the video element.
+                    - Draw image in canvas from the video.
+                    - Convert the contents of a canvas element to a data URL, which represents the canvas image as a base64-encoded string.
+
+                SENDING:
+                    - Sending the data URL and the generated filename to the server for saving (save_cam_capture.php).
+                    - After successfully sending the image url call sendActivityRecord(evidence_name_type) for saving the activity in the activity_report_table.
+
+            sendActivityRecord(evidence_name_type)
+
+                SENDING:
+                    - Send the evidence_name_type, filename, userid, quizid, and quizattempt to server for saving the activity in the activity_report_table (save_cam_activity.php).
+    */
+
     let videoElement;
-        //const canvasElement = document.getElementsByClassName('output_canvas')[0];
-
-        //const promptMessageElement = document.getElementById('promptMessage');
-
-        // const pitchAngleElement = document.getElementById('pitchAngle');
-        // const yawAngleElement = document.getElementById('yawAngle');
-        // const rollAngleElement = document.getElementById('rollAngle');
-        // const gazeDirectionElement = document.getElementById('gazeDirection');
 
         let susCounter = 0;
         let probSusCounter = 0;
+        let sendDurationCounter = 0;
         let duration;
         let intervalId;
         let filename;
 
-        // const camera = new Camera(videoElement, {onFrame: async () => {
-        //     await faceMesh.send({image: videoElement});
-        //     },
-        //     width: 1280,
-        //     height: 720
-        // });
+        // Camera constraints.
         const getUserMediaConstraints = (deviceId) => {
             return {
                 video: {
@@ -30,68 +76,70 @@ $(document).ready(function () {
             };
         };
 
+        // Get all available camera device.
         navigator.mediaDevices.enumerateDevices()
         .then(function(devices) {
             devices.forEach(function(device) {
                 if (device.kind === 'videoinput') {
-
                     console.log('avail cam: ', device.deviceId);
-                    //d89b7d58a7f1e6abeec4eb35a2ced3563f221dc27e5fe8043485ab8b5c2101e4
-                    
-
                 }
             });
         })
 
+        // Initialize the user's chosen camera from the proctoring session setup.
         const chosenCameraDevice = JSON.parse(jsdata.chosen_camera_device);
         var deviceId = chosenCameraDevice.video.deviceId.exact;
 
-        console.log('chosen cam', deviceId);
-
+        // When windows load
         window.onload = async function() {
+
+            // Use the user's chosen camera device.
             const constraints = getUserMediaConstraints(deviceId);
 
-                try {
-                    const stream = await navigator.mediaDevices.getUserMedia(constraints);
+            // Stream user's chosen camera with facemesh model.
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
                     
-                    // Create video element dynamically
-                    const video = document.createElement('video');
-                    video.className = 'input_video'; // Add class name
-                    video.srcObject = stream;
-                    video.autoplay = true; // Autoplay
-                    video.playsinline = true; // Ensure playsinline for mobile browsers
-                    video.style.display = 'none';
-                    document.body.appendChild(video); // Append to the document body
+                // Create video element for camera capture.
+                const video = document.createElement('video');
+                video.className = 'input_video';
+                video.srcObject = stream;
+                video.autoplay = true;
+                video.playsinline = true;
+                video.style.display = 'none';
+                document.body.appendChild(video);
 
-                    // When the video stream is loaded, dynamically set the canvas size to match the video stream
-                    // inputVideoElement.addEventListener('loadedmetadata', () => {
-                    //     canvasElement.width = inputVideoElement.videoWidth;
-                    //     canvasElement.height = inputVideoElement.videoHeight;
-                    // });
+                // Apply facemesh to the selected camera.
+                const onFrame = async () => {
+                    await faceMesh.send({ image: video });
+                    requestAnimationFrame(onFrame);
+                };
 
-                    // Apply FaceMesh to the selected camera
-                    const onFrame = async () => {
-                        await faceMesh.send({ image: video });
-                        requestAnimationFrame(onFrame);
-                    };
-                    // Start sending frames to FaceMesh
-                    onFrame();
+                // Start sending frames to FaceMesh
+                onFrame();
 
-            } catch (error) {
+            }
+            
+            // If error accessing camera.
+            catch (error) {
+
+                // If camera permission is denied, record in database.
                 if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
                     // User denied camera access
-                    console.error('User denied camera access.');
                         sendActivityRecord('camera_permission_denied');
-                        // Check if strict mode was activated
+                        // If strict mode was activated then forcefully exit quiz.
                         if (jsdata.strict_mode_activated == 1){
                             console.log('camera denied must redirect to review attempt quiz page');
                             window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
                         }
-                    } else {
+                } 
+                
+                else {
                         // Other errors
                         console.error('Error accessing camera:', error.message);
                         sendActivityRecord('camera_permission_denied');
-                        // Check if strict mode was activated
+
+                        // If strict mode was activated then forcefully exit quiz.
                         if (jsdata.strict_mode_activated == 1){
                         console.log('camera denied must redirect to review attempt quiz page');
                         window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
@@ -100,55 +148,26 @@ $(document).ready(function () {
             }
         }
 
+        // Results of facemesh
+        function onResults(results) {    
 
-        // navigator.mediaDevices.getUserMedia(constraints)
-        // .then((stream) => {
-        //     videoElement = document.createElement('video');
-        //     const camera = new Camera(videoElement, {onFrame: async () => {
-        //         await faceMesh.send({ image: videoElement });
-        //     },
-        //     width: 1280,
-        //     height: 720,
-        //     });
-
-        //     camera.start();
-        //     videoElement.srcObject = stream;
-        // })
-        // .catch((error) => {
-        //     if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        //     // User denied camera access
-        //     console.error('User denied camera access.');
-        //         sendActivityRecord('camera_permission_denied');
-        //         // Check if strict mode was activated
-        //         if (jsdata.strict_mode_activated == 1){
-        //             console.log('camera denied must redirect to review attempt quiz page');
-        //             window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
-        //         }
-        //     } else {
-        //         // Other errors
-        //         console.error('Error accessing camera:', error.message);
-        //         sendActivityRecord('camera_permission_denied');
-        //         // Check if strict mode was activated
-        //         if (jsdata.strict_mode_activated == 1){
-        //             console.log('camera denied must redirect to review attempt quiz page');
-        //             window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
-        //         }
-        //     }
-        // });
-
-
-
-        function onResults(results) {
-            
+            // If facemesh return landmarks
             if (results.multiFaceLandmarks) {
+
+                // Count face
                 const faceCount = results.multiFaceLandmarks.length;
+
+                // If face is only one.
                 if (faceCount > 0 && faceCount < 2){
 
+                    // Loop through the result of facemesh.
                     for (const landmarks of results.multiFaceLandmarks) {
+
+                        // Initialize the necessary landmark for computation of euler for headpose estimation.
                         const noseTip = landmarks[4];
                         const noseBridge = landmarks[6];
-                        const rightEar = landmarks[137];  // Adjust the index based on your model
-                        const leftEar = landmarks[366];   // Adjust the index based on your model
+                        const rightEar = landmarks[137];
+                        const leftEar = landmarks[366];
                         const chin = landmarks[152];
                         
                         // Calculate the roll angle (z-axis) between noseTip, noseBridge, and chin
@@ -159,39 +178,42 @@ $(document).ready(function () {
 
                         // Calculate the yaw angle (y-axis) between noseTip, noseBridge, and chin
                         const rawYawAngle = Math.atan2(chin.z - noseTip.z, chin.x - noseTip.x) * 180 / Math.PI;
+
+                        // Furnish pitch and yaw angle
                         const pitchAngle = rawPitchAngle - 15;
                         const yawAngle = rawYawAngle - 90;
                         
 
+                        // Headpose default is neutral.
                         let gazeDirection = "neutral";
-                        let promptMessage = "";
 
+                        // If the yaw and pitch goes above the neutral angle then headpose is a suspicious movement.
+                        // Call probable suspicious movement function with evidence name type as 'suspicious_movement'.
                         if (yawAngle > 15 || yawAngle < -10 || pitchAngle > 10 || pitchAngle < -10) {
                             gazeDirection = "sus";
-                            promptMessage = "Please position yourself at the center and face forward towards the camera.";
                             probSusMovement('suspicious_movement');
                         }
 
+                        // If the headpose returns to neutral
+                        // then stop the timer for the previous suspicious movement,
+                        // reset the suspicous counters.
                         if (gazeDirection === "neutral"){
-                            probSusMovement('sendTheActivty');
+                            //probSusMovement('sendTheActivty');
+                            sendDuration();
                             stopTimer();
                             susCounter = 0;
                             probSusCounter = 0;
                         }
-
-                        // Display the angles
-                        // promptMessageElement.innerHTML = `Prompt Message: ${promptMessage}`;
-                        // pitchAngleElement.innerHTML = `Pitch Angle: ${pitchAngle.toFixed(2)}`;
-                        // yawAngleElement.innerHTML = `Yaw Angle: ${yawAngle.toFixed(2)}`;
-                        // rollAngleElement.innerHTML = `Roll Angle: ${rollAngle.toFixed(2)}`;
-                        // gazeDirectionElement.innerHTML = `Gaze Direction: ${gazeDirection}`;
                     }
                 }
+                // If multiple face detected,
+                // call probable suspicious movement function with evidence name type as 'multiple_face'.
                 else if (faceCount > 1) {
-                    //gazeDirectionElement.innerHTML = `Gaze Direction: Multiple face detected`;
                     probSusMovement('multiple_face');
 
                 }
+                // If no face detected
+                // call probable suspicious movement function with evidence name type as 'no_face'.
                 else {
                     //gazeDirectionElement.innerHTML = `Gaze Direction: No face detected`;
                     probSusMovement('no_face');
@@ -200,86 +222,102 @@ $(document).ready(function () {
             }
         }
 
+        // Function for updating the duration of the detected and captured activity.
+        function sendDuration(){
+            if (sendDurationCounter === 0){
+                sendDurationCounter++;
+                updateDuration();
+            }
+        }
+
+        // Function for when suspicous movement is detected.
         function probSusMovement(evidence_name_type) {
             probSusCounter++;
-            if (probSusCounter > 10 && evidence_name_type !== 'sendTheActivty'){
-                if (susCounter === 0 && evidence_name_type !== 'sendTheActivty'){
-                    updateDuration();
+
+            // When probSusCounter is greater than 10 and susCounter is 0, then reset or set sendDurationCounter to 0,
+            // iterate susCounter, start timer for the duration, and capture camera captureEvidence(evidence_name_type).
+            // The value of evidence_name_type in captureEvidence(evidence_name_type) came from the probSusMovement(evidence_name_type).
+            if (probSusCounter > 10){
+                if (susCounter === 0){
+                    //updateDuration();
+                    sendDurationCounter = 0;
                     susCounter++;
-                    console.log('Counter: ', susCounter);
                     const intervalId = startTimer();
                     captureEvidence(evidence_name_type);
-                    console.log('captured');
                 }
             }
         }
 
         // Function to update the timer display
         function updateTimer(milliseconds) {
-            //document.getElementById('timer').textContent = seconds + '.' +milliseconds;
             duration = milliseconds;
         }
 
-        // Function to start the timer
+        // Function to start the timer for the duration
         function startTimer() {
-            //let seconds = 0;
             let milliseconds = 0;
             updateTimer(milliseconds);
 
             // Update the timer every 10 milliseconds
             intervalId = setInterval(function () {
                 milliseconds += 10;
-                // if (milliseconds >= 1000) {
-                //     seconds++;
-                //     milliseconds = 0;
-                // }
             updateTimer(milliseconds);
             }, 10);
+
+            return intervalId;
         }
+
+        // Function to stop timer.
         function stopTimer() {
             clearInterval(intervalId);
         }
 
         function captureEvidence(evidence_name_type) {
-            // Get the video element
+
+            // Retrieve the video element containing the camera feed.
             var video = document.querySelector('.input_video');
 
             setTimeout(() => {
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                // Create canvas for the capturing the video element.
+                const canvas = document.createElement('canvas');
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
 
-            // var capturedContainer = document.getElementById('capturedContainer');
-            // capturedContainer.innerHTML = ''; // Clear previous content
-            // capturedContainer.appendChild(canvas);
-                                
-            const { timestamp, milliseconds } = generateTimestamp();
-            filename = 'EVD_USER_' + jsdata.userid + '_QUIZ_' + jsdata.quizid + '_ATTEMPT_' + jsdata.quizattempt + '_' +timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type +'.png'; // Custom filename with evidenceType
-                                
-            const dataUrl = canvas.toDataURL('image/png');
-            
-            fetch(jsdata.wwwroot +'/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_capture.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'dataUri=' + encodeURIComponent(dataUrl) + '&filename=' + encodeURIComponent(filename),
-            })
-            .then(response => response.json())
-                .then(data => {
-                    console.log('Screen captured and saved as: ' + data.filename);
-                    // Send to function that saves in database
-                    sendActivityRecord(evidence_name_type);
+                // Draw image in the canvas from the video
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // Generate unique filename compose of userid, quizid, quizattempt, with timestamp and miliseconds.
+                const { timestamp, milliseconds } = generateTimestamp();
+                filename = 'EVD_USER_' + jsdata.userid + '_QUIZ_' + jsdata.quizid + '_ATTEMPT_' + jsdata.quizattempt + '_' +timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_' + evidence_name_type +'.png'; // Custom filename with evidenceType
+                
+                // Convert the contents of a canvas element to a data URL, which represents the canvas image as a base64-encoded string.
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                // Sending the data URL and the generated filename to the server for saving (save_cam_capture.php).
+                fetch(jsdata.wwwroot +'/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_capture.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: 'dataUri=' + encodeURIComponent(dataUrl) + '&filename=' + encodeURIComponent(filename),
                 })
-                .catch(error => {
-                    console.error('Error saving screen capture:', error);
-                });
+
+                // After successfully sending the image url call sendActivityRecord(evidence_name_type) for saving the activity in the activity_report_table.
+                .then(response => response.json())
+                    .then(data => {
+                        console.log('Screen captured and saved as: ' + data.filename);
+
+                        sendActivityRecord(evidence_name_type);
+                    })
+                    .catch(error => {
+                        console.error('Error saving screen capture:', error);
+                    });
             }, 200);
 
         }
 
+        // Function to generate timestamp
         function generateTimestamp() {
             const now = new Date();
             const options = {
@@ -299,12 +337,11 @@ $(document).ready(function () {
             return { timestamp, milliseconds: now.getMilliseconds() };
         }
 
-        // Save in database
+        // Send the evidence_name_type, filename, userid, quizid, and quizattempt to server for saving the activity in the activity_report_table (save_cam_activity.php).
         function sendActivityRecord(evidence_name_type) {
             var xhr = new XMLHttpRequest();
             xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_activity.php', true); // Replace with the actual path
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            // ==== DEBUGGING =====
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -317,14 +354,15 @@ $(document).ready(function () {
             };
             xhr.send('evidence_name_type=' + evidence_name_type + '&filename=' + filename + '&userid=' + jsdata.userid + '&quizid=' + jsdata.quizid + '&quizattempt=' + jsdata.quizattempt);
         }
-        // Update the filename for the recent activity
+
+        // Update the duration for the recent activity
+        // Sends the value of duration variable in server along with the userid, quizid, quizattempt, and filename to update the duration of the previous detected activity in activity_report_table.
         function updateDuration(){
             console.log('duration: ', duration);
 
             var xhr = new XMLHttpRequest();
             xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_activity_duration.php', true); // Replace with the actual path
             xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            // ==== DEBUGGING =====
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     if (xhr.status === 200) {
@@ -336,12 +374,6 @@ $(document).ready(function () {
                 }
             };
             xhr.send('filename=' + filename + '&duration=' + duration + '&userid=' + jsdata.userid + '&quizid=' + jsdata.quizid + '&quizattempt=' + jsdata.quizattempt);
-        }
-
-        
-        function updateNoseAngle(angleNoseTipBridge, angleRightEarLeftEar) {
-            noseAngleDisplay.innerHTML = `Nose Tip to Nose Bridge Angle: ${angleNoseTipBridge.toFixed(2)} degrees<br>`;
-            noseAngleDisplay.innerHTML += `Right Ear to Left Ear Angle: ${angleRightEarLeftEar.toFixed(2)} degrees`;
         }
         
         const faceMesh = new FaceMesh({locateFile: (file) => {
