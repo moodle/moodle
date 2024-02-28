@@ -264,21 +264,23 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
             !empty($SESSION->currenteditingcompany)) {
             $currenteditingcompany = $SESSION->currenteditingcompany;
             $currentcompany = $SESSION->company;
-            if ($mycompany = company::by_userid($user->id, true)) {
-                if ($currenteditingcompany != $mycompany->id) {
-                    $mycompanyrec = $DB->get_record('company', array('id' => $mycompany->id));
-                    if ($mycompanyrec->hostname != $currentcompany->hostname) {
-                        if (empty($mycompanyrec->hostname)) {
-                            $companyurl = $CFG->wwwrootdefault;
-                        } else {
-                            $companyurl = $_SERVER['REQUEST_SCHEME'] . "://" . $mycompanyrec->hostname;
+            if (!company::check_valid_user($currenteditingcompany, $user->id)) {
+                if ($mycompany = company::by_userid($user->id, true)) {
+                    if ($currenteditingcompany != $mycompany->id) {
+                        $mycompanyrec = $DB->get_record('company', array('id' => $mycompany->id));
+                        if ($mycompanyrec->hostname != $currentcompany->hostname) {
+                            if (empty($mycompanyrec->hostname)) {
+                                $companyurl = $CFG->wwwrootdefault;
+                            } else {
+                                $companyurl = $_SERVER['REQUEST_SCHEME'] . "://" . $mycompanyrec->hostname;
+                            }
                         }
-                    }
-                    $SESSION->currenteditingcompany = $mycompany->id;
-                    $SESSION->company = $mycompanyrec;
-                    $SESSION->theme = $mycompanyrec->theme;
+                        $SESSION->currenteditingcompany = $mycompany->id;
+                        $SESSION->company = $mycompanyrec;
+                        $SESSION->theme = $mycompanyrec->theme;
 
-                    redirect ($companyurl . '/login/index.php');
+                        redirect ($companyurl . '/login/index.php');
+                    }
                 }
             }
         }
