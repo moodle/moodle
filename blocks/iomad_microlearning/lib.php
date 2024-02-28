@@ -974,7 +974,7 @@ class microlearning {
 
         // Get users who need to be sent a new link email.
         mtrace("getting list of users who have a new nugget");
-        if ($scheduleusers = $DB->get_records_sql("SELECT mtu.* FROM {microlearning_thread_user} mtu
+        if ($scheduleusers = $DB->get_records_sql("SELECT mtu.*, mt.companyid FROM {microlearning_thread_user} mtu
                                                    JOIN {microlearning_thread} mt
                                                    ON (mtu.threadid = mt.id AND mt.send_message = 1)
                                                    AND mtu.message_delivered = 0
@@ -987,7 +987,7 @@ class microlearning {
                 if ($user = $DB->get_record('user', array('id' => $scheduleuser->userid, 'suspended' => 0, 'deleted' => 0))) {
                     // Get the email payload.
                     if ($nugget = $DB->get_record('microlearning_nugget', array('id' => $scheduleuser->nuggetid))) {
-                        $company = company::by_userid($user->id);
+                        $company = new company($scheduleuser->companyid);
                         // Get the nugget link.
                         $nugget->url = new moodle_url('/blocks/iomad_microlearning/land.php', array('nuggetid' => $nugget->id, 'userid' => $user->id, 'accesskey' =>$scheduleuser->accesskey));
                         // Fire the email.
@@ -1002,7 +1002,7 @@ class microlearning {
 
         // Get users who need to be sent a reminder email
         mtrace("getting list of users for first reminder");
-        if ($reminder1users = $DB->get_records_sql("SELECT mtu.* FROM {microlearning_thread_user} mtu
+        if ($reminder1users = $DB->get_records_sql("SELECT mtu.*,mt.companyid FROM {microlearning_thread_user} mtu
                                                    JOIN {microlearning_thread} mt
                                                    ON (mtu.threadid = mt.id)
                                                    WHERE mt.send_reminder = 1
@@ -1017,7 +1017,7 @@ class microlearning {
                 if ($user = $DB->get_record('user', array('id' => $reminder1user->userid, 'suspended' => 0, 'deleted' => 0))) {
                     // Get the email payload.
                     if ($nugget = $DB->get_record('microlearning_nugget', array('id' => $reminder1user->nuggetid))) {
-                        $company = company::by_userid($user->id);
+                        $company = new company($scheduleuser->companyid);
                         // Fix the payload.
                         $nugget->name = format_text($nugget->name);
                         $nugget->url = new moodle_url('/blocks/iomad_microlearning/land.php', array('nuggetid' => $nugget->id, 'userid' => $user->id, 'accesskey' =>$reminder1user->accesskey));
@@ -1033,7 +1033,7 @@ class microlearning {
 
         // Get users who need to be sent a second reminder email.
         mtrace("getting list of users for second reminder");
-        if ($reminder2users = $DB->get_records_sql("SELECT mtu.* FROM {microlearning_thread_user} mtu
+        if ($reminder2users = $DB->get_records_sql("SELECT mtu.*,mt.companyid FROM {microlearning_thread_user} mtu
                                                    JOIN {microlearning_thread} mt
                                                    ON (mtu.threadid = mt.id)
                                                    WHERE mt.send_reminder = 1
@@ -1048,7 +1048,7 @@ class microlearning {
                 if ($user = $DB->get_record('user', array('id' => $reminder2user->userid, 'suspended' => 0, 'deleted' => 0))) {
                     // Get the email payload.
                     if ($nugget = $DB->get_record('microlearning_nugget', array('id' => $reminder2user->nuggetid))) {
-                        $company = company::by_userid($user->id);
+                        $company = new company($scheduleuser->companyid);;
                         // Fix the payload.
                         $nugget->name = format_text($nugget->name);
                         $nugget->url = new moodle_url('/blocks/iomad_microlearning/land.php', array('nuggetid' => $nugget->id, 'userid' => $user->id, 'accesskey' =>$reminder2user->accesskey));
