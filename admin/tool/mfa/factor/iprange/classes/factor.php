@@ -74,7 +74,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_state(): string {
-        $safeips = get_config('factor_iprange', 'safeips');
+        $safeips = get_config('factor_iprange', 'safeips' . $this->postfix);
 
         // TODO: Check for failures here.
 

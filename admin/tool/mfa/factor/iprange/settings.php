@@ -27,21 +27,32 @@ defined('MOODLE_INTERNAL') || die();
 
 global $OUTPUT;
 
-$enabled = new admin_setting_configcheckbox('factor_iprange/enabled',
+global $CFG;
+
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
+$enabled = new admin_setting_configcheckbox('factor_iprange/enabled' . $postfix,
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
 $enabled->set_updatedcallback(function () {
-    \tool_mfa\manager::do_factor_action('iprange', get_config('factor_iprange', 'enabled') ? 'enable' : 'disable');
+    \tool_mfa\manager::do_factor_action('iprange', get_config('factor_iprange', 'enabled' . $postfix) ? 'enable' : 'disable');
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_iprange/weight',
+$settings->add(new admin_setting_configtext('factor_iprange/weight' . $postfix,
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
 
 // Current IP validation against list for description.
-$allowedips = get_config('factor_iprange', 'safeips');
+$allowedips = get_config('factor_iprange', 'safeips' . $postfix);
 if (trim($allowedips) == '') {
     $message = 'allowedipsempty';
     $type = 'notifyerror';
@@ -54,7 +65,7 @@ if (trim($allowedips) == '') {
 };
 $info = $OUTPUT->notification(get_string($message, 'factor_iprange', ['ip' => getremoteaddr()]), $type);
 
-$settings->add(new admin_setting_configiplist('factor_iprange/safeips',
+$settings->add(new admin_setting_configiplist('factor_iprange/safeips' . $postfix,
     new lang_string('settings:safeips', 'factor_iprange'),
     new lang_string('settings:safeips_help', 'factor_iprange',
             ['info' => $info, 'syntax' => get_string('ipblockersyntax', 'admin')]), '', PARAM_TEXT));

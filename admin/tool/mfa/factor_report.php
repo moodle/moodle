@@ -25,6 +25,15 @@
 require_once(__DIR__ . '/../../../config.php');
 require_once($CFG->libdir.'/adminlib.php');
 
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
 admin_externalpage_setup('factorreport');
 
 $reset = optional_param('reset', null, PARAM_TEXT);
@@ -52,7 +61,7 @@ if (!empty($reset) && confirm_sesskey()) {
     }
 
     // Bulk action for locked users.
-    $locklevel = (int) get_config('tool_mfa', 'lockout');
+    $locklevel = (int) get_config('tool_mfa', 'lockout' . $postfix);
     $sql = "SELECT DISTINCT(userid)
               FROM {tool_mfa}
              WHERE factor = ?

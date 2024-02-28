@@ -24,16 +24,26 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+global $CFG;
 
-$enabled = new admin_setting_configcheckbox('factor_auth/enabled',
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
+$enabled = new admin_setting_configcheckbox('factor_auth/enabled' . $postfix,
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
 $enabled->set_updatedcallback(function () {
-    \tool_mfa\manager::do_factor_action('auth', get_config('factor_auth', 'enabled') ? 'enable' : 'disable');
+    \tool_mfa\manager::do_factor_action('auth', get_config('factor_auth', 'enabled' . $postfix) ? 'enable' : 'disable');
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_auth/weight',
+$settings->add(new admin_setting_configtext('factor_auth/weight' . $postfix,
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
@@ -44,6 +54,6 @@ foreach ($authtypes as $type) {
     $authselect[$type] = $auth->get_title();
 }
 
-$settings->add(new admin_setting_configmulticheckbox('factor_auth/goodauth',
+$settings->add(new admin_setting_configmulticheckbox('factor_auth/goodauth' . $postfix,
     get_string('settings:goodauth', 'factor_auth'),
     get_string('settings:goodauth_help', 'factor_auth'), [], $authselect));

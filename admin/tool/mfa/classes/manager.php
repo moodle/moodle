@@ -18,6 +18,8 @@ namespace tool_mfa;
 
 use dml_exception;
 use tool_mfa\plugininfo\factor;
+use iomad;
+use context_system;
 
 /**
  * MFA management class.
@@ -47,9 +49,18 @@ class manager {
      * @return void
      */
     public static function display_debug_notification(): void {
-        global $OUTPUT, $PAGE;
+        global $OUTPUT, $PAGE, $CFG;
 
-        if (!get_config('tool_mfa', 'debugmode')) {
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
+        if (!get_config('tool_mfa', 'debugmode' . $postfix)) {
             return;
         }
         $html = $OUTPUT->heading(get_string('debugmode:heading', 'tool_mfa'), 3);
@@ -178,7 +189,16 @@ class manager {
      * @return void
      */
     public static function cannot_login(): void {
-        global $ME, $PAGE, $SESSION, $USER;
+        global $ME, $PAGE, $SESSION, $USER, $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
 
         // Determine page URL without triggering warnings from $PAGE.
         if (!preg_match("~(\/admin\/tool\/mfa\/auth.php)~", $ME)) {
@@ -191,7 +211,7 @@ class manager {
         $renderer = $PAGE->get_renderer('tool_mfa');
 
         echo $renderer->header();
-        if (get_config('tool_mfa', 'debugmode')) {
+        if (get_config('tool_mfa', 'debugmode' . $postfix)) {
             self::display_debug_notification();
         }
         echo $renderer->not_enough_factors();
@@ -563,6 +583,17 @@ class manager {
      * @return array
      */
     public static function get_no_redirect_urls(): array {
+        global $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         $factors = factor::get_factors();
         $urls = [
             new \moodle_url('/login/logout.php'),
@@ -573,7 +604,7 @@ class manager {
         }
 
         // Allow forced redirection exclusions.
-        if ($exclusions = get_config('tool_mfa', 'redir_exclusions')) {
+        if ($exclusions = get_config('tool_mfa', 'redir_exclusions' . $postfix)) {
             foreach (explode("\n", $exclusions) as $exclusion) {
                 $urls[] = new \moodle_url($exclusion);
             }
@@ -708,11 +739,20 @@ class manager {
     public static function is_ready(): bool {
         global $CFG, $USER;
 
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         if (!empty($CFG->upgraderunning)) {
             return false;
         }
 
-        $pluginenabled = get_config('tool_mfa', 'enabled');
+        $pluginenabled = get_config('tool_mfa', 'enabled' . $postfix);
         if (empty($pluginenabled)) {
             return false;
         }
@@ -742,7 +782,18 @@ class manager {
      * @throws dml_exception
      */
     public static function do_factor_action(string $factorname, string $action): void {
-        $order = explode(',', get_config('tool_mfa', 'factor_order'));
+        global $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
+        $order = explode(',', get_config('tool_mfa', 'factor_order' . $postfix));
         $key = array_search($factorname, $order);
 
         switch ($action) {
@@ -777,7 +828,7 @@ class manager {
             default:
                 break;
         }
-        self::set_factor_config(['factor_order' => implode(',', $order)], 'tool_mfa');
+        self::set_factor_config(['factor_order' . $postfix => implode(',', $order)], 'tool_mfa');
     }
 
     /**

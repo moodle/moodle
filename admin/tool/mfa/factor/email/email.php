@@ -30,6 +30,15 @@ $pass = optional_param('pass', '0', PARAM_INT);
 $secret = optional_param('secret', 0, PARAM_INT);
 // @codingStandardsIgnoreEnds
 
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
 $context = context_system::instance();
 $PAGE->set_context($context);
 $url = new moodle_url('/admin/tool/mfa/factor/email/email.php',
@@ -87,7 +96,7 @@ if ($form->is_cancelled()) {
         $event->trigger();
 
         // Suspend user account.
-        if (get_config('factor_email', 'suspend')) {
+        if (get_config('factor_email', 'suspend' . $postfix)) {
             $DB->set_field('user', 'suspended', 1, ['id' => $user->id]);
         }
 

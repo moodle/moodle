@@ -25,16 +25,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 require_once(__DIR__ . '/../../../../../cohort/lib.php');
+global $CFG;
 
-$enabled = new admin_setting_configcheckbox('factor_cohort/enabled',
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
+$enabled = new admin_setting_configcheckbox('factor_cohort/enabled' . $postfix,
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
 $enabled->set_updatedcallback(function () {
-    \tool_mfa\manager::do_factor_action('cohort', get_config('factor_cohort', 'enabled') ? 'enable' : 'disable');
+    \tool_mfa\manager::do_factor_action('cohort', get_config('factor_cohort', 'enabled' . $postfix) ? 'enable' : 'disable');
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_cohort/weight',
+$settings->add(new admin_setting_configtext('factor_cohort/weight' . $postfix,
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
@@ -46,7 +56,7 @@ foreach ($cohorts['cohorts'] as $cohort) {
 }
 
 if (!empty($choices)) {
-    $settings->add(new admin_setting_configmultiselect('factor_cohort/cohorts',
+    $settings->add(new admin_setting_configmultiselect('factor_cohort/cohorts' . $postfix,
     new lang_string('settings:cohort', 'factor_cohort'),
     new lang_string('settings:cohort_help', 'factor_cohort'), [], $choices));
 }

@@ -31,8 +31,17 @@ $PAGE->set_url(new moodle_url('/admin/tool/mfa/guide.php'));
 $PAGE->set_title(get_string('guidance', 'tool_mfa'));
 $PAGE->set_pagelayout('standard');
 
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
 // If guidance page isn't enabled, just redir back to home.
-if (!get_config('tool_mfa', 'guidance')) {
+if (!get_config('tool_mfa', 'guidance' . $postfix)) {
     redirect(new moodle_url('/'));
 }
 
@@ -51,7 +60,7 @@ if (isloggedin() && (isset($SESSION->tool_mfa_authenticated) && $SESSION->tool_m
 $PAGE->navbar->add(get_string('guidance', 'tool_mfa'), new \moodle_url('/admin/tool/mfa/guide.php'));
 
 echo $OUTPUT->header();
-$html = get_config('tool_mfa', 'guidancecontent');
+$html = get_config('tool_mfa', 'guidancecontent' . $postfix);
 
 // We need to go through and replace file markups with a matching filename.
 $fs = get_file_storage();

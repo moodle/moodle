@@ -34,6 +34,15 @@ require_capability('moodle/site:config', context_system::instance());
 global $_SERVER;
 $returnurl = $_SERVER['HTTP_REFERER'];
 
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
 $PAGE->set_url('/admin/tool/mfa/index.php');
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
@@ -58,7 +67,7 @@ foreach (\tool_mfa\plugininfo\factor::get_enabled_factors() as $enabledfactor) {
 switch ($action) {
     case 'disable':
         if (in_array($factor, $enabledfactors)) {
-            \tool_mfa\manager::set_factor_config(['enabled' => 0], 'factor_' . $factor);
+            \tool_mfa\manager::set_factor_config(['enabled' . $postfix => 0], 'factor_' . $factor);
             \tool_mfa\manager::do_factor_action($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.
@@ -68,7 +77,7 @@ switch ($action) {
 
     case 'enable':
         if (!in_array($factor, $enabledfactors)) {
-            \tool_mfa\manager::set_factor_config(['enabled' => 1], 'factor_' . $factor);
+            \tool_mfa\manager::set_factor_config(['enabled' . $postfix => 1], 'factor_' . $factor);
             \tool_mfa\manager::do_factor_action($factor, $action);
 
             \core\session\manager::gc(); // Remove stale sessions.

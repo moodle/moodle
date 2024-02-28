@@ -75,7 +75,7 @@ class factor extends object_factor_base {
      */
     public function get_state(): string {
         global $USER;
-        $adminpass = (bool) get_config('factor_capability', 'adminpasses');
+        $adminpass = (bool) get_config('factor_capability', 'adminpasses' . $this->postfix);
 
         // Do anything check is controlled from factor config.
         if (!has_capability('factor/capability:cannotpassfactor', \context_system::instance(), $USER, $adminpass)) {

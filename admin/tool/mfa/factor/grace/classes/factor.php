@@ -107,14 +107,14 @@ class factor extends object_factor_base {
         if (empty($starttime)) {
             return \tool_mfa\plugininfo\factor::STATE_UNKNOWN;
         } else {
-            $duration = get_config('factor_grace', 'graceperiod');
+            $duration = get_config('factor_grace', 'graceperiod' . $this->postfix);
 
             if (!empty($duration)) {
                 if (time() > $starttime + $duration) {
                     // If gracemode would have given points, but now doesnt,
                     // Jump out of the loop and force a factor setup.
                     // We will return once there is a setup, or the user tries to leave.
-                    if (get_config('factor_grace', 'forcesetup') && $redirectable) {
+                    if (get_config('factor_grace', 'forcesetup' . $this->postfix) && $redirectable) {
                         if (empty($SESSION->mfa_gracemode_recursive)) {
                             // Set a gracemode lock so any further recursive gets fall past any recursive calls.
                             $SESSION->mfa_gracemode_recursive = true;
@@ -181,12 +181,12 @@ class factor extends object_factor_base {
             $records = ($this->get_all_user_factors($USER));
             $record = reset($records);
             $starttime = $record->timecreated;
-            $timeremaining = ($starttime + get_config('factor_grace', 'graceperiod')) - time();
+            $timeremaining = ($starttime + get_config('factor_grace', 'graceperiod' . $this->postfix)) - time();
             $time = format_time($timeremaining);
 
             $data = ['url' => $link, 'time' => $time];
 
-            $customwarning = get_config('factor_grace', 'customwarning');
+            $customwarning = get_config('factor_grace', 'customwarning' . $this->postfix);
             if (!empty($customwarning)) {
                 // Clean text, then swap placeholders for time and the setup link.
                 $message = preg_replace("/{timeremaining}/", $time, $customwarning);
@@ -239,7 +239,7 @@ class factor extends object_factor_base {
      * @return array
      */
     public function get_no_redirect_urls(): array {
-        $redirect = get_config('factor_grace', 'forcesetup');
+        $redirect = get_config('factor_grace', 'forcesetup' . $this->postfix);
 
         // First check if user has any other input or setup factors active.
         $factors = $this->get_affecting_factors();
@@ -296,7 +296,7 @@ class factor extends object_factor_base {
         }, $active);
         $factors = $this->get_all_affecting_factors();
 
-        $ignorelist = get_config('factor_grace', 'ignorelist');
+        $ignorelist = get_config('factor_grace', 'ignorelist' . $this->postfix);
         $ignorelist = !empty($ignorelist) ? explode(',', $ignorelist) : [];
 
         $factors = array_filter($factors, function ($el) use ($ignorelist, $active) {

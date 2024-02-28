@@ -75,7 +75,7 @@ class factor extends object_factor_base {
      */
     public function get_state(): string {
         global $USER;
-        $rolestring = get_config('factor_role', 'roles');
+        $rolestring = get_config('factor_role', 'roles' . $this->postfix);
 
         // Nothing selected, everyone passes.
         if (empty($rolestring)) {
@@ -140,7 +140,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_summary_condition(): string {
-        $selectedroles = get_config('factor_role', 'roles');
+        $selectedroles = get_config('factor_role', 'roles' . $this->postfix);
         if (empty($selectedroles)) {
             return get_string('summarycondition', 'factor_role', get_string('none'));
         }

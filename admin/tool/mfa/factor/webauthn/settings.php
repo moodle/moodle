@@ -25,15 +25,26 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$enabled = new admin_setting_configcheckbox('factor_webauthn/enabled',
+global $CFG;
+
+// IOMAD
+require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+$companyid = iomad::get_my_companyid(context_system::instance(), false);
+if (!empty($companyid)) {
+    $postfix = "_$companyid";
+} else {
+    $postfix = "";
+}
+
+$enabled = new admin_setting_configcheckbox('factor_webauthn/enabled' . $postfix,
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
 $enabled->set_updatedcallback(function() {
-    \tool_mfa\manager::do_factor_action('webauthn', get_config('factor_webauthn', 'enabled') ? 'enable' : 'disable');
+    \tool_mfa\manager::do_factor_action('webauthn', get_config('factor_webauthn', 'enabled' . $postfix) ? 'enable' : 'disable');
 });
 $settings->add($enabled);
 
-$settings->add(new admin_setting_configtext('factor_webauthn/weight',
+$settings->add(new admin_setting_configtext('factor_webauthn/weight' . $postfix,
     new lang_string('settings:weight', 'tool_mfa'),
     new lang_string('settings:weight_help', 'tool_mfa'), 100, PARAM_INT));
 
@@ -44,12 +55,12 @@ $authenticators = [
     'hybrid' => get_string('authenticator:hybrid', 'factor_webauthn'),
     'internal' => get_string('authenticator:internal', 'factor_webauthn'),
 ];
-$settings->add(new admin_setting_configmultiselect('factor_webauthn/authenticatortypes',
+$settings->add(new admin_setting_configmultiselect('factor_webauthn/authenticatortypes' . $postfix,
     new lang_string('settings:authenticatortypes', 'factor_webauthn'),
     new lang_string('settings:authenticatortypes_help', 'factor_webauthn'),
     array_keys($authenticators), $authenticators));
 
-$settings->add(new admin_setting_configselect('factor_webauthn/userverification',
+$settings->add(new admin_setting_configselect('factor_webauthn/userverification' . $postfix,
     new lang_string('settings:userverification', 'factor_webauthn'),
     new lang_string('settings:userverification_help', 'factor_webauthn'),
     'preferred',

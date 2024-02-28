@@ -17,6 +17,8 @@
 namespace tool_mfa\local\factor;
 
 use stdClass;
+use iomad;
+use context_system;
 
 /**
  * MFA factor abstract class.
@@ -34,6 +36,9 @@ abstract class object_factor_base implements object_factor {
     /** @var int Lock counter */
     private $lockcounter;
 
+    /** @var string postfix */
+    public $postfix;
+
     /**
      * Secret manager
      *
@@ -50,7 +55,17 @@ abstract class object_factor_base implements object_factor {
      * @param string $name factor name
      */
     public function __construct($name) {
-        global $DB, $USER;
+        global $DB, $USER, $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $this->postfix = "_$companyid";
+        } else {
+            $this->postfix = "";
+        }
+
         $this->name = $name;
 
         // Setup secret manager.
@@ -79,7 +94,7 @@ abstract class object_factor_base implements object_factor {
                 }
 
                 // Now lock this factor if over the counter.
-                $lockthreshold = get_config('tool_mfa', 'lockout');
+                $lockthreshold = get_config('tool_mfa', 'lockout' . $this->postfix);
                 if ($this->lockcounter >= $lockthreshold) {
                     $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
                 }
@@ -99,7 +114,7 @@ abstract class object_factor_base implements object_factor {
      * @throws \dml_exception
      */
     public function is_enabled(): bool {
-        $status = get_config('factor_'.$this->name, 'enabled');
+        $status = get_config('factor_'.$this->name, 'enabled' . $this->postfix);
         if ($status == 1) {
             return true;
         }
@@ -115,6 +130,10 @@ abstract class object_factor_base implements object_factor {
      * @throws \dml_exception
      */
     public function get_weight(): int {
+        $weightcompany = get_config('factor_'.$this->name, 'weight' . $this->postfix);
+        if ($weightcompany !== false) {
+            return (int) $weightcompany;
+        }
         $weight = get_config('factor_'.$this->name, 'weight');
         if ($weight) {
             return (int) $weight;
@@ -553,7 +572,7 @@ abstract class object_factor_base implements object_factor {
         $DB->set_field('tool_mfa', 'lockcounter', $this->lockcounter, ['userid' => $USER->id, 'factor' => $this->name]);
 
         // Now lock this factor if over the counter.
-        $lockthreshold = get_config('tool_mfa', 'lockout');
+        $lockthreshold = get_config('tool_mfa', 'lockout' . $this->postfix);
         if ($this->lockcounter >= $lockthreshold) {
             $this->set_state(\tool_mfa\plugininfo\factor::STATE_LOCKED);
         }
@@ -565,7 +584,7 @@ abstract class object_factor_base implements object_factor {
      * @return int the number of attempts at this factor remaining.
      */
     public function get_remaining_attempts(): int {
-        $lockthreshold = get_config('tool_mfa', 'lockout');
+        $lockthreshold = get_config('tool_mfa', 'lockout' . $this->postfix);
         if ($this->lockcounter === -1) {
             // If upgrade.php hasnt been run yet, just return 10.
             return $lockthreshold;

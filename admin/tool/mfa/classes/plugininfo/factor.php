@@ -18,6 +18,8 @@ namespace tool_mfa\plugininfo;
 
 use moodle_url;
 use stdClass;
+use iomad;
+use context_system;
 
 /**
  * Subplugin info class.
@@ -70,8 +72,19 @@ class factor extends \core\plugininfo\base {
      * @throws \dml_exception
      */
     public static function sort_factors_by_order(array $unsorted): array {
+        global $CFG;
+
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         $sorted = [];
-        $orderarray = explode(',', get_config('tool_mfa', 'factor_order'));
+        $orderarray = explode(',', get_config('tool_mfa', 'factor_order' . $postfix));
 
         foreach ($orderarray as $order => $factorname) {
             foreach ($unsorted as $key => $factor) {
@@ -329,13 +342,22 @@ class factor extends \core\plugininfo\base {
     public function uninstall_cleanup() {
         global $DB, $CFG;
 
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         $DB->delete_records('tool_mfa', ['factor' => $this->name]);
         $DB->delete_records('tool_mfa_secrets', ['factor' => $this->name]);
 
-        $order = explode(',', get_config('tool_mfa', 'factor_order'));
+        $order = explode(',', get_config('tool_mfa', 'factor_order' . $postfix));
         if (in_array($this->name, $order)) {
             $order = array_diff($order, [$this->name]);
-            \tool_mfa\manager::set_factor_config(['factor_order' => implode(',', $order)], 'tool_mfa');
+            \tool_mfa\manager::set_factor_config(['factor_order' . $postfix => implode(',', $order)], 'tool_mfa');
         }
 
         parent::uninstall_cleanup();

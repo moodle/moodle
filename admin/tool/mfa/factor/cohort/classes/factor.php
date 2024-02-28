@@ -77,7 +77,7 @@ class factor extends object_factor_base {
      */
     public function get_state(): string {
         global $USER;
-        $cohortstring = get_config('factor_cohort', 'cohorts');
+        $cohortstring = get_config('factor_cohort', 'cohorts' . $this->postfix);
         // Nothing selected, everyone passes.
         if (empty($cohortstring)) {
             return \tool_mfa\plugininfo\factor::STATE_PASS;
@@ -122,7 +122,7 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_summary_condition(): string {
-        $selectedcohorts = get_config('factor_cohort', 'cohorts');
+        $selectedcohorts = get_config('factor_cohort', 'cohorts' . $this->postfix);
         if (empty($selectedcohorts)) {
             return get_string('summarycondition', 'factor_cohort', get_string('none'));
         }
