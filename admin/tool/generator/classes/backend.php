@@ -62,16 +62,6 @@ abstract class tool_generator_backend {
     protected $progress;
 
     /**
-     * @var int Epoch time at which last dot was displayed
-     */
-    protected $lastdot;
-
-    /**
-     * @var int Epoch time at which last percentage was displayed
-     */
-    protected $lastpercentage;
-
-    /**
      * @var int Epoch time at which current step (current set of dots) started
      */
     protected $starttime;
@@ -80,6 +70,11 @@ abstract class tool_generator_backend {
      * @var int Size code (index in the above arrays)
      */
     protected $size;
+
+    /**
+     * @var progrss_bar progressbar
+     */
+    protected $progressbar;
 
     /**
      * Generic generator class
@@ -132,24 +127,14 @@ abstract class tool_generator_backend {
         if (!$this->progress) {
             return;
         }
-        if (CLI_SCRIPT) {
-            echo '* ';
-        } else {
-            echo html_writer::start_tag('li');
-        }
-        echo get_string('progress_' . $langstring, $module, $a);
-        if (!$leaveopen) {
-            if (CLI_SCRIPT) {
-                echo "\n";
-            } else {
-                echo html_writer::end_tag('li');
-            }
-        } else {
-            echo ': ';
-            $this->lastdot = time();
-            $this->lastpercentage = $this->lastdot;
-            $this->starttime = microtime(true);
-        }
+
+        $this->langstring = $langstring;
+        $this->module = $module;
+        $this->aparam = $a;
+
+        $this->starttime = microtime(true);
+        $this->progressbar = new progress_bar();
+        $this->progressbar->create();
     }
 
     /**
@@ -164,24 +149,13 @@ abstract class tool_generator_backend {
             return;
         }
         $now = time();
-        if ($now == $this->lastdot) {
-            return;
-        }
-        $this->lastdot = $now;
-        if (CLI_SCRIPT) {
-            echo '.';
-        } else {
-            echo ' . ';
-        }
-        if ($now - $this->lastpercentage >= 30) {
-            echo round(100.0 * $number / $total, 1) . '%';
-            $this->lastpercentage = $now;
-        }
 
         // Update time limit so PHP doesn't time out.
         if (!CLI_SCRIPT) {
             core_php_time_limit::raise(120);
         }
+        $status = get_string('progress_' . $this->langstring, $this->module, $number);
+        $this->progressbar->update($number, $total, $status);
     }
 
     /**
@@ -191,11 +165,8 @@ abstract class tool_generator_backend {
         if (!$this->progress) {
             return;
         }
-        echo get_string('done', 'tool_generator', round(microtime(true) - $this->starttime, 1));
-        if (CLI_SCRIPT) {
-            echo "\n";
-        } else {
-            echo html_writer::end_tag('li');
-        }
+        $status = get_string('progress_' . $this->langstring, $this->module, $this->aparam);
+        $done = get_string('done', 'tool_generator', round(microtime(true) - $this->starttime, 1));
+        $this->progressbar->update_full(100, $status . ' - ' . $done);
     }
 }
