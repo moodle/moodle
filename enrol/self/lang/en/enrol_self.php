@@ -53,6 +53,12 @@ $string['enrolstartdate'] = 'Start date';
 $string['enrolstartdate_help'] = 'If enabled, users can enrol themselves from this date onward only.';
 $string['expiredaction'] = 'Enrolment expiry action';
 $string['expiredaction_help'] = 'Select action to carry out when user enrolment expires. Please note that some user data and settings are purged from course during course unenrolment.';
+$string['expiryinactivemessageenrolledbody'] = 'Hi {$a->user},
+
+Your enrolment in the course {$a->course} expires on {$a->timeend} as you have not visited it in the last {$a->inactivetime} days. This means that you will no longer have access to the course.
+
+To keep your enrolment active, simply log in and visit <a href="{$a->url}">{$a->course}</a> before {$a->timeend}.';
+$string['expiryinactivemessageenrolledsubject'] = 'Your enrolment is expiring: {$a->course}';
 $string['expirymessageenrollersubject'] = 'Self enrolment expiry notification';
 $string['expirymessageenrollerbody'] = 'Self enrolment in the course \'{$a->course}\' will expire within the next {$a->threshold} for the following users:
 
