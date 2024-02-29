@@ -17,13 +17,13 @@
 /**
  * Admin setting for AWS regions.
  *
- * @package    factor_sms
+ * @package    core
  * @author     Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- namespace factor_sms;
+namespace core\aws;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,7 +32,7 @@ require_once($CFG->dirroot . '/lib/adminlib.php');
 /**
  * Admin setting for a list of AWS regions.
  *
- * @package    factor_sms
+ * @package    core
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -50,7 +50,9 @@ class admin_settings_aws_region extends \admin_setting_configtext {
 
         $default = $this->get_defaultsetting();
         $options = [];
-        $all = require_once($CFG->dirroot . '/lib/aws-sdk/src/data/endpoints.json.php');
+        // We do require() not require_once() here, as the file returns a value and we may need to get
+        // this value more than once.
+        $all = require($CFG->dirroot . '/lib/aws-sdk/src/data/endpoints.json.php');
         $ends = $all['partitions'][0]['regions'];
         if ($ends) {
             foreach ($ends as $key => $value) {
@@ -69,7 +71,7 @@ class admin_settings_aws_region extends \admin_setting_configtext {
             'size' => $this->size,
             'options' => $options,
         ];
-        $element = $OUTPUT->render_from_template('factor_sms/setting_aws_region', $context);
+        $element = $OUTPUT->render_from_template('core/aws/setting_aws_region', $context);
         return format_admin_setting($this, $this->visiblename, $element, $this->description, true, '', $default, $query);
     }
 }

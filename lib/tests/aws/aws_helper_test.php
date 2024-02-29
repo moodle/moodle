@@ -15,18 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * factor_sms unit tests.
+ * aws_helper unit tests.
  *
- * @package   factor_sms
+ * @package   core
  * @author    Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \factor_sms\local\aws_helper
+ * @covers    \core\aws\aws_helper
  */
 
-namespace factor_sms;
-
-use factor_sms\local\aws_helper;
+namespace core\aws;
 
 /**
  * Testcase for the AWS helper.
@@ -35,7 +33,7 @@ use factor_sms\local\aws_helper;
  * @author     Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \factor_sms\classes\local\aws_helper
+ * @covers    \core\aws\aws_helper
  */
 class aws_helper_test extends \advanced_testcase {
 

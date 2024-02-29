@@ -17,13 +17,13 @@
 /**
  * AWS Client factory. Retrieves a client with moodle specific HTTP configuration.
  *
- * @package    factor_sms
+ * @package    core
  * @author     Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright  2022 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace factor_sms\local;
+namespace core\aws;
 use Aws\AwsClient;
 
 /**

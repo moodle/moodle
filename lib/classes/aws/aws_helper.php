@@ -17,13 +17,13 @@
 /**
  * AWS helper class. Contains useful functions when interacting with the SDK.
  *
- * @package    factor_sms
+ * @package    core
  * @author     Peter Burnett <peterburnett@catalyst-au.net>
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace factor_sms\local;
+namespace core\aws;
 
 use Aws\CommandInterface;
 use Aws\AwsClient;

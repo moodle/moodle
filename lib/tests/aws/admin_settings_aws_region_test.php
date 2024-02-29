@@ -17,22 +17,22 @@
 /**
  * factor_sms unit tests.
  *
- * @package   factor_sms
+ * @package   core
  * @author    Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @copyright 2020 Catalyst IT
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace factor_sms;
+namespace core\aws;
 
 /**
  * Testcase for the list of AWS regions admin setting.
  *
- * @package    factor_sms
+ * @package    core
  * @author     Mikhail Golenkov <mikhailgolenkov@catalyst-au.net>
  * @copyright  2020 Catalyst IT
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers     \admin_settings_aws_region_test
+ * @covers     \core\aws\admin_settings_aws_region
  */
 class admin_settings_aws_region_test extends \advanced_testcase {
 
