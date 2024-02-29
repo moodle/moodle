@@ -72,9 +72,22 @@ abstract class tool_generator_backend {
     protected $size;
 
     /**
-     * @var progrss_bar progressbar
+     * @var progress_bar progressbar
      */
     protected $progressbar;
+
+    /**
+     * @var string Part of the language string.
+     */
+    protected $langstring;
+    /**
+     * @var string Module for the language string.
+     */
+    protected $module;
+    /**
+     * @var string|object|array|int Optional language string parameters.
+     */
+    protected $aparam;
 
     /**
      * Generic generator class
