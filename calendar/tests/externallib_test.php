@@ -3257,4 +3257,39 @@ class externallib_test extends externallib_advanced_testcase {
             $this->assertEquals($expectedtimestamps[$data['key']], $data['timestamp']);
         }
     }
+
+    /**
+     * Test for checking if we receive the correct icon branding.
+     *
+     * @covers \core_calendar_external::get_calendar_action_events_by_timesort
+     */
+    public function test_get_calendar_event_branded(): void {
+
+        $this->resetAfterTest(true);
+
+        $user = $this->getDataGenerator()->create_user();
+        $course = $this->getDataGenerator()->create_course();
+        $this->getDataGenerator()->enrol_user($user->id, $course->id);
+
+        $this->setUser($user);
+        $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
+        $assign = $generator->create_instance(['course' => $course->id]);
+
+        $params = [
+            'type' => CALENDAR_EVENT_TYPE_ACTION,
+            'instance' => $assign->id,
+            'courseid' => $course->id,
+            'modulename' => 'assign',
+            'timesort' => 1,
+        ];
+        $event1 = $this->create_calendar_event('Event 1', $user->id, 'user', 0, 1, $params);
+        $result = core_calendar_external::get_calendar_action_events_by_timesort(0);
+        $result = external_api::clean_returnvalue(
+            core_calendar_external::get_calendar_action_events_by_timesort_returns(),
+            $result
+        );
+
+        $this->assertCount(1, $result['events']);
+        $this->assertFalse($result['events'][0]['branded']);
+    }
 }

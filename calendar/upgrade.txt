@@ -5,6 +5,17 @@ information provided here is intended especially for developers.
 * The following previously deprecated methods have been removed and can no longer be used:
   - `calendar_process_subscription_row`
   - `calendar_import_icalendar_events`
+* The event_exporter_base class now returns a field called "branded" indicating whether the module is branded or not.
+  All the external functions using the exporter will now return the new field:
+  - core_calendar_get_action_events_by_course
+  - core_calendar_get_action_events_by_courses
+  - core_calendar_get_action_events_by_timesort
+  - core_calendar_get_calendar_day_view
+  - core_calendar_get_calendar_event_by_id
+  - core_calendar_get_calendar_monthly_view
+  - core_calendar_get_calendar_upcoming_view
+  - core_calendar_submit_create_update_form
+  - core_calendar_update_event_start_day
 
 === 4.3 ===
 * The `navigation` property has been removed from `\core_calendar\external\day_exporter` as it is not being used by any of the
