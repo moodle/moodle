@@ -36533,6 +36533,9 @@ body {
 .navbar-nav .popover-region .icon {
   font-weight: bolder;
 }
+.navbar-nav .popover-region .notification-image .icon {
+  font-weight: 400;
+}
 
 .navbar .popover-region.collapsed .popover-region-container {
   opacity: 0;
@@ -36632,9 +36635,9 @@ body {
   width: calc(100% - 24px);
 }
 .content-item-container.selected {
-  background-color: #4f94cd;
+  background-color: #3279b3;
   color: #fff;
-  border-color: #4f94cd;
+  border-color: #3279b3;
 }
 .content-item-container.selected .content-item-footer .timestamp {
   color: #fff;
