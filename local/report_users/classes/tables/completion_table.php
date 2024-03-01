@@ -292,7 +292,7 @@ class completion_table extends table_sql {
 
                         $certurl = moodle_url::make_file_url('/pluginfile.php', '/'.$coursecontext->id.'/local_iomad_track/issue/'.$traccertrec->trackid.'/'.$traccertrec->filename);
                         $returntext .= '<a href="' . $certurl . '" title="' . format_string($traccertrec->filename) .'">
-                                        <img src="' . $output->image_url('f/pdf-32') . '" alt="' . format_string($traccertrec->filename) . '"></a>&nbsp';
+                                        <img src="' . $output->image_url('f/pdf') . '" alt="' . format_string($traccertrec->filename) . '" width="36"></a>&nbsp';
                     }
                     return $returntext;
                 } else {

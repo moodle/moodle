@@ -101,3 +101,84 @@ function local_iomad_track_delete_entry($trackid, $full=false) {
         $DB->delete_records('local_iomad_track', array('id' => $trackid));
     }
 }
+
+/*
+ * Function to download a number of certificates in a zip file
+ * and pass it to the browser.
+ */
+function local_iomad_track_download_certs($companyid = 0, $courses = [], $users = []) {
+    global $DB, $CFG, $USER;
+
+    // Set the companyid
+    if (empty($companyid)) {
+        $companyid = iomad::get_my_companyid(context_system::instance());
+    }
+    $companycontext = \core\context\company::instance($companyid);
+
+    $company = new company($companyid);
+
+    // Deal with the courses.
+    if (empty($courses)) {
+        $allcourses = array_keys($company->get_menu_courses(true, false, false, false)); 
+    } else {
+        $allcourses = $courses;
+    }
+
+    // Deal with the users.
+    $sqlselect = "courseid =:courseid AND companyid = :companyid AND timecompleted > 0";
+    if (!empty($users)) {
+        $sqlselect .= " AND userid IN (" . implode(',', $users) . ")";
+    }
+
+    // create the zip file
+    $zipfile = new ZipArchive();
+    $tempfilename = $CFG->dataroot . '/temp/filestorage/' . time();
+    $realfilename = "certificates.zip";
+    if ($zipfile->open($tempfilename, ZipArchive::CREATE) === TRUE) {
+        foreach ($allcourses as $course) {
+            $comprecords = $DB->get_records_select('local_iomad_track',
+                                                    $sqlselect,
+                                                   ['courseid' => $course,
+                                                    'companyid' => $company->id]); 
+            if (count($comprecords) > 0) {
+                // For all of the track saved files
+                foreach ($comprecords as $comprecord) {
+                    if ($filerec = $DB->get_record_select('files',
+                                                          "component =:component
+                                                           AND filearea = :filearea
+                                                           AND itemid = :itemid
+                                                           AND filesize > 0
+                                                           AND filename != '-'",
+                                                          ['component' => 'local_iomad_track',
+                                                           'filearea' => 'issue',
+                                                           'itemid' => $comprecord->id])) {
+                        if ($userrec = $DB->get_record('user', ['id' => $comprecord->userid])) {
+                            $savefilename = $comprecord->coursename . "/" . $userrec->firstname . "_" . $userrec->lastname . "_" . $userrec->id . "/" . $comprecord->id . "_" . $filerec->filename;
+                            $first = substr($filerec->contenthash, 0, 2);
+                            $second = substr($filerec->contenthash, 2, 2);
+                            $filepath = $CFG->dataroot . "/filedir/$first/$second/" . $filerec->contenthash;
+                            $zipfile->addFile($filepath, $savefilename);
+                        }
+                    }
+                }
+            }
+        }
+        $zipfile->close();
+
+        // Send the headers to force download the zip file
+        header("Content-type: application/zip");
+        header("Content-Disposition: attachment; filename=$realfilename");
+        header("Content-length: " . filesize($tempfilename));
+        header("Pragma: no-cache");
+        header("Expires: 0");
+        ob_clean();
+        flush();
+        $handle = fopen($tempfilename, "rb");
+        while (!feof($handle)){
+            echo fread($handle, 8192);
+        }
+        fclose($handle);
+        unlink($tempfilename);
+        exit;
+    }
+}

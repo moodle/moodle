@@ -30,6 +30,8 @@ use templatable;
 use core_completion\progress;
 use core_course_renderer;
 use moodle_url;
+use iomad;
+use context_system;
 
 require_once($CFG->dirroot . '/blocks/mycourses/locallib.php');
 require_once($CFG->libdir . '/completionlib.php');
@@ -79,6 +81,14 @@ class main implements renderable, templatable {
         $inprogressview = new inprogress_view($mycompletion);
         $completedview = new completed_view($myarchive);
 
+        $downloadcerts = false;
+        $downloadcertslink = "";
+        if (iomad::has_capability('block/iomad_company_admin:downloadmycertificates', context_system::instance())) {
+            $downloadcertslinkurl = new moodle_url('/local/report_completion/index.php', ['certusers' => $USER->id, 'action' => 'downloadcerts', 'sesskey' => sesskey()]);
+            $downloadcertslink = $downloadcertslinkurl->out(false);
+            $downloadcerts = true;
+        }
+
         // Now, set the tab we are going to be viewing.
         $viewingavailable = false;
         $viewinginprogress = false;
@@ -121,6 +131,8 @@ class main implements renderable, templatable {
             'sortdescurl' => $sortdescurl->out(false),
             'listviewurl' => $listviewurl->out(false),
             'cardviewurl' => $cardviewurl->out(false),
+            'downloadcertslink' => $downloadcertslink,
+            'downloadcerts' => $downloadcerts,
             'viewlist' => $viewlist,
             'viewcard' => $viewcard,
         ];

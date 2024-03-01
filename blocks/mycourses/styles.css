@@ -76,3 +76,6 @@ html.yui3-js-enabled body#page-my-index.format-site.path-my.gecko.dir-ltr.lang-e
     background-color: green;
 }
 
+.block-mycourses .nav-tabs {
+    padding-top: 15px;
+}

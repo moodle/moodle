@@ -718,5 +718,24 @@ $capabilities = array(
             'clientadministrator' => CAP_ALLOW
         ),
     ),
+
+    'block/iomad_company_admin:downloadcertificates' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COMPANY,
+        'archetypes' => array(
+            'companymanager' => CAP_ALLOW,
+            'companydepartmentmanager' => CAP_ALLOW,
+            'clientadministrator' => CAP_ALLOW
+        ),
+    ),
+
+    'block/iomad_company_admin:downloadmycertificates' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_COMPANY,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
+    ),
+
 );
 
