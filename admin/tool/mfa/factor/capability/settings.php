@@ -29,10 +29,9 @@ global $CFG;
 // IOMAD
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 $companyid = iomad::get_my_companyid(context_system::instance(), false);
+$postfix = "";
 if (!empty($companyid)) {
     $postfix = "_$companyid";
-} else {
-    $postfix = "";
 }
 
 $enabled = new admin_setting_configcheckbox('factor_capability/enabled' . $postfix,
