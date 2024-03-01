@@ -23,6 +23,8 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace mod_trainingevent\task;
+use company;
+use EmailTemplate;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -52,12 +54,13 @@ class send_reminder_emails extends \core\task\scheduled_task {
         if ($trainingevents = $DB->get_records_sql("SELECT *
                                                     FROM {trainingevent}
                                                     WHERE sendreminder > 0
-                                                    AND startdatetime < :now",
+                                                    AND setreminder = 1
+                                                    AND startdatetime > :now",
                                                     ['now' => $runtime])) {
             foreach ($trainingevents as $trainingevent) {
                 // Do we need to do anything?
-                if ((($trainingevent->sendreminder + 1 ) * 24 * 60 * 60 + $runtime) > $trainingevent->startdate &&
-                    ($trainingevent->sendreminder *24 * 60 *60 + $runtime) < $trainingevent->startdate ) {
+                if ((($trainingevent->sendreminder) * 24 * 60 * 60 + $runtime > $trainingevent->startdatetime) &&
+                    $runtime < $trainingevent->startdatetime) {
 
                     // Does the course actually exist?
                     if (!$course = $DB->get_record('course', ['id' => $trainingevent->course])) {
@@ -80,16 +83,16 @@ class send_reminder_emails extends \core\task\scheduled_task {
                         continue;
                     }
 
-                    $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
+                    $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $trainingevent->startdatetime);
 
                     // Send the reminders.
                     foreach ($eventusers as $eventuser) {
                         if ($user = $DB->get_record('user', ['id' => $eventuser->userid, 'suspended' => 0, 'deleted' => 0])) {
                             EmailTemplate::send('user_signed_up_for_event_reminder', array('course' => $course,
-                                                                                           'user' => $USER,
+                                                                                           'user' => $user,
                                                                                            'classroom' => $location,
                                                                                            'company' => $company,
-                                                                                           'event' => $event));
+                                                                                           'event' => $trainingevent));
 
                         }
                     }
