@@ -43,7 +43,7 @@ $managing_context = $DB->get_records_sql(
 
 // If a user does not have a course management role, there is no reason for them to access the Auto Proctor Dashboard.
 // The user will be redirected to the normal dashboard.
-if(!$managing_context){
+if (!$managing_context) {
     $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
     header("Location: $previous_page");
     exit();
@@ -64,11 +64,10 @@ foreach ($managing_context as $context) {
     // Get instance id of the context from contex table
     $sql = "SELECT instanceid
     FROM {context}
-    WHERE id= :id"
-    ;
+    WHERE id= :id";
     $instance_ids = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
 
-    echo "<script>console.log('instance id: ', " . json_encode($instance_ids) .");</script>";
+    echo "<script>console.log('instance id: ', " . json_encode($instance_ids) . ");</script>";
 
     // Push the instance_ids into the $course_ids array
     $course_ids = array_merge($course_ids, $instance_ids);
@@ -349,7 +348,7 @@ echo "<script>console.log('Auto Proctor Records: ', " . json_encode($managing_qu
                     <div class="flex-1 px-3 space-y-1 bg-gray-800 divide-y divide-gray-200 ">
                         <ul class="pb-2 space-y-2">
                             <li>
-                                <a href = "<?php echo $CFG->wwwroot . '/local/auto_proctor/auto_proctor_dashboard.php'?>">
+                                <a href="<?php echo $CFG->wwwroot . '/local/auto_proctor/auto_proctor_dashboard.php' ?>">
                                     <button type="button" class="flex items-center w-full p-2 text-base text-gray-50 transition duration-75 rounded-lg group hover:bg-gray-100 hover:text-gray-700" aria-controls="dropdown-layouts" data-collapse-toggle="dropdown-layouts">
                                         <svg class="flex-shrink-0 w-6 h-6 text-gray-100 transition duration-75 group-hover:text-gray-900 " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                             <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
@@ -392,7 +391,7 @@ echo "<script>console.log('Auto Proctor Records: ', " . json_encode($managing_qu
                         <!-- Card header -->
                         <div class="items-center justify-between lg:flex">
                             <div class="mb-4 lg:mb-0">
-                                <h3 class="mb-2 text-xl font-bold text-gray-900 text-gray-800">Hi, Proctor</h3>
+                                <h3 class="mb-2 text-xl font-bold text-gray-900 text-gray-800">DATA STRUCTURE</h3>
                                 <span class="text-base font-normal text-gray-500 ">You can see all your tests below</span>
                             </div>
                             <div class="items-center sm:flex">
@@ -412,96 +411,49 @@ echo "<script>console.log('Auto Proctor Records: ', " . json_encode($managing_qu
                                     </div>
                                 </div>
                                 <div class="flex items-center pl-2">
-                                    <button id="dropdownDefault" data-dropdown-toggle="dropdown" class="mb-4 sm:mb-0 mr-4 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
-                                        Filter by status
+                                    <button id="dropdownDefault" data-dropdown-toggle="dropdown" class="mb-6 sm:mb-0 mr-24 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 " type="button">
+                                        Filter
                                         <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                         </svg>
                                     </button>
                                     <!-- Dropdown menu -->
-                                    <div id="dropdown" class="z-10 hidden w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
-                                        <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-                                            Category
+                                    <div id="dropdown" class="z-10 hidden w-70 p-3 bg-white rounded-lg shadow ">
+                                        <h6 class="mb-2 text-sm font-medium text-gray-900">
+                                            Status
                                         </h6>
-                                        <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
-                                            <li class="flex items-center">
-                                                <input id="apple" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                                                <label for="apple" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                    Completed (56)
+                                        <ul class="space-y-2 text-sm " aria-labelledby="dropdownDefault">
+                                            <li class="inline-block">
+                                                <input id="apple" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                                <label for="apple" class="ml-2 text-sm font-medium text-gray-900">
+                                                    Completed
                                                 </label>
                                             </li>
-
-                                            <li class="flex items-center">
-                                                <input id="fitbit" type="checkbox" value="" checked class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                                                <label for="fitbit" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                    Cancelled (56)
+                                            <li class="inline-block pl-2">
+                                                <input id="fitbit" type="checkbox" value="" checked class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                                <label for="fitbit" class="ml-2 text-sm font-medium text-gray-900">
+                                                    In progress
                                                 </label>
                                             </li>
+                                            <div>
+                                                <h6 class="mb-2 text-sm font-medium text-gray-900">
+                                                    Date Created
+                                                </h6>
+                                                <div id="accordion-flush" data-accordion="collapse" data-active-classes="text-black " data-inactive-classes="text-gray-500">
+                                                    <div id="price-body" class="" aria-labelledby="price-heading">
+                                                        <div class="flex items-center py-2 space-x-3 font-light border-b border-gray-200 dark:border-gray-600">
+                                                            <div class="relative">
+                                                                <input type="date" id="datepicker-from" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="">
+                                                            </div>
+                                                            <div class="relative">
+                                                                <input type="date" id="datepicker-to" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="hell">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
 
-                                            <li class="flex items-center">
-                                                <input id="dell" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
 
-                                                <label for="dell" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                    In progress (56)
-                                                </label>
-                                            </li>
-
-                                            <li class="flex items-center">
-                                                <input id="asus" type="checkbox" value="" checked class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                                                <label for="asus" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                    In review (97)
-                                                </label>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="flex items-center">
-                                    <button id="dropdownDefault" data-dropdown-toggle="dropdown" class="mb-4 sm:mb-0 mr-4 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" type="button">
-                                        Sort by
-                                        <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                        </svg>
-                                    </button>
-                                    <!-- Dropdown menu -->
-                                    <div id="dropdown" class="z-10 hidden w-56 p-3 bg-white rounded-lg shadow dark:bg-gray-700">
-                                        <h6 class="mb-3 text-sm font-medium text-gray-900 dark:text-white">
-                                            Category
-                                        </h6>
-                                        <ul class="space-y-2 text-sm" aria-labelledby="dropdownDefault">
-                                            <li class="flex items-center">
-                                                <input id="apple" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                                                <label for="apple" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                    Completed (56)
-                                                </label>
-                                            </li>
-
-                                            <li class="flex items-center">
-                                                <input id="fitbit" type="checkbox" value="" checked class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                                                <label for="fitbit" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                    Cancelled (56)
-                                                </label>
-                                            </li>
-
-                                            <li class="flex items-center">
-                                                <input id="dell" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                                                <label for="dell" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                    In progress (56)
-                                                </label>
-                                            </li>
-
-                                            <li class="flex items-center">
-                                                <input id="asus" type="checkbox" value="" checked class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500" />
-
-                                                <label for="asus" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-100">
-                                                    In review (97)
-                                                </label>
-                                            </li>
+                                            </div>
                                         </ul>
                                     </div>
                                 </div>
@@ -529,23 +481,20 @@ echo "<script>console.log('Auto Proctor Records: ', " . json_encode($managing_qu
 
 
                                                     <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500">
-                                                        TYPE
+                                                        Status
                                                     </th>
-                                                    <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500">
-                                                        DATE CREATED
+                                                    <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500 flex items-center">
+                                                        Date Created
+                                                        <span class="ml-2">
+                                                            <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                                <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                            </svg>
+                                                        </span>
                                                     </th>
                                                     <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500">
                                                         COURSE
                                                     </th>
-                                                    <th scope="col" class=" p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500 flex items-center">
-                                                        Sort by
-                                                        <span class="ml-2">
-                                                            <svg width="20px" height="20px" viewBox="0 0 24 24" id="align-left-2" data-name="Flat Line" xmlns="http://www.w3.org/2000/svg" class="icon flat-line">
-                                                                <path id="primary" d="M21,12H3M21,6H3M21,18H11" style="fill: none; stroke: #6b7280; stroke-linecap: round; stroke-linejoin: round; stroke-width: 2;"></path>
-                                                            </svg>
-                                                        </span>
-                                                    </th>
-
                                                 </tr>
                                             </thead>
                                             <tbody class="bg-white ">
@@ -559,37 +508,42 @@ echo "<script>console.log('Auto Proctor Records: ', " . json_encode($managing_qu
                                                     $sql = "SELECT shortname
                                                         FROM {course}
                                                         WHERE id = :course_id;
-                                                        "
-                                                    ;
+                                                        ";
 
                                                     $params = array('course_id' => $course_id);
                                                     $course_name = $DB->get_field_sql($sql, $params);
 
                                                     $quiz_id = $quiz_record->id;
                                                     echo
-                                                        '<tr>
+                                                    '<tr>
                                                             <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
-                                                                <h1>'. $quiz_record->name .'</h1>
+                                                                <h1>' . $quiz_record->name . '</h1>
                                                                 <span class="font-normal text-[10px] text-center">
-                                                                    <a href="" class="">SHARE</a>
-                                                                    <a href="" class="pl-10">PREVIEW</a>
+                                                                <a href="" class="pl-2">PREVIEW</a>
                                                                 </span>
                                                             </td>
                                                             <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
 
                                                             </td>
                                                             <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                                '. $formatted_date .'
+                                                                ' . $formatted_date . '
                                                             </td>
                                                             <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                                '. $course_name .'
+                                                                ' . $course_name . '
                                                             </td>
                                                             <td class=" whitespace-nowrap">
                                                                 <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
-                                                                    <a href="quizSetting.php?quiz_id='. $quiz_id .'&course_name='. $course_name .'">SETTINGS</a>
+                                                                    <a href="quizSetting.php?quiz_id=' . $quiz_id . '&course_name=' . $course_name . '">SETTINGS</a>
                                                                 </span>
+                                                            </td>
+                                                            <td class=" whitespace-nowrap">
                                                                 <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
                                                                     <a href="">RESULTS</a>
+                                                                </span>
+                                                            </td>
+                                                            <td class=" whitespace-nowrap">
+                                                                <span class="text-blue-900 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
+                                                                    <a href="">Archive</a>
                                                                 </span>
                                                             </td>
                                                         </tr>
