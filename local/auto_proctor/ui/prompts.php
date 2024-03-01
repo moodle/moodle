@@ -261,11 +261,13 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
 
     // If camera monitoring is activated then ask user's cam permission
         if (monitor_camera_activated === 1){
-            navigator.mediaDevices.getUserMedia({ audio: true })
+            navigator.mediaDevices.getUserMedia({ video: true })
             .then(function(stream) {
+                console.log('CAMERA GRANTED');
                 // Your code to handle the audio stream
             })
             .catch(function(err) {
+                console.log('CAMERA DENIED');
                 confirm("Please give camera permission.");
             });
 
