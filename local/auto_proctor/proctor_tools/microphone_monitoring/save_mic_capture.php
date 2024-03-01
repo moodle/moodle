@@ -22,17 +22,20 @@
 */
 require_once(__DIR__ . '/../../../../config.php');
 
+// The destination folder for saving the captured image from the camera.
+// DIRECTTORY PATH: auto_proctor/proctor_tools/evidences/microphone_capture_evidence
+
 if (isset($_FILES['audio']) && isset($_FILES['audio']['tmp_name'])) {
     // Directory where the audio files will be stored
-    $target_dir = "../evidences/microphone_capture_evidence/";
+    $folderPath = "../evidences/microphone_capture_evidence/";
 
     // Create the directory if it doesn't exist
-    if (!file_exists($target_dir)) {
-        mkdir($target_dir, 0777, true); // Create directory recursively
+    if (!file_exists($folderPath)) {
+        mkdir($folderPath, 0777, true); // Create directory recursively
     }
 
     // Check if the directory is writable
-    if (!is_writable($target_dir)) {
+    if (!is_writable($folderPath)) {
         echo "Error: Directory is not writable.";
         exit;
     }
@@ -41,9 +44,9 @@ if (isset($_FILES['audio']) && isset($_FILES['audio']['tmp_name'])) {
     $filename = $_FILES['audio']['name'];
 
     // Set the target location where the audio file will be moved
-    $target_file = $target_dir . $filename;
+    $target_file = $folderPath . $filename;
 
-    // Move the uploaded audio file to the target location
+    // Upload audio file to the target location
     if (move_uploaded_file($_FILES['audio']['tmp_name'], $target_file)) {
         echo "Audio file uploaded successfully.";
     } else {

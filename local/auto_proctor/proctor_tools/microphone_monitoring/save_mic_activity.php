@@ -25,12 +25,15 @@ require_once(__DIR__ . '/../../../../config.php');
 global $DB, $PAGE, $USER, $CFG;
 
 if (isset($_POST['evidence_name_type'])) {
+
+    // Initialize all the necessary details about the record.
     $filename = $_POST['filename'];
     $activity_type = $_POST['evidence_name_type']; // Ensure it's an integer
     $userid = $_POST['userid'];
     $quizid = $_POST['quizid'];
     $quizattempt = $_POST['quizattempt'];
 
+    // Converting the activity_type to an integer to save in the database.
     switch ($activity_type) {
         case 'microphone_permission_denied':
             $activity_type = 11;
@@ -44,15 +47,23 @@ if (isset($_POST['evidence_name_type'])) {
         case 'loud_noise':
             $activity_type = 14;
             break;
-        // default:
     }
     
+    // Create insert instance
     $insertData = new stdClass();
+
+    // Initialize that the userid, quizid, attempt, evidence, and activity_type are the values that are fetch from the monitor_cam.js.
     $insertData->userid = $userid;
     $insertData->quizid = $quizid;
     $insertData->attempt = $quizattempt; // Assuming 'attempt' is a field in 'auto_proctor_activity_report_tb'
     $insertData->evidence = $filename;
     $insertData->activity_type = $activity_type; // You need to set the appropriate value for 'activity_type'
-    $DB->insert_record('auto_proctor_activity_report_tb', $insertData);
+
+    // Insert the activity record
+    $insert_activity = $DB->insert_record('auto_proctor_activity_report_tb', $insertData);
+
+    echo "activity_type: " . $activity_type;
+    echo "</br>";
+    echo "filename: " . $filename;
 }
 ?>
