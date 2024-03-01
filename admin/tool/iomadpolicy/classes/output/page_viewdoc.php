@@ -38,6 +38,7 @@ use single_button;
 use templatable;
 use tool_iomadpolicy\api;
 use tool_iomadpolicy\iomadpolicy_version;
+use iomad;
 
 /**
  * Represents a page for showing the given iomadpolicy document version.
