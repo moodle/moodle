@@ -29,9 +29,15 @@ $filename = $_POST['filename'];
 // DIRECTTORY PATH: auto_proctor/proctor_tools/evidences/camera_capture_evidence
 $folderPath = '../evidences/camera_capture_evidence/';
 
-// Ensuring that the folder exists
+// Create the directory if it doesn't exist
 if (!file_exists($folderPath)) {
     mkdir($folderPath, 0777, true);
+}
+
+// Check if the directory is writable
+if (!is_writable($folderPath)) {
+    echo "Error: Directory is not writable.";
+    exit;
 }
 
 // Since we converted the picture to a data URL, 
