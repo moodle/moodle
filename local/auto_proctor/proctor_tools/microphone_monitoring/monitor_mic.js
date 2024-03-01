@@ -127,7 +127,17 @@ $(document).ready(function () {
 
         // Save recorded audio
         mediaRecorder.onstop = function(e) {
-            if (duration >= 1000){
+
+            let timeLimit;
+
+            if (jsdata.monitor_camera_activated){
+                timeLimit = 500;
+            }
+            else{
+                timeLimit = 1000;
+            }
+
+            if (duration >= timeLimit){
 
                 // Create a Blob object from e.data
                 // chunks is an array containing binary data representing audio. 
@@ -223,6 +233,7 @@ $(document).ready(function () {
         // Update the timer every 10 milliseconds
         intervalId = setInterval(function () {
             milliseconds += 10;
+            console.log(milliseconds);
         updateTimer(milliseconds);
         }, 10);
     }
