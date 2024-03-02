@@ -41,6 +41,7 @@ $enabled = new admin_setting_configcheckbox('factor_iprange/enabled' . $postfix,
     new lang_string('settings:enablefactor', 'tool_mfa'),
     new lang_string('settings:enablefactor_help', 'tool_mfa'), 0);
 $enabled->set_updatedcallback(function () {
+    global $postfix;
     \tool_mfa\manager::do_factor_action('iprange', get_config('factor_iprange', 'enabled' . $postfix) ? 'enable' : 'disable');
 });
 $settings->add($enabled);
