@@ -317,7 +317,7 @@ class company_license_users_form extends \moodleform {
 
                         // Check the userid is valid.
                         if (!\company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
-                            print_error('invaliduserdepartment', 'block_iomad_company_management');
+                            throw new moodle_exception('invaliduserdepartment', 'block_iomad_company_management');
                         }
                         foreach ($courses as $courseid) {
                             $allow = true;
@@ -429,7 +429,7 @@ class company_license_users_form extends \moodleform {
 
                         // Check the userid is valid.
                         if (!\company::check_valid_user($this->selectedcompany, $licensedata->userid, $this->departmentid)) {
-                            print_error('invaliduserdepartment', 'block_iomad_company_management');
+                            throw new moodle_exception('invaliduserdepartment', 'block_iomad_company_management');
                         }
 
                         if (!$licensedata->isusing || $this->license->type == 1 || $this->license->type == 3) {

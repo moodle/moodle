@@ -96,7 +96,7 @@ if (empty($company) && !empty($companyid)) {
 if (!empty($update)) {
     // Need to change something.
     if (!$templatedetails = (array) $DB->get_record('iomad_templates', array('templateid' => $templateid))) {
-        print_error(get_string('invaliddetails', 'block_iomad_company_admin'));
+        throw new moodle_exception(get_string('invaliddetails', 'block_iomad_company_admin'));
     } else {
         if ('shared' == $update) {
             $previousshared = $templatedetails['shared'];

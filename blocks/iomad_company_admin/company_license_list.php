@@ -98,7 +98,7 @@ if ($delete and confirm_sesskey()) {              // Delete a selected company, 
     } else if (data_submitted()) {
         // Actually delete license.
         if (!$DB->delete_records('companylicense', array('id' => $delete))) {
-            print_error('error while deleting license');
+            throw new moodle_exception('error while deleting license');
         }
 
         // Create an event to deal with an parent license allocations.

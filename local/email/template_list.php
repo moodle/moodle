@@ -206,7 +206,7 @@ if ($action == 'delete' && confirm_sesskey()) {
         echo $output->header();
 
         if (!$templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
-            print_error('templatesetnotfound', 'local_email');
+            throw new moodle_exception('templatesetnotfound', 'local_email');
         }
 
         $optionsyes = array('templatesetid' => $templatesetid, 'confirm' => md5($templatesetid), 'sesskey' => sesskey(), 'action' => 'delete');
@@ -230,7 +230,7 @@ if ($action == 'delete' && confirm_sesskey()) {
         echo $output->header();
 
         if (!$templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
-            print_error('templatesetnotfound', 'local_email');
+            throw new moodle_exception('templatesetnotfound', 'local_email');
         }
 
         $optionsyes = array('templatesetid' => $templatesetid, 'confirm' => md5($templatesetid), 'sesskey' => sesskey(), 'action' => 'setdefault');
@@ -251,7 +251,7 @@ if ($action == 'delete' && confirm_sesskey()) {
         echo $output->header();
 
         if (!$templatesetinfo = $DB->get_record('email_templateset', array('id' => $templatesetid))) {
-            print_error('templatesetnotfound', 'local_email');
+            throw new moodle_exception('templatesetnotfound', 'local_email');
         }
 
         $optionsyes = array('templatesetid' => $templatesetid, 'confirm' => md5($templatesetid), 'sesskey' => sesskey(), 'action' => 'unsetdefault');

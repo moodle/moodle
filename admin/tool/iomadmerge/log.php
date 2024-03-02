@@ -55,7 +55,7 @@ $logger = new tool_iomadmerge_logger();
 $log = $logger->getDetail($id);
 
 if (empty($log)) {
-    print_error('wronglogid', 'tool_iomadmerge', new moodle_url('/admin/tool/iomadmerge/index.php')); //aborts execution
+    throw new moodle_exception('wronglogid', 'tool_iomadmerge', new moodle_url('/admin/tool/iomadmerge/index.php')); //aborts execution
 }
 
 $from = $DB->get_record('user', array('id' => $log->fromuserid), 'id, username');

@@ -31,4 +31,4 @@ $success = required_param('success', PARAM_INT);
 \auth_iomadsaml2\auto_login::finish((bool)$success, new moodle_url($url));
 
 // Something strange went wrong, or somebody tried to directly link here.
-print_error('errorinvalidautologin', 'auth_iomadsaml2');
+throw new moodle_exception('errorinvalidautologin', 'auth_iomadsaml2');

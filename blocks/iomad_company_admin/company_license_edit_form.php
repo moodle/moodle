@@ -226,12 +226,12 @@ if ( $mform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL) ) {
 
     // Check the department is valid.
     if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
-        print_error('invaliddepartment', 'block_iomad_company_admin');
+        throw new moodle_exception('invaliddepartment', 'block_iomad_company_admin');
     }
 
     // Check the license is valid.
     if (!empty($licenseid) && !company::check_valid_company_license($companyid, $licenseid)) {
-        print_error('invalidlicense', 'block_iomad_company_admin');
+        throw new moodle_exception('invalidlicense', 'block_iomad_company_admin');
     }
 
     $mform->display();

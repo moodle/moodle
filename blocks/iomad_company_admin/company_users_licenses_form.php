@@ -79,17 +79,17 @@ echo $OUTPUT->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
-    print_error('invaliddepartment', 'block_iomad_company_admin');
+    throw new moodle_exception('invaliddepartment', 'block_iomad_company_admin');
 }
 
 // Check the userid is valid.
 if (!company::check_valid_user($companyid, $userid, $departmentid)) {
-    print_error('invaliduserdepartment', 'block_iomad_company_management');
+    throw new moodle_exception('invaliduserdepartment', 'block_iomad_company_management');
 }
 
 //  Check the license is valid for this company.
 if (!empty($licenseid) && !company::check_valid_company_license($companyid, $licenseid)) {
-    print_error('invalidcompanylicense', 'block_iomad_company_admin');
+    throw new moodle_exception('invalidcompanylicense', 'block_iomad_company_admin');
 }
 
 if ($coursesform->is_cancelled() || optional_param('cancel', false, PARAM_BOOL)) {

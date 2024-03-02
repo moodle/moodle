@@ -31,12 +31,12 @@ $accesskey = required_param('accesskey', PARAM_CLEAN);
 
 // Check the user id still valid.
 if (!$user = $DB->get_record('user', array('id' => $userid, 'deleted' => 0, 'suspended' => 0))) {
-    print_error('invaliduser', 'block_iomad_microlearning');
+    throw new moodle_exception('invaliduser', 'block_iomad_microlearning');
 }
 
 // Check the nugget id still valid.
 if (!$nugget = $DB->get_record('microlearning_nugget', array('id' => $nuggetid))) {
-    print_error('invalidnugget', 'block_iomad_microlearning');
+    throw new moodle_exception('invalidnugget', 'block_iomad_microlearning');
 }
 
 // Are we already logged in?

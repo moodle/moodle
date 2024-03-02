@@ -162,7 +162,7 @@ class IomadMergeTool
                     cli_error('Error: ' . __METHOD__ . ':: ' . get_string('notablemergerclass', 'tool_iomadmerge',
                                     $class));
                 } else {
-                    print_error('notablemergerclass', 'tool_iomadmerge',
+                    throw new moodle_exception('notablemergerclass', 'tool_iomadmerge',
                             new moodle_url('/admin/tool/iomadmerge/index.php'), $class);
                 }
             }
@@ -420,7 +420,7 @@ class IomadMergeTool
                 cli_error('Error: ' . __METHOD__ . ':: ' . get_string('errortransactionsonly', 'tool_iomadmerge',
                                 $CFG->dbtype));
             } else {
-                print_error('errortransactionsonly', 'tool_iomadmerge',
+                throw new moodle_exception('errortransactionsonly', 'tool_iomadmerge',
                         new moodle_url('/admin/tool/iomadmerge/index.php'), $CFG->dbtype);
             }
         }

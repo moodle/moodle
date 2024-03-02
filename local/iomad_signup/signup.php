@@ -36,12 +36,12 @@ if (!isset($CFG->additionalhtmlhead)) {
 $CFG->additionalhtmlhead .= '<meta name="robots" content="noindex" />';
 
 if (empty($CFG->registerauth) && !$CFG->local_iomad_signup_enable) {
-    print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
+    throw new moodle_exception('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
 }
 $authplugin = get_auth_plugin($CFG->registerauth);
 
 if (!$authplugin->can_signup()) {
-    print_error('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
+    throw new moodle_exception('notlocalisederrormessage', 'error', '', 'Sorry, you may not use this page.');
 }
 
 $PAGE->set_url('/login/signup.php');
@@ -49,7 +49,7 @@ $PAGE->set_context(context_system::instance());
 
 // Check if the company being passed is valid.
 if (!$company = $DB->get_record('company', array('id'=> $wantedcompanyid, 'shortname'=>$wantedcompanyshort))) {
-    print_error(get_string('unknown_company', 'local_iomad_signup'));
+    throw new moodle_exception(get_string('unknown_company', 'local_iomad_signup'));
 }
 
 $company->deptid = 0;

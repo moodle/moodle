@@ -162,7 +162,7 @@ if ($suspend and confirm_sesskey()) {
     // Unsuspends a selected company, after confirmation.
     $company = $DB->get_record('company', ['id' => $unsuspend], '*', MUST_EXIST);
     if (!empty($company->parentid) && $DB->get_record('company', array('id' => $company->parentid, 'suspended' => 1))) {
-        print_error('parentcompanysuspended', 'block_iomad_company_admin');
+        throw new moodle_exception('parentcompanysuspended', 'block_iomad_company_admin');
     }
 
     if ($confirm != md5($unsuspend)) {

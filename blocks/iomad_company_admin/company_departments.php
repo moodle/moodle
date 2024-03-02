@@ -116,7 +116,7 @@ if ($mform->is_cancelled()) {
     } else if (isset($data->delete)) {
         // Check the department is valid.
         if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
-            print_error('invaliddepartment', 'block_iomad_company_admin');
+            throw new moodle_exception('invaliddepartment', 'block_iomad_company_admin');
         }
 
         $departmentinfo = $DB->get_record('department', array('id' => $departmentid), '*', MUST_EXIST);
@@ -147,7 +147,7 @@ if ($mform->is_cancelled()) {
 
             // Check the department is valid.
             if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
-                print_error('invaliddepartment', 'block_iomad_company_admin');
+                throw new moodle_exception('invaliddepartment', 'block_iomad_company_admin');
             } else {
                 if (!empty($departmentrecord->parent)) {
                     redirect(new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/company_department_create_form.php',
@@ -171,7 +171,7 @@ echo $output->header();
 
 // Check the department is valid.
 if (!empty($departmentid) && !company::check_valid_department($companyid, $departmentid)) {
-    print_error('invaliddepartment', 'block_iomad_company_admin');
+    throw new moodle_exception('invaliddepartment', 'block_iomad_company_admin');
 }
 
 $mform->display();

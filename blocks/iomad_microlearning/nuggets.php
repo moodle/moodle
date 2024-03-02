@@ -84,7 +84,7 @@ $PAGE->set_button($buttons);
 if ($deleteid) {
     // Check the thread is valid.
     if (!$nuggetinfo = $DB->get_record('microlearning_nugget', array('id' => $deleteid))) {
-        print_error('invalidnugget', 'block_iomad_microlearning');
+        throw new moodle_exception('invalidnugget', 'block_iomad_microlearning');
     }
 
     // Have we confirmed it?

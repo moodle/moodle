@@ -67,13 +67,13 @@ $PAGE->set_button($buttons);
 
 // Check the thread is valid.
 if (!$threadinfo = $DB->get_record('microlearning_thread', array('id' => $threadid))) {
-    print_error('invalidthread', 'block_iomad_microlearning');
+    throw new moodle_exception('invalidthread', 'block_iomad_microlearning');
 }
 
 if ($deleteid && confirm_sesskey() && $confirm == md5($deleteid)) {
     // Check the thread is valid.
     if (!$threadinfo = $DB->get_record('microlearning_thread', array('id' => $threadid))) {
-        print_error('invalidthread', 'block_iomad_microlearning');
+        throw new moodle_exception('invalidthread', 'block_iomad_microlearning');
     }
 
     // Get the list of thread ids which are to be removed..

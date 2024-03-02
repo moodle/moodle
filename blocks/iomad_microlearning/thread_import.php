@@ -72,7 +72,7 @@ $PAGE->set_button($buttons);
 if ($importid) {
     // Check the thread is valid.
     if (!$threadinfo = $DB->get_record('microlearning_thread', array('id' => $importid))) {
-        print_error('invalidthread', 'block_iomad_microlearning');
+        throw new moodle_exception('invalidthread', 'block_iomad_microlearning');
     }
 
     // Have we confirmed it?

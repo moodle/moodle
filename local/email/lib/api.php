@@ -200,7 +200,7 @@ class EmailTemplate {
         $this->sender = $this->get_user($sender);
 
         if (!isset($this->user->email)) {
-            print_error("No user was specified or the specified user has no email to send $templatename to.");
+            throw new moodle_exception("No user was specified or the specified user has no email to send $templatename to.");
         }
 
         if (isset($this->user->id) && !isset($this->user->profile)) {
@@ -924,7 +924,7 @@ class EmailTemplate {
             // If $course is an integer, it is a course id, get the object from database.
             if (is_int($course) || is_string($course)) {
                 if (!$course = $DB->get_record('course', array('id' => $course), '*', MUST_EXIST)) {
-                    print_error('Course ID was incorrect');
+                    throw new moodle_exception('Course ID was incorrect');
                 }
             }
 
@@ -958,7 +958,7 @@ class EmailTemplate {
                 if (isset($email[$templatename])) {
                     $template = (object) $email[$templatename];
                 } else {
-                    print_error("Email template '$templatename' not found");
+                    throw new moodle_exception("Email template '$templatename' not found");
                 }
             }
         }

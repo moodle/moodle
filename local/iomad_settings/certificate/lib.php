@@ -88,7 +88,7 @@ function iomad_settings_create_serial_number($certificate, $certrecord, $course,
                 $serialobj->timecreated = time();
             } else {
                 // This shouldn't happen.
-                print_error("Certificate Serial Number couldn't be created");
+                throw new moodle_exception("Certificate Serial Number couldn't be created");
             }
         }
     }

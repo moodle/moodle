@@ -229,7 +229,7 @@ class iomad_approve_access {
             if (!$trainingeventrecord->id = $DB->insert_record('trainingevent_users', $trainingeventrecord)) {
 
                 // Throw an error if that doesn't work.
-                print_error(get_string('updatefailed', 'block_iomad_approve_access'));
+                throw new moodle_exception(get_string('updatefailed', 'block_iomad_approve_access'));
             }
             $currentrecord = $trainingeventrecord;
         }

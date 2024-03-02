@@ -80,7 +80,7 @@ $PAGE->set_button($buttons);
 // Delete any valid groups.
 if ($deleteid && confirm_sesskey()) {
     if (!$group = $DB->get_record('microlearning_thread_group', array('id' => $deleteid))) {
-        print_error('nogroup', 'block_iomad_microlearning');
+        throw new moodle_exception('nogroup', 'block_iomad_microlearning');
     }
 
     if ($confirm == md5($deleteid)) {

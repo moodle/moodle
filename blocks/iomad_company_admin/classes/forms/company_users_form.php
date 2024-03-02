@@ -114,7 +114,7 @@ class company_users_form extends moodleform {
                      if (!$company->check_usercount(count($userstoassign))) {
                         $maxusers = $company->get('maxusers');
                         $returnurl = new moodle_url('/blocks/iomad_company_admin/company_users_form.php');
-                        print_error('maxuserswarning', 'block_iomad_company_admin', $returnurl, $maxusers);
+                        throw new moodle_exception('maxuserswarning', 'block_iomad_company_admin', $returnurl, $maxusers);
                     }
 
                     // Process them.

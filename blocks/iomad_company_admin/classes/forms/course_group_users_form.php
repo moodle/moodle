@@ -224,7 +224,7 @@ class course_group_users_form extends moodleform {
 
                 // Check the userid is valid.
                 if (!company::check_valid_user($this->selectedcompany, $adduser->id, $this->departmentid)) {
-                    print_error('invaliduserdepartment', 'block_iomad_company_management');
+                    throw new moodle_exception('invaliduserdepartment', 'block_iomad_company_management');
                 }
 
                 if ($allow) {
@@ -244,7 +244,7 @@ class course_group_users_form extends moodleform {
                 foreach ($userstounassign as $removeuser) {
                     // Check the userid is valid.
                     if (!company::check_valid_user($this->selectedcompany, $removeuser->id, $this->departmentid)) {
-                        print_error('invaliduserdepartment', 'block_iomad_company_management');
+                        throw new moodle_exception('invaliduserdepartment', 'block_iomad_company_management');
                     }
 
                     company_user::unassign_group($this->selectedcompany, $removeuser, $this->courseid, $this->groupid);

@@ -116,7 +116,7 @@ if ($canedit && $PAGE->user_allowed_editing()) {
 // Delete any valid courses.
 if (!empty($deleteid)) {
     if (!$course = $DB->get_record('course', array('id' => $deleteid))) {
-        print_error('invalidcourse');
+        throw new moodle_exception('invalidcourse');
     }
     if (confirm_sesskey() && $confirm == md5($deleteid)) {
         $destroy = optional_param('destroy', 0, PARAM_INT);
@@ -189,7 +189,7 @@ if (!empty($deleteid)) {
 // Hide/show courses.
 if(!empty($hideid) && iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {    
     if (!$course = $DB->get_record('course', array('id' => $hideid))) {
-        print_error('invalidcourse');
+        throw new moodle_exception('invalidcourse');
     }
     if (confirm_sesskey()) {
     	  $record = get_course($hideid);
@@ -199,7 +199,7 @@ if(!empty($hideid) && iomad::has_capability('block/iomad_company_admin:managecou
 }
 if(!empty($showid) && iomad::has_capability('block/iomad_company_admin:managecourses', $companycontext)) {
     if (!$course = $DB->get_record('course', array('id' => $showid))) {
-        print_error('invalidcourse');
+        throw new moodle_exception('invalidcourse');
     } 
     if (confirm_sesskey()) {
     	  $record = get_course($showid);

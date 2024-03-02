@@ -75,10 +75,10 @@ if ($id == -1) {
     // Editing existing user.
     iomad::require_capability('block/iomad_company_admin:editusers', $systemcontext);
     if (!$user = $DB->get_record('user', array('id' => $id))) {
-        print_error('invaliduserid');
+        throw new moodle_exception('invaliduserid');
     }
     if (!company::check_canedit_user($companyid, $id)) {
-        print_error('invaliduserid');
+        throw new moodle_exception('invaliduserid');
     }
 }
 
@@ -88,7 +88,7 @@ if ($user->id != -1 and is_mnet_remote_user($user)) {
 }
 
 if (isguestuser($user->id)) { // The real guest user can not be edited.
-    print_error('guestnoeditprofileother');
+    throw new moodle_exception('guestnoeditprofileother');
 }
 
 if ($user->deleted) {
@@ -198,14 +198,14 @@ if ($usernew = $userform->get_data()) {
         if (! $authplugin->user_update($user, $userform->get_data())) {
             // Auth update failed, rollback for moodle.
             $DB->update_record('user', $user);
-            print_error('cannotupdateuseronexauth', '', '', $user->auth);
+            throw new moodle_exception('cannotupdateuseronexauth', '', '', $user->auth);
         }
 
         // Set new password if specified.
         if (!empty($usernew->newpassword)) {
             if ($authplugin->can_change_password()) {
                 if (!$authplugin->user_update_password($usernew, $usernew->newpassword)) {
-                    print_error('cannotupdatepasswordonextauth', '', '', $usernew->auth);
+                    throw new moodle_exception('cannotupdatepasswordonextauth', '', '', $usernew->auth);
                 } else {
                     EmailTemplate::send('password_update', array('user' => $usernew));
                 }
@@ -249,7 +249,7 @@ if ($usernew = $userform->get_data()) {
     if ($usercreated) {
         // Set default message preferences.
         if (!message_set_default_message_preferences($usernew)) {
-            print_error('cannotsavemessageprefs', 'message');
+            throw new moodle_exception('cannotsavemessageprefs', 'message');
         }
         \core\event\user_updated::create_from_userid($usernew->id)->trigger();
     } else {

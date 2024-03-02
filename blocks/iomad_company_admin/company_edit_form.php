@@ -94,7 +94,7 @@ if (!$new) {
         // Can this user manage this parentid?
         if (!iomad::has_capability('block/iomad_company_admin:company_add', $companycontext) &&
             !$DB->get_record('company_users', array('companyid' => $parentid, 'userid' => $USER->id, 'managertype' => 1))) {
-            print_error(get_string('invalidcompany', 'block_iomad_company_admin'), 'error', new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php'));
+            throw new moodle_exception(get_string('invalidcompany', 'block_iomad_company_admin'), 'error', new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php'));
             die;
         }
 
