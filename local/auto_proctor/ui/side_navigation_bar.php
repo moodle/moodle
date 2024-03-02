@@ -121,14 +121,28 @@ $num_of_courses = count($course_ids);
                                 </button>
                                 <ul id="dropdown-crud" class="space-y-2 py-2 hidden ">
                                     <?php
+                                        // Get the course_category id for BSIT courses
+                                        $name = 'Bachelor of Science in Information Technology (Boni Campus)';
+                                        $params = array('name' => $name);
+                                        $sql = "
+                                            SELECT id
+                                            FROM {course_categories}
+                                            WHERE name = :name
+                                        ";
+
+                                        $course_category_id = $DB->get_fieldset_sql($sql, $params);
+
+                                        echo "<script>console.log('CATEGORY ID: ', " . $course_category_id[0] . ");</script>";
+
                                         for ($course = 0; $course < $num_of_courses; $course++) {
 
                                             $sql = "SELECT shortname
                                                 FROM {course}
-                                                WHERE id = :course_id;
+                                                WHERE id = :course_id
+                                                AND category = :course_category_id;
                                             ";
 
-                                            $params = array('course_id' => $course_ids[$course]);
+                                            $params = array('course_id' => $course_ids[$course], 'course_category_id' => $course_category_id[0]);
                                             $course_name = $DB->get_field_sql($sql, $params);
                                             
                                             echo '
