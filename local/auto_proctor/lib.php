@@ -281,10 +281,25 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
     // Get the user ID
     $userid = $USER->id;
 
+    // Get the course_category id for BSIT courses
+    $name = 'Bachelor of Science in Information Technology (Boni Campus)';
+    $params = array('name' => $name);
+    $sql = "
+        SELECT id
+        FROM {course_categories}
+        WHERE name = :name
+    ";
+
+    $course_category_id = $DB->get_fieldset_sql($sql, $params);
+
     // Loop through course IDs and check if the user manages any courses.
     // If the user manages a course, add the 'Auto Proctor Dashboard' button to the navigation bar.
+
     foreach ($all_course_id as $course_id) {
-        if (has_capability('moodle/course:manageactivities', context_course::instance($course_id->id), $USER->id)) {
+        if (has_capability('moodle/course:manageactivities', context_course::instance($course_id->id), $USER->id) && has_capability('moodle/course:manageactivities', context_course::instance($course_category_id[0]), $USER->id)) {
+
+        //if (has_capability('moodle/course:manageactivities', $course_context, $USER->id) && has_capability('moodle/course:manageactivities', $category_context, $USER->id)) {
+
             // Adding the auto-proctor in navigation bar ==================================
             $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/ui/auto_proctor_dashboard.php');
             $main_node->nodetype = 1;
