@@ -659,7 +659,7 @@ function profile_get_user_fields_with_data(int $userid): array {
     $params = array('userid' => $userid);
 
     // IOMAD - Filter the categories
-    if (!during_initial_install()) {
+    if ($DB->get_manager()->table_exists('company')) {
         $companyid = iomad::get_my_companyid(context_system::instance(), false);
         $sql .= " WHERE (uif.categoryid IN (
                   SELECT profileid FROM {company} where id = :companyid)

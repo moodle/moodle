@@ -152,6 +152,10 @@ class company extends context {
             return $context;
         }
 
+        if (!$DB->get_manager()->table_exists('company')) {
+            return \context_system::instance();
+        }
+
         if (!$record = $DB->get_record('context', array('contextlevel' => self::LEVEL, 'instanceid' => $companyid))) {
             if ($company = $DB->get_record('company', array('id' => $companyid), 'id', $strictness)) {
                 $record = context::insert_context_record(self::LEVEL, $company->id, '/'.SYSCONTEXTID, 0);
@@ -173,6 +177,10 @@ class company extends context {
     protected static function create_level_instances() {
         global $DB;
 
+        if (!$DB->get_manager()->table_exists('company')) {
+            return;
+        }
+
         $sql = "SELECT " . self::LEVEL . ", c.id
                   FROM {company} c
                  WHERE 1=1
@@ -192,12 +200,22 @@ class company extends context {
      * @return string cleanup SQL
      */
     protected static function get_cleanup_sql() {
-        $sql = "
+        global $DB;
+
+        if (!$DB->get_manager()->table_exists('company')) {
+            $sql = "
                   SELECT cx.*
                     FROM {context} cx
-         LEFT OUTER JOIN {company} c ON (cx.instanceid = c.id)
-                   WHERE c.id IS NULL AND cx.contextlevel = " . self::LEVEL . "
-               ";
+                    WHERE 1=2";
+        } else {
+
+            $sql = "
+                      SELECT cx.*
+                        FROM {context} cx
+             LEFT OUTER JOIN {company} c ON (cx.instanceid = c.id)
+                       WHERE c.id IS NULL AND cx.contextlevel = " . self::LEVEL . "
+                   ";
+        }
 
         return $sql;
     }

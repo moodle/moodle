@@ -32,6 +32,11 @@ class observer {
     public static function user_loggedin($event) {
         global $DB;
 
+        // Does the table exist?
+        if (!$DB->get_manager()->table_exists('local_report_user_logins')) {
+            return;
+        }
+
         // Get the relevant event date (course_completed event).
         $data = $event->get_data();
         $userid = $data['userid'];

@@ -88,7 +88,8 @@ $infomsg = '';
 $errorcode = 0;
 
 // IOMAD - Set the theme if the server hostname matches one of ours.
-if ($company = $DB->get_record('company', array('hostname' => $_SERVER["SERVER_NAME"]))) {
+if ($DB->get_manager()->table_exists('company') &&
+    $company = $DB->get_record('company', array('hostname' => $_SERVER["SERVER_NAME"]))) {
     $hascompanybyurl = true;
     // set the current editing company to be this.
     $SESSION->currenteditingcompany = $company->id;
@@ -260,7 +261,8 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
         }
 
         // Check if the company in the session is still correct.
-        if (!has_capability('block/iomad_company_admin:company_view_all', context_system::instance()) &&
+        if ($DB->get_manager()->table_exists('company') &&
+            !has_capability('block/iomad_company_admin:company_view_all', context_system::instance()) &&
             !empty($SESSION->currenteditingcompany)) {
             $currenteditingcompany = $SESSION->currenteditingcompany;
             $currentcompany = $SESSION->company;
@@ -292,7 +294,8 @@ if ($frm and isset($frm->username)) {                             // Login WITH 
 
         // IOMAD
         // Update the company for the user if there is one.
-        if (!empty($SESSION->currenteditingcompany)) {
+        if ($DB->get_manager()->table_exists('company') &&
+            !empty($SESSION->currenteditingcompany)) {
             $DB->set_field('company_users', 'lastused', time(), ['userid' => $user->id, 'companyid' => $SESSION->currenteditingcompany]);
         }
 

@@ -56,10 +56,12 @@ class iomad {
      * @returns int
      */
     public static function get_my_companyid($context, $required=true) {
-        global $SESSION, $USER;
+        global $SESSION, $USER, $DB;
 
         // are we logged in?
-        if (during_initial_install() || (empty($USER->id) && empty($SESSION->currenteditingcompany))) {
+        if (during_initial_install() ||
+            (empty($USER->id) && empty($SESSION->currenteditingcompany)) ||
+            !$DB->get_manager()->table_exists('company')) {
             return -1;
         }
 
@@ -410,6 +412,11 @@ class iomad {
         global $DB, $USER;
 
         $contextsystem = context_system::instance();
+
+        // if we aren't already set up - do nothing.
+        if (!$DB->get_manager()->table_exists('company')) {
+            return $categories;
+        }
 
         // Check if its the client admin.
         if (self::has_capability('block/iomad_company_admin:company_view_all', $contextsystem) && empty($userid)) {
