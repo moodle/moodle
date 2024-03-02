@@ -1,10 +1,3 @@
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-<title>e-RTU</title>
 
 <main>
     <div class="px-4 pt-6">
@@ -31,8 +24,8 @@
                             </form>
                         </div>
                     </div>
-                    <div class="flex items-center pl-2">
-                        <button id="dropdownDefault" data-dropdown-toggle="dropdown" class="mb-6 sm:mb-0 mr-24 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 " type="button">
+                    <div class="flex items-center pl-2 mb-2">
+                        <button id="dropdownDefault" data-dropdown-toggle="dropdown" class=" sm:mb-0 mr-24 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 " type="button">
                             Filter
                             <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
