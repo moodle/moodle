@@ -262,15 +262,29 @@ foreach ($menus as $key => $menu) {
 }
 
 // Remove empty ones.
+$doreset = false;
+$doselected = false;
 foreach ($panes as $paneid => $paneentry) {
     if (empty($paneentry['items'])) {
         unset($panes[$paneid]);
+        $doreset = true;
+        if ($tabs[$paneid - 1]['selected']) {
+            $doselected = true;
+        }
         unset($tabs[$paneid - 1]);
     }
 }
 
 // Reset the tabs array in case something was removed - as we need to order starting from 0.
-$tabs = array_values($tabs);
+if ($doreset) {
+    $tabs = array_values($tabs);
+}
+
+// Set default selected in case that was removed.
+if ($doselected) {
+    $tabs[0]['selected'] = true;
+    $panes[array_key_first($panes)]['selected'] =true;
+}
 
 // Logo.
 $logourl = $renderer->image_url('iomadlogo', 'block_iomad_company_admin');
@@ -340,7 +354,6 @@ if (!$companyselect->onecompany) {
 
 // Render block.
 $adminblock = new block_iomad_company_admin\output\adminblock($logourl, $companyselect, $tabs, $panes);
-
 
 echo $output->header();
 echo $renderer->render($adminblock);
