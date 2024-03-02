@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$plugin->release  = '4.2.2 (Build: 20230814)'; // Human-friendly version name
+$plugin->release  = '4.3.3+ (Build: 20240301)'; // Human-friendly version name
 $plugin->version  = 2016120600;
 $plugin->requires = 2019052000;
 $plugin->component  = 'local_report_attendance';
