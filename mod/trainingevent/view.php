@@ -53,6 +53,7 @@ if (! $course = $DB->get_record("course", array("id" => $cm->course))) {
 
 require_course_login($course, false, $cm);
 
+$systemcontext = context_system::instance();
 $companyid = iomad::get_my_companyid($systemcontext);
 $companycontext = \core\context\company::instance($companyid);
 
@@ -72,9 +73,7 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         $context = context_course::instance($event->course);
         require_login($event->course); // Adds to $PAGE, creates $OUTPUT.
         $PAGE->set_url($url);
-        $PAGE->set_pagelayout('mod');
         $PAGE->set_title($event->name);
-        $PAGE->set_heading($SITE->fullname);
         $PAGE->set_context(context_module::instance($id));
 
         // Get the associated department id.
@@ -1142,7 +1141,6 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
 
         if (!empty($location->description)) {
             $editoroptions = array('maxfiles' => EDITOR_UNLIMITED_FILES, 'maxbytes'=>$CFG->maxbytes, 'trusttext'=>false, 'noclean'=>true);
-            $systemcontext = context_system::instance();
             $editoroptions['context'] = $systemcontext;
             $editoroptions['subdirs'] = file_area_contains_subdirs($systemcontext, 'classroom', 'description', 0);
 

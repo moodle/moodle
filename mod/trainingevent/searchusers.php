@@ -70,15 +70,15 @@ if ($email) {
 $params['deptid'] = $departmentid;
 $params['eventid'] = $eventid;
 
-require_login($event->course); // Adds to $PAGE, creates $output.
-
-$companyid = iomad::get_my_companyid($systemcontext);
-$companycontext = \core\context\company::instance($companyid);
-
 if (!$event = $DB->get_record('trainingevent', array('id' => $eventid))) {
     print_error('invalid event ID');
 }
 
+require_login($event->course); // Adds to $PAGE, creates $output.
+
+$systemcontext = context_system::instance();
+$companyid = iomad::get_my_companyid($systemcontext);
+$companycontext = \core\context\company::instance($companyid);
 if (!$cm = get_coursemodule_from_instance('trainingevent', $event->id, $event->course)) {
     print_error('invalid coursemodule ID');
 }
@@ -87,9 +87,7 @@ if (!$cm = get_coursemodule_from_instance('trainingevent', $event->id, $event->c
 $url = new moodle_url('/course/view.php', array('id' => $event->course));
 $context = context_course::instance($event->course);
 $PAGE->set_url($url);
-$PAGE->set_pagelayout('mod');
 $PAGE->set_title($event->name);
-$PAGE->set_heading($SITE->fullname);
 $baseurl  = new moodle_url('searchusers.php', array('eventid' => $eventid));
 
 // get output renderer
