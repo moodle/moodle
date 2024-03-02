@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
-    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-    <title>Home-Dashboard</title>
-</head>
 
 <main>
                 <div class="p-4 bg-white block sm:flex items-center justify-between  lg:mt-1.5 ">
@@ -48,7 +37,7 @@
                 </div>
                 <div class="p-4 bg-white">
 
-                    <div class=" grid w-full grid-cols-1 gap-4 xl:grid-cols-3 2xl:grid-cols-3">
+                    <div class=" grid w-full grid-cols-3 gap-4 xl:grid-cols-3 2xl:grid-cols-3">
                         <div
                             class="items-center justify-between p-8 bg-[#FFD66E] border border-gray-200 rounded-lg shadow-sm sm:flex ">
                             <span class="flex justify-center items-center">
