@@ -5,21 +5,18 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  }}
 
-<div class="row m-t-2 p-2 border border-secondary rounded">
-   {{# companyselect.onecompany }}
-       <div class="alert alert-info">
-           {{#str }}currentcompany, block_iomad_company_admin,{{ companyselect.companyname }}{{/str }}
-       </div>
-   {{/ companyselect.onecompany }}
-   {{^ companyselect.onecompany }}
+{{# companyselect.onecompany }}
+{{/ companyselect.onecompany }}
+{{^ companyselect.onecompany }}
+   <div class="row m-t-2 p-2 border border-secondary rounded">
        <div class="col-lg-6 col-md-12">
            {{{ companyselect.selectform }}}
        </div>
        <div class="col-lg-6 col-md-12">
            {{{ companyselect.suspended }}}
        </div>
-   {{/ companyselect.onecompany }}
-</div>
+   </div>
+{{/ companyselect.onecompany }}
 
 <div class="m-t-2 iomad_company_admin ">
     {{> block_iomad_company_admin/tabs }}

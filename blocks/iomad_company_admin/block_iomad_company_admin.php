@@ -307,6 +307,17 @@ class block_iomad_company_admin extends block_base {
             return $this->content;
         }
 
+        // Remove empty ones.
+        foreach ($panes as $paneid => $paneentry) {
+            if (empty($paneentry['items'])) {
+                unset($panes[$paneid]);
+                unset($tabs[$paneid - 1]);
+            }
+        }
+
+        // Reset the tabs array in case something was removed - as we need to order starting from 0.
+        $tabs = array_values($tabs);
+
         // Logo.
         $logourl = $renderer->image_url('iomadlogo', 'block_iomad_company_admin');
 
