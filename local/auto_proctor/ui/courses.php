@@ -1,0 +1,242 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
+<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+<title>e-RTU</title>
+
+<main>
+    <div class="px-4 pt-6">
+        <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm  sm:p-6 ">
+            <!-- Card header -->
+            <div class="items-center justify-between lg:flex">
+                <div class="mb-4 lg:mb-0">
+                    <h3 class="mb-2 text-xl font-bold text-gray-900 text-gray-800">DATA STRUCTURE</h3>
+                    <span class="text-base font-normal text-gray-500 ">You can see all your tests below</span>
+                </div>
+                <div class="items-center sm:flex">
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <form action="#" method="GET" class=" lg:pl-3">
+                                <label for="topbar-search" class="sr-only">Search</label>
+                                <div class="relative mt-1 lg:w-96">
+                                    <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-500 " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                            <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </div>
+                                    <input type="text" name="text" id="topbar-search" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2.5  text-white " placeholder="Search">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="flex items-center pl-2">
+                        <button id="dropdownDefault" data-dropdown-toggle="dropdown" class="mb-6 sm:mb-0 mr-24 inline-flex items-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-4 py-2.5 " type="button">
+                            Filter
+                            <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </button>
+
+                        <!-- Dropdown menu -->
+                        <div id="dropdown" class="z-10 hidden w-70 p-3 bg-white rounded-lg shadow ">
+                            <h6 class="mb-2 text-sm font-medium text-gray-900">
+                                Status
+                            </h6>
+                            <ul class="space-y-2 text-sm " aria-labelledby="dropdownDefault">
+                                <li class="inline-block">
+                                    <input id="apple" type="checkbox" value="" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                    <label for="apple" class="ml-2 text-sm font-medium text-gray-900">
+                                        Completed
+                                    </label>
+                                </li>
+                                <li class="inline-block pl-2">
+                                    <input id="fitbit" type="checkbox" value="" checked class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                    <label for="fitbit" class="ml-2 text-sm font-medium text-gray-900">
+                                        In progress
+                                        </label>
+                                </li>
+                                <div>
+                                    <h6 class="mb-2 text-sm font-medium text-gray-900">
+                                        Date Created
+                                    </h6>
+                                    <div id="accordion-flush" data-accordion="collapse" data-active-classes="text-black " data-inactive-classes="text-gray-500">
+                                        <div id="price-body" class="" aria-labelledby="price-heading">
+                                            <div class="flex items-center py-2 space-x-3 font-light border-b border-gray-200 dark:border-gray-600">
+                                                <div class="relative">
+                                                    <input type="date" id="datepicker-from" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="">
+                                                </div>
+                                                <div class="relative">
+                                                    <input type="date" id="datepicker-to" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="hell">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="flex flex-col mt-6">
+                <div class="overflow-x-auto rounded-lg">
+                    <div class="inline-block min-w-full align-middle">
+                        <div class="overflow-hidden shadow sm:rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500 flex items-center">
+                                            NAME
+                                            <span class="ml-2">
+                                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                    <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                </svg>
+                                            </span>
+                                        </th>
+                                        <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500">
+                                            Status
+                                        </th>
+                                        <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500 flex items-center">
+                                            Date Created
+                                            <span class="ml-2">
+                                                <svg width="20px" height="20px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M6 9.65685L7.41421 11.0711L11.6569 6.82843L15.8995 11.0711L17.3137 9.65685L11.6569 4L6 9.65685Z" fill="#6b7280" />
+                                                    <path d="M6 14.4433L7.41421 13.0291L11.6569 17.2717L15.8995 13.0291L17.3137 14.4433L11.6569 20.1001L6 14.4433Z" fill="#6b7280" />
+                                                </svg>
+                                            </span>
+                                        </th>
+                                        <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500">
+                                            COURSE
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white ">
+                                    <?php
+                                        foreach ($managing_quizzes as $quiz_record) {
+                                            $timestamp = $quiz_record->timecreated;
+                                            $formatted_date = date("d M Y", $timestamp);
+
+                                            // Select monitor_microphone state
+                                            $course_id = $quiz_record->course;
+                                            $sql = "SELECT shortname
+                                                    FROM {course}
+                                                    WHERE id = :course_id;
+                                            ";
+
+                                            $params = array('course_id' => $course_id);
+                                            $course_name = $DB->get_field_sql($sql, $params);
+
+                                            $quiz_id = $quiz_record->id;
+                                            echo
+                                                '<tr>
+                                                    <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
+                                                        <h1>' . $quiz_record->name . '</h1>
+                                                        <span class="font-normal text-[10px] text-center">
+                                                            <a href="" class="pl-2">PREVIEW</a>
+                                                        </span>
+                                                    </td>
+                                                    <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
+                                                    </td>
+                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                        ' . $formatted_date . '
+                                                    </td>
+                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                        ' . $course_name . '
+                                                    </td>
+                                                    <td class=" whitespace-nowrap">
+                                                        <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
+                                                            <a href="quizSetting.php?quiz_id=' . $quiz_id . '&course_name=' . $course_name . '">SETTINGS</a>
+                                                        </span>
+                                                    </td>
+                                                    <td class=" whitespace-nowrap">
+                                                        <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
+                                                            <a href="">RESULTS</a>
+                                                        </span>
+                                                    </td>
+                                                    <td class=" whitespace-nowrap">
+                                                        <span class="text-blue-900 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
+                                                            <a href="">Archive</a>
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ';
+                                        }
+                                    ?>
+                                                <!-- 2 -->
+                                                <!-- <tr class="bg-gray-100">
+                                                    <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
+                                                        <h1>TEST NAME #2</h1>
+                                                        <span class="font-normal text-[10px] text-center">
+                                                            <a href="" class="">SHARE</a>
+                                                            <a href="" class="pl-10">PREVIEW</a>
+                                                        </span>
+                                                    </td>
+                                                    <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
+
+                                                    </td>
+                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                        08 Dec 2023
+                                                    </td>
+                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                        course 2
+                                                    </td>
+                                                    <td class=" whitespace-nowrap">
+                                                        <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
+                                                            <a href="quizSetting.php">SETTINGS</a>
+                                                        </span>
+                                                        <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
+                                                            <a href="">RESULTS</a>
+                                                        </span>
+                                                    </td>
+                                                </tr> -->
+    
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- card footer -->
+            <div class="sticky bottom-0 right-0 items-center w-full p-4 bg-white border-t border-gray-200 sm:flex sm:justify-between d">
+                <!-- note: do not delete this haha -->
+                <div class="flex items-center mb-4 sm:mb-0">
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center mb-4 sm:mb-0">
+                        <!-- previous 1 -->
+                        <a href="#" class="inline-flex border justify-center p-1 mr-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100">
+                            <svg class="w-7 h-7 transform -scale-x-1" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M12.8536 11.1464C13.0488 11.3417 13.0488 11.6583 12.8536 11.8536C12.6583 12.0488 12.3417 12.0488 12.1464 11.8536L8.14645 7.85355C7.95118 7.65829 7.95118 7.34171 8.14645 7.14645L12.1464 3.14645C12.3417 2.95118 12.6583 2.95118 12.8536 3.14645C13.0488 3.34171 13.0488 3.65829 12.8536 3.85355L9.20711 7.5L12.8536 11.1464ZM6.85355 11.1464C7.04882 11.3417 7.04882 11.6583 6.85355 11.8536C6.65829 12.0488 6.34171 12.0488 6.14645 11.8536L2.14645 7.85355C1.95118 7.65829 1.95118 7.34171 2.14645 7.14645L6.14645 3.14645C6.34171 2.95118 6.65829 2.95118 6.85355 3.14645C7.04882 3.34171 7.04882 3.65829 6.85355 3.85355L3.20711 7.5L6.85355 11.1464Z" fill="#6b7280" />
+                            </svg>
+                        </a>
+                        <!-- previous 2 -->
+                        <a href="#" class="inline-flex border justify-center p-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100">
+                            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <!-- next 1 -->
+                        <a href="#" class="inline-flex justify-center border  p-1 mr-1 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100">
+                            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </a>
+                        <!-- next 2 -->
+                        <a href="#" class="inline-flex justify-center border  p-1 mr-2 text-gray-500 rounded cursor-pointer hover:text-gray-900 hover:bg-gray-100">
+                            <svg class="w-7 h-7" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M2.14645 11.1464C1.95118 11.3417 1.95118 11.6583 2.14645 11.8536C2.34171 12.0488 2.65829 12.0488 2.85355 11.8536L6.85355 7.85355C7.04882 7.65829 7.04882 7.34171 6.85355 7.14645L2.85355 3.14645C2.65829 2.95118 2.34171 2.95118 2.14645 3.14645C1.95118 3.34171 1.95118 3.65829 2.14645 3.85355L5.79289 7.5L2.14645 11.1464ZM8.14645 11.1464C7.95118 11.3417 7.95118 11.6583 8.14645 11.8536C8.34171 12.0488 8.65829 12.0488 8.85355 11.8536L12.8536 7.85355C13.0488 7.65829 13.0488 7.34171 12.8536 7.14645L8.85355 3.14645C8.65829 2.95118 8.34171 2.95118 8.14645 3.14645C7.95118 3.34171 7.95118 3.65829 8.14645 3.85355L11.7929 7.5L8.14645 11.1464Z" fill="#6b7280" />
+                            </svg>
+                        </a>
+                        <span class="text-sm font-normal text-gray-500 ">Page<span class="font-semibold text-gray-900 ">1 of 1 </span>| <span class="font-semibold text-gray-900 pr-1 ">Go to Page</span></span>
+                        <input type="text" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-gray-500 focus:border-gray-500 block w-12  p-2.5  " placeholder="1">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+    
