@@ -38,7 +38,7 @@ $companycontext = \core\context\company::instance($companyid);
 $company = new company($companyid);
 
 // Can I do this?
-//iomad::require_capability('block/iomad_approve_access:approve', $companycontext);
+iomad::require_capability('block/iomad_approve_access:approve', $companycontext);
 
 $PAGE->set_context($companycontext);
 $baseurl = new moodle_url('/blocks/iomad_approve_access/approve.php');
