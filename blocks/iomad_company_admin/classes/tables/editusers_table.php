@@ -424,10 +424,10 @@ class editusers_table extends table_sql {
             $this->usertypeselect[10] = get_string('companymanager', 'block_iomad_company_admin');
         }
         if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $companycontext)) {
-            $this->usertypeselect[21] = get_string('departmentmanager', 'block_iomad_company_admin');
+            $this->usertypeselect[20] = get_string('departmentmanager', 'block_iomad_company_admin');
         }
         if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $companycontext)) {
-            $this->usertypeselect[41] = get_string('companyreporter', 'block_iomad_company_admin');
+            $this->usertypeselect[40] = get_string('companyreporter', 'block_iomad_company_admin');
         }
         if (!$CFG->iomad_autoenrol_managers && iomad::has_capability('block/iomad_company_admin:assign_educator', $companycontext)) {
             $this->usertypeselect[1] = get_string('educator', 'block_iomad_company_admin');

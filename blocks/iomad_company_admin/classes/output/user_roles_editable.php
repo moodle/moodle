@@ -157,13 +157,13 @@ class user_roles_editable extends \core\output\inplace_editable {
         // Deal with role selector.
         $usertypeselect = ['0' => get_string('user', 'block_iomad_company_admin')];
         if (iomad::has_capability('block/iomad_company_admin:assign_company_manager', $companycontext)) {
-            $usertypeselect[11] = get_string('companymanager', 'block_iomad_company_admin');
+            $usertypeselect[10] = get_string('companymanager', 'block_iomad_company_admin');
         }
         if (iomad::has_capability('block/iomad_company_admin:assign_department_manager', $companycontext)) {
-            $usertypeselect[21] = get_string('departmentmanager', 'block_iomad_company_admin');
+            $usertypeselect[20] = get_string('departmentmanager', 'block_iomad_company_admin');
         }
         if (iomad::has_capability('block/iomad_company_admin:assign_company_reporter', $companycontext)) {
-            $usertypeselect[41] = get_string('companyreporter', 'block_iomad_company_admin');
+            $usertypeselect[40] = get_string('companyreporter', 'block_iomad_company_admin');
         }
         if (!$CFG->iomad_autoenrol_managers && iomad::has_capability('block/iomad_company_admin:assign_educator', $companycontext)) {
             $usertypeselect[1] = get_string('educator', 'block_iomad_company_admin');
