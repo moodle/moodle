@@ -38,7 +38,7 @@ $companycontext = \core\context\company::instance($companyid);
 $company = new company($companyid);
 
 // Can I do this?
-iomad::require_capability('block/iomad_approve_access:approve', $companycontext);
+//iomad::require_capability('block/iomad_approve_access:approve', $companycontext);
 
 $PAGE->set_context($companycontext);
 $baseurl = new moodle_url('/blocks/iomad_approve_access/approve.php');
@@ -55,7 +55,15 @@ if (is_siteadmin($USER->id)) {
     $approvaltype = 'both';
 } else {
     // What type of manager am I?
-    if ($companyuser = $DB->get_record('company_users', array('userid' => $USER->id, 'companyid' => $companyid))) {
+    if ($companyusers = $DB->get_records_sql("SELECT DISTINCT managertype
+                                                      FROM {company_users}
+                                                      WHERE userid = :userid
+                                                      AND companyid = :companyid
+                                                      AND managertype > 0
+                                                      ORDER BY id
+                                                      LIMIT 1",
+                                                      ['userid' => $USER->id, 'companyid' => $companyid])) {
+                $companyuser = array_shift($companyusers);
         if ($companyuser->managertype == 2) {
             $approvaltype = 'manager';
         } else if ($companyuser->managertype == 1) {
@@ -90,11 +98,22 @@ if ($data = $callform->get_data()) {
                 // Get the room info.
                 $roominfo = $DB->get_record('classroom', array('id' => $event->classroomid));
 
+                // Work out the capacity for the training event.
+                if (!empty($activity->coursecapacity)) {
+                    $maxcapacity = $activity->coursecapacity;
+                } else {
+                    if (empty($roominfo->isvirtual)) {
+                        $maxcapacity = $roominfo->capacity;
+                    } else {
+                        $maxcapacity = 99999999999999999999;
+                    }
+                }
+
                 // Get the number of current attendees.
                 $numattendees = $DB->count_records('trainingevent_users', array('trainingeventid' => $event->id, 'waitlisted' => 0));
 
                 // Is the event full?
-                if ($numattendees >= $roominfo->capacity && $dataresult == 1) {
+                if ($numattendees > $maxcapacity && $dataresult == 1) {
                     continue;
                 }
 

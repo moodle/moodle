@@ -36,10 +36,8 @@ class approve_form extends moodleform {
 
         // Get my manager type.
         $department = false;
-        if ($manageruser = $DB->get_record('company_users', array('userid' => $USER->id))) {
-            if (($manageruser->managertype == 2)) {
-                $department = true;
-            }
+        if ($manageruser = $DB->get_records('company_users', ['userid' => $USER->id, 'managertype' => 2])) {
+            $department = true;
         }
 
         $selectarr = array();
@@ -64,6 +62,17 @@ class approve_form extends moodleform {
                 // Get the room info.
                 $roominfo = $DB->get_record('classroom', array('id' => $activity->classroomid));
 
+                // Work out the capacity for the training event.
+                if (!empty($activity->coursecapacity)) {
+                    $maxcapacity = $activity->coursecapacity;
+                } else {
+                    if (empty($roominfo->isvirtual)) {
+                        $maxcapacity = $roominfo->capacity;
+                    } else {
+                        $maxcapacity = 99999999999999999999;
+                    }
+                }
+
                 // Get the number of current attendees.
                 $numattendees = $DB->count_records('trainingevent_users', array('trainingeventid' => $activity->id, 'waitlisted' => 0));
 
@@ -75,7 +84,7 @@ class approve_form extends moodleform {
                 }
                 $radioarray = array();
                 // Is the event fully booked?
-                if ($numattendees < $roominfo->capacity ) {
+                if ($numattendees <= $maxcapacity) {
                     $radioarray[] =& $mform->createElement('radio',
                                                            'approve_'.$result->userid.'_'.$result->activityid,
                                                            '',

@@ -25,6 +25,7 @@ require_once($CFG->dirroot.'/local/iomad/lib/company.php');
 require_once($CFG->dirroot.'/local/iomad/lib/user.php');
 require_once($CFG->dirroot.'/local/iomad/lib/iomad.php');
 require_once($CFG->dirroot.'/calendar/lib.php');
+require_once($CFG->dirroot.'/mod/trainingevent/lib.php');
 
 class iomad_approve_access {
     /**
@@ -128,7 +129,15 @@ class iomad_approve_access {
             $approvaltype = 'both';
         } else {
             // Work out what type of manager I am, if any?
-            if ($manageruser = $DB->get_record_select('company_users', 'userid = :userid AND companyid = :companyid AND managertype > 0', array('userid' => $USER->id, 'companyid' => $companyid))) {
+            if ($managerusers = $DB->get_records_sql("SELECT DISTINCT managertype
+                                                      FROM {company_users}
+                                                      WHERE userid = :userid
+                                                      AND companyid = :companyid
+                                                      AND managertype > 0
+                                                      ORDER BY id
+                                                      LIMIT 1",
+                                                      ['userid' => $USER->id, 'companyid' => $companyid])) {
+                $manageruser = array_shift($managerusers);
                 if ($manageruser->managertype == 2) {
 
                     // Department manager.
@@ -217,11 +226,12 @@ class iomad_approve_access {
         if (!$currentrecord = $DB->get_record('trainingevent_users', array('userid' => $user->id, 'trainingeventid' => $event->id))) {
 
             // If not insert it.
-            if (!$DB->insert_record('trainingevent_users', $trainingeventrecord)) {
+            if (!$trainingeventrecord->id = $DB->insert_record('trainingevent_users', $trainingeventrecord)) {
 
                 // Throw an error if that doesn't work.
                 print_error(get_string('updatefailed', 'block_iomad_approve_access'));
             }
+            $currentrecord = $trainingeventrecord;
         }
         $DB->set_field('trainingevent_users', 'waitlisted', $waitlisted, ['id' => $currentrecord->id]);
 
@@ -230,6 +240,8 @@ class iomad_approve_access {
                                          WHERE instance = :eventid
                                          AND module = ( SELECT id FROM {modules}
                                            WHERE name = 'trainingevent')", array('eventid' => $event->id));
+
+        $location = $DB->get_record('classroom', ['id' => $event->classroomid]);
 
         if (empty($waitlisted)) {
 
