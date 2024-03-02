@@ -54,13 +54,11 @@ function xmldb_local_iomad_install() {
         // If not done already, allow assignment at system context.
         $levels = get_role_contextlevels( $companymanagerid );
         if (empty($levels)) {
-            $level = null;
+            $level = (object) [];
             $level->roleid = $companymanagerid;
             $level->contextlevel = CONTEXT_SYSTEM;
             $DB->insert_record( 'role_context_levels', $level );
         }
-
-        update_capabilities('companymanager');
     }
 
     // Create new Company Department Manager role.
@@ -75,13 +73,11 @@ function xmldb_local_iomad_install() {
         // If not done already, allow assignment at system context.
         $levels = get_role_contextlevels( $companydepartmentmanagerid );
         if (empty($levels)) {
-            $level = null;
+            $level = (object) [];
             $level->roleid = $companydepartmentmanagerid;
             $level->contextlevel = CONTEXT_SYSTEM;
             $DB->insert_record( 'role_context_levels', $level );
         }
-
-        update_capabilities('companydepartmentmanager');
     }
 
     // Create the Company Course Editor.
@@ -96,13 +92,11 @@ function xmldb_local_iomad_install() {
         // If not done already, allow assignment at system context.
         $levels = get_role_contextlevels( $companycourseeditorid );
         if (empty($levels)) {
-            $level = null;
+            $level = (object) [];
             $level->roleid = $companycourseeditorid;
             $level->contextlevel = CONTEXT_COURSE;
             $DB->insert_record( 'role_context_levels', $level );
         }
-
-        update_capabilities('companycourseeditor');
     }
 
     // Create new Company Course Non Editor role.
@@ -117,13 +111,11 @@ function xmldb_local_iomad_install() {
         // If not done already, allow assignment at system context.
         $levels = get_role_contextlevels( $companycoursenoneditorid );
         if (empty($levels)) {
-            $level = null;
+            $level = (object) [];
             $level->roleid = $companycoursenoneditorid;
             $level->contextlevel = CONTEXT_COURSE;
             $DB->insert_record( 'role_context_levels', $level );
         }
-
-        update_capabilities('companycoursenoneditor');
     }
 
     // Create new Company reporter role.
@@ -137,13 +129,11 @@ function xmldb_local_iomad_install() {
         // If not done already, allow assignment at system context.
         $levels = get_role_contextlevels( $companyreporterid );
         if (empty($levels)) {
-            $level = new stdClass;
+            $level = (object) [];
             $level->roleid = $companyreporterid;
             $level->contextlevel = CONTEXT_SYSTEM;
             $DB->insert_record( 'role_context_levels', $level );
         }
-
-        update_capabilities('companyreporter');
     }
 
     // Create new Client reporter role.
@@ -157,12 +147,16 @@ function xmldb_local_iomad_install() {
         // If not done already, allow assignment at system context.
         $levels = get_role_contextlevels( $clientreporterid );
         if (empty($levels)) {
-            $level = new stdClass;
+            $level = (object) [];
             $level->roleid = $clientreporterid;
             $level->contextlevel = CONTEXT_SYSTEM;
             $DB->insert_record( 'role_context_levels', $level );
         }
-
-        update_capabilities('clientreporter');
     }
+
+    // Create an adhoctask to set up these roles once cron runs again.
+    $roleresettask = new \local_iomad\task\resetrolestask();
+    // Queue the task.
+    \core\task\manager::queue_adhoc_task($roleresettask);
+
 }
