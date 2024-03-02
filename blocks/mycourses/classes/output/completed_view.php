@@ -98,7 +98,7 @@ class completed_view implements renderable, templatable {
             $exportedcourse->progress = 100;
             $exportedcourse->hasprogress = true;
             $exportedcourse->certificates = array();
-            $certificateimage = $output->image_url('f/pdf-32');
+            $certificateimage = $output->image_url('f/pdf');
             if (!empty($completed->hasgrade)) {
                 $exportedcourse->finalscore = intval($completed->finalgrade);
                 $exportedcourse->hasgrade = true;
