@@ -219,6 +219,9 @@ $card-gutter : $card-deck-margin * 2;
         margin-right: 0;
         .dashboard-card {
             width: calc(100% - #{$card-gutter}) !important;
+            @include media-breakpoint-down(xs) {
+                width: 100% !important;
+            }
         }
     }
 }
@@ -343,13 +346,6 @@ $card-gutter : $card-deck-margin * 2;
 
 .block.invisibleblock .card-title {
     color: $text-muted;
-}
-
-@include media-breakpoint-down(sm) {
-    .block.card {
-        border-left: 0;
-        border-right: 0;
-    }
 }
 
 .block_social_activities li a.movehere,

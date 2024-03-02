@@ -125,7 +125,9 @@ abstract class core_completion_edit_base_form extends moodleform {
                             ' has wrong suffix and has been removed from the form. This has to be fixed by the developer',
                             DEBUG_DEVELOPER
                         );
-                        $moduleform->_form->removeElement($customcompletionelement);
+                        if ($moduleform->_form->elementExists($customcompletionelement)) {
+                            $moduleform->_form->removeElement($customcompletionelement);
+                        }
                     }
                 }
             }

@@ -190,11 +190,9 @@ define([
             }
         });
 
-        root.on('click', Selectors.post.inpageCancelButton, function() {
+        root.on('click', Selectors.post.inpageCancelButton, function(e) {
             // Tell formchangechecker to reset the form state.
-            if (typeof M.core_formchangechecker !== 'undefined') {
-                M.core_formchangechecker.reset_form_dirty_state();
-            }
+            FormChangeChecker.resetFormDirtyState(e.currentTarget);
         });
     };
 

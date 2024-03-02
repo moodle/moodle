@@ -181,10 +181,10 @@ class renderer_base {
     public function render_from_template($templatename, $context) {
         $mustache = $this->get_mustache();
 
-        try {
+        if ($mustache->hasHelper('uniqid')) {
             // Grab a copy of the existing helper to be restored later.
             $uniqidhelper = $mustache->getHelper('uniqid');
-        } catch (Mustache_Exception_UnknownHelperException $e) {
+        } else {
             // Helper doesn't exist.
             $uniqidhelper = null;
         }
@@ -2762,8 +2762,12 @@ class core_renderer extends renderer_base {
 
         // Get the image html output first, auto generated based on initials if one isn't already set.
         if ($user->picture == 0 && empty($CFG->enablegravatar) && !defined('BEHAT_SITE_RUNNING')) {
-            $output = html_writer::tag('span', mb_substr($user->firstname, 0, 1) . mb_substr($user->lastname, 0, 1),
-                ['class' => 'userinitials size-' . $size]);
+            $initials = \core_user::get_initials($user);
+            // Don't modify in corner cases where neither the firstname nor the lastname appears.
+            $output = html_writer::tag(
+                'span', $initials,
+                ['class' => 'userinitials size-' . $size]
+            );
         } else {
             $output = html_writer::empty_tag('img', $attributes);
         }
@@ -4249,9 +4253,10 @@ EOD;
             'data-droptarget' => '1'
         );
         if ($this->page->blocks->region_has_content($displayregion, $this)) {
-            $content = $this->blocks_for_region($displayregion, $fakeblocksonly);
+            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'sr-only']) .
+                $this->blocks_for_region($displayregion, $fakeblocksonly);
         } else {
-            $content = '';
+            $content = html_writer::tag('h2', get_string('blocks'), ['class' => 'sr-only']);
         }
         return html_writer::tag($tag, $content, $attributes);
     }
@@ -5225,7 +5230,12 @@ EOD;
      * @return string ascii fragment
      */
     public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate) : string {
-        return html_writer::script(js_writer::function_call('updateProgressBar', [$id, $percent, $msg, $estimate]));
+        return html_writer::script(js_writer::function_call('updateProgressBar', [
+            $id,
+            round($percent, 1),
+            $msg,
+            $estimate,
+        ]));
     }
 
     /**

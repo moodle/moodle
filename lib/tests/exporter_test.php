@@ -29,6 +29,7 @@ use core_external\external_multiple_structure;
 use core_external\external_settings;
 use core_external\external_single_structure;
 use core_external\external_value;
+use core_external\util;
 
 /**
  * Exporter testcase.
@@ -201,6 +202,143 @@ class exporter_test extends \advanced_testcase {
         $this->assertEquals('otherstrings', $properties['otherstrings']['description']);
         // Assert nested elements are formatted correctly.
         $this->assertEquals('id', $properties['nestedarray']['type']['id']['description']);
+    }
+
+    /**
+     * Tests for the handling of the default attribute of format properties in exporters.
+     *
+     * @covers \core\external\exporter::export
+     * @return void
+     */
+    public function test_export_format_no_default(): void {
+        global $PAGE;
+        $output = $PAGE->get_renderer('core');
+        $syscontext = \context_system::instance();
+        $related = [
+            'context' => $syscontext,
+        ] + $this->validrelated;
+
+        // Pass a data that does not have the format property for stringA.
+        $data = [
+            'stringA' => '__Go to:__ [Moodle.org](https://moodle.org)',
+            'intB' => 1,
+        ];
+
+        // Note: For testing purposes only. Never extend exporter implementation. Only extend from the base exporter class!
+        $testablexporterclass = new class($data, $related) extends core_testable_exporter {
+            /**
+             * Properties definition.
+             */
+            public static function define_properties(): array {
+                $properties = parent::define_properties();
+                $properties['stringAformat']['default'] = FORMAT_MARKDOWN;
+                return $properties;
+            }
+        };
+        // For a property format with default set, it should be able to export a data even if the property format is not passed.
+        $result = $testablexporterclass->export($output);
+        $expected = '<strong>Go to:</strong> <a href="https://moodle.org">Moodle.org</a>';
+        $this->assertStringContainsString($expected, $result->stringA);
+        $this->assertEquals(FORMAT_HTML, $result->stringAformat);
+
+        // Passing data to an exporter with a required property format will throw an exception.
+        $exporter = new core_testable_exporter($data, $related);
+        $this->expectException(\coding_exception::class);
+        $exporter->export($output);
+    }
+
+    /**
+     * Test the processing of format properties.
+     *
+     * @covers \core\external\exporter::get_read_structure
+     * @return void
+     */
+    public function test_format_properties_with_optional(): void {
+        $testable = new class([]) extends \core\external\exporter {
+            /**
+             * Properties definition.
+             *
+             * @return array[]
+             */
+            public static function define_properties(): array {
+                return [
+                    'content' => [
+                        'type' => PARAM_RAW,
+                    ],
+                    'contentformat' => [
+                        'type' => PARAM_INT,
+                        'optional' => true,
+                    ],
+                    'description' => [
+                        'type' => PARAM_RAW,
+                        'optional' => true,
+                    ],
+                    'descriptionformat' => [
+                        'type' => PARAM_INT,
+                        'default' => FORMAT_MARKDOWN,
+                    ],
+                    'summary' => [
+                        'type' => PARAM_RAW,
+                    ],
+                    'summaryformat' => [
+                        'type' => PARAM_INT,
+                        'default' => null,
+                    ],
+                ];
+            }
+        };
+
+        $definition = $testable::get_read_structure();
+        // Check content and its format.
+        $this->assertEquals(VALUE_REQUIRED, $definition->keys['content']->required);
+        $this->assertEquals(VALUE_OPTIONAL, $definition->keys['contentformat']->required);
+        $this->assertEquals(null, $definition->keys['contentformat']->default);
+
+        // Check description and its format.
+        $this->assertEquals(VALUE_OPTIONAL, $definition->keys['description']->required);
+        $this->assertEquals(VALUE_DEFAULT, $definition->keys['descriptionformat']->required);
+        $this->assertEquals(FORMAT_MARKDOWN, $definition->keys['descriptionformat']->default);
+
+        // Check summary and its format.
+        $this->assertEquals(VALUE_REQUIRED, $definition->keys['summary']->required);
+        $this->assertEquals(null, $definition->keys['summary']->default);
+        $this->assertEquals(VALUE_DEFAULT, $definition->keys['summaryformat']->required);
+        $this->assertEquals(FORMAT_HTML, $definition->keys['summaryformat']->default);
+    }
+
+    /**
+     * Test the processing of format properties when an invalid default format is passed.
+     *
+     * @covers \core\external\exporter::get_read_structure
+     * @return void
+     */
+    public function test_optional_format_property_with_invalid_default(): void {
+        $testable = new class([]) extends \core\external\exporter {
+            /**
+             * Properties definition.
+             *
+             * @return array[]
+             */
+            public static function define_properties(): array {
+                return [
+                    'description' => [
+                        'type' => PARAM_RAW,
+                    ],
+                    'descriptionformat' => [
+                        'type' => PARAM_INT,
+                        'default' => 999,
+                    ],
+                ];
+            }
+        };
+
+        $definition = $testable::get_read_structure();
+        $this->assertDebuggingCalled(null, DEBUG_DEVELOPER);
+
+        // Check description and its format.
+        $this->assertEquals(VALUE_REQUIRED, $definition->keys['description']->required);
+        $this->assertEquals(VALUE_DEFAULT, $definition->keys['descriptionformat']->required);
+        $this->assertEquals(FORMAT_HTML, $definition->keys['descriptionformat']->default);
     }
 }
 

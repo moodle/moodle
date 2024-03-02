@@ -169,6 +169,17 @@
 .pagelayout-embedded #page {
     margin-top: 0;
 }
+.navbar-bootswatch {
+    .navbar-brand {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        .sitename {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+    }
+}
 
 // Make navbar height available for non-sass use.
 :root {

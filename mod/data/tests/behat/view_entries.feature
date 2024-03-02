@@ -173,3 +173,21 @@ Feature: Users can view and search database entries
     And I am on the "Test database name" "data activity" page logged in as teacher1
     Then I should not see "Select all"
     And I should not see "Delete selected"
+
+  Scenario Outline: Entries are linked based on autolink and open in new window settings
+    # Param1 refers to `Autolink`, param3 refers to `Open in new window`.
+    Given the following "mod_data > fields" exist:
+      | database | type | name              | param1   | param3   |
+      | data1    | url  | URL field name    | <param1> | <param3> |
+    And the following "mod_data > entries" exist:
+      | database | user     | Test field name  | Test field 2 name  | Test field 3 name   | URL field name |
+      | data1    | teacher1 | Test field entry | Test field 2 entry | http://example.com/ | www.moodle.org |
+    When I am on the "Test database name" "data activity" page logged in as teacher1
+    Then "www.moodle.org" "link" <autolink> exist
+    # Verify that the URL field is rendered as a link with the correct href attribute and target set to _blank.
+    And "a[target='_blank'][href='http://www.moodle.org']" "css_element" <autolink> exist
+
+    Examples:
+      | param1 | param3 | autolink   |
+      | 0      | 0      | should not |
+      | 1      | 1      | should     |

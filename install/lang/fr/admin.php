@@ -37,8 +37,8 @@ $string['clitypevalue'] = 'type valeur';
 $string['clitypevaluedefault'] = 'type valeur, tapez Entrée pour utiliser la valeur par défaut ({$a})';
 $string['cliunknowoption'] = 'Options non reconnues :
  {$a}.
-Utilisez l\'option --help.';
+Utilisez l’option --help.';
 $string['cliyesnoprompt'] = 'Tapez y (pour oui) ou n (pour non)';
-$string['environmentrequireinstall'] = 'L\'extension doit être installée et activée';
+$string['environmentrequireinstall'] = 'L’extension doit être installée et activée';
 $string['environmentrequireversion'] = 'La version {$a->needed} est requise ; vous utilisez actuellement la version {$a->current}';
 $string['upgradekeyset'] = 'Mettre à jour la clef (laisser vide pour ne pas la définir)';

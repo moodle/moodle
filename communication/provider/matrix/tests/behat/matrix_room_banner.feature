@@ -24,17 +24,16 @@ Feature: Display communication room status banner
     # Not for students to see.
     Then I should not see "Your Matrix room will be ready soon." in the "page-content" "region"
 
-#  Skipping while we update the Mock Server with the new route.
-#  Scenario: I can see the room has been created and ready to access
-#    When I run all adhoc tasks
-#    And I am on the "Test course" "Course" page logged in as "teacher1"
-#    Then I should see "Your Matrix room is ready!" in the "page-content" "region"
-#    # This is a one time message per user.
-#    When I reload the page
-#    Then I should not see "Your Matrix room is ready." in the "page-content" "region"
-#    # Not for students to see.
-#    When I am on the "Test course" "Course" page logged in as "student1"
-#    Then I should not see "Your Matrix room is ready." in the "page-content" "region"
+  Scenario: I can see the room has been created and ready to access
+    When I run all adhoc tasks
+    And I am on the "Test course" "Course" page logged in as "teacher1"
+    Then I should see "Your Matrix room is ready." in the "page-content" "region"
+    # This is a one time message per user.
+    When I reload the page
+    Then I should not see "Your Matrix room is ready." in the "page-content" "region"
+    # Not for students to see.
+    When I am on the "Test course" "Course" page logged in as "student1"
+    Then I should not see "Your Matrix room is ready." in the "page-content" "region"
 
   Scenario: Enabling or disabling the matrix plugin hides the banner accordingly
     Given I am on the "Test course" "Course" page logged in as "teacher1"

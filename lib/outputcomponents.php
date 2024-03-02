@@ -2049,16 +2049,19 @@ class html_writer {
      * @param int $currenttime A default timestamp in GMT
      * @param int $step minute spacing
      * @param array $attributes - html select element attributes
-     * @return HTML fragment
+     * @param float|int|string $timezone the timezone to use to calculate the time
+     *        {@link https://moodledev.io/docs/apis/subsystems/time#timezone}
+     * @return string HTML fragment
      */
-    public static function select_time($type, $name, $currenttime = 0, $step = 5, array $attributes = null) {
+    public static function select_time($type, $name, $currenttime = 0, $step = 5, array $attributes = null, $timezone = 99) {
         global $OUTPUT;
 
         if (!$currenttime) {
             $currenttime = time();
         }
         $calendartype = \core_calendar\type_factory::get_calendar_instance();
-        $currentdate = $calendartype->timestamp_to_date_array($currenttime);
+        $currentdate = $calendartype->timestamp_to_date_array($currenttime, $timezone);
+
         $userdatetype = $type;
         $timeunits = array();
 
@@ -5238,7 +5241,7 @@ class progress_bar implements renderable, templatable {
         $this->percent = $percent;
         $this->lastupdate = microtime(true);
 
-        echo $OUTPUT->render_progress_bar_update($this->html_id, sprintf("%.1f", $this->percent), $msg, $estimatemsg);
+        echo $OUTPUT->render_progress_bar_update($this->html_id, $this->percent, $msg, $estimatemsg);
         flush();
     }
 

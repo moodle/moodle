@@ -64,7 +64,7 @@ if ($requests === null) {
     $lasterror = json_last_error_msg();
     throw new coding_exception('Invalid json in request: ' . $lasterror);
 }
-$responses = array();
+$responses = [];
 
 // Defines the external settings required for Ajax processing.
 $settings = external_settings::get_instance();
@@ -75,17 +75,33 @@ $settings->set_raw(false);
 
 $haserror = false;
 foreach ($requests as $request) {
-    $response = array();
+    $response = [];
     $methodname = clean_param($request['methodname'], PARAM_ALPHANUMEXT);
     $index = clean_param($request['index'], PARAM_INT);
     $args = $request['args'];
 
     $response = external_api::call_external_function($methodname, $args, true);
     $responses[$index] = $response;
+
     if ($response['error']) {
-        // Do not process the remaining requests.
         $haserror = true;
-        break;
+        if (!NO_MOODLE_COOKIES) {
+            // If there was an error, and this HTTP request includes a Moodle cookie (and therefore a login), reject all
+            // subsequent changes.
+            //
+            // The reason for this is that an earlier step may be performing a dependant action. Consider the following:
+            // 1) Backup a thing
+            // 2) Reset the thing to its initial state
+            // 3) Restore the thing from the backup made in step 1.
+            //
+            // In the above example you do not want steps 2 and 3 to happen if step 1 fails.
+            // Do not process the remaining requests.
+
+            // If the request came through service-nologin.php which does not allow any kind of login,
+            // then it is not possible to make changes to the DB, session, site, etc.
+            // For all other cases, we *MUST* stop processing subsequent requests.
+            break;
+        }
     }
 }
 
@@ -93,7 +109,7 @@ if ($cacherequest && !$haserror) {
     // 90 days only - based on Moodle point release cadence being every 3 months.
     $lifetime = 60 * 60 * 24 * 90;
 
-    header('Expires: '. gmdate('D, d M Y H:i:s', time() + $lifetime) .' GMT');
+    header('Expires: ' . gmdate('D, d M Y H:i:s', time() + $lifetime) . ' GMT');
     header('Pragma: ');
     header('Cache-Control: public, max-age=' . $lifetime . ', immutable');
     header('Accept-Ranges: none');

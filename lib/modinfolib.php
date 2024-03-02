@@ -775,18 +775,37 @@ class course_modinfo {
      * @param int $cmid Course module id
      */
     public static function purge_course_module_cache(int $courseid, int $cmid): void {
+        self::purge_course_modules_cache($courseid, [$cmid]);
+    }
+
+    /**
+     * Purge the cache of multiple course modules.
+     *
+     * @param int $courseid Course id
+     * @param int[] $cmids List of course module ids
+     * @return void
+     */
+    public static function purge_course_modules_cache(int $courseid, array $cmids): void {
         $course = get_course($courseid);
         $cache = cache::make('core', 'coursemodinfo');
         $cachekey = $course->id;
         $cache->acquire_lock($cachekey);
         try {
             $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
-            $hascache = ($coursemodinfo !== false) && array_key_exists($cmid, $coursemodinfo->modinfo);
+            $hascache = ($coursemodinfo !== false);
+            $updatedcache = false;
             if ($hascache) {
-                $coursemodinfo->cacherev = -1;
-                unset($coursemodinfo->modinfo[$cmid]);
-                $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
-                $coursemodinfo = $cache->get_versioned($cachekey, $course->cacherev);
+                foreach ($cmids as $cmid) {
+                    if (array_key_exists($cmid, $coursemodinfo->modinfo)) {
+                        unset($coursemodinfo->modinfo[$cmid]);
+                        $updatedcache = true;
+                    }
+                }
+                if ($updatedcache) {
+                    $coursemodinfo->cacherev = -1;
+                    $cache->set_versioned($cachekey, $course->cacherev, $coursemodinfo);
+                    $cache->get_versioned($cachekey, $course->cacherev);
+                }
             }
         } finally {
             $cache->release_lock($cachekey);
@@ -2767,7 +2786,7 @@ function get_course_and_cm_from_instance($instanceorid, $modulename, $courseorid
     $modinfo = get_fast_modinfo($course, $userid);
     $instances = $modinfo->get_instances_of($modulename);
     if (!array_key_exists($instanceid, $instances)) {
-        throw new moodle_exception('invalidmoduleid', 'error', $instanceid);
+        throw new moodle_exception('invalidmoduleid', 'error', '', $instanceid);
     }
     return array($course, $instances[$instanceid]);
 }

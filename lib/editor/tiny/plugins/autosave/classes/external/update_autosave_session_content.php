@@ -65,7 +65,6 @@ class update_autosave_session_content extends external_api {
         string $elementid,
         string $drafttext
     ): array {
-        global $DB, $USER;
 
         [
             'contextid' => $contextid,
@@ -81,8 +80,11 @@ class update_autosave_session_content extends external_api {
             'drafttext' => $drafttext,
         ]);
 
-        $manager = new \tiny_autosave\autosave_manager($contextid, $pagehash, $pageinstance, $elementid);
-        $manager->update_autosave_record($drafttext);
+        // May have been called by a non-logged in user.
+        if (isloggedin() && !isguestuser()) {
+            $manager = new \tiny_autosave\autosave_manager($contextid, $pagehash, $pageinstance, $elementid);
+            $manager->update_autosave_record($drafttext);
+        }
 
         return [];
     }

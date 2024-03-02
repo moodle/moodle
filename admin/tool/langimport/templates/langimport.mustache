@@ -87,6 +87,7 @@
                 <div>
                     <form id="updateform" action="{{updateurl}}" method="post">
                         <fieldset>
+                            <input type="hidden" name="sesskey" value="{{sesskey}}">
                             <input type="submit" value="{{#str}}updatelangs, tool_langimport{{/str}}" class="btn btn-secondary">
                             {{#hasmanyinstalledlanguages}}
                                 <p class="mt-2 small">{{#str}} updatelangsnote, tool_langimport, {"taskname": {{#quote}}{{updatelangstaskname}}{{/quote}} }{{/str}}</p>

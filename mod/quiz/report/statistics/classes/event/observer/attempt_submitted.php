@@ -38,10 +38,6 @@ class attempt_submitted {
      */
     public static function process(\mod_quiz\event\attempt_submitted $event): void {
         $data = $event->get_data();
-        $quizid = $data['other']['quizid'];
-
-        $task = recalculate::instance($quizid);
-        $task->set_next_run_time(time() + HOURSECS);
-        \core\task\manager::queue_adhoc_task($task, true);
+        recalculate::queue_future_run($data['other']['quizid']);
     }
 }

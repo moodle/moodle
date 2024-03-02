@@ -1220,7 +1220,7 @@ function blog_validate_access($courseid, $modid, $groupid, $entryid, $userid) {
             throw new \moodle_exception('courseblogdisable', 'blog');
         }
         if (!$mod = $DB->get_record('course_modules', array('id' => $modid))) {
-            throw new \moodle_exception('invalidmoduleid', 'error', $modid);
+            throw new \moodle_exception('invalidmoduleid', 'error', '', $modid);
         }
         $courseid = $mod->course;
     }

@@ -145,13 +145,14 @@ abstract class exporter {
 
             // If the field is PARAM_RAW and has a format field.
             if ($propertyformat = self::get_format_field($properties, $property)) {
-                if (!property_exists($record, $propertyformat)) {
+                $formatdefinition = $properties[$propertyformat];
+                if (!property_exists($record, $propertyformat) && !array_key_exists('default', $formatdefinition)) {
                     // Whoops, we got something that wasn't defined.
                     throw new coding_exception('Unexpected property ' . $propertyformat);
                 }
 
                 $formatparams = $this->get_format_parameters($property);
-                $format = $record->$propertyformat;
+                $format = $record->$propertyformat ?? $formatdefinition['default'];
 
                 list($text, $format) = \core_external\util::format_text($data->$property, $format, $formatparams['context'],
                     $formatparams['component'], $formatparams['filearea'], $formatparams['itemid'], $formatparams['options']);
@@ -425,10 +426,12 @@ abstract class exporter {
      * @return external_format_value
      */
     final protected static function get_format_structure($property, $definition, $required = VALUE_REQUIRED) {
+        $default = null;
         if (array_key_exists('default', $definition)) {
             $required = VALUE_DEFAULT;
+            $default = $definition['default'];
         }
-        return new external_format_value($property, $required);
+        return new external_format_value($property, $required, $default);
     }
 
     /**
@@ -547,7 +550,12 @@ abstract class exporter {
                     if (isset($returns[$formatproperty])) {
                         throw new coding_exception('The format for \'' . $property . '\' is already defined.');
                     }
-                    $returns[$formatproperty] = self::get_format_structure($property, $properties[$formatproperty]);
+                    $formatpropertydef = $properties[$formatproperty];
+                    $formatpropertyrequired = VALUE_REQUIRED;
+                    if (!empty($formatpropertydef['optional'])) {
+                        $formatpropertyrequired = VALUE_OPTIONAL;
+                    }
+                    $returns[$formatproperty] = self::get_format_structure($property, $formatpropertydef, $formatpropertyrequired);
                 }
             }
         }

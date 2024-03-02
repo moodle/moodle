@@ -149,6 +149,7 @@ switch($requestmethod) {
                             $json[$slot->slot] = ['id' => $slot->id, 'slot' => $slot->slot,
                                                             'page' => $slot->page];
                         }
+                        quiz_delete_previews($quiz);
                         $result = ['slots' => $json];
                         break;
 

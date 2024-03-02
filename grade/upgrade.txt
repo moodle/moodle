@@ -1,6 +1,16 @@
 This file describes API changes in /grade/* ;
 Information provided here is intended especially for developers.
 
+=== 4.3.1 ===
+* Some changes to how print_grade_page_head() sets the page title:
+  * If a non-empty `$heading` parameter is passed, it will be used as the page title's unique identifying information.
+  * Add support for grade report plugins that define an `editingmode_title` lang string. If the grade report plugin defines this
+    language string, it will be used for the page title's unique identifying information when editing mode is turned on.
+* The function gradeimport_csv_load_data::insert_grade_record() now has extra parameter $gradeitem to carry over the grade item related info
+  for validation.
+* The function get_gradable_users() in grade/lib.php has extra param now to retrieve only active enrolments.
+* A new webservice core_grades_get_gradable_users has been added to retrieve gradable users for a course.
+
 === 4.3 ===
 * The $showtitle parameter in the print_grade_page_head function located inside grade/lib.php has been deprecated and is not used anymore.
 * The deprecated `core_grades_create_gradecategory` external method has been removed, in addition to the accompanying

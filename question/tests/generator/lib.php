@@ -69,7 +69,11 @@ class core_question_generator extends component_generator_base {
         $record = $this->datagenerator->combine_defaults_and_record($defaults, $record);
 
         if (!isset($record['contextid'])) {
-            $record['contextid'] = context_system::instance()->id;
+            if (isset($record['parent'])) {
+                $record['contextid'] = $DB->get_field('question_categories', 'contextid', ['id' => $record['parent']]);
+            } else {
+                $record['contextid'] = context_system::instance()->id;
+            }
         }
         if (!isset($record['parent'])) {
             $record['parent'] = question_get_top_category($record['contextid'], true)->id;

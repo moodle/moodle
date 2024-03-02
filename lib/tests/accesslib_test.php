@@ -1968,7 +1968,7 @@ class accesslib_test extends advanced_testcase {
         $mockedplugins->setAccessible(true);
         $plugins = $mockedplugins->getValue();
         $plugins['fake'] = [$pluginname => "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/$pluginname"];
-        $mockedplugins->setValue($plugins);
+        $mockedplugins->setValue(null, $plugins);
         update_capabilities('fake_access');
         $this->resetDebugging(); // We have debugging messages here that we need to get rid of.
         // End of the component loader mock.

@@ -61,6 +61,9 @@ class quiz_attempt {
     /** @var int maximum number of slots in the quiz for the review page to default to show all. */
     const MAX_SLOTS_FOR_DEFAULT_REVIEW_SHOW_ALL = 50;
 
+    /** @var int amount of time considered 'immedately after the attempt', in seconds. */
+    const IMMEDIATELY_AFTER_PERIOD = 2 * MINSECS;
+
     /** @var quiz_settings object containing the quiz settings. */
     protected $quizobj;
 
@@ -1226,7 +1229,7 @@ class quiz_attempt {
      */
     public function cannot_review_message($short = false) {
         return $this->quizobj->cannot_review_message(
-                $this->get_attempt_state(), $short);
+                $this->get_attempt_state(), $short, $this->attempt->timefinish);
     }
 
     /**
@@ -2324,6 +2327,9 @@ class quiz_attempt {
     public function get_number_of_unanswered_questions(): int {
         $totalunanswered = 0;
         foreach ($this->get_slots() as $slot) {
+            if (!$this->is_real_question($slot)) {
+                continue;
+            }
             $questionstate = $this->get_question_state($slot);
             if ($questionstate == question_state::$todo || $questionstate == question_state::$invalid) {
                 $totalunanswered++;

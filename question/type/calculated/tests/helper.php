@@ -41,7 +41,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  */
 class qtype_calculated_test_helper extends question_test_helper {
     public function get_test_questions() {
-        return array('sum');
+        return ['sum', 'mult'];
     }
 
     /**
@@ -70,15 +70,15 @@ class qtype_calculated_test_helper extends question_test_helper {
         $q->unitdisplay = qtype_numerical::UNITNONE;
         $q->unitgradingtype = 0;
         $q->unitpenalty = 0;
-        $q->ap = new qtype_numerical_answer_processor(array());
+        $q->ap = new qtype_numerical_answer_processor([]);
         $q->synchronised = false;
 
-        $q->datasetloader = new qtype_calculated_test_dataset_loader(0, array(
-            array('a' => 1, 'b' => 5),
-            array('a' => 3, 'b' => 4),
-            array('a' => 3, 'b' => 0.01416),
-            array('a' => 31, 'b' => 0.01416),
-        ));
+        $q->datasetloader = new qtype_calculated_test_dataset_loader(0, [
+            ['a' => 1, 'b' => 5],
+            ['a' => 3, 'b' => 4],
+            ['a' => 3, 'b' => 0.01416],
+            ['a' => 31, 'b' => 0.01416],
+        ]);
 
         return $q;
     }
@@ -115,7 +115,7 @@ class qtype_calculated_test_helper extends question_test_helper {
             $answer->correctanswerformat = 1;
         }
 
-        $qdata->options->units = array();
+        $qdata->options->units = [];
 
         return $qdata;
     }
@@ -138,24 +138,24 @@ class qtype_calculated_test_helper extends question_test_helper {
         $fromform->unitgradingtypes = '1';
         $fromform->unitsleft = '0';
         $fromform->nounits = 1;
-        $fromform->multiplier = array();
+        $fromform->multiplier = [];
         $fromform->multiplier[0] = '1.0';
         $fromform->synchronize = 0;
         $fromform->answernumbering = 0;
         $fromform->shuffleanswers = 0;
 
         $fromform->noanswers = 6;
-        $fromform->answer = array();
+        $fromform->answer = [];
         $fromform->answer[0] = '{a} + {b}';
         $fromform->answer[1] = '{a} - {b}';
         $fromform->answer[2] = '*';
 
-        $fromform->fraction = array();
+        $fromform->fraction = [];
         $fromform->fraction[0] = '1.0';
         $fromform->fraction[1] = '0.0';
         $fromform->fraction[2] = '0.0';
 
-        $fromform->tolerance = array();
+        $fromform->tolerance = [];
         $fromform->tolerance[0] = 0.001;
         $fromform->tolerance[1] = 0.001;
         $fromform->tolerance[2] = 0;
@@ -172,16 +172,16 @@ class qtype_calculated_test_helper extends question_test_helper {
         $fromform->correctanswerformat[1] = 1;
         $fromform->correctanswerformat[2] = 1;
 
-        $fromform->feedback = array();
-        $fromform->feedback[0] = array();
+        $fromform->feedback = [];
+        $fromform->feedback[0] = [];
         $fromform->feedback[0]['format'] = FORMAT_HTML;
         $fromform->feedback[0]['text'] = 'Very good.';
 
-        $fromform->feedback[1] = array();
+        $fromform->feedback[1] = [];
         $fromform->feedback[1]['format'] = FORMAT_HTML;
         $fromform->feedback[1]['text'] = 'Add. not subtract!';
 
-        $fromform->feedback[2] = array();
+        $fromform->feedback[2] = [];
         $fromform->feedback[2]['format'] = FORMAT_HTML;
         $fromform->feedback[2]['text'] = 'Completely wrong.';
 
@@ -189,6 +189,149 @@ class qtype_calculated_test_helper extends question_test_helper {
 
         return $fromform;
     }
+
+    /**
+     * Makes a calculated question about multiplying two numbers.
+     *
+     * @return qtype_calculated_question
+     * @throws coding_exception
+     */
+    public function make_calculated_question_mult() {
+        question_bank::load_question_definition_classes('calculated');
+        $q = new qtype_calculated_question();
+        test_question_maker::initialise_a_question($q);
+        $q->name = 'Simple multiplication';
+        $q->questiontext = 'What is {a} * {b}?';
+        $q->generalfeedback = 'Generalfeedback: {={a} * {b}} is the right answer.';
+
+        $q->answers = [
+            13 => new \qtype_calculated\qtype_calculated_answer(13, '{a} * {b}', 1.0, 'Positive.', FORMAT_HTML, 0),
+            14 => new \qtype_calculated\qtype_calculated_answer(14, '-{a} * {b}', 0.0, 'Negative.', FORMAT_HTML, 0),
+        ];
+        foreach ($q->answers as $answer) {
+            $answer->correctanswerlength = 2;
+            $answer->correctanswerformat = 1;
+        }
+
+        $q->qtype = question_bank::get_qtype('calculated');
+        $q->unitdisplay = qtype_numerical::UNITOPTIONAL;
+        $q->unitgradingtype = 0;
+        $q->unitpenalty = 0;
+        $q->unit = 'cm';
+        $q->ap = new qtype_numerical_answer_processor([]);
+        $q->synchronised = false;
+
+        $q->datasetloader = new qtype_calculated_test_dataset_loader(0, [
+            ['a' => 1, 'b' => 5],
+            ['a' => 3, 'b' => 4],
+            ['a' => 3, 'b' => 0.01416],
+            ['a' => 31, 'b' => 0.01416],
+        ]);
+
+        return $q;
+    }
+
+    /**
+     * Makes a calculated question about multiplying two numbers.
+     *
+     * @return qtype_calculated_question
+     * @throws coding_exception
+     */
+    public function get_calculated_question_data_mult() {
+        question_bank::load_question_definition_classes('calculated');
+        $qdata = new stdClass();
+        test_question_maker::initialise_question_data($qdata);
+
+        $qdata->qtype = 'calculated';
+        $qdata->name = 'Simple multiplication';
+        $qdata->questiontext = 'What is {a} * {b}?';
+        $qdata->generalfeedback = 'Generalfeedback: {={a} * {b}} is the right answer.';
+        $qdata->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+
+        $qdata->options = new stdClass();
+        $qdata->options->unitgradingtype = 0;
+        $qdata->options->unitpenalty = 0.0;
+        $qdata->options->showunits = qtype_numerical::UNITOPTIONAL;
+        $qdata->unit = 'cm';
+        $qdata->options->unitsleft = 0;
+        $qdata->options->synchronize = 0;
+
+        $qdata->options->answers = [
+            13 => new \qtype_calculated\qtype_calculated_answer(13, '{a} * {b}', 1.0, 'Positive.', FORMAT_HTML, 0.001),
+            14 => new \qtype_calculated\qtype_calculated_answer(14, '-{a} * {b}', 0.0, 'Negative.', FORMAT_HTML, 0.001),
+        ];
+        foreach ($qdata->options->answers as $answer) {
+            $answer->correctanswerlength = 2;
+            $answer->correctanswerformat = 1;
+        }
+
+        $qdata->options->units = [];
+
+        return $qdata;
+    }
+
+    /**
+     * Makes a calculated question about multiplying two numbers.
+     *
+     * @return qtype_calculated_question
+     * @throws coding_exception
+     */
+    public function get_calculated_question_form_data_mult() {
+        question_bank::load_question_definition_classes('calculated');
+        $fromform = new stdClass();
+
+        $fromform->name = 'Simple multiplication';
+        $fromform->questiontext = 'What is {a} * {b}?';
+        $fromform->defaultmark = 1.0;
+        $fromform->generalfeedback = 'Generalfeedback: {={a} * {b}} is the right answer.';
+
+        $fromform->unitrole = '0';
+        $fromform->unitpenalty = 0.1;
+        $fromform->unitgradingtypes = '1';
+        $fromform->unitsleft = '0';
+        $fromform->nounits = 1;
+        $fromform->multiplier = [];
+        $fromform->multiplier[0] = '1.0';
+        $fromform->synchronize = 0;
+        $fromform->answernumbering = 0;
+        $fromform->shuffleanswers = 0;
+
+        $fromform->noanswers = 6;
+        $fromform->answer = [];
+        $fromform->answer[0] = '{a} * {b}';
+        $fromform->answer[1] = '-{a} * {b}';
+
+        $fromform->fraction = [];
+        $fromform->fraction[0] = '1.0';
+        $fromform->fraction[1] = '0.0';
+
+        $fromform->tolerance = [];
+        $fromform->tolerance[0] = 0.001;
+        $fromform->tolerance[1] = 0.001;
+
+        $fromform->tolerancetype[0] = 1;
+        $fromform->tolerancetype[1] = 1;
+
+        $fromform->correctanswerlength[0] = 2;
+        $fromform->correctanswerlength[1] = 2;
+
+        $fromform->correctanswerformat[0] = 1;
+        $fromform->correctanswerformat[1] = 1;
+
+        $fromform->feedback = [];
+        $fromform->feedback[0] = [];
+        $fromform->feedback[0]['format'] = FORMAT_HTML;
+        $fromform->feedback[0]['text'] = 'Positive.';
+
+        $fromform->feedback[1] = [];
+        $fromform->feedback[1]['format'] = FORMAT_HTML;
+        $fromform->feedback[1]['text'] = 'Negative.';
+
+        $fromform->status = \core_question\local\bank\question_version_status::QUESTION_STATUS_READY;
+
+        return $fromform;
+    }
+
 }
 
 
@@ -199,9 +342,9 @@ class qtype_calculated_test_helper extends question_test_helper {
  * @copyright  2011 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class qtype_calculated_test_dataset_loader extends qtype_calculated_dataset_loader{
+class qtype_calculated_test_dataset_loader extends qtype_calculated_dataset_loader {
     protected $valuesets;
-    protected $aresynchronised = array();
+    protected $aresynchronised = [];
 
     public function __construct($questionid, array $valuesets) {
         parent::__construct($questionid);

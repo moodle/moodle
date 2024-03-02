@@ -748,25 +748,9 @@ class mod_bigbluebuttonbn_mod_form extends moodleform_mod {
      * unwanted warnings.
      */
     public function definition_after_data() {
-        global $COURSE;
         parent::definition_after_data();
         foreach ($this->formextensions as $formextension) {
             $formextension->definition_after_data();
-        }
-        $completion = new completion_info($COURSE);
-        if ($completion->is_enabled()) {
-            $mform = $this->_form;
-            $suffix = $this->get_suffix();
-            $completionattendancegroupel = 'completionattendancegroup' . $suffix;
-            $completionengagementgroupel = 'completionengagementgroup' . $suffix;
-            foreach ([$completionattendancegroupel, $completionengagementgroupel] as $groupname) {
-                if ($mform->elementExists($groupname)) {
-                    $element = $mform->getElement($groupname);
-                    if ($element->isFrozen()) {
-                        $element->unfreeze();
-                    }
-                }
-            }
         }
     }
 

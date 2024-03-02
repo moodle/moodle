@@ -27,12 +27,12 @@ Feature: Make content public or unlisted
     And I click on "Content bank" "link" in the "Navigation" "block"
     And I click on "filltheblanks.h5p" "link"
     And I wait until the page is ready
-    And I should not see "filltheblanks.h5p (Unlisted)" in the "h2" "css_element"
+    And "filltheblanks.h5p (Unlisted)" "heading" should not exist
     And I click on "More" "button"
     And I should see "Make unlisted"
     And I click on "Make unlisted" "link"
     And I wait until the page is ready
-    Then I should see "filltheblanks.h5p (Unlisted)" in the "h2" "css_element"
+    Then "filltheblanks.h5p (Unlisted)" "heading" should exist
     And I click on "More" "button"
     And I should see "Make public"
 
@@ -131,7 +131,7 @@ Feature: Make content public or unlisted
     And I click on "Upload" "link"
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Upload content" filemanager
     And I click on "Save changes" "button"
-    Then I should see "filltheblanks.h5p (Unlisted)" in the "h2" "css_element"
+    Then "filltheblanks.h5p (Unlisted)" "heading" should exist
 
   @_file_upload
   Scenario: User preference concerning content visibility overrides site-wide default content visibility
@@ -149,5 +149,5 @@ Feature: Make content public or unlisted
     And I click on "Upload" "link"
     And I upload "h5p/tests/fixtures/filltheblanks.h5p" file to "Upload content" filemanager
     And I click on "Save changes" "button"
-    Then I should see "filltheblanks.h5p" in the "h2" "css_element"
-    And I should not see "filltheblanks.h5p (Unlisted)" in the "h2" "css_element"
+    Then "filltheblanks.h5p" "heading" should exist
+    And "filltheblanks.h5p (Unlisted)" "heading" should not exist

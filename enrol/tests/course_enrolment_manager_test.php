@@ -18,6 +18,7 @@ namespace core_enrol;
 
 use context_course;
 use course_enrolment_manager;
+use stdClass;
 
 /**
  * Test course_enrolment_manager parts.
@@ -557,11 +558,18 @@ class course_enrolment_manager_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
+        // Create the forum.
+        $record = new stdClass();
+        $record->introformat = FORMAT_HTML;
+        $record->course = $this->course->id;
+        $forum = self::getDataGenerator()->create_module('forum', $record, ['groupmode' => SEPARATEGROUPS]);
+        $contextid = $DB->get_field('context', 'id', ['instanceid' => $forum->cmid, 'contextlevel' => CONTEXT_MODULE]);
+
         $teacher = $this->getDataGenerator()->create_and_enrol($this->course, 'teacher');
         $this->getDataGenerator()->create_group_member(['groupid' => $this->groups['group1']->id, 'userid' => $teacher->id]);
         $this->setUser($teacher);
 
-        $users = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true);
+        $courseusers = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true);
         $this->assertEqualsCanonicalizing([
             $teacher->username,
             $this->users['user0']->username,
@@ -570,26 +578,49 @@ class course_enrolment_manager_test extends \advanced_testcase {
             $this->users['user22']->username,
             $this->users['userall']->username,
             $this->users['usertch']->username,
-        ], array_column($users['users'], 'username'));
-        $this->assertEquals(7, $users['totalusers']);
+        ], array_column($courseusers['users'], 'username'));
+        $this->assertEquals(7, $courseusers['totalusers']);
 
-        // Switch course to separate groups.
-        $this->course->groupmode = SEPARATEGROUPS;
-        update_course($this->course);
-
-        $users = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true);
+        $forumusers = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true, $contextid);
         $this->assertEqualsCanonicalizing([
             $teacher->username,
             $this->users['user1']->username,
             $this->users['userall']->username,
-        ], array_column($users['users'], 'username'));
-        $this->assertEquals(3, $users['totalusers']);
+        ], array_column($forumusers['users'], 'username'));
+        $this->assertEquals(3, $forumusers['totalusers']);
+
+        // Switch course to separate groups and forum to no group.
+        $this->course->groupmode = SEPARATEGROUPS;
+        update_course($this->course);
+        set_coursemodule_groupmode($forum->cmid, NOGROUPS);
+
+        $courseusers = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true);
+        $this->assertEqualsCanonicalizing([
+            $teacher->username,
+            $this->users['user1']->username,
+            $this->users['userall']->username,
+        ], array_column($courseusers['users'], 'username'));
+        $this->assertEquals(3, $courseusers['totalusers']);
+
+        $forumusers = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true, $contextid);
+        $this->assertEqualsCanonicalizing([
+            $teacher->username,
+            $this->users['user0']->username,
+            $this->users['user1']->username,
+            $this->users['user21']->username,
+            $this->users['user22']->username,
+            $this->users['userall']->username,
+            $this->users['usertch']->username,
+        ], array_column($forumusers['users'], 'username'));
+        $this->assertEquals(7, $forumusers['totalusers']);
+
+        set_coursemodule_groupmode($forum->cmid, SEPARATEGROUPS);
 
         // Allow teacher to access all groups.
         $roleid = $DB->get_field('role', 'id', ['shortname' => 'teacher']);
         assign_capability('moodle/site:accessallgroups', CAP_ALLOW, $roleid, context_course::instance($this->course->id)->id);
 
-        $users = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true);
+        $courseusers = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true);
         $this->assertEqualsCanonicalizing([
             $teacher->username,
             $this->users['user0']->username,
@@ -598,7 +629,19 @@ class course_enrolment_manager_test extends \advanced_testcase {
             $this->users['user22']->username,
             $this->users['userall']->username,
             $this->users['usertch']->username,
-        ], array_column($users['users'], 'username'));
-        $this->assertEquals(7, $users['totalusers']);
+        ], array_column($courseusers['users'], 'username'));
+        $this->assertEquals(7, $courseusers['totalusers']);
+
+        $forumusers = (new course_enrolment_manager($PAGE, $this->course))->search_users('', false, 0, 25, true, $contextid);
+        $this->assertEqualsCanonicalizing([
+            $teacher->username,
+            $this->users['user0']->username,
+            $this->users['user1']->username,
+            $this->users['user21']->username,
+            $this->users['user22']->username,
+            $this->users['userall']->username,
+            $this->users['usertch']->username,
+        ], array_column($forumusers['users'], 'username'));
+        $this->assertEquals(7, $forumusers['totalusers']);
     }
 }

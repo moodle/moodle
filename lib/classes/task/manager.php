@@ -26,6 +26,7 @@ namespace core\task;
 
 use core\lock\lock;
 use core\lock\lock_factory;
+use core_shutdown_manager;
 
 define('CORE_TASK_TASKS_FILENAME', 'db/tasks.php');
 /**
@@ -50,6 +51,16 @@ class manager {
     const ADHOC_TASK_QUEUE_MODE_FILLING = 1;
 
     /**
+     * @var ?task_base $runningtask Used to tell what is the current running task in this process.
+     */
+    public static ?task_base $runningtask = null;
+
+    /**
+     * @var bool Used to tell if the manager's shutdown callback has been registered.
+     */
+    public static bool $registeredshutdownhandler = false;
+
+    /**
      * @var array A cached queue of adhoc tasks
      */
     public static $miniqueue;
@@ -63,6 +74,15 @@ class manager {
      * @var string Used to determine if the adhoc task queue is distributing or filling capacity.
      */
     public static $mode;
+
+    /**
+     * Reset the state of the task manager.
+     */
+    public static function reset_state(): void {
+        self::$miniqueue = null;
+        self::$numtasks = null;
+        self::$mode = null;
+    }
 
     /**
      * Given a component name, will load the list of tasks in the db/tasks.php file for that component.
@@ -229,6 +249,9 @@ class manager {
             $record->nextruntime = time() - 1;
         }
 
+        // Set the time the task was created.
+        $record->timecreated = time();
+
         // Check if the same task is already scheduled.
         if ($checkforexisting && self::task_is_scheduled($task)) {
             return false;
@@ -307,7 +330,6 @@ class manager {
         $record->faildelay = $task->get_fail_delay();
         $record->customdata = $task->get_custom_data_as_string();
         $record->userid = $task->get_userid();
-        $record->timecreated = time();
         $record->timestarted = $task->get_timestarted();
         $record->hostname = $task->get_hostname();
         $record->pid = $task->get_pid();
@@ -1077,6 +1099,42 @@ class manager {
     }
 
     /**
+     * This function will fail the currently running task, if there is one.
+     */
+    public static function fail_running_task(): void {
+        $runningtask = self::$runningtask;
+
+        if ($runningtask === null) {
+            return;
+        }
+
+        if ($runningtask instanceof scheduled_task) {
+            self::scheduled_task_failed($runningtask);
+            return;
+        }
+
+        if ($runningtask instanceof adhoc_task) {
+            self::adhoc_task_failed($runningtask);
+            return;
+        }
+    }
+
+    /**
+     * This function set's the $runningtask variable and ensures that the shutdown handler is registered.
+     * @param task_base $task
+     */
+    private static function task_starting(task_base $task): void {
+        self::$runningtask = $task;
+
+        // Add \core\task\manager::fail_running_task to shutdown manager, so we can ensure running tasks fail on shutdown.
+        if (!self::$registeredshutdownhandler) {
+            core_shutdown_manager::register_function('\core\task\manager::fail_running_task');
+
+            self::$registeredshutdownhandler = true;
+        }
+    }
+
+    /**
      * This function indicates that an adhoc task was not completed successfully and should be retried.
      *
      * @param \core\task\adhoc_task $task
@@ -1087,6 +1145,17 @@ class manager {
         logmanager::finalise_log(true);
 
         $delay = $task->get_fail_delay();
+
+        if ($delay > 0) {
+            // If the task has a fail delay, it's already run at least once.
+            // We need to check if the task should be retried or not.
+            $taskcustomdata = $task->get_custom_data();
+            if ($taskcustomdata && isset($taskcustomdata->noretry) && $taskcustomdata->noretry) {
+                // The task has been marked as not retrying, so we can mark it as completed and delete it.
+                self::adhoc_task_complete($task);
+                return;
+            }
+        }
 
         // Reschedule task with exponential fall off for failing tasks.
         if (empty($delay)) {
@@ -1114,6 +1183,8 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+
+        self::$runningtask = null;
     }
 
     /**
@@ -1139,6 +1210,8 @@ class manager {
 
         $record = self::record_from_adhoc_task($task);
         $DB->update_record('task_adhoc', $record);
+
+        self::task_starting($task);
     }
 
     /**
@@ -1164,6 +1237,8 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+
+        self::$runningtask = null;
     }
 
     /**
@@ -1208,6 +1283,8 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+
+        self::$runningtask = null;
     }
 
     /**
@@ -1253,6 +1330,8 @@ class manager {
         $record->hostname = $hostname;
         $record->pid = $pid;
         $DB->update_record('task_scheduled', $record);
+
+        self::task_starting($task);
     }
 
     /**
@@ -1287,6 +1366,8 @@ class manager {
             $task->get_cron_lock()->release();
         }
         $task->get_lock()->release();
+
+        self::$runningtask = null;
     }
 
     /**
@@ -1516,10 +1597,38 @@ class manager {
             $command = "{$phpbinary} {$scriptpath} {$taskarg}";
 
             // Execute it.
-            passthru($command);
+            self::passthru_via_mtrace($command);
         }
 
         return true;
+    }
+
+    /**
+     * This behaves similar to passthru but filters every line via
+     * the mtrace function so it can be post processed.
+     *
+     * @param string $command to run
+     * @return void
+     */
+    public static function passthru_via_mtrace(string $command) {
+        $descriptorspec = [
+            0 => ['pipe', 'r'], // STDIN.
+            1 => ['pipe', 'w'], // STDOUT.
+            2 => ['pipe', 'w'], // STDERR.
+        ];
+        flush();
+        $process = proc_open($command, $descriptorspec, $pipes, realpath('./'));
+        if (is_resource($process)) {
+            while ($s = fgets($pipes[1])) {
+                mtrace($s, '');
+                flush();
+            }
+        }
+
+        fclose($pipes[0]);
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        proc_close($process);
     }
 
     /**
@@ -1586,7 +1695,7 @@ class manager {
         }
 
         // Execute it.
-        passthru($command);
+        self::passthru_via_mtrace($command);
     }
 
     /**

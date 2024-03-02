@@ -16,10 +16,6 @@
 
 namespace core\task;
 
-defined('MOODLE_INTERNAL') || die();
-
-require_once(__DIR__ . '/../fixtures/task_fixtures.php');
-
 /**
  * This file contains unit tests for the 'task running' data.
  *
@@ -28,7 +24,10 @@ require_once(__DIR__ . '/../fixtures/task_fixtures.php');
  * @copyright 2019 The Open University
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class running_test extends \advanced_testcase {
+final class running_test extends \advanced_testcase {
+    public static function setUpBeforeClass(): void {
+        require_once(__DIR__ . '/../fixtures/task_fixtures.php');
+    }
 
     /**
      * Test for ad-hoc tasks.

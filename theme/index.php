@@ -40,8 +40,15 @@ if ($reset and confirm_sesskey()) {
     theme_reset_all_caches();
 }
 
+$definedinconfig = array_key_exists('theme', $CFG->config_php_settings);
+if ($definedinconfig) {
+    $forcedthemename = get_string('pluginname', 'theme_'.$CFG->theme);
+    // Show a notification that the theme is defined in config.php.
+    \core\notification::info(get_string('themedefinedinconfigphp', 'admin', $forcedthemename));
+}
+
 // Change theme.
-if (!empty($choose) && confirm_sesskey()) {
+if (!$definedinconfig && !empty($choose) && confirm_sesskey()) {
 
     // Load the theme to make sure it is valid.
     $theme = theme_config::load($choose);
@@ -101,7 +108,10 @@ foreach ($themes as $themename => $themedir) {
     // Is this the current theme?
     if ($themename == $CFG->theme) {
         $rowclasses[] = 'selectedtheme';
-    } else {
+        if ($definedinconfig) {
+            $infocell .= html_writer::div(get_string('configoverride', 'admin'), 'alert alert-info');
+        }
+    } else if (!$definedinconfig) {
         // Button to choose this as the main theme.
         $setthemestr = get_string('usetheme');
         $setthemeurl = new moodle_url('/theme/index.php', ['choose' => $themename, 'sesskey' => sesskey()]);

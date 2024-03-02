@@ -267,5 +267,8 @@ function xmldb_h5pactivity_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023042401, 'h5pactivity');
     }
 
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

@@ -5,8 +5,8 @@ Feature: Allow to mark course as completed without cron for activity completion 
 
   Background:
     Given the following "courses" exist:
-      | fullname          | shortname | category |
-      | Completion course | CC1       | 0        |
+      | fullname          | shortname | category | enablecompletion |
+      | Completion course | CC1       | 0        | 1                |
     And the following "users" exist:
       | username | firstname | lastname  | email                |
       | student1 | Student   | First     | student1@example.com |
@@ -25,11 +25,7 @@ Feature: Allow to mark course as completed without cron for activity completion 
     And the following "blocks" exist:
       | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
       | completionstatus | Course       | CC1       | course-view-*   | side-pre      |
-    And I am on the "Completion course" "course editing" page logged in as admin
-    And I expand all fieldsets
-    And I set the field "Enable completion tracking" to "Yes"
-    And I click on "Save and display" "button"
-    And I am on the "Test assignment name" "assign activity editing" page
+    And I am on the "Test assignment name" "assign activity editing" page logged in as admin
     And I click on "Expand all" "link" in the "region-main" "region"
     And I set the field "Add requirements" to "1"
     And I set the field "completionusegrade" to "1"

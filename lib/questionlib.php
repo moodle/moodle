@@ -1306,10 +1306,11 @@ function question_categorylist($categoryid): array {
     global $DB;
 
     // Final list of category IDs.
-    $categorylist = array();
+    $categorylist = [];
 
     // A list of category IDs to check for any sub-categories.
-    $subcategories = array($categoryid);
+    $subcategories = [$categoryid];
+    $contextid = $DB->get_field('question_categories', 'contextid', ['id' => $categoryid]);
 
     while ($subcategories) {
         foreach ($subcategories as $subcategory) {
@@ -1320,37 +1321,40 @@ function question_categorylist($categoryid): array {
             $categorylist[$subcategory] = $subcategory;
         }
 
-        list ($in, $params) = $DB->get_in_or_equal($subcategories);
+        [$in, $params] = $DB->get_in_or_equal($subcategories);
+        $params[] = $contextid;
 
-        $subcategories = $DB->get_records_select_menu('question_categories', "parent $in", $params,
-                                                    null, 'id,id AS id2');
+        // Order by id is not strictly needed, but it will be cheap, and makes the results deterministic.
+        $subcategories = $DB->get_records_select_menu('question_categories',
+                "parent $in AND contextid = ?", $params, 'id', 'id,id AS id2');
     }
 
     return $categorylist;
 }
 
 /**
- * Get all parent categories of a given question category in decending order.
+ * Get all parent categories of a given question category in descending order.
+ *
  * @param int $categoryid for which you want to find the parents.
  * @return array of question category ids of all parents categories.
  */
 function question_categorylist_parents(int $categoryid): array {
     global $DB;
-    $parent = $DB->get_field('question_categories', 'parent', array('id' => $categoryid));
-    if (!$parent) {
-        return [];
-    }
-    $categorylist = [$parent];
-    $currentid = $parent;
-    while ($currentid) {
-        $currentid = $DB->get_field('question_categories', 'parent', array('id' => $currentid));
-        if ($currentid) {
-            $categorylist[] = $currentid;
+
+    $category = $DB->get_record('question_categories', ['id' => $categoryid]);
+    $contextid = $category->contextid;
+
+    $categorylist = [];
+    while ($category->parent) {
+        $category = $DB->get_record('question_categories', ['id' => $category->parent]);
+        if (!$category || $category->contextid != $contextid) {
+            break;
         }
+        $categorylist[] = $category->id;
     }
-    // Present the list in decending order (the top category at the top).
-    $categorylist = array_reverse($categorylist);
-    return $categorylist;
+
+    // Present the list in descending order (the top category at the top).
+    return array_reverse($categorylist);
 }
 
 // Import/Export Functions.

@@ -41,6 +41,11 @@ M.core_comment = {
                 this.courseid = args.courseid;
                 this.contextid = args.contextid;
                 this.autostart = (args.autostart);
+                // Fail fast if the comments element cannot be found, such as in embedded-type views where blocks may be loaded
+                // then discarded.
+                if (!Y.one('#comment-ctrl-'+this.client_id)) {
+                    return;
+                }
                 // expand comments?
                 if (this.autostart) {
                     this.view(args.page);

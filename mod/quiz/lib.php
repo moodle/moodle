@@ -2606,3 +2606,21 @@ function mod_quiz_calculate_question_stats(context $context): ?all_calculated_fo
     $report = new quiz_statistics_report();
     return $report->calculate_questions_stats_for_question_bank($cm->instance, false, false);
 }
+
+/**
+ * Return a list of all the user preferences used by mod_quiz.
+ *
+ * @uses core_user::is_current_user
+ *
+ * @return array[]
+ */
+function mod_quiz_user_preferences(): array {
+    $preferences = [];
+    $preferences['quiz_timerhidden'] = [
+        'type' => PARAM_INT,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => '0',
+        'permissioncallback' => [core_user::class, 'is_current_user'],
+    ];
+    return $preferences;
+}

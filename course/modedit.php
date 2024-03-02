@@ -207,8 +207,6 @@ if ($mform->is_cancelled()) {
     exit;
 
 } else {
-
-    $streditinga = get_string('editinga', 'moodle', $fullmodulename);
     $strmodulenameplural = get_string('modulenameplural', $module->name);
 
     if (!empty($cm->id)) {
@@ -218,7 +216,7 @@ if ($mform->is_cancelled()) {
     }
 
     $PAGE->set_heading($course->fullname);
-    $PAGE->set_title($streditinga);
+    $PAGE->set_title($pageheading);
     $PAGE->set_cacheable(false);
 
     if (isset($navbaraddition)) {

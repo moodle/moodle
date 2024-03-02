@@ -111,9 +111,9 @@ class enrol_manual_external extends external_api {
               }
             }
             if (empty($instance)) {
-              $errorparams = new stdClass();
-              $errorparams->courseid = $enrolment['courseid'];
-              throw new moodle_exception('wsnoinstance', 'enrol_manual', $errorparams);
+                $errorparams = new stdClass();
+                $errorparams->courseid = $enrolment['courseid'];
+                throw new moodle_exception('wsnoinstance', 'enrol_manual', '', $errorparams);
             }
 
             // Check that the plugin accept enrolment (it should always the case, it's hard coded in the plugin).
@@ -195,7 +195,7 @@ class enrol_manual_external extends external_api {
             require_capability('enrol/manual:unenrol', $context);
             $instance = $DB->get_record('enrol', array('courseid' => $enrolment['courseid'], 'enrol' => 'manual'));
             if (!$instance) {
-                throw new moodle_exception('wsnoinstance', 'enrol_manual', $enrolment);
+                throw new moodle_exception('wsnoinstance', 'enrol_manual', '', $enrolment);
             }
             $user = $DB->get_record('user', array('id' => $enrolment['userid']));
             if (!$user) {

@@ -102,7 +102,7 @@ class block extends base {
      */
     public static function add_disabled_constraints_to_form(\MoodleQuickForm $mform) {
         $mform->hideIf('targetvalue_block', 'targettype', 'noteq',
-                \tool_usertours\target::get_target_constant_for_class(get_class()));
+                \tool_usertours\target::get_target_constant_for_class(self::class));
     }
 
     /**

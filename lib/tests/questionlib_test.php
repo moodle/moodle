@@ -2009,9 +2009,73 @@ class questionlib_test extends \advanced_testcase {
     }
 
     /**
-     * Test of question_categorylist_parents function.
+     * Test of question_categorylist function.
+     *
+     * @covers ::question_categorylist()
      */
-    public function test_question_categorylist_parents() {
+    public function test_question_categorylist(): void {
+        $this->resetAfterTest();
+
+        // Create a category tree.
+        /** @var \core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $context = \context_system::instance();
+
+        $top = question_get_top_category($context->id, true);
+        $cat1 = $questiongenerator->create_question_category(['parent' => $top->id]);
+        $sub11 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
+        $sub12 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
+        $cat2 = $questiongenerator->create_question_category(['parent' => $top->id]);
+        $sub22 = $questiongenerator->create_question_category(['parent' => $cat2->id]);
+
+        // Test - returned array has keys and values the same.
+        $this->assertEquals([$sub22->id], array_keys(question_categorylist($sub22->id)));
+        $this->assertEquals([$sub22->id], array_values(question_categorylist($sub22->id)));
+        $this->assertEquals([$cat1->id, $sub11->id, $sub12->id], array_keys(question_categorylist($cat1->id)));
+        $this->assertEquals([$cat1->id, $sub11->id, $sub12->id], array_values(question_categorylist($cat1->id)));
+        $this->assertEquals([$top->id, $cat1->id, $cat2->id, $sub11->id, $sub12->id, $sub22->id],
+                array_keys(question_categorylist($top->id)));
+        $this->assertEquals([$top->id, $cat1->id, $cat2->id, $sub11->id, $sub12->id, $sub22->id],
+                array_values(question_categorylist($top->id)));
+    }
+
+    /**
+     * Test of question_categorylist function when there is bad data, with a category pointing to a parent in another context.
+     *
+     * This is a situation that should never arise (parents and their children should always belong to the same context)
+     * but it does, because bugs, so the code should be robust to it.
+     *
+     * @covers ::question_categorylist()
+     */
+    public function test_question_categorylist_bad_data(): void {
+        $this->resetAfterTest();
+
+        // Create a category tree.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
+        /** @var \core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $context = \context_system::instance();
+
+        $top = question_get_top_category($context->id, true);
+        $cat1 = $questiongenerator->create_question_category(['parent' => $top->id]);
+        $sub11 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
+        $sub12 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
+        $cat2 = $questiongenerator->create_question_category(['parent' => $top->id, 'contextid' => $coursecontext->id]);
+        $sub22 = $questiongenerator->create_question_category(['parent' => $cat2->id]);
+
+        // Test - returned array has keys and values the same.
+        $this->assertEquals([$cat2->id, $sub22->id], array_keys(question_categorylist($cat2->id)));
+        $this->assertEquals([$top->id, $cat1->id, $sub11->id, $sub12->id],
+                array_keys(question_categorylist($top->id)));
+    }
+
+    /**
+     * Test of question_categorylist_parents function.
+     *
+     * @covers ::question_categorylist_parents()
+     */
+    public function test_question_categorylist_parents(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         /** @var \core_question_generator $questiongenerator */
@@ -2023,11 +2087,36 @@ class questionlib_test extends \advanced_testcase {
         // Add sub-categories.
         $cat1 = $questiongenerator->create_question_category(['parent' => $cat0->id]);
         $cat2 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
+
         // Test the 'get parents' function.
-        $parentcategories = question_categorylist_parents($cat2->id);
-        $this->assertEquals($cat0->id, $parentcategories[0]);
-        $this->assertEquals($cat1->id, $parentcategories[1]);
-        $this->assertCount(2, $parentcategories);
+        $this->assertEquals([$cat0->id, $cat1->id], question_categorylist_parents($cat2->id));
+    }
+
+    /**
+     * Test question_categorylist_parents when there is bad data, with a category pointing to a parent in another context.
+     *
+     * This is a situation that should never arise (parents and their children should always belong to the same context)
+     * but it does, because bugs, so the code should be robust to it.
+     *
+     * @covers ::question_categorylist_parents()
+     */
+    public function test_question_categorylist_parents_bad_data(): void {
+        $this->resetAfterTest();
+        $generator = $this->getDataGenerator();
+        /** @var \core_question_generator $questiongenerator */
+        $questiongenerator = $generator->get_plugin_generator('core_question');
+        $category = $generator->create_category();
+        $context = \context_coursecat::instance($category->id);
+        // Create a top category.
+        $cat0 = question_get_top_category($context->id, true);
+        // Add sub-categories - but in a different context.
+        $cat1 = $questiongenerator->create_question_category(
+            ['parent' => $cat0->id, 'contextid' => \context_system::instance()->id]);
+        $cat2 = $questiongenerator->create_question_category(
+            ['parent' => $cat1->id, 'contextid' => \context_system::instance()->id]);
+
+        // Test the 'get parents' function only returns categories in the same context.
+        $this->assertEquals([$cat1->id], question_categorylist_parents($cat2->id));
     }
 
     /**

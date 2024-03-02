@@ -23,6 +23,7 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
 use core\task\manager;
 use quiz_statistics\task\recalculate;
 use quiz_statistics\tests\statistics_helper;
+use quiz_statistics\tests\statistics_test_trait;
 
 /**
  * Unit tests for attempt_submitted observer
@@ -35,37 +36,8 @@ use quiz_statistics\tests\statistics_helper;
  */
 class attempt_submitted_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
+    use statistics_test_trait;
 
-    /**
-     * Return a user, and a quiz with 2 questions.
-     *
-     * @return array [$user, $quiz, $course]
-     */
-    protected function create_test_data(): array {
-        $this->resetAfterTest(true);
-        $generator = $this->getDataGenerator();
-        $user = $generator->create_user();
-        $course = $generator->create_course();
-        $quiz = $this->create_test_quiz($course);
-        $this->add_two_regular_questions($generator->get_plugin_generator('core_question'), $quiz);
-        return [$user, $quiz, $course];
-    }
-
-    /**
-     * Assert that a task is queued for a quiz.
-     *
-     * Check that the quizid stored in the task's custom data matches the provided quiz,
-     * and that the run time is in one hour from when the test is being run (within a small margin of error).
-     *
-     * @param recalculate $task
-     * @param \stdClass $quiz
-     * @return void
-     */
-    protected function assert_task_is_queued_for_quiz(recalculate $task, \stdClass $quiz): void {
-        $data = $task->get_custom_data();
-        $this->assertEquals($quiz->id, $data->quizid);
-        $this->assertEqualsWithDelta(time() + HOURSECS, $task->get_next_run_time(), 1);
-    }
 
     /**
      * Attempting a quiz should queue the recalculation task for that quiz in 1 hour's time.

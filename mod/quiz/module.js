@@ -78,6 +78,7 @@ M.mod_quiz.timer = {
         M.mod_quiz.timer.endtime = M.pageloadstarttime.getTime() + start*1000;
         M.mod_quiz.timer.preview = preview;
         M.mod_quiz.timer.update();
+
         Y.one('#quiz-timer-wrapper').setStyle('display', 'flex');
         require(['core_form/changechecker'], function(FormChangeChecker) {
             M.mod_quiz.timer.FormChangeChecker = FormChangeChecker;
@@ -85,31 +86,64 @@ M.mod_quiz.timer = {
         Y.one('#toggle-timer').on('click', function() {
             M.mod_quiz.timer.toggleVisibility();
         });
+
+        // We store the visibility as a user preference. If the value is not '1',
+        // i. e. it is '0' or the item does not exist, the timer must be shown.
+        require(['core_user/repository'], function(UserRepository) {
+            UserRepository.getUserPreference('quiz_timerhidden')
+                .then((response) => {
+                    M.mod_quiz.timer.setVisibility(response !== '1', false);
+                    return;
+                })
+                // If there is an error, we catch and ignore it, because (i) no matter what we do,
+                // we do not have the stored value, so we will need to take a reasonable default
+                // and (ii) the student who is currently taking the quiz is probably not interested
+                // in the technical details why the fetch failed, even less, because they can hardly
+                // do anything to solve the problem. However, we still log that there was an error
+                // to leave a trace, e. g. for debugging.
+                .catch((error) => {
+                    M.mod_quiz.timer.setVisibility(true, false);
+                    Y.log(error, 'error', 'moodle-mod_quiz');
+                });
+        });
     },
 
     /**
-     * Hide or show the timer.
-     * @param {boolean} whether we are ultimately displaying the timer and disabling the button
+     * Toggle the timer's visibility.
      */
-    toggleVisibility: function(finalShow = false) {
+    toggleVisibility: function() {
+        var Y = M.mod_quiz.timer.Y;
+        var timer = Y.one('#quiz-time-left');
+
+        // If the timer is currently hidden, the visibility should be set to true and vice versa.
+        this.setVisibility(timer.getAttribute('hidden') === 'hidden');
+    },
+
+    /**
+     * Set visibility of the timer.
+     * @param visible whether the timer should be visible
+     * @param updatePref whether the new status should be stored as a preference
+     */
+    setVisibility: function(visible, updatePref = true) {
         var Y = M.mod_quiz.timer.Y;
         var timer = Y.one('#quiz-time-left');
         var button = Y.one('#toggle-timer');
 
-        // When time is running out, we show the timer and disable the button.
-        if (finalShow) {
-            timer.show();
+        if (visible) {
             button.setContent(M.util.get_string('hide', 'moodle'));
-            button.setAttribute('disabled', true);
-            return;
+            timer.show();
+        } else {
+            button.setContent(M.util.get_string('show', 'moodle'));
+            timer.hide();
         }
 
-        timer.toggleView();
-        if (timer.getAttribute('hidden') === 'hidden') {
-            button.setContent(M.util.get_string('show', 'moodle'));
-        } else {
-            button.setContent(M.util.get_string('hide', 'moodle'));
+        // Only update the user preference if this has been requested.
+        if (updatePref) {
+            require(['core_user/repository'], function(UserRepository) {
+                UserRepository.setUserPreference('quiz_timerhidden', (visible ? '0' : '1'));
+            });
         }
+
     },
 
     /**
@@ -157,7 +191,12 @@ M.mod_quiz.timer = {
             Y.one('#quiz-timer').removeClass('timeleft' + (secondsleft + 2))
                     .removeClass('timeleft' + (secondsleft + 1))
                     .addClass('timeleft' + secondsleft);
-            M.mod_quiz.timer.toggleVisibility(true);
+
+            // From now on, the timer should be visible and should not be hideable anymore.
+            // We use the second (optional) parameter in order to leave the user preference
+            // unchanged.
+            M.mod_quiz.timer.setVisibility(true, false);
+            Y.one('#toggle-timer').setAttribute('disabled', true);
         }
 
         // Update the time display.
@@ -177,6 +216,13 @@ M.mod_quiz.timer = {
     // Allow the end time of the quiz to be updated.
     updateEndTime: function(timeleft) {
         var newtimeleft = new Date().getTime() + timeleft * 1000;
+
+        // Timer might not have been initialized yet. We initialize it with
+        // preview = 0, because it's better to take a preview for a real quiz
+        // than to take a real quiz for a preview.
+        if (M.mod_quiz.timer.Y === null) {
+            M.mod_quiz.timer.init(window.Y, timeleft, 0);
+        }
 
         // Only update if change is greater than the threshold, so the
         // time doesn't bounce around unnecessarily.

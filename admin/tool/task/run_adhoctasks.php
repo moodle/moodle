@@ -54,13 +54,19 @@ if ($taskid) {
         throw new \moodle_exception('invalidtaskid');
     }
     $classname = $record->classname;
-    $heading = "Run $classname task Id $taskid";
+    $heading = get_string('runadhoctask', 'tool_task', ['task' => $classname, 'taskid' => $taskid]);
     $tasks = [core\task\manager::adhoc_task_from_record($record)];
 } else {
     if (!$classname) {
         throw new \moodle_exception('noclassname', 'tool_task');
     }
-    $heading = "Run $classname " . ($failedonly ? "failed" : "all")." tasks";
+
+    $heading = get_string(
+        $failedonly ? 'runadhoctasksfailed' : 'runadhoctasks',
+        'tool_task',
+        s($classname),
+    );
+
     $now = time();
     $tasks = array_filter(
         core\task\manager::get_adhoc_tasks($classname, $failedonly, true),
@@ -111,6 +117,7 @@ require_sesskey();
 \core\session\manager::write_close();
 
 // Prepare to handle output via mtrace.
+require_once("{$CFG->dirroot}/{$CFG->admin}/tool/task/lib.php");
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 
 // Run the specified tasks.

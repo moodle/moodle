@@ -10,25 +10,18 @@ Feature: Completion pass grade  view activity completion in the forum activity
       | student1 | Vinnie    | Student1 | student1@example.com |
       | teacher1 | Darrell   | Teacher1 | teacher1@example.com |
     And the following "courses" exist:
-      | fullname | shortname | category |
-      | Course 1 | C1        | 0        |
+      | fullname | shortname | category | enablecompletion |
+      | Course 1 | C1        | 0        | 1                |
     And the following "course enrolments" exist:
       | user | course | role           |
       | student1 | C1 | student        |
       | teacher1 | C1 | editingteacher |
-    And I am on the "Course 1" course page logged in as teacher1
-    And I navigate to "Settings" in current page administration
-    And I expand all fieldsets
-    And I set the following fields to these values:
-      | Enable completion tracking | Yes |
-      | Show activity completion conditions | Yes |
-    And I press "Save and display"
     And the following "activity" exists:
       | activity | forum         |
       | course   | C1            |
       | idnumber | mh1           |
       | name     | Music history |
-    And I am on the "Music history" "forum activity editing" page
+    And I am on the "Music history" "forum activity editing" page logged in as teacher1
     And I expand all fieldsets
     And I set the following fields to these values:
       | Whole forum grading > Type            | Point       |

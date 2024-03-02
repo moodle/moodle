@@ -216,10 +216,20 @@ EOF;
      * @return null|self
      */
     public static function get_from_meetingid(string $meetingid): ?self {
+        global $DB;
+        // Here we try to manage cases where the meetingid was actually produced by the old plugin or we have actually
+        // changed the identifiers for the instance.
         $matches = self::parse_meetingid($meetingid);
+        $existinginstanceid = $DB->get_field('bigbluebuttonbn', 'id', ['meetingid' => $matches['meetingid']]);
+        if (empty($existinginstanceid)) {
+            debugging("The meeting id with ID ($meetingid) was not found in the bigbluebuttonbn table", DEBUG_DEVELOPER);
+            $existinginstanceid = $matches['instanceid']; // We try to "guess" the meeting id from its instance id. We should
+            // not really do that as this changes simply if we move the course elsewhere.
+            debugging("Trying to get the instanceid from the meeting ID. This will soon be deprecated", DEBUG_DEVELOPER);
+        }
+        $instance = self::get_from_instanceid($existinginstanceid);
 
-        $instance = self::get_from_instanceid($matches['instanceid']);
-
+        // Check for the group if any.
         if ($instance && array_key_exists('groupid', $matches)) {
             $instance->set_group_id($matches['groupid']);
         }
@@ -869,8 +879,8 @@ EOF;
         if (!config::get('importrecordings_enabled')) {
             return false;
         }
-        if ($this->can_manage_recordings()) {
-            return true;
+        if (!$this->can_manage_recordings()) {
+            return false;
         }
 
         return $this->is_feature_enabled('importrecordings');

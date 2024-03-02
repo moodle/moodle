@@ -351,13 +351,13 @@ class summary_table extends table_sql {
         ];
 
         // Add relevant filter params.
-        foreach ($this->exportfilterdata as $name => $data) {
-            if (is_array($data)) {
-                foreach ($data as $key => $value) {
+        foreach ($this->exportfilterdata as $name => $filterdata) {
+            if (is_array($filterdata)) {
+                foreach ($filterdata as $key => $value) {
                     $params["{$name}[{$key}]"] = $value;
                 }
             } else {
-                $params[$name] = $data;
+                $params[$name] = $filterdata;
             }
         }
 
@@ -736,7 +736,7 @@ class summary_table extends table_sql {
                 $orderby = " ORDER BY {$sort}";
             }
         } else {
-            $selectfields = 'COUNT(u.id)';
+            $selectfields = 'COUNT(DISTINCT u.id)';
         }
 
         $sql = "SELECT {$selectfields}

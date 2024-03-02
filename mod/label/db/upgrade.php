@@ -76,7 +76,7 @@ function xmldb_label_upgrade($oldversion) {
         $params = ['tofind' => '%@@PLUGINFILE@@%'];
         $total = $DB->count_records_select('label', $select, $params);
         if ($total > 0) {
-            $labels = $DB->get_recordset_select('label', $select, $params, 'id, name, intro');
+            $labels = $DB->get_recordset_select('label', $select, $params, '', 'id, name, intro');
 
             // Show a progress bar.
             $pbar = new progress_bar('upgrademodlabelpluginfile', 500, true);
@@ -113,6 +113,9 @@ function xmldb_label_upgrade($oldversion) {
     }
 
     // Automatically generated Moodle v4.2.0 release upgrade line.
+    // Put any upgrade step following this.
+
+    // Automatically generated Moodle v4.3.0 release upgrade line.
     // Put any upgrade step following this.
 
     return true;

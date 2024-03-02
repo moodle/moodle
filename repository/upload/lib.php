@@ -82,6 +82,8 @@ class repository_upload extends repository {
             $license = null, $author = '', $overwriteexisting = false, $areamaxbytes = FILE_AREA_MAX_BYTES_UNLIMITED) {
         global $USER, $CFG;
 
+        \core\session\manager::write_close();
+
         if ((is_array($types) and in_array('*', $types)) or $types == '*') {
             $this->mimetypes = '*';
         } else {

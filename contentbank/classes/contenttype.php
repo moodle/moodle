@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Content type manager class
- *
- * @package    core_contentbank
- * @copyright  2020 Amaia Anabitarte <amaia@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_contentbank;
 
 use core\event\contentbank_content_created;
@@ -286,7 +278,7 @@ abstract class contenttype {
      */
     public function get_icon(content $content): string {
         global $OUTPUT;
-        return $OUTPUT->image_url('f/unknown-64', 'moodle')->out(false);
+        return $OUTPUT->image_url('f/unknown')->out(false);
     }
 
     /**

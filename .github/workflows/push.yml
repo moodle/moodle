@@ -7,6 +7,12 @@ on:
       - MOODLE_[0-9]+_STABLE
     tags-ignore:
       - v[0-9]+.[0-9]+.[0-9]+*
+  workflow_dispatch:
+    inputs:
+      phpunit_extra_options:
+        description: Additional options to apply to PHPUnit
+        required: false
+        default: ''
 
 env:
   php: 8.2
@@ -17,10 +23,10 @@ jobs:
 
     steps:
       - name: Checking out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configuring node & npm
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
@@ -99,7 +105,7 @@ jobs:
           coverage: none
 
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setting up PHPUnit
         env:
@@ -115,4 +121,4 @@ jobs:
         env:
           dbtype: ${{ matrix.db }}
           phpunit_options: ${{ secrets.phpunit_options }}
-        run: vendor/bin/phpunit $phpunit_options
+        run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}

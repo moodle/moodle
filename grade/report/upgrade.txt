@@ -3,7 +3,7 @@ information provided here is intended especially for developers.
 
 === 4.3 ===
 * The load_users() method in the gradereport_singleview\local\screen class has been deprecated. Please use
-  get_gradable_users() instead.
+  grade_report::get_gradable_users() instead.
 * The \gradereport_singleview\local\screen\select has been deprecated. This class generates the output for the initial
   view to select the single view item type (user or grade item) which is no longer actively used as we do not provide
   direct links to it.

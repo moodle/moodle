@@ -991,6 +991,14 @@ class modinfolib_test extends advanced_testcase {
             $this->assertInstanceOf('dml_exception', $e);
         }
 
+        // Invalid module ID.
+        try {
+            get_course_and_cm_from_instance(-1, 'page', $course);
+            $this->fail();
+        } catch (moodle_exception $e) {
+            $this->assertStringContainsString('Invalid module ID: -1', $e->getMessage());
+        }
+
         // Invalid module name.
         try {
             get_course_and_cm_from_cmid($page->cmid, '1337 h4x0ring');
@@ -1191,6 +1199,88 @@ class modinfolib_test extends advanced_testcase {
         $this->assertArrayHasKey(0, $sectioncaches);
         $this->assertArrayHasKey(2, $sectioncaches);
         $this->assertArrayHasKey(3, $sectioncaches);
+        // Make sure that the cacherev will be reset.
+        $this->assertEquals(-1, $coursemodinfo->cacherev);
+    }
+
+    /**
+     * Purge a single course module from the cache.
+     *
+     * @return void
+     * @covers \course_modinfo::purge_course_module_cache
+     */
+    public function test_purge_course_module(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $cache = cache::make('core', 'coursemodinfo');
+
+        // Generate the course and pre-requisite section.
+        $course = $this->getDataGenerator()->create_course();
+        $cm1 = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+        $cm2 = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+        $cm3 = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+        $cm4 = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+        // Reset course cache.
+        rebuild_course_cache($course->id, true);
+        // Build course cache.
+        get_fast_modinfo($course->id);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        $this->assertCount(4, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm1->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm2->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm3->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm4->cmid, $coursemodinfo->modinfo);
+
+        course_modinfo::purge_course_module_cache($course->id, $cm1->cmid);
+
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        $this->assertCount(3, $coursemodinfo->modinfo);
+        $this->assertArrayNotHasKey($cm1->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm2->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm3->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm4->cmid, $coursemodinfo->modinfo);
+        // Make sure that the cacherev will be reset.
+        $this->assertEquals(-1, $coursemodinfo->cacherev);
+    }
+
+    /**
+     * Purge a multiple course modules from the cache.
+     *
+     * @return void
+     * @covers \course_modinfo::purge_course_modules_cache
+     */
+    public function test_purge_multiple_course_modules(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $cache = cache::make('core', 'coursemodinfo');
+
+        // Generate the course and pre-requisite section.
+        $course = $this->getDataGenerator()->create_course();
+        $cm1 = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+        $cm2 = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+        $cm3 = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+        $cm4 = $this->getDataGenerator()->create_module('page', ['course' => $course]);
+        // Reset course cache.
+        rebuild_course_cache($course->id, true);
+        // Build course cache.
+        get_fast_modinfo($course->id);
+        // Get the course modinfo cache.
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        $this->assertCount(4, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm1->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm2->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm3->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm4->cmid, $coursemodinfo->modinfo);
+
+        course_modinfo::purge_course_modules_cache($course->id, [$cm2->cmid, $cm3->cmid]);
+
+        $coursemodinfo = $cache->get_versioned($course->id, $course->cacherev);
+        $this->assertCount(2, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm1->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayNotHasKey($cm2->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayNotHasKey($cm3->cmid, $coursemodinfo->modinfo);
+        $this->assertArrayHasKey($cm4->cmid, $coursemodinfo->modinfo);
         // Make sure that the cacherev will be reset.
         $this->assertEquals(-1, $coursemodinfo->cacherev);
     }

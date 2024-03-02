@@ -445,6 +445,11 @@ function quiz_delete_attempt($attempt, $quiz) {
         $event = \mod_quiz\event\attempt_deleted::create($params);
         $event->add_record_snapshot('quiz_attempts', $attempt);
         $event->trigger();
+
+        $callbackclasses = \core_component::get_plugin_list_with_class('quiz', 'quiz_attempt_deleted');
+        foreach ($callbackclasses as $callbackclass) {
+            component_class_callback($callbackclass, 'callback', [$quiz->id]);
+        }
     }
 
     // Search quiz_attempts for other instances by this user.
@@ -1120,7 +1125,7 @@ function quiz_attempt_state($quiz, $attempt) {
         return display_options::DURING;
     } else if ($quiz->timeclose && time() >= $quiz->timeclose) {
         return display_options::AFTER_CLOSE;
-    } else if (time() < $attempt->timefinish + 120) {
+    } else if (time() < $attempt->timefinish + quiz_attempt::IMMEDIATELY_AFTER_PERIOD) {
         return display_options::IMMEDIATELY_AFTER;
     } else {
         return display_options::LATER_WHILE_OPEN;

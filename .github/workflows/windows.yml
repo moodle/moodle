@@ -1,7 +1,12 @@
 name: Windows Testing
 
 on:
-  workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      phpunit_extra_options:
+        description: Additional options to apply to PHPUnit
+        required: false
+        default: ''
 env:
   php: 8.2
 
@@ -16,10 +21,10 @@ jobs:
           git config --global core.eol lf
 
       - name: Checking out code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configuring node & npm
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version-file: '.nvmrc'
 
@@ -112,7 +117,7 @@ jobs:
           git config --global core.eol lf
 
       - name: Checking out code from ${{ env.GITHUB_REF_SLUG }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       # Needs to be done after php is available, git configured and Moodle checkout has happened.
       - name: Setting up moodle-exttests service
@@ -141,4 +146,4 @@ jobs:
         env:
           dbtype: ${{ matrix.db }}
           phpunit_options: ${{ secrets.phpunit_options }}
-        run: vendor/bin/phpunit $phpunit_options
+        run: vendor/bin/phpunit $phpunit_options ${{ inputs.phpunit_extra_options }}

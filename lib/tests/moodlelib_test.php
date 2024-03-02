@@ -646,6 +646,38 @@ class moodlelib_test extends \advanced_testcase {
         $this->assertSame('', clean_param(null, PARAM_TEXT));
     }
 
+    /**
+     * Data provider for {@see test_clean_param_host}
+     *
+     * @return array
+     */
+    public static function clean_param_host_provider(): array {
+        return [
+            'Valid (low octets)' => ['0.0.0.0', '0.0.0.0'],
+            'Valid (high octets)' => ['255.255.255.255', '255.255.255.255'],
+            'Invalid first octet' => ['256.1.1.1', ''],
+            'Invalid second octet' => ['1.256.1.1', ''],
+            'Invalid third octet' => ['1.1.256.1', ''],
+            'Invalid fourth octet' => ['1.1.1.256', ''],
+            'Valid host' => ['moodle.org', 'moodle.org'],
+            'Invalid host' => ['.example.com', ''],
+        ];
+    }
+
+    /**
+     * Testing cleaning parameters with PARAM_HOST
+     *
+     * @param string $param
+     * @param string $expected
+     *
+     * @dataProvider clean_param_host_provider
+     *
+     * @covers \clean_param
+     */
+    public function test_clean_param_host(string $param, string $expected): void {
+        $this->assertEquals($expected, clean_param($param, PARAM_HOST));
+    }
+
     public function test_clean_param_url() {
         // Test PARAM_URL and PARAM_LOCALURL a bit.
         // Valid URLs.

@@ -52,13 +52,13 @@ trait subplugins_test_helper_trait {
         $mockedplugins->setAccessible(true);
         $plugins = $mockedplugins->getValue();
         $plugins[extension::BBB_EXTENSION_PLUGIN_NAME] = [$pluginname => $bbbextpath . "/$pluginname"];
-        $mockedplugins->setValue($plugins);
+        $mockedplugins->setValue(null, $plugins);
 
         $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
         $mockedplugintypes->setAccessible(true);
         $pluginstypes = $mockedplugintypes->getValue();
         $pluginstypes[extension::BBB_EXTENSION_PLUGIN_NAME] = $bbbextpath;
-        $mockedplugintypes->setValue($pluginstypes);
+        $mockedplugintypes->setValue(null, $pluginstypes);
 
         $fillclassmap = $mockedcomponent->getMethod('fill_classmap_cache');
         $fillclassmap->setAccessible(true);
@@ -72,7 +72,7 @@ trait subplugins_test_helper_trait {
         $mockedsubplugins->setAccessible(true);
         $subplugins = $mockedsubplugins->getValue();
         $subplugins['mod_bigbluebuttonbn'][extension::BBB_EXTENSION_PLUGIN_NAME][] = $pluginname;
-        $mockedsubplugins->setValue($subplugins);
+        $mockedsubplugins->setValue(null, $subplugins);
 
         // Now write the content of the cache in a file so we can use it later.
         $content = core_component::get_cache_content();
@@ -149,7 +149,7 @@ trait subplugins_test_helper_trait {
         // Here we reset the plugin caches.
         $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
         $mockedplugintypes->setAccessible(true);
-        $mockedplugintypes->setValue(null);
+        $mockedplugintypes->setValue(null, null);
         $fillclassmap = $mockedcomponent->getMethod('init');
         $fillclassmap->setAccessible(true);
         $fillclassmap->invoke(null);

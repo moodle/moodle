@@ -45,7 +45,7 @@ class core_completion_generator extends component_generator_base {
             throw new moodle_exception('modulerequired');
         }
         if (!$DB->get_record('modules', ['id' => $record['module']])) {
-            throw new moodle_exception('invalidmoduleid');
+            throw new moodle_exception('invalidmoduleid', 'error', '', $record['module']);
         }
 
         $record = (object) array_merge([

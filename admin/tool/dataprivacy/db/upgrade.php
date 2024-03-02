@@ -152,5 +152,8 @@ function xmldb_tool_dataprivacy_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023062700, 'tool', 'dataprivacy');
     }
 
+    // Automatically generated Moodle v4.3.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

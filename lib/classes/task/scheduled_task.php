@@ -55,6 +55,8 @@ abstract class scheduled_task extends task_base {
     const DAYOFWEEKMIN = 0;
     /** Maximum dayofweek value. */
     const DAYOFWEEKMAX = 6;
+    /** Maximum dayofweek value allowed in input (7 = 0). */
+    const DAYOFWEEKMAXINPUT = 7;
 
     /**
      * Minute field identifier.
@@ -76,6 +78,12 @@ abstract class scheduled_task extends task_base {
      * Day-of-week field identifier.
      */
     const FIELD_DAYOFWEEK = 'dayofweek';
+
+    /**
+     * Time used for the next scheduled time when a task should never run. This is 2222-01-01 00:00 GMT
+     * which is a large time that still fits in 10 digits.
+     */
+    const NEVER_RUN_TIME = 7952342400;
 
     /** @var string $hour - Pattern to work out the valid hours */
     private $hour = '*';
@@ -380,13 +388,25 @@ abstract class scheduled_task extends task_base {
                 break;
             case self::FIELD_DAYOFWEEK:
                 $min = self::DAYOFWEEKMIN;
-                $max = self::DAYOFWEEKMAX;
+                $max = self::DAYOFWEEKMAXINPUT;
                 break;
             default:
                 throw new \coding_exception("Field '$field' is not a valid crontab identifier.");
         }
 
-        return $this->eval_cron_field($this->{$field}, $min, $max);
+        $result = $this->eval_cron_field($this->{$field}, $min, $max);
+        if ($field === self::FIELD_DAYOFWEEK) {
+            // For day of week, 0 and 7 both mean Sunday; if there is a 7 we set 0. The result array is sorted.
+            if (end($result) === 7) {
+                // Remove last element.
+                array_pop($result);
+                // Insert 0 as first element if it's not there already.
+                if (reset($result) !== 0) {
+                    array_unshift($result, 0);
+                }
+            }
+        }
+        return $result;
     }
 
     /**
@@ -506,9 +526,14 @@ abstract class scheduled_task extends task_base {
     /**
      * Calculate when this task should next be run based on the schedule.
      *
+     * @param int $now Current time, for testing (leave 0 to use default time)
      * @return int $nextruntime.
      */
-    public function get_next_scheduled_time() {
+    public function get_next_scheduled_time(int $now = 0): int {
+        if (!$now) {
+            $now = time();
+        }
+
         // We need to change to the server timezone before using php date() functions.
         \core_date::set_default_server_timezone();
 
@@ -518,27 +543,64 @@ abstract class scheduled_task extends task_base {
         $validdaysofweek = $this->get_valid(self::FIELD_DAYOFWEEK);
         $validmonths = $this->get_valid(self::FIELD_MONTH);
 
-        $nextvalidyear = date('Y');
-
-        $currentminute = date("i") + 1;
-        $currenthour = date("H");
-        $currentday = date("j");
-        $currentmonth = date("n");
-        $currentdayofweek = date("w");
-
-        $nextvalidminute = $this->next_in_list($currentminute, $validminutes);
-        if ($nextvalidminute < $currentminute) {
-            $currenthour += 1;
+        // If any of the fields contain no valid data then the task will never run.
+        if (!$validminutes || !$validhours || !$validdays || !$validdaysofweek || !$validmonths) {
+            return self::NEVER_RUN_TIME;
         }
-        $nextvalidhour = $this->next_in_list($currenthour, $validhours);
-        if ($nextvalidhour < $currenthour) {
-            $currentdayofweek += 1;
-            $currentday += 1;
+
+        $result = self::get_next_scheduled_time_inner($now, $validminutes, $validhours, $validdays, $validdaysofweek, $validmonths);
+        return $result;
+    }
+
+    /**
+     * Recursively calculate the next valid time for this task.
+     *
+     * @param int $now Start time
+     * @param array $validminutes Valid minutes
+     * @param array $validhours Valid hours
+     * @param array $validdays Valid days
+     * @param array $validdaysofweek Valid days of week
+     * @param array $validmonths Valid months
+     * @param int $originalyear Zero for first call, original year for recursive calls
+     * @return int Next run time
+     */
+    protected function get_next_scheduled_time_inner(int $now, array $validminutes, array $validhours,
+            array $validdays, array $validdaysofweek, array $validmonths, int $originalyear = 0) {
+        $currentyear = (int)date('Y', $now);
+        if ($originalyear) {
+            // In recursive calls, check we didn't go more than 8 years ahead, that indicates the
+            // user has chosen an impossible date. 8 years is the maximum time, considering a task
+            // set to run on 29 February over a century boundary when a leap year is skipped.
+            if ($currentyear - $originalyear > 8) {
+                // Use this time if it's never going to happen.
+                return self::NEVER_RUN_TIME;
+            }
+            $firstyear = $originalyear;
+        } else {
+            $firstyear = $currentyear;
         }
-        $nextvaliddayofmonth = $this->next_in_list($currentday, $validdays);
-        $nextvaliddayofweek = $this->next_in_list($currentdayofweek, $validdaysofweek);
+        $currentmonth = (int)date('n', $now);
+
+        // Evaluate month first.
+        $nextvalidmonth = $this->next_in_list($currentmonth, $validmonths);
+        if ($nextvalidmonth < $currentmonth) {
+            $currentyear += 1;
+        }
+        // If we moved to another month, set the current time to start of month, and restart calculations.
+        if ($nextvalidmonth !== $currentmonth) {
+            $newtime = strtotime($currentyear . '-' . $nextvalidmonth . '-01 00:00');
+            return $this->get_next_scheduled_time_inner($newtime, $validminutes, $validhours, $validdays,
+                    $validdaysofweek, $validmonths, $firstyear);
+        }
+
+        // Special handling for dayofmonth vs dayofweek (see man 5 cron). If both are specified, then
+        // it is ok to continue when either matches. If only one is specified then it must match.
+        $currentday = (int)date("j", $now);
+        $currentdayofweek = (int)date("w", $now);
+        $nextvaliddayofmonth = self::next_in_list($currentday, $validdays);
+        $nextvaliddayofweek = self::next_in_list($currentdayofweek, $validdaysofweek);
         $daysincrementbymonth = $nextvaliddayofmonth - $currentday;
-        $daysinmonth = date('t');
+        $daysinmonth = (int)date('t', $now);
         if ($nextvaliddayofmonth < $currentday) {
             $daysincrementbymonth += $daysinmonth;
         }
@@ -548,41 +610,65 @@ abstract class scheduled_task extends task_base {
             $daysincrementbyweek += 7;
         }
 
-        // Special handling for dayofmonth vs dayofweek:
-        // if either field is * - use the other field
-        // otherwise - choose the soonest (see man 5 cron).
         if ($this->dayofweek == '*') {
             $daysincrement = $daysincrementbymonth;
         } else if ($this->day == '*') {
             $daysincrement = $daysincrementbyweek;
         } else {
             // Take the smaller increment of days by month or week.
-            $daysincrement = $daysincrementbymonth;
-            if ($daysincrementbyweek < $daysincrementbymonth) {
-                $daysincrement = $daysincrementbyweek;
+            $daysincrement = min($daysincrementbymonth, $daysincrementbyweek);
+        }
+
+        // If we moved day, recurse using new start time.
+        if ($daysincrement != 0) {
+            $newtime = strtotime($currentyear . '-' . $currentmonth . '-' . $currentday .
+                    ' 00:00 +' . $daysincrement . ' days');
+            return $this->get_next_scheduled_time_inner($newtime, $validminutes, $validhours, $validdays,
+                    $validdaysofweek, $validmonths, $firstyear);
+        }
+
+        $currenthour = (int)date('H', $now);
+        $nextvalidhour = $this->next_in_list($currenthour, $validhours);
+        if ($nextvalidhour != $currenthour) {
+            if ($nextvalidhour < $currenthour) {
+                $offset = ' +1 day';
+            } else {
+                $offset = '';
             }
+            $newtime = strtotime($currentyear . '-' . $currentmonth . '-' . $currentday . ' ' . $nextvalidhour .
+                    ':00' . $offset);
+            return $this->get_next_scheduled_time_inner($newtime, $validminutes, $validhours, $validdays,
+                $validdaysofweek, $validmonths, $firstyear);
         }
 
-        $nextvaliddayofmonth = $currentday + $daysincrement;
-        if ($nextvaliddayofmonth > $daysinmonth) {
-            $currentmonth += 1;
-            $nextvaliddayofmonth -= $daysinmonth;
+        // Round time down to an exact minute because we need to use numeric calculations on it now.
+        // If we construct times based on all the components, it will mess up around DST changes
+        // (because there are two times with the same representation).
+        $now = intdiv($now, 60) * 60;
+
+        $currentminute = (int)date('i', $now);
+        $nextvalidminute = $this->next_in_list($currentminute, $validminutes);
+        if ($nextvalidminute == $currentminute && !$originalyear) {
+            // This is not a recursive call so time has not moved on at all yet. We can't use the
+            // same minute as now because it has already happened, it has to be at least one minute
+            // later, so update time and retry.
+            $newtime = $now + 60;
+            return $this->get_next_scheduled_time_inner($newtime, $validminutes, $validhours, $validdays,
+                $validdaysofweek, $validmonths, $firstyear);
         }
 
-        $nextvalidmonth = $this->next_in_list($currentmonth, $validmonths);
-        if ($nextvalidmonth < $currentmonth) {
-            $nextvalidyear += 1;
+        if ($nextvalidminute < $currentminute) {
+            // The time is in the next hour so we need to recurse. Don't use strtotime at this
+            // point because it will mess up around DST changes.
+            $minutesforward = $nextvalidminute + 60 - $currentminute;
+            $newtime = $now + $minutesforward * 60;
+            return $this->get_next_scheduled_time_inner($newtime, $validminutes, $validhours, $validdays,
+                $validdaysofweek, $validmonths, $firstyear);
         }
 
-        // Work out the next valid time.
-        $nexttime = mktime($nextvalidhour,
-                           $nextvalidminute,
-                           0,
-                           $nextvalidmonth,
-                           $nextvaliddayofmonth,
-                           $nextvalidyear);
-
-        return $nexttime;
+        // The next valid minute is in the same hour so it must be valid according to all other
+        // checks and we can finally return it.
+        return $now + ($nextvalidminute - $currentminute) * 60;
     }
 
     /**

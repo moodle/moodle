@@ -1,6 +1,31 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.3.3 ===
+
+* The `html_writer::select_time` method has a `$timezone` parameter to use when formatting the time parameter
+* New Behat `heading` named selector to more easily assert the presence of H1-H6 elements on the page
+
+=== 4.3.2 ===
+
+* The current page language is available in new `core/config` language property for Javascript modules
+* The customdata of adhoc_task class now accepts a new value called noretry. If set to true, the ad-hoc task will not be retried
+  if it fails.
+
+=== 4.3.1 ===
+
+* Added modalform config object `moduleName` param that can be used to define alternative modal type for the modalform. By default 'core/modal_save_cancel' is used.
+* Add a new parameter to the debounce (core/utils) function to allow for cancellation.
+* Add a new method core_user::get_initials to get the initials of a user in a way compatible with internationalisation.
+* course_modinfo now has a purge_course_modules_cache() method, which takes a list of cmids and purges
+  them all in a single cache set.
+* Behat generators can now implement the function finish_generate_ to detect when the whole list of elements have been generated.
+* In enrollib.php, the method enrol_get_course_users() got an optional 5th parameter $usergroups that
+  defaults to an empty array. Here, user group ids can be provided, to select enrolled users in a course
+  that are also members of these groups.
+* The options for `format_string()`, and `format_text()` are now checked for incorrectly passed context objects.
+  Please note that this was never an accepted value but previously failed silently.
+
 === 4.3 ===
 
 * Unnecessary parameters of admin_apply_default_settings() function were removed; upgrade script lists

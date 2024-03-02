@@ -80,9 +80,26 @@ class data_field_date extends data_field_base {
         }
 
         $str = '<div title="'.s($this->field->description).'" class="mod-data-input form-inline">';
-        $dayselector = html_writer::select_time('days', 'field_'.$this->field->id.'_day', $content);
-        $monthselector = html_writer::select_time('months', 'field_'.$this->field->id.'_month', $content);
-        $yearselector = html_writer::select_time('years', 'field_'.$this->field->id.'_year', $content);
+
+        $dayselector = html_writer::select_time(
+            type: 'days',
+            name: "field_{$this->field->id}_day",
+            currenttime: $content,
+            timezone: 0,
+        );
+        $monthselector = html_writer::select_time(
+            type: 'months',
+            name: "field_{$this->field->id}_month",
+            currenttime: $content,
+            timezone: 0,
+        );
+        $yearselector = html_writer::select_time(
+            type: 'years',
+            name: "field_{$this->field->id}_year",
+            currenttime: $content,
+            timezone: 0,
+        );
+
         $str .= $dayselector . $monthselector . $yearselector;
         $str .= '</div>';
 
@@ -198,7 +215,7 @@ class data_field_date extends data_field_base {
 
     function get_sort_sql($fieldname) {
         global $DB;
-        return $DB->sql_cast_char2int($fieldname, true);
+        return $DB->sql_cast_char2real($fieldname, true);
     }
 
     /**

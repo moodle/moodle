@@ -24,6 +24,7 @@
 
 namespace gradereport_singleview\local\screen;
 
+use grade_report;
 use gradereport_singleview\local\ui\range;
 use gradereport_singleview\local\ui\bulk_insert;
 use grade_grade;
@@ -151,7 +152,7 @@ class grade extends tablelike implements selectable_items, filterable_items {
      */
     public function init($selfitemisempty = false) {
 
-        $this->items = get_gradable_users($this->courseid, $this->groupid);
+        $this->items = grade_report::get_gradable_users($this->courseid, $this->groupid);
         $this->totalitemcount = count($this->items);
 
         if ($selfitemisempty) {
@@ -320,7 +321,9 @@ class grade extends tablelike implements selectable_items, filterable_items {
      * @return string
      */
     public function heading(): string {
-        return get_string('gradeitem', 'gradereport_singleview', $this->item->get_name());
+        global $PAGE;
+        $headinglangstring = $PAGE->user_is_editing() ? 'gradeitemedit' : 'gradeitem';
+        return get_string($headinglangstring, 'gradereport_singleview', $this->item->get_name());
     }
 
     /**

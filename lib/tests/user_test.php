@@ -19,6 +19,7 @@ namespace core;
 /**
  * Test core_user class.
  *
+ * @covers \core_user
  * @package    core
  * @copyright  2013 Rajesh Taneja <rajesh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -281,6 +282,36 @@ class user_test extends \advanced_testcase {
         $this->assertCount(0, $result);
         $result = \core_user::search('house@x.x');
         $this->assertCount(1, $result);
+    }
+
+    /**
+     * The search function had a bug where it failed if you have no identify fields (or only custom
+     * ones).
+     */
+    public function test_search_no_identity_fields(): void {
+        self::init_search_tests();
+
+        // Set no user identity fields.
+        set_config('showuseridentity', '');
+
+        // Set up course for test with teacher in.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $teacher = $generator->create_user(['firstname' => 'Alberto', 'lastname' => 'Unwin',
+            'email' => 'a.unwin@x.x']);
+        $generator->enrol_user($teacher->id, $course->id, 'teacher');
+
+        // Admin user has site-wide permissions, this uses one variant of the query.
+        $this->setAdminUser();
+        $result = \core_user::search('Al');
+        $this->assertCount(1, $result);
+        $this->assertEquals('Alberto', $result[0]->firstname);
+
+        // Teacher has course-wide permissions, this uses another variant.
+        $this->setUser($teacher);
+        $result = \core_user::search('Al');
+        $this->assertCount(1, $result);
+        $this->assertEquals('Alberto', $result[0]->firstname);
     }
 
     /**
@@ -903,5 +934,74 @@ class user_test extends \advanced_testcase {
         $options = ['link' => false];
         $this->assertEquals("<span class=\"userinitials size-35\">JD</span>",
             $OUTPUT->render(\core_user::get_profile_picture($user1, $context, $options)));
+    }
+
+    /**
+     * Test that user with Letter avatar respect language preference.
+     *
+     * @param array $userdata
+     * @param string $fullnameconfig
+     * @param string $expected
+     * @return void
+     * @covers       \core_user::get_initials
+     * @dataProvider user_name_provider
+     */
+    public function test_get_initials(array $userdata, string $fullnameconfig, string $expected): void {
+        $this->resetAfterTest();
+        // Create a user.
+        $page = new \moodle_page();
+        $page->set_url('/user/profile.php');
+        $page->set_context(\context_system::instance());
+        $renderer = $page->get_renderer('core');
+        $user1 =
+            $this->getDataGenerator()->create_user(
+                array_merge(
+                    ['picture' => 0, 'email' => 'user1@example.com'],
+                    $userdata
+                )
+            );
+        set_config('fullnamedisplay', $fullnameconfig);
+        $initials = \core_user::get_initials($user1);
+        $this->assertEquals($expected, $initials);
+    }
+
+    /**
+     * Provider of user configuration for testing initials rendering
+     *
+     * @return array[]
+     */
+    public static function user_name_provider(): array {
+        return [
+            'simple user' => [
+                'user' => ['firstname' => 'first', 'lastname' => 'last'],
+                'fullnamedisplay' => 'language',
+                'expected' => 'fl',
+            ],
+            'simple user with lastname firstname in language settings' => [
+                'user' => ['firstname' => 'first', 'lastname' => 'last'],
+                'fullnamedisplay' => 'lastname firstname',
+                'expected' => 'lf',
+            ],
+            'simple user with no surname' => [
+                'user' => ['firstname' => '', 'lastname' => 'L'],
+                'fullnamedisplay' => 'language',
+                'expected' => 'L',
+            ],
+            'simple user with a middle name' => [
+                'user' => ['firstname' => 'f', 'lastname' => 'l', 'middlename' => 'm'],
+                'fullnamedisplay' => 'middlename lastname',
+                'expected' => 'ml',
+            ],
+            'user with a middle name & fullnamedisplay contains 3 names' => [
+                'user' => ['firstname' => 'first', 'lastname' => 'last', 'middlename' => 'middle'],
+                'fullnamedisplay' => 'firstname middlename lastname',
+                'expected' => 'fl',
+            ],
+            'simple user with a namefield consisting of one element' => [
+                'user' => ['firstname' => 'first', 'lastname' => 'last'],
+                'fullnamedisplay' => 'lastname',
+                'expected' => 'l',
+            ],
+        ];
     }
 }

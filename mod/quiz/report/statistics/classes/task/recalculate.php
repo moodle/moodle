@@ -37,6 +37,11 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/report.php');
  */
 class recalculate extends \core\task\adhoc_task {
     /**
+     * The time to delay queued runs by, to prevent repeated recalculations.
+     */
+    const DELAY = HOURSECS;
+
+    /**
      * Create a new instance of the task.
      *
      * This sets the properties so that only one task will be queued at a time for a given quiz.
@@ -47,7 +52,6 @@ class recalculate extends \core\task\adhoc_task {
     public static function instance(int $quizid): recalculate {
         $task = new self();
         $task->set_component('quiz_statistics');
-        $task->set_userid(get_admin()->id);
         $task->set_custom_data((object)[
             'quizid' => $quizid,
         ]);
@@ -93,5 +97,21 @@ class recalculate extends \core\task\adhoc_task {
         $report->clear_cached_data($qubaids);
         $report->calculate_questions_stats_for_question_bank($quiz->id);
         mtrace('    Calculations completed at ' . userdate(time(), $dateformat) . '.');
+    }
+
+    /**
+     * Queue an instance of this task to happen after a delay.
+     *
+     * Multiple events may happen over a short period that require a recalculation. Rather than
+     * run the recalculation each time, this will queue a single run of the task for a given quiz,
+     * within the delay period.
+     *
+     * @param int $quizid The quiz to run the recalculation for.
+     * @return bool true of the task was queued.
+     */
+    public static function queue_future_run(int $quizid): bool {
+        $task = self::instance($quizid);
+        $task->set_next_run_time(time() + self::DELAY);
+        return \core\task\manager::queue_adhoc_task($task, true);
     }
 }

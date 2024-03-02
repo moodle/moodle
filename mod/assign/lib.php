@@ -1584,6 +1584,14 @@ function mod_assign_core_calendar_provide_event_action(calendar_event $event,
             return null;
         }
 
+        $instance = $assign->get_instance();
+        if ($instance->teamsubmission && !$instance->requireallteammemberssubmit) {
+            $groupsubmission = $assign->get_group_submission($userid, 0, false);
+            if ($groupsubmission && $groupsubmission->status === ASSIGN_SUBMISSION_STATUS_SUBMITTED) {
+                return null;
+            }
+        }
+
         $participant = $assign->get_participant($userid);
 
         if (!$participant) {
@@ -1744,24 +1752,29 @@ function mod_assign_core_calendar_event_timestart_updated(\calendar_event $event
 /**
  * Return a list of all the user preferences used by mod_assign.
  *
- * @return array
+ * @uses core_user::is_current_user
+ *
+ * @return array[]
  */
-function mod_assign_user_preferences() {
+function mod_assign_user_preferences(): array {
     $preferences = array();
     $preferences['assign_filter'] = array(
         'type' => PARAM_ALPHA,
         'null' => NULL_NOT_ALLOWED,
-        'default' => ''
+        'default' => '',
+        'permissioncallback' => [core_user::class, 'is_current_user'],
     );
     $preferences['assign_workflowfilter'] = array(
         'type' => PARAM_ALPHA,
         'null' => NULL_NOT_ALLOWED,
-        'default' => ''
+        'default' => '',
+        'permissioncallback' => [core_user::class, 'is_current_user'],
     );
     $preferences['assign_markerfilter'] = array(
         'type' => PARAM_ALPHANUMEXT,
         'null' => NULL_NOT_ALLOWED,
-        'default' => ''
+        'default' => '',
+        'permissioncallback' => [core_user::class, 'is_current_user'],
     );
 
     return $preferences;

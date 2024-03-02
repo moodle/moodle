@@ -16,6 +16,9 @@
 
 namespace mod_quiz;
 
+use core_question\question_reference_manager;
+use mod_quiz\question\display_options;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -236,6 +239,8 @@ class quiz_question_restore_test extends \advanced_testcase {
     /**
      * Test pre 4.0 quiz restore for regular questions.
      *
+     * Also, for efficiency, tests restore of the review options.
+     *
      * @covers ::process_quiz_question_legacy_instance
      */
     public function test_pre_4_quiz_restore_for_regular_questions() {
@@ -261,6 +266,12 @@ class quiz_question_restore_test extends \advanced_testcase {
         $quiz = array_values($modinfo->get_instances_of('quiz'))[0];
         $quizobj = \mod_quiz\quiz_settings::create($quiz->instance);
         $structure = structure::create_for_quiz($quizobj);
+
+        // Verify the restored review options setting.
+        $this->assertEquals(display_options::DURING |
+                    display_options::IMMEDIATELY_AFTER |
+                    display_options::LATER_WHILE_OPEN |
+                    display_options::AFTER_CLOSE, $quizobj->get_quiz()->reviewmaxmarks);
 
         // Are the correct slots returned?
         $slots = $structure->get_slots();
@@ -558,6 +569,12 @@ class quiz_question_restore_test extends \advanced_testcase {
             $this->assertArrayHasKey('filter', $filterconditions);
             $this->assertArrayHasKey('category', $filterconditions['filter']);
             $this->assertArrayHasKey('qtagids', $filterconditions['filter']);
+            $this->assertArrayHasKey('filteroptions', $filterconditions['filter']['category']);
+            $this->assertArrayHasKey('includesubcategories', $filterconditions['filter']['category']['filteroptions']);
+
+            // MDL-79708: Bad filter conversion check.
+            $this->assertArrayNotHasKey('includesubcategories', $filterconditions['filter']['category']);
+
             $this->assertArrayNotHasKey('questioncategoryid', $filterconditions);
             $this->assertArrayNotHasKey('tags', $filterconditions);
             $expectedtags = \core_tag_tag::get_by_name_bulk(1, ['foo', 'bar']);
@@ -567,6 +584,18 @@ class quiz_question_restore_test extends \advanced_testcase {
             $this->assertEquals($expectedcategory->id, $filterconditions['filter']['category']['values'][0]);
             $expectedcat = implode(',', [$expectedcategory->id, $expectedcategory->contextid]);
             $this->assertEquals($expectedcat, $filterconditions['cat']);
+
+            // MDL-79708: Try to convert already converted filter.
+            $filterconditionsold = $filterconditions;
+            $filterconditions = question_reference_manager::convert_legacy_set_reference_filter_condition($filterconditions);
+            // Check that the filtercondition didn't change.
+            $this->assertEquals($filterconditionsold, $filterconditions);
+
+            // MDL-79708: Try to convert a filter with previously bad conversion.
+            $filterconditions['filter']['category']['includesubcategories'] = 0;
+            unset($filterconditions['filter']['category']['filteroptions']);
+            $filterconditions = question_reference_manager::convert_legacy_set_reference_filter_condition($filterconditions);
+            $this->assertEquals($filterconditionsold, $filterconditions);
         }
     }
 }

@@ -751,7 +751,7 @@ class lib_test extends \advanced_testcase {
         // Now, let's suspend the enrolment of student2.
         $this->getDataGenerator()->enrol_user($student2->id, $course->id, 'student', 'manual', 0, 0, ENROL_USER_SUSPENDED);
         // Should return only the active gradable users (student1 and student3).
-        $gradableusers = get_gradable_users($course->id);
+        $gradableusers = \grade_report::get_gradable_users($course->id);
         $this->assertEqualsCanonicalizing([$student1->id, $student3->id], array_keys($gradableusers));
 
         // Give teacher 'viewsuspendedusers' capability and set a preference to display suspended users.
@@ -761,17 +761,17 @@ class lib_test extends \advanced_testcase {
 
         $this->setUser($teacher);
         // Should return all gradable users (including suspended enrolments).
-        $gradableusers = get_gradable_users($course->id);
+        $gradableusers = \grade_report::get_gradable_users($course->id);
         $this->assertEqualsCanonicalizing([$student1->id, $student2->id, $student3->id], array_keys($gradableusers));
 
         // Reactivate the course enrolment of student2.
         $this->getDataGenerator()->enrol_user($student2->id, $course->id, 'student', 'manual', 0, 0, ENROL_USER_ACTIVE);
         $this->setAdminUser();
         // Should return all gradable users from group1 (student1 and student2).
-        $gradableusers = get_gradable_users($course->id, $group1->id);
+        $gradableusers = \grade_report::get_gradable_users($course->id, $group1->id);
         $this->assertEqualsCanonicalizing([$student1->id, $student2->id], array_keys($gradableusers));
         // Should return all gradable users from group2 (student3).
-        $gradableusers = get_gradable_users($course->id, $group2->id);
+        $gradableusers = \grade_report::get_gradable_users($course->id, $group2->id);
         $this->assertEqualsCanonicalizing([$student3->id], array_keys($gradableusers));
     }
 }

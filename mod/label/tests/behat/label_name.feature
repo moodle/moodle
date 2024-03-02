@@ -10,7 +10,7 @@ Feature: Set label name
       | Test | C1 | 0 |
     And the following "users" exist:
       | username | firstname | lastname | email |
-      | teacher | Teacher | Frist | teacher1@example.com |
+      | teacher | Teacher | First | teacher1@example.com |
     And the following "course enrolments" exist:
       | user | course | role |
       | teacher | C1 | editingteacher |
@@ -23,8 +23,8 @@ Feature: Set label name
     And I am on "Test" course homepage
     And "Intro Text" activity should be visible
     And I am on the "Intro Text" "label activity editing" page logged in as teacher
-    And I should see "Name" in the "General" "fieldset"
-    And I set the field "Name" to "Test Label 1"
+    And I should see "Title in course index" in the "General" "fieldset"
+    And I set the field "Title in course index" to "Test Label 1"
     And I press "Save and return to course"
     And I am on "Test" course homepage
     Then "Test Label 1" activity should be visible

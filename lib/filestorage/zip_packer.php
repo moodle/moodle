@@ -451,6 +451,17 @@ class zip_packer extends file_packer {
             $done = 0;
         }
 
+        // Get user remaining space.
+        $areamaxbytes = FILE_AREA_MAX_BYTES_UNLIMITED;
+        $context = context::instance_by_id($contextid);
+        if (!has_capability('moodle/user:ignoreuserquota', $context)) {
+            // Get current used space for this user (private files only).
+            $fileareainfo = file_get_file_area_info($contextid, 'user', 'private');
+            $usedspace = $fileareainfo['filesize_without_references'];
+            $areamaxbytes = (int) $CFG->userquota - $usedspace;
+        }
+        $totalsizebytes = 0;
+
         foreach ($ziparch as $info) {
             // Notify progress.
             if ($progress) {
@@ -460,6 +471,8 @@ class zip_packer extends file_packer {
 
             $size = $info->size;
             $name = $info->pathname;
+
+            $realfilesize = 0;
 
             if ($name === '' or array_key_exists($name, $processed)) {
                 //probably filename collisions caused by filename cleaning/conversion
@@ -489,6 +502,17 @@ class zip_packer extends file_packer {
                 $content = '';
                 while (!feof($fz)) {
                     $content .= fread($fz, 262143);
+                    $realfilesize = strlen($content); // Current file size.
+                    $totalsizebytes = strlen($content);
+                    if ($realfilesize > $size ||
+                            ($areamaxbytes != FILE_AREA_MAX_BYTES_UNLIMITED && $totalsizebytes > $areamaxbytes)) {
+                        $processed[0] = 'cannotunzipquotaexceeded';
+                        // Close and unset the stream and the content.
+                        fclose($fz);
+                        unset($content);
+                        // Cancel all processes.
+                        break(2);
+                    }
                 }
                 fclose($fz);
                 if (strlen($content) !== $size) {
@@ -535,7 +559,19 @@ class zip_packer extends file_packer {
                 }
                 while (!feof($fz)) {
                     $content = fread($fz, 262143);
-                    fwrite($fp, $content);
+                    $numofbytes = fwrite($fp, $content);
+                    $realfilesize += $numofbytes; // Current file size.
+                    $totalsizebytes += $numofbytes;
+                    if ($realfilesize > $size ||
+                            ($areamaxbytes != FILE_AREA_MAX_BYTES_UNLIMITED && $totalsizebytes > $areamaxbytes)) {
+                        $processed[0] = 'cannotunzipquotaexceeded';
+                        // Close and remove the tmpfile.
+                        fclose($fz);
+                        fclose($fp);
+                        unlink($tmpfile);
+                        // Cancel all processes.
+                        break(2);
+                    }
                 }
                 fclose($fz);
                 fclose($fp);

@@ -921,7 +921,7 @@ function initialise_fullme() {
             require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
 
             iomad::check_redirect($wwwroot, $rurl);
-            redirect($CFG->wwwroot, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
+            redirect($CFG->wwwroot . $rurl['fullpath'], get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
         }
     }
 
@@ -2235,7 +2235,7 @@ function require_phpunit_isolation(): void {
         return;
     }
 
-    if (defined('PHPUNIT_ISOLATED_TEST')) {
+    if (defined('PHPUNIT_ISOLATED_TEST') && PHPUNIT_ISOLATED_TEST) {
         // Already isolated.
         return;
     }

@@ -94,7 +94,7 @@ class question_reference_manager {
                 $filtercondition['filter']['category'] = [
                     'jointype' => \qbank_managecategories\category_condition::JOINTYPE_DEFAULT,
                     'values' => [$filtercondition['questioncategoryid']],
-                    'includesubcategories' => $filtercondition['includingsubcategories'],
+                    'filteroptions' => ['includesubcategories' => $filtercondition['includingsubcategories']],
                 ];
                 unset($filtercondition['questioncategoryid']);
                 unset($filtercondition['includingsubcategories']);
@@ -119,6 +119,10 @@ class question_reference_manager {
             $filtercondition['qpage'] = 0;
             $filtercondition['qperpage'] = 100;
             $filtercondition['jointype'] = \core\output\datafilter::JOINTYPE_ALL;
+        } else if (isset($filtercondition['filter']['category']['includesubcategories'])) {
+            $filtercondition['filter']['category']['filteroptions'] =
+                ['includesubcategories' => $filtercondition['filter']['category']['includesubcategories']];
+            unset($filtercondition['filter']['category']['includesubcategories']);
         }
         return $filtercondition;
     }
