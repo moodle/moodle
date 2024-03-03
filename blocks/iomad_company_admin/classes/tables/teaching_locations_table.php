@@ -105,7 +105,7 @@ class teaching_locations_table extends table_sql {
         if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $companycontext)) {
             $deleteurl = new moodle_url($CFG->wwwroot . '/blocks/iomad_company_admin/classroom_list.php',
                                         ['delete' => $row->id,
-                                        'sesskeyy' => $sesskey]);
+                                        'sesskey' => $sesskey]);
             $deletebutton = "<a href='" . $deleteurl . "'><i class='icon fa fa-trash fa-fw' title='" . get_string('delete') . "' role='img' aria-label='" . get_string('delete') . "'></i></a>";
         }
 
