@@ -31,9 +31,10 @@ class iomad_company_select_form extends moodleform {
     public function __construct($actionurl, $companies = array(), $selectedcompany = 0) {
         global $USER, $DB;
         if (empty($selectedcompany) || empty($companies[$selectedcompany])) {
-            $this->companies = array(0 => get_string('selectacompany', 'block_iomad_company_selector')) + $companies;
+            $this->companies = [0 => get_string('selectacompany', 'block_iomad_company_selector')] + $companies;
         } else {
-            $this->companies = $companies;
+            $this->companies = [0 => $companies[$selectedcompany]] + $companies;
+            unset ($this->companies[$selectedcompany]);
         }
 
         parent::__construct($actionurl);
