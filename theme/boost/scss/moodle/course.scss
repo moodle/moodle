@@ -64,14 +64,7 @@
 
         &.indented {
             .activity-item {
-                border: 0;
                 margin-left: map-get($spacers, 3);
-            }
-        }
-        &.indented + .indented {
-            .activity-item {
-                border-top: $border-width solid $border-color;
-                border-radius: unset;
             }
         }
     }
