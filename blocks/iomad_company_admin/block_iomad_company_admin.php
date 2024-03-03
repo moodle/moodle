@@ -65,7 +65,8 @@ class block_iomad_company_admin extends block_base {
 
         // Get parameters.
         $edit = optional_param( 'edit', null, PARAM_BOOL );
-        $company = optional_param('company', 0, PARAM_INT);
+        $companychange = optional_param( 'companychange', false, PARAM_BOOL );
+        $company = optional_param('company', NULL, PARAM_INT);
         $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
         $noticeok = optional_param('noticeok', '', PARAM_CLEAN);
         $noticefail = optional_param('noticefail', '', PARAM_CLEAN);
@@ -74,6 +75,14 @@ class block_iomad_company_admin extends block_base {
 
         $systemcontext = context_system::instance();
         $companycontext = $systemcontext;
+
+        if ($companychange &&
+            empty($company) &&
+            iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
+            // We want to unset the current company.
+            $SESSION->currenteditingcompany = 0;
+            unset($SESSION->company);
+        }
 
         // Set the session to a user if they are editing a company other than their own.
         if (!empty($company) && ( iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)
@@ -90,7 +99,8 @@ class block_iomad_company_admin extends block_base {
         }
 
         // If we don't have one selected pick the first of these.
-        if (empty($SESSION->currenteditingcompany)) {
+        if (empty($SESSION->currenteditingcompany) &&
+            !iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
             if (iomad::is_company_user()) {
                 $company = iomad::companyid();
                 $SESSION->currenteditingcompany = $company;
@@ -121,7 +131,7 @@ class block_iomad_company_admin extends block_base {
         if ($this->content !== null) {
             return $this->content;
         }
-        $this->content = new stdClass;
+        $this->content = (object) [];
 
         // Renderer
         $renderer = $this->page->get_renderer('block_iomad_company_admin');
@@ -146,12 +156,6 @@ class block_iomad_company_admin extends block_base {
 
         $systemcontext = context_system::instance();
         $companycontext = $systemcontext;
-
-        // If no selected company no point showing tabs.
-        if (!$companyid = iomad::get_my_companyid($systemcontext, false)) {
-            $this->content->text = '<div class="alert alert-warning">' . get_string('nocompanyselected', 'block_iomad_company_admin') . '</div>';
-            return $this->content;
-        }
 
         if (!empty($companyid)) {
             $companycontext =  \core\context\company::instance($companyid);
@@ -302,7 +306,7 @@ class block_iomad_company_admin extends block_base {
 
         // If there are no menu items to show this user...
         if (!$somethingtodisplay) {
-            $this->content = new stdClass;
+            $this->content = (object) [];
             $this->content->text = '';
             return $this->content;
         }
@@ -340,7 +344,7 @@ class block_iomad_company_admin extends block_base {
 
         // Render block.
         $adminblock = new block_iomad_company_admin\output\adminblock($logourl, $companyselect, $tabs, $panes);
-        $this->content = new stdClass();
+        $this->content = (object) [];
         $this->content->text = $renderer->render($adminblock);
         return $this->content;
     }
@@ -348,7 +352,7 @@ class block_iomad_company_admin extends block_base {
     public function company_selector() {
         global $USER, $CFG, $DB, $OUTPUT, $SESSION;
 
-        $selector = new \stdClass;
+        $selector = (object) [];
 
         // Only display if you have the correct capability, or you are not in more than one company.
         // Just display name of current company if no choice.

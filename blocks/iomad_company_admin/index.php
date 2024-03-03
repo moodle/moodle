@@ -28,7 +28,8 @@ require_login();
 
 // Get parameters.
 $edit = optional_param( 'edit', null, PARAM_BOOL );
-$company = optional_param('company', 0, PARAM_INT);
+$companychange = optional_param( 'companychange', false, PARAM_BOOL );
+$company = optional_param('company', NULL, PARAM_INT);
 $showsuspendedcompanies = optional_param('showsuspendedcompanies', false, PARAM_BOOL);
 $noticeok = optional_param('noticeok', '', PARAM_CLEAN);
 $noticefail = optional_param('noticefail', '', PARAM_CLEAN);
@@ -39,6 +40,14 @@ $systemcontext = context_system::instance();
 $companycontext = $systemcontext;
 if (!empty($company)) {
     $companycontext =  \core\context\company::instance($company);
+}
+
+if ($companychange &&
+    empty($company) &&
+    iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
+    // We want to unset the current company.
+    $SESSION->currenteditingcompany = 0;
+    unset($SESSION->company);
 }
 
 // Set the session to a user if they are editing a company other than their own.
@@ -59,7 +68,8 @@ if (!$companycount = $DB->count_records('company')) {
 }
 
 // If we don't have one selected pick the first of these.
-if (empty($SESSION->currenteditingcompany)) {
+if (empty($SESSION->currenteditingcompany) &&
+    !iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
     if (iomad::is_company_user()) {
         $company = iomad::companyid();
         $SESSION->currenteditingcompany = $company;
@@ -101,12 +111,6 @@ if (!empty($selectedtab)) {
     $selectedtab = $SESSION->iomad_company_admin_tab;
 } else {
     $selectedtab = 1;
-}
-
-// If no selected company no point showing tabs.
-if (!iomad::get_my_companyid($systemcontext, false)) {
-    $this->content->text = '<div class="alert alert-warning">' . get_string('nocompanyselected', 'block_iomad_company_admin') . '</div>';
-    return $this->content;
 }
 
 // Build tabs.
@@ -290,7 +294,7 @@ if ($doselected) {
 $logourl = $renderer->image_url('iomadlogo', 'block_iomad_company_admin');
 
 // Company companyselect
-$companyselect = new \stdClass;
+$companyselect = (object) [];
 
 // Only display if you have the correct capability, or you are not in more than one company.
 // Just display name of current company if no choice.

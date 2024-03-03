@@ -41,10 +41,14 @@ class iomad_company_select_form extends moodleform {
 
     public function definition() {
         $mform =& $this->_form;
-        $autooptions = array('onchange' => 'this.form.submit()');
+        $autooptions = ['onchange' => 'this.form.submit()',
+                        'placeholder' => get_string('search')];
         $mform->addElement('autocomplete', 'company', get_string('selectacompany', 'block_iomad_company_selector'), $this->companies, $autooptions);
         $mform->addElement('hidden', 'showsuspendedcompanies');
         $mform->setType('showsuspendedcompanies', PARAM_BOOL);
+
+        $mform->AddElement('hidden', 'companychange', true);
+        $mform->setType('companychange', PARAM_BOOL);
 
         // Disable the onchange popup.
         $mform->disable_form_change_checker();
