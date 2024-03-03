@@ -37,8 +37,7 @@ $returnurl = $_SERVER['HTTP_REFERER'];
 // IOMAD
 require_once($CFG->dirroot . '/local/iomad/lib/company.php');
 $companyid = iomad::get_my_companyid(context_system::instance(), false);
-if (!empty($companyid) &&
-            get_config('tool_mfa', 'enabled'. "_$companyid") !== false) {
+if (!empty($companyid)) {
     $postfix = "_$companyid";
 } else {
     $postfix = "";
@@ -80,6 +79,9 @@ switch ($action) {
         if (!in_array($factor, $enabledfactors)) {
             \tool_mfa\manager::set_factor_config(['enabled' . $postfix => 1], 'factor_' . $factor);
             \tool_mfa\manager::do_factor_action($factor, $action);
+            if (!empty($postfix)) {
+                company::update_plugin('factor_' . $factor, $postfix);
+            }
 
             \core\session\manager::gc(); // Remove stale sessions.
             core_plugin_manager::reset_caches();

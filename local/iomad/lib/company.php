@@ -3975,6 +3975,38 @@ class company {
         return $mailer;
     }
 
+    /**
+     * Update plugin settings for given plugin and postfix.
+     *
+     * @param pluginname
+     * @param postfic
+     */
+    public static function update_plugin($pluginname, $postfix) {
+        if (empty($pluginname) || empty ($postfix)) {
+            return;
+        }
+        $settings = [];
+        $currentsettings = [];
+        $pluginsettings = get_config($pluginname);
+        foreach ($pluginsettings as $setting => $value) {
+            if (preg_match('/_'.$postfix.'$/', $setting)) {
+                $currentsettings[$setting] = $value;
+            } else if ($setting == 'version' || preg_match('/_\d+$/', $setting)) {
+                continue;
+            } else {
+                $settings[$setting] = $value;
+            }
+        }
+        // should have all the defaults - strip any we have config for.
+        foreach ($currentsettings as $current => $dump) {
+            unset($settings[$current]);
+        }
+        // Set any missing.
+        foreach ($settings as $setting => $value) {
+            set_config($setting . $postfix, $value, $pluginname);
+        }
+    }
+
     /***  Event Handlers  ***/
 
     /**

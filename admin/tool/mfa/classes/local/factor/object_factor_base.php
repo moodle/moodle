@@ -38,6 +38,7 @@ abstract class object_factor_base implements object_factor {
 
     /** @var string postfix */
     public $postfix;
+    public $companyid;
 
     /**
      * Secret manager
@@ -59,10 +60,10 @@ abstract class object_factor_base implements object_factor {
 
         // IOMAD
         require_once($CFG->dirroot . '/local/iomad/lib/company.php');
-        $companyid = iomad::get_my_companyid(context_system::instance(), false);
-        if (!empty($companyid) &&
-            get_config('tool_mfa', 'enabled'. "_$companyid") !== false) {
-            $this->postfix = "_$companyid";
+        $this->companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($this->companyid) &&
+            get_config('tool_mfa', 'enabled'. "_" . $this->companyid) !== false) {
+            $this->postfix = "_" . $this->companyid;
         } else {
             $this->postfix = "";
         }
@@ -115,7 +116,13 @@ abstract class object_factor_base implements object_factor {
      * @throws \dml_exception
      */
     public function is_enabled(): bool {
-        $status = get_config('factor_'.$this->name, 'enabled' . $this->postfix);
+        // Have to be explicit here - so not using $this value without checking.
+        if (!empty($this->companyid)) {
+            $postfix = "_" . $this->companyid;
+        } else {
+            $postfix = $this->postfix = "";
+        }
+        $status = get_config('factor_'.$this->name, 'enabled' . $postfix);
         if ($status == 1) {
             return true;
         }
