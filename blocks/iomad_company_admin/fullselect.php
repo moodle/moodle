@@ -55,7 +55,7 @@ $output = $PAGE->get_renderer('block_iomad_company_admin');
 $PAGE->set_heading(get_string('selectacompany', 'block_iomad_company_admin'));
 
 $full_companies_select = new block_iomad_company_admin\output\full_companies_select(['search' => $search]);
-$companysearchform = new iomad_company_search_form($url, []); 
+$companysearchform = new iomad_company_search_form($url, []);
 
 echo $output->header();
 
