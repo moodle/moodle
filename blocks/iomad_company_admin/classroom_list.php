@@ -31,6 +31,7 @@ $sort         = optional_param('sort', 'name', PARAM_ALPHA);
 $dir          = optional_param('dir', 'ASC', PARAM_ALPHA);
 $page         = optional_param('page', 0, PARAM_INT);
 $perpage      = optional_param('perpage', $CFG->iomad_max_list_classrooms, PARAM_INT);        // How many per page.
+$search = optional_param('search', '', PARAM_ALPHANUM);
 
 require_login();
 
@@ -62,6 +63,8 @@ $PAGE->navbar->add($linktext, $linkurl);
 
 $baseurl = new moodle_url(basename(__FILE__), array('sort' => $sort,
                                                     'dir' => $dir,
+                                                    'search' => $search,
+                                                    'page' => $page,
                                                     'perpage' => $perpage));
 $returnurl = $baseurl;
 
@@ -108,6 +111,9 @@ if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $companyco
 
 $PAGE->set_button($buttons);
 
+$searchform = new iomad_company_search_form($baseurl, []);
+
+
 // Set up the table
 $table = new block_iomad_company_admin\tables\teaching_locations_table('teaching_locations_table');
 
@@ -125,8 +131,25 @@ if (iomad::has_capability('block/iomad_company_admin:classrooms_delete', $compan
     $tableheaders[] = "";
     $tablecolumns[] = 'actions';
 }
+// Deal with search
+$searchsql = "";
+$sqlparams = ['companyid' => $companyid];
+if (!empty($search)) {
+    $searchsql = " AND (" . $DB->sql_like('name', ':namesearch', false);
+    $searchsql .= " OR " . $DB->sql_like('address', ':addresssearch', false);
+    $searchsql .= " OR " . $DB->sql_like('city', ':citysearch', false);
+    $searchsql .= " OR " . $DB->sql_like('country', ':countrysearch', false);
+    $searchsql .= " OR " . $DB->sql_like('postcode', ':postcodesearch', false) . ")";
+    
+    $sqlparams['namesearch'] = '%' . $DB->sql_like_escape($search) . '%';
+    $sqlparams['addresssearch'] = '%' . $DB->sql_like_escape($search) . '%';
+    $sqlparams['citysearch'] = '%' . $DB->sql_like_escape($search) . '%';
+    $sqlparams['countrysearch'] = '%' . $DB->sql_like_escape($search) . '%';
+    $sqlparams['postcodesearch'] = '%' . $DB->sql_like_escape($search) . '%';
+}
 
-$table->set_sql("*", "{classroom}", "companyid = :companyid", ['companyid' => $companyid]);
+
+$table->set_sql("*", "{classroom}", "companyid = :companyid $searchsql", $sqlparams);
 $table->define_baseurl($baseurl);
 $table->define_columns($tablecolumns);
 $table->define_headers($tableheaders);
@@ -141,6 +164,10 @@ if (iomad::has_capability('block/iomad_company_admin:classrooms_add', $companyco
 }
 
 echo $OUTPUT->header();
+
+echo html_writer::start_tag('p');
+$searchform->display();
+echo html_writer::end_tag('p');
 
 $table->out(30, true);
 

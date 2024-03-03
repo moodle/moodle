@@ -389,6 +389,7 @@ border-radius: 10px;
     text-align: center;
 }
 
-#page-blocks-iomad_company_admin-fullselect #fgroup_id_searcharray > div.col-md-3.col-form-label.d-flex.pb-0.pr-md-0 {
+#page-blocks-iomad_company_admin-fullselect #fgroup_id_searcharray > div.col-md-3.col-form-label.d-flex.pb-0.pr-md-0,
+#page-blocks-iomad_company_admin-classroom_list #fgroup_id_searcharray > div.col-md-3.col-form-label.d-flex.pb-0.pr-md-0 {
     display: none !important;
 }
