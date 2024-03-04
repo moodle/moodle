@@ -318,6 +318,7 @@ class company {
                                                  FROM {company} c
                                                  JOIN {company_users} cu ON (c.id = cu.companyid)
                                                  WHERE cu.userid = :userid
+                                                 AND cu.suspended = 0
                                                  $searchsql
                                                  $suspendedsql
                                                  ORDER BY $sort",
@@ -3526,6 +3527,28 @@ class company {
             return false;
         }
         // Shouldn't get here.  Return a false in case.
+        return false;
+    }
+
+    /**
+     * Checks that a userid is suspended the companyid.
+     *
+     * Parameters -
+     *              $companyid = int;
+     *              $userid = int;
+     *
+     * Returns boolean.
+     *
+     **/
+    public static function check_user_suspended($companyid, $userid) {
+        global $DB;
+
+        if ($DB->get_records('company_users', ['companyid' => $companyid,
+                                               'userid' => $userid,
+                                               'suspended' => 1])) {
+            return true;
+        }
+
         return false;
     }
 

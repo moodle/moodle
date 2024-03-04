@@ -4348,7 +4348,17 @@ function authenticate_user_login(
             $authplugin->pre_user_login_hook($user);
         }
 
-        if (!empty($user->suspended)) {
+        // IOMAD: if we have a SESSION for the company
+        // Check that it matches the user's actual company.
+        $companysuspended = false;
+        if (!empty($SESSION->currenteditingcompany)) {
+            if (company::check_user_suspended($SESSION->currenteditingcompany, $user->id)) {
+                $companysuspended = true;
+            }
+        }
+
+        if (!empty($user->suspended) ||
+            $companysuspended) {
             $failurereason = AUTH_LOGIN_SUSPENDED;
 
             // Trigger login failed event.

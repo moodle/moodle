@@ -420,7 +420,7 @@ if ($confirmuser and confirm_sesskey()) {
         die;
     } else {
         // Actually unsuspend the user.
-        company_user::unsuspend($user->id);
+        company_user::unsuspend($user->id, $companyid);
 
         // Create an event for this.
         $eventother = array('userid' => $user->id, 'companyname' => $company->get_name(), 'companyid' => $companyid);
@@ -581,7 +581,7 @@ if (!empty($showall)) {
     }
 }
 
-$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", "c.id")) . " AS cindex, u.*, c.id AS companyid, c.name AS companyname, u.suspended, cu.managertype, cu.educator";
+$selectsql = "DISTINCT " . $DB->sql_concat("u.id", $DB->sql_concat("'-'", "c.id")) . " AS cindex, u.*, c.id AS companyid, c.name AS companyname, u.suspended, cu.managertype, cu.educator, cu.suspended AS companysuspended";
 $fromsql = "{user} u JOIN {company_users} cu ON (u.id = cu.userid) JOIN {department} d ON (cu.departmentid = d.id AND cu.companyid = d.company) JOIN {company} c ON (cu.companyid = c.id AND d.company = c.id)";
 $wheresql = $searchinfo->sqlsearch . " $sqlsearch $companysql $managertypesql";
 $sqlparams = $searchinfo->searchparams + $params + array('companyid' => $companyid);

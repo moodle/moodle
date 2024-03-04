@@ -54,7 +54,8 @@ class editusers_table extends table_sql {
         $name = fullname($row, has_capability('moodle/site:viewfullnames', $this->get_context()));
 
         // Deal with suspended users.
-        if (!empty($row->suspended)) {
+        if (!empty($row->suspended) ||
+            !empty($row->companysuspended)) {
             $name = format_string("$name (S)");
         }
 
@@ -268,7 +269,8 @@ class editusers_table extends table_sql {
                             );
                         }
                         if (iomad::has_capability('block/iomad_company_admin:suspenduser', $companycontext)) {
-                            if (!empty($row->suspended)) {
+                            if (!empty($row->suspended) ||
+                                !empty($row->companysuspended)) {
                                 $url = new moodle_url('/blocks/iomad_company_admin/editusers.php', array(
                                     'unsuspend' => $row->id,
                                     'sesskey' => sesskey(),
