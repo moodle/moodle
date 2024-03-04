@@ -17,7 +17,7 @@ tracker. See git history of their repository for relevant information.
 1. Store an environment variable to the Tiny directory in the Moodle repository (the current directory).
 
  ```
-MOODLEDIR=`pwd`../../
+MOODLEDIR=`pwd`/../../
  ```
 
 2. Check out a clean copy of TinyMCE of the target version.
@@ -27,7 +27,7 @@ tinymce=`mktemp -d`
 cd "${tinymce}"
 git clone https://github.com/tinymce/tinymce.git
 cd tinymce
-git checkout -b MOODLE_402_STABLE
+git checkout -b MOODLE_404_STABLE
 git reset --hard [desired version]
  ```
 
