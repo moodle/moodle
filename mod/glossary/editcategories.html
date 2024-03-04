@@ -4,17 +4,17 @@
 ?>
 <div class="boxaligncenter">
 <form id="form" method="post" action="editcategories.php">
-    <div id="fitem_id_name" class="form-group row fitem">
+    <div id="fitem_id_name" class="mb-3 row fitem">
         <div class="col-md-3">
             <label class="col-form-label d-inline " for="name">
                 <?php echo get_string("name") ?>
             </label>
         </div>
-        <div class="col-md-9 form-inline felement" data-fieldtype="select">
+        <div class="col-md-9 d-flex flex-wrap align-items-center felement" data-fieldtype="select">
             <input type="text" name="name" id="name" class="form-control" size="30" value="<?php p($name) ?>" />
         </div>
     </div>
-    <div id="fitem_id_usedynalink" class="form-group row fitem">
+    <div id="fitem_id_usedynalink" class="mb-3 row fitem">
         <div class="col-md-3">
             <span class="float-sm-right text-nowrap">
                 <?php echo $OUTPUT->help_icon('linkcategory', 'glossary') ?>
@@ -23,7 +23,7 @@
                 <?php echo get_string("linkcategory","glossary") ?>
             </label>
         </div>
-        <div class="col-md-9 form-inline felement" data-fieldtype="select">
+        <div class="col-md-9 d-flex flex-wrap align-items-center felement" data-fieldtype="select">
             <select size="1" id="usedynalink" name="usedynalink" class="custom-select">
                 <option value="1" <?php
        if ( $usedynalink ) {
@@ -39,15 +39,15 @@
             </select>
         </div>
     </div>
-    <div id="fgroup_id_buttonar" class="form-group row fitem femptylabel" data-groupname="buttonar">
+    <div id="fgroup_id_buttonar" class="mb-3 row fitem femptylabel" data-groupname="buttonar">
         <div class="col-md-3">
             <span class="float-sm-right text-nowrap">
             </span>
             <label class="col-form-label d-inline " for="fgroup_id_buttonar">
             </label>
         </div>
-        <div class="col-md-9 form-inline felement" data-fieldtype="group">
-            <div class="form-group fitem form-submit mr-1">
+        <div class="col-md-9 d-flex flex-wrap align-items-center felement" data-fieldtype="group">
+            <div class="mb-3 fitem form-submit mr-1">
                 <label class="col-form-label" for="id_save">
                 </label>
                 <span data-fieldtype="submit">
@@ -61,7 +61,7 @@
                            value="<?php echo get_string("savechanges") ?>" />
                 </span>
             </div>
-            <div class="form-group fitem btn-cancel">
+            <div class="mb-3 fitem btn-cancel">
                 <label class="col-form-label" for="id_back">
                 </label>
                 <span data-fieldtype="submit">

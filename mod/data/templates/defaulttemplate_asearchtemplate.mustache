@@ -35,24 +35,24 @@
 }}
 <div class="defaulttemplate-asearch container">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3">
-        <div class="form-group col">
+        <div class="mb-3 col">
             <div class="font-weight-bold mb-2">{{#str}}authorfirstname, mod_data{{/str}}</div>
             ##firstname##
         </div>
-        <div class="form-group col">
+        <div class="mb-3 col">
             <div class="font-weight-bold mb-2">{{#str}}authorlastname, mod_data{{/str}}</div>
             ##lastname##
         </div>
 
         {{#fields}}
-            <div class="form-group col">
+            <div class="mb-3 col">
                 <div class="font-weight-bold mb-2">{{fieldname}}</div>
                 {{fieldcontent}}
             </div>
         {{/fields}}
 
         {{#tags}}
-            <div class="form-group col">
+            <div class="mb-3 col">
                 <div class="font-weight-bold mb-2">{{#str}}tags{{/str}}</div>
                 {{.}}
             </div>

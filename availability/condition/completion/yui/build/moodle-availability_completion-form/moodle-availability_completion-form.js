@@ -26,7 +26,7 @@ M.availability_completion.form.initInner = function(cms) {
 M.availability_completion.form.getNode = function(json) {
     // Create HTML structure.
     var html = '<span class="col-form-label pr-3"> ' + M.util.get_string('title', 'availability_completion') + '</span>' +
-               ' <span class="availability-group form-group"><label>' +
+               ' <span class="availability-group mb-3"><label>' +
             '<span class="accesshide">' + M.util.get_string('label_cm', 'availability_completion') + ' </span>' +
             '<select class="custom-select" name="cm" title="' + M.util.get_string('label_cm', 'availability_completion') + '">' +
             '<option value="0">' + M.util.get_string('choosedots', 'moodle') + '</option>';
@@ -44,7 +44,7 @@ M.availability_completion.form.getNode = function(json) {
             '<option value="2">' + M.util.get_string('option_pass', 'availability_completion') + '</option>' +
             '<option value="3">' + M.util.get_string('option_fail', 'availability_completion') + '</option>' +
             '</select></label></span>';
-    var node = Y.Node.create('<span class="form-inline">' + html + '</span>');
+    var node = Y.Node.create('<span class="d-flex flex-wrap align-items-center">' + html + '</span>');
 
     // Set initial values.
     if (json.cm !== undefined &&

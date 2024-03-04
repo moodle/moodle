@@ -82,7 +82,7 @@ class data_field_url extends data_field_base {
 
         $autolinkable = !empty($this->field->param1) && empty($this->field->param2);
 
-        $str = '<div title="' . s($this->field->description) . '" class="form-inline">';
+        $str = '<div title="' . s($this->field->description) . '" class="d-flex flex-wrap align-items-center">';
 
         $label = '<label for="' . $fieldid . '"><span class="accesshide">' . $this->field->name . '</span>';
         if ($this->field->required) {

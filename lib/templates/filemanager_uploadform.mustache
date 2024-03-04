@@ -26,21 +26,21 @@
     <div class="fp-content-center">
         <form enctype="multipart/form-data" method="POST" class="form">
             <div class="fp-formset">
-                <div class="fp-file form-group">
+                <div class="fp-file mb-3">
                     <label>{{#str}}attachment, repository{{/str}}</label>
                     <div class="px-3">
                         <input  type="file"/>
                     </div>
                 </div>
-                <div class="fp-saveas form-group">
+                <div class="fp-saveas mb-3">
                     <label>{{#str}}saveas, repository{{/str}}</label>
                     <input type="text" class="form-control"/>
                 </div>
-                <div class="fp-setauthor form-group">
+                <div class="fp-setauthor mb-3">
                     <label>{{#str}}author, repository{{/str}}</label>
                     <input type="text" class="form-control"/>
                 </div>
-                <div class="fp-setlicense form-group">
+                <div class="fp-setlicense mb-3">
                     {{>core/filemanager_chooselicense}}
                 </div>
             </div>

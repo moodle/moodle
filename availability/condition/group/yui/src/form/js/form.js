@@ -42,7 +42,7 @@ M.availability_group.form.getNode = function(json) {
         html += '<option value="' + group.id + '" data-visibility="' + group.visibility + '">' + group.name + '</option>';
     }
     html += '</select></span></label>';
-    var node = Y.Node.create('<span class="form-inline">' + html + '</span>');
+    var node = Y.Node.create('<span class="d-flex flex-wrap align-items-center">' + html + '</span>');
 
     var select = node.one('select[name=id]');
 

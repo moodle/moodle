@@ -1749,7 +1749,7 @@ function data_print_preference_form($data, $perpage, $search, $sort='', $order='
         $regsearchclass = 'search_inline';
         $advancedsearchclass = 'search_none';
     }
-    echo '<div id="reg_search" class="' . $regsearchclass . ' form-inline" >&nbsp;&nbsp;&nbsp;';
+    echo '<div id="reg_search" class="' . $regsearchclass . ' d-flex flex-wrap align-items-center" >&nbsp;&nbsp;&nbsp;';
     echo '<label for="pref_search">' . get_string('search') . '</label> <input type="text" ' .
          'class="form-control" size="16" name="search" id= "pref_search" value="' . s($search) . '" /></div>';
     echo '&nbsp;&nbsp;&nbsp;<label for="pref_sortby">'.get_string('sortby').'</label> ';

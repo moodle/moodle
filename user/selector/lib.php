@@ -268,7 +268,7 @@ abstract class user_selector_base {
         $output .= $this->output_options($groupedusers, $search);
 
         // Output the search controls.
-        $output .= "</select>\n<div class=\"form-inline\">\n";
+        $output .= "</select>\n<div class=\"d-flex flex-wrap align-items-center\">\n";
         $output .= '<input type="text" name="' . $this->name . '_searchtext" id="' .
                 $this->name . '_searchtext" size="15" value="' . s($search) . '" class="form-control"/>';
         $output .= '<input type="submit" name="' . $this->name . '_searchbutton" id="' .

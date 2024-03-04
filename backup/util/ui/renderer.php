@@ -866,7 +866,7 @@ class core_backup_renderer extends plugin_renderer_base {
         if ($component->get_count() === 0) {
             $output .= $this->output->notification(get_string('nomatchingcourses', 'backup'));
 
-            $output .= html_writer::start_tag('div', array('class' => 'ics-search form-inline'));
+            $output .= html_writer::start_tag('div', ['class' => 'ics-search d-flex flex-wrap align-items-center']);
             $attrs = array(
                 'type' => 'text',
                 'name' => restore_course_search::$VAR_SEARCH,
@@ -933,7 +933,7 @@ class core_backup_renderer extends plugin_renderer_base {
         $output .= html_writer::table($table);
         $output .= html_writer::end_tag('div');
 
-        $output .= html_writer::start_tag('div', array('class' => 'ics-search form-inline'));
+        $output .= html_writer::start_tag('div', ['class' => 'ics-search d-flex flex-wrap align-items-center']);
         $attrs = array(
             'type' => 'text',
             'name' => restore_course_search::$VAR_SEARCH,

@@ -82,7 +82,7 @@
         <div class="row rtl-compatible">
             <div class="col-md-6 mb-1">
                 <input type="hidden" name="id" value="{{courseid}}">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="groups">
                         <span id="groupslabel">{{#str}}groups{{/str}}</span>
                         <span id="thegrouping">&nbsp;</span>
@@ -94,36 +94,36 @@
                     </select>
                 </div>
                 <h3> {{#str}} withselected, group {{/str}} </h3>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" name="action" id="updatemembers" value="updatemembers" class="btn btn-secondary">{{#str}}showmembersforgroup, group{{/str}}</button>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" name="action" id="showeditgroupsettingsform" value="showgroupsettingsform" {{#editgroupsettingsdisabled}}disabled="disabled"{{/editgroupsettingsdisabled}} class="btn btn-secondary">{{#str}}editgroupsettings, group{{/str}}</button>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" name="action" id="deletegroup" value="deletegroup" {{#deletegroupdisabled}}disabled="disabled"{{/deletegroupdisabled}} class="btn btn-secondary">{{#str}}deleteselectedgroup, group{{/str}}</button>
                 </div>
                 {{#messagingsettingsvisible}}
-                    <div class="form-group">
+                    <div class="mb-3">
                         <button type="submit" name="action" id="disablemessaging" value="disablemessaging" class="btn btn-secondary" disabled="disabled">{{#str}}disablemessagingaction, group{{/str}}</button>
                     </div>
-                    <div class="form-group">
+                    <div class="mb-3">
                         <button type="submit" name="action" id="enablemessaging" value="enablemessaging" class="btn btn-secondary" disabled="disabled">{{#str}}enablemessagingaction, group{{/str}}</button>
                     </div>
                 {{/messagingsettingsvisible}}
                 <h3> {{#str}} manageactions, group {{/str}} </h3>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" name="action" id="showcreateorphangroupform" value="showcreateorphangroupform" class="btn btn-secondary">{{#str}}creategroup, group{{/str}}</button>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" name="action" id="showautocreategroupsform" value="showautocreategroupsform" class="btn btn-secondary">{{#str}}autocreategroups, group{{/str}}</button>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" name="action" id="showimportgroups" value="showimportgroups" class="btn btn-secondary">{{#str}}importgroups, group{{/str}}</button>
                 </div>
             </div>
             <div class="col-md-6 mb-1">
-                <div class="form-group">
+                <div class="mb-3">
                     <label for="members">
                         <span id="memberslabel">{{#str}}membersofselectedgroup, group{{/str}}</span>
                         <span id="thegroup">{{{selectedgroup}}}</span>
@@ -138,7 +138,7 @@
                         {{/members}}
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="mb-3">
                     <button type="submit" value="showaddmembersform" class="btn btn-secondary" {{#addmembersdisabled}}disabled="disabled"{{/addmembersdisabled}} name="action" id="showaddmembersform">{{#str}}adduserstogroup, group{{/str}}</button>
                 </div>
             </div>

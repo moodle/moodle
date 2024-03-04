@@ -42,7 +42,7 @@
         }
     }
 }}
-<div id="{{element.wrapperid}}" class="form-group row {{#error}}has-danger{{/error}} fitem {{#element.emptylabel}}femptylabel{{/element.emptylabel}} {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}} {{{element.parentclasses}}}" {{#element.groupname}}data-groupname="{{.}}"{{/element.groupname}}>
+<div id="{{element.wrapperid}}" class="mb-3 row {{#error}}has-danger{{/error}} fitem {{#element.emptylabel}}femptylabel{{/element.emptylabel}} {{#advanced}}advanced{{/advanced}} {{{element.extraclasses}}} {{{element.parentclasses}}}" {{#element.groupname}}data-groupname="{{.}}"{{/element.groupname}}>
     <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
         {{# label}}{{$ label }}
             {{^element.staticlabel}}
@@ -65,7 +65,7 @@
             {{{helpbutton}}}
         </div>
     </div>
-    <div class="col-md-9 form-inline align-items-start felement" data-fieldtype="{{element.type}}">
+    <div class="col-md-9 d-flex flex-wrap align-items-start felement" data-fieldtype="{{element.type}}">
         {{$ element }}
             <!-- Element goes here -->
         {{/ element }}

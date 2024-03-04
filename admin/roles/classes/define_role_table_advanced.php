@@ -645,7 +645,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
     protected function print_field($name, $caption, $field, $helpicon = null) {
         global $OUTPUT;
         // Attempt to generate HTML like formslib.
-        echo '<div class="fitem row form-group">';
+        echo '<div class="fitem row mb-3">';
         echo '<div class="fitemtitle col-md-3">';
         if ($name) {
             echo '<label for="' . $name . '">';
@@ -663,7 +663,7 @@ class core_role_define_role_table_advanced extends core_role_capability_table_wi
         } else {
             $extraclass = '';
         }
-        echo '<div class="felement col-md-9 form-inline' . $extraclass . '">';
+        echo '<div class="felement col-md-9 d-flex flex-wrap align-items-center' . $extraclass . '">';
         echo $field;
         if (isset($this->errors[$name])) {
             echo $OUTPUT->error_text($this->errors[$name]);

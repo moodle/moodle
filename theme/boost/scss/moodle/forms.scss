@@ -22,7 +22,7 @@
     margin-bottom: 4px;
 }
 
-.mform .form-inline {
+.mform .d-flex {
     .form-control,
     .custom-select {
         max-width: 100%;
@@ -30,19 +30,14 @@
     textarea.form-control {
         width: 100%;
     }
-    .form-group {
-        margin: 0.1rem 0.25rem 0.1rem 0;
+    .fitem {
+        margin: 0.1rem 0.25rem 0.1rem 0 !important; /* stylelint-disable-line declaration-no-important */
     }
     br + label {
         justify-content: flex-start;
         width: 100%;
         margin-right: 0;
     }
-}
-
-.unresponsive.mform .form-inline,
-.unresponsive.mform .form-inline label {
-    display: inline-flex;
 }
 
 #jump-to-activity.custom-select {
@@ -89,14 +84,6 @@ input#id_externalurl {
 .form-label .form-shortname {
     font-size: $font-size-xs;
     display: block;
-}
-
-.form-item .form-inline {
-    display: inline;
-}
-
-.form-inline label:not(.sr-only):not(.accesshide) + select {
-    margin-left: 0.5rem;
 }
 
 .formsettingheading .form-horizontal {
@@ -400,21 +387,7 @@ textarea[data-auto-rows] {
     }
 }
 
-/** Allow wrapping an mform in a div with the form-inline class to have an inline, responsive form. */
-.form-inline {
-    @include media-breakpoint-up(md) {
-        .col-md-9,
-        .col-md-3 {
-            label {
-                margin-left: 1rem;
-            }
-            margin-bottom: 1rem;
-            width: auto;
-        }
-    }
-}
-
-[data-fieldtype="modgrade"] .form-group {
+[data-fieldtype="modgrade"] .fitem {
     padding-bottom: $input-padding-y;
 }
 
@@ -438,9 +411,9 @@ textarea[data-auto-rows] {
 }
 
 // The autocomplete popup needs a display:block container to correctly position to popup.
-.form-inline[data-fieldtype="autocomplete"],
-.form-inline[data-fieldtype="tags"] {
-    display: block;
+.felement[data-fieldtype="autocomplete"],
+.felement[data-fieldtype="tags"] {
+    display: block !important; /* stylelint-disable-line declaration-no-important */
 }
 
 // Show editor at 100% width by default.
@@ -451,18 +424,6 @@ textarea[data-auto-rows] {
 @include media-breakpoint-up(md) {
     .mform fieldset .fcontainer.collapseable .col-form-label {
         padding-left: ($spacer * 2.5);
-    }
-}
-
-@include media-breakpoint-up(sm) {
-    .mform {
-        .form-inline {
-            .fdefaultcustom {
-                label {
-                    justify-content: initial;
-                }
-            }
-        }
     }
 }
 

@@ -17,6 +17,8 @@ information provided here is intended especially for theme designers.
   - size
   - make-container-max-widths
   - g-variant and bg-gradient-variant
+* Bootstrap `.form-group` helper class is no longer used, use margin utilities instead (´mb-3´, ...).
+* Bootstrap `.form-inline` helper class is no longer used, use display utilities instead (`.d-flex.flex-wrap.align-items-center`).
 
 === 4.3 ===
 * The $activity-iconcontainer-height and $activity-iconcontainer-width variables have been changed from 50px to 52px.

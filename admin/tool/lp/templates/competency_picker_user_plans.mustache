@@ -66,8 +66,8 @@
 
 <h3 class="mt-1">{{#str}}locatecompetency, tool_lp{{/str}}</h3>
 
-<form data-region="filtercompetencies" data-planid="{{plan.id}}" class="form-inline">
-    <div class="form-group">
+<form data-region="filtercompetencies" data-planid="{{plan.id}}" class="d-flex flex-wrap align-items-center">
+    <div class="mb-3">
         <label class="accesshide" for="filter{{uniqid}}">{{#str}}search, tool_lp{{/str}}</label>
         <input type="text" class="form-control" id="filter{{uniqid}}" placeholder="{{#str}}search, tool_lp{{/str}}" value="{{search}}">
         <button class="btn btn-secondary">{{#pix}}a/search, ,{{#str}}search{{/str}}{{/pix}}</button>

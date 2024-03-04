@@ -205,7 +205,7 @@ $bulkoptions = (object) [
     'uniqueid' => $participanttable->uniqueid,
 ];
 
-echo '<br /><div class="buttons"><div class="form-inline">';
+echo '<br /><div class="buttons"><div class="d-flex flex-wrap align-items-center">';
 
 echo html_writer::start_tag('div', array('class' => 'btn-group'));
 

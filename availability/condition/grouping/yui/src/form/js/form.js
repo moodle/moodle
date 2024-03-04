@@ -41,7 +41,7 @@ M.availability_grouping.form.getNode = function(json) {
         html += '<option value="' + grouping.id + '">' + grouping.name + '</option>';
     }
     html += '</select></span></label>';
-    var node = Y.Node.create('<span class="form-inline">' + html + '</span>');
+    var node = Y.Node.create('<span class="d-flex flex-wrap align-items-center">' + html + '</span>');
 
     // Set initial value if specified.
     if (json.id !== undefined &&

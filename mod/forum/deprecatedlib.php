@@ -442,8 +442,8 @@ function forum_update_subscriptions_button($courseid, $forumid): string {
         $edit = "on";
     }
 
-    $subscribers = html_writer::start_tag('form', array('action' => $CFG->wwwroot . '/mod/forum/subscribers.php',
-        'method' => 'get', 'class' => 'form-inline'));
+    $subscribers = html_writer::start_tag('form', ['action' => $CFG->wwwroot . '/mod/forum/subscribers.php',
+        'method' => 'get', 'class' => 'd-flex flex-wrap align-items-center']);
     $subscribers .= html_writer::empty_tag('input', array('type' => 'submit', 'value' => $string,
         'class' => 'btn btn-secondary'));
     $subscribers .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => 'id', 'value' => $forumid));

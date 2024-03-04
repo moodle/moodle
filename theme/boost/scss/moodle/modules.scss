@@ -245,15 +245,6 @@ select {
     }
 }
 
-#page-mod-forum-discuss .discussioncontrols {
-    width: auto;
-    margin: 0;
-
-    .form-inline input {
-        margin-top: -1px;
-    }
-}
-
 $author-image-width: 70px;
 $author-image-margin: 24px;
 $author-image-width-sm: 30px;
@@ -1020,9 +1011,6 @@ div#dock {
 .path-mod-lesson .answeroption .checkbox label p {
     display: inline;
 }
-.path-mod-lesson .form-inline label.form-check-label {
-    display: inline-block;
-}
 .path-mod-lesson .slideshow {
     overflow: auto;
     padding: 15px;
@@ -1208,7 +1196,7 @@ img.userpicture {
     width: auto;
     max-width: none;
 }
-#page-mod-quiz-mod #id_reviewoptionshdr .form-group {
+#page-mod-quiz-mod #id_reviewoptionshdr .fitem {
     float: left;
     width: 20rem;
     display: inline-block;
@@ -1218,10 +1206,6 @@ img.userpicture {
 #page-mod-quiz-mod #id_reviewoptionshdr .btn-link {
     line-height: 1.5;
     vertical-align: bottom;
-}
-#page-mod-quiz-mod #id_reviewoptionshdr .form-inline {
-    float: left;
-    clear: left;
 }
 #page-mod-quiz-mod #id_reviewoptionshdr .form-check {
     width: auto;

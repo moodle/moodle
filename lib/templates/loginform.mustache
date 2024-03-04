@@ -125,7 +125,7 @@
         <input id="anchor" type="hidden" name="anchor" value="">
         <script>document.getElementById('anchor').value = location.hash;</script>
         <input type="hidden" name="logintoken" value="{{logintoken}}">
-        <div class="login-form-username form-group">
+        <div class="login-form-username mb-3">
             <label for="username" class="sr-only">
                 {{^canloginbyemail}}
                     {{#str}} username {{/str}}
@@ -141,7 +141,7 @@
                 !}}{{#canloginbyemail}}{{#cleanstr}}usernameemail{{/cleanstr}}{{/canloginbyemail}}" {{!
                 !}}autocomplete="username">
         </div>
-        <div class="login-form-password form-group">
+        <div class="login-form-password mb-3">
             <label for="password" class="sr-only">{{#str}} password {{/str}}</label>
             <input type="password" name="password" id="password" value="" {{!
                 !}}class="form-control form-control-lg" {{!
@@ -149,14 +149,14 @@
                 !}}autocomplete="current-password">
         </div>
         {{#recaptcha}}
-            <div class="login-form-recaptcha form-group">
+            <div class="login-form-recaptcha mb-3">
                 {{{recaptcha}}}
             </div>
         {{/recaptcha}}
-        <div class="login-form-submit form-group">
+        <div class="login-form-submit mb-3">
             <button class="btn btn-primary btn-lg" type="submit" id="loginbtn">{{#str}}login{{/str}}</button>
         </div>
-        <div class="login-form-forgotpassword form-group">
+        <div class="login-form-forgotpassword mb-3">
             <a href="{{forgotpasswordurl}}">{{#str}}forgotaccount{{/str}}</a>
         </div>
     </form>

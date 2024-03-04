@@ -72,7 +72,7 @@
             </div>
             <div class="mb-1">
                 <label class="" for="{{elementid}}_tiny_image_size">{{#str}} size, tiny_media {{/str}}</label>
-                <div id="{{elementid}}_tiny_image_size" class="form-inline tiny_image_size">
+                <div id="{{elementid}}_tiny_image_size" class="d-flex flex-wrap align-items-center tiny_image_size">
                     <label class="accesshide" for="{{elementid}}_tiny_image_widthentry">{{#str}} width, tiny_media {{/str}}</label>
                     <input type="text" class="form-control mr-1 input-mini tiny_image_widthentry" id="{{elementid}}_tiny_image_widthentry" size="4" value="{{width}}"/>
                     x
@@ -85,7 +85,7 @@
                     </div>
                 </div>
             </div>
-            <div class="form-inline mb-1">
+            <div class="d-flex flex-wrap align-items-center mb-1">
                 <label for="{{elementid}}_tiny_image_alignment">{{#str}} alignment, tiny_media {{/str}}</label>
                 <select class="custom-select tiny_image_alignment" id="{{elementid}}_tiny_image_alignment">
                     {{#alignoptions}}

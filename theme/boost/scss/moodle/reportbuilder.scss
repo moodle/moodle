@@ -63,7 +63,7 @@ $rb-filters-footer-height: 4rem;
             word-break: break-all;
         }
     }
-    .form-group[data-groupname="buttonar"] {
+    .fitem[data-groupname="buttonar"] {
         position: absolute;
         bottom: 0;
         height: $rb-filters-footer-height;
@@ -84,11 +84,11 @@ $rb-filters-footer-height: 4rem;
         .fdate_selector {
             flex-wrap: wrap;
         }
-        .form-group {
-            margin-bottom: 0;
+        .fitem {
+            margin-bottom: 0 !important; /* stylelint-disable-line declaration-no-important */
             max-width: 100%;
         }
-        .form-group:not(.row):last-child {
+        .fitem:not(.row):last-child {
             flex: 1;
             min-width: 0;
             span,
