@@ -16,6 +16,11 @@
 
 namespace core_backup;
 
+use backup;
+use backup_controller;
+use backup_section_structure_step;
+use backup_section_task;
+
 /**
  * Tests for Moodle 2 steplib classes.
  *
@@ -40,11 +45,32 @@ class backup_stepslib_test extends \advanced_testcase {
      * @covers \backup_section_structure_step::define_structure
      */
     public function test_backup_section_structure_step(): void {
+        global $USER;
+
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course(['numsections' => 3, 'format' => 'topics']);
         $this->setAdminUser();
 
-        $step = new \backup_section_structure_step('section_commons', 'section.xml');
+        $step = new backup_section_structure_step('section_commons', 'section.xml');
+
+        // The backup_section_structure_step requires a complex dependency sequence
+        // but it does not have an easy dependency injection system.
+        // We create a real backup plan to get the task dependency sequence ready.
+        $bc = new backup_controller(
+            backup::TYPE_1COURSE,
+            $course->id,
+            backup::FORMAT_MOODLE,
+            backup::INTERACTIVE_NO,
+            backup::MODE_IMPORT,
+            $USER->id);
+        $tasks = $bc->get_plan()->get_tasks();
+        foreach ($tasks as $task) {
+            // We need only the task to backup section 1.
+            if ($task instanceof backup_section_task && $task->get_name() == "1") {
+                $task->add_step($step);
+                break;
+            }
+        }
 
         $reflection = new \ReflectionClass($step);
         $method = $reflection->getMethod('define_structure');
