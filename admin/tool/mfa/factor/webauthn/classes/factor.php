@@ -92,6 +92,13 @@ class factor extends object_factor_base {
 
     /**
      * WebAuthn Factor implementation.
+     */
+    public function has_replace(): bool {
+        return true;
+    }
+
+    /**
+     * WebAuthn Factor implementation.
      *
      * {@inheritDoc}
      */
@@ -145,7 +152,16 @@ class factor extends object_factor_base {
      * @return string
      */
     public function get_setup_string(): string {
-        return get_string('setupfactor', 'factor_webauthn');
+        return get_string('setupfactorbutton', 'factor_webauthn');
+    }
+
+    /**
+     * Gets the string for manage button on preferences page.
+     *
+     * @return string
+     */
+    public function get_manage_string(): string {
+        return get_string('managefactorbutton', 'factor_webauthn');
     }
 
     /**
@@ -245,16 +261,34 @@ class factor extends object_factor_base {
      * @return \MoodleQuickForm $mform
      */
     public function setup_factor_form_definition(\MoodleQuickForm $mform): \MoodleQuickForm {
-        global $PAGE, $USER, $SESSION;
+        global $PAGE, $USER, $SESSION, $OUTPUT;
+
+        $headingstring = $mform->elementExists('replaceid') ? 'replacefactor' : 'setupfactor';
+        $mform->addElement('html', $OUTPUT->heading(get_string($headingstring, 'factor_webauthn'), 2));
+
+        $html = \html_writer::tag('p', get_string('setupfactor:intro', 'factor_webauthn'));
+        $mform->addElement('html', $html);
+
+        // Security key name.
+        $mform->addElement('html', \html_writer::tag('p', get_string('setupfactor:instructionssecuritykeyname', 'factor_webauthn'),
+            ['class' => 'bold']));
 
         $mform->addElement('text', 'webauthn_name', get_string('authenticatorname', 'factor_webauthn'));
-        $mform->setType('webauthn_name', PARAM_ALPHANUM);
+        $mform->setType('webauthn_name', PARAM_TEXT);
         $mform->addRule('webauthn_name', get_string('required'), 'required', null, 'client');
+
+        $html = \html_writer::tag('p', get_string('setupfactor:securitykeyinfo', 'factor_webauthn'));
+        $mform->addElement('static', 'devicenameinfo', '', $html);
+
+        // Register security key.
+        $mform->addElement('html', \html_writer::tag('p',
+            get_string('setupfactor:instructionsregistersecuritykey', 'factor_webauthn'), ['class' => 'bold']));
 
         $registerbtn = \html_writer::tag('btn', get_string('register', 'factor_webauthn'), [
             'class' => 'btn btn-primary',
             'type' => 'button',
-            'id' => 'factor_webauthn-register'
+            'id' => 'factor_webauthn-register',
+            'tabindex' => '0',
         ]);
         $mform->addElement('static', 'register', '', $registerbtn);
 
@@ -325,14 +359,53 @@ class factor extends object_factor_base {
             $row->lastverified = time();
             $row->revoked = 0;
 
-            $id = $DB->insert_record('tool_mfa', $row);
+            // Check if a record with this configuration already exists, warning the user accordingly.
+            $record = $DB->get_record('tool_mfa', [
+                'userid' => $row->userid,
+                'secret' => $row->secret,
+                'factor' => $row->factor,
+            ], '*', IGNORE_MULTIPLE);
+            if ($record) {
+                \core\notification::warning(get_string('error:alreadyregistered', 'factor_webauthn'));
+                return null;
+            }
 
+            $id = $DB->insert_record('tool_mfa', $row);
             $record = $DB->get_record('tool_mfa', array('id' => $id));
             $this->create_event_after_factor_setup($USER);
 
             return $record;
         }
         return null;
+    }
+
+    /**
+     * WebAuthn Factor implementation with replacement of existing factor.
+     *
+     * @param stdClass $data The new factor data.
+     * @param int $id The id of the factor to replace.
+     * @return stdClass|null the factor record, or null.
+     */
+    public function replace_user_factor(stdClass $data, int $id): stdClass|null {
+        global $DB, $USER;
+
+        $oldrecord = $DB->get_record('tool_mfa', ['id' => $id]);
+        $newrecord = null;
+
+        // Ensure we have a valid existing record before setting the new one.
+        if ($oldrecord) {
+            $newrecord = $this->setup_user_factor($data);
+        }
+        // Ensure the new record was created before revoking the old.
+        if ($newrecord) {
+            $this->revoke_user_factor($id);
+        } else {
+            \core\notification::warning(get_string('error:couldnotreplace', 'tool_mfa'));
+            return null;
+        }
+        $this->create_event_after_factor_setup($USER);
+
+        return $newrecord ?? null;
     }
 
 }
