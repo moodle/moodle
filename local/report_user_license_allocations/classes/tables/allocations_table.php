@@ -181,7 +181,7 @@ class allocations_table extends table_sql {
      * @return string HTML content to go inside the td.
      */
     public function col_coursename($row) {
-        global $CFG, $DB;
+        global $CFG, $DB, $companycontext;
 
         $courseurl  = '/local/report_completion/index.php';
         if (!$this->is_downloading() && iomad::has_capability('local/report_completion:view', $companycontext)) {
