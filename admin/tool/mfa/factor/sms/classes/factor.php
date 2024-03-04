@@ -86,6 +86,15 @@ class factor extends object_factor_base {
     }
 
     /**
+     * Gets the string for manage button on preferences page.
+     *
+     * @return string
+     */
+    public function get_manage_string(): string {
+        return get_string('managefactorbutton', 'factor_sms');
+    }
+
+    /**
      * Defines setup_factor form definition page for SMS Factor.
      *
      * @param \MoodleQuickForm $mform
@@ -349,13 +358,7 @@ class factor extends object_factor_base {
      * @return bool
      */
     public function show_setup_buttons(): bool {
-        global $DB, $USER;
-
-        // If there is already a factor setup, don't allow multiple (for now).
-        $record = $DB->get_record('tool_mfa',
-            ['userid' => $USER->id, 'factor' => $this->name, 'secret' => '', 'revoked' => 0]);
-
-        return empty($record);
+        return true;
     }
 
     /**
