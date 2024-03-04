@@ -436,6 +436,7 @@ class course_edit_form extends moodleform {
         $buttonarray[] = &$mform->createElement('cancel');
         $mform->addGroup($buttonarray, 'buttonar', '', array(' '), false);
         $mform->closeHeaderBefore('buttonar');
+        $mform->set_sticky_footer('buttonar');
 
         $mform->addElement('hidden', 'id', null);
         $mform->setType('id', PARAM_INT);

@@ -38559,6 +38559,12 @@ body {
     padding: 0 1rem;
   }
 }
+.stickyfooter fieldset div {
+  justify-content: flex-end;
+}
+.stickyfooter [data-groupname=buttonar] {
+  width: 100%;
+}
 
 .hasstickyfooter .stickyfooter {
   bottom: 0;
