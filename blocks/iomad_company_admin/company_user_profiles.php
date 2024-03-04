@@ -100,7 +100,7 @@ switch ($action) {
         $id       = optional_param('id', 0, PARAM_INT);
         $datatype = optional_param('datatype', '', PARAM_ALPHA);
 
-        profile_edit_field($id, $datatype, $redirect, $companyid);
+        iomad_profile_edit_field($id, $datatype, $redirect, $companyid);
         die;
         break;
     default:

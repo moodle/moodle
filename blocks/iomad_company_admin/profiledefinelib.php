@@ -441,7 +441,7 @@ function profile_list_categories() {
 
 
 // Are we adding or editing a cateogory?
-function profile_edit_category($id, $redirect) {
+function iomad_profile_edit_category($id, $redirect) {
     global $CFG, $DB, $OUTPUT;
 
     require_once('index_category_form.php');
@@ -483,7 +483,7 @@ function profile_edit_category($id, $redirect) {
 
 }
 
-function profile_edit_field($id, $datatype, $redirect, $companyid) {
+function iomad_profile_edit_field($id, $datatype, $redirect, $companyid) {
     global $CFG, $DB, $OUTPUT, $PAGE;
 
     if (!$field = $DB->get_record('user_info_field', array('id' => $id))) {
@@ -569,8 +569,6 @@ function profile_edit_field($id, $datatype, $redirect, $companyid) {
         }
 
         // Print the page.
-        $context = context_system::instance();
-        $PAGE->set_context($context);
         $PAGE->navbar->add($strheading);
         echo $OUTPUT->header();
         echo $OUTPUT->heading($strheading);
