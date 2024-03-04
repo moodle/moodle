@@ -135,11 +135,11 @@ class factor_test extends \advanced_testcase {
             'secret' => 'fakekey',
             'devicename' => 'fakedevice',
         ];
-        $record = $totpfactor->setup_user_factor((object) $totpdata);
+        $totpfactor->setup_user_factor((object) $totpdata);
 
-        // Trying to add the same TOTP should return the existing record (exactly).
+        // Trying to add the same TOTP should return null.
         $anotherecord = $totpfactor->setup_user_factor((object) $totpdata);
-        $this->assertEquals($record, $anotherecord);
+        $this->assertNull($anotherecord);
 
         // The total count for factors added should be 1 at this point.
         $count = $DB->count_records('tool_mfa');
