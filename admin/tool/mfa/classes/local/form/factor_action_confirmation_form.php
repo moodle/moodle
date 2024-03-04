@@ -21,29 +21,36 @@ defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . "/formslib.php");
 
 /**
- * Revoke factor form
+ * Factor action confirmation form.
  *
  * @package     tool_mfa
  * @author      Mikhail Golenkov <golenkovm@gmail.com>
  * @copyright   Catalyst IT
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class revoke_factor_form extends \moodleform {
+class factor_action_confirmation_form extends \moodleform {
 
     /**
-     * {@inheritDoc}
-     * @see moodleform::definition()
+     * Form definition.
      */
     public function definition(): void {
-        global $OUTPUT;
         $mform = $this->_form;
-        $factorname = $this->_customdata['factorname'];
+        $factor = $this->_customdata['factor'];
         $devicename = $this->_customdata['devicename'];
+        $factorid = $this->_customdata['factorid'];
+        $action = $this->_customdata['action'];
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('areyousure', 'tool_mfa'), 4));
-        $mform->addElement('html', $OUTPUT->heading(get_string('factor', 'tool_mfa').': '.$factorname, 5));
-        $mform->addElement('html', $OUTPUT->heading(get_string('devicename', 'tool_mfa').': '.$devicename, 5));
+        $mform->addElement('html', get_string('confirmation' . $action, 'tool_mfa', $devicename));
 
-        $this->add_action_buttons(true, get_string('revoke', 'tool_mfa'));
+        $mform->setType('factorid', PARAM_INT);
+        $mform->addElement('hidden', 'factorid', $factorid);
+
+        $mform->setType('factor', PARAM_TEXT);
+        $mform->addElement('hidden', 'factor', $factor);
+
+        $mform->setType('action', PARAM_TEXT);
+        $mform->addElement('hidden', 'action', $action);
+
+        $mform->addElement('hidden', 'sesskey', sesskey());
     }
 }

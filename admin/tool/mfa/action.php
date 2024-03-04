@@ -25,7 +25,6 @@
 require_once(__DIR__ . '/../../../config.php');
 
 use tool_mfa\local\form\setup_factor_form;
-use tool_mfa\local\form\revoke_factor_form;
 
 require_login(null, false);
 if (isguestuser()) {
@@ -63,7 +62,6 @@ $context = context_user::instance($USER->id);
 $PAGE->set_context($context);
 $PAGE->set_url('/admin/tool/mfa/action.php');
 $PAGE->set_pagelayout('standard');
-$PAGE->set_title(get_string($action.'factor', 'tool_mfa'));
 $PAGE->set_cacheable(false);
 
 if ($node = $PAGE->settingsnav->find('usercurrentsettings', null)) {
@@ -77,7 +75,8 @@ switch ($action) {
             redirect($returnurl);
         }
 
-        $PAGE->navbar->add(get_string('setupfactor', 'factor_'.$factor));
+        $PAGE->set_title(get_string('setupfactor', 'tool_mfa'));
+        $PAGE->navbar->add($factorobject->get_setup_string());
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
         $form = new setup_factor_form($currenturl, ['factorname' => $factor]);
 
@@ -106,42 +105,72 @@ switch ($action) {
 
         break;
 
-    case 'revoke':
-        // Ensure sesskey is valid.
-        require_sesskey();
-
-        if (!$factorobject || !$factorobject->has_revoke()) {
-            throw new moodle_exception('error:revoke', 'tool_mfa', $returnurl);
+    case 'replace':
+        // Replace works much the same as setup.
+        if (!$factorobject || !$factorobject->has_replace()) {
+            redirect($returnurl);
         }
 
-        $PAGE->navbar->add(get_string('action:revoke', 'factor_'.$factor));
+        $PAGE->set_title(get_string('replacefactor', 'tool_mfa'));
+        $PAGE->navbar->add($factorobject->get_setup_string());
         $OUTPUT = $PAGE->get_renderer('tool_mfa');
-
-        $revokeparams = [
-            'factorname' => $factorobject->get_display_name(),
-            'devicename' => $factorobject->get_label($factorid),
-        ];
-        $form = new revoke_factor_form($currenturl, $revokeparams);
+        // Use setup factor form, but pass in additional id for replacement.
+        $form = new setup_factor_form($currenturl, ['factorname' => $factor, 'replaceid' => $factorid]);
 
         if ($form->is_submitted()) {
             $form->is_validated();
 
             if ($form->is_cancelled()) {
+                $factorobject->setup_factor_form_is_cancelled($factorid);
                 redirect($returnurl);
             }
 
-            if ($form->get_data()) {
-                if ($factorobject->revoke_user_factor($factorid)) {
-                    $finalurl = new moodle_url($returnurl, ['action' => 'revoked', 'factorid' => $factorid]);
+            if ($data = $form->get_data()) {
+                $record = $factorobject->replace_user_factor($data, $factorid);
+                if (!empty($record)) {
+                    $factorobject->set_state(\tool_mfa\plugininfo\factor::STATE_PASS);
+                    $finalurl = new moodle_url($returnurl, ['action' => 'setup', 'factorid' => $record->id]);
                     redirect($finalurl);
                 }
 
-                throw new moodle_exception('error:revoke', 'tool_mfa', $returnurl);
+                throw new moodle_exception('error:setupfactor', 'tool_mfa', $returnurl);
             }
         }
 
         echo $OUTPUT->header();
         $form->display();
+
+        break;
+
+    case 'revoke':
+        // Ensure sesskey is valid.
+        require_sesskey();
+        $PAGE->set_title(get_string('revokefactor', 'tool_mfa'));
+
+        if (!$factorobject || !$factorobject->has_revoke()) {
+            throw new moodle_exception('error:revoke', 'tool_mfa', $returnurl);
+        }
+
+        if ($factorobject->revoke_user_factor($factorid)) {
+            $finalurl = new moodle_url($returnurl, ['action' => 'revoked', 'factorid' => $factorid]);
+            redirect($finalurl);
+        }
+
+        throw new moodle_exception('error:revoke', 'tool_mfa', $returnurl);
+
+        break;
+
+    case 'manage':
+
+        $PAGE->set_title(get_string('managefactor', 'tool_mfa'));
+        $PAGE->navbar->add(get_string('action:manage', 'factor_'.$factor));
+        $OUTPUT = $PAGE->get_renderer('tool_mfa');
+        echo $OUTPUT->header();
+        echo $OUTPUT->heading(get_string('managefactor', 'factor_' . $factorobject->name));
+        echo $OUTPUT->active_factors($factor);
+        echo $OUTPUT->single_button($returnurl, get_string('back'));
+        // JS for modal confirming replace and revoke actions.
+        $PAGE->requires->js_call_amd('tool_mfa/confirmation_modal', 'init', [$context->id]);
 
         break;
 
