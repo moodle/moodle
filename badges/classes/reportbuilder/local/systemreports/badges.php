@@ -108,6 +108,7 @@ class badges extends system_report {
         $columns = [
             'badge:image',
             'badge:namewithlink',
+            'badge:version',
             'badge:status',
             'badge:criteria',
         ];
@@ -148,7 +149,9 @@ class badges extends system_report {
     protected function add_filters(): void {
         $filters = [
             'badge:name',
+            'badge:version',
             'badge:status',
+            'badge:expiry',
         ];
         $this->add_filters_from_entities($filters);
     }
