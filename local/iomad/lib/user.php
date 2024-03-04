@@ -367,17 +367,14 @@ class company_user {
         }
 
         foreach ($courseids as $courseid) {
-echo "checking if courseid $courseid is valid<br>";
             // Check if the courseid is valid.
             if (empty($courseid)) {
-echo "none<br>";
                 continue;
             }
 
             // Check if course is shared.
             if ($courseinfo = $DB->get_record('iomad_courses', array('courseid' => $courseid))) {
                 if ($courseinfo->licensed == 1) {
-echo "Licensed so skipping as we do that elsewhere<br>";
 
                     continue;
                 }
@@ -386,7 +383,6 @@ echo "Licensed so skipping as we do that elsewhere<br>";
                 } else {
                     $shared = false;
                 }
-echo "shared = $shared<br>";
             }
 
             // Do we have course groups?
@@ -417,7 +413,6 @@ echo "shared = $shared<br>";
                 }
                 // Is the user currently enrolled?
                 if (!empty($manualcache[$courseid]->id) && !$userenrolment = $DB->get_record('user_enrolments', array('userid' => $user->id, 'enrolid' => $manualcache[$courseid]->id))) {
-echo "Running manual->enrol_user()<br>";
                     $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, ENROL_USER_ACTIVE);
                 } else if ($completedrecords = $DB->get_records_select('local_iomad_track',
                                                                                 "userid = :userid
@@ -428,33 +423,26 @@ echo "Running manual->enrol_user()<br>";
                                                                                  ['userid' => $user->id,
                                                                                  'courseid' => $courseid,
                                                                                  'timeallocated' => $userenrolment->timecreated])) {
-echo "Getting records from LIT as we have have copmpleted all of the other assignations<br>";
                             // All previous attempts have been completed so enrol again.
                             foreach ($completedrecords as $completedrecord) {
                                 // Complete any license allocations.
-echo "Dealing with LIT id $completedrecord->id<br>";
                                 if (!empty($completedrecord->licenseid) &&
                                     $licenserecord = $DB->get_record('companylicense_users', ['userid' => $completedrecord->userid,
                                                                                               'licensecourseid' => $completedrecord->courseid,
                                                                                               'licenseid' => $completedrecord->licenseid,
                                                                                               'issuedate' => $completedrecord->licenseallocated])) {
                                     if (empty($licenserecord->timecompleted)) {
-echo "Marking clu.id $licenserecord->id as finished with @ $timestart<br>";
                                         $DB->set_field('companylicense_users', 'timecompleted', $timestart, ['id' => $licenserecord->id]);
                                     }
                                 }
                                 $DB->set_field('local_iomad_track', 'completedstop', 1, ['id' => $completedrecord->id]);
                             }
-echo "Clearing down the course</br>";
                             // Clear them from the course.
                             company_user::delete_user_course($user->id, $courseid, 'autodelete');
 
-echo "Re-enrolling them on the course</br>";
                             // Then re-enrol them.
                             $manual->enrol_user($manualcache[$courseid], $user->id, $rid, $today, $timeend, ENROL_USER_ACTIVE);
                 } else {
-$DB->set_debug(false);
-echo "Already got an enrolment - firing event <br>";
                     role_assign($rid, $user->id, context_course::instance($courseid));
                     // Fire a duplicate enrol event so we can add it to the tracking tables.
                     $event = \core\event\user_enrolment_created::create(
