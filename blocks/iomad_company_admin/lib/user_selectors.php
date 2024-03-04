@@ -36,6 +36,7 @@ abstract class company_user_selector_base extends user_selector_base {
     protected $selectedcourses;
     protected $searchoptionsoutput = false;
     protected $profilefieldid = 0;
+    protected $allusers = false;
 
     /** @var array JavaScript YUI3 Module definition */
     protected static $jsmodule = array(
@@ -67,6 +68,9 @@ abstract class company_user_selector_base extends user_selector_base {
         if (!empty($options['selectedcourses'])) {
             $this->selectedcourses = $options['selectedcourses'];
         }
+        if (!empty($options['allusers'])) {
+            $this->allusers = $options['allusers'];
+        }
         if (!empty($options['profilefieldid'])) {
             $profileid = $options['profilefieldid'];
         } else {
@@ -96,6 +100,9 @@ abstract class company_user_selector_base extends user_selector_base {
         }
         if (!empty($this->groupid)) {
             $options['groupid'] = $this->groupid;
+        }
+        if (!empty($this->allusers)) {
+            $options['allusers'] = $this->allusers;
         }
 
         return $options;
@@ -392,6 +399,7 @@ class potential_company_users_user_selector extends company_user_selector_base {
      */
     public function find_users($search) {
         global $CFG, $DB, $USER;
+
         // By default wherecondition retrieves all users except the deleted, not confirmed and guest.
         list($wherecondition, $params) = $this->search_sql($search, 'u');
         $params['companyid'] = $this->companyid;
@@ -403,7 +411,14 @@ class potential_company_users_user_selector extends company_user_selector_base {
             $adminsql = " AND u.id NOT IN (" . $CFG->siteadmins . ")";
         }
 
-        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u');
+        // Is it all users?
+        if (has_capability('block/iomad_company_admin:company_add', context_system::instance()) &&
+            $this->allusers) {
+            $usersql = "AND u.id NOT IN (SELECT userid FROM {company_users} WHERE companyid = :companyid)";
+        } else {
+            $usersql = "AND u.id NOT IN (SELECT userid FROM {company_users})";
+        }
+        $fields      = 'SELECT DISTINCT ' . $this->required_fields_sql('u') . ',u.institution';
         $countfields = 'SELECT COUNT(1)';
 
         $sql = " FROM {user} u
@@ -411,9 +426,7 @@ class potential_company_users_user_selector extends company_user_selector_base {
 
                  WHERE $wherecondition AND u.suspended = 0
                  $adminsql
-                 AND u.id NOT IN (
-                   SELECT userid FROM {company_users}
-                 )";
+                 $usersql";
 
         $order = ' ORDER BY u.firstname ASC, u.lastname ASC';
 
@@ -428,6 +441,10 @@ class potential_company_users_user_selector extends company_user_selector_base {
 
         if (empty($availableusers)) {
             return array();
+        }
+
+        foreach ($availableusers as $id => $user) {
+            $availableusers[$id]->email = $user->email . " - " . $user->institution;
         }
 
         if ($search) {

@@ -81,7 +81,11 @@ if (empty($SESSION->currenteditingcompany) &&
         $company = $firstcompany->id;
     }
 } else {
-    $company = $SESSION->currenteditingcompany;
+    if (!empty($SESSION->currenteditingcompany)) {
+        $company = $SESSION->currenteditingcompany;
+    } else {
+        $company = 0;
+    }
 }
 
 $companycontext = $systemcontext;

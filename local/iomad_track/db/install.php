@@ -24,7 +24,9 @@
 // This script is run after the dashboard has been installed.
 
 // In case we ever want to switch back to ordinary certificates
-define('CERTIFICATE', 'iomadcertificate');
+if (!defined('CERTIFICATE')) {
+    define('CERTIFICATE', 'iomadcertificate');
+}
 
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/lib.php');
 require_once($CFG->dirroot . '/mod/' . CERTIFICATE . '/locallib.php');

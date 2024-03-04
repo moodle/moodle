@@ -976,7 +976,7 @@ class company {
      *              $managertype = int;
      *
      **/
-    public function assign_user_to_company($userid, $departmentid = 0, $managertype = 0, $ws = false) {
+    public function assign_user_to_company($userid, $departmentid = 0, $managertype = 0, $ws = false, $import = false) {
         global $CFG, $DB;
 
         // is the user valid?
@@ -1040,6 +1040,16 @@ class company {
             } else {
                 throw new moodle_exception(get_string('cantassignusersdb', 'block_iomad_company_admin'));
             }
+        }
+
+        // Are we importing their completion data too?
+        if ($import) {
+            // Create an adhoctask to set up these roles once cron runs again.
+            $importtask = new \local_iomad_track\task\importusertask();
+            $importtask->set_custom_data(['companyid' => $this->id, 'userid' => $userid]);
+
+            // Queue the task.
+            \core\task\manager::queue_adhoc_task($importtask);
         }
 
         // Deal with auto enrolments.

@@ -36,11 +36,12 @@ class company_users_form extends moodleform {
     protected $potentialusers = null;
     protected $currentusers = null;
 
-    public function __construct($actionurl, $context, $companyid) {
+    public function __construct($actionurl, $context, $companyid, $allusers) {
         $this->selectedcompany = $companyid;
         $this->context = $context;
+        $this->allusers = $allusers;    
 
-        $options = array('context' => $this->context, 'companyid' => $this->selectedcompany);
+        $options = array('context' => $this->context, 'companyid' => $this->selectedcompany, 'allusers' => $allusers);
         $this->potentialusers = new potential_company_users_user_selector('potentialusers', $options);
         $this->currentusers = new current_company_users_user_selector('currentusers', $options);
 
@@ -75,7 +76,13 @@ class company_users_form extends moodleform {
                   <td id="buttonscell">
                       <p class="arrow_button">
                         <input name="add" id="add" type="submit" value="' . $OUTPUT->larrow().'&nbsp;'.get_string('add') . '"
-                               title="' . print_string('add') .'" class="btn btn-secondary"/><br />
+                               title="' . print_string('add') .'" class="btn btn-secondary"/><br />');
+            if ($this->allusers) {
+                $mform->addElement('html', '
+                        <input name="import" id="import" type="submit" value="'.$OUTPUT->larrow(). '&nbsp;'. get_string('import').'"
+                               title="'. print_string('remove') .'" class="btn btn-secondary"/><br />');
+            }
+            $mform->addElement('html', '
                         <input name="remove" id="remove" type="submit" value="'. get_string('remove').'&nbsp;'.$OUTPUT->rarrow(). '"
                                title="'. print_string('remove') .'" class="btn btn-secondary"/><br />
                      </p>
@@ -99,13 +106,18 @@ class company_users_form extends moodleform {
     public function process() {
         global $DB, $USER, $OUTPUT;
 
+        $add = optional_param('add', false, PARAM_BOOL);
+        $import = optional_param('import', false, PARAM_BOOL);
+        $remove = optional_param('remove', false, PARAM_BOOL);
+
         if ($this->selectedcompany) {
             $company = new company($this->selectedcompany);
             $companyshortname = $company->get_shortname();
             $companydefaultdepartment = company::get_company_parentnode($company->id);
 
             // Process incoming assignments.
-            if (optional_param('add', false, PARAM_BOOL) && confirm_sesskey()) {
+            if (($add || $import) &&
+                 confirm_sesskey()) {
                 $userstoassign = $this->potentialusers->get_selected_users();
                 if (!empty($userstoassign)) {
 
@@ -124,7 +136,7 @@ class company_users_form extends moodleform {
                         if ($allow) {
                             $user = $DB->get_record('user', array('id' => $adduser->id));
                             // Add user to default company department.
-                            $company->assign_user_to_company($adduser->id);
+                            $company->assign_user_to_company($adduser->id, 0, 0, false, $import);
 
                             \core\event\user_updated::create_from_userid($adduser->id)->trigger();
 
@@ -150,7 +162,7 @@ class company_users_form extends moodleform {
             }
 
             // Process incoming unassignments.
-            if (optional_param('remove', false, PARAM_BOOL) && confirm_sesskey()) {
+            if ($remove && confirm_sesskey()) {
                 $company = new company($this->selectedcompany);
                 $userstounassign = $this->currentusers->get_selected_users();
                 if (!empty($userstounassign)) {
