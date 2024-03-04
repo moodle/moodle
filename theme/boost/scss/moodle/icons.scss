@@ -204,6 +204,28 @@ $iconsizes: map-merge((
     }
 }
 
+.icon-circle {
+    display: inline-block;
+    background-color: darken($gray-400, 4%);
+    border-radius: 50%;
+    padding: 1.3rem;
+
+    .icon {
+        margin: 0;
+        text-align: center;
+        max-width: unset;
+        max-height: unset;
+        color: $black;
+    }
+
+    &.reversed {
+        background-color: darken($gray-400, 8%);
+        .icon {
+            color: $white;
+        }
+    }
+}
+
 // Make activtity colours available for custom modules.
 :root {
     @each $type, $value in $activity-icon-colors {

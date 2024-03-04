@@ -26060,6 +26060,11 @@ blockquote {
   vertical-align: middle;
 }
 
+/* General card customisations. */
+.card.active {
+  border-color: #8f959e;
+}
+
 .action-menu .dropdown-toggle {
   text-decoration: none;
   display: inline-block;
@@ -26365,6 +26370,26 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   margin: 0;
   height: 32px;
   width: 32px;
+}
+
+.icon-circle {
+  display: inline-block;
+  background-color: #c2cad1;
+  border-radius: 50%;
+  padding: 1.3rem;
+}
+.icon-circle .icon {
+  margin: 0;
+  text-align: center;
+  max-width: unset;
+  max-height: unset;
+  color: #000;
+}
+.icon-circle.reversed {
+  background-color: #b7c0c8;
+}
+.icon-circle.reversed .icon {
+  color: #fff;
 }
 
 :root {
