@@ -56,7 +56,7 @@ class course_delete_modules_test extends \advanced_testcase {
         $data = [
             'cms' => [$assigncm],
             'userid' => $user->id,
-            'realuserid' => $user->id
+            'realuserid' => $user->id,
         ];
         $removaltask->set_custom_data($data);
         $removaltask->execute();
@@ -64,13 +64,14 @@ class course_delete_modules_test extends \advanced_testcase {
         // The module has deleted from the course.
         $coursedmodules = get_course_mods($course->id);
         $this->assertCount(0, $coursedmodules);
-
     }
 
     /**
-     * Test to have a message in the exception.
+     * Test with failed and successful cms
+     *
+     * @covers ::course_delete_modules
      */
-    public function test_delete_module_exception() {
+    public function test_delete_module_exception(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -86,12 +87,19 @@ class course_delete_modules_test extends \advanced_testcase {
         $module->name = 'TestModuleToDelete';
         $DB->update_record('modules', $module);
 
+        // Generate successful test data.
+        $quiz1 = $generator->create_module('quiz', ['course' => $course]);
+        $quizcm1 = get_coursemodule_from_id('quiz', $quiz1->cmid);
+
+        $quiz2 = $generator->create_module('quiz', ['course' => $course]);
+        $quizcm2 = get_coursemodule_from_id('quiz', $quiz2->cmid);
+
         // Execute the task.
         $removaltask = new \core_course\task\course_delete_modules();
         $data = [
-            'cms' => [$assigncm],
+            'cms' => [$quizcm1, $assigncm, $quizcm2],
             'userid' => $user->id,
-            'realuserid' => $user->id
+            'realuserid' => $user->id,
         ];
         $removaltask->set_custom_data($data);
         try {
@@ -113,5 +121,9 @@ class course_delete_modules_test extends \advanced_testcase {
             // Assert the error message has correct line number.
             $this->assertMatchesRegularExpression($regex, $errormsg);
         }
+
+        // The success modules have been deleted from the course, and only the failed module is in the course.
+        $coursedmodules = get_course_mods($course->id);
+        $this->assertCount(1, $coursedmodules);
     }
 }
