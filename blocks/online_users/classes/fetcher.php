@@ -26,6 +26,10 @@ namespace block_online_users;
 
 defined('MOODLE_INTERNAL') || die();
 
+use iomad;
+use company;
+use context_system;
+
 /**
  * Class used to list and count online users
  *
@@ -107,6 +111,21 @@ class fetcher {
         $params['userid'] = $USER->id;
         $params['name'] = 'block_online_users_uservisibility';
 
+        // IOMAD - deal with companies.
+        $companysql = " AND 1=2 ";
+        $systemcontext = context_system::instance();
+
+        // Set the companyid
+        $companyid = iomad::get_my_companyid($systemcontext, false);
+        if (!empty($companyid)) {
+            $companysql = " AND u.id IN (SELECT userid FROM {company_users} WHERE companyid = :companyid) ";
+            $params['companyid'] = $companyid;
+        } else {
+            if (iomad::has_capability('block/iomad_company_admin:company_add', $systemcontext)) {
+                $companysql = "";
+            }
+        }
+
         if ($sitelevel) {
             $sql = "SELECT $userfields $lastaccess $uservisibility
                       FROM {user} u $groupmembers
@@ -115,6 +134,7 @@ class fetcher {
                      WHERE u.lastaccess > :timefrom
                            AND u.lastaccess <= :now
                            AND u.deleted = 0
+                           $companysql
                            $uservisibilityselect
                            $groupselect $groupby
                   ORDER BY lastaccess DESC ";
@@ -126,6 +146,7 @@ class fetcher {
                       WHERE u.lastaccess > :timefrom
                             AND u.lastaccess <= :now
                             AND u.deleted = 0
+                            $companysql
                             $uservisibilityselect
                             $groupselect";
         } else {
@@ -144,6 +165,7 @@ class fetcher {
                            AND ul.courseid = :courseid
                            AND ul.timeaccess <= :now
                            AND u.deleted = 0
+                           $companysql
                            $uservisibilityselect
                            $groupselect $groupby
                   ORDER BY lastaccess DESC";
@@ -158,6 +180,7 @@ class fetcher {
                            AND ul.courseid = :courseid
                            AND ul.timeaccess <= :now
                            AND u.deleted = 0
+                           $companysql
                            $uservisibilityselect
                            $groupselect";
 
