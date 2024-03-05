@@ -174,13 +174,13 @@ switch ($mode) {
                 }
                 $oldfieldname = $field->field->name;
 
-                $field->field->name = $fieldinput->name;
-                $field->field->description = $fieldinput->description;
+                $field->field->name = trim($fieldinput->name);
+                $field->field->description = trim($fieldinput->description);
                 $field->field->required = !empty($fieldinput->required) ? 1 : 0;
 
                 for ($i=1; $i<=10; $i++) {
                     if (isset($fieldinput->{'param'.$i})) {
-                        $field->field->{'param'.$i} = $fieldinput->{'param'.$i};
+                        $field->field->{'param'.$i} = trim($fieldinput->{'param'.$i});
                     } else {
                         $field->field->{'param'.$i} = '';
                     }
