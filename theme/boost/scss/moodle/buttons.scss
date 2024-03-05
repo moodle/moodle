@@ -62,6 +62,15 @@ p.arrow_button {
     }
 }
 
+// Specific styles for the collapse/expand buttons.
+.btn.btn-icon.icons-collapse-expand {
+    color: $primary;
+    background-color: $primary-light-background;
+    &:hover {
+        outline: 2px solid $primary;
+    }
+}
+
 @mixin button-focus($background, $innershadow) {
     &:focus,
     &.focus {

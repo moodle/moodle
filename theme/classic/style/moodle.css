@@ -35143,6 +35143,14 @@ p.arrow_button {
   line-height: 48px !important; /* stylelint-disable-line declaration-no-important */
 }
 
+.btn.btn-icon.icons-collapse-expand {
+  color: #0f6cbf;
+  background-color: #f5f9fc;
+}
+.btn.btn-icon.icons-collapse-expand:hover {
+  outline: 2px solid #0f6cbf;
+}
+
 .btn-primary:focus, .btn-primary.focus {
   outline: 0.2rem solid #000102;
   box-shadow: inset 0 0 0 2px #fff;
