@@ -1,1 +1,2 @@
 privacy:metadata,auth_lti
+firstlaunchnoauthnotice,auth_lti
