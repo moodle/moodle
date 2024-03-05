@@ -15,36 +15,51 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * @package   block_iomad_onlineusers
- * @copyright 2021 Derick Turner
- * @author    Derick Turner
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * Online users block caps.
+ *
+ * @package    block_iomad_onlineusers
+ * @copyright  1999 onwards Martin Dougiamas  {@link http://moodle.com}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
+defined('MOODLE_INTERNAL') || die();
 
 $capabilities = array(
 
-    'block/iomad_onlineusers:addinstance' => array(
+    'block/iomad_onlineusers:myaddinstance' => array(
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_SYSTEM,
+        'archetypes' => array(
+            'user' => CAP_ALLOW
+        ),
 
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK
+        'clonepermissionsfrom' => 'moodle/my:manageblocks'
     ),
 
-    'block/iomad_onlineusers:myaddinstance' => array(
+    'block/iomad_onlineusers:addinstance' => array(
+        'riskbitmask' => RISK_SPAM | RISK_XSS,
 
-        'captype' => 'read',
-        'contextlevel' => CONTEXT_BLOCK
+        'captype' => 'write',
+        'contextlevel' => CONTEXT_BLOCK,
+        'archetypes' => array(
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
+        ),
+
+        'clonepermissionsfrom' => 'moodle/site:manageblocks'
     ),
 
     'block/iomad_onlineusers:viewlist' => array(
 
         'captype' => 'read',
         'contextlevel' => CONTEXT_BLOCK,
-         'archetypes' => array(
-            'companymanager' => CAP_ALLOW,
-            'companydepartmentmanager' => CAP_ALLOW,
-            'clientadministrator' => CAP_ALLOW
+        'archetypes' => array(
+            'user' => CAP_ALLOW,
+            'guest' => CAP_PREVENT,
+            'student' => CAP_ALLOW,
+            'teacher' => CAP_ALLOW,
+            'editingteacher' => CAP_ALLOW,
+            'manager' => CAP_ALLOW
         )
     )
 );
-
-

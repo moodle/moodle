@@ -18,30 +18,53 @@
  * Privacy Subsystem implementation for block_iomad_onlineusers.
  *
  * @package    block_iomad_onlineusers
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
- * @author     Derick Turner
+ * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 namespace block_iomad_onlineusers\privacy;
 
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\writer;
+use core_privacy\local\request\transform;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Privacy Subsystem for block_iomad_onlineusers implementing null_provider.
+ * Privacy Subsystem for block_iomad_onlineusers.
  *
- * @copyright  2018 E-Learn Design http://www.e-learndesign.co.uk
+ * @copyright  2018 Zig Tan <zig@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class provider implements \core_privacy\local\metadata\null_provider {
+class provider implements
+        \core_privacy\local\metadata\provider,
+        \core_privacy\local\request\user_preference_provider {
 
     /**
-     * Get the language string identifier with the component's language
-     * file to explain why this plugin stores no data.
+     * Describe all the places where this plugin stores personal data.
      *
-     * @return  string
+     * @param collection $collection Collection of items to add metadata to.
+     * @return collection Collection with our added items.
      */
-    public static function get_reason() : string {
-        return 'privacy:metadata';
+    public static function get_metadata(collection $collection) : collection {
+
+        $collection->add_user_preference('block_iomad_onlineusers_uservisibility',
+                'privacy:metadata:preference:uservisibility');
+
+        return $collection;
+    }
+
+    /**
+     * Export user preferences controlled by this plugin.
+     *
+     * @param int $userid ID of the user we are exporting data form.
+     */
+    public static function export_user_preferences(int $userid) {
+
+        $uservisibility = get_user_preferences('block_iomad_onlineusers_uservisibility', 1, $userid);
+
+        writer::export_user_preference('block_iomad_onlineusers',
+                'block_iomad_onlineusers_uservisibility', transform::yesno($uservisibility),
+                get_string('privacy:metadata:preference:uservisibility', 'block_iomad_onlineusers'));
     }
 }

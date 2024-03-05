@@ -15,21 +15,32 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Online users block settings.
+ * Contains functions called by core.
  *
  * @package    block_iomad_onlineusers
- * @copyright  1999 onwards Martin Dougiamas (http://dougiamas.com)
+ * @copyright  2018 Mihail Geshoski <mihail@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die;
+defined('MOODLE_INTERNAL') || die();
 
-if ($ADMIN->fulltree) {
-    $settings->add(new admin_setting_configtext('block_iomad_onlineusers_timetosee', get_string('timetosee', 'block_iomad_onlineusers'),
-                   get_string('configtimetosee', 'block_iomad_onlineusers'), 5, PARAM_INT));
+/**
+ * Callback to define user preferences.
+ *
+ * @return array
+ */
+function block_iomad_onlineusers_user_preferences() {
+    $preferences = array();
+    $preferences['block_iomad_onlineusers_uservisibility'] = array(
+        'type' => PARAM_INT,
+        'null' => NULL_NOT_ALLOWED,
+        'default' => 1,
+        'choices' => array(0, 1),
+        'permissioncallback' => function($user, $preferencename) {
+            global $USER;
+            return $user->id == $USER->id;
+        }
+    );
 
-    $settings->add(new admin_setting_configcheckbox('block_iomad_onlineusers_onlinestatushiding',
-            get_string('onlinestatushiding', 'block_iomad_onlineusers'),
-            get_string('onlinestatushiding_desc', 'block_iomad_onlineusers'), 1));
+    return $preferences;
 }
-
