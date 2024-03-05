@@ -152,6 +152,22 @@ class navigationlib_test extends \advanced_testcase {
         }
     }
 
+    /**
+     * Test the add_attribute method.
+     * @covers \navigation_node::add_attribute
+     */
+    public function test_node_add_attribute(): void {
+        $this->setup_node();
+
+        $node = $this->node->get('demo1');
+        $this->assertInstanceOf('navigation_node', $node);
+        if ($node !== false) {
+            $node->add_attribute('data-foo', 'bar');
+            $attribute = reset($node->attributes);
+            $this->assertEqualsCanonicalizing(['name' => 'data-foo', 'value' => 'bar'], $attribute);
+        }
+    }
+
     public function test_node_check_if_active() {
         $this->setup_node();
 
