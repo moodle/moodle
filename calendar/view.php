@@ -96,10 +96,6 @@ $course = get_course($courseid);
 
 if ($iscoursecalendar && !empty($courseid)) {
     navigation_node::override_active_url(new moodle_url('/course/view.php', array('id' => $course->id)));
-    $PAGE->navbar->add(
-        get_string('calendar', 'calendar'),
-        new moodle_url('/calendar/view.php', ['view' => 'month', 'course' => $course->id])
-    );
     $PAGE->set_secondary_navigation(false);
 } else if (!empty($categoryid)) {
     core_course_category::get($categoryid); // Check that category exists and can be accessed.
@@ -138,13 +134,21 @@ switch($view) {
     break;
 }
 
-// Print title and header
+$PAGE->set_show_course_index(false);
 $PAGE->set_pagelayout('standard');
+
+// Print title and header.
 $PAGE->set_title("$course->shortname: $strcalendar: $pagetitle");
 
 $headingstr = get_string('calendar', 'core_calendar');
-$headingstr = ($iscoursecalendar) ? "{$headingstr}: {$COURSE->shortname}" : $headingstr;
-$PAGE->set_heading($headingstr);
+// If the user is on the course page,
+// then make the course name linkable to ease the user's navigation to the course page.
+if ($iscoursecalendar) {
+    $url = new \moodle_url('/course/view.php', ['id' => $courseid]);
+    $linkcourse = html_writer::link($url, $course->shortname);
+    $headingstr = "{$headingstr}: {$linkcourse}";
+}
+$PAGE->set_heading($headingstr, false);
 
 $renderer = $PAGE->get_renderer('core_calendar');
 $calendar->add_sidecalendar_blocks($renderer, true, $view);
