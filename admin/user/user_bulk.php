@@ -37,11 +37,18 @@ $ufiltering = new user_filtering();
 
 // Create the bulk operations form.
 $actionform = new user_bulk_action_form();
+$actionform->set_data(['returnurl' => $PAGE->url->out_as_local_url(false)]);
 if ($data = $actionform->get_data()) {
+    if ($data->passuserids) {
+        // This means we called the form from /admin/user.php or similar and the userids should be taken from the form
+        // data and not from $SESSION->bulk_users. For backwards compatibility we still set $SESSION->bulk_users.
+        $users = preg_split('/,/', $data->userids, -1, PREG_SPLIT_NO_EMPTY);
+        $SESSION->bulk_users = array_combine($users, $users);
+    }
     // Check if an action should be performed and do so.
     $bulkactions = $actionform->get_actions();
     if (array_key_exists($data->action, $bulkactions)) {
-        redirect($bulkactions[$data->action]->url);
+        redirect(new moodle_url($bulkactions[$data->action]->url, ['returnurl' => $data->returnurl ?: null]));
     }
 
 }

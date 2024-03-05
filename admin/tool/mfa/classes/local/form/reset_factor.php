@@ -40,6 +40,9 @@ class reset_factor extends \moodleform {
         $mform->addElement('hidden', 'bulkaction', $bulkaction);
         $mform->setType('bulkaction', PARAM_BOOL);
 
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+
         $factors = array_map(function ($element) {
             return $element->get_display_name();
         }, $factors);

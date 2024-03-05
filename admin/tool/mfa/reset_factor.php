@@ -28,17 +28,19 @@ require_once($CFG->libdir . '/adminlib.php');
 admin_externalpage_setup('tool_mfa_resetfactor');
 
 $bulk = !empty($SESSION->bulk_users);
+$returnurl = optional_param('returnurl', '', PARAM_LOCALURL);
 
 $factors = \tool_mfa\plugininfo\factor::get_factors();
 $form = new \tool_mfa\local\form\reset_factor(null, ['factors' => $factors, 'bulk' => $bulk]);
+if ($bulk) {
+    $form->set_data(['returnurl' => $returnurl]);
+    $return = new moodle_url($returnurl ?: '/admin/user/user_bulk.php');
+} else {
+    $return = new moodle_url('/admin/category.php', ['category' => 'toolmfafolder']);
+}
 
 if ($form->is_cancelled()) {
-    if ($bulk) {
-        $url = new moodle_url('/admin/user/user_bulk.php');
-    } else {
-        $url = new moodle_url('/admin/category.php', ['category' => 'toolmfafolder']);
-    }
-    redirect($url);
+    redirect($return);
 } else if ($fromform = $form->get_data()) {
     // Get factor from select index.
     if ($fromform->factor !== 'all') {
@@ -82,7 +84,7 @@ if ($form->is_cancelled()) {
     \core\notification::success(get_string('resetsuccessbulk', 'tool_mfa', $stringvar));
     unset($SESSION->bulk_users);
     // Redirect to bulk actions page.
-    redirect(new moodle_url('/admin/user/user_bulk.php'));
+    redirect($return);
 }
 
 echo $OUTPUT->header();

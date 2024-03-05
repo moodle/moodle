@@ -35,6 +35,9 @@ require_once($CFG->libdir.'/datalib.php');
  */
 class user_bulk_action_form extends moodleform {
 
+    /** @var bool */
+    protected $hasbulkactions = false;
+
     /**
      * Returns an array of action_link's of all bulk actions available for this user.
      *
@@ -44,6 +47,8 @@ class user_bulk_action_form extends moodleform {
 
         global $CFG;
 
+        $canaccessbulkactions = has_any_capability(['moodle/user:update', 'moodle/user:delete'], context_system::instance());
+
         $syscontext = context_system::instance();
         $actions = [];
         if (has_capability('moodle/user:update', $syscontext)) {
@@ -51,7 +56,7 @@ class user_bulk_action_form extends moodleform {
                 new moodle_url('/admin/user/user_bulk_confirm.php'),
                 get_string('confirm'));
         }
-        if (has_capability('moodle/site:readallmessages', $syscontext) && !empty($CFG->messaging)) {
+        if ($canaccessbulkactions && has_capability('moodle/site:readallmessages', $syscontext) && !empty($CFG->messaging)) {
             $actions['message'] = new action_link(
                 new moodle_url('/admin/user/user_bulk_message.php'),
                 get_string('messageselectadd'));
@@ -61,9 +66,11 @@ class user_bulk_action_form extends moodleform {
                 new moodle_url('/admin/user/user_bulk_delete.php'),
                 get_string('delete'));
         }
-        $actions['displayonpage'] = new action_link(
+        if ($canaccessbulkactions) {
+            $actions['displayonpage'] = new action_link(
                 new moodle_url('/admin/user/user_bulk_display.php'),
                 get_string('displayonpage'));
+        }
 
         if (has_capability('moodle/user:update', $syscontext)) {
             $actions['download'] = new action_link(
@@ -76,7 +83,7 @@ class user_bulk_action_form extends moodleform {
                 new moodle_url('/admin/user/user_bulk_forcepasswordchange.php'),
                 get_string('forcepasswordchange'));
         }
-        if (has_capability('moodle/cohort:assign', $syscontext)) {
+        if ($canaccessbulkactions && has_capability('moodle/cohort:assign', $syscontext)) {
             $actions['addtocohort'] = new action_link(
                 new moodle_url('/admin/user/user_bulk_cohortadd.php'),
                 get_string('bulkadd', 'core_cohort'));
@@ -93,6 +100,15 @@ class user_bulk_action_form extends moodleform {
             }
         }
 
+        // This method may be called from 'Bulk actions' and 'Browse user list' pages. Some actions
+        // may be irrelevant in one of the contexts and they can be excluded by specifying the
+        // 'excludeactions' customdata.
+        $excludeactions = $this->_customdata['excludeactions'] ?? [];
+        foreach ($excludeactions as $excludeaction) {
+            unset($actions[$excludeaction]);
+        }
+
+        $this->hasbulkactions = !empty($actions);
         return $actions;
 
     }
@@ -101,9 +117,19 @@ class user_bulk_action_form extends moodleform {
      * Form definition
      */
     public function definition() {
-        global $CFG;
-
         $mform =& $this->_form;
+
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_LOCALURL);
+
+        // When 'passuserids' is specified in the customdata, the user ids are expected in the form
+        // data rather than in the $SESSION->bulk_users .
+        $passuserids = !empty($this->_customdata['passuserids']);
+        $mform->addElement('hidden', 'passuserids', $passuserids);
+        $mform->setType('passuserids', PARAM_BOOL);
+
+        $mform->addElement('hidden', 'userids');
+        $mform->setType('userids', PARAM_SEQUENCE);
 
         $actions = [0 => get_string('choose') . '...'];
         $bulkactions = $this->get_actions();
@@ -111,9 +137,21 @@ class user_bulk_action_form extends moodleform {
             $actions[$key] = $action->text;
         }
         $objs = array();
-        $objs[] =& $mform->createElement('select', 'action', null, $actions);
-        $objs[] =& $mform->createElement('submit', 'doaction', get_string('go'));
+        $objs[] = $selectel = $mform->createElement('select', 'action', get_string('userbulk', 'admin'), $actions);
+        $selectel->setHiddenLabel(true);
+        if (empty($this->_customdata['hidesubmit'])) {
+            $objs[] =& $mform->createElement('submit', 'doaction', get_string('go'));
+        }
         $mform->addElement('group', 'actionsgrp', get_string('withselectedusers'), $objs, ' ', false);
+    }
+
+    /**
+     * Is there at least one available bulk action in this form
+     *
+     * @return bool
+     */
+    public function has_bulk_actions(): bool {
+        return $this->hasbulkactions;
     }
 }
 
