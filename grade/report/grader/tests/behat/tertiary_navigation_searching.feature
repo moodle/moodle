@@ -373,7 +373,8 @@ Feature: Within the grader report, test that we can search for users
     And I reload the page
     And I turn editing mode on
     And the field "perpage" matches value "20"
-    And I click on "Last name" "link"
+    And I click on user profile field menu "fullname"
+    And I choose "Ascending" in the open action menu
     And I wait until the page is ready
     # Search for a single user on second page and save grades.
     When I set the field "Search users" to "test32"
