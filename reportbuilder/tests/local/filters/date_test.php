@@ -232,6 +232,17 @@ class date_test extends advanced_testcase {
             'Before two months' => [date::DATE_BEFORE, 2, date::DATE_UNIT_MONTH, '-15 week'],
             'Before two years' => [date::DATE_BEFORE, 2, date::DATE_UNIT_YEAR, '-30 month'],
 
+            'After hour' => [date::DATE_AFTER, 1, date::DATE_UNIT_HOUR, '+90 minute'],
+            'After day' => [date::DATE_AFTER, 1, date::DATE_UNIT_DAY, '+25 hour'],
+            'After week' => [date::DATE_AFTER, 1, date::DATE_UNIT_WEEK, '+10 day'],
+            'After month' => [date::DATE_AFTER, 1, date::DATE_UNIT_MONTH, '+7 week'],
+            'After year' => [date::DATE_AFTER, 1, date::DATE_UNIT_YEAR, '+15 month'],
+            'After two hours' => [date::DATE_AFTER, 2, date::DATE_UNIT_HOUR, '+150 minute'],
+            'After two days' => [date::DATE_AFTER, 2, date::DATE_UNIT_DAY, '+50 hour'],
+            'After two weeks' => [date::DATE_AFTER, 2, date::DATE_UNIT_WEEK, '+20 day'],
+            'After two months' => [date::DATE_AFTER, 2, date::DATE_UNIT_MONTH, '+15 week'],
+            'After two years' => [date::DATE_AFTER, 2, date::DATE_UNIT_YEAR, '+30 month'],
+
             'Last hour' => [date::DATE_LAST, 1, date::DATE_UNIT_HOUR, '-30 minute'],
             'Last day' => [date::DATE_LAST, 1, date::DATE_UNIT_DAY, '-6 hour'],
             'Last week' => [date::DATE_LAST, 1, date::DATE_UNIT_WEEK, '-3 day'],
