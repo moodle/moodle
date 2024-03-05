@@ -1227,6 +1227,13 @@ class manager {
         $task->set_pid($pid);
 
         $record = self::record_from_adhoc_task($task);
+
+        // If this is the first time the task has been started, then set the first starting time.
+        $firststartingtime = $DB->get_field('task_adhoc', 'firststartingtime', ['id' => $record->id]);
+        if (is_null($firststartingtime)) {
+            $record->firststartingtime = $time;
+        }
+
         $DB->update_record('task_adhoc', $record);
 
         self::task_starting($task);
@@ -1813,7 +1820,7 @@ class manager {
             $CFG->task_adhoc_failed_retention : static::ADHOC_TASK_FAILED_RETENTION;
         $DB->delete_records_select(
             table: 'task_adhoc',
-            select: 'attemptsavailable = 0 AND timestarted < :time',
+            select: 'attemptsavailable = 0 AND firststartingtime < :time',
             params: ['time' => time() - $difftime],
         );
     }

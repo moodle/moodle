@@ -1093,5 +1093,20 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024022300.02);
     }
 
+    if ($oldversion < 2024030500.01) {
+
+        // Define field firststartingtime to be added to task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field('firststartingtime', XMLDB_TYPE_INTEGER, '10', null, null, null, null, 'attemptsavailable');
+
+        // Conditionally launch add field firststartingtime.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024030500.01);
+    }
+
     return true;
 }
