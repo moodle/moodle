@@ -3923,6 +3923,8 @@
       </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_xmlrpc_usage" level="optional">
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_oracle_usage" level="optional">
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="4.2" requires="3.11.8">
@@ -4112,6 +4114,8 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_xmlrpc_usage" level="optional">
       </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_mod_assignment" level="required">
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_oracle_usage" level="optional">
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
@@ -4305,6 +4309,8 @@
       </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_db_prefix_length" level="required">
       </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_oracle_usage" level="optional">
+      </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
   <MOODLE version="4.4" requires="4.1.2">
@@ -4495,6 +4501,8 @@
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_mod_assignment" level="required">
       </CUSTOM_CHECK>
       <CUSTOM_CHECK file="lib/upgradelib.php" function="check_db_prefix_length" level="required">
+      </CUSTOM_CHECK>
+      <CUSTOM_CHECK file="lib/upgradelib.php" function="check_oracle_usage" level="optional">
       </CUSTOM_CHECK>
     </CUSTOM_CHECKS>
   </MOODLE>
