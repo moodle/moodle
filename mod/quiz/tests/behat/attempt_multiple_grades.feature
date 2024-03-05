@@ -51,3 +51,7 @@ Feature: Attempt a quiz with multiple grades
     And I should see "1.00/2.00" in the "Marks" "table_row"
     # Funny order because 'Grade' also appears in other rows.
     And I should see "Grade" in the "50.00 out of 100.00" "table_row"
+    And I follow "Finish review"
+    And I should not see "Unused grade item"
+    And I should see "1.00/2.00" in the "Marks" "table_row"
+    And I should see "Grade" in the "50.00 out of 100.00" "table_row"

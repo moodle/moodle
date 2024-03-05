@@ -24,6 +24,7 @@ use mod_quiz\event\quiz_grade_updated;
 use mod_quiz\hook\structure_modified;
 use mod_quiz\output\grades\grade_out_of;
 use qubaid_condition;
+use qubaid_list;
 use question_engine_data_mapper;
 use question_usage_by_activity;
 use stdClass;
@@ -542,7 +543,7 @@ class grade_calculator {
     }
 
     /**
-     * Compute the grade and maximum grade for each grade item, for this attempt.
+     * Compute the grade and maximum for each item, for an attempt where the question_usage_by_activity is available.
      *
      * @param question_usage_by_activity $quba usage for the quiz attempt we want to calculate the grades of.
      * @return grade_out_of[] the grade for each item where the total grade is not zero.
@@ -576,6 +577,43 @@ class grade_calculator {
         foreach ($grades as $gradeitemid => $grade) {
             if ($grade->maxgrade < self::ALMOST_ZERO) {
                 unset($grades[$gradeitemid]);
+            }
+        }
+
+        return $grades;
+    }
+
+    /**
+     * Compute the grade and maximum for each item, for some attempts where we only have the usage ids.
+     *
+     * @param int[] $qubaids array of usage ids.
+     * @return grade_out_of[][] question_usage.id => array of grade_out_of.
+     *      ->name will be set to the grade item name. Must be output through {@see format_string()}..
+     */
+    public function compute_grade_item_totals_for_attempts(array $qubaids): array {
+        $this->ensure_grade_items_loaded();
+        $grades = [];
+        foreach ($qubaids as $qubaid) {
+            $grades[$qubaid] = [];
+        }
+
+        if (empty($this->gradeitems || empty($qubaids))) {
+            // Nothing to do.
+            return $grades;
+        }
+
+        $gradesdata = $this->load_grade_item_totals(new qubaid_list($qubaids));
+        foreach ($qubaids as $qubaid) {
+            foreach ($this->gradeitems as $gradeitem) {
+                if ($gradeitem->maxmark < self::ALMOST_ZERO) {
+                    continue;
+                }
+                $grades[$qubaid][$gradeitem->id] = new grade_out_of(
+                    $this->quizobj->get_quiz(),
+                    $gradesdata[$qubaid][$gradeitem->id] ?? 0,
+                    $gradeitem->maxmark,
+                    name: $gradeitem->name,
+                );
             }
         }
 
