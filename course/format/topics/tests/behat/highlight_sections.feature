@@ -15,7 +15,7 @@ Feature: Sections can be highlighted
       | activity | name                 | intro                       | course | idnumber | section |
       | assign   | Test assignment name | Test assignment description | C1     | assign1  | 0       |
       | book     | Test book name       | Test book description       | C1     | book1    | 1       |
-      | chat     | Test chat name       | Test chat description       | C1     | chat1    | 4       |
+      | lesson   | Test lesson name     | Test lesson description     | C1     | lesson1  | 4       |
       | choice   | Test choice name     | Test choice description     | C1     | choice1  | 5       |
     And the following "course enrolments" exist:
       | user     | course | role           |

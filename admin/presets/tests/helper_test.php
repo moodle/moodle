@@ -344,7 +344,7 @@ class helper_test extends \advanced_testcase {
                 ],
                 'plugins' => [
                     'assign' => 1,
-                    'chat' => 1,
+                    'book' => 1,
                     'data' => 1,
                     'lesson' => 1,
                 ],

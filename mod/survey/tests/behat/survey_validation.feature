@@ -14,6 +14,7 @@ Feature: When some answers are not selected, the survey should not be submitted
     And the following "course enrolments" exist:
       | user     | course | role    |
       | student1 | C1     | student |
+    And I enable "survey" "mod" plugin
 
   Scenario: Require survey view
     Given the following "activities" exist:

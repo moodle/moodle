@@ -33,6 +33,7 @@ Feature: Chat with my group
       | user1    | G1    |
       | user2    | G2    |
       | user4    | G3    |
+    And I enable "chat" "mod" plugin
     And the following "activities" exist:
       | activity | name          | intro                      | course | idnumber | groupmode |
       | chat     | Separate Chat | Chat with separate groups  | C1     | chat1    | 1         |

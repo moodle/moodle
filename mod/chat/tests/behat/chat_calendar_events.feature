@@ -16,6 +16,7 @@ Feature: Chat calendar entries
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And I enable "chat" "mod" plugin
 
   Scenario Outline: Create a chat activity with repeated chat times set
     # Create an activity with repeated chat times

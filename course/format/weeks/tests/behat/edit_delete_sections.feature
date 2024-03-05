@@ -15,7 +15,7 @@ Feature: Sections can be edited and deleted in weekly sections format
       | activity   | name                   | intro                         | course | idnumber    | section |
       | assign     | Test assignment name   | Test assignment description   | C1     | assign1     | 0       |
       | book       | Test book name         |                               | C1     | book1       | 1       |
-      | chat       | Test chat name         | Test chat description         | C1     | chat1       | 4       |
+      | lesson     | Test lesson name       | Test lesson description       | C1     | lesson1     | 4       |
       | choice     | Test choice name       | Test choice description       | C1     | choice1     | 5       |
     And the following "course enrolments" exist:
       | user | course | role |
@@ -75,7 +75,7 @@ Feature: Sections can be edited and deleted in weekly sections format
     When I delete section "4"
     And I press "Delete"
     Then I should not see "29 May - 4 June"
-    And I should not see "Test chat name"
+    And I should not see "Test lesson name"
     And I should see "Test choice name" in the "22 May - 28 May" "section"
     And I should see "22 May - 28 May"
 

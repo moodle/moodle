@@ -32,21 +32,21 @@ class mod_test extends advanced_testcase {
     public function test_get_enabled_plugins(): void {
         $this->resetAfterTest();
 
-        // The bigbluebuttonbn plugin is disabled by default.
+        // The bigbluebuttonbn and chat plugins are disabled by default.
         // Check all default formats.
         $plugins = mod::get_enabled_plugins();
         $this->assertArrayHasKey('assign', $plugins);
-        $this->assertArrayHasKey('chat', $plugins);
         $this->assertArrayHasKey('forum', $plugins);
+        $this->assertArrayNotHasKey('chat', $plugins);
         $this->assertArrayNotHasKey('bigbluebuttonbn', $plugins);
 
         // Disable assignment.
         mod::enable_plugin('assign', 0);
 
         $plugins = mod::get_enabled_plugins();
-        $this->assertArrayHasKey('chat', $plugins);
         $this->assertArrayHasKey('forum', $plugins);
         $this->assertArrayNotHasKey('assign', $plugins);
+        $this->assertArrayNotHasKey('chat', $plugins);
         $this->assertArrayNotHasKey('bigbluebuttonbn', $plugins);
     }
 }

@@ -38,6 +38,7 @@ Feature: Viewing response reports by group
       | user1      | G1    |
       | user2      | G2    |
       | user4      | G3    |
+    And I enable "survey" "mod" plugin
     And the following "activities" exist:
       | activity   | name            | intro                       | course | idnumber   | groupmode | template |
       | survey     | Separate survey | survey with separate groups | C1     | survey1    | 1         | 5        |

@@ -17,6 +17,7 @@ Feature: A teacher navigates to response reports of students
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
       | student2 | C1 | student |
+    And I enable "survey" "mod" plugin
     And the following "activities" exist:
       | activity | name             | course | idnumber  | template |
       | survey   | Test survey name | C1     | survey1   | 5        |

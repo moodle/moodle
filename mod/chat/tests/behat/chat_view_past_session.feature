@@ -16,6 +16,7 @@ Feature: View past chat sessions
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
       | student1 | C1     | student        |
+    And I enable "chat" "mod" plugin
 
   Scenario Outline: View past chat sessions
     # Display or hide past chat session based on example data

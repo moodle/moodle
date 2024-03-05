@@ -16,6 +16,7 @@ Feature: Chat reset
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
+    And I enable "chat" "mod" plugin
     And the following "activities" exist:
       | activity | name           | Description           | course | idnumber |
       | chat     | Test chat name | Test chat description | C1     | chat1    |
