@@ -1387,6 +1387,38 @@ class upgradelib_test extends advanced_testcase {
     }
 
     /**
+     * Test the check_oracle_usage check when the Moodle instance is not using Oracle as a database architecture.
+     *
+     * @covers ::check_oracle_usage
+     */
+    public function test_check_oracle_usage_is_not_used(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->dbtype = 'pgsql';
+
+        $result = new environment_results('custom_checks');
+        $this->assertNull(check_oracle_usage($result));
+    }
+
+    /**
+     * Test the check_oracle_usage check when the Moodle instance is using Oracle as a database architecture.
+     *
+     * @covers ::check_oracle_usage
+     */
+    public function test_check_oracle_usage_is_used(): void {
+        global $CFG;
+
+        $this->resetAfterTest();
+        $CFG->dbtype = 'oci';
+
+        $result = new environment_results('custom_checks');
+        $this->assertInstanceOf(environment_results::class, check_oracle_usage($result));
+        $this->assertEquals('oracle_database_usage', $result->getInfo());
+        $this->assertFalse($result->getStatus());
+    }
+
+    /**
      * Data provider of usermenu items.
      *
      * @return array
