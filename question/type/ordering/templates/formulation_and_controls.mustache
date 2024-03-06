@@ -67,8 +67,78 @@
             <div class="answer ordering">
                 <ul class="sortablelist {{layoutclass}} {{#numberingstyle}}numbering{{numberingstyle}}{{/numberingstyle}} {{#active}}active{{/active}}{{^active}}notactive{{/active}}" id="{{sortableid}}">
                     {{#answers}}
-                        <li class="{{^readonly}}sortableitem{{/readonly}} {{scoreclass}}" id="{{id}}">
-                            {{{feedbackimage}}}{{{answertext}}}
+                        <li class="p-2 {{^readonly}}sortableitem{{/readonly}} {{scoreclass}}" id="{{id}}">
+                            <div class="d-flex">
+                                {{^readonly}}
+                                    <div class="d-flex p-2 grip">
+                                        <i class='fas fa-grip-vertical' aria-hidden="true"></i>
+                                    </div>
+                                {{/readonly}}
+                                <div class="d-flex align-items-center flex-grow-1 px-2" id="{{id}}-text">
+                                    {{{feedbackimage}}}{{{answertext}}}
+                                </div>
+                                {{^readonly}}
+                                    <div class="d-flex px-2">
+                                        {{#horizontallayout}}
+                                            <button
+                                                type="button"
+                                                class="dir-rtl-hide btn btn-icon icon-no-margin"
+                                                data-action="move-backward"
+                                                aria-label="{{#cleanstr}}moveleft, qtype_ordering{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-left" aria-hidden="true"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="dir-rtl-hide btn btn-icon icon-no-margin"
+                                                data-action="move-forward"
+                                                aria-label="{{#cleanstr}}moveright, qtype_ordering{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-right" aria-hidden="true"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="dir-ltr-hide btn btn-icon icon-no-margin"
+                                                data-action="move-backward"
+                                                aria-label="{{#cleanstr}}moveright, qtype_ordering{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-right" aria-hidden="true"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="dir-ltr-hide btn btn-icon icon-no-margin"
+                                                data-action="move-forward"
+                                                aria-label="{{#cleanstr}}moveleft, qtype_ordering{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-left" aria-hidden="true"></i>
+                                            </button>
+                                        {{/horizontallayout}}
+                                        {{^horizontallayout}}
+                                            <button
+                                                type="button"
+                                                class="btn btn-icon icon-no-margin"
+                                                data-action="move-backward"
+                                                aria-label="{{#cleanstr}}moveup{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-up" aria-hidden="true"></i>
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="btn btn-icon icon-no-margin"
+                                                data-action="move-forward" aria-label="{{#cleanstr}}movedown{{/cleanstr}}"
+                                                aria-describedby="{{id}}-text"
+                                            >
+                                                <i class="icon fa fa-chevron-down" aria-hidden="true"></i>
+                                            </button>
+                                        {{/horizontallayout}}
+                                    </div>
+                                {{/readonly}}
+                            </div>
                         </li>
                     {{/answers}}
                 </ul>

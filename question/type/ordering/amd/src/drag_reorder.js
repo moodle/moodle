@@ -117,7 +117,7 @@ export default class DragReorder {
          * @param {Event} e The event.
          */
         const pointerHandle = e => {
-            if (e.target.closest(this.config.item)) {
+            if (e.target.closest(this.config.item) && !e.target.closest(this.config.actionButton)) {
                 this.itemDragging = $(e.target.closest(this.config.item));
                 const details = drag.prepare(e);
                 if (details.start) {
@@ -129,6 +129,7 @@ export default class DragReorder {
         this.orderList.addEventListener('mousedown', pointerHandle);
         this.orderList.addEventListener('touchstart', pointerHandle);
         this.orderList.addEventListener('keydown', this.itemMovedByKeyboard.bind(this));
+        this.orderList.addEventListener('click', this.itemMovedByClick.bind(this));
     }
 
     /**
@@ -256,7 +257,6 @@ export default class DragReorder {
             this.originalOrder = this.getCurrentOrder();
 
             switch (e.keyCode) {
-                case keys.space:
                 case keys.arrowRight:
                 case keys.arrowDown:
                     e.preventDefault();
@@ -280,6 +280,54 @@ export default class DragReorder {
             if (!this.arrayEquals(this.originalOrder, this.getCurrentOrder())) {
                 // Order has changed, call the callback.
                 this.config.reorderDone(this.itemDragging.closest(this.config.list), this.itemDragging, this.getCurrentOrder());
+            }
+        }
+    }
+
+    /**
+     * Handles the movement of an item by click.
+     *
+     * @param {MouseEvent} e The pointer event.
+     */
+    itemMovedByClick(e) {
+        const actionButton = e.target.closest(this.config.actionButton);
+        if (actionButton) {
+            this.itemDragging = $(e.target.closest(this.config.item));
+
+            // Store the current state of the list.
+            this.originalOrder = this.getCurrentOrder();
+
+            switch (actionButton.dataset.action) {
+                case 'move-backward':
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (this.itemDragging.prev().length) {
+                        this.itemDragging.prev().insertAfter(this.itemDragging);
+                    }
+                    break;
+                case 'move-forward':
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (this.itemDragging.next().length) {
+                        this.itemDragging.next().insertBefore(this.itemDragging);
+                    }
+                    break;
+            }
+
+            // After we have potentially moved the item, we need to check if the order has changed.
+            if (!this.arrayEquals(this.originalOrder, this.getCurrentOrder())) {
+                // Order has changed, call the callback.
+                this.config.reorderDone(this.itemDragging.closest(this.config.list), this.itemDragging, this.getCurrentOrder());
+
+                // When moving an item to the first or last position, the button that was clicked will be hidden.
+                // In this case, we need to focus the other button.
+                if (!this.itemDragging.prev().length) {
+                    // Focus the 'next' action button.
+                    this.itemDragging.find('[data-action="move-forward"]').focus();
+                } else if (!this.itemDragging.next().length) {
+                    // Focus the 'previous' action button.
+                    this.itemDragging.find('[data-action="move-backward"]').focus();
+                }
             }
         }
     }
@@ -369,6 +417,7 @@ export default class DragReorder {
      */
     static init(sortableid, responseid) {
         new DragReorder({
+            actionButton: '[data-action]',
             list: 'ul#' + sortableid,
             item: 'li.sortableitem',
             itemMovingClass: "current-drop",

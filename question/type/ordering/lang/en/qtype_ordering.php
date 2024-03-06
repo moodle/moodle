@@ -78,7 +78,8 @@ $string['layouttype'] = 'Layout of items';
 $string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
 $string['longestcontiguoussubset'] = 'Longest contiguous subset';
 $string['longestorderedsubset'] = 'Longest ordered subset';
-
+$string['moveleft'] = 'Move left';
+$string['moveright'] = 'Move right';
 $string['noresponsedetails'] = 'Sorry, no details of the response to this question are available.';
 $string['noscore'] = 'No score';
 $string['notenoughanswers'] = 'Ordering questions must have more than {$a} answers.';
