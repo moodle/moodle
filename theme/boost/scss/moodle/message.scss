@@ -442,13 +442,11 @@ $message-day-color: color-yiq($message-app-bg) !default;
     .contact-status {
         position: absolute;
         left: 39px;
-        top: 39px;
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
+        top: 34px;
         &.online {
-            border: 1px solid $body-bg;
-            background-color: $green;
+            .icon {
+                color: $green;
+            }
         }
     }
 
