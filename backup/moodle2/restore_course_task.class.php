@@ -167,6 +167,7 @@ class restore_course_task extends restore_task {
         $rules[] = new restore_decode_rule('BADGESVIEWBYID',       '/badges/view.php?type=2&id=$1', 'course');
         $rules[] = new restore_decode_rule('USERINDEXVIEWBYID',    '/user/index.php?id=$1',         'course');
         $rules[] = new restore_decode_rule('PLUGINFILEBYCONTEXT',  '/pluginfile.php/$1',            'context');
+        $rules[] = new restore_decode_rule('PLUGINFILEBYCONTEXTURLENCODED', '/pluginfile.php/$1', 'context', true);
 
         return $rules;
     }
