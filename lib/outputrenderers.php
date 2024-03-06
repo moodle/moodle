@@ -37,6 +37,7 @@
 
 use core\di;
 use core\hook\manager as hook_manager;
+use core\hook\output\before_standard_top_of_body_html_generation;
 use core\output\named_templatable;
 use core_completion\cm_completion_details;
 use core_course\output\activity_information;
@@ -811,22 +812,16 @@ class core_renderer extends renderer_base {
             $output .= "\n".$CFG->additionalhtmltopofbody;
         }
 
-        // Give subsystems an opportunity to inject extra html content. The callback
-        // must always return a string containing valid html.
-        foreach (\core_component::get_core_subsystems() as $name => $path) {
-            if ($path) {
-                $output .= component_callback($name, 'before_standard_top_of_body_html', [], '');
-            }
-        }
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_standard_top_of_body_html_generation.php');
 
-        // Give plugins an opportunity to inject extra html content. The callback
-        // must always return a string containing valid html.
-        $pluginswithfunction = get_plugins_with_function('before_standard_top_of_body_html', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $output .= $function();
-            }
-        }
+        // Allow components to add content to the top of the body.
+        $hook = new before_standard_top_of_body_html_generation($this, $output);
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
+        $output = $hook->get_output();
 
         $output .= $this->maintenance_warning();
 
