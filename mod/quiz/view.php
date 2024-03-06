@@ -24,6 +24,7 @@
  */
 
 use mod_quiz\access_manager;
+use mod_quiz\output\list_of_attempts;
 use mod_quiz\output\renderer;
 use mod_quiz\output\view_page;
 use mod_quiz\quiz_attempt;
@@ -99,6 +100,10 @@ $viewobj->attempts = $attempts;
 $viewobj->attemptobjs = [];
 foreach ($attempts as $attempt) {
     $viewobj->attemptobjs[] = new quiz_attempt($attempt, $quiz, $cm, $course, false);
+}
+$viewobj->attemptslist = new list_of_attempts($timenow);
+foreach (array_reverse($viewobj->attemptobjs) as $attemptobj) {
+    $viewobj->attemptslist->add_attempt($attemptobj);
 }
 
 // Work out the final grade, checking whether it was overridden in the gradebook.

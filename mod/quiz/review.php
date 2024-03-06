@@ -25,6 +25,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use mod_quiz\output\attempt_summary_information;
 use mod_quiz\output\navigation_panel_review;
 use mod_quiz\output\renderer;
 use mod_quiz\quiz_attempt;
@@ -113,141 +114,7 @@ $PAGE->set_title($attemptobj->review_page_title($page, $showall));
 $PAGE->set_heading($attemptobj->get_course()->fullname);
 $PAGE->activityheader->disable();
 
-// Summary table start. ============================================================================
-
-// Work out some time-related things.
-$attempt = $attemptobj->get_attempt();
-$quiz = $attemptobj->get_quiz();
-$overtime = 0;
-
-if ($attempt->state == quiz_attempt::FINISHED) {
-    if ($timetaken = ($attempt->timefinish - $attempt->timestart)) {
-        if ($quiz->timelimit && $timetaken > ($quiz->timelimit + 60)) {
-            $overtime = $timetaken - $quiz->timelimit;
-            $overtime = format_time($overtime);
-        }
-        $timetaken = format_time($timetaken);
-    } else {
-        $timetaken = "-";
-    }
-} else {
-    $timetaken = get_string('unfinished', 'quiz');
-}
-
-// Prepare summary informat about the whole attempt.
-$summarydata = [];
-if (!$attemptobj->get_quiz()->showuserpicture && $attemptobj->get_userid() != $USER->id) {
-    // If showuserpicture is true, the picture is shown elsewhere, so don't repeat it.
-    $student = $DB->get_record('user', ['id' => $attemptobj->get_userid()]);
-    $userpicture = new user_picture($student);
-    $userpicture->courseid = $attemptobj->get_courseid();
-    $summarydata['user'] = [
-        'title'   => $userpicture,
-        'content' => new action_link(new moodle_url('/user/view.php', [
-                                'id' => $student->id, 'course' => $attemptobj->get_courseid()]),
-                          fullname($student, true)),
-    ];
-}
-
-if ($attemptobj->has_capability('mod/quiz:viewreports')) {
-    $attemptlist = $attemptobj->links_to_other_attempts($attemptobj->review_url(null, $page,
-            $showall));
-    if ($attemptlist) {
-        $summarydata['attemptlist'] = [
-            'title'   => get_string('attempts', 'quiz'),
-            'content' => $attemptlist,
-        ];
-    }
-}
-
-// Timing information.
-$summarydata['startedon'] = [
-    'title'   => get_string('startedon', 'quiz'),
-    'content' => userdate($attempt->timestart),
-];
-
-$summarydata['state'] = [
-    'title'   => get_string('attemptstate', 'quiz'),
-    'content' => quiz_attempt::state_name($attempt->state),
-];
-
-if ($attempt->state == quiz_attempt::FINISHED) {
-    $summarydata['completedon'] = [
-        'title'   => get_string('completedon', 'quiz'),
-        'content' => userdate($attempt->timefinish),
-    ];
-    $summarydata['timetaken'] = [
-        'title'   => get_string('timetaken', 'quiz'),
-        'content' => $timetaken,
-    ];
-}
-
-if (!empty($overtime)) {
-    $summarydata['overdue'] = [
-        'title'   => get_string('overdue', 'quiz'),
-        'content' => $overtime,
-    ];
-}
-
-// Show marks (if the user is allowed to see marks at the moment).
-$grade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
-if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades($quiz)) {
-
-    if ($attempt->state != quiz_attempt::FINISHED) {
-        // Cannot display grade.
-
-    } else if (is_null($grade)) {
-        $summarydata['grade'] = [
-            'title'   => get_string('gradenoun'),
-            'content' => quiz_format_grade($quiz, $grade),
-        ];
-
-    } else {
-        // Show raw marks only if they are different from the grade (like on the view page).
-        if ($quiz->grade != $quiz->sumgrades) {
-            $a = new stdClass();
-            $a->grade = quiz_format_grade($quiz, $attempt->sumgrades);
-            $a->maxgrade = quiz_format_grade($quiz, $quiz->sumgrades);
-            $summarydata['marks'] = [
-                'title'   => get_string('marks', 'quiz'),
-                'content' => get_string('outofshort', 'quiz', $a),
-            ];
-        }
-
-        // Now the scaled grade.
-        $a = new stdClass();
-        $a->grade = html_writer::tag('b', quiz_format_grade($quiz, $grade));
-        $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
-        if ($quiz->grade != 100) {
-            // Show the percentage using the configured number of decimal places,
-            // but without trailing zeroes.
-            $a->percent = html_writer::tag('b', format_float(
-                    $attempt->sumgrades * 100 / $quiz->sumgrades,
-                    $quiz->decimalpoints, true, true));
-            $formattedgrade = get_string('outofpercent', 'quiz', $a);
-        } else {
-            $formattedgrade = get_string('outof', 'quiz', $a);
-        }
-        $summarydata['grade'] = [
-            'title'   => get_string('gradenoun'),
-            'content' => $formattedgrade,
-        ];
-    }
-}
-
-// Any additional summary data from the behaviour.
-$summarydata = array_merge($summarydata, $attemptobj->get_additional_summary_data($options));
-
-// Feedback if there is any, and the user is allowed to see it now.
-$feedback = $attemptobj->get_overall_feedback($grade);
-if ($options->overallfeedback && $feedback) {
-    $summarydata['feedback'] = [
-        'title'   => get_string('feedback', 'quiz'),
-        'content' => $feedback,
-    ];
-}
-
-// Summary table end. ==============================================================================
+$summarydata = attempt_summary_information::create_for_attempt($attemptobj, $options, $page, $showall);
 
 if ($showall) {
     $slots = $attemptobj->get_slots();

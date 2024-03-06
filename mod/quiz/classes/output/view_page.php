@@ -39,6 +39,8 @@ class view_page {
     public $attempts;
     /** @var quiz_attempt[] $attemptobjs objects corresponding to $attempts. */
     public $attemptobjs;
+    /** @var list_of_attempts list of past attempts for rendering. */
+    public $attemptslist;
     /** @var access_manager $accessmanager contains various access rules. */
     public $accessmanager;
     /** @var bool $canreviewmine whether the current user has the capability to

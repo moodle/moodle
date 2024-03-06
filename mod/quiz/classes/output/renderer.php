@@ -54,15 +54,22 @@ class renderer extends plugin_renderer_base {
      * @param bool $showall whether to show entire attempt on one page.
      * @param bool $lastpage if true the current page is the last page.
      * @param display_options $displayoptions instance of display_options.
-     * @param array $summarydata contains all table data
+     * @param attempt_summary_information|array $summarydata summary information about the attempt.
+     *      Passing an array is deprecated.
      * @return string HTML to display.
      */
     public function review_page(quiz_attempt $attemptobj, $slots, $page, $showall,
             $lastpage, display_options $displayoptions, $summarydata) {
+        if (is_array($summarydata)) {
+            debugging('Since Moodle 4.4, $summarydata passed to review_page should be a attempt_summary_information.',
+                DEBUG_DEVELOPER);
+            $summarydata = $this->filter_review_summary_table($summarydata, $page);
+            $summarydata = attempt_summary_information::create_from_legacy_array($summarydata);
+        }
 
         $output = '';
         $output .= $this->header();
-        $output .= $this->review_summary_table($summarydata, $page);
+        $output .= $this->review_attempt_summary($summarydata, $page);
         $output .= $this->review_form($page, $showall, $displayoptions,
                 $this->questions($attemptobj, true, $slots, $page, $showall, $displayoptions),
                 $attemptobj);
@@ -79,15 +86,21 @@ class renderer extends plugin_renderer_base {
      * @param int $slot which question to display.
      * @param int $seq which step of the question attempt to show. null = latest.
      * @param display_options $displayoptions instance of display_options.
-     * @param array $summarydata contains all table data
+     * @param attempt_summary_information|array $summarydata summary information about the attempt.
+     *      Passing an array is deprecated.
      * @return string HTML to display.
      */
     public function review_question_page(quiz_attempt $attemptobj, $slot, $seq,
             display_options $displayoptions, $summarydata) {
+        if (is_array($summarydata)) {
+            debugging('Since Moodle 4.4, $summarydata passed to review_question_page should be a attempt_summary_information.',
+                DEBUG_DEVELOPER);
+            $summarydata = attempt_summary_information::create_from_legacy_array($summarydata);
+        }
 
         $output = '';
         $output .= $this->header();
-        $output .= $this->review_summary_table($summarydata, 0);
+        $output .= html_writer::div($this->render($summarydata), 'mb-3');
 
         if (!is_null($seq)) {
             $output .= $attemptobj->render_question_at_step($slot, $seq, true, $this);
@@ -119,13 +132,48 @@ class renderer extends plugin_renderer_base {
     }
 
     /**
+     * A chance to filter the information before display.
+     *
+     * Moodle core uses this to display less infomrmation on pages after the first.
+     * This is a separate method, becaus it is a useful hook where themes can overrid things.
+     *
+     * @param attempt_summary_information $summarydata the data that will be displayed. Modify as desired.
+     * @param int $page contains the current page number
+     */
+    public function filter_review_attempt_summary(
+        attempt_summary_information $summarydata,
+        int $page
+    ): void {
+        if ($page > 0) {
+            $summarydata->filter_keeping_only(['user', 'attemptlist']);
+        }
+    }
+
+    /**
+     * Outputs the overall summary of the attempt at the top of the review page.
+     *
+     * @param attempt_summary_information $summarydata contains row data for table.
+     * @param int $page contains the current page number
+     * @return string HTML to display.
+     */
+    public function review_attempt_summary(
+        attempt_summary_information $summarydata,
+        int $page
+    ): string {
+        $this->filter_review_attempt_summary($summarydata, $page);
+        return html_writer::div($this->render($summarydata), 'mb-3');
+    }
+
+    /**
      * Filters the summarydata array.
      *
      * @param array $summarydata contains row data for table
      * @param int $page the current page number
      * @return array updated version of the $summarydata array.
+     * @deprecated since Moodle 4.4. Replaced by filter_review_attempt_summary.
      */
     protected function filter_review_summary_table($summarydata, $page) {
+        debugging('filter_review_summary_table() is deprecated. Replaced by filter_review_attempt_summary().', DEBUG_DEVELOPER);
         if ($page == 0) {
             return $summarydata;
         }
@@ -146,39 +194,12 @@ class renderer extends plugin_renderer_base {
      * @param array $summarydata contains row data for table
      * @param int $page contains the current page number
      * @return string HTML to display.
+     * @deprecated since Moodle 4.4. Replaced by review_attempt_summary.
      */
     public function review_summary_table($summarydata, $page) {
+        debugging('review_summary_table() is deprecated. Please use review_attempt_summary() instead.', DEBUG_DEVELOPER);
         $summarydata = $this->filter_review_summary_table($summarydata, $page);
-        if (empty($summarydata)) {
-            return '';
-        }
-
-        $output = '';
-        $output .= html_writer::start_tag('table', [
-                'class' => 'generaltable generalbox quizreviewsummary']);
-        $output .= html_writer::start_tag('tbody');
-        foreach ($summarydata as $rowdata) {
-            if ($rowdata['title'] instanceof renderable) {
-                $title = $this->render($rowdata['title']);
-            } else {
-                $title = $rowdata['title'];
-            }
-
-            if ($rowdata['content'] instanceof renderable) {
-                $content = $this->render($rowdata['content']);
-            } else {
-                $content = $rowdata['content'];
-            }
-
-            $output .= html_writer::tag('tr',
-                    html_writer::tag('th', $title, ['class' => 'cell', 'scope' => 'row']) .
-                    html_writer::tag('td', $content, ['class' => 'cell'])
-            );
-        }
-
-        $output .= html_writer::end_tag('tbody');
-        $output .= html_writer::end_tag('table');
-        return $output;
+        $this->render(attempt_summary_information::create_from_legacy_array($summarydata));
     }
 
     /**
@@ -868,8 +889,8 @@ class renderer extends plugin_renderer_base {
 
         $output .= $this->view_page_tertiary_nav($viewobj);
         $output .= $this->view_information($quiz, $cm, $context, $viewobj->infomessages);
-        $output .= $this->view_table($quiz, $context, $viewobj);
         $output .= $this->view_result_info($quiz, $context, $cm, $viewobj);
+        $output .= $this->render($viewobj->attemptslist);
         $output .= $this->box($this->view_page_buttons($viewobj), 'quizattempt');
         return $output;
     }
@@ -1094,8 +1115,10 @@ class renderer extends plugin_renderer_base {
      * @param stdClass $quiz the quiz settings.
      * @param context_module $context the quiz context.
      * @param view_page $viewobj
+     * @deprecated Since 4.4 please use the {@see list_of_attempts} renderable instead.
      */
     public function view_table($quiz, $context, $viewobj) {
+        debugging('view_table has been deprecated since 4.4 please use the list_of_attempts renderable instead.');
         if (!$viewobj->attempts) {
             return '';
         }
