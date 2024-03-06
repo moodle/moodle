@@ -15,24 +15,22 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Hook callbacks for Policies
+ * Hook fixture for \core_renderer::standard_footer_html.
  *
- * @package    tool_policy
- * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   core
+ * @category  test
+ * @copyright 2024 Andrew Lyons <andrew@nicols.co.uk>
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
 $callbacks = [
     [
-        'hook' => \core\hook\output\before_standard_top_of_body_html_generation::class,
-        'callback' => \tool_policy\hook_callbacks::class . '::before_standard_top_of_body_html_generation',
-        'priority' => 0,
-    ],
-    [
         'hook' => \core\hook\output\before_standard_footer_html_generation::class,
-        'callback' => [\tool_policy\hook_callbacks::class, 'before_standard_footer_html_generation'],
-        'priority' => 0,
+        'callback' => [
+            \test_fixtures\core_renderer\before_standard_footer_html_generation_callbacks::class,
+            'before_standard_footer_html_generation',
+        ],
     ],
 ];

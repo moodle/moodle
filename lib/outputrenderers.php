@@ -37,6 +37,7 @@
 
 use core\di;
 use core\hook\manager as hook_manager;
+use core\hook\output\before_standard_footer_html_generation;
 use core\hook\output\before_standard_top_of_body_html_generation;
 use core\output\named_templatable;
 use core_completion\cm_completion_details;
@@ -872,23 +873,21 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function standard_footer_html() {
-        global $CFG;
-
-        $output = '';
         if (during_initial_install()) {
             // Debugging info can not work before install is finished,
             // in any case we do not want any links during installation!
-            return $output;
+            return '';
         }
 
-        // Give plugins an opportunity to add any footer elements.
-        // The callback must always return a string containing valid html footer content.
-        $pluginswithfunction = get_plugins_with_function('standard_footer_html', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $output .= $function();
-            }
-        }
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_standard_footer_html_generation.php');
+
+        $hook = new before_standard_footer_html_generation($this);
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
+        $output = $hook->get_output();
 
         if (core_userfeedback::can_give_feedback()) {
             $output .= html_writer::div(

@@ -72,28 +72,6 @@ function tool_policy_myprofile_navigation(tree $tree, $user, $iscurrentuser, $co
 }
 
 /**
- * Callback to add footer elements.
- *
- * @return string HTML footer content
- */
-function tool_policy_standard_footer_html() {
-    global $CFG, $PAGE;
-
-    $output = '';
-    if (!empty($CFG->sitepolicyhandler)
-            && $CFG->sitepolicyhandler == 'tool_policy') {
-        $policies = api::get_current_versions_ids();
-        if (!empty($policies)) {
-            $url = new moodle_url('/admin/tool/policy/viewall.php', ['returnurl' => $PAGE->url]);
-            $output .= html_writer::link($url, get_string('userpolicysettings', 'tool_policy'));
-            $output = html_writer::div($output, 'policiesfooter');
-        }
-    }
-
-    return $output;
-}
-
-/**
  * Hooks redirection to policy acceptance pages before sign up.
  */
 function tool_policy_pre_signup_requests() {

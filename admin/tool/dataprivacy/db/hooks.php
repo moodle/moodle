@@ -15,9 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Hook callbacks for Policies
+ * Hook callbacks for Data privacy
  *
- * @package    tool_policy
+ * @package    tool_dataprivacy
  * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,13 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $callbacks = [
     [
-        'hook' => \core\hook\output\before_standard_top_of_body_html_generation::class,
-        'callback' => \tool_policy\hook_callbacks::class . '::before_standard_top_of_body_html_generation',
-        'priority' => 0,
-    ],
-    [
         'hook' => \core\hook\output\before_standard_footer_html_generation::class,
-        'callback' => [\tool_policy\hook_callbacks::class, 'before_standard_footer_html_generation'],
-        'priority' => 0,
+        'callback' => \tool_dataprivacy\hook_callbacks::class . '::standard_footer_html',
     ],
 ];
