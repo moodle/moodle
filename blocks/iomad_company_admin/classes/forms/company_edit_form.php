@@ -146,7 +146,8 @@ class company_edit_form extends \company_moodleform {
         }
 
         /* === Company email notifications === */
-         $mform->addElement('header', 'manageremails', get_string('manageremails', 'block_iomad_company_admin'));
+        $mform->addElement('header', 'manageremails', get_string('manageremails', 'block_iomad_company_admin'));
+        $mform->setExpanded('manageremails', false);         
 
         $emailchoices = array('0' => get_string('none'),
                               '1' => get_string('reminderemails', 'block_iomad_company_admin'),
