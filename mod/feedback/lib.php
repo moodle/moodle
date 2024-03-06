@@ -1455,6 +1455,7 @@ function feedback_get_template_list($course, $onlyownorpublic = '') {
  *
  * @param string $typ
  * @return feedback_item_base the instance of itemclass
+ * @throws moodle_exception For invalid type
  */
 function feedback_get_item_class($typ) {
     global $CFG;
@@ -1462,11 +1463,20 @@ function feedback_get_item_class($typ) {
     require_once($CFG->dirroot.'/mod/feedback/item/feedback_item_class.php');
 
     //get the class of item-typ
-    $itemclass = 'feedback_item_'.$typ;
+    $typeclean = clean_param($typ, PARAM_ALPHA);
+
+    $itemclass = "feedback_item_{$typeclean}";
+    $itemclasspath = "{$CFG->dirroot}/mod/feedback/item/{$typeclean}/lib.php";
+
     //get the instance of item-class
-    if (!class_exists($itemclass)) {
-        require_once($CFG->dirroot.'/mod/feedback/item/'.$typ.'/lib.php');
+    if (!class_exists($itemclass) && file_exists($itemclasspath)) {
+        require_once($itemclasspath);
     }
+
+    if (!class_exists($itemclass)) {
+        throw new moodle_exception('typemissing', 'feedback');
+    }
+
     return new $itemclass();
 }
 
