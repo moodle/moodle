@@ -232,7 +232,7 @@ abstract class attempts_report_table extends \table_sql {
     }
 
     /**
-     * Generate the display of the time taken column.
+     * Generate the display of the duration column.
      *
      * @param stdClass $attempt the table row being output.
      * @return string HTML content to go inside the td.

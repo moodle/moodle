@@ -129,6 +129,10 @@ class attempt_summary_information implements renderable, named_templatable {
             }
         }
 
+        // Attempt state.
+        $summary->add_item('state', get_string('attemptstate', 'quiz'),
+            quiz_attempt::state_name($attemptobj->get_attempt()->state));
+
         // Timing information.
         $attempt = $attemptobj->get_attempt();
         $quiz = $attemptobj->get_quiz();
@@ -150,13 +154,10 @@ class attempt_summary_information implements renderable, named_templatable {
 
         $summary->add_item('startedon', get_string('startedon', 'quiz'), userdate($attempt->timestart));
 
-        $summary->add_item('state', get_string('attemptstate', 'quiz'),
-            quiz_attempt::state_name($attemptobj->get_attempt()->state));
-
         if ($attempt->state == quiz_attempt::FINISHED) {
             $summary->add_item('completedon', get_string('completedon', 'quiz'),
                 userdate($attempt->timefinish));
-            $summary->add_item('timetaken', get_string('timetaken', 'quiz'), $timetaken);
+            $summary->add_item('timetaken', get_string('attemptduration', 'quiz'), $timetaken);
         }
 
         if (!empty($overtime)) {
