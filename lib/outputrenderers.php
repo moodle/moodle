@@ -889,12 +889,6 @@ class core_renderer extends renderer_base {
         $hook->process_legacy_callbacks();
         $output = $hook->get_output();
 
-        if (core_userfeedback::can_give_feedback()) {
-            $output .= html_writer::div(
-                $this->render_from_template('core/userfeedback_footer_link', ['url' => core_userfeedback::make_link()->out(false)])
-            );
-        }
-
         if ($this->page->devicetypeinuse == 'legacy') {
             // The legacy theme is in use print the notification
             $output .= html_writer::tag('div', get_string('legacythemeinuse'), array('class'=>'legacythemeinuse'));
