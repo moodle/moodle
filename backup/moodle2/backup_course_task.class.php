@@ -168,6 +168,7 @@ class backup_course_task extends backup_task {
         $content = self::encode_links_helper($content, 'BADGESVIEWBYID',       '/badges/view.php?type=2&id=');
         $content = self::encode_links_helper($content, 'USERINDEXVIEWBYID',    '/user/index.php?id=');
         $content = self::encode_links_helper($content, 'PLUGINFILEBYCONTEXT',  '/pluginfile.php/');
+        $content = self::encode_links_helper($content, 'PLUGINFILEBYCONTEXTURLENCODED', '/pluginfile.php/', true);
 
         return $content;
     }
@@ -178,17 +179,26 @@ class backup_course_task extends backup_task {
      * @param string $name the name of this type of encoded link.
      * @param string $path the path that identifies this type of link, up
      *      to the ?paramname= bit.
+     * @param bool $urlencoded whether to use urlencode() before replacing the path.
      * @return string content with one type of link encoded.
      */
-    static private function encode_links_helper($content, $name, $path) {
+    private static function encode_links_helper(string $content, string $name, string $path, bool $urlencoded = false) {
         global $CFG;
         // We want to convert both http and https links.
         $root = $CFG->wwwroot;
         $httpsroot = str_replace('http://', 'https://', $root);
         $httproot = str_replace('https://', 'http://', $root);
 
-        $httpsbase = preg_quote($httpsroot . $path, '/');
-        $httpbase = preg_quote($httproot . $path, '/');
+        $httpsbase = $httpsroot . $path;
+        $httpbase = $httproot . $path;
+
+        if ($urlencoded) {
+            $httpsbase = urlencode($httpsbase);
+            $httpbase = urlencode($httpbase);
+        }
+
+        $httpsbase = preg_quote($httpsbase, '/');
+        $httpbase = preg_quote($httpbase, '/');
 
         $return = preg_replace('/(' . $httpsbase . ')([0-9]+)/', '$@' . $name . '*$2@$', $content);
         $return = preg_replace('/(' . $httpbase . ')([0-9]+)/', '$@' . $name . '*$2@$', $return);
