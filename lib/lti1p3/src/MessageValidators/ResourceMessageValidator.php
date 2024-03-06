@@ -12,6 +12,9 @@ class ResourceMessageValidator extends AbstractMessageValidator
         return LtiConstants::MESSAGE_TYPE_RESOURCE;
     }
 
+    /**
+     * @throws LtiException
+     */
     public static function validate(array $jwtBody): void
     {
         static::validateGenericMessage($jwtBody);

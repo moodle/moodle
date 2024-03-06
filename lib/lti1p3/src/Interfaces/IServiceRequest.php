@@ -11,15 +11,21 @@ interface IServiceRequest
 
     public function getPayload(): array;
 
-    public function setUrl(string $url): self;
+    public function setUrl(string $url): IServiceRequest;
 
-    public function setAccessToken(string $accessToken): self;
+    public function setAccessToken(string $accessToken): IServiceRequest;
 
-    public function setBody(string $body): self;
+    public function setBody(string $body): IServiceRequest;
 
-    public function setAccept(string $accept): self;
+    public function setPayload(array $payload): IServiceRequest;
 
-    public function setContentType(string $contentType): self;
+    public function setAccept(string $accept): IServiceRequest;
+
+    public function setContentType(string $contentType): IServiceRequest;
 
     public function getErrorPrefix(): string;
+
+    public function getMaskResponseLogs(): bool;
+
+    public function setMaskResponseLogs(bool $maskResponseLogs): self;
 }

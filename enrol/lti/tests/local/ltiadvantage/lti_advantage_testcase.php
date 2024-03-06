@@ -138,7 +138,7 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
             ?array $customparams = null, $aud = '123'): LtiMessageLaunch {
 
         $mocklaunch = $this->getMockBuilder(LtiMessageLaunch::class)
-            ->onlyMethods(['getLaunchData'])
+            ->onlyMethods(['getLaunchData', 'getLaunchId'])
             ->disableOriginalConstructor()
             ->getMock();
         $mocklaunch->expects($this->any())
@@ -245,6 +245,12 @@ abstract class lti_advantage_testcase extends \advanced_testcase {
                     return $data;
                 }
             ));
+
+        $mocklaunch->expects($this->any())
+            ->method('getLaunchId')
+            ->will($this->returnCallback(function() {
+                return uniqid('lti1p3_launch_', true);
+            }));
 
         return $mocklaunch;
     }

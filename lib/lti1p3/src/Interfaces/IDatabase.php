@@ -4,7 +4,7 @@ namespace Packback\Lti1p3\Interfaces;
 
 interface IDatabase
 {
-    public function findRegistrationByIssuer($iss, $clientId = null);
+    public function findRegistrationByIssuer(string $iss, ?string $clientId = null): ?ILtiRegistration;
 
-    public function findDeployment($iss, $deploymentId, $clientId = null);
+    public function findDeployment(string $iss, string $deploymentId, ?string $clientId = null): ?ILtiDeployment;
 }
