@@ -656,26 +656,22 @@ class core_renderer extends renderer_base {
      */
     public function htmlattributes() {
         $return = get_html_lang(true);
-        $attributes = array();
+
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_html_attributes.php');
+
+        $hook = new before_html_attributes($this);
+
         if ($this->page->theme->doctype !== 'html5') {
-            $attributes['xmlns'] = 'http://www.w3.org/1999/xhtml';
+            $hook->add_attribute('xmlns', 'http://www.w3.org/1999/xhtml');
         }
 
-        // Give plugins an opportunity to add things like xml namespaces to the html element.
-        // This function should return an array of html attribute names => values.
-        $pluginswithfunction = get_plugins_with_function('add_htmlattributes', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $newattrs = $function();
-                unset($newattrs['dir']);
-                unset($newattrs['lang']);
-                unset($newattrs['xmlns']);
-                unset($newattrs['xml:lang']);
-                $attributes += $newattrs;
-            }
-        }
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
 
-        foreach ($attributes as $key => $val) {
+        foreach ($hook->get_attributes() as $key => $val) {
             $val = s($val);
             $return .= " $key=\"$val\"";
         }

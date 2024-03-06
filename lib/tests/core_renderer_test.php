@@ -94,4 +94,37 @@ final class core_renderer_test extends \advanced_testcase {
         $this->assertIsString($html);
         $this->assertStringContainsString('A heading can be added', $html);
     }
+
+    /**
+     * @covers \core\hook\before_html_attributes
+     */
+    public function test_htmlattributes(): void {
+        $page = new moodle_page();
+        $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
+
+        $attributes = $renderer->htmlattributes();
+        $this->assertIsString($attributes);
+        $this->assertStringNotContainsString('data-test="test"', $attributes);
+    }
+
+    /**
+     * @covers \core\hook\before_html_attributes
+     */
+    public function test_htmlattributes_hooked(): void {
+        require_once(__DIR__ . '/fixtures/core_renderer/htmlattributes_callbacks.php');
+
+        \core\di::set(
+            \core\hook\manager::class,
+            \core\hook\manager::phpunit_get_instance([
+                'test_plugin1' => __DIR__ . '/fixtures/core_renderer/htmlattributes_hooks.php',
+            ]),
+        );
+
+        $page = new moodle_page();
+        $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
+
+        $attributes = $renderer->htmlattributes();
+        $this->assertIsString($attributes);
+        $this->assertStringContainsString('data-test="test"', $attributes);
+    }
 }
