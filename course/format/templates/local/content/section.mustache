@@ -97,15 +97,9 @@
     data-number="{{num}}"
 >
     <div class="section-item">
-        <div class="course-section-header d-flex"
-            data-for="section_title"
-            data-id="{{id}}"
-            data-number="{{num}}"
-        >
-            {{$ core_courseformat/local/content/section/content }}
-                {{> core_courseformat/local/content/section/content }}
-            {{/ core_courseformat/local/content/section/content }}
-        </div>
+        {{$ core_courseformat/local/content/section/content }}
+            {{> core_courseformat/local/content/section/content }}
+        {{/ core_courseformat/local/content/section/content }}
     </div>
 
     {{#insertafter}}
