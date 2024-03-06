@@ -1,11 +1,36 @@
+<?php
+    if(isset($_GET['course_id'])){
+        $course_id = $_GET['course_id'];
+        $params = array('course_id' => $course_id);
 
+        // SELECTING COURSE FULLNAME
+            $sql = "SELECT fullname
+                FROM {course}
+                WHERE id = :course_id;
+            ";
+            $course_name = $DB->get_fieldset_sql($sql, $params);
+
+        // SELECTING COURSE'S QUIZZES
+            $sql = "SELECT *
+                FROM {quiz}
+                WHERE course = :course_id;
+            ";
+            $quiz_records = $DB->get_records_sql($sql, $params);
+
+            echo "<script>console.log('quiz_records: ', " . json_encode($quiz_records) . ");</script>";
+    }
+?>
 <main>
     <div class="px-4 pt-6">
         <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-sm  sm:p-6 ">
             <!-- Card header -->
             <div class="items-center justify-between lg:flex">
                 <div class="mb-4 lg:mb-0">
-                    <h3 class="mb-2 text-xl font-bold text-gray-900 text-gray-800">DATA STRUCTURE</h3>
+                    <h3 class="mb-2 text-xl font-bold text-gray-900 text-gray-800">
+                        <?php
+                            echo  $course_name[0];
+                        ?>
+                    </h3>
                     <span class="text-base font-normal text-gray-500 ">You can see all your tests below</span>
                 </div>
                 <div class="items-center sm:flex">
@@ -102,47 +127,35 @@
                                                 </svg>
                                             </span>
                                         </th>
-                                        <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500">
-                                            COURSE
-                                        </th>
+                                        <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500"></th>
+                                        <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500"></th>
+                                        <th scope="col" class="p-4 text-xs font-medium tracking-wider text-left  uppercase text-gray-500"></th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white ">
                                     <?php
-                                        foreach ($managing_quizzes as $quiz_record) {
-                                            $timestamp = $quiz_record->timecreated;
+                                        foreach ($quiz_records as $quiz) {
+                                            $timestamp = $quiz->timecreated;
                                             $formatted_date = date("d M Y", $timestamp);
 
-                                            // Select monitor_microphone state
-                                            $course_id = $quiz_record->course;
-                                            $sql = "SELECT shortname
-                                                    FROM {course}
-                                                    WHERE id = :course_id;
-                                            ";
-
-                                            $params = array('course_id' => $course_id);
-                                            $course_name = $DB->get_field_sql($sql, $params);
-
-                                            $quiz_id = $quiz_record->id;
+                                            echo "<script>console.log('date: ');</script>";
                                             echo
                                                 '<tr>
                                                     <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
-                                                        <h1>' . $quiz_record->name . '</h1>
+                                                        <h1>' . $quiz->name . '</h1>
                                                         <span class="font-normal text-[10px] text-center">
                                                             <a href="" class="pl-2">PREVIEW</a>
                                                         </span>
                                                     </td>
                                                     <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
+                                                        Completed
                                                     </td>
                                                     <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
                                                         ' . $formatted_date . '
                                                     </td>
-                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                        ' . $course_name . '
-                                                    </td>
                                                     <td class=" whitespace-nowrap">
                                                         <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
-                                                            <a href="quizSetting.php?quiz_id=' . $quiz_id . '&course_name=' . $course_name . '">SETTINGS</a>
+                                                            <a href="' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id .'&quiz_id='. $quiz->id .'&quiz_name='.$quiz->name.'">SETTINGS</a>
                                                         </span>
                                                     </td>
                                                     <td class=" whitespace-nowrap">

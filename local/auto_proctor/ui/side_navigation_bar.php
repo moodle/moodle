@@ -100,7 +100,8 @@ $num_of_courses = count($course_ids);
                     <div class="flex-1 px-3 space-y-1 bg-gray-800 divide-y divide-gray-200 ">
                         <ul class="pb-2 space-y-2">
                             <li>
-                                <a onclick = "toggleHome()">
+                                <!-- When there is a current selected course then url must be cleared, if not then only toggleHome. -->
+                                <a <?php echo isset($_GET['course_id']) ? 'href="' . $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php"' : 'onclick="toggleHome()"'; ?>>
                                     <button type="button" class="flex items-center w-full p-2 text-base text-gray-50 transition duration-75 rounded-lg group hover:bg-gray-100 hover:text-gray-700" aria-controls="dropdown-layouts" data-collapse-toggle="dropdown-layouts">
                                         <svg class="flex-shrink-0 w-6 h-6 text-gray-100 transition duration-75 group-hover:text-gray-900 " fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                             <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"></path>
@@ -119,7 +120,7 @@ $num_of_courses = count($course_ids);
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                                     </svg>
                                 </button>
-                                <ul id="dropdown-crud" class="space-y-2 py-2 hidden ">
+                                <ul id="dropdown-crud" class="space-y-2 py-2 <?php echo isset($_GET['course_id']) ? '' : 'hidden'; ?>">
                                     <?php
                                         // Get the course_category id for BSIT courses
                                         $name = 'Bachelor of Science in Information Technology (Boni Campus)';
@@ -132,8 +133,6 @@ $num_of_courses = count($course_ids);
 
                                         $course_category_id = $DB->get_fieldset_sql($sql, $params);
 
-                                        echo "<script>console.log('CATEGORY ID: ', " . $course_category_id[0] . ");</script>";
-
                                         for ($course = 0; $course < $num_of_courses; $course++) {
 
                                             $sql = "SELECT shortname
@@ -145,11 +144,26 @@ $num_of_courses = count($course_ids);
                                             $params = array('course_id' => $course_ids[$course], 'course_category_id' => $course_category_id[0]);
                                             $course_name = $DB->get_field_sql($sql, $params);
                                             
-                                            echo '
-                                                <li>
-                                                    <a href="#" class="text-base text-white rounded-lg flex items-center p-2 group hover:text-black hover:bg-gray-100 transition duration-75 pl-11 " onclick="toggleCourses()">' . $course_name . '</a>
-                                                </li>
-                                            ';
+                                            if ($course_name){
+
+                                                // When course is selected then highlight the button
+                                                if (isset($_GET['course_id']) && $_GET['course_id'] == $course_ids[$course]) {
+                                                    echo '
+                                                        <li>
+                                                            <a href = "' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id=' . $course_ids[$course] . '" class="text-base text-black rounded-lg flex items-center p-2 group bg-gray-100 hover:bg-gray-100 transition duration-75 pl-11 "" >' . $course_name . '</a>
+                                                        </li>
+                                                    ';
+                                                }
+
+                                                // If not then highlight when hover
+                                                else{
+                                                    echo '
+                                                        <li>
+                                                            <a href = "' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id=' . $course_ids[$course] . '" class="text-base text-white rounded-lg flex items-center p-2 group hover:text-black hover:bg-gray-100 transition duration-75 pl-11 ">' . $course_name . '</a>
+                                                        </li>
+                                                    ';
+                                                }
+                                            }
                                         }
                                     ?>
                                 </ul>
