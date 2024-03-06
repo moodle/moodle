@@ -57,20 +57,20 @@ $course_ids = array();
 // Loop through the context that the user manages
 foreach ($managing_context as $context) {
 
-    // Get the context id of the context
-    $context_id = $context->contextid;
-    echo "<script>console.log('Managing Course ID: ', " . json_encode($context_id) . ");</script>";
+// Get the context id of the context
+$context_id = $context->contextid;
+echo "<script>console.log('Managing Course ID: ', " . json_encode($context_id) . ");</script>";
 
-    // Get instance id of the context from contex table
-    $sql = "SELECT instanceid
-    FROM {context}
-    WHERE id= :id";
-    $instance_ids = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
+// Get instance id of the context from contex table
+$sql = "SELECT instanceid
+FROM {context}
+WHERE id= :id";
+$instance_ids = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
 
-    echo "<script>console.log('instance id: ', " . json_encode($instance_ids) . ");</script>";
+echo "<script>console.log('instance id: ', " . json_encode($instance_ids) . ");</script>";
 
-    // Push the instance_ids into the $course_ids array
-    $course_ids = array_merge($course_ids, $instance_ids);
+// Push the instance_ids into the $course_ids array
+$course_ids = array_merge($course_ids, $instance_ids);
 }
 
 echo "<script>console.log('All Course IDs: ', " . json_encode($course_ids) . ");</script>";
@@ -81,14 +81,14 @@ $managing_quizzes = array();
 // Ensuring that the user is managing a course.
 if (!empty($course_ids)) {
 
-    // Creating a placeholder for each element in $course_ids for the query
-    $placeholders = implode(', ', array_fill(0, count($course_ids), '?'));
+// Creating a placeholder for each element in $course_ids for the query
+$placeholders = implode(', ', array_fill(0, count($course_ids), '?'));
 
-    // Constructing the SQL query
-    $sql = "SELECT * FROM {quiz} WHERE course IN ($placeholders)";
+// Constructing the SQL query
+$sql = "SELECT * FROM {quiz} WHERE course IN ($placeholders)";
 
-    // Retrieve all the quizzes where the course is equal to the course IDs obtained earlier or the course IDs of the courses managed by the user.
-    $managing_quizzes = $DB->get_records_sql($sql, $course_ids);
+// Retrieve all the quizzes where the course is equal to the course IDs obtained earlier or the course IDs of the courses managed by the user.
+$managing_quizzes = $DB->get_records_sql($sql, $course_ids);
 };
 
 // Convert PHP array/object to JSON for JavaScript
@@ -133,7 +133,10 @@ $wwwroot = $CFG->wwwroot
             <!-- INCLUDE HOME DISPLAY  -->
             <section id="home" style="display: block;">
                 <?php
-                    include "dashboard_home.php";
+                    // Ensuring dashboard_home will display when no course is selected
+                    if (!isset($_GET['course_id'])) {
+                        include "dashboard_home.php";
+                    }
                 ?>
 
                 <script>
@@ -145,6 +148,8 @@ $wwwroot = $CFG->wwwroot
                             // Hide subject and quiz display
                             courses.style.display = "none";
                             archives.style.display = "none";
+                            quiz_settings.display = "none";
+                            quiz_results.style.display = "none";
                         }
                     }
                 </script>
@@ -153,21 +158,27 @@ $wwwroot = $CFG->wwwroot
             <!-- INCLUDE COURSE DISPLAY  -->
             <section id="courses" style="display: none;">
                 <?php
-                    if ($_GET['course_id']){
+                    // Javascript logic for display is in side_navigation_bar.php
+                    if (isset($_GET['course_id']) && !isset($_GET['quiz_id'])){
+                        include "courses.php";
                         echo '
                             <script>
-                                // Hide other display
-                                document.getElementById("dropdown-crud").classList.remove("hidden");
-                                courses.style.display = "block";
-                                home.style.display = "none";
-                                archives.style.display = "none";
+                                var courses = document.getElementById("courses");
+                                if (courses.style.display === "none") {
+                                    courses.style.display = "block";
+
+                                    // Hide subject and quiz display
+                                    home.style.display = "none";
+                                    archives.style.display = "none";
+                                    quiz_settings.display = "none";
+                                    quiz_results.style.display = "none";
+                                }
                             </script>
                         ';
                     }
-                    include "courses.php";
                 ?>
 
-                <script>
+                <!-- <script>
                     function toggleCourses() {
                         var courses = document.getElementById("courses");
                         if (courses.style.display === "none") {
@@ -178,7 +189,7 @@ $wwwroot = $CFG->wwwroot
                             archives.style.display = "none";
                         }
                     }
-                </script>
+                </script> -->
             </section>
 
             <!-- INCLUDE ARCHOVES DISPLAY  -->
@@ -197,9 +208,46 @@ $wwwroot = $CFG->wwwroot
                             // Hide subject and quiz display
                             home.style.display = "none";
                             courses.style.display = "none";
+                            quiz_settings.display = "none";
+                            quiz_results.style.display = "none";
                         }
+
+                        // if (window.location.search.includes('quiz_id')) {
+                        //     var searchParams = new URLSearchParams(window.location.search);
+                        //     searchParams.delete('quiz_id');
+                        //     var newUrl = window.location.pathname + searchParams.toString();
+                        //     window.history.replaceState({}, '', newUrl);
+                        // }
+
+                        // if (window.location.search.includes('course_id')) {
+                        //     var searchParams = new URLSearchParams(window.location.search);
+                        //     searchParams.delete('course_id');
+                        //     var newUrl = window.location.pathname + searchParams.toString();
+                        //     window.history.replaceState({}, '', newUrl);
+                        // }
                     }
                 </script>
+            </section>
+
+            <!-- INCLUDE QUIZ SETTINGS DISPLAY  -->
+            <section id="quiz_settings" style="display: none;">
+                <?php
+                    if (isset($_GET['course_id']) && isset($_GET['quiz_id'])){
+                        include "quiz_settings.php";
+
+                        echo '
+                            <script>
+                                    quiz_settings.style.display = "block";
+
+                                    // Hide subject and quiz display
+                                    home.style.display = "none";
+                                    archives.style.display = "none";
+                                    courses.style.display = "none";
+                                    quiz_results.style.display = "none";
+                            </script>
+                        ';
+                    }
+                ?>
             </section>
 
             <p class="my-10 text-sm text-center text-gray-500">

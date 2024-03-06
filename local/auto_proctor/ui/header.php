@@ -30,6 +30,10 @@ global $DB, $USER, $CFG;
 // Get user user id
 $user_id = $USER->id;
 
+// Get user's name
+$firstname = $USER->firstname;
+$lastname = $USER->lastname;
+
 // Check if any of the user's roles are administrator
 // Get the user's roles
 $roles = get_user_roles(context_system::instance(), $user_id);
@@ -82,7 +86,7 @@ $wwwroot = $CFG->wwwroot
                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
                         </svg>
                     </button>
-                    <a href="#" class="flex ml-2 md:mr-24">
+                    <a href="<?php echo $CFG->wwwroot . '/my/';?>" class="flex ml-2 md:mr-24">
                         <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap text-[#FFD66E]">e-RTU</span>
                     </a>
                 </div>
@@ -105,7 +109,7 @@ $wwwroot = $CFG->wwwroot
                                     Neil Sims
                                 </p>
                                 <p class="text-sm font-medium text-gray-900 truncate " role="none">
-                                    neil.sims@flowbite.com
+                                    <?php echo $firstname . ' ' . $lastname; ?>
                                 </p>
                             </div>
                             <ul class="py-1" role="none">
