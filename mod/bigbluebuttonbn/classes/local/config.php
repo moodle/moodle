@@ -40,12 +40,12 @@ class config {
     public const DEFAULT_DPA_URL = 'https://blindsidenetworks.com/dpa-moodle-free-tier';
 
     /** @var string the default bigbluebutton checksum algorithm */
-    public const DEFAULT_CHECKSUM_ALGORITHM = 'SHA1';
+    public const DEFAULT_CHECKSUM_ALGORITHM = 'SHA256';
 
     /** @var array list of supported bigbluebutton checksum algorithm */
     const CHECKSUM_ALGORITHMS = [
         self::DEFAULT_CHECKSUM_ALGORITHM,
-        'SHA256',
+        'SHA1',
         'SHA512'
     ];
 
