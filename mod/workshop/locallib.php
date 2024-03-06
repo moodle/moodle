@@ -215,6 +215,10 @@ class workshop {
                 $this->{$field} = $value;
             }
         }
+
+        $this->strategy = clean_param($this->strategy, PARAM_PLUGIN);
+        $this->evaluation = clean_param($this->evaluation, PARAM_PLUGIN);
+
         if (is_null($cm) || is_null($course)) {
             throw new coding_exception('Must specify $cm and $course');
         }
@@ -1556,6 +1560,9 @@ class workshop {
         global $CFG;    // because we require other libs here
 
         if (is_null($this->strategyinstance)) {
+            if (empty($this->strategy)) {
+                throw new coding_exception('Unknown grading strategy');
+            }
             $strategylib = __DIR__ . '/form/' . $this->strategy . '/lib.php';
             if (is_readable($strategylib)) {
                 require_once($strategylib);
@@ -1581,6 +1588,7 @@ class workshop {
     public function set_grading_evaluation_method($method) {
         global $DB;
 
+        $method = clean_param($method, PARAM_PLUGIN);
         $evaluationlib = __DIR__ . '/eval/' . $method . '/lib.php';
 
         if (is_readable($evaluationlib)) {
