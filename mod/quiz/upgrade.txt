@@ -19,6 +19,9 @@ This file describes API changes in the quiz code.
 * There is a new function qbank_helper::get_version_information_for_questions_in_attempt to efficiently
   check whether each question in an attempt is using the latest versions. This is used by re-grading,
   replacing some old code there, and to update teacher previews automatically.
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `get_slot_tags_for_slot_id`
+  - `quiz_retrieve_tags_for_slot_ids`
 
 === 4.3 ===
 

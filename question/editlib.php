@@ -114,52 +114,6 @@ function get_questions_category(object $category, bool $noparent, bool $recurse 
 }
 
 /**
- * Checks whether this is the only child of a top category in a context.
- *
- * @param int $categoryid a category id.
- * @return bool
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_is_only_child_of_top_category_in_context($categoryid) {
-    debugging('Function question_is_only_child_of_top_category_in_context()
-    has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::question_is_only_child_of_top_category_in_context() instead.',
-        DEBUG_DEVELOPER);
-    return \qbank_managecategories\helper::question_is_only_child_of_top_category_in_context($categoryid);
-}
-
-/**
- * Checks whether the category is a "Top" category (with no parent).
- *
- * @param int $categoryid a category id.
- * @return bool
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_is_top_category($categoryid) {
-    debugging('Function question_is_top_category() has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::question_is_top_category() instead.', DEBUG_DEVELOPER);
-    return \qbank_managecategories\helper::question_is_top_category($categoryid);
-}
-
-/**
- * Ensures that this user is allowed to delete this category.
- *
- * @param int $todelete a category id.
- * @deprecated since Moodle 4.0 MDL-71585
- * @see qbank_managecategories\helper
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-function question_can_delete_cat($todelete) {
-    debugging('Function question_can_delete_cat() has been deprecated and moved to qbank_managecategories plugin,
-    Please use qbank_managecategories\helper::question_can_delete_cat() instead.', DEBUG_DEVELOPER);
-    \qbank_managecategories\helper::question_can_delete_cat($todelete);
-}
-
-/**
  * Common setup for all pages for editing questions.
  * @param string $baseurl the name of the script calling this funciton. For examle 'qusetion/edit.php'.
  * @param string $edittab code for this edit tab
@@ -483,59 +437,5 @@ function require_login_in_context($contextorid = null){
 
     } else {
         require_login();
-    }
-}
-
-/**
- * Print a form to let the user choose which question type to add.
- * When the form is submitted, it goes to the question.php script.
- * @param $hiddenparams hidden parameters to add to the form, in addition to
- *      the qtype radio buttons.
- * @param $allowedqtypes optional list of qtypes that are allowed. If given, only
- *      those qtypes will be shown. Example value array('description', 'multichoice').
- * @deprecated since Moodle 4.0
- * @see \qbank_editquestion\editquestion_helper::print_choose_qtype_to_add_form()
- * @todo Final deprecation of this class in moodle 4.4 MDL-72438
- */
-function print_choose_qtype_to_add_form($hiddenparams, array $allowedqtypes = null, $enablejs = true) {
-    debugging('Function print_choose_qtype_to_add_form() is deprecated,
-     please use \qbank_editquestion\editquestion_helper::print_choose_qtype_to_add_form() instead.', DEBUG_DEVELOPER);
-    global $CFG, $PAGE, $OUTPUT;
-
-    $chooser = \qbank_editquestion\qbank_chooser::get($PAGE->course, $hiddenparams, $allowedqtypes);
-    $renderer = $PAGE->get_renderer('question', 'bank');
-
-    return $renderer->render($chooser);
-}
-
-/**
- * Print a button for creating a new question. This will open question/addquestion.php,
- * which in turn goes to question/question.php before getting back to $params['returnurl']
- * (by default the question bank screen).
- *
- * @param int $categoryid The id of the category that the new question should be added to.
- * @param array $params Other paramters to add to the URL. You need either $params['cmid'] or
- *      $params['courseid'], and you should probably set $params['returnurl']
- * @param string $caption the text to display on the button.
- * @param string $tooltip a tooltip to add to the button (optional).
- * @param bool $disabled if true, the button will be disabled.
- * @deprecated since Moodle 4.0
- * @see \qbank_editquestion\editquestion_helper::create_new_question_button()
- * @todo Final deprecation of this class in moodle 4.4 MDL-72438
- */
-function create_new_question_button($categoryid, $params, $caption, $tooltip = '', $disabled = false) {
-    debugging('Function create_new_question_button() has been deprecated and moved to bank/editquestion,
-     please use qbank_editquestion\editquestion_helper::create_new_question_button() instead.', DEBUG_DEVELOPER);
-    global $CFG, $PAGE, $OUTPUT;
-    static $choiceformprinted = false;
-    $params['category'] = $categoryid;
-    $url = new moodle_url('/question/bank/editquestion/addquestion.php', $params);
-    echo $OUTPUT->single_button($url, $caption, 'get', array('disabled'=>$disabled, 'title'=>$tooltip));
-
-    if (!$choiceformprinted) {
-        echo '<div id="qtypechoicecontainer">';
-        echo print_choose_qtype_to_add_form(array());
-        echo "</div>\n";
-        $choiceformprinted = true;
     }
 }
