@@ -30,7 +30,6 @@ export default class UserSearch extends search_combobox {
 
     courseID;
     groupID;
-    bannedFilterFields = ['profileimageurlsmall', 'profileimageurl', 'id', 'link', 'matchingField', 'matchingFieldName'];
 
     // A map of user profile field names that is human-readable.
     profilestringmap = null;
@@ -118,8 +117,9 @@ export default class UserSearch extends search_combobox {
      * @returns {Array} The users that match the given criteria.
      */
     async filterDataset(filterableData) {
+        const stringMap = await this.getStringMap();
         return filterableData.filter((user) => Object.keys(user).some((key) => {
-            if (user[key] === "" || user[key] === null || this.bannedFilterFields.includes(key)) {
+            if (user[key] === "" || user[key] === null || !stringMap.get(key)) {
                 return false;
             }
             return user[key].toString().toLowerCase().includes(this.getPreppedSearchTerm());
@@ -145,9 +145,10 @@ export default class UserSearch extends search_combobox {
                     const preppedSearchTerm = this.getPreppedSearchTerm();
                     const searchTerm = this.getSearchTerm();
 
-                    if (valueString.includes(preppedSearchTerm) && !this.bannedFilterFields.includes(key)) {
-                        // Ensure we have a good string, otherwise fallback to the key.
-                        user.matchingFieldName = stringMap.get(key) ?? key;
+                    // Ensure we match only on expected keys.
+                    const matchingFieldName = stringMap.get(key);
+                    if (matchingFieldName && valueString.includes(preppedSearchTerm)) {
+                        user.matchingFieldName = matchingFieldName;
 
                         // Safely prepare our matching results.
                         const escapedValueString = valueString.replace(/</g, '&lt;');
@@ -282,6 +283,7 @@ export default class UserSearch extends search_combobox {
         if (!this.profilestringmap) {
             const requiredStrings = [
                 'username',
+                'fullname',
                 'firstname',
                 'lastname',
                 'email',
