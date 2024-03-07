@@ -258,8 +258,7 @@ class core_course_external extends external_api {
 
                         $modcontext = context_module::instance($cm->id);
 
-                        $isbrandedfunction = $cm->modname.'_is_branded';
-                        $isbranded = function_exists($isbrandedfunction) ? $isbrandedfunction() : false;
+                        $isbranded = component_callback('mod_' . $cm->modname, 'is_branded', [], false);
 
                         // Common info (for people being able to see the module or availability dates).
                         $module['id'] = $cm->id;
