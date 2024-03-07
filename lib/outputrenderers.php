@@ -421,25 +421,12 @@ class renderer_base {
     }
 
     /**
-     * Whether we should display the main logo.
      * @deprecated since Moodle 4.0
-     * @todo final deprecation. To be removed in Moodle 4.4 MDL-73165.
-     * @param int $headinglevel The heading level we want to check against.
-     * @return bool
      */
-    public function should_display_main_logo($headinglevel = 1) {
-        debugging('should_display_main_logo() is deprecated and will be removed in Moodle 4.4.', DEBUG_DEVELOPER);
-        // Only render the logo if we're on the front page or login page and the we have a logo.
-        $logo = $this->get_logo_url();
-        if ($headinglevel == 1 && !empty($logo)) {
-            if ($this->page->pagelayout == 'frontpage' || $this->page->pagelayout == 'login') {
-                return true;
-            }
-        }
-
-        return false;
+    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
+    public function should_display_main_logo() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
-
 }
 
 

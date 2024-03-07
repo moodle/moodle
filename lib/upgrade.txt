@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.5 ===
+
+ * The following previously deprecated methods have been removed and can no longer be used:
+  - `renderer_base::should_display_main_logo`
+
 === 4.4 ===
 
 * New modinfo methods related to delegated sections (sections controlled by a component):
