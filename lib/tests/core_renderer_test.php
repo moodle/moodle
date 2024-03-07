@@ -63,6 +63,47 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
+     * @covers \core\hook\before_footer_html_generation
+     */
+    public function test_before_footer_html_generation(): void {
+        $this->resetAfterTest();
+        $page = new moodle_page();
+        $page->set_state(moodle_page::STATE_PRINTING_HEADER);
+        $page->set_state(moodle_page::STATE_IN_BODY);
+        $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
+
+        $page->opencontainers->push('header/footer', '</body></html>');
+        $html = $renderer->footer();
+        $this->assertIsString($html);
+        $this->assertStringNotContainsString('A heading can be added', $html);
+    }
+
+    /**
+     * @covers \core\hook\before_footer_html_generation
+     */
+    public function test_before_footer_html_generation_hooked(): void {
+        $this->resetAfterTest();
+        require_once(__DIR__ . '/fixtures/core_renderer/before_footer_html_generation_callbacks.php');
+
+        \core\di::set(
+            \core\hook\manager::class,
+            \core\hook\manager::phpunit_get_instance([
+                'test_plugin1' => __DIR__ . '/fixtures/core_renderer/before_footer_html_generation_hooks.php',
+            ]),
+        );
+
+        $page = new moodle_page();
+        $page->set_state(moodle_page::STATE_PRINTING_HEADER);
+        $page->set_state(moodle_page::STATE_IN_BODY);
+        $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
+
+        $page->opencontainers->push('header/footer', '</body></html>');
+        $html = $renderer->footer();
+        $this->assertIsString($html);
+        $this->assertStringContainsString('A heading can be added', $html);
+    }
+
+    /**
      * @covers \core\hook\before_standard_footer_html_generation
      */
     public function before_standard_footer_html_generation(): void {

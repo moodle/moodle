@@ -41,7 +41,12 @@ information provided here is intended especially for developers.
   - bulk_user_actions() -> core_user\hook\extend_bulk_user_actions
   - before_standard_top_of_body_html() -> core\hook\output\before_standard_top_of_body_html_generation
   - standard_after_main_region_html() -> core\hook\output\after_standard_main_region_html_generation
+<<<<<<< HEAD
   - standard_footer_html() -> core\hook\output\before_standard_footer_html_generation
+=======
+  - before_footer() -> core\hook\output\before_footer_html_generation
+  - standard_footer_html() -> core\hook\output\before_standard_footer_html_generation
+>>>>>>> 3516753f3a (MDL-81144 core: Convert before_footer to hook)
   - add_htmlattributes() -> core\hook\output\before_html_attributes
 * Deprecated PARAM_ types with the exception of PARAM_CLEAN now emit a deprecation exception. These were all deprecated in Moodle 2.0.
 * A new \core\attribute\deprecated attribute can be used to more clearly describe deprecated methods.

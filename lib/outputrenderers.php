@@ -38,6 +38,7 @@
 use core\di;
 use core\hook\manager as hook_manager;
 use core\hook\output\after_standard_main_region_html_generation;
+use core\hook\output\before_footer_html_generation;
 use core\hook\output\before_html_attributes;
 use core\hook\output\before_standard_footer_html_generation;
 use core\hook\output\before_standard_top_of_body_html_generation;
@@ -1408,6 +1409,7 @@ class core_renderer extends renderer_base {
         if ($cutpos === false) {
             throw new coding_exception('page layout file ' . $layoutfile . ' does not contain the main content placeholder, please include "<?php echo $OUTPUT->main_content() ?>" in theme layout file.');
         }
+
         $header = substr($rendered, 0, $cutpos);
         $footer = substr($rendered, $cutpos + strlen($token));
 
@@ -1482,20 +1484,16 @@ class core_renderer extends renderer_base {
     public function footer() {
         global $CFG, $DB, $PERF;
 
-        $output = '';
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_footer_html_generation.php');
 
-        // Give plugins an opportunity to touch the page before JS is finalized.
-        $pluginswithfunction = get_plugins_with_function('before_footer', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $extrafooter = $function();
-                if (is_string($extrafooter)) {
-                    $output .= $extrafooter;
-                }
-            }
-        }
-
-        $output .= $this->container_end_all(true);
+        $hook = new before_footer_html_generation($this);
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
+        $hook->add_html($this->container_end_all(true));
+        $output = $hook->get_output();
 
         $footer = $this->opencontainers->pop('header/footer');
 
