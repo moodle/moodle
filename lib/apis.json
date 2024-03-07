@@ -19,6 +19,11 @@
         "allowedlevel2": true,
         "allowedspread": true
     },
+    "attribute": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
     "availability": {
         "component": "core_availability",
         "allowedlevel2": false,

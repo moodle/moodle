@@ -19,6 +19,8 @@ namespace core\hook;
 /**
  * Interface for describing of lib.php callbacks that were deprecated by the hook.
  *
+ * Please note that, from Moodle 4.4, you can instead use the \core\attribute\hook\replaces_callback attribute.
+ *
  * @package   core
  * @author    Petr Skoda
  * @copyright 2022 Open LMS

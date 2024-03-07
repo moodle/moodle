@@ -154,11 +154,7 @@ class hook_list_table extends flexible_table {
             return '';
         }
 
-        $rc = new \ReflectionClass($row->classname);
-        if (!$rc->implementsInterface(\core\hook\deprecated_callback_replacement::class)) {
-            return '';
-        }
-        $deprecates = call_user_func([$row->classname, 'get_deprecated_plugin_callbacks']);
+        $deprecates = \core\hook\manager::get_replaced_callbacks($row->classname);
         if (count($deprecates) === 0) {
             return '';
         }

@@ -66,6 +66,16 @@ information provided here is intended especially for developers.
 * Removed \zip_writer::sanitise_filepath and \zipwriter::sanitise_filename as they are now automatically sanitised in the zipstream.
 * Plugins implementing callback `bulk_user_actions()` should be aware that bulk user actions can be executed
   from /admin/user.php as well as from the bulk actions page. The 'returnurl' parameter will be passed in the request.
+* A new attribute helper has been created at \core\attribute_helper.
+  This helper contains methods to fetch a single \ReflectionAttribute, or an array of \ReflectionAttribute for an item,
+  or an instance, or a set of instances.
+* New generic attributes have been added for:
+ - \core\attribute\label - An untranslated text label of an object
+ - \core\attribute\tags - A set of tags for an object
+* The hook API now supports the use of \core\attribute\label and \core\attribute\tags
+  as an alternative to implementing the \core\hook\described_hook interface.
+* The hook API now supports the use of the new \core\attribute\hook\replaces_callbacks() attribute
+  as an alternative to implementing the \core\hook\deprecated_callback_replacement interface.
 
 === 4.3 ===
 
