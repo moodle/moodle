@@ -42,6 +42,7 @@ class externallib_test extends externallib_advanced_testcase {
 
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
+        $this->setAdminUser();
 
         // Add courses.
         $courses = array();
@@ -59,6 +60,7 @@ class externallib_test extends externallib_advanced_testcase {
             $forum[] = $this->getDataGenerator()->create_module('forum', array('course' => $course));
             $glossary[] = $this->getDataGenerator()->create_module('glossary', array('course' => $course));
             $assign[] = $this->getDataGenerator()->create_module('assign', ['course' => $course]);
+            $h5pactivity[] = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
         }
         $generator->enrol_user($teacher->id, $courses[0]->id, 'teacher');
 
@@ -88,24 +90,39 @@ class externallib_test extends externallib_advanced_testcase {
             $this->waitForSecond();
         }
 
+        // Student access all h5p.
+        foreach ($h5pactivity as $module) {
+            $event = \mod_h5pactivity\event\course_module_viewed::create(
+                ['context' => \context_module::instance($module->cmid), 'objectid' => $module->id]
+            );
+            $event->trigger();
+            $this->waitForSecond();
+        }
+
         // Test that results are sorted by timeaccess DESC (default).
         $result = \block_recentlyaccesseditems\external::get_recent_items();
-        $this->assertCount((count($forum) + count($assign)), $result);
+        $this->assertCount((count($forum) + count($assign) + count($h5pactivity)), $result);
         foreach ($result as $key => $record) {
             if ($key == 0) {
                 continue;
             }
             $this->assertTrue($record->timeaccess < $result[$key - 1]->timeaccess);
+            // Check that the branded property is set correctly.
+            if ($record->modname == 'h5pactivity') {
+                $this->assertTrue($record->branded);
+            } else {
+                $this->assertFalse($record->branded);
+            }
         }
 
         // Delete a course and confirm it's activities don't get returned.
         delete_course($courses[0], false);
         $result = \block_recentlyaccesseditems\external::get_recent_items();
-        $this->assertCount((count($forum) + count($assign)) - 2, $result);
+        $this->assertCount((count($forum) + count($assign) + count($h5pactivity)) - 3, $result);
 
         // Delete a single course module should still return.
         course_delete_module($forum[1]->cmid);
         $result = \block_recentlyaccesseditems\external::get_recent_items();
-        $this->assertCount((count($forum) + count($assign)) - 3, $result);
+        $this->assertCount((count($forum) + count($assign) + count($h5pactivity)) - 4, $result);
     }
 }

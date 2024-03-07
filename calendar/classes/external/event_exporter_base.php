@@ -293,6 +293,10 @@ class event_exporter_base extends exporter {
             'purpose' => [
                 'type' => PARAM_TEXT
             ],
+            'branded' => [
+                'type' => PARAM_BOOL,
+                'optional' => true,
+            ],
         ];
     }
 
@@ -335,10 +339,13 @@ class event_exporter_base extends exporter {
         $values['normalisedeventtypetext'] = $stringexists ? get_string($identifier, 'calendar') : '';
 
         $purpose = 'none';
+        $isbranded = false;
         if ($moduleproxy) {
             $purpose = plugin_supports('mod', $moduleproxy->get('modname'), FEATURE_MOD_PURPOSE, 'none');
+            $isbranded = component_callback('mod_' . $moduleproxy->get('modname'), 'is_branded') !== null ? : false;
         }
         $values['purpose'] = $purpose;
+        $values['branded'] = $isbranded;
 
         $values['icon'] = $iconexporter->export($output);
 
