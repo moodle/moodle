@@ -37,6 +37,8 @@
 
 use core\di;
 use core\hook\manager as hook_manager;
+use core\hook\output\after_standard_main_region_html_generation;
+use core\hook\output\before_html_attributes;
 use core\hook\output\before_standard_footer_html_generation;
 use core\hook\output\before_standard_top_of_body_html_generation;
 use core\output\named_templatable;
@@ -1105,29 +1107,23 @@ class core_renderer extends renderer_base {
      */
     public function standard_after_main_region_html() {
         global $CFG;
-        $output = '';
+
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/after_standard_main_region_html_generation.php');
+
+        $hook = new after_standard_main_region_html_generation($this);
+
         if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmlbottomofbody)) {
-            $output .= "\n".$CFG->additionalhtmlbottomofbody;
+            $hook->add_html("\n");
+            $hook->add_html($CFG->additionalhtmlbottomofbody);
         }
 
-        // Give subsystems an opportunity to inject extra html content. The callback
-        // must always return a string containing valid html.
-        foreach (\core_component::get_core_subsystems() as $name => $path) {
-            if ($path) {
-                $output .= component_callback($name, 'standard_after_main_region_html', [], '');
-            }
-        }
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
 
-        // Give plugins an opportunity to inject extra html content. The callback
-        // must always return a string containing valid html.
-        $pluginswithfunction = get_plugins_with_function('standard_after_main_region_html', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $output .= $function();
-            }
-        }
-
-        return $output;
+        return $hook->get_output();
     }
 
     /**

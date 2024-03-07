@@ -96,6 +96,39 @@ final class core_renderer_test extends \advanced_testcase {
     }
 
     /**
+     * @covers \core\hook\after_standard_main_region_html_generation
+     */
+    public function test_after_standard_main_region_html_generation(): void {
+        $page = new moodle_page();
+        $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
+
+        $html = $renderer->standard_after_main_region_html();
+        $this->assertIsString($html);
+        $this->assertStringNotContainsString('A heading can be added', $html);
+    }
+
+    /**
+     * @covers \core\hook\after_standard_main_region_html_generation
+     */
+    public function test_after_standard_main_region_html_generation_hooked(): void {
+        require_once(__DIR__ . '/fixtures/core_renderer/after_standard_main_region_html_generation_callbacks.php');
+
+        \core\di::set(
+            \core\hook\manager::class,
+            \core\hook\manager::phpunit_get_instance([
+                'test_plugin1' => __DIR__ . '/fixtures/core_renderer/after_standard_main_region_html_generation_hooks.php',
+            ]),
+        );
+
+        $page = new moodle_page();
+        $renderer = new core_renderer($page, RENDERER_TARGET_GENERAL);
+
+        $html = $renderer->standard_after_main_region_html();
+        $this->assertIsString($html);
+        $this->assertStringContainsString('A heading can be added', $html);
+    }
+
+    /**
      * @covers \core\hook\before_html_attributes
      */
     public function test_htmlattributes(): void {

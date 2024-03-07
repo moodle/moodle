@@ -798,12 +798,3 @@ function core_message_user_preferences() {
         });
     return $preferences;
 }
-
-/**
- * Render the message drawer to be included in the top of the body of each page.
- *
- * @return string HTML
- */
-function core_message_standard_after_main_region_html() {
-    return \core_message\helper::render_messaging_widget(true, null, null);
-}
