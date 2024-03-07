@@ -81,7 +81,7 @@ class users extends datasource {
         $this->add_all_from_entity($userentity->get_entity_name());
         $this->add_all_from_entity($tagentity->get_entity_name(), ['name', 'namewithlink'], ['name'], ['name']);
         $this->add_all_from_entity($cohortentity->get_entity_name(), ['name', 'idnumber', 'description', 'customfield*'],
-            ['name', 'idnumber', 'customfield*'], ['name', 'idnumber', 'customfield*']);
+            ['cohortselect', 'name', 'idnumber', 'customfield*'], ['cohortselect', 'name', 'idnumber', 'customfield*']);
     }
 
     /**

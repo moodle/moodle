@@ -148,6 +148,9 @@ class cohorts_test extends core_reportbuilder_testcase {
     public function datasource_filters_provider(): array {
         return [
             // Cohort.
+            'Filter cohort' => ['cohort:cohortselect', [
+                'cohort:cohortselect_values' => [-1],
+            ], false],
             'Filter context' => ['cohort:context', [
                 'cohort:context_operator' => select::EQUAL_TO,
                 'cohort:context_value' => context_system::instance()->id,
