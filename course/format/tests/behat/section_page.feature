@@ -88,5 +88,5 @@ Feature: Single section course page
 
   Scenario: The add section button is not displayed in the single section page
     Given I turn editing mode on
-    When I click on "View" "link" in the "Topic 1" "section"
+    When I click on "View" "link" in the "Section 1" "section"
     Then "Add section" "link" should not exist in the "region-main" "region"
