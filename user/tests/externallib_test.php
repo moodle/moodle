@@ -304,6 +304,7 @@ class externallib_test extends externallib_advanced_testcase {
                 }
                 // Default language and no theme were used for the user.
                 $this->assertEquals($CFG->lang, $returneduser['lang']);
+                $this->assertEquals($generateduser->trackforums, $returneduser['trackforums']);
                 $this->assertEmpty($returneduser['theme']);
 
                 if ($returneduser['id'] == $user1->id) {

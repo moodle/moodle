@@ -892,6 +892,7 @@ class userlib_test extends \advanced_testcase {
                                                           'theme'      => $CFG->theme,
                                                           'timezone'   => '5',
                                                           'mailformat' => '0',
+                                                          'trackforums' => '1',
                                                       ]);
 
         // Fields that should get by default.
@@ -903,6 +904,7 @@ class userlib_test extends \advanced_testcase {
         self::assertSame($CFG->theme, $got['theme']);
         self::assertSame('5', $got['timezone']);
         self::assertSame('0', $got['mailformat']);
+        self::assertSame('1', $got['trackforums']);
     }
 
     /**

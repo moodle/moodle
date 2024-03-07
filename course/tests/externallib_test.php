@@ -1197,6 +1197,7 @@ class externallib_test extends externallib_advanced_testcase {
                     ), $module['purpose']
                 );
                 $this->assertFalse($module['branded']);
+                $this->assertStringContainsString('trackingtype', $module['customdata']);   // The customdata is JSON encoded.
                 $testexecuted = $testexecuted + 2;
             } else if ($module['id'] == $labelcm->id and $module['modname'] == 'label') {
                 $cm = $modinfo->cms[$labelcm->id];
