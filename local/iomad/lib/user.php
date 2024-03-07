@@ -226,6 +226,11 @@ class company_user {
     public static function delete( $userid, $companyid = 0 ) {
         global $DB;
 
+        if (!$user = $DB->get_record('user', ['id' => $userid, 'deleted' => 0])) {
+            // User doesn't exist
+            return;
+        }
+
         // Get the company details for the user.
         if (empty($companyid)) {
             $company = company::get_company_byuserid($userid);
@@ -243,7 +248,7 @@ class company_user {
         }
         if ($DB->get_records('company_users', array('userid' => $userid, 'managertype' => 2,
                                                     'companyid' => $company->id))) {
-            $departmentmanagerrole = $DB->get_record('role', array('shortname' => 'departmentmanager'));
+            $departmentmanagerrole = $DB->get_record('role', array('shortname' => 'companydepartmentmanager'));
             role_unassign($departmentmanagerrole->id, $userid, $companycontext->id);
         }
 
@@ -256,7 +261,6 @@ class company_user {
         // Only really delete the user if they aren't in any other company.
         if (!$DB->get_records('company_users', ['userid' => $userid])) {
             // Delete the user.
-            $user = $DB->get_record('user', array('id' => $userid));
             delete_user($user);
         }
     }

@@ -4163,6 +4163,29 @@ class company {
     }
 
     /**
+     * Triggered via company_updated event.
+     *
+     * @param \core\event\company_deleted $event
+     * @return bool true on success.
+     */
+    public static function company_deleted(\block_iomad_company_admin\event\company_deleted $event) {
+        global $CFG, $DB;
+
+        $companyid = $event->other['companyid'];
+        if (!$company = $DB->get_record('company', array('id' => $companyid))) {
+            return;
+        }
+
+        // Set up the adhoc task to do this.
+        // Fire off the adhoc task to populate this new field correctly.
+        $task = new local_iomad\task\deletecompanytask();
+        $task->set_custom_data(['companyid' => $companyid]);
+        \core\task\manager::queue_adhoc_task($task, true);
+
+        return true;
+    }
+
+    /**
      * Triggered via competency_framework_created event.
      *
      * @param \core\event\competency_framework_created $event

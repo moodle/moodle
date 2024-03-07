@@ -53,7 +53,6 @@ $showchild = optional_param('showchild', 1, PARAM_INT);
 $resetbutton = optional_param('resetbutton', '', PARAM_CLEAN);
 
 $params = [
-    'delete' => $delete,
     'suspend' => $suspend ? $suspend : $unsuspend,
     'showsuspended' => $showsuspended,
     'confirm' => $confirm,
@@ -83,6 +82,9 @@ iomad::require_capability('block/iomad_company_admin:company_add_child', $contex
 
 // Correct the navbar.
 $linktext = get_string('managecompanies', 'block_iomad_company_admin');
+if (!empty($delete)) {
+    $linktext = get_string('deletecompany', 'block_iomad_company_admin');
+}
 $linkurl = new moodle_url('/blocks/iomad_company_admin/editcompanies.php', $params);
 
 // Print the page header.
@@ -108,6 +110,7 @@ if (empty($data->showchild)) {
     $params['showchild'] = 0;
 }
 
+$strdelete = get_string('deletecompany', 'block_iomad_company_admin');
 $strsuspend = get_string('suspendcompany', 'block_iomad_company_admin');
 $strsuspendcheck = get_string('suspendcompanycheck', 'block_iomad_company_admin');
 $strunsuspend = get_string('unsuspendcompany', 'block_iomad_company_admin');
@@ -122,6 +125,30 @@ $strcreatechild = get_string('createchildcompany', 'block_iomad_company_admin');
 // Reset form?
 if ($resetbutton) {
     redirect(new moodle_url('/blocks/iomad_company_admin/editcompanies.php'));
+}
+
+// are we deleting something?
+if (!empty($delete) && confirm_sesskey()) {
+    iomad::require_capability('block/iomad_company_admin:company_delete', $context);
+    $deleteform = new \block_iomad_company_admin\forms\company_delete_form($baseurl, $delete);
+    if (!$deleteform->is_cancelled()) {
+        if ($deletedata = $deleteform->get_data()) {
+            // Create an event for this.  This handles the actual lifting.
+            $eventother = array('companyid' => $delete);
+            $event = \block_iomad_company_admin\event\company_deleted::create(array('context' => $context,
+                                                                                    'objectid' => $delete,
+                                                                                    'userid' => $USER->id,
+                                                                                    'other' => $eventother));
+            $event->trigger();
+
+            \core\notification::success(get_string('companydeletescheduled', 'block_iomad_company_admin'));
+        } else {
+            echo $OUTPUT->header();
+            echo $deleteform->display();
+            echo $OUTPUT->footer();
+            die;
+        }
+    }
 }
 
 if ($suspend and confirm_sesskey()) {
@@ -356,6 +383,8 @@ if ($companies) {
         $primary = true;
         $suspendurl = '';
         $suspendbutton = '';
+        $deleteurl = '';
+        $deletebutton = '';
         $manageurl = '';
         $managebutton = '';
         $ecommerceurl = '';
@@ -393,6 +422,12 @@ if ($companies) {
                 $suspendurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php",
                                             $linkparams);
                 $suspendbutton = "<a class='btn btn-sm btn-warning' href='$suspendurl'>$strsuspend</a>";
+                if (iomad::has_capability('block/iomad_company_admin:company_delete', $context)) {
+                    $linkparams['delete'] = $company->id;
+                    unset($linkparams['suspend']);
+                    $deleteurl = new moodle_url($CFG->wwwroot . "/blocks/iomad_company_admin/editcompanies.php", $linkparams);
+                    $deletebutton = "<a class='btn btn-sm btn-danger' href='$deleteurl'>$strdelete</a>";
+                }
             }
             $manageurl = new moodle_url($CFG->wwwroot .'/blocks/iomad_company_admin/index.php', array('company' => $company->id));
             $managebutton = "<a class='btn btn-sm btn-primary' href='$manageurl'>$strmanage</a>";
@@ -449,8 +484,9 @@ if ($companies) {
                             $overviewurl . ' ' .
                             $managebutton . ' ' .
                             $childbutton . ' ' .
+                            $ecommercebutton . ' ' .
                             $suspendbutton . ' ' .
-                            $ecommercebutton);
+                            $deletebutton);
     }
 } else {
     $table = null;

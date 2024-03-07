@@ -36,6 +36,13 @@ $observers = array(
     ),
 
     array(
+        'eventname'   => '\block_iomad_company_admin\event\company_deleted',
+        'callback'    => 'local_iomad_observer::company_deleted',
+        'includefile' => '/local/iomad/classes/observer.php',
+        'internal'    => false,
+    ),
+
+    array(
         'eventname'   => '\block_iomad_company_admin\event\company_license_created',
         'callback'    => 'local_iomad_observer::company_license_created',
         'includefile' => '/local/iomad/classes/observer.php',

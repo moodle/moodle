@@ -41,6 +41,17 @@ class local_iomad_observer {
     }
 
     /**
+     * Triggered via block_iomad_company_admin::company_created event.
+     *
+     * @param \block_iomad_company_admin\event\company_created $event
+     * @return bool true on success.
+     */
+    public static function company_deleted($event) {
+        company::company_deleted($event);
+        return true;
+    }
+
+    /**
      * Triggered via block_iomad_company_admin::company_license_created event.
      *
      * @param \block_iomad_company_admin\event\company_license_created $event
