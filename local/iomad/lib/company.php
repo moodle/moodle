@@ -37,10 +37,15 @@ class company {
     public $cssfields = array('bgcolor_header', 'bgcolor_content');
 
     public function __construct($companyid) {
-        global $DB;
+        global $DB, $SESSION;
 
         $this->id = $companyid;
-        $this->companyrecord = $DB->get_record('company', ['id' => $this->id], '*', MUST_EXIST);
+        if (!$this->companyrecord = $DB->get_record('company', ['id' => $this->id], '*')) {
+            unset($SESSION->currenteditingcompany);
+            unset($SESSION->company);
+            unset($this->id);
+            return;
+        }
     }
 
     /**

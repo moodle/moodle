@@ -79,8 +79,10 @@ function local_iomad_track_delete_entry($trackid, $full=false) {
     global $DB,$CFG;
 
     // Do we have a recorded certificate?
-    if ($cert = $DB->get_record('local_iomad_track_certs', array('trackid' => $trackid))) {
-        $DB->delete_records('local_iomad_track_certs', array('id' => $cert->id));
+    if ($certs = $DB->get_records('local_iomad_track_certs', array('trackid' => $trackid))) {
+        foreach ($certs as $cert) {
+            $DB->delete_records('local_iomad_track_certs', array('id' => $cert->id));
+        }
     }
 
     // Remove the actual underlying file.

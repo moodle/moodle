@@ -60,7 +60,7 @@ class deletecompanytask extends adhoc_task {
 
         // Delete the certificates
         mtrace("deleting all stored certificates");
-        $tracrecs = $DB->get_records_sql("SELECT lit.id
+        $tracrecs = $DB->get_records_sql("SELECT DISTINCT lit.id
                                           FROM {local_iomad_track} lit
                                           JOIN {local_iomad_track_certs} litc
                                           ON (lit.id = litc.trackid)
