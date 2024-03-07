@@ -150,22 +150,29 @@ class update_entry extends external_api {
         $context = context_system::instance();
 
         // Validate course association. We need to convert the course id to context.
-        if (!empty($entrydata->courseassoc)) {
-            $coursecontext = context_course::instance($entrydata->courseassoc);
+        if (isset($entrydata->courseassoc)) {
             $entrydata->courseid = $entrydata->courseassoc;
-            $entrydata->courseassoc = $coursecontext->id;   // Convert to context.
-            $context = $coursecontext;
+
+            if (!empty($entrydata->courseid)) {
+                $coursecontext = context_course::instance($entrydata->courseassoc);
+
+                $entrydata->courseassoc = $coursecontext->id;   // Convert to context.
+                $context = $coursecontext;
+            }
         }
 
         // Validate mod association.
-        if (!empty($entrydata->modassoc)) {
-            $modcontext = context_module::instance($entrydata->modassoc);
-            if (!empty($coursecontext) && $coursecontext->id != $modcontext->get_course_context(true)->id) {
-                throw new moodle_exception('errorinvalidparam', 'webservice', '', 'modassoc');
-            }
+        if (isset($entrydata->modassoc)) {
             $entrydata->coursemoduleid = $entrydata->modassoc;
-            $entrydata->modassoc = $modcontext->id; // Convert to context.
-            $context = $modcontext;
+
+            if (!empty($entrydata->coursemoduleid)) {
+                $modcontext = context_module::instance($entrydata->modassoc);
+                if (!empty($coursecontext) && $coursecontext->id != $modcontext->get_course_context(true)->id) {
+                    throw new moodle_exception('errorinvalidparam', 'webservice', '', 'modassoc');
+                }
+                $entrydata->modassoc = $modcontext->id; // Convert to context.
+                $context = $modcontext;
+            }
         }
 
         // Validate context. It might be upated because of the new association.

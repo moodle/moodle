@@ -1086,6 +1086,26 @@ class external_test extends \externallib_advanced_testcase {
                 $this->assertEquals($newattachfilename, $entry['attachmentfiles'][0]['filename']);
             }
         }
+
+        // Update removing associations.
+        $options = [
+            ['name' => 'courseassoc', 'value' => 0],
+            ['name' => 'modassoc', 'value' => 0],
+        ];
+
+        $result = update_entry::execute($entryid, $subject, $summary, FORMAT_HTML, $options);
+        $result = external_api::clean_returnvalue(update_entry::execute_returns(), $result);
+
+        // Retrieve files via WS.
+        $result = \core_blog\external::get_entries();
+        $result = external_api::clean_returnvalue(\core_blog\external::get_entries_returns(), $result);
+
+        foreach ($result['entries'] as $entry) {
+            if ($entry['id'] == $entryid) {
+                $this->assertEmpty($entry['courseid']);
+                $this->assertEmpty($entry['coursemoduleid']);
+            }
+        }
     }
 
     /**
