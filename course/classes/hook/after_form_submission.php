@@ -16,79 +16,39 @@
 
 namespace core_course\hook;
 
-use core\hook\described_hook;
-use stdClass;
-
 /**
  * Allows plugins to extend course form submission.
  *
  * @see create_course()
  * @see update_course()
  *
- * @package    core
+ * @package    core_course
  * @copyright  2023 Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class after_form_submission implements described_hook {
-
-    /**
-     * Submitted data.
-     *
-     * @var stdClass
-     */
-    protected $data;
-
-    /**
-     * Is it a new course ?
-     *
-     * @var bool
-     */
-    protected $isnewcourse = false;
-
+#[\core\attribute\label('Allows plugins to extend saving of the course editing form')]
+#[\core\attribute\tags('course')]
+class after_form_submission {
     /**
      * Creates new hook.
      *
-     * @param stdClass $data Submitted data.
-     * @param bool $isnewcourse Is it a new course?
+     * @param \stdClass $data Submitted data
+     * @param bool $isnewcourse Whether this is a new course
      */
-    public function __construct(stdClass $data, bool $isnewcourse = false) {
-        $this->data = $data;
-        $this->isnewcourse = $isnewcourse;
+    public function __construct(
+        /** @var \stdClass The submitted data */
+        protected \stdClass $data,
+        /** @var bool Whether this is a new course */
+        public readonly bool $isnewcourse = false,
+    ) {
     }
 
     /**
      * Returns submitted data.
      *
-     * @return stdClass
+     * @return \stdClass
      */
-    public function get_data(): stdClass {
+    public function get_data(): \stdClass {
         return $this->data;
-    }
-
-    /**
-     * Informs callbacks if a hook called for a new course.
-     *
-     * @return bool
-     */
-    public function is_new_course(): bool {
-        return $this->isnewcourse;
-    }
-
-    /**
-     * Describes the hook purpose.
-     *
-     * @return string
-     */
-    public static function get_hook_description(): string {
-        return 'Allows plugins to extend saving of the course editing form';
-    }
-
-    /**
-     * List of tags that describe this hook.
-     *
-     * @return string[]
-     */
-    public static function get_hook_tags(): array {
-        return ['course'];
     }
 }

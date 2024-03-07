@@ -25,70 +25,24 @@ use MoodleQuickForm;
  *
  * @see course_edit_form::definition()
  *
- * @package    core
+ * @package    core_course
  * @copyright  2023 Dmitrii Metelkin <dmitriim@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class after_form_definition implements described_hook {
-
-    /**
-     * Course form wrapper.
-     *
-     * @var course_edit_form
-     */
-    protected $formwrapper;
-
-    /**
-     * Form to be extended.
-     *
-     * @var \MoodleQuickForm
-     */
-    protected $mform;
-
+#[\core\attribute\label('Allows plugins to extend course editing form')]
+#[\core\attribute\tags('course')]
+class after_form_definition {
     /**
      * Creates new hook.
      *
      * @param course_edit_form $formwrapper Course form wrapper.
      * @param MoodleQuickForm $mform Form to be extended.
      */
-    public function __construct(course_edit_form $formwrapper, MoodleQuickForm $mform) {
-        $this->formwrapper = $formwrapper;
-        $this->mform = $mform;
-    }
-
-    /**
-     * Returns form.
-     *
-     * @return MoodleQuickForm
-     */
-    public function get_mform(): MoodleQuickForm {
-        return $this->mform;
-    }
-
-    /**
-     * Returns form wrapper instance.
-     *
-     * @return course_edit_form
-     */
-    public function get_formwrapper(): course_edit_form {
-        return $this->formwrapper;
-    }
-
-    /**
-     * Describes the hook purpose.
-     *
-     * @return string
-     */
-    public static function get_hook_description(): string {
-        return 'Allows plugins to extend course editing form';
-    }
-
-    /**
-     * List of tags that describe this hook.
-     *
-     * @return string[]
-     */
-    public static function get_hook_tags(): array {
-        return ['course'];
+    public function __construct(
+        /** @var course_edit_form The form wrapper for the edit form */
+        public readonly course_edit_form $formwrapper,
+        /** @var MoodlequickForm The form to be extended */
+        public readonly MoodleQuickForm $mform,
+    ) {
     }
 }
