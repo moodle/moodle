@@ -1,6 +1,10 @@
 This file describes API changes in /admin/tool/dataprivacy/*
 Information provided here is intended especially for developers.
 
+=== 4.4 ===
+* tool_dataprivacy\external\data_request_exporter now returns and additional optional field "downloadlink"
+  with the link to download a zip file containing the results of an export data request.
+
 === 4.3 ===
 * New add_request_contexts_with_status function adds the contexts from the contextlist_collection to
   the request with the status provided.

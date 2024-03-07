@@ -1249,6 +1249,8 @@ class external_test extends externallib_advanced_testcase {
      * Test for external::get_data_requests().
      */
     public function test_get_data_requests() {
+        global $DB;
+
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -1285,6 +1287,7 @@ class external_test extends externallib_advanced_testcase {
                 $this->assertEquals(api::DATAREQUEST_TYPE_EXPORT, $request['type']);
                 $this->assertEquals($comment, $request['comments']);
             }
+            $this->assertArrayNotHasKey('downloadlink', $request);  // Download link only present for download ready requests.
         }
 
         // Filter by type.
@@ -1314,12 +1317,16 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($request3->get('id'), $result['requests'][0]['id']);
 
         // Test filter by status.
-        api::update_request_status($request1->get('id'), api::DATAREQUEST_STATUS_DOWNLOAD_READY);
+        api::update_request_status($request3->get('id'), api::DATAREQUEST_STATUS_DOWNLOAD_READY);
         $result = get_data_requests::execute(0, [api::DATAREQUEST_STATUS_DOWNLOAD_READY]);
         $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
 
         $this->assertCount(1, $result['requests']);
-        $this->assertEquals($request1->get('id'), $result['requests'][0]['id']);
+        $this->assertEquals($request3->get('id'), $result['requests'][0]['id']);
+        // Check download link because the download is now ready.
+        $usercontext = \context_user::instance($anotheruser->id, IGNORE_MISSING);
+        $downloadlink = api::get_download_link($usercontext, $result['requests'][0]['id'])->url;
+        $this->assertEquals($downloadlink->out(false), $result['requests'][0]['downloadlink']);
 
         // Test filter by creation method.
         $result = get_data_requests::execute(0, [], [], [data_request::DATAREQUEST_CREATION_AUTO]);
@@ -1329,12 +1336,30 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($request3->get('id'), $result['requests'][0]['id']);
 
         // Get data requests for another user without required permissions.
-        $this->setUser($anotheruser);
+        $userrole = $DB->get_field('role', 'id', ['shortname' => 'user'], MUST_EXIST);
+        assign_capability('tool/dataprivacy:downloadownrequest', CAP_PROHIBIT, $userrole, \context_user::instance($anotheruser->id));
 
+        $this->setUser($anotheruser);
+        // Get my data request ready for download but without permissons for download it.
+        $result = get_data_requests::execute($anotheruser->id, [api::DATAREQUEST_STATUS_DOWNLOAD_READY]);
+        $result = external_api::clean_returnvalue(get_data_requests::execute_returns(), $result);
+        $this->assertArrayNotHasKey('downloadlink', $result['requests'][0]);   // Download link is not present.
+
+        // And now try to see a different user requests.
         $this->expectException(\moodle_exception::class);
         $dponamestring = implode (', ', api::get_dpo_role_names());
         $this->expectExceptionMessage(get_string('privacyofficeronly', 'tool_dataprivacy', $dponamestring));
         $result = get_data_requests::execute($user->id);
     }
 
+    /**
+     * Test for external::get_data_requests() invalid user id.
+     */
+    public function test_get_data_requests_invalid_userid() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        $this->expectException(\dml_exception::class);
+        get_data_requests::execute(-1);
+    }
 }
