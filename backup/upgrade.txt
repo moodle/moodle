@@ -1,13 +1,16 @@
 This files describes API changes in /backup/*,
 information provided here is intended especially for developers.
 
+=== 4.4 ===
+
+* New \core_backup\hook\before_course_modified_check hook which can be used to exclude events from automated backup has been implemented (See MDL-73926 and MDL-81044).
+
 === 4.3 ===
 
 * The function get_async_backup_links_backup has a new param of $backupid and is part of a fix to
   async backups (See MDL-69983).
 * During restore the function create_included_users has been updated to convert backups containing
   legacy MD5 hashed passwords to the new password hashing scheme (See MDL-79134).
-* New get_excluded_events hook for excluding events from automated backup has been implemented (See MDL-73926).
 
 === 4.1 ===
 
