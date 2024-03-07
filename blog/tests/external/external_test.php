@@ -890,7 +890,7 @@ class external_test extends \externallib_advanced_testcase {
 
         $this->expectException('\moodle_exception');
         $this->expectExceptionMessage(get_string('blogdisable', 'blog'));
-        delete_entry::execute(1);
+        delete_entry::execute($this->postid);
     }
 
     /**
@@ -903,7 +903,7 @@ class external_test extends \externallib_advanced_testcase {
         $this->setAdminUser();
 
         $this->expectException('\moodle_exception');
-        delete_entry::execute(1);
+        delete_entry::execute($this->postid + 1000);
     }
 
     /**
