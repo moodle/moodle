@@ -60,7 +60,7 @@ class backup_encode_content_test extends \basic_testcase {
             urlencode($httpsroot . '/pluginfile.php/123') . '.'
         );
         $this->assertEquals('$@COURSEVIEWBYID*123@$, $@COURSEVIEWBYID*123@$, $@GRADEINDEXBYID*123@$, ' .
-                '$@GRADEREPORTINDEXBYID*123@$, $@BADGESVIEWBYID*123@$, $@USERINDEXVIEWBYID*123@$, ' . 
+                '$@GRADEREPORTINDEXBYID*123@$, $@BADGESVIEWBYID*123@$, $@USERINDEXVIEWBYID*123@$, ' .
                 '$@PLUGINFILEBYCONTEXT*123@$ and $@PLUGINFILEBYCONTEXTURLENCODED*123@$.', $encoded);
 
         // HTTP root and links of both types in content.
@@ -76,7 +76,7 @@ class backup_encode_content_test extends \basic_testcase {
             urlencode($httproot . '/pluginfile.php/123') . '.'
         );
         $this->assertEquals('$@COURSEVIEWBYID*123@$, $@COURSEVIEWBYID*123@$, $@GRADEINDEXBYID*123@$, ' .
-                '$@GRADEREPORTINDEXBYID*123@$, $@BADGESVIEWBYID*123@$, $@USERINDEXVIEWBYID*123@$, ' . 
+                '$@GRADEREPORTINDEXBYID*123@$, $@BADGESVIEWBYID*123@$, $@USERINDEXVIEWBYID*123@$, ' .
                 '$@PLUGINFILEBYCONTEXT*123@$ and $@PLUGINFILEBYCONTEXTURLENCODED*123@$.', $encoded);
         $CFG->wwwroot = $oldroot;
     }
