@@ -31,7 +31,7 @@ use lang_string;
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class filesize_test extends advanced_testcase {
+final class filesize_test extends advanced_testcase {
 
     /**
      * Data provider for {@see test_get_sql_filter}
@@ -44,12 +44,14 @@ class filesize_test extends advanced_testcase {
 
             [filesize::LESS_THAN, false, 10, filesize::SIZE_UNIT_BYTE],
             [filesize::LESS_THAN, false, 10, filesize::SIZE_UNIT_KILOBYTE],
-            [filesize::LESS_THAN, true, 10, filesize::SIZE_UNIT_MEGABYTE],
+            [filesize::LESS_THAN, false, 1.7, filesize::SIZE_UNIT_MEGABYTE],
+            [filesize::LESS_THAN, true, 2.3, filesize::SIZE_UNIT_MEGABYTE],
             [filesize::LESS_THAN, true, 10, filesize::SIZE_UNIT_GIGABYTE],
 
             [filesize::GREATER_THAN, true, 10, filesize::SIZE_UNIT_BYTE],
             [filesize::GREATER_THAN, true, 10, filesize::SIZE_UNIT_KILOBYTE],
-            [filesize::GREATER_THAN, false, 10, filesize::SIZE_UNIT_MEGABYTE],
+            [filesize::GREATER_THAN, true, 1.7, filesize::SIZE_UNIT_MEGABYTE],
+            [filesize::GREATER_THAN, false, 2.3, filesize::SIZE_UNIT_MEGABYTE],
             [filesize::GREATER_THAN, false, 10, filesize::SIZE_UNIT_GIGABYTE],
         ];
     }

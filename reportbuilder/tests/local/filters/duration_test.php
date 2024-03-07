@@ -31,14 +31,14 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class duration_test extends advanced_testcase {
+final class duration_test extends advanced_testcase {
 
     /**
      * Data provider for {@see test_get_sql_filter}
      *
      * @return array
      */
-    public function get_sql_filter_provider(): array {
+    public static function get_sql_filter_provider(): array {
         return [
             'Any duration' =>
                 [duration::DURATION_ANY, true],
@@ -53,11 +53,11 @@ class duration_test extends advanced_testcase {
             'Maximum minutes match' =>
                 [duration::DURATION_MAXIMUM, true, 150, MINSECS],
             'Maximum hours non-match (float)' =>
-                [duration::DURATION_MAXIMUM, false, 0.5, HOURSECS],
+                [duration::DURATION_MAXIMUM, false, 0.777, HOURSECS],
             'Maximum hours non-match' =>
                 [duration::DURATION_MAXIMUM, false, 1, HOURSECS],
             'Maximum hours match (float)' =>
-                [duration::DURATION_MAXIMUM, true, 2.5, HOURSECS],
+                [duration::DURATION_MAXIMUM, true, 2.333, HOURSECS],
             'Maximum hours match' =>
                 [duration::DURATION_MAXIMUM, true, 3, HOURSECS],
 
@@ -71,11 +71,11 @@ class duration_test extends advanced_testcase {
             'Minimum minutes non-match' =>
                 [duration::DURATION_MINIMUM, false, 150, MINSECS],
             'Minimum hours match (float)' =>
-                [duration::DURATION_MINIMUM, true, 0.5, HOURSECS],
+                [duration::DURATION_MINIMUM, true, 0.777, HOURSECS],
             'Minimum hours match' =>
                 [duration::DURATION_MINIMUM, true, 1, HOURSECS],
             'Minimum hours non-match (float)' =>
-                [duration::DURATION_MINIMUM, false, 2.5, HOURSECS],
+                [duration::DURATION_MINIMUM, false, 2.333, HOURSECS],
             'Minimum hours non-match' =>
                 [duration::DURATION_MINIMUM, false, 3, HOURSECS],
         ];

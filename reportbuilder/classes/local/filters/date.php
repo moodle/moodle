@@ -111,6 +111,9 @@ class date extends base {
     /**
      * Setup form
      *
+     * Note that we cannot support float inputs in this filter currently, because decimals are not supported when calculating
+     * relative timeframes according to {@link https://www.php.net/manual/en/datetime.formats.php}
+     *
      * @param MoodleQuickForm $mform
      */
     public function setup_form(MoodleQuickForm $mform): void {
