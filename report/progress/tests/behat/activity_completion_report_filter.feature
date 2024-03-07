@@ -2,9 +2,13 @@
 Feature: Teacher can view and filter activity completion data by group, activity type and section.
 
   Background:
-    Given the following "courses" exist:
-      | fullname | shortname | format | enablecompletion | groupmode |
-      | Course 1 | C1        | topics | 1                | 1         |
+    Given the following "course" exists:
+      | fullname         | Course 1 |
+      | shortname        | C1       |
+      | format           | topics   |
+      | enablecompletion | 1        |
+      | groupmode        | 1        |
+      | initsections     | 1        |
     And the following "activities" exist:
       | activity | name          | intro   | course | idnumber | section | completion | completionview |
       | quiz     | My quiz B     | A3 desc | C1     | quizb    | 0       | 2          | 1              |
@@ -53,7 +57,7 @@ Feature: Teacher can view and filter activity completion data by group, activity
     And I should not see "Student Two" in the "completion-progress" "table"
     And I set the field "Separate groups" to "All participants"
     And I set the field "Include" to "All activities and resources"
-    And I set the field "Section" to "Topic 1"
+    And I set the field "Section" to "Section 1"
     And I should not see "My assignment" in the "completion-progress" "table"
     And I should not see "My page" in the "completion-progress" "table"
     And I should not see "My assignment" in the "completion-progress" "table"
@@ -61,10 +65,10 @@ Feature: Teacher can view and filter activity completion data by group, activity
     And I should see "My quiz A" in the "completion-progress" "table"
     And I should see "Quiz" in the "activityinclude" "select"
     And I should not see "Page" in the "activityinclude" "select"
-    And I set the field "Section" to "Topic 2"
+    And I set the field "Section" to "Section 2"
     And I should not see "Quiz" in the "activityinclude" "select"
     And I should see "Page" in the "activityinclude" "select"
     And I should see "Assignment" in the "activityinclude" "select"
     And I set the field "Include" to "Page"
-    And I set the field "Section" to "Topic 1"
+    And I set the field "Section" to "Section 1"
     And I should see "Page" in the "activityinclude" "select"

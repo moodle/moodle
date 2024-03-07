@@ -9,7 +9,7 @@ Feature: Varify section visibility interface
       | fullname         | Course 1 |
       | shortname        | C1       |
       | category         | 0        |
-      | numsections      | 3        |
+      | numsections      | 1        |
     And the following "activities" exist:
       | activity | name              | intro                       | course | idnumber | section |
       | assign   | Activity sample 1 | Test assignment description | C1     | sample1  | 1       |
@@ -34,10 +34,10 @@ Feature: Varify section visibility interface
   @javascript
   Scenario: Hide a section also hides the activities.
     When I hide section "1"
-    Then I should see "Hidden from students" in the "Topic 1" "section"
+    Then I should see "Hidden from students" in the "New section" "section"
     And I should see "Hidden from students" in the "Activity sample 1" "activity"
     And I show section "1"
-    And I should not see "Hidden from students" in the "Topic 1" "section"
+    And I should not see "Hidden from students" in the "New section" "section"
     And I should not see "Hidden from students" in the "Activity sample 1" "activity"
 
   @javascript

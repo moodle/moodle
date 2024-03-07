@@ -6,9 +6,9 @@ Feature: Backup Moodle courses
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | category | numsections |
-      | Course 1 | C1 | 0 | 10 |
-      | Course 2 | C2 | 0 | 2 |
+      | fullname | shortname | category | numsections | initsections |
+      | Course 1 | C1        | 0        | 10          | 1            |
+      | Course 2 | C2        | 0        | 2           | 1            |
     And the following "activities" exist:
       | activity | course | idnumber | name | intro | section |
       | assign | C2 | assign1 | Test assign | Assign description | 1 |
@@ -28,11 +28,11 @@ Feature: Backup Moodle courses
     When I backup "Course 1" course using this options:
       | Initial | Include calendar events | 0 |
       | Initial | Include course logs | 1 |
-      | Schema | Topic 5 | 0 |
+      | Schema  | Section 5 | 0 |
       | Confirmation | Filename | test_backup.mbz |
     Then I should see "Restore"
     And I click on "Restore" "link" in the "test_backup.mbz" "table_row"
-    And I should not see "Section 3"
+    And I should not see "Section 5" in the "region-main" "region"
     And I press "Continue"
     And I click on "Continue" "button" in the ".bcs-current-course" "css_element"
     And "No" "icon" should exist in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' fitem ')][contains(., 'Include calendar events')]" "xpath_element"
@@ -47,11 +47,11 @@ Feature: Backup Moodle courses
   Scenario: Backup selecting just one section
     When I backup "Course 2" course using this options:
       | Schema | Test data | 0 |
-      | Schema | Topic 2 | 0 |
+      | Schema | Section 2 | 0 |
       | Confirmation | Filename | test_backup.mbz |
     Then I should see "Course backup area"
     And I click on "Restore" "link" in the "test_backup.mbz" "table_row"
-    And I should not see "Section 2"
+    And I should not see "Section 2" in the "region-main" "region"
     And I press "Continue"
     And I click on "Continue" "button" in the ".bcs-current-course" "css_element"
     And I press "Next"

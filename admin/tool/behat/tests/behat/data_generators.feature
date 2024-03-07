@@ -101,7 +101,7 @@ Feature: Set up contextual data for tests
       | user | course | role |
       | student1 | C1 | student |
     When I am on the "Course 1" course page logged in as student1
-    Then I should see "Topic 1"
+    Then I should see "New section"
 
   Scenario: Add role assigns
     Given the following "roles" exist:

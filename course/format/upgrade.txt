@@ -52,6 +52,8 @@ and replaced by core_courseformat\base::set_sectionnum() and core_courseformat\b
 value when all the sections must be displayed (instead of 0). That way, section 0 (General), can be displayed on a single page too.
 * The course format setting has been updated to use a choice dropdown form element instead of a select element. Third-party
 plugins can now include the string 'plugin_description' to provide a description of the course format.
+* A new item, initsections, has been added to the testing_data_generator::create_course() function, to let the generator rename
+the sections to "Section X".
 
 === 4.3 ===
 * New core_courseformat\output\activitybadge class that can be extended by any module to display content near the activity name.

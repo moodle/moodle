@@ -118,7 +118,7 @@ class format_topics_test extends \advanced_testcase {
                 $sectionname = get_string('section0name', 'format_topics');
                 $this->assertEquals($sectionname, $courseformat->get_default_section_name($section));
             } else {
-                $sectionname = get_string('sectionname', 'format_topics') . ' ' . $section->section;
+                $sectionname = get_string('newsection', 'format_topics');
                 $this->assertEquals($sectionname, $courseformat->get_default_section_name($section));
             }
         }

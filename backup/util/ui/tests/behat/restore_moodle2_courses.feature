@@ -6,20 +6,24 @@ Feature: Restore Moodle 2 course backups
 
   Background:
     Given the following "courses" exist:
-      | fullname | shortname | category | format | numsections | coursedisplay |
-      | Course 1 | C1 | 0 | topics | 15 | 1 |
-      | Course 2 | C2 | 0 | topics | 5 | 0 |
-      | Course 3 | C3 | 0 | topics | 2 | 0 |
-      | Course 4 | C4 | 0 | topics | 20 | 0 |
+      | fullname | shortname | category | format | numsections | coursedisplay | initsections |
+      | Course 1 | C1        | 0        | topics | 15          | 1             | 1            |
+      | Course 2 | C2        | 0        | topics | 5           | 0             | 1            |
+      | Course 3 | C3        | 0        | topics | 2           | 0             | 1            |
+      | Course 4 | C4        | 0        | topics | 20          | 0             | 1            |
+      | Course 5 | C5        | 0        | topics | 15          | 1             | 0            |
     And the following "activities" exist:
       | activity | course | idnumber | name               | intro                | section | externalurl           |
       | assign   | C3     | assign1  | Test assign name   | Assign description   | 1       |                       |
       | data     | C3     | data1    | Test database name | Database description | 2       |                       |
       | forum    | C1     | 0001     | Test forum name    |                      | 1       |                       |
       | url      | C1     | url1     | Test URL name      | Test URL description | 3       | http://www.moodle.org |
+      | forum    | C5     | 0005     | Test forum name    |                      | 1       |                       |
+      | url      | C5     | url5     | Test URL name      | Test URL description | 3       | http://www.moodle.org |
     And the following "blocks" exist:
       | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
       | activity_modules | Course       | C1        | course-view-*   | side-pre      |
+      | activity_modules | Course       | C5        | course-view-*   | side-pre      |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
 
@@ -41,8 +45,8 @@ Feature: Restore Moodle 2 course backups
     Then I should see "Course 1 restored in a new course"
     And I should see "Activities" in the "Activities" "block"
     And I should see "Test forum name"
-    And I should see "Topic 15"
-    And I should not see "Topic 16"
+    And I should see "Section 15"
+    And I should not see "Section 16"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
     And the field "id_format" matches value "Custom sections"
@@ -79,10 +83,10 @@ Feature: Restore Moodle 2 course backups
 
   @javascript
   Scenario: Restore a backup into a new course changing the course format afterwards
-    Given I backup "Course 1" course using this options:
+    Given I backup "Course 5" course using this options:
       | Confirmation | Filename | test_backup.mbz |
     When I restore "test_backup.mbz" backup into a new course using this options:
-    Then I should see "Topic 1"
+    Then I should see "New section"
     And I should see "Test forum name"
     And I navigate to "Settings" in current page administration
     And I expand all fieldsets
@@ -125,10 +129,10 @@ Feature: Restore Moodle 2 course backups
     And section "3" should be visible
     And section "7" should be hidden
     And section "15" should be visible
-    And I should see "Topic 15"
-    And I should not see "Topic 16"
-    And I should see "Test URL name" in the "Topic 3" "section"
-    And I should see "Test forum name" in the "Topic 1" "section"
+    And I should see "Section 15"
+    And I should not see "Section 16"
+    And I should see "Test URL name" in the "Section 3" "section"
+    And I should see "Test forum name" in the "Section 1" "section"
 
   @javascript
   Scenario: Restore a backup in an existing course keeping the target course settings
@@ -147,10 +151,10 @@ Feature: Restore Moodle 2 course backups
     And section "3" should be visible
     And section "7" should be hidden
     And section "15" should be visible
-    And I should see "Topic 15"
-    And I should not see "Topic 16"
-    And I should see "Test URL name" in the "Topic 3" "section"
-    And I should see "Test forum name" in the "Topic 1" "section"
+    And I should see "Section 15"
+    And I should not see "Section 16"
+    And I should see "Test URL name" in the "Section 3" "section"
+    And I should see "Test forum name" in the "Section 1" "section"
 
   @javascript
   Scenario: Restore a backup in an existing course deleting contents and retaining the backup course settings
@@ -171,10 +175,10 @@ Feature: Restore Moodle 2 course backups
     And section "3" should be hidden
     And section "7" should be hidden
     And section "15" should be visible
-    And I should see "Topic 15"
-    And I should not see "Topic 16"
-    And I should see "Test URL name" in the "Topic 3" "section"
-    And I should see "Test forum name" in the "Topic 1" "section"
+    And I should see "Section 15"
+    And I should not see "Section 16"
+    And I should see "Test URL name" in the "Section 3" "section"
+    And I should see "Test forum name" in the "Section 1" "section"
 
   @javascript
   Scenario: Restore a backup in an existing course deleting contents and keeping the current course settings
@@ -195,10 +199,10 @@ Feature: Restore Moodle 2 course backups
     And section "3" should be hidden
     And section "7" should be hidden
     And section "15" should be visible
-    And I should see "Topic 15"
-    And I should not see "Topic 16"
-    And I should see "Test URL name" in the "Topic 3" "section"
-    And I should see "Test forum name" in the "Topic 1" "section"
+    And I should see "Section 15"
+    And I should not see "Section 16"
+    And I should see "Test URL name" in the "Section 3" "section"
+    And I should see "Test forum name" in the "Section 1" "section"
 
   @javascript
   Scenario: Restore a backup in an existing course deleting contents decreasing the number of sections
@@ -219,10 +223,10 @@ Feature: Restore Moodle 2 course backups
     And section "3" should be hidden
     And section "7" should be hidden
     And section "15" should be visible
-    And I should see "Topic 15"
-    And I should not see "Topic 16"
-    And I should see "Test URL name" in the "Topic 3" "section"
-    And I should see "Test forum name" in the "Topic 1" "section"
+    And I should see "Section 15"
+    And I should not see "Section 16"
+    And I should see "Test URL name" in the "Section 3" "section"
+    And I should see "Test forum name" in the "Section 1" "section"
 
   @javascript
   Scenario: Restore a backup with override permission

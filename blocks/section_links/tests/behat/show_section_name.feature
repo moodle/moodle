@@ -2,9 +2,13 @@
 Feature: The Section links block can be configured to display section name in addition to section number
 
   Background:
-    Given the following "courses" exist:
-      | fullname | shortname | category | numsections | coursedisplay |
-      | Course 1 | C1        | 0        | 10          | 1             |
+    Given the following "course" exists:
+      | fullname      | Course 1 |
+      | shortname     | C1       |
+      | category      | 0        |
+      | numsections   | 10       |
+      | coursedisplay | 1        |
+      | initsections  | 1        |
     And the following "activities" exist:
       | activity | name              | course | idnumber | section |
       | assign   | First assignment  | C1     | assign1  | 7       |
@@ -25,8 +29,8 @@ Feature: The Section links block can be configured to display section name in ad
 
   Scenario: Student can see section name under the Section links block
     When I am on the "Course 1" course page logged in as student1
-    Then I should see "7: Topic 7" in the "Section links" "block"
-    And I follow "7: Topic 7"
+    Then I should see "7: Section 7" in the "Section links" "block"
+    And I follow "7: Section 7"
     And I should see "First assignment"
 
   Scenario: Teacher can configure existing Section links block to display section number or section name
@@ -36,7 +40,7 @@ Feature: The Section links block can be configured to display section name in ad
     And I set the following fields to these values:
       | Display section name | No |
     And I click on "Save changes" "button"
-    Then I should not see "7: Topic 7" in the "Section links" "block"
+    Then I should not see "7: Section 7" in the "Section links" "block"
     And I should see "7" in the "Section links" "block"
     And I follow "7"
     And I should see "First assignment"

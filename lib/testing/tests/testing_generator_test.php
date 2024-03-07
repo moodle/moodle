@@ -23,6 +23,7 @@ namespace core;
  * @category   phpunit
  * @copyright  2012 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \core\testing_data_generator
  */
 class testing_generator_test extends \advanced_testcase {
     public function test_get_plugin_generator_good_case() {
@@ -168,12 +169,47 @@ class testing_generator_test extends \advanced_testcase {
 
         $section = $generator->create_course_section(array('course'=>$course->id, 'section'=>3));
         $this->assertEquals($course->id, $section->course);
+        $this->assertNull($section->name);
 
         $course = $generator->create_course(array('tags' => 'Cat, Dog'));
         $this->assertEquals(array('Cat', 'Dog'), array_values(\core_tag_tag::get_item_tags_array('core', 'course', $course->id)));
 
         $scale = $generator->create_scale();
         $this->assertNotEmpty($scale);
+    }
+
+    /**
+     * Test case for the `test_create_course_initsections` method.
+     *
+     * This method tests the behavior of creating a course with initialized sections.
+     * It checks that the sections are renamed to "Section x" when `initsections` is true,
+     * and that the sections are not renamed when `initsections` is false.
+     *
+     * @covers ::create_course
+     */
+    public function test_create_course_initsections(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+        $generator = $this->getDataGenerator();
+
+        // Check that the sections are renamed to "Section x" when initsections is true.
+        $course = $generator->create_course(['initsections' => 1]);
+        $sections = course_get_format($course)->get_sections();
+        foreach ($sections as $section) {
+            if ($section->sectionnum > 0) {
+                $this->assertEquals(get_string('section') . ' ' . $section->sectionnum, $section->name);
+            }
+        }
+
+        // Check that the sections are not renamed when initsections is false.
+        $course = $generator->create_course(['initsections' => 0]);
+        $sections = course_get_format($course)->get_sections();
+        foreach ($sections as $section) {
+            if ($section->sectionnum > 0) {
+                $this->assertNull($section->name);
+            }
+        }
     }
 
     public function test_create_module() {
