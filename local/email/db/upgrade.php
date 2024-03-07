@@ -623,6 +623,21 @@ function xmldb_local_email_upgrade($oldversion) {
         upgrade_plugin_savepoint(true, 2023030900, 'local', 'email');
     }
 
+    if ($oldversion < 2024030700) {
+
+        // Rename field repeatday on table email_templateset_templates to NEWNAMEGOESHERE.
+        $table = new xmldb_table('email_templateset_templates');
+        $field = new xmldb_field('repeateday', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', 'repeatvalue');
+
+        // Launch rename field repeatday.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->rename_field($table, $field, 'repeatday');
+        }
+
+        // Email savepoint reached.
+        upgrade_plugin_savepoint(true, 2024030700, 'local', 'email');
+    }
+
     return $result;
 
 }
