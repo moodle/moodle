@@ -151,6 +151,36 @@ $functions = array(
         'ajax'          => true,
         'loginrequired' => false,
     ),
+    'core_blog_get_access_information' => [
+        'classname' => '\core_blog\external\get_access_information',
+        'description' => 'Retrieves permission information for the current user.',
+        'type' => 'read',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_blog_add_entry' => [
+        'classname' => '\core_blog\external\add_entry',
+        'description' => 'Creates a new blog post entry.',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_blog_delete_entry' => [
+        'classname' => '\core_blog\external\delete_entry',
+        'description' => 'Deletes a blog post entry.',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_blog_prepare_entry_for_edition' => [
+        'classname' => '\core_blog\external\prepare_entry_for_edition',
+        'description' => 'Prepare a draft area for editing a blog entry..',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
+    'core_blog_update_entry' => [
+        'classname' => '\core_blog\external\update_entry',
+        'description' => 'Updates a blog entry.',
+        'type' => 'write',
+        'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],
+    ],
     'core_calendar_get_calendar_monthly_view' => array(
         'classname' => 'core_calendar_external',
         'methodname' => 'get_calendar_monthly_view',

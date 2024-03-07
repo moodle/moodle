@@ -393,6 +393,12 @@ class api {
             $settings->tool_dataprivacy_showdataretentionsummary = get_config('tool_dataprivacy', 'showdataretentionsummary');
         }
 
+        if (empty($section) || $section === 'blog') {
+            $settings->useblogassociations = $CFG->useblogassociations;
+            $settings->bloglevel = $CFG->bloglevel;
+            $settings->blogusecomments = $CFG->blogusecomments;
+        }
+
         if (empty($section) || $section === 'h5psettings') {
             \core_h5p\local\library\autoloader::register();
             $customcss = \core_h5p\file_storage::get_custom_styles();

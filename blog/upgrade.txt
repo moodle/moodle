@@ -1,6 +1,9 @@
 This files describes API changes in /blog/* ,
 information provided here is intended especially for developers.
 
+=== 4.4 ===
+  * The blog_entry class constructor now throws an exception if the indicated entry id does not exist.
+
 === 3.7 ===
   * External function get_entries now returns an additional field "tags" returning the post tags.
 

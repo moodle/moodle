@@ -1306,3 +1306,26 @@ function blog_validate_access($courseid, $modid, $groupid, $entryid, $userid) {
     }
     return array($courseid, $userid);
 }
+
+/**
+ * Get blog editor and attachment options for when creating or updating an entry
+ *
+ * @param mixed $entry The entry object (can be null)
+ * @return array editor and attachment options
+ */
+function blog_get_editor_options(mixed $entry = null): array {
+    global $CFG;
+
+    if (is_null($entry)) {
+        $entry = new stdClass();
+        $entry->id = null;
+    }
+
+    $sitecontext = context_system::instance();
+
+    $summaryoptions = ['maxfiles' => 99, 'maxbytes' => $CFG->maxbytes, 'trusttext' => true, 'context' => $sitecontext,
+        'subdirs' => file_area_contains_subdirs($sitecontext, 'blog', 'post', $entry->id)];
+    $attachmentoptions = ['subdirs' => false, 'maxfiles' => 99, 'maxbytes' => $CFG->maxbytes];
+
+    return [$summaryoptions, $attachmentoptions];
+}

@@ -135,12 +135,13 @@ class blog_entry implements renderable {
      * Constructor. If given an id, will fetch the corresponding record from the DB.
      *
      * @param mixed $idorparams A blog entry id if INT, or data for a new entry if array
+     * @throws moodle_exception
      */
     public function __construct($id=null, $params=null, $form=null) {
         global $DB, $PAGE, $CFG;
 
         if (!empty($id)) {
-            $object = $DB->get_record('post', array('id' => $id));
+            $object = $DB->get_record('post', array('id' => $id), '*', MUST_EXIST);
             foreach ($object as $var => $val) {
                 $this->$var = $val;
             }
