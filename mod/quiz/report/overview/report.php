@@ -398,14 +398,6 @@ class quiz_overview_report extends attempts_report {
     }
 
     /**
-     * For use in tests only. Clear the cached regrade data.
-     */
-    public function clear_regrade_date_cache(): void {
-        $this->structureforregrade = null;
-        $this->newquestionidsforold = null;
-    }
-
-    /**
      * Regrade attempts for this quiz, exactly which attempts are regraded is
      * controlled by the parameters.
      *
