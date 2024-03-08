@@ -16,6 +16,7 @@
 
 namespace tool_mfa\output;
 
+use core\context\system;
 use tool_mfa\local\factor\object_factor;
 use tool_mfa\local\form\login_form;
 use \html_writer;
@@ -223,7 +224,8 @@ class renderer extends \plugin_renderer_base {
         // Support link.
         $supportemail = $CFG->supportemail;
         if (!empty($supportemail)) {
-            $subject = get_string('email:subject', 'tool_mfa', $SITE->fullname);
+            $subject = get_string('email:subject', 'tool_mfa',
+                format_string($SITE->fullname, true, ['context' => system::instance()]));
             $maillink = \html_writer::link("mailto:$supportemail?Subject=$subject", $supportemail);
             $notification .= get_string('error:support', 'tool_mfa');
             $notification .= \html_writer::tag('p', $maillink);
