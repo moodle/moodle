@@ -537,6 +537,11 @@ define('HOMEPAGE_MYCOURSES', 3);
 defined('HUB_MOODLEORGHUBURL') || define('HUB_MOODLEORGHUBURL', 'https://stats.moodle.org');
 
 /**
+ * URL of main Moodle site for marketing, products and services.
+ */
+defined('MOODLE_PRODUCTURL') || define('MOODLE_PRODUCTURL', 'https://moodle.com');
+
+/**
  * URL of the statistic server public key.
  */
 defined('HUB_STATSPUBLICKEY') || define('HUB_STATSPUBLICKEY', 'https://moodle.org/static/statspubkey.pem');

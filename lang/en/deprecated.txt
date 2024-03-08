@@ -113,6 +113,13 @@ updatingain,core
 summaryof,core
 gradeitemadvanced,core_grades
 gradeitemadvanced_help,core_grades
+moodleapp,core_admin
+moodleapp_help,core_admin
+moodlebrandedapp_help,core_admin
+moodlepartners,core_admin
+moodlepartners_help,core_admin
+moodleservices,core_admin
+moodleservices_help,core_admin
 to,core
 from,core
 aria-toggledropdown,core_grades

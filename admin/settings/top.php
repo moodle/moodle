@@ -14,12 +14,6 @@ $ADMIN->add('root', new admin_externalpage('registrationmoodleorg', new lang_str
         new moodle_url("/admin/registration/index.php")));
  // hidden upgrade script
 $ADMIN->add('root', new admin_externalpage('upgradesettings', new lang_string('upgradesettings', 'admin'), "$CFG->wwwroot/$CFG->admin/upgradesettings.php", 'moodle/site:config', true));
-
-// Adding Moodle Services information page.
-$moodleservices = new admin_settingpage('moodleservices', new lang_string('moodleservices',
-    'admin'));
-$ADMIN->add('root', $moodleservices);
-
 $userfeedback = new admin_settingpage('userfeedback', new lang_string('feedbacksettings', 'admin'));
 $ADMIN->add('root', $userfeedback);
 

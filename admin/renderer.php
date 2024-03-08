@@ -2207,7 +2207,7 @@ class core_admin_renderer extends plugin_renderer_base {
         $out = format_text(get_string('registerwithmoodleorginfo', 'core_hub'), FORMAT_MARKDOWN);
 
         $out .= html_writer::link(
-            new moodle_url('/admin/settings.php', ['section' => 'moodleservices']),
+            MOODLE_PRODUCTURL.'/solutions/moodle-app/',
             $this->output->pix_icon('i/info', '').' '.get_string('registerwithmoodleorginfoapp', 'core_hub'),
             ['class' => 'btn btn-link', 'role' => 'opener', 'target' => '_href']
         );
