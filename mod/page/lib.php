@@ -227,7 +227,7 @@ function page_get_coursemodule_info($coursemodule) {
         return $info;
     }
 
-    $fullurl = "/mod/page/view.php?id=$coursemodule->id&amp;inpopup=1";
+    $fullurl = company::get_relativeurl("$CFG->wwwroot/mod/page/view.php?id=$coursemodule->id&amp;inpopup=1");
     $options = empty($page->displayoptions) ? [] : (array) unserialize_array($page->displayoptions);
     $width  = empty($options['popupwidth'])  ? 620 : $options['popupwidth'];
     $height = empty($options['popupheight']) ? 450 : $options['popupheight'];

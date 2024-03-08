@@ -215,6 +215,21 @@ class company {
     }
 
     /**
+     * Gets the relative URL given wwwroot for the current instance
+     *
+     * @return URL
+     *
+     **/
+    public static function get_relativeurl($url) {
+        $u = parse_url($url);
+        if (empty($u["path"])) {
+             $u["path"] = "";
+        }
+        // Return the relative URL.
+        return $u["path"] . (isset($u["query"]) ? "?$u[query]" : "");
+    }
+
+    /**
      * Recurses up the company tree to get the parent company.
      *
      * @return int
