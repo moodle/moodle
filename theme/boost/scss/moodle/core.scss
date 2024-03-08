@@ -393,7 +393,7 @@ img.activityicon {
 #maincontent {
     display: block;
     height: 1px;
-    overflow: hidden;
+    overflow: clip;
 }
 
 img.uihint {

@@ -11,7 +11,8 @@ $drawer-bg-color: $gray-100 !default;
 $drawer-scroll-bg-track: $gray-100 !default;
 $drawer-shadow-color: rgba(0, 0, 0, .25) !default;
 
-:target {
+:target,
+:focus {
     scroll-margin-top: $fixed-header-y + 10px;
 }
 
