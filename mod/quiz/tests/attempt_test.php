@@ -16,14 +16,18 @@
 
 namespace mod_quiz;
 
+use core_question\local\bank\condition;
 use core_question\local\bank\question_version_status;
+use core_question_generator;
 use mod_quiz\output\view_page;
+use mod_quiz_generator;
 use question_engine;
 
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/quiz/locallib.php');
+
 
 /**
  * Tests for the quiz_attempt class.
@@ -32,6 +36,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @category  test
  * @copyright 2014 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_quiz\quiz_attempt
  */
 class attempt_test extends \advanced_testcase {
 
@@ -376,6 +381,49 @@ class attempt_test extends \advanced_testcase {
         $quba = question_engine::load_questions_usage_by_activity($student1attempt->uniqueid);
         $step = $quba->get_question_attempt(1)->get_step(0);
         $this->assertEquals($student1->id, $step->get_user_id());
+    }
+
+    /**
+     * Test quiz_prepare_and_start_new_attempt function
+     */
+    public function test_quiz_prepare_and_start_new_attempt_random_draft() {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Create course.
+        $course = $this->getDataGenerator()->create_course();
+        // Create quiz.
+        /** @var mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(['course' => $course->id]);
+
+        // Create question with 2 versions. V1 ready. V2 draft.
+        /** @var core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $category = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('shortanswer', null,
+                ['questiontext' => 'V1', 'category' => $category->id]);
+        $questiongenerator->update_question($question, null,
+                ['questiontext' => 'V2', 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+
+        // Add a random question form that category.
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => condition::JOINTYPE_DEFAULT,
+                    'values' => [$category->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ];
+        $quizobj = quiz_settings::create($quiz->id);
+        $quizobj->get_structure()->add_random_questions(1, 1, $filtercondition);
+        $quizobj->get_grade_calculator()->recompute_quiz_sumgrades();
+
+        // Create an attempt.
+        $quizobj = quiz_settings::create($quiz->id);
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
+        $this->assertEquals(1, $attempt->preview);
     }
 
     /**
