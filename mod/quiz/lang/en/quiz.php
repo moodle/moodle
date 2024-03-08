@@ -544,6 +544,7 @@ $string['matchanswerno'] = 'Matching answer {$a}';
 $string['messageprovider:attempt_overdue'] = 'Warning when your quiz attempt becomes overdue';
 $string['messageprovider:confirmation'] = 'Confirmation of your own quiz submissions';
 $string['messageprovider:attempt_grading_complete'] = 'Notification that your attempt has been graded';
+$string['messageprovider:quiz_open_soon'] = 'Quiz opens soon notification';
 $string['messageprovider:submission'] = 'Notification of your students\' quiz submissions';
 $string['max'] = 'Max';
 $string['maxmark'] = 'Maximum mark';
@@ -818,6 +819,12 @@ $string['quizopenclose_link'] = 'mod/quiz/timing';
 $string['quizopened'] = 'This quiz is open.';
 $string['quizopenedon'] = 'This quiz opened on {$a}';
 $string['quizopens'] = 'Quiz opens';
+$string['quizopendatesoonhtml'] = '<p>Hi {$a->firstname},</p>
+<p>The quiz <strong>{$a->quizname}</strong> in course {$a->coursename} is opening soon.
+<p><strong>Opens: {$a->timeopen}</strong></p>
+<p><strong>Closes: {$a->timeclose}</strong></p>
+<p><a href="{$a->url}">Go to quiz</a></p>';
+$string['quizopendatesoonsubject'] = 'Opens on {$a->timeopen}: {$a->quizname}';
 $string['quizopenwillclose'] = 'This quiz is open, will close on {$a} at';
 $string['quizordernotrandom'] = 'Order of quiz not shuffled';
 $string['quizorderrandom'] = '* Order of quiz is shuffled';
@@ -978,6 +985,7 @@ $string['selectmultipletoolbar'] = 'Select multiple toolbar';
 $string['selectnone'] = 'Deselect all';
 $string['selectquestionslot'] = 'Select question {$a}';
 $string['selectquestiontype'] = '-- Select question type --';
+$string['sendnotificationopendatesoon'] = 'Notify user of an approaching quiz open date';
 $string['serveradded'] = 'Server added';
 $string['serveridentifier'] = 'Identifier';
 $string['serverinfo'] = 'Server information';

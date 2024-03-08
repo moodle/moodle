@@ -63,4 +63,13 @@ $messageproviders = [
             'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
         ],
     ],
+
+    // Notify of a quiz opening soon.
+    'quiz_open_soon' => [
+        'defaults' => [
+            'popup' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'email' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+            'airnotifier' => MESSAGE_PERMITTED + MESSAGE_DEFAULT_ENABLED,
+        ],
+    ],
 ];
