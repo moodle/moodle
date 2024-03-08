@@ -34,8 +34,7 @@ Feature: Delete course badge already awarded
     # Navigate to Manage Badges page in order to delete the badge
     And I navigate to "Badges > Manage badges" in current page administration
     # Delete the badge
-    And I open the action menu in "<badgename>" "table_row"
-    And I choose "Delete" in the open action menu
+    And I press "Delete" action in the "<badgename>" report row
     And I press "<deleteoption>"
     And I am on the "Course 1" "enrolled users" page
     And I click on "Student 1" "link"
