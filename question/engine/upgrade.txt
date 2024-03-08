@@ -1,5 +1,12 @@
 This files describes API changes for the core question engine.
 
+=== 4.4 ===
+
+* The method question_usage_by_activity::add_question_in_place_of_other has been made more flexible.
+  There is a new argument $keepoldquestionattempt. That defaults to true, which behaves the same as
+  the old API, but if you pass false, then the newly added question_attempt completely replaces the
+  existing one in-place.
+
 === 4.2 ===
 
 * A `$questionidentifier` property has been added to `\question_display_options` to enable question type plugins to associate the
