@@ -232,15 +232,14 @@ class random_question_loader {
                   JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
 
                  WHERE q.parent = :noparent
-                   AND qv.status = :ready
-                   AND qv.version = (
-                           SELECT MAX(v.version)
-                             FROM {question_versions} v
-                             JOIN {question_bank_entries} be ON be.id = v.questionbankentryid
-                            WHERE be.id = qbe.id
-                       )
                    $qtypecondition
                    $filtercondition
+                   AND qv.version = (
+                           SELECT MAX(version)
+                             FROM {question_versions}
+                            WHERE questionbankentryid = qbe.id
+                              AND status = :ready
+                       )
 
               ORDER BY previous_attempts
             ", array_merge(

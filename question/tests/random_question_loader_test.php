@@ -120,6 +120,58 @@ final class random_question_loader_test extends \advanced_testcase {
         $this->assertNull($loader->get_next_filtered_question_id($filters));
     }
 
+    public function test_draft_questions_not_returned(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        /** @var core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        // Create a question in draft state.
+        $category = $questiongenerator->create_question_category();
+        $questiongenerator->create_question('shortanswer', null,
+                ['category' => $category->id, 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+
+        // Try to a random question from that category - should not be one.
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => condition::JOINTYPE_DEFAULT,
+                    'values' => [$category->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ];
+        $loader = new random_question_loader(new qubaid_list([]));
+        $this->assertNull($loader->get_next_filtered_question_id($filtercondition));
+    }
+
+    public function test_questions_with_later_draft_version_is_returned(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        /** @var core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        // Create a question in draft state.
+        $category = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('shortanswer', null,
+                ['questiontext' => 'V1', 'category' => $category->id]);
+        $questiongenerator->update_question($question, null,
+                ['questiontext' => 'V2', 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+
+        // Try to a random question from that category - should get V1.
+        $filtercondition = [
+            'filter' => [
+                'category' => [
+                    'jointype' => condition::JOINTYPE_DEFAULT,
+                    'values' => [$category->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ];
+        $loader = new random_question_loader(new qubaid_list([]));
+        $this->assertEquals($question->id, $loader->get_next_filtered_question_id($filtercondition));
+    }
+
     public function test_one_question_category_returns_that_q_then_null(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
