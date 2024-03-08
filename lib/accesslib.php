@@ -604,7 +604,7 @@ function has_capability($capability, context $context, $user = null, $doanything
  */
 function has_any_capability(array $capabilities, context $context, $user = null, $doanything = true) {
     foreach ($capabilities as $capability) {
-        if (iomad::has_capability($capability, $context, $user, $doanything)) {
+        if (iomad::has_capability($capability, $context)) {
             return true;
         }
     }
