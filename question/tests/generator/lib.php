@@ -202,13 +202,13 @@ class core_question_generator extends component_generator_base {
      * responses to a number of questions within a question usage.
      *
      * In the responses array, the array keys are the slot numbers for which a response will
-     * be submitted. You can submit a response to any number of responses within the usage.
+     * be submitted. You can submit a response to any number of questions within the usage.
      * There is no need to do them all. The values are a string representation of the response.
      * The exact meaning of that depends on the particular question type. These strings
      * are passed to the un_summarise_response method of the question to decode.
      *
      * @param question_usage_by_activity $quba the question usage.
-     * @param array $responses the resonses to submit, in the format described above.
+     * @param array $responses the responses to submit, in the format described above.
      * @param bool $checkbutton if simulate a click on the check button for each question, else simulate save.
      *      This should only be used with behaviours that have a check button.
      * @return array that can be passed to methods like $quba->process_all_actions as simulated POST data.

@@ -16,6 +16,7 @@
 
 namespace mod_quiz;
 
+use core_question\local\bank\condition;
 use mod_quiz\external\submit_question_version;
 use mod_quiz\question\bank\qbank_helper;
 
@@ -31,7 +32,7 @@ require_once(__DIR__ . '/quiz_question_helper_test_trait.php');
  * @copyright  2021 Catalyst IT Australia Pty Ltd
  * @author     Safat Shahin <safatshahin@catalyst-au.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @coversDefaultClass \mod_quiz\question\bank\qbank_helper
+ * @covers \mod_quiz\question\bank\qbank_helper
  */
 class quiz_question_version_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
@@ -53,8 +54,6 @@ class quiz_question_version_test extends \advanced_testcase {
 
     /**
      * Test the quiz question data for changed version in the slots.
-     *
-     * @covers ::get_version_options
      */
     public function test_quiz_questions_for_changed_versions() {
         $this->resetAfterTest();
@@ -134,8 +133,6 @@ class quiz_question_version_test extends \advanced_testcase {
 
     /**
      * Test if changing the version of the slot changes the attempts.
-     *
-     * @covers ::get_version_options
      */
     public function test_quiz_question_attempts_with_changed_version() {
         $this->resetAfterTest();
@@ -151,7 +148,7 @@ class quiz_question_version_test extends \advanced_testcase {
         $questiongenerator->update_question($numq, null, ['name' => 'This is the second version']);
         $questiongenerator->update_question($numq, null, ['name' => 'This is the third version']);
         quiz_add_quiz_question($numq->id, $quiz);
-        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $this->student);
+        [, , $attemptobj] = $this->attempt_quiz($quiz, $this->student);
         $this->assertEquals('This is the third version', $attemptobj->get_question_attempt(1)->get_question()->name);
         // Create the quiz object.
         $quizobj = \mod_quiz\quiz_settings::create($quiz->id);
@@ -171,17 +168,88 @@ class quiz_question_version_test extends \advanced_testcase {
         // Change to version 1.
         $this->expectException('moodle_exception');
         submit_question_version::execute($slot->id, (int)$selectversions[1]->version);
-        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $this->student, 2);
+        [, , $attemptobj] = $this->attempt_quiz($quiz, $this->student, 2);
         $this->assertEquals('This is the first version', $attemptobj->get_question_attempt(1)->get_question()->name);
         // Change to version 2.
         submit_question_version::execute($slot->id, (int)$selectversions[2]->version);
-        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $this->student, 3);
+        [, , $attemptobj] = $this->attempt_quiz($quiz, $this->student, 3);
         $this->assertEquals('This is the second version', $attemptobj->get_question_attempt(1)->get_question()->name);
         // Create another version.
         $questiongenerator->update_question($numq, null, ['name' => 'This is the latest version']);
         // Change to always latest.
         submit_question_version::execute($slot->id, 0);
-        list($quizobj, $quba, $attemptobj) = $this->attempt_quiz($quiz, $this->student, 4);
+        [, , $attemptobj] = $this->attempt_quiz($quiz, $this->student, 4);
         $this->assertEquals('This is the latest version', $attemptobj->get_question_attempt(1)->get_question()->name);
+    }
+
+    public function test_get_version_information_for_questions_in_attempt(): void {
+        $this->resetAfterTest();
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        /** @var \core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        // Make two categories, each with a question.
+        $coursecontext = \context_course::instance($this->course->id);
+        $cat = $questiongenerator->create_question_category(
+            ['name' => 'Non-random questions', 'context' => $coursecontext->id]);
+        $randomcat = $questiongenerator->create_question_category(
+            ['name' => 'Random questions', 'context' => $coursecontext->id]);
+        $q1 = $questiongenerator->create_question('truefalse', null, ['category' => $cat->id]);
+        $q2 = $questiongenerator->create_question('truefalse', null, ['category' => $randomcat->id]);
+
+        // Make the quiz, adding q1, and a random question from randomcat.
+        $quiz = $quizgenerator->create_instance([
+            'course' => $this->course->id,
+            'grade' => 100.0,
+            'sumgrades' => 2,
+            'canredoquestions' => 1,
+            'preferredbehaviour' => 'immediatefeedback',
+        ]);
+        $quizobj = quiz_settings::create($quiz->id);
+        quiz_add_quiz_question($q1->id, $quiz);
+        $structure = $quizobj->get_structure();
+        $structure->add_random_questions(0, 1, [
+            'filter' => [
+                'category' => [
+                    'jointype' => condition::JOINTYPE_DEFAULT,
+                    'values' => [$randomcat->id],
+                    'filteroptions' => ['includesubcategories' => false],
+                ],
+            ],
+        ]);
+
+        // Student starts attempt.
+        $quizobj = quiz_settings::create($quiz->id);
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null);
+        $attemptobj = quiz_attempt::create($attempt->id);
+
+        // Answer both questions.
+        $postdata = $questiongenerator->get_simulated_post_data_for_questions_in_usage(
+            $attemptobj->get_question_usage(),
+            [1 => 'True', 2 => 'False'],
+            true,
+        );
+        $attemptobj->process_submitted_actions(time(), false, $postdata);
+
+        // Redo both questions - need to re-create attemptobj each time.
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_redo_question(1, time());
+        $attemptobj = quiz_attempt::create($attempt->id);
+        $attemptobj->process_redo_question(2, time());
+
+        // Edit both questions to make a second version.
+        $questiongenerator->update_question($q1);
+        $questiongenerator->update_question($q2);
+
+        // Finally! call the method we want to test.
+        $versioninfo = qbank_helper::get_version_information_for_questions_in_attempt(
+            $attemptobj->get_attempt(), $attemptobj->get_context());
+
+        // Verify - all questions should now want to be V2 for various reasons.
+        $this->assertEquals(2, $versioninfo[1]->newversion);
+        $this->assertEquals(2, $versioninfo[2]->newversion);
+        $this->assertEquals(2, $versioninfo[3]->newversion);
+        $this->assertEquals(2, $versioninfo[4]->newversion);
     }
 }
