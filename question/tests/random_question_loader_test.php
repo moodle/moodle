@@ -16,6 +16,9 @@
 
 namespace core_question;
 
+use core_question\local\bank\question_version_status;
+use core_question\local\bank\random_question_loader;
+use core_question_generator;
 use qubaid_list;
 use question_bank;
 use question_engine;
@@ -24,8 +27,9 @@ use question_engine;
  * Tests for the {@see core_question\local\bank\random_question_loader} class.
  *
  * @package   core_question
- * @copyright  2015 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @copyright 2015 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \core_question\local\bank\random_question_loader
  */
 class random_question_loader_test extends \advanced_testcase {
 
@@ -95,6 +99,40 @@ class random_question_loader_test extends \advanced_testcase {
         $loader = new \core_question\local\bank\random_question_loader(new qubaid_list([]));
 
         $this->assertNull($loader->get_next_question_id($cat->id, 0));
+    }
+
+    public function test_draft_questions_not_returned(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        /** @var core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        // Create a question in draft state.
+        $category = $questiongenerator->create_question_category();
+        $questiongenerator->create_question('shortanswer', null,
+                ['category' => $category->id, 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+
+        // Try to a random question from that category - should not be one.
+        $loader = new random_question_loader(new qubaid_list([]));
+        $this->assertNull($loader->get_next_question_id($category->id, false));
+    }
+
+    public function test_questions_with_later_draft_version_is_returned(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        /** @var core_question_generator $questiongenerator */
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+
+        // Create a question in draft state.
+        $category = $questiongenerator->create_question_category();
+        $question = $questiongenerator->create_question('shortanswer', null,
+                ['questiontext' => 'V1', 'category' => $category->id]);
+        $questiongenerator->update_question($question, null,
+                ['questiontext' => 'V2', 'status' => question_version_status::QUESTION_STATUS_DRAFT]);
+
+        // Try to a random question from that category - should get V1.
+        $loader = new random_question_loader(new qubaid_list([]));
+        $this->assertEquals($question->id, $loader->get_next_question_id($category->id, false));
     }
 
     public function test_one_question_category_returns_that_q_then_null() {

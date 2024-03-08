@@ -614,12 +614,10 @@ class question_finder implements cache_data_source {
         $from = $from . " " . $join;
         $where  = "qbe.questioncategoryid {$qcsql}
                AND q.parent = 0
-               AND qv.status = '$readystatus'
-               AND qv.version = (SELECT MAX(v.version)
+               AND qv.version = (SELECT MAX(version)
                                   FROM {question_versions} v
-                                  JOIN {question_bank_entries} be
-                                    ON be.id = v.questionbankentryid
-                                 WHERE be.id = qbe.id)";
+                                 WHERE questionbankentryid = qbe.id
+                                   AND status = '$readystatus')";
         $params = $qcparams;
 
         if (!empty($tagids)) {
