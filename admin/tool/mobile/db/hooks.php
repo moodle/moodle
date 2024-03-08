@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $callbacks = [
     [
-        'hook' => core\hook\output\standard_head_html_prepend::class,
-        'callback' => 'tool_mobile\local\hooks\output\standard_head_html_prepend::callback',
+        'hook' => \core\hook\output\standard_head_html_prepend::class,
+        'callback' => [\tool_mobile\local\hooks\output\standard_head_html_prepend::class, 'callback'],
         'priority' => 0,
     ],
 ];

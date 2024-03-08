@@ -546,6 +546,13 @@ final class manager implements
             return null;
         }
         $classmethod = $callback['callback'];
+        if (is_array($classmethod)) {
+            if (count($classmethod) !== 2) {
+                debugging("Hook callback definition contains invalid 'callback' array in '$component'", DEBUG_DEVELOPER);
+                return null;
+            }
+            $classmethod = implode('::', $classmethod);
+        }
         if (!is_string($classmethod)) {
             debugging("Hook callback definition contains invalid 'callback' string in '$component'", DEBUG_DEVELOPER);
             return null;
