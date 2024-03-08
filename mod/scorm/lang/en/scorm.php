@@ -267,6 +267,7 @@ $string['maximumattemptsdesc'] = 'This preference sets the default maximum attem
 $string['maximumgradedesc'] = 'This preference sets the default maximum grade for an activity';
 $string['menubar'] = 'Show the menu bar';
 $string['min'] = 'Minimum score';
+$string['minimumscoregreater'] = 'Minimum score must be greater than 0';
 $string['missing_attribute'] = 'Missing attribute {$a->attr} in tag {$a->tag}';
 $string['missingparam'] = 'A required parameter is missing or wrong';
 $string['missing_tag'] = 'Missing tag {$a->tag}';

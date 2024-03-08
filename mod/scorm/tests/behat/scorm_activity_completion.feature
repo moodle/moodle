@@ -27,10 +27,10 @@ Feature: View activity completion in the SCORM activity
       | completionstatusrequired | 6                                                             |
       | completionscorerequired  | 3                                                             |
       | completionstatusrequired | 6                                                             |
-      | completionstatusallscos | 1 |
+      | completionstatusallscos  | 1                                                             |
       | maxattempt               | 1                                                             |
       | completionview           | 1                                                             |
-      | completionusegrade           | 1                                                             |
+      | completionusegrade       | 1                                                             |
 
   @javascript
   Scenario: View automatic completion items as a teacher
@@ -131,3 +131,21 @@ Feature: View activity completion in the SCORM activity
     Then the manual completion button of "Music history" is displayed as "Mark as done"
     And I toggle the manual completion state of "Music history"
     And the manual completion button of "Music history" is displayed as "Done"
+
+  @javascript
+  Scenario: Required minimum score should be greater than zero
+    Given I am on the "Music history" "scorm activity" page logged in as teacher1
+    And I navigate to "Settings" in current page administration
+    And I expand all fieldsets
+    When I set the field "completionscorerequired" to "0"
+    And I click on "Save and display" "button"
+    Then I should see "Minimum score must be greater than 0"
+    And "Enter" "button" should not exist
+    And I set the field "completionscorerequired" to "-1"
+    And I click on "Save and display" "button"
+    And I should see "Minimum score must be greater than 0"
+    And "Enter" "button" should not exist
+    And I set the field "completionscorerequired" to "5"
+    And I click on "Save and display" "button"
+    And I should not see "Minimum score must be greater than 0"
+    And "Enter" "button" should exist
