@@ -72,7 +72,7 @@ class item_definition_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function creation_provider() : array {
+    public function creation_provider(): array {
         return [
             'No interactionType' => [''],
             'Choice' => ['choice'],

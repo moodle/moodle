@@ -92,7 +92,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_subscribe_to_forum(stdClass $user) : bool {
+    public function can_subscribe_to_forum(stdClass $user): bool {
         if ($this->forum->get_type() == 'single') {
             return false;
         }
@@ -108,7 +108,7 @@ class capability {
      * @param int|null $groupid The current activity group id
      * @return bool
      */
-    public function can_create_discussions(stdClass $user, int $groupid = null) : bool {
+    public function can_create_discussions(stdClass $user, int $groupid = null): bool {
         if (isguestuser($user) or !isloggedin()) {
             return false;
         }
@@ -159,7 +159,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_access_all_groups(stdClass $user) : bool {
+    public function can_access_all_groups(stdClass $user): bool {
         return has_capability('moodle/site:accessallgroups', $this->get_context(), $user);
     }
 
@@ -170,7 +170,7 @@ class capability {
      * @param int $groupid The id of the group that the forum is set to
      * @return bool
      */
-    public function can_access_group(stdClass $user, int $groupid) : bool {
+    public function can_access_group(stdClass $user, int $groupid): bool {
         if ($this->can_access_all_groups($user)) {
             // This user has access to all groups.
             return true;
@@ -188,7 +188,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_post_to_my_groups(stdClass $user) : bool {
+    public function can_post_to_my_groups(stdClass $user): bool {
         return has_capability('mod/forum:canposttomygroups', $this->get_context(), $user);
     }
 
@@ -198,7 +198,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_view_discussions(stdClass $user) : bool {
+    public function can_view_discussions(stdClass $user): bool {
         return has_capability('mod/forum:viewdiscussion', $this->get_context(), $user);
     }
 
@@ -208,7 +208,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_move_discussions(stdClass $user) : bool {
+    public function can_move_discussions(stdClass $user): bool {
         $forum = $this->get_forum();
         return $forum->get_type() !== 'single' &&
                 has_capability('mod/forum:movediscussions', $this->get_context(), $user);
@@ -220,7 +220,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_pin_discussions(stdClass $user) : bool {
+    public function can_pin_discussions(stdClass $user): bool {
         return $this->forum->get_type() !== 'single' &&
                 has_capability('mod/forum:pindiscussions', $this->get_context(), $user);
     }
@@ -231,7 +231,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_split_discussions(stdClass $user) : bool {
+    public function can_split_discussions(stdClass $user): bool {
         $forum = $this->get_forum();
         return $forum->get_type() !== 'single' && has_capability('mod/forum:splitdiscussions', $this->get_context(), $user);
     }
@@ -242,7 +242,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_export_discussions(stdClass $user) : bool {
+    public function can_export_discussions(stdClass $user): bool {
         global $CFG;
         return $CFG->enableportfolios && has_capability('mod/forum:exportdiscussion', $this->get_context(), $user);
     }
@@ -253,7 +253,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_manually_control_post_read_status(stdClass $user) : bool {
+    public function can_manually_control_post_read_status(stdClass $user): bool {
         global $CFG;
         return $CFG->forum_usermarksread && isloggedin() && forum_tp_is_tracked($this->get_forum_record(), $user);
     }
@@ -265,7 +265,7 @@ class capability {
      * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function must_post_before_viewing_discussion(stdClass $user, discussion_entity $discussion) : bool {
+    public function must_post_before_viewing_discussion(stdClass $user, discussion_entity $discussion): bool {
         $forum = $this->get_forum();
 
         if ($forum->get_type() === 'qanda') {
@@ -286,7 +286,7 @@ class capability {
      * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function can_subscribe_to_discussion(stdClass $user, discussion_entity $discussion) : bool {
+    public function can_subscribe_to_discussion(stdClass $user, discussion_entity $discussion): bool {
         return $this->can_subscribe_to_forum($user);
     }
 
@@ -297,7 +297,7 @@ class capability {
      * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function can_move_discussion(stdClass $user, discussion_entity $discussion) : bool {
+    public function can_move_discussion(stdClass $user, discussion_entity $discussion): bool {
         return $this->can_move_discussions($user);
     }
 
@@ -308,7 +308,7 @@ class capability {
      * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function can_pin_discussion(stdClass $user, discussion_entity $discussion) : bool {
+    public function can_pin_discussion(stdClass $user, discussion_entity $discussion): bool {
         return $this->can_pin_discussions($user);
     }
 
@@ -319,7 +319,7 @@ class capability {
      * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function can_post_in_discussion(stdClass $user, discussion_entity $discussion) : bool {
+    public function can_post_in_discussion(stdClass $user, discussion_entity $discussion): bool {
         $forum = $this->get_forum();
         $forumrecord = $this->get_forum_record();
 
@@ -343,7 +343,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_favourite_discussion(stdClass $user) : bool {
+    public function can_favourite_discussion(stdClass $user): bool {
         $context = $this->get_context();
         return has_capability('mod/forum:cantogglefavourite', $context, $user);
     }
@@ -355,7 +355,7 @@ class capability {
      * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function can_view_discussion(stdClass $user, discussion_entity $discussion) : bool {
+    public function can_view_discussion(stdClass $user, discussion_entity $discussion): bool {
         $forumrecord = $this->get_forum_record();
         $discussionrecord = $this->get_discussion_record($discussion);
         $context = $this->get_context();
@@ -371,7 +371,7 @@ class capability {
      * @param post_entity $post The post the user wants to view
      * @return bool
      */
-    public function can_view_post(stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function can_view_post(stdClass $user, discussion_entity $discussion, post_entity $post): bool {
         if (!$this->can_view_post_shell($user, $post)) {
             return false;
         }
@@ -404,7 +404,7 @@ class capability {
      * @return  bool
      *
      */
-    public function can_view_post_shell(stdClass $user, post_entity $post) : bool {
+    public function can_view_post_shell(stdClass $user, post_entity $post): bool {
         if ($post->is_owned_by_user($user)) {
             return true;
         }
@@ -426,7 +426,7 @@ class capability {
      * @param   stdClass $user The user to check
      * @return  bool
      */
-    public function can_view_any_private_reply(stdClass $user) : bool {
+    public function can_view_any_private_reply(stdClass $user): bool {
         return has_capability('mod/forum:readprivatereplies', $this->get_context(), $user);
     }
 
@@ -438,7 +438,7 @@ class capability {
      * @param post_entity $post The post the user wants to edit
      * @return bool
      */
-    public function can_edit_post(stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function can_edit_post(stdClass $user, discussion_entity $discussion, post_entity $post): bool {
         global $CFG;
 
         $context = $this->get_context();
@@ -472,7 +472,7 @@ class capability {
      * @throws moodle_exception
      */
     public function validate_delete_post(stdClass $user, discussion_entity $discussion, post_entity $post,
-            bool $hasreplies = false) : void {
+            bool $hasreplies = false): void {
         global $CFG;
 
         $forum = $this->get_forum();
@@ -513,7 +513,7 @@ class capability {
      * @return bool
      */
     public function can_delete_post(stdClass $user, discussion_entity $discussion, post_entity $post,
-            bool $hasreplies = false) : bool {
+            bool $hasreplies = false): bool {
 
         try {
             $this->validate_delete_post($user, $discussion, $post, $hasreplies);
@@ -531,7 +531,7 @@ class capability {
      * @param post_entity $post The post the user wants to split
      * @return bool
      */
-    public function can_split_post(stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function can_split_post(stdClass $user, discussion_entity $discussion, post_entity $post): bool {
         if ($post->is_private_reply()) {
             // It is not possible to create a private discussion.
             return false;
@@ -548,7 +548,7 @@ class capability {
      * @param post_entity $post The post the user wants to reply to
      * @return bool
      */
-    public function can_reply_to_post(stdClass $user, discussion_entity $discussion, post_entity $post) : bool {
+    public function can_reply_to_post(stdClass $user, discussion_entity $discussion, post_entity $post): bool {
         if ($post->is_private_reply()) {
             // It is not possible to reply to a private reply.
             return false;
@@ -567,7 +567,7 @@ class capability {
      * @param post_entity $post The post the user wants to reply to
      * @return bool
      */
-    public function can_reply_privately_to_post(stdClass $user, post_entity $post) : bool {
+    public function can_reply_privately_to_post(stdClass $user, post_entity $post): bool {
         if ($post->is_private_reply()) {
             // You cannot reply privately to a post which is, itself, a private reply.
             return false;
@@ -583,7 +583,7 @@ class capability {
      * @param post_entity $post The post the user wants to export
      * @return bool
      */
-    public function can_export_post(stdClass $user, post_entity $post) : bool {
+    public function can_export_post(stdClass $user, post_entity $post): bool {
         global $CFG;
         $context = $this->get_context();
         return $CFG->enableportfolios  && (has_capability('mod/forum:exportpost', $context, $user) ||
@@ -595,7 +595,7 @@ class capability {
      *
      * @return forum_entity
      */
-    protected function get_forum() : forum_entity {
+    protected function get_forum(): forum_entity {
         return $this->forum;
     }
 
@@ -604,7 +604,7 @@ class capability {
      *
      * @return stdClass
      */
-    protected function get_forum_record() : stdClass {
+    protected function get_forum_record(): stdClass {
         return $this->forumrecord;
     }
 
@@ -613,7 +613,7 @@ class capability {
      *
      * @return context
      */
-    protected function get_context() : context {
+    protected function get_context(): context {
         return $this->context;
     }
 
@@ -623,7 +623,7 @@ class capability {
      * @param discussion_entity $discussion The discussion to convert
      * @return stdClass
      */
-    protected function get_discussion_record(discussion_entity $discussion) : stdClass {
+    protected function get_discussion_record(discussion_entity $discussion): stdClass {
         return $this->discussiondatamapper->to_legacy_object($discussion);
     }
 
@@ -633,7 +633,7 @@ class capability {
      * @param post_entity $post The post to convert
      * @return stdClass
      */
-    protected function get_post_record(post_entity $post) : stdClass {
+    protected function get_post_record(post_entity $post): stdClass {
         return $this->postdatamapper->to_legacy_object($post);
     }
 
@@ -644,7 +644,7 @@ class capability {
      * @param discussion_entity $discussion The discussion to check
      * @return bool
      */
-    public function can_view_participants(stdClass $user, discussion_entity $discussion) : bool {
+    public function can_view_participants(stdClass $user, discussion_entity $discussion): bool {
         return course_can_view_participants($this->get_context()) &&
             !$this->must_post_before_viewing_discussion($user, $discussion);
     }
@@ -655,7 +655,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_view_hidden_posts(stdClass $user) : bool {
+    public function can_view_hidden_posts(stdClass $user): bool {
         return has_capability('mod/forum:viewhiddentimedposts', $this->get_context(), $user);
     }
 
@@ -675,7 +675,7 @@ class capability {
      * @param stdClass $user The user to check
      * @return bool
      */
-    public function can_manage_tags(stdClass $user) : bool {
+    public function can_manage_tags(stdClass $user): bool {
         return has_capability('moodle/tag:manage', context_system::instance(), $user);
     }
 
@@ -686,7 +686,7 @@ class capability {
      * @param stdClass $user
      * @return bool
      */
-    public function can_self_enrol(stdClass $user) : bool {
+    public function can_self_enrol(stdClass $user): bool {
         $canstart = false;
 
         if ($this->forum->get_type() != 'news') {
@@ -711,7 +711,7 @@ class capability {
      * @param stdClass $user The user object.
      * @return bool True if the user can export the forum or false otherwise.
      */
-    public function can_export_forum(stdClass $user) : bool {
+    public function can_export_forum(stdClass $user): bool {
         return has_capability('mod/forum:exportforum', $this->get_context(), $user);
     }
 

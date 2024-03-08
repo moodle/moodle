@@ -106,7 +106,7 @@ class author {
      *
      * @return int
      */
-    public function get_id() : int {
+    public function get_id(): int {
         return $this->id;
     }
 
@@ -115,7 +115,7 @@ class author {
      *
      * @return int
      */
-    public function get_picture_item_id() : int {
+    public function get_picture_item_id(): int {
         return $this->pictureitemid;
     }
 
@@ -124,7 +124,7 @@ class author {
      *
      * @return string
      */
-    public function get_first_name() : string {
+    public function get_first_name(): string {
         return $this->firstname;
     }
 
@@ -133,7 +133,7 @@ class author {
      *
      * @return string
      */
-    public function get_last_name() : string {
+    public function get_last_name(): string {
         return $this->lastname;
     }
 
@@ -142,7 +142,7 @@ class author {
      *
      * @return string
      */
-    public function get_full_name() : string {
+    public function get_full_name(): string {
         return $this->fullname;
     }
 
@@ -151,7 +151,7 @@ class author {
      *
      * @return string
      */
-    public function get_email() : string {
+    public function get_email(): string {
         return $this->email;
     }
 
@@ -160,7 +160,7 @@ class author {
      *
      * @return bool
      */
-    public function is_deleted() : bool {
+    public function is_deleted(): bool {
         return !empty($this->deleted);
     }
 
@@ -169,7 +169,7 @@ class author {
      *
      * @return string|null
      */
-    public function get_middle_name() : ?string {
+    public function get_middle_name(): ?string {
         return $this->middlename;
     }
 
@@ -178,7 +178,7 @@ class author {
      *
      * @return string|null
      */
-    public function get_first_name_phonetic() : ?string {
+    public function get_first_name_phonetic(): ?string {
         return $this->firstnamephonetic;
     }
 
@@ -187,7 +187,7 @@ class author {
      *
      * @return string|null
      */
-    public function get_last_name_phonetic() : ?string {
+    public function get_last_name_phonetic(): ?string {
         return $this->lastnamephonetic;
     }
 
@@ -196,7 +196,7 @@ class author {
      *
      * @return string|null
      */
-    public function get_alternate_name() : ?string {
+    public function get_alternate_name(): ?string {
         return $this->alternatename;
     }
 
@@ -205,7 +205,7 @@ class author {
      *
      * @return string|null
      */
-    public function get_image_alt() : ?string {
+    public function get_image_alt(): ?string {
         return $this->imagealt;
     }
 }

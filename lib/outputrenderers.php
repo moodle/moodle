@@ -4120,7 +4120,7 @@ EOD;
      *     their level. Note that you can as weel specify tabobject::$inactive for separate instances
      * @return string
      */
-    public final function tabtree($tabs, $selected = null, $inactive = null) {
+    final public function tabtree($tabs, $selected = null, $inactive = null) {
         return $this->render(new tabtree($tabs, $selected, $inactive));
     }
 
@@ -5191,7 +5191,7 @@ EOD;
      * @param  string $estimate time remaining message
      * @return string ascii fragment
      */
-    public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate) : string {
+    public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate): string {
         return html_writer::script(js_writer::function_call('updateProgressBar', [
             $id,
             round($percent, 1),
@@ -5475,7 +5475,7 @@ class core_renderer_cli extends core_renderer {
      * @param  string $estimate time remaining message
      * @return string ascii fragment
      */
-    public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate) : string {
+    public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate): string {
         $size = 55; // The width of the progress bar in chars.
         $ascii = '';
 

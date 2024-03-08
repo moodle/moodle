@@ -662,7 +662,7 @@ class enrol_manual_plugin extends enrol_plugin {
      * @param int $courseid Course ID.
      * @return stdClass|null Matching instance
      */
-    public function find_instance(array $enrolmentdata, int $courseid) : ?stdClass {
+    public function find_instance(array $enrolmentdata, int $courseid): ?stdClass {
 
         $instances = enrol_get_instances($courseid, false);
         $instance = null;

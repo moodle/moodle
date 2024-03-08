@@ -243,7 +243,7 @@ abstract class qtype_essay_format_renderer_base extends plugin_renderer_base {
      * @param object $context the context teh output belongs to.
      * @return string html to display the response.
      */
-    public abstract function response_area_read_only($name, question_attempt $qa,
+    abstract public function response_area_read_only($name, question_attempt $qa,
             question_attempt_step $step, $lines, $context);
 
     /**
@@ -255,13 +255,13 @@ abstract class qtype_essay_format_renderer_base extends plugin_renderer_base {
      * @param object $context the context teh output belongs to.
      * @return string html to display the response for editing.
      */
-    public abstract function response_area_input($name, question_attempt $qa,
+    abstract public function response_area_input($name, question_attempt $qa,
             question_attempt_step $step, $lines, $context);
 
     /**
      * @return string specific class name to add to the input element.
      */
-    protected abstract function class_name();
+    abstract protected function class_name();
 }
 
 /**

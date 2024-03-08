@@ -534,7 +534,7 @@ class core_files_renderer extends plugin_renderer_base {
      *
      * @return \stdClass $iconcontext the context for rendering license help info.
      */
-    protected function create_license_help_icon_context() : stdClass {
+    protected function create_license_help_icon_context(): stdClass {
         $licensecontext = new stdClass();
 
         $licenses = [];

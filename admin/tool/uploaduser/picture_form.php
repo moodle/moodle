@@ -28,7 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 require_once $CFG->libdir.'/formslib.php';
 
 class admin_uploadpicture_form extends moodleform {
-    function definition (){
+    function definition(){
         global $CFG, $USER;
 
         $mform =& $this->_form;

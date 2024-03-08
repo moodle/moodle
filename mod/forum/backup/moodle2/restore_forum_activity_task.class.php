@@ -51,7 +51,7 @@ class restore_forum_activity_task extends restore_activity_task {
      * Define the contents in the activity that must be
      * processed by the link decoder
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         $contents = array();
 
         $contents[] = new restore_decode_content('forum', array('intro'), 'forum');
@@ -64,7 +64,7 @@ class restore_forum_activity_task extends restore_activity_task {
      * Define the decoding rules for links belonging
      * to the activity to be executed by the link decoder
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         $rules = array();
 
         // List of forums in course
@@ -89,7 +89,7 @@ class restore_forum_activity_task extends restore_activity_task {
      * forum logs. It must return one array
      * of {@link restore_log_rule} objects
      */
-    static public function define_restore_log_rules() {
+    public static function define_restore_log_rules() {
         $rules = array();
 
         $rules[] = new restore_log_rule('forum', 'add', 'view.php?id={course_module}', '{forum}');
@@ -129,7 +129,7 @@ class restore_forum_activity_task extends restore_activity_task {
      * by the restore final task, but are defined here at
      * activity level. All them are rules not linked to any module instance (cmid = 0)
      */
-    static public function define_restore_log_rules_for_course() {
+    public static function define_restore_log_rules_for_course() {
         $rules = array();
 
         $rules[] = new restore_log_rule('forum', 'view forums', 'index.php?id={course}', null);

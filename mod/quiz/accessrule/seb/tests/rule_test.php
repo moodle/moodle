@@ -87,7 +87,7 @@ class rule_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function valid_form_data_provider() : array {
+    public function valid_form_data_provider(): array {
         return [
             'valid seb_requiresafeexambrowser' => ['seb_requiresafeexambrowser', '0'],
             'valid seb_linkquitseb0' => ['seb_linkquitseb', 'http://safeexambrowser.org/macosx'],
@@ -103,7 +103,7 @@ class rule_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function invalid_form_data_provider() : array {
+    public function invalid_form_data_provider(): array {
         return [
             'invalid seb_requiresafeexambrowser' => ['seb_requiresafeexambrowser', 'Uh oh!'],
             'invalid seb_linkquitseb0' => ['seb_linkquitseb', '\0'],

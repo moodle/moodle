@@ -34,7 +34,7 @@ abstract class xml_database_exporter extends database_exporter {
      * Generic output method. Subclasses should implement it with code specific
      * to the target XML sink.
      */
-    protected abstract function output($text);
+    abstract protected function output($text);
 
     /**
      * Callback function. Outputs open XML PI and moodle_database opening tag.

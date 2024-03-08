@@ -72,21 +72,21 @@ abstract class file_info {
      *
      * @return string
      */
-    public abstract function get_visible_name();
+    abstract public function get_visible_name();
 
     /**
      * Whether or not this is a directory
      *
      * @return bool
      */
-    public abstract function is_directory();
+    abstract public function is_directory();
 
     /**
      * Returns list of children.
      *
      * @return array of file_info instances
      */
-    public abstract function get_children();
+    abstract public function get_children();
 
     /**
      * Builds SQL sub query (WHERE clause) for selecting files with the specified extensions
@@ -203,7 +203,7 @@ abstract class file_info {
      *
      * @return file_info or null for root
      */
-    public abstract function get_parent();
+    abstract public function get_parent();
 
     /**
      * Returns array of url encoded params.

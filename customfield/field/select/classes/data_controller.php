@@ -39,7 +39,7 @@ class data_controller extends \core_customfield\data_controller {
      * Return the name of the field where the information is stored
      * @return string
      */
-    public function datafield() : string {
+    public function datafield(): string {
         return 'intvalue';
     }
 
@@ -93,7 +93,7 @@ class data_controller extends \core_customfield\data_controller {
      * @param array $files
      * @return array
      */
-    public function instance_form_validation(array $data, array $files) : array {
+    public function instance_form_validation(array $data, array $files): array {
         $errors = parent::instance_form_validation($data, $files);
         if ($this->get_field()->get_configdata_property('required')) {
             // Standard required rule does not work on select element.

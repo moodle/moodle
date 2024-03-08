@@ -31,7 +31,7 @@ class block_login extends block_base {
         return array('site' => true);
     }
 
-    function get_content () {
+    function get_content() {
         global $USER, $CFG, $SESSION, $OUTPUT;
         require_once($CFG->libdir . '/authlib.php');
 

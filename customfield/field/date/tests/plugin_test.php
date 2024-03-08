@@ -65,7 +65,7 @@ class plugin_test extends \advanced_testcase {
      * Get generator
      * @return core_customfield_generator
      */
-    protected function get_generator() : core_customfield_generator {
+    protected function get_generator(): core_customfield_generator {
         return $this->getDataGenerator()->get_plugin_generator('core_customfield');
     }
 
@@ -169,7 +169,7 @@ class plugin_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function parse_value_provider() : array {
+    public function parse_value_provider(): array {
         return [
             // Valid times.
             ['2019-10-01', strtotime('2019-10-01')],

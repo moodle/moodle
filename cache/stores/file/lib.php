@@ -981,7 +981,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @param string $ownerid Cache identifier
      * @return bool|null
      */
-    public function check_lock_state($key, $ownerid) : ?bool {
+    public function check_lock_state($key, $ownerid): ?bool {
         if (!array_key_exists($key, $this->locks)) {
             return null; // Lock does not exist.
         }
@@ -1011,7 +1011,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @return bool
      * @throws cache_exception
      */
-    public function acquire_lock($key, $ownerid) : bool {
+    public function acquire_lock($key, $ownerid): bool {
         $lock = $this->lockfactory->get_lock($key, $this->lockwait);
         if ($lock) {
             $this->locks[$key][$ownerid] = $lock;
@@ -1026,7 +1026,7 @@ class cachestore_file extends cache_store implements cache_is_key_aware, cache_i
      * @param string $ownerid Cache identifier
      * @return bool
      */
-    public function release_lock($key, $ownerid) : bool {
+    public function release_lock($key, $ownerid): bool {
         if (!array_key_exists($key, $this->locks)) {
             return false; // No lock to release.
         }

@@ -48,7 +48,7 @@ class read_slave_moodle_database_table_names extends read_slave_moodle_database 
      * @param string $sql
      * @return array
      */
-    public function table_names(string $sql) : array {
+    public function table_names(string $sql): array {
         return parent::table_names($sql);
     }
 }

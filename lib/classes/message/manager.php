@@ -64,7 +64,7 @@ class manager {
      * @param \stdClass $savemessage
      * @return int
      */
-    public static function send_message_to_conversation(message $eventdata, \stdClass $savemessage) : int {
+    public static function send_message_to_conversation(message $eventdata, \stdClass $savemessage): int {
         global $DB, $CFG, $SITE;
 
         if (empty($eventdata->convid)) {

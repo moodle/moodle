@@ -510,7 +510,7 @@ TEMPLATE;
      * @param array $cache A cache of templates
      * @return mustache_template_source_loader
      */
-    private function build_loader_from_static_cache(array $cache) : mustache_template_source_loader {
+    private function build_loader_from_static_cache(array $cache): mustache_template_source_loader {
         return new mustache_template_source_loader(function($component, $name, $themename) use ($cache) {
             return $cache[$component][$name];
         });

@@ -53,7 +53,7 @@ class category_hooks_test extends \advanced_testcase {
      * @param string $callback Callback function used in method we test.
      * @return MockObject
      */
-    public function get_mock_category(\core_course_category $category, string $callback = '') : MockObject {
+    public function get_mock_category(\core_course_category $category, string $callback = ''): MockObject {
         // Setup mock object for \core_course_category.
         // Disable original constructor, since we can't use it directly since it is private.
         $mockcategory = $this->getMockBuilder(\core_course_category::class)

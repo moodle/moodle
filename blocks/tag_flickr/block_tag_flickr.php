@@ -168,7 +168,7 @@ class block_tag_flickr extends block_base {
         return $response;
     }
 
-    function build_photo_url ($photo, $size='medium') {
+    function build_photo_url($photo, $size='medium') {
         //receives an array (can use the individual photo data returned
         //from an API call) and returns a URL (doesn't mean that the
         //file size exists)

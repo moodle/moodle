@@ -60,7 +60,7 @@ class langstring_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function fix_syntax_data() : array {
+    public function fix_syntax_data(): array {
         return [
             // Syntax sanity v1 strings.
             [

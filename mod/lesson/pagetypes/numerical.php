@@ -325,7 +325,7 @@ class lesson_page_type_numerical extends lesson_page {
      * @param stdClass $data The form data to update.
      * @return stdClass The updated fom data.
      */
-    public function update_form_data(stdClass $data) : stdClass {
+    public function update_form_data(stdClass $data): stdClass {
         $answercount = count($this->get_answers());
 
         // If no answers provided, then we don't need to check anything.
@@ -403,7 +403,7 @@ class lesson_add_page_form_numerical extends lesson_add_page_form_base {
      *
      * @return object|void
      */
-    public function get_data() : ?stdClass {
+    public function get_data(): ?stdClass {
         $data = parent::get_data();
 
         if (!empty($data->answer_editor)) {
@@ -421,7 +421,7 @@ class lesson_add_page_form_numerical extends lesson_add_page_form_base {
      *
      * @return object submitted data; NULL if not valid or not submitted or cancelled
      */
-    public function get_submitted_data() : ?stdClass {
+    public function get_submitted_data(): ?stdClass {
         $data = parent::get_submitted_data();
 
         if (!empty($data->answer_editor)) {

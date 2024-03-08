@@ -59,7 +59,7 @@ abstract class file_packer {
      * @param file_progress $progress Progress indicator callback or null if not required
      * @return stored_file|bool false if error stored_file instance if ok
      */
-    public abstract function archive_to_storage(array $files, $contextid,
+    abstract public function archive_to_storage(array $files, $contextid,
             $component, $filearea, $itemid, $filepath, $filename,
             $userid = NULL, $ignoreinvalidfiles=true, file_progress $progress = null);
 
@@ -84,7 +84,7 @@ abstract class file_packer {
      * @param file_progress $progress Progress indicator callback or null if not required
      * @return bool true if file created, false if not
      */
-    public abstract function archive_to_pathname(array $files, $archivefile,
+    abstract public function archive_to_pathname(array $files, $archivefile,
             $ignoreinvalidfiles=true, file_progress $progress = null);
 
     /**
@@ -98,7 +98,7 @@ abstract class file_packer {
      * details.
      * @return array|bool list of processed files; false if error
      */
-    public abstract function extract_to_pathname($archivefile, $pathname,
+    abstract public function extract_to_pathname($archivefile, $pathname,
             array $onlyfiles = NULL, file_progress $progress = null, $returnbool = false);
 
     /**
@@ -114,7 +114,7 @@ abstract class file_packer {
      * @param file_progress $progress Progress indicator callback or null if not required
      * @return array|bool list of processed files; false if error
      */
-    public abstract function extract_to_storage($archivefile, $contextid,
+    abstract public function extract_to_storage($archivefile, $contextid,
             $component, $filearea, $itemid, $pathbase, $userid = NULL,
             file_progress $progress = null);
 
@@ -124,5 +124,5 @@ abstract class file_packer {
      * @param string|file_archive $archivefile
      * @return array of file infos
      */
-    public abstract function list_files($archivefile);
+    abstract public function list_files($archivefile);
 }

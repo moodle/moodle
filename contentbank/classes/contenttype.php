@@ -374,7 +374,7 @@ abstract class contenttype {
      * @param  content $content The content to be managed.
      * @return bool     True if content could be managed. False otherwise.
      */
-    public final function can_manage(content $content): bool {
+    final public function can_manage(content $content): bool {
         global $USER;
 
         if ($this->context->id != $content->get_content()->contextid) {

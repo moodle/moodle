@@ -737,7 +737,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_courses
      */
-    public function test_get_courses () {
+    public function test_get_courses() {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -923,7 +923,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test search_courses
      */
-    public function test_search_courses () {
+    public function test_search_courses() {
 
         global $DB;
 
@@ -3302,7 +3302,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test cases for the get_enrolled_courses_by_timeline_classification test.
      */
-    public function get_get_enrolled_courses_by_timeline_classification_test_cases():array {
+    public function get_get_enrolled_courses_by_timeline_classification_test_cases(): array {
         $now = time();
         $day = 86400;
 

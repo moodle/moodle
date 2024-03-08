@@ -178,7 +178,7 @@ class singleview extends grade_report {
      * @param renderer_base $output
      * @return string HTML to display
      */
-    public function bulk_actions_menu(renderer_base $output) : string {
+    public function bulk_actions_menu(renderer_base $output): string {
         $options = [
             'overrideallgrades' => get_string('overrideallgrades', 'gradereport_singleview'),
             'overridenonegrades' => get_string('overridenonegrades', 'gradereport_singleview'),

@@ -5185,7 +5185,7 @@ class progress_bar implements renderable, templatable {
      * Getter for ID
      * @return string id
      */
-    public function get_id() : string {
+    public function get_id(): string {
         return $this->html_id;
     }
 

@@ -2165,7 +2165,7 @@ class api_test extends \advanced_testcase {
      * @param   string  $course Retention policy for courses.
      * @param   string  $activity Retention policy for activities.
      */
-    protected function setup_basics(string $system, string $user, string $course = null, string $activity = null) : \stdClass {
+    protected function setup_basics(string $system, string $user, string $course = null, string $activity = null): \stdClass {
         $this->resetAfterTest();
 
         $purposes = (object) [
@@ -2321,7 +2321,7 @@ class api_test extends \advanced_testcase {
      * @param   int     $status
      * @return  \tool_dataprivacy\data_request
      */
-    protected function create_request_with_type_and_status(int $userid, int $type, int $status) : \tool_dataprivacy\data_request {
+    protected function create_request_with_type_and_status(int $userid, int $type, int $status): \tool_dataprivacy\data_request {
         $request = new \tool_dataprivacy\data_request(0, (object) [
             'userid' => $userid,
             'type' => $type,

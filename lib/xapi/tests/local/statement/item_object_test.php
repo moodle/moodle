@@ -117,7 +117,7 @@ class item_object_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_data_provider() : array {
+    public function invalid_data_provider(): array {
         return [
             'Empty or null id' => [
                 '',

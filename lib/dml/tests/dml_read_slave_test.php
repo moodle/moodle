@@ -61,7 +61,7 @@ class dml_read_slave_test extends \base_testcase {
             ['dbhost' => 'test_ro3', 'dbport' => 3, 'dbuser' => 'test3', 'dbpass' => 'test3'],
         ],
         $dbclass = read_slave_moodle_database::class
-    ) : read_slave_moodle_database {
+    ): read_slave_moodle_database {
         $dbhost = 'test_rw';
         $dbname = 'test';
         $dbuser = 'test';
@@ -84,7 +84,7 @@ class dml_read_slave_test extends \base_testcase {
      * @param string $handle
      * @return void
      */
-    private function assert_readonly_handle($handle) : void {
+    private function assert_readonly_handle($handle): void {
         $this->assertMatchesRegularExpression('/^test_ro\d:\d:test\d:test\d$/', $handle);
     }
 
@@ -94,7 +94,7 @@ class dml_read_slave_test extends \base_testcase {
      * @return array
      * @dataProvider table_names_provider
      */
-    public function table_names_provider() : array {
+    public function table_names_provider(): array {
         return [
             [
                 "SELECT *
@@ -140,7 +140,7 @@ class dml_read_slave_test extends \base_testcase {
      * @return void
      * @dataProvider table_names_provider
      */
-    public function test_table_names($sql, $tables) : void {
+    public function test_table_names($sql, $tables): void {
         $db = new read_slave_moodle_database_table_names();
 
         $this->assertEquals($tables, $db->table_names($db->fix_sql_params($sql)[0]));
@@ -152,7 +152,7 @@ class dml_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_read_read_write_read() : void {
+    public function test_read_read_write_read(): void {
         $DB = $this->new_db(true);
 
         $this->assertEquals(0, $DB->perf_get_reads_slave());
@@ -192,7 +192,7 @@ class dml_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_read_write_write() : void {
+    public function test_read_write_write(): void {
         $DB = $this->new_db();
 
         $this->assertEquals(0, $DB->perf_get_reads_slave());
@@ -217,7 +217,7 @@ class dml_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_write_read_read() : void {
+    public function test_write_read_read(): void {
         $DB = $this->new_db();
 
         $this->assertEquals(0, $DB->perf_get_reads_slave());
@@ -255,7 +255,7 @@ class dml_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_read_temptable() : void {
+    public function test_read_temptable(): void {
         $DB = $this->new_db();
         $DB->add_temptable('temptable1');
 
@@ -274,7 +274,7 @@ class dml_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_read_excluded_tables() : void {
+    public function test_read_excluded_tables(): void {
         $DB = $this->new_db();
 
         $this->assertEquals(0, $DB->perf_get_reads_slave());
@@ -457,7 +457,7 @@ class dml_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_read_only_conn_fail() : void {
+    public function test_read_only_conn_fail(): void {
         $DB = $this->new_db(false, 'test_ro_fail');
 
         $this->assertEquals(0, $DB->perf_get_reads_slave());
@@ -475,7 +475,7 @@ class dml_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_read_only_conn_first_fail() : void {
+    public function test_read_only_conn_first_fail(): void {
         $DB = $this->new_db(false, ['test_ro_fail', 'test_ro_ok']);
 
         $this->assertEquals(0, $DB->perf_get_reads_slave());
@@ -510,7 +510,7 @@ class dml_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_lock_db() : void {
+    public function test_lock_db(): void {
         $this->with_global_db(function () {
             global $DB;
 
@@ -544,7 +544,7 @@ class dml_read_slave_test extends \base_testcase {
      *
      * @return void
      */
-    public function test_sessions() : void {
+    public function test_sessions(): void {
         $this->with_global_db(function () {
             global $DB, $CFG;
 

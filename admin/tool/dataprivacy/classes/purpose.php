@@ -185,7 +185,7 @@ class purpose extends \core\persistent {
      *
      * @return  array
      */
-    public function get_purpose_overrides() : array {
+    public function get_purpose_overrides(): array {
         return purpose_override::get_overrides_for_purpose($this);
     }
 }

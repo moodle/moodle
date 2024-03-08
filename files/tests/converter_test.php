@@ -786,7 +786,7 @@ class core_file_converter_requirements_base implements \core_files\converter_int
      *
      * @return  string
      */
-    public function  get_supported_conversions() {
+    public function get_supported_conversions() {
         return [];
     }
 

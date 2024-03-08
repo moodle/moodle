@@ -114,7 +114,7 @@ class core_calendar_external extends external_api {
      * @return \core_external\external_description
      * @since Moodle 2.5
      */
-    public static function  delete_calendar_events_returns() {
+    public static function delete_calendar_events_returns() {
         return null;
     }
 
@@ -365,7 +365,7 @@ class core_calendar_external extends external_api {
      * @return \core_external\external_description
      * @since Moodle 2.5
      */
-    public static function  get_calendar_events_returns() {
+    public static function get_calendar_events_returns() {
         return new external_single_structure(array(
                 'events' => new external_multiple_structure( new external_single_structure(
                         array(
@@ -760,7 +760,7 @@ class core_calendar_external extends external_api {
      * @return \core_external\external_description.
      * @since Moodle 2.5
      */
-    public static function  create_calendar_events_returns() {
+    public static function create_calendar_events_returns() {
             return new external_single_structure(
                     array(
                         'events' => new external_multiple_structure( new external_single_structure(
@@ -989,7 +989,7 @@ class core_calendar_external extends external_api {
      *
      * @return \core_external\external_description.
      */
-    public static function  submit_create_update_form_returns() {
+    public static function submit_create_update_form_returns() {
         $eventstructure = event_exporter::get_read_structure();
         $eventstructure->required = VALUE_OPTIONAL;
 
@@ -1329,7 +1329,7 @@ class core_calendar_external extends external_api {
      * @return \core_external\external_description.
      * @since  Moodle 3.7
      */
-    public static function  get_calendar_access_information_returns() {
+    public static function get_calendar_access_information_returns() {
 
         return new external_single_structure(
             [
@@ -1389,7 +1389,7 @@ class core_calendar_external extends external_api {
      * @return \core_external\external_description.
      * @since  Moodle 3.7
      */
-    public static function  get_allowed_event_types_returns() {
+    public static function get_allowed_event_types_returns() {
 
         return new external_single_structure(
             [

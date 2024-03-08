@@ -60,7 +60,7 @@ class extract_user {
      * @param stdClass[] $records The DB records
      * @return stdClass[] The list of extracted users
      */
-    public function execute(array $records) : array {
+    public function execute(array $records): array {
         $idalias = $this->idalias;
         $alias = $this->alias;
 

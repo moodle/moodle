@@ -45,7 +45,7 @@ use core_external\util as external_util;
  * @param string $newvalue the changed question title
  * @return \core\output\inplace_editable
  */
-function qbank_viewquestionname_inplace_editable ($itemtype, $itemid, $newvalue) : \core\output\inplace_editable {
+function qbank_viewquestionname_inplace_editable ($itemtype, $itemid, $newvalue): \core\output\inplace_editable {
     if ($itemtype === 'questionname') {
         global $CFG, $DB;
         require_once($CFG->libdir . '/questionlib.php');

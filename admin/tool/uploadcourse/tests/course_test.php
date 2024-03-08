@@ -1739,7 +1739,7 @@ class course_test extends \advanced_testcase {
      *
      * @return core_customfield_generator
      */
-    protected function get_customfield_generator() : \core_customfield_generator {
+    protected function get_customfield_generator(): \core_customfield_generator {
         return $this->getDataGenerator()->get_plugin_generator('core_customfield');
     }
 
@@ -1753,7 +1753,7 @@ class course_test extends \advanced_testcase {
      * @return \core_customfield\field_controller
      */
     protected function create_custom_field(\core_customfield\category_controller $category, string $type, string $shortname,
-            array $configdata = []) : \core_customfield\field_controller {
+            array $configdata = []): \core_customfield\field_controller {
 
         return $this->get_customfield_generator()->create_field([
             'categoryid' => $category->get('id'),

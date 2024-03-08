@@ -546,7 +546,7 @@ EOF;
      *
      * @return array Array where key is tag name and value is an integer
      */
-    public static function get_tags_for_scenario() : array {
+    public static function get_tags_for_scenario(): array {
         return self::$scenariotags;
     }
 

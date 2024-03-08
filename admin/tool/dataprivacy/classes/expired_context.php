@@ -182,7 +182,7 @@ class expired_context extends \core\persistent {
      * @param   int[]   $roleids
      * @return  expired_context
      */
-    protected function set_roleids_for(string $field, array $roleids) : expired_context {
+    protected function set_roleids_for(string $field, array $roleids): expired_context {
         $roledata = json_encode($roleids);
 
         $this->raw_set($field, $roledata);
@@ -211,7 +211,7 @@ class expired_context extends \core\persistent {
      * @param   int[]   $roleids
      * @return  expired_context
      */
-    protected function set_unexpiredroles(array $roleids) : expired_context {
+    protected function set_unexpiredroles(array $roleids): expired_context {
         $this->set_roleids_for('unexpiredroles', $roleids);
 
         return $this;
@@ -223,7 +223,7 @@ class expired_context extends \core\persistent {
      * @param   int[]   $roleids
      * @return  expired_context
      */
-    public function add_expiredroles(array $roleids) : expired_context {
+    public function add_expiredroles(array $roleids): expired_context {
         $existing = $this->get('expiredroles');
         $newvalue = array_merge($existing, $roleids);
 
@@ -238,7 +238,7 @@ class expired_context extends \core\persistent {
      * @param   int[]   $roleids
      * @return  unexpired_context
      */
-    public function add_unexpiredroles(array $roleids) : expired_context {
+    public function add_unexpiredroles(array $roleids): expired_context {
         $existing = $this->get('unexpiredroles');
         $newvalue = array_merge($existing, $roleids);
 
@@ -253,7 +253,7 @@ class expired_context extends \core\persistent {
      * @param   int[]   $roleids
      * @return  expired_context
      */
-    protected function set_expiredroles(array $roleids) : expired_context {
+    protected function set_expiredroles(array $roleids): expired_context {
         $this->set_roleids_for('expiredroles', $roleids);
 
         return $this;
@@ -285,7 +285,7 @@ class expired_context extends \core\persistent {
      * @param   boolean         $save
      * @return  expired_context
      */
-    public static function create_from_expiry_info(\context $context, expiry_info $info, bool $save = true) : expired_context {
+    public static function create_from_expiry_info(\context $context, expiry_info $info, bool $save = true): expired_context {
         $record = (object) [
             'contextid' => $context->id,
             'status' => self::STATUS_EXPIRED,
@@ -309,7 +309,7 @@ class expired_context extends \core\persistent {
      * @param   expiry_info     $info
      * @return  $this
      */
-    public function update_from_expiry_info(expiry_info $info) : expired_context {
+    public function update_from_expiry_info(expiry_info $info): expired_context {
         $save = false;
 
         // Compare the expiredroles.
@@ -353,7 +353,7 @@ class expired_context extends \core\persistent {
      *
      * @return  bool
      */
-    public function can_process_deletion() : bool {
+    public function can_process_deletion(): bool {
         return ($this->get('status') == self::STATUS_APPROVED);
     }
 
@@ -362,7 +362,7 @@ class expired_context extends \core\persistent {
      *
      * @return  bool
      */
-    public function is_complete() : bool {
+    public function is_complete(): bool {
         return ($this->get('status') == self::STATUS_CLEANED);
     }
 
@@ -372,7 +372,7 @@ class expired_context extends \core\persistent {
      *
      * @return  bool
      */
-    public function is_fully_expired() : bool {
+    public function is_fully_expired(): bool {
         return $this->get('defaultexpired') && empty($this->get('unexpiredroles'));
     }
 }

@@ -43,7 +43,7 @@ class contextlist extends contextlist_base {
      * @param   array   $params The set of SQL parameters
      * @return  $this
      */
-    public function add_from_sql(string $sql, array $params) : contextlist {
+    public function add_from_sql(string $sql, array $params): contextlist {
         global $DB;
 
         $fields = \context_helper::get_preload_record_columns_sql('ctx');
@@ -87,7 +87,7 @@ class contextlist extends contextlist_base {
      *
      * @return $this
      */
-    public function add_system_context() : contextlist {
+    public function add_system_context(): contextlist {
         return $this->add_from_sql(SYSCONTEXTID, []);
     }
 
@@ -97,7 +97,7 @@ class contextlist extends contextlist_base {
      * @param int $userid
      * @return $this
      */
-    public function add_user_context(int $userid) : contextlist {
+    public function add_user_context(int $userid): contextlist {
         $sql = "SELECT DISTINCT ctx.id
                   FROM {context} ctx
                  WHERE ctx.contextlevel = :contextlevel
@@ -111,7 +111,7 @@ class contextlist extends contextlist_base {
      * @param array $userids
      * @return $this
      */
-    public function add_user_contexts(array $userids) : contextlist {
+    public function add_user_contexts(array $userids): contextlist {
         global $DB;
 
         list($useridsql, $useridparams) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
@@ -137,7 +137,7 @@ class contextlist extends contextlist_base {
      * @param   string  $sql The SQL to guess from
      * @return  string  The field name or a numeric value representing the context id
      */
-    protected function guess_id_field_from_sql(string $sql) : string {
+    protected function guess_id_field_from_sql(string $sql): string {
         // We are not interested in any subquery/view/conditions for the purpose of this method, so
         // let's reduce the query to the interesting parts by recursively cleaning all
         // contents within parenthesis. If there are problems (null), we keep the text unmodified.

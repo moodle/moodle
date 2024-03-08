@@ -32,7 +32,7 @@ abstract class backup_helper {
     /**
      * Given one backupid, create all the needed dirs to have one backup temp dir available
      */
-    static public function check_and_create_backup_dir($backupid) {
+    public static function check_and_create_backup_dir($backupid) {
         $backupiddir = make_backup_temp_directory($backupid, false);
         if (empty($backupiddir)) {
             throw new backup_helper_exception('cannot_create_backup_temp_dir');
@@ -48,7 +48,7 @@ abstract class backup_helper {
      * @param string $backupid Backup id
      * @param \core\progress\base $progress Optional progress reporting object
      */
-    static public function clear_backup_dir($backupid, \core\progress\base $progress = null) {
+    public static function clear_backup_dir($backupid, \core\progress\base $progress = null) {
         $backupiddir = make_backup_temp_directory($backupid, false);
         if (!self::delete_dir_contents($backupiddir, '', $progress)) {
             throw new backup_helper_exception('cannot_empty_backup_temp_dir');
@@ -65,7 +65,7 @@ abstract class backup_helper {
      * @param string $backupid Backup id
      * @param \core\progress\base $progress Optional progress reporting object
      */
-     static public function delete_backup_dir($backupid, \core\progress\base $progress = null) {
+     public static function delete_backup_dir($backupid, \core\progress\base $progress = null) {
          $backupiddir = make_backup_temp_directory($backupid, false);
          self::clear_backup_dir($backupid, $progress);
          return rmdir($backupiddir);
@@ -83,7 +83,7 @@ abstract class backup_helper {
      * @param string $excludedir Exclude this directory
      * @param \core\progress\base $progress Optional progress reporting object
      */
-    static public function delete_dir_contents($dir, $excludeddir='', \core\progress\base $progress = null) {
+    public static function delete_dir_contents($dir, $excludeddir='', \core\progress\base $progress = null) {
         global $CFG;
 
         if ($progress) {
@@ -156,7 +156,7 @@ abstract class backup_helper {
      * @param int $deletebefore Delete files and directories older than this time
      * @param \core\progress\base $progress Optional progress reporting object
      */
-    static public function delete_old_backup_dirs($deletebefore, \core\progress\base $progress = null) {
+    public static function delete_old_backup_dirs($deletebefore, \core\progress\base $progress = null) {
         $status = true;
         // Get files and directories in the backup temp dir.
         $backuptempdir = make_backup_temp_directory('');
@@ -188,7 +188,7 @@ abstract class backup_helper {
      * parameter is true, supporting translation via get_string() and sending to
      * standard output.
      */
-    static public function log($message, $level, $a, $depth, $display, $logger) {
+    public static function log($message, $level, $a, $depth, $display, $logger) {
         // Send to standard loggers
         $logmessage = $message;
         $options = empty($depth) ? array() : array('depth' => $depth);
@@ -219,7 +219,7 @@ abstract class backup_helper {
      *
      * @throws moodle_exception in case of any problems
      */
-    static public function store_backup_file($backupid, $filepath, \core\progress\base $progress = null) {
+    public static function store_backup_file($backupid, $filepath, \core\progress\base $progress = null) {
         global $CFG;
 
         // First of all, get some information from the backup_controller to help us decide
@@ -386,7 +386,7 @@ abstract class backup_helper {
      *
      * @param string $current The current course reuse option where the header is modified
      */
-    public static function print_coursereuse_selector(string $current):void {
+    public static function print_coursereuse_selector(string $current): void {
         global $OUTPUT, $PAGE;
 
         if ($coursereusenode = $PAGE->settingsnav->find('coursereuse', \navigation_node::TYPE_CONTAINER)) {

@@ -73,7 +73,7 @@ class get_result_admintree_test extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public static function execute_options_provider() : array {
+    public static function execute_options_provider(): array {
         return [
             'get check result (ok, no details)' => [
                 'triggererror' => false,

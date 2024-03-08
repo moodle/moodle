@@ -157,7 +157,7 @@ class renderer extends plugin_renderer_base {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    public function analysisbutton(int $courseid) : string {
+    public function analysisbutton(int $courseid): string {
         $link = new moodle_url(accessibility::get_plugin_url(), [
             'action' => 'requestanalysis',
             'courseid' => $courseid

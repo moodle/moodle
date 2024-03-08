@@ -241,7 +241,7 @@ class data_request extends persistent {
      *
      * @return  bool
      */
-    public function is_resettable() : bool {
+    public function is_resettable(): bool {
         if (api::DATAREQUEST_TYPE_OTHERS == $this->get('type')) {
             // It is not possible to reset 'other' reqeusts.
             return false;
@@ -260,7 +260,7 @@ class data_request extends persistent {
      *
      * @return  bool
      */
-    public function is_active() : bool {
+    public function is_active(): bool {
         $active = [
             api::DATAREQUEST_STATUS_APPROVED => true,
         ];
@@ -275,7 +275,7 @@ class data_request extends persistent {
      *
      * @return  self
      */
-    public function resubmit_request() : data_request {
+    public function resubmit_request(): data_request {
         if ($this->is_active()) {
             $this->set('status', api::DATAREQUEST_STATUS_REJECTED)->save();
         }

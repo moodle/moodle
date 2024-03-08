@@ -65,7 +65,7 @@ class block_settings extends block_base {
      *
      * @return false
      */
-    function  instance_can_be_hidden() {
+    function instance_can_be_hidden() {
         return false;
     }
 

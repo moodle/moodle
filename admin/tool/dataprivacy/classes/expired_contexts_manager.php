@@ -68,7 +68,7 @@ class expired_contexts_manager {
      *
      * @return  int[]   The number of contexts flagged as expired for courses, and users.
      */
-    public function flag_expired_contexts() : array {
+    public function flag_expired_contexts(): array {
         $this->trace->output('Checking requirements');
         if (!$this->check_requirements()) {
             $this->trace->output('Requirements not met. Cannot process expired retentions.', 1);
@@ -151,7 +151,7 @@ class expired_contexts_manager {
      * @param   string      $contextpath A contexpath to restrict results to
      * @return  \stdClass[]
      */
-    protected static function get_nested_expiry_info($contextpath = '') : array {
+    protected static function get_nested_expiry_info($contextpath = ''): array {
         $coursepaths = self::get_nested_expiry_info_for_courses($contextpath);
         $userpaths = self::get_nested_expiry_info_for_user($contextpath);
 
@@ -164,7 +164,7 @@ class expired_contexts_manager {
      * @param   string      $contextpath A contexpath to restrict results to
      * @return  \stdClass[]
      */
-    protected static function get_nested_expiry_info_for_courses($contextpath = '') : array {
+    protected static function get_nested_expiry_info_for_courses($contextpath = ''): array {
         global $DB;
 
         $contextfields = \context_helper::get_preload_record_columns_sql('ctx');
@@ -217,7 +217,7 @@ class expired_contexts_manager {
      * @param   string      $contextpath A contexpath to restrict results to
      * @return  \stdClass[]
      */
-    protected static function get_nested_expiry_info_for_user($contextpath = '') : array {
+    protected static function get_nested_expiry_info_for_user($contextpath = ''): array {
         global $DB;
 
         $contextfields = \context_helper::get_preload_record_columns_sql('ctx');
@@ -262,7 +262,7 @@ class expired_contexts_manager {
      * @param   array       $params The params required by the SQL.
      * @return  \stdClass[]
      */
-    protected static function get_nested_expiry_info_from_sql(string $sql, array $params) : array {
+    protected static function get_nested_expiry_info_from_sql(string $sql, array $params): array {
         global $DB;
 
         $fulllist = $DB->get_recordset_sql($sql, $params);
@@ -334,7 +334,7 @@ class expired_contexts_manager {
      * @param   \context    $context
      * @return  bool
      */
-    protected static function is_eligible_for_deletion(array &$pathstoskip, \context $context) : bool {
+    protected static function is_eligible_for_deletion(array &$pathstoskip, \context $context): bool {
         $shouldskip = false;
         // Check whether any of the child contexts are ineligble.
         $shouldskip = !empty(array_filter($pathstoskip, function($path) use ($context) {
@@ -361,7 +361,7 @@ class expired_contexts_manager {
      *
      * @return  int[]       The number of deleted contexts.
      */
-    public function process_approved_deletions() : array {
+    public function process_approved_deletions(): array {
         $this->trace->output('Checking requirements');
         if (!$this->check_requirements()) {
             $this->trace->output('Requirements not met. Cannot process expired retentions.', 1);
@@ -538,7 +538,7 @@ class expired_contexts_manager {
      *
      * @return bool
      */
-    protected static function require_all_end_dates_for_user_deletion() : bool {
+    protected static function require_all_end_dates_for_user_deletion(): bool {
         $requireenddate = get_config('tool_dataprivacy', 'requireallenddatesforuserdeletion');
 
         return !empty($requireenddate);
@@ -563,7 +563,7 @@ class expired_contexts_manager {
      * @param   int         $comparisondate The date for comparison
      * @return  bool
      */
-    protected static function has_expired(string $period, int $comparisondate) : bool {
+    protected static function has_expired(string $period, int $comparisondate): bool {
         $dt = new \DateTime();
         $dt->setTimestamp($comparisondate);
         $dt->add(new \DateInterval($period));
@@ -578,7 +578,7 @@ class expired_contexts_manager {
      * @param   int         $comparisondate The date for comparison
      * @return  expiry_info
      */
-    protected static function get_expiry_info(purpose $purpose, int $comparisondate = 0) : expiry_info {
+    protected static function get_expiry_info(purpose $purpose, int $comparisondate = 0): expiry_info {
         $overrides = $purpose->get_purpose_overrides();
         $expiredroles = $unexpiredroles = [];
         if (empty($overrides)) {
@@ -730,7 +730,7 @@ class expired_contexts_manager {
      * @param   \context        $context
      * @return  \stdClass
      */
-    protected function get_role_users_for_expired_context(expired_context $expiredctx, \context $context) : \stdClass {
+    protected function get_role_users_for_expired_context(expired_context $expiredctx, \context $context): \stdClass {
         $expiredroles = $expiredctx->get('expiredroles');
         $expiredroleusers = [];
         if (!empty($expiredroles)) {
@@ -782,7 +782,7 @@ class expired_contexts_manager {
      * @param   \context    $context
      * @return  bool
      */
-    public static function is_context_expired(\context $context) : bool {
+    public static function is_context_expired(\context $context): bool {
         $parents = $context->get_parent_contexts(true);
         foreach ($parents as $parent) {
             if ($parent instanceof \context_course) {
@@ -805,7 +805,7 @@ class expired_contexts_manager {
      * @param   \stdClass   $course
      * @return  bool
      */
-    protected static function is_course_expired(\stdClass $course) : bool {
+    protected static function is_course_expired(\stdClass $course): bool {
         $context = \context_course::instance($course->id);
 
         return self::is_course_context_expired($context);
@@ -818,7 +818,7 @@ class expired_contexts_manager {
      * @param   \context        $context
      * @return  bool
      */
-    protected static function is_course_context_expired(\context $context) : bool {
+    protected static function is_course_context_expired(\context $context): bool {
         $expiryrecords = self::get_nested_expiry_info_for_courses($context->path);
 
         return !empty($expiryrecords[$context->path]) && $expiryrecords[$context->path]->info->is_fully_expired();
@@ -839,7 +839,7 @@ class expired_contexts_manager {
      * @param   \context_user   $context
      * @return  bool
      */
-    protected static function are_user_context_dependencies_expired(\context_user $context) : bool {
+    protected static function are_user_context_dependencies_expired(\context_user $context): bool {
         // The context instanceid is the user's ID.
         if (isguestuser($context->instanceid) || is_siteadmin($context->instanceid)) {
             // This is an admin, or the guest and cannot expire.
@@ -889,7 +889,7 @@ class expired_contexts_manager {
      * @param   \stdClass   $user
      * @return  bool
      */
-    public static function is_context_expired_or_unprotected_for_user(\context $context, \stdClass $user) : bool {
+    public static function is_context_expired_or_unprotected_for_user(\context $context, \stdClass $user): bool {
         // User/course contexts can't expire if no purpose is set in the system context.
         if (!data_registry::defaults_set()) {
             return false;
@@ -972,7 +972,7 @@ class expired_contexts_manager {
      *
      * @return  manager
      */
-    protected function get_privacy_manager() : manager {
+    protected function get_privacy_manager(): manager {
         if (null === $this->manager) {
             $this->manager = new manager();
             $this->manager->set_observer(new \tool_dataprivacy\manager_observer());
@@ -986,7 +986,7 @@ class expired_contexts_manager {
      *
      * @return  int
      */
-    protected function get_delete_limit() : int {
+    protected function get_delete_limit(): int {
         return self::DELETE_LIMIT;
     }
 
@@ -995,7 +995,7 @@ class expired_contexts_manager {
      *
      * @return  \progress_trace
      */
-    protected function get_progress() : \progress_trace {
+    protected function get_progress(): \progress_trace {
         if (null === $this->progresstracer) {
             $this->set_progress(new \text_progress_trace());
         }
@@ -1009,7 +1009,7 @@ class expired_contexts_manager {
      * @param   \progress_trace $trace
      * @return  $this
      */
-    public function set_progress(\progress_trace $trace) : expired_contexts_manager {
+    public function set_progress(\progress_trace $trace): expired_contexts_manager {
         $this->progresstracer = $trace;
 
         return $this;

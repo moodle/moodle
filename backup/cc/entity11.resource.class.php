@@ -25,7 +25,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 class cc11_resource extends entities11 {
 
-    public function generate_node () {
+    public function generate_node() {
 
         cc112moodle::log_action('Creating Resource mods');
 
@@ -42,7 +42,7 @@ class cc11_resource extends entities11 {
 
     }
 
-    private function create_node_course_modules_mod_resource ($sheet_mod_resource, $instance) {
+    private function create_node_course_modules_mod_resource($sheet_mod_resource, $instance) {
         global $CFG;
 
         require_once($CFG->libdir.'/validateurlsyntax.php');

@@ -70,7 +70,7 @@ class auth_plugin_cas extends auth_plugin_ldap {
      * @param string $password The password (with system magic quotes)
      * @return bool Authentication success or failure.
      */
-    function user_login ($username, $password) {
+    function user_login($username, $password) {
         $this->connectCAS();
         return phpCAS::isAuthenticated() && (trim(core_text::strtolower(phpCAS::getUser())) == $username);
     }

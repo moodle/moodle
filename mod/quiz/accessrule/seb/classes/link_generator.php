@@ -45,7 +45,7 @@ class link_generator {
      * @param bool $secure Whether to use HTTPS or HTTP protocol.
      * @return string A URL.
      */
-    public static function get_link(string $cmid, bool $seb = false, bool $secure = true) : string {
+    public static function get_link(string $cmid, bool $seb = false, bool $secure = true): string {
         // Check if course module exists.
         get_coursemodule_from_id('quiz', $cmid, 0, false, MUST_EXIST);
 

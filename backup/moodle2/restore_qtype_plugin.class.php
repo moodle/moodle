@@ -384,7 +384,7 @@ abstract class restore_qtype_plugin extends restore_plugin {
      *
      * Note each qtype will have, if needed, its own define_decode_contents method
      */
-    static public function define_plugin_decode_contents() {
+    public static function define_plugin_decode_contents() {
 
         $contents = array();
 

@@ -281,7 +281,7 @@ class memcached extends handler {
      * @param   string  $str save_path value containing memcached connection string
      * @return  array[]
      */
-    protected static function connection_string_to_memcache_servers(string $str) : array {
+    protected static function connection_string_to_memcache_servers(string $str): array {
         $servers = [];
         $parts   = explode(',', $str);
         foreach ($parts as $part) {

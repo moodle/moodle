@@ -150,7 +150,7 @@ class template_controller {
      * Returns a text for create new record button.
      * @return string
      */
-    protected function get_create_button_text() : string {
+    protected function get_create_button_text(): string {
         return get_string('addtemplate', 'quizaccess_seb');
     }
 
@@ -161,7 +161,7 @@ class template_controller {
      *
      * @return \quizaccess_seb\local\form\template
      */
-    protected function get_form($instance) : \quizaccess_seb\local\form\template {
+    protected function get_form($instance): \quizaccess_seb\local\form\template {
         global $PAGE;
 
         return new \quizaccess_seb\local\form\template($PAGE->url->out(false), ['persistent' => $instance]);
@@ -171,7 +171,7 @@ class template_controller {
      * View page heading string.
      * @return string
      */
-    protected function get_view_heading() : string {
+    protected function get_view_heading(): string {
         return get_string('managetemplates', 'quizaccess_seb');
     }
 
@@ -179,7 +179,7 @@ class template_controller {
      * New record heading string.
      * @return string
      */
-    protected function get_new_heading() : string {
+    protected function get_new_heading(): string {
         return get_string('newtemplate', 'quizaccess_seb');
     }
 
@@ -187,7 +187,7 @@ class template_controller {
      * Edit record heading string.
      * @return string
      */
-    protected function get_edit_heading() : string {
+    protected function get_edit_heading(): string {
         return get_string('edittemplate', 'quizaccess_seb');
     }
 
@@ -195,7 +195,7 @@ class template_controller {
      * Returns base URL for the manager.
      * @return string
      */
-    public static function get_base_url() : string {
+    public static function get_base_url(): string {
         return '/mod/quiz/accessrule/seb/template.php';
     }
 

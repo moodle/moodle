@@ -250,7 +250,7 @@ abstract class moodle_list {
     /**
      * Should be overriden to return an array of records of list items.
      */
-    public abstract function get_records();
+    abstract public function get_records();
 
     /**
      * display list of page numbers for navigation

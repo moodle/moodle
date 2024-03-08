@@ -41,7 +41,7 @@ class data_controller extends \core_customfield\data_controller {
      * Return the name of the field where the information is stored
      * @return string
      */
-    public function datafield() : string {
+    public function datafield(): string {
         return 'value';
     }
 
@@ -61,7 +61,7 @@ class data_controller extends \core_customfield\data_controller {
      *
      * @return string
      */
-    public function get_form_element_name() : string {
+    public function get_form_element_name(): string {
         return parent::get_form_element_name() . '_editor';
     }
 

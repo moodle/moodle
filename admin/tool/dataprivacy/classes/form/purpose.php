@@ -245,7 +245,7 @@ class purpose extends persistent {
      * @param   string  $prefix The prefix to apply to the field
      * @return  \stdClass
      */
-    protected function get_role_override_id(string $prefix = '') : \stdClass {
+    protected function get_role_override_id(string $prefix = ''): \stdClass {
         $fieldname = "{$prefix}id";
 
         $fielddata = (object) [
@@ -264,7 +264,7 @@ class purpose extends persistent {
      * @param   string  $prefix The prefix to apply to the field
      * @return  \stdClass
      */
-    protected function get_role_field(string $prefix = '') : \stdClass {
+    protected function get_role_field(string $prefix = ''): \stdClass {
         $fieldname = "{$prefix}roleid";
 
         $fielddata = (object) [
@@ -297,7 +297,7 @@ class purpose extends persistent {
      * @param   string  $prefix The prefix to apply to the field
      * @return  \stdClass
      */
-    protected function get_lawful_base_field(string $prefix = '') : \stdClass {
+    protected function get_lawful_base_field(string $prefix = ''): \stdClass {
         $fieldname = "{$prefix}lawfulbases";
 
         $data = (object) [
@@ -334,7 +334,7 @@ class purpose extends persistent {
      * @param   string  $prefix The prefix to apply to the field
      * @return  \stdClass
      */
-    protected function get_sensitive_base_field(string $prefix = '') : \stdClass {
+    protected function get_sensitive_base_field(string $prefix = ''): \stdClass {
         $fieldname = "{$prefix}sensitivedatareasons";
 
         $data = (object) [
@@ -373,7 +373,7 @@ class purpose extends persistent {
      * @param   string  $prefix The name of the main field, and prefix for the subfields.
      * @return  \stdClass
      */
-    protected function get_retention_period_fields(string $prefix = '') : \stdClass {
+    protected function get_retention_period_fields(string $prefix = ''): \stdClass {
         $prefix = "{$prefix}retentionperiod";
         $data = (object) [
             'fields' => [],
@@ -411,7 +411,7 @@ class purpose extends persistent {
      * @param   string  $prefix The prefix to apply to the field
      * @return  \stdClass
      */
-    protected function get_protected_field(string $prefix = '') : \stdClass {
+    protected function get_protected_field(string $prefix = ''): \stdClass {
         $fieldname = "{$prefix}protected";
 
         return (object) [
@@ -470,7 +470,7 @@ class purpose extends persistent {
      * @param   \stdClass $data
      * @return  \stdClass
      */
-    protected function convert_existing_data_to_values(\stdClass $data) : \stdClass {
+    protected function convert_existing_data_to_values(\stdClass $data): \stdClass {
         $data->lawfulbases = explode(',', $data->lawfulbases);
         if (!empty($data->sensitivedatareasons)) {
             $data->sensitivedatareasons = explode(',', $data->sensitivedatareasons);

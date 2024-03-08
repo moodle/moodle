@@ -156,7 +156,7 @@ class backup_course_task extends backup_task {
      * @param string $content content in which to encode links.
      * @return string content with links encoded.
      */
-    static public function encode_content_links($content) {
+    public static function encode_content_links($content) {
 
         // Link to the course main page (it also covers "&topic=xx" and "&week=xx"
         // because they don't become transformed (section number) in backup/restore.

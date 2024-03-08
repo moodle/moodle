@@ -1036,7 +1036,7 @@ class core_backup_renderer extends plugin_renderer_base {
      * @param \context $context The Moodle context for these restores.
      * @return string $html The table HTML.
      */
-    public function restore_progress_viewer ($userid, $context) {
+    public function restore_progress_viewer($userid, $context) {
         $tablehead = array(get_string('course'), get_string('time'), get_string('status', 'backup'));
 
         $table = new html_table();

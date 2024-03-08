@@ -555,7 +555,7 @@ trait behat_session_trait {
      *
      * @return bool True if it's in the app
      */
-    protected function is_in_app() : bool {
+    protected function is_in_app(): bool {
         // Cannot be in the app if there's no @app tag on scenario.
         if (!$this->has_tag('app')) {
             return false;
@@ -732,7 +732,7 @@ trait behat_session_trait {
      * @param string $tag Tag to check
      * @return bool True if the tag exists in scenario or feature
      */
-    public function has_tag(string $tag) : bool {
+    public function has_tag(string $tag): bool {
         return array_key_exists($tag, behat_hooks::get_tags_for_scenario());
     }
 
@@ -1295,7 +1295,7 @@ EOF;
      * @param int $timeout One of the TIMEOUT constants
      * @return int Actual timeout (in seconds)
      */
-    protected static function get_real_timeout(int $timeout) : int {
+    protected static function get_real_timeout(int $timeout): int {
         global $CFG;
         if (!empty($CFG->behat_increasetimeout)) {
             return $timeout * $CFG->behat_increasetimeout;
@@ -1311,7 +1311,7 @@ EOF;
      *
      * @return int Timeout in seconds
      */
-    public static function get_timeout() : int {
+    public static function get_timeout(): int {
         return self::get_real_timeout(6);
     }
 
@@ -1324,7 +1324,7 @@ EOF;
      *
      * @return int Timeout in seconds
      */
-    public static function get_reduced_timeout() : int {
+    public static function get_reduced_timeout(): int {
         return self::get_real_timeout(2);
     }
 
@@ -1335,7 +1335,7 @@ EOF;
      *
      * @return int Timeout in seconds
      */
-    public static function get_extended_timeout() : int {
+    public static function get_extended_timeout(): int {
         return self::get_real_timeout(10);
     }
 

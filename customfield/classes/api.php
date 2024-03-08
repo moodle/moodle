@@ -54,7 +54,7 @@ class api {
      *     If ($adddefaults): All fieldids are present, some data_controller objects may have 'id', some not.
      *     If (!$adddefaults): Only fieldids with data are present, all data_controller objects have 'id'.
      */
-    public static function get_instance_fields_data(array $fields, int $instanceid, bool $adddefaults = true) : array {
+    public static function get_instance_fields_data(array $fields, int $instanceid, bool $adddefaults = true): array {
         return self::get_instances_fields_data($fields, [$instanceid], $adddefaults)[$instanceid];
     }
 
@@ -69,7 +69,7 @@ class api {
      *     If (!$adddefaults): All instanceids are present but only fieldids with data are present, all
      *         data_controller objects have 'id'.
      */
-    public static function get_instances_fields_data(array $fields, array $instanceids, bool $adddefaults = true) : array {
+    public static function get_instances_fields_data(array $fields, array $instanceids, bool $adddefaults = true): array {
         global $DB;
 
         // Create the results array where instances and fields order is the same as in the input arrays.
@@ -230,7 +230,7 @@ class api {
      *
      * @param field_controller $field
      */
-    public static function delete_field_configuration(field_controller $field) : bool {
+    public static function delete_field_configuration(field_controller $field): bool {
         $event = field_deleted::create_from_object($field);
         get_file_storage()->delete_area_files($field->get_handler()->get_configuration_context()->id, 'core_customfield',
             'description', $field->get('id'));
@@ -246,7 +246,7 @@ class api {
      * @param bool $editable
      * @return inplace_editable
      */
-    public static function get_category_inplace_editable(category_controller $category, bool $editable = true) : inplace_editable {
+    public static function get_category_inplace_editable(category_controller $category, bool $editable = true): inplace_editable {
         return new inplace_editable('core_customfield',
                                     'category',
                                     $category->get('id'),
@@ -318,7 +318,7 @@ class api {
      * @param category_controller $category
      * @return bool
      */
-    public static function delete_category(category_controller $category) : bool {
+    public static function delete_category(category_controller $category): bool {
         $event = category_deleted::create_from_object($category);
 
         // Delete all fields.
@@ -339,7 +339,7 @@ class api {
      * @param int $itemid
      * @return category_controller[]
      */
-    public static function get_categories_with_fields(string $component, string $area, int $itemid) : array {
+    public static function get_categories_with_fields(string $component, string $area, int $itemid): array {
         global $DB;
 
         $categories = [];
@@ -397,7 +397,7 @@ class api {
      * @param field_controller $field
      * @return \stdClass
      */
-    public static function prepare_field_for_config_form(field_controller $field) : \stdClass {
+    public static function prepare_field_for_config_form(field_controller $field): \stdClass {
         if ($field->get('id')) {
             $formdata = $field->to_record();
             $formdata->configdata = $field->get('configdata');

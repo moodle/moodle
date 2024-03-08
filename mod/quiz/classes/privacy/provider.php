@@ -63,7 +63,7 @@ class provider implements
      * @param   collection  $items  The collection to add metadata to.
      * @return  collection  The array of metadata
      */
-    public static function get_metadata(collection $items) : collection {
+    public static function get_metadata(collection $items): collection {
         // The table 'quiz' stores a record for each quiz.
         // It does not contain user personal data, but data is returned from it for contextual requirements.
 
@@ -140,7 +140,7 @@ class provider implements
      * @param   int             $userid The user to search.
      * @return  contextlist     $contextlist The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $resultset = new contextlist();
 
         // Users who attempted the quiz.

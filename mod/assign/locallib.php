@@ -1773,7 +1773,7 @@ class assign {
      * @param int|null $userid the id of the user to load the assign instance for.
      * @return stdClass The settings
      */
-    public function get_instance(int $userid = null) : stdClass {
+    public function get_instance(int $userid = null): stdClass {
         global $USER;
         $userid = $userid ?? $USER->id;
 
@@ -1796,7 +1796,7 @@ class assign {
      * @param int $userid the id of the user to calculate the properties for.
      * @return stdClass a new record having calculated properties.
      */
-    private function calculate_properties(\stdClass $record, int $userid) : \stdClass {
+    private function calculate_properties(\stdClass $record, int $userid): \stdClass {
         $record = clone ($record);
 
         // Relative dates.

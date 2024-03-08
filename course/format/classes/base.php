@@ -110,7 +110,7 @@ abstract class base {
      * @param string $format
      * @return string
      */
-    protected static final function get_format_or_default($format) {
+    final protected static function get_format_or_default($format) {
         global $CFG;
         require_once($CFG->dirroot . '/course/lib.php');
 
@@ -153,7 +153,7 @@ abstract class base {
      * @param string $format
      * @return string
      */
-    protected static final function get_class_name($format) {
+    final protected static function get_class_name($format) {
         global $CFG;
         static $classnames = array('site' => 'format_site');
         if (!isset($classnames[$format])) {
@@ -180,7 +180,7 @@ abstract class base {
      *     an object that has the property 'format' and may contain property 'id'
      * @return base
      */
-    public static final function instance($courseorid) {
+    final public static function instance($courseorid) {
         global $DB;
         if (!is_object($courseorid)) {
             $courseid = (int)$courseorid;
@@ -214,7 +214,7 @@ abstract class base {
      *
      * @param int $courseid
      */
-    public static final function reset_course_cache($courseid = 0) {
+    final public static function reset_course_cache($courseid = 0) {
         if ($courseid) {
             if (isset(self::$instances[$courseid])) {
                 foreach (self::$instances[$courseid] as $format => $object) {
@@ -289,7 +289,7 @@ abstract class base {
      *
      * @return string
      */
-    public final function get_format() {
+    final public function get_format() {
         return $this->format;
     }
 
@@ -298,7 +298,7 @@ abstract class base {
      *
      * @return int
      */
-    public final function get_courseid() {
+    final public function get_courseid() {
         return $this->courseid;
     }
 
@@ -490,7 +490,7 @@ abstract class base {
      *
      * @return array of section_info objects
      */
-    public final function get_sections() {
+    final public function get_sections() {
         if ($course = $this->get_course()) {
             $modinfo = get_fast_modinfo($course);
             return $modinfo->get_section_info_all();
@@ -505,7 +505,7 @@ abstract class base {
      * @param int $strictness
      * @return section_info
      */
-    public final function get_section($section, $strictness = IGNORE_MISSING) {
+    final public function get_section($section, $strictness = IGNORE_MISSING) {
         if (is_object($section)) {
             $sectionnum = $section->section;
         } else {
@@ -989,7 +989,7 @@ abstract class base {
      *
      * @return lang_string
      */
-    public final function get_format_name() {
+    final public function get_format_name() {
         return new lang_string('pluginname', 'format_'.$this->get_format());
     }
 
@@ -1213,7 +1213,7 @@ abstract class base {
      * @param int|null $sectionid null if it is course format option
      * @return array array of options that have valid values
      */
-    protected function validate_format_options(array $rawdata, int $sectionid = null) : array {
+    protected function validate_format_options(array $rawdata, int $sectionid = null): array {
         if (!$sectionid) {
             $allformatoptions = $this->course_format_options(true);
         } else {
@@ -1237,7 +1237,7 @@ abstract class base {
      * @param array $data data to insert/update
      * @return array array of options that have valid values
      */
-    public function validate_course_format_options(array $data) : array {
+    public function validate_course_format_options(array $data): array {
         return $this->validate_format_options($data);
     }
 

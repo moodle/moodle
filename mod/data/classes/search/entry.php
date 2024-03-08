@@ -373,7 +373,7 @@ class entry extends \core_search\base_mod {
      * @param string $fieldtype
      * @return string|null It will return the class name or null if the field type is not available.
      */
-    protected function get_field_class_name(string $fieldtype) : ?string {
+    protected function get_field_class_name(string $fieldtype): ?string {
         global $CFG;
 
         $fieldtype = trim($fieldtype);

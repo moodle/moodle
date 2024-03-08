@@ -25,17 +25,17 @@
  */
 interface cc_i_manifest {
 
-    public function on_create ();
-    public function on_load ();
-    public function on_save ();
-    public function add_new_organization (cc_i_organization &$org);
-    public function get_resources ();
-    public function get_resource_list ();
-    public function add_resource (cc_i_resource $res, $identifier=null, $type='webcontent');
+    public function on_create();
+    public function on_load();
+    public function on_save();
+    public function add_new_organization(cc_i_organization &$org);
+    public function get_resources();
+    public function get_resource_list();
+    public function add_resource(cc_i_resource $res, $identifier=null, $type='webcontent');
     public function add_metadata_manifest(cc_i_metadata_manifest $met);
-    public function add_metadata_resource (cc_i_metadata_resource $met,$identifier);
-    public function add_metadata_file (cc_i_metadata_file $met,$identifier,$filename);
-    public function put_nodes ();
+    public function add_metadata_resource(cc_i_metadata_resource $met,$identifier);
+    public function add_metadata_file(cc_i_metadata_file $met,$identifier,$filename);
+    public function put_nodes();
 
 }
 
@@ -46,10 +46,10 @@ interface cc_i_manifest {
  */
 interface cc_i_organization {
 
-    public function add_item (cc_i_item &$item);
-    public function has_items ();
-    public function attr_value (&$nod, $name, $ns=null);
-    public function process_organization (&$node,&$doc);
+    public function add_item(cc_i_item &$item);
+    public function has_items();
+    public function attr_value(&$nod, $name, $ns=null);
+    public function process_organization(&$node,&$doc);
 
 }
 
@@ -60,11 +60,11 @@ interface cc_i_organization {
  */
 interface cc_i_item {
 
-    public function add_child_item (cc_i_item &$item);
-    public function attach_resource ($res);     // can be object or value
-    public function has_child_items ();
-    public function attr_value (&$nod, $name, $ns=null);
-    public function process_item (&$node,&$doc);
+    public function add_child_item(cc_i_item &$item);
+    public function attach_resource($res);     // can be object or value
+    public function has_child_items();
+    public function attr_value(&$nod, $name, $ns=null);
+    public function process_item(&$node,&$doc);
 
 }
 
@@ -74,10 +74,10 @@ interface cc_i_item {
  */
 interface cc_i_resource {
 
-    public function get_attr_value (&$nod, $name, $ns=null);
-    public function add_resource ($fname, $location='');
-    public function import_resource (DOMElement &$node, cc_i_manifest &$doc);
-    public function process_resource ($manifestroot, &$fname,$folder);
+    public function get_attr_value(&$nod, $name, $ns=null);
+    public function add_resource($fname, $location='');
+    public function import_resource(DOMElement &$node, cc_i_manifest &$doc);
+    public function process_resource($manifestroot, &$fname,$folder);
 
 }
 

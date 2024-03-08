@@ -377,7 +377,7 @@ class renderer extends \plugin_renderer_base {
      *
      * @return string
      */
-    public function additional_lock_actions() : string {
+    public function additional_lock_actions(): string {
         $url = new moodle_url('/cache/admin.php', array('action' => 'newlockinstance'));
         $select = new single_select($url, 'lock', cache_factory::get_administration_display_helper()->get_addable_lock_options());
         $select->label = get_string('addnewlockinstance', 'cache');

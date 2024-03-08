@@ -24,7 +24,7 @@ defined('MOODLE_INTERNAL') or die('Direct access to this script is forbidden.');
 
 class cc11_forum extends entities11 {
 
-    public function full_path ($path, $dir_sep = DIRECTORY_SEPARATOR) {
+    public function full_path($path, $dir_sep = DIRECTORY_SEPARATOR) {
 
         $token = '$IMS-CC-FILEBASE$';
         $path = str_replace($token, '', $path);
@@ -67,7 +67,7 @@ class cc11_forum extends entities11 {
         return $result;
     }
 
-    public function generate_node () {
+    public function generate_node() {
 
         cc2moodle::log_action('Creating Forum mods');
 
@@ -82,7 +82,7 @@ class cc11_forum extends entities11 {
         return $response;
     }
 
-    private function create_node_course_modules_mod_forum ($instance) {
+    private function create_node_course_modules_mod_forum($instance) {
 
         $sheet_mod_forum = cc112moodle::loadsheet(SHEET_COURSE_SECTIONS_SECTION_MODS_MOD_FORUM);
 
@@ -109,7 +109,7 @@ class cc11_forum extends entities11 {
         return $result;
     }
 
-    public function get_topic_data ($instance) {
+    public function get_topic_data($instance) {
 
         $topic_data = array();
 
@@ -159,7 +159,7 @@ class cc11_forum extends entities11 {
         return $topic_data;
     }
 
-    private function generate_attachment_html ($filename) {
+    private function generate_attachment_html($filename) {
 
         $images_extensions = array('gif' , 'jpeg' , 'jpg' , 'jif' , 'jfif' , 'png' , 'bmp');
 

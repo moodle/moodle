@@ -223,7 +223,7 @@ class core_question_external extends external_api {
      * @see \qbank_tagquestion\external\qbank_tagquestion_external
      * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
-    public static function  submit_tags_form_returns() {
+    public static function submit_tags_form_returns() {
         return new external_single_structure([
                 'status' => new external_value(PARAM_BOOL, 'status: true if success')
         ]);
@@ -346,7 +346,7 @@ class core_question_external extends external_api {
     /**
      * Returns description of method result value.
      */
-    public static function  get_random_question_summaries_returns() {
+    public static function get_random_question_summaries_returns() {
         return new external_single_structure([
             'totalcount' => new external_value(PARAM_INT, 'total number of questions in result set'),
             'questions' => new external_multiple_structure(

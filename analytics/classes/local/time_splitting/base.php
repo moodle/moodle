@@ -77,7 +77,7 @@ abstract class base {
      *
      * @return \lang_string
      */
-    public static abstract function get_name() : \lang_string;
+    abstract public static function get_name(): \lang_string;
 
     /**
      * Returns the time splitting method id.
@@ -231,7 +231,7 @@ abstract class base {
      * @param int $rangeindex
      * @return string
      */
-    public final function append_rangeindex($sampleid, $rangeindex) {
+    final public function append_rangeindex($sampleid, $rangeindex) {
         return $sampleid . '-' . $rangeindex;
     }
 
@@ -241,7 +241,7 @@ abstract class base {
      * @param string $uniquesampleid
      * @return array array($sampleid, $rangeindex)
      */
-    public final function infer_sample_info($uniquesampleid) {
+    final public function infer_sample_info($uniquesampleid) {
         return explode('-', $uniquesampleid);
     }
 

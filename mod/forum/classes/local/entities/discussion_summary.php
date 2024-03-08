@@ -71,7 +71,7 @@ class discussion_summary {
      *
      * @return discussion_entity
      */
-    public function get_discussion() : discussion_entity {
+    public function get_discussion(): discussion_entity {
         return $this->discussion;
     }
 
@@ -80,7 +80,7 @@ class discussion_summary {
      *
      * @return author_entity
      */
-    public function get_first_post_author() : author_entity {
+    public function get_first_post_author(): author_entity {
         return $this->firstpostauthor;
     }
 
@@ -89,7 +89,7 @@ class discussion_summary {
      *
      * @return author_entity
      */
-    public function get_latest_post_author() : author_entity {
+    public function get_latest_post_author(): author_entity {
         return $this->latestpostauthor;
     }
 
@@ -98,7 +98,7 @@ class discussion_summary {
      *
      * @return post_entity
      */
-    public function get_first_post() : post_entity {
+    public function get_first_post(): post_entity {
         return $this->firstpost;
     }
 }

@@ -1120,7 +1120,7 @@ class quiz_attempt {
      * @param int $page the page number (starting with 0) in the attempt.
      * @return string attempt page title.
      */
-    public function attempt_page_title(int $page) : string {
+    public function attempt_page_title(int $page): string {
         if ($this->get_num_pages() > 1) {
             $a = new stdClass();
             $a->name = $this->get_quiz_name();
@@ -1153,7 +1153,7 @@ class quiz_attempt {
      *
      * @return string summary page title.
      */
-    public function summary_page_title() : string {
+    public function summary_page_title(): string {
         return get_string('attemptsummarytitle', 'quiz', $this->get_quiz_name());
     }
 
@@ -1182,7 +1182,7 @@ class quiz_attempt {
      * @param bool $showall whether the review page contains the entire attempt on one page.
      * @return string title of the review page.
      */
-    public function review_page_title(int $page, bool $showall = false) : string {
+    public function review_page_title(int $page, bool $showall = false): string {
         if (!$showall && $this->get_num_pages() > 1) {
             $a = new stdClass();
             $a->name = $this->get_quiz_name();

@@ -59,7 +59,7 @@ class config_key_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function real_ck_hash_provider() : array {
+    public function real_ck_hash_provider(): array {
         return [
             'unencrypted_mac2.1.4' => ['unencrypted_mac_001.seb',
                     '4fa9af8ec8759eb7c680752ef4ee5eaf1a860628608fccae2715d519849f9292', ''],

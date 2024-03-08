@@ -143,7 +143,7 @@ class item_agent_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_data_provider() : array {
+    public function invalid_data_provider(): array {
         return [
             'Wrong objecttype' => [
                 'Invalid', true, true
@@ -203,7 +203,7 @@ class item_agent_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function unspupported_create_provider() : array {
+    public function unspupported_create_provider(): array {
         return [
             'Both mbox and account' => [
                 true, true, false, false

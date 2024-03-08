@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/user/editlib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_uploaduser_form1 extends moodleform {
-    function definition () {
+    function definition() {
         $mform = $this->_form;
 
         $mform->addElement('header', 'settingsheader', get_string('upload'));
@@ -90,7 +90,7 @@ class admin_uploaduser_form1 extends moodleform {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class admin_uploaduser_form2 extends moodleform {
-    function definition () {
+    function definition() {
         global $CFG, $USER;
 
         $mform   = $this->_form;

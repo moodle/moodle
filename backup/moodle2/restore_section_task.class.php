@@ -128,7 +128,7 @@ class restore_section_task extends restore_task {
      * Define the contents in the course that must be
      * processed by the link decoder
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         $contents = array();
 
         $contents[] = new restore_decode_content('course_sections', 'summary', 'course_section');
@@ -140,7 +140,7 @@ class restore_section_task extends restore_task {
      * Define the decoding rules for links belonging
      * to the sections to be executed by the link decoder
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         return array();
     }
 

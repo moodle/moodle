@@ -206,7 +206,7 @@ class api {
      * @param int $limitnum
      * @return array
      */
-    public static function message_search_users(int $userid, string $search, int $limitfrom = 0, int $limitnum = 20) : array {
+    public static function message_search_users(int $userid, string $search, int $limitfrom = 0, int $limitnum = 20): array {
         global $CFG, $DB;
 
         // Check if messaging is enabled.
@@ -395,7 +395,7 @@ class api {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    protected static function get_linked_conversation_extra_fields(array $conversations) : array {
+    protected static function get_linked_conversation_extra_fields(array $conversations): array {
         global $DB, $PAGE;
 
         $renderer = $PAGE->get_renderer('core');
@@ -801,7 +801,7 @@ class api {
      * @throws \dml_exception
      */
     public static function get_conversations_between_users(int $userid1, int $userid2,
-                                                           int $limitfrom = 0, int $limitnum = 20) : array {
+                                                           int $limitfrom = 0, int $limitnum = 20): array {
 
         global $DB;
 
@@ -968,7 +968,7 @@ class api {
      * @return favourite the favourite object.
      * @throws \moodle_exception if the user or conversation don't exist.
      */
-    public static function set_favourite_conversation(int $conversationid, int $userid) : favourite {
+    public static function set_favourite_conversation(int $conversationid, int $userid): favourite {
         global $DB;
 
         if (!self::is_user_in_conversation($userid, $conversationid)) {
@@ -1062,7 +1062,7 @@ class api {
      * @param int $userid The user id
      * @return array
      */
-    public static function count_contacts(int $userid) : int {
+    public static function count_contacts(int $userid): int {
         global $DB;
 
         $sql = "SELECT COUNT(id)
@@ -1105,7 +1105,7 @@ class api {
      * @return array of messages
      */
     public static function get_conversation_messages(int $userid, int $convid, int $limitfrom = 0, int $limitnum = 0,
-        string $sort = 'timecreated ASC', int $timefrom = 0, int $timeto = 0) : array {
+        string $sort = 'timecreated ASC', int $timefrom = 0, int $timeto = 0): array {
 
         if (!empty($timefrom)) {
             // Check the cache to see if we even need to do a DB query.
@@ -1168,7 +1168,7 @@ class api {
      * @param int $conversationid The id of the conversation
      * @return bool Returns true if a user can delete the conversation, false otherwise.
      */
-    public static function can_delete_conversation(int $userid, int $conversationid = null) : bool {
+    public static function can_delete_conversation(int $userid, int $conversationid = null): bool {
         global $USER;
 
         if (is_null($conversationid)) {
@@ -1280,7 +1280,7 @@ class api {
      * @return bool true if user is permitted, false otherwise
      * @since 3.6
      */
-    public static function can_mark_all_messages_as_read(int $userid, int $conversationid) : bool {
+    public static function can_mark_all_messages_as_read(int $userid, int $conversationid): bool {
         global $USER;
 
         $systemcontext = \context_system::instance();
@@ -1307,7 +1307,7 @@ class api {
      * @param int $userid The user whose conversations should be counted.
      * @return array the array of conversations counts, indexed by type.
      */
-    public static function get_conversation_counts(int $userid) : array {
+    public static function get_conversation_counts(int $userid): array {
         global $DB;
         self::lazy_create_self_conversation($userid);
 
@@ -1550,7 +1550,7 @@ class api {
      *        the user is still able to send a message.
      * @return bool true if user is permitted, false otherwise.
      */
-    public static function can_send_message(int $recipientid, int $senderid, bool $evenifblocked = false) : bool {
+    public static function can_send_message(int $recipientid, int $senderid, bool $evenifblocked = false): bool {
         $systemcontext = \context_system::instance();
 
         if (!has_capability('moodle/site:sendmessage', $systemcontext, $senderid)) {
@@ -1574,7 +1574,7 @@ class api {
      * @return bool true if the user can send a message to the conversation, false otherwise.
      * @throws \moodle_exception
      */
-    public static function can_send_message_to_conversation(int $userid, int $conversationid) : bool {
+    public static function can_send_message_to_conversation(int $userid, int $conversationid): bool {
         global $DB;
 
         $systemcontext = \context_system::instance();
@@ -1621,7 +1621,7 @@ class api {
      * @throws \moodle_exception if the user is not permitted to send a message to the conversation.
      */
     public static function send_message_to_conversation(int $userid, int $conversationid, string $message,
-                                                        int $format) : \stdClass {
+                                                        int $format): \stdClass {
         global $DB, $PAGE;
 
         if (!self::can_send_message_to_conversation($userid, $conversationid)) {
@@ -1712,7 +1712,7 @@ class api {
      * @param  int    $userid The user identifier.
      * @return int    The default messaging preference.
      */
-    public static function get_user_privacy_messaging_preference(int $userid) : int {
+    public static function get_user_privacy_messaging_preference(int $userid): int {
         global $CFG, $USER;
 
         // When $CFG->messagingallusers is enabled, default value for the messaging preference will be "Anyone on the site";
@@ -2165,7 +2165,7 @@ class api {
      * @param \context $context The context they are creating the conversation from, most likely course context
      * @return bool
      */
-    public static function can_create_group_conversation(int $userid, \context $context) : bool {
+    public static function can_create_group_conversation(int $userid, \context $context): bool {
         global $CFG;
 
         // If we can't message at all, then we can't create a conversation.
@@ -2184,7 +2184,7 @@ class api {
      * @param int $requesteduserid The id of the user being requested
      * @return bool
      */
-    public static function can_create_contact(int $userid, int $requesteduserid) : bool {
+    public static function can_create_contact(int $userid, int $requesteduserid): bool {
         global $CFG;
 
         // If we can't message at all, then we can't create a contact.
@@ -2208,7 +2208,7 @@ class api {
      * @param int $requesteduserid The id of the user being requested
      * @return \stdClass the request
      */
-    public static function create_contact_request(int $userid, int $requesteduserid) : \stdClass {
+    public static function create_contact_request(int $userid, int $requesteduserid): \stdClass {
         global $DB, $PAGE, $SITE;
 
         $request = new \stdClass();
@@ -2309,7 +2309,7 @@ class api {
      * @param int $limitnum
      * @return array The list of contact requests
      */
-    public static function get_contact_requests(int $userid, int $limitfrom = 0, int $limitnum = 0) : array {
+    public static function get_contact_requests(int $userid, int $limitfrom = 0, int $limitnum = 0): array {
         global $DB;
 
         $sql = "SELECT mcr.userid
@@ -2333,7 +2333,7 @@ class api {
      * @param int $userid The ID of the user we want to return the number of received contact requests for
      * @return int The count
      */
-    public static function get_received_contact_requests_count(int $userid) : int {
+    public static function get_received_contact_requests_count(int $userid): int {
         global $DB;
         $sql = "SELECT COUNT(mcr.id)
                   FROM {message_contact_requests} mcr
@@ -2452,7 +2452,7 @@ class api {
      * @param int $contactid The id of the other user
      * @return bool Returns true if they are a contact, false otherwise
      */
-    public static function is_contact(int $userid, int $contactid) : bool {
+    public static function is_contact(int $userid, int $contactid): bool {
         global $DB;
 
         $sql = "SELECT id
@@ -2486,7 +2486,7 @@ class api {
      * @param int $blockeduserid
      * @return bool Returns true if they are a blocked, false otherwise
      */
-    public static function is_blocked(int $userid, int $blockeduserid) : bool {
+    public static function is_blocked(int $userid, int $blockeduserid): bool {
         global $DB;
 
         return $DB->record_exists('message_users_blocked', ['userid' => $userid, 'blockeduserid' => $blockeduserid]);
@@ -2499,7 +2499,7 @@ class api {
      * @param int $requesteduserid The id of the user being requested
      * @return \stdClass[]
      */
-    public static function get_contact_requests_between_users(int $userid, int $requesteduserid) : array {
+    public static function get_contact_requests_between_users(int $userid, int $requesteduserid): array {
         global $DB;
 
         $sql = "SELECT *
@@ -2516,7 +2516,7 @@ class api {
      * @param int $requesteduserid The id of the user being requested
      * @return bool Returns true if a contact request exists, false otherwise
      */
-    public static function does_contact_request_exist(int $userid, int $requesteduserid) : bool {
+    public static function does_contact_request_exist(int $userid, int $requesteduserid): bool {
         global $DB;
 
         $sql = "SELECT id
@@ -2533,7 +2533,7 @@ class api {
      * @param int $conversationid The id of the conversation
      * @return bool Returns true if a contact request exists, false otherwise
      */
-    public static function is_user_in_conversation(int $userid, int $conversationid) : bool {
+    public static function is_user_in_conversation(int $userid, int $conversationid): bool {
         global $DB;
 
         return $DB->record_exists('message_conversation_members', ['conversationid' => $conversationid,
@@ -2549,7 +2549,7 @@ class api {
      *        the user is still able to send a message.
      * @return bool true if recipient hasn't blocked sender and sender can contact to recipient, false otherwise.
      */
-    protected static function can_contact_user(int $recipientid, int $senderid, bool $evenifblocked = false) : bool {
+    protected static function can_contact_user(int $recipientid, int $senderid, bool $evenifblocked = false): bool {
         if (has_capability('moodle/site:messageanyuser', \context_system::instance(), $senderid) ||
             $recipientid == $senderid) {
             // The sender has the ability to contact any user across the entire site or themselves.
@@ -2687,7 +2687,7 @@ class api {
      * @return int Number of conversation members.
      * @throws \dml_exception
      */
-    public static function count_conversation_members(int $convid) : int {
+    public static function count_conversation_members(int $convid): int {
         global $DB;
 
         return $DB->count_records('message_conversation_members', ['conversationid' => $convid]);
@@ -2702,7 +2702,7 @@ class api {
      * @param int $contextid The id of the context.
      * @return bool Returns if a conversation area exists and is enabled, false otherwise
      */
-    public static function is_conversation_area_enabled(string $component, string $itemtype, int $itemid, int $contextid) : bool {
+    public static function is_conversation_area_enabled(string $component, string $itemtype, int $itemid, int $contextid): bool {
         global $DB;
 
         return $DB->record_exists('message_conversations',
@@ -2802,7 +2802,7 @@ class api {
      */
     public static function get_conversation_members(int $userid, int $conversationid, bool $includecontactrequests = false,
                                                     bool $includeprivacyinfo = false, int $limitfrom = 0,
-                                                    int $limitnum = 0) : array {
+                                                    int $limitnum = 0): array {
         global $DB;
 
         if ($members = $DB->get_records('message_conversation_members', ['conversationid' => $conversationid],
@@ -2822,7 +2822,7 @@ class api {
      * @param int $userid the id of the user whose conversations we'll check.
      * @return array the unread counts for each conversation, indexed by type.
      */
-    public static function get_unread_conversation_counts(int $userid) : array {
+    public static function get_unread_conversation_counts(int $userid): array {
         global $DB;
 
         // Get all conversations the user is in, and check unread.
@@ -2877,7 +2877,7 @@ class api {
      * @param int $userid The id of the user
      * @param int $conversationid The id of the conversation
      */
-    public static function mute_conversation(int $userid, int $conversationid) : void {
+    public static function mute_conversation(int $userid, int $conversationid): void {
         global $DB;
 
         $mutedconversation = new \stdClass();
@@ -2895,7 +2895,7 @@ class api {
      * @param int $userid The id of the user
      * @param int $conversationid The id of the conversation
      */
-    public static function unmute_conversation(int $userid, int $conversationid) : void {
+    public static function unmute_conversation(int $userid, int $conversationid): void {
         global $DB;
 
         $DB->delete_records('message_conversation_actions',
@@ -2914,7 +2914,7 @@ class api {
      * @param int $conversationid The id of the conversation
      * @return bool Whether or not the conversation is muted or not
      */
-    public static function is_conversation_muted(int $userid, int $conversationid) : bool {
+    public static function is_conversation_muted(int $userid, int $conversationid): bool {
         global $DB;
 
         return $DB->record_exists('message_conversation_actions',
@@ -2964,7 +2964,7 @@ class api {
      * @param int $messageid The message id
      * @return bool Returns true if a user can delete the message for all users, false otherwise.
      */
-    public static function can_delete_message_for_all_users(int $userid, int $messageid) : bool {
+    public static function can_delete_message_for_all_users(int $userid, int $messageid): bool {
         global $DB;
 
         $sql = "SELECT mc.id, mc.contextid
@@ -3018,7 +3018,7 @@ class api {
      *
      * @param int $userid the user to whom the conversation belongs.
      */
-    protected static function lazy_create_self_conversation(int $userid) : void {
+    protected static function lazy_create_self_conversation(int $userid): void {
         global $DB;
         // Check if the self-conversation for this user exists.
         // If not, create and star it for the user.

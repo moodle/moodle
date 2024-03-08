@@ -652,7 +652,7 @@ class cache_factory {
      *
      * @return core_cache\administration_helper
      */
-    public static function get_administration_display_helper() : core_cache\administration_helper {
+    public static function get_administration_display_helper(): core_cache\administration_helper {
         if (is_null(self::$displayhelper)) {
             self::$displayhelper = new \core_cache\local\administration_display_helper();
         }

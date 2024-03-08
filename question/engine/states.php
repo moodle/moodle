@@ -282,7 +282,7 @@ abstract class question_state {
      * @return string the name of a string that can be looked up in the 'question'
      *      lang pack, or used as a CSS class name, etc.
      */
-    public abstract function get_state_class($showcorrectness);
+    abstract public function get_state_class($showcorrectness);
 
     /**
      * The result of doing get_string on the result of {@link get_state_class()}.

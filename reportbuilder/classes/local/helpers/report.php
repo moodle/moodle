@@ -406,7 +406,7 @@ class report {
      *
      * @deprecated since Moodle 4.1 - please do not use this function any more, {@see custom_report_column_cards_exporter}
      */
-    public static function get_available_columns(report_model $persistent) : array {
+    public static function get_available_columns(report_model $persistent): array {
         debugging('The function ' . __FUNCTION__ . '() is deprecated, please do not use it any more. ' .
             'See \'custom_report_column_cards_exporter\' class for replacement', DEBUG_DEVELOPER);
 

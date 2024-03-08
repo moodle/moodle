@@ -29,7 +29,7 @@ defined('MOODLE_INTERNAL') || die();
  *
  * @return array of check objects
  */
-function tool_task_status_checks() : array {
+function tool_task_status_checks(): array {
     return [
         new \tool_task\check\cronrunning(),
         new \tool_task\check\maxfaildelay(),

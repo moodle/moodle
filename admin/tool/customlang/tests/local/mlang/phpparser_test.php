@@ -79,7 +79,7 @@ class phpparser_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function parse_provider() : array {
+    public function parse_provider(): array {
         return [
             'Invalid PHP code' => [
                 'No PHP code', [], false

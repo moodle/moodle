@@ -375,7 +375,7 @@ class mnet_xmlrpc_client {
      * @param object $mnet_peer A mnet_peer object with details of the remote host the request will be sent to
      * @return \PhpXmlRpc\Client handle - the almost-ready-to-send http request
      */
-    public function prepare_http_request ($mnet_peer) {
+    public function prepare_http_request($mnet_peer) {
         $uri = $mnet_peer->wwwroot . $mnet_peer->application->xmlrpc_server_url;
 
         // Instantiate the xmlrpc client to be used for the client request

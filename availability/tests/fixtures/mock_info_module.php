@@ -109,7 +109,7 @@ class mock_info_module extends info_module {
      * Override course-module info.
      * @param \cm_info $cm
      */
-    public function set_cm (\cm_info $cm) {
+    public function set_cm(\cm_info $cm) {
         $this->cm = $cm;
     }
 }

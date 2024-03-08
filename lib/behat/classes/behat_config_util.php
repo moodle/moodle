@@ -753,7 +753,7 @@ class behat_config_util {
      * @param bool $verbose If true, outputs information about installed app version
      * @return string List of tags or '' if not supporting mobile
      */
-    protected function get_mobile_version_tags($verbose = true) : string {
+    protected function get_mobile_version_tags($verbose = true): string {
         global $CFG;
 
         if (empty($CFG->behat_ionic_wwwroot)) {
@@ -1068,7 +1068,7 @@ class behat_config_util {
      * @param string $path
      * @return string The string without the last /tests part
      */
-    public final function clean_path($path) {
+    final public function clean_path($path) {
 
         $path = rtrim($path, DIRECTORY_SEPARATOR);
 
@@ -1087,7 +1087,7 @@ class behat_config_util {
      *
      * @return string
      */
-    public static final function get_behat_tests_path() {
+    final public static function get_behat_tests_path() {
         return DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'behat';
     }
 
@@ -1099,7 +1099,7 @@ class behat_config_util {
      * @param bool $includeclass if class should be included.
      * @return string
      */
-    public static final function get_behat_theme_selector_override_classname($themename, $selectortype, $includeclass = false) {
+    final public static function get_behat_theme_selector_override_classname($themename, $selectortype, $includeclass = false) {
         global $CFG;
 
         if ($selectortype !== 'named_partial' && $selectortype !== 'named_exact') {
@@ -1501,7 +1501,7 @@ class behat_config_util {
      * @param string $theme theme name.
      * @return  List of contexts
      */
-    protected function get_behat_contexts_for_theme($theme) : array {
+    protected function get_behat_contexts_for_theme($theme): array {
         // If we already have this list then just return. This will not change by run.
         if (!empty($this->themecontexts[$theme])) {
             return $this->themecontexts[$theme];

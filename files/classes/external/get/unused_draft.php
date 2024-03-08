@@ -51,7 +51,7 @@ class unused_draft extends external_api {
      * @return external_function_parameters
      * @since Moodle 3.11
      */
-    public static function execute_parameters() : external_function_parameters {
+    public static function execute_parameters(): external_function_parameters {
         return new external_function_parameters ([]);
     }
 
@@ -61,7 +61,7 @@ class unused_draft extends external_api {
      * @return array of information containing the draft item area and possible warnings.
      * @since Moodle 3.11
      */
-    public static function execute() : array {
+    public static function execute(): array {
         global $USER;
 
         $usercontext = context_user::instance($USER->id);
@@ -83,7 +83,7 @@ class unused_draft extends external_api {
      * @return external_single_structure
      * @since Moodle 3.11
      */
-    public static function execute_returns() : external_single_structure {
+    public static function execute_returns(): external_single_structure {
         return new external_single_structure(
             [
                 'component' => new external_value(PARAM_COMPONENT, 'File area component.'),

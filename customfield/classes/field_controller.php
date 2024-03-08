@@ -81,7 +81,7 @@ abstract class field_controller {
      * @throws \coding_exception
      * @throws \moodle_exception
      */
-    public static function create(int $id, \stdClass $record = null, category_controller $category = null) : field_controller {
+    public static function create(int $id, \stdClass $record = null, category_controller $category = null): field_controller {
         global $DB;
         if ($id && $record) {
             // This warning really should be in persistent as well.
@@ -144,7 +144,7 @@ abstract class field_controller {
      * @param array $files
      * @return array associative array of error messages
      */
-    public function config_form_validation(array $data, $files = array()) : array {
+    public function config_form_validation(array $data, $files = array()): array {
         return array();
     }
 
@@ -179,7 +179,7 @@ abstract class field_controller {
      *
      * @return bool
      */
-    public function delete() : bool {
+    public function delete(): bool {
         global $DB;
         $DB->delete_records('customfield_data', ['fieldid' => $this->get('id')]);
         return $this->field->delete();
@@ -208,7 +208,7 @@ abstract class field_controller {
      *
      * @return category_controller
      */
-    public final function get_category() : category_controller {
+    final public function get_category(): category_controller {
         return $this->category;
     }
 
@@ -231,7 +231,7 @@ abstract class field_controller {
      *
      * @return handler
      */
-    public final function get_handler() : handler {
+    final public function get_handler(): handler {
         return $this->get_category()->get_handler();
     }
 
@@ -250,14 +250,14 @@ abstract class field_controller {
      *
      * @param \MoodleQuickForm $mform
      */
-    public abstract function config_form_definition(\MoodleQuickForm $mform);
+    abstract public function config_form_definition(\MoodleQuickForm $mform);
 
     /**
      * Returns the field name formatted according to configuration context.
      *
      * @return string
      */
-    public function get_formatted_name() : string {
+    public function get_formatted_name(): string {
         $context = $this->get_handler()->get_configuration_context();
         return format_string($this->get('name'), true, ['context' => $context]);
     }

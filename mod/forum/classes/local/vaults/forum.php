@@ -52,7 +52,7 @@ class forum extends db_table_vault {
      *
      * @return string
      */
-    protected function get_table_alias() : string {
+    protected function get_table_alias(): string {
         return 'f';
     }
 
@@ -64,7 +64,7 @@ class forum extends db_table_vault {
      * @param int|null $userid The user ID
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null): string {
         $db = $this->get_db();
         $alias = $this->get_table_alias();
 
@@ -98,7 +98,7 @@ class forum extends db_table_vault {
      *
      * @return array
      */
-    protected function get_preprocessors() : array {
+    protected function get_preprocessors(): array {
         return array_merge(
             parent::get_preprocessors(),
             [
@@ -116,7 +116,7 @@ class forum extends db_table_vault {
      * @param array $results The DB records
      * @return forum_entity[]
      */
-    protected function from_db_records(array $results) : array {
+    protected function from_db_records(array $results): array {
         $entityfactory = $this->get_entity_factory();
 
         return array_map(function(array $result) use ($entityfactory) {
@@ -136,7 +136,7 @@ class forum extends db_table_vault {
      * @param int $id The course module id
      * @return forum_entity|null
      */
-    public function get_from_course_module_id(int $id) : ?forum_entity {
+    public function get_from_course_module_id(int $id): ?forum_entity {
         $records = $this->get_from_course_module_ids([$id]);
         return count($records) ? array_shift($records) : null;
     }
@@ -147,7 +147,7 @@ class forum extends db_table_vault {
      * @param int[] $ids The course module ids
      * @return forum_entity[]
      */
-    public function get_from_course_module_ids(array $ids) : array {
+    public function get_from_course_module_ids(array $ids): array {
         $alias = $this->get_table_alias();
         list($insql, $params) = $this->get_db()->get_in_or_equal($ids);
         $wheresql = 'cm.id ' . $insql;
@@ -163,7 +163,7 @@ class forum extends db_table_vault {
      * @param int $id The course module id
      * @return forum_entity|null
      */
-    public function get_from_post_id(int $id) : ?forum_entity {
+    public function get_from_post_id(int $id): ?forum_entity {
         $alias = $this->get_table_alias();
         $thistable = new dml_table(self::TABLE, $alias, $alias);
         $coursemoduletable = new dml_table('course_modules', 'cm', 'cm_');

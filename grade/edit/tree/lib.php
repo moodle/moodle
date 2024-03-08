@@ -748,7 +748,7 @@ abstract class grade_edit_tree_column {
         }
     }
 
-    public abstract function get_header_cell();
+    abstract public function get_header_cell();
 
     public function get_category_cell($category, $levelclass, $params) {
         $cell = clone($this->categorycell);

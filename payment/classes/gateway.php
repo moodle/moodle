@@ -36,7 +36,7 @@ abstract class gateway {
      *
      * @return string[] An array of the currency codes in the three-character ISO-4217 format
      */
-    public abstract static function get_supported_currencies(): array;
+    abstract public static function get_supported_currencies(): array;
 
     /**
      * Configuration form for the gateway instance
@@ -45,7 +45,7 @@ abstract class gateway {
      *
      * @param \core_payment\form\account_gateway $form
      */
-    public abstract static function add_configuration_to_gateway_form(\core_payment\form\account_gateway $form): void;
+    abstract public static function add_configuration_to_gateway_form(\core_payment\form\account_gateway $form): void;
 
     /**
      * Validates the gateway configuration form.

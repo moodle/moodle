@@ -101,7 +101,7 @@ class core_course_renderer extends plugin_renderer_base {
      * @param array $ignored argument ignored
      * @return string
      */
-    public final function course_category_tree(array $ignored) {
+    final public function course_category_tree(array $ignored) {
         debugging('Function core_course_renderer::course_category_tree() is deprecated, please use frontpage_combo_list()', DEBUG_DEVELOPER);
         return $this->frontpage_combo_list();
     }
@@ -115,7 +115,7 @@ class core_course_renderer extends plugin_renderer_base {
      * @param int $depth
      * @return string
      */
-    protected final function course_category_tree_category(stdClass $category, $depth=1) {
+    final protected function course_category_tree_category(stdClass $category, $depth=1) {
         debugging('Function core_course_renderer::course_category_tree_category() is deprecated', DEBUG_DEVELOPER);
         return '';
     }

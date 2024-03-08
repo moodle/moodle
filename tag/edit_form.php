@@ -42,7 +42,7 @@ class tag_edit_form extends moodleform {
      * Overrides the abstract moodleform::definition method for defining what the form that is to be
      * presented to the user.
      */
-    function definition () {
+    function definition() {
 
         $mform =& $this->_form;
 

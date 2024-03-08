@@ -73,7 +73,7 @@
          * @param file $log valid open file handle - log info will be written to this file
          * @return return code from execution of command
          */
-        function execute( $command, $log=null ) {
+        function execute($command, $log=null ) {
             $output = array();
             exec( $command, $output, $return_code );
             if ($log) {
@@ -95,7 +95,7 @@
          * @param file $log valid open file handle for optional logging (debugging only)
          * @return bool true if successful
          */
-        function render( $formula, $filename, $fontsize=12, $density=240, $background='', $log=null ) {
+        function render($formula, $filename, $fontsize=12, $density=240, $background='', $log=null ) {
 
             global $CFG;
 

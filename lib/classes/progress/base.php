@@ -243,7 +243,7 @@ abstract class base {
     /**
      * Called whenever new progress should be displayed.
      */
-    protected abstract function update_progress();
+    abstract protected function update_progress();
 
     /**
      * @return bool True if currently inside a progress section

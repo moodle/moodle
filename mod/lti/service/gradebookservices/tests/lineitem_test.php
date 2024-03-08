@@ -187,7 +187,7 @@ class lineitem_test extends \advanced_testcase {
      * @return object lti instance created
      */
     private function create_graded_lti(int $typeid, object $course, ?string $resourceid, ?string $tag,
-            ?string $subreviewurl = null, ?string $subreviewparams = null) : object {
+            ?string $subreviewurl = null, ?string $subreviewparams = null): object {
 
         $lti = ['course' => $course->id,
             'typeid' => $typeid,

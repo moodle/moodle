@@ -576,7 +576,7 @@ abstract class engine {
      * @param  int      $limit The maximum number of results to return. If empty, limit to manager::MAX_RESULTS.
      * @return \core_search\document[] Results or false if no results
      */
-    public abstract function execute_query($filters, $accessinfo, $limit = 0);
+    abstract public function execute_query($filters, $accessinfo, $limit = 0);
 
     /**
      * Delete all documents.

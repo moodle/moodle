@@ -29,7 +29,7 @@ trait mod_lti_course_categories_trait {
      *
      * @return array
      */
-    public function setup_course_categories() : array {
+    public function setup_course_categories(): array {
         global $DB;
 
         $topcatdbrecord = $DB->get_record('course_categories', ['parent' => 0]);

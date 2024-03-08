@@ -89,7 +89,7 @@ class quizaccess_seb extends access_rule_base {
      * @return array $errors the updated $errors array.
      */
     public static function validate_settings_form_fields(array $errors,
-                                                         array $data, $files, mod_quiz_mod_form $quizform) : array {
+                                                         array $data, $files, mod_quiz_mod_form $quizform): array {
 
         $quizid = $data['instance'];
         $cmid = $data['coursemodule'];
@@ -235,7 +235,7 @@ class quizaccess_seb extends access_rule_base {
      *        used named placeholders, and the placeholder names should start with the
      *        plugin name, to avoid collisions.
      */
-    public static function get_settings_sql($quizid) : array {
+    public static function get_settings_sql($quizid): array {
         return [
                 'seb.requiresafeexambrowser AS seb_requiresafeexambrowser, '
                 . 'seb.showsebtaskbar AS seb_showsebtaskbar, '
@@ -323,7 +323,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return array
      */
-    private function get_user_finished_attempts() : array {
+    private function get_user_finished_attempts(): array {
         global $USER;
 
         return quiz_get_user_attempts(
@@ -361,7 +361,7 @@ class quizaccess_seb extends access_rule_base {
      * @param string $identifier Reason string identifier.
      * @return string
      */
-    private function get_reason_text(string $identifier) : string {
+    private function get_reason_text(string $identifier): string {
         if (in_array($identifier, ['not_seb', 'invalid_config_key', 'invalid_browser_key'])) {
             return get_string($identifier, 'quizaccess_seb');
         }
@@ -374,7 +374,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string
      */
-    private function get_invalid_key_error_message() : string {
+    private function get_invalid_key_error_message(): string {
         // Return error message with download link and links to get the seb config.
         return get_string('invalidkeys', 'quizaccess_seb')
             . $this->display_buttons($this->get_action_buttons());
@@ -385,7 +385,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string
      */
-    private function get_require_seb_error_message() : string {
+    private function get_require_seb_error_message(): string {
         $message = get_string('clientrequiresseb', 'quizaccess_seb');
 
         if ($this->should_display_download_seb_link()) {
@@ -401,7 +401,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string empty or a button which has the configured seb quit link.
      */
-    private function get_quit_button() : string {
+    private function get_quit_button(): string {
         $quitbutton = '';
 
         if (empty($this->get_user_finished_attempts())) {
@@ -428,7 +428,7 @@ class quizaccess_seb extends access_rule_base {
      * @return mixed a message, or array of messages, explaining the restriction
      *         (may be '' if no message is appropriate).
      */
-    public function description() : array {
+    public function description(): array {
         global $PAGE;
 
         $messages = [get_string('sebrequired', 'quizaccess_seb')];
@@ -478,7 +478,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string HTML code of the provided buttons.
      */
-    private function display_buttons(string $buttonshtml, $class = '', array $attributes = null) : string {
+    private function display_buttons(string $buttonshtml, $class = '', array $attributes = null): string {
         $html = '';
 
         if (!empty($buttonshtml)) {
@@ -493,7 +493,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string Html block of all action buttons.
      */
-    private function get_action_buttons() : string {
+    private function get_action_buttons(): string {
         $buttons = '';
 
         if ($this->should_display_download_seb_link()) {
@@ -522,7 +522,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string A link to download SafeExam Browser.
      */
-    private function get_download_seb_button() : string {
+    private function get_download_seb_button(): string {
         global $OUTPUT;
 
         $button = '';
@@ -539,7 +539,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string A link to launch Safe Exam Browser.
      */
-    private function get_launch_seb_button() : string {
+    private function get_launch_seb_button(): string {
         // Rendering as a href and not as button in a form to circumvent browser warnings for sending to URL with unknown protocol.
         $seblink = \quizaccess_seb\link_generator::get_link($this->quiz->cmid, true, is_https());
 
@@ -556,7 +556,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string A link to launch Safe Exam Browser.
      */
-    private function get_download_config_button() : string {
+    private function get_download_config_button(): string {
         // Rendering as a href and not as button in a form to circumvent browser warnings for sending to URL with unknown protocol.
         $httplink = \quizaccess_seb\link_generator::get_link($this->quiz->cmid, false, is_https());
 
@@ -573,7 +573,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return string
      */
-    private function get_seb_download_url() : string {
+    private function get_seb_download_url(): string {
         return get_config('quizaccess_seb', 'downloadlink');
     }
 
@@ -582,7 +582,7 @@ class quizaccess_seb extends access_rule_base {
      *
      * @return bool
      */
-    private function should_display_download_seb_link() : bool {
+    private function should_display_download_seb_link(): bool {
         return !empty($this->quiz->seb_showsebdownloadlink);
     }
 }

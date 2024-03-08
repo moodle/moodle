@@ -1317,7 +1317,7 @@ abstract class lesson_add_page_form_base extends moodleform {
      * Used to determine if this is a standard page or a special page
      * @return bool
      */
-    public final function is_standard() {
+    final public function is_standard() {
         return (bool)$this->standard;
     }
 
@@ -1327,7 +1327,7 @@ abstract class lesson_add_page_form_base extends moodleform {
      * This method adds the basic elements to the form including title and contents
      * and then calls custom_definition();
      */
-    public final function definition() {
+    final public function definition() {
         global $CFG;
         $mform = $this->_form;
         $editoroptions = $this->_customdata['editoroptions'];
@@ -1389,7 +1389,7 @@ abstract class lesson_add_page_form_base extends moodleform {
      * @param string|null $label
      * @param int $selected The page to select by default
      */
-    protected final function add_jumpto($name, $label=null, $selected=LESSON_NEXTPAGE) {
+    final protected function add_jumpto($name, $label=null, $selected=LESSON_NEXTPAGE) {
         $title = get_string("jump", "lesson");
         if ($label === null) {
             $label = $title;
@@ -1409,7 +1409,7 @@ abstract class lesson_add_page_form_base extends moodleform {
      * @param string|null $label
      * @param mixed $value The default value
      */
-    protected final function add_score($name, $label=null, $value=null) {
+    final protected function add_score($name, $label=null, $value=null) {
         if ($label === null) {
             $label = get_string("score", "lesson");
         }
@@ -1441,7 +1441,7 @@ abstract class lesson_add_page_form_base extends moodleform {
      *                      component as it's elements
      * @return void
      */
-    protected final function add_answer($count, $label = null, $required = false, $format= '', array $help = []) {
+    final protected function add_answer($count, $label = null, $required = false, $format= '', array $help = []) {
         if ($label === null) {
             $label = get_string('answer', 'lesson');
         }
@@ -1474,7 +1474,7 @@ abstract class lesson_add_page_form_base extends moodleform {
      * @param bool $required
      * @return void
      */
-    protected final function add_response($count, $label = null, $required = false) {
+    final protected function add_response($count, $label = null, $required = false) {
         if ($label === null) {
             $label = get_string('response', 'lesson');
         }
@@ -5026,7 +5026,7 @@ abstract class lesson_page extends lesson_base {
      * @param stdClass $data The form data to update.
      * @return stdClass The updated fom data.
      */
-    public function update_form_data(stdClass $data) : stdClass {
+    public function update_form_data(stdClass $data): stdClass {
         return $data;
     }
 }

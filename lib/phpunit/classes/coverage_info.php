@@ -42,7 +42,7 @@ class phpunit_coverage_info {
      * @param   string  $plugindir The root of the plugin, relative to the dataroot.
      * @return  array
      */
-    final public function get_includelists(string $plugindir) : array {
+    final public function get_includelists(string $plugindir): array {
         $coverages = [];
 
         $includelistfolders = array_merge([
@@ -79,7 +79,7 @@ class phpunit_coverage_info {
      * @param   string  $plugindir The root of the plugin, relative to the dataroot.
      * @return  array
      */
-    final public function get_excludelists(string $plugindir) : array {
+    final public function get_excludelists(string $plugindir): array {
         $coverages = [];
 
         if (!empty($plugindir)) {

@@ -59,7 +59,7 @@ class helper {
      */
     public static function get_conversation_messages(int $userid, int $convid, int $timedeleted = 0, int $limitfrom = 0,
                                                      int $limitnum = 0, string $sort = 'timecreated ASC', int $timefrom = 0,
-                                                     int $timeto = 0) : array {
+                                                     int $timeto = 0): array {
         global $DB;
 
         $sql = "SELECT m.id, m.useridfrom, m.subject, m.fullmessage, m.fullmessagehtml,
@@ -124,7 +124,7 @@ class helper {
      * @param array $messages The formated array messages.
      * @return array A conversation array with the messages and the involved members.
      */
-    public static function format_conversation_messages(int $userid, int $convid, array $messages) : array {
+    public static function format_conversation_messages(int $userid, int $convid, array $messages): array {
         global $USER;
 
         // Create the conversation array.
@@ -349,7 +349,7 @@ class helper {
      * @param int $useridto
      * @return array
      */
-    public static function messageuser_link_params(int $useridto) : array {
+    public static function messageuser_link_params(int $useridto): array {
         global $USER;
 
         return [
@@ -422,7 +422,7 @@ class helper {
      * @throws \dml_exception
      */
     public static function get_member_info(int $referenceuserid, array $userids, bool $includecontactrequests = false,
-                                           bool $includeprivacyinfo = false) : array {
+                                           bool $includeprivacyinfo = false): array {
         global $DB, $PAGE;
 
         // Prevent exception being thrown when array is empty.
@@ -666,7 +666,7 @@ class helper {
      *                          subset of user_get_default_fields (optional)
      * @return array the array of userdetails, if visible, or an empty array otherwise.
      */
-    public static function search_get_user_details(\stdClass $user, array $userfields = []) : array {
+    public static function search_get_user_details(\stdClass $user, array $userfields = []): array {
         global $CFG, $USER;
         require_once($CFG->dirroot . '/user/lib.php');
 
@@ -697,7 +697,7 @@ class helper {
     public static function prevent_unclosed_html_tags(
         string $message,
         bool $removebody = false
-    ) : string {
+    ): string {
         $html = '';
         if (!empty($message)) {
             $doc = new DOMDocument();

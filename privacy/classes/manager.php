@@ -140,7 +140,7 @@ class manager {
      * @param string $component frankenstyle component name, e.g. 'mod_assign'
      * @return bool true if the component is compliant, false otherwise.
      */
-    public function component_is_compliant(string $component) : bool {
+    public function component_is_compliant(string $component): bool {
         // Components which don't store user data need only implement the null_provider.
         if ($this->component_implements($component, null_provider::class)) {
             return true;
@@ -165,7 +165,7 @@ class manager {
      * @param  string $component Frankenstyle component name.
      * @return string The key to retrieve the language string for the null provider reason.
      */
-    public function get_null_provider_reason(string $component) : string {
+    public function get_null_provider_reason(string $component): string {
         if ($this->component_implements($component, null_provider::class)) {
             $reason = $this->handled_component_class_callback($component, null_provider::class, 'get_reason', []);
             return empty($reason) ? 'privacy:reason' : $reason;
@@ -196,7 +196,7 @@ class manager {
      *
      * @return collection[] The array of collection objects, indexed by frankenstyle component name.
      */
-    public function get_metadata_for_components() : array {
+    public function get_metadata_for_components(): array {
         // Get the metadata, and put into an assoc array indexed by component name.
         $metadata = [];
         foreach ($this->get_component_list() as $component) {
@@ -216,7 +216,7 @@ class manager {
      * @param int $userid the id of the user we're fetching contexts for.
      * @return contextlist_collection the collection of contextlist items for the respective components.
      */
-    public function get_contexts_for_userid(int $userid) : contextlist_collection {
+    public function get_contexts_for_userid(int $userid): contextlist_collection {
         $progress = static::get_log_tracer();
 
         $components = $this->get_component_list();
@@ -262,7 +262,7 @@ class manager {
      * @param   \context    $context The context to search
      * @return  userlist_collection the collection of userlist items for the respective components.
      */
-    public function get_users_in_context(\context $context) : \core_privacy\local\request\userlist_collection {
+    public function get_users_in_context(\context $context): \core_privacy\local\request\userlist_collection {
         $progress = static::get_log_tracer();
 
         $components = $this->get_component_list();
@@ -539,7 +539,7 @@ class manager {
      * @param string $interface the name of the interface we want to check.
      * @return bool True if an implementation was found, false otherwise.
      */
-    protected function component_implements(string $component, string $interface) : bool {
+    protected function component_implements(string $component, string $interface): bool {
         $providerclass = $this->get_provider_classname($component);
         if (class_exists($providerclass)) {
             $rc = new \ReflectionClass($providerclass);

@@ -42,7 +42,7 @@ class cachestore_addinstance_form extends moodleform {
     /**
      * The definition of the add instance form
      */
-    protected final function definition() {
+    final protected function definition() {
         $form = $this->_form;
         $store = $this->_customdata['store'];
         $plugin = $this->_customdata['plugin'];
@@ -131,7 +131,7 @@ class cache_definition_mappings_form extends moodleform {
     /**
      * The definition of the form
      */
-    protected final function definition() {
+    final protected function definition() {
         global $OUTPUT;
 
         $definition = $this->_customdata['definition'];
@@ -202,7 +202,7 @@ class cache_definition_sharing_form extends moodleform {
     /**
      * The definition of the form
      */
-    protected final function definition() {
+    final protected function definition() {
         $definition = $this->_customdata['definition'];
         $sharingoptions = $this->_customdata['sharingoptions'];
         $form = $this->_form;

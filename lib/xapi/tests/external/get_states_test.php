@@ -145,7 +145,7 @@ class get_states_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function components_provider() : array {
+    public function components_provider(): array {
         return [
             'Inexistent component' => [
                 'component' => 'inexistent_component',

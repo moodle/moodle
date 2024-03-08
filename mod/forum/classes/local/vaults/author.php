@@ -46,7 +46,7 @@ class author extends db_table_vault {
      *
      * @return string
      */
-    protected function get_table_alias() : string {
+    protected function get_table_alias(): string {
         return 'a';
     }
 
@@ -58,7 +58,7 @@ class author extends db_table_vault {
      * @param int|null $userid The user ID
      * @return string
      */
-    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null) : string {
+    protected function generate_get_records_sql(string $wheresql = null, string $sortsql = null, ?int $userid = null): string {
         $selectsql = 'SELECT * FROM {' . self::TABLE . '} ' . $this->get_table_alias();
         $selectsql .= $wheresql ? ' WHERE ' . $wheresql : '';
         $selectsql .= $sortsql ? ' ORDER BY ' . $sortsql : '';
@@ -91,7 +91,7 @@ class author extends db_table_vault {
      * @param post_entity[] $posts The list of posts
      * @return author_entity[]
      */
-    public function get_authors_for_posts(array $posts) : array {
+    public function get_authors_for_posts(array $posts): array {
         $authorids = array_reduce($posts, function($carry, $post) {
             $carry[$post->get_author_id()] = true;
             return $carry;
@@ -107,7 +107,7 @@ class author extends db_table_vault {
      * @param int[] $authorids The list of author ids to fetch.
      * @return int[] Results indexed by author id.
      */
-    public function get_context_ids_for_author_ids(array $authorids) : array {
+    public function get_context_ids_for_author_ids(array $authorids): array {
         $db = $this->get_db();
         [$insql, $params] = $db->get_in_or_equal($authorids);
         $sql = "SELECT instanceid, id FROM {context} WHERE contextlevel = ? AND instanceid {$insql}";

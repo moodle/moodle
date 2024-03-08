@@ -46,7 +46,7 @@ class tour implements \renderable {
      *
      * @param   toursource      $tour       The tour being output.
      */
-    public function __construct (toursource $tour) {
+    public function __construct(toursource $tour) {
         $this->tour = $tour;
     }
 

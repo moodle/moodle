@@ -256,7 +256,7 @@ class test_userlist_base extends userlist_base {
      *
      * @param   int[]   $contexids  The list of contextids to use.
      */
-    public function set_userids(array $userids) : userlist_base {
+    public function set_userids(array $userids): userlist_base {
         return parent::set_userids($userids);
     }
 }

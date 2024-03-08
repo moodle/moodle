@@ -104,7 +104,7 @@ class update_question_version_status extends external_api {
     /**
      * Returns description of method result value.
      */
-    public static function  execute_returns() {
+    public static function execute_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_BOOL, 'status: true if success'),
             'statusname' => new external_value(PARAM_RAW, 'statusname: name of the status'),

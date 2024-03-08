@@ -45,7 +45,7 @@ class any_course_access extends \core_analytics\local\indicator\binary {
      *
      * @return \lang_string
      */
-    public static function get_name() : \lang_string {
+    public static function get_name(): \lang_string {
         return new \lang_string('indicator:anycourseaccess');
     }
 

@@ -49,7 +49,7 @@ class competency_template_deleted extends base {
      * @param template $template The template.
      * @return self
      */
-    public static final function create_from_template(template $template) {
+    final public static function create_from_template(template $template) {
         if (!$template->get('id')) {
             throw new \coding_exception('The template ID must be set.');
         }

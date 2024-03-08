@@ -460,7 +460,7 @@ function lti_get_jwt_claim_mapping() {
  * @return object|null
  * @since  Moodle 3.9
  */
-function lti_get_instance_type(object $instance) : ?object {
+function lti_get_instance_type(object $instance): ?object {
     if (empty($instance->typeid)) {
         if (!$tool = lti_get_tool_by_url_match($instance->toolurl, $instance->course)) {
             $tool = lti_get_tool_by_url_match($instance->securetoolurl,  $instance->course);
@@ -1422,7 +1422,7 @@ function params_to_string(object $params) {
  *
  * @return stdClass Form config for the item
  */
-function content_item_to_form(object $tool, object $typeconfig, object $item) : stdClass {
+function content_item_to_form(object $tool, object $typeconfig, object $item): stdClass {
     global $OUTPUT;
 
     $config = new stdClass();
@@ -2880,7 +2880,7 @@ function lti_update_type($type, $config) {
  * @param string $lticoursecategories Comma separated list of course categories.
  * @return void
  */
-function lti_type_add_categories(int $typeid, string $lticoursecategories = '') : void {
+function lti_type_add_categories(int $typeid, string $lticoursecategories = ''): void {
     global $DB;
     $coursecategories = explode(',', $lticoursecategories);
     foreach ($coursecategories as $coursecategory) {

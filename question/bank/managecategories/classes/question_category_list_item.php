@@ -34,7 +34,7 @@ class question_category_list_item extends \list_item {
      * @param bool $last Is the last on the list.
      * @param \list_item $lastitem Last item.
      */
-    public function set_icon_html($first, $last, $lastitem) : void {
+    public function set_icon_html($first, $last, $lastitem): void {
         global $CFG;
         $category = $this->item;
         $url = new moodle_url('/question/bank/managecategories/category.php',
@@ -75,7 +75,7 @@ class question_category_list_item extends \list_item {
      * @return string Item html.
      * @throws \moodle_exception
      */
-    public function item_html($extraargs = []) : string {
+    public function item_html($extraargs = []): string {
         global $PAGE, $OUTPUT;
         $str = $extraargs['str'];
         $category = $this->item;

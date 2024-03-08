@@ -153,7 +153,7 @@ class ChatDaemon {
         }
     }
 
-    public function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
+    public function error_handler($errno, $errmsg, $filename, $linenum, $vars) {
         // Checks if an error needs to be suppressed due to @.
         if (error_reporting() != 0) {
             $this->trace($errmsg.' on line '.$linenum, $errno);

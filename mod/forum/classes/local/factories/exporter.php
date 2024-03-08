@@ -93,7 +93,7 @@ class exporter {
         stdClass $user,
         forum_entity $forum,
         ?int $currentgroup
-    ) : forum_exporter {
+    ): forum_exporter {
         return new forum_exporter($forum, [
             'legacydatamapperfactory' => $this->legacydatamapperfactory,
             'capabilitymanager' => $this->managerfactory->get_capability_manager($forum),
@@ -109,7 +109,7 @@ class exporter {
      *
      * @return  array
      */
-    public static function get_forum_export_structure() : array {
+    public static function get_forum_export_structure(): array {
         return forum_exporter::read_properties_definition();
     }
 
@@ -128,7 +128,7 @@ class exporter {
         discussion_entity $discussion,
         array $groupsbyid = [],
         array $favouriteids = []
-    ) : discussion_exporter {
+    ): discussion_exporter {
         return new discussion_exporter($discussion, [
             'context' => $forum->get_context(),
             'forum' => $forum,
@@ -178,7 +178,7 @@ class exporter {
         array $postauthorcontextids = [],
         array $favourites = [],
         array $latestauthors = []
-    ) : discussion_summaries_exporter {
+    ): discussion_summaries_exporter {
         return new discussion_summaries_exporter(
             $discussions,
             $groupsbyid,
@@ -241,7 +241,7 @@ class exporter {
         array $ratingbypostid = [],
         bool $includehtml = false,
         array $inlineattachmentsbypostid = []
-    ) : posts_exporter {
+    ): posts_exporter {
         return new posts_exporter(
             $posts,
             $authorsbyid,

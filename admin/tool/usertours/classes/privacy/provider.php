@@ -50,7 +50,7 @@ class provider implements
      * @param   collection     $items The initialised item collection to add items to.
      * @return  collection     A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $items) : collection {
+    public static function get_metadata(collection $items): collection {
         // There are several user preferences.
         $items->add_user_preference(\tool_usertours\tour::TOUR_REQUESTED_BY_USER, 'privacy:metadata:preference:requested');
         $items->add_user_preference(\tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER, 'privacy:metadata:preference:completed');

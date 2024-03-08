@@ -190,7 +190,7 @@ class template_editor_tools implements templatable, renderable {
      * @param array $taglist the indexed array of taglists ($tag => $tagname)
      * @return array of optgroup data
      */
-    protected function get_optgroup_data (string $name, array $taglist): array {
+    protected function get_optgroup_data(string $name, array $taglist): array {
         $tags = [];
         foreach ($taglist as $tag => $tagname) {
             $tags[] = [

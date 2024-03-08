@@ -1037,7 +1037,7 @@ class auth_plugin_mnet extends auth_plugin_base {
      * @param object $logline The log information to be trimmed
      * @return object The passed logline object trimmed to not exceed storable limits
      */
-    function trim_logline ($logline) {
+    function trim_logline($logline) {
         $limits = array('ip' => 15, 'coursename' => 40, 'module' => 20, 'action' => 40,
                         'url' => 255);
         foreach ($limits as $property => $limit) {

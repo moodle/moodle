@@ -74,7 +74,7 @@ class exported_html_page implements renderable, templatable {
      * @param renderer_base $output
      * @return array
      */
-    public function export_for_template(renderer_base $output) : Array {
+    public function export_for_template(renderer_base $output): Array {
         return [
             'navigation' => $this->navigationdata,
             'systemname' => $this->systemname,

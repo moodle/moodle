@@ -53,7 +53,7 @@ class restore_book_activity_task extends restore_activity_task {
      *
      * @return array
      */
-    static public function define_decode_contents() {
+    public static function define_decode_contents() {
         $contents = array();
 
         $contents[] = new restore_decode_content('book', array('intro'), 'book');
@@ -68,7 +68,7 @@ class restore_book_activity_task extends restore_activity_task {
      *
      * @return array
      */
-    static public function define_decode_rules() {
+    public static function define_decode_rules() {
         $rules = array();
 
         // List of books in course
@@ -97,7 +97,7 @@ class restore_book_activity_task extends restore_activity_task {
      *
      * @return array
      */
-    static public function define_restore_log_rules() {
+    public static function define_restore_log_rules() {
         $rules = array();
 
         $rules[] = new restore_log_rule('book', 'add', 'view.php?id={course_module}', '{book}');
@@ -131,7 +131,7 @@ class restore_book_activity_task extends restore_activity_task {
      *
      * @return array
      */
-    static public function define_restore_log_rules_for_course() {
+    public static function define_restore_log_rules_for_course() {
         $rules = array();
 
         $rules[] = new restore_log_rule('book', 'view all', 'index.php?id={course}', null);

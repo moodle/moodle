@@ -69,7 +69,7 @@ class user_favourite_service {
      * @throws \moodle_exception if the component name is invalid, or if the repository encounters any errors.
      */
     public function create_favourite(string $component, string $itemtype, int $itemid, \context $context,
-            int $ordering = null) : favourite {
+            int $ordering = null): favourite {
         // Access: Any component can ask to favourite something, we can't verify access to that 'something' here though.
 
         // Validate the component name.
@@ -95,7 +95,7 @@ class user_favourite_service {
      * @return array the list of favourites found.
      * @throws \moodle_exception if the component name is invalid, or if the repository encounters any errors.
      */
-    public function find_favourites_by_type(string $component, string $itemtype, int $limitfrom = 0, int $limitnum = 0) : array {
+    public function find_favourites_by_type(string $component, string $itemtype, int $limitfrom = 0, int $limitnum = 0): array {
         if (!in_array($component, \core_component::get_component_names())) {
             throw new \moodle_exception("Invalid component name '$component'");
         }
@@ -123,7 +123,7 @@ class user_favourite_service {
      * @return array the list of favourites found.
      * @throws \moodle_exception if the component name is invalid, or if the repository encounters any errors.
      */
-    public function find_all_favourites(string $component, array $itemtypes = [], int $limitfrom = 0, int $limitnum = 0) : array {
+    public function find_all_favourites(string $component, array $itemtypes = [], int $limitfrom = 0, int $limitnum = 0): array {
         if (!in_array($component, \core_component::get_component_names())) {
             throw new \moodle_exception("Invalid component name '$component'");
         }
@@ -172,7 +172,7 @@ class user_favourite_service {
      * @param string $joinitemid the table and column identifier which the itemid is joined to. E.g. conversation.id.
      * @return array the list of sql and params, in the format [$sql, $params].
      */
-    public function get_join_sql_by_type(string $component, string $itemtype, string $tablealias, string $joinitemid) : array {
+    public function get_join_sql_by_type(string $component, string $itemtype, string $tablealias, string $joinitemid): array {
         $sql = " LEFT JOIN {favourite} {$tablealias}
                         ON {$tablealias}.component = :favouritecomponent
                        AND {$tablealias}.itemtype = :favouriteitemtype
@@ -222,7 +222,7 @@ class user_favourite_service {
      * @param \context $context the context of the item which was favourited.
      * @return bool true if the item is favourited, false otherwise.
      */
-    public function favourite_exists(string $component, string $itemtype, int $itemid, \context $context) : bool {
+    public function favourite_exists(string $component, string $itemtype, int $itemid, \context $context): bool {
         return $this->repo->exists_by(
             [
                 'userid' => $this->userid,

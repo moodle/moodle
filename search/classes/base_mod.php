@@ -293,7 +293,7 @@ abstract class base_mod extends base {
      * @param \core_search\document $doc
      * @return \core_search\document_icon
      */
-    public function get_doc_icon(document $doc) : document_icon {
+    public function get_doc_icon(document $doc): document_icon {
         return new document_icon('monologo', $this->get_module_name());
     }
 

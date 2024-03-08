@@ -423,7 +423,7 @@ class stateactions {
      * @param int[] $ids section ids
      * @param int $visible the new visible value
      */
-    protected function set_section_visibility (
+    protected function set_section_visibility(
         stateupdates $updates,
         stdClass $course,
         array $ids,
@@ -808,7 +808,7 @@ class stateactions {
      * @param int[] $ids the course modules $ids
      * @return cm_info[] the extracted cm_info objects
      */
-    protected function get_cm_info (course_modinfo $modinfo, array $ids): array {
+    protected function get_cm_info(course_modinfo $modinfo, array $ids): array {
         $cms = [];
         foreach ($ids as $cmid) {
             $cms[$cmid] = $modinfo->get_cm($cmid);

@@ -81,7 +81,7 @@ abstract class info {
      *
      * @return \context Context for this item
      */
-    public abstract function get_context();
+    abstract public function get_context();
 
     /**
      * Obtains the modinfo associated with this availability information.
@@ -378,7 +378,7 @@ abstract class info {
      *
      * @return string Name of item
      */
-    protected abstract function get_thing_name();
+    abstract protected function get_thing_name();
 
     /**
      * Stores an updated availability tree JSON structure into the relevant
@@ -386,7 +386,7 @@ abstract class info {
      *
      * @param string $availabilty New JSON value
      */
-    protected abstract function set_in_database($availabilty);
+    abstract protected function set_in_database($availabilty);
 
     /**
      * In rare cases the system may want to change all references to one ID
@@ -662,7 +662,7 @@ abstract class info {
      *
      * @return string Name of capability used to view hidden items of this type
      */
-    protected abstract function get_view_hidden_capability();
+    abstract protected function get_view_hidden_capability();
 
     /**
      * Obtains SQL that returns a list of enrolled users that has been filtered

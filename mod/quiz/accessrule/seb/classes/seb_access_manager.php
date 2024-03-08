@@ -146,7 +146,7 @@ class seb_access_manager {
      *
      * @return bool If required.
      */
-    public function seb_required() : bool {
+    public function seb_required(): bool {
         if (!$this->quizsettings) {
             return false;
         } else {
@@ -221,7 +221,7 @@ class seb_access_manager {
      *
      * @return \mod_quiz\quiz_settings
      */
-    public function get_quiz() : quiz_settings {
+    public function get_quiz(): quiz_settings {
         return $this->quiz;
     }
 

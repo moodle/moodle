@@ -42,7 +42,7 @@ class user_edit_forum_form extends moodleform {
     /**
      * Define the form.
      */
-    public function definition () {
+    public function definition() {
         global $CFG, $COURSE;
 
         $mform = $this->_form;

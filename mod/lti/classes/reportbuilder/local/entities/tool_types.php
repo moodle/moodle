@@ -179,7 +179,7 @@ class tool_types extends base {
                 "{$tablealias}.ltiversion"
             ))
                 ->add_joins($this->get_joins())
-                ->set_options_callback(static function() : array {
+                ->set_options_callback(static function(): array {
                     return ['LTI-1p0' => 'Legacy LTI', '1.3.0' => "LTI Advantage"];
                 })
         ];

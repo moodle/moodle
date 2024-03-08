@@ -50,7 +50,7 @@ class provider implements
      * @param   collection $collection The initialised collection to add items to.
      * @return  collection A listing of user data stored through this system.
      */
-    public static function get_metadata(collection $collection) : collection {
+    public static function get_metadata(collection $collection): collection {
         return $collection->add_database_table('user_info_data', [
             'userid' => 'privacy:metadata:profilefield_datetime:userid',
             'fieldid' => 'privacy:metadata:profilefield_datetime:fieldid',
@@ -65,7 +65,7 @@ class provider implements
      * @param   int         $userid     The user to search.
      * @return  contextlist $contextlist  The contextlist containing the list of contexts used in this plugin.
      */
-    public static function get_contexts_for_userid(int $userid) : contextlist {
+    public static function get_contexts_for_userid(int $userid): contextlist {
         $sql = "SELECT ctx.id
                   FROM {user_info_data} uda
                   JOIN {user_info_field} uif ON uda.fieldid = uif.id

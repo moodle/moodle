@@ -984,7 +984,7 @@ class phpunit_util extends testing_util {
      * @param   int     $level The number of levels of indentation to pad
      * @return  string
      */
-    protected static function pad(string $string, int $level) : string {
+    protected static function pad(string $string, int $level): string {
         return str_repeat(" ", $level * 2) . "{$string}\n";
     }
 
@@ -995,7 +995,7 @@ class phpunit_util extends testing_util {
      * @param   string[] $excludelists The list of files/folders in the excludelist.
      * @return  string
      */
-    protected static function get_coverage_config(array $includelists, array $excludelists) : string {
+    protected static function get_coverage_config(array $includelists, array $excludelists): string {
         $coverages = '';
         if (!empty($includelists)) {
             $coverages .= self::pad("<include>", 2);

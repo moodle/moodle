@@ -55,7 +55,7 @@ class lesson_page_type_essay extends lesson_page {
      * @param string $useranswer serialized object
      * @return object
      */
-    static public function extract_useranswer($useranswer) {
+    public static function extract_useranswer($useranswer) {
         $essayinfo = unserialize_object($useranswer);
         if (!isset($essayinfo->responseformat)) {
             $essayinfo->response = text_to_html($essayinfo->response ?? '', false, false);

@@ -121,7 +121,7 @@ final class libxml_errors_mgr {
         libxml_clear_errors();
     }
 
-    private function collect_errors ($filename=''){
+    private function collect_errors($filename=''){
         $errors = libxml_get_errors();
         static $error_types = array(
         LIBXML_ERR_ERROR => 'Error'

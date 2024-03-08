@@ -38,7 +38,7 @@ interface task_logger {
      *
      * @return  bool
      */
-    public static function is_configured() : bool;
+    public static function is_configured(): bool;
 
     /**
      * Store the log for the specified task.
@@ -59,7 +59,7 @@ interface task_logger {
      *
      * @return  bool
      */
-    public static function has_log_report() : bool;
+    public static function has_log_report(): bool;
 
     /**
      * Get any URL available for viewing relevant task log reports.
@@ -67,5 +67,5 @@ interface task_logger {
      * @param   string      $classname The task class to fetch for
      * @return  \moodle_url
      */
-    public static function get_url_for_task_class(string $classname) : \moodle_url;
+    public static function get_url_for_task_class(string $classname): \moodle_url;
 }

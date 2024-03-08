@@ -83,7 +83,7 @@ class test_sql_generator extends \sql_generator {
      * @param xmldb_table $xmldbtable The xmldb_table object instance.
      * @return array Array of SQL statements to add one comment to the table.
      */
-    function getCommentSQL ($xmldbtable) {
+    function getCommentSQL($xmldbtable) {
         return [];
     }
 

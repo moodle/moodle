@@ -2061,7 +2061,7 @@ class grade_category extends grade_object {
      * @param int   $sortorder The current sortorder
      * @return array An array containing 'object', 'type', 'depth' and optionally 'children'
      */
-    static private function _fetch_course_tree_recursion($category_array, &$sortorder) {
+    private static function _fetch_course_tree_recursion($category_array, &$sortorder) {
         if (isset($category_array['object']->gradetype) && $category_array['object']->gradetype==GRADE_TYPE_NONE) {
             return null;
         }

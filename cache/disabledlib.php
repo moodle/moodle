@@ -207,7 +207,7 @@ class cache_disabled extends cache implements cache_loader_with_locking {
      * @param int|string $key
      * @return bool
      */
-    public function acquire_lock($key) : bool {
+    public function acquire_lock($key): bool {
         return true;
     }
 
@@ -217,7 +217,7 @@ class cache_disabled extends cache implements cache_loader_with_locking {
      * @param int|string $key
      * @return bool
      */
-    public function release_lock($key) : bool {
+    public function release_lock($key): bool {
         return true;
     }
 
@@ -227,7 +227,7 @@ class cache_disabled extends cache implements cache_loader_with_locking {
      * @param int|string $key
      * @return bool
      */
-    public function check_lock_state($key) : bool {
+    public function check_lock_state($key): bool {
         return true;
     }
 }

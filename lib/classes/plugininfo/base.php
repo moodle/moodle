@@ -428,7 +428,7 @@ abstract class base {
      * @param int $branch the moodle branch number
      * @return bool true if not incompatible with moodle branch
      */
-    public function is_core_compatible_satisfied(int $branch) : bool {
+    public function is_core_compatible_satisfied(int $branch): bool {
         if (!empty($this->pluginincompatible) && ($branch >= $this->pluginincompatible)) {
             return false;
         } else {
@@ -675,7 +675,7 @@ abstract class base {
      * @param string $return either 'overview' or 'manage'
      * @return moodle_url
      */
-    public final function get_default_uninstall_url($return = 'overview') {
+    final public function get_default_uninstall_url($return = 'overview') {
         return new moodle_url('/admin/plugins.php', array(
             'uninstall' => $this->component,
             'confirm' => 0,

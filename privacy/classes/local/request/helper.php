@@ -51,7 +51,7 @@ class helper {
      * @param   contextlist     $contextlist The contextlist being appended to.
      * @return  contextlist     The final contextlist
      */
-    public static function add_shared_contexts_to_contextlist_for(int $userid, contextlist $contextlist) : contextlist {
+    public static function add_shared_contexts_to_contextlist_for(int $userid, contextlist $contextlist): contextlist {
         if (strpos($contextlist->get_component(), 'mod_') === 0) {
             // Activity modules support data stored by core about them - for example, activity completion.
             $contextlist = static::add_shared_contexts_to_contextlist_for_course_module($userid, $contextlist);
@@ -127,7 +127,7 @@ class helper {
      * @param   \stdClass       $user The user being written.
      * @return  \stdClass
      */
-    public static function get_context_data(\context $context, \stdClass $user) : \stdClass {
+    public static function get_context_data(\context $context, \stdClass $user): \stdClass {
         global $DB;
 
         $basedata = (object) [];
@@ -164,7 +164,7 @@ class helper {
      * @param   contextlist     $contextlist The contextlist being appended to.
      * @return  contextlist     The final contextlist
      */
-    protected static function add_shared_contexts_to_contextlist_for_course_module(int $userid, contextlist $contextlist) : contextlist {
+    protected static function add_shared_contexts_to_contextlist_for_course_module(int $userid, contextlist $contextlist): contextlist {
         // Fetch all contexts where the user has activity completion enabled.
         $sql = "SELECT
                 c.id
@@ -193,7 +193,7 @@ class helper {
      * @param   \stdClass       $user The user being written.
      * @return  \stdClass
      */
-    protected static function get_context_module_data(\context_module $context, \stdClass $user) : \stdClass {
+    protected static function get_context_module_data(\context_module $context, \stdClass $user): \stdClass {
         global $DB;
 
         $coursecontext = $context->get_course_context();
@@ -240,7 +240,7 @@ class helper {
      * @param   \stdClass $user The user being written.
      * @return  \stdClass General data about this block instance.
      */
-    protected static function get_context_block_data(\context_block $context, \stdClass $user) : \stdClass {
+    protected static function get_context_block_data(\context_block $context, \stdClass $user): \stdClass {
         global $DB;
 
         $block = $DB->get_record('block_instances', ['id' => $context->instanceid]);

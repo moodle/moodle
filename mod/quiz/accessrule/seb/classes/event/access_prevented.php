@@ -51,7 +51,7 @@ class access_prevented extends base {
      * @return base
      */
     public static function create_strict(seb_access_manager $accessmanager, string $reason,
-            ?string $configkey = null, ?string $browserexamkey = null) : base {
+            ?string $configkey = null, ?string $browserexamkey = null): base {
         global $USER;
 
         $other = [];
@@ -109,7 +109,7 @@ class access_prevented extends base {
      *
      * @return array Mapping of object id.
      */
-    public static function get_objectid_mapping() : array {
+    public static function get_objectid_mapping(): array {
         return ['db' => 'quiz', 'restore' => 'quiz'];
     }
 
@@ -119,7 +119,7 @@ class access_prevented extends base {
      *
      * @return array List of mapping of other ids.
      */
-    public static function get_other_mapping() : array {
+    public static function get_other_mapping(): array {
         return [
             'cmid' => ['db' => 'course_modules', 'restore' => 'course_modules']
         ];

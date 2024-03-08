@@ -101,7 +101,7 @@ abstract class question_behaviour_attempt_updater {
         $this->qeupdater = null;
     }
 
-    protected abstract function behaviour_name();
+    abstract protected function behaviour_name();
 
     public function get_converted_qa() {
         $this->initialise_qa();
@@ -231,8 +231,8 @@ abstract class question_behaviour_attempt_updater {
         $this->unexpected_event($state);
     }
 
-    protected abstract function process6($step, $state);
-    protected abstract function process7($step, $state);
+    abstract protected function process6($step, $state);
+    abstract protected function process7($step, $state);
 
     protected function process8($step, $state) {
         return $this->process6($step, $state);

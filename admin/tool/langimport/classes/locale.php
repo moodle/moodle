@@ -42,7 +42,7 @@ class locale {
      * @return bool TRUE if the locale is available on OS.
      * @throws coding_exception when $langpackcode parameter is a non-empty string.
      */
-    public function check_locale_availability(string $langpackcode) : bool {
+    public function check_locale_availability(string $langpackcode): bool {
         global $CFG;
 
         if (empty($langpackcode)) {

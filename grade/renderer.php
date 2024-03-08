@@ -158,7 +158,7 @@ class core_grades_renderer extends plugin_renderer_base {
      * @param bool $showbuttons Whether to display buttons (message, add to contacts) within the heading.
      * @return string The raw HTML to render.
      */
-    public function user_heading(stdClass $user, int $courseid, bool $showbuttons = true) : string {
+    public function user_heading(stdClass $user, int $courseid, bool $showbuttons = true): string {
         global $USER;
 
         $headingdata = [

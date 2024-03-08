@@ -53,7 +53,7 @@ class category_created extends \core\event\base {
      * @param category_controller $category
      * @return category_created
      */
-    public static function create_from_object(category_controller $category) : category_created {
+    public static function create_from_object(category_controller $category): category_created {
         $eventparams = [
             'objectid' => $category->get('id'),
             'context'  => $category->get_handler()->get_configuration_context(),

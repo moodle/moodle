@@ -1183,7 +1183,7 @@ class core_useragent {
      * @param string $extension
      * @return bool
      */
-    public static function supports_media_source_extensions(string $extension) : bool {
+    public static function supports_media_source_extensions(string $extension): bool {
         // Not supported in IE below 11.0.
         if (self::is_ie() && !self::check_ie_version('11.0')) {
             return false;

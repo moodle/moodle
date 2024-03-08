@@ -42,7 +42,7 @@ class event_form extends moodleform {
     /**
      * The form definition
      */
-    function definition () {
+    function definition() {
         global $CFG, $USER, $OUTPUT;
         $mform = $this->_form;
         $newevent = (empty($this->_customdata->event) || empty($this->_customdata->event->id));

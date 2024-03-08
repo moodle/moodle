@@ -43,7 +43,7 @@ trait subcontext_info {
      * @param   \stdClass   $discussion The discussion
      * @return  array
      */
-    protected static function get_discussion_area(\stdClass $discussion) : Array {
+    protected static function get_discussion_area(\stdClass $discussion): Array {
         $pathparts = [];
         if (!empty($discussion->groupname)) {
             $pathparts[] = get_string('groups');
@@ -69,7 +69,7 @@ trait subcontext_info {
      * @param   \stdClass   $post The post.
      * @return  array
      */
-    protected static function get_post_area(\stdClass $post) : Array {
+    protected static function get_post_area(\stdClass $post): Array {
         $parts = [
             $post->created,
             $post->subject,

@@ -217,7 +217,7 @@ EOD;
      *
      * @return string the unique id of the file picker.
      */
-    protected function get_filepicker_unique_id() : string {
+    protected function get_filepicker_unique_id(): string {
         if (empty($this->filepickeruniqueid)) {
             $this->filepickeruniqueid = uniqid();
         }

@@ -86,7 +86,7 @@ class template_list extends \flexible_table {
      * @param \quizaccess_seb\template $data Template for this row.
      * @return string
      */
-    protected function col_name(template $data) : string {
+    protected function col_name(template $data): string {
         return \html_writer::link(
             new \moodle_url(template_controller::get_base_url(), [
                 'id' => $data->get('id'),
@@ -102,7 +102,7 @@ class template_list extends \flexible_table {
      * @param \quizaccess_seb\template $data Template for this row.
      * @return string
      */
-    protected function col_description(template $data) : string {
+    protected function col_description(template $data): string {
         return $data->get('description');
     }
 
@@ -132,7 +132,7 @@ class template_list extends \flexible_table {
      * @param \quizaccess_seb\template $data Template for this row.
      * @return string
      */
-    protected function col_actions(template $data) : string {
+    protected function col_actions(template $data): string {
         $actions = [];
 
         $actions[] = helper::format_icon_link(

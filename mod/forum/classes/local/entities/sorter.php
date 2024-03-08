@@ -89,7 +89,7 @@ class sorter {
      * @param array $items The list of items to sort.
      * @return array
      */
-    public function sort_into_children(array $items) : array {
+    public function sort_into_children(array $items): array {
         $ids = array_reduce($items, function($carry, $item) {
             $carry[($this->getid)($item)] = true;
             return $carry;
@@ -139,7 +139,7 @@ class sorter {
      * @param array $items Items in the data structure returned by "sort_into_children"
      * @return array A flat array.
      */
-    public function flatten_children(array $items) : array {
+    public function flatten_children(array $items): array {
         $result = [];
 
         foreach ($items as [$item, $children]) {

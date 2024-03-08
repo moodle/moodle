@@ -69,7 +69,7 @@ class edit_menu_column extends column_base {
         echo $OUTPUT->render($menu);
     }
 
-    public function get_required_fields():array {
+    public function get_required_fields(): array {
         return ['q.qtype'];
     }
 

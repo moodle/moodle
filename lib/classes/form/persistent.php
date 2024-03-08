@@ -301,7 +301,7 @@ abstract class persistent extends moodleform {
      * @param  array $files
      * @return array
      */
-    public final function validation($data, $files) {
+    final public function validation($data, $files) {
         $errors = parent::validation($data, $files);
         $data = $this->get_submitted_data();
 

@@ -197,7 +197,7 @@ class property_list {
      *
      * @return string XML ready for creating an XML file.
      */
-    public function to_xml() : string {
+    public function to_xml(): string {
         return $this->cfpropertylist->toXML();
     }
 
@@ -225,7 +225,7 @@ class property_list {
      *
      * @return string A json encoded string.
      */
-    public function to_json() : string {
+    public function to_json(): string {
         // Create a clone of the PList, so main list isn't mutated.
         $jsonplist = new CFPropertyList();
         $jsonplist->parse($this->cfpropertylist->toXML(), CFPropertyList::FORMAT_XML);
@@ -383,7 +383,7 @@ class property_list {
      * @param array $array Array containing CFType objects.
      * @return array Standard PHP array.
      */
-    private function array_serialize_cftypes(array $array) : array {
+    private function array_serialize_cftypes(array $array): array {
         $array = new CFDictionary($array); // Convert back to CFDictionary so serialization is recursive.
         return $array->toArray(); // Serialize.
     }

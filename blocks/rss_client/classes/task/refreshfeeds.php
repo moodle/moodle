@@ -119,7 +119,7 @@ class refreshfeeds extends \core\task\scheduled_task {
      * @param   string  $url The URL to fetch
      * @return  \moodle_simplepie
      */
-    protected function fetch_feed(string $url) : \moodle_simplepie {
+    protected function fetch_feed(string $url): \moodle_simplepie {
         // Fetch the rss feed, using standard simplepie caching so feeds will be renewed only if cache has expired.
         \core_php_time_limit::raise(60);
 
@@ -140,7 +140,7 @@ class refreshfeeds extends \core\task\scheduled_task {
      * @param   int     $currentskip The current skip time of a record.
      * @return  int     The newly calculated skip time.
      */
-    protected function calculate_skiptime(int $currentskip) : int {
+    protected function calculate_skiptime(int $currentskip): int {
         // If the feed has never failed, then the initial skiptime will be 0. We use a default of 5 minutes in this case.
         // If the feed has previously failed then we double that time.
         $newskiptime = max(MINSECS * 5, ($currentskip * 2));

@@ -62,7 +62,7 @@ class manager {
      *
      * @return array of check objects
      */
-    static public function get_performance_checks() : array {
+    public static function get_performance_checks(): array {
         $checks = [
             new performance\designermode(),
             new performance\cachejs(),

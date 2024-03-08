@@ -119,7 +119,7 @@ class column_manager extends column_manager_base {
      * @param ?array $columns Column order to set. Null value clears the setting.
      * @param bool $global save this as a global default, rather than a user preference?
      */
-    public static function set_column_order(?array $columns, bool $global = false) : void {
+    public static function set_column_order(?array $columns, bool $global = false): void {
         if (!is_null($columns)) {
             $columns = implode(',', $columns);
         }
@@ -132,7 +132,7 @@ class column_manager extends column_manager_base {
      * @param ?array $columns List of hidden columns. Null value clears the setting.
      * @param bool $global save this as a global default, rather than a user preference?
      */
-    public static function set_hidden_columns(?array $columns, bool $global = false) : void {
+    public static function set_hidden_columns(?array $columns, bool $global = false): void {
         if (!is_null($columns)) {
             $columns = implode(',', $columns);
         }
@@ -145,7 +145,7 @@ class column_manager extends column_manager_base {
      * @param ?string $sizes columns with width. Null value clears the setting.
      * @param bool $global save this as a global default, rather than a user preference?
      */
-    public static function set_column_size(?string $sizes, bool $global = false) : void {
+    public static function set_column_size(?string $sizes, bool $global = false): void {
         self::save_preference('colsize', $sizes, $global);
     }
 

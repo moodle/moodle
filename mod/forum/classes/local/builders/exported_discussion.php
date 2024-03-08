@@ -105,7 +105,7 @@ class exported_discussion {
         stdClass $user,
         forum_entity $forum,
         discussion_entity $discussion
-    ) : array {
+    ): array {
 
         $favouriteids = [];
         if ($this->is_favourited($discussion, $forum->get_context(), $user)) {
@@ -125,7 +125,7 @@ class exported_discussion {
      * @param forum_entity $forum The forum entity
      * @return stdClass[]
      */
-    private function get_groups_available_in_forum($forum) : array {
+    private function get_groups_available_in_forum($forum): array {
         $course = $forum->get_course_record();
         $coursemodule = $forum->get_course_module_record();
 

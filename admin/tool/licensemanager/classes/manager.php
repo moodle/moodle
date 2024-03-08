@@ -75,7 +75,7 @@ class manager {
      * @param string $action the api action to carry out.
      * @param string|object $license the license object or shortname of license to carry action out on.
      */
-    public function execute(string $action, $license) : void {
+    public function execute(string $action, $license): void {
 
         admin_externalpage_setup('licensemanager');
 
@@ -140,7 +140,7 @@ class manager {
      *
      * @return bool true if license editing complete, false otherwise.
      */
-    private function edit(string $action, string $licenseshortname) : bool {
+    private function edit(string $action, string $licenseshortname): bool {
 
         if ($action != self::ACTION_CREATE && $action != self::ACTION_UPDATE) {
             throw new \coding_exception('license edit actions are limited to create and update');
@@ -190,7 +190,7 @@ class manager {
      * @param string $direction which direction to move, up or down.
      * @param string $licenseshortname the shortname of the license to move up or down order.
      */
-    private function change_license_order(string $direction, string $licenseshortname) : void {
+    private function change_license_order(string $direction, string $licenseshortname): void {
 
         if (!empty($licenseshortname)) {
             if ($direction == self::ACTION_MOVE_UP) {
@@ -208,7 +208,7 @@ class manager {
      * @param string $licenseshortname the shortname of the license to create/edit.
      * @param \tool_licensemanager\form\edit_license $form the form for submitting edit data.
      */
-    private function view_license_editor(string $action, string $licenseshortname, edit_license $form) : void {
+    private function view_license_editor(string $action, string $licenseshortname, edit_license $form): void {
         global $PAGE;
 
         $renderer = $PAGE->get_renderer('tool_licensemanager');
@@ -233,7 +233,7 @@ class manager {
     /**
      * View the license manager.
      */
-    private function view_license_manager(string $message = null) : void {
+    private function view_license_manager(string $message = null): void {
         global $PAGE, $OUTPUT;
 
         $renderer = $PAGE->get_renderer('tool_licensemanager');

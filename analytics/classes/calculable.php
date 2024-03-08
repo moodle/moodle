@@ -79,7 +79,7 @@ abstract class calculable {
      *
      * @return \lang_string
      */
-    public static abstract function get_name() : \lang_string;
+    abstract public static function get_name(): \lang_string;
 
     /**
      * The class id is the calculable class full qualified class name.
@@ -160,7 +160,7 @@ abstract class calculable {
      * @param  array    $info           The data. Indexed by an id unique across the site. E.g. an activity id.
      * @return null
      */
-    protected final function add_shared_calculation_info(int $sampleid, array $info) {
+    final protected function add_shared_calculation_info(int $sampleid, array $info) {
         if (is_null($this->calculationinfo)) {
             // Lazy loading.
             $this->calculationinfo = new \core_analytics\calculation_info();
@@ -178,7 +178,7 @@ abstract class calculable {
      * @param  int                                       $rangeindex
      * @return null
      */
-    public final function save_calculation_info(\core_analytics\local\time_splitting\base $timesplitting, int $rangeindex) {
+    final public function save_calculation_info(\core_analytics\local\time_splitting\base $timesplitting, int $rangeindex) {
         if (!is_null($this->calculationinfo)) {
             $this->calculationinfo->save($this, $timesplitting, $rangeindex);
         }
