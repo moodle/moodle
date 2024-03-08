@@ -716,11 +716,16 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertCount(1, $result['cohorts']);
         $this->assertEquals('Cohortsearch 4', $result['cohorts'][$cohort4->id]->name);
 
-        $result = core_cohort_external::search_cohorts("Cohortsearch 4", $syscontext, 'parents');
+        // A user with permissions in the system, searching category context.
+        $result = core_cohort_external::search_cohorts("Cohortsearch 4", $catcontext, 'parents');
         $this->assertCount(1, $result['cohorts']);
         $this->assertEquals('Cohortsearch 4', $result['cohorts'][$cohort4->id]->name);
-        $this->assertIsArray($result['cohorts'][$cohort4->id]->customfields);
-        $this->assertCount(2, $result['cohorts'][$cohort4->id]->customfields);
+
+        $this->assertEqualsCanonicalizing([
+            'Test value 1',
+            'Test value 2',
+        ], array_column($result['cohorts'][$cohort4->id]->customfields, 'value'));
+
         $actual = [];
         foreach ($result['cohorts'][$cohort4->id]->customfields as $customfield) {
             $this->assertArrayHasKey('name', $customfield);
@@ -730,8 +735,6 @@ class externallib_test extends externallib_advanced_testcase {
             $this->assertArrayHasKey('value', $customfield);
             $actual[$customfield['shortname']] = $customfield;
         }
-        $this->assertEquals('Test value 1', $actual['testfield1']['value']);
-        $this->assertEquals('Test value 2', $actual['testfield2']['value']);
 
         // A user with permissions in the category.
         $this->setUser($catcreator);
