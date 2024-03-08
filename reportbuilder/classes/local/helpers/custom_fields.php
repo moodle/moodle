@@ -212,6 +212,10 @@ class custom_fields {
             return column::TYPE_TIMESTAMP;
         }
 
+        if ($field->get('type') === 'select') {
+            return column::TYPE_TEXT;
+        }
+
         if ($datafield === 'intvalue') {
             return column::TYPE_INTEGER;
         }
