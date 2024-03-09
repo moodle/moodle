@@ -29,6 +29,7 @@ if (isset($_POST['evidence_name_type'])) {
     // Initialize all the necessary details about the record.
     $filename = $_POST['filename'];
     $activity_type = $_POST['evidence_name_type']; // Ensure it's an integer
+    $activity_timestamp = $_POST['activity_timestamp'];
     $userid = $_POST['userid'];
     $quizid = $_POST['quizid'];
     $quizattempt = $_POST['quizattempt'];
@@ -61,6 +62,7 @@ if (isset($_POST['evidence_name_type'])) {
     $insertData->attempt = $quizattempt;
     $insertData->evidence = $filename;
     $insertData->activity_type = $activity_type;
+    $insertData->timestamp = $activity_timestamp;
 
     // Insert the activity record
     $insert_activity = $DB->insert_record('auto_proctor_activity_report_tb', $insertData);
