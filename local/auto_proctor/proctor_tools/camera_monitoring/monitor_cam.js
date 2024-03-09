@@ -57,22 +57,40 @@ $(document).ready(function () {
                     - Send the evidence_name_type, filename, userid, quizid, and quizattempt to server for saving the activity in the activity_report_table (save_cam_activity.php).
     */
 
-    let videoElement;
+    let isRecording = false;
+    let video_proctoring;
+    let video_recording;
+    let timestamp_captured;
 
         let susCounter = 0;
         let probSusCounter = 0;
-        let sendDurationCounter = 0;
-        let duration;
         let intervalId;
         let filename;
 
+        let mediaRecorder;
+        let recordedChunks = [];
+        let startTime;
+        let timestampInterval;
+        let activity_timestamp;
+
         // Camera constraints.
-        const getUserMediaConstraints = (deviceId) => {
+        const getUserMediaConstraintsProctoring = (deviceId) => {
             return {
                 video: {
                 deviceId: deviceId ? { exact: deviceId } : undefined,
                 facingMode: 'user', // Set facingMode if preferred
                 },
+            };
+        };
+
+        // Camera constraints.
+        const getUserMediaConstraintsRecording = (deviceId) => {
+            return {
+                video: {
+                deviceId: deviceId ? { exact: deviceId } : undefined,
+                facingMode: 'user', // Set facingMode if preferred
+                },
+                audio: true,
             };
         };
 
@@ -90,28 +108,43 @@ $(document).ready(function () {
         const chosenCameraDevice = JSON.parse(jsdata.chosen_camera_device);
         var deviceId = chosenCameraDevice.video.deviceId.exact;
 
-        // When windows load
+        // When windows loada
         window.onload = async function() {
 
             // Use the user's chosen camera device.
-            const constraints = getUserMediaConstraints(deviceId);
+            const constraints_proctoring = getUserMediaConstraintsProctoring(deviceId);
+            const constraints_recording= getUserMediaConstraintsRecording(deviceId);
 
             // Stream user's chosen camera with facemesh model.
             try {
-                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const stream_proctoring = await navigator.mediaDevices.getUserMedia(constraints_proctoring);
+                const stream_recording = await navigator.mediaDevices.getUserMedia(constraints_recording);
+
                     
                 // Create video element for camera capture.
-                const video = document.createElement('video');
-                video.className = 'input_video';
-                video.srcObject = stream;
-                video.autoplay = true;
-                video.playsinline = true;
-                video.style.display = 'none';
-                document.body.appendChild(video);
+                video_proctoring = document.createElement('video');
+                video_proctoring.className = 'input_video';
+                video_proctoring.srcObject = stream_proctoring;
+                video_proctoring.autoplay = true;
+                video_proctoring.playsinline = true;
+                video_proctoring.style.display = 'none';
+                document.body.appendChild(video_proctoring);
+
+                // Create video element for camera capture.
+                video_recording = document.createElement('video');
+                video_recording.className = 'input_video';
+                video_recording.srcObject = stream_recording;
+                video_recording.autoplay = true;
+                video_recording.muted = true;
+                video_recording.playsinline = true;
+                video_recording.style.display = 'none';
+                document.body.appendChild(video_recording);
+
+                startRecording();
 
                 // Apply facemesh to the selected camera.
                 const onFrame = async () => {
-                    await faceMesh.send({ image: video });
+                    await faceMesh.send({ image: video_proctoring });
                     requestAnimationFrame(onFrame);
                 };
 
@@ -146,6 +179,70 @@ $(document).ready(function () {
                     }
                 }
             }
+        }
+
+        function startRecording() {
+            
+            if (!video_recording.srcObject) {
+                video_recording.srcObject = window.stream_recording;
+            }
+
+            console.log('recording');
+            isRecording = true;
+
+            recordedChunks = [];
+            startTime = Date.now();
+            mediaRecorder = new MediaRecorder(video_recording.srcObject, { mimeType: 'video/webm' });
+            mediaRecorder.start();
+            mediaRecorder.ondataavailable = handleDataAvailable;
+            mediaRecorder.onstop = handleStop;
+            updateTimestamp(); // Initialize timestamp
+            timestampInterval = setInterval(updateTimestamp, 1000); // Update timestamp every second
+        }
+
+        function handleDataAvailable(event) {
+            recordedChunks.push(event.data);
+        }
+
+        function handleStop(event) {
+            clearInterval(timestampInterval); // Stop updating timestamp
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const videoUrl = URL.createObjectURL(blob);
+            video_recording.src = videoUrl;
+            video_recording.style.display = 'none'; // Hide the video element
+            downloadVideo(blob);
+        }
+
+        function downloadVideo(blob) {
+            const { timestamp, milliseconds } = generateTimestamp();
+            const recording_filename = 'EVD_USER_' + jsdata.userid + '_QUIZ_' + jsdata.quizid + '_ATTEMPT_' + jsdata.quizattempt + '_' +timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_RECORDING';
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_recording.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+            xhr.setRequestHeader('X-Recording-Filename', recording_filename); // Send recording filename as a header
+            xhr.responseType = 'blob';
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    const blob = new Blob([xhr.response], { type: 'video/webm' });
+                }
+            };
+            xhr.send(blob);
+        }
+
+        //document.getElementById('stop_recording').addEventListener('click', stopRecording);
+        function stopRecording() {
+            isRecording = false;
+            mediaRecorder.stop();
+        }
+
+        function updateTimestamp() {
+            const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsedSeconds / 60).toString().padStart(2, '0');
+            const seconds = (elapsedSeconds % 60).toString().padStart(2, '0');
+            //document.getElementById('timer').textContent = `Video Time: ${minutes}:${seconds}`;
+
+            activity_timestamp = minutes + ':' + seconds;
         }
 
         // Results of facemesh
@@ -198,9 +295,6 @@ $(document).ready(function () {
                         // then stop the timer for the previous suspicious movement,
                         // reset the suspicous counters.
                         if (gazeDirection === "neutral"){
-                            //probSusMovement('sendTheActivty');
-                            sendDuration();
-                            stopTimer();
                             susCounter = 0;
                             probSusCounter = 0;
                         }
@@ -222,14 +316,6 @@ $(document).ready(function () {
             }
         }
 
-        // Function for updating the duration of the detected and captured activity.
-        function sendDuration(){
-            if (sendDurationCounter === 0){
-                sendDurationCounter++;
-                updateDuration();
-            }
-        }
-
         // Function for when suspicous movement is detected.
         function probSusMovement(evidence_name_type) {
             probSusCounter++;
@@ -239,37 +325,11 @@ $(document).ready(function () {
             // The value of evidence_name_type in captureEvidence(evidence_name_type) came from the probSusMovement(evidence_name_type).
             if (probSusCounter > 10){
                 if (susCounter === 0){
-                    //updateDuration();
-                    sendDurationCounter = 0;
                     susCounter++;
-                    const intervalId = startTimer();
                     captureEvidence(evidence_name_type);
+                    timestamp_captured = activity_timestamp;
                 }
             }
-        }
-
-        // Function to update the timer
-        function updateTimer(milliseconds) {
-            duration = milliseconds;
-        }
-
-        // Function to start the timer for the duration
-        function startTimer() {
-            let milliseconds = 0;
-            updateTimer(milliseconds);
-
-            // Update the timer every 10 milliseconds
-            intervalId = setInterval(function () {
-                milliseconds += 10;
-            updateTimer(milliseconds);
-            }, 10);
-
-            return intervalId;
-        }
-
-        // Function to stop timer.
-        function stopTimer() {
-            clearInterval(intervalId);
         }
 
         function captureEvidence(evidence_name_type) {
@@ -352,28 +412,7 @@ $(document).ready(function () {
                     }
                 }
             };
-            xhr.send('evidence_name_type=' + evidence_name_type + '&filename=' + filename + '&userid=' + jsdata.userid + '&quizid=' + jsdata.quizid + '&quizattempt=' + jsdata.quizattempt);
-        }
-
-        // Update the duration for the recent activity
-        // Sends the value of duration variable in server along with the userid, quizid, quizattempt, and filename to update the duration of the previous detected activity in activity_report_table.
-        function updateDuration(){
-            console.log('duration: ', duration);
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_activity_duration.php', true); // Replace with the actual path
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    if (xhr.status === 200) {
-                        console.log('POST request successful');
-                    } else {
-                        console.error('POST request failed with status: ' + xhr.status);
-                        // Handle the error or provide feedback to the user
-                    }
-                }
-            };
-            xhr.send('filename=' + filename + '&duration=' + duration + '&userid=' + jsdata.userid + '&quizid=' + jsdata.quizid + '&quizattempt=' + jsdata.quizattempt);
+            xhr.send('evidence_name_type=' + evidence_name_type + '&filename=' + filename + '&activity_timestamp=' + timestamp_captured + '&userid=' + jsdata.userid + '&quizid=' + jsdata.quizid + '&quizattempt=' + jsdata.quizattempt);
         }
         
         const faceMesh = new FaceMesh({locateFile: (file) => {
@@ -396,6 +435,7 @@ $(document).ready(function () {
 
                 // If camera permission is denied, record in database.
                 if (this.state = 'denied'){
+                    stopRecording();
                     sendActivityRecord('camera_permission_denied_during_quiz');
 
                     // Check if strict mode was activated
@@ -406,5 +446,13 @@ $(document).ready(function () {
                     }
                 }
             };
+        });
+
+        window.addEventListener('beforeunload', function(event) {
+            // Check if recording is in progress
+            if (isRecording) {
+                // Stop recording or perform any necessary cleanup actions
+                stopRecording();
+            }
         });
 });
