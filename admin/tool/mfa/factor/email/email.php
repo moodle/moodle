@@ -24,7 +24,7 @@
  */
 // Ignore coding standards for login check, this page does not require login.
 // @codingStandardsIgnoreStart
-require_once(__DIR__ . '../../../../../../config.php');
+require_once(__DIR__ . '/../../../../../config.php');
 $instanceid = required_param('instance', PARAM_INT);
 $pass = optional_param('pass', '0', PARAM_INT);
 $secret = optional_param('secret', 0, PARAM_INT);
