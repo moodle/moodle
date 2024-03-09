@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace OpenSpout\Reader;
 
+use OpenSpout\Common\Exception\IOException;
+
 /**
  * @template T of SheetIteratorInterface
  */
@@ -15,7 +17,7 @@ interface ReaderInterface
      *
      * @param string $filePath Path of the file to be read
      *
-     * @throws \OpenSpout\Common\Exception\IOException
+     * @throws IOException
      */
     public function open(string $filePath): void;
 
@@ -24,7 +26,7 @@ interface ReaderInterface
      *
      * @return T
      *
-     * @throws \OpenSpout\Reader\Exception\ReaderNotOpenedException If called before opening the reader
+     * @throws Exception\ReaderNotOpenedException If called before opening the reader
      */
     public function getSheetIterator(): SheetIteratorInterface;
 

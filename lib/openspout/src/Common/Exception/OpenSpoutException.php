@@ -6,6 +6,4 @@ namespace OpenSpout\Common\Exception;
 
 use Exception;
 
-abstract class OpenSpoutException extends Exception
-{
-}
+abstract class OpenSpoutException extends Exception {}

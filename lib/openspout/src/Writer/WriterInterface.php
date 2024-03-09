@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace OpenSpout\Writer;
 
 use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Exception\InvalidArgumentException;
+use OpenSpout\Common\Exception\IOException;
 
 interface WriterInterface
 {
@@ -14,7 +16,7 @@ interface WriterInterface
      *
      * @param string $outputFilePath Path of the output file that will contain the data
      *
-     * @throws \OpenSpout\Common\Exception\IOException If the writer cannot be opened or if the given path is not writable
+     * @throws IOException If the writer cannot be opened or if the given path is not writable
      */
     public function openToFile(string $outputFilePath): void;
 
@@ -24,7 +26,7 @@ interface WriterInterface
      *
      * @param string $outputFileName Name of the output file that will contain the data. If a path is passed in, only the file name will be kept
      *
-     * @throws \OpenSpout\Common\Exception\IOException If the writer cannot be opened
+     * @throws IOException If the writer cannot be opened
      */
     public function openToBrowser(string $outputFileName): void;
 
@@ -33,8 +35,8 @@ interface WriterInterface
      *
      * @param Row $row The row to be appended to the stream
      *
-     * @throws \OpenSpout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
-     * @throws \OpenSpout\Common\Exception\IOException              If unable to write data
+     * @throws Exception\WriterNotOpenedException If the writer has not been opened yet
+     * @throws IOException                        If unable to write data
      */
     public function addRow(Row $row): void;
 
@@ -43,9 +45,9 @@ interface WriterInterface
      *
      * @param Row[] $rows The rows to be appended to the stream
      *
-     * @throws \OpenSpout\Common\Exception\InvalidArgumentException If the input param is not valid
-     * @throws \OpenSpout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
-     * @throws \OpenSpout\Common\Exception\IOException              If unable to write data
+     * @throws InvalidArgumentException           If the input param is not valid
+     * @throws Exception\WriterNotOpenedException If the writer has not been opened yet
+     * @throws IOException                        If unable to write data
      */
     public function addRows(array $rows): void;
 

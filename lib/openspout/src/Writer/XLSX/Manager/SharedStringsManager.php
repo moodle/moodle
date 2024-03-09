@@ -31,7 +31,7 @@ final class SharedStringsManager
     private int $numSharedStrings = 0;
 
     /** @var Escaper\XLSX Strings escaper */
-    private Escaper\XLSX $stringsEscaper;
+    private readonly Escaper\XLSX $stringsEscaper;
 
     /**
      * @param string       $xlFolder       Path to the "xl" folder

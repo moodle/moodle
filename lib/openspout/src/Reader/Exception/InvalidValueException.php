@@ -8,7 +8,7 @@ use Throwable;
 
 final class InvalidValueException extends ReaderException
 {
-    private string $invalidValue;
+    private readonly string $invalidValue;
 
     public function __construct(string $invalidValue, string $message = '', int $code = 0, ?Throwable $previous = null)
     {

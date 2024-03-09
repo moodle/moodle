@@ -6,6 +6,9 @@ namespace OpenSpout\Writer\XLSX;
 
 use OpenSpout\Common\Entity\Style\Style;
 use OpenSpout\Writer\Common\AbstractOptions;
+use OpenSpout\Writer\XLSX\Options\HeaderFooter;
+use OpenSpout\Writer\XLSX\Options\PageMargin;
+use OpenSpout\Writer\XLSX\Options\PageSetup;
 
 final class Options extends AbstractOptions
 {
@@ -16,6 +19,12 @@ final class Options extends AbstractOptions
 
     /** @var MergeCell[] */
     private array $MERGE_CELLS = [];
+
+    private ?PageMargin $pageMargin = null;
+
+    private ?PageSetup $pageSetup = null;
+
+    private ?HeaderFooter $headerFooter = null;
 
     public function __construct()
     {
@@ -62,5 +71,35 @@ final class Options extends AbstractOptions
     public function getMergeCells(): array
     {
         return $this->MERGE_CELLS;
+    }
+
+    public function setPageMargin(PageMargin $pageMargin): void
+    {
+        $this->pageMargin = $pageMargin;
+    }
+
+    public function getPageMargin(): ?PageMargin
+    {
+        return $this->pageMargin;
+    }
+
+    public function setPageSetup(PageSetup $pageSetup): void
+    {
+        $this->pageSetup = $pageSetup;
+    }
+
+    public function getPageSetup(): ?PageSetup
+    {
+        return $this->pageSetup;
+    }
+
+    public function setHeaderFooter(HeaderFooter $headerFooter): void
+    {
+        $this->headerFooter = $headerFooter;
+    }
+
+    public function getHeaderFooter(): ?HeaderFooter
+    {
+        return $this->headerFooter;
     }
 }

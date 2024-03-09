@@ -24,7 +24,7 @@ abstract class AbstractReader implements ReaderInterface
      *
      * @param string $filePath Path of the file to be read
      *
-     * @throws \OpenSpout\Common\Exception\IOException If the file at the given path does not exist, is not readable or is corrupted
+     * @throws IOException If the file at the given path does not exist, is not readable or is corrupted
      */
     public function open(string $filePath): void
     {
