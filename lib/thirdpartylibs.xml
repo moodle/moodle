@@ -632,7 +632,7 @@ All rights reserved.</copyright>
     <location>psr/http-factory</location>
     <name>http-factory</name>
     <description>Provides interfaces that describe the components of a HTTP Factory.</description>
-    <version>1.0.1</version>
+    <version>1.1.0</version>
     <license>MIT</license>
     <repository>https://github.com/php-fig/http-factory</repository>
   </library>
