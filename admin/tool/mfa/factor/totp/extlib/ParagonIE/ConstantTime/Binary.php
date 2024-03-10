@@ -1,8 +1,11 @@
 <?php
+declare(strict_types=1);
 namespace ParagonIE\ConstantTime;
 
+use TypeError;
+
 /**
- *  Copyright (c) 2016 - 2017 Paragon Initiative Enterprises.
+ *  Copyright (c) 2016 - 2022 Paragon Initiative Enterprises.
  *  Copyright (c) 2014 Steve "Sc00bz" Thomas (steve at tobtu dot com)
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -42,12 +45,16 @@ abstract class Binary
      * @param string $str
      * @return int
      */
-    public static function safeStrlen($str)
-    {
+    public static function safeStrlen(
+        #[\SensitiveParameter]
+        string $str
+    ): int {
         if (\function_exists('mb_strlen')) {
+            // mb_strlen in PHP 7.x can return false.
+            /** @psalm-suppress RedundantCast */
             return (int) \mb_strlen($str, '8bit');
         } else {
-            return (int) \strlen($str);
+            return \strlen($str);
         }
     }
 
@@ -59,36 +66,25 @@ abstract class Binary
      * @staticvar boolean $exists
      * @param string $str
      * @param int $start
-     * @param int $length
+     * @param ?int $length
      * @return string
-     * @throws \TypeError
+     *
+     * @throws TypeError
      */
     public static function safeSubstr(
-        $str,
-        $start = 0,
-        $length = \null
-    ) {
-        if (\function_exists('mb_substr')) {
-            // mb_substr($str, 0, null, '8bit') returns an empty string on PHP
-            // 5.3, so we have to find the length ourselves.
-            if (\is_null($length)) {
-                if ($start >= 0) {
-                    $length = self::safeStrlen($str) - $start;
-                } else {
-                    $length = -$start;
-                }
-            }
-            // $length calculation above might result in a 0-length string
-            if ($length === 0) {
-                return '';
-            }
-            return \mb_substr($str, $start, $length, '8bit');
-        }
+        #[\SensitiveParameter]
+        string $str,
+        int $start = 0,
+        ?int $length = null
+    ): string {
         if ($length === 0) {
             return '';
         }
-        // Unlike mb_substr(), substr() doesn't accept null for length
-        if (!is_null($length)) {
+        if (\function_exists('mb_substr')) {
+            return \mb_substr($str, $start, $length, '8bit');
+        }
+        // Unlike mb_substr(), substr() doesn't accept NULL for length
+        if ($length !== null) {
             return \substr($str, $start, $length);
         } else {
             return \substr($str, $start);
