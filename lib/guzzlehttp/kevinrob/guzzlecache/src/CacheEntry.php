@@ -3,10 +3,11 @@
 namespace Kevinrob\GuzzleCache;
 
 use GuzzleHttp\Psr7\PumpStream;
+use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class CacheEntry
+class CacheEntry implements \Serializable
 {
     /**
      * @var RequestInterface
@@ -256,47 +257,77 @@ class CacheEntry
         return time() - $this->dateCreated->getTimestamp();
     }
 
-    public function __sleep()
+    public function __serialize(): array
     {
-        // Stream/Resource can't be serialized... So we copy the content into an implementation of `Psr\Http\Message\StreamInterface`
-        if ($this->response !== null) {
-            $responseBody = (string)$this->response->getBody();
-            $this->response = $this->response->withBody(
-                new PumpStream(
-                    new BodyStore($responseBody),
-                    [
-                        'size' => mb_strlen($responseBody),
-                    ]
-                )
-            );
-        }
+        return [
+            'request' => self::toSerializeableMessage($this->request),
+            'response' => $this->response !== null ? self::toSerializeableMessage($this->response) : null,
+            'staleAt' => $this->staleAt,
+            'staleIfErrorTo' => $this->staleIfErrorTo,
+            'staleWhileRevalidateTo' => $this->staleWhileRevalidateTo,
+            'dateCreated' => $this->dateCreated,
+            'timestampStale' => $this->timestampStale,
+        ];
+    }
 
-        $requestBody = (string)$this->request->getBody();
-        $this->request = $this->request->withBody(
+    public function __unserialize(array $data): void
+    {
+        $prefix = '';
+        if (isset($data["\0*\0request"])) {
+            // We are unserializing a cache entry which was serialized with a version < 4.1.1
+            $prefix = "\0*\0";
+        }
+        $this->request = self::restoreStreamBody($data[$prefix.'request']);
+        $this->response = $data[$prefix.'response'] !== null ? self::restoreStreamBody($data[$prefix.'response']) : null;
+        $this->staleAt = $data[$prefix.'staleAt'];
+        $this->staleIfErrorTo = $data[$prefix.'staleIfErrorTo'];
+        $this->staleWhileRevalidateTo = $data[$prefix.'staleWhileRevalidateTo'];
+        $this->dateCreated = $data[$prefix.'dateCreated'];
+        $this->timestampStale = $data[$prefix.'timestampStale'];
+    }
+
+    /**
+     * Stream/Resource can't be serialized... So we copy the content into an implementation of `Psr\Http\Message\StreamInterface`
+     *
+     * @template T of MessageInterface
+     *
+     * @param T $message
+     * @return T
+     */
+    private static function toSerializeableMessage(MessageInterface $message): MessageInterface
+    {
+        $bodyString = (string)$message->getBody();
+
+        return $message->withBody(
             new PumpStream(
-                new BodyStore($requestBody),
+                new BodyStore($bodyString),
                 [
-                    'size' => mb_strlen($requestBody)
+                    'size' => mb_strlen($bodyString),
                 ]
             )
         );
-
-        return array_keys(get_object_vars($this));
     }
 
-    public function __wakeup()
+    /**
+     * @template T of MessageInterface
+     *
+     * @param T $message
+     * @return T
+     */
+    private static function restoreStreamBody(MessageInterface $message): MessageInterface
     {
-        // We re-create the stream of the response
-        if ($this->response !== null) {
-            $this->response = $this->response
-                ->withBody(
-                    \GuzzleHttp\Psr7\Utils::streamFor((string) $this->response->getBody())
-                );
-        }
-        $this->request = $this->request
-            ->withBody(
-                \GuzzleHttp\Psr7\Utils::streamFor((string) $this->request->getBody())
-            );
+        return $message->withBody(
+            \GuzzleHttp\Psr7\Utils::streamFor((string) $message->getBody())
+        );
     }
 
+    public function serialize()
+    {
+        return serialize($this->__serialize());
+    }
+
+    public function unserialize($data)
+    {
+        $this->__unserialize(unserialize($data));
+    }
 }

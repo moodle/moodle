@@ -7,7 +7,6 @@ use GuzzleHttp\Exception\TransferException;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Promise\RejectedPromise;
-use GuzzleHttp\Promise\Utils;
 use GuzzleHttp\Psr7\Response;
 use Kevinrob\GuzzleCache\Strategy\CacheStrategyInterface;
 use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
@@ -111,8 +110,7 @@ class CacheMiddleware
      */
     public function purgeReValidation()
     {
-        // Call to \GuzzleHttp\Promise\inspect_all throws error, replacing with the latest one.
-        Utils::inspectAll($this->waitingRevalidate);
+        \GuzzleHttp\Promise\Utils::inspectAll($this->waitingRevalidate);
     }
 
     /**
@@ -239,11 +237,9 @@ class CacheMiddleware
                     return static::addToCache($this->cacheStorage, $request, $response, $update);
                 },
                 function ($reason) use ($cacheEntry) {
-                    if ($reason instanceof TransferException) {
-                        $response = static::getStaleResponse($cacheEntry);
-                        if ($response instanceof ResponseInterface) {
-                            return $response;
-                        }
+                    $response = static::getStaleResponse($cacheEntry);
+                    if ($response instanceof ResponseInterface) {
+                        return $response;
                     }
 
                     return new RejectedPromise($reason);
