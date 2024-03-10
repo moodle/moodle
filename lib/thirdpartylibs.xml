@@ -765,7 +765,7 @@ All rights reserved.</copyright>
     <location>jmespath</location>
     <name>JMESPath</name>
     <description>The JMESPath library</description>
-    <version>2.6.1</version>
+    <version>2.7.0</version>
     <license>MIT</license>
     <repository>https://github.com/jmespath/jmespath.php</repository>
     <copyrights>
