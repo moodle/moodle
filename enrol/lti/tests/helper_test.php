@@ -477,7 +477,6 @@ class helper_test extends \advanced_testcase {
     public function test_set_xpath($parameters, $expected) {
         $helper = new \ReflectionClass('enrol_lti\\helper');
         $function = $helper->getMethod('set_xpath');
-        $function->setAccessible(true);
 
         $document = new \DOMDocument();
         $document->load(realpath(__DIR__ . '/fixtures/input.xml'));
@@ -502,7 +501,6 @@ class helper_test extends \advanced_testcase {
         ];
         $helper = new \ReflectionClass('enrol_lti\\helper');
         $function = $helper->getMethod('set_xpath');
-        $function->setAccessible(true);
 
         $document = new \DOMDocument();
         $document->load(realpath(__DIR__ . '/fixtures/input.xml'));

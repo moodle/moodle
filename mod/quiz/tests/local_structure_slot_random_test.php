@@ -82,7 +82,6 @@ class local_structure_slot_random_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass('\mod_quiz\local\structure\slot_random');
         $rcp = $rc->getProperty('filtercondition');
-        $rcp->setAccessible(true);
         $record = json_decode($rcp->getValue($randomslot));
 
         $this->assertEquals($quiz->id, $randomslot->get_quiz()->id);
@@ -90,7 +89,6 @@ class local_structure_slot_random_test extends \advanced_testcase {
         $this->assertTrue($record->filters->category->filteroptions->includesubcategories);
 
         $rcp = $rc->getProperty('record');
-        $rcp->setAccessible(true);
         $record = $rcp->getValue($randomslot);
         $this->assertEquals(1, $record->maxmark);
     }
@@ -168,7 +166,6 @@ class local_structure_slot_random_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass('\mod_quiz\local\structure\slot_random');
         $rcp = $rc->getProperty('quiz');
-        $rcp->setAccessible(true);
         $quizpropery = $rcp->getValue($randomslot);
 
         $this->assertEquals($quiz, $quizpropery);
@@ -223,7 +220,6 @@ class local_structure_slot_random_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass('\mod_quiz\local\structure\slot_random');
         $rcp = $rc->getProperty('filtercondition');
-        $rcp->setAccessible(true);
         $tagspropery = $rcp->getValue($randomslot);
 
         $this->assertEquals([$tags['foo']->id, $tags['bar']->id],

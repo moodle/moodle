@@ -209,12 +209,10 @@ class boostnavbar_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(boostnavbar::class);
         $rcp = $rc->getProperty('items');
-        $rcp->setAccessible(true);
         $rcp->setValue($boostnavbar, $page->navbar->get_items());
 
         // Make the call to the function.
         $rcm = $rc->getMethod('remove_no_link_items');
-        $rcm->setAccessible(true);
         $rcm->invoke($boostnavbar, $removesectionnodes);
 
         // Get the value for the class variable that the function modifies.
@@ -388,12 +386,10 @@ class boostnavbar_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(boostnavbar::class);
         $rcp = $rc->getProperty('items');
-        $rcp->setAccessible(true);
         $rcp->setValue($boostnavbar, $page->navbar->get_items());
 
         // Make the call to the function.
         $rcm = $rc->getMethod('remove_duplicate_items');
-        $rcm->setAccessible(true);
         $rcm->invoke($boostnavbar);
 
         // Get the value for the class variable that the function modifies.
@@ -527,12 +523,10 @@ class boostnavbar_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(boostnavbar::class);
         $rcp = $rc->getProperty('items');
-        $rcp->setAccessible(true);
         $rcp->setValue($boostnavbar, $page->navbar->get_items());
 
         // Make the call to the function.
         $rcm = $rc->getMethod('remove_items_that_exist_in_navigation');
-        $rcm->setAccessible(true);
         $rcm->invoke($boostnavbar, $navigationmenu);
 
         // Get the value for the class variable that the function modifies.

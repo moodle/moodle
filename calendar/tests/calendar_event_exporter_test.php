@@ -80,7 +80,6 @@ class calendar_event_exporter_test extends \advanced_testcase {
             ->getMock();
         $reflector = new \ReflectionClass($class);
         $method = $reflector->getMethod('get_timestamp_min_limit');
-        $method->setAccessible(true);
 
         $result = $method->invoke($mock, $starttime, $min);
         $this->assertEquals($expected, $result['mindaytimestamp']);
@@ -137,7 +136,6 @@ class calendar_event_exporter_test extends \advanced_testcase {
             ->getMock();
         $reflector = new \ReflectionClass($class);
         $method = $reflector->getMethod('get_timestamp_max_limit');
-        $method->setAccessible(true);
 
         $result = $method->invoke($mock, $starttime, $max);
         $this->assertEquals($expected, $result['maxdaytimestamp']);

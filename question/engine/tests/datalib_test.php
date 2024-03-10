@@ -272,7 +272,6 @@ class datalib_test extends \qbehaviour_walkthrough_test_base {
         $newstep = new \question_attempt_step();
         $newstep->set_state(null);
         $addstepmethod = new \ReflectionMethod('question_attempt', 'add_step');
-        $addstepmethod->setAccessible(true);
         $addstepmethod->invoke($quba->get_question_attempt($slot), $newstep);
 
         // Verify that trying to save this throws an exception.

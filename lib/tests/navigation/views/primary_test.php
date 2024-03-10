@@ -126,7 +126,6 @@ class primary_test extends \advanced_testcase {
 
         $primary = new primary($PAGE);
         $method = new ReflectionMethod('core\navigation\views\primary', 'search_and_set_active_node');
-        $method->setAccessible(true);
 
         $result = $method->invoke($primary, $node);
 

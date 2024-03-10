@@ -86,7 +86,6 @@ class proxy_base_test extends \advanced_testcase {
     protected static function get_status() {
         $rc = new \ReflectionClass(proxy_base::class);
         $rcm = $rc->getMethod('fetch_endpoint_xml');
-        $rcm->setAccessible(true);
         return $rcm->invoke(null, '');
     }
 }

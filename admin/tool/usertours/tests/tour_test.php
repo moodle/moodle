@@ -116,7 +116,6 @@ class tour_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\tour::class);
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
 
         $this->assertTrue($rcp->getValue($tour));
     }
@@ -172,7 +171,6 @@ class tour_test extends \advanced_testcase {
         $rc = new \ReflectionClass(tour::class);
 
         $rcp = $rc->getProperty($key);
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $value);
 
         $getter = 'get_' . $key;
@@ -233,13 +231,11 @@ class tour_test extends \advanced_testcase {
         $rc = new \ReflectionClass(tour::class);
 
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, true);
 
         $this->assertSame($tour, $tour->persist());
 
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $this->assertEquals($id, $rcp->getValue($tour));
     }
 
@@ -283,7 +279,6 @@ class tour_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $this->assertEquals($id, $rcp->getValue($tour));
     }
 
@@ -322,11 +317,9 @@ class tour_test extends \advanced_testcase {
         $rc = new \ReflectionClass(tour::class);
 
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, 42);
 
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, true);
 
         $this->assertSame($tour, $tour->persist());
@@ -370,11 +363,9 @@ class tour_test extends \advanced_testcase {
         $rc = new \ReflectionClass(tour::class);
 
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, 42);
 
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, true);
 
         $this->assertSame($tour, $tour->persist(true));
@@ -393,7 +384,6 @@ class tour_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('config');
-        $rcp->setAccessible(true);
         $this->assertEquals((object) [
                 'key' => 'value',
                 'another' => [
@@ -410,7 +400,6 @@ class tour_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('config');
-        $rcp->setAccessible(true);
 
         $allvalues = (object) [
                 'some' => 'value',
@@ -499,7 +488,6 @@ class tour_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('config');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $values);
 
         $this->assertEquals($expected, $tour->get_config($key, $default));
@@ -544,7 +532,6 @@ class tour_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $id);
 
         $step = $this->getMockBuilder(\tool_usertours\step::class)
@@ -923,7 +910,6 @@ class tour_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('sortorder');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $sortorder);
 
         $this->assertEquals($isfirst, $tour->is_first_tour());
@@ -943,7 +929,6 @@ class tour_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('sortorder');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $sortorder);
 
         // The total will be calculated.
@@ -969,7 +954,6 @@ class tour_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('sortorder');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $sortorder);
 
         // The total is provided.

@@ -281,7 +281,6 @@ class command_test extends \advanced_testcase {
         );
 
         $execute = new ReflectionMethod($instance, 'execute');
-        $execute->setAccessible(true);
         $execute->invoke($instance, $command);
     }
 

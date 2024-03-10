@@ -50,7 +50,6 @@ class factor_test extends \advanced_testcase {
 
         set_config('expireovernight', 0, 'factor_token');
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
-        $method->setAccessible(true);
 
         // Test that non-overnight timestamps are just exactly as configured.
         // We don't need to care about 0 or negative ints, they will just make the cookie expire immediately.
@@ -95,7 +94,6 @@ class factor_test extends \advanced_testcase {
     public function test_calculate_expiry_time_for_overnight_expiry_with_one_day_expiry($timestamp) {
         // Setup configuration.
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
-        $method->setAccessible(true);
         set_config('expireovernight', 1, 'factor_token');
         set_config('expiry', DAYSECS, 'factor_token');
 
@@ -144,7 +142,6 @@ class factor_test extends \advanced_testcase {
     public function test_calculate_expiry_time_for_overnight_expiry_with_two_day_expiry($timestamp) {
         // Setup configuration.
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
-        $method->setAccessible(true);
         set_config('expireovernight', 1, 'factor_token');
         set_config('expiry', 2 * DAYSECS, 'factor_token');
 
@@ -195,7 +192,6 @@ class factor_test extends \advanced_testcase {
     public function test_calculate_expiry_time_for_overnight_expiry_with_three_hour_expiry($timestamp) {
         // Setup configuration.
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
-        $method->setAccessible(true);
         set_config('expireovernight', 1, 'factor_token');
         set_config('expiry', 3 * HOURSECS, 'factor_token');
 
@@ -240,7 +236,6 @@ class factor_test extends \advanced_testcase {
     public function test_calculate_expiry_time_for_overnight_expiry_with_an_hour_expiry($timestamp) {
         // Setup configuration.
         $method = new \ReflectionMethod($this->factor, 'calculate_expiry_time');
-        $method->setAccessible(true);
         set_config('expireovernight', 1, 'factor_token');
         set_config('expiry', HOURSECS, 'factor_token');
 

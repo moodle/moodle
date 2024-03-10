@@ -513,7 +513,6 @@ class ldap_test extends \advanced_testcase {
         // Use reflection to sneak a look at the plugin.
         $rc = new \ReflectionClass('enrol_ldap_plugin');
         $rcp = $rc->getProperty('userobjectclass');
-        $rcp->setAccessible(true);
 
         // Fetch the current userobjectclass value.
         $value = $rcp->getValue($instance);

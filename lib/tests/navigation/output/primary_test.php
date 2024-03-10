@@ -168,7 +168,6 @@ class primary_test extends \advanced_testcase {
         $CFG->custommenuitems = $config;
         $output = new primary($PAGE);
         $method = new ReflectionMethod('core\navigation\output\primary', 'get_custom_menu');
-        $method->setAccessible(true);
         $renderer = $PAGE->get_renderer('core');
 
         // We can't assert the value of each menuitem "moremenuid" property (because it's random).
@@ -375,7 +374,6 @@ class primary_test extends \advanced_testcase {
         $primary = new primary($PAGE);
 
         $method = new ReflectionMethod('core\navigation\output\primary', 'get_primary_nav');
-        $method->setAccessible(true);
         $dataprimary = $method->invoke($primary);
 
         // Take this custom menu that would come from the  setting custommenitems.
@@ -395,7 +393,6 @@ class primary_test extends \advanced_testcase {
 
         $datacustom = $this->get_custom_menu($custommenuitems);
         $method = new ReflectionMethod('core\navigation\output\primary', 'merge_primary_and_custom');
-        $method->setAccessible(true);
         $menucomplete = $method->invoke($primary, $dataprimary, $datacustom, $ismobile);
         return $menucomplete;
     }

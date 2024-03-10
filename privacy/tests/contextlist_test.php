@@ -127,7 +127,6 @@ class contextlist_test extends advanced_testcase {
 
         $rc = new \ReflectionClass(contextlist::class);
         $rcm = $rc->getMethod('guess_id_field_from_sql');
-        $rcm->setAccessible(true);
         $actual = $rcm->invoke(new contextlist(), $sql);
 
         $this->assertEquals($expected, $actual, 'Unable to guess context id field in: '.$sql);

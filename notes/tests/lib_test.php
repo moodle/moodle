@@ -75,7 +75,6 @@ class lib_test extends \advanced_testcase {
         core_notes_myprofile_navigation($this->tree, $USER, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayHasKey('notes', $nodes->getValue($this->tree));
     }
 
@@ -92,7 +91,6 @@ class lib_test extends \advanced_testcase {
         core_notes_myprofile_navigation($this->tree, $USER, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('notes', $nodes->getValue($this->tree));
     }
 
@@ -112,7 +110,6 @@ class lib_test extends \advanced_testcase {
         core_notes_myprofile_navigation($this->tree, $USER, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('notes', $nodes->getValue($this->tree));
     }
 }

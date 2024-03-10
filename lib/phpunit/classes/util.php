@@ -973,7 +973,6 @@ class phpunit_util extends testing_util {
     public static function call_internal_method($object, $methodname, array $params, $classname) {
         $reflection = new \ReflectionClass($classname);
         $method = $reflection->getMethod($methodname);
-        $method->setAccessible(true);
         return $method->invokeArgs($object, $params);
     }
 

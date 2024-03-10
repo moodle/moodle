@@ -160,7 +160,6 @@ class api_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\repository_dropbox\dropbox::class);
         $rcm = $rc->getMethod('check_and_handle_api_errors');
-        $rcm->setAccessible(true);
 
         if ($exception) {
             $this->expectException($exception);
@@ -334,7 +333,6 @@ class api_test extends \advanced_testcase {
         // Make the call.
         $rc = new \ReflectionClass(\repository_dropbox\dropbox::class);
         $rcm = $rc->getMethod('fetch_dropbox_data');
-        $rcm->setAccessible(true);
         $rcm->invoke($mock, $endpoint);
     }
 
@@ -361,7 +359,6 @@ class api_test extends \advanced_testcase {
         // Make the call.
         $rc = new \ReflectionClass(\repository_dropbox\dropbox::class);
         $rcm = $rc->getMethod('fetch_dropbox_data');
-        $rcm->setAccessible(true);
         $rcm->invoke($mock, $endpoint, null);
     }
 
@@ -389,7 +386,6 @@ class api_test extends \advanced_testcase {
         // Make the call.
         $rc = new \ReflectionClass(\repository_dropbox\dropbox::class);
         $rcm = $rc->getMethod('fetch_dropbox_data');
-        $rcm->setAccessible(true);
         $rcm->invoke($mock, $endpoint, $data);
     }
 
@@ -430,7 +426,6 @@ class api_test extends \advanced_testcase {
         // Make the call.
         $rc = new \ReflectionClass(\repository_dropbox\dropbox::class);
         $rcm = $rc->getMethod('fetch_dropbox_data');
-        $rcm->setAccessible(true);
         $result = $rcm->invoke($mock, $endpoint, null, 'matches');
 
         $this->assertEquals([
@@ -496,7 +491,6 @@ class api_test extends \advanced_testcase {
         // Make the call.
         $rc = new \ReflectionClass(\repository_dropbox\dropbox::class);
         $rcm = $rc->getMethod('fetch_dropbox_content');
-        $rcm->setAccessible(true);
         $result = $rcm->invoke($mock, $endpoint, $data);
 
         $this->assertEquals($response, $result);

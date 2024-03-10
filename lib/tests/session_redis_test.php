@@ -368,7 +368,6 @@ class session_redis_test extends \advanced_testcase {
         $sess = new \core\session\redis();
 
         $prop = new \ReflectionProperty(\core\session\redis::class, 'host');
-        $prop->setAccessible(true);
         $this->assertEquals('tls://' . TEST_SESSION_REDIS_HOST, $prop->getValue($sess));
     }
 }

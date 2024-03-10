@@ -134,7 +134,6 @@ class manage_badge_action_bar_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(manage_badge_action_bar::class);
         $rcm = $rc->getMethod('generate_badge_navigation');
-        $rcm->setAccessible(true);
         $content = $rcm->invoke($actionbar);
         $this->assertEquals($expected, array_values($content));
     }

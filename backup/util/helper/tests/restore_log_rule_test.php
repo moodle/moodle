@@ -62,11 +62,9 @@ class restore_log_rule_test extends \basic_testcase {
         $class = new \ReflectionClass('restore_log_rule');
 
         $method = $class->getMethod('extract_tokens');
-        $method->setAccessible(true);
         $tokens = $method->invoke($lr, $original);
 
         $method = $class->getMethod('build_regexp');
-        $method->setAccessible(true);
         $this->assertSame($expectation, $method->invoke($lr, $original, $tokens));
     }
 }

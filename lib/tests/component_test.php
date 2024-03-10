@@ -640,11 +640,9 @@ class component_test extends advanced_testcase {
      */
     public function test_classloader($psr0, $psr4, $classname, $includedfiles): void {
         $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
-        $psr0namespaces->setAccessible(true);
         $psr0namespaces->setValue(null, $psr0);
 
         $psr4namespaces = new ReflectionProperty('core_component', 'psr4namespaces');
-        $psr4namespaces->setAccessible(true);
         $psr4namespaces->setValue(null, $psr4);
 
         core_component::classloader($classname);
@@ -775,16 +773,13 @@ class component_test extends advanced_testcase {
      */
     public function test_psr_classloader($psr0, $psr4, $classname, $file): void {
         $psr0namespaces = new ReflectionProperty('core_component', 'psr0namespaces');
-        $psr0namespaces->setAccessible(true);
         $psr0namespaces->setValue(null, $psr0);
 
         $psr4namespaces = new ReflectionProperty('core_component', 'psr4namespaces');
-        $psr4namespaces->setAccessible(true);
         $psr4namespaces->setValue(null, $psr4);
 
         $component = new ReflectionClass('core_component');
         $psrclassloader = $component->getMethod('psr_classloader');
-        $psrclassloader->setAccessible(true);
 
         $returnvalue = $psrclassloader->invokeArgs(null, [$classname]);
         // Normalise to forward slashes for testing comparison.
@@ -845,7 +840,6 @@ class component_test extends advanced_testcase {
     public function test_get_class_file($classname, $prefix, $path, $separators, $result): void {
         $component = new ReflectionClass('core_component');
         $psrclassloader = $component->getMethod('get_class_file');
-        $psrclassloader->setAccessible(true);
 
         $file = $psrclassloader->invokeArgs(null, [$classname, $prefix, $path, $separators]);
         $this->assertEquals($result, $file);

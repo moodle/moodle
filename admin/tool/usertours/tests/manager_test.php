@@ -110,7 +110,6 @@ class manager_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass('\tool_usertours\manager');
         $rcm = $rc->getMethod($function);
-        $rcm->setAccessible(true);
 
         $this->expectException('moodle_exception');
         $rcm->invokeArgs($manager, $arguments);
@@ -186,7 +185,6 @@ class manager_test extends \advanced_testcase {
         // Call protected method via reflection.
         $class = new \ReflectionClass(\tool_usertours\manager::class);
         $method = $class->getMethod('_move_tour');
-        $method->setAccessible(true);
         $method->invokeArgs(null, [$tour, $direction]);
 
         // Assert expected sortorder.

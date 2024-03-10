@@ -494,7 +494,6 @@ class file_system_test extends \advanced_testcase {
         $contenthash = \file_storage::hash_from_string($filecontent);
 
         $method = new \ReflectionMethod(file_system::class, 'is_file_removable');
-        $method->setAccessible(true);
         $result = $method->invokeArgs(null, [$contenthash]);
         $this->assertFalse($result);
     }
@@ -517,7 +516,6 @@ class file_system_test extends \advanced_testcase {
         $DB->method('record_exists')->willReturn(true);
 
         $method = new \ReflectionMethod(file_system::class, 'is_file_removable');
-        $method->setAccessible(true);
         $result = $method->invokeArgs(null, [$contenthash]);
 
         $this->assertFalse($result);
@@ -541,7 +539,6 @@ class file_system_test extends \advanced_testcase {
         $DB->method('record_exists')->willReturn(false);
 
         $method = new \ReflectionMethod(file_system::class, 'is_file_removable');
-        $method->setAccessible(true);
         $result = $method->invokeArgs(null, [$contenthash]);
 
         $this->assertTrue($result);
@@ -910,7 +907,6 @@ class file_system_test extends \advanced_testcase {
         $fs = $this->get_testable_mock();
 
         $method = new \ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, [$filepath]);
 
         $this->assertArrayHasKey('width', $result);
@@ -932,7 +928,6 @@ class file_system_test extends \advanced_testcase {
         $fs = $this->get_testable_mock();
 
         $method = new \ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, [$filepath]);
 
         $this->assertFalse($result);
@@ -949,7 +944,6 @@ class file_system_test extends \advanced_testcase {
         $fs = $this->get_testable_mock();
 
         $method = new \ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, [$filepath]);
 
         $this->assertArrayHasKey('width', $result);
@@ -971,7 +965,6 @@ class file_system_test extends \advanced_testcase {
         $fs = $this->get_testable_mock();
 
         $method = new \ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, [$filepath]);
 
         $this->assertArrayHasKey('width', $result);
@@ -993,7 +986,6 @@ class file_system_test extends \advanced_testcase {
         $fs = $this->get_testable_mock();
 
         $method = new \ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, [$filepath]);
 
         $this->assertArrayHasKey('width', $result);
@@ -1015,7 +1007,6 @@ class file_system_test extends \advanced_testcase {
         $fs = $this->get_testable_mock();
 
         $method = new \ReflectionMethod(file_system::class, 'get_imageinfo_from_path');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, [$filepath]);
 
         $this->assertFalse($result);

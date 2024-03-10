@@ -1250,11 +1250,9 @@ class moodle_content_writer_test extends advanced_testcase {
 
         if (null === $subcontext) {
             $rcm = $rc->getMethod('get_context_path');
-            $rcm->setAccessible(true);
             $path = $rcm->invoke($writer);
         } else {
             $rcm = $rc->getMethod('get_path');
-            $rcm->setAccessible(true);
             $path = $rcm->invoke($writer, $subcontext, $name);
         }
 

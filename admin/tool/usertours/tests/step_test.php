@@ -130,7 +130,6 @@ class step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcm = $rc->getMethod('fetch');
-        $rcm->setAccessible(true);
 
         $id = rand(1, 100);
         $this->assertEquals($retval, $rcm->invoke($step, 'fetch', $id));
@@ -150,7 +149,6 @@ class step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
 
         $this->assertTrue($rcp->getValue($step));
     }
@@ -234,7 +232,6 @@ class step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcp = $rc->getProperty('config');
-        $rcp->setAccessible(true);
 
         $allvalues = (object) [
                 'some' => 'value',
@@ -361,7 +358,6 @@ class step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcp = $rc->getProperty('config');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, $values);
 
         $target = $this->getMockBuilder(\tool_usertours\local\target\base::class)
@@ -465,7 +461,6 @@ class step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcp = $rc->getProperty('config');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, $initialvalues);
 
         $target = $this->getMockBuilder(\tool_usertours\local\target\base::class)
@@ -542,12 +537,10 @@ class step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, true);
 
         $tour = $this->createMock(\tool_usertours\tour::class);
         $rcp = $rc->getProperty('tour');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, $tour);
 
         $this->assertSame($step, $step->persist());
@@ -592,7 +585,6 @@ class step_test extends \advanced_testcase {
         $tour = $this->createMock(\tool_usertours\tour::class);
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcp = $rc->getProperty('tour');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, $tour);
 
         $this->assertSame($step, $step->persist(true));
@@ -633,16 +625,13 @@ class step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, 42);
 
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, true);
 
         $tour = $this->createMock(\tool_usertours\tour::class);
         $rcp = $rc->getProperty('tour');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, $tour);
 
         $this->assertSame($step, $step->persist());
@@ -685,12 +674,10 @@ class step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, 42);
 
         $tour = $this->createMock(\tool_usertours\tour::class);
         $rcp = $rc->getProperty('tour');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, $tour);
 
         $this->assertSame($step, $step->persist(true));
@@ -752,7 +739,6 @@ class step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_usertours\step::class);
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $rcp->setValue($step, $id);
 
         $this->assertEquals($id, $step->get_id());
@@ -810,7 +796,6 @@ class step_test extends \advanced_testcase {
         $rc = new \ReflectionClass(\tool_usertours\step::class);
 
         $rcp = $rc->getProperty($key);
-        $rcp->setAccessible(true);
         $rcp->setValue($step, $value);
 
         $getter = 'get_' . $key;

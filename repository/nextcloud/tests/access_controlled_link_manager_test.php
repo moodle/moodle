@@ -612,7 +612,6 @@ XML;
     protected function set_private_property($value, $propertyname, $class) {
         $refclient = new \ReflectionClass($class);
         $private = $refclient->getProperty($propertyname);
-        $private->setAccessible(true);
         $private->setValue($class, $value);
         return $private;
     }
@@ -626,7 +625,6 @@ XML;
     protected function get_private_property($propertyname, $class) {
         $refclient = new \ReflectionClass($class);
         $private = $refclient->getProperty($propertyname);
-        $private->setAccessible(true);
         $property = $private->getValue($private);
         return $property;
     }

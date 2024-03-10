@@ -491,7 +491,6 @@ class setuplib_test extends \advanced_testcase {
 
         // The \core\uuid::generate_uuid_via_pecl_uuid_extension static method is protected. Use Reflection to call the method.
         $method = new \ReflectionMethod('\core\uuid', 'generate_uuid_via_pecl_uuid_extension');
-        $method->setAccessible(true);
         $uuid = $method->invoke(null);
         $this->assertTrue(self::is_valid_uuid_v4($uuid), "Invalid v4 uuid: '$uuid'");
     }
@@ -508,7 +507,6 @@ class setuplib_test extends \advanced_testcase {
 
         // The \core\uuid::generate_uuid_via_random_bytes static method is protected. Use Reflection to call the method.
         $method = new \ReflectionMethod('\core\uuid', 'generate_uuid_via_random_bytes');
-        $method->setAccessible(true);
         $uuid = $method->invoke(null);
         $this->assertTrue(self::is_valid_uuid_v4($uuid), "Invalid v4 uuid: '$uuid'");
     }

@@ -447,7 +447,6 @@ class matrix_client_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass($instance);
         $rcm = $rc->getMethod('execute');
-        $rcm->setAccessible(true);
         $result = $rcm->invoke($instance, $command);
 
         $this->assertEquals(200, $result->getStatusCode());

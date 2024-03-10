@@ -866,7 +866,6 @@ class locallib_test extends \advanced_testcase {
 
         $reflector = new \ReflectionObject($this->workshop);
         $initialbarprefsprop = $reflector->getProperty('initialbarprefs');
-        $initialbarprefsprop->setAccessible(true);
         $initialbarprefs = $initialbarprefsprop->getValue($this->workshop);
 
         return $initialbarprefs;

@@ -45,7 +45,6 @@ class baseactions_test extends \advanced_testcase {
     private function get_base_reflection_method(baseactions $baseinstance, string $methodname): ReflectionMethod {
         $reflectionclass = new \reflectionclass($baseinstance);
         $method = $reflectionclass->getMethod($methodname);
-        $method->setAccessible(true);
         return $method;
     }
 

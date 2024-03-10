@@ -95,7 +95,6 @@ class activity_sender_test extends \advanced_testcase {
 
         // Set get_file method accessibility.
         $method = new ReflectionMethod(activity_sender::class, 'prepare_share_contents');
-        $method->setAccessible(true);
 
         // Test with invalid share format.
         $this->expectException(\moodle_exception::class);
@@ -157,7 +156,6 @@ class activity_sender_test extends \advanced_testcase {
 
         // Set get_resource_description method accessibility.
         $method = new ReflectionMethod(activity_sender::class, 'get_resource_description');
-        $method->setAccessible(true);
 
         // Test the processed description.
         $processeddescription = $method->invoke(new activity_sender(

@@ -39,7 +39,6 @@ class statistics_table_test extends \advanced_testcase {
         // The format_percentage method is protected. Use Reflection to call the method.
         $reflector = new \ReflectionClass('quiz_statistics_table');
         $method = $reflector->getMethod('format_percentage');
-        $method->setAccessible(true);
 
         $this->assertEquals(
                 '84.758%',
@@ -58,7 +57,6 @@ class statistics_table_test extends \advanced_testcase {
         // The format_percentage_range method is protected. Use Reflection to call the method.
         $reflector = new \ReflectionClass('quiz_statistics_table');
         $method = $reflector->getMethod('format_percentage_range');
-        $method->setAccessible(true);
 
         $this->assertEquals(
                 '54.400% − 84.758%',
@@ -77,7 +75,6 @@ class statistics_table_test extends \advanced_testcase {
         // The format_range method is protected. Use Reflection to call the method.
         $reflector = new \ReflectionClass('quiz_statistics_table');
         $method = $reflector->getMethod('format_range');
-        $method->setAccessible(true);
 
         $this->assertEquals(
                 '5 − 10',

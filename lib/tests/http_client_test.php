@@ -57,12 +57,10 @@ class http_client_test extends \advanced_testcase {
                     return $object->$attributename;
                 }
 
-                $attribute->setAccessible(true);
 
                 try {
                     return $attribute->getValue($object);
                 } finally {
-                    $attribute->setAccessible(false);
                 }
             } catch (\ReflectionException $e) {
                 // Do nothing.
