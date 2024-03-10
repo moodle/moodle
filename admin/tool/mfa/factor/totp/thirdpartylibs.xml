@@ -1,13 +1,6 @@
 <?xml version="1.0"?>
 <libraries>
   <library>
-    <location>extlib/Assert</location>
-    <name>Assert</name>
-    <version>2.1</version>
-    <license>MIT</license>
-    <repository>https://github.com/beberlei/assert</repository>
-  </library>
-  <library>
     <location>extlib/OTPHP</location>
     <name>OTPHP</name>
     <version>11.3.0</version>
