@@ -51,19 +51,11 @@ class Client implements ProviderInterface
     /**
      * @var array<string>
      */
-    private $locales;
+    private array $locales;
+    private WsClient $client;
+    private static string $basePath = '/geoip/v2.1';
 
-    /**
-     * @var WsClient
-     */
-    private $client;
-
-    /**
-     * @var string
-     */
-    private static $basePath = '/geoip/v2.1';
-
-    public const VERSION = 'v2.13.0';
+    public const VERSION = 'v3.0.0';
 
     /**
      * Constructor.
@@ -76,7 +68,12 @@ class Client implements ProviderInterface
      *                           * `host` - The host to use when querying the web
      *                           service. To query the GeoLite2 web service
      *                           instead of the GeoIP2 web service, set the
-     *                           host to `geolite.info`.
+     *                           host to `geolite.info`. To query the Sandbox
+     *                           GeoIP2 web service instead of the production
+     *                           GeoIP2 web service, set the host to
+     *                           `sandbox.maxmind.com`. The sandbox allows you to
+     *                           experiment with the API without affecting your
+     *                           production data.
      *                           * `timeout` - Timeout in seconds.
      *                           * `connectTimeout` - Initial connection timeout in seconds.
      *                           * `proxy` - The HTTP proxy to use. May include a schema, port,
@@ -135,6 +132,8 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\GeoIp2Exception This serves as the parent
      *                                           class to the above exceptions. It will be thrown directly
      *                                           if a 200 status code is returned but the body is invalid.
+     * @throws \InvalidArgumentException         if something other than a single IP address or "me" is
+     *                                           passed to the method
      */
     public function city(string $ipAddress = 'me'): City
     {
@@ -165,6 +164,8 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\GeoIp2Exception This serves as the parent class to the above exceptions. It
      *                                           will be thrown directly if a 200 status code is returned but
      *                                           the body is invalid.
+     * @throws \InvalidArgumentException         if something other than a single IP address or "me" is
+     *                                           passed to the method
      */
     public function country(string $ipAddress = 'me'): Country
     {
@@ -195,6 +196,8 @@ class Client implements ProviderInterface
      * @throws \GeoIp2\Exception\GeoIp2Exception This serves as the parent
      *                                           class to the above exceptions. It will be thrown directly
      *                                           if a 200 status code is returned but the body is invalid.
+     * @throws \InvalidArgumentException         if something other than a single IP address or "me" is
+     *                                           passed to the method
      */
     public function insights(string $ipAddress = 'me'): Insights
     {
@@ -204,6 +207,11 @@ class Client implements ProviderInterface
 
     private function responseFor(string $endpoint, string $class, string $ipAddress): Country
     {
+        if ($ipAddress !== 'me' && !filter_var($ipAddress, \FILTER_VALIDATE_IP)) {
+            throw new \InvalidArgumentException(
+                "The value \"$ipAddress\" is not a valid IP address."
+            );
+        }
         $path = implode('/', [self::$basePath, $endpoint, $ipAddress]);
 
         try {
