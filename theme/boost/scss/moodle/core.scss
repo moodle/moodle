@@ -2310,6 +2310,8 @@ $footer-link-color: $bg-inverse-link-color !default;
     a {
         color: $footer-link-color;
         text-decoration: underline;
+        padding-top: map-get($spacers, 1);
+        padding-bottom: map-get($spacers, 1);
 
         .icon {
             color: $footer-link-color;
