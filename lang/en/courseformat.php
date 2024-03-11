@@ -46,6 +46,7 @@ $string['cm_separategroups_feedback'] = '{$a->name} group mode changed to Separa
 $string['cm_show_feedback'] = '{$a->name} is now shown.';
 $string['cm_show_feedback_batch'] = 'The selected {$a->count} activities are now shown.';
 $string['cm_stealth_feedback'] = '{$a->name} is now available but not shown on the course page.';
+$string['cm_stealth_feedback_batch'] = 'The selected {$a->count} activities are now available but not shown on the course page.';
 $string['cm_visiblegroups_feedback'] = '{$a->name} group mode changed to Visible groups.';
 $string['cmavailability'] = 'Activity availability';
 $string['cmdelete_info'] = 'This will delete {$a->name} and any user data it contains.';
