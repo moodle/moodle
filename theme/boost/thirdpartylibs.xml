@@ -199,7 +199,7 @@
     <location>scss/fontawesome</location>
     <name>Font Awesome - http://fontawesome.com</name>
     <description>Font Awesome CSS, LESS, and Sass files. Font Awesome is the Internet's icon library and toolkit, used by millions of designers, developers, and content creators.</description>
-    <version>6.4.0</version>
+    <version>6.5.1</version>
     <license>(MIT)</license>
     <repository>https://github.com/FortAwesome/Font-Awesome</repository>
     <copyrights>
