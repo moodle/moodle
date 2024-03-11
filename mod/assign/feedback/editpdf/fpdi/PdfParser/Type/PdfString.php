@@ -4,7 +4,7 @@
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
+ * @copyright Copyright (c) 2023 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -76,6 +76,36 @@ class PdfString extends PdfType
     public static function ensure($string)
     {
         return PdfType::ensureType(self::class, $string, 'String value expected.');
+    }
+
+    /**
+     * Escapes sequences in a string according to the PDF specification.
+     *
+     * @param string $s
+     * @return string
+     */
+    public static function escape($s)
+    {
+        // Still a bit faster, than direct replacing
+        if (
+            \strpos($s, '\\') !== false ||
+            \strpos($s, ')')  !== false ||
+            \strpos($s, '(')  !== false ||
+            \strpos($s, "\x0D") !== false ||
+            \strpos($s, "\x0A") !== false ||
+            \strpos($s, "\x09") !== false ||
+            \strpos($s, "\x08") !== false ||
+            \strpos($s, "\x0C") !== false
+        ) {
+            // is faster than strtr(...)
+            return \str_replace(
+                ['\\',   ')',   '(',   "\x0D", "\x0A", "\x09", "\x08", "\x0C"],
+                ['\\\\', '\\)', '\\(', '\r',   '\n',   '\t',   '\b',   '\f'],
+                $s
+            );
+        }
+
+        return $s;
     }
 
     /**

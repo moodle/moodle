@@ -4,7 +4,7 @@
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
+ * @copyright Copyright (c) 2023 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
@@ -108,6 +108,12 @@ class StreamReader
 
         $metaData = \stream_get_meta_data($stream);
         if (!$metaData['seekable']) {
+            throw new \InvalidArgumentException(
+                'Given stream is not seekable!'
+            );
+        }
+
+        if (fseek($stream, 0) === -1) {
             throw new \InvalidArgumentException(
                 'Given stream is not seekable!'
             );
