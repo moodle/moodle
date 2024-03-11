@@ -167,15 +167,6 @@ class settings {
             );
             $settingsgeneral->add($item);
 
-            if (empty($CFG->bigbluebuttonbn_default_dpa_accepted)) {
-                $settingsgeneral->add(new admin_setting_configcheckbox(
-                    'bigbluebuttonbn_default_dpa_accepted',
-                    get_string('acceptdpa', 'mod_bigbluebuttonbn'),
-                    get_string('enablingbigbluebuttondpainfo', 'mod_bigbluebuttonbn', config::DEFAULT_DPA_URL),
-                    0
-                ));
-            }
-
             $item = new admin_setting_configtext(
                 'bigbluebuttonbn_server_url',
                 get_string('config_server_url', 'bigbluebuttonbn'),
@@ -220,16 +211,6 @@ class settings {
                 $settingsgeneral
             );
 
-            $item = new \admin_setting_description(
-                'bigbluebuttonbn_dpa_info',
-                '',
-                get_string('config_dpa_note', 'bigbluebuttonbn', config::DEFAULT_DPA_URL),
-            );
-            $this->add_conditional_element(
-                'dpa_info',
-                $item,
-                $settingsgeneral
-            );
             $item = new admin_setting_configtext(
                 'bigbluebuttonbn_poll_interval',
                 get_string('config_poll_interval', 'bigbluebuttonbn'),

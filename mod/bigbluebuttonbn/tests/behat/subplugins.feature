@@ -5,7 +5,7 @@ Feature: BigBlueButtonBN Subplugins test
   I can see the additional settings coming from the subplugins in the edit form
 
   Background:  Make sure that the BigBlueButtonBN plugin is enabled
-    Given I accept dpa and enable bigbluebuttonbn plugin
+    Given I enable "bigbluebuttonbn" "mod" plugin
     And the following "courses" exist:
       | fullname    | shortname   | category | enablecompletion |
       | Test course | Test course | 0        | 1                |

@@ -5,7 +5,7 @@ Feature: Set role as Bigbluebuttonbn moderator
   I need to see the list of roles
 
   Background:
-    Given I accept dpa and enable bigbluebuttonbn plugin
+    Given I enable "bigbluebuttonbn" "mod" plugin
     And the following "course" exist:
       | fullname | shortname |
       | Course 1 | C1        |

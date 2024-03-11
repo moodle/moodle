@@ -6,7 +6,7 @@ Feature: Test the ability to end a meeting
 
   Background:
     Given a BigBlueButton mock server is configured
-    And I accept dpa and enable bigbluebuttonbn plugin
+    And I enable "bigbluebuttonbn" "mod" plugin
 
   Scenario Outline: Only a BigBlueButton moderator can end a session
     Given the following course exists:

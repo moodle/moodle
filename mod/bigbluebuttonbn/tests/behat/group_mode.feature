@@ -5,7 +5,7 @@ Feature: Test the module in group mode.
       # groupmode 1 = separate groups, we force the group
       # groupmode 2 = visible group
     Given a BigBlueButton mock server is configured
-    And I accept dpa and enable bigbluebuttonbn plugin
+    And I enable "bigbluebuttonbn" "mod" plugin
     And the following "courses" exist:
       | fullname      | shortname | category | groupmode | groupmodeforce |
       | Test Course 1 | C1        | 0        | 1         | 1              |

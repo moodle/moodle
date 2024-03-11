@@ -36,8 +36,6 @@ class config {
     /** @var string Default bigbluebutton server shared secret */
     public const DEFAULT_SHARED_SECRET = '0b21fcaf34673a8c3ec8ed877d76ae34';
 
-    /** @var string Default bigbluebutton data processing agreement url */
-    public const DEFAULT_DPA_URL = 'https://blindsidenetworks.com/dpa-moodle-free-tier';
 
     /** @var string the default bigbluebutton checksum algorithm */
     public const DEFAULT_CHECKSUM_ALGORITHM = 'SHA256';
