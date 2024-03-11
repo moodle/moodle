@@ -10,7 +10,7 @@ use OpenSpout\Common\Entity\Style\Style;
 
 final class DateTimeCell extends Cell
 {
-    private DateTimeInterface $value;
+    private readonly DateTimeInterface $value;
 
     public function __construct(DateTimeInterface $value, ?Style $style)
     {

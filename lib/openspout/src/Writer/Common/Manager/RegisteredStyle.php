@@ -13,9 +13,9 @@ use OpenSpout\Common\Entity\Style\Style;
  */
 final class RegisteredStyle
 {
-    private Style $style;
+    private readonly Style $style;
 
-    private bool $isMatchingRowStyle;
+    private readonly bool $isMatchingRowStyle;
 
     public function __construct(Style $style, bool $isMatchingRowStyle)
     {

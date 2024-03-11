@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OpenSpout\Writer\Common\Manager;
 
 use OpenSpout\Common\Entity\Row;
+use OpenSpout\Common\Exception\InvalidArgumentException;
 use OpenSpout\Common\Exception\IOException;
 use OpenSpout\Common\Helper\StringHelper;
 use OpenSpout\Writer\Common\AbstractOptions;
@@ -32,10 +33,10 @@ abstract class AbstractWorkbookManager implements WorkbookManagerInterface
     protected AbstractOptions $options;
 
     /** @var Workbook The workbook to manage */
-    private Workbook $workbook;
+    private readonly Workbook $workbook;
 
     /** @var StyleMerger Helper to merge styles */
-    private StyleMerger $styleMerger;
+    private readonly StyleMerger $styleMerger;
 
     /** @var Worksheet The worksheet where data will be written to */
     private Worksheet $currentWorksheet;
@@ -113,8 +114,8 @@ abstract class AbstractWorkbookManager implements WorkbookManagerInterface
      *
      * @param Row $row The row to be added
      *
-     * @throws IOException                                          If trying to create a new sheet and unable to open the sheet for writing
-     * @throws \OpenSpout\Common\Exception\InvalidArgumentException
+     * @throws IOException              If trying to create a new sheet and unable to open the sheet for writing
+     * @throws InvalidArgumentException
      */
     final public function addRowToCurrentWorksheet(Row $row): void
     {
@@ -190,7 +191,7 @@ abstract class AbstractWorkbookManager implements WorkbookManagerInterface
      *
      * @return Worksheet The created sheet
      *
-     * @throws \OpenSpout\Common\Exception\IOException If unable to open the sheet for writing
+     * @throws IOException If unable to open the sheet for writing
      */
     private function addNewSheet(): Worksheet
     {
@@ -253,7 +254,7 @@ abstract class AbstractWorkbookManager implements WorkbookManagerInterface
      * @param Row       $row       The row to be added
      *
      * @throws IOException
-     * @throws \OpenSpout\Common\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function addRowToWorksheet(Worksheet $worksheet, Row $row): void
     {

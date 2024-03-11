@@ -16,10 +16,9 @@ final class AutoFilter
      * @param positive-int   $toRow
      */
     public function __construct(
-        public int $fromColumnIndex,
-        public int $fromRow,
-        public int $toColumnIndex,
-        public int $toRow
-    ) {
-    }
+        public readonly int $fromColumnIndex,
+        public readonly int $fromRow,
+        public readonly int $toColumnIndex,
+        public readonly int $toRow
+    ) {}
 }

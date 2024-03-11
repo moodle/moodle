@@ -12,7 +12,7 @@ use OpenSpout\Reader\SheetIteratorInterface;
 final class SheetIterator implements SheetIteratorInterface
 {
     /** @var Sheet The CSV unique "sheet" */
-    private Sheet $sheet;
+    private readonly Sheet $sheet;
 
     /** @var bool Whether the unique "sheet" has already been read */
     private bool $hasReadUniqueSheet = false;

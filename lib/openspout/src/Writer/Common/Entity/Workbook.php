@@ -13,7 +13,7 @@ final class Workbook
     private array $worksheets = [];
 
     /** @var string Timestamp based unique ID identifying the workbook */
-    private string $internalId;
+    private readonly string $internalId;
 
     /**
      * Workbook constructor.

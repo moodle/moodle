@@ -22,7 +22,7 @@ use OpenSpout\Writer\ODS\Helper\BorderHelper;
  */
 final class StyleManager extends CommonStyleManager
 {
-    private AbstractOptions $options;
+    private readonly AbstractOptions $options;
 
     public function __construct(StyleRegistry $styleRegistry, AbstractOptions $options)
     {

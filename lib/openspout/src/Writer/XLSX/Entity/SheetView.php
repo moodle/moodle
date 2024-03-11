@@ -256,7 +256,7 @@ final class SheetView
     private function generateAttributes(array $data): string
     {
         // Create attribute for each key
-        $attributes = array_map(static function (string $key, bool|string|int $value): string {
+        $attributes = array_map(static function (string $key, bool|int|string $value): string {
             if (\is_bool($value)) {
                 $value = $value ? 'true' : 'false';
             }

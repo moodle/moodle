@@ -27,7 +27,7 @@ abstract class Cell
         $this->setStyle($style);
     }
 
-    abstract public function getValue(): null|bool|string|int|float|DateTimeInterface|DateInterval;
+    abstract public function getValue(): null|bool|DateInterval|DateTimeInterface|float|int|string;
 
     final public function setStyle(?Style $style): void
     {
@@ -39,7 +39,7 @@ abstract class Cell
         return $this->style;
     }
 
-    final public static function fromValue(null|bool|string|int|float|DateTimeInterface|DateInterval $value, ?Style $style = null): self
+    final public static function fromValue(null|bool|DateInterval|DateTimeInterface|float|int|string $value, ?Style $style = null): self
     {
         if (\is_bool($value)) {
             return new BooleanCell($value, $style);
@@ -57,7 +57,7 @@ abstract class Cell
             return new DateIntervalCell($value, $style);
         }
         if (isset($value[0]) && '=' === $value[0]) {
-            return new FormulaCell($value, $style);
+            return new FormulaCell($value, $style, null);
         }
 
         return new StringCell($value, $style);

@@ -23,7 +23,7 @@ final class Writer extends AbstractWriterMultiSheets
     /** @var string Content-Type value for the header */
     protected static string $headerContentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
-    private Options $options;
+    private readonly Options $options;
 
     public function __construct(?Options $options = null)
     {

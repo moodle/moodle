@@ -9,7 +9,7 @@ use OpenSpout\Common\Entity\Style\Style;
 
 final class BooleanCell extends Cell
 {
-    private bool $value;
+    private readonly bool $value;
 
     public function __construct(bool $value, ?Style $style)
     {
