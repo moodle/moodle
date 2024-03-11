@@ -26,19 +26,25 @@ namespace core\hook\output;
 #[\core\attribute\tags('output')]
 #[\core\attribute\label('Allows plugins to add any elements to the page &lt;head&gt; html tag.')]
 #[\core\attribute\hook\replaces_callbacks('before_standard_html_head')]
-class standard_head_html_prepend {
-    /** @var string $output Stores results from callbacks */
-    private $output = '';
+final class before_standard_head_html_generation {
+    public function __construct(
+        /** @var \renderer_base The core_renderer instnace used for the generation */
+        public readonly \renderer_base $renderer,
+        private string $output = '',
+    ) {
+    }
 
     /**
      * Plugins implementing callback can add any HTML to the page.
      *
      * Must be a string containing valid html head content
      *
-     * @param string $output
+     * @param null|string $output
      */
-    public function add_html(string $output): void {
-        $this->output .= $output;
+    public function add_html(?string $output): void {
+        if ($output) {
+            $this->output .= $output;
+        }
     }
 
     /**
