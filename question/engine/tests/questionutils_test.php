@@ -226,4 +226,32 @@ class questionutils_test extends \advanced_testcase {
         $this->assertSame(-1.5, question_utils::clean_param_mark('-1.5'));
         $this->assertSame(-1.5, question_utils::clean_param_mark('-1,5'));
     }
+
+    /**
+     * Test the content is being filtered by filters.
+     *
+     * @covers ::format_question_fragment
+     */
+    public function test_format_question_fragment(): void {
+        global $CFG;
+        require_once($CFG->libdir . '/filterlib.php');
+        $this->resetAfterTest();
+        // Set few filters on.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        filter_set_global_state('mathjaxloader', TEXTFILTER_ON);
+        filter_set_applies_to_strings('multilang', 1);
+        filter_set_applies_to_strings('mathjaxloader', 1);
+
+        $systemcontext = \context_system::instance();
+        $input = 'Some inline math \\( y = x^2 \\) and multi lang with html tag
+        <span lang="en" class="multilang"><b>English</b></span><span lang="fr" class="multilang">Français</span>';
+
+        $expected = question_utils::format_question_fragment($input, $systemcontext);
+
+        // The data should only be filtered by mathjax and multi lang filter. HTML tags should not be affeacted.
+        $this->assertStringContainsString('<span class="filter_mathjaxloader_equation">Some inline math', $expected);
+        $this->assertStringContainsString('<span class="nolink">\( y = x^2 \)</span>', $expected);
+        $this->assertStringNotContainsString('<span lang="en" class="multilang">', $expected);
+        $this->assertStringContainsString('<b>English</b>', $expected);
+    }
 }

@@ -83,6 +83,9 @@ This files describes API changes for code that uses the question API.
   .question-bank-table. This applies to the same styles to preview on the qbank_columnsortorder admin screen. It is important
   that the styles match on these pages so that the defaults have the expected result in the question bank.
 
+10) A new utility function format_question_fragment is created.
+    format_question_fragment is added so that question content can filter base on filters.
+
 === 4.2 ===
 
 1) The question/qengine.js has been deprecated. We create core_question/question_engine

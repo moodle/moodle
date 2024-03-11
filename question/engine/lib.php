@@ -1134,6 +1134,20 @@ abstract class question_utils {
 
         return $editoroptions;
     }
+
+    /**
+     * Format question fragment string and apply filtering,
+     *
+     * @param string $text current text that we want to be apply filters.
+     * @param context $context of the page question are in.
+     * @return string  result has been modified by filters.
+     */
+    public static function format_question_fragment(string $text, context $context): string {
+        global $PAGE;
+        $filtermanager = \filter_manager::instance();
+        $filtermanager->setup_page_for_filters($PAGE, $context);
+        return $filtermanager->filter_string($text, $context);
+    }
 }
 
 
