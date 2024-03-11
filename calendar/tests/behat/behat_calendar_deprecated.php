@@ -42,7 +42,18 @@ class behat_calendar_deprecated extends behat_deprecated_base {
     public function i_hover_over_today_in_the_calendar() {
         $this->deprecated_message('behat_calendar::i_hover_over_today_in_the_calendar');
         $todaysday = date('j');
-        // Note: This step was removed via MDL-71733 but this step was not deprecated alongside it.
-        return $this->i_hover_over_day_of_this_month_in_calendar($todaysday);
+
+        $summarytitle = userdate(time(), get_string('strftimemonthyear'));
+        // The current month table.
+        $currentmonth = "table[descendant::*[self::caption[contains(concat(' ', normalize-space(.), ' '), ' {$summarytitle} ')]]]";
+
+        // Strings for the class cell match.
+        $cellclasses  = "contains(concat(' ', normalize-space(@class), ' '), ' day ')";
+        $daycontains  = "text()[contains(concat(' ', normalize-space(.), ' '), ' {$todaysday} ')]";
+        $daycell      = "td[{$cellclasses}]";
+        $dayofmonth   = "a[{$daycontains}]";
+
+        $xpath = '//' . $currentmonth . '/descendant::' . $daycell . '/' . $dayofmonth;
+        $this->execute("behat_general::i_hover", [$xpath, "xpath_element"]);
     }
 }
