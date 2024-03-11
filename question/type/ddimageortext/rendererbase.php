@@ -52,7 +52,6 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
 
     public function formulation_and_controls(question_attempt $qa,
             question_display_options $options) {
-
         $question = $qa->get_question();
         $response = $qa->get_last_qt_data();
 
@@ -92,6 +91,7 @@ class qtype_ddtoimage_renderer_base extends qtype_with_combined_feedback_rendere
                     $classes[] = 'infinite';
                 }
                 if ($dragimageurl === null) {
+                    $dragimage->text = question_utils::format_question_fragment($dragimage->text, $this->page->context);
                     $dragimagehomesgroup .= html_writer::div($dragimage->text, join(' ', $classes), ['src' => $dragimageurl]);
                 } else {
                     $dragimagehomesgroup .= html_writer::img($dragimageurl, $dragimage->text, ['class' => join(' ', $classes)]);
