@@ -123,16 +123,6 @@ class behat_calendar extends behat_base {
     }
 
     /**
-     * Hover over today in the calendar.
-     *
-     * @Given /^I hover over today in the calendar$/
-     */
-    public function i_hover_over_today_in_the_calendar() {
-        $todaysday = date('j');
-        return $this->i_hover_over_day_of_this_month_in_calendar($todaysday);
-    }
-
-    /**
      * Navigate to a specific month in the calendar.
      *
      * @Given /^I view the calendar for "(?P<month>\d+)" "(?P<year>\d+)"$/
