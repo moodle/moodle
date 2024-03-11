@@ -33,26 +33,26 @@ $string['hideexpiry'] = 'Highlight expire';
 $string['report_completion_overview:view'] = 'View course completion overview report';
 $string['showexpiry'] = 'Highlight all';
 $string['showexpiryonly'] = 'Highlight course with valid length only';
-$string['showexpiryonly_help'] = 'If this option is checked then courses which do not have a validlength will not be displayed in colour in the graphical overview by default';
+$string['showexpiryonly_help'] = 'If this option is checked, then courses which do not have a valid length will not be displayed in colour in the graphical overview by default';
 $string['showfulldetail'] = 'Show full completion detail';
-$string['showfulldetail_help'] = 'If this option is checked then all of the completion information is displayed otherwise it\'s just the completion and expiry dates';
+$string['showfulldetail_help'] = 'If this option is checked, then all of the completion information is displayed, otherwise it\'s just the completion and expiry dates';
 $string['warningduration'] = 'Expired warning limit';
 $string['warningduration_help'] = 'This is the value of time before a course expires where the report will show the expiry warning colours instead of the OK colours.';
-$string['coursesummary'] = 'Enrolled: {$a->enrolled}
+$string['coursesummary'] = 'Enroled: {$a->enrolled}
 Started: {$a->timestarted}
 Completed: {$a->timecompleted}
 Expires: {$a->timeexpires}
 Grade: {$a->finalscore}';
-$string['coursesummary_noexpiry'] = 'Enrolled: {$a->enrolled}
+$string['coursesummary_noexpiry'] = 'Enroled: {$a->enrolled}
 Started: {$a->timestarted}
 Completed: {$a->timecompleted}
 Grade: {$a->finalscore}';
-$string['coursesummary_nograde'] = 'Enrolled: {$a->enrolled}
+$string['coursesummary_nograde'] = 'Enroled: {$a->enrolled}
 Started: {$a->timestarted}
 Completed: {$a->timecompleted}
 Expires: {$a->timeexpires}
 Result: Passed';
-$string['coursesummary_nograde_noexpiry'] = 'Enrolled: {$a->enrolled}
+$string['coursesummary_nograde_noexpiry'] = 'Enroled: {$a->enrolled}
 Started: {$a->timestarted}
 Completed: {$a->timecompleted}
 Result: Passed';
@@ -60,7 +60,7 @@ $string['coursesummary_partial'] = 'Completed: {$a->timecompleted}
 Expires: {$a->timeexpires}';
 $string['report_completion_overview_title'] = 'Completion overview report';
 $string['notcompleted'] = 'In progress';
-$string['notenrolled']  = 'Not enrolled';
+$string['notenrolled']  = 'Not enroled';
 $string['indate'] = 'OK';
 $string['expiring'] = 'Due';
 $string['expired'] = 'Expired';

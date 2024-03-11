@@ -16,7 +16,7 @@
 
 $string['actions'] = 'Actions';
 $string['active'] = 'Active';
-$string['active_help'] = 'Is Learning path available to students';
+$string['active_help'] = 'Is learning path available to students';
 $string['addpath'] = 'Add new path';
 $string['addgroup'] = 'Add group';
 $string['addtopath'] = 'Add to path';
@@ -36,7 +36,7 @@ $string['deletepath'] = 'Delete path';
 $string['deletefrompath'] = 'Delete from path';
 $string['deletegroup'] = 'Delete group';
 $string['description'] = 'Description';
-$string['description_help'] = 'Full description of Learning Path';
+$string['description_help'] = 'Full description of learning path';
 $string['done'] = 'Done';
 $string['draganddrop'] = 'Drag to move/order';
 $string['dragtoorder'] = 'Drag to order';
@@ -71,7 +71,7 @@ $string['notactive'] = 'Not active';
 $string['openeye'] = 'Make available';
 $string['pathcompany'] = 'Edit path for \'{$a}\'';
 $string['picture'] = 'Picture';
-$string['picture_help'] = 'Picture associated with Learning Path';
+$string['picture_help'] = 'Picture associated with learning path';
 $string['pluginname'] = 'IOMAD learning paths';
 $string['prospectivecourses'] = 'Prospective courses';
 $string['prospectivestudents'] = 'Prospective students';

@@ -26,8 +26,8 @@
  * Strings for component 'local_template_selector', language 'en'
  */
 
-$string['templateselectortoomany'] = 'template_selector got more than one selected template, even though multiselect is false.';
-$string['cannotcallusgetselectedtemplate'] = 'You cannot call template_selector::get_selected_template if multi select is true.';
+$string['templateselectortoomany'] = 'template_selector got more than one selected template, even though multi-select is false.';
+$string['cannotcallusgetselectedtemplate'] = 'You cannot call template_selector::get_selected_template if multi-select is true.';
 $string['clear'] = 'Clear';
 $string['searchoptions'] = 'Search options';
 $string['templateselectorpreserveselected'] = 'Keep selected templates, even if they no longer match the search';
@@ -41,5 +41,5 @@ $string['nomatchingtemplates'] = 'No templates match \'{$a}\'';
 $string['none'] = 'None';
 $string['pluginname'] = 'Template selectors';
 $string['previouslyselectedtemplates'] = 'Previously selected templates not matching \'{$a}\'';
-$string['privacy:metadata'] = 'The Locatio IOMAD Template selectors plugin only shows data stored in other locations.';
+$string['privacy:metadata'] = 'The Local IOMAD Template selectors plugin only shows data stored in other locations.';
 $string['search'] = 'Search';
