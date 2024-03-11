@@ -285,6 +285,9 @@ class deprecation_test extends \advanced_testcase {
             // Deprecated global function.
             ['core\fixtures\deprecated_function', true],
             ['core\fixtures\not_deprecated_function', false],
+
+            // Empty array.
+            [[], false],
         ];
     }
 

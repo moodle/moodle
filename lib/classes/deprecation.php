@@ -83,6 +83,9 @@ class deprecation {
             // The reference is an array, but it's not an object or a class that currently exists.
             return null;
         }
+
+        // The reference is none of the above.
+        return null;
     }
 
     /**
