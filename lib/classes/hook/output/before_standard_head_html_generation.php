@@ -28,7 +28,7 @@ namespace core\hook\output;
 #[\core\attribute\hook\replaces_callbacks('before_standard_html_head')]
 final class before_standard_head_html_generation {
     public function __construct(
-        /** @var \renderer_base The core_renderer instnace used for the generation */
+        /** @var \renderer_base The core_renderer instance used for the generation */
         public readonly \renderer_base $renderer,
         private string $output = '',
     ) {
