@@ -1375,19 +1375,10 @@ class structure {
 
 
     /**
-     * Retrieve the list of slot tags for the given slot id.
-     *
-     * @param int $slotid The id for the slot
-     * @return stdClass[] The list of slot tag records
      * @deprecated since Moodle 4.0 MDL-71573
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
-    public function get_slot_tags_for_slot_id($slotid) {
-        debugging('Function get_slot_tags_for_slot_id() has been deprecated and the structure
-         for this method have been moved to filtercondition in question_set_reference table, please
-          use the new structure instead.', DEBUG_DEVELOPER);
-        // All the associated code for this method have been removed to get rid of accidental call or errors.
-        return [];
+    public function get_slot_tags_for_slot_id() {
+        throw new \coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**

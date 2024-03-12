@@ -88,25 +88,10 @@ if (!M.core_scroll_manager.save_scroll_pos) {
         Y.log("The scroll_to_saved_pos function has been deprecated. " +
             "Please use initLinksScrollPos in core/scroll_manager instead.", 'moodle-core-notification', 'warn');
     };
-
-    /**
-     * If there is a parameter like scrollpos=123 in the URL, scroll to that saved position.
-     * @deprecated since Moodle 4.0
-     * @see core/scroll_manager
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
-     */
-    M.core_scroll_manager.scroll_to_saved_pos = function(Y) {
-        callPromisedFunction(M.core_scroll_manager.scroll_to_saved_pos, Y);
-    };
 }
 /* eslint-enable */
 
 M.core_question_engine = M.core_question_engine || {};
-
-/**
- * Flag used by M.core_question_engine.prevent_repeat_submission.
- */
-M.core_question_engine.questionformalreadysubmitted = false;
 
 /**
  * Initialise a question submit button. This saves the scroll position and
@@ -132,63 +117,4 @@ M.core_question_engine.init_submit_button = function(Y, button) {
             buttonel.form.action = buttonel.form.action + '#' + outeruniqueid;
         }
     }, buttonel);
-}
-
-/**
- * Initialise a form that contains questions printed using print_question.
- * This has the effect of:
- * 1. Turning off browser autocomlete.
- * 2. Stopping enter from submitting the form (or toggling the next flag) unless
- *    keyboard focus is on the submit button or the flag.
- * 3. Removes any '.questionflagsavebutton's, since we have JavaScript to toggle
- *    the flags using ajax.
- * 4. Scroll to the position indicated by scrollpos= in the URL, if it is there.
- * 5. Prevent the user from repeatedly submitting the form.
- * @param Y the Yahoo object. Needs to have the DOM and Event modules loaded.
- * @param form something that can be passed to Y.one, to find the form element.
- * @deprecated since Moodle 4.0
- * @see core_question/question_engine
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-M.core_question_engine.init_form = function(Y, form) {
-    Y.log("The core_question_engine.init_form function has been deprecated. " +
-        "Please use init_form in core_question/question_engine instead.", 'moodle-core-notification', 'warn');
-
-    Y.one(form).setAttribute('autocomplete', 'off');
-
-    Y.on('submit', M.core_question_engine.prevent_repeat_submission, form, form, Y);
-
-    Y.on('key', function (e) {
-        if (!e.target.test('a') && !e.target.test('input[type=submit]') &&
-                !e.target.test('input[type=img]') && !e.target.test('textarea') && !e.target.test('[contenteditable=true]')) {
-            e.preventDefault();
-        }
-    }, form, 'press:13');
-
-    Y.one(form).all('.questionflagsavebutton').remove();
-
-    M.core_scroll_manager.scroll_to_saved_pos(Y);
-}
-
-/**
- * Event handler to stop a question form being submitted more than once.
- * @param e the form submit event.
- * @param form the form element.
- * @deprecated since Moodle 4.0
- * @see core_question/question_engine
- * @todo Final deprecation on Moodle 4.4 MDL-72438
- */
-M.core_question_engine.prevent_repeat_submission = function(e, Y) {
-    Y.log("The prevent_repeat_submission function has been deprecated. " +
-        "Please use preventRepeatSubmission in core_question/question_engine instead.", 'moodle-core-notification', 'warn');
-
-    if (M.core_question_engine.questionformalreadysubmitted) {
-        e.halt();
-        return;
-    }
-
-    setTimeout(function() {
-        Y.all('input[type=submit]').set('disabled', true);
-    }, 0);
-    M.core_question_engine.questionformalreadysubmitted = true;
 }

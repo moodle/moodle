@@ -76,6 +76,20 @@ information provided here is intended especially for developers.
   as an alternative to implementing the \core\hook\described_hook interface.
 * The hook API now supports the use of the new \core\attribute\hook\replaces_callbacks() attribute
   as an alternative to implementing the \core\hook\deprecated_callback_replacement interface.
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `question_preview_url`
+  - `question_preview_popup_params`
+  - `question_hash`
+  - `question_make_export_url`
+  - `question_get_export_single_question_url`
+  - `question_remove_stale_questions_from_category`
+  - `flatten_category_tree`
+  - `add_indented_names`
+  - `question_category_select_menu`
+  - `get_categories_for_contexts`
+  - `question_category_options`
+  - `question_add_context_in_key`
+  - `question_fix_top_names`
 
 === 4.3 ===
 

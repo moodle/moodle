@@ -92,18 +92,10 @@ class core_question_bank_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Render a qbank_chooser.
-     *
-     * @param renderable $qbankchooser The chooser.
-     * @return string
      * @deprecated since Moodle 4.0
-     * @see \qbank_editquestion\output\renderer
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
-    public function render_qbank_chooser(renderable $qbankchooser) {
-        debugging('Function render_qbank_chooser is deprecated,
-         please use qbank_editquestion renderer instead.', DEBUG_DEVELOPER);
-        return $this->render_from_template('core_question/qbank_chooser', $qbankchooser->export_for_template($this));
+    public function render_qbank_chooser() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
@@ -192,61 +184,31 @@ class core_question_bank_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Build the HTML for the question chooser javascript popup.
-     *
-     * @param array $real A set of real question types
-     * @param array $fake A set of fake question types
-     * @param object $course The course that will be displayed
-     * @param array $hiddenparams Any hidden parameters to add to the form
-     * @return string The composed HTML for the questionbank chooser
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
+     * @deprecated since Moodle 4.0
      */
-    public function qbank_chooser($real, $fake, $course, $hiddenparams) {
-        debugging('Method core_question_bank_renderer::qbank_chooser() is deprecated, ' .
-                'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
-        return '';
+    public function qbank_chooser() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
-     * Build the HTML for a specified set of question types.
-     *
-     * @param array $types A set of question types as used by the qbank_chooser_module function
-     * @return string The composed HTML for the module
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
+     * @deprecated since Moodle 4.0
      */
-    protected function qbank_chooser_types($types) {
-        debugging('Method core_question_bank_renderer::qbank_chooser_types() is deprecated, ' .
-                'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
-        return '';
+    protected function qbank_chooser_types() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
-     * Return the HTML for the specified question type, adding any required classes.
-     *
-     * @param object $qtype An object containing the title, and link. An icon, and help text may optionally be specified.
-     * If the module contains subtypes in the types option, then these will also be displayed.
-     * @param array $classes Additional classes to add to the encompassing div element
-     * @return string The composed HTML for the question type
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
+     * @deprecated since Moodle 4.0
      */
-    protected function qbank_chooser_qtype($qtype, $classes = array()) {
-        debugging('Method core_question_bank_renderer::qbank_chooser_qtype() is deprecated, ' .
-                'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
-        return '';
+    protected function qbank_chooser_qtype() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
-     * Return the title for the question bank chooser.
-     *
-     * @param string $title The language string identifier
-     * @param string $identifier The component identifier
-     * @return string The composed HTML for the title
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
+     * @deprecated since Moodle 4.0
      */
-    protected function qbank_chooser_title($title, $identifier = null) {
-        debugging('Method core_question_bank_renderer::qbank_chooser_title() is deprecated, ' .
-                'see core_question_bank_renderer::render_qbank_chooser().', DEBUG_DEVELOPER);
-        return '';
+    protected function qbank_chooser_title() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
 }

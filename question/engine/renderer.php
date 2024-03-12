@@ -42,24 +42,10 @@ class core_question_renderer extends plugin_renderer_base {
     }
 
     /**
-     * Render an icon, optionally with the word 'Preview' beside it, to preview
-     * a given question.
-     * @param int $questionid the id of the question to be previewed.
-     * @param context $context the context in which the preview is happening.
-     *      Must be a course or category context.
-     * @param bool $showlabel if true, show the word 'Preview' after the icon.
-     *      If false, just show the icon.
      * @deprecated since Moodle 4.0
-     * @see qbank_previewquestion\output\renderer
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
-    public function question_preview_link($questionid, context $context, $showlabel) {
-         debugging('Function question_preview_link() has been deprecated and moved to qbank_previewquestion plugin,
-         Please use qbank_previewquestion renderer.', DEBUG_DEVELOPER);
-
-        return $this->page->get_renderer('qbank_previewquestion')->question_preview_link(
-                $questionid, $context, $showlabel
-        );
+    public function question_preview_link() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
