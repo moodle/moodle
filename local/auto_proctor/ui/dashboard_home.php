@@ -4,7 +4,7 @@
                 <div class="p-4 bg-white block sm:flex items-center justify-between  lg:mt-1.5 ">
                     <div class="w-full mb-1">
                         <div class="mb-4">
-                            <nav class="flex mb-5" aria-label="Breadcrumb">
+                            <!-- <nav class="flex mb-5" aria-label="Breadcrumb">
                                 <ol class="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
                                     <li class="inline-flex items-center">
                                         <a href="#"
@@ -30,7 +30,7 @@
                                         </div>
                                     </li>
                                 </ol>
-                            </nav>
+                            </nav> -->
                             <h1 class="text-xl font-bold text-gray-900 sm:text-2xl ">Dashboard</h1>
                         </div>
                     </div>

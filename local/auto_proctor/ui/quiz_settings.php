@@ -29,12 +29,15 @@ global $DB, $USER, $CFG;
     if(isset($_GET['course_id']) && isset($_GET['quiz_id'])){
         $course_id = $_GET['course_id'];
         $quiz_name = $_GET['quiz_name'];
+        $course_name = $_GET['course_name'];
         $quiz_id = $_GET['quiz_id'];
         $params = array('course_id' => $course_id);
 
         // Retrieve all records from AP Table
         $AP_tb = 'auto_proctor_quiz_tb';
         $AP_records = $DB->get_records($AP_tb);
+
+        echo "<script>console.log('course name: ', ". json_encode($course_name) .");</script>";
 
 
         // SELECTING COURSE'S QUIZZES
@@ -218,6 +221,7 @@ global $DB, $USER, $CFG;
                       <!-- Pass the quiz id in form for processing in the database -->
                       <input type="hidden" name="quiz_id" value="<?php echo $quiz_id; ?>" />
                       <input type="hidden" name="course_id" value="<?php echo $course_id; ?>" />
+                      <input type="hidden" name="quiz_settings" value="1" />
                       <input type="hidden" name="quiz_name" value="<?php echo $quiz_name; ?>" />
                       <!-- Save and Cancel buttons -->
                       <div class="flex justify-start">
@@ -232,14 +236,19 @@ global $DB, $USER, $CFG;
 </form>
 
 <script>
-  document.getElementById("cancelQuizSettings").addEventListener("click", function() {
-    // Get the current URL
-    var currentUrl = window.location.href;
+  document.getElementById("cancelQuizSettings").addEventListener("click", function(event) {
+    event.preventDefault();
+    //Simulate a click event on the currently selected course link
+    var courseLink = document.getElementById("<?php echo $course_id . '_eproctor'; ?>");
+    
+    // Check if the course link exists
+    if (courseLink) {
+        // Trigger a click event on the course link
+        courseLink.click();
+        console.error("FOUND COURSE LINK.");
+    } else {
+        console.error("Course link not found.");
+    }
 
-    // Remove query parameters
-    var newUrl = currentUrl.replace(/&?quiz_id=\d+&quiz_name=[^&]+/, '');
-
-    // Redirect to the new URL without the specified query parameters
-    window.location.href = newUrl;
 });
 </script>

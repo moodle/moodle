@@ -136,7 +136,9 @@ $wwwroot = $CFG->wwwroot
                     // Ensuring dashboard_home will display when no course is selected
                     if (!isset($_GET['course_id'])) {
                         include "dashboard_home.php";
+
                     }
+
                 ?>
 
                 <script>
@@ -148,9 +150,10 @@ $wwwroot = $CFG->wwwroot
                             // Hide subject and quiz display
                             courses.style.display = "none";
                             archives.style.display = "none";
-                            quiz_settings.display = "none";
+                            quiz_settings.style.display = "none";
                             quiz_results.style.display = "none";
                         }
+                        
                     }
                 </script>
             </section>
@@ -197,43 +200,48 @@ $wwwroot = $CFG->wwwroot
                 <?php
                     //include "dashboard_main.php";
                     echo "ARCHIVES";
-
-                    if (isset($_GET['course_id'])){
-                        echo "
-                        <script>
-                            var modifiedURL = removeParametersFromCurrentURL();
-                            console.log(modifiedURL);
-                        </script>
-                        ";
-                    }
                 ?>
 
                 <script>
                     function toggleArchives() {
+
                         var archives = document.getElementById("archives");
+                        var coursesDropdown = document.getElementById("coursesDropdown");
+                        var courseId = new URLSearchParams(window.location.search).get('course_id');
+                        var settings = new URLSearchParams(window.location.search).get('quiz_settings');
+                        var results = new URLSearchParams(window.location.search).get('quiz_results');
+
+                        if (courseId) {
+                            coursesDropdown.click();
+                             // Remove the parameters in URL
+                            // Get the current URL
+                            var url = new URL(window.location.href);
+
+                            // Remove parameters individually
+                            url.searchParams.delete('course_id');
+                            url.searchParams.delete('quiz_id');
+                            url.searchParams.delete('quiz_name');
+
+                            // Replace the current URL without redirecting
+                            history.replaceState(null, '', url.href);
+                        }
+
                         if (archives.style.display === "none") {
                             archives.style.display = "block";
 
                             // Hide subject and quiz display
                             home.style.display = "none";
                             courses.style.display = "none";
-                            quiz_settings.display = "none";
-                            quiz_results.style.display = "none";
+
+                            if (settings){
+                                quiz_settings.style.display = "none";
+                            }
+
+                            if (results){
+                                quiz_results.style.display = "none";
+                            }
+                            dropdown.style.display = "none";
                         }
-
-                        // if (window.location.search.includes('quiz_id')) {
-                        //     var searchParams = new URLSearchParams(window.location.search);
-                        //     searchParams.delete('quiz_id');
-                        //     var newUrl = window.location.pathname + searchParams.toString();
-                        //     window.history.replaceState({}, '', newUrl);
-                        // }
-
-                        // if (window.location.search.includes('course_id')) {
-                        //     var searchParams = new URLSearchParams(window.location.search);
-                        //     searchParams.delete('course_id');
-                        //     var newUrl = window.location.pathname + searchParams.toString();
-                        //     window.history.replaceState({}, '', newUrl);
-                        // }
                     }
                 </script>
             </section>
@@ -241,25 +249,47 @@ $wwwroot = $CFG->wwwroot
             <!-- INCLUDE QUIZ SETTINGS DISPLAY  -->
             <!-- <section id="quiz_settings" style="display: none;"> -->
                 <?php
-                    if (isset($_GET['course_id']) && isset($_GET['quiz_id'])){
-                        echo '<section id="quiz_settings" style="display: none;">';
-                        include "quiz_settings.php";
+                if(isset($_GET['quiz_name']) && !isset($_GET['quiz_results'])){
+                        if (isset($_GET['course_id']) && isset($_GET['quiz_id']) ){
+                            echo '<section id="quiz_settings" style="display: none;">';
+                            include "quiz_settings.php";
+
+                            echo '
+                                <script>
+                                        quiz_settings.style.display = "block";
+
+                                        // Hide subject and quiz display
+                                        home.style.display = "none";
+                                        archives.style.display = "none";
+                                        courses.style.display = "none";
+                                        
+                                </script>
+                            ';
+                            echo "</section>";
+                        }
+                    }
+                ?>
+            <!-- </section> -->
+
+            <!-- INCLUDE QUIZ RESULTS DISPLAY  -->
+            <?php
+                    if (isset($_GET['quiz_results'])){
+                        echo '<section id="quiz_results" style="display: none;">';
+                        include "quiz_results.php";
 
                         echo '
                             <script>
-                                    quiz_settings.style.display = "block";
+                                    quiz_results.style.display = "block";
 
                                     // Hide subject and quiz display
                                     home.style.display = "none";
                                     archives.style.display = "none";
                                     courses.style.display = "none";
-                                    quiz_results.style.display = "none";
                             </script>
                         ';
                         echo "</section>";
                     }
                 ?>
-            <!-- </section> -->
 
             <p class="my-10 text-sm text-center text-gray-500">
                 &copy; 2023-2024 <a href="https://flowbite.com/" class="hover:underline" target="_blank">e-RTU</a>. All rights reserved.
