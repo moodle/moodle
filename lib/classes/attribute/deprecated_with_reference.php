@@ -14,40 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core;
-
-use Attribute;
+namespace core\attribute;
 
 /**
- * Attribute to describe a deprecated item.
+ * Attribute to describe a deprecated item which contains a reference to the owning feature.
  *
  * @package    core
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[Attribute]
-class deprecated {
+class deprecated_with_reference extends deprecated {
     /**
-     * A deprecated item.
+     * A deprecated item which also includes a reference to the owning feature.
      *
-     * This attribute can be applied to any function, class, method, constant, property, enum, etc.
+     * This attribute is not expected to be used more generally. It is an internal feature.
      *
-     * Note: The mere presence of the attribute does not do anything. It must be checked by some part of the code.
-     *
-     * @param mixed $descriptor A brief descriptor of the thing that was deprecated.
+     * @param string $owner The code which owns the usage
+     * @param null|string $replacement Any replacement for the deprecated thing
      * @param null|string $since When it was deprecated
      * @param null|string $reason Why it was deprecated
-     * @param null|string $replacement Any replacement for the deprecated thing
      * @param null|string $mdl Link to the Moodle Tracker issue for more information
+     * @param bool $final Whether this is a final deprecation
+     * @param bool $emit Whether to emit a deprecation warning
      */
     public function __construct(
-        public readonly mixed $descriptor,
-        public readonly ?string $since = null,
-        public readonly ?string $reason = null,
-        public readonly ?string $replacement = null,
-        public readonly ?string $mdl = null,
-        public readonly bool $final = false,
-        public readonly bool $emit = true,
+        public readonly string $owner,
+        ?string $replacement,
+        ?string $since,
+        ?string $reason,
+        ?string $mdl,
+        bool $final,
+        bool $emit,
     ) {
+        parent::__construct(
+            replacement: $replacement,
+            since: $since,
+            reason: $reason,
+            mdl: $mdl,
+            final: $final,
+            emit: $emit,
+        );
     }
 }
