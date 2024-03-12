@@ -91,7 +91,9 @@
         "sitename": "Beer & Chips",
         "logintoken": "randomstring",
         "maintenance": "For full access to this site, you need to login in as an admin.",
-        "languagemenu": "Choose language"
+        "languagemenu": "Choose language",
+        "togglepassword": true,
+        "smallscreensonly": true
     }
 }}
 
@@ -214,13 +216,24 @@
 
 {{#js}}
     {{^error}}
+        {{#togglepassword}}
+            require(['core/togglesensitive'], function(ToggleSensitive) {
+                ToggleSensitive.init("password", {{smallscreensonly}});
+            });
+        {{/togglepassword}}
         {{#autofocusform}}
-            var userNameField = document.getElementById('username');
-            if (userNameField.value.length == 0) {
-                userNameField.focus();
-            } else {
-                document.getElementById('password').focus();
-            }
+            require(['core_form/events'], function(FormEvent) {
+                function autoFocus() {
+                    const userNameField = document.getElementById('username');
+                    if (userNameField.value.length == 0) {
+                        userNameField.focus();
+                    } else {
+                        document.getElementById('password').focus();
+                    }
+                }
+                autoFocus();
+                window.addEventListener(FormEvent.eventTypes.fieldStructureChanged, autoFocus);
+            });
         {{/autofocusform}}
     {{/error}}
     {{#error}}

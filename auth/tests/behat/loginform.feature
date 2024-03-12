@@ -101,3 +101,21 @@ Feature: Test if the login form provides the correct feedback
     And I press "Log in"
     And I press the tab key
     Then the focused element is "Username" "field"
+
+  Scenario: Display the password visibility toggle icon
+    Given the following config values are set as admin:
+      | loginpasswordtoggle | 1 |
+    When I follow "Log in"
+    Then "Toggle sensitive" "button" should be visible
+    And the following config values are set as admin:
+      | loginpasswordtoggle | 0 |
+    And I reload the page
+    And "Toggle sensitive" "button" should not be visible
+
+  Scenario: Display the password visibility toggle icon for small screens only
+    Given the following config values are set as admin:
+      | loginpasswordtoggle | 2 |
+    When I follow "Log in"
+    Then "Toggle sensitive" "button" should not be visible
+    And I change the viewport size to "mobile"
+    And "Toggle sensitive" "button" should be visible
