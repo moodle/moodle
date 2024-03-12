@@ -68,7 +68,7 @@ videojs.addLanguage('ar', {
   "Raised": "بارز",
   "Depressed": "منخفض",
   "Uniform": "منتظم",
-  "Dropshadow": "ظل خلفي",
+  "Drop shadow": "ظل خلفي",
   "Font Family": "عائلة الخطوط",
   "Proportional Sans-Serif": "Proportional Sans-Serif",
   "Monospace Sans-Serif": "Monospace Sans-Serif",

@@ -68,7 +68,7 @@ videojs.addLanguage('eu', {
   "Raised": "Jasoa",
   "Depressed": "Hondoratua",
   "Uniform": "Uniformea",
-  "Dropshadow": "Itzalduna",
+  "Drop shadow": "Itzalduna",
   "Font Family": "Letra-tipoa",
   "Proportional Sans-Serif": "Sans-Serif proportzionala",
   "Monospace Sans-Serif": "Tarte berdineko Sans-Serif",

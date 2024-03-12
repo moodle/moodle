@@ -68,7 +68,7 @@ videojs.addLanguage('gd', {
   "Raised": "Àrdaichte",
   "Depressed": "Air a bhrùthadh",
   "Uniform": "Cunbhalach",
-  "Dropshadow": "Sgàil",
+  "Drop shadow": "Sgàil",
   "Font Family": "Teaghlach a’ chrutha-chlò",
   "Proportional Sans-Serif": "Sans-serif co-rèireach",
   "Monospace Sans-Serif": "Sans-serif aon-leud",
