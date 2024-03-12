@@ -136,15 +136,15 @@ if (!empty($deleteid)) {
                                            'deleteid' => $deleteid,
                                            'sesskey' => sesskey()
                                            ));
-        $continue = new single_button($confirmurl, get_string('continue'), 'post', true);
+        $continue = new single_button($confirmurl, get_string('continue'), 'post');
         $destroyurl = new moodle_url('iomad_courses_form.php',
                                      array('confirm' => md5($deleteid),
                                            'deleteid' => $deleteid,
                                            'destroy' => true,
                                            'sesskey' => sesskey()
                                            ));
-        $destroy = new single_button($destroyurl, get_string('destroy', 'block_iomad_company_admin'), 'post', true);
-        $cancel = new single_button($linkurl, get_string('cancel'), 'post', true);
+        $destroy = new single_button($destroyurl, get_string('destroy', 'block_iomad_company_admin'), 'post');
+        $cancel = new single_button($linkurl, get_string('cancel'), 'post');
 
         $attributes = [
             'role'=>'alertdialog',
