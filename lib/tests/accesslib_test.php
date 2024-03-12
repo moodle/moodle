@@ -1965,7 +1965,6 @@ class accesslib_test extends advanced_testcase {
         // the access.php works.
         $mockedcomponent = new ReflectionClass(core_component::class);
         $mockedplugins = $mockedcomponent->getProperty('plugins');
-        $mockedplugins->setAccessible(true);
         $plugins = $mockedplugins->getValue();
         $plugins['fake'] = [$pluginname => "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/$pluginname"];
         $mockedplugins->setValue(null, $plugins);
@@ -4877,7 +4876,6 @@ class accesslib_test extends advanced_testcase {
             ->getMock();
 
         $rcp = new ReflectionProperty($context, '_path');
-        $rcp->setAccessible(true);
         $rcp->setValue($context, $contextpath);
 
         $comparisoncontext = $this->getMockBuilder(\context::class)
@@ -4889,7 +4887,6 @@ class accesslib_test extends advanced_testcase {
             ->getMock();
 
         $rcp = new ReflectionProperty($comparisoncontext, '_path');
-        $rcp->setAccessible(true);
         $rcp->setValue($comparisoncontext, $testpath);
 
         $this->assertEquals($expected, $context->is_parent_of($comparisoncontext, $testself));
@@ -4986,7 +4983,6 @@ class accesslib_test extends advanced_testcase {
             ->getMock();
 
         $rcp = new ReflectionProperty($context, '_path');
-        $rcp->setAccessible(true);
         $rcp->setValue($context, $contextpath);
 
         $comparisoncontext = $this->getMockBuilder(\context::class)
@@ -4998,7 +4994,6 @@ class accesslib_test extends advanced_testcase {
             ->getMock();
 
         $rcp = new ReflectionProperty($comparisoncontext, '_path');
-        $rcp->setAccessible(true);
         $rcp->setValue($comparisoncontext, $testpath);
 
         $this->assertEquals($expected, $context->is_child_of($comparisoncontext, $testself));

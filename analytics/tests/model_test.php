@@ -427,7 +427,6 @@ class model_test extends \advanced_testcase {
         $modelconfig = new \core_analytics\model_config($this->model);
 
         $method = new \ReflectionMethod('\\core_analytics\\model_config', 'export_model_data');
-        $method->setAccessible(true);
 
         $modeldata = $method->invoke($modelconfig);
 

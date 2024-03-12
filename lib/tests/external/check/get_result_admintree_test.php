@@ -227,7 +227,6 @@ class get_result_admintree_test extends externallib_advanced_testcase {
         $root = $this->setup_admin_tree($settings);
 
         $method = new ReflectionMethod(get_result_admintree::class, 'get_check_from_setting');
-        $method->setAccessible(true);
 
         $result = $method->invoke(new get_result_admintree(), $searchid, $searchname, $root);
 

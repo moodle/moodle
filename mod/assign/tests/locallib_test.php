@@ -4015,7 +4015,6 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
 
         // Call fix_null_grades().
         $method = new \ReflectionMethod(\assign::class, 'fix_null_grades');
-        $method->setAccessible(true);
         $result = $method->invoke($assign);
 
         $this->assertSame(true, $result);

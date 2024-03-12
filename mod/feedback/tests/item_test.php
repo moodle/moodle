@@ -58,7 +58,6 @@ class item_test extends advanced_testcase {
         $itemclass = feedback_get_item_class('textarea');
         $reflection = new ReflectionClass($itemclass);
         $method = $reflection->getMethod('get_analysed');
-        $method->setAccessible(true);
 
         // Call the method and indicate it is being used for Excel.
         $actual = $method->invoke(new $itemclass(), $item, false, $course->id, true);

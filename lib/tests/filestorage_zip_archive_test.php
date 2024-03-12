@@ -44,7 +44,6 @@ class filestorage_zip_archive_test extends \advanced_testcase {
         $ziparchive = new zip_archive();
 
         $method = new \ReflectionMethod('zip_archive', 'mangle_pathname');
-        $method->setAccessible(true);
 
         $result = $method->invoke($ziparchive, $string);
         $this->assertSame($expected, $result);

@@ -77,7 +77,6 @@ class restore_gradebook_structure_step_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass('\restore_gradebook_structure_step');
         $rcm = $rc->getMethod('rewrite_step_backup_file_for_legacy_freeze');
-        $rcm->setAccessible(true);
         $rcm->invoke($restore, $filepath);
 
         // Check the result.

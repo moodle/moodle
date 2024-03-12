@@ -432,7 +432,6 @@ class lib_test extends \advanced_testcase {
         $form = new mod_bigbluebuttonbn_mod_form($data, 1, $bbactivitycm, $this->get_course());
         $refclass = new ReflectionClass("mod_bigbluebuttonbn_mod_form");
         $formprop = $refclass->getProperty('_form');
-        $formprop->setAccessible(true);
 
         /* @var $mform MoodleQuickForm quickform object definition */
         $mform = $formprop->getValue($form);

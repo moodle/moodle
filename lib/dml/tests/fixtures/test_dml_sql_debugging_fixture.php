@@ -61,7 +61,6 @@ class test_dml_sql_debugging_fixture {
      */
     public function one(string $sql) {
         $method = new \ReflectionMethod($this->db, 'add_sql_debugging');
-        $method->setAccessible(true);
         return $method->invoke($this->db, $sql);
     }
 

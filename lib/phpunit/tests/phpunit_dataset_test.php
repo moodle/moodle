@@ -54,11 +54,8 @@ class phpunit_dataset_test extends advanced_testcase {
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // Expectations.
         $exptables = ['user', 'user2'];
@@ -158,11 +155,8 @@ class phpunit_dataset_test extends advanced_testcase {
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {
@@ -251,11 +245,8 @@ class phpunit_dataset_test extends advanced_testcase {
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {
@@ -397,11 +388,8 @@ class phpunit_dataset_test extends advanced_testcase {
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {
@@ -491,11 +479,8 @@ class phpunit_dataset_test extends advanced_testcase {
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {
@@ -662,11 +647,8 @@ class phpunit_dataset_test extends advanced_testcase {
         // We need public properties to check the basis.
         $dsref = new \ReflectionClass($ds);
         $dstables = $dsref->getProperty('tables');
-        $dstables->setAccessible(true);
         $dscolumns = $dsref->getProperty('columns');
-        $dscolumns->setAccessible(true);
         $dsrows = $dsref->getProperty('rows');
-        $dsrows->setAccessible(true);
 
         // We are expecting an exception.
         if (!empty($exception)) {

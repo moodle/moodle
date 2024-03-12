@@ -57,7 +57,6 @@ class participants_action_bar_test extends \advanced_testcase {
         $PAGE->set_context($context);
         $output = new participants_action_bar($course, $PAGE, null);
         $method = new ReflectionMethod('\core\output\participants_action_bar', 'get_content_for_select');
-        $method->setAccessible(true);
         $renderer = $PAGE->get_renderer('core');
 
         $response = $method->invoke($output, $renderer);

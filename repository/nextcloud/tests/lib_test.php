@@ -618,7 +618,6 @@ JSON;
         $refclient = new \ReflectionClass($dav);
 
         $property = $refclient->getProperty('_port');
-        $property->setAccessible(true);
 
         $port = $property->getValue($dav);
 
@@ -977,7 +976,6 @@ XML;
                 $curl->method('get_info')->willReturn(['http_code' => 200]);
 
                 $reflectionproperty = new \ReflectionProperty($this->repo, 'curl');
-                $reflectionproperty->setAccessible(true);
                 $reflectionproperty->setValue($this->repo, $curl);
             }
         } else {
@@ -1002,7 +1000,6 @@ XML;
     protected function set_private_property($value, $propertyname) {
         $refclient = new \ReflectionClass($this->repo);
         $private = $refclient->getProperty($propertyname);
-        $private->setAccessible(true);
         $private->setValue($this->repo, $value);
 
         return $private;

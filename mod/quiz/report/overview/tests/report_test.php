@@ -230,7 +230,6 @@ class report_test extends \advanced_testcase {
             $reflectionobject = $parent;
         }
         $prefsproperty = $reflectionobject->getProperty('prefs');
-        $prefsproperty->setAccessible(true);
         $prefs = $prefsproperty->getValue($table);
         $prefs['i_first'] = 'A';
         $prefsproperty->setValue($table, $prefs);

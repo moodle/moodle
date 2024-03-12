@@ -117,7 +117,6 @@ class dml_mysqli_read_slave_test extends \base_testcase {
             $rc = new \ReflectionClass(\mysqli_native_moodle_database::class);
             $rcm = $rc->getMethod('insert_chunk_size');
 
-            $rcm->setAccessible(true);
             $rcm->invoke($db2);
             $this->assertGreaterThan($reads, $reads = $db2->perf_get_reads());
             $this->assertGreaterThan($readsprimary, $readsprimary = $reads - $db2->perf_get_reads_slave());

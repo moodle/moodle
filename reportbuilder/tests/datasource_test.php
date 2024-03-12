@@ -89,7 +89,6 @@ class datasource_test extends advanced_testcase {
         $instance = $this->get_datasource_test_source();
 
         $method = (new ReflectionClass($instance))->getMethod('add_columns_from_entity');
-        $method->setAccessible(true);
         $method->invoke($instance, 'user', $include, $exclude);
 
         // Get all our user entity columns.
@@ -146,7 +145,6 @@ class datasource_test extends advanced_testcase {
         $instance = $this->get_datasource_test_source();
 
         $method = (new ReflectionClass($instance))->getMethod('add_filters_from_entity');
-        $method->setAccessible(true);
         $method->invoke($instance, 'user', $include, $exclude);
 
         // Get all our user entity filters.
@@ -203,7 +201,6 @@ class datasource_test extends advanced_testcase {
         $instance = $this->get_datasource_test_source();
 
         $method = (new ReflectionClass($instance))->getMethod('add_conditions_from_entity');
-        $method->setAccessible(true);
         $method->invoke($instance, 'user', $include, $exclude);
 
         // Get all our user entity conditions.
@@ -225,7 +222,6 @@ class datasource_test extends advanced_testcase {
         $instance = $this->get_datasource_test_source();
 
         $method = (new ReflectionClass($instance))->getMethod('add_all_from_entity');
-        $method->setAccessible(true);
         $method->invoke($instance, 'user', ['username'], ['firstname'], ['lastname']);
 
         // Assert the column we added (plus one we didn't).

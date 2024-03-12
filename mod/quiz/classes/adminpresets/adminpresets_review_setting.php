@@ -36,7 +36,6 @@ class adminpresets_review_setting extends adminpresets_setting {
 
         // Getting the masks descriptions (review_setting protected method).
         $reflectiontimes = new ReflectionMethod('mod_quiz\admin\review_setting', 'times');
-        $reflectiontimes->setAccessible(true);
         $times = $reflectiontimes->invoke(null);
 
         $visiblevalue = '';

@@ -180,7 +180,6 @@ class xhprof_test extends \advanced_testcase {
         // Make moodle_xhprofrun::xhprof_topo_sort() accessible.
         $reflection = new \ReflectionClass('\moodle_xhprofrun');
         $method = $reflection->getMethod('xhprof_topo_sort');
-        $method->setAccessible(true);
         // Sort the data.
         $result = $method->invokeArgs(new \moodle_xhprofrun(), [$rundata]);
         $this->assertIsArray($result);
@@ -227,7 +226,6 @@ class xhprof_test extends \advanced_testcase {
         // Make moodle_xhprofrun::reduce_run_data() accessible.
         $reflection = new \ReflectionClass('\moodle_xhprofrun');
         $method = $reflection->getMethod('reduce_run_data');
-        $method->setAccessible(true);
         // Reduce the data.
         $result = $method->invokeArgs(new \moodle_xhprofrun(), [$rundata]);
         $this->assertIsArray($result);

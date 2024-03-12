@@ -81,7 +81,6 @@ class portfolio_caller_test extends \advanced_testcase {
 
         $reflector = new \ReflectionObject($portfoliocaller);
         $propertysubmission = $reflector->getProperty('submission');
-        $propertysubmission->setAccessible(true);
         $submission = $propertysubmission->getValue($portfoliocaller);
 
         $this->assertEquals($subid1, $submission->id);

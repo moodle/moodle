@@ -124,7 +124,6 @@ class rrule_manager_test extends \advanced_testcase {
         $reflectionclass = new \ReflectionClass($mang);
         foreach ($props as $prop => $expectedval) {
             $rcprop = $reflectionclass->getProperty($prop);
-            $rcprop->setAccessible(true);
             $this->assertEquals($expectedval, $rcprop->getValue($mang));
         }
     }

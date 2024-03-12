@@ -76,7 +76,6 @@ class extension_test extends \advanced_testcase {
         // Make the method public so we can test it.
         $reflectionextension = new \ReflectionClass(extension::class);
         $getclassimplementing = $reflectionextension->getMethod('get_instances_implementing');
-        $getclassimplementing->setAccessible(true);
         $allfoundinstances = $getclassimplementing->invoke(null, $apiclass);
         $foundclasses = array_map(
             function($instance) {

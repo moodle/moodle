@@ -62,7 +62,6 @@ class statistics_bulk_loader_test extends advanced_testcase {
         $this->setAdminUser();
 
         $rcm = new ReflectionMethod(statistics_bulk_loader::class, 'get_all_places_where_questions_were_attempted');
-        $rcm->setAccessible(true);
 
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
@@ -273,7 +272,6 @@ class statistics_bulk_loader_test extends advanced_testcase {
     private function extract_item_value(all_calculated_for_qubaid_condition $statistics,
                                         int $questionid, string $item): ?float {
         $rcm = new ReflectionMethod(statistics_bulk_loader::class, 'extract_item_value');
-        $rcm->setAccessible(true);
         return $rcm->invoke(null, $statistics, $questionid, $item);
     }
 
@@ -285,7 +283,6 @@ class statistics_bulk_loader_test extends advanced_testcase {
      */
     private function load_quiz_statistics_for_place(context $context): ?all_calculated_for_qubaid_condition {
         $rcm = new ReflectionMethod(statistics_bulk_loader::class, 'load_statistics_for_place');
-        $rcm->setAccessible(true);
         return $rcm->invoke(null, 'mod_quiz', $context);
     }
 

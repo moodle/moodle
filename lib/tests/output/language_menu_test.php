@@ -61,7 +61,6 @@ class language_menu_test extends \advanced_testcase {
 
         $output = new language_menu($PAGE);
         $method = new ReflectionMethod('\core\output\language_menu', 'export_for_template');
-        $method->setAccessible(true);
         $renderer = $PAGE->get_renderer('core');
 
         $response = $method->invoke($output, $renderer);

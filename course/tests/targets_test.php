@@ -413,7 +413,6 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
 
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $target->add_sample_data($samplesdata);
@@ -448,7 +447,6 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
 
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $target->add_sample_data($samplesdata);
@@ -456,7 +454,6 @@ class targets_test extends \advanced_testcase {
 
         $reftarget = new \ReflectionObject($target);
         $refmethod = $reftarget->getMethod('calculate_sample');
-        $refmethod->setAccessible(true);
 
         if ($nullcalculation) {
             $this->assertNull($refmethod->invoke($target, $sampleid, $analysable, $starttime, $endtime));
@@ -532,7 +529,6 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
 
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $target->add_sample_data($samplesdata);
@@ -540,7 +536,6 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core_course\analytics\target\course_competencies');
         $method = $class->getMethod('calculate_sample');
-        $method->setAccessible(true);
 
         // Method calculate_sample() returns 1 when the user has not achieved all the competencies assigned to the course.
         $this->assertEquals(1, $method->invoke($target, $sampleid, $analysable));
@@ -630,14 +625,12 @@ class targets_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
 
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $target->add_sample_data($samplesdata);
 
         $class = new \ReflectionClass('\core_course\analytics\target\course_gradetopass');
         $method = $class->getMethod('calculate_sample');
-        $method->setAccessible(true);
 
         // Verify all the expectations are fulfilled.
         foreach ($sampleids as $sampleid => $key) {

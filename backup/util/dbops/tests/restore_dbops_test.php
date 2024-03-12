@@ -351,7 +351,6 @@ class restore_dbops_test extends \advanced_testcase {
         $dbuser = $DB->get_record('user', ['id' => $dbuser->id]);
 
         $method = (new \ReflectionClass('restore_dbops'))->getMethod('precheck_user');
-        $method->setAccessible(true);
         $result = $method->invoke(null, $backupuser, $samesite, $siteid);
 
         if (is_bool($result)) {

@@ -2061,7 +2061,6 @@ class testable_curl extends curl {
     public function get_options() {
         // Access to private property.
         $rp = new \ReflectionProperty('curl', 'options');
-        $rp->setAccessible(true);
         return $rp->getValue($this);
     }
 
@@ -2073,7 +2072,6 @@ class testable_curl extends curl {
     public function set_options($options) {
         // Access to private property.
         $rp = new \ReflectionProperty('curl', 'options');
-        $rp->setAccessible(true);
         $rp->setValue($this, $options);
     }
 
@@ -2107,7 +2105,6 @@ class testable_curl extends curl {
     public function call_apply_opt($options = null) {
         // Access to private method.
         $rm = new \ReflectionMethod('curl', 'apply_opt');
-        $rm->setAccessible(true);
         $ch = curl_init();
         return $rm->invoke($this, $ch, $options);
     }

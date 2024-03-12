@@ -1885,7 +1885,6 @@ class ddl_test extends \database_driver_testcase {
 
         $rc = new \ReflectionClass('moodle_database');
         $rcm = $rc->getMethod('get_temp_tables_cache');
-        $rcm->setAccessible(true);
         $metacachetemp = $rcm->invokeArgs($DB, []);
 
         // Data of test_table0 should be removed from the cache.
@@ -1896,7 +1895,6 @@ class ddl_test extends \database_driver_testcase {
 
         $rc = new \ReflectionClass('moodle_database');
         $rcm = $rc->getMethod('get_metacache');
-        $rcm->setAccessible(true);
         $metacache = $rcm->invokeArgs($DB, []);
 
         // Data of test_table2 should be intact.

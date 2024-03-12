@@ -500,7 +500,7 @@ class dml_test extends \database_driver_testcase {
         $out = $fixture->four($sql);
         $expected = <<<EOD
 SELECT * FROM {users}
--- line 65 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+-- line 64 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
 EOD;
         $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
 
@@ -508,8 +508,8 @@ EOD;
         $out = $fixture->four($sql);
         $expected = <<<EOD
 SELECT * FROM {users}
--- line 65 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
--- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
+-- line 64 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+-- line 73 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
 EOD;
         $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
 
@@ -517,10 +517,10 @@ EOD;
         $out = $fixture->four($sql);
         $expected = <<<EOD
 SELECT * FROM {users}
--- line 65 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
--- line 74 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
--- line 83 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two()
--- line 92 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three()
+-- line 64 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to ReflectionMethod->invoke()
+-- line 73 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->one()
+-- line 82 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->two()
+-- line 91 of /lib/dml/tests/fixtures/test_dml_sql_debugging_fixture.php: call to test_dml_sql_debugging_fixture->three()
 -- line 517 of /lib/dml/tests/dml_test.php: call to test_dml_sql_debugging_fixture->four()
 EOD;
         $this->assertEquals($this->unix_to_os_dirsep($expected), $out);
@@ -6371,7 +6371,6 @@ EOD;
         $this->assertTrue(empty($cfg->dboptions['versionfromdb']));
         $rc = new \ReflectionClass(\mysqli_native_moodle_database::class);
         $rcm = $rc->getMethod('should_db_version_be_read_from_db');
-        $rcm->setAccessible(true);
         $this->assertFalse($rcm->invokeArgs($DB, []));
 
         ['description' => $description, 'version' => $version] = $DB->get_server_info();

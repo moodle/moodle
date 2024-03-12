@@ -207,12 +207,10 @@ class result_test extends \advanced_testcase {
 
         $reflectionoutput = new \ReflectionClass($classname);
         $constructor = $reflectionoutput->getConstructor();
-        $constructor->setAccessible(true);
         $resultoutput = $reflectionoutput->newInstanceWithoutConstructor();
         $constructor->invoke($resultoutput, $result->get_data());
 
         $exportoptions = $reflectionoutput->getMethod('export_options');
-        $exportoptions->setAccessible(true);
 
         $data = $exportoptions->invoke($resultoutput);
         $useranswersdata = array_map(function($item) {

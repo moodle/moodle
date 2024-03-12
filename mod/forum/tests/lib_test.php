@@ -2866,7 +2866,6 @@ class lib_test extends \advanced_testcase {
         mod_forum_myprofile_navigation($tree, $user, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayHasKey('forumposts', $nodes->getValue($tree));
         $this->assertArrayHasKey('forumdiscussions', $nodes->getValue($tree));
     }
@@ -2891,7 +2890,6 @@ class lib_test extends \advanced_testcase {
         mod_forum_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('forumposts', $nodes->getValue($tree));
         $this->assertArrayNotHasKey('forumdiscussions', $nodes->getValue($tree));
     }
@@ -2916,7 +2914,6 @@ class lib_test extends \advanced_testcase {
         mod_forum_myprofile_navigation($tree, $user, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayHasKey('forumposts', $nodes->getValue($tree));
         $this->assertArrayHasKey('forumdiscussions', $nodes->getValue($tree));
     }

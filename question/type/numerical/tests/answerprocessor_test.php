@@ -62,7 +62,6 @@ class answerprocessor_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass($ap);
         $rcm = $rc->getMethod('parse_response');
-        $rcm->setAccessible(true);
 
         $this->assertEquals($expected, $rcm->invoke($ap, $args));
     }

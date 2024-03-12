@@ -91,7 +91,6 @@ class lib_test extends \advanced_testcase {
         report_log_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayHasKey('alllogs', $nodes->getValue($this->tree));
         $this->assertArrayHasKey('todayslogs', $nodes->getValue($this->tree));
     }
@@ -108,7 +107,6 @@ class lib_test extends \advanced_testcase {
         report_log_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('alllogs', $nodes->getValue($this->tree));
         $this->assertArrayNotHasKey('todayslogs', $nodes->getValue($this->tree));
     }

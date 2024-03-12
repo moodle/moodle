@@ -51,7 +51,6 @@ class document_services_test extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
 
         $method = new ReflectionMethod('\assignfeedback_editpdf\document_services', 'save_file');
-        $method->setAccessible(true);
 
         $filearea = document_services::TMP_ROTATED_JPG_FILEAREA;
         $content = 'some random content';
@@ -82,7 +81,6 @@ class document_services_test extends advanced_testcase {
         $this->getDataGenerator()->enrol_user($user->id, $course->id, 'student');
 
         $method = new ReflectionMethod('\assignfeedback_editpdf\document_services', 'save_rotated_image_file');
-        $method->setAccessible(true);
 
         $imagecontent = file_get_contents($CFG->dirroot . '/lib/filestorage/tests/fixtures/testimage.png');
         $imageresource = imagecreatefromstring($imagecontent);

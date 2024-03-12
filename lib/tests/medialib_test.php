@@ -475,7 +475,6 @@ class medialib_test extends \advanced_testcase {
      */
     public function get_players_test($manager) {
         $method = new \ReflectionMethod("core_media_manager", "get_players");
-        $method->setAccessible(true);
         $players = $method->invoke($manager);
         $out = '';
         foreach ($players as $player) {

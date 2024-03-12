@@ -63,7 +63,6 @@ class secondary_test extends \advanced_testcase {
         ];
 
         $method = new ReflectionMethod('core\navigation\views\secondary', 'get_leaf_nodes');
-        $method->setAccessible(true);
         $sortednodes = $method->invoke($secondary, $secondary, $nodes);
         foreach ($sortednodes as $order => $node) {
             $this->assertEquals($expectednodes[$order], $node->key);
@@ -216,7 +215,6 @@ class secondary_test extends \advanced_testcase {
         $node = $this->get_tree_initilised_to_set_activate($seturl);
         $secondary = new secondary($PAGE);
         $method = new ReflectionMethod('core\navigation\views\secondary', 'active_node_scan');
-        $method->setAccessible(true);
 
         $result = $method->invoke($secondary, $node);
 
@@ -274,7 +272,6 @@ class secondary_test extends \advanced_testcase {
         }
 
         $method = new ReflectionMethod('core\navigation\views\secondary', 'force_nodes_into_more_menu');
-        $method->setAccessible(true);
         $method->invoke($secondary, $defaultmoremenunodes, $maxdisplayednodes);
 
         $actualmoremenunodes = [];
@@ -465,7 +462,6 @@ class secondary_test extends \advanced_testcase {
         $PAGE->set_url($selectedurl);
         $secondary = new secondary($PAGE);
         $method = new ReflectionMethod('core\navigation\views\secondary', 'nodes_match_current_url');
-        $method->setAccessible(true);
         $response = $method->invoke($secondary, $node);
 
         $this->assertSame($response->key ?? null, $expectednode);
@@ -630,7 +626,6 @@ class secondary_test extends \advanced_testcase {
 
         $secondary = new secondary($PAGE);
         $method = new ReflectionMethod('core\navigation\views\secondary', 'get_node_with_first_action');
-        $method->setAccessible(true);
         $response = $method->invoke($secondary, $selectednode, $selectednode);
         $this->assertEquals($expected, $response);
     }
@@ -688,7 +683,6 @@ class secondary_test extends \advanced_testcase {
         }
 
         $method = new ReflectionMethod('core\navigation\views\secondary', 'add_external_nodes_to_secondary');
-        $method->setAccessible(true);
         $method->invoke($secondary, $firstnode, $firstnode, $customparent);
 
         $actualnodes = $separatenode ? $customparent->get_children_key_list() : $secondary->get_children_key_list();
@@ -850,12 +844,10 @@ class secondary_test extends \advanced_testcase {
         } else {
             // Set the correct node as active.
             $method = new ReflectionMethod('core\navigation\views\secondary', 'scan_for_active_node');
-            $method->setAccessible(true);
             $method->invoke($secondary, $secondary);
         }
 
         $method = new ReflectionMethod('core\navigation\views\secondary', 'get_overflow_menu_data');
-        $method->setAccessible(true);
         $response = $method->invoke($secondary);
         if ($expectednull) {
             $this->assertNull($response);
