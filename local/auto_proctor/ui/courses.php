@@ -155,12 +155,12 @@
                                                     </td>
                                                     <td class=" whitespace-nowrap">
                                                         <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
-                                                            <a href="' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id .'&quiz_id='. $quiz->id .'&quiz_name='.$quiz->name.'">SETTINGS</a>
+                                                            <a href="' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id .'&quiz_id='. $quiz->id .'&quiz_name='.$quiz->name .'&course_name='.$course_name[0].'&quiz_settings=1">SETTINGS</a>
                                                         </span>
                                                     </td>
                                                     <td class=" whitespace-nowrap">
                                                         <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
-                                                            <a href="">RESULTS</a>
+                                                            <a href="' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id .'&quiz_id='. $quiz->id .'&quiz_name='.$quiz->name .'&quiz_results=1">RESULTS</a>
                                                         </span>
                                                     </td>
                                                     <td class=" whitespace-nowrap">
