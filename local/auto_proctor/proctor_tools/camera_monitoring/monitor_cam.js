@@ -1,6 +1,15 @@
 $(document).ready(function () {
     /*
         We stream the chosen device camera and send its frames to the FaceMesh model for face detection.
+        When streaming with muted audio, there is a conflict with FaceMesh. Therefore, we have two camera streams: one for the FaceMesh model, which has no audio, and the other for the recording, which has audio.
+
+        CAMERA RECORDING
+            - When camera stream then startRecording().
+            - When file is being unloaded (exiting file, reloading the file) or when camera permission is denied during quiz then stopRecording().
+
+            startRecording()
+                - Set isRecording to true
+
 
         FACE DETECTION
             - Count detected faces; when multiple faces are detected, then probSusMovement('multiple_face'); if no faces are detected, then probSusMovement('no_face').
@@ -9,32 +18,14 @@ $(document).ready(function () {
             - Using the retrieved landmarks, compute the Euler angle, pitch, and yaw.
             - When pitch and yaw go out of range for a neutral head pose, then it is considered a suspicious movement.
             - When suspicious movement is detected then probSusMovement('suspicious_movement').
-            - If movement is in a range for a neutral head pose, then sendDuration(), stop timer for the previous detected activity, reset probSusCounter and susCounter.
+            - If movement is in a range for a neutral head pose, reset probSusCounter and susCounter.
 
             probSusMovement(evidence_name_type)
                 - Iterate probSusCounter
-                - When probSusCounter is greater than 10 and susCounter is 0, then reset or set sendDurationCounter to 0,
-                iterate susCounter, start timer for the duration, and capture camera captureEvidence(evidence_name_type).
+                - When probSusCounter is greater than 10 and susCounter is 0, then iterate susCounter, start timer for the duration, and capture camera captureEvidence(evidence_name_type).
                 
                 NOTE: The value of evidence_name_type in captureEvidence(evidence_name_type) came from the probSusMovement(evidence_name_type).
 
-        UPDATING CAPTURED ACTIVITY DURATION
-
-            sendDuration()
-            - If sendDurationCounter is 0 then iterate sendDurationCounter and updateDuration() for the previous detected activity.
-
-            updateDuration()
-            - Sends the value of duration variable in server along with the userid, quizid, quizattempt, and filename to update the duration of the previous detected activity in activity_report_table.
-
-            updateTimer(milliseconds)
-            - This function sets the duration variable with the value of miliseconds variable.
-
-            startTimer()
-            - This function set or reset the miliseconds to 0.
-            - Iterate miliseconds by 10 every 10 miliseconds, then updateTimer(milliseconds).
-
-            stopTimer()
-            - Clear intervalId.
 
         CAMERA CAPTURE
 
@@ -58,13 +49,16 @@ $(document).ready(function () {
     */
 
     let isRecording = false;
+    let isSending = true;
     let video_proctoring;
     let video_recording;
     let timestamp_captured;
+    let preventedAction;
+    let quittingQuiz;
+    let newSubmitButton;
 
         let susCounter = 0;
         let probSusCounter = 0;
-        let intervalId;
         let filename;
 
         let mediaRecorder;
@@ -73,7 +67,9 @@ $(document).ready(function () {
         let timestampInterval;
         let activity_timestamp;
 
-        // Camera constraints.
+        var last_clicked;
+
+        // Camera constraints for proctoring
         const getUserMediaConstraintsProctoring = (deviceId) => {
             return {
                 video: {
@@ -83,12 +79,13 @@ $(document).ready(function () {
             };
         };
 
-        // Camera constraints.
+        // Camera constraints for recording
         const getUserMediaConstraintsRecording = (deviceId) => {
             return {
                 video: {
                 deviceId: deviceId ? { exact: deviceId } : undefined,
                 facingMode: 'user', // Set facingMode if preferred
+                frameRate: { max: 7 },
                 },
                 audio: true,
             };
@@ -121,7 +118,7 @@ $(document).ready(function () {
                 const stream_recording = await navigator.mediaDevices.getUserMedia(constraints_recording);
 
                     
-                // Create video element for camera capture.
+                // Create video element for the proctoring.
                 video_proctoring = document.createElement('video');
                 video_proctoring.className = 'input_video';
                 video_proctoring.srcObject = stream_proctoring;
@@ -130,7 +127,7 @@ $(document).ready(function () {
                 video_proctoring.style.display = 'none';
                 document.body.appendChild(video_proctoring);
 
-                // Create video element for camera capture.
+                // Create video element for camera recording.
                 video_recording = document.createElement('video');
                 video_recording.className = 'input_video';
                 video_recording.srcObject = stream_recording;
@@ -140,6 +137,7 @@ $(document).ready(function () {
                 video_recording.style.display = 'none';
                 document.body.appendChild(video_recording);
 
+                // Start the camera recording
                 startRecording();
 
                 // Apply facemesh to the selected camera.
@@ -181,23 +179,32 @@ $(document).ready(function () {
             }
         }
 
+        // Starting the camera recording
         function startRecording() {
             
             if (!video_recording.srcObject) {
                 video_recording.srcObject = window.stream_recording;
             }
 
-            console.log('recording');
+            console.log('recording')
+
+            // Set this to true for the purpose of saving the video.
             isRecording = true;
 
+            // For the raw data
             recordedChunks = [];
+
+            // Start the timestamp
             startTime = Date.now();
+
+            // Set and start the recording of the video
             mediaRecorder = new MediaRecorder(video_recording.srcObject, { mimeType: 'video/webm' });
             mediaRecorder.start();
             mediaRecorder.ondataavailable = handleDataAvailable;
             mediaRecorder.onstop = handleStop;
-            updateTimestamp(); // Initialize timestamp
-            timestampInterval = setInterval(updateTimestamp, 1000); // Update timestamp every second
+            updateTimestamp();
+            // Update timestamp every second
+            timestampInterval = setInterval(updateTimestamp, 1000);
         }
 
         function handleDataAvailable(event) {
@@ -217,32 +224,58 @@ $(document).ready(function () {
             const { timestamp, milliseconds } = generateTimestamp();
             const recording_filename = 'EVD_USER_' + jsdata.userid + '_QUIZ_' + jsdata.quizid + '_ATTEMPT_' + jsdata.quizattempt + '_' +timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_RECORDING';
 
-            const xhr = new XMLHttpRequest();
-            xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_recording.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/octet-stream');
-            xhr.setRequestHeader('X-Recording-Filename', recording_filename); // Send recording filename as a header
-            xhr.responseType = 'blob';
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    const blob = new Blob([xhr.response], { type: 'video/webm' });
+            // ==== USING XHR ====
+            // const xhr = new XMLHttpRequest();
+            // xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_recording.php', true);
+            // xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+            // xhr.setRequestHeader('X-Recording-Filename', recording_filename); // Send recording filename as a header
+            // xhr.responseType = 'blob';
+            // xhr.onload = function () {
+            //     if (xhr.status === 200) {
+            //         console.log('Recording saved successfully.');
+            //         const blob = new Blob([xhr.response], { type: 'video/webm' });
+            //         isSending = false;
+            //     }
+            // };
+            // xhr.send(blob);
+
+            fetch(jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_recording.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/octet-stream',
+                    'X-Recording-Filename': recording_filename
+                },
+                body: blob
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Recording saved successfully.');
+                    //const blob = new Blob([xhr.response], { type: 'video/webm' });
+                    isSending = false;
+                } else {
+                    console.error('Failed to save recording:', response.statusText);
                 }
-            };
-            xhr.send(blob);
+            })
+            .catch(error => {
+                console.error('An error occurred while saving the recording:', error);
+            });
         }
 
-        //document.getElementById('stop_recording').addEventListener('click', stopRecording);
         function stopRecording() {
             isRecording = false;
             mediaRecorder.stop();
         }
 
         function updateTimestamp() {
+            // Get the current time in milliseconds
             const elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
-            const minutes = Math.floor(elapsedSeconds / 60).toString().padStart(2, '0');
-            const seconds = (elapsedSeconds % 60).toString().padStart(2, '0');
-            //document.getElementById('timer').textContent = `Video Time: ${minutes}:${seconds}`;
 
-            activity_timestamp = minutes + ':' + seconds;
+            // Calculate hours, minutes, and seconds
+            const hours = Math.floor(elapsedSeconds / 3600).toString().padStart(2, '0');
+            const minutes = Math.floor((elapsedSeconds % 3600) / 60).toString().padStart(2, '0');
+            const seconds = (elapsedSeconds % 60).toString().padStart(2, '0');
+
+            activity_timestamp = hours + ':' + minutes + ':' + seconds;
         }
 
         // Results of facemesh
@@ -320,8 +353,7 @@ $(document).ready(function () {
         function probSusMovement(evidence_name_type) {
             probSusCounter++;
 
-            // When probSusCounter is greater than 10 and susCounter is 0, then reset or set sendDurationCounter to 0,
-            // iterate susCounter, start timer for the duration, and capture camera captureEvidence(evidence_name_type).
+            // When probSusCounter is greater than 10 and susCounter is 0, then iterate susCounter, and capture camera captureEvidence(evidence_name_type).
             // The value of evidence_name_type in captureEvidence(evidence_name_type) came from the probSusMovement(evidence_name_type).
             if (probSusCounter > 10){
                 if (susCounter === 0){
@@ -433,7 +465,7 @@ $(document).ready(function () {
             permissionStatus.onchange = function() {
                 console.log('camera permission state has changed to ', this.state);
 
-                // If camera permission is denied, record in database.
+                // If camera permission is denied, record in database, stop the recording to save.
                 if (this.state = 'denied'){
                     stopRecording();
                     sendActivityRecord('camera_permission_denied_during_quiz');
@@ -448,11 +480,182 @@ $(document).ready(function () {
             };
         });
 
-        window.addEventListener('beforeunload', function(event) {
-            // Check if recording is in progress
-            if (isRecording) {
-                // Stop recording or perform any necessary cleanup actions
+        // Function to create an loading overlay
+        function createOverlay() {
+            // Check if overlay already exists
+            if (!document.getElementById('overlay')) {
+                // Create a div element for the overlay
+                var overlay = document.createElement('div');
+                
+                // Set attributes for the overlay
+                overlay.id = 'overlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                overlay.style.zIndex = '9999'; 
+                
+                // Append the loading animation HTML to the overlay
+                overlay.innerHTML = `
+                <style>
+                    body {
+                        font-family: 'Titillium Web', sans-serif;
+                        font-size: 18px;
+                        font-weight: bold;
+                    }
+                    .loading {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        top: 50%;
+                        width: 100px;
+                        color: #000;
+                        margin: auto;
+                        -webkit-transform: translateY(-50%);
+                        -moz-transform: translateY(-50%);
+                        -o-transform: translateY(-50%);
+                        transform: translateY(-50%);
+                    }
+                    .loading span {
+                        position: absolute;
+                        height: 10px;
+                        width: 84px;
+                        top: 50px;
+                        overflow: hidden;
+                    }
+                    .loading span > i {
+                        position: absolute;
+                        height: 10px;
+                        width: 10px;
+                        border-radius: 50%;
+                        -webkit-animation: wait 4s infinite;
+                        -moz-animation: wait 4s infinite;
+                        -o-animation: wait 4s infinite;
+                        animation: wait 4s infinite;
+                    }
+                    .loading span > i:nth-of-type(1) {
+                        left: -28px;
+                        background: black;
+                    }
+                    .loading span > i:nth-of-type(2) {
+                        left: -21px;
+                        -webkit-animation-delay: 0.8s;
+                        animation-delay: 0.8s;
+                        background: black;
+                    }
+                    @keyframes wait {
+                        0%   { left: -7px  }
+                        30%  { left: 52px  }
+                        60%  { left: 22px  }
+                        100% { left: 100px }
+                    }
+                </style>
+                <div class="loading">
+                    <p>Please wait</p>
+                    <span><i></i><i></i></span>
+                </div>`;
+
+                // Append the overlay to the body
+                document.body.appendChild(overlay);
+            }
+        }
+
+        // Function to remove overlay
+        function removeOverlay() {
+            var overlay = document.getElementById('overlay');
+            if (overlay) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }
+
+        window.onclick = function(e) {
+            last_clicked = e.target;
+
+            // Check if the last clicked element is an anchor element and has an href attribute
+            if (last_clicked.tagName.toLowerCase() === 'a' && last_clicked.getAttribute('href') !== null) {
+                quittingQuiz = true;
+                console.log('Target is an anchor element with href:', last_clicked.getAttribute('href'));
+
+                preventedAction = last_clicked;
+                return true;
+            }
+            else if (last_clicked.tagName.toLowerCase() === 'input' && last_clicked.getAttribute('type') === 'submit'){
+                quittingQuiz = false;
+            }
+            else{
+                quittingQuiz = true;
+                preventedAction = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                console.log('Target is an anchor element with href:', last_clicked.getAttribute('href'));
+                return true;
+            }
+        }
+
+        // Function to continuously check isSending flag and update overlay
+        function checkSendingStatus() {
+            console.log('isSending: ', isSending);
+            console.log('quittingQuiz: ', quittingQuiz);
+
+            if (isSending) {
+                createOverlay();
+            } else if (!isSending){
+                removeOverlay();
+                if (quittingQuiz){
+                    console.log('redirectingggggggggggggggg');
+                    window.location.href = preventedAction;
+                }
+                else{
+                    removeOverlay();
+                    var button = document.getElementById('mod_quiz-next-nav');
+                    if (button) {
+                        console.log('clicking');
+                        button.click();
+                    }
+                }
+                
+            }
+        }
+
+        document.getElementById('mod_quiz-next-nav').addEventListener('click', function(event) {
+            console.log('isSending: ', isSending);
+            // Prevent default action only on the first click
+            if (!this.clickedOnce) {
+                createOverlay();
+                isSending = true;
                 stopRecording();
+
+                console.log('once');
+
+                event.preventDefault();
+                event.returnValue = "Your changes may not be saved. Are you sure you want to leave?";
+                this.clickedOnce = true;
+            }
+
+            if (isSending){
+                var intervalId = setInterval(checkSendingStatus, 1000);
             }
         });
+
+        window.addEventListener('beforeunload', function (event) {
+        console.log('isSending: ', isSending);
+        console.log('RECORDING:', isRecording);
+            if (isRecording){
+                createOverlay();
+                isSending = true;
+                stopRecording();
+                
+                if (isSending){
+                    console.log('onload');
+                    event.preventDefault();
+                    event.returnValue = "Your changes may not be saved. Are you sure you want to leave?";
+                }
+                
+            }
+            if (isSending){
+                var intervalId = setInterval(checkSendingStatus, 1000);
+            }
+
+        });
+        
 });

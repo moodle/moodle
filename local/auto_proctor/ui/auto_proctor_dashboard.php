@@ -16,7 +16,7 @@
 
 /**
  * @package     local_auto_proctor
- * @author      Angelica
+ * @author      Angelica, Renzi
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @var stdClass $plugin
  */
@@ -197,6 +197,15 @@ $wwwroot = $CFG->wwwroot
                 <?php
                     //include "dashboard_main.php";
                     echo "ARCHIVES";
+
+                    if (isset($_GET['course_id'])){
+                        echo "
+                        <script>
+                            var modifiedURL = removeParametersFromCurrentURL();
+                            console.log(modifiedURL);
+                        </script>
+                        ";
+                    }
                 ?>
 
                 <script>
@@ -230,9 +239,10 @@ $wwwroot = $CFG->wwwroot
             </section>
 
             <!-- INCLUDE QUIZ SETTINGS DISPLAY  -->
-            <section id="quiz_settings" style="display: none;">
+            <!-- <section id="quiz_settings" style="display: none;"> -->
                 <?php
                     if (isset($_GET['course_id']) && isset($_GET['quiz_id'])){
+                        echo '<section id="quiz_settings" style="display: none;">';
                         include "quiz_settings.php";
 
                         echo '
@@ -246,9 +256,10 @@ $wwwroot = $CFG->wwwroot
                                     quiz_results.style.display = "none";
                             </script>
                         ';
+                        echo "</section>";
                     }
                 ?>
-            </section>
+            <!-- </section> -->
 
             <p class="my-10 text-sm text-center text-gray-500">
                 &copy; 2023-2024 <a href="https://flowbite.com/" class="hover:underline" target="_blank">e-RTU</a>. All rights reserved.
