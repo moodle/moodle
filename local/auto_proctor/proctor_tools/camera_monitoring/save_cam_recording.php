@@ -22,27 +22,53 @@
 */
 require_once(__DIR__ . '/../../../../config.php');
 
-// Specify the path where the video will be saved
-$upload_dir = '../evidences/camera_capture_evidence/';
-if (!file_exists($upload_dir)) {
-    mkdir($upload_dir, 0777, true);
+// // Specify the path where the video will be saved
+// $upload_dir = '../evidences/camera_capture_evidence/';
+// if (!file_exists($upload_dir)) {
+//     mkdir($upload_dir, 0777, true);
+// }
+
+// // Get the recording filename from the custom header
+// $recording_filename = isset($_SERVER['HTTP_X_RECORDING_FILENAME']) ? $_SERVER['HTTP_X_RECORDING_FILENAME'] : 'recorded_video';
+
+// // Define the file paths
+// $webm_file = $upload_dir . $recording_filename . '.webm';
+
+// // Save the WebM file
+// file_put_contents($webm_file, file_get_contents('php://input'));
+
+// // Check if WebM file was saved successfully
+// if (file_exists($webm_file)) {
+//     echo 'Video saved as: ' . $webm_file;
+// } else {
+//     echo 'Error: Failed to save video';
+// }
+
+// ========= USING XHR ===========
+$uploadDir = '../evidences/camera_capture_evidence/';
+$recordingFilename = isset($_SERVER['HTTP_X_RECORDING_FILENAME']) ? $_SERVER['HTTP_X_RECORDING_FILENAME'] : 'recorded_video';
+$webmFile = $uploadDir . $recordingFilename . '.webm';
+
+if (!file_exists($uploadDir) && !mkdir($uploadDir, 0777, true)) {
+    die('Error: Failed to create directory');
 }
 
-// Get the recording filename from the custom header
-$recording_filename = isset($_SERVER['HTTP_X_RECORDING_FILENAME']) ? $_SERVER['HTTP_X_RECORDING_FILENAME'] : 'recorded_video';
+$uploadedFile = fopen('php://input', 'rb');
+$targetFile = fopen($webmFile, 'wb');
 
-// Define the file paths
-$webm_file = $upload_dir . $recording_filename . '.webm';
-
-// Save the WebM file
-file_put_contents($webm_file, file_get_contents('php://input'));
-
-// Check if WebM file was saved successfully
-if (file_exists($webm_file)) {
-    echo 'Video saved as: ' . $webm_file;
-} else {
-    echo 'Error: Failed to save video';
+if (!$uploadedFile || !$targetFile || stream_copy_to_stream($uploadedFile, $targetFile) === false) {
+    die('Error: Failed to save recording');
 }
+
+fclose($uploadedFile);
+fclose($targetFile);
+
+echo 'Recording saved as: ' . $webmFile;
+
+
+
+
+
 
 // ============ IF FFMPEG IS INSTALLED IN THE SERVER ============
 // This script convert the webm file to mp4, if conversion is successful then it deletes the webm file.

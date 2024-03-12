@@ -106,7 +106,7 @@ global $DB, $USER, $CFG;
         <div class="p-4 bg-white block sm:flex items-center justify-between  lg:mt-1.5 ">
           <div class="w-full mb-1">
             <div class="mb-4">
-              <nav class="flex mb-5" aria-label="Breadcrumb">
+              <!-- <nav class="flex mb-5" aria-label="Breadcrumb">
                 <ol class="inline-flex items-center space-x-1 text-sm font-medium md:space-x-2">
                   <li class="inline-flex items-center">
                     <a href="#" class="inline-flex items-center text-gray-700 hover:text-primary-600 ">
@@ -124,7 +124,7 @@ global $DB, $USER, $CFG;
                     </div>
                   </li>
                 </ol>
-              </nav>
+              </nav> -->
               <h1 class="text-xl font-semibold text-gray-900 sm:text-2xl ">Test Settings</h1>
               <span class="text-base font-normal text-gray-500 ">Change the settings for <?php echo $quiz_name; ?></span>
             </div>
@@ -222,7 +222,7 @@ global $DB, $USER, $CFG;
                       <!-- Save and Cancel buttons -->
                       <div class="flex justify-start">
                         <button class="bg-[#0061A8] text-white px-4 py-2 rounded-md mr-2" name = "save_btn">Save</button>
-                        <button class="bg-gray-300 text-black px-4 py-2 rounded-md">Cancel</button>
+                        <button id = "cancelQuizSettings" class="bg-gray-300 text-black px-4 py-2 rounded-md">Cancel</button>
                       </div>
                     </form>
                 </div>
@@ -230,3 +230,16 @@ global $DB, $USER, $CFG;
         </div>
     </div>
 </form>
+
+<script>
+  document.getElementById("cancelQuizSettings").addEventListener("click", function() {
+    // Get the current URL
+    var currentUrl = window.location.href;
+
+    // Remove query parameters
+    var newUrl = currentUrl.replace(/&?quiz_id=\d+&quiz_name=[^&]+/, '');
+
+    // Redirect to the new URL without the specified query parameters
+    window.location.href = newUrl;
+});
+</script>
