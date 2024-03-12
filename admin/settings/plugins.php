@@ -544,6 +544,18 @@ if ($hassiteconfig || has_capability('moodle/question:config', $systemcontext)) 
     $settings->add(new admin_setting_configselect('question_preview/history',
             get_string('responsehistory', 'question'), '', 0, $hiddenofvisible));
 
+    // Question editing settings.
+    $settings = new admin_settingpage('qediting',
+            get_string('questionediting', 'question'),
+            'moodle/question:config');
+    $ADMIN->add('qtypesettings', $settings);
+
+    $settings->add(new admin_setting_heading('qediting_options',
+            '', get_string('questionediting_desc', 'question')));
+
+    $settings->add(new admin_setting_configcheckbox('questiondefaultssave',
+            get_string('questiondefaultssave', 'question'), get_string('questiondefaultssave_desc', 'question'), 1));
+
     // Settings for particular question types.
     $plugins = core_plugin_manager::instance()->get_plugins_of_type('qtype');
     core_collator::asort_objects_by_property($plugins, 'displayname');
