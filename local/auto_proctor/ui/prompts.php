@@ -45,6 +45,7 @@ $userid = $jsdata['userid'];
 $quizid = $jsdata['quizid'];
 $quizattempt = $jsdata['quizattempt'];
 $quizattempturl = $jsdata['quizattempturl'];
+$cmid = $jsdata['cmid'];
 $monitor_camera_activated = $jsdata['monitor_camera_activated'];
 $monitor_microphone_activated = $jsdata['monitor_microphone_activated'];
 $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
@@ -68,12 +69,14 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
 <!-- <div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"> -->
     <div class="relative p-10 py-9 w-full max-w-3xl max-h-full">
         <div class="relative bg-white rounded-lg shadow">
-            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-                <span class="sr-only">Close modal</span>
-            </button>
+            <a href = "<?php echo $wwwroot.'/mod/quiz/view.php?id=' . $cmid;?>">
+                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </a>
             <div class="p-6 md:p-8  text-center">
                 <h1 class="mb-2 text-2xl font-semibold text-black ">Multiple Monitor Detected</h1>
 
@@ -100,12 +103,14 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
 <div id="cam-view-popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-10 py-9 w-full max-w-3xl max-h-full">
         <div class="relative bg-white rounded-lg shadow">
-            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-                <span class="sr-only">Close modal</span>
-            </button>
+            <a href = "<?php echo $wwwroot.'/mod/quiz/view.php?id=' . $cmid;?>">
+                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </a>
             <div class="p-6 md:p-8  text-center">
                 <h1 class="mb-2 text-2xl font-semibold text-black ">Camera View</h1>
 
@@ -137,12 +142,14 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
 <div id="cam-select-popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-12 py-16 w-full max-w-3xl max-h-full">
         <div class="relative bg-white rounded-lg shadow">
-            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-                <span class="sr-only">Close modal</span>
-            </button>
+            <a href = "<?php echo $wwwroot.'/mod/quiz/view.php?id=' . $cmid;?>">
+                <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center " data-modal-hide="popup-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </a>
             <div class="p-6 md:p-8 mb-4 text-center">
                 <h1 class="mb-2 text-2xl font-semibold text-black ">Multiple Cameras Detected</h1>
 
@@ -236,6 +243,7 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
     var have_not_multiple_btn = document.getElementById('have-not-multiple-btn');
     var have_multiple_btn = document.getElementById('have-multiple-btn');
     var continue_multiple_btn = document.getElementById('continue-multiple-btn');
+    
 
 
     // If microphone monitoring is activated then ask user's mic permission
@@ -475,9 +483,14 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
         xhr.send('userid=' + <?php echo $userid; ?> + '&quizid=' + <?php echo $quizid; ?> + '&quizattempt=' + <?php echo $quizattempt; ?> + '&quizattempturl=' + <?php echo json_encode($quizattempturl); ?> + '&chosen_camera_device=' + chosen_camera_device + '&chosen_monitor_set_up=' + chosen_monitor_set_up + '&device_type=' + device_type);
     }
 
+    
+
     // When windows load
     window.onload = function() {
         var filterElement = document.getElementById('filter');
+        var videoInputDeviceCount = 0;
+        var cameraHeaderText = document.querySelector('h3.text-gray-700');
+        var selectedCameraLabel = "Select any camera";
 
         // Retrieve all available camera devices to display and
         // make them options in the camera select modal.
@@ -485,6 +498,7 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
         .then(function(devices) {
             devices.forEach(function(device) {
                 if (device.kind === 'videoinput') {
+                    videoInputDeviceCount++;
                     var option = document.createElement('li');
                     option.className = "flex items-center";
                     var input = document.createElement('input');
@@ -492,6 +506,13 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
                     input.id = device.deviceId;
                     input.name = "camera";
                     input.value = device.deviceId;
+                    input.addEventListener("change", function() {
+                                if (input.checked) {
+                                    var selectedCameraLabel = device.label || 'Camera ' + videoInputDeviceCount;
+                                    // Display the selected camera label
+                                    document.getElementById("dropdownDefault").textContent = "Selected camera: " + selectedCameraLabel;
+                                }
+                            });
                     var label = document.createElement('label');
                     label.htmlFor = device.deviceId;
                     label.className = "ml-2 text-sm font-medium text-gray-900";
@@ -501,6 +522,9 @@ $monitor_tab_switching_activated = $jsdata['monitor_tab_switching_activated'];
                     filterElement.querySelector('ul').appendChild(option);
                 }
             });
+                if (cameraHeaderText) {
+                    cameraHeaderText.textContent = "We detected " + videoInputDeviceCount + " cameras. Please select one of them to continue.";
+                }
         })
         .catch(function(err) {
             console.error('Error enumerating devices:', err);
