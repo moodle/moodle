@@ -18,14 +18,14 @@ Feature: As a user I can complete a BigblueButtonBN activity by usual or custom 
 
   Scenario: I set the completion to standard type of completion.
     Given I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as admin
-    And I click on "Settings" "link"
+    When I click on "Settings" "link"
     And I expand all fieldsets
     And I set the following fields to these values:
       | Add requirements         | 1                  |
       | View the activity   | 1                                                 |
     And I press "Save and display"
     And I log out
-    Given I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as traverst
+    And I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as traverst
     Then I should see "Done: View"
 
   @javascript
@@ -33,22 +33,22 @@ Feature: As a user I can complete a BigblueButtonBN activity by usual or custom 
     Given a BigBlueButton mock server is configured
     And the following config values are set as admin:
       | bigbluebuttonbn_meetingevents_enabled | 1 |
-    When I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as admin
+    And I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as admin
     And I click on "Settings" "link"
     And I expand all fieldsets
     And I set the following fields to these values:
-      | Add requirements         | 1                  |
-      | Chats               | 1                                                 |
+      | Add requirements | 1 |
+      | Chats            | 1 |
     And I press "Save and display"
     # We start the meeting here so to make sure that meta_analytics-callback-url is set.
     And the following "mod_bigbluebuttonbn > meeting" exists:
       | activity | RoomRecordings |
     And I log out
-    Given I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as traverst
+    And I am on the "RoomRecordings" "bigbluebuttonbn activity" page logged in as traverst
     When I click on "Join session" "link"
     And I switch to "bigbluebutton_conference" window
     And I wait until the page is ready
-    Then I follow "End Meeting"
+    And I follow "End Meeting"
     And the BigBlueButtonBN server has received the following events from user "traverst":
       | instancename   | eventtype | eventdata |
       | RoomRecordings | chats     | 1         |
@@ -57,7 +57,7 @@ Feature: As a user I can complete a BigblueButtonBN activity by usual or custom 
     # is closed before.
     And I close all opened windows
     And I switch to the main window
-    Given the BigBlueButtonBN activity "RoomRecordings" has sent recording all its events
+    And the BigBlueButtonBN activity "RoomRecordings" has sent recording all its events
     And I run all adhoc tasks
     And I reload the page
     Then I should see "Done: Participate in 1 chat(s)"
