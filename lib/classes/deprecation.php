@@ -45,7 +45,7 @@ class deprecation {
                 return self::from(explode('::', $reference));
             }
 
-            if (class_exists($reference)) {
+            if (class_exists($reference) || interface_exists($reference) || trait_exists($reference)) {
                 // The reference looks to be a class name.
                 return self::from([$reference]);
             }
@@ -75,9 +75,11 @@ class deprecation {
                 return self::from_reflected_object($rc, $reference[1] ?? null);
             }
 
-            if (is_string($reference[0]) && class_exists($reference[0])) {
-                $rc = new \ReflectionClass($reference[0]);
-                return self::from_reflected_object($rc, $reference[1] ?? null);
+            if (is_string($reference[0])) {
+                if (class_exists($reference[0]) || interface_exists($reference[0]) || trait_exists($reference[0])) {
+                    $rc = new \ReflectionClass($reference[0]);
+                    return self::from_reflected_object($rc, $reference[1] ?? null);
+                }
             }
 
             // The reference is an array, but it's not an object or a class that currently exists.
@@ -150,6 +152,20 @@ class deprecation {
         $classattribute = self::get_attribute($rc, $rc->name);
         if ($classattribute || $name === null) {
             return $classattribute;
+        }
+
+        // Check for any deprecated interfaces.
+        foreach ($rc->getInterfaces() as $interface) {
+            if ($attribute = self::get_attribute($interface, $interface->name)) {
+                return $attribute;
+            }
+        }
+
+        // And any deprecated traits.
+        foreach ($rc->getTraits() as $trait) {
+            if ($attribute = self::get_attribute($trait, $trait->name)) {
+                return $attribute;
+            }
         }
 
         if ($rc->hasConstant($name)) {

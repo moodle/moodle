@@ -71,3 +71,66 @@ function not_deprecated_function() {
 #[deprecated('not_deprecated_class::not_deprecated_method()')]
 function deprecated_function() {
 }
+
+interface not_deprecated_interface {
+    const NOT_DEPRECATED_CONST = 'Not deprecated const';
+
+    #[deprecated('self::NOT_DEPRECATED_CONST')]
+    const DEPRECATED_CONST = 'Deprecated const';
+
+    // Note: It does not make sense to deprecate methods in an _interface_ as the interface itself should be deprecated.
+}
+
+#[deprecated('not_deprecated_interface')]
+interface deprecated_interface {
+    const DEPRECATED_CONST = 'Deprecated const';
+
+    public function not_deprecated_method();
+}
+
+trait not_deprecated_trait {
+    protected string $notdeprecatedproperty = 'Not deprecated property';
+
+    #[deprecated('$this->notdeprecatedproperty')]
+    protected string $deprecatedproperty = 'Deprecated property';
+
+    public function not_deprecated_method() {
+    }
+
+    #[deprecated('$this->not_deprecated_method()')]
+    public function deprecated_method() {
+    }
+}
+
+#[deprecated(not_deprecated_trait::class)]
+trait deprecated_trait {
+    protected string $notdeprecatedproperty = 'Not deprecated property';
+
+    #[deprecated('$this->notdeprecatedproperty')]
+    protected string $deprecatedproperty = 'Deprecated property';
+
+    public function not_deprecated_method() {
+    }
+
+    #[deprecated(replacement: null, mdl: 'MDL-80677')]
+    public function deprecated_method() {
+    }
+}
+
+class not_deprecated_class_using_deprecated_trait_features {
+    use deprecated_trait;
+}
+
+class not_deprecated_class_implementing_deprecated_interface implements deprecated_interface {
+    public function not_deprecated_method() {
+    }
+}
+
+class not_deprecated_class_using_not_deprecated_trait_features {
+    use not_deprecated_trait;
+}
+
+class not_deprecated_class_implementing_not_deprecated_interface implements not_deprecated_interface {
+    public function not_deprecated_method() {
+    }
+}

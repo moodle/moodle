@@ -226,16 +226,36 @@ class deprecation_test extends \advanced_testcase {
         return [
             // Classes.
             [\core\fixtures\deprecated_class::class, true],
+            [\core\fixtures\deprecated_interface::class, true],
+            [\core\fixtures\deprecated_trait::class, true],
             [[\core\fixtures\deprecated_class::class], true],
+            [[\core\fixtures\deprecated_interface::class], true],
+            [[\core\fixtures\deprecated_trait::class], true],
+
+            [\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class, false],
+            [[\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class], false],
+
             [\core\fixtures\not_deprecated_class::class, false],
+            [\core\fixtures\not_deprecated_interface::class, false],
+            [\core\fixtures\not_deprecated_trait::class, false],
             [[\core\fixtures\not_deprecated_class::class], false],
+            [[\core\fixtures\not_deprecated_interface::class], false],
+            [[\core\fixtures\not_deprecated_trait::class], false],
 
             // Class properties in a deprecated class.
             [\core\fixtures\deprecated_class::class . '::deprecatedproperty', true],
             [[\core\fixtures\deprecated_class::class, 'deprecatedproperty'], true],
+            [\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class . '::deprecatedproperty', true],
+            [[\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class, 'deprecatedproperty'], true],
+            [\core\fixtures\not_deprecated_class_using_not_deprecated_trait_features::class . '::deprecatedproperty', true],
+            [[\core\fixtures\not_deprecated_class_using_not_deprecated_trait_features::class, 'deprecatedproperty'], true],
 
             [\core\fixtures\deprecated_class::class . '::notdeprecatedproperty', true],
             [[\core\fixtures\deprecated_class::class, 'notdeprecatedproperty'], true],
+            [\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class . '::notdeprecatedproperty', true],
+            [[\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class, 'notdeprecatedproperty'], true],
+            [\core\fixtures\not_deprecated_class_using_not_deprecated_trait_features::class . '::notdeprecatedproperty', false],
+            [[\core\fixtures\not_deprecated_class_using_not_deprecated_trait_features::class, 'notdeprecatedproperty'], false],
 
             // Class constants in a deprecated class.
             [\core\fixtures\deprecated_class::class . '::DEPRECATED_CONST', true],
@@ -248,8 +268,18 @@ class deprecation_test extends \advanced_testcase {
             [\core\fixtures\deprecated_class::class . '::deprecated_method', true],
             [[\core\fixtures\deprecated_class::class, 'deprecated_method'], true],
 
+            [\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class . '::deprecated_method', true],
+            [[\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class, 'deprecated_method'], true],
+            [\core\fixtures\not_deprecated_class_using_not_deprecated_trait_features::class . '::deprecated_method', true],
+            [[\core\fixtures\not_deprecated_class_using_not_deprecated_trait_features::class, 'deprecated_method'], true],
+
             [\core\fixtures\deprecated_class::class . '::not_deprecated_method', true],
             [[\core\fixtures\deprecated_class::class, 'not_deprecated_method'], true],
+
+            [\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class . '::not_deprecated_method', true],
+            [[\core\fixtures\not_deprecated_class_using_deprecated_trait_features::class, 'not_deprecated_method'], true],
+            [\core\fixtures\not_deprecated_class_implementing_deprecated_interface::class . '::not_deprecated_method', true],
+            [[\core\fixtures\not_deprecated_class_implementing_deprecated_interface::class, 'not_deprecated_method'], true],
 
             // Class properties in a not-deprecated class.
             [\core\fixtures\not_deprecated_class::class . '::deprecatedproperty', true],
@@ -264,6 +294,12 @@ class deprecation_test extends \advanced_testcase {
 
             [\core\fixtures\not_deprecated_class::class . '::NOT_DEPRECATED_CONST', false],
             [[\core\fixtures\not_deprecated_class::class, 'NOT_DEPRECATED_CONST'], false],
+
+            [\core\fixtures\not_deprecated_interface::class . '::DEPRECATED_CONST', true],
+            [[\core\fixtures\not_deprecated_interface::class, 'DEPRECATED_CONST'], true],
+
+            [\core\fixtures\not_deprecated_interface::class . '::NOT_DEPRECATED_CONST', false],
+            [[\core\fixtures\not_deprecated_interface::class, 'NOT_DEPRECATED_CONST'], false],
 
             // Class methods in a not-deprecated class.
             [\core\fixtures\not_deprecated_class::class . '::deprecated_method', true],
