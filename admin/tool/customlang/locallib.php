@@ -36,7 +36,7 @@ class tool_customlang_utils {
      * Rough number of strings that are being processed during a full checkout.
      * This is used to estimate the progress of the checkout.
      */
-    const ROUGH_NUMBER_OF_STRINGS = 32000;
+    const ROUGH_NUMBER_OF_STRINGS = 33000;
 
     /** @var array cache of {@link self::list_components()} results */
     private static $components = null;
