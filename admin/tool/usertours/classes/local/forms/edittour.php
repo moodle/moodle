@@ -28,7 +28,8 @@ defined('MOODLE_INTERNAL') || die('Direct access to this script is forbidden.');
 
 require_once($CFG->libdir . '/formslib.php');
 
-use \tool_usertours\helper;
+use tool_usertours\helper;
+use tool_usertours\tour;
 
 /**
  * Form for editing tours.
@@ -87,6 +88,17 @@ class edittour extends \moodleform {
 
         $mform->addElement('checkbox', 'displaystepnumbers', get_string('displaystepnumbers', 'tool_usertours'));
         $mform->addHelpButton('displaystepnumbers', 'displaystepnumbers', 'tool_usertours');
+
+        $mform->addElement(
+            'select',
+            'showtourwhen',
+            get_string('showtourwhen', 'tool_usertours'),
+            [
+                tour::SHOW_TOUR_UNTIL_COMPLETE => get_string('showtouruntilcomplete', 'tool_usertours'),
+                tour::SHOW_TOUR_ON_EACH_PAGE_VISIT => get_string('showtoureachtime', 'tool_usertours'),
+            ]
+        );
+        $mform->setDefault('showtourwhen', tour::SHOW_TOUR_UNTIL_COMPLETE);
 
         // Configuration.
         $this->tour->add_config_to_form($mform);

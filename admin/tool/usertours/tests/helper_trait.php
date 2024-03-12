@@ -21,16 +21,6 @@
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Helpers for unit tests.
- *
- * @package    tool_usertours
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 trait tool_usertours_helper_trait {
     /**
      * A helper to create an empty tour.
@@ -47,7 +37,7 @@ trait tool_usertours_helper_trait {
             'name' => '',
             'description' => '',
             'configdata' => '',
-            'displaystepnumbers' => true
+            'displaystepnumbers' => true,
         ];
 
         if ($tourconfig === null) {

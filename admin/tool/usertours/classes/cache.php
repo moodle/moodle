@@ -14,21 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_usertours;
+
 /**
  * Cache manager.
  *
  * @package    tool_usertours
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-namespace tool_usertours;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Cache manager.
- *
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -97,7 +88,7 @@ EOF;
         }
 
         $target = $targetmatch->out_as_local_url();
-        return array_filter($tours, function($tour) use ($possiblematches, $target) {
+        return array_filter($tours, function ($tour) use ($possiblematches, $target) {
             if (in_array($tour->pathmatch, $possiblematches)) {
                 return true;
             }

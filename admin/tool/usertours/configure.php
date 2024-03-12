@@ -31,5 +31,5 @@ $pluginmanager = new \tool_usertours\manager();
 $PAGE->set_context(context_system::instance());
 
 $pluginmanager->execute(
-        $action
-    );
+    $action
+);
