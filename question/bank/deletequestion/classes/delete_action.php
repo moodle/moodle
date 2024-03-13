@@ -75,6 +75,10 @@ class delete_action extends question_action_base {
         }
     }
 
+    public function get_menu_position(): int {
+        return 400;
+    }
+
     protected function get_url_icon_and_label(\stdClass $question): array {
         if (!question_has_capability_on($question, 'edit')) {
             return [null, null, null];
