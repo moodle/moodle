@@ -21,20 +21,19 @@ Feature: An admin can import grades into gradebook using a CSV file
       | student2 | C1     | student        |
       | student3 | C1     | student        |
     And the following "grade item" exists:
-      | course         | C1            |
-      | itemname       | Manual item 1 |
-      | grademin       | 10            |
-      | grademax       | 500           |
+      | course   | C1            |
+      | itemname | Manual item 1 |
+      | grademin | 10            |
+      | grademax | 500           |
     And the following "grade grades" exist:
       | gradeitem     | user     | grade |
       | Manual item 1 | student1 | 50.00 |
       | Manual item 1 | student2 | 50.00 |
       | Manual item 1 | student3 | 50.00 |
 
-  @javascript
   Scenario: Max grade of grade item is respected when importing grades
     Given I am on the "Course 1" "Course" page logged in as "teacher1"
-    And I navigate to "More > Import" in the course gradebook
+    And I navigate to "CSV file" import page in the course gradebook
     And I upload "grade/tests/fixtures/grade_import_grademax.csv" file to "File" filemanager
     And I click on "Upload grades" "button"
     And I set the field "Map from" to "Email address"
@@ -62,7 +61,28 @@ Feature: An admin can import grades into gradebook using a CSV file
     And I should see "Grade import success"
     And I click on "Continue" "button"
     Then the following should exist in the "user-grades" table:
-      | -1-                | -1-                  | -3-       | -4-       |
-      | Student 1          | student1@example.com | 400.00    | 400.00    |
-      | Student 2          | student2@example.com |  50.00    |  50.00    |
-      | Student 3          | student3@example.com |  50.00    |  50.00    |
+      | -1-                | -1-                  | -3-    | -4-    |
+      | Student 1          | student1@example.com | 400.00 | 400.00 |
+      | Student 2          | student2@example.com | 50.00  | 50.00  |
+      | Student 3          | student3@example.com | 50.00  | 50.00  |
+
+  Scenario: Importing grades with multiple new mappings
+    Given I am on the "Course 1" "Course" page logged in as "teacher1"
+    And I navigate to "CSV file" import page in the course gradebook
+    And I upload "grade/tests/fixtures/grade_import_multiple_mappings.csv" file to "File" filemanager
+    And I click on "Upload grades" "button"
+    And I set the following fields to these values:
+      | Map from | Email address  |
+      | Map to   | Email address  |
+      | Grade A  | New grade item |
+      | Grade B  | New grade item |
+      | Grade C  | New grade item |
+      | Grade D  | New grade item |
+    And I click on "Upload grades" "button"
+    And I should see "Grade import success"
+    And I click on "Continue" "button"
+    Then the following should exist in the "user-grades" table:
+      | -1-       | -1-                  | -3-   | -4-   | -5-   | -6-   | -7-   | -8-    |
+      | Student 1 | student1@example.com | 50.00 | 11.00 | 12.00 | 13.00 | 14.00 | 100.00 |
+      | Student 2 | student2@example.com | 50.00 | 21.00 | 22.00 | 23.00 | 24.00 | 140.00 |
+      | Student 3 | student3@example.com | 50.00 | 31.00 | 32.00 | 33.00 | 34.00 | 180.00 |
