@@ -32,4 +32,4 @@ $string['requires_company'] = 'You belong to <strong>{$a}</strong>';
 $string['requires_notanycompany'] = 'You do not belong to any company';
 $string['requires_notcompany'] = 'You do not belong to <strong>{$a}</strong>';
 $string['title'] = 'Company';
-$string['privacy:metadata'] = 'The Restriction by company plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The \'Restriction by company\' plugin does not store any personal data.';

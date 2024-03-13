@@ -22,14 +22,14 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['anytrainingevent'] = '(Any trainingevent)';
-$string['description'] = 'Allow only students who are signed up to a specified trainingevent.';
-$string['missing'] = '(Missing trainingevent)';
-$string['pluginname'] = 'Restriction by trainingevent';
-$string['error_selecttrainingevent'] = 'You must select a trainingevent.';
-$string['requires_anytrainingevent'] = 'You are signed up to a trainingevent';
+$string['anytrainingevent'] = '(Any training event)';
+$string['description'] = 'Allow only students who are signed up to a specified training event.';
+$string['missing'] = '(Missing training event)';
+$string['pluginname'] = 'Restriction by training event';
+$string['error_selecttrainingevent'] = 'You must select a training event.';
+$string['requires_anytrainingevent'] = 'You are signed up to a training event';
 $string['requires_trainingevent'] = 'You are signed up to <strong>{$a}</strong>';
-$string['requires_notanytrainingevent'] = 'You are not signed up to any trainingevent';
-$string['requires_nottrainingevent'] = 'You are notsigned upbelong to <strong>{$a}</strong>';
+$string['requires_notanytrainingevent'] = 'You are not signed up to any training event';
+$string['requires_nottrainingevent'] = 'You are not signed up to <strong>{$a}</strong>';
 $string['title'] = 'Training event';
-$string['privacy:metadata'] = 'The Restriction by trainingevent plugin does not store any personal data.';
+$string['privacy:metadata'] = 'The \'Restriction by training event\' plugin does not store any personal data.';
