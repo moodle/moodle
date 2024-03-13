@@ -34,11 +34,11 @@ $string['borderblack'] = 'Black';
 $string['borderblue'] = 'Blue';
 $string['borderbrown'] = 'Brown';
 $string['bordercolor'] = 'Border Lines';
-$string['bordercolor_help'] = 'Since images can substantially increase the size of the pdf file, you may choose to print a border of lines instead of using a border image (be sure the Border Image option is set to No).  The Border Lines option will print a nice border of three lines of varying widths in the chosen color.';
+$string['bordercolor_help'] = 'Since images can substantially increase the size of the PDF file, you may choose to print a border of lines instead of using a border image (be sure the \'Border Image\' option is set to No). The \'Border Lines\' option will print a border of three lines of varying widths in the chosen colour.';
 $string['bordergreen'] = 'Green';
 $string['borderlines'] = 'Lines';
 $string['borderstyle'] = 'Border Image';
-$string['borderstyle_help'] = 'The Border Image option allows you to choose a border image from the certificate/pix/borders folder.  Select the border image that you want around the certificate edges or select no border.';
+$string['borderstyle_help'] = 'The \'Border Image\' option allows you to choose a border image from the certificate/pix/borders folder. Select the border image that you want around the certificate edges or select \'no border\'.';
 $string['iomadcertificate'] = 'Verification for certificate code:';
 $string['iomadcertificate:addinstance'] = 'Add a certificate instance';
 $string['iomadcertificate:manage'] = 'Manage a certificate instance';
@@ -50,13 +50,13 @@ $string['iomadcertificatename'] = 'Certificate Name';
 $string['iomadcertificatereport'] = 'Certificates Report';
 $string['iomadcertificatesfor'] = 'Certificates for';
 $string['iomadcertificatetype'] = 'Certificate Type';
-$string['iomadcertificatetype_help'] = 'This is where you determine the layout of the certificate. The certificate type folder includes four default certificates:
+$string['iomadcertificatetype_help'] ='This is where you determine the layout of the certificate. The certificate type folder includes four default certificates:
 A4 Embedded prints on A4 size paper with embedded font.
 A4 Non-Embedded prints on A4 size paper without embedded fonts.
 Letter Embedded prints on letter size paper with embedded font.
 Letter Non-Embedded prints on letter size paper without embedded fonts.
 
-The non-embedded types use the Helvetica and Times fonts.  If you feel your users will not have these fonts on their computer, or if your language uses characters or symbols that are not accommodated by the Helvetica and Times fonts, then choose an embedded type.  The embedded types use the Dejavusans and Dejavuserif fonts.  This will make the pdf files rather large; thus it is not recommended to use an embedded type unless you must.
+The non-embedded types use the Helvetica and Times fonts. If you feel your users will not have these fonts on their computer, or if your language uses characters or symbols that are not accommodated by the Helvetica and Times fonts, then choose an embedded type. The embedded types use the Dejavusans and Dejavuserif fonts. This will make the PDF files rather large; it is not recommended to use an embedded type unless that\'s your only option.
 
 New type folders can be added to the certificate/type folder. The name of the folder and any new language strings for the new type must be added to the certificate language file.';
 $string['certify'] = 'This is to certify that';
@@ -69,11 +69,9 @@ $string['coursetimereq'] = 'Required minutes in course';
 $string['coursetimereq_help'] = 'Enter here the minimum amount of time, in minutes, that a student must be logged into the course before they will be able to receive the certificate.';
 $string['credithours'] = 'Credit Hours';
 $string['customtext'] = 'Custom Text';
-$string['customtext_help'] = 'If you want the certificate to print different names for the teacher than those who are assigned
-the role of teacher, do not select Print Teacher or any signature image except for the line image.  Enter the teacher names in this text box as you would like them to appear.  By default, this text is placed in the lower left of the certificate. The following html tags are available: &lt;br&gt;, &lt;p&gt;, &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;img&gt; (src and width (or height) are mandatory), &lt;a&gt; (href is mandatory), &lt;font&gt; (possible attributes are: color, (hex color code), face, (arial, times, courier, helvetica, symbol)).';
-$string['date'] = 'On';
+$string['customtext_help'] = 'If you want the certificate to print different names for the teacher for those who are assigned the role of teacher, do not select Print Teacher or any signature image except for the line image. Enter the teacher names in this text box as you would like them to appear.  By default, this text is placed in the lower left of the certificate. The following HTML tags are available: &lt;br&gt;, &lt;p&gt;, &lt;b&gt;, &lt;i&gt;, &lt;u&gt;, &lt;img&gt; (src and width (or height) are mandatory), &lt;a&gt; (href is mandatory), &lt;font&gt; (possible attributes are: colour, (hex colour code), face, (arial, times, courier, helvetica, symbol)).';
 $string['datefmt'] = 'Date Format';
-$string['datefmt_help'] = 'Choose a date format to print the date on the certificate. Or, choose the last option to have the date printed in the format of the user\'s chosen language.';
+$string['datefmt_help'] = 'Choose a date format to print the date on the certificate. Or choose the last option to have the date printed in the format of the user\'s chosen language.';
 $string['datehelp'] = 'Date';
 $string['deletissuediomadcertificates'] = 'Delete issued certificates';
 $string['delivery'] = 'Delivery';
@@ -143,12 +141,12 @@ $string['nofileselected'] = 'Must choose a file to upload!';
 $string['nogrades'] = 'No grades available';
 $string['notapplicable'] = 'N/A';
 $string['notfound'] = 'The certificate number could not be validated.';
-$string['notissued'] = 'Not Issued';
+$string['notissued'] = 'Not issued';
 $string['notissuedyet'] = 'Not issued yet';
 $string['notreceived'] = 'You have not received this certificate';
 $string['openbrowser'] = 'Open in new window';
 $string['opendownload'] = 'Click the button below to save your certificate to your computer.';
-$string['openemail'] = 'Click the button below and your certificate will be sent to you as an email attachment.';
+$string['openemail'] = 'Click the button below, and your certificate will be sent to you as an email attachment.';
 $string['openwindow'] = 'Click the button below to open your certificate in a new browser window.';
 $string['or'] = 'Or';
 $string['orientation'] = 'Orientation';
@@ -157,22 +155,22 @@ $string['pluginadministration'] = 'IOMAD Certificate administration';
 $string['pluginname'] = 'IOMAD Certificate';
 $string['portrait'] = 'Portrait';
 $string['printdate'] = 'Print Date';
-$string['printdate_help'] = 'This is the date that will be printed, if a print date is selected. If the course completion date is selected but the student has not completed the course, the date received will be printed. You can also choose to print the date based on when an activity was graded. If a certificate is issued before that activity is graded, the date received will be printed.';
+$string['printdate_help'] = 'This is the date that will be printed on the certificate, if a print date option is selected. If the course completion date is selected but the student has not completed the course, the date received will be printed. You can also choose to print the date based on when an activity was graded. If a certificate is issued before that activity is graded, the date received will be printed.';
 $string['printerfriendly'] = 'Printer-friendly page';
 $string['printhours'] = 'Print Credit Hours';
 $string['printhours_help'] = 'Enter here the number of credit hours to be printed on the certificate.';
 $string['printgrade'] = 'Print Grade';
-$string['printgrade_help'] = 'You can choose any available course grade items from the gradebook to print the user\'s grade received for that item on the certificate.  The grade items are listed in the order in which they appear in the gradebook. Choose the format of the grade below.';
+$string['printgrade_help'] = 'You can choose any available course grade items from the gradebook to print the user\'s grade received for that item on the certificate. The grade items are listed in the order in which they appear in the gradebook. Choose the format of the grade below.';
 $string['printnumber'] = 'Print Code';
 $string['printnumber_help'] = 'A unique 10-digit code of random letters and numbers can be printed on the certificate. This number can then be verified by comparing it to the code number displayed in the certificates report.';
 $string['printoutcome'] = 'Print Outcome';
-$string['printoutcome_help'] = 'You can choose any course outcome to print the name of the outcome and the user\'s received outcome on the certificate.  An example might be: Assignment Outcome: Proficient.';
+$string['printoutcome_help'] = 'You can choose any course outcome to print the name of the outcome and the user\'s received outcome on the certificate. An example might be \'Assignment Outcome: Proficient\'.';
 $string['printseal'] = 'Seal or Logo Image';
 $string['printseal_help'] = 'This option allows you to select a seal or logo to print on the certificate from the certificate/pix/seals folder. By default, this image is placed in the lower right corner of the certificate.';
 $string['printsignature'] = 'Signature Image';
-$string['printsignature_help'] = 'This option allows you to print a signature image from the certificate/pix/signatures folder.  You can print a graphic representation of a signature, or print a line for a written signature. By default, this image is placed in the lower left of the certificate.';
+$string['printsignature_help'] = 'This option allows you to print a signature image from the certificate/pix/signatures folder. You can print a graphic representation of a signature or print a line for a written signature. By default, this image is placed in the lower left of the certificate.';
 $string['printteacher'] = 'Print Teacher Name(s)';
-$string['printteacher_help'] = 'For printing the teacher name on the certificate, set the role of teacher at the module level.  Do this if, for example, you have more than one teacher for the course or you have more than one certificate in the course and you want to print different teacher names on each certificate.  Click to edit the certificate, then click on the Locally assigned roles tab.  Then assign the role of Teacher (editing teacher) to the certificate (they do not HAVE to be a teacher in the course--you can assign that role to anyone).  Those names will be printed on the certificate for teacher.';
+$string['printteacher_help'] = 'For printing the teacher name on the certificate, set the role of teacher at the module level. Do this if, for example, you have more than one teacher for the course or more than one certificate in the course and you want to print different teacher names on each certificate. Click to edit the certificate, then click on the \'Locally assigned roles\' tab. Then assign the role of teacher (editing teacher) to the certificate (they do not HAVE to be a teacher in the course - you can assign that role to anyone). Those names will be printed on the certificate for teacher.';
 $string['printwmark'] = 'Watermark Image';
 $string['printwmark_help'] = 'A watermark file can be placed in the background of the certificate. A watermark is a faded graphic. A watermark could be a logo, seal, crest, wording, or whatever you want to use as a graphic background.';
 $string['receivedcerts'] = 'Received certificates';
@@ -180,7 +178,7 @@ $string['receiveddate'] = 'Date Received';
 $string['removecert'] = 'Issued certificates removed';
 $string['report'] = 'Report';
 $string['reportcert'] = 'Report Certificates';
-$string['reportcert_help'] = 'If you choose yes here, then this certificate\'s date received, code number, and the course name will be shown on the user certificate reports.  If you choose to print a grade on this certificate, then that grade will also be shown on the certificate report.';
+$string['reportcert_help'] = 'If you choose yes here, then this certificate\'s date received, code number, and the course name will be shown on the user certificate reports. If you choose to print a grade on this certificate, then that grade will also be shown on the certificate report.';
 $string['requiredtimenotmet'] = 'You must spend at least a minimum of {$a->requiredtime} minutes in the course before you can access this certificate';
 $string['requiredtimenotvalid'] = 'The required time must be a valid number greater than 0';
 $string['reviewiomadcertificate'] = 'Review your certificate';
@@ -200,7 +198,7 @@ $string['typeletter_embedded'] = 'Letter Embedded';
 $string['typeletter_non_embedded'] = 'Letter Non-Embedded';
 $string['unsupportedfiletype'] = 'File must be a jpeg or png file';
 $string['uploadimage'] = 'Upload image';
-$string['uploadimagedesc'] = 'This button will take you to a new screen where you will be able to upload images.';
+$string['uploadimagedesc'] = 'This button will take you to a new screen where you will be able to upload images';
 $string['userdateformat'] = 'User\'s Language Date Format';
 $string['validate'] = 'Verify';
 $string['verifyiomadcertificate'] = 'Verify Certificate';
