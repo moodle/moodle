@@ -23,8 +23,9 @@
 }
 
 .mform .d-flex {
-    .form-control,
-    .custom-select {
+    // Override the default bootstrap form-control width.
+    .form-control {
+        width: auto;
         max-width: 100%;
     }
     textarea.form-control {
@@ -38,6 +39,12 @@
         width: 100%;
         margin-right: 0;
     }
+}
+
+// Override the default bootstrap custom-select width.
+.custom-select {
+    width: auto;
+    max-width: 100%;
 }
 
 #jump-to-activity.custom-select {

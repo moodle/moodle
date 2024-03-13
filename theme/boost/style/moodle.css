@@ -25352,11 +25352,6 @@ input[disabled] {
   cursor: not-allowed;
 }
 
-.custom-select {
-  width: auto;
-  max-width: 100%;
-}
-
 .fade.in {
   opacity: 1;
 }
@@ -32851,8 +32846,8 @@ body.path-question-type .mform fieldset.hidden {
   margin-bottom: 4px;
 }
 
-.mform .d-flex .form-control,
-.mform .d-flex .custom-select {
+.mform .d-flex .form-control {
+  width: auto;
   max-width: 100%;
 }
 .mform .d-flex textarea.form-control {
@@ -32865,6 +32860,11 @@ body.path-question-type .mform fieldset.hidden {
   justify-content: flex-start;
   width: 100%;
   margin-right: 0;
+}
+
+.custom-select {
+  width: auto;
+  max-width: 100%;
 }
 
 #jump-to-activity.custom-select {
