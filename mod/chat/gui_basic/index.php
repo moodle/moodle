@@ -196,7 +196,7 @@ if ($messages) {
 }
 echo '<table class="generaltable"><tbody>';
 echo '<tr>
-        <th scope="col" class="cell">' . get_string('from') . '</th>
+        <th scope="col" class="cell">' . get_string('fromsender') . '</th>
         <th scope="col" class="cell">' . get_string('message', 'message') . '</th>
         <th scope="col" class="cell">' . get_string('time') . '</th>
       </tr>';
