@@ -55,7 +55,7 @@ class behat_form_passwordunmask extends behat_form_text {
         }
 
         $id = $this->field->getAttribute('id');
-        $wrapper = $this->field->getParent()->getParent()->find('css', '[data-passwordunmask="wrapper"]');
+        $wrapper = $this->field->getParent()->getParent()->getParent()->find('css', '[data-passwordunmask="wrapper"]');
         $wrapper->click();
         $this->wait_for_pending_js();
 
