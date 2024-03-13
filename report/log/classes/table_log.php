@@ -23,7 +23,8 @@
  */
 
 defined('MOODLE_INTERNAL') || die;
-
+global $CFG;
+require_once($CFG->libdir . '/tablelib.php');
 /**
  * Table log class for displaying logs.
  *
@@ -403,7 +404,7 @@ class report_log_table_log extends table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        global $DB;
+        global $DB, $USER;
 
         $joins = array();
         $params = array();
@@ -438,14 +439,35 @@ class report_log_table_log extends table_sql {
         }
 
         // Getting all members of a group.
-        if ($groupid and empty($this->filterparams->userid)) {
-            if ($gusers = groups_get_members($groupid)) {
-                $gusers = array_keys($gusers);
-                $joins[] = 'userid IN (' . implode(',', $gusers) . ')';
+        if (empty($this->filterparams->userid)) {
+            if ($groupid) {
+                if ($gusers = groups_get_members($groupid)) {
+                    $gusers = array_keys($gusers);
+                    $joins[] = 'userid IN (' . implode(',', $gusers) . ')';
+                } else {
+                    $joins[] = 'userid = 0'; // No users in groups, so we want something that will always be false.
+                }
             } else {
-                $joins[] = 'userid = 0'; // No users in groups, so we want something that will always be false.
+                // No group selected and we are not filtering by user, so we want all users that are visible to the current user.
+                // If we are in a course, then let's check what logs we can see.
+                $course = get_course($this->filterparams->courseid);
+                $groupmode = groups_get_course_groupmode($course);
+                $context = context_course::instance($this->filterparams->courseid);
+                $userid = 0;
+                if ($groupmode == SEPARATEGROUPS && !has_capability('moodle/site:accessallgroups', $context)) {
+                    $userid = $USER->id;
+                }
+                $cgroups = groups_get_all_groups($this->filterparams->courseid, $userid);
+                $cgroups = array_keys($cgroups);
+                if ($groupmode != SEPARATEGROUPS || has_capability('moodle/site:accessallgroups', $context)) {
+                    $cgroups[] = USERSWITHOUTGROUP;
+                }
+                // If that's the case, limit the users to be in the groups only, defined by the filter.
+                [$groupmembersql, $groupmemberparams] = groups_get_members_ids_sql($cgroups, $context);
+                $joins[] = "userid IN ($groupmembersql)";
+                $params = array_merge($params, $groupmemberparams);
             }
-        } else if (!empty($this->filterparams->userid)) {
+        } else {
             $joins[] = "userid = :userid";
             $params['userid'] = $this->filterparams->userid;
         }

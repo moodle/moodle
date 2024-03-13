@@ -13,20 +13,20 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+namespace report_loglive;
 
-namespace report_log;
-
+use advanced_testcase;
 use context_course;
 use core_user;
 
 /**
- * Class report_log\renderable_test to cover functions in \report_log_renderable.
+ * Tests for table log and groups.
  *
- * @package    report_log
- * @copyright  2023 Stephan Robotta <stephan.robotta@bfh.ch>
+ * @package    report_loglive
+ * @copyright  2024 onwards Laurent David <laurent.david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later.
  */
-class renderable_test extends \advanced_testcase {
+class table_log_test extends advanced_testcase {
     /**
      * @var int The course with separate groups.
      */
@@ -55,6 +55,7 @@ class renderable_test extends \advanced_testcase {
             'teacher0' => ['group0'],
             'teacher1' => ['group1'],
             'teacher2' => ['group0', 'group1'],
+            'teacher3' => [],
         ],
         // Make editingteacher also member of group1.
         'editingteacher' => [
@@ -77,11 +78,11 @@ class renderable_test extends \advanced_testcase {
     private $courses;
 
     /**
-     * Get the data provider for test_get_user_list().
+     * Data provider for test_get_table_logs.
      *
      * @return array
      */
-    public static function get_user_visibility_list_provider(): array {
+    public static function get_report_logs_provider(): array {
         return [
             'separategroups: student 0' => [
                 self::COURSE_SEPARATE_GROUP,
@@ -96,19 +97,39 @@ class renderable_test extends \advanced_testcase {
             'separategroups: student 1' => [
                 self::COURSE_SEPARATE_GROUP,
                 'student1',
-                // All users in group 1.
+                // All users in group1.
                 [
-                    'student1', 'student2', 'teacher1', 'teacher2', 'editingteacher1',
-                    'editingteacher2',
+                    'student1', 'student2',
+                    'teacher1', 'teacher2',
+                    'editingteacher1', 'editingteacher2',
+                ],
+            ],
+            'separategroups: student 2' => [
+                self::COURSE_SEPARATE_GROUP,
+                'student2',
+                // All users in group0 and group1.
+                [
+                    'student0', 'student1', 'student2',
+                    'teacher0', 'teacher1', 'teacher2',
+                    'editingteacher0', 'editingteacher1', 'editingteacher2',
+                ],
+            ],
+            'separategroups: student3' => [
+                self::COURSE_SEPARATE_GROUP,
+                'student3',
+                // Student 3 is not in any group so should only see user without a group.
+                [
+                    'student3',
+                    'teacher3',
                 ],
             ],
             'separategroups: editing teacher 0' => [
                 self::COURSE_SEPARATE_GROUP,
                 'editingteacher0',
-                // All users (including student3 who is not in a group).
+                // All users including student 3 as we can see all users (event the one not in a group).
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
@@ -125,54 +146,20 @@ class renderable_test extends \advanced_testcase {
             'separategroups: teacher 2' => [
                 self::COURSE_SEPARATE_GROUP,
                 'teacher2',
-                // All users in group 0 and 1.
+                // All users in group0 and group1.
                 [
                     'student0', 'student1', 'student2',
                     'teacher0', 'teacher1', 'teacher2',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
-            'separategroups: teacher 2 with group0 selected' => [
+            'separategroups: teacher 3' => [
                 self::COURSE_SEPARATE_GROUP,
-                'teacher2',
-                // All users in group 0.
+                'teacher3',
+                // Teacher 3 is not in any group so should only see user without a group.
                 [
-                    'student0', 'student2',
-                    'teacher0', 'teacher2',
-                    'editingteacher0', 'editingteacher2',
-                ],
-                'group0',
-            ],
-            'separategroups: teacher 2 with group1 selected' => [
-                self::COURSE_SEPARATE_GROUP,
-                'teacher2',
-                // All users in group 1.
-                [
-                    'student1', 'student2',
-                    'teacher1', 'teacher2',
-                    'editingteacher1', 'editingteacher2',
-                ],
-                'group1',
-            ],
-            'visiblegroup: teacher 0 with group1 selected' => [
-                self::COURSE_VISIBLE_GROUP,
-                'teacher2',
-                // All users in group 1.
-                [
-                    'student1', 'student2',
-                    'teacher1', 'teacher2',
-                    'editingteacher1', 'editingteacher2',
-                ],
-                'group1',
-            ],
-            'visiblegroup: teacher 0 without group selected' => [
-                self::COURSE_VISIBLE_GROUP,
-                'teacher2',
-                // All users.
-                [
-                    'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
-                    'editingteacher0', 'editingteacher1', 'editingteacher2',
+                    'student3',
+                    'teacher3',
                 ],
             ],
             'visiblegroup: editing teacher' => [
@@ -181,7 +168,7 @@ class renderable_test extends \advanced_testcase {
                 // All users.
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
@@ -191,7 +178,7 @@ class renderable_test extends \advanced_testcase {
                 // All users.
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
@@ -201,7 +188,7 @@ class renderable_test extends \advanced_testcase {
                 // All users.
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
@@ -211,7 +198,7 @@ class renderable_test extends \advanced_testcase {
                 // All users.
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
@@ -221,40 +208,10 @@ class renderable_test extends \advanced_testcase {
                 // All users.
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
-        ];
-    }
-
-    /**
-     * Data provider for test_get_group_list().
-     *
-     * @return array
-     */
-    public static function get_group_list_provider(): array {
-        return [
-            // The student sees his own group only.
-            'separategroup: student in one group' => [self::COURSE_SEPARATE_GROUP, 'student0', 1],
-            'separategroup: student in two groups' => [self::COURSE_SEPARATE_GROUP, 'student2', 2],
-            // While the teacher is not allowed to see all groups.
-            'separategroup: teacher in one group' => [self::COURSE_SEPARATE_GROUP, 'teacher0', 1],
-            'separategroup: teacher in two groups' => [self::COURSE_SEPARATE_GROUP, 'teacher2', 2],
-            // But editing teacher should see all.
-            'separategroup: editingteacher' => [self::COURSE_SEPARATE_GROUP, 'editingteacher0', 2],
-            // The student sees all groups.
-            'visiblegroup: student in one group' => [self::COURSE_VISIBLE_GROUP, 'student0', 2],
-            // Same for teacher.
-            'visiblegroup: teacher in one group' => [self::COURSE_VISIBLE_GROUP, 'teacher0', 2],
-            // And editing teacher.
-            'visiblegroup: editingteacher' => [self::COURSE_VISIBLE_GROUP, 'editingteacher0', 2],
-            // No group.
-            'nogroups: student in one group' => [self::COURSE_NO_GROUP, 'student0', 0],
-            // Same for teacher.
-            'nogroups: teacher in one group' => [self::COURSE_NO_GROUP, 'teacher0', 0],
-            // And editing teacher.
-            'nogroups: editingteacher' => [self::COURSE_NO_GROUP, 'editingteacher0', 0],
         ];
     }
 
@@ -266,7 +223,9 @@ class renderable_test extends \advanced_testcase {
      * @throws \coding_exception
      */
     public function setUp(): void {
+        global $DB;
         $this->resetAfterTest();
+        $this->preventResetByRollback(); // This is to ensure that we can actually trigger event and record them in the log store.
         $this->courses[self::COURSE_SEPARATE_GROUP] = $this->getDataGenerator()->create_course(['groupmode' => SEPARATEGROUPS]);
         $this->courses[self::COURSE_VISIBLE_GROUP] = $this->getDataGenerator()->create_course(['groupmode' => VISIBLEGROUPS]);
         $this->courses[self::COURSE_NO_GROUP] = $this->getDataGenerator()->create_course();
@@ -305,99 +264,9 @@ class renderable_test extends \advanced_testcase {
                 $this->users[$username] = $user;
             }
         }
-    }
-
-    /**
-     * Test report_log_renderable::get_user_list().
-     *
-     * @param int $courseindex
-     * @param string $username
-     * @param array $expectedusers
-     * @param string|null $groupname
-     * @covers       \report_log_renderable::get_user_list
-     * @dataProvider get_user_visibility_list_provider
-     * @return void
-     */
-    public function test_get_user_list(int $courseindex, string $username, array $expectedusers,
-        string $groupname = null): void {
-        global $PAGE, $CFG;
-        $currentcourse = $this->courses[$courseindex];
-        $PAGE->set_url('/report/log/index.php?id=' . $currentcourse->id);
-        // Fetch all users of group 1 and the guest user.
-        $currentuser = $this->users[$username];
-        $this->setUser($currentuser->id);
-        $groupid = 0;
-        if ($groupname) {
-            $groupid = $this->groupsbycourse[$courseindex][$groupname]->id;
-        }
-        $renderable = new \report_log_renderable(
-            "", (int) $currentcourse->id, $currentuser->id, 0, '', $groupid);
-        $userlist = $renderable->get_user_list();
-        unset($userlist[$CFG->siteguest]); // We ignore guest.
-        $usersid = array_keys($userlist);
-
-        $users = array_map(function($userid) {
-            return core_user::get_user($userid);
-        }, $usersid);
-
-        // Now check that the users are the expected ones.
-        asort($expectedusers);
-        $userlistbyname = array_column($users, 'username');
-        asort($userlistbyname);
-        $this->assertEquals(array_values($expectedusers), array_values($userlistbyname));
-
-        // Check that users are in order lastname > firstname > id.
-        $sortedusers = $users;
-        // Sort user by lastname > firstname > id.
-        usort($sortedusers, function($a, $b) {
-            if ($a->lastname != $b->lastname) {
-                return $a->lastname <=> $b->lastname;
-            }
-            if ($a->firstname != $b->firstname) {
-                return $a->firstname <=> $b->firstname;
-            }
-            return $a->id <=> $b->id;
-        });
-
-        $sortedusernames = array_column($sortedusers, 'username');
-        $userlistbyname = array_column($users, 'username');
-        $this->assertEquals($sortedusernames, $userlistbyname);
-
-    }
-
-    /**
-     * Test report_log_renderable::get_group_list().
-     *
-     * @covers       \report_log_renderable::get_group_list
-     * @dataProvider get_group_list_provider
-     * @return void
-     */
-    public function test_get_group_list($courseindex, $username, $expectedcount): void {
-        global $PAGE;
-        $PAGE->set_url('/report/log/index.php?id=' . $this->courses[$courseindex]->id);
-        $this->setUser($this->users[$username]->id);
-        $renderable = new \report_log_renderable("", (int) $this->courses[$courseindex]->id, $this->users[$username]->id);
-        $groups = $renderable->get_group_list();
-        $this->assertCount($expectedcount, $groups);
-    }
-
-    /**
-     * Test table_log
-     *
-     * @param int $courseindex
-     * @param string $username
-     * @param array $expectedusers
-     * @param string|null $groupname
-     * @covers       \report_log_renderable::get_user_list
-     * @dataProvider get_user_visibility_list_provider
-     * @return void
-     */
-    public function test_get_table_logs(int $courseindex, string $username, array $expectedusers, ?string $groupname = null): void {
-        global $DB, $PAGE;
-        $this->preventResetByRollback(); // This is to ensure that we can actually trigger event and record them in the log store.
         // Configure log store.
         set_config('enabled_stores', 'logstore_standard', 'tool_log');
-        $manager = get_log_manager(true);
+        get_log_manager(true);
         $DB->delete_records('logstore_standard_log');
 
         foreach ($this->courses as $course) {
@@ -410,29 +279,37 @@ class renderable_test extends \advanced_testcase {
                 $event->trigger();
             }
         }
+    }
+
+    /**
+     * Test table_log
+     *
+     * @param int $courseindex
+     * @param string $username
+     * @param array $expectedusers
+     * @covers       \report_log_renderable::get_user_list
+     * @dataProvider get_report_logs_provider
+     * @return void
+     */
+    public function test_get_table_logs(int $courseindex, string $username, array $expectedusers): void {
+        $manager = get_log_manager();
         $stores = $manager->get_readers();
         $store = $stores['logstore_standard'];
         // Build the report.
+        $url = new \moodle_url("/report/loglive/index.php");
+        $renderable = new \report_loglive_renderable('logstore_standard', $this->courses[$courseindex], $url);
+        $table = $renderable->get_table();
         $currentuser = $this->users[$username];
         $this->setUser($currentuser->id);
-        $groupid = 0;
-        if ($groupname) {
-            $groupid = $this->groupsbycourse[$courseindex][$groupname]->id;
-        }
-        $PAGE->set_url('/report/log/index.php?id=' . $this->courses[$courseindex]->id);
-        $renderable = new \report_log_renderable("", (int) $this->courses[$courseindex]->id, 0, 0, '', $groupid);
-        $renderable->setup_table();
-        $table = $renderable->tablelog;
         $store->flush();
         $table->query_db(100);
-        $usernames = [];
-        foreach ($table->rawdata as $event) {
-            if (get_class($event) !== \core\event\course_viewed::class) {
-                continue;
-            }
-            $user = core_user::get_user($event->userid, '*', MUST_EXIST);
-            $usernames[] = $user->username;
-        }
+        $filteredevents = array_filter($table->rawdata, fn($event) => get_class($event) === \core\event\course_viewed::class);
+        $usernames = array_map(
+            function($event) {
+                $user = core_user::get_user($event->userid, '*', MUST_EXIST);
+                return $user->username;
+            },
+            $filteredevents);
         sort($expectedusers);
         sort($usernames);
         $this->assertEquals($expectedusers, $usernames);
