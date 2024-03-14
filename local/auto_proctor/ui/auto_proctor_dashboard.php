@@ -221,6 +221,9 @@ $wwwroot = $CFG->wwwroot
                             url.searchParams.delete('course_id');
                             url.searchParams.delete('quiz_id');
                             url.searchParams.delete('quiz_name');
+                            url.searchParams.delete('quiz_results');
+                            url.searchParams.delete('quiz_settings');
+                            url.searchParams.delete('course_name');
 
                             // Replace the current URL without redirecting
                             history.replaceState(null, '', url.href);
