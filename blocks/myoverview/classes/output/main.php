@@ -363,7 +363,14 @@ class main implements renderable, templatable {
         if (!$this->displaygroupingcustomfield) {
             return [];
         }
-        $fieldid = $DB->get_field('customfield_field', 'id', ['shortname' => $this->customfiltergrouping]);
+
+        // Get the relevant customfield ID within the core_course/course component/area.
+        $fieldid = $DB->get_field_sql("
+            SELECT f.id
+              FROM {customfield_field} f
+              JOIN {customfield_category} c ON c.id = f.categoryid
+             WHERE f.shortname = :shortname AND c.component = 'core_course' AND c.area = 'course'
+        ", ['shortname' => $this->customfiltergrouping]);
         if (!$fieldid) {
             return [];
         }

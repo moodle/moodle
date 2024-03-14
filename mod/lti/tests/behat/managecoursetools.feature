@@ -82,12 +82,10 @@ Feature: Manage course tools
     And I navigate to "LTI External tools" in current page administration
     And the "Edit" item should exist in the "Actions" action menu of the "Test tool" "table_row"
     And the "Delete" item should exist in the "Actions" action menu of the "Test tool" "table_row"
-    When I open the action menu in "Test tool" "table_row"
-    And I choose "Edit" in the open action menu
+    When I press "Edit" action in the "Test tool" report row
     And I press "Cancel"
     Then I should see "Test tool" in the "reportbuilder-table" "table"
-    And I open the action menu in "Test tool" "table_row"
-    And I choose "Edit" in the open action menu
+    And I press "Edit" action in the "Test tool" report row
     And I set the following fields to these values:
       | Tool name        | Test tool (edited)                       |
       | Tool URL         | http://example.com                       |
@@ -119,13 +117,11 @@ Feature: Manage course tools
       | Another tool | Example 123         | https://another.example.com/tool | C1     |
     And I am on the "Course 1" course page logged in as teacher1
     And I navigate to "LTI External tools" in current page administration
-    When I open the action menu in "Test tool" "table_row"
-    And I choose "Delete" in the open action menu
+    When I press "Delete" action in the "Test tool" report row
     Then I should see "This will delete Test tool from the available LTI tools in your course."
     And I click on "Cancel" "button" in the "Delete Test tool" "dialogue"
     And I should see "Test tool" in the "reportbuilder-table" "table"
-    And I open the action menu in "Test tool" "table_row"
-    And I choose "Delete" in the open action menu
+    And I press "Delete" action in the "Test tool" report row
     And I should see "This will delete Test tool from the available LTI tools in your course."
     And I click on "Delete" "button" in the "Delete Test tool" "dialogue"
     And I should see "Test tool deleted"
@@ -144,8 +140,7 @@ Feature: Manage course tools
     Then I should see "Test tool 1" in the "reportbuilder-table" "table"
     # The cartridge description, if set, overrides the description set in the type edit form (bug?).
     And I should see "Example tool description" in the "Test tool 1" "table_row"
-    And I open the action menu in "Test tool 1" "table_row"
-    And I choose "Edit" in the open action menu
+    And I press "Edit" action in the "Test tool 1" report row
     And the field "Tool name" matches value "Test tool 1"
     And the field "Tool URL" matches value "http://www.example.com/lti/provider.php"
     And the field "Icon URL" matches value "http://download.moodle.org/unittest/test.jpg"
