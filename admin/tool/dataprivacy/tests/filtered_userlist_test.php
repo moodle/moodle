@@ -41,7 +41,6 @@ class filtered_userlist_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass(\tool_dataprivacy\filtered_userlist::class);
         $rcm = $rc->getMethod('set_userids');
-        $rcm->setAccessible(true);
         $rcm->invoke($userlist, $initial);
 
 

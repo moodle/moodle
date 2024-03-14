@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 require_once($CFG->dirroot . '/question/editlib.php');
 
+use coding_exception;
 use core\plugininfo\qbank;
 use core\output\datafilter;
 use core_plugin_manager;
@@ -850,21 +851,10 @@ class view {
     }
 
     /**
-     * Get the URL to preview a question.
-     * @param \stdClass $questiondata the data defining the question.
-     * @return \moodle_url the URL.
      * @deprecated since Moodle 4.0
-     * @see \qbank_previewquestion\helper::question_preview_url()
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
-    public function preview_question_url($questiondata) {
-        debugging(
-            'Function preview_question_url() has been deprecated and moved to qbank_previewquestion plugin, ' .
-                'please use qbank_previewquestion\helper::question_preview_url() instead.',
-            DEBUG_DEVELOPER
-        );
-        return question_preview_url($questiondata->id, null, null, null, null,
-            $this->get_most_specific_context());
+    public function preview_question_url() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
@@ -1510,29 +1500,17 @@ class view {
     }
 
     /**
-     * Process actions for the selected action.
      * @deprecated since Moodle 4.0
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
     public function process_actions(): void {
-        debugging('Function process_actions() is deprecated and its code has been completely deleted.
-         Please, remove the call from your code and check core_question\local\bank\bulk_action_base
-          to learn more about bulk actions in qbank.', DEBUG_DEVELOPER);
-        // Associated code is deleted to make sure any incorrect call doesnt not cause any data loss.
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**
-     * Process actions with ui.
-     * @return bool
      * @deprecated since Moodle 4.0
-     * @todo Final deprecation on Moodle 4.4 MDL-72438
      */
-    public function process_actions_needing_ui(): bool {
-        debugging('Function process_actions_needing_ui() is deprecated and its code has been completely deleted.
-         Please, remove the call from your code and check core_question\local\bank\bulk_action_base
-          to learn more about bulk actions in qbank.', DEBUG_DEVELOPER);
-        // Associated code is deleted to make sure any incorrect call doesnt not cause any data loss.
-        return false;
+    public function process_actions_needing_ui() {
+        throw new coding_exception(__FUNCTION__ . '() has been removed.');
     }
 
     /**

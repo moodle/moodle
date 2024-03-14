@@ -74,7 +74,6 @@ class backup_stepslib_test extends \advanced_testcase {
 
         $reflection = new \ReflectionClass($step);
         $method = $reflection->getMethod('define_structure');
-        $method->setAccessible(true);
         $structure = $method->invoke($step);
 
         $elements = $structure->get_final_elements();

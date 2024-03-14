@@ -175,7 +175,6 @@ class lib_test extends \advanced_testcase {
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayHasKey('blogs', $nodes->getValue($tree));
     }
 
@@ -197,7 +196,6 @@ class lib_test extends \advanced_testcase {
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
     }
 
@@ -220,7 +218,6 @@ class lib_test extends \advanced_testcase {
         core_blog_myprofile_navigation($tree, $USER, $iscurrentuser, $course);
         $reflector = new \ReflectionObject($tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('blogs', $nodes->getValue($tree));
     }
 

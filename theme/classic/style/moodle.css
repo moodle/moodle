@@ -33258,6 +33258,21 @@ textarea[data-auto-rows] {
   padding-left: 0;
 }
 
+.toggle-sensitive-btn .icon {
+  margin-right: 0;
+}
+
+@media (min-width: 576px) {
+  .toggle-sensitive-wrapper.small-screens-only.input-group:not(.has-validation) > .form-control:not(:last-child) {
+    border-radius: 0.25rem;
+  }
+  .toggle-sensitive-wrapper.small-screens-only.input-group:not(.has-validation) > .form-control-lg:not(:last-child) {
+    border-radius: 0.3rem;
+  }
+  .toggle-sensitive-wrapper.small-screens-only.input-group:not(.has-validation) > .input-group-append .toggle-sensitive-btn {
+    display: none;
+  }
+}
 .pagelayout-login #region-main {
   border: 0;
   background-color: inherit;
@@ -35942,6 +35957,11 @@ body.behat-site .stickyfooter {
   position: inherit;
   z-index: inherit;
 }
+body.behat-site.hasstickyfooter .stickyfooter .sticky-footer-content-wrapper,
+body.behat-site .stickyfooter .sticky-footer-content-wrapper {
+  padding: 0;
+  margin: 0;
+}
 body.behat-site .dropdown-item {
   margin-top: 4px !important; /* stylelint-disable declaration-no-important */
 }
@@ -36031,7 +36051,7 @@ body {
   position: fixed;
   right: 0;
   left: 0;
-  height: max(80px, 0.9375rem * 3);
+  min-height: max(80px, 0.9375rem * 3);
   bottom: calc(max(80px, 0.9375rem * 3) * -1);
   transition: bottom 0.5s;
   z-index: 1030;

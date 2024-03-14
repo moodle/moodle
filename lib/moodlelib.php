@@ -74,7 +74,6 @@ define('HOURMINS', 60);
 // We currently include \core\param manually here to avoid broken upgrades.
 // This may change after the next LTS release as LTS releases require the previous LTS release.
 require_once(__DIR__ . '/classes/deprecation.php');
-require_once(__DIR__ . '/classes/deprecated.php');
 require_once(__DIR__ . '/classes/param.php');
 
 /**
@@ -600,6 +599,21 @@ define('CONTACT_SUPPORT_ANYONE', 2);
  * Maximum number of characters for password.
  */
 define('MAX_PASSWORD_CHARACTERS', 128);
+
+/**
+ * Toggle sensitive feature is disabled. Used for sensitive inputs (passwords, tokens, keys).
+ */
+define('TOGGLE_SENSITIVE_DISABLED', 0);
+
+/**
+ * Toggle sensitive feature is enabled. Used for sensitive inputs (passwords, tokens, keys).
+ */
+define('TOGGLE_SENSITIVE_ENABLED', 1);
+
+/**
+ * Toggle sensitive feature is enabled for small screens only. Used for sensitive inputs (passwords, tokens, keys).
+ */
+define('TOGGLE_SENSITIVE_SMALL_SCREENS_ONLY', 2);
 
 // PARAMETER HANDLING.
 

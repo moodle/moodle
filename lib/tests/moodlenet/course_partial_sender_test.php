@@ -95,7 +95,6 @@ class course_partial_sender_test extends \advanced_testcase {
 
         // Set get_file method accessibility.
         $method = new ReflectionMethod(course_partial_sender::class, 'prepare_share_contents');
-        $method->setAccessible(true);
 
         $httpclient = new http_client();
         $moodlenetclient = new moodlenet_client($httpclient, $this->mockoauthclient);
@@ -151,7 +150,6 @@ class course_partial_sender_test extends \advanced_testcase {
 
         // Set get_resource_description method accessibility.
         $method = new ReflectionMethod(course_partial_sender::class, 'get_resource_description');
-        $method->setAccessible(true);
 
         // Test the processed description.
         $httpclient = new http_client();

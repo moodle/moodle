@@ -69,11 +69,9 @@ class file_storage_test extends \advanced_testcase {
         // Get value of protected properties.
         $h5p_fs_rc = new \ReflectionClass(file_storage::class);
         $h5p_file_storage_context = $h5p_fs_rc->getProperty('context');
-        $h5p_file_storage_context->setAccessible(true);
         $this->h5p_fs_context = $h5p_file_storage_context->getValue($this->h5p_file_storage);
 
         $h5p_file_storage_fs = $h5p_fs_rc->getProperty('fs');
-        $h5p_file_storage_fs->setAccessible(true);
         $this->h5p_fs_fs = $h5p_file_storage_fs->getValue($this->h5p_file_storage);
     }
 
@@ -625,7 +623,6 @@ class file_storage_test extends \advanced_testcase {
 
         // Set get_file method accessibility.
         $method = new ReflectionMethod(file_storage::class, 'get_file');
-        $method->setAccessible(true);
 
         $contentfile = $method->invoke(new file_storage(), file_storage::CONTENT_FILEAREA, $h5pcontentid, $file);
 
@@ -668,7 +665,6 @@ class file_storage_test extends \advanced_testcase {
 
         // Set get_file method accessibility.
         $method = new ReflectionMethod(file_storage::class, 'move_file');
-        $method->setAccessible(true);
 
         $method->invoke(new file_storage(), $file, $h5pcontentid);
 

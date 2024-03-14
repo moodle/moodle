@@ -72,7 +72,6 @@ class edit_form_test extends \advanced_testcase {
         list($form) = $this->get_form('qtype_ddwtos_edit_form');
         // Use reflection to get the protected property we need.
         $property = new \ReflectionProperty('qtype_ddwtos_edit_form', '_form');
-        $property->setAccessible(true);
         $mform = $property->getValue($form);
         $choices = $mform->getElement('choices[0]');
         $groupoptions = $choices->_elements[1];

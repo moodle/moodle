@@ -68,7 +68,7 @@ videojs.addLanguage('ru', {
   "Raised": "Поднятый",
   "Depressed": "Пониженный",
   "Uniform": "Одинаковый",
-  "Dropshadow": "Тень",
+  "Drop shadow": "Тень",
   "Font Family": "Шрифт",
   "Proportional Sans-Serif": "Пропорциональный без засечек",
   "Monospace Sans-Serif": "Моноширинный без засечек",

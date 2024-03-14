@@ -98,7 +98,7 @@ class editstep extends \moodleform {
         // Content type.
         $typeoptions = [
             static::CONTENTTYPE_LANGSTRING => get_string('content_type_langstring', 'tool_usertours'),
-            static::CONTENTTYPE_MANUAL => get_string('content_type_manual', 'tool_usertours')
+            static::CONTENTTYPE_MANUAL => get_string('content_type_manual', 'tool_usertours'),
         ];
         $mform->addElement('select', 'contenttype', get_string('content_type', 'tool_usertours'), $typeoptions);
         $mform->addHelpButton('contenttype', 'content_type', 'tool_usertours');
@@ -114,7 +114,7 @@ class editstep extends \moodleform {
             'maxbytes' => $CFG->maxbytes,
             'maxfiles' => EDITOR_UNLIMITED_FILES,
             'changeformat' => 1,
-            'trusttext' => true
+            'trusttext' => true,
         ];
         $objs = $mform->createElement('editor', 'content', get_string('content', 'tool_usertours'), null, $editoroptions);
         // TODO: MDL-68540 We need to add the editor to a group element because editor element will not work with hideIf.

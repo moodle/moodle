@@ -469,7 +469,6 @@ class external_api_test extends \advanced_testcase {
     protected function get_context_from_params() {
         $rc = new \ReflectionClass(external_api::class);
         $method = $rc->getMethod('get_context_from_params');
-        $method->setAccessible(true);
         return $method->invokeArgs(null, func_get_args());
     }
 }

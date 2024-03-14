@@ -567,7 +567,6 @@ class preset_test extends \advanced_testcase {
         // Make accessible the method.
         $reflection = new \ReflectionClass(preset::class);
         $method = $reflection->getMethod('generate_preset_xml');
-        $method->setAccessible(true);
 
         // The method should return empty string when trying to generate preset.xml for a plugin preset.
         $preset = preset::create_from_plugin(null, 'imagegallery');

@@ -79,7 +79,6 @@ class quiz_statistics_report_test extends \advanced_testcase {
         }
 
         $reflectiondb = new \ReflectionProperty($lockfactory, 'db');
-        $reflectiondb->setAccessible(true);
         $reflectiondb->setValue($lockfactory, self::$lockdb);
         self::$lockfactory = $lockfactory;
     }

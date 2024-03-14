@@ -3125,3 +3125,94 @@ function random_bytes_emulate($length) {
     );
     return random_bytes($length);
 }
+
+/**
+ * @deprecated since Moodle 4.0
+ */
+function question_preview_url() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0
+ */
+function question_preview_popup_params() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0
+ */
+function question_hash() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0 MDL-71573
+ */
+function question_make_export_url() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0
+ */
+function question_get_export_single_question_url() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0 MDL-71585
+ */
+function question_remove_stale_questions_from_category() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0 MDL-71585
+ */
+function flatten_category_tree() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0 MDL-71585
+ */
+function add_indented_names() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0 MDL-71585
+ */
+function question_category_select_menu() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0 MDL-71585
+ */
+function get_categories_for_contexts() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0 MDL-71585
+ */
+function question_category_options() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0 MDL-71585
+ */
+function question_add_context_in_key() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}
+
+/**
+ * @deprecated since Moodle 4.0 MDL-71585
+ */
+function question_fix_top_names() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
+}

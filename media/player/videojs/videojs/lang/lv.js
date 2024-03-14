@@ -68,7 +68,7 @@ videojs.addLanguage('lv', {
   "Raised": "Izvirzīts",
   "Depressed": "Samazināts",
   "Uniform": "Vienmērīgs",
-  "Dropshadow": "Ēnots",
+  "Drop shadow": "Ēnots",
   "Font Family": "Šrifts",
   "Proportional Sans-Serif": "Proportional Sans-Serif",
   "Monospace Sans-Serif": "Monospace Sans-Serif",

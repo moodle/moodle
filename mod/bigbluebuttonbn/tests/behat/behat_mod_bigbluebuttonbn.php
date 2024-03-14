@@ -262,10 +262,8 @@ XPATH
         $this->setup_fake_plugin("simple");
         $mockedcomponent = new ReflectionClass(core_component::class);
         $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
-        $mockedplugintypes->setAccessible(true);
         $mockedplugintypes->setValue(null, null);
         $init = $mockedcomponent->getMethod('init');
-        $init->setAccessible(true);
         $init->invoke(null);
         // I enable the plugin.
         $manager = core_plugin_manager::resolve_plugininfo_class(\mod_bigbluebuttonbn\extension::BBB_EXTENSION_PLUGIN_NAME);

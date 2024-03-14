@@ -16,24 +16,24 @@
 
 namespace tool_usertours;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/formslib.php');
-
 /**
  * Tests for tour.
  *
  * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @license    https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers    \tool_usertours\tour
  */
 class tour_test extends \advanced_testcase {
-
     /**
      * @var moodle_database
      */
     protected $db;
+
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->libdir . '/formslib.php');
+    }
 
     /**
      * Setup to store the DB reference.
@@ -62,8 +62,7 @@ class tour_test extends \advanced_testcase {
         global $DB;
 
         $DB = $this->getMockBuilder(\moodle_database::class)
-            ->getMock()
-            ;
+            ->getMock();
 
         return $DB;
     }
@@ -73,33 +72,37 @@ class tour_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function dirty_value_provider() {
+    public static function dirty_value_provider(): array {
         return [
-                'name' => [
-                        'name',
-                        ['Lorem'],
-                    ],
-                'description' => [
-                        'description',
-                        ['Lorem'],
-                    ],
-                'pathmatch' => [
-                        'pathmatch',
-                        ['Lorem'],
-                    ],
-                'enabled' => [
-                        'enabled',
-                        ['Lorem'],
-                    ],
-                'sortorder' => [
-                        'sortorder',
-                        [1],
-                    ],
-                'config' => [
-                        'config',
-                        ['key', 'value'],
-                    ],
-            ];
+            'name' => [
+                'name',
+                ['Lorem'],
+            ],
+            'description' => [
+                'description',
+                ['Lorem'],
+            ],
+            'pathmatch' => [
+                'pathmatch',
+                ['Lorem'],
+            ],
+            'enabled' => [
+                'enabled',
+                ['Lorem'],
+            ],
+            'sortorder' => [
+                'sortorder',
+                [1],
+            ],
+            'config' => [
+                'config',
+                ['key', 'value'],
+            ],
+            'showtourwhen' => [
+                'showtourwhen',
+                [0],
+            ],
+        ];
     }
 
     /**
@@ -109,14 +112,13 @@ class tour_test extends \advanced_testcase {
      * @param   string  $name           The name of the key being tested
      * @param   mixed   $value          The value being set
      */
-    public function test_dirty_values($name, $value) {
+    public function test_dirty_values($name, $value): void {
         $tour = new \tool_usertours\tour();
         $method = 'set_' . $name;
         call_user_func_array([$tour, $method], $value);
 
         $rc = new \ReflectionClass(\tool_usertours\tour::class);
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
 
         $this->assertTrue($rcp->getValue($tour));
     }
@@ -126,37 +128,37 @@ class tour_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function getter_provider() {
+    public static function getter_provider(): array {
         return [
-                'id' => [
-                        'id',
-                        rand(1, 100),
-                    ],
-                'name' => [
-                        'name',
-                        'Lorem',
-                    ],
-                'description' => [
-                        'description',
-                        'Lorem',
-                    ],
-                'pathmatch' => [
-                        'pathmatch',
-                        'Lorem',
-                    ],
-                'enabled' => [
-                        'enabled',
-                        'Lorem',
-                    ],
-                'sortorder' => [
-                        'sortorder',
-                        rand(1, 100),
-                    ],
-                'config' => [
-                        'config',
-                        ['key', 'value'],
-                    ],
-            ];
+            'id' => [
+                'id',
+                rand(1, 100),
+            ],
+            'name' => [
+                'name',
+                'Lorem',
+            ],
+            'description' => [
+                'description',
+                'Lorem',
+            ],
+            'pathmatch' => [
+                'pathmatch',
+                'Lorem',
+            ],
+            'enabled' => [
+                'enabled',
+                'Lorem',
+            ],
+            'sortorder' => [
+                'sortorder',
+                rand(1, 100),
+            ],
+            'config' => [
+                'config',
+                ['key', 'value'],
+            ],
+        ];
     }
 
     /**
@@ -166,13 +168,12 @@ class tour_test extends \advanced_testcase {
      * @param   string  $key            The name of the key being tested
      * @param   mixed   $value          The value being set
      */
-    public function test_getters($key, $value) {
+    public function test_getters($key, $value): void {
         $tour = new \tool_usertours\tour();
 
         $rc = new \ReflectionClass(tour::class);
 
         $rcp = $rc->getProperty($key);
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $value);
 
         $getter = 'get_' . $key;
@@ -183,15 +184,13 @@ class tour_test extends \advanced_testcase {
     /**
      * Ensure that non-dirty tours are not persisted.
      */
-    public function test_persist_non_dirty() {
+    public function test_persist_non_dirty(): void {
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods(['to_record'])
-            ->getMock()
-            ;
+            ->getMock();
 
         $tour->expects($this->never())
-            ->method('to_record')
-            ;
+            ->method('to_record');
 
         $this->assertSame($tour, $tour->persist());
     }
@@ -199,134 +198,114 @@ class tour_test extends \advanced_testcase {
     /**
      * Ensure that new dirty tours are persisted.
      */
-    public function test_persist_dirty_new() {
+    public function test_persist_dirty_new(): void {
         // Mock the database.
         $DB = $this->mock_database();
 
         $DB->expects($this->never())
-            ->method('update_record')
-            ;
+            ->method('update_record');
 
         $id = rand(1, 100);
         $DB->expects($this->once())
             ->method('insert_record')
-            ->willReturn($id)
-            ;
+            ->willReturn($id);
 
         // Mock the tour.
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'to_record',
-                    'reload',
-                ])
-            ->getMock()
-            ;
+                'to_record',
+                'reload',
+            ])
+            ->getMock();
 
         $tour->expects($this->once())
-            ->method('to_record')
-            ;
+            ->method('to_record');
 
         $tour->expects($this->once())
-            ->method('reload')
-            ;
+            ->method('reload');
 
         $rc = new \ReflectionClass(tour::class);
 
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, true);
 
         $this->assertSame($tour, $tour->persist());
 
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $this->assertEquals($id, $rcp->getValue($tour));
     }
 
     /**
      * Ensure that non-dirty, forced tours are persisted.
      */
-    public function test_persist_force_new() {
+    public function test_persist_force_new(): void {
         global $DB;
 
         // Mock the database.
         $DB = $this->mock_database();
 
         $DB->expects($this->never())
-            ->method('update_record')
-            ;
+            ->method('update_record');
 
         $id = rand(1, 100);
         $DB->expects($this->once())
             ->method('insert_record')
-            ->willReturn($id)
-            ;
+            ->willReturn($id);
 
         // Mock the tour.
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'to_record',
-                    'reload',
-                ])
-            ->getMock()
-            ;
+                'to_record',
+                'reload',
+            ])
+            ->getMock();
 
         $tour->expects($this->once())
-            ->method('to_record')
-            ;
+            ->method('to_record');
 
         $tour->expects($this->once())
-            ->method('reload')
-            ;
+            ->method('reload');
 
         $this->assertSame($tour, $tour->persist(true));
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $this->assertEquals($id, $rcp->getValue($tour));
     }
 
     /**
      * Ensure that dirty tours are persisted.
      */
-    public function test_persist_dirty_existing() {
+    public function test_persist_dirty_existing(): void {
         // Mock the database.
         $DB = $this->mock_database();
         $DB->expects($this->once())
             ->method('update_record')
-            ->willReturn($this->returnSelf())
-            ;
+            ->willReturn($this->returnSelf());
 
         $DB->expects($this->never())
-            ->method('insert_record')
-            ;
+            ->method('insert_record');
 
         // Mock the tour.
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'to_record',
-                    'reload',
-                ])
-            ->getMock()
-            ;
+                'to_record',
+                'reload',
+            ])
+            ->getMock();
 
         $tour->expects($this->once())
-            ->method('to_record')
-            ;
+            ->method('to_record');
 
         $tour->expects($this->once())
-            ->method('reload')
-            ;
+            ->method('reload');
 
         $rc = new \ReflectionClass(tour::class);
 
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, 42);
 
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, true);
 
         $this->assertSame($tour, $tour->persist());
@@ -335,7 +314,7 @@ class tour_test extends \advanced_testcase {
     /**
      * Ensure that non-dirty, forced tours are persisted.
      */
-    public function test_persist_force() {
+    public function test_persist_force(): void {
         global $DB;
 
         // Mock the database.
@@ -343,38 +322,31 @@ class tour_test extends \advanced_testcase {
 
         $DB->expects($this->once())
             ->method('update_record')
-            ->willReturn($this->returnSelf())
-            ;
+            ->willReturn($this->returnSelf());
 
         $DB->expects($this->never())
-            ->method('insert_record')
-            ;
+            ->method('insert_record');
 
         // Mock the tour.
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'to_record',
-                    'reload',
-                ])
-            ->getMock()
-            ;
+                'to_record',
+                'reload',
+            ])
+            ->getMock();
 
         $tour->expects($this->once())
-            ->method('to_record')
-            ;
+            ->method('to_record');
 
         $tour->expects($this->once())
-            ->method('reload')
-            ;
+            ->method('reload');
 
         $rc = new \ReflectionClass(tour::class);
 
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, 42);
 
         $rcp = $rc->getProperty('dirty');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, true);
 
         $this->assertSame($tour, $tour->persist(true));
@@ -383,42 +355,40 @@ class tour_test extends \advanced_testcase {
     /**
      * Test setting config.
      */
-    public function test_set_config() {
+    public function test_set_config(): void {
         $tour = new \tool_usertours\tour();
 
         $tour->set_config('key', 'value');
         $tour->set_config('another', [
-                'foo' => 'bar',
-            ]);
+            'foo' => 'bar',
+        ]);
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('config');
-        $rcp->setAccessible(true);
         $this->assertEquals((object) [
-                'key' => 'value',
-                'another' => [
-                    'foo' => 'bar',
-                ],
-            ], $rcp->getValue($tour));
+            'key' => 'value',
+            'another' => [
+                'foo' => 'bar',
+            ],
+        ], $rcp->getValue($tour));
     }
 
     /**
      * Test get_config with no keys provided.
      */
-    public function test_get_config_no_keys() {
+    public function test_get_config_no_keys(): void {
         $tour = new \tool_usertours\tour();
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('config');
-        $rcp->setAccessible(true);
 
         $allvalues = (object) [
-                'some' => 'value',
-                'another' => 42,
-                'key' => [
-                    'somethingelse',
-                ],
-            ];
+            'some' => 'value',
+            'another' => 42,
+            'key' => [
+                'somethingelse',
+            ],
+        ];
 
         $rcp->setValue($tour, $allvalues);
 
@@ -430,59 +400,59 @@ class tour_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_config_provider() {
+    public static function get_config_provider(): array {
         $allvalues = (object) [
-                'some' => 'value',
-                'another' => 42,
-                'key' => [
-                    'somethingelse',
-                ],
-            ];
+            'some' => 'value',
+            'another' => 42,
+            'key' => [
+                'somethingelse',
+            ],
+        ];
 
         return [
-                'No nitial config' => [
-                        null,
-                        null,
-                        null,
-                        (object) [],
-                    ],
-                'All values' => [
-                        $allvalues,
-                        null,
-                        null,
-                        $allvalues,
-                    ],
-                'Valid string value' => [
-                        $allvalues,
-                        'some',
-                        null,
-                        'value',
-                    ],
-                'Valid array value' => [
-                        $allvalues,
-                        'key',
-                        null,
-                        ['somethingelse'],
-                    ],
-                'Invalid value' => [
-                        $allvalues,
-                        'notavalue',
-                        null,
-                        null,
-                    ],
-                'Configuration value' => [
-                        $allvalues,
-                        'placement',
-                        null,
-                        \tool_usertours\configuration::get_default_value('placement'),
-                    ],
-                'Invalid value with default' => [
-                        $allvalues,
-                        'notavalue',
-                        'somedefault',
-                        'somedefault',
-                    ],
-            ];
+            'No nitial config' => [
+                null,
+                null,
+                null,
+                (object) [],
+            ],
+            'All values' => [
+                $allvalues,
+                null,
+                null,
+                $allvalues,
+            ],
+            'Valid string value' => [
+                $allvalues,
+                'some',
+                null,
+                'value',
+            ],
+            'Valid array value' => [
+                $allvalues,
+                'key',
+                null,
+                ['somethingelse'],
+            ],
+            'Invalid value' => [
+                $allvalues,
+                'notavalue',
+                null,
+                null,
+            ],
+            'Configuration value' => [
+                $allvalues,
+                'placement',
+                null,
+                \tool_usertours\configuration::get_default_value('placement'),
+            ],
+            'Invalid value with default' => [
+                $allvalues,
+                'notavalue',
+                'somedefault',
+                'somedefault',
+            ],
+        ];
     }
 
     /**
@@ -494,12 +464,11 @@ class tour_test extends \advanced_testcase {
      * @param   mixed   $default    The default value
      * @param   mixed   $expected   The expected value
      */
-    public function test_get_config_valid_keys($values, $key, $default, $expected) {
+    public function test_get_config_valid_keys($values, $key, $default, $expected): void {
         $tour = new \tool_usertours\tour();
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('config');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $values);
 
         $this->assertEquals($expected, $tour->get_config($key, $default));
@@ -508,23 +477,20 @@ class tour_test extends \advanced_testcase {
     /**
      * Check that a tour which has never been persisted is removed correctly.
      */
-    public function test_remove_non_persisted() {
+    public function test_remove_non_persisted(): void {
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'get_steps',
-                ])
-            ->getMock()
-            ;
+                'get_steps',
+            ])
+            ->getMock();
 
         $tour->expects($this->never())
-            ->method('get_steps')
-            ;
+            ->method('get_steps');
 
         // Mock the database.
         $DB = $this->mock_database();
         $DB->expects($this->never())
-            ->method('delete_records')
-            ;
+            ->method('delete_records');
 
         $this->assertNull($tour->remove());
     }
@@ -532,32 +498,28 @@ class tour_test extends \advanced_testcase {
     /**
      * Check that a tour which has been persisted is removed correctly.
      */
-    public function test_remove_persisted() {
+    public function test_remove_persisted(): void {
         $id = rand(1, 100);
 
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'get_steps',
-                ])
-            ->getMock()
-            ;
+                'get_steps',
+            ])
+            ->getMock();
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('id');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $id);
 
         $step = $this->getMockBuilder(\tool_usertours\step::class)
             ->onlyMethods([
-                    'remove',
-                ])
-            ->getMock()
-            ;
+                'remove',
+            ])
+            ->getMock();
 
         $tour->expects($this->once())
             ->method('get_steps')
-            ->willReturn([$step])
-            ;
+            ->willReturn([$step]);
 
         // Mock the database.
         $DB = $this->mock_database();
@@ -569,14 +531,12 @@ class tour_test extends \advanced_testcase {
                 [$this->equalTo('user_preferences'), $this->equalTo(['name' => tour::TOUR_LAST_COMPLETED_BY_USER . $id])],
                 [$this->equalTo('user_preferences'), $this->equalTo(['name' => tour::TOUR_REQUESTED_BY_USER . $id])]
             )
-            ->willReturn(null)
-            ;
+            ->willReturn(null);
 
         $DB->expects($this->once())
             ->method('get_records')
             ->with($this->equalTo('tool_usertours_tours'), $this->equalTo(null))
-            ->willReturn([])
-            ;
+            ->willReturn([]);
 
         $this->assertNull($tour->remove());
     }
@@ -584,7 +544,7 @@ class tour_test extends \advanced_testcase {
     /**
      * Teset that sortorder is reset according to sortorder with values from 0.
      */
-    public function test_reset_step_sortorder() {
+    public function test_reset_step_sortorder(): void {
         $tour = new \tool_usertours\tour();
 
         $mockdata = [];
@@ -598,12 +558,10 @@ class tour_test extends \advanced_testcase {
         $DB = $this->mock_database();
         $DB->expects($this->once())
             ->method('get_records')
-            ->willReturn($mockdata)
-            ;
+            ->willReturn($mockdata);
 
         $setfield = $DB->expects($this->exactly(5))
-            ->method('set_field')
-            ;
+            ->method('set_field');
         call_user_func_array([$setfield, 'withConsecutive'], $expectations);
 
         $tour->reset_step_sortorder();
@@ -612,7 +570,7 @@ class tour_test extends \advanced_testcase {
     /**
      * Test that a disabled tour should never be shown to users.
      */
-    public function test_should_show_for_user_disabled() {
+    public function test_should_show_for_user_disabled(): void {
         $tour = new \tool_usertours\tour();
         $tour->set_enabled(false);
 
@@ -624,40 +582,54 @@ class tour_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function should_show_for_user_provider() {
+    public static function should_show_for_user_provider(): array {
         $time = time();
         return [
-                'Not seen by user at all' => [
-                        null,
-                        null,
-                        null,
-                        true,
-                    ],
-                'Completed by user before majorupdatetime' => [
-                        $time - DAYSECS,
-                        null,
-                        $time,
-                        true,
-                    ],
-                'Completed by user since majorupdatetime' => [
-                        $time,
-                        null,
-                        $time - DAYSECS,
-                        false,
-                    ],
-                'Requested by user before current completion' => [
-                        $time,
-                        $time - DAYSECS,
-                        null,
-                        false,
-                    ],
-                'Requested by user since completion' => [
-                        $time - DAYSECS,
-                        $time,
-                        null,
-                        true,
-                    ],
-            ];
+            'Not seen by user at all' => [
+                null,
+                null,
+                null,
+                [],
+                true,
+            ],
+            'Completed by user before majorupdatetime' => [
+                $time - DAYSECS,
+                null,
+                $time,
+                [],
+                true,
+            ],
+            'Completed by user since majorupdatetime' => [
+                $time,
+                null,
+                $time - DAYSECS,
+                [],
+                false,
+            ],
+            'Requested by user before current completion' => [
+                $time,
+                $time - DAYSECS,
+                $time - MINSECS,
+                [],
+                false,
+            ],
+            'Requested by user since completion' => [
+                $time - DAYSECS,
+                $time,
+                'null',
+                [],
+                true,
+            ],
+            'Tour will show on each load' => [
+                $time,
+                $time - DAYSECS,
+                null,
+                [
+                    'showtourwhen' => tour::SHOW_TOUR_ON_EACH_PAGE_VISIT,
+                ],
+                true,
+            ],
+        ];
     }
 
     /**
@@ -667,30 +639,37 @@ class tour_test extends \advanced_testcase {
      * @param   mixed   $completiondate The user's completion date for this tour
      * @param   mixed   $requesteddate  The user's last requested date for this tour
      * @param   mixed   $updateddate    The date this tour was last updated
+     * @param   mixed   $config         The tour config to apply
      * @param   string  $expectation    The expected tour key
      */
-    public function test_should_show_for_user($completiondate, $requesteddate, $updateddate, $expectation) {
+    public function test_should_show_for_user(
+        $completiondate,
+        $requesteddate,
+        $updateddate,
+        $config,
+        $expectation,
+    ): void {
         // Uses user preferences so we must be in a user context.
         $this->resetAfterTest();
         $this->setAdminUser();
 
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'get_id',
-                    'get_config',
-                    'is_enabled',
-                ])
-            ->getMock()
-            ;
+                'get_id',
+                'is_enabled',
+            ])
+            ->getMock();
 
         $tour->method('is_enabled')
-            ->willReturn(true)
-            ;
+            ->willReturn(true);
+
+        foreach ($config as $key => $value) {
+            $tour->set_config($key, $value);
+        }
 
         $id = rand(1, 100);
         $tour->method('get_id')
-            ->willReturn($id)
-            ;
+            ->willReturn($id);
 
         if ($completiondate !== null) {
             set_user_preference(\tool_usertours\tour::TOUR_LAST_COMPLETED_BY_USER . $id, $completiondate);
@@ -701,10 +680,7 @@ class tour_test extends \advanced_testcase {
         }
 
         if ($updateddate !== null) {
-            $tour->expects($this->once())
-                ->method('get_config')
-                ->willReturn($updateddate)
-                ;
+            $tour->set_config('majorupdatetime', $updateddate);
         }
 
         $this->assertEquals($expectation, $tour->should_show_for_user());
@@ -715,44 +691,47 @@ class tour_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_tour_key_provider() {
+    public static function get_tour_key_provider(): array {
         $id = rand(1, 100);
         $time = time();
 
         return [
             'No initial values' => [
-                    $id,
-                    [null, $time],
-                    $this->greaterThanOrEqual($time),
-                    true,
-                    null,
-                    sprintf('tool_usertours_\d_%d_%s', $id, $time),
-                ],
+                $id,
+                [null, $time],
+                static::logicalOr(
+                    new \PHPUnit\Framework\Constraint\IsEqual($time),
+                    new \PHPUnit\Framework\Constraint\GreaterThan($time),
+                ),
+                true,
+                null,
+                sprintf('tool_usertours_\d_%d_%s', $id, $time),
+            ],
 
             'Initial tour time, no user pref' => [
-                    $id,
-                    [$time],
-                    null,
-                    false,
-                    null,
-                    sprintf('tool_usertours_\d_%d_%s', $id, $time),
-                ],
+                $id,
+                [$time],
+                null,
+                false,
+                null,
+                sprintf('tool_usertours_\d_%d_%s', $id, $time),
+            ],
             'Initial tour time, with user reset lower' => [
-                    $id,
-                    [$time],
-                    null,
-                    false,
-                    $time - DAYSECS,
-                    sprintf('tool_usertours_\d_%d_%s', $id, $time),
-                ],
+                $id,
+                [$time],
+                null,
+                false,
+                $time - DAYSECS,
+                sprintf('tool_usertours_\d_%d_%s', $id, $time),
+            ],
             'Initial tour time, with user reset higher' => [
-                    $id,
-                    [$time],
-                    null,
-                    false,
-                    $time + DAYSECS,
-                    sprintf('tool_usertours_\d_%d_%s', $id, $time + DAYSECS),
-                ],
+                $id,
+                [$time],
+                null,
+                false,
+                $time + DAYSECS,
+                sprintf('tool_usertours_\d_%d_%s', $id, $time + DAYSECS),
+            ],
         ];
     }
 
@@ -767,83 +746,74 @@ class tour_test extends \advanced_testcase {
      * @param   mixed   $userpref       The value to set for the user preference
      * @param   string  $expectation    The expected tour key
      */
-    public function test_get_tour_key($id, $getconfig, $setconfig, $willpersist, $userpref, $expectation) {
+    public function test_get_tour_key($id, $getconfig, $setconfig, $willpersist, $userpref, $expectation): void {
         // Uses user preferences so we must be in a user context.
         $this->resetAfterTest();
         $this->setAdminUser();
 
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'get_config',
-                    'set_config',
-                    'get_id',
-                    'persist',
-                ])
-            ->getMock()
-            ;
+                'get_config',
+                'set_config',
+                'get_id',
+                'persist',
+            ])
+            ->getMock();
 
         if ($getconfig) {
             $tour->expects($this->exactly(count($getconfig)))
                 ->method('get_config')
-                ->will(call_user_func_array([$this, 'onConsecutiveCalls'], $getconfig))
-                ;
+                ->will(call_user_func_array([$this, 'onConsecutiveCalls'], $getconfig));
         }
 
         if ($setconfig) {
             $tour->expects($this->once())
                 ->method('set_config')
                 ->with($this->equalTo('majorupdatetime'), $setconfig)
-                ->will($this->returnSelf())
-                ;
+                ->will($this->returnSelf());
         } else {
             $tour->expects($this->never())
-                ->method('set_config')
-                ;
+                ->method('set_config');
         }
 
         if ($willpersist) {
             $tour->expects($this->once())
-                ->method('persist')
-                ;
+                ->method('persist');
         } else {
             $tour->expects($this->never())
-                ->method('persist')
-                ;
+                ->method('persist');
         }
 
         $tour->expects($this->any())
             ->method('get_id')
-            ->willReturn($id)
-            ;
+            ->willReturn($id);
 
         if ($userpref !== null) {
             set_user_preference(\tool_usertours\tour::TOUR_REQUESTED_BY_USER . $id, $userpref);
         }
 
         $this->assertMatchesRegularExpression(
-                '/' . $expectation . '/',
-                $tour->get_tour_key()
-            );
+            '/' . $expectation . '/',
+            $tour->get_tour_key()
+        );
     }
 
     /**
      * Ensure that the request_user_reset function sets an appropriate value for the tour.
      */
-    public function test_requested_user_reset() {
+    public function test_requested_user_reset(): void {
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'get_id',
-                ])
-            ->getMock()
-            ;
+                'get_id',
+            ])
+            ->getMock();
 
         $id = rand(1, 100);
         $time = time();
 
         $tour->expects($this->once())
             ->method('get_id')
-            ->willReturn($id)
-            ;
+            ->willReturn($id);
 
         $tour->request_user_reset();
 
@@ -853,21 +823,19 @@ class tour_test extends \advanced_testcase {
     /**
      * Ensure that the request_user_reset function sets an appropriate value for the tour.
      */
-    public function test_mark_user_completed() {
+    public function test_mark_user_completed(): void {
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods([
-                    'get_id',
-                ])
-            ->getMock()
-            ;
+                'get_id',
+            ])
+            ->getMock();
 
         $id = rand(1, 100);
         $time = time();
 
         $tour->expects($this->once())
             ->method('get_id')
-            ->willReturn($id)
-            ;
+            ->willReturn($id);
 
         $tour->mark_user_completed();
 
@@ -879,34 +847,34 @@ class tour_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function sortorder_first_last_provider() {
+    public static function sortorder_first_last_provider(): array {
         $topcount = rand(10, 100);
         return [
-                'Only tour => first + last' => [
-                        0,
-                        true,
-                        1,
-                        true,
-                    ],
-                'First tour of many' => [
-                        0,
-                        true,
-                        $topcount,
-                        false,
-                    ],
-                'Last tour of many' => [
-                        $topcount - 1,
-                        false,
-                        $topcount,
-                        true,
-                    ],
-                'Middle tour of many' => [
-                        5,
-                        false,
-                        $topcount,
-                        false,
-                    ],
-            ];
+            'Only tour => first + last' => [
+                0,
+                true,
+                1,
+                true,
+            ],
+            'First tour of many' => [
+                0,
+                true,
+                $topcount,
+                false,
+            ],
+            'Last tour of many' => [
+                $topcount - 1,
+                false,
+                $topcount,
+                true,
+            ],
+            'Middle tour of many' => [
+                5,
+                false,
+                $topcount,
+                false,
+            ],
+        ];
     }
 
     /**
@@ -918,12 +886,11 @@ class tour_test extends \advanced_testcase {
      * @param   int     $total          The number of tours
      * @param   bool    $islast         Whether this is the last tour
      */
-    public function test_is_first_tour($sortorder, $isfirst, $total, $islast) {
+    public function test_is_first_tour($sortorder, $isfirst, $total, $islast): void {
         $tour = new \tool_usertours\tour();
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('sortorder');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $sortorder);
 
         $this->assertEquals($isfirst, $tour->is_first_tour());
@@ -938,20 +905,18 @@ class tour_test extends \advanced_testcase {
      * @param   int     $total          The number of tours
      * @param   bool    $islast         Whether this is the last tour
      */
-    public function test_is_last_tour_calculated($sortorder, $isfirst, $total, $islast) {
+    public function test_is_last_tour_calculated($sortorder, $isfirst, $total, $islast): void {
         $tour = new \tool_usertours\tour();
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('sortorder');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $sortorder);
 
         // The total will be calculated.
         $DB = $this->mock_database();
         $DB->expects($this->once())
             ->method('count_records')
-            ->willReturn($total)
-            ;
+            ->willReturn($total);
         $this->assertEquals($islast, $tour->is_last_tour());
     }
 
@@ -964,12 +929,11 @@ class tour_test extends \advanced_testcase {
      * @param   int     $total          The number of tours
      * @param   bool    $islast         Whether this is the last tour
      */
-    public function test_is_last_tour_provided($sortorder, $isfirst, $total, $islast) {
+    public function test_is_last_tour_provided($sortorder, $isfirst, $total, $islast): void {
         $tour = new \tool_usertours\tour();
 
         $rc = new \ReflectionClass(tour::class);
         $rcp = $rc->getProperty('sortorder');
-        $rcp->setAccessible(true);
         $rcp->setValue($tour, $sortorder);
 
         // The total is provided.
@@ -977,8 +941,7 @@ class tour_test extends \advanced_testcase {
         $DB = $this->mock_database();
         $DB->expects($this->never())
             ->method('count_records')
-            ->willReturn(0)
-            ;
+            ->willReturn(0);
         $this->assertEquals($islast, $tour->is_last_tour($total));
     }
 
@@ -987,7 +950,7 @@ class tour_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_filter_values_provider() {
+    public static function get_filter_values_provider(): array {
         $cheese = ['cheddar', 'boursin', 'mozzarella'];
         $horses = ['coolie', 'dakota', 'leo', 'twiggy'];
         return [
@@ -1013,7 +976,7 @@ class tour_test extends \advanced_testcase {
             'Some config for several filters' => [
                 [
                     'horses' => $horses,
-                    'cheese' => $cheese
+                    'cheese' => $cheese,
                 ],
                 'horses',
                 $horses,
@@ -1029,7 +992,7 @@ class tour_test extends \advanced_testcase {
      * @param   string      $filtername     The name of the filter being tested
      * @param   array       $expectedvalues The expected result
      */
-    public function test_get_filter_values($fullconfig, $filtername, $expectedvalues) {
+    public function test_get_filter_values($fullconfig, $filtername, $expectedvalues): void {
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods(['get_config'])
             ->getMock();
@@ -1046,7 +1009,7 @@ class tour_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function set_filter_values_provider() {
+    public static function set_filter_values_provider(): array {
         $cheese = ['cheddar', 'boursin', 'mozzarella'];
         $horses = ['coolie', 'dakota', 'leo', 'twiggy'];
 
@@ -1087,7 +1050,7 @@ class tour_test extends \advanced_testcase {
      * @param   array       $newvalues      The new values to store
      * @param   array       $expectedvalues The combined values
      */
-    public function test_set_filter_values_merge($currentvalues, $filtername, $newvalues, $expectedvalues) {
+    public function test_set_filter_values_merge($currentvalues, $filtername, $newvalues, $expectedvalues): void {
         $tour = $this->getMockBuilder(tour::class)
             ->onlyMethods(['get_config', 'set_config'])
             ->getMock();

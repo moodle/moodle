@@ -35,6 +35,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\di;
+use core\hook\manager as hook_manager;
 use core\output\named_templatable;
 use core_completion\cm_completion_details;
 use core_course\output\activity_information;
@@ -698,32 +700,36 @@ class core_renderer extends renderer_base {
             $this->page->blocks->ensure_content_created($region, $this);
         }
 
-        $output = '';
-
         // Give plugins an opportunity to add any head elements. The callback
         // must always return a string containing valid html head content.
 
-        $hook = new \core\hook\output\standard_head_html_prepend();
-        \core\hook\manager::get_instance()->dispatch($hook);
+        $hook = new \core\hook\output\before_standard_head_html_generation($this);
+        di::get(hook_manager::class)->dispatch($hook);
         $hook->process_legacy_callbacks();
-        $output .= $hook->get_output();
 
         // Allow a url_rewrite plugin to setup any dynamic head content.
         if (isset($CFG->urlrewriteclass) && !isset($CFG->upgraderunning)) {
             $class = $CFG->urlrewriteclass;
-            $output .= $class::html_head_setup();
+            $hook->add_html($class::html_head_setup());
         }
 
-        $output .= '<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . "\n";
-        $output .= '<meta name="keywords" content="moodle, ' . $this->page->title . '" />' . "\n";
+        $hook->add_html('<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />' . "\n");
+        $hook->add_html('<meta name="keywords" content="moodle, ' . $this->page->title . '" />' . "\n");
         // This is only set by the {@link redirect()} method
-        $output .= $this->metarefreshtag;
+        $hook->add_html($this->metarefreshtag);
 
         // Check if a periodic refresh delay has been set and make sure we arn't
         // already meta refreshing
         if ($this->metarefreshtag=='' && $this->page->periodicrefreshdelay!==null) {
-            $output .= '<meta http-equiv="refresh" content="'.$this->page->periodicrefreshdelay.';url='.$this->page->url->out().'" />';
+            $hook->add_html(
+                html_writer::empty_tag('meta', [
+                    'http-equiv' => 'refresh',
+                    'content' => $this->page->periodicrefreshdelay . ';url='.$this->page->url->out(),
+                ]),
+            );
         }
+
+        $output = $hook->get_output();
 
         // Set up help link popups for all links with the helptooltip class
         $this->page->requires->js_init_call('M.util.help_popups.setup');

@@ -38,8 +38,7 @@ Feature: Display badges
     And I navigate to "Badges > Manage badges" in site administration
     And I follow "Testing system badge"
     And I select "Recipients (1)" from the "jump" singleselect
-    And I open the action menu in "Student 1" "table_row"
-    And I choose "View issued badge" in the open action menu
+    And I press "View issued badge" action in the "Student 1" report row
     Then I should see "Awarded to Student 1"
     And I should see "This badge has to be awarded by a user with the following role:"
     And I should not see "Expired"
@@ -64,8 +63,7 @@ Feature: Display badges
     And I navigate to "Badges > Manage badges" in site administration
     And I follow "Testing system badge"
     And I select "Recipients (1)" from the "jump" singleselect
-    And I open the action menu in "Student 1" "table_row"
-    And I choose "View issued badge" in the open action menu
+    And I press "View issued badge" action in the "Student 1" report row
     Then I should see "Awarded to Student 1"
     And I should see "Complete ALL of the listed requirements."
     And I should see "This badge has to be awarded by a user with the following role:"
@@ -86,8 +84,7 @@ Feature: Display badges
     And I press "Continue"
     # Check badge details are displayed.
     And I select "Recipients (2)" from the "jump" singleselect
-    And I open the action menu in "Student 1" "table_row"
-    And I choose "View issued badge" in the open action menu
+    And I press "View issued badge" action in the "Student 1" report row
     Then I should see "Awarded to Student 1"
     And I should see "Complete ANY of the listed requirements."
     And I should see "This badge has to be awarded by a user with the following role:"
@@ -115,8 +112,7 @@ Feature: Display badges
     And I navigate to "Badges > Manage badges" in site administration
     And I follow "Testing system badge"
     And I select "Recipients (1)" from the "jump" singleselect
-    And I open the action menu in "Student 1" "table_row"
-    And I choose "View issued badge" in the open action menu
+    And I press "View issued badge" action in the "Student 1" report row
     Then I should see "Expires"
     And I should not see "Expired"
 
@@ -140,7 +136,6 @@ Feature: Display badges
     And I navigate to "Badges > Manage badges" in site administration
     And I follow "Testing system badge"
     And I select "Recipients (1)" from the "jump" singleselect
-    And I open the action menu in "Student 1" "table_row"
-    And I choose "View issued badge" in the open action menu
+    And I press "View issued badge" action in the "Student 1" report row
     Then I should see "Expired"
     And I should not see "Expires"

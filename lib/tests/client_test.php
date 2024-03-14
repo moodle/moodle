@@ -109,7 +109,6 @@ class client_test extends advanced_testcase {
         ];
 
         $method = new ReflectionMethod("core\oauth2\client", "map_userinfo_to_fields");
-        $method->setAccessible(true);
 
         $issuer = new \core\oauth2\issuer(0);
         $mockbuilder = $this->getMockBuilder('core\oauth2\client');

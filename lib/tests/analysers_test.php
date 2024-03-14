@@ -57,7 +57,6 @@ class analysers_test extends \advanced_testcase {
         // Just 1 sample per course.
         $class = new \ReflectionClass('\core\analytics\analyser\courses');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $this->assertCount(1, $sampleids);
         $sampleid = reset($sampleids);
@@ -107,7 +106,6 @@ class analysers_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\site_courses');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         $this->assertCount(3, $sampleids);
 
@@ -159,7 +157,6 @@ class analysers_test extends \advanced_testcase {
 
         $class = new \ReflectionClass('\core\analytics\analyser\student_enrolments');
         $method = $class->getMethod('get_all_samples');
-        $method->setAccessible(true);
         list($sampleids, $samplesdata) = $method->invoke($analyser, $analysable);
         // Only students.
         $this->assertCount(2, $sampleids);

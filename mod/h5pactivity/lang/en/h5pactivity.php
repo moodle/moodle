@@ -80,7 +80,7 @@ $string['grade_highest_attempt'] = 'Highest grade';
 $string['grade_average_attempt'] = 'Average grade';
 $string['grade_last_attempt'] = 'Last attempt';
 $string['grade_first_attempt'] = 'First attempt';
-$string['grade_h5p'] = 'Grade: {$a}';
+$string['gradenoun_h5p'] = 'Grade: {$a}';
 $string['h5pactivity:addinstance'] = 'Add a new H5P';
 $string['h5pactivity:reviewattempts'] = 'Review H5P attempts';
 $string['h5pactivity:submit'] = 'Submit H5P attempts';
@@ -148,3 +148,6 @@ $string['usecontentbank'] = 'Use the <a href="{$a}" target="_blank">content bank
 $string['view'] = 'View';
 $string['viewattempts'] = 'View attempts ({$a})';
 $string['view_report'] = 'View report';
+
+// Deprecated since Moodle 4.4.
+$string['grade_h5p'] = 'Grade: {$a}';

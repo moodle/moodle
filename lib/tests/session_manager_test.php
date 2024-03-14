@@ -916,7 +916,6 @@ class session_manager_test extends \advanced_testcase {
     public function test_array_session_diff(array $a, array $b, array $expected) {
         $class = new \ReflectionClass('\core\session\manager');
         $method = $class->getMethod('array_session_diff');
-        $method->setAccessible(true);
 
         $result = $method->invokeArgs(null, [$a, $b]);
         $this->assertSame($expected, $result);

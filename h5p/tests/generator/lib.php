@@ -554,7 +554,6 @@ class core_h5p_generator extends \component_generator_base {
         // Call the method. We need the id of the new H5P content.
         $rc = new \ReflectionClass(player::class);
         $rcp = $rc->getProperty('h5pid');
-        $rcp->setAccessible(true);
         $h5pid = $rcp->getValue($h5pplayer);
 
         // Get the info export file.

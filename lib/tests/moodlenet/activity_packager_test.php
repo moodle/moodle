@@ -54,10 +54,8 @@ class activity_packager_test extends \advanced_testcase {
         // Fetch all backup task settings.
         $rc = new \ReflectionClass(activity_packager::class);
         $rcmgetbackup = $rc->getMethod('get_backup_controller');
-        $rcmgetbackup->setAccessible(true);
         $controller = $rcmgetbackup->invoke($packager);
         $rcmgetall = $rc->getMethod('get_all_task_settings');
-        $rcmgetall->setAccessible(true);
         $tasksettings = $rcmgetall->invoke($packager, $controller);
 
         // Fetch the default settings and grab an example value (setting_root_users).
@@ -80,7 +78,6 @@ class activity_packager_test extends \advanced_testcase {
         // Override the setting_root_users value, then re-fetch the settings to check the change is reflected.
         $overridevalue = ($oldvalue == 1) ? 0 : 1;
         $rcmoverridesetting = $rc->getMethod('override_task_setting');
-        $rcmoverridesetting->setAccessible(true);
         $rcmoverridesetting->invoke($packager, $tasksettings, $testsettingname, $overridevalue);
         $tasksettings = $rcmgetall->invoke($packager, $controller);
         $rootsettings = $tasksettings[\backup_root_task::class];

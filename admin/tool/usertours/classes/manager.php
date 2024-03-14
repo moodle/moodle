@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tour manager.
- *
- * @package    tool_usertours
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_usertours;
-
-defined('MOODLE_INTERNAL') || die();
 
 use tool_usertours\local\forms;
 use tool_usertours\local\table;
@@ -33,11 +23,11 @@ use core\notification;
 /**
  * Tour manager.
  *
+ * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class manager {
-
     /**
      * @var ACTION_LISTTOURS      The action to get the list of tours.
      */
@@ -163,7 +153,7 @@ class manager {
         $PAGE->set_primary_active_tab('siteadminnode');
 
         // Add the main content.
-        switch($action) {
+        switch ($action) {
             case self::ACTION_NEWTOUR:
             case self::ACTION_EDITTOUR:
                 $this->edit_tour(optional_param('id', null, PARAM_INT));
@@ -356,7 +346,6 @@ class manager {
         if ($id) {
             $tour = tour::instance($id);
             $PAGE->navbar->add(helper::get_string_from_input($tour->get_name()), $tour->get_edit_link());
-
         } else {
             $tour = new tour();
             $PAGE->navbar->add(get_string('newtour', 'tool_usertours'), $tour->get_edit_link());
@@ -374,6 +363,7 @@ class manager {
             $tour->set_enabled(!empty($data->enabled));
             $tour->set_endtourlabel($data->endtourlabel);
             $tour->set_display_step_numbers(!empty($data->displaystepnumbers));
+            $tour->set_showtourwhen($data->showtourwhen);
 
             foreach (configuration::get_defaultable_keys() as $key) {
                 $tour->set_config($key, $data->$key);
@@ -403,6 +393,7 @@ class manager {
                 foreach (helper::get_all_filters() as $filterclass) {
                     $filterclass::prepare_filter_values_for_form($tour, $data);
                 }
+
                 $form->set_data($data);
             }
 
@@ -568,7 +559,7 @@ class manager {
 
         require_sesskey();
 
-        $tour = $DB->get_record('tool_usertours_tours', array('id' => $tourid));
+        $tour = $DB->get_record('tool_usertours_tours', ['id' => $tourid]);
         $tour->enabled = $visibility;
         $DB->update_record('tool_usertours_tours', $tour);
 
@@ -784,9 +775,10 @@ class manager {
      */
     protected static function _move_tour(tour $tour, $direction) {
         // We can't move the first tour higher, nor the last tour any lower.
-        if (($tour->is_first_tour() && $direction == helper::MOVE_UP) ||
-                ($tour->is_last_tour() && $direction == helper::MOVE_DOWN)) {
-
+        if (
+            ($tour->is_first_tour() && $direction == helper::MOVE_UP) ||
+                ($tour->is_last_tour() && $direction == helper::MOVE_DOWN)
+        ) {
             return;
         }
 

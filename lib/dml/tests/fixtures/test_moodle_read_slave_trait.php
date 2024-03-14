@@ -53,7 +53,6 @@ trait test_moodle_read_slave_trait {
         $this->prefix = 'test_'; // Default, not to leave empty.
 
         $rcp = new ReflectionProperty(parent::class, 'wantreadslave');
-        $rcp->setAccessible(true);
         $rcp->setValue($this, true);
 
         $this->dbhwrite = $rw;

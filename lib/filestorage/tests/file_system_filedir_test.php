@@ -218,7 +218,6 @@ class file_system_filedir_test extends \advanced_testcase {
             ->willReturn($expectedresult);
 
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_remote_path_from_hash');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, [$contenthash]);
 
         $this->assertEquals($expectedresult, $result);
@@ -294,7 +293,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_fulldir_from_hash');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($hash));
 
         $expectedpath = sprintf('%s/filedir/%s', $CFG->dataroot, $hashdir);
@@ -326,7 +324,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod('file_system_filedir', 'get_fulldir_from_storedfile');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         $expectedpath = sprintf('%s/filedir/%s', $CFG->dataroot, $hashdir);
@@ -345,7 +342,6 @@ class file_system_filedir_test extends \advanced_testcase {
      */
     public function test_get_contentdir_from_hash($hash, $hashdir) {
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_contentdir_from_hash');
-        $method->setAccessible(true);
 
         $fs = new file_system_filedir();
         $result = $method->invokeArgs($fs, array($hash));
@@ -365,7 +361,6 @@ class file_system_filedir_test extends \advanced_testcase {
      */
     public function test_get_contentpath_from_hash($hash, $hashdir) {
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_contentpath_from_hash');
-        $method->setAccessible(true);
 
         $fs = new file_system_filedir();
         $result = $method->invokeArgs($fs, array($hash));
@@ -389,7 +384,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_trash_fullpath_from_hash');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($hash));
 
         $expectedpath = sprintf('%s/trashdir/%s/%s', $CFG->dataroot, $hashdir, $hash);
@@ -411,7 +405,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'get_trash_fulldir_from_hash');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($hash));
 
         $expectedpath = sprintf('%s/trashdir/%s', $CFG->dataroot, $hashdir);
@@ -486,7 +479,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -526,7 +518,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -564,7 +555,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -601,7 +591,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -635,7 +624,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -675,7 +663,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'recover_file');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($fs, array($file));
 
         // Test the output.
@@ -1092,7 +1079,6 @@ class file_system_filedir_test extends \advanced_testcase {
 
         $fs = new file_system_filedir();
         $method = new \ReflectionMethod(file_system_filedir::class, 'empty_trash');
-        $method->setAccessible(true);
         $result = $method->invoke($fs);
 
         $this->assertTrue($vfileroot->hasChild('filedir/0f/f3/' . $contenthash));

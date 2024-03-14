@@ -207,7 +207,6 @@ class server_test extends \advanced_testcase {
      */
     public function test_xmlize($description, $value, $expected) {
         $method = new \ReflectionMethod('webservice_rest_server', 'xmlize_result');
-        $method->setAccessible(true);
         $this->assertEquals($expected, $method->invoke(null, $value, $description));
     }
 

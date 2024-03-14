@@ -54,7 +54,6 @@ class base_send_notification_test extends advanced_testcase {
 
         $rc = new \ReflectionClass(base_send_notification::class);
         $rcm = $rc->getMethod('get_instance');
-        $rcm->setAccessible(true);
         $instance = $rcm->invoke($stub);
 
         $this->assertEquals($instancedata->id, $instance->get_instance_id());

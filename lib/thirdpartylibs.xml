@@ -155,7 +155,7 @@
     <location>phpmailer</location>
     <name>PHPMailer</name>
     <description>Class for sending email using either sendmail, PHP mail(), or SMTP. Methods are based upon the standard AspEmail(tm) classes.</description>
-    <version>6.8.0</version>
+    <version>6.9.1</version>
     <license>LGPL</license>
     <licenseversion>2.1</licenseversion>
     <repository>https://github.com/PHPMailer/PHPMailer</repository>
@@ -365,7 +365,7 @@ All rights reserved.</copyright>
     <location>openspout</location>
     <name>OpenSpout</name>
     <description>Library to read and write spreadsheet files (CSV, XLSX and ODS).</description>
-    <version>4.15.0</version>
+    <version>4.23.0</version>
     <license>MIT</license>
     <repository>https://github.com/openspout/openspout</repository>
     <copyrights>

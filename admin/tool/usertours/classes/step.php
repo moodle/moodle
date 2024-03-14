@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace tool_usertours;
+
+use context_system;
+use stdClass;
+
 /**
  * Step class.
  *
@@ -21,22 +26,7 @@
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-namespace tool_usertours;
-
-use context_system;
-use stdClass;
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Step class.
- *
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 class step {
-
     /**
      * @var     int     $id         The id of the step.
      */
@@ -137,7 +127,7 @@ class step {
         global $DB;
 
         return $this->reload_from_record(
-            $DB->get_record('tool_usertours_steps', array('id' => $id))
+            $DB->get_record('tool_usertours_steps', ['id' => $id])
         );
     }
 
@@ -414,7 +404,7 @@ class step {
      */
     public function get_config($key = null, $default = null) {
         if ($this->config === null) {
-            $this->config = (object) array();
+            $this->config = (object) [];
         }
 
         if ($key === null) {
@@ -448,7 +438,7 @@ class step {
      */
     public function set_config($key, $value) {
         if ($this->config === null) {
-            $this->config = (object) array();
+            $this->config = (object) [];
         }
 
         if ($value === null) {
@@ -497,7 +487,7 @@ class step {
                 'name' => $file->get_filename(),
                 'path' => $file->get_filepath(),
                 'content' => base64_encode($file->get_content()),
-                'encode' => 'base64'
+                'encode' => 'base64',
             ];
         }
 
@@ -635,7 +625,7 @@ class step {
             return;
         }
 
-        $DB->delete_records('tool_usertours_steps', array('id' => $this->id));
+        $DB->delete_records('tool_usertours_steps', ['id' => $this->id]);
         $this->get_tour()->reset_step_sortorder();
 
         // Notify of a change to the step configuration.
@@ -817,15 +807,19 @@ class step {
             return $content;
         }
 
-        $content = preg_replace_callback('%@@PIXICON::(?P<identifier>([^::]*))::(?P<component>([^@@]*))@@%',
-            function(array $matches) {
+        $content = preg_replace_callback(
+            '%@@PIXICON::(?P<identifier>([^::]*))::(?P<component>([^@@]*))@@%',
+            function (array $matches) {
                 global $OUTPUT;
                 $component = $matches['component'];
                 if ($component == 'moodle') {
                     $component = 'core';
                 }
-                return \html_writer::img($OUTPUT->image_url($matches['identifier'], $component)->out(false), '',
-                    ['class' => 'img-fluid']);
+                return \html_writer::img(
+                    $OUTPUT->image_url($matches['identifier'], $component)->out(false),
+                    '',
+                    ['class' => 'img-fluid']
+                );
             },
             $content
         );

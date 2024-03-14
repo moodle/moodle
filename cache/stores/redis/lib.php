@@ -851,7 +851,6 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         if (!empty($config->test_ttl)) {
             $definition = clone $definition;
             $property = (new ReflectionClass($definition))->getProperty('ttl');
-            $property->setAccessible(true);
             $property->setValue($definition, 999);
         }
         $cache = new cachestore_redis('Redis test', $configuration);

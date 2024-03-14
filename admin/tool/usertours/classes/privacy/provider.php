@@ -14,25 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Privacy Subsystem implementation for tool_usertours.
- *
- * @package    tool_usertours
- * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_usertours\privacy;
 
-use \core_privacy\local\request\writer;
-use \core_privacy\local\metadata\collection;
-use \core_privacy\local\request\transform;
-
-defined('MOODLE_INTERNAL') || die();
+use core_privacy\local\request\writer;
+use core_privacy\local\metadata\collection;
+use core_privacy\local\request\transform;
 
 /**
  * Implementation of the privacy subsystem plugin provider for the user tours feature.
  *
+ * @package    tool_usertours
  * @copyright  2018 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -41,9 +32,7 @@ class provider implements
     \core_privacy\local\metadata\provider,
 
     // This plugin has some sitewide user preferences to export.
-    \core_privacy\local\request\user_preference_provider
-{
-
+    \core_privacy\local\request\user_preference_provider {
     /**
      * Returns meta data about this system.
      *

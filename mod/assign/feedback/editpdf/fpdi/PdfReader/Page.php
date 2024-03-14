@@ -4,21 +4,27 @@
  * This file is part of FPDI
  *
  * @package   setasign\Fpdi
- * @copyright Copyright (c) 2020 Setasign GmbH & Co. KG (https://www.setasign.com)
+ * @copyright Copyright (c) 2023 Setasign GmbH & Co. KG (https://www.setasign.com)
  * @license   http://opensource.org/licenses/mit-license The MIT License
  */
 
 namespace setasign\Fpdi\PdfReader;
 
+use setasign\Fpdi\FpdiException;
+use setasign\Fpdi\GraphicsState;
+use setasign\Fpdi\Math\Vector;
 use setasign\Fpdi\PdfParser\Filter\FilterException;
 use setasign\Fpdi\PdfParser\PdfParser;
 use setasign\Fpdi\PdfParser\PdfParserException;
 use setasign\Fpdi\PdfParser\Type\PdfArray;
 use setasign\Fpdi\PdfParser\Type\PdfDictionary;
+use setasign\Fpdi\PdfParser\Type\PdfHexString;
 use setasign\Fpdi\PdfParser\Type\PdfIndirectObject;
+use setasign\Fpdi\PdfParser\Type\PdfName;
 use setasign\Fpdi\PdfParser\Type\PdfNull;
 use setasign\Fpdi\PdfParser\Type\PdfNumeric;
 use setasign\Fpdi\PdfParser\Type\PdfStream;
+use setasign\Fpdi\PdfParser\Type\PdfString;
 use setasign\Fpdi\PdfParser\Type\PdfType;
 use setasign\Fpdi\PdfParser\Type\PdfTypeException;
 use setasign\Fpdi\PdfReader\DataStructure\Rectangle;
@@ -83,7 +89,7 @@ class Page
      */
     public function getPageDictionary()
     {
-        if (null === $this->pageDictionary) {
+        if ($this->pageDictionary === null) {
             $this->pageDictionary = PdfDictionary::ensure(PdfType::resolve($this->getPageObject(), $this->parser));
         }
 
@@ -155,7 +161,7 @@ class Page
     public function getRotation()
     {
         $rotation = $this->getAttribute('Rotate');
-        if (null === $rotation) {
+        if ($rotation === null) {
             return 0;
         }
 
@@ -267,5 +273,148 @@ class Page
             'Array or stream expected.',
             PdfReaderException::UNEXPECTED_DATA_TYPE
         );
+    }
+
+    /**
+     * Get information of all external links on this page.
+     *
+     * All coordinates are normalized in view to rotation and translation of the boundary-box, so that their
+     * origin is lower-left.
+     *
+     * @return array
+     */
+    public function getExternalLinks($box = PageBoundaries::CROP_BOX)
+    {
+        try {
+            $dict = $this->getPageDictionary();
+            $annotations = PdfType::resolve(PdfDictionary::get($dict, 'Annots'), $this->parser);
+        } catch (FpdiException $e) {
+            return [];
+        }
+
+        if (!$annotations instanceof PdfArray) {
+            return [];
+        }
+
+        $links = [];
+
+        foreach ($annotations->value as $entry) {
+            try {
+                $annotation = PdfType::resolve($entry, $this->parser);
+
+                $value = PdfType::resolve(PdfDictionary::get($annotation, 'Subtype'), $this->parser);
+                if (!$value instanceof PdfName || $value->value !== 'Link') {
+                    continue;
+                }
+
+                $dest = PdfType::resolve(PdfDictionary::get($annotation, 'Dest'), $this->parser);
+                if (!$dest instanceof PdfNull) {
+                    continue;
+                }
+
+                $action = PdfType::resolve(PdfDictionary::get($annotation, 'A'), $this->parser);
+                if (!$action instanceof PdfDictionary) {
+                    continue;
+                }
+
+                $actionType = PdfType::resolve(PdfDictionary::get($action, 'S'), $this->parser);
+                if (!$actionType instanceof PdfName || $actionType->value !== 'URI') {
+                    continue;
+                }
+
+                $uri = PdfType::resolve(PdfDictionary::get($action, 'URI'), $this->parser);
+                if ($uri instanceof PdfString) {
+                    $uriValue = PdfString::unescape($uri->value);
+                } elseif ($uri instanceof PdfHexString) {
+                    $uriValue = \hex2bin($uri->value);
+                } else {
+                    continue;
+                }
+
+                $rect = PdfType::resolve(PdfDictionary::get($annotation, 'Rect'), $this->parser);
+                if (!$rect instanceof PdfArray || count($rect->value) !== 4) {
+                    continue;
+                }
+
+                $rect = Rectangle::byPdfArray($rect, $this->parser);
+                if ($rect->getWidth() === 0 || $rect->getHeight() === 0) {
+                    continue;
+                }
+
+                $bbox = $this->getBoundary($box);
+                $rotation = $this->getRotation();
+
+                $gs = new GraphicsState();
+                $gs->translate(-$bbox->getLlx(), -$bbox->getLly());
+                $gs->rotate($bbox->getLlx(), $bbox->getLly(), -$rotation);
+
+                switch ($rotation) {
+                    case 90:
+                        $gs->translate(-$bbox->getWidth(), 0);
+                        break;
+                    case 180:
+                        $gs->translate(-$bbox->getWidth(), -$bbox->getHeight());
+                        break;
+                    case 270:
+                        $gs->translate(0, -$bbox->getHeight());
+                        break;
+                }
+
+                $normalizedRect = Rectangle::byVectors(
+                    $gs->toUserSpace(new Vector($rect->getLlx(), $rect->getLly())),
+                    $gs->toUserSpace(new Vector($rect->getUrx(), $rect->getUry()))
+                );
+
+                $quadPoints = PdfType::resolve(PdfDictionary::get($annotation, 'QuadPoints'), $this->parser);
+                $normalizedQuadPoints = [];
+                if ($quadPoints instanceof PdfArray) {
+                    $quadPointsCount = count($quadPoints->value);
+                    if ($quadPointsCount % 8 === 0) {
+                        for ($i = 0; ($i + 1) < $quadPointsCount; $i += 2) {
+                            $x = PdfNumeric::ensure(PdfType::resolve($quadPoints->value[$i], $this->parser));
+                            $y = PdfNumeric::ensure(PdfType::resolve($quadPoints->value[$i + 1], $this->parser));
+
+                            $v = $gs->toUserSpace(new Vector($x->value, $y->value));
+                            $normalizedQuadPoints[] = $v->getX();
+                            $normalizedQuadPoints[] = $v->getY();
+                        }
+                    }
+                }
+
+                // we remove unsupported/unneeded values here
+                unset(
+                    $annotation->value['P'],
+                    $annotation->value['NM'],
+                    $annotation->value['AP'],
+                    $annotation->value['AS'],
+                    $annotation->value['Type'],
+                    $annotation->value['Subtype'],
+                    $annotation->value['Rect'],
+                    $annotation->value['A'],
+                    $annotation->value['QuadPoints'],
+                    $annotation->value['Rotate'],
+                    $annotation->value['M'],
+                    $annotation->value['StructParent'],
+                    $annotation->value['OC']
+                );
+
+                // ...and flatten the PDF object to eliminate any indirect references.
+                // Indirect references are a problem when writing the output in FPDF
+                // because FPDF uses pre-calculated object numbers while FPDI creates
+                // them at runtime.
+                $annotation = PdfType::flatten($annotation, $this->parser);
+
+                $links[] = [
+                    'rect' => $normalizedRect,
+                    'quadPoints' => $normalizedQuadPoints,
+                    'uri' => $uriValue,
+                    'pdfObject' => $annotation
+                ];
+            } catch (FpdiException $e) {
+                continue;
+            }
+        }
+
+        return $links;
     }
 }

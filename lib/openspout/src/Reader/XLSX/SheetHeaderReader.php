@@ -18,16 +18,16 @@ final class SheetHeaderReader
     public const XML_ATTRIBUTE_WIDTH = 'width';
 
     /** @var string Path of the XLSX file being read */
-    private string $filePath;
+    private readonly string $filePath;
 
     /** @var string Path of the sheet data XML file as in [Content_Types].xml */
-    private string $sheetDataXMLFilePath;
+    private readonly string $sheetDataXMLFilePath;
 
     /** @var XMLReader The XMLReader object that will help read sheet's XML data */
-    private XMLReader $xmlReader;
+    private readonly XMLReader $xmlReader;
 
     /** @var XMLProcessor Helper Object to process XML nodes */
-    private XMLProcessor $xmlProcessor;
+    private readonly XMLProcessor $xmlProcessor;
 
     /** @var ColumnWidth[] The widths of the columns in the sheet, if specified */
     private array $columnWidths = [];

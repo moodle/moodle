@@ -2079,7 +2079,6 @@ class expired_contexts_test extends \advanced_testcase {
         $rc = new \ReflectionClass(\tool_dataprivacy\expired_contexts_manager::class);
         $rcm = $rc->getMethod('get_progress');
 
-        $rcm->setAccessible(true);
         $this->assertInstanceOf(\text_progress_trace::class, $rcm->invoke($manager));
     }
 
@@ -2094,7 +2093,6 @@ class expired_contexts_test extends \advanced_testcase {
         $rc = new \ReflectionClass(\tool_dataprivacy\expired_contexts_manager::class);
         $rcm = $rc->getMethod('get_progress');
 
-        $rcm->setAccessible(true);
         $this->assertSame($mytrace, $rcm->invoke($manager));
     }
 

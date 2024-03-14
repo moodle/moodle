@@ -1,4 +1,4 @@
-VideoJS 8.3.0
+VideoJS 8.10.0
 --------------
 https://github.com/videojs/video.js
 
@@ -16,7 +16,7 @@ Instructions to import VideoJS player into Moodle:
 6. copy 'lang/' into 'videojs/' subfolder (so the result will be media/player/videojs/videojs/lang).
 
 Import plugins:
-YouTube Playback Technology for VideoJS 3.0.0
+YouTube Playback Technology for VideoJS 3.0.1
 ---------------------------------------------
 https://github.com/videojs/videojs-youtube
 

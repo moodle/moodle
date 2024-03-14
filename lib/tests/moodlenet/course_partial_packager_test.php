@@ -51,11 +51,9 @@ class course_partial_packager_test extends \advanced_testcase {
         // Fetch all backup task settings.
         $rc = new \ReflectionClass(course_partial_packager::class);
         $rcmgetbackup = $rc->getMethod('get_backup_controller');
-        $rcmgetbackup->setAccessible(true);
         $controller = $rcmgetbackup->invoke($packager);
 
         $rcmremove = $rc->getMethod('remove_unselected_activities');
-        $rcmremove->setAccessible(true);
         $rcmremove->invoke($packager, $controller);
 
         // Fetch all backup task settings for asserting them.

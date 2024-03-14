@@ -38,7 +38,6 @@ use tool_usertours\step as stepsource;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class step implements \renderable {
-
     /**
      * @var The step instance.
      */
@@ -65,8 +64,14 @@ class step implements \renderable {
 
         $content = $step->get_content();
         $systemcontext = \context_system::instance();
-        $content = file_rewrite_pluginfile_urls($content, 'pluginfile.php', $systemcontext->id,
-            'tool_usertours', 'stepcontent', $step->get_id());
+        $content = file_rewrite_pluginfile_urls(
+            $content,
+            'pluginfile.php',
+            $systemcontext->id,
+            'tool_usertours',
+            'stepcontent',
+            $step->get_id()
+        );
 
         $content = helper::get_string_from_input($content);
         $content = $step::get_step_image_from_input($content);
@@ -74,17 +79,17 @@ class step implements \renderable {
         $result = (object) [
             'stepid'    => $step->get_id(),
             'title'     => \core_external\util::format_text(
-                    helper::get_string_from_input($step->get_title()),
-                    FORMAT_HTML,
-                    $PAGE->context->id,
-                    'tool_usertours'
-                )[0],
+                helper::get_string_from_input($step->get_title()),
+                FORMAT_HTML,
+                $PAGE->context->id,
+                'tool_usertours'
+            )[0],
             'content'   => \core_external\util::format_text(
-                    $content,
-                    $step->get_contentformat(),
-                    $PAGE->context->id,
-                    'tool_usertours'
-                )[0],
+                $content,
+                $step->get_contentformat(),
+                $PAGE->context->id,
+                'tool_usertours'
+            )[0],
             'element'   => $step->get_target()->convert_to_css(),
         ];
 

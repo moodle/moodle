@@ -37,9 +37,9 @@ information provided here is intended especially for developers.
     - get_attempts_available(): Used to get the number of attempts available for the task.
 * There is a new DML method $DB->get_fieldset. For some reason, this did not exist even though get_fieldset_select etc. did.
 * The following callbacks have been migrated to hooks:
-  - before_standard_html_head() -> core\hook\output\standard_head_html_prepend
+  - before_standard_html_head() -> core\hook\output\before_standard_head_html_generation
 * Deprecated PARAM_ types with the exception of PARAM_CLEAN now emit a deprecation exception. These were all deprecated in Moodle 2.0.
-* A new \core\deprecated attribute can be used to more clearly describe deprecated methods.
+* A new \core\attribute\deprecated attribute can be used to more clearly describe deprecated methods.
 * A new \core\deprecation class can be used to inspect for deprecated attributes:
   - `\core\deprecation::is_deprecated(example::class);`
   - `\core\deprecation::emit_deprecation_if_present([self::class, 'some_method']);`
@@ -76,6 +76,20 @@ information provided here is intended especially for developers.
   as an alternative to implementing the \core\hook\described_hook interface.
 * The hook API now supports the use of the new \core\attribute\hook\replaces_callbacks() attribute
   as an alternative to implementing the \core\hook\deprecated_callback_replacement interface.
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `question_preview_url`
+  - `question_preview_popup_params`
+  - `question_hash`
+  - `question_make_export_url`
+  - `question_get_export_single_question_url`
+  - `question_remove_stale_questions_from_category`
+  - `flatten_category_tree`
+  - `add_indented_names`
+  - `question_category_select_menu`
+  - `get_categories_for_contexts`
+  - `question_category_options`
+  - `question_add_context_in_key`
+  - `question_fix_top_names`
 
 === 4.3 ===
 

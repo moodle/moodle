@@ -568,7 +568,6 @@ class contentbank_test extends advanced_testcase {
 
             // Replace protected singletoninstance reference (core_plugin_manager property) with mock object.
             $ref = new \ReflectionProperty(\core_plugin_manager::class, 'singletoninstance');
-            $ref->setAccessible(true);
             $ref->setValue(null, $pluginmanager);
 
             // Return values of get_plugins_of_type method.
@@ -592,7 +591,6 @@ class contentbank_test extends advanced_testcase {
             // Get access to private property enabledcontenttypes.
             $rc = new \ReflectionClass(\core_contentbank\contentbank::class);
             $rcp = $rc->getProperty('enabledcontenttypes');
-            $rcp->setAccessible(true);
 
             foreach ($contenttypesenabled as $contenttypename) {
                 $plugins["\\contenttype_$contenttypename\\contenttype"] = $contenttypename;

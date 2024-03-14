@@ -168,7 +168,6 @@ class locallib_participants_test extends \advanced_testcase {
 
         $rc = new \ReflectionClass('assign');
         $rcm = $rc->getMethod('update_submission');
-        $rcm->setAccessible(true);
         $rcm->invokeArgs($assign, [$submission, $user->id, true, false]);
 
         $plugin = $assign->get_submission_plugin_by_type($type);

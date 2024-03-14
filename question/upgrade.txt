@@ -1,5 +1,42 @@
 This files describes API changes for code that uses the question API.
 
+=== 4.4 ===
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `submit_tags_form`
+  - `get_bulk_action_key`
+  - `preview_question_url`
+  - `process_actions`
+  - `process_actions_needing_ui`
+  - `question_is_only_child_of_top_category_in_context`
+  - `question_is_top_category`
+  - `question_can_delete_cat`
+  - `print_choose_qtype_to_add_form`
+  - `create_new_question_button`
+  - `question_preview_link`
+  - `core_question_output_fragment_tags_form`
+  - `render_qbank_chooser`
+  - `qbank_chooser`
+  - `qbank_chooser_types`
+  - `qbank_chooser_qtype`
+  - `qbank_chooser_title`
+
+* The following previously deprecated files have been removed and can no longer be used:
+  - `question/amd/src/edit_tags.js`
+  - `question/amd/src/repository.js`
+  - `question/amd/src/selectors.js`
+  - `question/category_class.php`
+  - `question/category_form.php`
+  - `question/export_form.php`
+  - `question/import_form.php`
+  - `question/move_form.php`
+  - `question/previewlib.php`
+  - `question/yui/src/preview/js/preview.js`
+
+* The following previously deprecated JS functions have been removed and can no longer be used:
+  - `M.core_scroll_manager.scroll_to_saved_pos`
+  - `M.core_question_engine.init_form`
+  - `M.core_question_engine.prevent_repeat_submission`
+
 === 4.3 ===
 
 1) The core_question_generator::update_question has been changed so that it no longer modifies the $question

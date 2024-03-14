@@ -14,35 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for helper.
- *
- * @package    tool_usertours
- * @copyright  2022 Huong Nguyen <huongnv13@gmail.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_usertours;
 
 use advanced_testcase;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Tests for helper.
  *
  * @package    tool_usertours
  * @copyright  2022 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers   \tool_usertours\helper
  */
 class helper_test extends advanced_testcase {
-
     /**
      * Data Provider for get_string_from_input.
      *
      * @return array
      */
-    public function get_string_from_input_provider(): array {
+    public static function get_string_from_input_provider(): array {
         return [
             'Text'  => [
                 'example',
@@ -78,7 +68,7 @@ class helper_test extends advanced_testcase {
      * @param string $string The string to test
      * @param string $expected The expected result
      */
-    public function test_get_string_from_input($string, $expected) {
+    public function test_get_string_from_input($string, $expected): void {
         $this->assertEquals($expected, helper::get_string_from_input($string));
     }
 }

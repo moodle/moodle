@@ -36,6 +36,9 @@ $string['description_help'] = 'The description of a tour may be added as plain t
 Alternatively, a language string ID may be entered in the format identifier,component (with no brackets or space after the comma).';
 $string['displaystepnumbers'] = 'Display step numbers';
 $string['displaystepnumbers_help'] = 'Whether to display a step number count e.g. 1/4, 2/4 etc. to indicate the length of the user tour.';
+$string['showtourwhen'] = 'Show tour';
+$string['showtoureachtime'] = 'each time a filter matches it';
+$string['showtouruntilcomplete'] = 'until it has been closed';
 $string['confirmstepremovalquestion'] = 'Are you sure that you wish to remove this step?';
 $string['confirmstepremovaltitle'] = 'Confirm step removal';
 $string['confirmtourremovalquestion'] = 'Are you sure that you wish to remove this tour?';

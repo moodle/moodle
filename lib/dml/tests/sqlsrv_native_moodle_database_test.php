@@ -125,10 +125,8 @@ class sqlsrv_native_moodle_database_test extends \advanced_testcase {
         $reflector = new \ReflectionObject($sqlsrv);
 
         $method = $reflector->getMethod('add_no_lock_to_temp_tables');
-        $method->setAccessible(true);
 
         $temptablesproperty = $reflector->getProperty('temptables');
-        $temptablesproperty->setAccessible(true);
         $temptables = new temptables_tester();
 
         $temptablesproperty->setValue($sqlsrv, $temptables);
@@ -252,7 +250,6 @@ EOT
 
         // The has_query_order_by static method is protected. Use Reflection to call the method.
         $method = new \ReflectionMethod('sqlsrv_native_moodle_database', 'has_query_order_by');
-        $method->setAccessible(true);
         $result = $method->invoke(null, $sql);
         $this->assertSame($expectedresult, $result);
     }

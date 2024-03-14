@@ -154,7 +154,6 @@ class factor_test extends \advanced_testcase {
 
         // Check verification code.
         $rcm = $rc->getMethod('check_verification_code');
-        $rcm->setAccessible(true);
         $this->assertTrue($rcm->invoke($smsfactor, $secretcode));
 
         // Test that calling the revoke on the generic type revokes all.

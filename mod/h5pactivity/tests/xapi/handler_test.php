@@ -421,7 +421,6 @@ class handler_test extends \advanced_testcase {
         $handler = handler::create($component);
         // Change the method visibility for validate_state in order to test it.
         $method = new \ReflectionMethod(handler::class, 'validate_state');
-        $method->setAccessible(true);
 
         // The activity id should be numeric.
         $state = test_helper::create_state(['activity' => item_activity::create_from_id('AA')]);

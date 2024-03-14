@@ -89,7 +89,6 @@ class pgsql_native_moodle_database_test extends \advanced_testcase {
         global $DB;
         $reflector = new ReflectionClass($DB);
         $property = $reflector->getProperty('inorequaluniqueindex');
-        $property->setAccessible(true);
         return (int) $property->getValue($DB);
     }
 
@@ -390,7 +389,6 @@ class pgsql_native_moodle_database_test extends \advanced_testcase {
 
         $reflector = new ReflectionClass($db2);
         $rp = $reflector->getProperty('pgsql');
-        $rp->setAccessible(true);
         return $rp->getValue($db2);
     }
 

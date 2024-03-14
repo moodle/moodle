@@ -3347,7 +3347,6 @@ function data_presets_generate_xml($course, $cm, $data) {
     $preset = preset::create_from_instance($manager, $data->name);
     $reflection = new \ReflectionClass(preset::class);
     $method = $reflection->getMethod('generate_preset_xml');
-    $method->setAccessible(true);
     return $method->invokeArgs($preset, []);
 }
 

@@ -72,7 +72,6 @@ class category_hooks_test extends \advanced_testcase {
         // This is used to overcome private constructor.
         $reflected = new \ReflectionClass(\core_course_category::class);
         $constructor = $reflected->getConstructor();
-        $constructor->setAccessible(true);
         $constructor->invoke($mockcategory, $category->get_db_record());
 
         return $mockcategory;

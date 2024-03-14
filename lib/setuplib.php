@@ -958,7 +958,13 @@ function initialise_fullme() {
                 throw new moodle_exception('requirecorrectaccess', 'error', '', null,
                     'You called ' . $calledurl .', you should have called ' . $correcturl);
             }
-            redirect($CFG->wwwroot . $rurl['fullpath'], get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
+            $rfullpath = $rurl['fullpath'];
+            // Check that URL is under $CFG->wwwroot.
+            if (strpos($rfullpath, $wwwroot['path']) === 0) {
+                $rfullpath = substr($rurl['fullpath'], strlen($wwwroot['path']) - 1);
+                $rfullpath = (new moodle_url($rfullpath))->out(false);
+            }
+            redirect($rfullpath, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
         }
     }
 
@@ -1492,7 +1498,7 @@ function disable_output_buffering() {
  */
 function is_major_upgrade_required() {
     global $CFG;
-    $lastmajordbchanges = 2022101400.03; // This should be the version where the breaking changes happen.
+    $lastmajordbchanges = 2024010400.00; // This should be the version where the breaking changes happen.
 
     $required = empty($CFG->version);
     $required = $required || (float)$CFG->version < $lastmajordbchanges;

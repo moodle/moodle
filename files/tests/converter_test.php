@@ -223,7 +223,6 @@ class converter_test extends advanced_testcase {
         $converter->method('get_enabled_plugins')->willReturn([]);
 
         $method = new ReflectionMethod(\core_files\converter::class, 'get_document_converter_classes');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($converter, ['docx', 'pdf']);
         $this->assertEmpty($result);
     }
@@ -238,7 +237,6 @@ class converter_test extends advanced_testcase {
             ]);
 
         $method = new ReflectionMethod(\core_files\converter::class, 'get_document_converter_classes');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($converter, ['docx', 'pdf']);
         $this->assertEmpty($result);
     }
@@ -257,7 +255,6 @@ class converter_test extends advanced_testcase {
             ]);
 
         $method = new ReflectionMethod(\core_files\converter::class, 'get_document_converter_classes');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($converter, ['docx', 'pdf']);
         $this->assertEmpty($result);
     }
@@ -276,7 +273,6 @@ class converter_test extends advanced_testcase {
             ]);
 
         $method = new ReflectionMethod(\core_files\converter::class, 'get_document_converter_classes');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($converter, ['docx', 'pdf']);
         $this->assertEmpty($result);
     }
@@ -296,7 +292,6 @@ class converter_test extends advanced_testcase {
             ]);
 
         $method = new ReflectionMethod(\core_files\converter::class, 'get_document_converter_classes');
-        $method->setAccessible(true);
         $result = $method->invokeArgs($converter, ['docx', 'pdf']);
         $this->assertCount(1, $result);
         $this->assertNotFalse(array_search($classname, $result));
@@ -681,7 +676,6 @@ class converter_test extends advanced_testcase {
      */
     public function test_get_next_converter_no_converters() {
         $rcm = new \ReflectionMethod(converter::class, 'get_next_converter');
-        $rcm->setAccessible(true);
 
         $converter = new \core_files\converter();
         $result = $rcm->invoke($converter, [], null);
@@ -694,7 +688,6 @@ class converter_test extends advanced_testcase {
      */
     public function test_get_next_converter_only_converters() {
         $rcm = new \ReflectionMethod(converter::class, 'get_next_converter');
-        $rcm->setAccessible(true);
 
         $converter = new converter();
         $result = $rcm->invoke($converter, ['example'], 'example');
@@ -707,7 +700,6 @@ class converter_test extends advanced_testcase {
      */
     public function test_get_next_converter_last_converters() {
         $rcm = new \ReflectionMethod(converter::class, 'get_next_converter');
-        $rcm->setAccessible(true);
 
         $converter = new converter();
         $result = $rcm->invoke($converter, ['foo', 'example'], 'example');
@@ -720,7 +712,6 @@ class converter_test extends advanced_testcase {
      */
     public function test_get_next_converter_middle_converters() {
         $rcm = new \ReflectionMethod(converter::class, 'get_next_converter');
-        $rcm->setAccessible(true);
 
         $converter = new converter();
         $result = $rcm->invoke($converter, ['foo', 'bar', 'baz', 'example'], 'bar');
@@ -733,7 +724,6 @@ class converter_test extends advanced_testcase {
      */
     public function test_get_next_converter_first() {
         $rcm = new \ReflectionMethod(converter::class, 'get_next_converter');
-        $rcm->setAccessible(true);
 
         $converter = new converter();
         $result = $rcm->invoke($converter, ['foo', 'bar', 'baz', 'example']);

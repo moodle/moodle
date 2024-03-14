@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace OpenSpout\Common\Helper;
 
+use OpenSpout\Common\Exception\IOException;
+
 /**
  * @internal
  */
@@ -17,7 +19,7 @@ interface FileSystemHelperInterface
      *
      * @return string Path of the created folder
      *
-     * @throws \OpenSpout\Common\Exception\IOException If unable to create the folder or if the folder path is not inside of the base folder
+     * @throws IOException If unable to create the folder or if the folder path is not inside of the base folder
      */
     public function createFolder(string $parentFolderPath, string $folderName): string;
 
@@ -31,7 +33,7 @@ interface FileSystemHelperInterface
      *
      * @return string Path of the created file
      *
-     * @throws \OpenSpout\Common\Exception\IOException If unable to create the file or if the file path is not inside of the base folder
+     * @throws IOException If unable to create the file or if the file path is not inside of the base folder
      */
     public function createFileWithContents(string $parentFolderPath, string $fileName, string $fileContents): string;
 
@@ -40,7 +42,7 @@ interface FileSystemHelperInterface
      *
      * @param string $filePath Path of the file to delete
      *
-     * @throws \OpenSpout\Common\Exception\IOException If the file path is not inside of the base folder
+     * @throws IOException If the file path is not inside of the base folder
      */
     public function deleteFile(string $filePath): void;
 
@@ -49,7 +51,7 @@ interface FileSystemHelperInterface
      *
      * @param string $folderPath Path of the folder to delete
      *
-     * @throws \OpenSpout\Common\Exception\IOException If the folder path is not inside of the base folder
+     * @throws IOException If the folder path is not inside of the base folder
      */
     public function deleteFolderRecursively(string $folderPath): void;
 }

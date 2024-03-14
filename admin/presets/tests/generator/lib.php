@@ -227,7 +227,6 @@ class core_adminpresets_generator extends \component_generator_base {
     public function access_protected($object, string $property) {
         $reflection = new ReflectionClass($object);
         $property = $reflection->getProperty($property);
-        $property->setAccessible(true);
         return $property->getValue($object);
     }
 
@@ -244,7 +243,6 @@ class core_adminpresets_generator extends \component_generator_base {
 
         // Set method accessibility.
         $method = new ReflectionMethod(manager::class, 'get_setting');
-        $method->setAccessible(true);
 
         // Get the proper adminpresets_setting instance.
         $settingpage = $adminroot->locate($category);

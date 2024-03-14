@@ -113,7 +113,6 @@ class editor_test extends advanced_testcase {
         // Call the method. We need the id of the new H5P content.
         $rc = new \ReflectionClass(player::class);
         $rcp = $rc->getProperty('h5pid');
-        $rcp->setAccessible(true);
         $h5pid = $rcp->getValue($h5pplayer);
 
         $editor = new editor();
@@ -122,7 +121,6 @@ class editor_test extends advanced_testcase {
         // Check we get the H5P content.
         $rc = new \ReflectionClass(editor::class);
         $rcp = $rc->getProperty('oldcontent');
-        $rcp->setAccessible(true);
         $oldcontent = $rcp->getValue($editor);
 
         $core = (new factory)->get_core();
@@ -130,7 +128,6 @@ class editor_test extends advanced_testcase {
 
         // Check we get the file of the H5P content.
         $rcp = $rc->getProperty('oldfile');
-        $rcp->setAccessible(true);
         $oldfile = $rcp->getValue($editor);
 
         $this->assertSame($file->get_contenthash(), $oldfile->get_contenthash());
@@ -154,7 +151,6 @@ class editor_test extends advanced_testcase {
         // Check that the library has the right value.
         $rc = new \ReflectionClass(editor::class);
         $rcp = $rc->getProperty('library');
-        $rcp->setAccessible(true);
         $actual = $rcp->getValue($editor);
 
         $this->assertSame($library, $actual);
@@ -171,7 +167,6 @@ class editor_test extends advanced_testcase {
         ];
 
         $rcp = $rc->getProperty('filearea');
-        $rcp->setAccessible(true);
         $actual = $rcp->getValue($editor);
 
         $this->assertEquals($expected, $actual);
@@ -198,8 +193,6 @@ class editor_test extends advanced_testcase {
         $rc = new \ReflectionClass(page_requirements_manager::class);
         $rcp = $rc->getProperty('cssurls');
         $rcp2 = $rc->getProperty('jsincludes');
-        $rcp->setAccessible(true);
-        $rcp2->setAccessible(true);
         $actualcss = array_keys($rcp->getValue($PAGE->requires));
         $actualjs = array_keys($rcp2->getValue($PAGE->requires)['head']);
         $cachebuster = helper::get_cache_buster();

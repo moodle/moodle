@@ -58,7 +58,6 @@ trait behat_named_selector {
         // This is due to an API limitation in Mink.
         $rc = new \ReflectionClass(\Behat\Mink\Selector\NamedSelector::class);
         $r = $rc->getProperty('replacements');
-        $r->setAccessible(true);
         $replacements = $r->getValue($this);
 
         $selectorxpath = strtr($selector->get_combined_xpath(), $replacements);
@@ -77,7 +76,6 @@ trait behat_named_selector {
         // This is due to an API limitation in Mink.
         $rc = new \ReflectionClass(\Behat\Mink\Selector\NamedSelector::class);
         $r = $rc->getProperty('replacements');
-        $r->setAccessible(true);
         $existing = $r->getValue($this);
 
         $from = $replacement->get_from($component);

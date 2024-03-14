@@ -13,22 +13,22 @@ use OpenSpout\Reader\SheetWithVisibilityInterface;
 final class Sheet implements SheetWithVisibilityInterface
 {
     /** @var RowIterator To iterate over sheet's rows */
-    private RowIterator $rowIterator;
+    private readonly RowIterator $rowIterator;
 
     /** @var SheetHeaderReader To read the header of the sheet, containing for instance the col widths */
-    private SheetHeaderReader $headerReader;
+    private readonly SheetHeaderReader $headerReader;
 
     /** @var int Index of the sheet, based on order in the workbook (zero-based) */
-    private int $index;
+    private readonly int $index;
 
     /** @var string Name of the sheet */
-    private string $name;
+    private readonly string $name;
 
     /** @var bool Whether the sheet was the active one */
-    private bool $isActive;
+    private readonly bool $isActive;
 
     /** @var bool Whether the sheet is visible */
-    private bool $isVisible;
+    private readonly bool $isVisible;
 
     /**
      * @param RowIterator $rowIterator    The corresponding row iterator

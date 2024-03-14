@@ -14,17 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Theme filter.
- *
- * @package    tool_usertours
- * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace tool_usertours\local\filter;
-
-defined('MOODLE_INTERNAL') || die();
 
 use tool_usertours\tour;
 use context;
@@ -32,6 +22,7 @@ use context;
 /**
  * Theme filter.
  *
+ * @package    tool_usertours
  * @copyright  2016 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -106,7 +97,7 @@ class role extends base {
         }
 
         // Use a request cache to save on DB queries.
-        // We may be checking multiple tours and they'll all be for the same userid, and contextid
+        // We may be checking multiple tours and they'll all be for the same userid, and contextid.
         $cache = \cache::make_from_params(\cache_store::MODE_REQUEST, 'tool_usertours', 'filter_role');
 
         // Get all of the roles used in this context, including special roles such as user, and frontpageuser.

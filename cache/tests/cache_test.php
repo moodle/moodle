@@ -2332,11 +2332,8 @@ class cache_test extends \advanced_testcase {
         // We need to get the individual stores so as to set up the right behaviour here.
         $ref = new \ReflectionClass('\cache');
         $definitionprop = $ref->getProperty('definition');
-        $definitionprop->setAccessible(true);
         $storeprop = $ref->getProperty('store');
-        $storeprop->setAccessible(true);
         $loaderprop = $ref->getProperty('loader');
-        $loaderprop->setAccessible(true);
 
         $definition = $definitionprop->getValue($cache);
         $localstore = $storeprop->getValue($cache);
@@ -2346,7 +2343,6 @@ class cache_test extends \advanced_testcase {
         // Set the lock waiting time to 1 second so it doesn't take forever to run the test.
         $ref = new \ReflectionClass('\cachestore_file');
         $lockwaitprop = $ref->getProperty('lockwait');
-        $lockwaitprop->setAccessible(true);
 
         $lockwaitprop->setValue($localstore, 1);
         $lockwaitprop->setValue($sharedstore, 1);

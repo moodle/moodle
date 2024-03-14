@@ -25,8 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Tiny premium';
+$string['pluginname'] = 'TinyMCE Premium';
 $string['apikey'] = 'API key';
-$string['apikey_desc'] = 'Your Tiny premium API key requires a paid subscription. You can find your key on your Tiny Cloud account page.';
-$string['premium:accesspremium'] = 'Access Tiny Premium features';
+$string['apikey_desc'] = '<p>Your API key is available on your <a target="_blank" href="https://www.tiny.cloud">Tiny Cloud</a> account page if you have purchased a subscription, or if you are on a free trial.</p><p>See the list of available TinyMCE Premium features for Moodle in <a target="_blank" href="https://docs.moodle.org/en/TinyMCE_editor#TinyMCE_Premium">Moodle Docs</a>.</p>';
+$string['premium:accesspremium'] = 'Access TinyMCE Premium features';
 $string['privacy:metadata'] = 'The Tiny premium plugin for TinyMCE does not store any personal data.';

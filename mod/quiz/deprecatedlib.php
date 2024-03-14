@@ -35,80 +35,10 @@ function quiz_get_completion_state() {
 }
 
 /**
- * Retrieves tag information for the given list of quiz slot ids.
- * Currently the only slots that have tags are random question slots.
- *
- * Example:
- * If we have 3 slots with id 1, 2, and 3. The first slot has two tags, the second
- * has one tag, and the third has zero tags. The return structure will look like:
- * [
- *      1 => [
- *          quiz_slot_tags.id => { ...tag data... },
- *          quiz_slot_tags.id => { ...tag data... },
- *      ],
- *      2 => [
- *          quiz_slot_tags.id => { ...tag data... },
- *      ],
- *      3 => [],
- * ]
- *
- * @param int[] $slotids The list of id for the quiz slots.
- * @return array[] List of quiz_slot_tags records indexed by slot id.
  * @deprecated since Moodle 4.0
- * @todo Final deprecation on Moodle 4.4 MDL-72438
  */
-function quiz_retrieve_tags_for_slot_ids($slotids) {
-    debugging('Method quiz_retrieve_tags_for_slot_ids() is deprecated, ' .
-        'see filtercondition->tags from the question_set_reference table.', DEBUG_DEVELOPER);
-    global $DB;
-    if (empty($slotids)) {
-        return [];
-    }
-
-    $slottags = $DB->get_records_list('quiz_slot_tags', 'slotid', $slotids);
-    $tagsbyid = core_tag_tag::get_bulk(array_filter(array_column($slottags, 'tagid')), 'id, name');
-    $tagsbyname = false; // It will be loaded later if required.
-    $emptytagids = array_reduce($slotids, function($carry, $slotid) {
-        $carry[$slotid] = [];
-        return $carry;
-    }, []);
-
-    return array_reduce(
-        $slottags,
-        function($carry, $slottag) use ($slottags, $tagsbyid, $tagsbyname) {
-            if (isset($tagsbyid[$slottag->tagid])) {
-                // Make sure that we're returning the most updated tag name.
-                $slottag->tagname = $tagsbyid[$slottag->tagid]->name;
-            } else {
-                if ($tagsbyname === false) {
-                    // We were hoping that this query could be avoided, but life
-                    // showed its other side to us!
-                    $tagcollid = core_tag_area::get_collection('core', 'question');
-                    $tagsbyname = core_tag_tag::get_by_name_bulk(
-                        $tagcollid,
-                        array_column($slottags, 'tagname'),
-                        'id, name'
-                    );
-                }
-                if (isset($tagsbyname[$slottag->tagname])) {
-                    // Make sure that we're returning the current tag id that matches
-                    // the given tag name.
-                    $slottag->tagid = $tagsbyname[$slottag->tagname]->id;
-                } else {
-                    // The tag does not exist anymore (neither the tag id nor the tag name
-                    // matches an existing tag).
-                    // We still need to include this row in the result as some callers might
-                    // be interested in these rows. An example is the editing forms that still
-                    // need to display tag names even if they don't exist anymore.
-                    $slottag->tagid = null;
-                }
-            }
-
-            $carry[$slottag->slotid][$slottag->id] = $slottag;
-            return $carry;
-        },
-        $emptytagids
-    );
+function quiz_retrieve_tags_for_slot_ids() {
+    throw new coding_exception(__FUNCTION__ . '() has been removed.');
 }
 
 /**

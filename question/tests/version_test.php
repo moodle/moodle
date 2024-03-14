@@ -344,7 +344,6 @@ class version_test extends \advanced_testcase {
         $question3 = $this->qgenerator->update_question($question2, null, ['idnumber' => 'id2']);
 
         $latestversioninspector = new \ReflectionProperty('question_definition', 'latestversion');
-        $latestversioninspector->setAccessible(true);
         $this->assertEmpty(question_version_info::$pendingdefinitions);
 
         $questiondef1 = question_bank::load_question($question1->id);

@@ -755,7 +755,7 @@ function h5pactivity_print_recent_mod_activity(stdClass $activity, int $courseid
         'userurl' => new moodle_url('/user/view.php', array('id' => $activity->user->id, 'course' => $courseid)),
         'fullname' => $activity->user->fullname];
     if (isset($activity->grade)) {
-        $template['grade'] = get_string('grade_h5p', 'h5pactivity', $activity->grade);
+        $template['grade'] = get_string('gradenoun_h5p', 'h5pactivity', $activity->grade);
     }
 
     echo $OUTPUT->render_from_template('mod_h5pactivity/reviewattempts', $template);

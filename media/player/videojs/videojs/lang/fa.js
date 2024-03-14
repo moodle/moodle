@@ -68,7 +68,7 @@ videojs.addLanguage('fa', {
   "Raised": "برجسته",
   "Depressed": "فرورفته",
   "Uniform": "یکنواخت",
-  "Dropshadow": "سایه‌دار",
+  "Drop shadow": "سایه‌دار",
   "Font Family": "نوع قلم",
   "Proportional Sans-Serif": "Sans-Serif متناسب",
   "Monospace Sans-Serif": "Sans-Serif هم‌عرض",
@@ -87,5 +87,11 @@ videojs.addLanguage('fa', {
   "Exit Picture-in-Picture": "خروج از حالت تصویر در تصویر",
   "Picture-in-Picture": "تصویر در تصویر",
   "Skip forward {1} seconds": "{1} ثانیه بعد",
-  "Skip backward {1} seconds": "{1} ثانیه قبل"
+  "Skip backward {1} seconds": "{1} ثانیه قبل",
+  "No content": "بدون محتوا",
+  "Color": "رنگ",
+  "Opacity": "شفافیت",
+  "Text Background": "رنگ پس زمینه",
+  "Caption Area Background": "رنگ پس زمینه عنوان",
+  "Playing in Picture-in-Picture": "پخش در حالت تصویر در تصویر"
 });

@@ -21,7 +21,7 @@ Feature: BigBlueButtonBN Subplugins test
   Scenario: I check that new fields are available and editable in the instance edit form
     Given I am on the "BBB Instance name" "bigbluebuttonbn activity editing" page logged in as "admin"
     When I expand all fieldsets
-    And I should see "New field"
+    Then I should see "New field"
 
   @javascript
   Scenario: I check that new fields are available and when I edit the field the value is saved

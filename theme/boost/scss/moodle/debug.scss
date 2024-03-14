@@ -12,6 +12,10 @@ body.behat-site {
     .stickyfooter {
         position: inherit;
         z-index: inherit;
+        .sticky-footer-content-wrapper {
+            padding: 0;
+            margin: 0;
+        }
     }
 
     // We need more spacing in action menus so behat does not click on the wrong menu item.

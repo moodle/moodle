@@ -69,7 +69,6 @@ class lib_test extends \advanced_testcase {
         gradereport_user_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayHasKey('grade', $nodes->getValue($this->tree));
     }
 
@@ -84,7 +83,6 @@ class lib_test extends \advanced_testcase {
         gradereport_user_myprofile_navigation($this->tree, $this->user, $iscurrentuser, $this->course);
         $reflector = new \ReflectionObject($this->tree);
         $nodes = $reflector->getProperty('nodes');
-        $nodes->setAccessible(true);
         $this->assertArrayNotHasKey('grade', $nodes->getValue($this->tree));
     }
 }

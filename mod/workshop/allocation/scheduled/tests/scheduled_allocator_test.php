@@ -135,7 +135,6 @@ class scheduled_allocator_test extends \advanced_testcase {
         $allocator = new \workshop_scheduled_allocator($this->workshop);
 
         $storesettingsmethod = new \ReflectionMethod('workshop_scheduled_allocator', 'store_settings');
-        $storesettingsmethod->setAccessible(true);
         $storesettingsmethod->invoke($allocator, true, true, $settings, new \workshop_allocation_result($allocator));
     }
 

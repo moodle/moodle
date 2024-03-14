@@ -55,7 +55,6 @@ class access_manager_test extends \advanced_testcase {
 
         $reflection = new \ReflectionClass('\quizaccess_seb\seb_access_manager');
         $property = $reflection->getProperty('quizsettings');
-        $property->setAccessible(true);
 
         $this->assertFalse($property->getValue($accessmanager));
     }

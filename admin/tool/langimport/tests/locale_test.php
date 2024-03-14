@@ -84,7 +84,6 @@ class locale_test extends \advanced_testcase {
         $loc = new locale();
         $rc = new \ReflectionClass(locale::class);
         $rm = $rc->getMethod('set_locale');
-        $rm->setAccessible(true);
 
         // Capture current locale for later restore (funnily, using the set_locale() method itself.
         $originallocale = $rm->invokeArgs($loc, [LC_ALL, 0]);
