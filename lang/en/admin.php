@@ -942,6 +942,7 @@ $string['opensslrecommended'] = 'Installing the optional OpenSSL library is high
 $string['opensslrequired'] = 'The OpenSSL PHP extension is now required by Moodle to provide stronger cryptographic services.';
 $string['opentowebcrawlers'] = 'Open to search engines';
 $string['optionalmaintenancemessage'] = 'Optional maintenance message';
+$string['oracledatabaseinuse'] = 'We are changing Oracle DB support in Moodle LMS. Moodle version 4.5 will be the last version that supports Oracle as a database architecture. Further information can be found <a href="https://moodle.org/mod/forum/discuss.php?d=456122" target="_blank">here</a>';
 $string['order1'] = 'First';
 $string['order2'] = 'Second';
 $string['order3'] = 'Third';
