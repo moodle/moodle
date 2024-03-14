@@ -79,7 +79,7 @@ global $DB, $USER, $CFG;
           }
       }
 
-      if (!$isteacher){
+      if (!$isteacher && !is_siteadmin($user_id)){
           $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
           header("Location: $previous_page");
           exit();

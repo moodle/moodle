@@ -316,7 +316,7 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
         if ($enrolled_status === "Yes"){
             foreach ($all_course_id as $course_id) {
                 if (has_capability($capability, context_course::instance($course_id->id), $userid)) {
-                    echo "User has the capability '$capability'";
+                    //echo "User has the capability '$capability'";
                     $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/ui/auto_proctor_dashboard.php');
                     $main_node->nodetype = 1;
                     $main_node->collapse = false;
