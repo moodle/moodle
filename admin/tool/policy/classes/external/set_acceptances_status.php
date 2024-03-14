@@ -48,11 +48,14 @@ class set_acceptances_status extends external_api {
                     new external_single_structure([
                         'versionid' => new external_value(PARAM_INT, 'The policy version id.'),
                         'status' => new external_value(PARAM_INT, 'The policy acceptance status. 0: decline, 1: accept.'),
+                        'note' => new external_value(PARAM_NOTAGS,
+                            'Any comments added by a user when giving consent on behalf of another user.', VALUE_OPTIONAL, null),
                     ]), 'Policies acceptances for the given user.'
                 ),
                 'userid' => new external_value(PARAM_INT,
                     'The user id we want to set the acceptances. Default is the current user.', VALUE_DEFAULT, 0
                 ),
+
             ]
         );
     }
@@ -91,18 +94,25 @@ class set_acceptances_status extends external_api {
         }
 
         // Split acceptances.
-        $allcurrentpolicies = api::list_current_versions(policy_version::AUDIENCE_LOGGEDIN);
-        $requestedpolicies = $agreepolicies = $declinepolicies = [];
+        $requestedpolicies = $agreepolicies = $declinepolicies = $notes = [];
         foreach ($params['policies'] as $policy) {
             $requestedpolicies[$policy['versionid']] = $policy['status'];
+            if ($USER->id != $user->id) {
+                // Notes are only allowed when setting acceptances on behalf of another user.
+                $notes[$policy['versionid']] = $policy['note'] ?? null;
+            }
         }
 
-        foreach ($allcurrentpolicies as $policy) {
-            if (isset($requestedpolicies[$policy->id])) {
-                if ($requestedpolicies[$policy->id] === 1) {
-                    $agreepolicies[] = $policy->id;
-                } else if ($requestedpolicies[$policy->id] === 0) {
-                    $declinepolicies[] = $policy->id;
+        // Retrieve all  policies and their acceptances.
+        $allpolicies = api::get_policies_with_acceptances($user->id);
+        foreach ($allpolicies as $policy) {
+            foreach ($policy->versions as $version) {
+                if (isset($requestedpolicies[$version->id])) {
+                    if ($requestedpolicies[$version->id] === 1) {
+                        $agreepolicies[] = $version->id;
+                    } else if ($requestedpolicies[$version->id] === 0) {
+                        $declinepolicies[] = $version->id;
+                    }
                 }
             }
         }
@@ -112,8 +122,12 @@ class set_acceptances_status extends external_api {
         api::can_decline_policies($declinepolicies, $user->id, true);
 
         // Good to go.
-        api::accept_policies($agreepolicies, $user->id, null);
-        api::decline_policies($declinepolicies, $user->id, null);
+        foreach ($agreepolicies as $policyversionid) {
+            api::accept_policies($policyversionid, $user->id, $notes[$policyversionid] ?? null);
+        }
+        foreach ($declinepolicies as $policyversionid) {
+            api::decline_policies($policyversionid, $user->id, $notes[$policyversionid] ?? null);
+        }
 
         $return = [
             'policyagreed' => (int) $user->policyagreed,  // Final policy agreement status for $user.

@@ -118,6 +118,11 @@ class get_user_acceptances extends external_api {
                         [$policy['acceptance']['note']] = util::format_text($version->acceptance->note, FORMAT_MOODLE, $systemcontext);
                     }
                 }
+                // Return permission for actions for the current policy and user.
+                $policy['canaccept'] = api::can_accept_policies([$version->id], $user->id);
+                $policy['candecline'] = api::can_decline_policies([$version->id], $user->id);
+                $policy['canrevoke'] = api::can_revoke_policies([$version->id], $user->id);
+
                 $policies[] = $policy;
             }
         }
@@ -157,6 +162,9 @@ class get_user_acceptances extends external_api {
                         'note' => new external_value(PARAM_TEXT, 'The policy note/remarks.', VALUE_OPTIONAL),
                         'modfullname' => new external_value(PARAM_NOTAGS, 'The fullname who accepted on behalf.', VALUE_OPTIONAL),
                     ], 'Acceptance status for the given user.', VALUE_OPTIONAL),
+                    'canaccept' => new external_value(PARAM_BOOL, 'Whether the policy can be accepted.'),
+                    'candecline' => new external_value(PARAM_BOOL, 'Whether the policy can be declined.'),
+                    'canrevoke' => new external_value(PARAM_BOOL, 'Whether the policy can be revoked.'),
                 ]), 'Policies and acceptance status for the given user.', VALUE_OPTIONAL
             ),
             'warnings'  => new external_warnings(),
