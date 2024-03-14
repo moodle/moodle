@@ -42,7 +42,7 @@ Feature: Quiz availability can be set
       | opentext | timeopen      | attemptvisibility | quizavailability |
       # Case 1 - open is set to future date, close is disabled.
       | Opens    | ##tomorrow##  | should not        | should           |
-       # Case 4 - open is set to past date, close is disabled.
+      # Case 4 - open is set to past date, close is disabled.
       | Opened   | ##yesterday## | should           | should not        |
 
   Scenario Outline: Set quiz closing time while opening time is disabled
@@ -110,22 +110,18 @@ Feature: Quiz availability can be set
   @javascript
   Scenario Outline: Timer is displayed when quiz closes in less than an hour
     Given the following "activities" exist:
-      | activity | course | name   |
-      | quiz     | C1     | Quiz 1 |
+      | activity | course | name   | timeclose   |
+      | quiz     | C1     | Quiz 1 | <closedate> |
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |
-    Given I am on the "Quiz 1" "quiz activity editing" page logged in as teacher1
-    And I set the following fields to these values:
-      | timeclose[enabled] | 1           |
-      | Close the quiz     | <closedate> |
-    And I press "Save and display"
+    And I am on the "Quiz 1" "quiz activity" page logged in as "teacher1"
     When I press "Preview quiz"
     # Confirm timer visibility for teacher
     Then I <timervisibility> see "Time left"
-    # Confirm timer visibility for student
-    And I am on the "Quiz 1" "quiz activity" page logged in as student1
+    And I am on the "Quiz 1" "quiz activity" page logged in as "student1"
     And I press "Attempt quiz"
+    # Confirm timer visibility for student
     And I <timervisibility> see "Time left"
 
     Examples:
