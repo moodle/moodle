@@ -24,7 +24,67 @@
 require_once(__DIR__ . '/../../../config.php'); // Setup moodle global variable also
 require_login();
 // Get the global $DB object
+
 global $DB, $USER, $CFG;
+    // Get user user id
+    $user_id = $USER->id;
+
+    // Check if the user has a managing role, such as an editing teacher or teacher.
+    // Only users with those roles are allowed to create or modify a quiz.
+    $managing_context = $DB->get_records_sql(
+        'SELECT * FROM {role_assignments} WHERE userid = ? AND roleid IN (?, ?)',
+        [
+            $user_id,
+            3, // Editing Teacehr
+            4, // Teacher
+        ]
+    );
+
+
+    echo "<script>console.log('courses enrolled: ', " . json_encode(count($managing_context)) . ");</script>";
+
+    // If a user does not have a course management role, there is no reason for them to access the Auto Proctor Dashboard.
+    // The user will be redirected to the normal dashboard.
+    if (!$managing_context && !is_siteadmin($user_id)) {
+        $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
+        header("Location: $previous_page");
+        exit();
+    }
+
+    // Check if user is techer in this course
+        $isteacher = false;
+        if(!is_siteadmin($user_id)){                
+    
+            // Loop through the context that the user manages
+            foreach ($managing_context as $context) {
+    
+                // Get the context id of the context
+                $context_id = $context->contextid;
+                echo "<script>console.log('Managing Course IDhome: ', " . json_encode($context_id) . ");</script>";
+    
+                // Get instance id of the context from contex table
+                $sql = "SELECT instanceid
+                    FROM {context}
+                    WHERE id= :id
+                ";
+                $instance_id = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
+
+                //echo $instance_id . "</br>";
+                if ($_GET['course_id'] == $instance_id[0]){
+                    //break;
+                    echo "is teacher";
+                    echo "</br>";
+                    $isteacher = true;
+                    break;
+                }
+            }
+        }
+
+        if (!$isteacher){
+            $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
+            header("Location: $previous_page");
+            exit();
+        }
 
     if(isset($_GET['course_id']) && isset($_GET['quiz_id'])){
         $course_id = $_GET['course_id'];
@@ -42,6 +102,35 @@ global $DB, $USER, $CFG;
             WHERE id = :course_id;
         ";
         $course_name = $DB->get_fieldset_sql($sql, $params);
+
+        $sql = "
+        SELECT u.id AS user_id,
+        CASE WHEN COUNT(c.id) > 0 THEN 'Yes' ELSE 'No' END AS enrolled_in_bs_it
+        FROM {user} u
+        LEFT JOIN {user_enrolments} ue ON u.id = ue.userid
+        LEFT JOIN {enrol} e ON ue.enrolid = e.id
+        LEFT JOIN {course} c ON e.courseid = c.id
+        LEFT JOIN {course_categories} cc ON c.category = cc.id
+        WHERE cc.name = 'Bachelor of Science in Information Technology (Boni Campus)'
+        AND u.id = :user_id
+        GROUP BY u.id;
+
+    ";
+    
+    $userid = $USER->id;
+    $params = array('user_id' => $userid);
+    $is_user_enrolled_in_BSIT = $DB->get_records_sql($sql, $params);
+
+    if (!empty($is_user_enrolled_in_BSIT)) {
+        foreach ($is_user_enrolled_in_BSIT as $record) {
+            $user_id = $record->user_id;
+            $enrolled_status = $record->enrolled_in_bs_it;
+            
+            if ($enrolled_status === "Yes"){
+                print_r($is_user_enrolled_in_BSIT);
+            }
+        }
+    } 
 
 
         // COLLECTING ALL ID OF EXPECTED QUIZ TAKERS
@@ -187,8 +276,8 @@ global $DB, $USER, $CFG;
 
         $count_quiz_attempts = count($all_quiz_attempts);
 
-        print_r($all_quiz_attempts);
-        echo "</br>";
+        // print_r($all_quiz_attempts);
+        // echo "</br>";
 
         foreach($all_quiz_attempts as $attempt){
             echo "attempt</br>";

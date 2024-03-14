@@ -281,35 +281,89 @@ function local_auto_proctor_extend_navigation(global_navigation $navigation){
     // Get the user ID
     $userid = $USER->id;
 
-    // Get the course_category id for BSIT courses
-    $name = 'Bachelor of Science in Information Technology (Boni Campus)';
-    $params = array('name' => $name);
-    $sql = "
-        SELECT id
-        FROM {course_categories}
-        WHERE name = :name
-    ";
+    // Check if user is taecher of courses with BSIT category
+    // If yes then make the AP dashboard accessible
+        $sql = "
+            SELECT u.id AS user_id,
+            CASE WHEN COUNT(c.id) > 0 THEN 'Yes' ELSE 'No' END AS enrolled_in_bs_it
+            FROM {user} u
+            LEFT JOIN {user_enrolments} ue ON u.id = ue.userid
+            LEFT JOIN {enrol} e ON ue.enrolid = e.id
+            LEFT JOIN {course} c ON e.courseid = c.id
+            LEFT JOIN {course_categories} cc ON c.category = cc.id
+            WHERE cc.name = 'Bachelor of Science in Information Technology (Boni Campus)'
+            AND u.id = :user_id
+            GROUP BY u.id;
 
-    $course_category_id = $DB->get_fieldset_sql($sql, $params);
+        ";
+
+        $params = array('user_id' => $userid);
+        $is_user_enrolled_in_BSIT = $DB->get_records_sql($sql, $params);
+
+
+        if (!empty($is_user_enrolled_in_BSIT)) {
+            foreach ($is_user_enrolled_in_BSIT as $record) {
+                $user_id = $record->user_id;
+                $enrolled_status = $record->enrolled_in_bs_it;
+                if ($enrolled_status === "Yes"){
+                    break;
+                }
+            }
+        } 
+
+        $access_ap_dashboard = false;
+        $capability = 'moodle/course:manageactivities';
+        if ($enrolled_status === "Yes"){
+            foreach ($all_course_id as $course_id) {
+                if (has_capability($capability, context_course::instance($course_id->id), $userid)) {
+                    echo "User has the capability '$capability'";
+                    $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/ui/auto_proctor_dashboard.php');
+                    $main_node->nodetype = 1;
+                    $main_node->collapse = false;
+                    $main_node->forceopen = true;
+                    $main_node->isexpandable = false;
+                    $main_node->showinflatnavigation = true;
+                    $access_ap_dashboard = true;
+                    break;
+                }
+            }
+        }
+
+    // Check if user is admin
+    // AP dashboard must be accessible
+        if (!$access_ap_dashboard){
+            if (is_siteadmin($user_id)) {
+                $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/ui/auto_proctor_dashboard.php');
+                $main_node->nodetype = 1;
+                $main_node->collapse = false;
+                $main_node->forceopen = true;
+                $main_node->isexpandable = false;
+                $main_node->showinflatnavigation = true;
+            }
+        }
+
+
 
     // Loop through course IDs and check if the user manages any courses.
     // If the user manages a course, add the 'Auto Proctor Dashboard' button to the navigation bar.
 
-    foreach ($all_course_id as $course_id) {
-        if (has_capability('moodle/course:manageactivities', context_course::instance($course_id->id), $USER->id) && has_capability('moodle/course:manageactivities', context_course::instance($course_category_id[0]), $USER->id)) {
+    // foreach ($all_course_id as $course_id) {
+    //     foreach ($course_category_ids as $category_id) {
+    //         if (has_capability('moodle/course:manageactivities', context_course::instance($course_id->id), $USER->id) && has_capability('moodle/course:manageactivities', context_course::instance($course_category_ids[0]), $USER->id)) {
 
-        //if (has_capability('moodle/course:manageactivities', $course_context, $USER->id) && has_capability('moodle/course:manageactivities', $category_context, $USER->id)) {
+    //         //if (has_capability('moodle/course:manageactivities', $course_context, $USER->id) && has_capability('moodle/course:manageactivities', $category_context, $USER->id)) {
 
-            // Adding the auto-proctor in navigation bar ==================================
-            $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/ui/auto_proctor_dashboard.php');
-            $main_node->nodetype = 1;
-            $main_node->collapse = false;
-            $main_node->forceopen = true;
-            $main_node->isexpandable = false;
-            $main_node->showinflatnavigation = true;
-            break;
-        }
-    }
+    //             // Adding the auto-proctor in navigation bar ==================================
+    //             $main_node = $navigation->add('Auto-Proctor', '/local/auto_proctor/ui/auto_proctor_dashboard.php');
+    //             $main_node->nodetype = 1;
+    //             $main_node->collapse = false;
+    //             $main_node->forceopen = true;
+    //             $main_node->isexpandable = false;
+    //             $main_node->showinflatnavigation = true;
+    //             break 2;
+    //         }
+    //     }
+    // }
 
     $quizProctor = new QuizProctor($PAGE, $DB, $CFG, $USER, $COURSE);
     $quizProctor->captureQuizAttempt($USER->id, $COURSE);

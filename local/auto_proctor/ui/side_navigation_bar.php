@@ -43,37 +43,61 @@ $managing_context = $DB->get_records_sql(
 
 // If a user does not have a course management role, there is no reason for them to access the Auto Proctor Dashboard.
 // The user will be redirected to the normal dashboard.
-if (!$managing_context) {
+if (!$managing_context && !is_siteadmin($user_id)) {
     $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
     header("Location: $previous_page");
     exit();
 }
-
 // Now, we will retrieve all the context IDs for the instances or context that the user manages.
 
-// Array for the course IDs we will retrieve.
-$course_ids = array();
+    // ========= IF USER IS TEACHER
+    if(!is_siteadmin($user_id)){
+        // Array for the course IDs we will retrieve.
+        $course_ids = array();
 
-// Loop through the context that the user manages
-foreach ($managing_context as $context) {
+        // Loop through the context that the user manages
+        foreach ($managing_context as $context) {
 
-    // Get the context id of the context
-    $context_id = $context->contextid;
-    echo "<script>console.log('Managing Course ID: ', " . json_encode($context_id) . ");</script>";
+            // Get the context id of the context
+            $context_id = $context->contextid;
+            echo "<script>console.log('Managing Course ID: ', " . json_encode($context_id) . ");</script>";
 
-    // Get instance id of the context from contex table
-    $sql = "SELECT instanceid
-    FROM {context}
-    WHERE id= :id";
-    $instance_ids = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
+            // Get instance id of the context from contex table
+            $sql = "SELECT instanceid
+            FROM {context}
+            WHERE id= :id";
+            $instance_ids = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
 
-    echo "<script>console.log('instance id: ', " . json_encode($instance_ids) . ");</script>";
+            echo "<script>console.log('instance id: ', " . json_encode($instance_ids) . ");</script>";
 
-    // Push the instance_ids into the $course_ids array
-    $course_ids = array_merge($course_ids, $instance_ids);
-}
+            // Push the instance_ids into the $course_ids array
+            $course_ids = array_merge($course_ids, $instance_ids);
+        }
 
-echo "<script>console.log('All Course IDs: ', " . json_encode($course_ids) . ");</script>";
+        echo "<script>console.log('All Course IDs: ', " . json_encode($course_ids) . ");</script>";
+    }
+
+    // ======== IF USER IS ADMIN
+    if(is_siteadmin($user_id)){
+        $course_ids = array();
+        $sql = "
+            SELECT c.id AS course_id, ctx.id AS context_id
+            FROM {course} c
+            JOIN {course_categories} cc ON c.category = cc.id
+            JOIN {context} ctx ON ctx.instanceid = c.id
+            WHERE cc.name = 'Bachelor of Science in Information Technology (Boni Campus)'
+        ";
+
+        $courses = $DB->get_records_sql($sql);
+
+        foreach ($courses as $course) {
+            $course_ids[] = $course->course_id;
+        }
+
+        $course_ids = array_merge($course_ids);
+
+        echo "<script>console.log('All Course IDs: ', " . json_encode($course_ids) . ");</script>";
+    }
 
 // Get the wwwroot of the site
 $wwwroot = $CFG->wwwroot;

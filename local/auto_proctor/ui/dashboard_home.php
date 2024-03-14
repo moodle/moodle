@@ -1,4 +1,206 @@
+<?php
+// This file is part of Moodle Course Rollover Plugin
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+/**
+ * @package     local_auto_proctor
+ * @author      Angelica
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @var stdClass $plugin
+ */
+
+require_once(__DIR__ . '/../../../config.php'); // Setup moodle global variable also
+
+require_login();
+
+global $DB, $USER, $CFG;
+
+// Get user user id
+$user_id = $USER->id;
+
+// Check if the user has a managing role, such as an editing teacher or teacher.
+// Only users with those roles are allowed to create or modify a quiz.
+$managing_context = $DB->get_records_sql(
+    'SELECT * FROM {role_assignments} WHERE userid = ? AND roleid IN (?, ?)',
+    [
+        $user_id,
+        3, // Editing Teacehr
+        4, // Teacher
+    ]
+);
+
+
+echo "<script>console.log('courses enrolled: ', " . json_encode(count($managing_context)) . ");</script>";
+
+// If a user does not have a course management role, there is no reason for them to access the Auto Proctor Dashboard.
+// The user will be redirected to the normal dashboard.
+if (!$managing_context && !is_siteadmin($user_id)) {
+    $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
+    header("Location: $previous_page");
+    exit();
+}
+
+// Now, we will retrieve all the context IDs for the instances or context that the user manages.
+// Array for the course IDs we will retrieve.
+    // $course_ids = array();
+
+    // // Loop through the context that the user manages
+    // foreach ($managing_context as $context) {
+
+    //     // Get the context id of the context
+    //     $context_id = $context->contextid;
+    //     echo "<script>console.log('Managing Course ID: ', " . json_encode($context_id) . ");</script>";
+
+    //     // Get instance id of the context from contex table
+    //     $sql = "SELECT instanceid
+    //         FROM {context}
+    //         WHERE id= :id
+    //     "; 
+    //     $instance_ids = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
+
+    //     echo "<script>console.log('instance id: ', " . json_encode($instance_ids) . ");</script>";
+
+    //     // Push the instance_ids into the $course_ids array
+    //     $course_ids = array_merge($course_ids, $instance_ids);
+    // }
+
+    // echo "<script>console.log('All Course IDs: ', " . json_encode($course_ids) . ");</script>";
+    
+// ========= IF USER IS TEACHER
+    if(!is_siteadmin($user_id)){
+       // Array for the course IDs we will retrieve.
+       $course_ids = array();
+
+        // Loop through the context that the user manages
+        foreach ($managing_context as $context) {
+
+            // Get the context id of the context
+            $context_id = $context->contextid;
+            echo "<script>console.log('Managing Course IDhome: ', " . json_encode($context_id) . ");</script>";
+
+            // Get instance id of the context from contex table
+            $sql = "SELECT instanceid
+                FROM {context}
+                WHERE id= :id
+            ";
+            $instance_id = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
+
+            // Select only the course id in BSIT
+
+                $name = 'Bachelor of Science in Information Technology (Boni Campus)';
+                $sql = "
+                    SELECT id
+                    FROM {course_categories}
+                    WHERE name = :name;
+                ";
+                $params = array('name' => $name);
+
+                $bsit_id = $DB->get_fieldset_sql($sql, $params);
+
+                $sql = "SELECT id
+                    FROM {course}
+                    WHERE id= :id
+                    AND category= :bsit_id;
+                ";
+
+                $params = array('id' => $instance_id[0], 'bsit_id' => $bsit_id[0]);
+                $course_id = $DB->get_fieldset_sql($sql, $params);
+
+
+            // Push the instance_ids into the $course_ids array
+            $course_ids = array_merge($course_ids, $course_id);
+            echo "</br>";
+        }
+       //print_r($course_ids);
+       echo "<script>console.log('All Course IDs: ', " . json_encode($course_ids) . ");</script>";
+    }
+
+// ======== IF USER IS ADMIN
+    if(is_siteadmin($user_id)){
+        $course_ids = array();
+        $sql = "
+            SELECT c.id AS course_id, ctx.id AS context_id
+            FROM {course} c
+            JOIN {course_categories} cc ON c.category = cc.id
+            JOIN {context} ctx ON ctx.instanceid = c.id
+            WHERE cc.name = 'Bachelor of Science in Information Technology (Boni Campus)'
+        ";
+
+        $courses = $DB->get_records_sql($sql);
+
+        foreach ($courses as $course) {
+            $course_ids[] = $course->course_id;
+        }
+
+        $course_ids = array_merge($course_ids);
+
+        echo "<script>console.log('All Course IDs COUNT: ', " . json_encode($num_of_courses) . ");</script>";
+        
+    }
+
+// Get the wwwroot of the site
+$wwwroot = $CFG->wwwroot;
+
+
+// ====== GET ALL STUDENTS
+
+$course_id_placeholders = implode(', ', array_fill(0, count($course_ids), '?'));
+
+$sql = "
+    SELECT u.id
+    FROM {user} u
+    JOIN {user_enrolments} ue ON u.id = ue.userid
+    JOIN {enrol} e ON ue.enrolid = e.id
+    JOIN {role_assignments} ra ON u.id = ra.userid
+    WHERE e.courseid IN ($course_id_placeholders)
+    AND ra.roleid = (SELECT id FROM {role} WHERE shortname = 'student')
+    AND u.id <> ?
+";
+
+$params = array_merge($course_ids, [$user_id]); // Append $user_id to the end of $course_ids array
+
+$all_students = $DB->get_records_sql($sql, $params);
+
+
+    // // Initialize an array to store student IDs
+    // $student_ids = array();
+
+    // // Iterate over the results and push IDs into the array
+    // foreach ($all_students as $student) {
+    //     $student_ids[] = $student->id;
+    // }
+
+    //echo implode(', ', $student_ids);
+
+    // ======= NUMBER OF ALL HANDLED STUDENTS
+        $num_of_all_students = count($all_students);
+
+    // ======= NUMBER OF ALL CREATED QUIZ
+        $sql = "SELECT *
+            FROM {quiz}
+            WHERE course IN ($course_id_placeholders)
+        ";
+
+        // Execute the query
+        $all_created_quizzes = $DB->get_records_sql($sql, $course_ids);
+
+        $num_of_all_created_quiz = count($all_created_quizzes);
+
+        $num_of_courses = count($course_ids);
+
+?>
 
 <main>
                 <div class="p-4 bg-white block sm:flex items-center justify-between  lg:mt-1.5 ">
@@ -72,7 +274,7 @@
                             </span>
                             <div class="w-full text-center ">
                                 <h3 class="text-base font-normal text-gray-500 ">Number of students</h3>
-                                <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl ">402</span>
+                                <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl "><?php echo $num_of_all_students; ?></span>
                             </div>
                         </div>
                         <div
@@ -93,7 +295,7 @@
                             </span>
                             <div class="w-full text-center">
                                 <h3 class="text-base font-normal text-gray-500 ">Number of published Quizzes</h3>
-                                <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl ">15</span>
+                                <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl "><?php echo $num_of_all_created_quiz; ?></span>
                             </div>
                         </div>
                         <div
@@ -119,7 +321,7 @@
                             </span>
                             <div class="w-full text-center">
                                 <h3 class="text-base font-normal text-gray-500 ">Number of Courses</h3>
-                                <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl ">8</span>
+                                <span class="text-2xl font-bold leading-none text-gray-900 sm:text-3xl "><?php echo $num_of_courses; ?></span>
                             </div>
                         </div>
                     </div>
@@ -202,21 +404,83 @@
                                             </tr>
                                         </thead>
                                         <tbody class="bg-white ">
-                                            <tr>
-                                                <td class="p-4 text-sm font-normal text-gray-900 whitespace-nowrap ">
-                                                    <span class="font-semibold">001</span>
-                                                </td>
-                                                <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                    Alvince Arandia
-                                                </td>
-                                                <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
-                                                    vincearandia@gmail.com
-                                                </td>
-                                                <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                    Data Structure
-                                                </td>
-                                            </tr>
-                                            <tr>
+                                            <?php
+
+                                                foreach ($all_students as $student){
+
+                                                    // ====== SELECT USER INFO
+                                                        $sql = "SELECT *
+                                                                FROM {user}
+                                                                WHERE id = :userid
+                                                        ";
+
+                                                        // Parameters for the query
+                                                        $params = array('userid' => $student->id);
+                                                        $user_info = $DB->get_record_sql($sql, $params);
+
+                                                        $user_full_name = $user_info->firstname . ' ' . $user_info->lastname;
+
+                                                        $user_email = $user_info->email;
+
+                                                        $user_idnumber = $user_info->idnumber;
+
+                                                    // ====== SELECT COURSE USER ENROLLED IN
+                                                        $sql = "SELECT e.courseid
+                                                            FROM {user_enrolments} ue
+                                                            JOIN {enrol} e ON ue.enrolid = e.id
+                                                            WHERE ue.userid = ?
+                                                            AND e.courseid IN ($course_id_placeholders)
+                                                            ORDER BY e.courseid
+                                                        ";
+
+                                                        $params = array_merge(array('userid' => $student->id), $course_ids);
+
+                                                        // Execute the query
+                                                        $course_ids_result = $DB->get_records_sql($sql, $params);
+
+                                                        
+                                                    echo'
+                                                        <tr>
+                                                            <td class="p-4 text-sm font-normal text-gray-900 whitespace-nowrap ">
+                                                                <span class="font-semibold">'. $user_idnumber .'</span>
+                                                            </td>
+                                                            <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                                '. $user_full_name.'
+                                                            </td>
+                                                            <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
+                                                                '. $user_email .'
+                                                            </td>
+                                                            <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                    ';
+
+                                                        foreach ($course_ids_result as $row) {
+                                                            $course_id = $row->courseid;
+
+                                                            $sql = "SELECT fullname
+                                                                    FROM {course}
+                                                                    WHERE id = :course_id
+                                                                ";
+
+                                                            $params = array('course_id' => $course_id);
+                                                            $enrolled_courses = $DB->get_records_sql($sql, $params);
+
+                                                            $fullnames_string = '';
+
+                                                            // Check if the course exists and print its fullname
+                                                            if (!empty($enrolled_courses)) {
+                                                                // Since get_records_sql() returns an array, we access the first record directly
+                                                                $course = reset($enrolled_courses);
+                                                                $fullnames_string .= $course->fullname . '</br>';
+                                                            }
+                                                        
+                                                            echo $fullnames_string;
+                                                        }
+                                                    echo'   </td>
+                                                        </tr>
+                                                    ';
+                                                }
+                                            ?>
+                                            <!-- <tr>
                                                 <td class="p-4 text-sm font-normal text-gray-900 whitespace-nowrap ">
                                                     <span class="font-semibold">002</span>
                                                 </td>
@@ -243,7 +507,7 @@
                                                 <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
                                                     Art App
                                                 </td>
-                                            </tr>
+                                            </tr> -->
                                         </tbody>
                                     </table>
                                 </div>
