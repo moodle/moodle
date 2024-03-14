@@ -43,7 +43,7 @@ $managing_context = $DB->get_records_sql(
 
 // If a user does not have a course management role, there is no reason for them to access the Auto Proctor Dashboard.
 // The user will be redirected to the normal dashboard.
-if (!$managing_context) {
+if (!$managing_context && !is_siteadmin($user_id)) {
     $previous_page = isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : $CFG->wwwroot . '/my/';  // Use a default redirect path if HTTP_REFERER is not set
     header("Location: $previous_page");
     exit();

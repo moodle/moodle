@@ -43,6 +43,35 @@ global $DB, $USER, $CFG;
         ";
         $course_name = $DB->get_fieldset_sql($sql, $params);
 
+        $sql = "
+        SELECT u.id AS user_id,
+        CASE WHEN COUNT(c.id) > 0 THEN 'Yes' ELSE 'No' END AS enrolled_in_bs_it
+        FROM {user} u
+        LEFT JOIN {user_enrolments} ue ON u.id = ue.userid
+        LEFT JOIN {enrol} e ON ue.enrolid = e.id
+        LEFT JOIN {course} c ON e.courseid = c.id
+        LEFT JOIN {course_categories} cc ON c.category = cc.id
+        WHERE cc.name = 'Bachelor of Science in Information Technology (Boni Campus)'
+        AND u.id = :user_id
+        GROUP BY u.id;
+
+    ";
+    
+    $userid = $USER->id;
+    $params = array('user_id' => $userid);
+    $is_user_enrolled_in_BSIT = $DB->get_records_sql($sql, $params);
+
+    if (!empty($is_user_enrolled_in_BSIT)) {
+        foreach ($is_user_enrolled_in_BSIT as $record) {
+            $user_id = $record->user_id;
+            $enrolled_status = $record->enrolled_in_bs_it;
+            
+            if ($enrolled_status === "Yes"){
+                print_r($is_user_enrolled_in_BSIT);
+            }
+        }
+    } 
+
 
         // COLLECTING ALL ID OF EXPECTED QUIZ TAKERS
             $sql = "SELECT u.*
@@ -187,8 +216,8 @@ global $DB, $USER, $CFG;
 
         $count_quiz_attempts = count($all_quiz_attempts);
 
-        print_r($all_quiz_attempts);
-        echo "</br>";
+        // print_r($all_quiz_attempts);
+        // echo "</br>";
 
         foreach($all_quiz_attempts as $attempt){
             echo "attempt</br>";
