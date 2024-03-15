@@ -15,6 +15,7 @@
             <FIELD NAME="monitor_camera" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
             <FIELD NAME="monitor_microphone" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
             <FIELD NAME="strict_mode" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+            <FIELD NAME="archived" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         </FIELDS>
         <KEYS>
             <!-- Define id as the primary key -->
@@ -68,6 +69,27 @@
             <KEY NAME="fk_auto_proctor_proctoring_session_tb_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
             <KEY NAME="fk_auto_proctor_proctoring_session_tb_quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
             <KEY NAME="fk_auto_proctor_proctoring_session_tb_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
+        </KEYS>
+        </TABLE>
+
+        <!-- TABLE FOR STORING VIDEO SESSION -->
+        <TABLE NAME="auto_proctor_session_camera_recording" COMMENT="proctoring session log">
+        <FIELDS>
+            <!-- Define id as an auto-increment key -->
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+            <FIELD NAME="event_datetime" TYPE="datetime" NOTNULL="true" DEFAULT="CURRENT_TIMESTAMP" SEQUENCE="false"/>
+            <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="quizid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="attempt" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            <FIELD NAME="camera_recording" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        </FIELDS>
+        <KEYS>
+            <!-- Define id as the primary key -->
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+            <!-- Define quizid as a foreign key -->
+            <KEY NAME="fk_auto_proctor_session_camera_recording_userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_session_camera_recording_quizid" TYPE="foreign" FIELDS="quizid" REFTABLE="quiz" REFFIELDS="id"/>
+            <KEY NAME="fk_auto_proctor_session_camera_recording_attempt" TYPE="foreign" FIELDS="attempt" REFTABLE="quiz_attempts" REFFIELDS="attempt"/>
         </KEYS>
         </TABLE>
 

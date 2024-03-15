@@ -590,8 +590,7 @@ global $DB, $USER, $CFG;
                                                 '. $duration .'
                                             </td>
                                             <td class="p-4 whitespace-nowrap">
-                                                <a
-                                                class=" text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5">View Report</a>
+                                            <a href="' . $CFG->wwwroot . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id .'&user_id=' . $userid . '&quiz_id=' . $attempt->quiz . '&quiz_attempt=' . $attempt->attempt . '" class="text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5">View Report</a>
                                             </td>
                                             </tr>
                                         ';
