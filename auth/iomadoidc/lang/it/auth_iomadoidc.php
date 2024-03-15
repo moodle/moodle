@@ -24,8 +24,8 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-$string['pluginname'] = 'OpenID Connect';
-$string['auth_iomadoidcdescription'] = 'Il plugin OpenID Connect fornisce funzionalità single-sign-on utilizzando Identity Provider configurabili.';
+$string['pluginname'] = 'IOMAD OpenID Connect';
+$string['auth_iomadoidcdescription'] = 'Il plugin IOMAD OpenID Connect fornisce funzionalità single-sign-on utilizzando Identity Provider configurabili.';
 $string['cfg_authendpoint_key'] = 'Endpoint di autorizzazione';
 $string['cfg_authendpoint_desc'] = 'L\'URI dell\'endpoint di autorizzazione dall\'Identity Provider da utilizzare.';
 $string['cfg_autoappend_key'] = 'Aggiungi automaticamente';

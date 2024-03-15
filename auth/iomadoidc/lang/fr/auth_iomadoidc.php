@@ -24,8 +24,8 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-$string['pluginname'] = 'OpenID Connect';
-$string['auth_iomadoidcdescription'] = 'Le plug-in OpenID Connect fournit une fonctionnalité SSO avec des fournisseurs d\'identité configurables.';
+$string['pluginname'] = 'IOMAD OpenID Connect';
+$string['auth_iomadoidcdescription'] = 'Le plug-in IOMAD OpenID Connect fournit une fonctionnalité SSO avec des fournisseurs d\'identité configurables.';
 
 $string['cfg_authendpoint_key'] = 'Point d\'accès d\'autorisation';
 $string['cfg_authendpoint_desc'] = 'URI du point d\'accès d\'autorisation de votre fournisseur d\'identité à utiliser.';

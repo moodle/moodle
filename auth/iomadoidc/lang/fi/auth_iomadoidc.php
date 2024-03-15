@@ -24,8 +24,8 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-$string['pluginname'] = 'OpenID Connect';
-$string['auth_iomadoidcdescription'] = 'OpenID Connect -lisäosa mahdollistaa kertakirjautumisen käyttämällä määritettävissä olevaa identiteetintarjoajaa.';
+$string['pluginname'] = 'IOMAD OpenID Connect';
+$string['auth_iomadoidcdescription'] = 'IOMAD OpenID Connect -lisäosa mahdollistaa kertakirjautumisen käyttämällä määritettävissä olevaa identiteetintarjoajaa.';
 $string['cfg_authendpoint_key'] = 'Todennuksen päätepiste';
 $string['cfg_authendpoint_desc'] = 'Käytettävän identiteetintarjoajan todennuksen päätepisteen URI.';
 $string['cfg_autoappend_key'] = 'Lisää automaattisesti';

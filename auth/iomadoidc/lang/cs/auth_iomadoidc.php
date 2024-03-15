@@ -24,8 +24,8 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-$string['pluginname'] = 'OpenID Connect';
-$string['auth_iomadoidcdescription'] = 'Plugin OpenID Connect poskytuje funkci jednotného přihlašování pomocí konfigurovatelných poskytovatelů identity.';
+$string['pluginname'] = 'IOMAD OpenID Connect';
+$string['auth_iomadoidcdescription'] = 'Plugin IOMAD OpenID Connect poskytuje funkci jednotného přihlašování pomocí konfigurovatelných poskytovatelů identity.';
 $string['cfg_authendpoint_key'] = 'Koncový bod autorizace';
 $string['cfg_authendpoint_desc'] = 'Identifikátor URI koncového bodu autorizace od vašeho poskytovatele identity, který se má použít.';
 $string['cfg_autoappend_key'] = 'Automaticky připojit';

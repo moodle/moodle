@@ -27,7 +27,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'IOMAD OpenID Connect';
-$string['auth_iomadoidcdescription'] = 'The OpenID Connect authentication plugin provides single-sign-on functionality using configurable IdP.';
+$string['auth_iomadoidcdescription'] = 'The IOMAD OpenID Connect authentication plugin provides single-sign-on functionality using configurable IdP.';
 
 // Configuration pages.
 $string['settings_page_other_settings'] = 'Other options';
@@ -119,7 +119,7 @@ $string['iomadoidcresource'] = 'Resource';
 $string['iomadoidcresource_help'] = 'The OpenID Connect resource for which to send the request.<br/>
 <b>Note</b> this is paramater is not supported in <b>Microsoft identity platform (v2.0)</b> IdP type.';
 $string['iomadoidcscope'] = 'Scope';
-$string['iomadoidcscope_help'] = 'The IOMADOIDC Scope to use.';
+$string['iomadoidcscope_help'] = 'The OIDC Scope to use.';
 $string['cfg_opname_key'] = 'Provider Display Name';
 $string['cfg_opname_desc'] = 'This is an end-user-facing label that identifies the type of credentials the user must use to login. This label is used throughout the user-facing portions of this plugin to identify your provider.';
 $string['cfg_redirecturi_key'] = 'Redirect URI';
@@ -158,7 +158,7 @@ $string['application_updated_azure'] = 'OpenID Connect application setting was u
 
 $string['event_debug'] = 'Debug message';
 
-$string['task_cleanup_iomadoidc_state_and_token'] = 'Clean up IOMADOIDC state and invalid token';
+$string['task_cleanup_iomadoidc_state_and_token'] = 'Clean up OIDC state and invalid token';
 
 $string['errorauthdisconnectemptypassword'] = 'Password cannot be empty';
 $string['errorauthdisconnectemptyusername'] = 'Username cannot be empty';
@@ -235,10 +235,10 @@ $string['privacy:metadata:auth_iomadoidc_prevlogin:userid'] = 'The ID of the Moo
 $string['privacy:metadata:auth_iomadoidc_prevlogin:method'] = 'The previous login method';
 $string['privacy:metadata:auth_iomadoidc_prevlogin:password'] = 'The previous (encrypted) user password field.';
 $string['privacy:metadata:auth_iomadoidc_token'] = 'OpenID Connect tokens';
-$string['privacy:metadata:auth_iomadoidc_token:iomadoidcuniqid'] = 'The IOMADOIDC unique user identifier.';
+$string['privacy:metadata:auth_iomadoidc_token:iomadoidcuniqid'] = 'The OIDC unique user identifier.';
 $string['privacy:metadata:auth_iomadoidc_token:username'] = 'The username of the Moodle user';
 $string['privacy:metadata:auth_iomadoidc_token:userid'] = 'The user ID of the Moodle user';
-$string['privacy:metadata:auth_iomadoidc_token:iomadoidcusername'] = 'The username of the IOMADOIDC user';
+$string['privacy:metadata:auth_iomadoidc_token:iomadoidcusername'] = 'The username of the OIDC user';
 $string['privacy:metadata:auth_iomadoidc_token:scope'] = 'The scope of the token';
 $string['privacy:metadata:auth_iomadoidc_token:tokenresource'] = 'The resource of the token';
 $string['privacy:metadata:auth_iomadoidc_token:authcode'] = 'The auth code for the token';
@@ -271,13 +271,13 @@ $string['na'] = 'n/a';
 $string['mismatched_details'] = 'Token record contains username "{$a->tokenusername}"; matched Moodle user has username "{$a->moodleusername}".';
 $string['delete_token_and_reference'] = 'Delete token and reference';
 $string['table_token_id'] = 'Token record ID';
-$string['table_iomadoidc_username'] = 'IOMADOIDC username';
-$string['table_token_unique_id'] = 'IOMADOIDC unique ID';
+$string['table_iomadoidc_username'] = 'OIDC username';
+$string['table_token_unique_id'] = 'OIDC unique ID';
 $string['table_matching_status'] = 'Matching status';
 $string['table_matching_details'] = 'Details';
 $string['table_action'] = 'Action';
 $string['token_deleted'] = 'Token was deleted successfully';
-$string['no_token_to_cleanup'] = 'There are no IOMADOIDC token to cleanup.';
+$string['no_token_to_cleanup'] = 'There are no OIDC token to cleanup.';
 
 $string['errorusermatched'] = 'The Microsoft 365 account "{$a->aadupn}" is already matched with Moodle user "{$a->username}". To complete the connection, please log in as that Moodle user first and follow the instructions in the Microsoft block.';
 

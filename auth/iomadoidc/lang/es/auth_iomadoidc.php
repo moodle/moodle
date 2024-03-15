@@ -24,8 +24,8 @@
  * @copyright (C) 2014 onwards Microsoft, Inc. (http://microsoft.com/)
  */
 
-$string['pluginname'] = 'OpenID Connect';
-$string['auth_iomadoidcdescription'] = 'El complemento OpenID Connect ofrece funcionalidad de inicio de sesión único a través de proveedores de identidad configurables.';
+$string['pluginname'] = 'IOMAD OpenID Connect';
+$string['auth_iomadoidcdescription'] = 'El complemento IOMAD OpenID Connect ofrece funcionalidad de inicio de sesión único a través de proveedores de identidad configurables.';
 $string['cfg_authendpoint_key'] = 'Extremo de autorización';
 $string['cfg_authendpoint_desc'] = 'La URI del extremo de autorización del proveedor de identidad que va a utilizar.';
 $string['cfg_autoappend_key'] = 'Anexo automático';
