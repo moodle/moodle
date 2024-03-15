@@ -680,9 +680,11 @@ class sqlsrv_native_moodle_database extends moodle_database {
      * @return bool
      */
     private function free_result($resource) {
-        if (!is_bool($resource)) { // true/false resources cannot be freed
+        if (!is_bool($resource) && is_resource($resource)) {
+            // We need to make sure that the statement resource is in the correct type before freeing it.
             return sqlsrv_free_stmt($resource);
         }
+        return false;
     }
 
     /**
