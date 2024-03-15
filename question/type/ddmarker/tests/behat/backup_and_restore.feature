@@ -19,6 +19,8 @@ Feature: Test duplicating a quiz containing a drag and drop markers question
       | quiz       | Test quiz | C1     | quiz1    |
     And quiz "Test quiz" contains the following questions:
       | Drag markers | 1 |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I log in as "admin"
     And I am on "Course 1" course homepage
 

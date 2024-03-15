@@ -31,6 +31,8 @@ Feature: Enrolments are synchronised with meta courses
       | student2 | C2C2 | student | 0 |
       | student1 | C4C4 | student | 0 |
       | student2 | C4C4 | student | 1 |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I log in as "admin"
     And I navigate to "Plugins > Enrolments > Manage enrol plugins" in site administration
     And I click on "Enable" "link" in the "Course meta link" "table_row"

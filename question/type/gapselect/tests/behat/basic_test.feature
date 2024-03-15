@@ -13,6 +13,8 @@ Feature: Test all the basic functionality of this question type
     And the following "course enrolments" exist:
       | user    | course | role           |
       | teacher | C1     | editingteacher |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
 
   @javascript
   Scenario: Create, edit then preview a gapselect question.

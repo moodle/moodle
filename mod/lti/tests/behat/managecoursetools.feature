@@ -17,6 +17,8 @@ Feature: Manage course tools
     And the following "course enrolments" exist:
       | user     | course | role           |
       | teacher1 | C1     | editingteacher |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
 
   Scenario: Create a course tool from the zero state
     Given I am on the "Course 1" course page logged in as teacher1

@@ -12,6 +12,8 @@ Feature: BigBlueButtonBN Subplugins test
     And the following "activities" exist:
       | activity        | course      | name              | type |
       | bigbluebuttonbn | Test course | BBB Instance name | 0    |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
 
   Scenario: Add a subplugin and check that the settings are available
     Given I log in as "admin"
