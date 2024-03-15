@@ -226,6 +226,8 @@ if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 
     $userreportrenderer = $PAGE->get_renderer('gradereport_singleview');
     // Add previous/next user navigation.
     echo $userreportrenderer->report_navigation($gpr, $courseid, $context, $report, $groupid, $itemtype, $itemid);
+
+    $gui->close();
 }
 
 $event = \gradereport_singleview\event\grade_report_viewed::create(

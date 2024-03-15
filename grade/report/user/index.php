@@ -166,7 +166,6 @@ if (has_capability('moodle/grade:viewall', $context)) {
                 echo $report->print_table(true);
             }
         }
-        $gui->close();
     } else { // Show one user's report.
         // Store the id of the current user item in a session variable which represents the last viewed item.
         $SESSION->gradereport_user["useritem-{$context->id}"] = $userid;
@@ -187,6 +186,8 @@ if (has_capability('moodle/grade:viewall', $context)) {
         // Add previous/next user navigation.
         echo $userreportrenderer->user_navigation($gui, $userid, $courseid);
     }
+
+    $gui->close();
 } else {
     // Students will see just their own report.
     // Create a report instance.
