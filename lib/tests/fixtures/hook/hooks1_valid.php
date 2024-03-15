@@ -28,6 +28,6 @@ defined('MOODLE_INTERNAL') || die();
 $callbacks = [
     [
         'hook' => 'test_plugin\\hook\\hook',
-        'callback' => 'test_plugin\\callbacks::test1',
+        'callback' => [\test_plugin\callbacks::class, 'test1'],
     ],
 ];
