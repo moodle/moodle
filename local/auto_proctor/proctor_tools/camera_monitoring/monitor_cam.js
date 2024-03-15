@@ -56,6 +56,7 @@ $(document).ready(function () {
     let preventedAction;
     let quittingQuiz;
     let newSubmitButton;
+    let recording_filename;
 
         let susCounter = 0;
         let probSusCounter = 0;
@@ -222,8 +223,7 @@ $(document).ready(function () {
 
         function downloadVideo(blob) {
             const { timestamp, milliseconds } = generateTimestamp();
-            const recording_filename = 'EVD_USER_' + jsdata.userid + '_QUIZ_' + jsdata.quizid + '_ATTEMPT_' + jsdata.quizattempt + '_' +timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_RECORDING';
-
+            recording_filename = 'EVD_USER_' + jsdata.userid + '_QUIZ_' + jsdata.quizid + '_ATTEMPT_' + jsdata.quizattempt + '_' +timestamp.replace(/[/:, ]/g, '') + '_' + milliseconds + '_RECORDING';
             // ==== USING XHR ====
             // const xhr = new XMLHttpRequest();
             // xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_recording.php', true);
@@ -238,6 +238,7 @@ $(document).ready(function () {
             //     }
             // };
             // xhr.send(blob);
+            sendCamRecordingDetails()
 
             fetch(jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_recording.php', {
                 method: 'POST',
@@ -249,6 +250,7 @@ $(document).ready(function () {
             })
             .then(response => {
                 if (response.ok) {
+                    sendCamRecordingDetails();
                     console.log('Recording saved successfully.');
                     //const blob = new Blob([xhr.response], { type: 'video/webm' });
                     isSending = false;
@@ -259,6 +261,23 @@ $(document).ready(function () {
             .catch(error => {
                 console.error('An error occurred while saving the recording:', error);
             });
+        }
+
+        function sendCamRecordingDetails(){
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', jsdata.wwwroot + '/local/auto_proctor/proctor_tools/camera_monitoring/save_cam_recording_details.php', true); // Replace with the actual path
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        console.log('POST request successful');
+                    } else {
+                        console.error('POST request failed with status: ' + xhr.status);
+                        // Handle the error or provide feedback to the user
+                    }
+                }
+            };
+            xhr.send('userid=' + jsdata.userid + '&quizid=' + jsdata.quizid + '&quizattempt=' + jsdata.quizattempt + '&recording_filename=' + recording_filename);
         }
 
         function stopRecording() {

@@ -152,6 +152,7 @@ $wwwroot = $CFG->wwwroot
                             archives.style.display = "none";
                             quiz_settings.style.display = "none";
                             quiz_results.style.display = "none";
+                            user_id.style.display = "none";
                         }
                         
                     }
@@ -175,6 +176,7 @@ $wwwroot = $CFG->wwwroot
                                     archives.style.display = "none";
                                     quiz_settings.display = "none";
                                     quiz_results.style.display = "none";
+                                    user_id.style.display = "none";
                                 }
                             </script>
                         ';
@@ -198,8 +200,7 @@ $wwwroot = $CFG->wwwroot
             <!-- INCLUDE ARCHOVES DISPLAY  -->
             <section id="archives" style="display: none;">
                 <?php
-                    //include "dashboard_main.php";
-                    echo "ARCHIVES";
+                    include "archives.php";
                 ?>
 
                 <script>
@@ -224,6 +225,7 @@ $wwwroot = $CFG->wwwroot
                             url.searchParams.delete('quiz_results');
                             url.searchParams.delete('quiz_settings');
                             url.searchParams.delete('course_name');
+                            url.searchParams.delete('user_id');
 
                             // Replace the current URL without redirecting
                             history.replaceState(null, '', url.href);
@@ -265,6 +267,7 @@ $wwwroot = $CFG->wwwroot
                                         home.style.display = "none";
                                         archives.style.display = "none";
                                         courses.style.display = "none";
+                                        user_id.style.display = "none";
                                         
                                 </script>
                             ';
@@ -288,6 +291,27 @@ $wwwroot = $CFG->wwwroot
                                     home.style.display = "none";
                                     archives.style.display = "none";
                                     courses.style.display = "none";
+                                    user_id.style.display = "none";
+                            </script>
+                        ';
+                        echo "</section>";
+                    }
+                ?>
+
+                <?php
+                    if (isset($_GET['user_id'])){
+                        echo '<section id="view_report" style="display: none;">';
+                        include "view_report.php";
+
+                        echo '
+                            <script>
+                                    view_report.style.display = "block";
+
+                                    // Hide subject and quiz display
+                                    home.style.display = "none";
+                                    archives.style.display = "none";
+                                    courses.style.display = "none";
+                                    quiz_results.style.display = "none";
                             </script>
                         ';
                         echo "</section>";
