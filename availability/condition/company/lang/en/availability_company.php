@@ -23,12 +23,12 @@
  */
 
 $string['anycompany'] = '(Any company)';
-$string['description'] = 'Allow only students who belong to a specified company, or all companys.';
+$string['description'] = 'Allow only users who belong to a specified company, or allow users from all companies.';
 $string['missing'] = '(Missing company)';
-$string['pluginname'] = 'Restriction by company';
+$string['pluginname'] ='Restriction by Company';
 $string['error_selectcompany'] = 'You must select a company.';
-$string['requires_anycompany'] = 'You belong to any company';
-$string['requires_company'] = 'You belong to <strong>{$a}</strong>';
+$string['requires_anycompany'] ='You must belong to any company';
+$string['requires_company'] = 'You must belong to <strong>{$a}</strong>';
 $string['requires_notanycompany'] = 'You do not belong to any company';
 $string['requires_notcompany'] = 'You do not belong to <strong>{$a}</strong>';
 $string['title'] = 'Company';

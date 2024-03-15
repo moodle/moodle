@@ -25,7 +25,7 @@
 $string['anytrainingevent'] = '(Any training event)';
 $string['description'] = 'Allow only students who are signed up to a specified training event.';
 $string['missing'] = '(Missing training event)';
-$string['pluginname'] = 'Restriction by training event';
+$string['pluginname'] = 'Restriction by Training Event';
 $string['error_selecttrainingevent'] = 'You must select a training event.';
 $string['requires_anytrainingevent'] = 'You are signed up to a training event';
 $string['requires_trainingevent'] = 'You are signed up to <strong>{$a}</strong>';
