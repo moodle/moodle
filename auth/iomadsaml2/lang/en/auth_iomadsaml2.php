@@ -231,7 +231,7 @@ deny library=overdue<br>';
 /*
  * Privacy provider (GDPR)
  */
-$string["privacy:no_data_reason"] = "The Saml2 authentication plugin does not store any personal data.";
+$string["privacy:no_data_reason"] = "The IOMAD Saml2 authentication plugin does not store any personal data.";
 
 /*
  * Signing Algorithm
