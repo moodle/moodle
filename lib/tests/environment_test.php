@@ -85,6 +85,10 @@ class environment_test extends \advanced_testcase {
                 // If we're on a 32-bit system, skip 64-bit check. 32-bit PHP has PHP_INT_SIZE set to 4.
                 $this->markTestSkipped('64-bit check is not necessary for unit testing.');
             }
+            if ($result->info === 'oracle_database_usage') {
+                // If we're on a system that uses the Oracle database, skip the Oracle check.
+                $this->markTestSkipped('Oracle database check is not necessary for unit testing.');
+            }
         }
         $info = "{$result->part}:{$result->info}";
         $this->assertTrue($result->getStatus(), "Problem detected in environment ($info), fix all warnings and errors!");
