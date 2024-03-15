@@ -15,18 +15,29 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * factor_totp upgrade library.
  *
- * @package     factor_totp
- * @subpackage  tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    factor_totp
+ * @copyright  2024 Daniel Ziegenberg <daniel@ziegenberg.at>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Factor totp upgrade helper function
+ *
+ * @param int $oldversion
+ */
+function xmldb_factor_totp_upgrade($oldversion): bool {
+    if ($oldversion < 2024081600) {
 
-$plugin->version      = 2024081600;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires     = 2024041600;      // Requires this Moodle version.
-$plugin->component    = 'factor_totp';   // Full name of the plugin (used for diagnostics).
-$plugin->maturity     = MATURITY_STABLE;
+        $window = get_config('factor_totp', 'window');
+        if ($window && $window >= 30) {
+            set_config('window', 29, 'factor_totp');
+        }
+
+        // Savepoint reached.
+        upgrade_plugin_savepoint(true, 2024081600, 'factor', 'auth');
+    }
+
+    return true;
+}

@@ -50,7 +50,7 @@ class factor_test extends \advanced_testcase {
         $this->setUser($user);
         // Setup test staples.
         $totp = \OTPHP\TOTP::create('fakekey');
-        $window = 10;
+        $window = 29;
 
         set_config('enabled', 1, 'factor_totp');
         $totpfactor = \tool_mfa\plugininfo\factor::get_factor('totp');
@@ -67,21 +67,15 @@ class factor_test extends \advanced_testcase {
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_VALID, $result);
 
-        // Now update timeverified to 2 mins ago, and check codes within window are blocked.
-        $code = $totp->at(time() - (2 * MINSECS));
-        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), ['id' => $factorinstance->id]);
+        // Now update timeverified to 45 seconds ago, and check codes within window is blocked.
+        $code = $totp->at(time() - (20));
+        $DB->set_field('tool_mfa', 'lastverified', time() - (20), ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_USED, $result);
 
-        // Now update timeverified to 2 mins ago, and check codes within window are blocked.
+        // Now update timeverified to 45 seconds ago, and check code from current increment within window is blocked.
         $code = $totp->at(time());
-        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), ['id' => $factorinstance->id]);
-        $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
-        $this->assertEquals($totpfactor::TOTP_USED, $result);
-
-        // Now update timeverified to 2 mins ago, and check codes within window are blocked.
-        $code = $totp->at(time() - (4 * MINSECS));
-        $DB->set_field('tool_mfa', 'lastverified', time() - (2 * MINSECS), ['id' => $factorinstance->id]);
+        $DB->set_field('tool_mfa', 'lastverified', time() - (20), ['id' => $factorinstance->id]);
         $result = $totpfactor->validate_code($code, $window, $totp, $factorinstance);
         $this->assertEquals($totpfactor::TOTP_USED, $result);
 
