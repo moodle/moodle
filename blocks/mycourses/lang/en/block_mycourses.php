@@ -24,7 +24,7 @@
 
 $string['archive'] = 'Older course history';
 $string['archivecutofflabel'] = 'Number of days for archive';
-$string['archivecutoffdesc'] = 'This sets the number of days after which a course is moved to the archive listing.';
+$string['archivecutoffdesc'] = 'This sets the number of days after which a course is moved to the archive listing';
 $string['archivetitle'] = 'Archive courses';
 $string['aria:courseprogress'] = 'Course progress:';
 $string['availableheader'] = 'Available courses';
@@ -51,5 +51,5 @@ $string['privacy:metadata'] = 'The My Courses block only shows data stored in ot
 $string['result'] = 'Result - {$a}';
 $string['showsummarylabel'] = 'Show course summary';
 $string['showsummarydesc'] = 'Show the course summary in the listing';
-$string['startcourse'] = 'Click \'ok\' to start this course';
+$string['startcourse'] = 'Click \'OK\' to start this course';
 $string['title'] = 'My courses';
