@@ -131,7 +131,6 @@ class gradereport_user_renderer extends plugin_renderer_base {
         while ($userdata = $gui->next_user()) {
             $users[$userdata->user->id] = $userdata->user;
         }
-        $gui->close();
 
         $arraykeys = array_keys($users);
         $keynumber = array_search($userid, $arraykeys);
