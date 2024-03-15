@@ -50,7 +50,7 @@ $string['iomadcertificatename'] = 'Certificate Name';
 $string['iomadcertificatereport'] = 'Certificates Report';
 $string['iomadcertificatesfor'] = 'Certificates for';
 $string['iomadcertificatetype'] = 'Certificate Type';
-$string['iomadcertificatetype_help'] ='This is where you determine the layout of the certificate. The certificate type folder includes four default certificates:
+$string['iomadcertificatetype_help'] = 'This is where you determine the layout of the certificate. The certificate type folder includes four default certificates:
 A4 Embedded prints on A4 size paper with embedded font.
 A4 Non-Embedded prints on A4 size paper without embedded fonts.
 Letter Embedded prints on letter size paper with embedded font.
@@ -92,16 +92,16 @@ $string['emailteachermail'] = '
 {$a->student} has received their certificate: \'{$a->certificate}\'
 for {$a->course}.
 
-You can review it here:
+You can review the certificate here:
 
     {$a->url}';
 $string['emailteachermailhtml'] = '
 {$a->student} has received their certificate: \'<i>{$a->certificate}</i>\'
 for {$a->course}.
 
-You can review it here:
+You can review the certificate here:
 
-    <a href="{$a->url}">Certificate Report</a>.';
+    <a href="{$a->url}">Certificate Report</a>';
 $string['entercode'] = 'Enter certificate code to verify:';
 $string['fontsans'] = 'Sans-serif font family';
 $string['fontsans_desc'] = 'Sans-serif font family for certificates with embedded fonts';
@@ -155,7 +155,7 @@ $string['pluginadministration'] = 'IOMAD Certificate administration';
 $string['pluginname'] = 'IOMAD Certificate';
 $string['portrait'] = 'Portrait';
 $string['printdate'] = 'Print Date';
-$string['printdate_help'] = 'This is the date that will be printed on the certificate, if a print date option is selected. If the course completion date is selected but the student has not completed the course, the date received will be printed. You can also choose to print the date based on when an activity was graded. If a certificate is issued before that activity is graded, the date received will be printed.';
+$string['printdate_help'] = 'This is the date that will be printed on the certificate if a print date is selected. If the course completion date is selected but the student has not completed the course, the date that the certificate was received will be printed. You can also choose to print the date based on when an activity was graded. If a certificate is issued before that activity is graded, the date received will be printed.';
 $string['printerfriendly'] = 'Printer-friendly page';
 $string['printhours'] = 'Print Credit Hours';
 $string['printhours_help'] = 'Enter here the number of credit hours to be printed on the certificate.';
@@ -172,7 +172,7 @@ $string['printsignature_help'] = 'This option allows you to print a signature im
 $string['printteacher'] = 'Print Teacher Name(s)';
 $string['printteacher_help'] = 'For printing the teacher name on the certificate, set the role of teacher at the module level. Do this if, for example, you have more than one teacher for the course or more than one certificate in the course and you want to print different teacher names on each certificate. Click to edit the certificate, then click on the \'Locally assigned roles\' tab. Then assign the role of teacher (editing teacher) to the certificate (they do not HAVE to be a teacher in the course - you can assign that role to anyone). Those names will be printed on the certificate for teacher.';
 $string['printwmark'] = 'Watermark Image';
-$string['printwmark_help'] = 'A watermark file can be placed in the background of the certificate. A watermark is a faded graphic. A watermark could be a logo, seal, crest, wording, or whatever you want to use as a graphic background.';
+$string['printwmark_help'] =  'A watermark image can be placed in the background of the certificate. This could be a logo, seal, crest, wording, or whatever you want to use as a graphic background.';
 $string['receivedcerts'] = 'Received certificates';
 $string['receiveddate'] = 'Date Received';
 $string['removecert'] = 'Issued certificates removed';
@@ -183,7 +183,7 @@ $string['requiredtimenotmet'] = 'You must spend at least a minimum of {$a->requi
 $string['requiredtimenotvalid'] = 'The required time must be a valid number greater than 0';
 $string['reviewiomadcertificate'] = 'Review your certificate';
 $string['savecert'] = 'Save Certificates';
-$string['savecert_help'] = 'If you choose this option, then a copy of each user\'s certificate pdf file is saved in the course files moddata folder for that certificate. A link to each user\'s saved certificate will be displayed in the certificate report.';
+$string['savecert_help'] = 'If you choose this option, then a copy of each user\'s certificate PDF file will be saved in the moodledata directory. A link to each user\'s saved certificate will be displayed in the certificate report.';
 $string['seal'] = 'Seal';
 $string['sigline'] = 'line';
 $string['signature'] = 'Signature';
