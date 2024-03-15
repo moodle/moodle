@@ -26,8 +26,8 @@
  * Strings for component 'local_framework_selector', language 'en'
  */
 
-$string['frameworkselectortoomany'] = 'framework_selector got more than one selected framework, even though multiselect is false.';
-$string['cannotcallusgetselectedframework'] = 'You cannot call framework_selector::get_selected_framework if multi select is true.';
+$string['frameworkselectortoomany'] = 'framework_selector got more than one selected framework, even though multi-select is false';
+$string['cannotcallusgetselectedframework'] = 'You cannot call framework_selector::get_selected_framework if multi-select is true';
 $string['clear'] = 'Clear';
 $string['searchoptions'] = 'Search options';
 $string['frameworkselectorpreserveselected'] = 'Keep selected frameworks, even if they no longer match the search';

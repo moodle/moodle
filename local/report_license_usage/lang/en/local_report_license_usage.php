@@ -22,8 +22,8 @@
  */
 
 $string['blocktitle'] = 'License Allocations Report';
-$string['pluginname'] = 'License allocations report';
-$string['privacy:metadata'] = 'The Local IOMAD license allocations report only shows data stored in other locations.';
+$string['pluginname'] = 'License Allocations Report';
+$string['privacy:metadata'] = 'The \'Local IOMAD license allocations report\' only shows data stored in other locations.';
 $string['report_license_usage_title'] = 'License allocations report';
 $string['report_license_usage:view'] = 'View the license allocations report';
 $string['repuserlicallocation'] = 'License allocations report';

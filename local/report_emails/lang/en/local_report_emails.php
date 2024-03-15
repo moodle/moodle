@@ -23,8 +23,8 @@
 
 $string['report_emails:view'] = 'View the IOMAD email report';
 $string['report_emails:resend'] = 'Resend IOMAD emails';
-$string['pluginname'] = 'Outgoing email report';
-$string['privacy:metadata'] = 'The Local IOMAD email report only shows data stored in other locations.';
+$string['pluginname'] = 'Outgoing Email Report';
+$string['privacy:metadata'] = 'The \'Local IOMAD email report\' only shows data stored in other locations.';
 $string['sender'] = 'Sender';
 $string['created'] = 'Date created';
 $string['due'] = 'Date due';

@@ -22,7 +22,7 @@
  */
 
 $string['pluginname'] = 'IOMAD completion tracking';
-$string['privacy:metadata'] = 'The Local IOMAD completion tracking plugin only shows data stored in other locations.';
+$string['privacy:metadata'] = 'The \'Local IOMAD completion tracking\' plugin only shows data stored in other locations.';
 $string['privacy:metadata:local_iomad_track:id'] = 'Local IOMAD track ID';
 $string['privacy:metadata:local_iomad_track:courseid'] = 'Course ID';
 $string['privacy:metadata:local_iomad_track:coursename'] = 'Course name.';
@@ -54,6 +54,6 @@ $string['importcompletionrecords'] = 'Import completion records';
 $string['uploadcompletionresult'] = 'Upload completion file result';
 $string['completionimportfromfile'] = 'Completion import from file';
 $string['importcompletionsfromfile'] = 'Import completion information from file';
-$string['courseswithoutcompletionenabledcouunt'] = 'Number of courses which do not have completion enable = {$a}';
+$string['courseswithoutcompletionenabledcouunt'] = 'Number of courses which do not have completion enabled = {$a}';
 $string['courseswithoutcompletioncriteriacouunt'] ='Number of courses which have no completion criteria = {$a}';
 $string['checkcoursestatusmoodle'] = 'Check course settings for import';

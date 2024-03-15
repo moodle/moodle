@@ -21,7 +21,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-$string['pluginname'] = 'IOMAD settings';
+$string['pluginname'] = 'IOMAD Settings';
 $string['privacy:metadata'] = 'The Local IOMAD settings plugin only shows data stored in other locations.';
 $string['customtext2'] = 'Custom Text 2';
 $string['customtext3'] = 'Custom Text 3';

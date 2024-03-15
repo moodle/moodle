@@ -26,7 +26,7 @@
  */
 
 $string['blocktitle'] = 'Email Reports';
-$string['pluginname'] = 'Email reports';
+$string['pluginname'] = 'Email Reports';
 $string['privacy:metadata'] = 'The IOMAD Local email reports plugin only shows data stored in other locations.';
 $string['course_not_completed_task'] = 'Email reports - Course not completed task';
 $string['course_not_started_task'] = 'Email reports - Course not started task';
