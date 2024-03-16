@@ -326,15 +326,15 @@ $all_students = $DB->get_records_sql($sql, $params);
                         </div>
                     </div>
                 </div>
-                <div class="bg-white p-4 items-center mb-8 justify-between block sm:flex md:divide-x ">
+                <div class="bg-white p-4 items-center mb-8 justify-between block sm:flex ">
                     <h1 class="px-4 text-xl justify-start font-semibold text-gray-900 sm:text-2xl py-0">Students</h1>
                     <div class="flex items-center mb-4 sm:mb-0">
                         <form class="sm:pr-3" action="#" method="GET">
-                            <label for="products-search" class="sr-only">Search</label>
+                            <label for="archive_search" class="sr-only">Search</label>
                             <div class="relative w-48 mt-1 sm:w-64 xl:w-96">
-                                <input type="text" name="email" id="products-search"
+                                <input type="text" name="email" id="archive_search"
                                     class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 "
-                                    placeholder="Search">
+                                    placeholder="⌕ Search">
                             </div>
                         </form>
                     </div>
