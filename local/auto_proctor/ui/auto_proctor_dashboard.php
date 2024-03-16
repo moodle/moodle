@@ -134,9 +134,8 @@ $wwwroot = $CFG->wwwroot
             <section id="home" style="display: block;">
                 <?php
                     // Ensuring dashboard_home will display when no course is selected
-                    if (!isset($_GET['course_id'])) {
+                    if (!isset($_GET['course_id']) && !isset($_GET['archives'])){
                         include "dashboard_home.php";
-
                     }
 
                 ?>
@@ -146,6 +145,19 @@ $wwwroot = $CFG->wwwroot
                         var home = document.getElementById("home");
                         if (home.style.display === "none") {
                             home.style.display = "block";
+
+                            // Remove parameters individually
+                            url.searchParams.delete("course_id");
+                            url.searchParams.delete("quiz_id");
+                            url.searchParams.delete("quiz_name");
+                            url.searchParams.delete("quiz_results");
+                            url.searchParams.delete("quiz_settings");
+                            url.searchParams.delete("course_name");
+                            url.searchParams.delete("user_id");
+                            url.searchParams.delete("archives");
+
+                            // Replace the current URL without redirecting
+                            history.replaceState(null, "", url.href);
 
                             // Hide subject and quiz display
                             courses.style.display = "none";
@@ -200,55 +212,22 @@ $wwwroot = $CFG->wwwroot
             <!-- INCLUDE ARCHOVES DISPLAY  -->
             <section id="archives" style="display: none;">
                 <?php
-                    include "archives.php";
+                    if (isset($_GET['archives'])){
+                        include "archives.php";
+
+                        echo '
+                            <script>
+                                if (archives.style.display === "none") {
+                                    archives.style.display = "block";
+
+                                    // Hide subject and quiz display
+                                    home.style.display = "none";
+                                }
+                            </script>
+                        ';
+                    }
                 ?>
 
-                <script>
-                    function toggleArchives() {
-
-                        var archives = document.getElementById("archives");
-                        var coursesDropdown = document.getElementById("coursesDropdown");
-                        var courseId = new URLSearchParams(window.location.search).get('course_id');
-                        var settings = new URLSearchParams(window.location.search).get('quiz_settings');
-                        var results = new URLSearchParams(window.location.search).get('quiz_results');
-
-                        if (courseId) {
-                            coursesDropdown.click();
-                             // Remove the parameters in URL
-                            // Get the current URL
-                            var url = new URL(window.location.href);
-
-                            // Remove parameters individually
-                            url.searchParams.delete('course_id');
-                            url.searchParams.delete('quiz_id');
-                            url.searchParams.delete('quiz_name');
-                            url.searchParams.delete('quiz_results');
-                            url.searchParams.delete('quiz_settings');
-                            url.searchParams.delete('course_name');
-                            url.searchParams.delete('user_id');
-
-                            // Replace the current URL without redirecting
-                            history.replaceState(null, '', url.href);
-                        }
-
-                        if (archives.style.display === "none") {
-                            archives.style.display = "block";
-
-                            // Hide subject and quiz display
-                            home.style.display = "none";
-                            courses.style.display = "none";
-
-                            if (settings){
-                                quiz_settings.style.display = "none";
-                            }
-
-                            if (results){
-                                quiz_results.style.display = "none";
-                            }
-                            dropdown.style.display = "none";
-                        }
-                    }
-                </script>
             </section>
 
             <!-- INCLUDE QUIZ SETTINGS DISPLAY  -->

@@ -55,34 +55,62 @@ if (!$managing_context && !is_siteadmin($user_id)) {
         // Array for the course IDs we will retrieve.
         $course_ids = array();
 
-        // Loop through the context that the user manages
-        foreach ($managing_context as $context) {
+            // Loop through the context that the user manages
+            foreach ($managing_context as $context) {
 
-            // Get the context id of the context
-            $context_id = $context->contextid;
-            echo "<script>console.log('Managing Course ID: ', " . json_encode($context_id) . ");</script>";
+                // Get the context id of the context
+                $context_id = $context->contextid;
+                echo "<script>console.log('Managing Course ID: ', " . json_encode($context_id) . ");</script>";
 
-            // Get instance id of the context from contex table
-            $sql = "SELECT instanceid
-            FROM {context}
-            WHERE id= :id";
-            $instance_ids = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
+                // Get instance id of the context from contex table
+                $sql = "SELECT instanceid
+                FROM {context}
+                WHERE id= :id";
+                $instance_ids = $DB->get_fieldset_sql($sql, ['id' => $context_id]);
 
-            echo "<script>console.log('instance id: ', " . json_encode($instance_ids) . ");</script>";
+                echo "<script>console.log('instance id: ', " . json_encode($instance_ids) . ");</script>";
 
-            // Push the instance_ids into the $course_ids array
-            $course_ids = array_merge($course_ids, $instance_ids);
+                // Push the instance_ids into the $course_ids array
+                $course_ids = array_merge($course_ids, $instance_ids);
+            }
 
-        }
+            // Select category id of BSIT
+                $course_name = 'Bachelor of Science in Information Technology (Boni Campus)';
+                $sql = "SELECT id
+                    FROM {course_categories}
+                    WHERE name = :course_name;
+                ";
+                $params = array('course_name' => $course_name);
+                $bsit_id = $DB->get_fieldset_sql($sql, $params);
+            
+            foreach($course_ids as $course_id){
+                $sql = "SELECT category
+                    FROM {course}
+                    WHERE id = :course_id;
+                ";
+                $params = array('course_id' => $course_id);
+                $course_category = $DB->get_fieldset_sql($sql, $params);
 
-        $course_id_placeholders = implode(',', array_fill(0, count($instance_ids), '?'));
+                if ($course_category[0] === $bsit_id[0]){
+                    //$course_ids[] = $course_id;
+                    echo "an it: " . $course_id . '</br>';
+                    $course_ids[] = $course_id;
+                }
+            }
+        
+        // Push the instance_ids into the $course_ids array
+        $course_ids = array_merge($course_ids);
+
+        $course_id_placeholders = implode(',', array_fill(0, count($course_ids), '?'));
             // GET ALL QUIZZES OF COURSES IN AUTOPROCTOR TABLE
             $sql = "SELECT *
                 FROM {auto_proctor_quiz_tb}
-                WHERE course IN ($course_id_placeholders);
+                WHERE course IN ($course_id_placeholders)
+                AND archived = 1;
             ";
         $ap_quiz_records = $DB->get_records_sql($sql, $course_ids);
         echo "<script>console.log('All Course IDs: ', " . json_encode($course_ids) . ");</script>";
+        //print_r($ap_quiz_records);
     }
 
     // ======== IF USER IS ADMIN
@@ -104,38 +132,19 @@ if (!$managing_context && !is_siteadmin($user_id)) {
 
         $course_ids = array_merge($course_ids);
         $course_id_placeholders = implode(',', array_fill(0, count($course_ids), '?'));
-
-        // GET ALL QUIZZES OF COURSES IN AUTOPROCTOR TABLE
-        $sql = "SELECT *
-            FROM {auto_proctor_quiz_tb}
-            WHERE course IN ($course_id_placeholders);
-        ";
+            // GET ALL QUIZZES OF COURSES IN AUTOPROCTOR TABLE
+            $sql = "SELECT *
+                FROM {auto_proctor_quiz_tb}
+                WHERE course IN ($course_id_placeholders)
+                AND archived = 1;
+            ";
         $ap_quiz_records = $DB->get_records_sql($sql, $course_ids);
-
-        $quiz_ids = array();
-
-        if ($ap_quiz_records) {
-            foreach ($ap_quiz_records as $record) {
-                // Push each quiz ID into the array
-                $quiz_ids[] = $record->quizid;
-            }
-        }
-        $quiz_id_placeholders = implode(',', array_fill(0, count($quiz_ids), '?'));
-
-    // SELECTING COURSE'S QUIZZES
-        $sql = "SELECT *
-            FROM {quiz}
-            WHERE id IN ($quiz_id_placeholders);
-        ";
-        $quiz_records = $DB->get_records_sql($sql, $quiz_ids);
+        echo "<script>console.log('All Course IDs: ', " . json_encode($course_ids) . ");</script>";
     }
     
-
 // Get the wwwroot of the site
 $wwwroot = $CFG->wwwroot;
-
-// $num_of_quiz_record = count($quiz_records);
-// $num_of_ap_quiz_record = count($ap_quiz_records);
+;
 
 ?>
 
@@ -291,22 +300,101 @@ $wwwroot = $CFG->wwwroot;
                                         </thead>
                                         <tbody class="bg-white ">
                                             <?php
-                                                foreach($ap_quiz_records as $ap_quiz){
+                                                // foreach($ap_quiz_records as $ap_quiz){
+                                                //     $sql = "SELECT name
+                                                //         FROM {quiz}
+                                                //         WHERE id = :quiz_id;
+                                                //     ";
+                                                //     $param = array('quiz_id' => $ap_quiz->quizid);
+                                                //     $quiz_name = $DB->get_fieldset_sql($sql, $param);
+
+                                                //     $sql = "SELECT shortname
+                                                //         FROM {course}
+                                                //         WHERE id = :course_id;
+                                                //     ";
+                                                //     $param = array('course_id' => $ap_quiz->course);
+                                                //     $course_name = $DB->get_fieldset_sql($sql, $param);
+
+                                                //     // SELECT TEACHERS OR QUIZ
+                                                //     $teacher_role_id = 3;
+                                                //     $editing_teacher_role_id = 4; 
+
+                                                //     $sql = "SELECT DISTINCT u.*
+                                                //             FROM {user} u
+                                                //             INNER JOIN {role_assignments} ra ON ra.userid = u.id
+                                                //             INNER JOIN {context} ctx ON ctx.id = ra.contextid
+                                                //             INNER JOIN {course} c ON c.id = ctx.instanceid
+                                                //             WHERE c.id = :course_id
+                                                //             AND (ra.roleid = :teacher_role_id OR ra.roleid = :editing_teacher_role_id)";
+
+                                                //     // Parameters for the SQL query
+                                                //     $params = array(
+                                                //         'course_id' => $ap_quiz->course,
+                                                //         'teacher_role_id' => $teacher_role_id,
+                                                //         'editing_teacher_role_id' => $editing_teacher_role_id
+                                                //     );
+
+                                                //     $course_teacher = $DB->get_records_sql($sql, $params);
+
+                                                //     // SELECT THE DATE CREATED OF QUIZ
+                                                //     $sql = "SELECT timecreated
+                                                //         FROM {quiz}
+                                                //         WHERE id = :quiz_id;
+                                                //     ";
+                                                //     $param = array('quiz_id' => $ap_quiz->quizid);
+                                                //     $date_created = $DB->get_fieldset_sql($sql, $param);
+
+                                                //     //print_r($course_teacher);
+
+                                                //     echo '
+                                                //         <tr>
+                                                //             <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
+                                                //                 <h1>'. $quiz_name[0].'</h1>
+                                                //                 <span class="font-normal text-[10px] text-center">
+                                                //                     <a href="" class="pl-2">PREVIEW</a>
+                                                //                 </span>
+                                                //             </td>
+                                                //             <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                //                 '. $course_name[0] .'
+                                                //             </td>
+                                                //             <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
+                                                //             '
+                                                //         ;
+                                                //             foreach($course_teacher as $teacher){
+                                                //                 $teacher_fullname = $teacher->firstname . ' ' . $teacher->lastname;
+
+                                                //                 echo $teacher_fullname;
+                                                //             }
+                                                //     echo '
+                                                //             </td>
+                                                //             <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
+                                                //                 '. date("d M Y", $date_created[0]) .'
+                                                //             </td>
+                                                //             <td class="p-4 text-sm font-normal text-blue-700 whitespace-nowrap ">
+                                                //                 <a href="">Restore</a>
+                                                //             </td>
+                                                //         </tr>
+                                                //     ';
+                                                // }
+                                            
+                                            foreach($ap_quiz_records as $archived_quiz){
+                                                // Select quiz name
                                                     $sql = "SELECT name
-                                                        FROM {quiz}
-                                                        WHERE id = :quiz_id;
-                                                    ";
-                                                    $param = array('quiz_id' => $ap_quiz->quizid);
+                                                                FROM {quiz}
+                                                                WHERE id = :quiz_id;
+                                                            ";
+                                                    $param = array('quiz_id' => $archived_quiz->quizid);
                                                     $quiz_name = $DB->get_fieldset_sql($sql, $param);
 
+                                                // Selec quiz course name
                                                     $sql = "SELECT shortname
                                                         FROM {course}
                                                         WHERE id = :course_id;
                                                     ";
-                                                    $param = array('course_id' => $ap_quiz->course);
+                                                    $param = array('course_id' => $archived_quiz->course);
                                                     $course_name = $DB->get_fieldset_sql($sql, $param);
 
-                                                    // SELECT TEACHERS OR QUIZ
+                                                // Select quiz teacher name
                                                     $teacher_role_id = 3;
                                                     $editing_teacher_role_id = 4; 
 
@@ -320,94 +408,49 @@ $wwwroot = $CFG->wwwroot;
 
                                                     // Parameters for the SQL query
                                                     $params = array(
-                                                        'course_id' => $ap_quiz->course,
+                                                        'course_id' => $archived_quiz->course,
                                                         'teacher_role_id' => $teacher_role_id,
                                                         'editing_teacher_role_id' => $editing_teacher_role_id
                                                     );
 
                                                     $course_teacher = $DB->get_records_sql($sql, $params);
 
-                                                    // SELECT THE DATE CREATED OF QUIZ
-                                                    $sql = "SELECT timecreated
-                                                        FROM {quiz}
-                                                        WHERE id = :quiz_id;
-                                                    ";
-                                                    $param = array('quiz_id' => $ap_quiz->quizid);
-                                                    $date_created = $DB->get_fieldset_sql($sql, $param);
-
-                                                    //print_r($course_teacher);
-
-                                                    echo '
-                                                        <tr>
-                                                            <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
-                                                                <h1>'. $quiz_name[0].'</h1>
-                                                                <span class="font-normal text-[10px] text-center">
-                                                                    <a href="" class="pl-2">PREVIEW</a>
-                                                                </span>
-                                                            </td>
-                                                            <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                                '. $course_name[0] .'
-                                                            </td>
-                                                            <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
-                                                            '
-                                                        ;
-                                                            foreach($course_teacher as $teacher){
-                                                                $teacher_fullname = $teacher->firstname . ' ' . $teacher->lastname;
-
-                                                                echo $teacher_fullname;
-                                                            }
-                                                    echo '
-                                                            </td>
-                                                            <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
-                                                                '. date("d M Y", $date_created[0]) .'
-                                                            </td>
-                                                            <td class="p-4 text-sm font-normal text-blue-700 whitespace-nowrap ">
-                                                                <a href="">Restore</a>
-                                                            </td>
-                                                        </tr>
-                                                    ';
-                                                }
+                                                    // Select quiz date created
+                                                        $sql = "SELECT timecreated
+                                                            FROM {quiz}
+                                                            WHERE id = :quiz_id;
+                                                        ";
+                                                        $param = array('quiz_id' => $archived_quiz->quizid);
+                                                        $date_created = $DB->get_fieldset_sql($sql, $param);
+                                                echo '
+                                                    <tr>
+                                                        <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
+                                                            <h1>'. $quiz_name[0] .'</h1>
+                                                            <span class="font-normal text-[10px] text-center">
+                                                                <a href="" class="pl-2">PREVIEW</a>
+                                                            </span>
+                                                        </td>
+                                                        <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                            '. $course_name[0] .'
+                                                        </td>
+                                                        <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
+                                                        ';
+                                                        foreach($course_teacher as $teacher){
+                                                            $teacher_fullname = $teacher->firstname . ' ' . $teacher->lastname;
+                                                            echo $teacher_fullname;
+                                                        }
+                                                echo '
+                                                        </td>
+                                                        <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
+                                                            '. date("d M Y", $date_created[0]) .'
+                                                        </td>
+                                                        <td class="p-4 text-sm font-normal text-blue-700 whitespace-nowrap ">
+                                                                <a href="" class="restoreThis" data-quizid="'.$archived_quiz->quizid.'">Restore</a>
+                                                        </td>
+                                                    </tr>
+                                                ';
+                                            }
                                             ?>
-                                            <!-- <tr>
-                                                <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
-                                                    <h1>QUIZ NO .2</h1>
-                                                    <span class="font-normal text-[10px] text-center">
-                                                        <a href="" class="pl-2">PREVIEW</a>
-                                                    </span>
-                                                </td>
-                                                <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                    Data Science
-                                                </td>
-                                                <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
-                                                    Al Vince R. Arandia
-                                                </td>
-                                                <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
-                                                    08 Dec 2023
-                                                </td>
-                                                <td class="p-4 text-sm font-normal text-blue-700 whitespace-nowrap ">
-                                                        <a href="">Restore</a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
-                                                    <h1>QUIZ NO .3</h1>
-                                                    <span class="font-normal text-[10px] text-center">
-                                                        <a href="" class="pl-2">PREVIEW</a>
-                                                    </span>
-                                                </td>
-                                                <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                    Data Science
-                                                </td>
-                                                <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
-                                                    Al Vince R. Arandia
-                                                </td>
-                                                <td class="p-4 text-sm font-semibold text-gray-900 whitespace-nowrap ">
-                                                    08 Dec 2023
-                                                </td>
-                                                <td class="p-4 text-sm font-normal text-blue-700 whitespace-nowrap ">
-                                                    <a href="">Restore</a>
-                                                </td>
-                                            </tr> -->
                                         </tbody>
                                     </table>
                                 </div>
@@ -459,3 +502,130 @@ $wwwroot = $CFG->wwwroot;
        
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.1/flowbite.min.js"></script>
 <script src="https://flowbite-admin-dashboard.vercel.app//app.bundle.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Select all elements with class 'archiveThis'
+        var restoreLinks = document.querySelectorAll('.restoreThis');
+
+        // Iterate over each 'archiveThis' link
+        restoreLinks.forEach(function(link) {
+            // Add click event listener
+            link.addEventListener('click', function(event) {
+                // Prevent the default action of the link (i.e., navigating to href)
+                event.preventDefault();
+                //createOverlay();
+
+                // Retrieve the quizid from the data attribute
+                var quizId = link.getAttribute('data-quizid');
+
+                // Send the quizid to a PHP script via AJAX
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'functions/archives_functions.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        console.log('Quiz restored successfully');
+                        //removeOverlay();
+                        location.reload();
+                    }
+                };
+                xhr.send('quizid=' + quizId);
+                // When page is loading prevent clicking archive button
+                // when still loading it will not function
+                restoreLinks.removeAttribute('href');
+                restoreLinks.disabled = true;
+
+                // Here you can perform further actions like sending the quizId via AJAX
+            });
+        });
+    });
+
+    function createOverlay() {
+            // Check if overlay already exists
+            if (!document.getElementById('overlay')) {
+                // Create a div element for the overlay
+                var overlay = document.createElement('div');
+                
+                // Set attributes for the overlay
+                overlay.id = 'overlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                overlay.style.zIndex = '9999'; 
+                
+                // Append the loading animation HTML to the overlay
+                overlay.innerHTML = `
+                <style>
+                    body {
+                        font-family: 'Titillium Web', sans-serif;
+                        font-size: 18px;
+                        font-weight: bold;
+                    }
+                    .loading {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        top: 50%;
+                        width: 100px;
+                        color: #000;
+                        margin: auto;
+                        -webkit-transform: translateY(-50%);
+                        -moz-transform: translateY(-50%);
+                        -o-transform: translateY(-50%);
+                        transform: translateY(-50%);
+                    }
+                    .loading span {
+                        position: absolute;
+                        height: 10px;
+                        width: 84px;
+                        top: 50px;
+                        overflow: hidden;
+                    }
+                    .loading span > i {
+                        position: absolute;
+                        height: 10px;
+                        width: 10px;
+                        border-radius: 50%;
+                        -webkit-animation: wait 4s infinite;
+                        -moz-animation: wait 4s infinite;
+                        -o-animation: wait 4s infinite;
+                        animation: wait 4s infinite;
+                    }
+                    .loading span > i:nth-of-type(1) {
+                        left: -28px;
+                        background: black;
+                    }
+                    .loading span > i:nth-of-type(2) {
+                        left: -21px;
+                        -webkit-animation-delay: 0.8s;
+                        animation-delay: 0.8s;
+                        background: black;
+                    }
+                    @keyframes wait {
+                        0%   { left: -7px  }
+                        30%  { left: 52px  }
+                        60%  { left: 22px  }
+                        100% { left: 100px }
+                    }
+                </style>
+                <div class="loading">
+                    <p>Please wait</p>
+                    <span><i></i><i></i></span>
+                </div>`;
+
+                // Append the overlay to the body
+                document.body.appendChild(overlay);
+            }
+        }
+
+        // Function to remove overlay
+        function removeOverlay() {
+            var overlay = document.getElementById('overlay');
+            if (overlay) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }
+</script>

@@ -100,10 +100,23 @@ global $DB, $USER, $CFG;
 
         // SELECTING COURSE'S QUIZZES
             $sql = "SELECT *
-                FROM {quiz}
-                WHERE course = :course_id;
+                FROM {auto_proctor_quiz_tb}
+                WHERE course = :course_id
+                AND archived = 0;
             ";
-            $quiz_records = $DB->get_records_sql($sql, $params);
+            $ap_quiz_records = $DB->get_records_sql($sql, $params);
+
+            // Initialize an array to store student IDs
+            $course_ids = array();
+
+            // Iterate over the results and push IDs into the array
+            foreach ($ap_quiz_records as $record) {
+                $course_ids[] = $record->quizid;
+            }
+
+            $course_id_placeholders = implode(', ', array_map(function($id) {
+                return ':course_id_' . $id;
+            }, $course_ids));
 
             echo "<script>console.log('quiz_records: ', " . json_encode($quiz_records) . ");</script>";
     }
@@ -222,42 +235,54 @@ global $DB, $USER, $CFG;
                                 </thead>
                                 <tbody class="bg-white ">
                                     <?php
-                                        foreach ($quiz_records as $quiz) {
-                                            $timestamp = $quiz->timecreated;
-                                            $formatted_date = date("d M Y", $timestamp);
+                                        foreach ($ap_quiz_records as $record) {
+                                            $sql = "SELECT *
+                                                FROM {quiz}
+                                                WHERE id = :quizid;"
+                                            ;
 
-                                            echo "<script>console.log('date: ');</script>";
-                                            echo
-                                                '<tr>
-                                                    <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
-                                                        <h1>' . $quiz->name . '</h1>
-                                                        <span class="font-normal text-[10px] text-center">
-                                                            <a href="" class="pl-2">PREVIEW</a>
-                                                        </span>
-                                                    </td>
-                                                    <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
-                                                        Completed
-                                                    </td>
-                                                    <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
-                                                        ' . $formatted_date . '
-                                                    </td>
-                                                    <td class=" whitespace-nowrap">
-                                                        <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
-                                                            <a href="' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id .'&quiz_id='. $quiz->id .'&quiz_name='.$quiz->name .'&course_name='.$course_name[0].'&quiz_settings=1">SETTINGS</a>
-                                                        </span>
-                                                    </td>
-                                                    <td class=" whitespace-nowrap">
-                                                        <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
-                                                            <a href="' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id .'&quiz_id='. $quiz->id .'&quiz_name='.$quiz->name .'&quiz_results=1">RESULTS</a>
-                                                        </span>
-                                                    </td>
-                                                    <td class=" whitespace-nowrap">
-                                                        <span class="text-blue-900 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
-                                                            <a href="">Archive</a>
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            ';
+                                            $quizid = $record->quizid;
+                                            $params = array('quizid' => $quizid);
+                                            $quiz_record = $DB->get_records_sql($sql, $params);
+
+                                            foreach ($quiz_record as $quiz){
+                                                $timestamp = $quiz->timecreated;
+                                                $formatted_date = date("d M Y", $timestamp);
+
+                                                echo "<script>console.log('date: ');</script>";
+                                                echo
+                                                    '<tr>
+                                                        <td class="p-4 text-sm font-semibold  whitespace-nowrap text-gray-800">
+                                                            <h1>' . $quiz->name . '</h1>
+                                                            <span class="font-normal text-[10px] text-center">
+                                                                <a href="" class="pl-2">PREVIEW</a>
+                                                            </span>
+                                                        </td>
+                                                        <td class="p-4 text-sm font-normal text-gray-800 whitespace-nowrap ">
+                                                            Completed
+                                                        </td>
+                                                        <td class="p-4 text-sm font-normal text-gray-500 whitespace-nowrap ">
+                                                            ' . $formatted_date . '
+                                                        </td>
+                                                        <td class=" whitespace-nowrap">
+                                                            <span class="bg-white text-gray-500 text-xs font-medium mr-2 px-3 py-1 rounded-md border">
+                                                                <a href="' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id .'&quiz_id='. $quiz->id .'&quiz_name='.$quiz->name .'&course_name='.$course_name[0].'&quiz_settings=1">SETTINGS</a>
+                                                            </span>
+                                                        </td>
+                                                        <td class=" whitespace-nowrap">
+                                                            <span class="bg-[#0061A8] text-gray-100 text-xs font-medium mr-2 px-3 py-1 rounded-md   ">
+                                                                <a href="' . $CFG->wwwroot  . '/local/auto_proctor/ui/auto_proctor_dashboard.php?course_id='. $course_id .'&quiz_id='. $quiz->id .'&quiz_name='.$quiz->name .'&quiz_results=1">RESULTS</a>
+                                                            </span>
+                                                        </td>
+                                                        <td class=" whitespace-nowrap">
+                                                        <button href="" class="archiveThis" data-quizid="'.$quiz->id.'">
+                                                            <span class="text-blue-900 text-xs font-medium mr-2 px-3 py-1 rounded-md">Archive
+                                                            </span>
+                                                        </button>
+                                                        </td>
+                                                    </tr>
+                                                ';
+                                            }
                                         }
                                     ?>
                                                 <!-- 2 -->
@@ -333,4 +358,131 @@ global $DB, $USER, $CFG;
         </div>
     </div>
 </main>
-    
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Select all elements with class 'archiveThis'
+        var archiveLinks = document.querySelectorAll('.archiveThis');
+
+        // Iterate over each 'archiveThis' link
+        archiveLinks.forEach(function(link) {
+            // Add click event listener
+            link.addEventListener('click', function(event) {
+                // Prevent the default action of the link (i.e., navigating to href)
+                event.preventDefault();
+                //createOverlay();
+                // Retrieve the quizid from the data attribute
+                var quizId = link.getAttribute('data-quizid');
+
+                // Send the quizid to a PHP script via AJAX
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', 'functions/courses_functions.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                        console.log('Quiz archived successfully');
+                        //removeOverlay();
+                        location.reload();
+                    }
+                };
+                xhr.send('quizid=' + quizId);
+
+                // When page is loading prevent clicking archive button
+                // when still loading it will not function
+                archiveLinks.removeAttribute('href');
+                archiveLinks.disabled = true;
+
+                // Here you can perform further actions like sending the quizId via AJAX
+            });
+        });
+    });
+
+    // Function to create an loading overlay
+    function createOverlay() {
+            // Check if overlay already exists
+            if (!document.getElementById('overlay')) {
+                // Create a div element for the overlay
+                var overlay = document.createElement('div');
+                
+                // Set attributes for the overlay
+                overlay.id = 'overlay';
+                overlay.style.position = 'fixed';
+                overlay.style.top = '0';
+                overlay.style.left = '0';
+                overlay.style.width = '100%';
+                overlay.style.height = '100%';
+                overlay.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+                overlay.style.zIndex = '9999'; 
+                
+                // Append the loading animation HTML to the overlay
+                overlay.innerHTML = `
+                <style>
+                    body {
+                        font-family: 'Titillium Web', sans-serif;
+                        font-size: 18px;
+                        font-weight: bold;
+                    }
+                    .loading {
+                        position: absolute;
+                        left: 0;
+                        right: 0;
+                        top: 50%;
+                        width: 100px;
+                        color: #000;
+                        margin: auto;
+                        -webkit-transform: translateY(-50%);
+                        -moz-transform: translateY(-50%);
+                        -o-transform: translateY(-50%);
+                        transform: translateY(-50%);
+                    }
+                    .loading span {
+                        position: absolute;
+                        height: 10px;
+                        width: 84px;
+                        top: 50px;
+                        overflow: hidden;
+                    }
+                    .loading span > i {
+                        position: absolute;
+                        height: 10px;
+                        width: 10px;
+                        border-radius: 50%;
+                        -webkit-animation: wait 4s infinite;
+                        -moz-animation: wait 4s infinite;
+                        -o-animation: wait 4s infinite;
+                        animation: wait 4s infinite;
+                    }
+                    .loading span > i:nth-of-type(1) {
+                        left: -28px;
+                        background: black;
+                    }
+                    .loading span > i:nth-of-type(2) {
+                        left: -21px;
+                        -webkit-animation-delay: 0.8s;
+                        animation-delay: 0.8s;
+                        background: black;
+                    }
+                    @keyframes wait {
+                        0%   { left: -7px  }
+                        30%  { left: 52px  }
+                        60%  { left: 22px  }
+                        100% { left: 100px }
+                    }
+                </style>
+                <div class="loading">
+                    <p>Please wait</p>
+                    <span><i></i><i></i></span>
+                </div>`;
+
+                // Append the overlay to the body
+                document.body.appendChild(overlay);
+            }
+        }
+
+        // Function to remove overlay
+        function removeOverlay() {
+            var overlay = document.getElementById('overlay');
+            if (overlay) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        }
+</script>
