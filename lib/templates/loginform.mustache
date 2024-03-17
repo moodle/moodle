@@ -216,11 +216,6 @@
 
 {{#js}}
     {{^error}}
-        {{#togglepassword}}
-            require(['core/togglesensitive'], function(ToggleSensitive) {
-                ToggleSensitive.init("password", {{smallscreensonly}});
-            });
-        {{/togglepassword}}
         {{#autofocusform}}
             require(['core_form/events'], function(FormEvent) {
                 function autoFocus() {
@@ -239,6 +234,11 @@
     {{#error}}
         document.getElementById('loginerrormessage').focus();
     {{/error}}
+    {{#togglepassword}}
+        require(['core/togglesensitive'], function(ToggleSensitive) {
+            ToggleSensitive.init("password", {{smallscreensonly}});
+        });
+    {{/togglepassword}}
     require(['core_form/submit'], function(Submit) {
         Submit.init("loginbtn");
         {{#canloginasguest}}
