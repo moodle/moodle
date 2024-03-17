@@ -541,7 +541,7 @@ echo "open for all companies</br>";
                 // we only want the companies which the course is assigned to and the user belongs to
                 $companies = $DB->get_records_sql("SELECT DISTINCT cu.companyid AS id
                                                    FROM {company_users} cu
-                                                   JOIN {company_courses} cc ON (cu.companyid = cc.companyid)
+                                                   JOIN {company_course} cc ON (cu.companyid = cc.companyid)
                                                    WHERE cu.userid = :userid
                                                    AND cc.courseid = :courseid",
                                                   ['userid' => $userid,
