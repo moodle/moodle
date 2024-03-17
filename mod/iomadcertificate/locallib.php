@@ -234,7 +234,7 @@ function iomadcertificate_email_student($course, $iomadcertificate, $certrecord,
 
     // Ok, no teachers, use administrator name
     if (empty($teacher)) {
-        $teacher = fullname(get_admin());
+        $teacher = get_admin();
     }
 
     $info = new stdClass;
