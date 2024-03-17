@@ -72,8 +72,8 @@ global $DB, $USER, $CFG;
                 //echo $instance_id . "</br>";
                 if ($_GET['course_id'] == $instance_id[0]){
                     //break;
-                    echo "is teacher";
-                    echo "</br>";
+                    // echo "is teacher";
+                    // echo "</br>";
                     $isteacher = true;
                     break;
                 }
@@ -127,7 +127,7 @@ global $DB, $USER, $CFG;
             $enrolled_status = $record->enrolled_in_bs_it;
             
             if ($enrolled_status === "Yes"){
-                print_r($is_user_enrolled_in_BSIT);
+                //print_r($is_user_enrolled_in_BSIT);
             }
         }
     } 
@@ -252,7 +252,7 @@ global $DB, $USER, $CFG;
                 $quiz_status = "Complete";
             }
 
-            echo $current_time;
+            //echo $current_time;
             
 
         // ========= SELECT DATE QUIZ CREATED
@@ -279,9 +279,6 @@ global $DB, $USER, $CFG;
         // print_r($all_quiz_attempts);
         // echo "</br>";
 
-        foreach($all_quiz_attempts as $attempt){
-            echo "attempt</br>";
-        }
 
     }
 
