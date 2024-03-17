@@ -70,6 +70,36 @@ $(document).ready(function () {
 
         var last_clicked;
 
+        // Check camera permission
+        setTimeout(function() {
+            navigator.permissions.query({name: 'camera'}).then(function(permissionStatus) {
+                console.log('camera permission state is ', permissionStatus.state);
+                if (permissionStatus.state === 'denied') {
+                    if (jsdata.strict_mode_activated == 1) {
+                        console.log('camera denied must redirect to review attempt quiz page');
+                        window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                    }
+                }
+                permissionStatus.onchange = function() {
+                    console.log('camera permission state has changed to ', this.state);
+        
+                    // If camera permission is denied, record in database, stop the recording to save.
+                    if (this.state === 'denied') {
+                        stopRecording();
+                        sendActivityRecord('camera_permission_denied_during_quiz');
+        
+                        // Check if strict mode was activated
+                        // If strict mode was activated then forcefully exit quiz.
+                        if (jsdata.strict_mode_activated == 1) {
+                            console.log('camera denied must redirect to review attempt quiz page');
+                            window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
+                        }
+                    }
+                };
+            });
+        }, 5000); // 5000 milliseconds = 5 seconds
+        
+
         // Camera constraints for proctoring
         const getUserMediaConstraintsProctoring = (deviceId) => {
             return {
@@ -477,27 +507,6 @@ $(document).ready(function () {
             minTrackingConfidence: 0.5
         });
         faceMesh.onResults(onResults);
-
-        // Check camera permission
-        navigator.permissions.query({name: 'camera'}).then(function(permissionStatus) {
-            console.log('camera permission state is ', permissionStatus.state);
-            permissionStatus.onchange = function() {
-                console.log('camera permission state has changed to ', this.state);
-
-                // If camera permission is denied, record in database, stop the recording to save.
-                if (this.state = 'denied'){
-                    stopRecording();
-                    sendActivityRecord('camera_permission_denied_during_quiz');
-
-                    // Check if strict mode was activated
-                    // If strict mode was activated then forcefully exit quiz.
-                    if (jsdata.strict_mode_activated == 1){
-                        console.log('camera denied must redirect to review attempt quiz page');
-                        window.location.href = jsdata.wwwroot + '/mod/quiz/view.php?id=' + jsdata.cmid;
-                    }
-                }
-            };
-        });
 
         // Function to create an loading overlay
         function createOverlay() {

@@ -233,7 +233,7 @@ $(document).ready(function () {
         // Update the timer every 10 milliseconds
         intervalId = setInterval(function () {
             milliseconds += 10;
-            console.log(milliseconds);
+            //console.log(milliseconds);
         updateTimer(milliseconds);
         }, 10);
     }
