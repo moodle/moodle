@@ -334,7 +334,7 @@ function iomadcertificate_print_user_files($iomadcertificate, $userid, $contexti
         $filename = $file->get_filename();
         $link = file_encode_url($CFG->wwwroot.'/pluginfile.php', '/'.$contextid.'/mod_iomadcertificate/issue/'.$certrecord->id.'/'.$filename);
 
-        $output = '<img src="'.$OUTPUT->pix_url(file_mimetype_icon($file->get_mimetype())).'" height="16" width="16" alt="'.$file->get_mimetype().'" />&nbsp;'.
+        $output = '<img src="'.$OUTPUT->image_url(file_mimetype_icon($file->get_mimetype())).'" height="16" width="16" alt="'.$file->get_mimetype().'" />&nbsp;'.
             '<a href="'.$link.'" >'.s($filename).'</a>';
 
     }
