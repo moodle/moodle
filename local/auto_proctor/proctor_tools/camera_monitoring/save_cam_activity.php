@@ -24,10 +24,10 @@ require_once(__DIR__ . '/../../../../config.php');
 
 global $DB, $PAGE, $USER, $CFG;
 
-if (isset($_POST['recording_filename'])) {
+if (isset($_POST['filename'])) {
 
     // Initialize all the necessary details about the record.
-    $recording_filename = $_POST['filename'];
+    $filename = $_POST['filename'];
     $activity_type = $_POST['evidence_name_type']; // Ensure it's an integer
     $activity_timestamp = $_POST['activity_timestamp'];
     $userid = $_POST['userid'];
