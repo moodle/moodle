@@ -216,6 +216,14 @@ class badges_test extends core_reportbuilder_testcase {
                 'badge:name_operator' => text::IS_EQUAL_TO,
                 'badge:name_value' => 'Other badge',
             ], false],
+            'Filter badge version' => ['badge:version', [
+                'badge:version_operator' => text::IS_EQUAL_TO,
+                'badge:version_value' => '2.0',
+            ], true],
+            'Filter badge version (no match)' => ['badge:version', [
+                'badge:version_operator' => text::IS_EQUAL_TO,
+                'badge:version_value' => '1.0',
+            ], false],
             'Filter badge status' => ['badge:status', [
                 'badge:status_operator' => select::EQUAL_TO,
                 'badge:status_value' => BADGE_STATUS_ACTIVE_LOCKED,
@@ -223,6 +231,14 @@ class badges_test extends core_reportbuilder_testcase {
             'Filter badge status (no match)' => ['badge:status', [
                 'badge:status_operator' => select::EQUAL_TO,
                 'badge:status_value' => BADGE_STATUS_ACTIVE,
+            ], false],
+            'Filter badge expiry' => ['badge:expiry', [
+                'badge:expiry_operator' => date::DATE_RANGE,
+                'badge:expiry_from' => 1622502000,
+            ], true],
+            'Filter badge expiry (no match)' => ['badge:expiry', [
+                'badge:expiry_operator' => date::DATE_RANGE,
+                'badge:expiry_to' => 1622502000,
             ], false],
             'Filter badge type' => ['badge:type', [
                 'badge:type_operator' => select::EQUAL_TO,
@@ -307,6 +323,7 @@ class badges_test extends core_reportbuilder_testcase {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_badges');
         $badge = $generator->create_badge([
             'name' => 'Course badge',
+            'version' => '2.0',
             'type' => BADGE_TYPE_COURSE,
             'courseid' => $course->id,
             'expireperiod' => HOURSECS,
