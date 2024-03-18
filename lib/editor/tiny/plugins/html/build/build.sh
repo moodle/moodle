@@ -23,11 +23,10 @@ npx rollup \
 
 # Next install js-beautify
 echo "Installing js-beautify"
-API_URL="https://api.github.com/repos/beautify-web/js-beautify/releases/latest"
+API_URL='https://api.github.com/repos/beautifier/js-beautify/releases/latest'
 
 # Get the .zip download URL
 ZIP_URL=$(curl -s $API_URL | jq -r ".zipball_url")
-
 # Download the latest release
 curl -L -o latest_release.zip $ZIP_URL
 # Create a temporary directory
@@ -37,7 +36,7 @@ TEMP_DIR=$(mktemp -d)
 unzip -q latest_release.zip -d $TEMP_DIR
 
 # Find the subdirectory that starts with "beautify"
-SUB_DIR=$(find $TEMP_DIR -type d -name "beautify*" | head -n 1)
+SUB_DIR=$(find $TEMP_DIR -type d -name "beautifier*beautify*" | head -n 1)
 
 # Copy the js-beautify files to the correct location.
 cp -v $SUB_DIR/js/lib/beautify*.js ../amd/src/beautify
@@ -47,5 +46,9 @@ cp -v $SUB_DIR/LICENSE ../amd/src/beautify/LICENSE
 
 # Remove the temporary directory, node_modules directory and the js-beautify zip.
 rm -rf $TEMP_DIR
+
+echo 'Code mirror version: ' $(npm --json ls  codemirror | jq -r '.dependencies.codemirror.version')
+echo 'Beautify version:' $(curl -s $API_URL | jq -r '.tag_name')
+
 rm -rf node_modules
 rm latest_release.zip
