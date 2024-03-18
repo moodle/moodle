@@ -65,3 +65,10 @@ Feature: See the competencies for an activity
     And I click on "PageName1" "autocomplete_selection"
     And I should see "Test-Comp1"
     And I should see "Test-Comp2"
+
+  @accessibility
+  Scenario: Evaluate the accessibility of the user competency summary dialogue
+    Given I navigate to "Reports" in current page administration
+    When I click on "Competency breakdown" "link"
+    And I click on "Not rated" "link"
+    And the page should meet accessibility standards
