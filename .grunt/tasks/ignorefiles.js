@@ -59,6 +59,31 @@ module.exports = grunt => {
     };
 
     /**
+     * Extracts ignore entries from a local ignore file.
+     *
+     * @param {string} componentPath the file path to the component, relative to the code base directory
+     * @param {string} ignoreFilePath the path to the ignore file
+     * @return {array} array of ignore paths to be included in the global ignore files
+     */
+    const getEntriesFromLocalIgnoreFile = (componentPath, ignoreFilePath) => {
+        const ignorePaths = [];
+        if (grunt.file.exists(ignoreFilePath)) {
+            const ignoreFile = grunt.file.read(ignoreFilePath);
+            const entries = ignoreFile.split('\n');
+            entries.forEach(entry => {
+                entry = entry.trim();
+                if (entry.length > 0 && !entry.startsWith('#') && !entry.startsWith('!')) {
+                    while (entry.startsWith('/')) {
+                        entry = entry.substring(1);
+                    }
+                    ignorePaths.push(componentPath + '/' + entry);
+                }
+            });
+        }
+        return ignorePaths;
+    };
+
+    /**
      * Generate ignore files (utilising thirdpartylibs.xml data)
      */
     const handler = function() {
@@ -67,6 +92,20 @@ module.exports = grunt => {
 
         // An array of paths to third party directories.
         const thirdPartyPaths = ComponentList.getThirdPartyPaths();
+        const localStylelintIgnorePaths = [];
+        const localEslintIgnorePaths = [];
+        ComponentList.getComponentPaths(process.cwd() + '/').forEach(componentPath => {
+            const localEslintIgnorePath = process.cwd() + '/' + componentPath + '/.eslintignore';
+            const localEslintIgnoreEntries = getEntriesFromLocalIgnoreFile(componentPath, localEslintIgnorePath);
+            if (localEslintIgnoreEntries.length > 0) {
+                localEslintIgnorePaths.push(...localEslintIgnoreEntries);
+            }
+            const localStylelintIgnorePath = process.cwd() + '/' + componentPath + '/.stylelintignore';
+            const localStylelintIgnoreEntries = getEntriesFromLocalIgnoreFile(componentPath, localStylelintIgnorePath);
+            if (localStylelintIgnoreEntries.length > 0) {
+                localStylelintIgnorePaths.push(...localStylelintIgnoreEntries);
+            }
+        });
 
         // Generate .eslintignore.
         const eslintIgnores = [
@@ -77,7 +116,7 @@ module.exports = grunt => {
             // Ignore all yui/src meta directories and build directories.
             '*/**/yui/src/*/meta/',
             '*/**/build/',
-        ].concat(thirdPartyPaths);
+        ].concat(thirdPartyPaths).concat(localEslintIgnorePaths);
         grunt.file.write('.eslintignore', eslintIgnores.join('\n') + '\n');
 
         // Generate .stylelintignore.
@@ -88,7 +127,7 @@ module.exports = grunt => {
             'public/theme/classic/style/moodle.css',
             'jsdoc/styles/*.css',
             'public/admin/tool/componentlibrary/hugo/dist/css/docs.css',
-        ].concat(thirdPartyPaths);
+        ].concat(thirdPartyPaths).concat(localStylelintIgnorePaths);
         grunt.file.write('.stylelintignore', stylelintIgnores.join('\n') + '\n');
 
         phpcsIgnore(thirdPartyPaths);
