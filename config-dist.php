@@ -790,6 +790,11 @@ $CFG->admin = 'admin';
 // To further control this, the debug_developer_use_pretty_exceptions setting can be set to false.
 // $CFG->debug_developer_use_pretty_exceptions = true;
 //
+// In many development situations it is desirable to have debugging() calls treated as errors rather than
+// as exceptions.
+// If this property is not specified then it will be true if pretty exceptions are usable.
+// $CFG->debug_developer_debugging_as_error = true;
+//
 // The Whoops! UI can also provide a link to open files in  your preferred editor.
 // You can set your preferred editor by setting:
 // $CFG->debug_developer_editor = 'vscode';

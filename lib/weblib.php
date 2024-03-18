@@ -3320,17 +3320,26 @@ function debugging($message = '', $level = DEBUG_NORMAL, $backtrace = null) {
             // Script does not want any errors or debugging in output,
             // we send the info to error log instead.
             error_log('Debugging: ' . $message . ' in '. PHP_EOL . $from);
-
         } else if ($forcedebug or $CFG->debugdisplay) {
             if (!defined('DEBUGGING_PRINTED')) {
                 define('DEBUGGING_PRINTED', 1); // Indicates we have printed something.
             }
+
             if (CLI_SCRIPT) {
                 echo "++ $message ++\n$from";
             } else {
-                echo '<div class="notifytiny debuggingmessage" data-rel="debugging">' , $message , $from , '</div>';
-            }
+                if (property_exists($CFG, 'debug_developer_debugging_as_error')) {
+                    $showaserror = $CFG->debug_developer_debugging_as_error;
+                } else {
+                    $showaserror = (bool) get_whoops();
+                }
 
+                if ($showaserror) {
+                    trigger_error($message, E_USER_NOTICE);
+                } else {
+                    echo '<div class="notifytiny debuggingmessage" data-rel="debugging">', $message, $from, '</div>';
+                }
+            }
         } else {
             trigger_error($message . $from, E_USER_NOTICE);
         }
