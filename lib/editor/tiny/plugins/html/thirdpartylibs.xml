@@ -12,8 +12,8 @@
     <location>amd/src/beautify</location>
     <name>js-beautify</name>
     <description>Beautifier for javascript.</description>
-    <version>1.14.8</version>
+    <version>1.15.1</version>
     <license>MIT</license>
-    <repository>https://github.com/beautify-web/js-beautify/</repository>
+    <repository>https://github.com/beautifier/js-beautify/</repository>
   </library>
 </libraries>
