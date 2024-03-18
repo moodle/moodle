@@ -47,8 +47,10 @@
     </div>
     <div class="row mb-1">
         <div class="col-6">
-            <input type="checkbox" class="mastercheck mr-1" aria-label="{{#str}}checkall, completion{{/str}}">
-            <label class="font-weight-bold">{{#str}}activitieslabel, core_completion{{/str}}</label>
+            <label class="font-weight-bold">
+                <input type="checkbox" class="mastercheck mr-1" aria-label="{{#str}}checkall, completion{{/str}}">
+                {{#str}}activitieslabel, core_completion{{/str}}
+            </label>
         </div>
         <div class="col-6">
             <label class="font-weight-bold">{{#str}}completion, core_completion{{/str}}</label>
@@ -62,10 +64,11 @@
              <div class="mb-1">
                 <div class="row mb-1">
                     <div class="col-6">
-                        <label class="accesshide" for="modtype_{{id}}">{{#str}}select, core_completion{{/str}} {{formattedname}}</label>
-                        <input id="modtype_{{id}}" type="checkbox" class="mr-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{{formattedname}}}{{/str}}">
-                        <img class="iconlarge activityicon" src="{{icon}}" alt=" " role="presentation" />
-                        <span>{{{formattedname}}}</span>
+                        <label for="modtype_{{id}}">
+                            <input id="modtype_{{id}}" type="checkbox" class="mr-1" name="modids[]" value="{{id}}" aria-label="{{#str}}checkactivity, completion, {{{formattedname}}}{{/str}}">
+                            <img class="iconlarge activityicon" src="{{icon}}" alt="" />
+                            <span>{{{formattedname}}}</span>
+                        </label>
                     </div>
                     <div class="activity-completionstatus col-6">
                         <div class="col-sm-1 pl-0">
