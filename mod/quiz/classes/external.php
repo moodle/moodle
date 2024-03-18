@@ -412,6 +412,9 @@ class mod_quiz_external extends external_api {
         // Update quiz with override information.
         $quiz = quiz_update_effective_access($quiz, $params['userid']);
         $attempts = quiz_get_user_attempts($quiz->id, $user->id, $params['status'], $params['includepreviews']);
+        $quizobj = new quiz_settings($quiz, $cm, $course);
+        $gradeitemmarks = $quizobj->get_grade_calculator()->compute_grade_item_totals_for_attempts(
+                array_column($attempts, 'uniqueid'));
         $attemptresponse = [];
         foreach ($attempts as $attempt) {
             $reviewoptions = quiz_get_review_options($quiz, $attempt, $context);
@@ -419,6 +422,15 @@ class mod_quiz_external extends external_api {
                     ($reviewoptions->marks < question_display_options::MARK_AND_MAX || $attempt->state != quiz_attempt::FINISHED)) {
                 // Blank the mark if the teacher does not allow it.
                 $attempt->sumgrades = null;
+            } else if (isset($gradeitemmarks[$attempt->uniqueid])) {
+                $attempt->gradeitemmarks = [];
+                foreach ($gradeitemmarks[$attempt->uniqueid] as $gradeitem) {
+                    $attempt->gradeitemmarks[] = [
+                        'name' => \core_external\util::format_string($gradeitem->name, $context),
+                        'grade' => $gradeitem->grade,
+                        'maxgrade' => $gradeitem->maxgrade,
+                    ];
+                }
             }
             $attemptresponse[] = $attempt;
         }
@@ -459,6 +471,13 @@ class mod_quiz_external extends external_api {
                 'timecheckstate' => new external_value(PARAM_INT, 'Next time quiz cron should check attempt for
                                                         state changes.  NULL means never check.', VALUE_OPTIONAL),
                 'sumgrades' => new external_value(PARAM_FLOAT, 'Total marks for this attempt.', VALUE_OPTIONAL),
+                'gradeitemmarks' => new external_multiple_structure(
+                    new external_single_structure([
+                        'name' => new external_value(PARAM_RAW, 'The name of this grade item.'),
+                        'grade' => new external_value(PARAM_FLOAT, 'The grade this attempt earned for this item.'),
+                        'maxgrade' => new external_value(PARAM_FLOAT, 'The total this grade is out of.'),
+                    ], 'The grade for each grade item.'),
+                'If the quiz has additional grades set up, the mark for each grade for this attempt.', VALUE_OPTIONAL),
                 'gradednotificationsenttime' => new external_value(PARAM_INT,
                     'Time when the student was notified that manual grading of their attempt was complete.', VALUE_OPTIONAL),
             ]
@@ -1455,7 +1474,6 @@ class mod_quiz_external extends external_api {
      * @since Moodle 3.1
      */
     public static function get_attempt_review($attemptid, $page = -1) {
-        global $PAGE;
 
         $warnings = [];
 
@@ -1465,7 +1483,7 @@ class mod_quiz_external extends external_api {
         ];
         $params = self::validate_parameters(self::get_attempt_review_parameters(), $params);
 
-        list($attemptobj, $displayoptions) = self::validate_attempt_review($params);
+        [$attemptobj, $displayoptions] = self::validate_attempt_review($params);
 
         if ($params['page'] !== -1) {
             $page = $attemptobj->force_page_number_into_range($params['page']);
@@ -1500,6 +1518,22 @@ class mod_quiz_external extends external_api {
                 'title' => get_string('feedback', 'quiz'),
                 'content' => $feedback,
             ];
+        }
+
+        if (!has_capability('mod/quiz:viewreports', $attemptobj->get_context()) &&
+                ($displayoptions->marks < question_display_options::MARK_AND_MAX ||
+                        $attemptobj->get_attempt()->state != quiz_attempt::FINISHED)) {
+            // Blank the mark if the teacher does not allow it.
+            $result['attempt']->sumgrades = null;
+        } else {
+            $result['attempt']->gradeitemmarks = [];
+            foreach ($attemptobj->get_grade_item_totals() as $gradeitem) {
+                $result['attempt']->gradeitemmarks[] = [
+                    'name' => \core_external\util::format_string($gradeitem->name, $attemptobj->get_context()),
+                    'grade' => $gradeitem->grade,
+                    'maxgrade' => $gradeitem->maxgrade,
+                ];
+            }
         }
 
         $result['grade'] = $grade;
