@@ -38,12 +38,33 @@ class user_bulk_action_form extends moodleform {
     /** @var bool */
     protected $hasbulkactions = false;
 
+    /** @var array|null */
+    protected $actions = null;
+
     /**
      * Returns an array of action_link's of all bulk actions available for this user.
      *
+     * @param bool $flatlist whether to return a flat list (for easier searching) or a list with
+     *     option groups that can be used to build a select element
      * @return array of action_link objects
      */
-    public function get_actions(): array {
+    public function get_actions(bool $flatlist = true): array {
+        if ($this->actions === null) {
+            $this->actions = $this->build_actions();
+            $this->hasbulkactions = !empty($this->actions);
+        }
+        if ($flatlist) {
+            return array_reduce($this->actions, fn($carry, $item) => $carry + $item, []);
+        }
+        return $this->actions;
+    }
+
+    /**
+     * Builds the list of bulk user actions available for this user.
+     *
+     * @return array
+     */
+    protected function build_actions(): array {
 
         global $CFG;
 
@@ -89,28 +110,36 @@ class user_bulk_action_form extends moodleform {
                 get_string('bulkadd', 'core_cohort'));
         }
 
-        // Any plugin can append actions to this list by implementing a callback
-        // <component>_bulk_user_actions() which returns an array of action_link.
-        // Each new action's key should have a frankenstyle prefix to avoid clashes.
-        // See MDL-38511 for more details.
-        $moreactions = get_plugins_with_function('bulk_user_actions', 'lib.php');
+        // Collect all bulk user actions.
+        $hook = new \core_user\hook\extend_bulk_user_actions();
+
+        // Add actions from core.
+        foreach ($actions as $identifier => $action) {
+            $hook->add_action($identifier, $action);
+        }
+
+        // Add actions from the legacy callback 'bulk_user_actions'.
+        $moreactions = get_plugins_with_function('bulk_user_actions', 'lib.php', true, true);
         foreach ($moreactions as $plugintype => $plugins) {
             foreach ($plugins as $pluginfunction) {
-                $actions += $pluginfunction();
+                $pluginactions = $pluginfunction();
+                foreach ($pluginactions as $identifier => $action) {
+                    $hook->add_action($identifier, $action);
+                }
             }
         }
+
+        // Any plugin can append user bulk actions to this list by implementing a hook callback.
+        \core\hook\manager::get_instance()->dispatch($hook);
 
         // This method may be called from 'Bulk actions' and 'Browse user list' pages. Some actions
         // may be irrelevant in one of the contexts and they can be excluded by specifying the
         // 'excludeactions' customdata.
         $excludeactions = $this->_customdata['excludeactions'] ?? [];
         foreach ($excludeactions as $excludeaction) {
-            unset($actions[$excludeaction]);
+            $hook->add_action($excludeaction, null);
         }
-
-        $this->hasbulkactions = !empty($actions);
-        return $actions;
-
+        return $hook->get_actions();
     }
 
     /**
@@ -131,13 +160,13 @@ class user_bulk_action_form extends moodleform {
         $mform->addElement('hidden', 'userids');
         $mform->setType('userids', PARAM_SEQUENCE);
 
-        $actions = [0 => get_string('choose') . '...'];
-        $bulkactions = $this->get_actions();
-        foreach ($bulkactions as $key => $action) {
-            $actions[$key] = $action->text;
+        $actions = ['' => [0 => get_string('choose') . '...']];
+        $bulkactions = $this->get_actions(false);
+        foreach ($bulkactions as $category => $categoryactions) {
+            $actions[$category] = array_map(fn($action) => $action->text, $categoryactions);
         }
         $objs = array();
-        $objs[] = $selectel = $mform->createElement('select', 'action', get_string('userbulk', 'admin'), $actions);
+        $objs[] = $selectel = $mform->createElement('selectgroups', 'action', get_string('userbulk', 'admin'), $actions);
         $selectel->setHiddenLabel(true);
         if (empty($this->_customdata['hidesubmit'])) {
             $objs[] =& $mform->createElement('submit', 'doaction', get_string('go'));
