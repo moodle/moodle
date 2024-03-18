@@ -203,14 +203,13 @@ class block_activity_results extends block_base {
 
         // IOMAD - Get the user's company details.
         $companyid = iomad::get_my_companyid(context_system::instance(), false);
-        $company = new company($companyid);
         // Get the grades for this activity.
         $sql = 'SELECT * FROM {grade_grades}
                  WHERE itemid = ? AND finalgrade is not NULL
                  AND userid IN (SELECT userid FROM {company_users} WHERE companyid = ?)
                  ORDER BY finalgrade, timemodified DESC';
 
-        $grades = $DB->get_records_sql($sql, array( $activitygradeitemid, $company->id));
+        $grades = $DB->get_records_sql($sql, array( $activitygradeitemid, $companyid));
 
         if (empty($grades) || $activity->hidden) {
             // No grades available, The block will hide itself in this case.
