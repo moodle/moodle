@@ -2117,13 +2117,18 @@ class core_renderer extends renderer_base {
             $attributes['class'] = 'action-icon';
         }
 
-        $icon = $this->render($pixicon);
-
         if ($linktext) {
             $text = $pixicon->attributes['alt'];
+            // Set the icon as a decorative image if we're displaying the action text.
+            // Otherwise, the action name will be read twice by assistive technologies.
+            $pixicon->attributes['alt'] = '';
+            $pixicon->attributes['title'] = '';
+            $pixicon->attributes['aria-hidden'] = 'true';
         } else {
             $text = '';
         }
+
+        $icon = $this->render($pixicon);
 
         return $this->action_link($url, $text.$icon, $action, $attributes);
     }
