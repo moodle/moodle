@@ -2732,10 +2732,16 @@ class core_renderer extends renderer_base {
         // Get the image html output first, auto generated based on initials if one isn't already set.
         if ($user->picture == 0 && empty($CFG->enablegravatar) && !defined('BEHAT_SITE_RUNNING')) {
             $initials = \core_user::get_initials($user);
+            $fullname = fullname($userpicture->user, $canviewfullnames);
             // Don't modify in corner cases where neither the firstname nor the lastname appears.
             $output = html_writer::tag(
                 'span', $initials,
-                ['class' => 'userinitials size-' . $size]
+                [
+                    'class' => 'userinitials size-' . $size,
+                    'title' => $fullname,
+                    'aria-label' => $fullname,
+                    'role' => 'img',
+                ]
             );
         } else {
             $output = html_writer::empty_tag('img', $attributes);
