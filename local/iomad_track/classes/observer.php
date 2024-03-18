@@ -226,10 +226,8 @@ class observer {
                                                    'timelow' => $enrolrec->timecreated - 10,
                                                    'timehigh' => $enrolrec->timecreated + 10])) {
                 foreach ($trackrecs as $trackrec) {
-echo "checking track id $trackrec->id</br>";
                     // Is this a duplicate event?
                     if ($trackrec->timecompleted !=null && (round($trackrec->timecompleted  / 10 ) * 10) != (round($comprec->timecompleted /10) *10)) {
-echo "Skipping </br>";
                         continue;
                     }
 
@@ -274,7 +272,6 @@ echo "Skipping </br>";
 
                     $trackrec->modifiedtime = time();
                     $DB->update_record('local_iomad_track', $trackrec);
-echo "updated record with compeltion time of $trackrec->timecompleted</br>";
                     // Record the certificate.
                     self::record_certificates($courseid, $userid, $trackrec->id);
                     $trackid = $trackrec->id;
@@ -420,7 +417,6 @@ echo "updated record with compeltion time of $trackrec->timecompleted</br>";
         $completedstop = 0;
         $expiredstop = 0;
 
-echo "IN LIT func</br>";
         // Check if there is already an entry for this.
         if ($entry = $DB->get_record('local_iomad_track', array('userid' => $userid,
                                                                 'courseid' => $courseid,
@@ -428,7 +424,6 @@ echo "IN LIT func</br>";
                                                                 'timecompleted' => null))) {
             $licenserec = $DB->get_record('companylicense', array('id' => $licenseid));
 
-echo "already got an entry we can copy</br>";
             // Is this an educator license?
             if ($licenserec->type == 2 || $licenserec->type == 3) {
                 $entry->expirysent = $modifiedtime;
@@ -442,7 +437,6 @@ echo "already got an entry we can copy</br>";
             $entry->modifiedtime = time();
             $DB->update_record('local_iomad_track', $entry);
         } else {
-echo "Creating a new entry</br>";
             // Create one.
             if ($courserec = $DB->get_record('course', array('id' => $courseid))) {
                 $licenserec = $DB->get_record('companylicense', array('id' => $licenseid));
@@ -510,7 +504,6 @@ echo "Creating a new entry</br>";
         $modifiedtime = $event->timecreated;
         $companyid = $event->companyid;
 
-echo "In LIT user_enrolment_created</br>";
 
         // Get the enrolment information.
         if (!$enrolrec = $DB->get_record('user_enrolments', ['id' => $event->objectid])) {
@@ -530,12 +523,10 @@ echo "In LIT user_enrolment_created</br>";
         $enrol = $DB->get_record('enrol', ['id' => $enrolrec->enrolid]);
         $companies = [$companyid];
         if ($enrol->enrol == 'self') {
-echo "This is a self enrolment course</br>";
             // If this is an unassigned course or an open shared course - 
             if ($DB->get_record('iomad_courses', ['courseid' => $courseid, 'shared' => 1]) ||
                 !$DB->get_record('iomad_courses', ['courseid' => $courseid])) {
               // The it's evey company the user is assigned to.
-echo "open for all companies</br>";
               $companies = array_keys(company::get_companies_select(false, false, false));
             } else {
                 // we only want the companies which the course is assigned to and the user belongs to
@@ -546,12 +537,9 @@ echo "open for all companies</br>";
                                                    AND cc.courseid = :courseid",
                                                   ['userid' => $userid,
                                                    'courseid' => $courseid]);
-echo "Only for some companies</br>";
             }
             // We need to get all of the companies which the user is assigned to that has this course available.
         }
-echo "Our list is <pre>";print_r($companies);echo "</pre>";
-echo "Getting entries</br>";
         foreach ($companies as $companyid) {
             // Check if there is already an entry for this.
             $firstentry = null;
@@ -560,14 +548,12 @@ echo "Getting entries</br>";
                                                                   'timeenrolled' => $timeenrolled,
                                                                   'coursecleared' => 0,
                                                                   'timecompleted' => null])) {
-    echo "gone some - handling them<br>";
                 foreach ($entries as $entry) {
                     // We already have an entry.  Change the issue time.
                     if (empty($firstentry)) {
                         $firstentry = $entry;
                     }
                     if (empty($entry->timeenrolled)) {
-    echo "setting timeenrolled as we dont have one</br>";
                         $entry->timeenrolled = $timeenrolled;
                     }
                     $entry->modifiedtime = $modifiedtime;
@@ -583,7 +569,6 @@ echo "Getting entries</br>";
                     $DB->insert_record('local_iomad_track', $firstentry);
                 }
             } else {
-    echo "creating a new one</br>";
                 // Create one.
                 if ($courserec = $DB->get_record('course', array('id' => $courseid))) {
                     $entry = array('userid' => $userid,
@@ -617,12 +602,10 @@ echo "Getting entries</br>";
         $modifiedtime = $event->timecreated;
         $companyid = $event->companyid;
 
-echo "In LIT license_used</br>";
         // Check if there is already an entry for this.
         if ($entries = $DB->get_records('local_iomad_track', array('userid' => $userid,
                                                                  'courseid' => $courseid,
                                                                  'timecompleted' => null))) {
-echo "We already match something</br>";
             if ($enrolrec = $DB->get_record_sql("SELECT ue.* FROM {user_enrolments} ue
                                                      JOIN {enrol} e ON (ue.enrolid = e.id)
                                                      WHERE ue.userid = :userid
@@ -631,7 +614,6 @@ echo "We already match something</br>";
                                                      array('userid' => $userid,
                                                            'courseid' => $courseid))) {
                 foreach ($entries as $entry) {
-    echo "Dealing with entry id $entry->id</br>";
                     // We already have an entry.  Change the issue time.
                     $entry->timeenrolled = $enrolrec->timecreated;
                     $entry->timestarted = $enrolrec->timecreated;
@@ -640,7 +622,6 @@ echo "We already match something</br>";
                 }
             }
         } else {
-echo "creating a new one</br>";
             // Create one.
             if ($courserec = $DB->get_record('course', array('id' => $courseid)) &&
                 $licenserec = $DB->get_record('companylicense', array('id' => $licenseid)) &&
