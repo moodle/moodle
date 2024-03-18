@@ -284,6 +284,8 @@ class badge extends base {
      * @return filter[]
      */
     protected function get_all_filters(): array {
+        global $DB;
+
         $badgealias = $this->get_table_alias('badge');
 
         // Name.
@@ -330,9 +332,9 @@ class badge extends base {
             'expiry',
             new lang_string('expirydate', 'core_badges'),
             $this->get_entity_name(),
-            "CASE
-                WHEN {$badgealias}.expiredate IS NULL AND {$badgealias}.expireperiod IS NULL THEN :{$parammaxint}
-                ELSE COALESCE({$badgealias}.expiredate, {$badgealias}.expireperiod + :{$paramtime})
+            "CASE WHEN {$badgealias}.expiredate IS NULL AND {$badgealias}.expireperiod IS NULL
+                  THEN " . $DB->sql_cast_char2int(":{$parammaxint}") . "
+                  ELSE COALESCE({$badgealias}.expiredate, {$badgealias}.expireperiod + :{$paramtime})
              END",
             [$parammaxint => 2147483647, $paramtime => time()]
         ))
