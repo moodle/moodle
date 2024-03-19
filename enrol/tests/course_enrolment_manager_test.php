@@ -296,7 +296,7 @@ class course_enrolment_manager_test extends \advanced_testcase {
         $this->assertEquals('Smart suit', $user->imagealt);
 
         // But not some random other field like city.
-        $this->assertObjectNotHasAttribute('city', $user);
+        $this->assertObjectNotHasProperty('city', $user);
     }
 
     /**
@@ -330,7 +330,7 @@ class course_enrolment_manager_test extends \advanced_testcase {
         $this->assertEquals('Smart suit', $user->imagealt);
 
         // But not some random other field like city.
-        $this->assertObjectNotHasAttribute('city', $user);
+        $this->assertObjectNotHasProperty('city', $user);
     }
 
     /**
@@ -367,7 +367,7 @@ class course_enrolment_manager_test extends \advanced_testcase {
         $this->assertEquals('Smart suit', $user->imagealt);
 
         // But not some random other field like city.
-        $this->assertObjectNotHasAttribute('city', $user);
+        $this->assertObjectNotHasProperty('city', $user);
     }
 
     /**

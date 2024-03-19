@@ -720,7 +720,7 @@ class lib_test extends \advanced_testcase {
 
         // Test custom fields are not returned if not needed.
         $result = cohort_get_cohort($cohort1->id, $coursectx);
-        $this->assertObjectNotHasAttribute('customfields', $result);
+        $this->assertObjectNotHasProperty('customfields', $result);
 
         // Test cohort_get_cohorts.
         $result = cohort_get_cohorts(\context_system::instance()->id, 0, 25, '', true);
@@ -745,7 +745,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(2, $result['totalcohorts']);
         $this->assertEquals(2, $result['allcohorts']);
         foreach ($result['cohorts'] as $cohort) {
-            $this->assertObjectNotHasAttribute('customfields', $cohort);
+            $this->assertObjectNotHasProperty('customfields', $cohort);
         }
 
         // Test test_cohort_get_all_cohorts.
@@ -771,7 +771,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(2, $result['totalcohorts']);
         $this->assertEquals(2, $result['allcohorts']);
         foreach ($result['cohorts'] as $cohort) {
-            $this->assertObjectNotHasAttribute('customfields', $cohort);
+            $this->assertObjectNotHasProperty('customfields', $cohort);
         }
 
         // Test cohort_get_available_cohorts.
@@ -795,7 +795,7 @@ class lib_test extends \advanced_testcase {
         $result = cohort_get_available_cohorts($coursectx, COHORT_ALL, 0, 25, '');
         $this->assertCount(2, $result);
         foreach ($result as $cohort) {
-            $this->assertObjectNotHasAttribute('customfields', $cohort);
+            $this->assertObjectNotHasProperty('customfields', $cohort);
         }
 
         // Test cohort_get_user_cohorts.
@@ -822,7 +822,7 @@ class lib_test extends \advanced_testcase {
         $result = cohort_get_user_cohorts($user->id);
         $this->assertCount(2, $result);
         foreach ($result as $cohort) {
-            $this->assertObjectNotHasAttribute('customfields', $cohort);
+            $this->assertObjectNotHasProperty('customfields', $cohort);
         }
     }
 

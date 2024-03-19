@@ -176,31 +176,31 @@ class activitybadge_test extends \advanced_testcase {
         ?array $extra = null
     ): void {
         if (is_null($content)) {
-            $this->assertObjectNotHasAttribute('badgecontent', $result);
+            $this->assertObjectNotHasProperty('badgecontent', $result);
         } else {
             $this->assertEquals($content, $result->badgecontent);
         }
 
         if (is_null($style)) {
-            $this->assertObjectNotHasAttribute('badgestyle', $result);
+            $this->assertObjectNotHasProperty('badgestyle', $result);
         } else {
             $this->assertEquals($style, $result->badgestyle);
         }
 
         if (is_null($url)) {
-            $this->assertObjectNotHasAttribute('badgeurl', $result);
+            $this->assertObjectNotHasProperty('badgeurl', $result);
         } else {
             $this->assertEquals($url, $result->badgeurl);
         }
 
         if (is_null($elementid)) {
-            $this->assertObjectNotHasAttribute('badgeelementid', $result);
+            $this->assertObjectNotHasProperty('badgeelementid', $result);
         } else {
             $this->assertEquals($elementid, $result->badgeelementid);
         }
 
         if (is_null($extra)) {
-            $this->assertObjectNotHasAttribute('badgeextraattributes', $result);
+            $this->assertObjectNotHasProperty('badgeextraattributes', $result);
         } else {
             $this->assertEquals($extra, $result->badgeextraattributes);
         }

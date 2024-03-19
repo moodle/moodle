@@ -381,12 +381,12 @@ class provider_test extends provider_testcase {
         $this->assertEquals($yes, $prefs->block_is_hidden->value);
 
         $prefs = writer::with_context($bprivatefiles->context)->get_user_context_preferences('core_block');
-        $this->assertObjectNotHasAttribute('block_is_docked', $prefs);
+        $this->assertObjectNotHasProperty('block_is_docked', $prefs);
         $this->assertEquals($no, $prefs->block_is_hidden->value);
 
         $prefs = writer::with_context($bmyprofile->context)->get_user_context_preferences('core_block');
         $this->assertEquals($yes, $prefs->block_is_docked->value);
-        $this->assertObjectNotHasAttribute('block_is_hidden', $prefs);
+        $this->assertObjectNotHasProperty('block_is_hidden', $prefs);
     }
 
     /**

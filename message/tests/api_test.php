@@ -5209,7 +5209,7 @@ class api_test extends messagelib_test {
         $this->assertCount(1, (array) $customdata->actionbuttons);
         $this->assertObjectHasAttribute('placeholders', $customdata);
         $this->assertCount(1, (array) $customdata->placeholders);
-        $this->assertObjectNotHasAttribute('notificationiconurl', $customdata);    // No group image means no image.
+        $this->assertObjectNotHasProperty('notificationiconurl', $customdata);    // No group image means no image.
 
         // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
         // however, we can still determine the number and ids of any recipients this way.

@@ -120,7 +120,7 @@ class advanced_test extends \advanced_testcase {
         // Ensure session is reset after setUser, as it may contain extra info.
         $SESSION->sometestvalue = true;
         $this->setUser($user);
-        $this->assertObjectNotHasAttribute('sometestvalue', $SESSION);
+        $this->assertObjectNotHasProperty('sometestvalue', $SESSION);
     }
 
     public function test_set_admin_user() {

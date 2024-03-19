@@ -1568,7 +1568,7 @@ calendar,core_calendar|/calendar/view.php?view=month',
     public function test_moodle_start_upgrade_outageless() {
         global $CFG;
         $this->resetAfterTest();
-        $this->assertObjectNotHasAttribute('upgraderunning', $CFG);
+        $this->assertObjectNotHasProperty('upgraderunning', $CFG);
 
         // Confirm that starting normally sets the upgraderunning flag.
         upgrade_started();
@@ -1592,7 +1592,7 @@ calendar,core_calendar|/calendar/view.php?view=month',
     public function test_moodle_set_upgrade_timeout_outageless() {
         global $CFG;
         $this->resetAfterTest();
-        $this->assertObjectNotHasAttribute('upgraderunning', $CFG);
+        $this->assertObjectNotHasProperty('upgraderunning', $CFG);
 
         // Confirm running normally sets the timeout.
         upgrade_set_timeout(120);

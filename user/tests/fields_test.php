@@ -391,7 +391,7 @@ class fields_test extends \advanced_testcase {
         $this->assertCount(2, $records);
 
         // User id was renamed.
-        $this->assertObjectNotHasAttribute('id', $records['XXX1']);
+        $this->assertObjectNotHasProperty('id', $records['XXX1']);
         $this->assertObjectHasAttribute('userid', $records['XXX1']);
 
         // Other fields are normal (just try a couple).
@@ -415,8 +415,8 @@ class fields_test extends \advanced_testcase {
         $this->assertCount(2, $records);
 
         // User id was renamed.
-        $this->assertObjectNotHasAttribute('id', $records['XXX1']);
-        $this->assertObjectNotHasAttribute('u_id', $records['XXX1']);
+        $this->assertObjectNotHasProperty('id', $records['XXX1']);
+        $this->assertObjectNotHasProperty('u_id', $records['XXX1']);
         $this->assertObjectHasAttribute('userid', $records['XXX1']);
 
         // Other fields are prefixed (just try a couple).

@@ -56,7 +56,7 @@ class profilelib_test extends \advanced_testcase {
         $this->assertArrayNotHasKey($id1, profile_get_custom_fields(true));
 
         // Check that profile_user_record returns same (no) fields.
-        $this->assertObjectNotHasAttribute('frogdesc', profile_user_record($user->id));
+        $this->assertObjectNotHasProperty('frogdesc', profile_user_record($user->id));
 
         // Check that profile_user_record returns all the fields when requested.
         $this->assertObjectHasAttribute('frogdesc', profile_user_record($user->id, false));

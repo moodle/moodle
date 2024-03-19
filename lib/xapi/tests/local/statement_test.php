@@ -174,7 +174,7 @@ class statement_test extends advanced_testcase {
                 $this->assertObjectHasAttribute($extra, $data);
                 $this->assertNotEmpty($data->$extra);
             } else {
-                $this->assertObjectNotHasAttribute($extra, $data);
+                $this->assertObjectNotHasProperty($extra, $data);
             }
         }
     }
@@ -308,7 +308,7 @@ class statement_test extends advanced_testcase {
                 $this->assertObjectHasAttribute($extra, $data);
                 $this->assertNotEmpty($data->object);
             } else {
-                $this->assertObjectNotHasAttribute($extra, $data);
+                $this->assertObjectNotHasProperty($extra, $data);
             }
         }
     }

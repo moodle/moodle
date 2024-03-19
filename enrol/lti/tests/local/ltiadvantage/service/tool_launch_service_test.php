@@ -514,7 +514,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
 
         // Instructors aren't subject to forceembed.
         $launchservice->user_launches_tool($instructoruser, $mockinstructorlaunch);
-        $this->assertObjectNotHasAttribute('forcepagelayout', $SESSION);
+        $this->assertObjectNotHasProperty('forcepagelayout', $SESSION);
 
         // Learners are.
         $launchservice->user_launches_tool($learneruser, $mocklearnerlaunch);

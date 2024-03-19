@@ -954,14 +954,14 @@ class enrollib_test extends advanced_testcase {
         // Check fields parameter still works. Fields default (certain base fields).
         $this->assertObjectHasAttribute('id', $courses[$course3->id]);
         $this->assertObjectHasAttribute('shortname', $courses[$course3->id]);
-        $this->assertObjectNotHasAttribute('summary', $courses[$course3->id]);
+        $this->assertObjectNotHasProperty('summary', $courses[$course3->id]);
 
         // Specified fields (one, string).
         $courses = enrol_get_my_courses('summary', 'id', 0, [], true);
         $this->assertObjectHasAttribute('id', $courses[$course3->id]);
         $this->assertObjectHasAttribute('shortname', $courses[$course3->id]);
         $this->assertObjectHasAttribute('summary', $courses[$course3->id]);
-        $this->assertObjectNotHasAttribute('summaryformat', $courses[$course3->id]);
+        $this->assertObjectNotHasProperty('summaryformat', $courses[$course3->id]);
 
         // Specified fields (two, string).
         $courses = enrol_get_my_courses('summary, summaryformat', 'id', 0, [], true);
