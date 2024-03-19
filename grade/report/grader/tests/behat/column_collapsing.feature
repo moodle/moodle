@@ -126,6 +126,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I choose "Collapse" in the open action menu
     And "Email" "link" in the "First name / Last name" "table_row" should not be visible
     When I press "Expand column Email"
+    And I wait until the page is ready
     Then "Email" "link" in the "First name / Last name" "table_row" should be visible
 
   Scenario: When a grade item is collapsed, the grade category is shown alongside the column name.
