@@ -23,7 +23,7 @@ class AuthenticatorData {
     private static $_COSE_KTY = 1;
     private static $_COSE_ALG = 3;
 
-    // Cose EC2 ES256 P-256 curve
+    // Cose curve
     private static $_COSE_CRV = -1;
     private static $_COSE_X = -2;
     private static $_COSE_Y = -3;
@@ -32,12 +32,19 @@ class AuthenticatorData {
     private static $_COSE_N = -1;
     private static $_COSE_E = -2;
 
+    // EC2 key type
     private static $_EC2_TYPE = 2;
     private static $_EC2_ES256 = -7;
     private static $_EC2_P256 = 1;
 
+    // RSA key type
     private static $_RSA_TYPE = 3;
     private static $_RSA_RS256 = -257;
+
+    // OKP key type
+    private static $_OKP_TYPE = 1;
+    private static $_OKP_ED25519 = 6;
+    private static $_OKP_EDDSA = -8;
 
     /**
      * Parsing the authenticatorData binary.
@@ -115,10 +122,15 @@ class AuthenticatorData {
      * @return string
      */
     public function getPublicKeyPem() {
+        if (!($this->_attestedCredentialData instanceof \stdClass) || !isset($this->_attestedCredentialData->credentialPublicKey)) {
+            throw  new WebAuthnException('credential data not included in authenticator data', WebAuthnException::INVALID_DATA);
+        }
+        
         $der = null;
-        switch ($this->_attestedCredentialData->credentialPublicKey->kty) {
+        switch ($this->_attestedCredentialData->credentialPublicKey->kty ?? null) {
             case self::$_EC2_TYPE: $der = $this->_getEc2Der(); break;
             case self::$_RSA_TYPE: $der = $this->_getRsaDer(); break;
+            case self::$_OKP_TYPE: $der = $this->_getOkpDer(); break;
             default: throw new WebAuthnException('invalid key type', WebAuthnException::INVALID_DATA);
         }
 
@@ -134,8 +146,11 @@ class AuthenticatorData {
      * @throws WebAuthnException
      */
     public function getPublicKeyU2F() {
-        if (!($this->_attestedCredentialData instanceof \stdClass)) {
+        if (!($this->_attestedCredentialData instanceof \stdClass) || !isset($this->_attestedCredentialData->credentialPublicKey)) {
             throw  new WebAuthnException('credential data not included in authenticator data', WebAuthnException::INVALID_DATA);
+        }
+        if (($this->_attestedCredentialData->credentialPublicKey->kty ?? null) !== self::$_EC2_TYPE) {
+            throw new WebAuthnException('signature algorithm not ES256', WebAuthnException::INVALID_PUBLIC_KEY);
         }
         return "\x04" . // ECC uncompressed
                 $this->_attestedCredentialData->credentialPublicKey->x .
@@ -189,6 +204,19 @@ class AuthenticatorData {
                 $this->_der_oid("\x2A\x86\x48\xCE\x3D\x03\x01\x07")  // 1.2.840.10045.3.1.7 prime256v1
             ) .
             $this->_der_bitString($this->getPublicKeyU2F())
+        );
+    }
+
+    /**
+     * Returns DER encoded EdDSA key
+     * @return string
+     */
+    private function _getOkpDer() {
+        return $this->_der_sequence(
+            $this->_der_sequence(
+                $this->_der_oid("\x2B\x65\x70") // OID 1.3.101.112 curveEd25519 (EdDSA 25519 signature algorithm)
+            ) .
+            $this->_der_bitString($this->_attestedCredentialData->credentialPublicKey->x)
         );
     }
 
@@ -283,9 +311,39 @@ class AuthenticatorData {
         switch ($credPKey->alg) {
             case self::$_EC2_ES256: $this->_readCredentialPublicKeyES256($credPKey, $enc); break;
             case self::$_RSA_RS256: $this->_readCredentialPublicKeyRS256($credPKey, $enc); break;
+            case self::$_OKP_EDDSA: $this->_readCredentialPublicKeyEDDSA($credPKey, $enc); break;
         }
 
         return $credPKey;
+    }
+
+    /**
+     * extract EDDSA informations from cose
+     * @param \stdClass $credPKey
+     * @param \stdClass $enc
+     * @throws WebAuthnException
+     */
+    private function _readCredentialPublicKeyEDDSA(&$credPKey, $enc) {
+        $credPKey->crv = $enc[self::$_COSE_CRV];
+        $credPKey->x   = $enc[self::$_COSE_X] instanceof ByteBuffer ? $enc[self::$_COSE_X]->getBinaryString() : null;
+        unset ($enc);
+
+        // Validation
+        if ($credPKey->kty !== self::$_OKP_TYPE) {
+            throw new WebAuthnException('public key not in OKP format', WebAuthnException::INVALID_PUBLIC_KEY);
+        }
+
+        if ($credPKey->alg !== self::$_OKP_EDDSA) {
+            throw new WebAuthnException('signature algorithm not EdDSA', WebAuthnException::INVALID_PUBLIC_KEY);
+        }
+
+        if ($credPKey->crv !== self::$_OKP_ED25519) {
+            throw new WebAuthnException('curve not Ed25519', WebAuthnException::INVALID_PUBLIC_KEY);
+        }
+
+        if (\strlen($credPKey->x) !== 32) {
+            throw new WebAuthnException('Invalid X-coordinate', WebAuthnException::INVALID_PUBLIC_KEY);
+        }
     }
 
     /**

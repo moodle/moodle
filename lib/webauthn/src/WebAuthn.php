@@ -46,7 +46,7 @@ class WebAuthn {
         $supportedFormats = array('android-key', 'android-safetynet', 'apple', 'fido-u2f', 'none', 'packed', 'tpm');
 
         if (!\function_exists('\openssl_open')) {
-            throw new WebAuthnException('OpenSSL-Module not installed');;
+            throw new WebAuthnException('OpenSSL-Module not installed');
         }
 
         if (!\in_array('SHA256', \array_map('\strtoupper', \openssl_get_md_methods()))) {
@@ -73,7 +73,7 @@ class WebAuthn {
      */
     public function addRootCertificates($path, $certFileExtensions=null) {
         if (!\is_array($this->_caFiles)) {
-            $this->_caFiles = array();
+            $this->_caFiles = [];
         }
         if ($certFileExtensions === null) {
             $certFileExtensions = array('pem', 'crt', 'cer', 'der');
@@ -122,7 +122,7 @@ class WebAuthn {
      * @param array $excludeCredentialIds a array of ids, which are already registered, to prevent re-registration
      * @return \stdClass
      */
-    public function getCreateArgs($userId, $userName, $userDisplayName, $timeout=20, $requireResidentKey=false, $requireUserVerification=false, $crossPlatformAttachment=null, $excludeCredentialIds=array()) {
+    public function getCreateArgs($userId, $userName, $userDisplayName, $timeout=20, $requireResidentKey=false, $requireUserVerification=false, $crossPlatformAttachment=null, $excludeCredentialIds=[]) {
 
         $args = new \stdClass();
         $args->publicKey = new \stdClass();
@@ -166,12 +166,23 @@ class WebAuthn {
         $args->publicKey->user->displayName = $userDisplayName;
 
         // supported algorithms
-        $args->publicKey->pubKeyCredParams = array();
-        $tmp = new \stdClass();
-        $tmp->type = 'public-key';
-        $tmp->alg = -7; // ES256
-        $args->publicKey->pubKeyCredParams[] = $tmp;
-        unset ($tmp);
+        $args->publicKey->pubKeyCredParams = [];
+
+        if (function_exists('sodium_crypto_sign_verify_detached') || \in_array('ed25519', \openssl_get_curve_names(), true)) {
+            $tmp = new \stdClass();
+            $tmp->type = 'public-key';
+            $tmp->alg = -8; // EdDSA
+            $args->publicKey->pubKeyCredParams[] = $tmp;
+            unset ($tmp);
+        }
+
+        if (\in_array('prime256v1', \openssl_get_curve_names(), true)) {
+            $tmp = new \stdClass();
+            $tmp->type = 'public-key';
+            $tmp->alg = -7; // ES256
+            $args->publicKey->pubKeyCredParams[] = $tmp;
+            unset ($tmp);
+        }
 
         $tmp = new \stdClass();
         $tmp->type = 'public-key';
@@ -194,7 +205,7 @@ class WebAuthn {
         $args->publicKey->challenge = $this->_createChallenge(); // binary
 
         //prevent re-registration by specifying existing credentials
-        $args->publicKey->excludeCredentials = array();
+        $args->publicKey->excludeCredentials = [];
 
         if (is_array($excludeCredentialIds)) {
             foreach ($excludeCredentialIds as $id) {
@@ -228,7 +239,7 @@ class WebAuthn {
      *                                             string 'required' 'preferred' 'discouraged'
      * @return \stdClass
      */
-    public function getGetArgs($credentialIds=array(), $timeout=20, $allowUsb=true, $allowNfc=true, $allowBle=true, $allowHybrid=true, $allowInternal=true, $requireUserVerification=false) {
+    public function getGetArgs($credentialIds=[], $timeout=20, $allowUsb=true, $allowNfc=true, $allowBle=true, $allowHybrid=true, $allowInternal=true, $requireUserVerification=false) {
 
         // validate User Verification Requirement
         if (\is_bool($requireUserVerification)) {
@@ -247,12 +258,12 @@ class WebAuthn {
         $args->publicKey->rpId = $this->_rpId;
 
         if (\is_array($credentialIds) && \count($credentialIds) > 0) {
-            $args->publicKey->allowCredentials = array();
+            $args->publicKey->allowCredentials = [];
 
             foreach ($credentialIds as $id) {
                 $tmp = new \stdClass();
                 $tmp->id = $id instanceof ByteBuffer ? $id : new ByteBuffer($id);  // binary
-                $tmp->transports = array();
+                $tmp->transports = [];
 
                 if ($allowUsb) {
                     $tmp->transports[] = 'usb';
@@ -468,12 +479,7 @@ class WebAuthn {
         $dataToVerify .= $authenticatorData;
         $dataToVerify .= $clientDataHash;
 
-        $publicKey = \openssl_pkey_get_public($credentialPublicKey);
-        if ($publicKey === false) {
-            throw new WebAuthnException('public key invalid', WebAuthnException::INVALID_PUBLIC_KEY);
-        }
-
-        if (\openssl_verify($dataToVerify, $signature, $publicKey, OPENSSL_ALGO_SHA256) !== 1) {
+        if (!$this->_verifySignature($dataToVerify, $signature, $credentialPublicKey)) {
             throw new WebAuthnException('invalid signature', WebAuthnException::INVALID_SIGNATURE);
         }
 
@@ -622,5 +628,50 @@ class WebAuthn {
             $this->_challenge = ByteBuffer::randomBuffer($length);
         }
         return $this->_challenge;
+    }
+
+    /**
+     * check if the signature is valid.
+     * @param string $dataToVerify
+     * @param string $signature
+     * @param string $credentialPublicKey PEM format
+     * @return bool
+     */
+    private function _verifySignature($dataToVerify, $signature, $credentialPublicKey) {
+
+        // Use Sodium to verify EdDSA 25519 as its not yet supported by openssl
+        if (\function_exists('sodium_crypto_sign_verify_detached') && !\in_array('ed25519', \openssl_get_curve_names(), true)) {
+            $pkParts = [];
+            if (\preg_match('/BEGIN PUBLIC KEY\-+(?:\s|\n|\r)+([^\-]+)(?:\s|\n|\r)*\-+END PUBLIC KEY/i', $credentialPublicKey, $pkParts)) {
+                $rawPk = \base64_decode($pkParts[1]);
+
+                // 30        = der sequence
+                // 2a        = length 42 byte
+                // 30        = der sequence
+                // 05        = lenght 5 byte
+                // 06        = der OID
+                // 03        = OID length 3 byte
+                // 2b 65 70  = OID 1.3.101.112 curveEd25519 (EdDSA 25519 signature algorithm)
+                // 03        = der bit string
+                // 21        = length 33 byte
+                // 00        = null padding
+                // [...]     = 32 byte x-curve
+                $okpPrefix = "\x30\x2a\x30\x05\x06\x03\x2b\x65\x70\x03\x21\x00";
+
+                if ($rawPk && \strlen($rawPk) === 44 && \substr($rawPk,0, \strlen($okpPrefix)) === $okpPrefix) {
+                    $publicKeyXCurve = \substr($rawPk, \strlen($okpPrefix));
+
+                    return \sodium_crypto_sign_verify_detached($signature, $dataToVerify, $publicKeyXCurve);
+                }
+            }
+        }
+
+        // verify with openSSL
+        $publicKey = \openssl_pkey_get_public($credentialPublicKey);
+        if ($publicKey === false) {
+            throw new WebAuthnException('public key invalid', WebAuthnException::INVALID_PUBLIC_KEY);
+        }
+
+        return \openssl_verify($dataToVerify, $signature, $publicKey, OPENSSL_ALGO_SHA256) === 1;
     }
 }

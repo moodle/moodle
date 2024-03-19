@@ -123,7 +123,7 @@ abstract class FormatBase {
         }
 
         if ($content) {
-            $this->_x5c_tempFile = \sys_get_temp_dir() . '/x5c_chain_' . \base_convert(\rand(), 10, 36) . '.pem';
+            $this->_x5c_tempFile = \tempnam(\sys_get_temp_dir(), 'x5c_');
             if (\file_put_contents($this->_x5c_tempFile, $content) !== false) {
                 return $this->_x5c_tempFile;
             }
