@@ -89,14 +89,12 @@ $string['attemptheading'] = 'Attempt {$a->attemptnumber}: {$a->submissionsummary
 $string['attempthistory'] = 'Previous attempts';
 $string['attemptnumber'] = 'Attempt number';
 $string['attemptsettings'] = 'Attempt settings';
-$string['attemptreopenmethod'] = 'Additional attempts';
-$string['attemptreopenmethod_help'] = 'This setting determines whether a student can make additional attempts at the assignment. For each attempt, the grade and feedback are saved, and can be viewed by the teacher and the student. The available options are:
+$string['attemptreopenmethod'] = 'Grant attempts';
+$string['attemptreopenmethod_help'] = 'This setting controls how students are granted attempts for this assignment. For each attempt, the grade and feedback are saved, and can be viewed by the teacher and the student. The available options are:
 
-* Never - Only one attempt is possible.
-* Manually - Additional attempts may be allowed by a teacher.
-* Automatically until pass - Additional attempts are allowed automatically until the student achieves the grade to pass set in the gradebook for this assignment.';
+* Manually - After each attempt, you can grant the next one through the Submissions page or the Grader page.
+* Automatically until pass - After each attempt, the next will be granted automatically, until the student achieves the passing grade.';
 $string['attemptreopenmethod_manual'] = 'Manually';
-$string['attemptreopenmethod_none'] = 'Never';
 $string['attemptreopenmethod_untilpass'] = 'Automatically until pass';
 $string['availability'] = 'Availability';
 $string['back'] = 'Back';
@@ -363,7 +361,7 @@ $string['markingworkflowstatenotmarked'] = 'Not marked';
 $string['markingworkflowstatereadyforreview'] = 'Marking completed';
 $string['markingworkflowstatereadyforrelease'] = 'Ready for release';
 $string['markingworkflowstatereleased'] = 'Released';
-$string['maxattempts'] = 'Maximum attempts';
+$string['maxattempts'] = 'Allowed attempts';
 $string['maxattempts_help'] = 'The maximum number of submission attempts that can be made by a student. After this number has been reached, the submission can no longer be reopened.';
 $string['maxgrade'] = 'Maximum grade';
 $string['maxgrade'] = 'Maximum Grade';
@@ -666,3 +664,6 @@ $string['viewsubmissiongradingtable'] = 'View submission grading table.';
 $string['viewrevealidentitiesconfirm'] = 'View reveal student identities confirmation page.';
 $string['workflowfilter'] = 'Workflow filter';
 $string['xofy'] = '{$a->x} of {$a->y}';
+
+// Deprecated since Moodle 4.4.
+$string['attemptreopenmethod_none'] = 'Never';

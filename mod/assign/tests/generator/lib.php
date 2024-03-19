@@ -36,7 +36,7 @@ class mod_assign_generator extends testing_module_generator {
     public function create_instance($record = null, array $options = null) {
         $record = (object)(array)$record;
 
-        $defaultsettings = array(
+        $defaultsettings = [
             'alwaysshowdescription'             => 1,
             'submissiondrafts'                  => 1,
             'requiresubmissionstatement'        => 0,
@@ -52,15 +52,15 @@ class mod_assign_generator extends testing_module_generator {
             'requireallteammemberssubmit'       => 0,
             'teamsubmissiongroupingid'          => 0,
             'blindmarking'                      => 0,
-            'attemptreopenmethod'               => 'none',
-            'maxattempts'                       => -1,
+            'attemptreopenmethod'               => 'untilpass',
+            'maxattempts'                       => 1,
             'markingworkflow'                   => 0,
             'markingallocation'                 => 0,
             'markinganonymous'                  => 0,
             'activityformat'                    => 0,
             'timelimit'                         => 0,
             'submissionattachments'             => 0,
-        );
+        ];
 
         if (property_exists($record, 'teamsubmissiongroupingid')) {
             $record->teamsubmissiongroupingid = $this->get_grouping_id($record->teamsubmissiongroupingid);

@@ -16,6 +16,7 @@ Feature: In an assignment, students start a new attempt based on their previous 
       | intro                               | Submit your online text |
       | assignsubmission_onlinetext_enabled | 1                       |
       | assignsubmission_file_enabled       | 0                       |
+      | maxattempts                         | -1                      |
       | attemptreopenmethod                 | manual                  |
       | hidegrader                          | 1                       |
       | submissiondrafts                    | 0                       |

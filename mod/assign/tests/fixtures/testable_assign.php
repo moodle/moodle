@@ -145,6 +145,7 @@ class mod_assign_testable_assign extends assign {
         $formparams = array();
         $formparams['submissiondrafts'] = 1;
         $formparams['duedate'] = 1;
+        $formparams['maxattempts'] = ASSIGN_UNLIMITED_ATTEMPTS;
         $formparams['attemptreopenmethod'] = ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL;
         $formparams['feedbackplugins'] = array();
         $formparams['markingworkflow'] = 1;

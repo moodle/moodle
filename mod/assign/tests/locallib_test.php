@@ -3746,6 +3746,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $teacher->ignoresesskey = true;
         $this->setUser($teacher);
         $assign = $this->create_instance($course, [
+                'maxattempts' => ASSIGN_UNLIMITED_ATTEMPTS,
                 'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL,
             ]);
 

@@ -29,6 +29,7 @@ Feature: In an assignment, teachers can edit feedback for a students previous su
       | assignsubmission_onlinetext_enabled | 1                       |
       | assignfeedback_comments_enabled     | 1                       |
       | submissiondrafts                    | 0                       |
+      | maxattempts                         | -1                      |
       | attemptreopenmethod                 | manual                  |
     And the following "mod_assign > submissions" exist:
       | assign                | user      | onlinetext                        |

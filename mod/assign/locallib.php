@@ -45,6 +45,12 @@ define('ASSIGN_FILTER_DRAFT', 'draft');
 define('ASSIGN_MARKER_FILTER_NO_MARKER', -1);
 
 // Reopen attempt methods.
+/**
+ * ASSIGN_ATTEMPT_REOPEN_METHOD_NONE - Reopening attempts is not allowed.
+ *
+ * @deprecated since Moodle 4.4
+ * @todo MDL-81977 This will be deleted in Moodle 4.8.
+ */
 define('ASSIGN_ATTEMPT_REOPEN_METHOD_NONE', 'none');
 define('ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL', 'manual');
 define('ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS', 'untilpass');
@@ -756,13 +762,8 @@ class assign {
         if (isset($formdata->hidegrader)) {
             $update->hidegrader = $formdata->hidegrader;
         }
-        $update->attemptreopenmethod = ASSIGN_ATTEMPT_REOPEN_METHOD_NONE;
-        if (!empty($formdata->attemptreopenmethod)) {
-            $update->attemptreopenmethod = $formdata->attemptreopenmethod;
-        }
-        if (!empty($formdata->maxattempts)) {
-            $update->maxattempts = $formdata->maxattempts;
-        }
+        $update->maxattempts = $formdata->maxattempts ?? 1;
+        $update->attemptreopenmethod = $formdata->attemptreopenmethod ?? ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS;
         if (isset($formdata->preventsubmissionnotingroup)) {
             $update->preventsubmissionnotingroup = $formdata->preventsubmissionnotingroup;
         }
@@ -1531,13 +1532,8 @@ class assign {
             $update->hidegrader = $formdata->hidegrader;
         }
         $update->blindmarking = $formdata->blindmarking;
-        $update->attemptreopenmethod = ASSIGN_ATTEMPT_REOPEN_METHOD_NONE;
-        if (!empty($formdata->attemptreopenmethod)) {
-            $update->attemptreopenmethod = $formdata->attemptreopenmethod;
-        }
-        if (!empty($formdata->maxattempts)) {
-            $update->maxattempts = $formdata->maxattempts;
-        }
+        $update->maxattempts = $formdata->maxattempts ?? 1;
+        $update->attemptreopenmethod = $formdata->attemptreopenmethod ?? ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS;
         if (isset($formdata->preventsubmissionnotingroup)) {
             $update->preventsubmissionnotingroup = $formdata->preventsubmissionnotingroup;
         }
@@ -4522,6 +4518,7 @@ class assign {
         $batchformparams = array('cm'=>$cmid,
                                  'submissiondrafts'=>$this->get_instance()->submissiondrafts,
                                  'duedate'=>$this->get_instance()->duedate,
+                                 'maxattempts' => $this->get_instance()->maxattempts,
                                  'attemptreopenmethod'=>$this->get_instance()->attemptreopenmethod,
                                  'feedbackplugins'=>$this->get_feedback_plugins(),
                                  'context'=>$this->get_context(),
@@ -5003,6 +5000,7 @@ class assign {
         $batchformparams = array('cm'=>$this->get_course_module()->id,
                                  'submissiondrafts'=>$this->get_instance()->submissiondrafts,
                                  'duedate'=>$this->get_instance()->duedate,
+                                 'maxattempts' => $this->get_instance()->maxattempts,
                                  'attemptreopenmethod'=>$this->get_instance()->attemptreopenmethod,
                                  'feedbackplugins'=>$this->get_feedback_plugins(),
                                  'context'=>$this->get_context(),
@@ -7972,9 +7970,8 @@ class assign {
         }
 
         // Do not show if we are editing a previous attempt.
-        if (($attemptnumber == -1 ||
-            ($attemptnumber + 1) == count($this->get_all_submissions($userid))) &&
-            $this->get_instance()->attemptreopenmethod != ASSIGN_ATTEMPT_REOPEN_METHOD_NONE) {
+        if (($attemptnumber == -1 || ($attemptnumber + 1) == count($this->get_all_submissions($userid))) &&
+                ($this->get_instance()->maxattempts > 1 || $this->get_instance()->maxattempts == ASSIGN_UNLIMITED_ATTEMPTS)) {
             $mform->addElement('header', 'attemptsettings', get_string('attemptsettings', 'assign'));
             $attemptreopenmethod = get_string('attemptreopenmethod_' . $this->get_instance()->attemptreopenmethod, 'assign');
             $mform->addElement('static', 'attemptreopenmethod', get_string('attemptreopenmethod', 'assign'), $attemptreopenmethod);
@@ -8946,7 +8943,8 @@ class assign {
     protected function add_attempt($userid) {
         require_capability('mod/assign:grade', $this->context);
 
-        if ($this->get_instance()->attemptreopenmethod == ASSIGN_ATTEMPT_REOPEN_METHOD_NONE) {
+        // If additional attempts are disallowed.
+        if ($this->get_instance()->maxattempts == 1) {
             return false;
         }
 

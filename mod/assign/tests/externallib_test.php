@@ -614,6 +614,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
 
         $result = $this->create_assign_with_student_and_teacher([
             'assignsubmission_onlinetext_enabled' => 1,
+            'maxattempts' => ASSIGN_UNLIMITED_ATTEMPTS,
             'attemptreopenmethod' => 'manual',
             'teamsubmission' => 1,
         ]);
