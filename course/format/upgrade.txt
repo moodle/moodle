@@ -54,6 +54,7 @@ value when all the sections must be displayed (instead of 0). That way, section 
 plugins can now include the string 'plugin_description' to provide a description of the course format.
 * A new item, initsections, has been added to the testing_data_generator::create_course() function, to let the generator rename
 the sections to "Section X".
+* The core_courseformat\base::get_format_string last parameter has been removed because it was erroneous.
 
 === 4.3 ===
 * New core_courseformat\output\activitybadge class that can be extended by any module to display content near the activity name.
