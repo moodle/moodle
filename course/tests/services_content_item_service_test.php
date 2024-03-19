@@ -51,14 +51,14 @@ class services_content_item_service_test extends \advanced_testcase {
         $contentitems = $cis->get_content_items_for_user_in_course($user, $course);
 
         foreach ($contentitems as $key => $contentitem) {
-            $this->assertObjectHasAttribute('id', $contentitem);
-            $this->assertObjectHasAttribute('name', $contentitem);
-            $this->assertObjectHasAttribute('title', $contentitem);
-            $this->assertObjectHasAttribute('link', $contentitem);
-            $this->assertObjectHasAttribute('icon', $contentitem);
-            $this->assertObjectHasAttribute('help', $contentitem);
-            $this->assertObjectHasAttribute('archetype', $contentitem);
-            $this->assertObjectHasAttribute('componentname', $contentitem);
+            $this->assertObjectHasProperty('id', $contentitem);
+            $this->assertObjectHasProperty('name', $contentitem);
+            $this->assertObjectHasProperty('title', $contentitem);
+            $this->assertObjectHasProperty('link', $contentitem);
+            $this->assertObjectHasProperty('icon', $contentitem);
+            $this->assertObjectHasProperty('help', $contentitem);
+            $this->assertObjectHasProperty('archetype', $contentitem);
+            $this->assertObjectHasProperty('componentname', $contentitem);
         }
     }
 

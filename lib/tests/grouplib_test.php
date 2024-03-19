@@ -656,9 +656,9 @@ class grouplib_test extends \advanced_testcase {
         // Get the data.
         $data = groups_get_course_data($course->id);
         $this->assertInstanceOf('stdClass', $data);
-        $this->assertObjectHasAttribute('groups', $data);
-        $this->assertObjectHasAttribute('groupings', $data);
-        $this->assertObjectHasAttribute('mappings', $data);
+        $this->assertObjectHasProperty('groups', $data);
+        $this->assertObjectHasProperty('groupings', $data);
+        $this->assertObjectHasProperty('mappings', $data);
 
         // Test we have the expected items returns.
         $this->assertCount(4, $data->groups);

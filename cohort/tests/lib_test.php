@@ -711,7 +711,7 @@ class lib_test extends \advanced_testcase {
 
         // Test cohort_get_cohort.
         $result = cohort_get_cohort($cohort1->id, $coursectx, true);
-        $this->assertObjectHasAttribute('customfields', $result);
+        $this->assertObjectHasProperty('customfields', $result);
         $this->assertCount(1, $result->customfields);
         $field = reset($result->customfields);
         $this->assertInstanceOf(data_controller::class, $field);
@@ -727,7 +727,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(2, $result['totalcohorts']);
         $this->assertEquals(2, $result['allcohorts']);
         foreach ($result['cohorts'] as $cohort) {
-            $this->assertObjectHasAttribute('customfields', $cohort);
+            $this->assertObjectHasProperty('customfields', $cohort);
             $this->assertCount(1, $cohort->customfields);
             $field = reset($cohort->customfields);
             $this->assertInstanceOf(data_controller::class, $field);
@@ -753,7 +753,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(2, $result['totalcohorts']);
         $this->assertEquals(2, $result['allcohorts']);
         foreach ($result['cohorts'] as $cohort) {
-            $this->assertObjectHasAttribute('customfields', $cohort);
+            $this->assertObjectHasProperty('customfields', $cohort);
             $this->assertCount(1, $cohort->customfields);
             $field = reset($cohort->customfields);
             $this->assertInstanceOf(data_controller::class, $field);
@@ -778,7 +778,7 @@ class lib_test extends \advanced_testcase {
         $result = cohort_get_available_cohorts($coursectx, COHORT_ALL, 0, 25, '', true);
         $this->assertCount(2, $result);
         foreach ($result as $cohort) {
-            $this->assertObjectHasAttribute('customfields', $cohort);
+            $this->assertObjectHasProperty('customfields', $cohort);
             $this->assertCount(1, $cohort->customfields);
             $field = reset($cohort->customfields);
             $this->assertInstanceOf(data_controller::class, $field);
@@ -805,7 +805,7 @@ class lib_test extends \advanced_testcase {
         $result = cohort_get_user_cohorts($user->id, true);
         $this->assertCount(2, $result);
         foreach ($result as $cohort) {
-            $this->assertObjectHasAttribute('customfields', $cohort);
+            $this->assertObjectHasProperty('customfields', $cohort);
             $this->assertCount(1, $cohort->customfields);
             $field = reset($cohort->customfields);
             $this->assertInstanceOf(data_controller::class, $field);

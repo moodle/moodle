@@ -37,7 +37,7 @@ class api_test extends \advanced_testcase {
 
         // Prepare the form data for adding a new policy document.
         $formdata = api::form_policydoc_data(new policy_version(0));
-        $this->assertObjectHasAttribute('name', $formdata);
+        $this->assertObjectHasProperty('name', $formdata);
         $this->assertArrayHasKey('text', $formdata->summary_editor);
         $this->assertArrayHasKey('format', $formdata->content_editor);
 

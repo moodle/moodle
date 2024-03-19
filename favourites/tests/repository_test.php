@@ -67,13 +67,13 @@ class repository_test extends \advanced_testcase {
 
         // Verify we get the record back.
         $this->assertInstanceOf(favourite::class, $favourite);
-        $this->assertObjectHasAttribute('id', $favourite);
+        $this->assertObjectHasProperty('id', $favourite);
         $this->assertEquals('core_course', $favourite->component);
         $this->assertEquals('course', $favourite->itemtype);
 
         // Verify the returned object has additional properties, created as part of the add.
-        $this->assertObjectHasAttribute('ordering', $favourite);
-        $this->assertObjectHasAttribute('timecreated', $favourite);
+        $this->assertObjectHasProperty('ordering', $favourite);
+        $this->assertObjectHasProperty('timecreated', $favourite);
         $this->assertGreaterThanOrEqual($timenow, $favourite->timecreated);
 
         // Try to save the same record again and confirm the store throws an exception.
@@ -137,8 +137,8 @@ class repository_test extends \advanced_testcase {
             $this->assertEquals('course', $favourite->itemtype);
 
             // Verify the returned object has additional properties, created as part of the add.
-            $this->assertObjectHasAttribute('ordering', $favourite);
-            $this->assertObjectHasAttribute('timecreated', $favourite);
+            $this->assertObjectHasProperty('ordering', $favourite);
+            $this->assertObjectHasProperty('timecreated', $favourite);
             $this->assertGreaterThanOrEqual($timenow, $favourite->timecreated);
         }
 
@@ -167,7 +167,7 @@ class repository_test extends \advanced_testcase {
         // Now, from the repo, get the single favourite we just created, by id.
         $userfavourite = $favouritesrepo->find($favourite->id);
         $this->assertInstanceOf(favourite::class, $userfavourite);
-        $this->assertObjectHasAttribute('timecreated', $userfavourite);
+        $this->assertObjectHasProperty('timecreated', $userfavourite);
 
         // Try to get a favourite we know doesn't exist.
         // We expect an exception in this case.
@@ -209,8 +209,8 @@ class repository_test extends \advanced_testcase {
         $this->assertCount(4, $favourites);
         foreach ($favourites as $fav) {
             $this->assertInstanceOf(favourite::class, $fav);
-            $this->assertObjectHasAttribute('id', $fav);
-            $this->assertObjectHasAttribute('timecreated', $fav);
+            $this->assertObjectHasProperty('id', $fav);
+            $this->assertObjectHasProperty('timecreated', $fav);
         }
     }
 

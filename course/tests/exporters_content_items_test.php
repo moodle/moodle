@@ -53,16 +53,16 @@ class exporters_content_items_test extends \advanced_testcase {
         $renderer = $PAGE->get_renderer('core');
         $exportedcontentitems = $ciexporter->export($renderer);
 
-        $this->assertObjectHasAttribute('content_items', $exportedcontentitems);
+        $this->assertObjectHasProperty('content_items', $exportedcontentitems);
         foreach ($exportedcontentitems->content_items as $key => $dto) {
-            $this->assertObjectHasAttribute('id', $dto);
-            $this->assertObjectHasAttribute('name', $dto);
-            $this->assertObjectHasAttribute('title', $dto);
-            $this->assertObjectHasAttribute('link', $dto);
-            $this->assertObjectHasAttribute('icon', $dto);
-            $this->assertObjectHasAttribute('help', $dto);
-            $this->assertObjectHasAttribute('archetype', $dto);
-            $this->assertObjectHasAttribute('componentname', $dto);
+            $this->assertObjectHasProperty('id', $dto);
+            $this->assertObjectHasProperty('name', $dto);
+            $this->assertObjectHasProperty('title', $dto);
+            $this->assertObjectHasProperty('link', $dto);
+            $this->assertObjectHasProperty('icon', $dto);
+            $this->assertObjectHasProperty('help', $dto);
+            $this->assertObjectHasProperty('archetype', $dto);
+            $this->assertObjectHasProperty('componentname', $dto);
         }
     }
 }

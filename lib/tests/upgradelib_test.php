@@ -915,8 +915,8 @@ class upgradelib_test extends advanced_testcase {
 
         foreach ($licenses as $license) {
             $this->assertContains($license->shortname, $expectedshortnames);
-            $this->assertObjectHasAttribute('custom', $license);
-            $this->assertObjectHasAttribute('sortorder', $license);
+            $this->assertObjectHasProperty('custom', $license);
+            $this->assertObjectHasProperty('sortorder', $license);
         }
         // A core license which was deleted prior to upgrade should not be reinstalled.
         $actualshortnames = $DB->get_records_menu('license', null, '', 'id, shortname');

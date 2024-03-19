@@ -103,9 +103,9 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
             }
         }
     }
@@ -124,7 +124,7 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
                 $this->assertObjectNotHasProperty('country', $user);
                 $this->assertObjectNotHasProperty('city', $user);
             }
@@ -144,17 +144,17 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($systemselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
             }
         }
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
             }
         }
     }
@@ -178,7 +178,7 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($systemselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
                 $this->assertObjectNotHasProperty('country', $user);
                 $this->assertObjectNotHasProperty('city', $user);
             }
@@ -186,9 +186,9 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
             }
         }
     }
@@ -209,7 +209,7 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($systemselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
                 $this->assertObjectNotHasProperty('country', $user);
                 $this->assertObjectNotHasProperty('city', $user);
             }
@@ -217,7 +217,7 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($courseselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
                 $this->assertObjectNotHasProperty('country', $user);
                 $this->assertObjectNotHasProperty('city', $user);
             }
@@ -242,9 +242,9 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($implicitselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
                 $this->assertObjectNotHasProperty('email', $user);
                 $this->assertObjectNotHasProperty('department', $user);
             }
@@ -252,9 +252,9 @@ class userselector_test extends \advanced_testcase {
 
         foreach ($explicitselector->find_users('') as $found) {
             foreach ($found as $user) {
-                $this->assertObjectHasAttribute('idnumber', $user);
-                $this->assertObjectHasAttribute('country', $user);
-                $this->assertObjectHasAttribute('city', $user);
+                $this->assertObjectHasProperty('idnumber', $user);
+                $this->assertObjectHasProperty('country', $user);
+                $this->assertObjectHasProperty('city', $user);
                 $this->assertObjectNotHasProperty('email', $user);
                 $this->assertObjectNotHasProperty('department', $user);
             }

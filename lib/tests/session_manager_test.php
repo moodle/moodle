@@ -99,15 +99,15 @@ class session_manager_test extends \advanced_testcase {
         $this->assertEquals(0, $USER->id);
 
         $user = $this->getDataGenerator()->create_user();
-        $this->assertObjectHasAttribute('description', $user);
-        $this->assertObjectHasAttribute('password', $user);
+        $this->assertObjectHasProperty('description', $user);
+        $this->assertObjectHasProperty('password', $user);
 
         \core\session\manager::set_user($user);
 
         $this->assertEquals($user->id, $USER->id);
         $this->assertObjectNotHasProperty('description', $user);
         $this->assertObjectNotHasProperty('password', $user);
-        $this->assertObjectHasAttribute('sesskey', $user);
+        $this->assertObjectHasProperty('sesskey', $user);
         $this->assertSame($user, $GLOBALS['USER']);
         $this->assertSame($GLOBALS['USER'], $_SESSION['USER']);
         $this->assertSame($GLOBALS['USER'], $USER);

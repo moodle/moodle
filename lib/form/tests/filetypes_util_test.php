@@ -281,8 +281,8 @@ class filetypes_util_test extends advanced_testcase {
         $data = $util->data_for_browser();
         $this->assertContainsOnly('object', $data);
         foreach ($data as $group) {
-            $this->assertObjectHasAttribute('key', $group);
-            $this->assertObjectHasAttribute('types', $group);
+            $this->assertObjectHasProperty('key', $group);
+            $this->assertObjectHasProperty('types', $group);
             if ($group->key !== '') {
                 $this->assertTrue($group->selectable);
             }

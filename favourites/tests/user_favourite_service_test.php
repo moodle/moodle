@@ -200,7 +200,7 @@ class user_favourite_service_test extends \advanced_testcase {
 
         // Favourite a course.
         $favourite1 = $user1service->create_favourite('core_course', 'course', $course1context->instanceid, $course1context);
-        $this->assertObjectHasAttribute('id', $favourite1);
+        $this->assertObjectHasProperty('id', $favourite1);
 
         // Try to favourite the same course again.
         $this->expectException('moodle_exception');

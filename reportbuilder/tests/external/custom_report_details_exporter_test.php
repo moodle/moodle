@@ -58,7 +58,7 @@ class custom_report_details_exporter_test extends advanced_testcase {
         $this->assertEquals(users::get_name(), $export->sourcename);
 
         // We use the user exporter for the modifier of the report.
-        $this->assertObjectHasAttribute('modifiedby', $export);
+        $this->assertObjectHasProperty('modifiedby', $export);
         $this->assertEquals(fullname($user), $export->modifiedby->fullname);
     }
 }

@@ -201,7 +201,7 @@ class question_type_test extends \advanced_testcase {
             }
         }
 
-        $this->assertObjectHasAttribute('subquestions', $actualquestiondata->options);
+        $this->assertObjectHasProperty('subquestions', $actualquestiondata->options);
 
         $subqpropstoignore = array('id');
         foreach ($questiondata->options->subquestions as $subq) {

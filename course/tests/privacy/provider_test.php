@@ -193,10 +193,10 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $writer = \core_privacy\local\request\writer::with_context($context1);
         $this->assertTrue($writer->has_any_data());
         $writerdata = $writer->get_data();
-        $this->assertObjectHasAttribute('fullname', $writerdata);
-        $this->assertObjectHasAttribute('shortname', $writerdata);
-        $this->assertObjectHasAttribute('idnumber', $writerdata);
-        $this->assertObjectHasAttribute('summary', $writerdata);
+        $this->assertObjectHasProperty('fullname', $writerdata);
+        $this->assertObjectHasProperty('shortname', $writerdata);
+        $this->assertObjectHasProperty('idnumber', $writerdata);
+        $this->assertObjectHasProperty('summary', $writerdata);
     }
 
     /**
@@ -226,10 +226,10 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $writer = \core_privacy\local\request\writer::with_context($context1);
         $this->assertTrue($writer->has_any_data());
         $writerdata = $writer->get_data();
-        $this->assertObjectHasAttribute('fullname', $writerdata);
-        $this->assertObjectHasAttribute('shortname', $writerdata);
-        $this->assertObjectHasAttribute('idnumber', $writerdata);
-        $this->assertObjectHasAttribute('summary', $writerdata);
+        $this->assertObjectHasProperty('fullname', $writerdata);
+        $this->assertObjectHasProperty('shortname', $writerdata);
+        $this->assertObjectHasProperty('idnumber', $writerdata);
+        $this->assertObjectHasProperty('summary', $writerdata);
     }
 
     /**

@@ -302,21 +302,21 @@ class locallib_test extends mod_lti_testcase {
 
         // Try when the forcessl config property is not set.
         lti_prepare_type_for_save($type, $config);
-        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertObjectHasProperty('lti_forcessl', $config);
         $this->assertEquals(0, $config->lti_forcessl);
         $this->assertEquals(0, $type->forcessl);
 
         // Try when forcessl config property is set.
         $config->lti_forcessl = 1;
         lti_prepare_type_for_save($type, $config);
-        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertObjectHasProperty('lti_forcessl', $config);
         $this->assertEquals(1, $config->lti_forcessl);
         $this->assertEquals(1, $type->forcessl);
 
         // Try when forcessl config property is set to 0.
         $config->lti_forcessl = 0;
         lti_prepare_type_for_save($type, $config);
-        $this->assertObjectHasAttribute('lti_forcessl', $config);
+        $this->assertObjectHasProperty('lti_forcessl', $config);
         $this->assertEquals(0, $config->lti_forcessl);
         $this->assertEquals(0, $type->forcessl);
     }

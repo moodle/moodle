@@ -573,8 +573,8 @@ class datalib_test extends \advanced_testcase {
         $this->assertSame($folder1a->id, $cm->instance);
         $this->assertSame($folder1a->course, $cm->course);
         $this->assertObjectNotHasProperty('sectionnum', $cm);
-        $this->assertObjectHasAttribute('revision', $cm);
-        $this->assertObjectHasAttribute('display', $cm);
+        $this->assertObjectHasProperty('revision', $cm);
+        $this->assertObjectHasProperty('display', $cm);
 
         $modules = get_coursemodules_in_course('label', $course1->id);
         $this->assertCount(0, $modules);
@@ -842,7 +842,7 @@ class datalib_test extends \advanced_testcase {
         $this->assertEquals('user_a@example.com', $results[$userids[0]]->email);
         $this->assertEquals(1, $results[$userids[0]]->confirmed);
         $this->assertEquals('a_first', $results[$userids[0]]->firstname);
-        $this->assertObjectHasAttribute('firstnamephonetic', $results[$userids[0]]);
+        $this->assertObjectHasProperty('firstnamephonetic', $results[$userids[0]]);
 
         // Should not have the custom field or department because no context specified.
         $this->assertObjectNotHasProperty('department', $results[$userids[0]]);

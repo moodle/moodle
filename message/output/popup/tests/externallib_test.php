@@ -101,7 +101,7 @@ class externallib_test extends \advanced_testcase {
         $found = 0;
         foreach ($result['notifications'] as $notification) {
             if (!empty($notification->customdata)) {
-                $this->assertObjectHasAttribute('datakey', json_decode($notification->customdata));
+                $this->assertObjectHasProperty('datakey', json_decode($notification->customdata));
                 $found++;
             }
         }

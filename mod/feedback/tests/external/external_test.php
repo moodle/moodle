@@ -759,7 +759,7 @@ class external_test extends externallib_advanced_testcase {
         $customdata = json_decode($messages[0]->customdata);
         $this->assertEquals($this->feedback->id, $customdata->instance);
         $this->assertEquals($this->feedback->cmid, $customdata->cmid);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
     }
 
     /**

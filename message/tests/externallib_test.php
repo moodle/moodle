@@ -1484,7 +1484,7 @@ class externallib_test extends externallib_advanced_testcase {
         $messages = external_api::clean_returnvalue(core_message_external::get_messages_returns(), $messages);
         $this->assertCount(1, $messages['messages']);
         // Check we receive custom data as a unserialisable json.
-        $this->assertObjectHasAttribute('datakey', json_decode($messages['messages'][0]['customdata']));
+        $this->assertObjectHasProperty('datakey', json_decode($messages['messages'][0]['customdata']));
         $this->assertEquals('mod_feedback', $messages['messages'][0]['component']);
         $this->assertEquals('submission', $messages['messages'][0]['eventtype']);
         $feedbackicon = clean_param($PAGE->get_renderer('core')->image_url('monologo', 'mod_feedback')->out(), PARAM_URL);
@@ -4527,7 +4527,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(true, $member1->showonlinestatus);
         $this->assertEquals(false, $member1->iscontact);
         $this->assertEquals(false, $member1->isblocked);
-        $this->assertObjectHasAttribute('contactrequests', $member1);
+        $this->assertObjectHasProperty('contactrequests', $member1);
         $this->assertEmpty($member1->contactrequests);
 
         $this->assertEquals($user2->id, $member2->id);
@@ -4536,7 +4536,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(true, $member2->showonlinestatus);
         $this->assertEquals(true, $member2->iscontact);
         $this->assertEquals(false, $member2->isblocked);
-        $this->assertObjectHasAttribute('contactrequests', $member2);
+        $this->assertObjectHasProperty('contactrequests', $member2);
         $this->assertEmpty($member2->contactrequests);
 
         $this->assertEquals($user3->id, $member3->id);
@@ -4545,7 +4545,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals(true, $member3->showonlinestatus);
         $this->assertEquals(false, $member3->iscontact);
         $this->assertEquals(true, $member3->isblocked);
-        $this->assertObjectHasAttribute('contactrequests', $member3);
+        $this->assertObjectHasProperty('contactrequests', $member3);
         $this->assertEmpty($member3->contactrequests);
     }
 
@@ -4712,12 +4712,12 @@ class externallib_test extends externallib_advanced_testcase {
         external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
 
         $this->assertCount(2, $writtenmessages);
-        $this->assertObjectHasAttribute('id', $writtenmessages[0]);
+        $this->assertObjectHasProperty('id', $writtenmessages[0]);
         $this->assertEquals($user1->id, $writtenmessages[0]->useridfrom);
         $this->assertEquals('<p>a message from user 1</p>', $writtenmessages[0]->text);
         $this->assertNotEmpty($writtenmessages[0]->timecreated);
 
-        $this->assertObjectHasAttribute('id', $writtenmessages[1]);
+        $this->assertObjectHasProperty('id', $writtenmessages[1]);
         $this->assertEquals($user1->id, $writtenmessages[1]->useridfrom);
         $this->assertEquals('<p>another message from user 1</p>', $writtenmessages[1]->text);
         $this->assertNotEmpty($writtenmessages[1]->timecreated);
@@ -4764,12 +4764,12 @@ class externallib_test extends externallib_advanced_testcase {
         external_api::clean_returnvalue(core_message_external::send_messages_to_conversation_returns(), $writtenmessages);
 
         $this->assertCount(2, $writtenmessages);
-        $this->assertObjectHasAttribute('id', $writtenmessages[0]);
+        $this->assertObjectHasProperty('id', $writtenmessages[0]);
         $this->assertEquals($user1->id, $writtenmessages[0]->useridfrom);
         $this->assertEquals('<p>a message from user 1 to group conv</p>', $writtenmessages[0]->text);
         $this->assertNotEmpty($writtenmessages[0]->timecreated);
 
-        $this->assertObjectHasAttribute('id', $writtenmessages[1]);
+        $this->assertObjectHasProperty('id', $writtenmessages[1]);
         $this->assertEquals($user1->id, $writtenmessages[1]->useridfrom);
         $this->assertEquals('<p>another message from user 1 to group conv</p>', $writtenmessages[1]->text);
         $this->assertNotEmpty($writtenmessages[1]->timecreated);

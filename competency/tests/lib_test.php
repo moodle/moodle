@@ -99,7 +99,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($expectedurlname, $message->contexturlname);
         // Test customdata.
         $customdata = json_decode($message->customdata);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
         $this->assertStringContainsString('tokenpluginfile.php', $customdata->notificationiconurl);
         $userpicture = new \user_picture($u1);
         $userpicture->size = 1; // Use f1 size.
@@ -229,7 +229,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($u1->id, $message->useridto);
         // Test customdata.
         $customdata = json_decode($message->customdata);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
 
         // Post a comment in a plan with reviewer. The reviewer is messaged.
         $p1->set('reviewerid', $u2->id);
