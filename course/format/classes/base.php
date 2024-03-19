@@ -872,16 +872,15 @@ abstract class base {
      * core_courseformat will be user as the component.
      *
      * @param string $key the string key
-     * @param string|object|array $data extra data that can be used within translation strings
-     * @param string|null $lang moodle translation language, null means use current
+     * @param string|object|array|int $data extra data that can be used within translation strings
      * @return string the get_string result
      */
-    public function get_format_string(string $key, $data = null, $lang = null): string {
+    public function get_format_string(string $key, $data = null): string {
         $component = 'format_' . $this->get_format();
         if (!get_string_manager()->string_exists($key, $component)) {
             $component = 'core_courseformat';
         }
-        return get_string($key, $component, $data, $lang);
+        return get_string($key, $component, $data);
     }
 
     /**
