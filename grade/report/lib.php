@@ -492,7 +492,7 @@ abstract class grade_report {
             [
                 'where' => $keywordswhere,
                 'params' => $keywordsparams,
-            ] = $this->get_users_search_sql($mappings, (array)$userfields);
+            ] = $this->get_users_search_sql($mappings, $userfields->get_required_fields());
             $this->userwheresql .= " AND $keywordswhere";
             $this->userwheresql_params = array_merge($this->userwheresql_params, $keywordsparams);
         }
