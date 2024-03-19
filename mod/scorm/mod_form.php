@@ -472,7 +472,10 @@ class mod_scorm_mod_form extends moodleform_mod {
 
         // Validate 'Require minimum score' value.
         $completionscorerequiredel = 'completionscorerequired' . $this->get_suffix();
-        if (array_key_exists($completionscorerequiredel, $data) &&
+        $completionscoreenabledel = 'completionscoreenabled' . $this->get_suffix();
+        if (array_key_exists($completionscoreenabledel, $data) &&
+                $data[$completionscoreenabledel] &&
+                array_key_exists($completionscorerequiredel, $data) &&
                 strlen($data[$completionscorerequiredel]) &&
                 $data[$completionscorerequiredel] <= 0
         ) {
