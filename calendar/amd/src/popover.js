@@ -38,14 +38,16 @@ const isPopoverAvailable = (dateContainer) => {
 const isPopoverConfigured = new Map();
 
 const showPopover = target => {
-    if (!isPopoverConfigured.has(target)) {
+    const dateContainer = target.closest(CalendarSelectors.elements.dateContainer);
+    if (!isPopoverConfigured.has(dateContainer)) {
         const dateEle = jQuery(target);
         dateEle.popover({
             trigger: 'manual',
             placement: 'top',
             html: true,
+            title: dateContainer.dataset.title,
             content: () => {
-                const source = dateEle.find(CalendarSelectors.elements.dateContent);
+                const source = jQuery(dateContainer).find(CalendarSelectors.elements.dateContent);
                 const content = jQuery('<div>');
                 if (source.length) {
                     const temptContent = source.find('.hidden').clone(false);
@@ -55,10 +57,10 @@ const showPopover = target => {
             }
         });
 
-        isPopoverConfigured.set(target, true);
+        isPopoverConfigured.set(dateContainer, true);
     }
 
-    if (isPopoverAvailable(target)) {
+    if (isPopoverAvailable(dateContainer)) {
         jQuery(target).popover('show');
         target.addEventListener('mouseleave', hidePopover);
         target.addEventListener('focusout', hidePopover);
@@ -75,9 +77,9 @@ const hidePopover = e => {
         const isTargetActive = target.contains(document.activeElement);
         const isTargetHover = target.matches(':hover');
         if (!isTargetActive && !isTargetHover) {
-            jQuery(dateContainer).popover('hide');
-            dateContainer.removeEventListener('mouseleave', hidePopover);
-            dateContainer.removeEventListener('focusout', hidePopover);
+            jQuery(target).popover('hide');
+            target.removeEventListener('mouseleave', hidePopover);
+            target.removeEventListener('focusout', hidePopover);
         }
     }
 };
@@ -87,13 +89,13 @@ const hidePopover = e => {
  */
 const registerEventListeners = () => {
     const showPopoverHandler = (e) => {
-        const dateContainer = e.target.closest(CalendarSelectors.elements.dateContainer);
-        if (!dateContainer) {
+        const dayLink = e.target.closest(CalendarSelectors.links.dayLink);
+        if (!dayLink) {
             return;
         }
 
         e.preventDefault();
-        showPopover(dateContainer);
+        showPopover(dayLink);
     };
 
     document.addEventListener('mouseover', showPopoverHandler);

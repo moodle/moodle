@@ -10,8 +10,8 @@ Feature: View a site event on the dashboard
       | student1 | Student | 1 | student1@example.com | S1 |
     And I log in as "admin"
     And I create a calendar event with form data:
-      | id_eventtype | Site |
-      | id_name | Site Event |
+      | id_eventtype    | Site |
+      | id_name         | Site Event |
     And I log out
 
   @javascript
@@ -29,5 +29,5 @@ Feature: View a site event on the dashboard
     # We need to give the browser a couple seconds to re-render the page after the screen has been resized.
     And I wait "1" seconds
     And I should not see "Site Event"
-    And I hover over today in the mini-calendar block
+    When I hover over today in the mini-calendar block responsive view
     And I should see "Site Event"
