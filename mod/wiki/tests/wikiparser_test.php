@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/mod/wiki/parser/parser.php');
  *
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class wikiparser_test extends \basic_testcase {
+class wikiparser_test extends \advanced_testcase {
 
     /**
      * URL inside the clickable text of some link should not be turned into a new link via the url_tag_rule.
@@ -332,4 +332,52 @@ class wikiparser_test extends \basic_testcase {
         $this->assertNotEquals(false, $section);
     }
 
+    /**
+     * Test that format that are not supported are raising an exception
+     *
+     * @param string $format
+     * @param string $expected
+     * @covers \wiki_parser_proxy::parse
+     * @dataProvider format_parser_provider
+     */
+    public function test_format_parser(string $format, string $expected) {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $wiki = $generator->create_module('wiki', array_merge(['course' => $course->id, 'defaultformat' => $format]));
+        $wikigenerator = $this->getDataGenerator()->get_plugin_generator('mod_wiki');
+        if ($expected === 'exception') {
+            $this->expectException(\moodle_exception::class);
+        }
+        $page = $wikigenerator->create_page($wiki);
+        $version = wiki_get_current_version($page->id);
+        $this->assertEquals($expected, $version->contentformat);
+    }
+
+    /**
+     * Data provider for test_format_parser
+     *
+     * @return array[]
+     */
+    public static function format_parser_provider(): array {
+        return [
+            'creole' => [
+                'data' => 'creole',
+                'expected' => 'creole',
+            ],
+            'html' => [
+                'data' => 'html',
+                'expected' => 'html',
+            ],
+            'wikimarkup' => [
+                'data' => 'nwiki',
+                'expected' => 'nwiki',
+            ],
+            'wrong format' => [
+                'data' => '../wrongformat123',
+                'expected' => 'exception',
+            ],
+        ];
+    }
 }
