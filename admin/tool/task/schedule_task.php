@@ -88,9 +88,8 @@ echo $OUTPUT->footer();
 echo $OUTPUT->select_element_for_append();
 
 // Prepare to handle output via mtrace.
-echo html_writer::start_tag('pre', ['style' => 'color: #fff; background: #333; padding: 1em; min-height: 24lh']);
-
 require_once("{$CFG->dirroot}/{$CFG->admin}/tool/task/lib.php");
+echo html_writer::start_tag('pre', ['class' => 'task-output', 'style' => 'min-height: 24lh']);
 $CFG->mtrace_wrapper = 'tool_task_mtrace_wrapper';
 
 // Run the specified task (this will output an error if it doesn't exist).

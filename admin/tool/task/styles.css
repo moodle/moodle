@@ -15,3 +15,14 @@
 #page-admin-tool-task-scheduledtasks .task-clearfaildelay {
     font-size: 0.75em;
 }
+
+.path-admin-tool-task .task-output {
+    color: #fff;
+    background: #333;
+    padding: 1em;
+
+    a {
+        color: #fff;
+        text-decoration: underline;
+    }
+}
