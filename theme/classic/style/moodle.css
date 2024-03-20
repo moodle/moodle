@@ -23282,7 +23282,7 @@ img.activityicon {
 #maincontent {
   display: block;
   height: 1px;
-  overflow: hidden;
+  overflow: clip;
 }
 
 img.uihint {
@@ -29756,7 +29756,8 @@ span.editinstructions .alert-link {
 }
 
 /* Anchor link offset fix. This makes hash links scroll 60px down to account for the fixed header. */
-:target {
+:target,
+:focus {
   scroll-margin-top: 60px;
 }
 
