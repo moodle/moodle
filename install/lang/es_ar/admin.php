@@ -33,3 +33,9 @@ $string['clianswerno'] = 'n';
 $string['cliansweryes'] = 's';
 $string['cliincorrectvalueerror'] = 'Error, valor incorrecto "{$a->value}" para "{$a->option}"';
 $string['cliincorrectvalueretry'] = 'Valor incorrecto, por favor reintentar';
+$string['clitypevalue'] = 'tipear el valor';
+$string['clitypevaluedefault'] = 'tipear el valor, presionar Enter para usar el valor por defecto  ({$a})';
+$string['cliunknowoption'] = 'Opciones no reconocidas:
+   {$a}
+Utilice la opción --help.';
+$string['cliyesnoprompt'] = 'Tipear y (significa sí) o n (significa no)';
