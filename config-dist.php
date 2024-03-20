@@ -315,10 +315,11 @@ $CFG->admin = 'admin';
 //         '/dataroot/' => $CFG->dataroot,
 //         '/cachedir/' => '/var/www/moodle/cache',    // for custom $CFG->cachedir locations
 //         '/localcachedir/' => '/var/local/cache',    // for custom $CFG->localcachedir locations
-//         '/localrequestdir/' => '/tmp',              // for custom $CFG->localrequestdir locations
 //         '/tempdir/'  => '/var/www/moodle/temp',     // for custom $CFG->tempdir locations
 //         '/filedir'   => '/var/www/moodle/filedir',  // for custom $CFG->filedir locations
 //     );
+// Please note: It is *not* possible to use X-Sendfile with the per-request directory.
+// The directory is highly likely to have been deleted by the time the web server sends the file.
 //
 // YUI caching may be sometimes improved by slasharguments:
 //     $CFG->yuislasharguments = 1;
