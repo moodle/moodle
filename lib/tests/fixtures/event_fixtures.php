@@ -245,25 +245,6 @@ class grade_report_viewed extends \core\event\grade_report_viewed {
 }
 
 /**
- * Event to test context used in event functions
- */
-class context_used_in_event extends \core\event\base {
-    public function get_description() {
-        return $this->context->instanceid . " Description";
-    }
-
-    protected function init() {
-        $this->data['crud'] = 'u';
-        $this->data['edulevel'] = self::LEVEL_PARTICIPATING;
-        $this->context = \context_system::instance();
-    }
-
-    public function get_url() {
-        return new \moodle_url('/somepath/somefile.php', array('id' => $this->context->instanceid));
-    }
-}
-
-/**
  * This is an explanation of the event.
  *      - I'm making a point here.
  *      - I have a second {@link something}  point here.
