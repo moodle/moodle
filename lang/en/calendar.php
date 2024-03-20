@@ -192,6 +192,7 @@ $string['moreevents'] = '{$a} more';
 $string['namewithsource'] = '{$a->name} ({$a->source})';
 $string['never'] = 'Never';
 $string['newevent'] = 'New event';
+$string['newmonthannouncement'] = 'Calendar is now set to {$a}.';
 $string['notitle'] = 'no title';
 $string['noupcomingevents'] = 'There are no upcoming events';
 $string['nocalendarsubscriptions'] = 'No calendar subscriptions yet. Do you want to {$a}';
