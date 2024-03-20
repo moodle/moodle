@@ -224,11 +224,6 @@ final class copy_helper {
      * @return array An array of mappings between backup ids and restore controllers
      */
     private static function map_backupids_to_restore_controller(array $backuprecords): array {
-        // Needed for PHP 7.3 - array_merge only accepts 0 parameters in PHP >= 7.4.
-        if (empty($backuprecords)) {
-            return [];
-        }
-
         return array_merge(
             ...array_map(
                 function (\stdClass $backuprecord): array {
