@@ -63,6 +63,7 @@ class end_meeting_test extends \externallib_advanced_testcase {
      * Test execute API CALL with no instance
      */
     public function test_execute_no_instance() {
+        $this->resetAfterTest();
         $this->expectException(moodle_exception::class);
         $endmeeting = $this->end_meeting(1234, 5678);
     }

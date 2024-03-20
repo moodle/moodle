@@ -26,6 +26,7 @@ namespace mod_bigbluebuttonbn\test;
 
 use context_module;
 use mod_bigbluebuttonbn\instance;
+use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\local\proxy\recording_proxy;
 use mod_bigbluebuttonbn\meeting;
 use stdClass;
@@ -158,6 +159,8 @@ trait testcase_helper_trait {
         }
         try {
             $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn')->reset_mock();
+            // Mock server expects a value. By default this field is empty.
+            set_config('bigbluebuttonbn_shared_secret', config::DEFAULT_SHARED_SECRET);
         } catch (\moodle_exception $e) {
             $this->markTestSkipped(
                 'Cannot connect to the mock server for this test. Make sure that TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER points

@@ -61,6 +61,7 @@ class can_join_test extends \externallib_advanced_testcase {
      * Test execute API CALL with no instance
      */
     public function test_execute_no_instance() {
+        $this->resetAfterTest();
         $canjoin = $this->can_join(1234, 5678);
 
         $this->assertIsArray($canjoin);

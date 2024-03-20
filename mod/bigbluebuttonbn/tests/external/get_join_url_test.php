@@ -63,6 +63,7 @@ class get_join_url_test extends \externallib_advanced_testcase {
      * Test execute API CALL with no instance
      */
     public function test_execute_no_instance() {
+        $this->resetAfterTest();
         $this->expectExceptionMessageMatches('/No such instance.*/');
         $joinurl = $this->get_join_url(1234, 5678);
 

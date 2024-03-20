@@ -63,6 +63,7 @@ class completion_validate_test extends \externallib_advanced_testcase {
      * Test execute API CALL with no instance
      */
     public function test_execute_no_instance() {
+        $this->resetAfterTest();
         $result = $this->completion_validate(1234);
 
         $this->assertIsArray($result);

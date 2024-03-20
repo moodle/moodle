@@ -28,6 +28,7 @@ require_once(__DIR__ . '/../../../../lib/behat/behat_base.php');
 use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use mod_bigbluebuttonbn\instance;
+use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\test\subplugins_test_helper_trait;
 use Moodle\BehatExtension\Exception\SkippedException;
 require_once(__DIR__ . '../../../classes/test/subplugins_test_helper_trait.php');
@@ -57,6 +58,9 @@ class behat_mod_bigbluebuttonbn extends behat_base {
         if (defined('TEST_MOD_BIGBLUEBUTTONBN_MOCK_SERVER')) {
             $this->send_mock_request('backoffice/reset');
         }
+        // Fields are empty by default which causes tests to fail.
+        set_config('bigbluebuttonbn_server_url', config::DEFAULT_SERVER_URL);
+        set_config('bigbluebuttonbn_shared_secret', config::DEFAULT_SHARED_SECRET);
     }
 
     /**
