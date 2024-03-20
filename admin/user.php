@@ -176,7 +176,7 @@
     echo html_writer::start_div('', ['data-region' => 'report-user-list-wrapper']);
 
     $bulkactions = new user_bulk_action_form(new moodle_url('/admin/user/user_bulk.php'),
-        ['excludeactions' => ['displayonpage'], 'passuserids' => true, 'hidesubmit' => true],
+        ['excludeactions' => ['displayonpage', 'download'], 'passuserids' => true, 'hidesubmit' => true],
         'post', '',
         ['id' => 'user-bulk-action-form']);
     $bulkactions->set_data(['returnurl' => $PAGE->url->out_as_local_url(false)]);
