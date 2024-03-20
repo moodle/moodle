@@ -61,6 +61,7 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         // See MDL-9367.
         $data->editbegin = $this->apply_date_offset($data->editbegin);
         $data->editend = $this->apply_date_offset($data->editend);
+        $data->defaultformat = clean_param($data->defaultformat, PARAM_ALPHA);
 
         // insert the wiki record
         $newitemid = $DB->insert_record('wiki', $data);
@@ -120,7 +121,7 @@ class restore_wiki_activity_structure_step extends restore_activity_structure_st
         $oldid = $data->id;
         $data->pageid = $this->get_new_parentid('wiki_page');
         $data->userid = $this->get_mappingid('user', $data->userid);
-
+        $data->contentformat = clean_param($data->contentformat, PARAM_ALPHA);
         $newitemid = $DB->insert_record('wiki_versions', $data);
         $this->set_mapping('wiki_version', $oldid, $newitemid);
     }
