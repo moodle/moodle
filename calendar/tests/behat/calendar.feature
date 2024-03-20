@@ -278,7 +278,7 @@ Feature: Perform basic calendar functionality
     # We need to give the browser a couple seconds to re-render the page after the screen has been resized.
     And I wait "1" seconds
     And I should not see "Event 1:1"
-    And I hover over day "1" of this month in the full calendar page
+    And I hover over day "1" of this month in the full calendar page responsive view
     And I should see "Event 1:1"
 
   @javascript
