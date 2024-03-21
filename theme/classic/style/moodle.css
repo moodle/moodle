@@ -25789,6 +25789,40 @@ body.dragging .dragging {
   cursor: move;
 }
 
+.dropzone-container {
+  cursor: pointer;
+}
+.dropzone-container .dropzone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  border: 2px dashed #bbb;
+  border-radius: 0.5rem;
+}
+.dropzone-container .dropzone.dragover {
+  border: 2px dashed #6c8cd3;
+}
+.dropzone-container .dropzone-icon {
+  color: #8f959e;
+}
+.dropzone-container .dropzone-icon .icon {
+  font-size: 6em;
+  width: auto;
+  height: auto;
+  max-width: initial;
+  max-height: initial;
+  margin-right: 0;
+}
+.dropzone-container .dropzone-sr-only-focusable:active, .dropzone-container .dropzone-sr-only-focusable:focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(15, 108, 191, 0.75);
+  z-index: 1060;
+  position: relative;
+  background: #fff;
+  padding: 7px;
+}
+
 .overlay-preview {
   background-color: rgba(255, 255, 255, 0.8);
   border: 2px dashed #0f6cbf;
