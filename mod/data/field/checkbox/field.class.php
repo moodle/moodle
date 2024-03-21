@@ -60,7 +60,7 @@ class data_field_checkbox extends data_field_base {
             $content = $formdata->$fieldname ?? [];
         } else if ($recordid) {
             $content = $DB->get_field('data_content', 'content', ['fieldid' => $this->field->id, 'recordid' => $recordid]);
-            $content = explode('##', $content);
+            $content = explode('##', $content ?? '');
         } else {
             $content = [];
         }
