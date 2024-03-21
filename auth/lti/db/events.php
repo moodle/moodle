@@ -15,15 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * LTI authentication plugin version information
+ * LTI Auth plugin event handler definition.
  *
  * @package auth_lti
- * @copyright 2016 Mark Nelson <markn@moodle.com>
+ * @category event
+ * @copyright 2024 Jake Dallimore <jrhdallimore@gmail.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2023042401; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires = 2023041800; // Requires this Moodle version.
-$plugin->component = 'auth_lti'; // Full name of the plugin (used for diagnostics).
+$observers = [
+    [
+        'eventname' => '\core\event\user_loggedin',
+        'callback' => '\auth_lti\local\ltiadvantage\event\event_handler::handle_user_loggedin',
+    ],
+];
