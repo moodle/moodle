@@ -684,7 +684,7 @@ class observer {
         }
 
         // Check if there is already an entry for this.
-        if ($entrys = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
+        if ($entries = $DB->get_records_sql("SELECT * FROM {local_iomad_track}
                                             WHERE userid = :userid
                                             AND courseid = :courseid
                                             AND
