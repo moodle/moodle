@@ -11,7 +11,7 @@ tags:
 
 ## Description
 
-Most Moodle icons are rendered using the 6.4 versions of [Fontawesome](https://fontawesome.com/v6/search). Iconnames are mapped from the Moodle icon name to the Font Awesome icon names in `/lib/classes/output/icon_system_fontawesome.php`
+Most Moodle icons are rendered using the 6.5.1 versions of [Fontawesome](https://fontawesome.com/v6/search). Iconnames are mapped from the Moodle icon name to the Font Awesome icon names in `/lib/classes/output/icon_system_fontawesome.php`
 
 If needed a theme can override this map and provide its own mapping.
 
