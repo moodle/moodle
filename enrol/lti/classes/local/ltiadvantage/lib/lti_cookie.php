@@ -16,6 +16,7 @@
 
 namespace enrol_lti\local\ltiadvantage\lib;
 
+use auth_lti\local\ltiadvantage\utility\cookie_helper;
 use Packback\Lti1p3\Interfaces\ICookie;
 
 /**
@@ -54,6 +55,9 @@ class lti_cookie implements ICookie {
         ];
 
         setcookie($name, $value, array_merge($cookieoptions, $samesiteoptions, $options));
+
+        // Necessary, since partitioned can't be set via setcookie yet.
+        cookie_helper::add_attributes_to_cookie_response_header($name, ['Partitioned']);
 
         // Set a second fallback cookie in the event that "SameSite" is not supported.
         setcookie('LEGACY_'.$name, $value, array_merge($cookieoptions, $options));
