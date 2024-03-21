@@ -24,6 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+require_once(__DIR__ . '/deprecatedlib.php');
+
 /**
  * Returns list of available numbering types
  * @return array
@@ -38,23 +40,6 @@ function book_get_numbering_types() {
         BOOK_NUM_NUMBERS    => get_string('numbering1', 'mod_book'),
         BOOK_NUM_BULLETS    => get_string('numbering2', 'mod_book'),
         BOOK_NUM_INDENTED   => get_string('numbering3', 'mod_book')
-    );
-}
-
-/**
- * Returns list of available navigation link types.
- *
- * @deprecated since Moodle 4.0. MDL-72376.
- * @return array
- */
-function book_get_nav_types() {
-    debugging("book_get_nav_types() is deprecated. There is no replacement. Navigation is now only next and previous.");
-    require_once(__DIR__.'/locallib.php');
-
-    return array (
-        BOOK_LINK_TOCONLY   => get_string('navtoc', 'mod_book'),
-        BOOK_LINK_IMAGE     => get_string('navimages', 'mod_book'),
-        BOOK_LINK_TEXT      => get_string('navtext', 'mod_book'),
     );
 }
 
@@ -215,14 +200,6 @@ function book_cron () {
  */
 function book_grades($bookid) {
     return null;
-}
-
-/**
- * @deprecated since Moodle 3.8
- */
-function book_scale_used() {
-    throw new coding_exception('book_scale_used() can not be used anymore. Plugins can implement ' .
-        '<modname>_scale_used_anywhere, all implementations of <modname>_scale_used are now ignored');
 }
 
 /**
