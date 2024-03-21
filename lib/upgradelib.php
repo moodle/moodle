@@ -513,6 +513,13 @@ function upgrade_stale_php_files_present(): bool {
     global $CFG;
 
     $someexamplesofremovedfiles = [
+        // Removed in 4.4.
+        '/README.txt',
+        '/lib/dataformatlib.php',
+        '/lib/horde/readme_moodle.txt',
+        '/lib/yui/src/formchangechecker/js/formchangechecker.js',
+        '/mod/forum/pix/monologo.png',
+        '/question/tests/behat/behat_question.php',
         // Removed in 4.3.
         '/badges/ajax.php',
         '/course/editdefaultcompletion.php',
