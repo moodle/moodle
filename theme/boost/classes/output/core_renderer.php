@@ -170,8 +170,7 @@ class core_renderer extends \core_renderer {
                 $purposeclass = plugin_supports('mod', $this->page->activityname, FEATURE_MOD_PURPOSE);
                 $purposeclass .= ' activityiconcontainer icon-size-6';
                 $purposeclass .= ' modicon_' . $this->page->activityname;
-                $isbrandedfunction = $this->page->activityname.'_is_branded';
-                $isbranded = function_exists($isbrandedfunction) ? $isbrandedfunction() : false;
+                $isbranded = component_callback('mod_' . $this->page->activityname, 'is_branded', [], false);
                 $imagedata = html_writer::tag('div', $imagedata, ['class' => $purposeclass . ($isbranded ? ' isbranded' : '')]);
                 if (!empty($USER->editing)) {
                     $prefix = get_string('modulename', $this->page->activityname);

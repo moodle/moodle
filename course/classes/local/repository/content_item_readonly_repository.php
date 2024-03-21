@@ -132,8 +132,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
             $help = $this->get_core_module_help_string($mod->name);
             $archetype = plugin_supports('mod', $mod->name, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             $purpose = plugin_supports('mod', $mod->name, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
-            $isbrandedfunction = $mod->name.'_is_branded';
-            $isbranded = function_exists($isbrandedfunction) ? $isbrandedfunction() : false;
+            $isbranded = component_callback('mod_' . $mod->name, 'is_branded', [], false);
 
             $contentitem = new content_item(
                 $mod->id,
@@ -197,8 +196,7 @@ class content_item_readonly_repository implements content_item_readonly_reposito
             $help = $this->get_core_module_help_string($mod->name);
             $archetype = plugin_supports('mod', $mod->name, FEATURE_MOD_ARCHETYPE, MOD_ARCHETYPE_OTHER);
             $purpose = plugin_supports('mod', $mod->name, FEATURE_MOD_PURPOSE, MOD_PURPOSE_OTHER);
-            $isbrandedfunction = $mod->name.'_is_branded';
-            $isbranded = function_exists($isbrandedfunction) ? $isbrandedfunction() : false;
+            $isbranded = component_callback('mod_' . $mod->name, 'is_branded', [], false);
 
             $icon = 'monologo';
             // Quick check for monologo icons.

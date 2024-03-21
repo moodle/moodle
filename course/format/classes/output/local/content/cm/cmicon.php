@@ -78,8 +78,8 @@ class cmicon implements named_templatable, renderable {
 
         $iconurl = $mod->get_icon_url();
         $iconclass = $iconurl->get_param('filtericon') ? '' : 'nofilter';
-        $isbrandedfunction = $mod->modname.'_is_branded';
-        $isbranded = function_exists($isbrandedfunction) ? $isbrandedfunction() : false;
+        $isbranded = component_callback('mod_' . $mod->modname, 'is_branded', [], false);
+
         $data = [
             'uservisible' => $mod->uservisible,
             'url' => $mod->url,
