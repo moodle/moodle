@@ -1964,7 +1964,11 @@ abstract class admin_setting {
             // IOMAD - had to change this one.
             if ($value === false) {
                 if (is_array($this->defaultsetting)) {
-                    return $this->defaultsetting[array_key_first($this->defaultsetting)];
+                    if (!empty($this->defaultsetting)) {
+                        return $this->defaultsetting[array_key_first($this->defaultsetting)];
+                    } else {
+                        return NULL;
+                    }
                 } else {
                     return $this->defaultsetting;
                 }
