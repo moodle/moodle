@@ -393,3 +393,14 @@ border-radius: 10px;
 #page-blocks-iomad_company_admin-classroom_list #fgroup_id_searcharray > div.col-md-3.col-form-label.d-flex.pb-0.pr-md-0 {
     display: none !important;
 }
+
+.navbar.fixed-top .companymenu {
+    display: flex;
+}
+
+.navbar.fixed-top .companymenu .dropdown {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+

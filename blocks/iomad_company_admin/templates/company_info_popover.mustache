@@ -38,20 +38,20 @@
     }
 
 }}
-<div class="usermenu">
+<div class="companymenu">
     <div class="dropdown show">
         {{#hasmultiple}}
             <a href="#"
                role="button"
-               id="user-menu-toggle"
+               id="company-menu-toggle"
                data-toggle="dropdown"
                aria-label="Company menu"
                aria-haspopup="true"
-               aria-controls="user-action-menu"
+               aria-controls="company-action-menu"
                class="btn dropdown-toggle"
                aria-expanded="true">
         {{/hasmultiple}}
-                <span class="userbutton">
+                <span class="companybutton">
                     {{#companylogo}}
                         <img src="{{companylogo}}" alt="company logo">
                     {{/companylogo}}
@@ -59,8 +59,8 @@
                 </span>
         {{#hasmultiple}}
             </a>
-            <div id="user-action-menu" class="dropdown-menu dropdown-menu">
-                <div id="usermenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
+            <div id="company-action-menu" class="dropdown-menu dropdown-menu">
+                <div id="companymenu-carousel" class="carousel slide" data-touch="false" data-interval="false" data-keyboard="false">
                     <div class="carousel-inner">
                         <div id="carousel-item-main" class="carousel-item active" role="menu" tabindex="-1" aria-label="Company">
                             {{#mycompanies}}
