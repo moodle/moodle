@@ -116,7 +116,7 @@ class auth_plugin_lti extends \auth_plugin_base {
             if (isloggedin()) {
                 // If a different user is currently logged in, authenticate the linked user instead.
                 global $USER;
-                if ((int) $USER->id !== $user->id) {
+                if ($USER->id !== $user->id) {
                     complete_user_login($user);
                 }
                 // If the linked user is already logged in, skip the call to complete_user_login() because this affects deep linking
