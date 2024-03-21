@@ -170,7 +170,6 @@ $string['exportownentries'] = 'Export your own entries only? ({$a->mine}/{$a->al
 $string['exportpreset'] = 'Export preset';
 $string['failedpresetdelete'] = 'An error was encountered while trying to delete the preset.';
 $string['fieldadded'] = 'Field added';
-$string['fieldallowautolink'] = 'Allow autolink';
 $string['fielddeleted'] = 'Field deleted';
 $string['fielddelimiter'] = 'Field separator';
 $string['fielddescription'] = 'Field description';
@@ -489,3 +488,6 @@ $string['fieldids'] = 'Field ids';
 
 // Deprecated since Moodle 4.3.
 $string['completionentries'] = 'Require entries';
+
+// Deprecated since Moodle 4.4.
+$string['fieldallowautolink'] = 'Allow autolink';
