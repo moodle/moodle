@@ -51,6 +51,12 @@ class core_reportbuilder_generator extends component_generator_base {
             throw new coding_exception('Record must contain \'source\' property');
         }
 
+        // Report tags.
+        $tags = $record['tags'] ?? '';
+        if (!is_array($tags)) {
+            $record['tags'] = preg_split('/\s*,\s*/', $tags, -1, PREG_SPLIT_NO_EMPTY);
+        }
+
         // Include default setup unless specifically disabled in passed record.
         $default = (bool) ($record['default'] ?? true);
 

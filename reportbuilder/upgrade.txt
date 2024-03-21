@@ -15,6 +15,10 @@ Information provided here is intended especially for developers.
 * The base datasource `add_all_from_entity` method accepts additional parameters to limit which columns, filters and conditions
   are added. The `add_[columns|filters|conditions]_from_entity` class methods also now support wildcard matching in both `$include`
   and `$exclude` parameters
+* Custom reports now implement the tag API, with options for specifying in the `report::[create|update]_report` helper methods
+  as well as in the `create_report` test generator method
+* The `tags` filter has been improved to also allow for filtering by component/itemtype core_tag definition - this is more
+  suited for system reports
 * New report filter types:
   - `cohort` for reports containing cohort data
   - `courserole` for reports showing course enrolments

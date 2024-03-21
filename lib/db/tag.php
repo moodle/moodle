@@ -93,4 +93,10 @@ $tagareas = [
         'callback' => 'badge_get_tagged_badges',
         'callbackfile' => '/badges/lib.php',
     ],
+    [
+        'itemtype' => 'reportbuilder_report',
+        'component' => 'core_reportbuilder',
+        'callback' => 'core_reportbuilder_get_tagged_reports',
+        'callbackfile' => '/reportbuilder/lib.php',
+    ],
 ];
