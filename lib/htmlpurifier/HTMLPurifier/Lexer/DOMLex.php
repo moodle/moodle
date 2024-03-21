@@ -104,7 +104,6 @@ class HTMLPurifier_Lexer_DOMLex extends HTMLPurifier_Lexer
      * To iterate is human, to recurse divine - L. Peter Deutsch
      * @param DOMNode $node DOMNode to be tokenized.
      * @param HTMLPurifier_Token[] $tokens   Array-list of already tokenized tokens.
-     * @return HTMLPurifier_Token of node appended to previously passed tokens.
      */
     protected function tokenizeDOM($node, &$tokens, $config)
     {

@@ -101,7 +101,7 @@ class HTMLPurifier_Lexer
                         break;
                     }
 
-                    if (class_exists('DOMDocument', false) &&
+                    if (class_exists('DOMDocument') &&
                         method_exists('DOMDocument', 'loadHTML') &&
                         !extension_loaded('domxml')
                     ) {
