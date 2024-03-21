@@ -248,7 +248,7 @@ foreach ($menus as $key => $menu) {
     }
 
     // Get topic action icon
-    if (!empty($menu['iconsmall'])) {
+    if (!$CFG->iomad_useicons && !empty($menu['iconsmall'])) {
         $iconsmall = $menu['iconsmall'];
     } else {
         $iconsmall = '';
