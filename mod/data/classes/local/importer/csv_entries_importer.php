@@ -103,6 +103,7 @@ class csv_entries_importer extends entries_importer {
                         unset($fieldnames[$id]); // To ensure the user provided content fields remain in the array once flipped.
                     } else {
                         $field = $rawfields[$name];
+                        $field->type = clean_param($field->type, PARAM_ALPHA);
                         $filepath = "$CFG->dirroot/mod/data/field/$field->type/field.class.php";
                         if (!file_exists($filepath)) {
                             $errorfield .= "'$name' ";
