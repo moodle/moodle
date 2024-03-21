@@ -1,0 +1,7 @@
+issueNumber: MDL-81321
+notes:
+  mod_data:
+    - message: >-
+        The `mod_data_renderer::render_fields_footer` method has been deprecated
+        as it's no longer used
+      type: deprecated

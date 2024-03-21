@@ -470,9 +470,6 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
     echo '</div>';
     echo '</form>';
 
-    // Add a sticky footer.
-    echo $renderer->render_fields_footer($manager);
-
     echo '</div>';
 }
 
