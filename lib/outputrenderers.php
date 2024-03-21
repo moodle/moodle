@@ -3410,10 +3410,11 @@ EOD;
      * @param string $contents The contents of the box
      * @param string $classes A space-separated list of CSS classes
      * @param string $id An optional ID
+     * @param array $attributes Optional other attributes as array
      * @return string the HTML to output.
      */
-    public function container($contents, $classes = null, $id = null) {
-        return $this->container_start($classes, $id) . $contents . $this->container_end();
+    public function container($contents, $classes = null, $id = null, $attributes = []) {
+        return $this->container_start($classes, $id, $attributes) . $contents . $this->container_end();
     }
 
     /**
@@ -3421,12 +3422,13 @@ EOD;
      *
      * @param string $classes A space-separated list of CSS classes
      * @param string $id An optional ID
+     * @param array $attributes Optional other attributes as array
      * @return string the HTML to output.
      */
-    public function container_start($classes = null, $id = null) {
+    public function container_start($classes = null, $id = null, $attributes = []) {
         $this->opencontainers->push('container', html_writer::end_tag('div'));
-        return html_writer::start_tag('div', array('id' => $id,
-                'class' => renderer_base::prepare_classes($classes)));
+        $attributes = array_merge(['id' => $id, 'class' => renderer_base::prepare_classes($classes)], $attributes);
+        return html_writer::start_tag('div', $attributes);
     }
 
     /**

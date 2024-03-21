@@ -91,6 +91,9 @@ information provided here is intended especially for developers.
   - `question_category_options`
   - `question_add_context_in_key`
   - `question_fix_top_names`
+* Added a new parameter to `core_renderer::container` and `core_renderer::container_start` to allow for the addition of
+  custom attributes.
+* Added a new method `navigation_node::add_attribute()` to allow adding HTML attributes to the node.
 
 === 4.3 ===
 

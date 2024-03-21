@@ -374,3 +374,10 @@ Feature: Course index depending on role
     And I should see "Activity sample 5" in the "courseindex-content" "region"
     # Label intro text should be displayed if label name is not set.
     And I should see "Test label 2" in the "courseindex-content" "region"
+
+  @javascript
+  Scenario: Change the section name inline in section page
+    When I am on the "Course 1 > Section 2" "course > section" page logged in as "teacher1"
+    And I turn editing mode on
+    When I set the field "Edit section name" in the "page-header" "region" to "Custom section name"
+    Then I should see "Custom section name" in the "courseindex-content" "region"

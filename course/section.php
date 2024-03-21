@@ -148,7 +148,10 @@ if ($format->show_editor()) {
     $renderable = $sectionclass->export_for_template($renderer);
     $controlmenuhtml = $renderable->controlmenu->menu;
     $PAGE->add_header_action($controlmenuhtml);
-    $sectionheading = $OUTPUT->render($format->inplace_editable_render_section_name($sectioninfo, false));
+    $sectionheading = $OUTPUT->container(
+        $OUTPUT->render($format->inplace_editable_render_section_name($sectioninfo, false)),
+        attributes: ['data-for' => 'section_title'],
+    );
     $PAGE->set_heading($sectionheading, false, false);
 } else {
     $PAGE->set_heading($sectiontitle);
