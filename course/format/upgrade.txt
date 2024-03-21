@@ -2,6 +2,9 @@ This files describes API changes for course formats
 
 Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/format
 
+=== 4.2.7 ===
+* The core_courseformat\base::get_format_string last parameter has been removed because it was erroneous.
+
 === 4.2 ===
 * New core_courseformat\base::get_context() to get the course context directly from the format instance.
 * New core_courseformat\base::delete_module() method. Now format plugins can extend the activity deletion logic
