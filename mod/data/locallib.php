@@ -976,6 +976,7 @@ function data_get_tag_title_field($dataid) {
         if ($field->addtemplateposition === false) {
             continue;
         }
+        $field->type = clean_param($field->type, PARAM_ALPHA);
         $filepath = $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php';
         if (!file_exists($filepath)) {
             continue;
@@ -1019,6 +1020,7 @@ function data_get_tag_title_for_entry($field, $entry) {
     if (!isset($field->type)) {
         return null;
     }
+    $field->type = clean_param($field->type, PARAM_ALPHA);
     $filepath = $CFG->dirroot . '/mod/data/field/' . $field->type . '/field.class.php';
     if (!file_exists($filepath)) {
         return null;
