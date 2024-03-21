@@ -26,7 +26,7 @@ use GuzzleHttp\Psr7\Uri;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \moodle_url
  */
-class moodle_url_test extends \advanced_testcase {
+final class moodle_url_test extends \advanced_testcase {
     /**
      * Test basic moodle_url construction.
      */
@@ -429,5 +429,75 @@ class moodle_url_test extends \advanced_testcase {
         $url = \moodle_url::from_uri($uri);
         $this->assertSame("{$CFG->wwwroot}/course/view/#section-1", $url->out(false));
         $this->assertEmpty($url->params());
+    }
+
+    /**
+     * @dataProvider url_fragment_parsing_provider
+     */
+    public function test_url_fragment_parsing(string $fragment, string $expected): void {
+        $url = new \moodle_url('/index.php', null, $fragment);
+
+        // Test the encoded fragment.
+        $this->assertEquals(
+            "#{$expected}",
+            $url->get_encoded_anchor(),
+        );
+
+        // Test the value of ->raw_out() with escaping enabled.
+        $parts = parse_url($url->raw_out(true), PHP_URL_FRAGMENT);
+        $this->assertEquals($expected, parse_url($url->raw_out(true), PHP_URL_FRAGMENT));
+
+        // Test the value of ->raw_out() with escaping disabled.
+        $parts = parse_url($url->raw_out(false));
+        $this->assertEquals($expected, $parts['fragment']);
+
+        // Test the value of ->out() with escaping enabled.
+        $parts = parse_url($url->out(true));
+        $this->assertEquals($expected, $parts['fragment']);
+
+        // Test the value of ->out() with escaping disabled.
+        $parts = parse_url($url->out(false));
+        $this->assertEquals($expected, $parts['fragment']);
+    }
+
+    /**
+     * Data provider for url_fragment_parsing tests.
+     *
+     * @return array
+     */
+    public static function url_fragment_parsing_provider(): array {
+        return [
+            'Simple fragment' => ['test', 'test'],
+            // RFC 3986 allows the following characters in a fragment without them being encoded:
+            // pct-encoded: "%" HEXDIG HEXDIG
+            // unreserved:  ALPHA / DIGIT / "-" / "." / "_" / "~" /
+            // sub-delims:  "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "=" / ":" / "@"
+            // fragment:    "/" / "?"
+            //
+            // These should not be encoded in the fragment unless they were already encoded.
+            'Fragment with RFC3986 characters' => [
+                'test-._~!$&\'()*+,;=:@/?',
+                'test-._~!$&\'()*+,;=:@/?',
+            ],
+            'Contains % without HEXDIG HEXDIG' => [
+                '%Percent',
+                '%25Percent',
+            ],
+            'Contains multiple %' => [
+                // % followed by a valid pct-encoded followed by two more %%.
+                '%%23%%',
+                '%25%23%25%25',
+            ],
+            'Fragment with already-encoded RFC3986 characters' => [
+                rawurlencode('test-._~!$&\'()*+,;=:@/?'),
+                rawurlencode('test-._~!$&\'()*+,;=:@/?'),
+            ],
+            'Fragment with encoded slashes' => ['test%2fwith%2fencoded%2fslashes', 'test%2fwith%2fencoded%2fslashes'],
+            'Fragment with encoded characters' => ['test%20with%20encoded%20characters', 'test%20with%20encoded%20characters'],
+
+            // The following are examples which _should_ become encoded.
+            'Spaces become encoded' => ['test with spaces', 'test%20with%20spaces'],
+            'Quotes become encoded' => ['test with "quotes"', 'test%20with%20%22quotes%22'],
+        ];
     }
 }
