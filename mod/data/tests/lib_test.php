@@ -2165,4 +2165,48 @@ class lib_test extends \advanced_testcase {
             ],
         ];
     }
+
+    /**
+     * Test that format that are not supported are raising an exception
+     *
+     * @param string $type
+     * @param string $expected
+     * @covers \data_get_field_new
+     * @dataProvider format_parser_provider
+     */
+    public function test_create_field(string $type, string $expected) {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+
+        $data = $this->getDataGenerator()->create_module('data', ['course' => $course->id]  );
+        if ($expected === 'exception') {
+            $this->expectException(\moodle_exception::class);
+        }
+        $field = data_get_field_new($type, $data);
+        $this->assertStringContainsString($expected, get_class($field));
+    }
+
+    /**
+     * Data provider for test_format_parser
+     *
+     * @return array[]
+     */
+    public static function format_parser_provider(): array {
+        return [
+            'text' => [
+                'type' => 'text',
+                'expected' => 'data_field_text',
+            ],
+            'picture' => [
+                'type' => 'picture',
+                'expected' => 'data_field_picture',
+            ],
+            'wrong type' => [
+                'type' => '../wrongformat123',
+                'expected' => 'exception',
+            ],
+        ];
+    }
 }
