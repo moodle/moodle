@@ -27,22 +27,21 @@ Feature: Sections can be edited and deleted in custom sections format
   Scenario: View the default name of the general section in custom sections format
     Given I am on "Course 1" course homepage with editing mode on
     When I edit the section "0"
-    Then the field "Custom" matches value "0"
-    And the field "New value for Section name" matches value "General"
+    Then the field "Section name" matches value ""
+    And I should see "General"
 
   Scenario: Edit the default name of the general section in custom sections format
     Given I am on "Course 1" course homepage with editing mode on
     And I should see "General" in the "General" "section"
     When I edit the section "0" and I fill the form with:
-      | Custom | 1                     |
-      | New value for Section name      | This is the general section |
+      | Section name      | This is the general section |
     Then I should see "This is the general section" in the "page" "region"
 
   Scenario: View the default name of the second section in custom sections format
     Given I am on "Course 2" course homepage with editing mode on
     When I edit the section "1"
-    Then the field "Custom" matches value "0"
-    And the field "New value for Section name" matches value "New section"
+    Then the field "Section name" matches value ""
+    And I should see "New section"
 
   Scenario: Edit section summary in custom sections format
     Given I am on "Course 1" course homepage with editing mode on
@@ -53,8 +52,7 @@ Feature: Sections can be edited and deleted in custom sections format
   Scenario: Edit section default name in custom sections format
     Given I am on "Course 1" course homepage with editing mode on
     When I edit the section "2" and I fill the form with:
-      | Custom | 1                      |
-      | New value for Section name      | This is the second section |
+      | Section name      | This is the second section |
     Then I should see "This is the second section" in the "page" "region"
     And I should not see "Section 2" in the "region-main" "region"
 

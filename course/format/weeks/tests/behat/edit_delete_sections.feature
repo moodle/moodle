@@ -25,19 +25,18 @@ Feature: Sections can be edited and deleted in weekly sections format
 
   Scenario: View the default name of the general section in weeks format
     When I edit the section "0"
-    Then the field "Custom" matches value "0"
-    And the field "New value for Section name" matches value "General"
+    Then the field "Section name" matches value ""
+    And I should see "General"
 
   Scenario: Edit the default name of the general section in weeks format
     When I edit the section "0" and I fill the form with:
-      | Custom | 1                      |
-      | New value for Section name      | This is the general section |
+      | Section name      | This is the general section |
     Then I should see "This is the general section" in the "page" "region"
 
   Scenario: View the default name of the second section in weeks format
     When I edit the section "2"
-    Then the field "Custom" matches value "0"
-    And the field "New value for Section name" matches value "8 May - 14 May"
+    Then the field "Section name" matches value ""
+    And I should see "8 May - 14 May"
 
   Scenario: Edit section summary in weeks format
     When I edit the section "2" and I fill the form with:
@@ -47,8 +46,7 @@ Feature: Sections can be edited and deleted in weekly sections format
   Scenario: Edit section default name in weeks format
     Given I should see "8 May - 14 May" in the "8 May - 14 May" "section"
     When I edit the section "2" and I fill the form with:
-      | Custom | 1                  |
-      | New value for Section name      | This is the second week |
+      | Section name      | This is the second week |
     Then I should see "This is the second week" in the "page" "region"
     And I should not see "8 May - 14 May"
 
