@@ -131,9 +131,16 @@ export default class Component extends BaseComponent {
             const toggler = section.querySelector(this.selectors.COLLAPSE);
             const isCollapsed = toggler?.classList.contains(this.classes.COLLAPSED) ?? false;
 
-            if (isChevron || isCollapsed) {
-                // Update the state.
-                const sectionId = section.getAttribute('data-id');
+            // Update the state.
+            const sectionId = section.getAttribute('data-id');
+            if ((!sectionlink)) {
+                this.reactive.dispatch(
+                    'sectionIndexCollapsed',
+                    [sectionId],
+                    !isCollapsed
+                );
+            } else if (isCollapsed) {
+                // Always expand the section when clicking on section name.
                 this.reactive.dispatch(
                     'sectionIndexCollapsed',
                     [sectionId],

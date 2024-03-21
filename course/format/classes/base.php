@@ -617,8 +617,9 @@ abstract class base {
         global $USER;
         $course = $this->get_course();
         try {
-            $sectionpreferences = (array) json_decode(
-                get_user_preferences("coursesectionspreferences_{$course->id}", '', $USER->id)
+            $sectionpreferences = json_decode(
+                get_user_preferences("coursesectionspreferences_{$course->id}", '', $USER->id),
+                true
             );
             if (empty($sectionpreferences)) {
                 $sectionpreferences = [];
@@ -637,10 +638,65 @@ abstract class base {
      *
      */
     public function set_sections_preference(string $preferencename, array $sectionids) {
-        global $USER;
-        $course = $this->get_course();
         $sectionpreferences = $this->get_sections_preferences_by_preference();
         $sectionpreferences[$preferencename] = $sectionids;
+        $this->persist_to_user_preference($sectionpreferences);
+    }
+
+    /**
+     * Add section preference ids.
+     *
+     * @param string $preferencename preference name
+     * @param array $sectionids affected section ids
+     */
+    public function add_section_preference_ids(
+        string $preferencename,
+        array $sectionids
+    ): void {
+        $sectionpreferences = $this->get_sections_preferences_by_preference();
+        if (!isset($sectionpreferences[$preferencename])) {
+            $sectionpreferences[$preferencename] = [];
+        }
+        foreach ($sectionids as $sectionid) {
+            if (!in_array($sectionid, $sectionpreferences[$preferencename])) {
+                $sectionpreferences[$preferencename][] = $sectionid;
+            }
+        }
+        $this->persist_to_user_preference($sectionpreferences);
+    }
+
+    /**
+     * Remove section preference ids.
+     *
+     * @param string $preferencename preference name
+     * @param array $sectionids affected section ids
+     */
+    public function remove_section_preference_ids(
+        string $preferencename,
+        array $sectionids
+    ): void {
+        $sectionpreferences = $this->get_sections_preferences_by_preference();
+        if (!isset($sectionpreferences[$preferencename])) {
+            $sectionpreferences[$preferencename] = [];
+        }
+        foreach ($sectionids as $sectionid) {
+            if (($key = array_search($sectionid, $sectionpreferences[$preferencename])) !== false) {
+                unset($sectionpreferences[$preferencename][$key]);
+            }
+        }
+        $this->persist_to_user_preference($sectionpreferences);
+    }
+
+    /**
+     * Persist the section preferences to the user preferences.
+     *
+     * @param array $sectionpreferences the section preferences
+     */
+    private function persist_to_user_preference(
+        array $sectionpreferences
+    ): void {
+        global $USER;
+        $course = $this->get_course();
         set_user_preference('coursesectionspreferences_' . $course->id, json_encode($sectionpreferences), $USER->id);
         // Invalidate section preferences cache.
         $coursesectionscache = cache::make('core', 'coursesectionspreferences');

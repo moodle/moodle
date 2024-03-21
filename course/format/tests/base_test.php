@@ -348,6 +348,73 @@ class base_test extends advanced_testcase {
     }
 
     /**
+     * Test add_section_preference_ids() method.
+     *
+     * @covers \core_courseformat\base::persist_to_user_preference
+     */
+    public function test_add_section_preference_ids(): void {
+        $this->resetAfterTest();
+        // Create initial data.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_and_enrol($course);
+        // Get the course format.
+        $format = course_get_format($course);
+        // Login as the user.
+        $this->setUser($user);
+
+        // Add section preference ids.
+        $format->add_section_preference_ids('pref1', [1, 2]);
+        $format->add_section_preference_ids('pref1', [3]);
+        $format->add_section_preference_ids('pref2', [1]);
+
+        // Get section preferences.
+        $sectionpreferences = $format->get_sections_preferences_by_preference();
+        $this->assertCount(3, $sectionpreferences['pref1']);
+        $this->assertContains(1, $sectionpreferences['pref1']);
+        $this->assertContains(2, $sectionpreferences['pref1']);
+        $this->assertContains(3, $sectionpreferences['pref1']);
+        $this->assertCount(1, $sectionpreferences['pref2']);
+        $this->assertContains(1, $sectionpreferences['pref1']);
+    }
+
+    /**
+     * Test remove_section_preference_ids() method.
+     *
+     * @covers \core_courseformat\base::persist_to_user_preference
+     */
+    public function test_remove_section_preference_ids(): void {
+        $this->resetAfterTest();
+        // Create initial data.
+        $generator = $this->getDataGenerator();
+        $course = $generator->create_course();
+        $user = $generator->create_and_enrol($course);
+        // Get the course format.
+        $format = course_get_format($course);
+        // Login as the user.
+        $this->setUser($user);
+        // Set initial preferences.
+        $format->set_sections_preference('pref1', [1, 2, 3]);
+        $format->set_sections_preference('pref2', [1]);
+
+        // Remove section with id = 3 out of the pref1.
+        $format->remove_section_preference_ids('pref1', [3]);
+        // Get section preferences.
+        $sectionpreferences = $format->get_sections_preferences_by_preference();
+        $this->assertCount(2, $sectionpreferences['pref1']);
+        $this->assertCount(1, $sectionpreferences['pref2']);
+
+        // Remove section with id = 2 out of the pref1.
+        $format->remove_section_preference_ids('pref1', [2]);
+        // Remove section with id = 1 out of the pref2.
+        $format->remove_section_preference_ids('pref2', [1]);
+        // Get section preferences.
+        $sectionpreferences = $format->get_sections_preferences_by_preference();
+        $this->assertCount(1, $sectionpreferences['pref1']);
+        $this->assertEmpty($sectionpreferences['pref2']);
+    }
+
+    /**
      * Test that retrieving last section number for a course
      *
      * @covers ::get_last_section_number
