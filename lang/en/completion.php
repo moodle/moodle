@@ -255,9 +255,6 @@ $string['writingcompletiondata'] = 'Writing completion data';
 $string['xdays'] = '{$a} days';
 $string['youmust'] = 'You must';
 
-// Deprecated since Moodle 4.0.
-$string['yourprogress'] = 'Your progress';
-
 // Deprecated since Moodle 4.3.
 $string['editcoursecompletionsettings'] = 'Edit course completion settings';
 $string['completiondefault'] = 'Default completion tracking';

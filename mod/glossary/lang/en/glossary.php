@@ -339,8 +339,5 @@ $string['withoutauthor'] = 'Concepts without author';
 $string['writtenby'] = 'by';
 $string['youarenottheauthor'] = 'You are not the author of this comment, so you are not allowed to edit it.';
 
-// Deprecated since 4.0.
-$string['waitingapproval'] = 'Waiting approval';
-
 // Deprecated since 4.3.
 $string['completionentriesgroup'] = 'Require entries';

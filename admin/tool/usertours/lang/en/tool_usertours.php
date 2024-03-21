@@ -303,6 +303,3 @@ $string['tour_gradebook_tour_description'] = 'Search and navigation features in 
 $string['tour_gradebook_tour_name'] = 'Gradebook Grader Report';
 $string['tour_final_step_title'] = 'End of tour';
 $string['tour_final_step_content'] = 'This is the end of your user tour. It won\'t show again unless you reset it using the link in the footer.';
-
-// Deprecated since Moodle 4.0.
-$string['previousstep'] = 'Previous';

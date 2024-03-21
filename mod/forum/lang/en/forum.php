@@ -792,11 +792,6 @@ $string['showmoreusers'] = 'Show more users';
 $string['viewconversation'] = 'View discussion';
 $string['viewgrades'] = 'View grades';
 
-// Deprecated since Moodle 4.0.
-$string['postmailinfolink'] = 'This is a copy of a message posted in {$a->coursename}.
-
-To reply click on this link: {$a->replylink}';
-
 // Deprecated since Moodle 4.3.
 $string['completionpostsgroup'] = 'Require posts';
 $string['completiondiscussionsgroup'] = 'Require discussions';

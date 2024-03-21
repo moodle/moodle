@@ -1,2 +1,0 @@
-printheading,mod_page
-printheadingexplain,mod_page

@@ -39,9 +39,3 @@ $string['privacy:metadata'] = 'The VideoJS player media plugin does not store an
 $string['videoextensions'] = 'Video file extensions';
 $string['videocssclass'] = 'CSS class for video';
 $string['youtube'] = 'YouTube videos';
-
-// Deprecated since Moodle 4.0.
-$string['configrtmp'] = 'If enabled, links that start with rtmp:// will be handled by the plugin, irrespective of whether the extension is enabled in the Video file extensions (videoextensions) setting. Flash fallback must be enabled for RTMP to work.';
-$string['configuseflash'] = 'Use Flash player if video format is not natively supported by the browser and/or natively by the VideoJS player. If enabled, VideoJS will be engaged for any file extension from the above list without browser check. Please note that Flash is not available in mobile browsers and discouraged in many desktop ones.';
-$string['rtmp'] = 'RTMP streams';
-$string['useflash'] = 'Use Flash fallback';

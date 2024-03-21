@@ -59,9 +59,6 @@ $string['privacy:drawerindexopen'] = 'The current preference for the index drawe
 $string['privacy:drawerblockclosed'] = 'The current preference for the block drawer is closed.';
 $string['privacy:drawerblockopen'] = 'The current preference for the block drawer is open.';
 
-// Deprecated since Moodle 4.0.
-$string['totop'] = 'Go to top';
-
 // Deprecated since Moodle 4.1.
 $string['currentinparentheses'] = '(current)';
 $string['privacy:drawernavclosed'] = 'The current preference for the navigation drawer is closed.';

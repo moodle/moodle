@@ -281,8 +281,3 @@ $string['thanksforanswers'] = 'Thanks for answering this survey, {$a}';
 $string['time'] = 'Time';
 $string['notyetanswered'] = 'Not yet answered';
 $string['allquestionrequireanswer'] = 'All questions are required and must be answered.';
-
-// Deprecated since Moodle 4.0.
-$string['clicktocontinue'] = 'Click here to continue';
-$string['viewsurveyresponses'] = 'View {$a} survey responses';
-$string['allquestions'] = 'All questions in order, all students';

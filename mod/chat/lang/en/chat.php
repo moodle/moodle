@@ -175,6 +175,3 @@ $string['usingchat_help'] = 'The chat module contains some features to make chat
 * Beeps - You can send a sound to other participants by clicking the "beep" link next to their name. A useful shortcut to beep all the people in the chat at once is to type "beep all".
 * HTML - If you know some HTML code, you can use it in your text to do things like insert images, play sounds or create different coloured text';
 $string['viewreport'] = 'Past sessions';
-
-// Deprecated since Moodle 4.0.
-$string['nextsession'] = 'Next scheduled session';

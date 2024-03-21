@@ -2460,11 +2460,6 @@ $string['yourwordforx'] = 'Your word for \'{$a}\'';
 $string['zippingbackup'] = 'Zipping backup';
 $string['deprecatedeventname'] = '{$a} (no longer in use)';
 
-// Deprecated since Moodle 4.0.
-$string['createuserandpass'] = 'Choose your username and password';
-$string['descriptiona'] = 'Description: {$a}';
-$string['supplyinfo'] = 'More details';
-
 // Deprecated since Moodle 4.3.
 $string['clicktochangeinbrackets'] = '{$a} (Click to change)';
 $string['modshowcmtitle'] = 'Show activity';

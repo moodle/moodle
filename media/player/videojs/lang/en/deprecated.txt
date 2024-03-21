@@ -1,4 +1,0 @@
-configrtmp,media_videojs
-configuseflash,media_videojs
-rtmp,media_videojs
-useflash,media_videojs

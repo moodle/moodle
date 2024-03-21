@@ -1,1 +1,5 @@
-postmailinfolink,mod_forum
+completionpostsgroup,mod_forum
+completiondiscussionsgroup,mod_forum
+completiondiscussionshelp,mod_forum
+completionrepliesgroup,mod_forum
+completionreplieshelp,mod_forum

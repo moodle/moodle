@@ -201,5 +201,3 @@ $string['usercompetencystatus_inreview'] = 'In review';
 $string['usercompetencystatus_waitingforreview'] = 'Waiting for review';
 $string['userplans'] = 'Learning plans';
 
-// Deprecated since Moodle 4.0.
-$string['invalidpersistenterror'] = 'Error: {$a}';

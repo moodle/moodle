@@ -274,12 +274,3 @@ $string['wouldliketocontactyou'] = 'Would like to contact you';
 $string['you'] = 'You:';
 $string['youhaveblockeduser'] = 'You have blocked this user.';
 $string['yourcontactrequestpending'] = 'Your contact request is pending with {$a}';
-
-// Deprecated since Moodle 4.0.
-$string['defaults'] = 'Defaults';
-$string['loggedin_help'] = 'Configure how you would like to receive notifications when you are logged into Moodle';
-$string['loggedindescription'] = 'When you are logged into Moodle';
-$string['loggedoff_help'] = 'Configure how you would like to receive notifications when you are not logged into Moodle';
-$string['loggedoffdescription'] = 'When you are not logged into Moodle';
-$string['sendingvia'] = 'Sending "{$a->provider}" via "{$a->processor}"';
-$string['sendingviawhen'] = 'Sending "{$a->provider}" via "{$a->processor}" when {$a->state}';

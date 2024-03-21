@@ -98,6 +98,3 @@ $string['visibilitypref_help'] = 'Content you create in the content bank will us
 $string['visibilitysetpublic'] = 'Make public';
 $string['visibilitysetunlisted'] = 'Make unlisted';
 $string['visibilitytitleunlisted'] = '{$a} (Unlisted)';
-
-// Deprecated since 4.0.
-$string['close'] = 'Close';
