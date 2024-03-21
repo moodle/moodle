@@ -1577,7 +1577,6 @@ class company {
             foreach ($companycourses as $courseid => $name) {
                 $coursecontext = \context_course::instance($courseid);
                 if ($licrecs = $DB->get_records_select('local_iomad_track',
-                                                       'id',
                                                        'userid = :userid
                                                         AND courseid = :courseid
                                                         AND companyid = :companyid
@@ -1585,7 +1584,8 @@ class company {
                                                         AND timecompleted > 0',
                                                        ['userid' => $userid,
                                                         'companyid' => $this->id,
-                                                        'courseid' => $courseid])) {
+                                                        'courseid' => $courseid],
+                                                        'id')) {
                     // Clear down the user from the courses.
                     foreach ($licrecs as $licrec) {
                         // Remove this specific record.
