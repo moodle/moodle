@@ -1039,12 +1039,14 @@ class enrol_self_plugin extends enrol_plugin {
             }
         }
 
-        if (($data['expirynotify'] > 0 || $data['customint2']) && $data['expirythreshold'] < 86400) {
+        if (array_key_exists('expirynotify', $data)
+                && ($data['expirynotify'] > 0 || $data['customint2'])
+                && $data['expirythreshold'] < 86400) {
             $errors['expirythreshold'] = get_string('errorthresholdlow', 'core_enrol');
         }
 
         // Now these ones are checked by quickforms, but we may be called by the upload enrolments tool, or a webservive.
-        if (core_text::strlen($data['name']) > 255) {
+        if (array_key_exists('name', $data) && core_text::strlen($data['name']) > 255) {
             $errors['name'] = get_string('err_maxlength', 'form', 255);
         }
         $validstatus = array_keys($this->get_status_options());
@@ -1072,7 +1074,7 @@ class enrol_self_plugin extends enrol_plugin {
             'expirynotify' => $validexpirynotify,
             'roleid' => $validroles
         );
-        if ($data['expirynotify'] != 0) {
+        if (array_key_exists('expirynotify', $data) && $data['expirynotify'] != 0) {
             $tovalidate['expirythreshold'] = PARAM_INT;
         }
         $typeerrors = $this->validate_param_types($data, $tovalidate);
