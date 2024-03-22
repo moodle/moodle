@@ -17,6 +17,7 @@
 namespace core_courseformat;
 
 use section_info;
+use core_courseformat\stateupdates;
 
 /**
  * Section delegate base class.
@@ -76,5 +77,31 @@ abstract class sectiondelegate {
      */
     public static function has_delegate_class(string $pluginname): bool {
         return self::get_delegate_class_name($pluginname) !== null;
+    }
+
+    /**
+     * Define the section final name.
+     *
+     * This method can process the section name and return the validated new name.
+     *
+     * @param section_info $section
+     * @param string|null $newname the new name value to store in the database
+     * @return string|null the name value to store in the database
+     */
+    public function preprocess_section_name(section_info $section, ?string $newname): ?string {
+        return $newname;
+    }
+
+    /**
+     * Add extra state updates when put or create a section.
+     *
+     * This method is called every time the backend sends a delegated section
+     * state update to the UI.
+     *
+     * @param section_info $section the affected section.
+     * @param stateupdates $updates the state updates object to notify the UI.
+     */
+    public function put_section_state_extra_updates(section_info $section, stateupdates $updates): void {
+        // By default, do nothing.
     }
 }

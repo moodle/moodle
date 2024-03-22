@@ -541,4 +541,364 @@ class sectionactions_test extends \advanced_testcase {
         }
         $this->assertEquals(3, $count);
     }
+
+    /**
+     * Test section update method.
+     *
+     * @covers ::update
+     * @dataProvider update_provider
+     * @param string $fieldname the name of the field to update
+     * @param int|string $value the value to set
+     * @param int|string $expected the expected value after the update ('=' to specify the same value as original field)
+     * @param bool $expectexception if the method should throw an exception
+     */
+    public function test_update(
+        string $fieldname,
+        int|string $value,
+        int|string $expected,
+        bool $expectexception
+    ): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 1],
+            ['createsections' => true]
+        );
+        $section = get_fast_modinfo($course)->get_section_info(1);
+
+        $sectionrecord = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertNotEquals($value, $sectionrecord->$fieldname);
+        $this->assertNotEquals($value, $section->$fieldname);
+
+        if ($expectexception) {
+            $this->expectException(\moodle_exception::class);
+        }
+
+        if ($expected === '=') {
+            $expected = $section->$fieldname;
+        }
+
+        $sectionactions = new sectionactions($course);
+        $sectionactions->update($section, [$fieldname => $value]);
+
+        $sectionrecord = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertEquals($expected, $sectionrecord->$fieldname);
+
+        $section = get_fast_modinfo($course)->get_section_info(1);
+        $this->assertEquals($expected, $section->$fieldname);
+    }
+
+    /**
+     * Data provider for test_update.
+     * @return array
+     */
+    public static function update_provider(): array {
+        return [
+            'Id will not be updated' => [
+                'fieldname' => 'id',
+                'value' => -1,
+                'expected' => '=',
+                'expectexception' => false,
+            ],
+            'Course will not be updated' => [
+                'fieldname' => 'course',
+                'value' => -1,
+                'expected' => '=',
+                'expectexception' => false,
+            ],
+            'Section number will not be updated' => [
+                'fieldname' => 'section',
+                'value' => -1,
+                'expected' => '=',
+                'expectexception' => false,
+            ],
+            'Sequence will be updated' => [
+                'fieldname' => 'name',
+                'value' => 'new name',
+                'expected' => 'new name',
+                'expectexception' => false,
+            ],
+            'Summary can be updated' => [
+                'fieldname' => 'summary',
+                'value' => 'new summary',
+                'expected' => 'new summary',
+                'expectexception' => false,
+            ],
+            'Visible can be updated' => [
+                'fieldname' => 'visible',
+                'value' => 0,
+                'expected' => 0,
+                'expectexception' => false,
+            ],
+            'component can be updated' => [
+                'fieldname' => 'component',
+                'value' => 'mod_assign',
+                'expected' => 'mod_assign',
+                'expectexception' => false,
+            ],
+            'itemid can be updated' => [
+                'fieldname' => 'itemid',
+                'value' => 1,
+                'expected' => 1,
+                'expectexception' => false,
+            ],
+            'Long names throws and exception' => [
+                'fieldname' => 'name',
+                'value' => str_repeat('a', 256),
+                'expected' => '=',
+                'expectexception' => true,
+            ],
+        ];
+    }
+
+    /**
+     * Test section update method updating several values at once.
+     *
+     * @covers ::update
+     */
+    public function test_update_multiple_fields(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 1],
+            ['createsections' => true]
+        );
+        $section = get_fast_modinfo($course)->get_section_info(1);
+
+        $sectionrecord = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertEquals(1, $sectionrecord->visible);
+        $this->assertNull($section->name);
+
+        $sectionactions = new sectionactions($course);
+        $sectionactions->update($section, ['name' => 'New name', 'visible' => 0]);
+
+        $sectionrecord = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertEquals('New name', $sectionrecord->name);
+        $this->assertEquals(0, $sectionrecord->visible);
+
+        $section = get_fast_modinfo($course)->get_section_info(1);
+        $this->assertEquals('New name', $section->name);
+        $this->assertEquals(0, $section->visible);
+    }
+
+    /**
+     * Test updating a section trigger a course section update log event.
+     *
+     * @covers ::update
+     */
+    public function test_course_section_updated_event(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 1],
+            ['createsections' => true]
+        );
+        $section = get_fast_modinfo($course)->get_section_info(1);
+
+        $sink = $this->redirectEvents();
+
+        $sectionactions = new sectionactions($course);
+        $sectionactions->update($section, ['name' => 'New name', 'visible' => 0]);
+
+        $events = $sink->get_events();
+        $event = reset($events);
+
+        // Check that the event data is valid.
+        $this->assertInstanceOf('\core\event\course_section_updated', $event);
+        $data = $event->get_data();
+        $this->assertEquals(\context_course::instance($course->id), $event->get_context());
+        $this->assertEquals($section->id, $data['objectid']);
+    }
+
+    /**
+     * Test section update change the modified date.
+     *
+     * @covers ::update
+     */
+    public function test_update_time_modified(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Create the course with sections.
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 1],
+            ['createsections' => true]
+        );
+        $section = get_fast_modinfo($course)->get_section_info(1);
+
+        $sectionrecord = $DB->get_record('course_sections', ['id' => $section->id]);
+        $oldtimemodified = $sectionrecord->timemodified;
+
+        $sectionactions = new sectionactions($course);
+
+        // Ensuring that the section update occurs at a different timestamp.
+        $this->waitForSecond();
+
+        // The timemodified should only be updated if the section is actually updated.
+        $result = $sectionactions->update($section, []);
+        $this->assertFalse($result);
+        $sectionrecord = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertEquals($oldtimemodified, $sectionrecord->timemodified);
+
+        // Now update something to prove timemodified changes.
+        $result = $sectionactions->update($section, ['name' => 'New name']);
+        $this->assertTrue($result);
+        $sectionrecord = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertGreaterThan($oldtimemodified, $sectionrecord->timemodified);
+    }
+
+    /**
+     * Test section updating visibility will hide or show section activities.
+     *
+     * @covers ::update
+     */
+    public function test_update_hide_section_activities(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Create 4 activities (visible, visible, hidden, hidden).
+        $course = $this->getDataGenerator()->create_course(
+            ['format' => 'topics', 'numsections' => 1],
+            ['createsections' => true]
+        );
+        $activity1 = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'section' => 1]
+        );
+        $activity2 = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'section' => 1]
+        );
+        $activity3 = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'section' => 1, 'visible' => 0]
+        );
+        $activity4 = $this->getDataGenerator()->create_module(
+            'assign',
+            ['course' => $course->id, 'section' => 1, 'visible' => 0]
+        );
+
+        $modinfo = get_fast_modinfo($course);
+        $cm1 = $modinfo->get_cm($activity1->cmid);
+        $cm2 = $modinfo->get_cm($activity2->cmid);
+        $cm3 = $modinfo->get_cm($activity3->cmid);
+        $cm4 = $modinfo->get_cm($activity4->cmid);
+        $this->assertEquals(1, $cm1->visible);
+        $this->assertEquals(1, $cm2->visible);
+        $this->assertEquals(0, $cm3->visible);
+        $this->assertEquals(0, $cm4->visible);
+
+        $sectionactions = new sectionactions($course);
+
+        // Validate hidding section hides all activities.
+        $section = $modinfo->get_section_info(1);
+        $sectionactions->update($section, ['visible' => 0]);
+
+        $modinfo = get_fast_modinfo($course);
+        $cm1 = $modinfo->get_cm($activity1->cmid);
+        $cm2 = $modinfo->get_cm($activity2->cmid);
+        $cm3 = $modinfo->get_cm($activity3->cmid);
+        $cm4 = $modinfo->get_cm($activity4->cmid);
+        $this->assertEquals(0, $cm1->visible);
+        $this->assertEquals(0, $cm2->visible);
+        $this->assertEquals(0, $cm3->visible);
+        $this->assertEquals(0, $cm4->visible);
+
+        // Validate showing the section restores the previous visibility.
+        $section = $modinfo->get_section_info(1);
+        $sectionactions->update($section, ['visible' => 1]);
+
+        $modinfo = get_fast_modinfo($course);
+        $cm1 = $modinfo->get_cm($activity1->cmid);
+        $cm2 = $modinfo->get_cm($activity2->cmid);
+        $cm3 = $modinfo->get_cm($activity3->cmid);
+        $cm4 = $modinfo->get_cm($activity4->cmid);
+        $this->assertEquals(1, $cm1->visible);
+        $this->assertEquals(1, $cm2->visible);
+        $this->assertEquals(0, $cm3->visible);
+        $this->assertEquals(0, $cm4->visible);
+
+        // Swap two activities visibility to alter visible values.
+        set_coursemodule_visible($cm2->id, 0, 0, true);
+        set_coursemodule_visible($cm4->id, 1, 1, true);
+
+        $modinfo = get_fast_modinfo($course);
+        $cm1 = $modinfo->get_cm($activity1->cmid);
+        $cm2 = $modinfo->get_cm($activity2->cmid);
+        $cm3 = $modinfo->get_cm($activity3->cmid);
+        $cm4 = $modinfo->get_cm($activity4->cmid);
+        $this->assertEquals(1, $cm1->visible);
+        $this->assertEquals(0, $cm2->visible);
+        $this->assertEquals(0, $cm3->visible);
+        $this->assertEquals(1, $cm4->visible);
+
+        // Validate hidding the section again.
+        $section = $modinfo->get_section_info(1);
+        $sectionactions->update($section, ['visible' => 0]);
+
+        $modinfo = get_fast_modinfo($course);
+        $cm1 = $modinfo->get_cm($activity1->cmid);
+        $cm2 = $modinfo->get_cm($activity2->cmid);
+        $cm3 = $modinfo->get_cm($activity3->cmid);
+        $cm4 = $modinfo->get_cm($activity4->cmid);
+        $this->assertEquals(0, $cm1->visible);
+        $this->assertEquals(0, $cm2->visible);
+        $this->assertEquals(0, $cm3->visible);
+        $this->assertEquals(0, $cm4->visible);
+
+        // Validate showing the section once more to check previous state is restored.
+        $section = $modinfo->get_section_info(1);
+        $sectionactions->update($section, ['visible' => 1]);
+
+        $modinfo = get_fast_modinfo($course);
+        $cm1 = $modinfo->get_cm($activity1->cmid);
+        $cm2 = $modinfo->get_cm($activity2->cmid);
+        $cm3 = $modinfo->get_cm($activity3->cmid);
+        $cm4 = $modinfo->get_cm($activity4->cmid);
+        $this->assertEquals(1, $cm1->visible);
+        $this->assertEquals(0, $cm2->visible);
+        $this->assertEquals(0, $cm3->visible);
+        $this->assertEquals(1, $cm4->visible);
+    }
+
+    /**
+     * Test that the preprocess_section_name method can alter the section rename value.
+     *
+     * @covers ::update
+     * @covers ::preprocess_delegated_section_fields
+     */
+    public function test_preprocess_section_name(): void {
+        global $DB, $CFG;
+        $this->resetAfterTest();
+
+        require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
+
+        $course = $this->getDataGenerator()->create_course();
+
+        $sectionactions = new sectionactions($course);
+        $section = $sectionactions->create_delegated('test_component', 1);
+
+        $result = $sectionactions->update($section, ['name' => 'new_name']);
+        $this->assertTrue($result);
+
+        $section = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertEquals('new_name_suffix', $section->name);
+
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info_by_id($section->id);
+        $this->assertEquals('new_name_suffix', $sectioninfo->name);
+
+        // Validate null name.
+        $section = $sectionactions->create_delegated('test_component', 1, (object)['name' => 'sample']);
+
+        $result = $sectionactions->update($section, ['name' => null]);
+        $this->assertTrue($result);
+
+        $section = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertEquals('null_name', $section->name);
+
+        $sectioninfo = get_fast_modinfo($course->id)->get_section_info_by_id($section->id);
+        $this->assertEquals('null_name', $sectioninfo->name);
+    }
 }

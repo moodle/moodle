@@ -17,6 +17,8 @@
 namespace test_component\courseformat;
 
 use core_courseformat\sectiondelegate as sectiondelegatebase;
+use core_courseformat\stateupdates;
+use section_info;
 
 /**
  * Test class for section delegate.
@@ -26,4 +28,28 @@ use core_courseformat\sectiondelegate as sectiondelegatebase;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class sectiondelegate extends sectiondelegatebase {
+    /**
+     * Test method to fake preprocesses the section name by appending a suffix to it.
+     *
+     * @param section_info $section The section information.
+     * @param string|null $newname The new name for the section.
+     * @return string|null The preprocessed section name with the suffix appended.
+     */
+    public function preprocess_section_name(section_info $section, ?string $newname): ?string {
+        if (empty($newname)) {
+            return 'null_name';
+        }
+        return $newname . '_suffix';
+    }
+
+    /**
+     * Test method to add state updates of a section with additional information.
+     *
+     * @param section_info $section The section to update.
+     * @param stateupdates $updates The state updates to apply.
+     * @return void
+     */
+    public function put_section_state_extra_updates(section_info $section, stateupdates $updates): void {
+        $updates->add_cm_put($section->itemid);
+    }
 }

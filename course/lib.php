@@ -749,49 +749,13 @@ function set_coursemodule_visible($id, $visible, $visibleoncoursepage = 1, bool 
 /**
  * Changes the course module name
  *
- * @param int $id course module id
+ * @param int $cmid course module id
  * @param string $name new value for a name
  * @return bool whether a change was made
  */
-function set_coursemodule_name($id, $name) {
-    global $CFG, $DB;
-    require_once($CFG->libdir . '/gradelib.php');
-
-    $cm = get_coursemodule_from_id('', $id, 0, false, MUST_EXIST);
-
-    $module = new \stdClass();
-    $module->id = $cm->instance;
-
-    // Escape strings as they would be by mform.
-    if (!empty($CFG->formatstringstriptags)) {
-        $module->name = clean_param($name, PARAM_TEXT);
-    } else {
-        $module->name = clean_param($name, PARAM_CLEANHTML);
-    }
-    if ($module->name === $cm->name || strval($module->name) === '') {
-        return false;
-    }
-    if (\core_text::strlen($module->name) > 255) {
-        throw new \moodle_exception('maximumchars', 'moodle', '', 255);
-    }
-
-    $module->timemodified = time();
-    $DB->update_record($cm->modname, $module);
-    $cm->name = $module->name;
-    \core\event\course_module_updated::create_from_cm($cm)->trigger();
-    \course_modinfo::purge_course_module_cache($cm->course, $cm->id);
-    rebuild_course_cache($cm->course, false, true);
-
-    // Attempt to update the grade item if relevant.
-    $grademodule = $DB->get_record($cm->modname, array('id' => $cm->instance));
-    $grademodule->cmidnumber = $cm->idnumber;
-    $grademodule->modname = $cm->modname;
-    grade_update_mod_grades($grademodule);
-
-    // Update calendar events with the new name.
-    course_module_update_calendar_events($cm->modname, $grademodule, $cm);
-
-    return true;
+function set_coursemodule_name($cmid, $name) {
+    $coursecontext = context_module::instance($cmid)->get_course_context();
+    return formatactions::cm($coursecontext->instanceid)->rename($cmid, $name);
 }
 
 /**
@@ -1277,69 +1241,20 @@ function course_delete_section_async($section, $forcedeleteifnotempty = true) {
  *
  * This function does not check permissions or clean values - this has to be done prior to calling it.
  *
- * @param int|stdClass $course
+ * @param int|stdClass $courseorid
  * @param stdClass $section record from course_sections table - it will be updated with the new values
  * @param array|stdClass $data
  */
-function course_update_section($course, $section, $data) {
-    global $DB;
+function course_update_section($courseorid, $section, $data) {
+    $sectioninfo = get_fast_modinfo($courseorid)->get_section_info_by_id($section->id);
+    formatactions::section($courseorid)->update($sectioninfo, $data);
 
-    $courseid = (is_object($course)) ? $course->id : (int)$course;
-
-    // Some fields can not be updated using this method.
-    $data = array_diff_key((array)$data, array('id', 'course', 'section', 'sequence'));
-    $changevisibility = (array_key_exists('visible', $data) && (bool)$data['visible'] != (bool)$section->visible);
-    if (array_key_exists('name', $data) && \core_text::strlen($data['name']) > 255) {
-        throw new moodle_exception('maximumchars', 'moodle', '', 255);
-    }
-
-    // Update record in the DB and course format options.
-    $data['id'] = $section->id;
-    $data['timemodified'] = time();
-    $DB->update_record('course_sections', $data);
-    // Invalidate the section cache by given section id.
-    course_modinfo::purge_course_section_cache_by_id($courseid, $section->id);
-    rebuild_course_cache($courseid, false, true);
-    course_get_format($courseid)->update_section_format_options($data);
-
-    // Update fields of the $section object.
+    // Update $section object fields (for legacy compatibility).
+    $data = array_diff_key((array) $data, array_flip(['id', 'course', 'section', 'sequence']));
     foreach ($data as $key => $value) {
         if (property_exists($section, $key)) {
             $section->$key = $value;
         }
-    }
-
-    // Trigger an event for course section update.
-    $event = \core\event\course_section_updated::create(
-        array(
-            'objectid' => $section->id,
-            'courseid' => $courseid,
-            'context' => context_course::instance($courseid),
-            'other' => array('sectionnum' => $section->section)
-        )
-    );
-    $event->trigger();
-
-    // If section visibility was changed, hide the modules in this section too.
-    if ($changevisibility && !empty($section->sequence)) {
-        $modules = explode(',', $section->sequence);
-        $cmids = [];
-        foreach ($modules as $moduleid) {
-            if ($cm = get_coursemodule_from_id(null, $moduleid, $courseid)) {
-                $cmids[] = $cm->id;
-                if ($data['visible']) {
-                    // As we unhide the section, we use the previously saved visibility stored in visibleold.
-                    set_coursemodule_visible($moduleid, $cm->visibleold, $cm->visibleoncoursepage, false);
-                } else {
-                    // We hide the section, so we hide the module but we store the original state in visibleold.
-                    set_coursemodule_visible($moduleid, 0, $cm->visibleoncoursepage, false);
-                    $DB->set_field('course_modules', 'visibleold', $cm->visible, ['id' => $moduleid]);
-                }
-                \core\event\course_module_updated::create_from_cm($cm)->trigger();
-            }
-        }
-        \course_modinfo::purge_course_modules_cache($courseid, $cmids);
-        rebuild_course_cache($courseid, false, true);
     }
 }
 

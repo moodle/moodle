@@ -782,19 +782,27 @@ class courselib_test extends advanced_testcase {
         $this->resetAfterTest();
 
         // Create the course with sections.
-        $course = $this->getDataGenerator()->create_course(array('numsections' => 10), array('createsections' => true));
-        $sections = $DB->get_records('course_sections', array('course' => $course->id));
+        $course = $this->getDataGenerator()->create_course(
+            ['numsections' => 10],
+            ['createsections' => true]
+        );
+        $sections = $DB->get_records('course_sections', ['course' => $course->id]);
 
         // Get the last section's time modified value.
         $section = array_pop($sections);
         $oldtimemodified = $section->timemodified;
 
-        // Update the section.
-        $this->waitForSecond(); // Ensuring that the section update occurs at a different timestamp.
-        course_update_section($course, $section, array());
+        // Ensuring that the section update occurs at a different timestamp.
+        $this->waitForSecond();
 
-        // Check that the time has changed.
-        $section = $DB->get_record('course_sections', array('id' => $section->id));
+        // The timemodified should only be updated if the section is actually updated.
+        course_update_section($course, $section, []);
+        $sectionrecord = $DB->get_record('course_sections', ['id' => $section->id]);
+        $this->assertEquals($oldtimemodified, $sectionrecord->timemodified);
+
+        // Now update something to prove timemodified changes.
+        course_update_section($course, $section, ['name' => 'New name']);
+        $section = $DB->get_record('course_sections', ['id' => $section->id]);
         $newtimemodified = $section->timemodified;
         $this->assertGreaterThan($oldtimemodified, $newtimemodified);
     }
