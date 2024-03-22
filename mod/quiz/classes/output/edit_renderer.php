@@ -753,8 +753,23 @@ class edit_renderer extends \plugin_renderer_base {
      * @return string HTML to output.
      */
     public function question(structure $structure, int $slot, \moodle_url $pageurl) {
+        global $DB;
+
         // Get the data required by the question_slot template.
         $slotid = $structure->get_slot_id_for_slot($slot);
+        $question = $structure->get_question_in_slot($slot);
+        $bank = $structure->get_source_bank($slot);
+
+        if ($bank?->issharedbank) {
+            $bankurl = (new \moodle_url('/question/edit.php',
+                [
+                    'cmid' => $bank->cminfo->id,
+                    'cat' => "{$question->category},{$question->contextid}",
+                ]
+            ))->out(false);
+        } else {
+            $bankurl = '';
+        }
 
         $output = '';
         $output .= html_writer::start_tag('div');
@@ -780,6 +795,9 @@ class edit_renderer extends \plugin_renderer_base {
             'questiondependencyicon' => ($structure->can_be_edited() ? $this->question_dependency_icon($structure, $slot) : ''),
             'versionselection' => false,
             'draftversion' => $structure->get_question_in_slot($slot)->status == question_version_status::QUESTION_STATUS_DRAFT,
+            'bankname' => $bank?->cminfo->get_formatted_name(),
+            'issharedbank' => $bank?->issharedbank,
+            'bankurl' => $bankurl,
         ];
 
         $data['versionoptions'] = [];
