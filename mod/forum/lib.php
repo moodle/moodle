@@ -6478,7 +6478,7 @@ function forum_get_coursemodule_info($coursemodule) {
     global $DB;
 
     $dbparams = ['id' => $coursemodule->instance];
-    $fields = 'id, name, intro, introformat, completionposts, completiondiscussions, completionreplies, duedate, cutoffdate';
+    $fields = 'id, name, intro, introformat, completionposts, completiondiscussions, completionreplies, duedate, cutoffdate, trackingtype';
     if (!$forum = $DB->get_record('forum', $dbparams, $fields)) {
         return false;
     }
@@ -6505,6 +6505,8 @@ function forum_get_coursemodule_info($coursemodule) {
     if ($forum->cutoffdate) {
         $result->customdata['cutoffdate'] = $forum->cutoffdate;
     }
+    // Add the forum type to the custom data for Web Services (core_course_get_contents).
+    $result->customdata['trackingtype'] = $forum->trackingtype;
 
     return $result;
 }
