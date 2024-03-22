@@ -621,7 +621,7 @@ class moodle_url {
             $uri .= '?' . $querystring;
         }
         if (!is_null($this->anchor)) {
-            $uri .= '#' . rawurlencode($this->anchor);
+            $uri .= '#'.$this->anchor;
         }
 
         return $uri;
@@ -641,7 +641,7 @@ class moodle_url {
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
         if ($includeanchor and !is_null($this->anchor)) {
-            $uri .= '#' . rawurlencode($this->anchor);
+            $uri .= '#' . $this->anchor;
         }
 
         return $uri;
