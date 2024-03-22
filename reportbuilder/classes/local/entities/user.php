@@ -445,6 +445,7 @@ class user extends base {
             'suspended' => new lang_string('suspended'),
             'confirmed' => new lang_string('confirmed', 'admin'),
             'username' => new lang_string('username'),
+            'auth' => new lang_string('authentication', 'moodle'),
             'moodlenetprofile' => new lang_string('moodlenetprofile', 'user'),
             'timecreated' => new lang_string('timecreated', 'core_reportbuilder'),
             'timemodified' => new lang_string('timemodified', 'core_reportbuilder'),
@@ -550,32 +551,6 @@ class user extends base {
         ))
             ->add_joins($this->get_joins());
 
-        // Authentication method filter.
-        $filters[] = (new filter(
-            select::class,
-            'auth',
-            new lang_string('authentication', 'moodle'),
-            $this->get_entity_name(),
-            "{$tablealias}.auth"
-        ))
-            ->add_joins($this->get_joins())
-            ->set_options_callback(static function(): array {
-                $plugins = core_component::get_plugin_list('auth');
-                $enabled = get_string('pluginenabled', 'core_plugin');
-                $disabled = get_string('plugindisabled', 'core_plugin');
-                $authoptions = [$enabled => [], $disabled => []];
-
-                foreach ($plugins as $pluginname => $unused) {
-                    $plugin = get_auth_plugin($pluginname);
-                    if (is_enabled_auth($pluginname)) {
-                        $authoptions[$enabled][$pluginname] = $plugin->get_title();
-                    } else {
-                        $authoptions[$disabled][$pluginname] = $plugin->get_title();
-                    }
-                }
-                return $authoptions;
-            });
-
         return $filters;
     }
 
@@ -599,6 +574,20 @@ class user extends base {
     }
 
     /**
+     * List of options for the field auth
+     *
+     * @return string[]
+     */
+    public static function get_options_for_auth(): array {
+        $authlist = array_keys(core_component::get_plugin_list('auth'));
+
+        return array_map(
+            fn(string $auth) => get_auth_plugin($auth)->get_title(),
+            array_combine($authlist, $authlist),
+        );
+    }
+
+    /**
      * List of options for the field country.
      *
      * @return string[]
@@ -610,7 +599,7 @@ class user extends base {
     /**
      * List of options for the field theme.
      *
-     * @return array
+     * @return string[]
      */
     public static function get_options_for_theme(): array {
         return array_map(
