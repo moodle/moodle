@@ -13,17 +13,25 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
- * Quiz statistics report version information.
+ * Hook callback definitions for core
  *
- * @package   quiz_statistics
- * @copyright 2008 Jamie Pratt
+ * @package   core
+ * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023100901;
-$plugin->requires  = 2023100400;
-$plugin->component = 'quiz_statistics';
+$callbacks = [
+    [
+        'hook' => 'fake_hooktest\hook\hook_replacing_callback',
+        'callback' => 'fake_hooktest\hook_callbacks::component_callback_replacement',
+        'priority' => 500,
+    ],
+    [
+        'hook' => 'fake_hooktest\hook\hook_replacing_class_callback',
+        'callback' => 'fake_hooktest\hook_callbacks::component_class_callback_replacement',
+        'priority' => 600,
+    ],
+];

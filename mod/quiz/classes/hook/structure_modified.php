@@ -13,32 +13,39 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+namespace mod_quiz\hook;
 
-namespace quiz_statistics;
-
-use quiz_statistics\task\recalculate;
+use core\attribute;
+use mod_quiz\structure;
 
 /**
- * Queue a statistics recalculation when an attempt is deleted.
+ * The quiz structure has been modified
  *
- * @package   quiz_statistics
+ * @package   mod_quiz
  * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @deprecated Since Moodle 4.4 MDL-80099.
- * @todo Final deprecation in Moodle 4.8 MDL-80956.
  */
-class quiz_attempt_deleted {
+#[attribute\label('The quiz structure has been modified')]
+#[attribute\tags('quiz', 'structure')]
+#[attribute\hook\replaces_callbacks('quiz_structure_modified::callback')]
+class structure_modified {
     /**
-     * Queue a recalculation.
+     * Create a new hook with the modified structure.
      *
-     * @param int $quizid The quiz the attempt belongs to.
-     * @return void
-     * @deprecated Since Moodle 4.4 MDL-80099.
+     * @param structure $structure The new structure.
      */
-    public static function callback(int $quizid): void {
-        debugging('quiz_statistics\quiz_attempt_deleted callback class has been deprecated in favour of ' .
-            'the quiz_statistics\hook_callbacks::quiz_attempt_submitted_or_deleted hook callback.', DEBUG_DEVELOPER);
-        recalculate::queue_future_run($quizid);
+    public function __construct(
+        protected structure $structure
+    ) {
+    }
+
+    /**
+     * Returns the new structure of the quiz.
+     *
+     * @return structure The structure object.
+     */
+    public function get_structure(): structure {
+        return $this->structure;
     }
 }

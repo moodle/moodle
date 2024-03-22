@@ -7453,13 +7453,17 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
         foreach ($pluginfunctions as $plugintype => $plugins) {
             foreach ($plugins as $plugin => $unusedfunction) {
                 $component = $plugintype . '_' . $plugin;
-                if (\core\hook\manager::get_instance()->is_deprecated_plugin_callback($plugincallback)) {
+                if ($hooks = \core\hook\manager::get_instance()->get_hooks_deprecating_plugin_callback($plugincallback)) {
                     if (\core\hook\manager::get_instance()->is_deprecating_hook_present($component, $plugincallback)) {
                         // Ignore the old callback, it is there only for older Moodle versions.
                         unset($pluginfunctions[$plugintype][$plugin]);
                     } else {
-                        debugging("Callback $plugincallback in $component component should be migrated to new hook callback",
-                            DEBUG_DEVELOPER);
+                        $hookmessage = count($hooks) == 1 ? reset($hooks) : 'one of  ' . implode(', ', $hooks);
+                        debugging(
+                            "Callback $plugincallback in $component component should be migrated to new " .
+                                "hook callback for $hookmessage",
+                            DEBUG_DEVELOPER
+                        );
                     }
                 }
             }
@@ -7688,13 +7692,15 @@ function component_callback($component, $function, array $params = array(), $def
 
     if ($functionname) {
         if ($migratedtohook) {
-            if (\core\hook\manager::get_instance()->is_deprecated_plugin_callback($function)) {
+            if ($hooks = \core\hook\manager::get_instance()->get_hooks_deprecating_plugin_callback($function)) {
                 if (\core\hook\manager::get_instance()->is_deprecating_hook_present($component, $function)) {
                     // Do not call the old lib.php callback,
                     // it is there for compatibility with older Moodle versions only.
                     return null;
                 } else {
-                    debugging("Callback $function in $component component should be migrated to new hook callback",
+                    $hookmessage = count($hooks) == 1 ? reset($hooks) : 'one of  ' . implode(', ', $hooks);
+                    debugging(
+                        "Callback $function in $component component should be migrated to new hook callback for $hookmessage",
                         DEBUG_DEVELOPER);
                 }
             }
@@ -7769,9 +7775,10 @@ function component_callback_exists($component, $function) {
  * @param   string      $methodname The name of the staticically defined method on the class.
  * @param   array       $params The arguments to pass into the method.
  * @param   mixed       $default The default value.
+ * @param   bool        $migratedtohook True if the callback has been migrated to a hook.
  * @return  mixed       The return value.
  */
-function component_class_callback($classname, $methodname, array $params, $default = null) {
+function component_class_callback($classname, $methodname, array $params, $default = null, bool $migratedtohook = false) {
     if (!class_exists($classname)) {
         return $default;
     }
@@ -7781,6 +7788,24 @@ function component_class_callback($classname, $methodname, array $params, $defau
     }
 
     $fullfunction = $classname . '::' . $methodname;
+
+    if ($migratedtohook) {
+        $functionparts = explode('\\', trim($fullfunction, '\\'));
+        $component = $functionparts[0];
+        $callback = end($functionparts);
+        if ($hooks = \core\hook\manager::get_instance()->get_hooks_deprecating_plugin_callback($callback)) {
+            if (\core\hook\manager::get_instance()->is_deprecating_hook_present($component, $callback)) {
+                // Do not call the old class callback,
+                // it is there for compatibility with older Moodle versions only.
+                return null;
+            } else {
+                $hookmessage = count($hooks) == 1 ? reset($hooks) : 'one of  ' . implode(', ', $hooks);
+                debugging("Callback $callback in $component component should be migrated to new hook callback for $hookmessage",
+                        DEBUG_DEVELOPER);
+            }
+        }
+    }
+
     $result = call_user_func_array($fullfunction, $params);
 
     if (null === $result) {

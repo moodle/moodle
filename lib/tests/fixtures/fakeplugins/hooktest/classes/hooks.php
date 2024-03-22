@@ -13,21 +13,29 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+namespace fake_hooktest;
 
 /**
- * Add event observers for quiz_statistics
+ * Hook discovery for fake plugin.
  *
- * @package   quiz_statistics
- * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
+ * @package   core
+ * @copyright 2024 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-$observers = [
-    [
-        'eventname' => '\mod_quiz\event\attempt_submitted',
-        'callback' => '\quiz_statistics\event\observer\attempt_submitted::process',
-    ],
-];
+class hooks implements \core\hook\discovery_agent {
+    public static function discover_hooks(): array {
+        return [
+            'fake_hooktest\hook\hook_replacing_callback' => [
+                'class' => 'fake_hooktest\hook\hook_replacing_callback',
+                'description' => 'Hook replacing callback',
+                'tags' => ['test'],
+            ],
+            'fake_hooktest\hook\hook_replacing_class_callback' => [
+                'class' => 'fake_hooktest\hook\hook_replacing_class_callback',
+                'description' => 'Hook replacing class callback',
+                'tags' => ['test'],
+            ],
+        ];
+    }
+}

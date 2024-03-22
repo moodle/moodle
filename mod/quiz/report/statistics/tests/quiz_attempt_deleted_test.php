@@ -32,7 +32,7 @@ use quiz_statistics\tests\statistics_test_trait;
  * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \quiz_statistics\quiz_attempt_deleted
+ * @covers    \quiz_statistics\hook_callbacks::quiz_attempt_submitted_or_deleted
  */
 class quiz_attempt_deleted_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;

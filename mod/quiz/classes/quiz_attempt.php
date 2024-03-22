@@ -23,6 +23,7 @@ use coding_exception;
 use context_module;
 use Exception;
 use html_writer;
+use mod_quiz\hook\attempt_state_changed;
 use mod_quiz\output\links_to_other_attempts;
 use mod_quiz\output\renderer;
 use mod_quiz\question\bank\qbank_helper;
@@ -1763,6 +1764,8 @@ class quiz_attempt {
 
         question_engine::save_questions_usage_by_activity($this->quba);
 
+        $originalattempt = clone $this->attempt;
+
         $this->attempt->timemodified = $timestamp;
         $this->attempt->timefinish = $timefinish ?? $timestamp;
         $this->attempt->sumgrades = $this->quba->get_total_mark();
@@ -1784,6 +1787,7 @@ class quiz_attempt {
             // Trigger event.
             $this->fire_state_transition_event('\mod_quiz\event\attempt_submitted', $timestamp, $studentisonline);
 
+            \core\hook\manager::get_instance()->dispatch(new attempt_state_changed($originalattempt, $this->attempt));
             // Tell any access rules that care that the attempt is over.
             $this->get_access_manager($timestamp)->current_attempt_finished();
         }
@@ -1820,6 +1824,7 @@ class quiz_attempt {
     public function process_going_overdue($timestamp, $studentisonline) {
         global $DB;
 
+        $originalattempt = clone $this->attempt;
         $transaction = $DB->start_delegated_transaction();
         $this->attempt->timemodified = $timestamp;
         $this->attempt->state = self::OVERDUE;
@@ -1830,6 +1835,7 @@ class quiz_attempt {
 
         $this->fire_state_transition_event('\mod_quiz\event\attempt_becameoverdue', $timestamp, $studentisonline);
 
+        \core\hook\manager::get_instance()->dispatch(new attempt_state_changed($originalattempt, $this->attempt));
         $transaction->allow_commit();
 
         quiz_send_overdue_message($this);
@@ -1844,6 +1850,7 @@ class quiz_attempt {
     public function process_abandon($timestamp, $studentisonline) {
         global $DB;
 
+        $originalattempt = clone $this->attempt;
         $transaction = $DB->start_delegated_transaction();
         $this->attempt->timemodified = $timestamp;
         $this->attempt->state = self::ABANDONED;
@@ -1851,6 +1858,8 @@ class quiz_attempt {
         $DB->update_record('quiz_attempts', $this->attempt);
 
         $this->fire_state_transition_event('\mod_quiz\event\attempt_abandoned', $timestamp, $studentisonline);
+
+        \core\hook\manager::get_instance()->dispatch(new attempt_state_changed($originalattempt, $this->attempt));
 
         $transaction->allow_commit();
     }
@@ -1872,6 +1881,7 @@ class quiz_attempt {
             throw new coding_exception('Can only reopen an attempt that was never submitted.');
         }
 
+        $originalattempt = clone $this->attempt;
         $transaction = $DB->start_delegated_transaction();
         $this->attempt->timemodified = $timestamp;
         $this->attempt->state = self::IN_PROGRESS;
@@ -1880,6 +1890,7 @@ class quiz_attempt {
 
         $this->fire_state_transition_event('\mod_quiz\event\attempt_reopened', $timestamp, false);
 
+        \core\hook\manager::get_instance()->dispatch(new attempt_state_changed($originalattempt, $this->attempt));
         $timeclose = $this->get_access_manager($timestamp)->get_end_time($this->attempt);
         if ($timeclose && $timestamp > $timeclose) {
             $this->process_finish($timestamp, false, $timeclose);

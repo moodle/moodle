@@ -13,7 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-namespace quiz_statistics\event\observer;
+namespace quiz_statistics;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -32,12 +32,11 @@ use quiz_statistics\tests\statistics_test_trait;
  * @copyright 2023 onwards Catalyst IT EU {@link https://catalyst-eu.net}
  * @author    Mark Johnson <mark.johnson@catalyst-eu.net>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers    \quiz_statistics\event\observer\attempt_submitted
+ * @covers    \quiz_statistics\hook_callbacks::quiz_attempt_submitted_or_deleted
  */
-class attempt_submitted_test extends \advanced_testcase {
+class quiz_attempt_submitted_test extends \advanced_testcase {
     use \quiz_question_helper_test_trait;
     use statistics_test_trait;
-
 
     /**
      * Attempting a quiz should queue the recalculation task for that quiz in 1 hour's time.
