@@ -283,7 +283,7 @@ class block_iomad_company_admin extends block_base {
             }
 
             // Get topic action icon
-            if (!empty($menu['iconsmall'])) {
+            if (!$CFG->iomad_useicons && !empty($menu['iconsmall'])) {
                 $iconsmall = $menu['iconsmall'];
             } else {
                 $iconsmall = '';
