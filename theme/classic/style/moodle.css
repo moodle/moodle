@@ -29070,6 +29070,9 @@ span.editinstructions .alert-link {
   font-size: 1.171875rem;
   color: #0f6cbf;
 }
+.course-section .overlay-preview {
+  z-index: 5;
+}
 
 .btn.add-section {
   border-radius: 1rem;
