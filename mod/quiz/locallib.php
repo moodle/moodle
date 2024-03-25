@@ -40,6 +40,7 @@ use mod_quiz\access_manager;
 use mod_quiz\event\attempt_submitted;
 use mod_quiz\grade_calculator;
 use mod_quiz\hook\attempt_state_changed;
+use mod_quiz\local\override_manager;
 use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
@@ -1592,28 +1593,11 @@ function quiz_send_notify_manual_graded_message(quiz_attempt $attemptobj, object
  * @return void
  */
 function quiz_process_group_deleted_in_course($courseid) {
-    global $DB;
+    $affectedquizzes = override_manager::delete_orphaned_group_overrides_in_course($courseid);
 
-    // It would be nice if we got the groupid that was deleted.
-    // Instead, we just update all quizzes with orphaned group overrides.
-    $sql = "SELECT o.id, o.quiz, o.groupid
-              FROM {quiz_overrides} o
-              JOIN {quiz} quiz ON quiz.id = o.quiz
-         LEFT JOIN {groups} grp ON grp.id = o.groupid
-             WHERE quiz.course = :courseid
-               AND o.groupid IS NOT NULL
-               AND grp.id IS NULL";
-    $params = ['courseid' => $courseid];
-    $records = $DB->get_records_sql($sql, $params);
-    if (!$records) {
-        return; // Nothing to do.
+    if (!empty($affectedquizzes)) {
+        quiz_update_open_attempts(['quizid' => $affectedquizzes]);
     }
-    $DB->delete_records_list('quiz_overrides', 'id', array_keys($records));
-    $cache = cache::make('mod_quiz', 'overrides');
-    foreach ($records as $record) {
-        $cache->delete("{$record->quiz}_g_{$record->groupid}");
-    }
-    quiz_update_open_attempts(['quizid' => array_unique(array_column($records, 'quiz'))]);
 }
 
 /**

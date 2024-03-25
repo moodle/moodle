@@ -630,6 +630,7 @@ class events_test extends \advanced_testcase {
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $quizsettings = quiz_settings::create($quiz->id);
 
         // Create an override.
         $override = new \stdClass();
@@ -639,7 +640,7 @@ class events_test extends \advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        quiz_delete_override($quiz, $override->id);
+        $quizsettings->get_override_manager()->delete_overrides(overrides: [$override]);
         $events = $sink->get_events();
         $event = reset($events);
 
@@ -660,6 +661,7 @@ class events_test extends \advanced_testcase {
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
+        $quizsettings = quiz_settings::create($quiz->id);
 
         // Create an override.
         $override = new \stdClass();
@@ -669,7 +671,7 @@ class events_test extends \advanced_testcase {
 
         // Trigger and capture the event.
         $sink = $this->redirectEvents();
-        quiz_delete_override($quiz, $override->id);
+        $quizsettings->get_override_manager()->delete_overrides(overrides: [$override]);
         $events = $sink->get_events();
         $event = reset($events);
 

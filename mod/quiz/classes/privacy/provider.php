@@ -365,8 +365,8 @@ class provider implements
                 [$quizobj]
             );
 
-        // Delete all overrides - do not log.
-        quiz_delete_all_overrides($quiz, false);
+        // Delete all overrides.
+        $quizobj->get_override_manager()->delete_all_overrides(shouldlog: false);
 
         // This will delete all question attempts, quiz attempts, and quiz grades for this quiz.
         quiz_delete_all_attempts($quiz);
@@ -411,9 +411,11 @@ class provider implements
                 'userid' => $user->id,
             ]);
 
-            foreach ($overrides as $override) {
-                quiz_delete_override($quiz, $override->id, false);
-            }
+            $manager = $quizobj->get_override_manager();
+            $manager->delete_overrides(
+                overrides: $overrides,
+                shouldlog: false,
+            );
 
             // This will delete all question attempts, quiz attempts, and quiz grades for this quiz.
             quiz_delete_user_attempts($quizobj, $user);
@@ -461,9 +463,11 @@ class provider implements
                 'userid' => $userid,
             ]);
 
-            foreach ($overrides as $override) {
-                quiz_delete_override($quiz, $override->id, false);
-            }
+            $manager = $quizobj->get_override_manager();
+            $manager->delete_overrides(
+                overrides: $overrides,
+                shouldlog: false,
+            );
 
             // This will delete all question attempts, quiz attempts, and quiz grades for this user in the given quiz.
             quiz_delete_user_attempts($quizobj, (object)['id' => $userid]);

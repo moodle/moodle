@@ -22,6 +22,12 @@ This file describes API changes in the quiz code.
 * The following previously deprecated methods have been removed and can no longer be used:
   - `get_slot_tags_for_slot_id`
   - `quiz_retrieve_tags_for_slot_ids`
+* Quiz override logic has been refactored and put in a new override_manager class.
+* Quiz override cache should now be accessed using the new override_cache class.
+* The quiz_delete_overrides and quiz_delete_all_overrides functions are now deprecated. Please instead use:
+  - override_manager::delete_override_by_id
+  - override_manager::delete_overrides
+  - override_manager::delete_all_overrides
 
 === 4.3 ===
 

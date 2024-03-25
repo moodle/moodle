@@ -231,4 +231,28 @@ $functions = [
         'capabilities'  => 'mod/quiz:manage',
         'ajax'          => true,
     ],
+
+    'mod_quiz_save_overrides' => [
+        'classname'     => 'mod_quiz\external\save_overrides',
+        'description'   => 'Update or insert quiz overrides',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:manageoverrides',
+        'ajax'          => true,
+    ],
+
+    'mod_quiz_delete_overrides' => [
+        'classname'     => 'mod_quiz\external\delete_overrides',
+        'description'   => 'Delete quiz overrides',
+        'type'          => 'write',
+        'capabilities'  => 'mod/quiz:manageoverrides',
+        'ajax'          => true,
+    ],
+
+    'mod_quiz_get_overrides' => [
+        'classname'     => 'mod_quiz\external\get_overrides',
+        'description'   => 'Get quiz overrides',
+        'type'          => 'read',
+        'capabilities'  => 'mod/quiz:manageoverrides',
+        'ajax'          => true,
+    ],
 ];

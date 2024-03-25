@@ -56,6 +56,9 @@ class edit_override_form extends moodleform {
     /** @var int userid, if provided. */
     protected $userid;
 
+    /** @var int overrideid, if provided. */
+    protected $overrideid;
+
     /**
      * Constructor.
      *
@@ -76,6 +79,7 @@ class edit_override_form extends moodleform {
         $this->groupmode = $groupmode;
         $this->groupid = empty($override->groupid) ? 0 : $override->groupid;
         $this->userid = empty($override->userid) ? 0 : $override->userid;
+        $this->overrideid = $override->id ?? 0;
 
         parent::__construct($submiturl);
     }
@@ -261,42 +265,28 @@ class edit_override_form extends moodleform {
         return $username;
     }
 
+    /**
+     * Validate the data from the form.
+     *
+     * @param  array $data form data
+     * @param  array $files form files
+     * @return array An array of error messages, where the key is is the mform element name and the value is the error.
+     */
     public function validation($data, $files): array {
         $errors = parent::validation($data, $files);
+        $data['id'] = $this->overrideid;
+        $data['quiz'] = $this->quiz->id;
 
-        $mform =& $this->_form;
-        $quiz = $this->quiz;
+        $manager = new \mod_quiz\local\override_manager($this->quiz, $this->context);
+        $errors = array_merge($errors, $manager->validate_data($data));
 
-        if ($mform->elementExists('userid')) {
-            if (empty($data['userid'])) {
-                $errors['userid'] = get_string('required');
+        // Any 'general' errors we merge with the group/user selector element.
+        if (!empty($errors['general'])) {
+            if ($this->groupmode) {
+                $errors['groupid'] = $errors['groupid'] ?? "" . $errors['general'];
+            } else {
+                $errors['userid'] = $errors['userid'] ?? "" . $errors['general'];
             }
-        }
-
-        if ($mform->elementExists('groupid')) {
-            if (empty($data['groupid'])) {
-                $errors['groupid'] = get_string('required');
-            }
-        }
-
-        // Ensure that the dates make sense.
-        if (!empty($data['timeopen']) && !empty($data['timeclose'])) {
-            if ($data['timeclose'] < $data['timeopen'] ) {
-                $errors['timeclose'] = get_string('closebeforeopen', 'quiz');
-            }
-        }
-
-        // Ensure that at least one quiz setting was changed.
-        $changed = false;
-        $keys = ['timeopen', 'timeclose', 'timelimit', 'attempts', 'password'];
-        foreach ($keys as $key) {
-            if ($data[$key] != $quiz->{$key}) {
-                $changed = true;
-                break;
-            }
-        }
-        if (!$changed) {
-            $errors['timeopen'] = get_string('nooverridedata', 'quiz');
         }
 
         return $errors;
