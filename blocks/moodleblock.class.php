@@ -71,7 +71,7 @@ class block_base {
 
     /**
      * An object to contain the information to be displayed in the block.
-     * @var stdClass $content
+     * @var stdClass|null $content
      */
     var $content       = NULL;
 
@@ -88,7 +88,7 @@ class block_base {
     public $page       = NULL;
 
     /**
-     * This blocks's context.
+     * This block's context.
      * @var context
      */
     public $context    = NULL;
@@ -141,7 +141,7 @@ class block_base {
      * This should be implemented by the derived class to return
      * the content object.
      *
-     * @return stdObject
+     * @return stdClass
      */
     function get_content() {
         // This should be implemented by the derived class.
@@ -167,7 +167,7 @@ class block_base {
      * Intentionally doesn't check if content_type is set.
      * This is already done in {@link _self_test()}
      *
-     * @return string $this->content_type
+     * @return int $this->content_type
      */
     function get_content_type() {
         // Intentionally doesn't check if a content_type is set. This is already done in _self_test()
@@ -178,7 +178,7 @@ class block_base {
      * Returns true or false, depending on whether this block has any content to display
      * and whether the user has permission to view the block
      *
-     * @return boolean
+     * @return bool
      */
     function is_empty() {
         if ( !has_capability('moodle/block:view', $this->context) ) {
@@ -194,7 +194,7 @@ class block_base {
      * then calls the block's {@link get_content()} function
      * to set its value back.
      *
-     * @return stdObject
+     * @return stdClass
      */
     function refresh_content() {
         // Nothing special here, depends on content()
@@ -211,7 +211,7 @@ class block_base {
      * {@link html_attributes()}, {@link formatted_contents()} or {@link get_content()},
      * {@link hide_header()}, {@link (get_edit_controls)}, etc.
      *
-     * @return block_contents a representation of the block, for rendering.
+     * @return block_contents|null a representation of the block, for rendering.
      * @since Moodle 2.0.
      */
     public function get_content_for_output($output) {
