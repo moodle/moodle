@@ -91,12 +91,12 @@ class edit_field_save extends XMLDBAction {
         $comment = trim($comment);
 
         $type       = required_param('type', PARAM_INT);
-        $length     = strtolower(optional_param('length', NULL, PARAM_ALPHANUM));
+        $length     = optional_param('length', null, PARAM_INT);
         $decimals   = optional_param('decimals', NULL, PARAM_INT);
         $notnull    = optional_param('notnull', false, PARAM_BOOL);
         $sequence   = optional_param('sequence', false, PARAM_BOOL);
         $default    = optional_param('default', NULL, PARAM_PATH);
-        $default    = trim($default);
+        $default    = is_null($default) ? $default : trim($default);
 
         $editeddir = $XMLDB->editeddirs[$dirpath];
         $structure = $editeddir->xml_file->getStructure();
