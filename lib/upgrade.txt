@@ -99,6 +99,43 @@ information provided here is intended especially for developers.
   to bool if the original functionality is desired.
 * core\hook\manager::phpunit_get_instance() now sets self::$instance to the mocked instance if the optional $persist argument is
   true, so future calls to ::get_instance() will return it.
+* PHPUnit has been upgraded to 9.6 (see MDL-81266 for details).
+  The main goal of the update is to allow developers to know in advance,
+  via deprecations, which stuff is going to stop working (because of being removed)
+  with PHPUnit 10 (see MDL-80969 for details). Other than that, the changes are minimal.
+  This is the list of noticeable changes:
+  - Deprecation: MDL-81281. A number of attribute-related assertions have been deprecated, will
+    be removed with PHPUnit 10. Alternatives for *some* of them are available:
+      - assertClassHasAttribute()
+      - assertClassNotHasAttribute()
+      - assertClassHasStaticAttribute()
+      - assertClassNotHasStaticAttribute()
+      - assertObjectHasAttribute()         => assertObjectHasProperty()
+      - assertObjectNotHasAttribute()      => assertObjectNotHasProperty()
+  - Deprecation: MDL-81266. A number of deprecation/notice/warning/error expectations have
+    been deprecated, will be removed with PHPUnit 10. No alternative exists. A working
+    replacement is available in the linked issue, hopefully there aren't many cases.
+      - expectDeprecation()
+      - expectDeprecationMessage()
+      - expectDeprecationMessageMatches()
+      - expectError()
+      - expectErrorMessage()
+      - expectErrorMessageMatches()
+      - expectNotice()
+      - expectNoticeMessage()
+      - expectNoticeMessageMatches()
+      - expectWarning()
+      - expectWarningMessage()
+      - expectWarningMessageMatches()
+  - Deprecation: MDL-81308. The ->withConsecutive() functionality on PHPUnit mocks
+    has been *silently* deprecated, will be removed with PHPUnit 10. Note that this
+    won't affect PHPUnit 9.6 runs and an alternative path will be
+    proposed in the linked issue, part of the PHPUnit 10 epic.
+  - Deprecation: PHPUnit\Framework\TestCase::getMockClass() has been deprecated, will
+    be removed with PHPUnit 10. No clear alternative exists and won't be investigated,
+    because there aren't cases in core.
+  - Deprecation: Cannot use the "Test" suffix on abstract test case classes. Proceed to
+    rename them to end with "TestCase" instead.
 
 === 4.3 ===
 
