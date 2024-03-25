@@ -1,6 +1,10 @@
 This files describes API changes in /mod/forum/*,
 information provided here is intended especially for developers.
 
+=== 4.5 ===
+
+* Final deprecation of forum_update_subscriptions_button().
+
 === 4.4 ===
 
 * The mod_forum_get_forum_discussions_paginated web service has been removed from core.
