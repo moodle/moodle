@@ -3,7 +3,7 @@ Feature: Test the ability to run the full meeting lifecycle (start to end) for g
 
   Background:
     Given a BigBlueButton mock server is configured
-    And I accept dpa and enable bigbluebuttonbn plugin
+    And I enable "bigbluebuttonbn" "mod" plugin
     And the following config values are set as admin:
       | bigbluebuttonbn_guestaccess_enabled | 1 |
     And the following course exists:

@@ -63,6 +63,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
      * Test execute API CALL with no instance
      */
     public function test_execute_wrong_instance() {
+        $this->resetAfterTest();
         $getrecordings = $this->get_recordings(1234);
 
         $this->assertIsArray($getrecordings);

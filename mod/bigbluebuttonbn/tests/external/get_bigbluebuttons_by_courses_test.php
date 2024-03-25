@@ -63,6 +63,7 @@ class get_bigbluebuttons_by_courses_test extends \externallib_advanced_testcase 
      * Test execute API CALL with no instance
      */
     public function test_execute_no_instance() {
+        $this->resetAfterTest();
         $bbbactivities = $this->get_bigbluebuttons_by_courses([1234, 5678]);
 
         $this->assertIsArray($bbbactivities);

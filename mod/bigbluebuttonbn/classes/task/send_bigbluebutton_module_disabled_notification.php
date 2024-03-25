@@ -23,7 +23,7 @@ use core\message\message;
 use mod_bigbluebuttonbn\local\config;
 
 /**
- * Ad-hoc task to send a notification related to the disabling of the BigBlueButton activity module.
+ * Deprecated Ad-hoc task to send a notification related to the disabling of the BigBlueButton activity module.
  *
  * The ad-hoc tasks sends a notification to the administrator informing that the BigBlueButton activity module has
  * been disabled and they are required to confirm their acceptance of the data processing agreement prior to
@@ -34,25 +34,12 @@ use mod_bigbluebuttonbn\local\config;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class send_bigbluebutton_module_disabled_notification extends adhoc_task {
-
     /**
      * Execute the task.
      */
-    public function execute(): void {
-        $message = new message();
-        $message->component = 'moodle';
-        $message->name = 'notices';
-        $message->userfrom = \core_user::get_noreply_user();
-        $message->userto = get_admin();
-        $message->notification = 1;
-        $message->contexturl = (new \moodle_url('/admin/modules.php'))->out(false);
-        $message->contexturlname = get_string('modsettings', 'admin');
-        $message->subject = get_string('bigbluebuttondisablednotification_subject', 'mod_bigbluebuttonbn');
-        $message->fullmessageformat = FORMAT_HTML;
-        $message->fullmessagehtml = get_string('bigbluebuttondisablednotification', 'mod_bigbluebuttonbn',
-            config::DEFAULT_DPA_URL);
-        $message->smallmessage = strip_tags($message->fullmessagehtml);
-
-        message_send($message);
+    public function execute() {
+        // Log the debug message.
+        $message = "Attempted to run deprecated send_bigbluebutton_module_disabled_notification task.";
+        debugging($message, DEBUG_DEVELOPER);
     }
 }

@@ -36,8 +36,6 @@ class config {
     /** @var string Default bigbluebutton server shared secret */
     public const DEFAULT_SHARED_SECRET = '0b21fcaf34673a8c3ec8ed877d76ae34';
 
-    /** @var string Default bigbluebutton data processing agreement url */
-    public const DEFAULT_DPA_URL = 'https://blindsidenetworks.com/dpa-moodle-free-tier';
 
     /** @var string the default bigbluebutton checksum algorithm */
     public const DEFAULT_CHECKSUM_ALGORITHM = 'SHA256';
@@ -67,8 +65,8 @@ class config {
      */
     protected static function defaultvalues(): array {
         return [
-            'server_url' => self::DEFAULT_SERVER_URL,
-            'shared_secret' => self::DEFAULT_SHARED_SECRET,
+            'server_url' => '',
+            'shared_secret' => '',
             'voicebridge_editable' => false,
             'importrecordings_enabled' => false,
             'importrecordings_from_deleted_enabled' => false,
@@ -175,6 +173,27 @@ class config {
      */
     public static function importrecordings_enabled(): bool {
         return (boolean) self::get('importrecordings_enabled');
+    }
+
+    /**
+     * Check if bbb server credentials are invalid.
+     *
+     * @return bool
+     */
+    public static function server_credentials_invalid(): bool {
+        // Test server credentials across all versions of the plugin are flagged.
+        $parsedurl = parse_url(self::get('server_url'));
+        $defaultserverurl = parse_url(self::DEFAULT_SERVER_URL);
+        if (!isset($parsedurl['host'])) {
+            return false;
+        }
+        if (strpos($parsedurl['host'], $defaultserverurl['host']) === 0) {
+            return true;
+        }
+        if (strpos($parsedurl['host'], 'test-install.blindsidenetworks.com') === 0) {
+            return true;
+        }
+        return false;
     }
 
     /**

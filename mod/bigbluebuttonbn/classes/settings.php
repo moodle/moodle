@@ -152,7 +152,7 @@ class settings {
      * @throws \coding_exception
      */
     protected function add_general_settings(): admin_settingpage {
-        global $CFG;
+        global $CFG, $OUTPUT;
         $settingsgeneral = new admin_settingpage(
             $this->section,
             get_string('config_general', 'bigbluebuttonbn'),
@@ -167,12 +167,12 @@ class settings {
             );
             $settingsgeneral->add($item);
 
-            if (empty($CFG->bigbluebuttonbn_default_dpa_accepted)) {
-                $settingsgeneral->add(new admin_setting_configcheckbox(
-                    'bigbluebuttonbn_default_dpa_accepted',
-                    get_string('acceptdpa', 'mod_bigbluebuttonbn'),
-                    get_string('enablingbigbluebuttondpainfo', 'mod_bigbluebuttonbn', config::DEFAULT_DPA_URL),
-                    0
+            if (config::server_credentials_invalid()) {
+                // A notification should appear when default credentials are used.
+                $settingsgeneral->add(new admin_setting_heading(
+                    'bigbluebuttonbn_notification',
+                    '',
+                    $OUTPUT->notification(get_string('credentials_warning', 'mod_bigbluebuttonbn'), 'error')
                 ));
             }
 
@@ -180,7 +180,7 @@ class settings {
                 'bigbluebuttonbn_server_url',
                 get_string('config_server_url', 'bigbluebuttonbn'),
                 get_string('config_server_url_description', 'bigbluebuttonbn'),
-                config::DEFAULT_SERVER_URL,
+                '',
                 PARAM_RAW
             );
             $item->set_updatedcallback(
@@ -199,7 +199,7 @@ class settings {
                 'bigbluebuttonbn_shared_secret',
                 get_string('config_shared_secret', 'bigbluebuttonbn'),
                 get_string('config_shared_secret_description', 'bigbluebuttonbn'),
-                config::DEFAULT_SHARED_SECRET
+                ''
             );
             $this->add_conditional_element(
                 'shared_secret',
@@ -220,16 +220,6 @@ class settings {
                 $settingsgeneral
             );
 
-            $item = new \admin_setting_description(
-                'bigbluebuttonbn_dpa_info',
-                '',
-                get_string('config_dpa_note', 'bigbluebuttonbn', config::DEFAULT_DPA_URL),
-            );
-            $this->add_conditional_element(
-                'dpa_info',
-                $item,
-                $settingsgeneral
-            );
             $item = new admin_setting_configtext(
                 'bigbluebuttonbn_poll_interval',
                 get_string('config_poll_interval', 'bigbluebuttonbn'),

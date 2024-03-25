@@ -4,7 +4,7 @@ Feature: Test the ability to run the full meeting lifecycle (start to end)
 
   Background:
     Given a BigBlueButton mock server is configured
-    And I accept dpa and enable bigbluebuttonbn plugin
+    And I enable "bigbluebuttonbn" "mod" plugin
     And the following config values are set as admin:
       | bigbluebuttonbn_userlimit_editable | 1 |
     And the following course exists:
