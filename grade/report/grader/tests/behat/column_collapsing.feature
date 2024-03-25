@@ -110,9 +110,9 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on "Collapsed columns" "combobox"
     # This is checking that the column name search dropdown exists.
     When I wait until "Search collapsed columns" "field" exists
-    And I click on "Test assignment one" "option_role" in the "form" "gradereport_grader > collapse search"
-    And I click on "Test assignment three" "option_role" in the "form" "gradereport_grader > collapse search"
-    And I click on "Phone" "option_role" in the "form" "gradereport_grader > collapse search"
+    And I click on "Test assignment one" "checkbox" in the "form" "gradereport_grader > collapse search"
+    And I click on "Test assignment three" "checkbox" in the "form" "gradereport_grader > collapse search"
+    And I click on "Phone" "checkbox" in the "form" "gradereport_grader > collapse search"
     And I click on "Expand" "button" in the "form" "gradereport_grader > collapse search"
     And "Test assignment one" "link" in the "First name / Last name" "table_row" should be visible
     And "Test assignment three" "link" in the "First name / Last name" "table_row" should be visible
@@ -181,41 +181,18 @@ Feature: Within the grader report, test that we can collapse columns
     And I choose "Collapse" in the open action menu
     # Basic tests for the page.
     When I click on "Collapsed columns" "combobox"
-    And the page should meet accessibility standards
-    And the page should meet "wcag131, wcag141, wcag412" accessibility standards
     And the page should meet accessibility standards with "wcag131, wcag141, wcag412" extra tests
     # Move onto general keyboard navigation testing.
     Then the focused element is "Search collapsed columns" "field"
-    And I press the down key
-    And the focused element is "Email address" "option_role"
-    And I press the end key
-    And the focused element is "Country" "option_role"
-    And I press the home key
-    And the focused element is "Email address" "option_role"
-    And I press the up key
-    And the focused element is "Country" "option_role"
-    And I press the down key
-    And the focused element is "Email address" "option_role"
-    And I press the end key
-    And I press the tab key
-    And the focused element is "Select all" "checkbox"
     And I press the escape key
     And the focused element is "Collapsed columns" "combobox"
     And I click on "Collapsed columns" "combobox"
-    Then I set the field "Search collapsed columns" to "Goodmeme"
-    And I wait until "No results for \"Goodmeme\"" "text" exists
-    And I press the down key
-    And the focused element is "Search collapsed columns" "field"
     # Lets check the tabbing order.
     And I set the field "Search collapsed columns" to "phone"
-    And I wait until "Mobile phone" "option_role" exists
+    And I wait until "Mobile phone" "checkbox" exists
     And I press the tab key
     And the focused element is "Clear search input" "button" in the ".dropdown-menu.show" "css_element"
-    And I press the tab key
-    And I press the tab key
-    And I press the tab key
-    And I press the tab key
-    And the focused element is "Close" "button" in the ".dropdown-menu.show" "css_element"
+    And I press the escape key
     And I press the tab key
     # The course grade category menu.
     And the focused element is "Cell actions" "button"
@@ -306,6 +283,6 @@ Feature: Within the grader report, test that we can collapse columns
     And I wait until "Collapsed columns" "combobox" exists
     When I click on "Collapsed columns" "combobox"
     And I click on "Select all" "checkbox"
-    And I click on "Email" "option_role" in the "form" "gradereport_grader > collapse search"
+    And I click on "Email" "checkbox" in the "form" "gradereport_grader > collapse search"
     # The select all option should now be unchecked, Checking the form or option role is iffy with behat so we use the id.
-    Then "input#check-all-input:not([checked=checked])" "css_element" should exist
+    Then the field "Select all" matches value ""

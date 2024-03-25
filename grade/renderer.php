@@ -45,12 +45,18 @@ class core_grades_renderer extends plugin_renderer_base {
      * Renders the group selector trigger element.
      *
      * @param object $course The course object.
-     * @param string|null $groupactionbaseurl The base URL for the group action.
+     * @param string|null $groupactionbaseurl This parameter has been deprecated since 4.4 and should not be used anymore.
      * @return string|null The raw HTML to render.
      */
     public function group_selector(object $course, ?string $groupactionbaseurl = null): ?string {
         global $USER;
 
+        if ($groupactionbaseurl !== null) {
+            debugging(
+                'The $groupactionbaseurl argument has been deprecated. Please remove it from your method calls.',
+                DEBUG_DEVELOPER,
+            );
+        }
         // Make sure that group mode is enabled.
         if (!$groupmode = $course->groupmode) {
             return null;
@@ -59,17 +65,12 @@ class core_grades_renderer extends plugin_renderer_base {
         $sbody = $this->render_from_template('core_group/comboboxsearch/searchbody', [
             'courseid' => $course->id,
             'currentvalue' => optional_param('groupsearchvalue', '', PARAM_NOTAGS),
+            'instance' => rand(),
         ]);
 
-        $label = $groupmode == VISIBLEGROUPS ? get_string('selectgroupsvisible') :
-            get_string('selectgroupsseparate');
+        $label = $groupmode == VISIBLEGROUPS ? get_string('selectgroupsvisible') : get_string('selectgroupsseparate');
 
-        $data = [
-            'name' => 'group',
-            'label' => $label,
-            'courseid' => $course->id,
-            'groupactionbaseurl' => $groupactionbaseurl
-        ];
+        $buttondata = ['label' => $label];
 
         $context = context_course::instance($course->id);
 
@@ -80,22 +81,27 @@ class core_grades_renderer extends plugin_renderer_base {
         }
 
         $activegroup = groups_get_course_group($course, true, $allowedgroups);
-        $data['group'] = $activegroup;
+        $buttondata['group'] = $activegroup;
 
         if ($activegroup) {
             $group = groups_get_group($activegroup);
-            $data['selectedgroup'] = format_string($group->name, true, ['context' => $context]);
+            $buttondata['selectedgroup'] = format_string($group->name, true, ['context' => $context]);
         } else if ($activegroup === 0) {
-            $data['selectedgroup'] = get_string('allparticipants');
+            $buttondata['selectedgroup'] = get_string('allparticipants');
         }
 
         $groupdropdown = new comboboxsearch(
             false,
-            $this->render_from_template('core_group/comboboxsearch/group_selector', $data),
+            $this->render_from_template('core_group/comboboxsearch/group_selector', $buttondata),
             $sbody,
             'group-search',
             'groupsearchwidget',
-            'groupsearchdropdown overflow-auto w-100',
+            'groupsearchdropdown overflow-auto',
+            null,
+            true,
+            $label,
+            'group',
+            $activegroup
         );
         return $this->render_from_template($groupdropdown->get_template(), $groupdropdown->export_for_template($this));
     }

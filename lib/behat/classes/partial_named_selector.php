@@ -80,6 +80,7 @@ class behat_partial_named_selector extends \Behat\Mink\Selector\PartialNamedSele
         'group_message' => 'group_message',
         'autocomplete' => 'autocomplete',
         'iframe' => 'iframe',
+        'option_role' => 'option_role',
     );
 
     /**

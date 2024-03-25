@@ -17,35 +17,35 @@
     Wrapping template for returned result items.
 
     Context variables required for this template:
+    * instance - The instance ID of the combo box.
     * users - Our returned users to render.
     * found - Count of the found users.
     * total - Total count of users within this report.
-    * selectall - The created link that allows users to select all of the results.
+    * selectall - Whether to show the select all option.
     * searchterm - The entered text to find these results.
     * hasusers - Allow the handling where no users exist for the returned search term.
 
     Example context (json):
     {
+        "instance": 25,
         "users": [
             {
                 "id": 2,
                 "fullname": "Foo bar",
                 "profileimageurl": "http://foo.bar/pluginfile.php/79/user/icon/boost/f1?rev=7630",
                 "matchingField": "<span class=\"font-weight-bold\">Foo</span> bar",
-                "matchingFieldName": "Fullname",
-                "link": "http://foo.bar/grade/report/grader/index.php?id=42&userid=2"
+                "matchingFieldName": "Fullname"
             },
             {
                 "id": 3,
                 "fullname": "Bar Foo",
                 "profileimageurl": "http://foo.bar/pluginfile.php/80/user/icon/boost/f1?rev=7631",
                 "matchingField": "Bar <span class=\"font-weight-bold\">Foo</span>",
-                "matchingFieldName": "Fullname",
-                "link": "http://foo.bar/grade/report/grader/index.php?id=42&userid=3"
+                "matchingFieldName": "Fullname"
             }
         ],
         "matches": 20,
-        "selectall": "https://foo.bar/grade/report/grader/index.php?id=2&searchvalue=abe",
+        "selectall": true,
         "searchterm": "Foo",
         "hasresults": true
     }
@@ -59,10 +59,15 @@
     {{/results}}
     {{$selectall}}
         {{#selectall}}
-            <li class="w-100 result-row p-1 border-top bottom-0 position-sticky" role="none" id="result-row-{{id}}">
-                <a role="option" class="dropdown-item d-flex small p-3" id="select-all" href="{{{selectall}}}" tabindex="-1">
-                    {{#str}}viewallresults, core, {{matches}}{{/str}}
-                </a>
+            <li
+                id="result-row-{{instance}}-0"
+                class="w-100 p-1 border-top bottom-0 position-sticky dropdown-item d-flex small p-3"
+                role="option"
+                {{! The data-short-text attribute is provided so that aria.js would use it rather than the whole content. }}
+                data-short-text="{{searchterm}}"
+                data-value="0"
+            >
+                {{#str}}viewallresults, core, {{matches}}{{/str}}
             </li>
         {{/selectall}}
     {{/selectall}}

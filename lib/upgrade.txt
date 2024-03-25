@@ -99,6 +99,7 @@ information provided here is intended especially for developers.
   to bool if the original functionality is desired.
 * core\hook\manager::phpunit_get_instance() now sets self::$instance to the mocked instance if the optional $persist argument is
   true, so future calls to ::get_instance() will return it.
+* The triggerSelector method in the `core/comboboxsearch/search_combobox` JS module is deprecated. It was not used.
 
 === 4.3 ===
 

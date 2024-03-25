@@ -17,23 +17,22 @@
     Wrapping template for returned result items.
 
     Context variables required for this template:
+    * instance - The instance ID of the combo box.
     * results - Our returned results to render.
     * searchterm - The entered text to find these results.
     * hasresult - Allow the handling where no results exist for the returned search term.
-    * noresults - Our fall through case if nothing matches.
 
     Example context (json):
     {
+        "instance": 25,
         "results": [
             {
                 "id": 2,
-                "name": "Foo bar",
-                "link": "http://foo.bar/grade/report/grader/index.php?id=42&userid=2"
+                "name": "Foo bar"
             },
             {
                 "id": 3,
-                "name": "Bar Foo",
-                "link": "http://foo.bar/grade/report/grader/index.php?id=42&userid=3"
+                "name": "Bar Foo"
             }
         ],
         "searchterm": "Foo",
@@ -41,17 +40,22 @@
     }
 }}
 <div class="d-flex flex-column mh-100 h-100">
-    {{#hasresults}}
-        <ul id="{{$listid}}list{{/listid}}-result-listbox" class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group h-100 mx-0 {{$listclasses}}{{/listclasses}}" role="listbox" data-region="search-result-items-container" tabindex="-1" aria-label="{{#cleanstr}} aria:dropdowngrades, core_grades {{/cleanstr}}">
+    <ul
+        id="{{$listid}}list{{/listid}}-{{instance}}-result-listbox"
+        class="searchresultitemscontainer d-flex flex-column mw-100 position-relative py-2 list-group h-100 mx-0 {{$listclasses}}{{/listclasses}}"
+        role="listbox"
+        data-region="search-result-items-container"
+    >
+        {{#hasresults}}
             {{$results}}
                 {{#results}}
                     {{>core/local/comboboxsearch/resultitem}}
                 {{/results}}
             {{/results}}
             {{$selectall}}{{/selectall}}
-        </ul>
-    {{/hasresults}}
+        {{/hasresults}}
+    </ul>
     {{^hasresults}}
-        <span class="small d-block px-4 my-4">{{#str}} noresultsfor, core, {{searchterm}}{{/str}}</span>
+        <span class="small d-block px-4 mt-2 mb-4">{{#str}} noresultsfor, core, {{searchterm}}{{/str}}</span>
     {{/hasresults}}
 </div>

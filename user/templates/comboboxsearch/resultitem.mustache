@@ -22,7 +22,6 @@
     * profileimageurl - Link for the users' large profile image.
     * matchingField - The field in the user object that matched the search criteria.
     * matchingFieldName - The name of the field that was matched upon for A11y purposes.
-    * link - The link used to redirect upon self to show only this specific user.
 
     Example context (json):
     {
@@ -30,12 +29,12 @@
         "fullname": "Foo bar",
         "profileimageurl": "http://foo.bar/pluginfile.php/79/user/icon/boost/f1?rev=7630",
         "matchingField": "<span class=\"font-weight-bold\">Foo</span> bar",
-        "matchingFieldName": "Fullname",
-        "link": "http://foo.bar/grade/report/grader/index.php?id=42&userid=2"
+        "matchingFieldName": "Fullname"
     }
 }}
 {{<core/local/comboboxsearch/resultitem }}
-    {{$arialabel}}{{#str}}viewresults, core, {{fullname}}{{/str}}{{/arialabel}}
+    {{$arialabel}}{{fullname}}{{/arialabel}}
+    {{$shorttext}}{{fullname}}{{/shorttext}}
     {{$content}}
         <span class="d-block px-2 w-25">
             {{#profileimageurl}}

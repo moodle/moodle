@@ -82,17 +82,14 @@ Feature: Group searching functionality within the user report.
     And I click on "Search groups" "field"
     And I wait until "Default group" "option_role" exists
     And I press the down key
-    And the focused element is "All participants" "option_role"
-    And I press the end key
-    And the focused element is "Tutor group" "option_role"
-    And I press the home key
-    And the focused element is "All participants" "option_role"
-    And I press the up key
-    And the focused element is "Tutor group" "option_role"
-    And I press the down key
-    And the focused element is "All participants" "option_role"
-    And I press the escape key
     And the focused element is "Search groups" "field"
+    And ".active" "css_element" should exist in the "All participants" "option_role"
+    And I press the up key
+    And the focused element is "Search groups" "field"
+    And ".active" "css_element" should exist in the "Tutor group" "option_role"
+    And I press the down key
+    And the focused element is "Search groups" "field"
+    And ".active" "css_element" should exist in the "All participants" "option_role"
     Then I set the field "Search groups" to "Goodmeme"
     And I wait until "Tutor group" "option_role" does not exist
     And I press the down key
@@ -103,7 +100,8 @@ Feature: Group searching functionality within the user report.
     And I set the field "Search groups" to "Tutor"
     And I wait until "All participants" "option_role" does not exist
     And I press the down key
-    And the focused element is "Tutor group" "option_role"
+    And the focused element is "Search groups" "field"
+    And ".active" "css_element" should exist in the "Tutor group" "option_role"
 
     # Lets check the tabbing order.
     And I set the field "Search groups" to "Marker"

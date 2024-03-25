@@ -18,6 +18,7 @@
 
     Context variables required for this template:
     * itemid - The value of the grade item selector element (id of the preselected grade item)
+    * instance - The instance ID of the combo box.
     * courseid - The course ID.
     * selectedoption - (optional) Object containing information about the selected option.
         * text - The text of the selected option.
@@ -25,6 +26,7 @@
     Example context (json):
     {
         "itemid": "21",
+        "instance": "25",
         "courseid": "2",
         "selectedoption": {
             "text": "Grade item 1"
@@ -34,7 +36,7 @@
 <div class="align-items-center d-flex">
     {{#selectedoption}}
         <div class="d-block pr-3 text-truncate">
-                    <span class="d-block small">
+                    <span class="d-block small" aria-hidden="true">
                         {{#str}} selectagrade, gradereport_singleview {{/str}}
                     </span>
             <span class="p-0 font-weight-bold">
@@ -48,5 +50,6 @@
         </div>
     {{/selectedoption}}
 </div>
-<span class="d-none" data-region="courseid" data-courseid="{{courseid}}" aria-hidden="true"></span>
-<span class="d-none" data-region="itemid" data-itemid="{{itemid}}" aria-hidden="true"></span>
+<span class="d-none" data-region="courseid" data-courseid="{{courseid}}"></span>
+<span class="d-none" data-region="itemid" data-itemid="{{itemid}}"></span>
+<span class="d-none" data-region="instance" data-instance="{{instance}}"></span>

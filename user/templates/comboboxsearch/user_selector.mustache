@@ -20,6 +20,8 @@
     The user selector trigger element.
 
     Context variables required for this template:
+    * name - The name of the input element representing the user search combobox.
+    * value - The value of the input element representing the user search combobox.
     * currentvalue - If the user has already searched, set the value to that.
     * courseid - The course ID.
     * group - The group ID.
@@ -27,41 +29,33 @@
 
     Example context (json):
     {
+        "name": "input-1",
+        "value": "0",
         "currentvalue": "bar",
         "courseid": 2,
         "group": 25,
         "resetlink": "grade/report/grader/index.php?id=2"
     }
 }}
-<span class="d-none" data-region="courseid" data-courseid="{{courseid}}" aria-hidden="true"></span>
-<span class="d-none" data-region="groupid" data-groupid="{{group}}" aria-hidden="true"></span>
+<span class="d-none" data-region="courseid" data-courseid="{{courseid}}"></span>
+<span class="d-none" data-region="groupid" data-groupid="{{group}}"></span>
+<span class="d-none" data-region="instance" data-instance="{{instance}}"></span>
+{{< core/search_input_auto }}
+    {{$label}}{{#str}}searchusers, core{{/str}}{{/label}}
+    {{$placeholder}}{{#str}}searchusers, core{{/str}}{{/placeholder}}
+    {{$value}}{{currentvalue}}{{/value}}
+    {{$additionalattributes}}
+        role="combobox"
+        aria-expanded="false"
+        aria-controls="user-{{instance}}-result-listbox"
+        aria-autocomplete="list"
+        aria-haspopup="listbox"
+        data-input-element="user-input-{{uniqid}}-{{instance}}"
+    {{/additionalattributes}}
+{{/ core/search_input_auto }}
 {{#currentvalue}}
-    {{< core/search_input_auto }}
-        {{$label}}{{#str}}
-            searchusers, core
-        {{/str}}{{/label}}
-        {{$value}}{{currentvalue}}{{/value}}
-        {{$additionalattributes}}
-            aria-autocomplete="list"
-            data-input-element="user-input-{{uniqid}}"
-        {{/additionalattributes}}
-    {{/ core/search_input_auto }}
     <a class="ml-2 btn btn-link border-0 align-self-center" href="{{resetlink}}" data-action="resetpage" role="link" aria-label="{{#str}}clearsearch, core{{/str}}">
         {{#str}}clear{{/str}}
     </a>
 {{/currentvalue}}
-{{^currentvalue}}
-    {{< core/search_input_auto }}
-        {{$label}}{{#str}}
-            searchusers, core
-        {{/str}}{{/label}}
-        {{$placeholder}}{{#str}}
-            searchusers, core
-        {{/str}}{{/placeholder}}
-        {{$additionalattributes}}
-            aria-autocomplete="list"
-            data-input-element="user-input-{{uniqid}}"
-        {{/additionalattributes}}
-    {{/ core/search_input_auto }}
-{{/currentvalue}}
-<input type="hidden" name="search" id="user-input-{{uniqid}}"/>
+<input type="hidden" name="{{name}}" value="{{value}}" id="user-input-{{uniqid}}-{{instance}}"/>

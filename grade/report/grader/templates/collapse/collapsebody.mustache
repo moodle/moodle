@@ -18,6 +18,7 @@
 
     Example context (json):
     {
+        "instance": 25,
         "results": [
             {
                 "name": "42",
@@ -39,24 +40,18 @@
         {{$placeholder}}{{#str}}
             searchcollapsedcolumns, core_grades
         {{/str}}{{/placeholder}}
-        {{$additionalattributes}}
-            role="combobox"
-            aria-expanded="true"
-            aria-controls="collapse-listbox"
-            aria-autocomplete="list"
-            data-input-element="collapse-input-{{uniqid}}"
-        {{/additionalattributes}}
     {{/ core/search_input_auto }}
-    <input type="hidden" name="search" id="collapse-input-{{uniqid}}"/>
-
     <form class="columnsdropdownform flex-column h-100">
-        <ul id="collapse-listbox" class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" role="listbox" data-region="search-result-items-container" tabindex="-1" aria-label="{{#cleanstr}} aria:dropdowncolumns, gradereport_grader {{/cleanstr}}" aria-busy="true">
-            {{>gradereport_grader/collapse/collapseresults}}
-        </ul>
+        <fieldset>
+            <legend class="sr-only">{{#str}} aria:dropdowncolumns, gradereport_grader {{/str}}</legend>
+            <ul id="collapse-{{instance}}-listbox" class="searchresultitemscontainer overflow-auto py-2 px-1 list-group mx-0 text-truncate" data-region="search-result-items-container">
+                {{>gradereport_grader/collapse/collapseresults}}
+            </ul>
+        </fieldset>
         <div class="d-flex mt-2">
             <div class="d-flex align-items-center form-check">
-                <label id="check-all" for="check-all-input" class="selected-option-info text-truncate form-check-label d-block" tabindex="-1">
-                    <input disabled id="check-all-input" class="form-check-input" type="checkbox" data-action="selectall" aria-label="{{#str}}selectall, core{{/str}}">
+                <label id="check-all" class="selected-option-info text-truncate form-check-label d-block">
+                    <input disabled class="form-check-input" type="checkbox" data-action="selectall">
                     {{#str}}selectall, core{{/str}}
                 </label>
             </div>

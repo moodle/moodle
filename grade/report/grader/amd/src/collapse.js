@@ -56,6 +56,7 @@ const selectors = {
     count: '[data-collapse="count"]',
     placeholder: '.collapsecolumndropdown [data-region="placeholder"]',
     fullDropdown: '.collapsecolumndropdown',
+    searchResultContainer: '.searchresultitemscontainer',
 };
 
 const countIndicator = document.querySelector(selectors.count);
@@ -98,6 +99,19 @@ export default class ColumnSearch extends search_combobox {
                 document.querySelector('.gradereport-grader-table').classList.remove('d-none');
             }, 10);
         }).then(() => pendingPromise.resolve()).catch(Notification.exception);
+
+        this.$component.on('hide.bs.dropdown', () => {
+            const searchResultContainer = this.component.querySelector(selectors.searchResultContainer);
+            searchResultContainer.scrollTop = 0;
+
+            // Use setTimeout to make sure the following code is executed after the click event is handled.
+            setTimeout(() => {
+                if (this.searchInput.value !== '') {
+                    this.searchInput.value = '';
+                    this.searchInput.dispatchEvent(new Event('input', {bubbles: true}));
+                }
+            });
+        });
     }
 
     /**
@@ -116,15 +130,6 @@ export default class ColumnSearch extends search_combobox {
      */
     dropdownSelector() {
         return '.searchresultitemscontainer';
-    }
-
-    /**
-     * The triggering div that contains the searching widget.
-     *
-     * @returns {string}
-     */
-    triggerSelector() {
-        return '.collapsecolumn';
     }
 
     /**
@@ -215,25 +220,6 @@ export default class ColumnSearch extends search_combobox {
 
             this.nodesUpdate(e.target.closest(selectors.colVal)?.dataset.col);
             this.nodesUpdate(e.target.closest(selectors.colVal)?.dataset.itemid);
-        }
-    }
-
-    /**
-     * The handler for when a user presses a key within the component.
-     *
-     * @param {KeyboardEvent} e The triggering event that we are working with.
-     */
-    async keyHandler(e) {
-        super.keyHandler(e);
-
-        // Switch the key presses to handle keyboard nav.
-        switch (e.key) {
-            case 'Tab':
-                if (e.target.closest(this.selectors.input)) {
-                    e.preventDefault();
-                    this.clearSearchButton.focus({preventScroll: true});
-                }
-                break;
         }
     }
 
@@ -492,6 +478,7 @@ export default class ColumnSearch extends search_combobox {
         // Update the collapsed button pill.
         this.countUpdate();
         const {html, js} = await renderForPromise('gradereport_grader/collapse/collapsebody', {
+            'instance': this.instance,
             'results': this.getMatchedResults(),
             'userid': this.userID,
         });
@@ -505,6 +492,7 @@ export default class ColumnSearch extends search_combobox {
         // Add a small BS listener so that we can set the focus correctly on open.
         this.$component.on('shown.bs.dropdown', () => {
             this.searchInput.focus({preventScroll: true});
+            this.selectallEnable();
         });
     }
 
@@ -512,14 +500,26 @@ export default class ColumnSearch extends search_combobox {
      * Build the content then replace the node.
      */
     async renderDropdown() {
-        const form = this.component.querySelector(selectors.formDropdown);
-        const selectall = form.querySelector('[data-action="selectall"]');
         const {html, js} = await renderForPromise('gradereport_grader/collapse/collapseresults', {
+            instance: this.instance,
             'results': this.getMatchedResults(),
             'searchTerm': this.getSearchTerm(),
         });
-        selectall.disabled = this.getMatchedResults().length === 0;
         replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+        this.selectallEnable();
+        // Reset the expand button to be disabled as we have re-rendered the dropdown.
+        const form = this.component.querySelector(selectors.formDropdown);
+        const expandButton = form.querySelector(`[data-action="${selectors.formItems.save}"`);
+        expandButton.disabled = true;
+    }
+
+    /**
+     * Given we render the dropdown, Determine if we want to enable the select all checkbox.
+     */
+    selectallEnable() {
+        const form = this.component.querySelector(selectors.formDropdown);
+        const selectall = form.querySelector('[data-action="selectall"]');
+        selectall.disabled = this.getMatchedResults().length === 0;
     }
 
     /**

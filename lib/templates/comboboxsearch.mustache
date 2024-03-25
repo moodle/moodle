@@ -17,8 +17,11 @@
     Combobox search selector dropdown.
 
     Context variables required for this template:
-    * rtl - Is this dropdown being used in a RTL case? if so, we need to ensure it drops down in the right place.
+    * label - The label for the the combobox.
+    * name - The name of the input element representing the combobox.
+    * value - The value of the input element representing the combobox.
     * renderlater - This determines if we show a placeholder whilst fetching content to replace within the placeholder region
+    * buttonheader - The header to be shown above the button
     * buttoncontent - The string to be shown to users to trigger the dropdown
     * usebutton - If we want to use a button to trigger the dropdown, or just the dropdown itself
     * dropdowncontent - If rendering now, The content within the dropdown
@@ -29,10 +32,13 @@
 
     Example context (json):
     {
-        "rtl": false,
+        "label": "Example searchable combobox",
+        "name": "input-1",
+        "value": "0",
         "renderlater": false,
+        "buttonheader": "Example:",
         "usebutton": true,
-        "buttoncontent": "Example dropdown button",
+        "buttoncontent": "Dropdown button",
         "dropdowncontent": "Some body content to render right now",
         "parentclasses": "my-dropdown",
         "buttonclasses": "my-button",
@@ -43,17 +49,7 @@
 {{#buttonheader}}
     <small>{{.}}</small>
 {{/buttonheader}}
-<div class="{{#parentclasses}}{{.}}{{/parentclasses}}"
-    {{^usebutton}}
-        tabindex="-1"
-        data-toggle="dropdown"
-        aria-expanded="false"
-        role="combobox"
-        aria-haspopup="dialog"
-        aria-controls="dialog-{{instance}}-{{uniqid}}"
-        aria-label="{{#cleanstr}} aria-toggledropdown, core_grades {{/cleanstr}}"
-        data-input-element="input-{{uniqid}}"
-    {{/usebutton}}>
+<div class="{{#parentclasses}}{{.}}{{/parentclasses}} dropdown" data-instance="{{instance}}">
 
     {{#usebutton}}
         <div tabindex="0"
@@ -62,20 +58,23 @@
              role="combobox"
              aria-haspopup="dialog"
              aria-controls="dialog-{{instance}}-{{uniqid}}"
-             class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle keep-open d-flex text-left align-items-center p-0 font-weight-bold"
-             aria-label="{{#cleanstr}} aria-toggledropdown, core_grades {{/cleanstr}}"
-             data-input-element="input-{{uniqid}}">
+             class="{{#buttonclasses}}{{.}}{{/buttonclasses}} btn dropdown-toggle d-flex text-left align-items-center p-0 font-weight-bold"
+             aria-label="{{label}}"
+             data-input-element="input-{{instance}}-{{uniqid}}">
             {{{buttoncontent}}}
         </div>
+        <input type="hidden" name="{{name}}" value="{{value}}" id="input-{{instance}}-{{uniqid}}"/>
     {{/usebutton}}
 
     {{^usebutton}}{{{buttoncontent}}}{{/usebutton}}
 
-    <div class="{{#dropdownclasses}}{{.}}{{/dropdownclasses}} dropdown-menu {{#rtl}}dropdown-menu-right{{/rtl}}"
-         id="dialog-{{instance}}-{{uniqid}}"
-         role="dialog"
-         aria-modal="true"
-         aria-label="{{#cleanstr}} selectagroup, core {{/cleanstr}}"
+    <div class="{{#dropdownclasses}}{{.}}{{/dropdownclasses}} dropdown-menu"
+        id="dialog-{{instance}}-{{uniqid}}"
+        {{#usebutton}}
+            role="dialog"
+            aria-modal="true"
+            aria-label="{{label}}"
+        {{/usebutton}}
     >
         <div class="w-100 p-3" data-region="placeholder">
             {{#renderlater}}

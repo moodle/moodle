@@ -104,11 +104,12 @@ Feature: Within the singleview report, a teacher can search for users.
     Given I click on "Turtle" in the "user" search widget
     And I wait until the page is ready
     # The search input remains in the field on reload this is in keeping with other search implementations.
-    When the field "Search users" matches value "Turtle"
-    And "Turtle Manatee" "option_role" should not exist
+    When the field "Search users" matches value "Turtle Manatee"
+    # The users get preloaded for accessibility reasons.
+    And "Turtle Manatee" "option_role" should exist
     # Test if we can then further retain the turtle result set and further filter from there.
     Then I set the field "Search users" to "Turtle plagiarism"
-    And "Turtle Manatee" "list_item" should not exist
+    And I wait until "Turtle Manatee" "option_role" does not exist
     And I should see "No results for \"Turtle plagiarism\""
 
   Scenario: A teacher can search for values besides the users' name
@@ -186,15 +187,11 @@ Feature: Within the singleview report, a teacher can search for users.
     # Move onto general keyboard navigation testing.
     When I wait until "Turtle Manatee" "option_role" exists
     And I press the down key
-    And the focused element is "Student 1" "option_role"
-    And I press the end key
-    And the focused element is "Dummy User" "option_role"
-    And I press the home key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the up key
-    And the focused element is "Dummy User" "option_role"
+    And ".active" "css_element" should exist in the "Dummy User" "option_role"
     And I press the down key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
     And I press the escape key
     And the focused element is "Search users" "field"
     Then I set the field "Search users" to "Goodmeme"
@@ -206,7 +203,7 @@ Feature: Within the singleview report, a teacher can search for users.
     And I set the field "Search users" to "ABC"
     And I wait until "Turtle Manatee" "option_role" exists
     And I press the down key
-    And the focused element is "Student 1" "option_role"
+    And ".active" "css_element" should exist in the "Student 1" "option_role"
 
     # Lets check the tabbing order.
     And I set the field "Search users" to "ABC"

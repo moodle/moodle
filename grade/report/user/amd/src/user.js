@@ -42,11 +42,14 @@ export default class User extends UserSearch {
         const {html, js} = await renderForPromise('core_user/comboboxsearch/resultset', {
             users: this.getMatchedResults().slice(0, 5),
             hasresults: this.getMatchedResults().length > 0,
+            instance: this.instance,
             matches: this.getDatasetSize(),
             searchterm: this.getSearchTerm(),
             selectall: this.selectAllResultsLink(),
         });
         replaceNodeContents(this.getHTMLElements().searchDropdown, html, js);
+        // Remove aria-activedescendant when the available options change.
+        this.searchInput.removeAttribute('aria-activedescendant');
     }
 
     /**
@@ -63,7 +66,7 @@ export default class User extends UserSearch {
     }
 
     /**
-     * Build up the view all link that is dedicated to a particular result.
+     * Build up the link that is dedicated to a particular result.
      *
      * @param {Number} userID The ID of the user selected.
      * @returns {string|*}

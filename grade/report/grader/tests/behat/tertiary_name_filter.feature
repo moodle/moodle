@@ -120,6 +120,7 @@ Feature: Within the grader report, test that we can open our generic filter drop
     # Click off the drop down
     And I click on "Filter by name" "combobox"
     And "input[data-action=save]" "css_element" should be visible
+    And I change window size to "large"
     And I click on user profile field menu "fullname"
     And "input[data-action=save]" "css_element" should not be visible
 
