@@ -48,6 +48,9 @@ Feature: View the user report as the student will see it
     And I change window size to "medium"
 
   Scenario: View the report as the teacher themselves
+    Given the following "activities" exist:
+      | activity | course | idnumber | name          | intro             | grade |
+      | quiz     | C1     | q1       | Test quiz one | Submit something! | 100   |
     When I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     And I should see "Course 1 & '\""
@@ -63,9 +66,16 @@ Feature: View the user report as the student will see it
       | Sub category 2 total    | 33.33 %           | 150.00 | 0–200 | 75.00 %    | -                            |
       | Test assignment five    | 16.67 %           | 21.00  | 0–100 | 21.00 %    | 3.50 %                       |
       | Test assignment six     | 16.67 %           | 97.00  | 0–100 | 97.00 %    | 16.17 %                      |
+      | Test quiz one           | 0.00 %( Empty )   | -      | 0–100 | -          | 0.00 %                       |
       | Course total            | -                 | 383.00 | 0–600 | 63.83 %    | -                            |
+    # Confirm a contextual menu with a link to the Grade analysis page is available for "Test quiz one".
+    And I open the action menu in "Test quiz one" "table_row"
+    And "Grade analysis" "link" should exist
 
   Scenario: View the report as the student from both the teachers and students perspective
+    Given the following "activities" exist:
+      | activity | course | idnumber | name          | intro             | grade |
+      | quiz     | C1     | q1       | Test quiz one | Submit something! | 100   |
     When I navigate to "View > User report" in the course gradebook
     And I click on "Student 1" in the "user" search widget
     And I set the field "View report as" to "User"
@@ -75,6 +85,7 @@ Feature: View the user report as the student will see it
       | Test assignment two     | -                 | 35.00  | 0–100 | 35.00 %    | -                            |
       | Sub category 1 total    | 33.33 %           | -      | 0–200 | -          | -                            |
       | Test assignment five    | -                 | 21.00  | 0–100 | 21.00 %    | -                            |
+      | Test quiz one           | -                 | -      | 0–100 | -          | -                            |
       | Course total            | -                 | -      | 0–600 | -          | -                            |
     And "//i[@aria-label='Pass']" "xpath_element" should exist in the "Test assignment one" "table_row"
     And "//i[@aria-label='Fail']" "xpath_element" should exist in the "Test assignment two" "table_row"
@@ -84,15 +95,19 @@ Feature: View the user report as the student will see it
       | Test assignment four    |
       | Sub category 2 total    |
       | Test assignment six     |
+    # Confirm a contextual menu with a link to the Grade analysis page is available for "Test quiz one".
+    And I open the action menu in "Test quiz one" "table_row"
+    And "Grade analysis" "link" should exist
     And I log out
     And I am on the "C1" "Course" page logged in as "student1"
     And I navigate to "User report" in the course gradebook
-    Then the following should exist in the "user-grade" table:
+    And the following should exist in the "user-grade" table:
       | Grade item              | Calculated weight | Grade  | Range | Percentage | Contribution to course total |
       | Test assignment one     | -                 | 80.00  | 0–100 | 80.00 %    | -                            |
       | Test assignment two     | -                 | 35.00  | 0–100 | 35.00 %    | -                            |
       | Sub category 1 total    | 33.33 %           | -      | 0–200 | -          | -                            |
       | Test assignment five    | -                 | 21.00  | 0–100 | 21.00 %    | -                            |
+      | Test quiz one           | -                 | -      | 0–100 | -          | -                            |
       | Course total            | -                 | -      | 0–600 | -          | -                            |
     And "//i[@aria-label='Pass']" "xpath_element" should exist in the "Test assignment one" "table_row"
     And "//i[@aria-label='Fail']" "xpath_element" should exist in the "Test assignment two" "table_row"
@@ -102,6 +117,9 @@ Feature: View the user report as the student will see it
       | Test assignment four    |
       | Sub category 2 total    |
       | Test assignment six     |
+    # Confirm a contextual menu with a link to the Grade analysis page is available for "Test quiz one".
+    And I open the action menu in "Test quiz one" "table_row"
+    And "Grade analysis" "link" should exist
 
   Scenario: View the report as the student from both the teachers and students perspective with totals excluding hidden
     Given I navigate to "Setup > Course grade settings" in the course gradebook
