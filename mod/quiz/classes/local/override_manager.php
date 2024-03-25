@@ -31,7 +31,6 @@ use mod_quiz\event\user_override_updated;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class override_manager {
-
     /** @var array quiz setting keys that can be overwritten **/
     private const OVERRIDEABLE_QUIZ_SETTINGS = ['timeopen', 'timeclose', 'timelimit', 'attempts', 'password'];
 
@@ -87,9 +86,9 @@ class override_manager {
         $errors = [];
 
         // Ensure at least one of the overrideable settings is set.
-        $keysthatareset = array_map(function($key) use ($formdata) {
+        $keysthatareset = array_map(function ($key) use ($formdata) {
             return isset($formdata->$key) && !is_null($formdata->$key);
-        } , self::OVERRIDEABLE_QUIZ_SETTINGS);
+        }, self::OVERRIDEABLE_QUIZ_SETTINGS);
 
         if (!in_array(true, $keysthatareset)) {
             $errors['general'][] = new \lang_string('nooverridedata', 'quiz');

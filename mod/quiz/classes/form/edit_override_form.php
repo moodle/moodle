@@ -57,7 +57,7 @@ class edit_override_form extends moodleform {
     protected $userid;
 
     /** @var int overrideid, if provided. */
-    protected $overrideid;
+    protected int $overrideid;
 
     /**
      * Constructor.

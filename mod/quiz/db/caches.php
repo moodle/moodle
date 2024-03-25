@@ -32,7 +32,7 @@ $definitions = [
         'simplekeys' => true,
         'datasource' => '\mod_quiz\cache\overrides',
         'invalidationevents' => [
-           \mod_quiz\local\override_cache::INVALIDATION_USERDATARESET,
+            \mod_quiz\local\override_cache::INVALIDATION_USERDATARESET,
         ],
     ],
 ];

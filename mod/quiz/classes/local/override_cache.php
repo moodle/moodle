@@ -25,8 +25,7 @@ namespace mod_quiz\local;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class override_cache {
-
-    /** @var string invalidation event used to purge data when reset_userdata is called, {@see \cache_helper::purge_by_event()}**/
+    /** @var string invalidation event used to purge data when reset_userdata is called, {@see \cache_helper::purge_by_event()} **/
     public const INVALIDATION_USERDATARESET = 'userdatareset';
 
     /**
@@ -43,7 +42,7 @@ class override_cache {
     /**
      * Returns the override cache
      *
-     * @return cache
+     * @return \cache
      */
     protected function get_cache(): \cache {
         return \cache::make('mod_quiz', 'overrides');

@@ -322,13 +322,16 @@ function quiz_calculate_best_attempt($quiz, $attempts) {
  * @param bool $log Whether to trigger logs.
  * @return bool true on success
  */
+#[\core\attribute\deprecated('override_manager::delete_override_by_id', since: '4.4')]
 function quiz_delete_override($quiz, $overrideid, $log = true) {
-    debugging('quiz_delete_override is deprecated. Please use override_manager::delete_override_by_id instead.', DEBUG_DEVELOPER);
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     $quizsettings = quiz_settings::create($quiz->id);
     $quizsettings->get_override_manager()->delete_overrides_by_id(
         ids: [$overrideid],
         shouldlog: $log,
     );
+
+    return true;
 }
 
 /**
@@ -339,9 +342,9 @@ function quiz_delete_override($quiz, $overrideid, $log = true) {
  * @param stdClass $quiz The quiz object.
  * @param bool $log Whether to trigger logs.
  */
+#[\core\attribute\deprecated('override_manager::delete_all_overrides', since: '4.4')]
 function quiz_delete_all_overrides($quiz, $log = true) {
-    debugging('quiz_delete_all_overrides is deprecated. Please use override_manager::delete_all_overrides instead.',
-        DEBUG_DEVELOPER);
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
     $quizsettings = quiz_settings::create($quiz->id);
     $quizsettings->get_override_manager()->delete_all_overrides(shouldlog: $log);
 }

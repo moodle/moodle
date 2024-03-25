@@ -14,9 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_quiz;
-
-use mod_quiz\local\override_cache;
+namespace mod_quiz\local;
 
 /**
  * Cache manager tests for quiz overrides
@@ -27,7 +25,6 @@ use mod_quiz\local\override_cache;
  * @covers    \mod_quiz\local\override_cache
  */
 final class override_cache_test extends \advanced_testcase {
-
     /**
      * Tests CRUD functions of the override_cache
      */
@@ -37,14 +34,11 @@ final class override_cache_test extends \advanced_testcase {
         $reflection = new \ReflectionClass($overridecache);
 
         $getcache = $reflection->getMethod('get_cache');
-        $getcache->setAccessible(true);
         $cache = $getcache->invoke($overridecache);
 
         $getuserkey = $reflection->getMethod('get_user_cache_key');
-        $getuserkey->setAccessible(true);
 
         $getgroupkey = $reflection->getMethod('get_group_cache_key');
-        $getgroupkey->setAccessible(true);
 
         $dummydata = (object)[
             'userid' => 1234,
@@ -79,7 +73,7 @@ final class override_cache_test extends \advanced_testcase {
         $cache->set($getgroupkey->invoke($overridecache, 456), 'testgroup');
 
         // Purge it.
-        \cache_helper::purge_by_event(\mod_quiz\local\override_cache::INVALIDATION_USERDATARESET);
+        \cache_helper::purge_by_event(override_cache::INVALIDATION_USERDATARESET);
         $this->assertEmpty($overridecache->get_cached_user_override(123));
         $this->assertEmpty($overridecache->get_cached_group_override(456));
     }

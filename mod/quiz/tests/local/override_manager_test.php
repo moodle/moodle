@@ -14,15 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace mod_quiz;
+namespace mod_quiz\local;
 
 use mod_quiz\event\group_override_created;
 use mod_quiz\event\group_override_updated;
 use mod_quiz\event\user_override_created;
 use mod_quiz\event\user_override_updated;
-use mod_quiz\local\override_manager;
 use mod_quiz\event\user_override_deleted;
-use mod_quiz\local\override_cache;
+use mod_quiz\quiz_settings;
 
 /**
  * Test for override_manager class
@@ -33,7 +32,6 @@ use mod_quiz\local\override_cache;
  * @covers    \mod_quiz\local\override_manager
  */
 final class override_manager_test extends \advanced_testcase {
-
     /** @var array Default quiz settings **/
     private const TEST_QUIZ_SETTINGS = [
         'attempts' => 5,
@@ -305,8 +303,12 @@ final class override_manager_test extends \advanced_testcase {
      * @param string $expectedeventclass an event class, which is expected to the emitted by upsert
      * @dataProvider save_and_get_override_provider
      */
-    public function test_save_and_get_override(array $existingdata, array $formdata, int $expectedrecordscreated,
-        string $expectedeventclass): void {
+    public function test_save_and_get_override(
+        array $existingdata,
+        array $formdata,
+        int $expectedrecordscreated,
+        string $expectedeventclass
+    ): void {
         global $DB;
 
         $this->setAdminUser();
@@ -966,8 +968,11 @@ final class override_manager_test extends \advanced_testcase {
      * @param \Closure $functionbeingtested is passed the manager and calls the function being tested (usually require_*_capability)
      * @dataProvider require_read_capability_provider
      */
-    public function test_require_read_capability(array $capabilitiestogive, bool $expectedallowed,
-        \Closure $functionbeingtested): void {
+    public function test_require_read_capability(
+        array $capabilitiestogive,
+        bool $expectedallowed,
+        \Closure $functionbeingtested
+    ): void {
         $this->resetAfterTest();
         [$quizobj] = $this->create_quiz_and_course();
         $user = $this->getDataGenerator()->create_user();
