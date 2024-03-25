@@ -38227,9 +38227,6 @@ div.editor_atto_toolbar button .icon {
 .courseindex .courseindex-item:focus.dimmed .courseindex-chevron {
   color: black;
 }
-.courseindex .courseindex-item:hover.draggable, .courseindex .courseindex-item:focus.draggable {
-  cursor: pointer;
-}
 .courseindex .courseindex-item.dragging {
   border: 1px solid #b8dce2;
   background-color: #e0f0f2;
