@@ -29014,6 +29014,9 @@ span.editinstructions .alert-link {
   padding: 2rem;
   width: 100%;
 }
+.course-section .overlay-preview {
+  z-index: 5;
+}
 
 .description .course-description-item {
   font-size: 0.875em;
