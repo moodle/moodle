@@ -1514,6 +1514,16 @@ class structure {
                 'COALESCE(MAX(sortorder) + 1, 1)',
                 ['quizid' => $this->get_quizid()]);
 
+        // If name is blank, supply a default.
+        if ((string) $gradeitemdata->name === '') {
+            $count = 0;
+            do {
+                $count += 1;
+                $gradeitemdata->name = get_string('gradeitemdefaultname', 'quiz', $count);
+            } while ($DB->record_exists('quiz_grade_items',
+                ['quizid' => $this->get_quizid(), 'name' => $gradeitemdata->name]));
+        }
+
         $transaction = $DB->start_delegated_transaction();
 
         // Create the grade item.

@@ -49,7 +49,8 @@ class create_grade_items extends external_api {
             'quizid' => new external_value(PARAM_INT, 'The quiz to update slots for.'),
             'quizgradeitems' => new external_multiple_structure(
                 new external_single_structure([
-                    'name' => new external_value(PARAM_TEXT, 'The name for the grade item to create.'),
+                    'name' => new external_value(PARAM_TEXT,
+                        'The name for the grade item to create. If empty string, a sensible default is used.'),
                 ])
             ),
         ]);

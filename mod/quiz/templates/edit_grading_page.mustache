@@ -81,8 +81,6 @@
 
     <h2>{{#str}} gradeitemsetup, quiz {{/str}}</h2>
 
-    <h3>{{#str}} gradeitems, grades {{/str}}</h3>
-
     {{^hasgradeitems}}
         {{#nogradeitems}}
             {{> core/notification_info}}
@@ -91,17 +89,18 @@
 
     {{#hasgradeitems}}
         <table class="generaltable table-responsive" id="mod_quiz-grade-item-list" data-quiz-id="{{quizid}}">
+            <caption class="sr-only"> {{#str}} gradeitems, grades {{/str}} </caption>
             <thead>
                 <tr>
                     <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
-                    <th scope="col">{{#str}} actions {{/str}}</th>
                     <th scope="col">{{#str}} totalmarks, quiz {{/str}}</th>
+                    <th scope="col">{{#str}} actions {{/str}}</th>
                 </tr>
             </thead>
             <tbody>
                 {{#gradeitems}}
                     <tr data-quiz-grade-item-id="{{id}}">
-                        <th scope="row" class="align-middle py-1">
+                        <th scope="row" class="align-middle font-weight-normal py-1">
                             <span class="inplaceeditable inplaceeditable-text w-100"
                                 data-raw-name="{{name}}" data-edit-label="{{#str}} gradeitemnewname, quiz, {{{displayname}}} {{/str}}">
                                     <a href="#" class="quickeditlink w-100" data-action-edit="1" title="{{#str}} gradeitemedit, quiz, {{{displayname}}} {{/str}}">
@@ -112,15 +111,15 @@
                                     </a>
                             </span>
                         </th>
+                        <td class="align-middle text-right py-1">
+                            {{summarks}}
+                        </td>
                         <td class="align-middle text-center py-1">
                             {{^isused}}
                                 <a href="#" data-action-delete="1">
                                     {{#pix}} t/delete, core, {{#str}} gradeitemdelete, quiz, {{{name}}} {{/str}} {{/pix}}
                                 </a>
                             {{/isused}}
-                        </td>
-                        <td class="align-middle text-right py-1">
-                            {{summarks}}
                         </td>
                     </tr>
                 {{/gradeitems}}
@@ -131,10 +130,6 @@
     <div class="mb-5">
         <button type="button" class="btn btn-secondary" id="mod_quiz-add_grade_item"
                 data-quiz-id="{{quizid}}">{{#str}} additem, grades{{/str}}</button>
-        {{#hasgradeitems}}
-            <button type="button" class="btn btn-danger" id="mod_quiz-grades_reset_all"
-                data-quiz-id="{{quizid}}">{{#str}} gradeitemsremoveall, quiz{{/str}}</button>
-        {{/hasgradeitems}}
         {{^hasgradeitems}}
             {{#hasmultiplesections}}
                 <button type="button" class="btn btn-secondary" id="mod_quiz-grades_auto_setup"
@@ -153,9 +148,10 @@
 
     {{#hasslots}}
         <table class="generaltable table-responsive" id="mod_quiz-slot-list" data-quiz-id="{{quizid}}">
+            <caption class="sr-only"> {{#str}} gradeitemmarkscheme, quiz {{/str}} </caption>
             <thead>
                 <tr>
-                    <th scope="col">{{#str}} qnumberbrief, quiz {{/str}}</th>
+                    <th scope="col">{{#str}} numberabbr, quiz {{/str}}</th>
                     <th scope="col">{{#str}} question, quiz {{/str}}</th>
                     <th scope="col">{{#str}} marks, quiz {{/str}}</th>
                     <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
@@ -188,4 +184,11 @@
         </table>
     {{/hasslots}}
 
+    <div>
+        {{#hasgradeitems}}
+            <h3>{{#str}} gradeitemsremovealltitle, quiz {{/str}}</h3>
+            <button type="button" class="btn btn-danger" id="mod_quiz-grades_reset_all"
+                data-quiz-id="{{quizid}}">{{#str}} gradeitemsremoveall, quiz {{/str}}</button>
+        {{/hasgradeitems}}
+    </div>
 </div>

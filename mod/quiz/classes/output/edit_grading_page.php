@@ -90,6 +90,9 @@ class edit_grading_page implements renderable, templatable {
 
         // Add the relevant slots ot each section.
         foreach ($this->structure->get_slots() as $slot) {
+            if (!$this->structure->is_real_question($slot->slot)) {
+                continue;
+            }
             // Mark the right choice as selected.
             $choices = $gradeitemchoices;
             if ($slot->quizgradeitemid) {

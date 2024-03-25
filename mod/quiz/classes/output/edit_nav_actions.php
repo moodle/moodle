@@ -57,16 +57,16 @@ class edit_nav_actions implements renderable, templatable {
 
         // Build the navigation drop-down.
         $questionsurl = new moodle_url('/mod/quiz/edit.php', ['cmid' => $this->cmid]);
-        $complexgradingurl = new moodle_url('/mod/quiz/editgrading.php', ['cmid' => $this->cmid]);
+        $gradeitemsetupurl = new moodle_url('/mod/quiz/editgrading.php', ['cmid' => $this->cmid]);
 
         $menu = [
             $questionsurl->out(false) => get_string('questions', 'quiz'),
-            $complexgradingurl->out(false) => get_string('complexgrading', 'quiz'),
+            $gradeitemsetupurl->out(false) => get_string('gradeitemsetup', 'quiz'),
         ];
 
         $overridesnav = new url_select(
             $menu,
-            $this->whichpage === self::SUMMARY ? $questionsurl->out(false) : $complexgradingurl->out(false),
+            $this->whichpage === self::SUMMARY ? $questionsurl->out(false) : $gradeitemsetupurl->out(false),
             null
         );
         $overridesnav->set_label(get_string('quizsetupnavigation', 'quiz'), ['class' => 'sr-only']);

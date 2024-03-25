@@ -55,7 +55,6 @@ $quizhasattempts = quiz_has_attempts($quiz->id);
 
 // Initialise output.
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_pagetype('mod-quiz-edit');
 
 $output = $PAGE->get_renderer('mod_quiz', 'edit');
 

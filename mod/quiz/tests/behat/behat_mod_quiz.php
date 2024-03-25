@@ -322,7 +322,7 @@ class behat_mod_quiz extends behat_question_base {
             }
 
             // Grade item.
-            if (array_key_exists('grade item', $questiondata)) {
+            if (array_key_exists('grade item', $questiondata) && trim($questiondata['grade item']) !== '') {
                 $extraslotproperties['quizgradeitemid'] =
                     $DB->get_field('quiz_grade_items', 'id',
                         ['quizid' => $quiz->id, 'name' => $questiondata['grade item']], MUST_EXIST);

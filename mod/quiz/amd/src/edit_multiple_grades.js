@@ -52,17 +52,15 @@ const SELECTORS = {
  * Call the Ajax service to create a quiz grade item.
  *
  * @param {Number} quizId id of the quiz to update.
- * @param {String} name name of the grade item to create.
  * @returns {Promise<Object>} a promise that resolves to the template context required to re-render the page.
  */
 const createGradeItem = (
     quizId,
-    name
 ) => callServiceAndReturnRenderingData({
     methodname: 'mod_quiz_create_grade_items',
     args: {
         quizid: quizId,
-        quizgradeitems: [{name: name}],
+        quizgradeitems: [{name: ''}],
     }
 });
 
@@ -413,8 +411,7 @@ const handleAddGradeItemClick = (e) => {
 
     const quizId = e.target.dataset.quizId;
 
-    getString('gradeitemdefaultname', 'quiz')
-        .then((name) => createGradeItem(quizId, name))
+    createGradeItem(quizId)
         .then(reRenderPage)
         .then(() => {
             pending.resolve();

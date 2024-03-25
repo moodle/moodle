@@ -18,10 +18,11 @@ Feature: Setup multiple grades for a quiz
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype     | name       | questiontext        |
-      | Test questions   | truefalse | Question A | This is question 01 |
-      | Test questions   | truefalse | Question B | This is question 02 |
-      | Test questions   | truefalse | Question C | This is question 03 |
+      | questioncategory | qtype       | name       | questiontext        |
+      | Test questions   | description | Info       | Some information    |
+      | Test questions   | truefalse   | Question A | This is question 01 |
+      | Test questions   | truefalse   | Question B | This is question 02 |
+      | Test questions   | truefalse   | Question C | This is question 03 |
     And the following "activities" exist:
       | activity | name   | course |
       | quiz     | Quiz 1 | C1     |
@@ -35,6 +36,7 @@ Feature: Setup multiple grades for a quiz
       | Quiz 1 | Unused grade item |
     And quiz "Quiz 1" contains the following questions:
       | question   | page | grade item   |
+      | Info       | 1    |              |
       | Question A | 1    | Intuition    |
       | Question B | 1    | Intelligence |
       | Question C | 2    | Intuition    |
@@ -56,19 +58,23 @@ Feature: Setup multiple grades for a quiz
     And the field "Question C" matches value "Intuition"
     And "3" row "Marks" column of "mod_quiz-slot-list" table should contain "1.00"
 
+    And I should not see "Info"
+
   @javascript
   Scenario: A grade item can be created and renamed
     Given quiz "Quiz 1" contains the following questions:
       | question   | page |
       | Question A | 1    |
     When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
-    And I should see "This quiz does not yet have any grade items defined"
+    And I should see "Create grade items within your quiz. Allocate questions or quiz sections to these grade items to break down grade results into different areas."
     And I press "Add grade item"
-    Then "New grade item" "table_row" should exist
-    And I click on "Edit" "link" in the "New grade item" "table_row"
+    Then "New grade item 1" "table_row" should exist
+    And I press "Add grade item"
+    Then "New grade item 2" "table_row" should exist
+    And I click on "Edit" "link" in the "New grade item 1" "table_row"
     And I set the field "New name for grade item" to "Intelligence"
     And I press enter
-    And I should not see "New grade item"
+    And I should not see "New grade item 1"
     And "Intelligence" "table_row" should exist
 
   @javascript
@@ -97,7 +103,7 @@ Feature: Setup multiple grades for a quiz
     When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
     And I follow "Delete grade item Unused grade item"
     Then I should not see "Unused grade item"
-    And I should see "This quiz does not yet have any grade items defined"
+    And I should see "Create grade items within your quiz. Allocate questions or quiz sections to these grade items to break down grade results into different areas."
 
   @javascript
   Scenario: Grade item for a slot can be changed
@@ -130,14 +136,14 @@ Feature: Setup multiple grades for a quiz
       | Question C | 2    | Intuition    |
 
     When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
-    And I press "Reset advanced grading setup"
-    And I click on "Reset" "button" in the "Reset grading setup?" "dialogue"
+    And I press "Reset setup"
+    And I click on "Reset" "button" in the "Reset grade items setup?" "dialogue"
 
-    Then I should see "This quiz does not yet have any grade items defined, just a simple overall score will be used."
+    Then I should see "Create grade items within your quiz. Allocate questions or quiz sections to these grade items to break down grade results into different areas."
     And the field "Question A" matches value "[none]"
     And the field "Question B" matches value "[none]"
     And the field "Question C" matches value "[none]"
-    And I should not see "Reset advanced grading setup"
+    And I should not see "Reset grade items setup"
 
   @javascript
   Scenario: Reset all can be cancelled
@@ -145,8 +151,8 @@ Feature: Setup multiple grades for a quiz
       | quiz   | name              |
       | Quiz 1 | Intuition         |
     When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
-    And I press "Reset advanced grading setup"
-    And I click on "Cancel" "button" in the "Reset grading setup?" "dialogue"
+    And I press "Reset setup"
+    And I click on "Cancel" "button" in the "Reset grade items setup?" "dialogue"
     Then I should see "Intuition"
 
   @javascript
