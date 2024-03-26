@@ -28,6 +28,8 @@ import $ from 'jquery';
 import drag from 'core/dragdrop';
 import Templates from 'core/templates';
 import Notification from 'core/notification';
+import {getString} from 'core/str';
+import {prefetchString} from 'core/prefetch';
 
 export default class DragReorder {
 
@@ -218,6 +220,13 @@ export default class DragReorder {
             // Order has changed, call the callback.
             this.config.reorderDone(this.itemDragging.closest(this.config.list), this.itemDragging, this.getCurrentOrder());
 
+            getString('moved', 'qtype_ordering', {
+                item: this.itemDragging.find('[data-itemcontent]').text().trim(),
+                position: this.itemDragging.index() + 1,
+                total: this.orderList.querySelectorAll(this.config.item).length
+            }).then((str) => {
+                this.config.announcementRegion.innerHTML = str;
+            });
         }
 
         // Clean up after the drag is finished.
@@ -272,6 +281,14 @@ export default class DragReorder {
                     // Focus the 'previous' action button.
                     this.itemDragging.find('[data-action="move-backward"]').focus();
                 }
+
+                getString('moved', 'qtype_ordering', {
+                    item: this.itemDragging.find('[data-itemcontent]').text().trim(),
+                    position: this.itemDragging.index() + 1,
+                    total: this.orderList.querySelectorAll(this.config.item).length
+                }).then((str) => {
+                    this.config.announcementRegion.innerHTML = str;
+                });
             }
         }
     }
@@ -342,6 +359,7 @@ export default class DragReorder {
     static init(sortableid, responseid) {
         new DragReorder({
             actionButton: '[data-action]',
+            announcementRegion: document.querySelector(`#${sortableid}-announcement`),
             list: 'ul#' + sortableid,
             item: 'li.sortableitem',
             itemMovingClass: "current-drop",
@@ -352,5 +370,7 @@ export default class DragReorder {
                 $('input#' + responseid)[0].value = newOrder.join(',');
             }
         });
+
+        prefetchString('qtype_ordering', 'moved');
     }
 }

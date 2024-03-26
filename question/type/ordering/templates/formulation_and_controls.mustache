@@ -65,6 +65,7 @@
     {{#responsename}}
         <div class="ablock" id="{{ablockid}}">
             <div class="answer ordering">
+                <div aria-live="polite" class="sr-only" id="{{sortableid}}-announcement"></div>
                 <ul class="sortablelist {{layoutclass}} {{#numberingstyle}}numbering{{numberingstyle}}{{/numberingstyle}} {{#active}}active{{/active}}{{^active}}notactive{{/active}}" id="{{sortableid}}">
                     {{#answers}}
                         <li class="p-2 {{^readonly}}sortableitem{{/readonly}} {{scoreclass}}" id="{{id}}">
@@ -74,7 +75,7 @@
                                         <i class='fas fa-grip-vertical' aria-hidden="true"></i>
                                     </div>
                                 {{/readonly}}
-                                <div class="d-flex align-items-center flex-grow-1 px-2" id="{{id}}-text">
+                                <div class="d-flex align-items-center flex-grow-1 px-2" id="{{id}}-text" data-itemcontent>
                                     {{{feedbackimage}}}{{{answertext}}}
                                 </div>
                                 {{^readonly}}
