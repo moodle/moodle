@@ -49,6 +49,13 @@ function xsendfile($filepath) {
 
     $filepath = realpath($filepath);
 
+    $localrequestdir = realpath($CFG->localrequestdir);
+    if (str_contains($filepath, $localrequestdir)) {
+        // Do not serve files from local request directory using xsendfile.
+        // They are likely to be removed before xsendfile can serve them.
+        return false;
+    }
+
     $aliased = false;
     if (!empty($CFG->xsendfilealiases) and is_array($CFG->xsendfilealiases)) {
         foreach ($CFG->xsendfilealiases as $alias=>$dir) {
