@@ -14,30 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\hook\user;
+
+use core\hook\described_hook;
+use core\hook\stoppable_trait;
+
 /**
- * Hook callbacks for Moodle app tools
+ * Allow plugins to callback as soon possible after user has completed login.
  *
- * @package    tool_mobile
- * @copyright  2023 Marina Glancy
+ * @package    core
+ * @copyright  2024 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+class after_complete_login implements described_hook,
+        \Psr\EventDispatcher\StoppableEventInterface {
+    use stoppable_trait;
 
-defined('MOODLE_INTERNAL') || die();
+    /**
+     * Describes the hook purpose.
+     *
+     * @return string
+     */
+    public static function get_hook_description(): string {
+        return 'Allow plugins to callback as soon possible after user has completed login.';
+    }
 
-$callbacks = [
-    [
-        'hook' => \core\hook\output\before_standard_head_html_generation::class,
-        'callback' => [\tool_mobile\local\hook\output\before_standard_head_html_generation::class, 'callback'],
-        'priority' => 0,
-    ],
-    [
-        'hook' => core\hook\user\after_complete_login::class,
-        'callback' => 'tool_mobile\local\hooks\user\after_complete_login::callback',
-        'priority' => 500,
-    ],
-    [
-        'hook' => tool_mfa\hook\after_user_passed_mfa::class,
-        'callback' => 'tool_mobile\local\hooks\user\after_user_passed_mfa::callback',
-        'priority' => 500,
-    ],
-];
+    /**
+     * List of tags that describe this hook.
+     *
+     * @return string[]
+     */
+    public static function get_hook_tags(): array {
+        return ['login'];
+    }
+}
