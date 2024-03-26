@@ -3494,6 +3494,9 @@ abstract class enrol_plugin {
         $errors = array();
         $invalidstr = get_string('invaliddata', 'error');
         foreach ($rules as $fieldname => $rule) {
+            if (!array_key_exists($fieldname, $data)) {
+                continue;
+            }
             if (is_array($rule)) {
                 if (!in_array($data[$fieldname], $rule)) {
                     $errors[$fieldname] = $invalidstr;
@@ -3553,6 +3556,8 @@ abstract class enrol_plugin {
      * @return lang_string|null Error
      */
     public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null): ?lang_string {
+        global $DB;
+
         if ($courseid) {
             $enrolmentdata += ['courseid' => $courseid, 'id' => 0, 'status' => ENROL_INSTANCE_ENABLED];
             $instance = (object)[
@@ -3561,6 +3566,9 @@ abstract class enrol_plugin {
                 'status' => $enrolmentdata['status'],
                 'type' => $this->get_name(),
             ];
+            if (array_key_exists('role', $enrolmentdata)) {
+                $instance->roleid = $DB->get_field('role', 'id', ['shortname' => $enrolmentdata['role']]);
+            }
             $formerrors = $this->edit_instance_validation($enrolmentdata, [], $instance, context_course::instance($courseid));
             if (!empty($formerrors)) {
                 $errors = array_map(fn($key) => "{$key}: {$formerrors[$key]}", array_keys($formerrors));
