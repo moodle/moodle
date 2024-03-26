@@ -227,3 +227,16 @@ Feature: Bulk activity and section selection.
     When I click on "Select topic Topic 1" "checkbox"
     And I click on "Select topic Topic 2" "checkbox"
     Then I should see "2 selected" in the "sticky-footer" "region"
+
+  Scenario: Bulk selection in small devices
+    Given I change the viewport size to "mobile"
+    And I close block drawer if open
+    When I click on "Bulk actions" "button"
+    Then I should not see "0 selected" in the "sticky-footer" "region"
+    And I should not see "Select all" in the "sticky-footer" "region"
+    And I should not see "Availability" in the "sticky-footer" "region"
+    And I should not see "Duplicate" in the "sticky-footer" "region"
+    And I should not see "Move" in the "sticky-footer" "region"
+    And I should not see "Delete" in the "sticky-footer" "region"
+    And I click on "Close bulk actions" "button" in the "sticky-footer" "region"
+    And "sticky-footer" "region" should not be visible
