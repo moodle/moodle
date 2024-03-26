@@ -1,0 +1,54 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template datafield_checkbox/checkbox
+
+    The purpose of this template is to enable the user to define a checkbox field.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * name string The field's name.
+    * description string The field's description.
+    * required bool The field's requiredness.
+    * param1 string The field's options.
+
+    Example context (json):
+    {
+        "name": "A name",
+        "description": "A description",
+        "required": true,
+        "param1": "One\nTwo\nThree"
+    }
+}}
+
+<fieldset>
+    {{> mod_data/fields/basicfields }}
+    {{> mod_data/fields/requiredfield }}
+    <div class="form-group row fitem">
+        <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
+            <label for="param1">{{#str}}fieldoptions, data{{/str}}</label>
+        </div>
+        <div class="col-md-9 form-inline align-items-start felement">
+            <textarea class="optionstextarea form-control" name="param1" id="param1" cols="80" rows="10">{{param1}}</textarea>
+        </div>
+    </div>
+</fieldset>

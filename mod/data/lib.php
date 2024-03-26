@@ -428,11 +428,26 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
 
         echo $OUTPUT->heading($this->name(), 3);
 
-        $filepath = $CFG->dirroot.'/mod/data/field/'.$this->type.'/mod.html';
+        $filepath = $CFG->dirroot . '/mod/data/field/' . $this->type . '/mod.html';
+        $templatename = 'datafield_' . $this->type . '/' . $this->type;
 
-        if (!file_exists($filepath)) {
-            throw new \moodle_exception(get_string('missingfieldtype', 'data', (object)['name' => $this->field->name]));
+        try {
+            $templatefilepath = \core\output\mustache_template_finder::get_template_filepath($templatename);
+            $templatefileexists = true;
+        } catch (moodle_exception $e) {
+            if (!file_exists($filepath)) {
+                // Neither file exists.
+                throw new \moodle_exception(get_string('missingfieldtype', 'data', (object)['name' => $this->field->name]));
+            }
+            $templatefileexists = false;
+        }
+
+        if ($templatefileexists) {
+            // Give out templated Bootstrap formatted form fields.
+            $data = $this->get_field_params();
+            echo $OUTPUT->render_from_template($templatename, $data);
         } else {
+            // Fall back to display mod.html for backward compatibility.
             require_once($filepath);
         }
 
@@ -742,6 +757,37 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
         }
         return $configs;
     }
+
+    /**
+     * Function to let field define their parameters.
+     *
+     * This method that should be overridden by the datafield plugins
+     * when they need to define their data.
+     *
+     * @return array
+     */
+    protected function get_field_params(): array {
+        // Name and description of the field.
+        $data = [
+            'name' => $this->field->name,
+            'description' => $this->field->description,
+        ];
+
+        // Whether the field is required.
+        if (isset($this->field->required)) {
+            $data['required'] = $this->field->required;
+        }
+
+        // Add all the field parameters.
+        for ($i = 1; $i <= 10; $i++) {
+            if (isset($this->field->{"param$i"})) {
+                $data["param$i"] = $this->field->{"param$i"};
+            }
+        }
+
+        return $data;
+    }
+
 }
 
 
