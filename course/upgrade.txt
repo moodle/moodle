@@ -38,6 +38,7 @@ The colors for all these purposes and the filters applied to outline them are de
 * New behat step using the URL resolvers:
  - When I am on the "Course > <section> "course > section" page logged in as "<username>". When utilizing 'Section x'
  it first searches by section name (Section x). If it's not found, then it searches by the section number (x).
+* The template core_course/course_search_form has been removed following its cessation of use upon MDL-69454 in version 3.11.
 
 === 4.3 ===
 * The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used

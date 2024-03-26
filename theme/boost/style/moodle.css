@@ -28485,11 +28485,6 @@ span.editinstructions .alert-link {
   vertical-align: text-bottom;
 }
 
-#coursesearch {
-  margin-top: 1em;
-  text-align: left;
-}
-
 #page-course-pending .pendingcourserequests {
   margin-bottom: 1em;
 }
@@ -33077,10 +33072,6 @@ input#id_externalurl {
 
 div#dateselector-calendar-panel {
   z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
-}
-
-fieldset.coursesearchbox label {
-  display: inline;
 }
 
 /**

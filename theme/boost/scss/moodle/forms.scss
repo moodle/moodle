@@ -197,10 +197,6 @@ div#dateselector-calendar-panel {
     z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
 }
 
-fieldset.coursesearchbox label {
-    display: inline;
-}
-
 /**
  * Show the labels above text editors and file managers except on wide screens.
  */

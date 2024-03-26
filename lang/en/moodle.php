@@ -430,12 +430,6 @@ $string['coursesectiontitleediting'] = 'Edit {$a->sectionname}: {$a->sectiontitl
 $string['coursesettings'] = 'Course default settings';
 $string['coursesmovedout'] = 'Courses moved out from {$a}';
 $string['coursespending'] = 'Courses pending approval';
-$string['coursesearch'] = 'Search courses';
-$string['coursesearch_help'] = 'You can search for multiple words at once and can refine your search as follows:
-
-* word - find any match of this word within the text
-* +word - only exact matching words will be found
-* -word - don\'t include results containing this word.';
 $string['coursestart'] = 'Course start';
 $string['coursesummary'] = 'Course summary';
 $string['coursesummary_help'] = 'A short description of your course. The content you add here is searchable.';
@@ -2504,3 +2498,9 @@ $string['summaryof'] = 'Summary of {$a}';
 $string['from'] = 'From';
 $string['to'] = 'To';
 $string['viewresults'] = 'View results for {$a}';
+$string['coursesearch'] = 'Search courses';
+$string['coursesearch_help'] = 'You can search for multiple words at once and can refine your search as follows:
+
+* word - find any match of this word within the text
+* +word - only exact matching words will be found
+* -word - don\'t include results containing this word.';
