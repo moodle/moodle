@@ -35,8 +35,8 @@ Feature: Moving a question to another category should not affect random question
     And I follow "a random question"
     And I apply question bank filter "Category" with value "Used category"
     And I press "Add random question"
-    And I should see "Random question based on filter condition" on quiz page "1"
-    And I click on "Configure question" "link" in the "Random question based on filter condition" "list_item"
+    And I should see "Random (Used category) based on filter condition" on quiz page "1"
+    And I click on "Configure question" "link" in the "Random (Used category) based on filter condition" "list_item"
     And I should see "Used category"
     And I am on "Course 1" course homepage
     And I navigate to "Question bank" in current page administration
@@ -49,8 +49,8 @@ Feature: Moving a question to another category should not affect random question
     Then I should see "Test question to be moved"
     And I should see "Subcategory (1)"
     And I am on the "Quiz 1" "mod_quiz > Edit" page
-    And I should see "Random question based on filter condition" on quiz page "1"
-    And I click on "Configure question" "link" in the "Random question based on filter condition" "list_item"
+    And I should see "Random (Used category) based on filter condition" on quiz page "1"
+    And I click on "Configure question" "link" in the "Random (Used category) based on filter condition" "list_item"
     And I should see "Used category"
 
   @javascript
@@ -60,7 +60,7 @@ Feature: Moving a question to another category should not affect random question
     And I follow "a random question"
     And I apply question bank filter "Category" with value "Used category"
     And I press "Add random question"
-    And I should see "Random question based on filter condition" on quiz page "1"
+    And I should see "Random (Used category) based on filter condition" on quiz page "1"
     And I am on the "Course 1" "core_question > course question categories" page
     And I click on "Edit this category" "link" in the "Used category" "list_item"
     And I set the following fields to these values:
@@ -70,4 +70,4 @@ Feature: Moving a question to another category should not affect random question
     Then I should see "Used category new"
     And I should see "I was edited" in the "Used category new" "list_item"
     And I am on the "Quiz 1" "mod_quiz > Edit" page
-    And I should see "Random question based on filter condition" on quiz page "1"
+    And I should see "Random (Used category new) based on filter condition" on quiz page "1"
