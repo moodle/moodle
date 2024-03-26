@@ -76,7 +76,7 @@ class sessionlib_test extends \advanced_testcase {
         $this->assertSame($user1->id, $USER->id);
         $this->assertSame($PAGE->context, \context_course::instance($SITE->id));
         $this->assertNotSame($adminsession, $SESSION);
-        $this->assertObjectNotHasAttribute('test1', $SESSION);
+        $this->assertObjectNotHasProperty('test1', $SESSION);
         $this->assertEmpty((array)$SESSION);
         $usersession1 = $SESSION;
         $SESSION->test2 = true;
@@ -261,7 +261,7 @@ class sessionlib_test extends \advanced_testcase {
         $user = $this->getDataGenerator()->create_user();
 
         \core\session\manager::init_empty_session();
-        $this->assertObjectNotHasAttribute('sesskey', $USER);
+        $this->assertObjectNotHasProperty('sesskey', $USER);
 
         $sesskey = sesskey();
         $this->assertNotEmpty($sesskey);

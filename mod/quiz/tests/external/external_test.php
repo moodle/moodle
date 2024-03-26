@@ -1553,7 +1553,7 @@ class external_test extends externallib_advanced_testcase {
             $this->assertEquals($quizobj->get_quizid(), $customdata->instance);
             $this->assertEquals($quizobj->get_cmid(), $customdata->cmid);
             $this->assertEquals($attempt->id, $customdata->attemptid);
-            $this->assertObjectHasAttribute('notificationiconurl', $customdata);
+            $this->assertObjectHasProperty('notificationiconurl', $customdata);
         }
 
         // Start new attempt.

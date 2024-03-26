@@ -330,8 +330,8 @@ class badgeslib_test extends advanced_testcase {
         $message = array_pop($messages);
         // Check we have the expected data.
         $customdata = json_decode($message->customdata);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
-        $this->assertObjectHasAttribute('hash', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('hash', $customdata);
 
         $user2 = $this->getDataGenerator()->create_user();
         $badge->issue($user2->id, true);

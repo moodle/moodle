@@ -56,10 +56,10 @@ class profilelib_test extends \advanced_testcase {
         $this->assertArrayNotHasKey($id1, profile_get_custom_fields(true));
 
         // Check that profile_user_record returns same (no) fields.
-        $this->assertObjectNotHasAttribute('frogdesc', profile_user_record($user->id));
+        $this->assertObjectNotHasProperty('frogdesc', profile_user_record($user->id));
 
         // Check that profile_user_record returns all the fields when requested.
-        $this->assertObjectHasAttribute('frogdesc', profile_user_record($user->id, false));
+        $this->assertObjectHasProperty('frogdesc', profile_user_record($user->id, false));
 
         // Add another custom field, this time of normal text type.
         $id2 = $this->getDataGenerator()->create_custom_profile_field(array(
@@ -75,10 +75,10 @@ class profilelib_test extends \advanced_testcase {
         $this->assertArrayHasKey($id2, profile_get_custom_fields(true));
 
         // Check profile_user_record returns same field.
-        $this->assertObjectHasAttribute('frogname', profile_user_record($user->id));
+        $this->assertObjectHasProperty('frogname', profile_user_record($user->id));
 
         // Check that profile_user_record returns all the fields when requested.
-        $this->assertObjectHasAttribute('frogname', profile_user_record($user->id, false));
+        $this->assertObjectHasProperty('frogname', profile_user_record($user->id, false));
     }
 
     /**
@@ -233,7 +233,7 @@ class profilelib_test extends \advanced_testcase {
         $this->assertEquals('Gryffindor', $profilefields1->house);
 
         $profilefields2 = profile_user_record($harry->id);
-        $this->assertObjectHasAttribute('house', $profilefields2);
+        $this->assertObjectHasProperty('house', $profilefields2);
         $this->assertNull($profilefields2->house);
     }
 

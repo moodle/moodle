@@ -171,10 +171,10 @@ class statement_test extends advanced_testcase {
         $alldefined = array_merge($extras, $extravalues);
         foreach ($allextras as $extra) {
             if (in_array($extra, $alldefined)) {
-                $this->assertObjectHasAttribute($extra, $data);
+                $this->assertObjectHasProperty($extra, $data);
                 $this->assertNotEmpty($data->$extra);
             } else {
-                $this->assertObjectNotHasAttribute($extra, $data);
+                $this->assertObjectNotHasProperty($extra, $data);
             }
         }
     }
@@ -305,10 +305,10 @@ class statement_test extends advanced_testcase {
         $alldefined = array_merge($extras, $extravalues);
         foreach ($allextras as $extra) {
             if (in_array($extra, $alldefined)) {
-                $this->assertObjectHasAttribute($extra, $data);
+                $this->assertObjectHasProperty($extra, $data);
                 $this->assertNotEmpty($data->object);
             } else {
-                $this->assertObjectNotHasAttribute($extra, $data);
+                $this->assertObjectNotHasProperty($extra, $data);
             }
         }
     }
@@ -340,7 +340,7 @@ class statement_test extends advanced_testcase {
 
         // Check resulting json.
         $statementdata = json_decode(json_encode($statement));
-        $this->assertObjectHasAttribute('attachments', $statementdata);
+        $this->assertObjectHasProperty('attachments', $statementdata);
         $this->assertNotEmpty($statementdata->attachments);
         $this->assertCount(1, $statementdata->attachments);
     }
@@ -382,7 +382,7 @@ class statement_test extends advanced_testcase {
         $this->assertEquals($itemdata->length, $attachmentdata->length);
 
         $statementdata = json_decode(json_encode($statement));
-        $this->assertObjectHasAttribute('attachments', $statementdata);
+        $this->assertObjectHasProperty('attachments', $statementdata);
         $this->assertNotEmpty($statementdata->attachments);
         $this->assertCount(1, $statementdata->attachments);
 

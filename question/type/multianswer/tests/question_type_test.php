@@ -313,7 +313,7 @@ class question_type_test extends \advanced_testcase {
             }
         }
 
-        $this->assertObjectHasAttribute('questions', $actualquestiondata->options);
+        $this->assertObjectHasProperty('questions', $actualquestiondata->options);
 
         $subqpropstoignore =
             ['id', 'category', 'parent', 'contextid', 'question', 'options', 'stamp', 'timemodified',

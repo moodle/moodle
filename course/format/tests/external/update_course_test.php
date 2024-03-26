@@ -93,7 +93,7 @@ class update_course_test extends \externallib_advanced_testcase {
         $update = $this->find_update($results, $expected['action'], 'cm', $activity->cmid);
         $this->assertNotEmpty($update);
         if ($expected['visible'] === null) {
-            $this->assertObjectNotHasAttribute('visible', $update->fields);
+            $this->assertObjectNotHasProperty('visible', $update->fields);
         } else {
             $this->assertEquals($expected['visible'], $update->fields->visible);
         }

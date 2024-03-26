@@ -1212,36 +1212,36 @@ class api_test extends messagelib_test {
 
         // Verify format of the return structure.
         foreach ($conversations as $conv) {
-            $this->assertObjectHasAttribute('id', $conv);
-            $this->assertObjectHasAttribute('name', $conv);
-            $this->assertObjectHasAttribute('subname', $conv);
-            $this->assertObjectHasAttribute('imageurl', $conv);
-            $this->assertObjectHasAttribute('type', $conv);
-            $this->assertObjectHasAttribute('isfavourite', $conv);
-            $this->assertObjectHasAttribute('membercount', $conv);
-            $this->assertObjectHasAttribute('isread', $conv);
-            $this->assertObjectHasAttribute('unreadcount', $conv);
-            $this->assertObjectHasAttribute('members', $conv);
+            $this->assertObjectHasProperty('id', $conv);
+            $this->assertObjectHasProperty('name', $conv);
+            $this->assertObjectHasProperty('subname', $conv);
+            $this->assertObjectHasProperty('imageurl', $conv);
+            $this->assertObjectHasProperty('type', $conv);
+            $this->assertObjectHasProperty('isfavourite', $conv);
+            $this->assertObjectHasProperty('membercount', $conv);
+            $this->assertObjectHasProperty('isread', $conv);
+            $this->assertObjectHasProperty('unreadcount', $conv);
+            $this->assertObjectHasProperty('members', $conv);
             foreach ($conv->members as $member) {
-                $this->assertObjectHasAttribute('id', $member);
-                $this->assertObjectHasAttribute('fullname', $member);
-                $this->assertObjectHasAttribute('profileimageurl', $member);
-                $this->assertObjectHasAttribute('profileimageurlsmall', $member);
-                $this->assertObjectHasAttribute('isonline', $member);
-                $this->assertObjectHasAttribute('showonlinestatus', $member);
-                $this->assertObjectHasAttribute('isblocked', $member);
-                $this->assertObjectHasAttribute('iscontact', $member);
-                $this->assertObjectHasAttribute('isdeleted', $member);
-                $this->assertObjectHasAttribute('canmessage', $member);
-                $this->assertObjectHasAttribute('requirescontact', $member);
-                $this->assertObjectHasAttribute('contactrequests', $member);
+                $this->assertObjectHasProperty('id', $member);
+                $this->assertObjectHasProperty('fullname', $member);
+                $this->assertObjectHasProperty('profileimageurl', $member);
+                $this->assertObjectHasProperty('profileimageurlsmall', $member);
+                $this->assertObjectHasProperty('isonline', $member);
+                $this->assertObjectHasProperty('showonlinestatus', $member);
+                $this->assertObjectHasProperty('isblocked', $member);
+                $this->assertObjectHasProperty('iscontact', $member);
+                $this->assertObjectHasProperty('isdeleted', $member);
+                $this->assertObjectHasProperty('canmessage', $member);
+                $this->assertObjectHasProperty('requirescontact', $member);
+                $this->assertObjectHasProperty('contactrequests', $member);
             }
-            $this->assertObjectHasAttribute('messages', $conv);
+            $this->assertObjectHasProperty('messages', $conv);
             foreach ($conv->messages as $message) {
-                $this->assertObjectHasAttribute('id', $message);
-                $this->assertObjectHasAttribute('useridfrom', $message);
-                $this->assertObjectHasAttribute('text', $message);
-                $this->assertObjectHasAttribute('timecreated', $message);
+                $this->assertObjectHasProperty('id', $message);
+                $this->assertObjectHasProperty('useridfrom', $message);
+                $this->assertObjectHasProperty('text', $message);
+                $this->assertObjectHasProperty('timecreated', $message);
             }
         }
     }
@@ -4232,8 +4232,8 @@ class api_test extends messagelib_test {
         $sink->close();
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
-        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('actionbuttons', $customdata);
         $this->assertCount(2, (array) $customdata->actionbuttons);
 
         $this->assertEquals($user1->id, $request->userid);
@@ -4308,12 +4308,12 @@ class api_test extends messagelib_test {
 
         $this->assertEquals($user2->id, $request->id);
         $this->assertEquals(fullname($user2), $request->fullname);
-        $this->assertObjectHasAttribute('profileimageurl', $request);
-        $this->assertObjectHasAttribute('profileimageurlsmall', $request);
-        $this->assertObjectHasAttribute('isonline', $request);
-        $this->assertObjectHasAttribute('showonlinestatus', $request);
-        $this->assertObjectHasAttribute('isblocked', $request);
-        $this->assertObjectHasAttribute('iscontact', $request);
+        $this->assertObjectHasProperty('profileimageurl', $request);
+        $this->assertObjectHasProperty('profileimageurlsmall', $request);
+        $this->assertObjectHasProperty('isonline', $request);
+        $this->assertObjectHasProperty('showonlinestatus', $request);
+        $this->assertObjectHasProperty('isblocked', $request);
+        $this->assertObjectHasProperty('iscontact', $request);
     }
 
     /**
@@ -4980,7 +4980,7 @@ class api_test extends messagelib_test {
         $this->assertEquals(true, $member1->showonlinestatus);
         $this->assertEquals(false, $member1->iscontact);
         $this->assertEquals(false, $member1->isblocked);
-        $this->assertObjectHasAttribute('contactrequests', $member1);
+        $this->assertObjectHasProperty('contactrequests', $member1);
         $this->assertEmpty($member1->contactrequests);
 
         $this->assertEquals($user2->id, $member2->id);
@@ -4989,7 +4989,7 @@ class api_test extends messagelib_test {
         $this->assertEquals(true, $member2->showonlinestatus);
         $this->assertEquals(true, $member2->iscontact);
         $this->assertEquals(false, $member2->isblocked);
-        $this->assertObjectHasAttribute('contactrequests', $member2);
+        $this->assertObjectHasProperty('contactrequests', $member2);
         $this->assertEmpty($member2->contactrequests);
 
         $this->assertEquals($user3->id, $member3->id);
@@ -4998,7 +4998,7 @@ class api_test extends messagelib_test {
         $this->assertEquals(true, $member3->showonlinestatus);
         $this->assertEquals(false, $member3->iscontact);
         $this->assertEquals(true, $member3->isblocked);
-        $this->assertObjectHasAttribute('contactrequests', $member3);
+        $this->assertObjectHasProperty('contactrequests', $member3);
         $this->assertEmpty($member3->contactrequests);
     }
 
@@ -5149,18 +5149,18 @@ class api_test extends messagelib_test {
         $messages = $messagessink->get_messages();
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
-        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('actionbuttons', $customdata);
         $this->assertCount(1, (array) $customdata->actionbuttons);
-        $this->assertObjectHasAttribute('placeholders', $customdata);
+        $this->assertObjectHasProperty('placeholders', $customdata);
         $this->assertCount(1, (array) $customdata->placeholders);
 
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
-        $this->assertObjectHasAttribute('id', $message1);
+        $this->assertObjectHasProperty('id', $message1);
         $this->assertEquals($user1->id, $message1->useridfrom);
         $this->assertEquals('this is a message', $message1->text);
-        $this->assertObjectHasAttribute('timecreated', $message1);
+        $this->assertObjectHasProperty('timecreated', $message1);
 
         // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
         // however, we can still determine the number and ids of any recipients this way.
@@ -5199,17 +5199,17 @@ class api_test extends messagelib_test {
         $messages = $messagessink->get_messages();
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
-        $this->assertObjectHasAttribute('id', $message1);
+        $this->assertObjectHasProperty('id', $message1);
         $this->assertEquals($user1->id, $message1->useridfrom);
         $this->assertEquals('message to the group', $message1->text);
-        $this->assertObjectHasAttribute('timecreated', $message1);
+        $this->assertObjectHasProperty('timecreated', $message1);
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
-        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertObjectHasProperty('actionbuttons', $customdata);
         $this->assertCount(1, (array) $customdata->actionbuttons);
-        $this->assertObjectHasAttribute('placeholders', $customdata);
+        $this->assertObjectHasProperty('placeholders', $customdata);
         $this->assertCount(1, (array) $customdata->placeholders);
-        $this->assertObjectNotHasAttribute('notificationiconurl', $customdata);    // No group image means no image.
+        $this->assertObjectNotHasProperty('notificationiconurl', $customdata);    // No group image means no image.
 
         // Verify events. Note: the event is a message read event because of an if (PHPUNIT) conditional within message_send(),
         // however, we can still determine the number and ids of any recipients this way.
@@ -5268,14 +5268,14 @@ class api_test extends messagelib_test {
         $messages = $messagessink->get_messages();
         // Verify the message returned.
         $this->assertInstanceOf(\stdClass::class, $message1);
-        $this->assertObjectHasAttribute('id', $message1);
+        $this->assertObjectHasProperty('id', $message1);
         $this->assertEquals($user1->id, $message1->useridfrom);
         $this->assertEquals('message to the group', $message1->text);
-        $this->assertObjectHasAttribute('timecreated', $message1);
+        $this->assertObjectHasProperty('timecreated', $message1);
         // Test customdata.
         $customdata = json_decode($messages[0]->customdata);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
-        $this->assertObjectHasAttribute('notificationsendericonurl', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('notificationsendericonurl', $customdata);
         $this->assertEquals($groupimageurl, $customdata->notificationiconurl);
         $this->assertEquals($group->name, $customdata->conversationname);
         $userpicture = new \user_picture($user1);

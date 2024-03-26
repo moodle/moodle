@@ -1606,8 +1606,8 @@ class mail_test extends \advanced_testcase {
         $this->assertEquals($forum->cmid, $customdata->cmid);
         $this->assertEquals($post->id, $customdata->postid);
         $this->assertEquals($discussion->id, $customdata->discussionid);
-        $this->assertObjectHasAttribute('notificationiconurl', $customdata);
-        $this->assertObjectHasAttribute('actionbuttons', $customdata);
+        $this->assertObjectHasProperty('notificationiconurl', $customdata);
+        $this->assertObjectHasProperty('actionbuttons', $customdata);
         $this->assertCount(1, (array) $customdata->actionbuttons);
     }
 }

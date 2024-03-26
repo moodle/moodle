@@ -120,7 +120,7 @@ class advanced_test extends \advanced_testcase {
         // Ensure session is reset after setUser, as it may contain extra info.
         $SESSION->sometestvalue = true;
         $this->setUser($user);
-        $this->assertObjectNotHasAttribute('sometestvalue', $SESSION);
+        $this->assertObjectNotHasProperty('sometestvalue', $SESSION);
     }
 
     public function test_set_admin_user() {
@@ -369,7 +369,15 @@ class advanced_test extends \advanced_testcase {
         ]);
 
         if ($phpwarn) {
-            $this->expectWarning();
+            // Let's convert the warnings into an assert-able exception.
+            set_error_handler(
+                static function ($errno, $errstr) {
+                    restore_error_handler();
+                    throw new \Exception($errstr, $errno);
+                },
+                E_WARNING // Or any other specific E_ that we want to assert.
+            );
+            $this->expectException(\Exception::class);
         }
         $this->assertEventContextNotUsed($event);
     }

@@ -952,26 +952,26 @@ class enrollib_test extends advanced_testcase {
         $this->assertEquals([$course1->id, $course2->id, $course3->id], array_keys($courses));
 
         // Check fields parameter still works. Fields default (certain base fields).
-        $this->assertObjectHasAttribute('id', $courses[$course3->id]);
-        $this->assertObjectHasAttribute('shortname', $courses[$course3->id]);
-        $this->assertObjectNotHasAttribute('summary', $courses[$course3->id]);
+        $this->assertObjectHasProperty('id', $courses[$course3->id]);
+        $this->assertObjectHasProperty('shortname', $courses[$course3->id]);
+        $this->assertObjectNotHasProperty('summary', $courses[$course3->id]);
 
         // Specified fields (one, string).
         $courses = enrol_get_my_courses('summary', 'id', 0, [], true);
-        $this->assertObjectHasAttribute('id', $courses[$course3->id]);
-        $this->assertObjectHasAttribute('shortname', $courses[$course3->id]);
-        $this->assertObjectHasAttribute('summary', $courses[$course3->id]);
-        $this->assertObjectNotHasAttribute('summaryformat', $courses[$course3->id]);
+        $this->assertObjectHasProperty('id', $courses[$course3->id]);
+        $this->assertObjectHasProperty('shortname', $courses[$course3->id]);
+        $this->assertObjectHasProperty('summary', $courses[$course3->id]);
+        $this->assertObjectNotHasProperty('summaryformat', $courses[$course3->id]);
 
         // Specified fields (two, string).
         $courses = enrol_get_my_courses('summary, summaryformat', 'id', 0, [], true);
-        $this->assertObjectHasAttribute('summary', $courses[$course3->id]);
-        $this->assertObjectHasAttribute('summaryformat', $courses[$course3->id]);
+        $this->assertObjectHasProperty('summary', $courses[$course3->id]);
+        $this->assertObjectHasProperty('summaryformat', $courses[$course3->id]);
 
         // Specified fields (two, array).
         $courses = enrol_get_my_courses(['summary', 'summaryformat'], 'id', 0, [], true);
-        $this->assertObjectHasAttribute('summary', $courses[$course3->id]);
-        $this->assertObjectHasAttribute('summaryformat', $courses[$course3->id]);
+        $this->assertObjectHasProperty('summary', $courses[$course3->id]);
+        $this->assertObjectHasProperty('summaryformat', $courses[$course3->id]);
 
         // By default, courses are ordered by sortorder - which by default is most recent first.
         $courses = enrol_get_my_courses(null, null, 0, [], true);

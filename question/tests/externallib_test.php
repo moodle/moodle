@@ -356,10 +356,10 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertEquals($expected->qtype, $actual->qtype);
         // These values are added by the formatting. It doesn't matter what the
         // exact values are just that they are returned.
-        $this->assertObjectHasAttribute('icon', $actual);
-        $this->assertObjectHasAttribute('key', $actual->icon);
-        $this->assertObjectHasAttribute('component', $actual->icon);
-        $this->assertObjectHasAttribute('alttext', $actual->icon);
+        $this->assertObjectHasProperty('icon', $actual);
+        $this->assertObjectHasProperty('key', $actual->icon);
+        $this->assertObjectHasProperty('component', $actual->icon);
+        $this->assertObjectHasProperty('alttext', $actual->icon);
     }
 
     /**

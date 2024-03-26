@@ -269,7 +269,7 @@ class provider_test extends provider_testcase {
 
         $workshop = $writer->get_data([]);
         $this->assertEquals('Workshop11', $workshop->name);
-        $this->assertObjectHasAttribute('phase', $workshop);
+        $this->assertObjectHasProperty('phase', $workshop);
 
         $mysubmission = $writer->get_data([
             get_string('mysubmission', 'mod_workshop'),

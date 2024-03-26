@@ -391,12 +391,12 @@ class fields_test extends \advanced_testcase {
         $this->assertCount(2, $records);
 
         // User id was renamed.
-        $this->assertObjectNotHasAttribute('id', $records['XXX1']);
-        $this->assertObjectHasAttribute('userid', $records['XXX1']);
+        $this->assertObjectNotHasProperty('id', $records['XXX1']);
+        $this->assertObjectHasProperty('userid', $records['XXX1']);
 
         // Other fields are normal (just try a couple).
-        $this->assertObjectHasAttribute('firstname', $records['XXX1']);
-        $this->assertObjectHasAttribute('imagealt', $records['XXX1']);
+        $this->assertObjectHasProperty('firstname', $records['XXX1']);
+        $this->assertObjectHasProperty('imagealt', $records['XXX1']);
 
         // Check the user id is actually right.
         $this->assertEquals('XXX1',
@@ -415,13 +415,13 @@ class fields_test extends \advanced_testcase {
         $this->assertCount(2, $records);
 
         // User id was renamed.
-        $this->assertObjectNotHasAttribute('id', $records['XXX1']);
-        $this->assertObjectNotHasAttribute('u_id', $records['XXX1']);
-        $this->assertObjectHasAttribute('userid', $records['XXX1']);
+        $this->assertObjectNotHasProperty('id', $records['XXX1']);
+        $this->assertObjectNotHasProperty('u_id', $records['XXX1']);
+        $this->assertObjectHasProperty('userid', $records['XXX1']);
 
         // Other fields are prefixed (just try a couple).
-        $this->assertObjectHasAttribute('u_firstname', $records['XXX1']);
-        $this->assertObjectHasAttribute('u_imagealt', $records['XXX1']);
+        $this->assertObjectHasProperty('u_firstname', $records['XXX1']);
+        $this->assertObjectHasProperty('u_imagealt', $records['XXX1']);
 
         // Without a leading comma.
         ['selects' => $selects, 'joins' => $joins, 'params' => $joinparams] =
@@ -437,8 +437,8 @@ class fields_test extends \advanced_testcase {
             // ID should be the first field used by get_records_sql.
             $this->assertEquals($key, $record->id);
             // Check 2 other sample properties.
-            $this->assertObjectHasAttribute('firstname', $record);
-            $this->assertObjectHasAttribute('imagealt', $record);
+            $this->assertObjectHasProperty('firstname', $record);
+            $this->assertObjectHasProperty('imagealt', $record);
         }
     }
 

@@ -50,7 +50,7 @@ class timing_wrapper_lock_factory_test extends \advanced_testcase {
         $duration = microtime(true) - $before;
 
         // Confirm that perf info is now logged and appears plausible.
-        $this->assertObjectHasAttribute('locks', $PERF);
+        $this->assertObjectHasProperty('locks', $PERF);
         $this->assertEquals('phpunit', $PERF->locks[0]->type);
         $this->assertEquals('frog', $PERF->locks[0]->resource);
         $this->assertTrue($PERF->locks[0]->wait <= $duration);

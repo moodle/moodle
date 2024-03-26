@@ -178,12 +178,12 @@ class user_test extends \advanced_testcase {
         $this->assertEquals('House', $result[0]->lastname);
         $this->assertEquals('house@x.x', $result[0]->email);
         $this->assertEquals(0, $result[0]->deleted);
-        $this->assertObjectHasAttribute('firstnamephonetic', $result[0]);
-        $this->assertObjectHasAttribute('lastnamephonetic', $result[0]);
-        $this->assertObjectHasAttribute('middlename', $result[0]);
-        $this->assertObjectHasAttribute('alternatename', $result[0]);
-        $this->assertObjectHasAttribute('imagealt', $result[0]);
-        $this->assertObjectHasAttribute('username', $result[0]);
+        $this->assertObjectHasProperty('firstnamephonetic', $result[0]);
+        $this->assertObjectHasProperty('lastnamephonetic', $result[0]);
+        $this->assertObjectHasProperty('middlename', $result[0]);
+        $this->assertObjectHasProperty('alternatename', $result[0]);
+        $this->assertObjectHasProperty('imagealt', $result[0]);
+        $this->assertObjectHasProperty('username', $result[0]);
 
         // Now search by lastname, both names, and partials, case-insensitive.
         $this->assertEquals($result, \core_user::search('House'));
