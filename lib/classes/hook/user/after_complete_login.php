@@ -26,8 +26,9 @@ use core\hook\stoppable_trait;
  * @copyright  2024 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class after_complete_login implements described_hook,
-        \Psr\EventDispatcher\StoppableEventInterface {
+class after_complete_login implements
+    described_hook,
+    \Psr\EventDispatcher\StoppableEventInterface {
     use stoppable_trait;
 
     /**
