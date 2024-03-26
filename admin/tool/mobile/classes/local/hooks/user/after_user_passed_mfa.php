@@ -24,7 +24,6 @@ namespace tool_mobile\local\hooks\user;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class after_user_passed_mfa {
-
     /**
      * Callback to recover $SESSION->wantsurl.
      *
@@ -36,7 +35,6 @@ class after_user_passed_mfa {
         // Check if the user is doing a mobile app launch, if that's the case, ensure $SESSION->wantsurl is correctly set.
         if (!NO_MOODLE_COOKIES && !empty($_COOKIE['tool_mobile_launch'])) {
             if (empty($SESSION->wantsurl) || strpos($SESSION->wantsurl, '/tool/mobile/launch.php') === false) {
-
                 $params = json_decode($_COOKIE['tool_mobile_launch'], true);
                 $SESSION->wantsurl = (new \moodle_url("/$CFG->admin/tool/mobile/launch.php", $params))->out(false);
                 $SESSION->tool_mfa_has_been_redirected = true;  // Indicate MFA that they need to follow $SESSION->wantsurl.

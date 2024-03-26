@@ -22,12 +22,13 @@ use core\hook\stoppable_trait;
 /**
  * Allow plugins to callback as soon possible after user has passed MFA.
  *
- * @package    core
+ * @package    tool_mfa
  * @copyright  2024 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class after_user_passed_mfa implements described_hook,
-        \Psr\EventDispatcher\StoppableEventInterface {
+class after_user_passed_mfa implements
+    described_hook,
+    \Psr\EventDispatcher\StoppableEventInterface {
     use stoppable_trait;
 
     /**
