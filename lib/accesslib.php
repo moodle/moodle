@@ -1645,18 +1645,6 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
 
     core_course_category::role_assignment_changed($roleid, $context);
 
-    // Update the room membership and power levels when the user role changes.
-    if (\core_communication\api::is_available() && $coursecontext = $context->get_course_context(false)) {
-        $communication = \core_communication\api::load_by_instance(
-            $coursecontext,
-            'core_course',
-            'coursecommunication',
-            $coursecontext->instanceid,
-        );
-
-        $communication->update_room_membership([$userid]);
-    }
-
     $event = \core\event\role_assigned::create(array(
         'context' => $context,
         'objectid' => $ra->roleid,
@@ -1669,6 +1657,13 @@ function role_assign($roleid, $userid, $contextid, $component = '', $itemid = 0,
     ));
     $event->add_record_snapshot('role_assignments', $ra);
     $event->trigger();
+
+    // Dispatch the hook for post role assignment actions.
+    $hook = new \core\hook\access\after_role_assigned(
+        context: $context,
+        userid: $userid,
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
     return $ra->id;
 }
@@ -1763,19 +1758,12 @@ function role_unassign_all(array $params, $subcontexts = false, $includemanual =
             $event->trigger();
             core_course_category::role_assignment_changed($ra->roleid, $context);
 
-            // Update the room membership and power levels when the user role changes.
-            if (\core_communication\api::is_available() && $coursecontext = $context->get_course_context(false)) {
-                $communication = \core_communication\api::load_by_instance(
-                    $coursecontext,
-                    'core_course',
-                    'coursecommunication',
-                    $coursecontext->instanceid,
-                );
-
-                $communication->update_room_membership([$ra->userid]);
-            }
-
-
+            // Dispatch the hook for post role assignment actions.
+            $hook = new \core\hook\access\after_role_unassigned(
+                context: $context,
+                userid: $ra->userid,
+            );
+            \core\di::get(\core\hook\manager::class)->dispatch($hook);
         }
     }
     unset($ras);

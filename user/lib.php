@@ -150,7 +150,7 @@ function user_create_user($user, $updatepassword = true, $triggerevent = true) {
  *             This will not affect user_password_updated event triggering.
  */
 function user_update_user($user, $updatepassword = true, $triggerevent = true) {
-    global $DB, $CFG;
+    global $DB;
 
     // Set the timecreate field to the current time.
     if (!is_object($user)) {
@@ -159,26 +159,12 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
 
     $currentrecord = $DB->get_record('user', ['id' => $user->id]);
 
-    // Communication api update for user.
-    if (core_communication\api::is_available()) {
-        $usercourses = enrol_get_users_courses($user->id);
-        if (!empty($currentrecord) && isset($user->suspended) && $currentrecord->suspended !== $user->suspended) {
-            foreach ($usercourses as $usercourse) {
-                $communication = \core_communication\api::load_by_instance(
-                    context: \core\context\course::instance($usercourse->id),
-                    component: 'core_course',
-                    instancetype: 'coursecommunication',
-                    instanceid: $usercourse->id
-                );
-                // If the record updated the suspended for a user.
-                if ($user->suspended === 0) {
-                    $communication->add_members_to_room([$user->id]);
-                } else if ($user->suspended === 1) {
-                    $communication->remove_members_from_room([$user->id]);
-                }
-            }
-        }
-    }
+    // Dispatch the hook for pre user update actions.
+    $hook = new \core_user\hook\before_user_update(
+        user: $user,
+        currentuserdata: $currentrecord,
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
     // Check username.
     if (isset($user->username)) {

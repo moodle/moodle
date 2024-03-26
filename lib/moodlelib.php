@@ -3563,7 +3563,6 @@ function delete_user(stdClass $user) {
         debugging('Local administrator accounts can not be deleted.');
         return false;
     }
-
     // Allow plugins to use this user object before we completely delete it.
     if ($pluginsfunction = get_plugins_with_function('pre_user_delete')) {
         foreach ($pluginsfunction as $plugintype => $plugins) {
@@ -3573,27 +3572,17 @@ function delete_user(stdClass $user) {
         }
     }
 
+    // Dispatch the hook for pre user update actions.
+    $hook = new \core_user\hook\before_user_deleted(
+        user: $user,
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
     // Keep user record before updating it, as we have to pass this to user_deleted event.
     $olduser = clone $user;
 
     // Keep a copy of user context, we need it for event.
     $usercontext = context_user::instance($user->id);
-
-    // Remove user from communication rooms immediately.
-    if (core_communication\api::is_available()) {
-        foreach (enrol_get_users_courses($user->id) as $course) {
-            $communication = \core_communication\processor::load_by_instance(
-                context: \core\context\course::instance($course->id),
-                component: 'core_course',
-                instancetype: 'coursecommunication',
-                instanceid: $course->id,
-            );
-            if ($communication !== null) {
-                $communication->get_room_user_provider()->remove_members_from_room([$user->id]);
-                $communication->delete_instance_user_mapping([$user->id]);
-            }
-        }
-    }
 
     // Delete all grades - backup is kept in grade_grades_history table.
     grade_user_delete($user->id);
@@ -4641,6 +4630,12 @@ function delete_course($courseorid, $showfeedback = true) {
         }
     }
 
+    // Dispatch the hook for pre course delete actions.
+    $hook = new \core_course\hook\before_course_delete(
+        course: $course,
+    );
+    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+
     // Tell the search manager we are about to delete a course. This prevents us sending updates
     // for each individual context being deleted.
     \core_search\manager::course_deleting_start($courseid);
@@ -4651,29 +4646,8 @@ function delete_course($courseorid, $showfeedback = true) {
     // Make the course completely empty.
     remove_course_contents($courseid, $showfeedback);
 
-    // Communication provider delete associated information.
-    $communication = \core_communication\api::load_by_instance(
-        $context,
-        'core_course',
-        'coursecommunication',
-        $course->id
-    );
-
     // Delete the course and related context instance.
     context_helper::delete_instance(CONTEXT_COURSE, $courseid);
-
-    // Update communication room membership of enrolled users.
-    require_once($CFG->libdir . '/enrollib.php');
-    $courseusers = enrol_get_course_users($courseid);
-    $enrolledusers = [];
-
-    foreach ($courseusers as $user) {
-        $enrolledusers[] = $user->id;
-    }
-
-    $communication->remove_members_from_room($enrolledusers);
-
-    $communication->delete_room();
 
     $DB->delete_records("course", array("id" => $courseid));
     $DB->delete_records("course_format_options", array("courseid" => $courseid));

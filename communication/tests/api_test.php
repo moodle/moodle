@@ -16,9 +16,13 @@
 
 namespace core_communication;
 
+use core_communication\task\add_members_to_room_task;
+use core_communication\task\create_and_configure_room_task;
 use communication_matrix\matrix_test_helper_trait;
 use core_communication\task\synchronise_provider_task;
 use core_communication\task\synchronise_providers_task;
+use core_communication\task\remove_members_from_room;
+use core_communication\task\update_room_task;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -350,5 +354,195 @@ class api_test extends \advanced_testcase {
         $this->execute_task(synchronise_providers_task::class);
         $adhoctask = \core\task\manager::get_adhoc_tasks(synchronise_provider_task::class);
         $this->assertCount(2, $adhoctask);
+    }
+
+    /**
+     * Test the removal of all members from the room.
+     *
+     * @covers ::remove_all_members_from_room
+     */
+    public function test_remove_all_members_from_room(): void {
+        $course = $this->get_course();
+        $userid = $this->get_user()->id;
+        $communication = \core_communication\api::load_by_instance(
+            context: \core\context\course::instance($course->id),
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id,
+        );
+        $communication->add_members_to_room([$userid]);
+
+        // Now test the removing members from a room.
+        $communication->remove_all_members_from_room();
+
+        // Test the remove members tasks added.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(remove_members_from_room::class);
+        $this->assertCount(1, $adhoctask);
+    }
+
+    /**
+     * Test the configuration of room changes as well as the membership with the change of provider.
+     *
+     * @covers ::configure_room_and_membership_by_provider
+     */
+    public function test_configure_room_and_membership_by_provider(): void {
+        global $DB;
+
+        $course = $this->get_course('Sampleroom', 'none');
+        $userid = $this->get_user()->id;
+        $provider = 'communication_matrix';
+
+        $communication = \core_communication\api::load_by_instance(
+            context: \core\context\course::instance($course->id),
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id,
+        );
+
+        $communication->configure_room_and_membership_by_provider(
+            provider: $provider,
+            instance: $course,
+            communicationroomname: $course->fullname,
+            users: [$userid],
+        );
+        $communication->reload();
+
+        // Test that the task to create a room is added.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(create_and_configure_room_task::class);
+        $this->assertCount(1, $adhoctask);
+
+        // Test that no update tasks are added.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(update_room_task::class);
+        $this->assertCount(0, $adhoctask);
+
+        // Test that the task to add members to room is not added, as we are adding the user mapping not the task.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(add_members_to_room_task::class);
+        $this->assertCount(0, $adhoctask);
+
+        // Now delete all the ad-hoc tasks.
+        $DB->delete_records('task_adhoc');
+
+        // Now disable the provider by setting none.
+        $communication->configure_room_and_membership_by_provider(
+            provider: processor::PROVIDER_NONE,
+            instance: $course,
+            communicationroomname: $course->fullname,
+            users: [$userid],
+        );
+        $communication->reload();
+
+        // Test that the task to delete a room is added.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(update_room_task::class);
+        $this->assertCount(1, $adhoctask);
+
+        // Test that the task to remove members from room is added.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(remove_members_from_room::class);
+        $this->assertCount(1, $adhoctask);
+
+        // Now delete all the ad-hoc tasks.
+        $DB->delete_records('task_adhoc');
+
+        // Now try to set the same none provider again.
+        $communication->configure_room_and_membership_by_provider(
+            provider: processor::PROVIDER_NONE,
+            instance: $course,
+            communicationroomname: $course->fullname,
+            users: [$userid],
+        );
+
+        // Test that no communicaiton task is added.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(create_and_configure_room_task::class);
+        $this->assertCount(0, $adhoctask);
+
+        $adhoctask = \core\task\manager::get_adhoc_tasks(update_room_task::class);
+        $this->assertCount(0, $adhoctask);
+
+        $adhoctask = \core\task\manager::get_adhoc_tasks(add_members_to_room_task::class);
+        $this->assertCount(0, $adhoctask);
+
+        $adhoctask = \core\task\manager::get_adhoc_tasks(remove_members_from_room::class);
+        $this->assertCount(0, $adhoctask);
+
+        // Now let's change it back to matrix and test the update task is added.
+        $communication->configure_room_and_membership_by_provider(
+            provider: $provider,
+            instance: $course,
+            communicationroomname: $course->fullname,
+            users: [$userid],
+        );
+        $communication->reload();
+
+        // Test create task is not added because communication has been created in the past.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(create_and_configure_room_task::class);
+        $this->assertCount(0, $adhoctask);
+
+        // Test an update task added.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(update_room_task::class);
+        $this->assertCount(1, $adhoctask);
+
+        // Test add membership task is added.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(add_members_to_room_task::class);
+        $this->assertCount(1, $adhoctask);
+
+        // Now delete all the ad-hoc tasks.
+        $DB->delete_records('task_adhoc');
+
+        // Now change the provider to another one.
+        $communication->configure_room_and_membership_by_provider(
+            provider: 'communication_customlink',
+            instance: $course,
+            communicationroomname: $course->fullname,
+            users: [$userid],
+        );
+        $communication->reload();
+
+        // Remove membership and update room task for the previous provider.
+        // Create room task for new one.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(update_room_task::class);
+        $this->assertCount(1, $adhoctask);
+
+        $adhoctask = \core\task\manager::get_adhoc_tasks(remove_members_from_room::class);
+        $this->assertCount(1, $adhoctask);
+
+        $adhoctask = \core\task\manager::get_adhoc_tasks(create_and_configure_room_task::class);
+        $this->assertCount(1, $adhoctask);
+
+        // Now delete all the ad-hoc tasks.
+        $DB->delete_records('task_adhoc');
+
+        // Now disable the provider.
+        $communication->configure_room_and_membership_by_provider(
+            provider: processor::PROVIDER_NONE,
+            instance: $course,
+            communicationroomname: $course->fullname,
+            users: [$userid],
+        );
+        $communication->reload();
+
+        // Should have one update and one remove task.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(update_room_task::class);
+        $this->assertCount(1, $adhoctask);
+
+        // This provider doesn't have any membership, so no remove task.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(remove_members_from_room::class);
+        $this->assertCount(0, $adhoctask);
+
+        // Now delete all the ad-hoc tasks.
+        $DB->delete_records('task_adhoc');
+
+        // Now enable the same provider again.
+        $communication->configure_room_and_membership_by_provider(
+            provider: $provider,
+            instance: $course,
+            communicationroomname: $course->fullname,
+            users: [$userid],
+        );
+
+        // Now it should have one update and one add task.
+        $adhoctask = \core\task\manager::get_adhoc_tasks(update_room_task::class);
+        $this->assertCount(1, $adhoctask);
+
+        $adhoctask = \core\task\manager::get_adhoc_tasks(add_members_to_room_task::class);
+        $this->assertCount(1, $adhoctask);
     }
 }

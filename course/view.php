@@ -307,14 +307,8 @@ $PAGE->set_heading($course->fullname);
 echo $OUTPUT->header();
 
 // Show communication room status notification.
-if (core_communication\api::is_available() && has_capability('moodle/course:update', $context)) {
-    $communication = \core_communication\api::load_by_instance(
-        $context,
-        'core_course',
-        'coursecommunication',
-        $course->id
-    );
-    $communication->show_communication_room_status_notification();
+if (has_capability('moodle/course:update', $context)) {
+    core_communication\helper::get_course_communication_status_notification($course);
 }
 
 if ($USER->editing == 1) {
