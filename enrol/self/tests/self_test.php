@@ -293,7 +293,7 @@ class self_test extends \advanced_testcase {
         $this->assertCount($numnotifications, $messages);
         if ($numnotifications && ($customint2 > 0)) {
             $this->assertEquals($user3->id, $messages[0]->useridto);
-            $this->assertStringContainsString('you have not visited', $messages[0]->fullmessagehtml);
+            $this->assertStringContainsString('you have not accessed', $messages[0]->fullmessagehtml);
         }
 
         // Make sure that notifications are not repeated.

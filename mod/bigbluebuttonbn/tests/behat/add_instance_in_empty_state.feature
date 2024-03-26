@@ -43,6 +43,6 @@ Feature: I can create a bigbluebuttonbn instance with default server
 
     Examples:
       | user       | shouldseemessage | messageexist |
-      | user1      | The use of default server credentials will soon expire.| should not see |
-      | teacher1   | The use of default server credentials will soon expire.| should see |
-      | admin      | Default BigBlueButton plugin credentials will soon expire.| should see |
+      | user1      | The BigBlueButton server credentials will soon expire. | should not see |
+      | teacher1   | The BigBlueButton server credentials will soon expire. | should see |
+      | admin      | The BigBlueButton server credentials will soon expire. | should see |
