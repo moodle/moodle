@@ -26,6 +26,7 @@
 /.patches/
 /.idea/
 .phpstorm.*
+!.phpstorm.meta.php
 /nbproject/
 CVS
 .DS_Store
