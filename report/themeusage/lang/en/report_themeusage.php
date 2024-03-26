@@ -23,7 +23,7 @@
  */
 
 $string['getreport'] = 'Get report';
-$string['invalidparametertheme'] = 'Invalid paramater set for theme';
+$string['invalidparametertheme'] = 'Invalid parameter set for theme.';
 $string['pluginname'] = 'Theme usage';
 $string['privacy:metadata'] = 'The theme report plugin does not store any personal data.';
 $string['themename'] = 'Theme name';
