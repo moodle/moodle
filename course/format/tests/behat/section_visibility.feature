@@ -43,7 +43,7 @@ Feature: Varify section visibility interface
   @javascript
   Scenario: Hiden activities in hidden sections stay hidden when the section is shown.
     Given I open "Activity sample 1" actions menu
-    And I choose "Availability > Hide on course page" in the open action menu
+    And I choose "Hide" in the open action menu
     And I should see "Hidden from students" in the "Activity sample 1" "activity"
     And I hide section "1"
     And I should see "Hidden from students" in the "Activity sample 1" "activity"

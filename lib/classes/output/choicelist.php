@@ -95,6 +95,23 @@ class choicelist implements renderable, named_templatable {
     }
 
     /**
+     * Get the selectable options.
+     *
+     * This method returns an array of options that are selectable, excluding the selected option and any disabled options.
+     *
+     * @return \stdClass[]
+     */
+    public function get_selectable_options(): array {
+        $selectableOptions = [];
+        foreach ($this->options as $option) {
+            if ($option['value'] !== $this->selected && !$option['disabled']) {
+                $selectableOptions[] = (object) $option;
+            }
+        }
+        return $selectableOptions;
+    }
+
+    /**
      * Set the selected option.
      *
      * @param string $value The value of the selected option.
@@ -204,6 +221,23 @@ class choicelist implements renderable, named_templatable {
                 'value' => $attributevalue,
             ];
         }
+    }
+
+    /**
+     * Retrieves the HTML attributes for a given value from the options array.
+
+     * @param string $value The value for which to retrieve the extras.
+     * @return array an array of HTML attributes of the option (attribute => value).
+     */
+    public function get_option_extras(string $value): array {
+        if (!isset($this->options[$value]) || !isset($this->options[$value]['extras'])) {
+            return [];
+        }
+        $result = [];
+        foreach ($this->options[$value]['extras'] as $extra) {
+            $result[$extra['attribute']] = $extra['value'];
+        }
+        return $result;
     }
 
     /**
