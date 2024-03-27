@@ -1,6 +1,11 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.5 ===
+
+* Final deprecation of print_error(). Use moodle_exception instead.
+
+
 === 4.4 ===
 
 * New modinfo methods related to delegated sections (sections controlled by a component):
