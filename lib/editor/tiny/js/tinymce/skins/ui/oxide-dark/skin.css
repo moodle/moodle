@@ -738,6 +738,7 @@ button::-moz-focus-inner {
   font-style: normal;
   font-weight: normal;
   line-height: 24px;
+  max-width: 100%;
   text-transform: none;
   word-break: break-all;
 }
@@ -936,6 +937,10 @@ button::-moz-focus-inner {
 .tox .tox-hue-slider,
 .tox .tox-hue-slider-spectrum {
   width: 20px;
+}
+.tox .tox-hue-slider-spectrum:focus,
+.tox .tox-sv-palette-spectrum:focus {
+  outline: #08f solid;
 }
 .tox .tox-hue-slider-thumb {
   background: white;
@@ -1415,8 +1420,8 @@ button::-moz-focus-inner {
   background-color: rgba(0, 108, 231, 0.1);
 }
 .tox .tox-dialog__body-nav-item--active {
-  border-bottom: 2px solid #006ce7;
-  color: #006ce7;
+  border-bottom: 2px solid #67aeff;
+  color: #67aeff;
 }
 .tox .tox-dialog__body-content {
   box-sizing: border-box;
@@ -1443,18 +1448,23 @@ button::-moz-focus-inner {
   margin-top: 0;
 }
 .tox .tox-dialog__body-content a {
-  color: #006ce7;
+  color: #67aeff;
   cursor: pointer;
-  text-decoration: none;
+  text-decoration: underline;
 }
 .tox .tox-dialog__body-content a:hover,
 .tox .tox-dialog__body-content a:focus {
-  color: #0054b4;
-  text-decoration: none;
+  color: #cde5ff;
+  text-decoration: underline;
+}
+.tox .tox-dialog__body-content a:focus-visible {
+  border-radius: 1px;
+  outline: 2px solid #67aeff;
+  outline-offset: 2px;
 }
 .tox .tox-dialog__body-content a:active {
-  color: #0054b4;
-  text-decoration: none;
+  color: #ffffff;
+  text-decoration: underline;
 }
 .tox .tox-dialog__body-content svg {
   fill: #fff;
@@ -2351,6 +2361,9 @@ body.tox-dialog__disable-scroll {
     overflow-wrap: break-word;
     word-break: normal;
   }
+  .tox .tox-dialog__popups .tox-menu .tox-collection__item-label {
+    word-break: break-all;
+  }
 }
 .tox .tox-menu__label h1,
 .tox .tox-menu__label h2,
@@ -2853,19 +2866,42 @@ body.tox-dialog__disable-scroll {
   position: relative;
   text-transform: none;
 }
-.tox .tox-statusbar__text-container {
-  display: flex;
-  flex: 1 1 auto;
-  justify-content: flex-end;
-  overflow: hidden;
-}
 .tox .tox-statusbar__path {
   display: flex;
   flex: 1 1 auto;
-  margin-right: auto;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.tox .tox-statusbar__right-container {
+  display: flex;
+  justify-content: flex-end;
+  white-space: nowrap;
+}
+.tox .tox-statusbar__help-text {
+  text-align: center;
+}
+.tox .tox-statusbar__text-container {
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: space-between;
+  overflow: hidden;
+}
+@media only screen and (min-width: 768px ) {
+  .tox .tox-statusbar__text-container.tox-statusbar__text-container-3-cols > .tox-statusbar__help-text,
+  .tox .tox-statusbar__text-container.tox-statusbar__text-container-3-cols > .tox-statusbar__right-container,
+  .tox .tox-statusbar__text-container.tox-statusbar__text-container-3-cols > .tox-statusbar__path {
+    flex: 0 0 calc(100% / 3);
+  }
+}
+.tox .tox-statusbar__text-container.tox-statusbar__text-container--flex-end {
+  justify-content: flex-end;
+}
+.tox .tox-statusbar__text-container.tox-statusbar__text-container--flex-start {
+  justify-content: flex-start;
+}
+.tox .tox-statusbar__text-container.tox-statusbar__text-container--space-around {
+  justify-content: space-around;
 }
 .tox .tox-statusbar__path > * {
   display: inline;
@@ -2874,6 +2910,14 @@ body.tox-dialog__disable-scroll {
 .tox .tox-statusbar__wordcount {
   flex: 0 0 auto;
   margin-left: 1ch;
+}
+@media only screen and (max-width: 767px ) {
+  .tox .tox-statusbar__text-container .tox-statusbar__help-text {
+    display: none;
+  }
+  .tox .tox-statusbar__text-container .tox-statusbar__help-text:only-child {
+    display: block;
+  }
 }
 .tox .tox-statusbar a,
 .tox .tox-statusbar__path-item,

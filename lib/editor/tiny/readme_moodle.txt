@@ -1,1 +1,1 @@
-For instructions on how to import TinyMCE into Moodle, see js/tinymce/readme_moodle.md.
+For instructions on how to import TinyMCE into Moodle, see readme_moodle.md.

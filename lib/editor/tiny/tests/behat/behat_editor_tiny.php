@@ -265,7 +265,7 @@ class behat_editor_tiny extends behat_base implements \core_behat\settable_edito
 
         $editor = $this->get_editor_container_for_locator($editorlocator);
         try {
-            $button = $this->find('button', get_string('tiny:more...', 'editor_tiny'), false, $editor);
+            $button = $this->find('button', get_string('tiny:reveal_or_hide_additional_toolbar_items', 'editor_tiny'), false, $editor);
         } catch (ExpectationException $e) {
             // No more button, so no need to expand.
             return;
