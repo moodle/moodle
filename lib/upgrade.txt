@@ -515,7 +515,7 @@ being forced open in all behat tests.
     - upgrade_analytics_fix_contextids_defaults()
     - upgrade_convert_hub_config_site_param_names()
     - upgrade_rename_prediction_actions_useful_incorrectly_flagged()
-* The method ensure_adhoc_task_qos() in lib/classes/task/manager.php  has been deprecated, please use get_next_adhoc_task()
+* The method ensure_adhoc_task_qos() in lib/classes/task/manager.php has been deprecated, please use get_next_adhoc_task()
   instead.
 * New setting $CFG->enrolments_sync_interval controls the minimum time in seconds between re-synchronization of enrollment via enrol_check_plugins.
   This only applies to web requests without a session such as webservice calls, tokenpluginfile.php and rss links Function
