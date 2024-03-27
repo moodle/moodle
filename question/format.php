@@ -388,8 +388,8 @@ class qformat_default {
                     }
                 }
                 if ($invalidfractions) {
-                    echo $OUTPUT->notification(get_string('invalidgrade', 'question',
-                            implode(', ', $invalidfractions)));
+                    $a = ['grades' => implode(', ', $invalidfractions), 'question' => $question->name];
+                    echo $OUTPUT->notification(get_string('invalidgradequestion', 'question', $a));
                     ++$gradeerrors;
                     continue;
                 } else {

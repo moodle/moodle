@@ -236,6 +236,31 @@ class qformat_xml_import_export_test extends advanced_testcase {
     }
 
     /**
+     * Check exception when importing questions with invalid grades.
+     *
+     * @covers \qformat_default::importprocess
+     */
+    public function test_import_invalid_grades(): void {
+        global $OUTPUT;
+
+        $this->resetAfterTest(true);
+        $course = $this->getDataGenerator()->create_course();
+        $this->setAdminUser();
+        $qformat = $this->create_qformat('error_invalid_grades.xml', $course);
+
+        ob_start();
+        $imported = $qformat->importprocess();
+        $output = ob_get_clean();
+
+        $a = ['grades' => '0.33', 'question' => 'Question with invalid grades : x > 1 & x < 2'];
+        $expectedoutput = $OUTPUT->notification(get_string('invalidgradequestion', 'question', $a));
+        $expectedoutput .= $OUTPUT->notification(get_string('importparseerror', 'question'));
+
+        $this->assertFalse($imported);
+        $this->assertEquals($expectedoutput, $output);
+    }
+
+    /**
      * Simple check for exporting a category.
      */
     public function test_export_category() {
