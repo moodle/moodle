@@ -832,6 +832,66 @@ class auth_plugin_base {
     public function get_extrauserinfo(): array {
         return $this->extrauserinfo;
     }
+
+    /**
+     * Returns the enabled auth plugins
+     *
+     * @return array of plugin classes
+     */
+    public static function get_enabled_auth_plugin_classes(): array {
+        $plugins = [];
+        $authsequence = get_enabled_auth_plugins();
+        foreach ($authsequence as $authname) {
+            $plugins[] = get_auth_plugin($authname);
+        }
+        return $plugins;
+    }
+
+    /**
+     * Find an OS level admin Moodle user account
+     *
+     * Used when running CLI scripts. Only accounts which are
+     * site admin will be accepted.
+     *
+     * @return null|stdClass Admin user record if found
+     */
+    public static function find_cli_admin_user(): ?stdClass {
+        $plugins = static::get_enabled_auth_plugin_classes();
+        foreach ($plugins as $authplugin) {
+            $user = $authplugin->find_cli_user();
+            // This MUST be a valid admin user.
+            if (!empty($user) && is_siteadmin($user->id)) {
+                return $user;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find and login as an OS level admin Moodle user account
+     *
+     * Used for running CLI scripts which must be admin accounts.
+     */
+    public static function login_cli_admin_user(): void {
+        $user = static::find_cli_admin_user();
+        if (!empty($user)) {
+            \core\session\manager::set_user($user);
+        }
+    }
+
+    /**
+     * Identify a Moodle account on the CLI
+     *
+     * For example a plugin might use posix_geteuid and posix_getpwuid
+     * to find the username of the OS level user and then match that
+     * against Moodle user accounts.
+     *
+     * @return null|stdClass User user record if found
+     */
+    public function find_cli_user(): ?stdClass {
+        // Override if needed.
+        return null;
+    }
 }
 
 /**

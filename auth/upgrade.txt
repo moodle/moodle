@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 4.4 ===
 
 * A sesskey is no longer passed to the auth/test_settings.php page so it can no longer be required in test_settings().
+* Auth plugins can now attempt to identify users running CLI scripts using a new method find_cli_user()
 
 === 4.2 ===
 * Support for configuration with the deprecated auth_config.php file has been removed.

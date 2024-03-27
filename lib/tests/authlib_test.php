@@ -504,4 +504,50 @@ class authlib_test extends \advanced_testcase {
         // Restore the original email address validator.
         \moodle_phpmailer::$validator = $defaultvalidator;
     }
+
+    /**
+     * Test the find_cli_user method
+     * @covers ::find_cli_user
+     */
+    public function test_find_cli_user(): void {
+        global $CFG, $USER;
+        require_once("$CFG->libdir/authlib.php");
+        require_once("$CFG->libdir/tests/fixtures/testable_auth_plugin_base.php");
+
+        $this->resetAfterTest();
+
+        $user = \testable_auth_plugin_base::find_cli_admin_user();
+        $this->assertEmpty($user);
+
+        $u1 = $this->getDataGenerator()->create_user([
+            'username' => 'abcdef',
+            'email' => 'abcdef@example.com',
+        ]);
+        $user = \testable_auth_plugin_base::find_cli_admin_user();
+        $this->assertEmpty($user); // User is not an admin yet.
+
+        \testable_auth_plugin_base::login_cli_admin_user();
+        $this->assertEquals($USER->id, 0); // User is not logged in.
+
+        $CFG->siteadmins .= "," . $u1->id;
+
+        \testable_auth_plugin_base::login_cli_admin_user();
+        $this->assertEquals($USER->id, $u1->id); // User is now logged in.
+
+        $user = \testable_auth_plugin_base::find_cli_admin_user();
+        $this->assertNotEmpty($user);
+    }
+
+    /**
+     * Test the get_enabled_auth_plugin_classes method
+     * @covers ::get_enabled_auth_plugin_classes
+     */
+    public function test_get_enabled_auth_plugin_classes(): void {
+        global $CFG;
+        require_once("$CFG->libdir/authlib.php");
+        $plugins = \auth_plugin_base::get_enabled_auth_plugin_classes();
+        $this->assertEquals(get_class($plugins[0]), 'auth_plugin_manual');
+        $this->assertEquals(count($plugins), 3);
+    }
+
 }

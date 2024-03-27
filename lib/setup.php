@@ -1027,6 +1027,11 @@ if (!empty($CFG->debugvalidators) and !empty($CFG->guestloginbutton)) {
 // can be using in the logfile and stripped out if needed.
 set_access_log_user();
 
+if (CLI_SCRIPT && !empty($CFG->version)) {
+    // Allow auth plugins to optionally authenticate users on the CLI.
+    require_once($CFG->libdir. '/authlib.php');
+    auth_plugin_base::login_cli_admin_user();
+}
 
 // Ensure the urlrewriteclass is setup correctly (to avoid crippling site).
 if (isset($CFG->urlrewriteclass)) {
