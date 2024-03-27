@@ -35,23 +35,11 @@ define('MESSAGE_TYPE_MESSAGE', 'message');
  * Define contants for messaging default settings population. For unambiguity of
  * plugin developer intentions we use 4-bit value (LSB numbering):
  * bit 0 - whether to send message (MESSAGE_DEFAULT_ENABLED)
- * bit 1 - Deprecated: whether to send message (MESSAGE_DEFAULT_LOGGEDOFF). Used to mean only when the user is logged off.
+ * bit 1 - not used
  * bit 2..3 - messaging permission (MESSAGE_DISALLOWED|MESSAGE_PERMITTED|MESSAGE_FORCED)
  *
  * MESSAGE_PERMITTED_MASK contains the mask we use to distinguish permission setting.
  */
-
- /**
-  * @deprecated since Moodle 4.0. Use MESSAGE_DEFAULT_ENABLED instead.
-  * @todo Remove on MDL-73284.
-  */
-define('MESSAGE_DEFAULT_LOGGEDIN', 0x01); // 0001
-
- /**
-  * @deprecated since Moodle 4.0 MDL-73284. Use MESSAGE_DEFAULT_ENABLED instead.
-  * @todo Remove on MDL-73284.
-  */
-define('MESSAGE_DEFAULT_LOGGEDOFF', 0x02); // 0010
 
 define('MESSAGE_DEFAULT_ENABLED', 0x01); // 0001.
 
@@ -60,13 +48,6 @@ define('MESSAGE_PERMITTED', 0x08); // 1000.
 define('MESSAGE_FORCED', 0x0c); // 1100.
 
 define('MESSAGE_PERMITTED_MASK', 0x0c); // 1100.
-
-/**
- * Set default value for default outputs permitted setting
- * @deprecated since Moodle 4.0 MDL-73284.
- * @todo Remove on MDL-73284.
- */
-define('MESSAGE_DEFAULT_PERMITTED', 'permitted');
 
 /**
  * Set default values for polling.
@@ -464,7 +445,6 @@ function get_message_output_default_preferences() {
  * Translate message default settings from binary value to the array of string
  * representing the settings to be stored. Also validate the provided value and
  * use default if it is malformed.
- * @todo Remove usage of MESSAGE_DEFAULT_LOGGEDOFF on MDL-73284.
  *
  * @param  int    $plugindefault Default setting suggested by plugin
  * @param  string $processorname The name of processor
@@ -503,10 +483,6 @@ function translate_message_default_setting($plugindefault, $processorname) {
             $locked = false;
             // It's equivalent to logged in.
             $enabled = $plugindefault & MESSAGE_DEFAULT_ENABLED == MESSAGE_DEFAULT_ENABLED;
-
-            // MESSAGE_DEFAULT_LOGGEDOFF is deprecated but we're checking it just in case.
-            $loggedoff = $plugindefault & MESSAGE_DEFAULT_LOGGEDOFF == MESSAGE_DEFAULT_LOGGEDOFF;
-            $enabled = $enabled || $loggedoff;
             break;
     }
 
