@@ -1,0 +1,24 @@
+issueNumber: MDL-75189
+notes:
+  mod_data:
+    - message: |
+        Final deprecation and removal of the following classes:
+          - data_preset_importer
+          - data_preset_existing_importer
+          - data_preset_upload_importer
+          - data_import_preset_zip_form
+      type: removed
+    - message: >
+        - Final deprecation of \mod_data_renderer::import_setting_mappings(). Please use \mod_data_renderer::importing_preset() instead.
+        - Final deprecation of data_print_template() function. Please use mod_data\manager::get_template and mod_data\template::parse_entries instead.
+        - Final deprecation of data_preset_name(). Please use preset::get_name_from_plugin() instead.
+        - Final deprecation of data_get_available_presets(). Please use manager::get_available_presets() instead.
+        - Final deprecation of data_get_available_site_presets(). Please use manager::get_available_saved_presets() instead.
+        - Final deprecation of data_delete_site_preset(). Please use preset::delete() instead.
+        - Final deprecation of is_directory_a_preset(). Please use preset::is_directory_a_preset() instead.
+        - Final deprecation of data_presets_save(). Please use preset::save() instead.
+        - Final deprecation of data_presets_generate_xml(). Please use preset::generate_preset_xml() instead.
+        - Final deprecation of data_presets_export(). Please use preset::export() instead.
+        - Final deprecation of data_user_can_delete_preset(). Please use preset::can_manage() instead.
+        - Final deprecation of data_view(). Please use mod_data\manager::set_module_viewed() instead.
+      type: removed
