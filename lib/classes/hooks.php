@@ -87,7 +87,7 @@ final class hooks implements \core\hook\discovery_agent {
                 }
 
                 if ($tags = attribute_helper::instance($classname, \core\attribute\tags::class)) {
-                    $hooks[$classname]['tags'][] = $tags->tags;
+                    $hooks[$classname]['tags'] = $tags->tags;
                 }
             }
         }
