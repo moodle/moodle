@@ -28,13 +28,14 @@ use advanced_testcase;
  * @coversDefaultClass \mod_bigbluebuttonbn\task\base_send_notification
  */
 class base_send_notification_test extends advanced_testcase {
+
     /**
-     * Check if set instance ID works correctly
+     * Returns mock base_send_notification class
      *
+     * @return base_send_notification
      */
-    public function test_set_instance_id(): void {
-        $this->resetAfterTest();
-        $stub = $this->getMockForAbstractClass(
+    private function get_mock(): base_send_notification {
+        return $this->getMockForAbstractClass(
             base_send_notification::class,
             [],
             '',
@@ -43,7 +44,26 @@ class base_send_notification_test extends advanced_testcase {
             true,
             []
         );
+    }
 
+    /**
+     * Returns reflection method for base_send_notification->get_instance
+     *
+     * @return \ReflectionMethod
+     */
+    private function get_instance_reflection(): \ReflectionMethod {
+        $rc = new \ReflectionClass(base_send_notification::class);
+        $rcm = $rc->getMethod('get_instance');
+        $rcm->setAccessible(true);
+        return $rcm;
+    }
+
+    /**
+     * Check if set instance ID works correctly
+     */
+    public function test_set_instance_id(): void {
+        $this->resetAfterTest();
+        $stub = $this->get_mock();
         $generator = $this->getDataGenerator();
         $course = $generator->create_course();
         $instancedata = $generator->create_module('bigbluebuttonbn', [
@@ -52,11 +72,23 @@ class base_send_notification_test extends advanced_testcase {
 
         $stub->set_instance_id($instancedata->id);
 
-        $rc = new \ReflectionClass(base_send_notification::class);
-        $rcm = $rc->getMethod('get_instance');
-        $rcm->setAccessible(true);
+        $rcm = $this->get_instance_reflection();
         $instance = $rcm->invoke($stub);
-
+        $this->assertNotNull($instance);
         $this->assertEquals($instancedata->id, $instance->get_instance_id());
+    }
+
+    /**
+     * Check if instanceid missing is checked and handled.
+     */
+    public function test_set_instanceid_missing(): void {
+        $this->resetAfterTest();
+        $stub = $this->get_mock();
+        $rcm = $this->get_instance_reflection();
+
+        // This should throw a coding exception since there is no instanceid set.
+        $this->expectException(\coding_exception::class);
+        $this->expectExceptionMessage("Task custom data was missing instanceid");
+        $rcm->invoke($stub);
     }
 }
