@@ -137,6 +137,32 @@ final class adhoc_task_test extends \advanced_testcase {
     }
 
     /**
+     * Test that failed tasks eventually hit the maximum delay.
+     *
+     * @covers \core\task\adhoc_task
+     */
+    public function test_get_next_adhoc_task_maximum_fail_delay(): void {
+        $this->resetAfterTest(true);
+
+        $now = time();
+
+        // Create an adhoc task.
+        $task = new adhoc_test_task();
+        $attemptsavailable = $task->get_attempts_available();
+        manager::queue_adhoc_task($task);
+
+        // Exhaust all attempts available.
+        for ($x = 0; $x < $attemptsavailable; $x++) {
+            $delay = $task->get_fail_delay() * 2;
+            $task = manager::get_next_adhoc_task($now + $delay);
+            $task->execute();
+            manager::adhoc_task_failed($task);
+        }
+        // Check that the fail delay is now set to 24 hours (the maximum amount of times).
+        $this->assertEquals(DAYSECS, $task->get_fail_delay());
+    }
+
+    /**
      * Test adhoc task failure retry backoff.
      */
     public function test_adhoc_task_with_retry_flag(): void {
@@ -148,13 +174,13 @@ final class adhoc_task_test extends \advanced_testcase {
         $task = new adhoc_test_task();
         $taskid1 = manager::queue_adhoc_task(task: $task);
 
-        // This is a normal task, so it should have unlimited attempts. The remaining available attempts should be null.
+        // This is a normal task, so it should have limited attempts.
         $attemptsavailable = $DB->get_field(
             table: 'task_adhoc',
             return: 'attemptsavailable',
             conditions: ['id' => $taskid1]
         );
-        $this->assertEquals(expected: manager::MAX_RETRY, actual: $attemptsavailable);
+        $this->assertEquals(expected: 12, actual: $attemptsavailable);
 
         // Get the task from the scheduler, execute it, and mark it as failed.
         $task = manager::get_next_adhoc_task(timestart: $now);
@@ -162,13 +188,13 @@ final class adhoc_task_test extends \advanced_testcase {
         $task->execute();
         manager::adhoc_task_failed(task: $task);
 
-        // This is a normal task, so it should have unlimited attempts. The remaining available attempts should be null.
+        // Now that the task has failed, there should be one less attempt available.
         $attemptsavailable = $DB->get_field(
             table: 'task_adhoc',
             return: 'attemptsavailable',
             conditions: ['id' => $taskid1]
         );
-        $this->assertEquals(expected: manager::MAX_RETRY - 1, actual: $attemptsavailable);
+        $this->assertEquals(expected: 12 - 1, actual: $attemptsavailable);
 
         // Create a no-retry adhoc task.
         $now = time();

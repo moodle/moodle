@@ -46,8 +46,8 @@ abstract class adhoc_task extends task_base {
     /** @var \core\lock\lock The concurrency task lock for this task. */
     private $concurrencylock = null;
 
-    /** @var integer|null $attemptsavailable - The remaining attempts of the task, or null for unlimited. */
-    private $attemptsavailable = null;
+    /** @var int $attemptsavailable - The remaining attempts of the task. */
+    private $attemptsavailable = 12;
 
     /**
      * Provide default implementation of the task name for backward compatibility. Extending classes are expected to implement
@@ -178,18 +178,18 @@ abstract class adhoc_task extends task_base {
     /**
      * Set the remaining attempts of the task.
      *
-     * @param int|null $attemptsavailable Number of the remaining attempts of the task, or null for unlimited.
+     * @param int $attemptsavailable Number of the remaining attempts of the task.
      */
-    public function set_attempts_available(?int $attemptsavailable): void {
+    public function set_attempts_available(int $attemptsavailable): void {
         $this->attemptsavailable = $attemptsavailable;
     }
 
     /**
      * Get the remaining attempts of the task.
      *
-     * @return int|null Number of the remaining attempts of the task, or null for unlimited.
+     * @return int Number of the remaining attempts of the task.
      */
-    public function get_attempts_available(): ?int {
+    public function get_attempts_available(): int {
         return $this->attemptsavailable;
     }
 

@@ -870,7 +870,7 @@ function xmldb_main_upgrade($oldversion) {
         $field = new xmldb_field(
             name: 'attemptsavailable',
             type: XMLDB_TYPE_INTEGER,
-            precision: '1',
+            precision: '2',
             unsigned: null,
             notnull: null,
             sequence: null,
@@ -1127,6 +1127,21 @@ function xmldb_main_upgrade($oldversion) {
 
         // Main savepoint reached.
         upgrade_main_savepoint(true, 2024030500.02);
+    }
+
+    if ($oldversion < 2024032600.01) {
+
+        // Changing precision of field attemptsavailable on table task_adhoc to (2).
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field('attemptsavailable', XMLDB_TYPE_INTEGER, '2', null, null, null, null, 'pid');
+
+        // Launch change of precision for field.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->change_field_precision($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024032600.01);
     }
 
     return true;

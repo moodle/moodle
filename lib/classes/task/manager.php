@@ -57,11 +57,6 @@ class manager {
     const ADHOC_TASK_FAILED_RETENTION = 4 * WEEKSECS;
 
     /**
-     * @var int Used for max retry.
-     */
-    const MAX_RETRY = 9;
-
-    /**
      * @var ?task_base $runningtask Used to tell what is the current running task in this process.
      */
     public static ?task_base $runningtask = null;
@@ -261,7 +256,7 @@ class manager {
         }
 
         // Check if the task is allowed to be retried or not.
-        $record->attemptsavailable = $task->retry_until_success() ? self::MAX_RETRY : 1;
+        $record->attemptsavailable = $task->retry_until_success() ? $record->attemptsavailable : 1;
         // Set the time the task was created.
         $record->timecreated = time();
 
