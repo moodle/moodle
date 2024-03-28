@@ -3548,33 +3548,13 @@ abstract class enrol_plugin {
      * This is called from the tool_uploadcourse if the plugin supports instance creation in
      * upload course ({@see self::is_csv_upload_supported()})
      *
-     * The fallback is to call the edit_instance_validation() but it will be better if the plugins
-     * implement this method to return better error messages.
+     * Override it if plugin can validate provided data in relevant context.
      *
      * @param array $enrolmentdata enrolment data to validate.
      * @param int|null $courseid Course ID.
      * @return lang_string|null Error
      */
     public function validate_plugin_data_context(array $enrolmentdata, ?int $courseid = null): ?lang_string {
-        global $DB;
-
-        if ($courseid) {
-            $enrolmentdata += ['courseid' => $courseid, 'id' => 0, 'status' => ENROL_INSTANCE_ENABLED];
-            $instance = (object)[
-                'id' => null,
-                'courseid' => $courseid,
-                'status' => $enrolmentdata['status'],
-                'type' => $this->get_name(),
-            ];
-            if (array_key_exists('role', $enrolmentdata)) {
-                $instance->roleid = $DB->get_field('role', 'id', ['shortname' => $enrolmentdata['role']]);
-            }
-            $formerrors = $this->edit_instance_validation($enrolmentdata, [], $instance, context_course::instance($courseid));
-            if (!empty($formerrors)) {
-                $errors = array_map(fn($key) => "{$key}: {$formerrors[$key]}", array_keys($formerrors));
-                return new lang_string('errorcannotcreateorupdateenrolment', 'tool_uploadcourse', $errors);
-            }
-        }
         return null;
     }
 
