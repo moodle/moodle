@@ -146,8 +146,10 @@ if (!empty($bulkbutton)) {
 if ($format->show_editor()) {
     $sectionclass = new \core_courseformat\output\local\content\section($format, $sectioninfo);
     $renderable = $sectionclass->export_for_template($renderer);
-    $controlmenuhtml = $renderable->controlmenu->menu;
-    $PAGE->add_header_action($controlmenuhtml);
+    if (property_exists($renderable->controlmenu, 'menu')) {
+        $controlmenuhtml = $renderable->controlmenu->menu;
+        $PAGE->add_header_action($controlmenuhtml);
+    }
     $sectionheading = $OUTPUT->container(
         $OUTPUT->render($format->inplace_editable_render_section_name($sectioninfo, false)),
         attributes: ['data-for' => 'section_title'],
