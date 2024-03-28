@@ -512,7 +512,8 @@ class random_question_loader {
                       FROM {question} q
                       JOIN {question_versions} qv ON qv.questionid = q.id
                       JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                      {$condition}) q";
+                      {$condition}) q
+                  ORDER BY q.id";
 
             return $DB->get_records_sql($sql, $param, $offset, $limit);
         } else {
