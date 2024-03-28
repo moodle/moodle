@@ -364,7 +364,7 @@ class qformat_default {
         // check for errors before we continue
         if ($this->stoponerror and ($this->importerrors>0)) {
             echo $OUTPUT->notification(get_string('importparseerror', 'question'));
-            return true;
+            return false;
         }
 
         // get list of valid answer grades
@@ -388,8 +388,8 @@ class qformat_default {
                     }
                 }
                 if ($invalidfractions) {
-                    echo $OUTPUT->notification(get_string('invalidgrade', 'question',
-                            implode(', ', $invalidfractions)));
+                    $a = ['grades' => implode(', ', $invalidfractions), 'question' => $question->name];
+                    echo $OUTPUT->notification(get_string('invalidgradequestion', 'question', $a));
                     ++$gradeerrors;
                     continue;
                 } else {
@@ -402,6 +402,7 @@ class qformat_default {
 
         // check for errors before we continue
         if ($this->stoponerror && $gradeerrors > 0) {
+            echo $OUTPUT->notification(get_string('importparseerror', 'question'));
             return false;
         }
 
