@@ -176,6 +176,7 @@ $string['failed'] = 'Failed';
 $string['fraction'] = 'Fraction';
 $string['graderequired'] = 'Required course grade';
 $string['gradexrequired'] = '{$a} required';
+$string['incompatibleplugin'] = 'This activity does not support default completion settings. Completion conditions must be manually set for each use.';
 $string['inprogress'] = 'In progress';
 $string['manual'] = 'Manual';
 $string['manualcompletionby'] = 'Manual completion by others';
