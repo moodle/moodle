@@ -24,6 +24,8 @@ Feature: Restore Moodle 2 course backups
       | blockname        | contextlevel | reference | pagetypepattern | defaultregion |
       | activity_modules | Course       | C1        | course-view-*   | side-pre      |
       | activity_modules | Course       | C5        | course-view-*   | side-pre      |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I log in as "admin"
     And I am on "Course 1" course homepage with editing mode on
 

@@ -13,6 +13,8 @@ Feature: Restoring Moodle 2 backup restores LTI configuration
       | user | course | role |
       | teacher1 | C1 | editingteacher |
       | teacher1 | C2 | editingteacher |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
 
   Scenario: Backup and restore course with preconfigured site LTI tool on the same site
     Given the following "mod_lti > tool types" exist:

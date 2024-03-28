@@ -19,6 +19,8 @@ Feature: Backup xAPI states
       | course          | C1                                      |
       | name            | Awesome H5P package                     |
       | packagefilepath | h5p/tests/fixtures/filltheblanks.h5p    |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     # Save state for the student user.
     And I am on the "Awesome H5P package" "h5pactivity activity" page logged in as student1
     And I switch to "h5p-player" class iframe

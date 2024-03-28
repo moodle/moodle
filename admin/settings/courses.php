@@ -727,12 +727,12 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) {
     $temp = new admin_settingpage('asyncgeneralsettings', new lang_string('asyncgeneralsettings', 'backup'));
 
     $temp->add(new admin_setting_configcheckbox('enableasyncbackup', new lang_string('enableasyncbackup', 'backup'),
-            new lang_string('enableasyncbackup_help', 'backup'), 0, 1, 0));
+            new lang_string('enableasyncbackup_help', 'backup'), 1, 1, 0));
 
     $temp->add(new admin_setting_configcheckbox(
             'backup/backup_async_message_users',
             new lang_string('asyncemailenable', 'backup'),
-            new lang_string('asyncemailenabledetail', 'backup'), 0));
+            new lang_string('asyncemailenabledetail', 'backup'), 1));
     $temp->hide_if('backup/backup_async_message_users', 'enableasyncbackup');
 
     $temp->add(new admin_setting_configtext(

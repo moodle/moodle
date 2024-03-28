@@ -11,6 +11,8 @@ Feature: Backup and restore of quizzes
     And the following "question categories" exist:
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I log in as "admin"
 
   @javascript

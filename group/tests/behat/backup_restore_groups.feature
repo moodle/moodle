@@ -22,6 +22,8 @@ Feature: Backup and restore a course containing groups
       | Not visible                               | C1     | N        | 3          | 0             |
       | Visible/Non-Participation                 | C1     | VN       | 0          | 0             |
       | Only visible to members/Non-Participation | C1     | MN       | 1          | 0             |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I log in as "admin"
     And I backup "Course 1" course using this options:
       | Confirmation | Filename | test_backup.mbz |

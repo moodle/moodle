@@ -32,6 +32,8 @@ Feature: Restore Moodle 2 course backups with different user data settings
     And the following "mod_data > entries" exist:
       | database | user     | Test field name |
       | data1    | student1 | Student entry   |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I log in as "admin"
     And I backup "Course 1" course using this options:
       | Initial      | Include enrolled users | 1               |

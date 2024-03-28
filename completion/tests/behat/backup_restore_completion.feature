@@ -26,6 +26,8 @@ Feature: Backup and restore the activity with the completion
       | completionusegrade                  | 1                       |
       | gradepass                           | 50                      |
       | completionpassgrade                 | 1                       |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I am on the "Test assignment name" "assign activity" page logged in as student1
     And I log out
 

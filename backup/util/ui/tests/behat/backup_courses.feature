@@ -13,6 +13,8 @@ Feature: Backup Moodle courses
       | activity | course | idnumber | name | intro | section |
       | assign | C2 | assign1 | Test assign | Assign description | 1 |
       | data | C2 | data1 | Test data | Database description | 2 |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I log in as "admin"
 
   Scenario: Backup a course providing options

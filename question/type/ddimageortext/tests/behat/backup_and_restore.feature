@@ -19,6 +19,8 @@ Feature: Test duplicating a quiz containing a drag and drop onto image question
       | quiz       | Test quiz | C1     | quiz1    |
     And quiz "Test quiz" contains the following questions:
       | Drag onto image | 1 |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
 
   @javascript
   Scenario: Backup and restore a course containing a drag and drop onto image question
