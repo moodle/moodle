@@ -40,6 +40,7 @@ use core\hook\manager as hook_manager;
 use core\hook\output\after_standard_main_region_html_generation;
 use core\hook\output\before_footer_html_generation;
 use core\hook\output\before_html_attributes;
+use core\hook\output\before_http_headers;
 use core\hook\output\before_standard_footer_html_generation;
 use core\hook\output\before_standard_top_of_body_html_generation;
 use core\output\named_templatable;
@@ -1359,14 +1360,12 @@ class core_renderer extends renderer_base {
     public function header() {
         global $USER, $CFG, $SESSION;
 
-        // Give plugins an opportunity touch things before the http headers are sent
-        // such as adding additional headers. The return value is ignored.
-        $pluginswithfunction = get_plugins_with_function('before_http_headers', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $function();
-            }
-        }
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_http_headers.php');
+
+        di::get(hook_manager::class)->dispatch(new before_http_headers($this));
 
         if (\core\session\manager::is_loggedinas()) {
             $this->page->add_body_class('userloggedinas');
