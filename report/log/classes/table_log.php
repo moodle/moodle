@@ -25,6 +25,7 @@
 defined('MOODLE_INTERNAL') || die;
 global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
+
 /**
  * Table log class for displaying logs.
  *
@@ -33,7 +34,6 @@ require_once($CFG->libdir . '/tablelib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class report_log_table_log extends table_sql {
-
     /** @var array list of user fullnames shown in report */
     private $userfullnames = array();
 
@@ -155,12 +155,14 @@ class report_log_table_log extends table_sql {
     /**
      * Generate the username column.
      *
-     * @param stdClass $event event data.
+     * @param \core\event\base $event event data.
      * @return string HTML for the username column
      */
     public function col_fullnameuser($event) {
         // Get extra event data for origin and realuserid.
         $logextra = $event->get_logextra();
+
+        $eventusername = $event->userid ? $this->get_user_fullname($event->userid) : false;
 
         // Add username who did the action.
         if (!empty($logextra['realuserid'])) {
@@ -168,7 +170,7 @@ class report_log_table_log extends table_sql {
             if (!$a->realusername = $this->get_user_fullname($logextra['realuserid'])) {
                 $a->realusername = '-';
             }
-            if (!$a->asusername = $this->get_user_fullname($event->userid)) {
+            if (!$a->asusername = $eventusername) {
                 $a->asusername = '-';
             }
             if (empty($this->download)) {
@@ -182,13 +184,13 @@ class report_log_table_log extends table_sql {
             }
             $username = get_string('eventloggedas', 'report_log', $a);
 
-        } else if (!empty($event->userid) && $username = $this->get_user_fullname($event->userid)) {
+        } else if ($eventusername) {
             if (empty($this->download)) {
                 $params = array('id' => $event->userid);
                 if ($event->courseid) {
                     $params['course'] = $event->courseid;
                 }
-                $username = html_writer::link(new moodle_url('/user/view.php', $params), $username);
+                $username = html_writer::link(new moodle_url('/user/view.php', $params), $eventusername);
             }
         } else {
             $username = '-';
