@@ -14,6 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+use cache;
+use coding_exception;
+use core_component;
+use moodle_exception;
+use moodle_url;
+use progress_trace;
+use stdClass;
+
 /**
  * Defines classes used for plugins management
  *
@@ -25,7 +35,7 @@
  * @copyright  2011 David Mudrak <david@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class core_plugin_manager {
+class plugin_manager {
     /** the plugin is shipped with standard Moodle distribution */
     const PLUGIN_SOURCE_STANDARD    = 'std';
     /** the plugin is added extension */
@@ -67,10 +77,10 @@ class core_plugin_manager {
     /** the plugin does not specify supports */
     const VERSION_NO_SUPPORTS = 'nosupports';
 
-    /** @var core_plugin_manager holds the singleton instance */
+    /** @var plugin_manager holds the singleton instance */
     protected static $singletoninstance;
-    /** @var \stdClass cache of standard plugins */
-    protected static ?\stdClass $standardplugincache = null;
+    /** @var stdClass cache of standard plugins */
+    protected static ?stdClass $standardplugincache = null;
     /** @var array of raw plugins information */
     protected $pluginsinfo = null;
     /** @var array of raw subplugins information */
@@ -333,9 +343,9 @@ class core_plugin_manager {
     /**
      * Load the standard plugin data from the plugins.json file.
      *
-     * @return \stdClass
+     * @return stdClass
      */
-    protected static function load_standard_plugins(): \stdClass {
+    protected static function load_standard_plugins(): stdClass {
         if (static::$standardplugincache === null) {
             $data = file_get_contents(dirname(__DIR__) . '/plugins.json');
             static::$standardplugincache = json_decode($data, false);
@@ -409,7 +419,6 @@ class core_plugin_manager {
             return $this->pluginsinfo[$type];
         }
 
-        /** @var \core\plugininfo\base $plugintypeclass */
         $plugintypeclass = static::resolve_plugininfo_class($type);
         $plugins = $plugintypeclass::get_plugins($type, $types[$type], $plugintypeclass, $this);
         $this->pluginsinfo[$type] = $plugins;
@@ -832,10 +841,9 @@ class core_plugin_manager {
      *
      * @param \core\plugininfo\base $plugin the plugin we are checking
      * @param string|int|double $moodleversion moodle core branch to check against
-     * @return stdObject
+     * @return stdClass
      */
     protected function resolve_core_requirements(\core\plugininfo\base $plugin, $moodleversion, $moodlebranch) {
-
         $reqs = (object)[
             'hasver' => null,
             'reqver' => null,
@@ -1463,7 +1471,7 @@ class core_plugin_manager {
      *
      * @param string $component
      * @param string $return either 'overview' or 'manage'
-     * @return moodle_url uninstall URL, null if uninstall not supported
+     * @return null|moodle_url uninstall URL, null if uninstall not supported
      */
     public function get_uninstall_url($component, $return = 'overview') {
         if (!$this->can_uninstall_plugin($component)) {
@@ -1948,7 +1956,7 @@ class core_plugin_manager {
     /**
      * Archive the current on-disk plugin code.
      *
-     * @param \core\plugiinfo\base $plugin
+     * @param \core\plugininfo\base $plugin
      * @return bool
      */
     public function archive_plugin_version(\core\plugininfo\base $plugin) {
@@ -2152,3 +2160,5 @@ class core_plugin_manager {
         return $this->updateapiclient;
     }
 }
+
+class_alias(plugin_manager::class, 'core_plugin_manager');
