@@ -146,6 +146,7 @@ $string['advertise_classroom_based_course_name'] = 'Advertise training event';
 $string['user_signed_up_for_event_name'] = 'User training event sign up';
 $string['user_signed_up_for_event_reminder_name'] = 'User training event reminder';
 $string['user_signed_up_for_event_teacher_name'] = 'User training event sign up - teacher';
+$string['user_signed_up_to_waitlist_name'] = 'User training event waiting list sign up';
 $string['user_removed_from_event_name'] = 'User training event cancelled';
 $string['user_removed_from_event_teacher_name'] = 'User training event cancelled - teacher';
 $string['user_removed_from_event_waitlist_name'] = 'User training event removed from waiting list';
@@ -199,6 +200,7 @@ $string['advertise_classroom_based_course_name_help'] = 'Template sent out when 
 $string['user_signed_up_for_event_name_help'] = 'Template sent out to a user when they sign up for a training event which doesn\'t require manager approval.';
 $string['user_signed_up_for_event_reminder_name_help'] = 'Template sent out to remind a user they are signed up for a training event.';
 $string['user_signed_up_for_event_teacher_name_help'] = 'Template sent out to teachers when a user has signed up for a training event which doesn\'t require manager approval.';
+$string['user_signed_up_to_waitlist_name_help'] = 'Template sent out to a user when they sign on to the waiting list for a training event.';
 $string['user_removed_from_event_name_help'] = 'Template sent out to a user for confirmation when they have been removed from a training event.';
 $string['user_removed_from_event_teacher_name_help'] = 'Template sent out to teacher when a user has been removed from a training event.';
 $string['user_removed_from_event_waitlist_name_help'] = 'Template sent out to a user for confirmation when they have been removed from a training event waiting list.';
@@ -336,11 +338,22 @@ Address: {Classroom_Address}</br>
 $string['user_signed_up_for_event_teacher_subject'] = 'User attending notice {Course_FullName}';
 $string['user_signed_up_for_event_teacher_body'] = '<p>Dear {User_FirstName},</p>
 <p>{Approveuser_FirstName} {Approveuser_LastName} has signed up for the face-to-face training on {Course_FullName} at the following event -</p>
-<p>Time : {Classroom_Time}</br>
-Location : {Classroom_Name}</br>
-Address : {Classroom_Address}</br>
+<p>Time: {Classroom_Time}</br>
+Location: {Classroom_Name}</br>
+Address: {Classroom_Address}</br>
 {Classroom_City} {Classroom_Postcode}</br>';
 
+$string['user_signed_up_to_waitlist_subject'] = 'Added to waiting list for {Course_FullName}';
+$string['user_signed_up_to_waitlist_body'] = '<p>Dear {User_FirstName},</p>
+
+<p>You have been added to the <b>waiting list</b> for the face-to-face training on {Course_FullName} at the following event:</p>
+
+<p>Time: {Classroom_Time}<br>
+Location: {Classroom_Name}<br>
+Address: {Classroom_Address}<br>
+          {Classroom_City} {Classroom_Postcode}<br>
+
+<p>You do not currently have a confirmed place, but will be informed if this changes.</p>';
 $string['user_removed_from_event_teacher_subject'] = 'User cancellation notice {Course_FullName}';
 $string['user_removed_from_event_teacher_body'] = '<p>Dear {User_FirstName},</p>
 <p>{Approveuser_FirstName} {Approveuser_LastName} is no longer attending the face-to-face training on {Course_FullName} at the following event -</p>

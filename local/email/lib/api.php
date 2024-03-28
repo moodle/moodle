@@ -1086,6 +1086,7 @@ class EmailTemplate {
                                 'user_removed_from_event' => 'user_removed_from_event',
                                 'user_reset' => 'user_reset',
                                 'user_signed_up_for_event' => 'user_signed_up_for_event',
+                                'user_signed_up_to_waitlist' => 'user_signed_up_to_waitlist',
                                 'user_suspended' => 'user_suspended',
                                 'user_unsuspended' => 'user_unsuspended');
 

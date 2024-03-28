@@ -191,9 +191,14 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
         if (!empty($attending)) {
             $companyid = iomad::get_my_companyid(context_system::instance());
             $usercompany = new company($companyid);
+            $course = $DB->get_record('course', array('id' => $event->course));
+            $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
+
+            // Process the request.
             if ('yes' == $attending) {
                 $record = $DB->get_record('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id));
 
+                // Is this for the waiting list?
                 if ($waitingoption) {
                     if (!($record && $record->waitlisted)) {
                         if ($record) {
@@ -202,6 +207,13 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                             $DB->insert_record('trainingevent_users', array('trainingeventid' => $event->id, 'userid' => $USER->id, 'waitlisted'=>1));
                         }
                     }
+
+                    // Send the added to waiting list email.
+                    EmailTemplate::send('user_signed_up_to_waitlist', array('course' => $course,
+                                                                            'user' => $USER,
+                                                                            'classroom' => $location,
+                                                                            'company' => $usercompany,
+                                                                            'event' => $event));
 
                 } else if (!($record && !$record->waitlisted)) {
                     if ($record && $record->waitlisted) {
@@ -223,8 +235,6 @@ if (!$event = $DB->get_record('trainingevent', array('id' => $cm->instance))) {
                     if (empty($res)) {
                         throw new moodle_exception('error creating attendance record');
                     } else {
-                        $course = $DB->get_record('course', array('id' => $event->course));
-                        $location->time = date($CFG->iomad_date_format . ' \a\t H:i', $event->startdatetime);
 
                         // Send an email as long as it hasn't already started.
                         if ($event->startdatetime > time()) {

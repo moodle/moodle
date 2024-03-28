@@ -138,6 +138,7 @@ class local_email {
                             'user_signed_up_for_event',
                             'user_signed_up_for_event_reminder',
                             'user_signed_up_for_event_teacher',
+                            'user_signed_up_to_waitlist',
                             'user_suspended',
                             'user_unsuspended');
 
@@ -182,6 +183,7 @@ class local_email {
                        'user_removed_from_event_waitlist',
                        'user_reset',
                        'user_signed_up_for_event',
+                       'user_signed_up_to_waitlist',
                        'user_suspended',
                        'user_unsuspended'];
 
