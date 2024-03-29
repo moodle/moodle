@@ -71,5 +71,14 @@ $tasks = [
         'day' => '*',
         'month' => '*',
         'dayofweek' => '*'
+    ],
+    [
+        'classname' => 'local_email_reports\task\company_license_expiring_task',
+        'blocking' => 0,
+        'minute' => '0',
+        'hour' => '0',
+        'day' => '*',
+        'month' => '*',
+        'dayofweek' => '*'
     ]
 ];

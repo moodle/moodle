@@ -1054,7 +1054,6 @@ class company_user {
                 $DB->set_field_select('local_iomad_track', 'coursecleared', 1, $litsql, $litparams);
             }
             // Fix company licenses
-echo "Clearing down licenses which have been used for courseid $courseid</br>";
             if ($licenses = $DB->get_records('companylicense_users', $params)) {
                 foreach ($licenses as $license) {
                     if ($action != 'delete') {

@@ -4494,7 +4494,6 @@ class company {
     public static function user_enrolment_created(\core\event\user_enrolment_created $event) {
         global $DB, $CFG;
 
-echo "IN company::user_enrolment_created</br>";
         $userid = $event->relateduserid;
         $timestamp = $event->timecreated;
         $courseid = $event->courseid;
@@ -4706,6 +4705,27 @@ echo "IN company::user_enrolment_created</br>";
         // Update the license usage.
         self::update_license_usage($licenseid);
 
+        // Check if we need to warn about usage.
+        $licenserec = $DB->get_record('companylicense', ['id' => $licenseid]);
+        if ($licenserec->used/$licenserec->allocation * 100 > 90) {
+            // Get the company managers.
+            if ($companymanagers = $DB->get_records_sql("SELECT u.*
+                                                         FROM {user} u
+                                                         JOIN {company_users} cu ON (u.id = cu.userid)
+                                                         WHERE u.deleted = 0
+                                                         AND u.suspended = 0
+                                                         AND cu.companyid = :companyid
+                                                         AND cu.managertype =1",
+                                                        ['companyid' => $company->id])) {
+                foreach ($companymanagers as $companymanager) {
+                    EmailTemplate::send('licensepoolwarning', array('course' => $course,
+                                                                    'company' => $company,
+                                                                    'user' => $companymanager,
+                                                                    'license' => $license));
+                }
+            }
+        }
+
         // Is this an immediate license?
         if (!empty($licenserecord->instant)) {
             if (self::license_ok_to_use($licenseid, $courseid, $userid)) {
@@ -4732,9 +4752,7 @@ echo "IN company::user_enrolment_created</br>";
                     }
 
                     if ($licenserecord->type < 2) {
-echo "Checking if user $user->id is enrolled on course $instance->courseid</br>";
                         if (!is_enrolled(context_course::instance($instance->courseid), $user->id)) {
-echo "They aren't so we will add them</br>";
                             $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
                         } else if ($completedrecords = $DB->get_records_select('local_iomad_track',
                                                                                 "userid = :userid
@@ -4745,27 +4763,22 @@ echo "They aren't so we will add them</br>";
                                                                                  ['userid' => $userid,
                                                                                  'courseid' => $course->id,
                                                                                  'timeallocated' => $event->timecreated])) {
-echo "Getting records from LIT as we have have copmpleted all of the other assignations<br>";
                             // All previous attempts have been completed so enrol again.
                             foreach ($completedrecords as $completedrecord) {
                                 // Complete any license allocations.
-echo "Dealing with LIT id $completedrecord->id<br>";
                                 if ($licenserecord = $DB->get_record('companylicense_users', ['userid' => $completedrecord->userid,
                                                                                               'licensecourseid' => $completedrecord->courseid,
                                                                                               'licenseid' => $completedrecord->licenseid,
                                                                                               'issuedate' => $completedrecord->licenseallocated])) {
                                     if (empty($licenserecord->timecompleted)) {
-echo "Marking clu.id $licenserecord->id as finished with @ $timestart<br>";
                                         $DB->set_field('companylicense_users', 'timecompleted', $timestart, ['id' => $licenserecord->id]);
                                     }
                                 }
                                 $DB->set_field('local_iomad_track', 'completedstop', 1, ['id' => $completedrecord->id]);
                             }
-echo "Clearing down the course</br>";
                             // Clear them from the course.
                             company_user::delete_user_course($user->id, $course->id, 'autodelete');
 
-echo "Re-enrolling them on the course</br>";
                             // Then re-enrol them.
                             $enrol->enrol_user($instance, $user->id, $instance->roleid, $timestart, $timeend);
                         } 
