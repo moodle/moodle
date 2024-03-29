@@ -74,10 +74,10 @@
                 <label class="" for="{{elementid}}_tiny_image_size">{{#str}} size, tiny_media {{/str}}</label>
                 <div id="{{elementid}}_tiny_image_size" class="d-flex flex-wrap align-items-center tiny_image_size">
                     <label class="accesshide" for="{{elementid}}_tiny_image_widthentry">{{#str}} width, tiny_media {{/str}}</label>
-                    <input type="text" class="form-control mr-1 input-mini tiny_image_widthentry" id="{{elementid}}_tiny_image_widthentry" size="4" value="{{width}}"/>
+                    <input type="text" class="form-control mr-1 w-auto input-mini tiny_image_widthentry" id="{{elementid}}_tiny_image_widthentry" size="4" value="{{width}}"/>
                     x
                     <label class="accesshide" for="{{elementid}}_tiny_image_heightentry">{{#str}} height, tiny_media {{/str}}</label>
-                    <input type="text" class="form-control ml-1 input-mini tiny_image_heightentry" id="{{elementid}}_tiny_image_heightentry" size="4" value="{{height}}"/>
+                    <input type="text" class="form-control ml-1 w-auto input-mini tiny_image_heightentry" id="{{elementid}}_tiny_image_heightentry" size="4" value="{{height}}"/>
 
                     <div class="form-check ml-2">
                         <input type="checkbox" class="form-check-input tiny_image_constrain" id="{{elementid}}_tiny_image_constrain"/>
@@ -86,8 +86,8 @@
                 </div>
             </div>
             <div class="d-flex flex-wrap align-items-center mb-1">
-                <label for="{{elementid}}_tiny_image_alignment">{{#str}} alignment, tiny_media {{/str}}</label>
-                <select class="custom-select tiny_image_alignment" id="{{elementid}}_tiny_image_alignment">
+                <label for="{{elementid}}_tiny_image_alignment" class="mb-0">{{#str}} alignment, tiny_media {{/str}}</label>
+                <select class="custom-select tiny_image_alignment ml-2" id="{{elementid}}_tiny_image_alignment">
                     {{#alignoptions}}
                         <option value="{{value}}" {{#selected}}selected{{/selected}}>{{{text}}}</option>
                     {{/alignoptions}}
