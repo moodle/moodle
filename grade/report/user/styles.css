@@ -183,7 +183,8 @@
 
     .path-grade-report-user .user-grade th.category a.toggle-category,
     .grade-report-user .user-grade th.category a.toggle-category
-    .path-grade-report-user #page-footer {
+    .path-grade-report-user #page-footer,
+    .path-grade-report-user .user-grade td.column-grade .action-menu {
         display: none;
     }
 }
