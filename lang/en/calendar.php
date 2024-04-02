@@ -48,10 +48,10 @@ $string['confirmsubscriptiondelete'] = 'Are you sure you want to delete the "{$a
 $string['copycalendarurl'] = 'Copy calendar URL';
 $string['copyurl'] = 'Copy URL';
 $string['course'] = 'Course';
+$string['coursecalendarlink'] = 'Course calendar';
 $string['courseevent'] = 'Course event';
 $string['courseevents'] = 'Course events';
 $string['categoryevents'] = 'Category events';
-$string['coursecalendar'] = '{$a} calendar';
 $string['courses'] = 'Courses';
 $string['customexport'] = 'Custom range ({$a->timestart} - {$a->timeend})';
 $string['daily'] = 'Daily';
@@ -284,3 +284,6 @@ $string['whendate'] = 'When: {$a}';
 $string['yesterday'] = 'Yesterday';
 $string['youcandeleteallrepeats'] = 'This event is part of a repeating event series. You can delete this event only, or all {$a} events in the series at once.';
 $string['yoursubscriptions'] = 'Imported calendars';
+
+// Deprecated since Moodle 4.4.
+$string['coursecalendar'] = '{$a} calendar';

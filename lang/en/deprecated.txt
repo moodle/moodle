@@ -125,3 +125,4 @@ from,core
 aria-toggledropdown,core_grades
 aria:dropdowngrades,core_grades
 viewresults,core
+coursecalendar,core_calendar
