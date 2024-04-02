@@ -120,16 +120,23 @@ class helper {
             throw new \coding_exception('Invalid action provided.');
         }
 
-        // Get the group mode for this course.
-        $groupmode = $course->groupmode ?? get_course(courseid: $course->id)->groupmode;
         $coursecontext = \context_course::instance(courseid: $course->id);
 
-        // If group mode is not set, then just handle the update normally for these users.
+        $communication = self::load_by_course(
+            courseid: $course->id,
+            context: $coursecontext,
+        );
+
+        // Check we have communication correctly set up before proceeding.
+        if ($communication->get_processor() === null) {
+            return;
+        }
+
+        // Get the group mode for this course.
+        $groupmode = $course->groupmode ?? get_course(courseid: $course->id)->groupmode;
+
         if ((int)$groupmode === NOGROUPS) {
-            $communication = self::load_by_course(
-                courseid: $course->id,
-                context: $coursecontext,
-            );
+            // If group mode is not set, then just handle the update normally for these users.
             $communication->$memberaction($userids);
         } else {
             // If group mode is set, then handle the update for these users with repect to the group they are in.

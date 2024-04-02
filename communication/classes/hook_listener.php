@@ -247,7 +247,7 @@ class hook_listener {
         );
         $provider = $course->selectedcommunication ?? $defaultprovider;
 
-        if (empty($provider) && $provider === processor::PROVIDER_NONE) {
+        if (empty($provider) || $provider === processor::PROVIDER_NONE) {
             return;
         }
 
