@@ -157,10 +157,8 @@ final class cookie_helper {
                 // Set a session flag storing the method used to set it, and make sure the session cookie uses this method.
                 $cookiemethod = $cookie1received ? self::COOKIE_METHOD_NO_PARTITIONING : self::COOKIE_METHOD_EXPLICIT_PARTITIONING;
                 $SESSION->auth_lti_cookie_method = $cookiemethod;
-                if ($cookiemethod === self::COOKIE_METHOD_EXPLICIT_PARTITIONING) {
-                    // This assumes secure is set, since that's the only way a paritioned test cookie have been set.
-                    self::add_attributes_to_cookie_response_header('MoodleSession'.$CFG->sessioncookie, ['Partitioned', 'Secure']);
-                }
+
+                self::setup_session_cookie();
             }
         }
     }
@@ -207,6 +205,24 @@ final class cookie_helper {
             self::add_attributes_to_cookie_response_header('MoodleSession'.$CFG->sessioncookie, [$expirestr]);
         } else {
             setcookie('MoodleSession'.$CFG->sessioncookie, '', time() - 60);
+        }
+    }
+
+    /**
+     * Sets up the session cookie according to the method used in the cookie check, and with SameSite=None; Secure attributes.
+     *
+     * @return void
+     */
+    public static function setup_session_cookie(): void {
+        global $CFG;
+        require_once($CFG->libdir . '/sessionlib.php');
+
+        if (is_moodle_cookie_secure()) {
+            $atts = ['SameSite=None', 'Secure'];
+            if (self::get_cookies_supported_method() == self::COOKIE_METHOD_EXPLICIT_PARTITIONING) {
+                $atts[] = 'Partitioned';
+            }
+            self::add_attributes_to_cookie_response_header('MoodleSession' . $CFG->sessioncookie, $atts);
         }
     }
 
