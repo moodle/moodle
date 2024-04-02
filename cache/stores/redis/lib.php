@@ -215,8 +215,6 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         // Set Redis server(s).
         $servers = explode("\n", $configuration['server']);
         $trimmedservers = [];
-        // print_r($configuration);
-        // print_r($servers);
         foreach ($servers as $server) {
             $server = strtolower(trim($server));
             if (!empty($server)) {
@@ -256,32 +254,15 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
         }
         // Connect to redis.
         $redis = null;
-        // print_r($trimmedservers);
-        // exit;
         try {
             // Create a $redis object of a RedisCluster or Redis class.
             if ($clustermode) {
-                $redis = new RedisCluster(
-                    name: null,
-                    seeds: $trimmedservers,
-                    timeout: 1,
-                    read_timeout: 1,
-                    persistent: true,
-                    auth: $password,
-                    context: !empty($opts) ? $opts : null,
-                );
+                $redis = new RedisCluster(null, $trimmedservers, 1, 1, true, $password, !empty($opts) ? $opts : null);
             } else {
                 // We only need the first record for the single redis.
                 list($server, $port) = explode(':', $trimmedservers[0]);
                 $redis = new Redis();
-                $redis->connect(
-                    host: $server,
-                    port: $port,
-                    timeout: 1,
-                    retry_interval: 100,
-                    read_timeout: 1,
-                    context: $opts,
-                );
+                $redis->connect($server, $port, 1, null, 100, 1, $opts);
                 if (!empty($password)) {
                     $redis->auth($password);
                 }
@@ -306,7 +287,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             }
             $this->isready = true;
         } catch (RedisException | RedisClusterException $e) {
-            $server = $clustermode ? implode(',', $trimmedservers) : $trimmedservers[0].':'.$port;
+            $server = $clustermode ? implode(',', $trimmedservers) : $server.':'.$port;
             debugging("Failed to connect to Redis at {$server}, the error returned was: {$e->getMessage()}");
             $this->isready = false;
         }
