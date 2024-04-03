@@ -47,8 +47,6 @@ class enrol_instance_edit_form extends moodleform {
 
         list($instance, $plugin, $context, $type, $returnurl) = $this->_customdata;
 
-        $mform->addElement('header', 'header', get_string('pluginname', 'enrol_' . $type));
-
         $plugin->edit_instance_form($instance, $mform, $context);
 
         $mform->addElement('hidden', 'id');
