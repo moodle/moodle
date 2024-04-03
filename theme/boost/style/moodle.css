@@ -26961,6 +26961,9 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   background-color: #d7e4d6;
 }
 
+/**
+ Blocks
+ */
 .blockmovetarget .accesshide {
   position: relative;
   left: initial;
@@ -27090,76 +27093,36 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   border-radius: 50%;
 }
 
-.dashboard-card-deck.one-row {
-  flex-flow: nowrap;
-  overflow-x: scroll;
+.card-grid {
+  display: flex;
+}
+.card-grid .card {
+  flex: 1;
+}
+.drawercontent .card-grid .col, .blockcolumn .card-grid .col {
+  flex: 0 0 auto;
+  max-width: 100%;
 }
 
-.summaryimage {
-  height: 5rem;
-  width: 5rem;
-  background-position: center;
-  background-size: cover;
+.card-carousel {
+  display: flex;
 }
-
-.dashboard-list-img {
-  height: 5rem;
-  width: 20rem;
-  background-position: center;
-  background-size: cover;
-}
-@media (max-width: 1199.98px) {
-  .dashboard-list-img {
-    width: 100%;
-  }
-}
-
-.dashboard-card-deck .dashboard-card {
-  margin-bottom: 0.5rem;
-  flex-basis: auto;
-  width: 100%;
-  flex-grow: 0;
-  flex-shrink: 0;
-}
-.dashboard-card-deck .dashboard-card .dashboard-card-img {
-  height: 7rem;
-  background-position: center;
-  background-size: cover;
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-.dashboard-card-deck .dashboard-card .dashboard-card-footer {
-  padding: 0.8rem;
+.card-carousel .card {
+  flex: 1;
 }
 @media (min-width: 576px) {
-  .dashboard-card-deck.fixed-width-cards .dashboard-card {
-    width: 300px;
+  .card-carousel .card {
+    flex: 0 1 auto;
+    width: 240px;
     max-width: 100%;
   }
 }
 
-@media (min-width: 576px) {
-  .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(50% - 0.5rem);
-  }
-}
-@media (min-width: 840px) {
-  .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: calc(33.33% - 0.5rem);
-  }
-}
-
-#block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) {
-  margin-left: 0;
-  margin-right: 0;
-}
-#block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-  width: calc(100% - 0.5rem) !important;
-}
-@media (max-width: 575.98px) {
-  #block-region-side-pre .dashboard-card-deck:not(.fixed-width-cards) .dashboard-card {
-    width: 100% !important;
-  }
+.course-card .card-img-top,
+.theme-card .card-img-top {
+  height: 7rem;
+  background-position: center;
+  background-size: cover;
 }
 
 .block_recentlyaccessedcourses .paging-bar-container {
@@ -27181,23 +27144,19 @@ body.behat-site .action-menu .dropdown-subpanel-content.show {
   width: 40px;
   height: 40px;
 }
-aside[id^=block-region-side-] .block_recentlyaccesseditems .dashboard-card-deck.one-row {
-  flex-flow: wrap;
-  overflow-x: hidden;
-}
-aside[id^=block-region-side-] .block_recentlyaccesseditems .dashboard-card-deck .card:nth-of-type(n+4) {
+aside[id^=block-region-side-] .block_recentlyaccesseditems .card:nth-of-type(n+4) {
   display: none;
 }
 #block-region-content .block_recentlyaccesseditems [data-region=more-items-button-container] {
   display: none;
 }
-.block_recentlyaccesseditems a.dashboard-card:hover, .block_recentlyaccesseditems a.dashboard-card:focus {
+.block_recentlyaccesseditems a.card:hover, .block_recentlyaccesseditems a.card:focus {
   text-decoration: none;
 }
-.block_recentlyaccesseditems a.dashboard-card:hover h6, .block_recentlyaccesseditems a.dashboard-card:focus h6 {
+.block_recentlyaccesseditems a.card:hover h6, .block_recentlyaccesseditems a.card:focus h6 {
   text-decoration: underline;
 }
-.block_recentlyaccesseditems a.dashboard-card small {
+.block_recentlyaccesseditems a.card small {
   color: #1d2125;
 }
 
@@ -27206,6 +27165,23 @@ aside[id^=block-region-side-] .block_recentlyaccesseditems .dashboard-card-deck 
 }
 .block_myoverview .paged-content-page-container {
   min-height: 13rem;
+}
+.block_myoverview .summary-image {
+  height: 5rem;
+  width: 5rem;
+  background-position: center;
+  background-size: cover;
+}
+.block_myoverview .list-image {
+  height: 5rem;
+  width: 20rem;
+  background-position: center;
+  background-size: cover;
+}
+@media (max-width: 1199.98px) {
+  .block_myoverview .list-image {
+    width: 100%;
+  }
 }
 
 .block_timeline .paged-content-page-container {

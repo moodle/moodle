@@ -1,3 +1,7 @@
+/**
+ Blocks
+ */
+
 .blockmovetarget .accesshide {
     position: relative;
     left: initial;
@@ -98,8 +102,6 @@ $blocks-plus-gutter: $blocks-column-width + ( $grid-gutter-width * 0.5 );
     }
 }
 
-$card-gutter : $card-deck-margin * 2;
-
 .block .empty-placeholder-image-lg {
     height: 5rem;
 }
@@ -111,6 +113,10 @@ $card-gutter : $card-deck-margin * 2;
         }
     }
 }
+
+//
+// Cards.
+//
 
 .block .block-cards {
     .course-info-container {
@@ -146,81 +152,40 @@ $card-gutter : $card-deck-margin * 2;
         border-radius: 50%;
     }
 }
-
-.dashboard-card-deck.one-row {
-    flex-flow: nowrap;
-    overflow-x: scroll;
+.card-grid {
+    display: flex;
+    .card {
+        flex: 1;
+    }
+    .drawercontent & .col,
+    .blockcolumn & .col {
+        flex: 0 0 auto;
+        max-width: 100%;
+    }
 }
-
-.summaryimage {
-    height: 5rem;
-    width: 5rem;
-    background-position: center;
-    background-size: cover;
+.card-carousel {
+    display: flex;
+    .card {
+        flex: 1;
+        @include media-breakpoint-up(sm) {
+            flex: 0 1 auto;
+            width: 240px;
+            max-width: 100%;
+        }
+    }
 }
-.dashboard-list-img {
-    height: 5rem;
-    width: 20rem;
-    background-position: center;
-    background-size: cover;
-    @include media-breakpoint-down(lg) {
-        width: 100%;
+.course-card,
+.theme-card {
+    .card-img-top {
+        height: 7rem;
+        background-position: center;
+        background-size: cover;
     }
 }
 
-.dashboard-card-deck {
-    .dashboard-card {
-        margin-bottom: $card-gutter;
-        flex-basis: auto;
-        width: 100%;
-        flex-grow: 0;
-        flex-shrink: 0;
-        .dashboard-card-img {
-            height: 7rem;
-            background-position: center;
-            background-size: cover;
-            border-bottom-left-radius: 0;
-            border-bottom-right-radius: 0;
-        }
-        .dashboard-card-footer {
-            padding: 0.8rem;
-        }
-    }
-    @include media-breakpoint-up(sm) {
-        &.fixed-width-cards {
-            .dashboard-card {
-                width: 300px;
-                max-width: 100%;
-            }
-        }
-    }
-}
-
-.dashboard-card-deck:not(.fixed-width-cards) {
-    @media (min-width: 576px) {
-        .dashboard-card {
-            width: calc(50% - #{$card-gutter});
-        }
-    }
-    @media (min-width: 840px) {
-        .dashboard-card {
-            width: calc(33.33% - #{$card-gutter});
-        }
-    }
-}
-
-#block-region-side-pre {
-    .dashboard-card-deck:not(.fixed-width-cards) {
-        margin-left: 0;
-        margin-right: 0;
-        .dashboard-card {
-            width: calc(100% - #{$card-gutter}) !important;
-            @include media-breakpoint-down(xs) {
-                width: 100% !important;
-            }
-        }
-    }
-}
+//
+// Block block_recentlyaccessedcourses
+//
 
 .block_recentlyaccessedcourses {
     .paging-bar-container {
@@ -228,14 +193,12 @@ $card-gutter : $card-deck-margin * 2;
         padding-right: 0.5rem;
         justify-content: flex-end;
     }
-
     @include media-breakpoint-down(xs) {
         .paging-bar-container {
             margin-top: 0;
         }
     }
 }
-
 #block-region-side-pre {
     .block_recentlyaccessedcourses {
         .paging-bar-container {
@@ -244,26 +207,22 @@ $card-gutter : $card-deck-margin * 2;
     }
 }
 
+//
+// Block block_recentlyaccesseditems
+//
+
 .block_recentlyaccesseditems {
     .activityiconcontainer {
         width: 40px;
         height: 40px;
     }
-
-    aside[id^="block-region-side-"] & .dashboard-card-deck.one-row {
-        flex-flow: wrap;
-        overflow-x: hidden;
-    }
-
-    aside[id^="block-region-side-"] & .dashboard-card-deck .card:nth-of-type(n+4) {
+    aside[id^="block-region-side-"] & .card:nth-of-type(n+4) {
         display: none;
     }
-
     #block-region-content & [data-region="more-items-button-container"] {
         display: none;
     }
-
-    a.dashboard-card {
+    a.card {
         &:hover,
         &:focus {
             text-decoration: none;
@@ -277,6 +236,10 @@ $card-gutter : $card-deck-margin * 2;
     }
 }
 
+//
+// Block block_myoverview
+//
+
 .block_myoverview {
     .content {
         min-height: 19.35rem;
@@ -284,19 +247,41 @@ $card-gutter : $card-deck-margin * 2;
     .paged-content-page-container {
         min-height: 13rem;
     }
+    .summary-image {
+        height: 5rem;
+        width: 5rem;
+        background-position: center;
+        background-size: cover;
+    }
+    .list-image {
+        height: 5rem;
+        width: 20rem;
+        background-position: center;
+        background-size: cover;
+        @include media-breakpoint-down(lg) {
+            width: 100%;
+        }
+    }
 }
+
+//
+// Block block_timeline
+//
 
 .block_timeline {
     .paged-content-page-container {
         background-color: $list-group-bg;
     }
 }
-
 .block_timeline {
     .event-action {
         padding-left: 5.55em;
     }
 }
+
+//
+// Blocks block_settings and block_navigation
+//
 
 // Show expand collapse with font-awesome.
 .block_settings .block_tree [aria-expanded="true"],
@@ -353,6 +338,10 @@ $card-gutter : $card-deck-margin * 2;
     border: 2px dashed $gray-800;
     margin: 4px 0;
 }
+
+//
+// Fake blocks
+//
 
 .pagelayout-embedded {
     .has-fake-blocks {

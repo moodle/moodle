@@ -62,9 +62,11 @@
         {{>core/single_button}}
     </div>
 {{/resetbutton}}
-<div class="card-deck dashboard-card-deck" id="themelist" data-region="card-deck" role="list" data-definedinconfig="{{definedinconfig}}">
+<div class="card-grid row row-cols-1 row-cols-md-3 mx-0" id="themelist" data-region="card-deck" role="list" data-definedinconfig="{{definedinconfig}}">
     {{#themes}}
-        {{>core_admin/themeselector/theme_card}}
+        <div class="col d-flex px-1 mb-2">
+            {{>core_admin/themeselector/theme_card}}
+        </div>
     {{/themes}}
 </div>
 

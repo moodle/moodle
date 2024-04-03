@@ -25,18 +25,18 @@ Feature: The my overview block allows users to favourite their courses
 
   Scenario: Favourite a course on a course card
     Given I am on the "My courses" page logged in as "student1"
-    When I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
-    And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 2')]" "xpath_element"
+    When I click on ".coursemenubtn" "css_element" in the "//div[contains(@class, 'course-card') and contains(.,'Course 2')]" "xpath_element"
+    And I click on "Star this course" "link" in the "//div[contains(@class, 'course-card') and contains(.,'Course 2')]" "xpath_element"
     And I reload the page
-    Then "//div[@class='card dashboard-card' and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='false']" "xpath_element" should exist
-    And "//div[@class='card dashboard-card' and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should not exist
-    And "//div[@class='card dashboard-card' and contains(.,'Course 1')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
-    And "//div[@class='card dashboard-card' and contains(.,'Course 3')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
+    Then "//div[contains(@class, 'course-card') and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='false']" "xpath_element" should exist
+    And "//div[contains(@class, 'course-card') and contains(.,'Course 2')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should not exist
+    And "//div[contains(@class, 'course-card') and contains(.,'Course 1')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
+    And "//div[contains(@class, 'course-card') and contains(.,'Course 3')]//span[@data-region='is-favourite' and @aria-hidden='true']" "xpath_element" should exist
 
   Scenario: Star a course and switch display to list
     Given I am on the "My courses" page logged in as "student1"
-    When I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
-    And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
+    When I click on ".coursemenubtn" "css_element" in the "//div[contains(@class, 'course-card') and contains(.,'Course 5')]" "xpath_element"
+    And I click on "Star this course" "link" in the "//div[contains(@class, 'course-card') and contains(.,'Course 5')]" "xpath_element"
     And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     And I click on "List" "link" in the "Course overview" "block"
     Then "//li[contains(concat(' ', normalize-space(@class), ' '), 'list-group-item') and contains(.,'Course 5')]//span[@data-region='is-favourite' and @aria-hidden='false']" "xpath_element" should exist
@@ -46,8 +46,8 @@ Feature: The my overview block allows users to favourite their courses
 
   Scenario: Star a course and switch display to summary
     Given I am on the "My courses" page logged in as "student1"
-    When I click on ".coursemenubtn" "css_element" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
-    And I click on "Star this course" "link" in the "//div[@class='card dashboard-card' and contains(.,'Course 5')]" "xpath_element"
+    When I click on ".coursemenubtn" "css_element" in the "//div[contains(@class, 'course-card') and contains(.,'Course 5')]" "xpath_element"
+    And I click on "Star this course" "link" in the "//div[contains(@class, 'course-card') and contains(.,'Course 5')]" "xpath_element"
     And I click on "Display drop-down menu" "button" in the "Course overview" "block"
     And I click on "Summary" "link" in the "Course overview" "block"
     Then "//div[contains(concat(' ', normalize-space(@class), ' '), 'course-summaryitem') and contains(.,'Course 5')]//span[@data-region='is-favourite' and @aria-hidden='false']" "xpath_element" should exist
