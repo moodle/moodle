@@ -44,14 +44,6 @@ function book_get_numbering_types() {
 }
 
 /**
- * Returns list of available navigation link CSS classes.
- * @return array
- */
-function book_get_nav_classes() {
-    return array ('navtoc', 'navimages', 'navtext');
-}
-
-/**
  * Add book instance.
  *
  * @param stdClass $data
