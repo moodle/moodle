@@ -1025,9 +1025,10 @@ function chat_format_message_theme ($message, $chatuser, $currentuser, $grouping
     // It cannot be called here as HTML-isation interferes with special case
     // recognition, but *must* be called on any user-sourced text to be inserted
     // into $outmain.
-    $options = new stdClass();
-    $options->para = false;
-    $options->blanktarget = true;
+    $options = [
+        'para' => false,
+        'blanktarget' => true,
+    ];
 
     // And now check for special cases.
     $special = false;
