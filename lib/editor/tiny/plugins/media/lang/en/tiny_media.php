@@ -90,6 +90,7 @@ $string['presentationoraltrequired'] = 'An image must have a description, unless
 $string['privacy:metadata'] = 'The media plugin for TinyMCE does not store any personal data.';
 $string['remove'] = 'Remove';
 $string['repositorynotpermitted'] = 'Paste an image link in the field below.';
+$string['repositoryuploadnotpermitted'] = 'Paste an image link in the field below or<br>click the Browse Repositories button.';
 $string['saveimage'] = 'Save';
 $string['size'] = 'Width x height (in pixels)';
 $string['sizecustom'] = 'Custom size';

@@ -33,15 +33,21 @@
             <!-- File input -->
             <input type="file" id="tiny_image_fileinput" accept="image/*" class="d-none">
         {{/showdropzone}}
-        {{^showfilepicker}}
+        {{^showdropzone}}
             <div class="text-center">
                 <!-- Dropzone icon -->
                 <i class="fa-6x pb-2 text-secondary fa fa-cloud"></i>
                 <!-- Dropzone string -->
                 <div class="lead text-center">
-                    <p class="mb-0">{{#str}} repositorynotpermitted, tiny_media {{/str}}</p>
+                    <p class="mb-0">
+                    {{#showfilepicker}}
+                        {{#str}} repositoryuploadnotpermitted, tiny_media {{/str}}</p>
+                    {{/showfilepicker}}
+                    {{^showfilepicker}}
+                        {{#str}} repositorynotpermitted, tiny_media {{/str}}
+                    {{/showfilepicker}}
                 </div>
             </div>
-        {{/showfilepicker}}
+        {{/showdropzone}}
     </div>
 </div>
