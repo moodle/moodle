@@ -25,14 +25,14 @@ namespace core\output;
  * @covers \core\output\icon_system_fontawesome
  */
 class icon_system_fontawesome_test extends \advanced_testcase {
+
     /**
-     * Returns a list of all mapped icons along with the component dir, and file name (without any suffix/extension).
-     *
-     * @return array
+     * Test that the specified icon has an SVG fallback.
      */
-    public function get_icon_name_map(): array {
+    public function test_svg_fallback(): void {
+        // This can't be tested using data provider because it initializes the theme system when running filtered tests.
         $instance = icon_system::instance(icon_system::FONTAWESOME);
-        return array_map(function($key) {
+        $icons = array_map(function($key) {
             global $CFG;
             [$component, $file] = explode(':', $key);
 
@@ -45,22 +45,16 @@ class icon_system_fontawesome_test extends \advanced_testcase {
             }
 
             return [
-                $key,
-                $componentdir,
-                $file,
+                'key' => $key,
+                'path' => $componentdir,
+                'filename' => $file,
             ];
         }, array_keys($instance->get_icon_name_map()));
-    }
 
-    /**
-     * Test that the specified icon has an SVG fallback.
-     *
-     * @param string $key Icon key.
-     * @param string $path Path to the component directory.
-     * @param string $filename Icon filename.
-     * @dataProvider get_icon_name_map
-     */
-    public function test_svg_fallback(string $key, string $path, string $filename): void {
-        $this->assertTrue(file_exists("{$path}/pix/{$filename}.svg"), "No SVG equivalent found for '{$key}'");
+        foreach ($icons as $icon) {
+            $this->assertTrue(
+                file_exists("{$icon['path']}/pix/{$icon['filename']}.svg"), "No SVG equivalent found for '{$icon['key']}'",
+            );
+        }
     }
 }
