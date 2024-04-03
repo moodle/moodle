@@ -58,7 +58,7 @@ Feature: Group assignment submissions
     And I should see "This submission is the work of my group, except where we have acknowledged the use of the works of other people."
     And I press "Continue"
     And I should see "Confirm submission"
-    And I should see "- Required"
+    And I should see "You are required to agree to this statement before you can submit."
     And I set the field "submissionstatement" to "1"
     And I press "Continue"
     And I should see "Submitted for grading" in the "Submission status" "table_row"
