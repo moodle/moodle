@@ -729,4 +729,38 @@ abstract class advanced_testcase extends base_testcase {
             \core\task\manager::adhoc_task_complete($task);
         }
     }
+
+    /**
+     * Mock the clock with an incrementing clock.
+     *
+     * @param null|int $starttime
+     * @return \incrementing_clock
+     */
+    public function mock_clock_with_incrementing(
+        ?int $starttime = null,
+    ): \incrementing_clock {
+        require_once(dirname(__DIR__, 2) . '/testing/classes/incrementing_clock.php');
+        $clock = new \incrementing_clock($starttime);
+
+        \core\di::set(\core\clock::class, $clock);
+
+        return $clock;
+    }
+
+    /**
+     * Mock the clock with a frozen clock.
+     *
+     * @param null|int $time
+     * @return \frozen_clock
+     */
+    public function mock_clock_with_frozen(
+        ?int $time = null,
+    ): \frozen_clock {
+        require_once(dirname(__DIR__, 2) . '/testing/classes/frozen_clock.php');
+        $clock = new \frozen_clock($time);
+
+        \core\di::set(\core\clock::class, $clock);
+
+        return $clock;
+    }
 }

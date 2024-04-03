@@ -613,6 +613,14 @@ All rights reserved.</copyright>
     <repository>https://github.com/php-fig/container</repository>
   </library>
   <library>
+    <location>psr/clock</location>
+    <name>clock</name>
+    <description>Clock Interface (PHP FIG PSR-20).</description>
+    <version>1.0.0</version>
+    <license>MIT</license>
+    <repository>https://github.com/php-fig/clock</repository>
+  </library>
+  <library>
     <location>psr/http-client</location>
     <name>http-client</name>
     <description>Provides an abstraction that describe the components of a HTTP Client.</description>
