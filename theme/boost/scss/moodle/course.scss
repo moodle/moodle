@@ -1258,6 +1258,11 @@ $divider-hover-color: $primary !default;
         font-size: $font-size-lg;
         color: $primary;
     }
+
+    // Add new z-index context for dnd overlay higher divider buttons and quick edit links.
+    .overlay-preview {
+        z-index: 5;
+    }
 }
 
 // Course 'add section' button.
