@@ -3290,7 +3290,7 @@ function create_event_draft_file_deleted(context $context, stored_file $storedfi
  * @param string $filearea filearea
  * @param int $itemid the item id
  * @param array $files Array of files object with each item having filename/filepath as values
- * @return array $return Array of strings matching up to the parent directory of the deleted files
+ * @return false|stdClass $return Object containing URL of zip archive and a file path
  * @throws coding_exception
  */
 function repository_download_selected_files($context, string $component, string $filearea, $itemid, array $files) {
@@ -3307,10 +3307,6 @@ function repository_download_selected_files($context, string $component, string 
         $filename = $selectedfile->filename ? clean_filename($selectedfile->filename) : '.'; // Default to '.' for root.
         $filepath = clean_param($selectedfile->filepath, PARAM_PATH); // Default to '/' for downloadall.
         $filepath = file_correct_filepath($filepath);
-        $area = file_get_draft_area_info($itemid, $filepath);
-        if ($area['filecount'] == 0 && $area['foldercount'] == 0) {
-            continue;
-        }
 
         $storedfile = $fs->get_file($context->id, $component, $filearea, $itemid, $filepath, $filename);
         // If it is empty we are downloading a directory.
@@ -3324,16 +3320,16 @@ function repository_download_selected_files($context, string $component, string 
         $filestoarchive[$archivefile] = $storedfile;
     }
     $zippedfile = get_string('files') . '.zip';
-    if ($newfile =
-        $zipper->archive_to_storage(
+    if ($zipper->archive_to_storage(
             $filestoarchive,
             $context->id,
             $component,
             $filearea,
             $newdraftitemid,
             "/",
-            $zippedfile, $USER->id)
-    ) {
+            $zippedfile,
+            $USER->id,
+    )) {
         $return = new stdClass();
         $return->fileurl = moodle_url::make_draftfile_url($newdraftitemid, '/', $zippedfile)->out();
         $return->filepath = $filepath;
