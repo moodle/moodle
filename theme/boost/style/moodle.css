@@ -28461,11 +28461,6 @@ span.editinstructions .alert-link {
   vertical-align: text-bottom;
 }
 
-#coursesearch {
-  margin-top: 1em;
-  text-align: left;
-}
-
 #page-course-pending .pendingcourserequests {
   margin-bottom: 1em;
 }
@@ -28860,35 +28855,6 @@ span.editinstructions .alert-link {
 }
 
 /** Management header styling **/
-.coursecat-management-header {
-  vertical-align: middle;
-}
-.coursecat-management-header h2 {
-  display: inline-block;
-  text-align: left;
-}
-.coursecat-management-header > div {
-  float: right;
-}
-.coursecat-management-header > div > div {
-  margin: 10px 0 10px 1em;
-  display: inline-block;
-}
-.coursecat-management-header select {
-  max-width: 300px;
-  cursor: pointer;
-  padding: 0.4em 0.5em 0.45em 1em;
-  vertical-align: baseline;
-  white-space: nowrap;
-}
-.coursecat-management-header .view-mode-selector .moodle-actionmenu {
-  white-space: nowrap;
-  display: inline-block;
-}
-.coursecat-management-header .view-mode-selector .moodle-actionmenu[data-enhanced].show .menu a {
-  padding-left: 1em;
-}
-
 .course-being-dragged-proxy {
   border: 0;
   color: #0f6cbf;
@@ -33085,10 +33051,6 @@ input#id_externalurl {
 
 div#dateselector-calendar-panel {
   z-index: 3100; /* Set higher than the z-index of the filemanager - see MDL-39047. */
-}
-
-fieldset.coursesearchbox label {
-  display: inline;
 }
 
 /**

@@ -556,11 +556,6 @@ span.editinstructions {
     vertical-align: text-bottom;
 }
 
-#coursesearch {
-    margin-top: 1em;
-    text-align: left;
-}
-
 #page-course-pending .pendingcourserequests {
     margin-bottom: 1em;
 }
@@ -985,43 +980,6 @@ span.editinstructions {
 }
 
 /** Management header styling **/
-.coursecat-management-header {
-    vertical-align: middle;
-
-    h2 {
-        display: inline-block;
-        text-align: left;
-    }
-
-    > div {
-        float: right;
-
-        > div {
-            margin: 10px 0 10px 1em;
-            display: inline-block;
-        }
-    }
-
-    select {
-        max-width: 300px;
-        cursor: pointer;
-        padding: 0.4em 0.5em 0.45em 1em;
-        vertical-align: baseline;
-        white-space: nowrap;
-    }
-
-    .view-mode-selector {
-        .moodle-actionmenu {
-            white-space: nowrap;
-            display: inline-block;
-        }
-
-        .moodle-actionmenu[data-enhanced].show .menu a {
-            padding-left: 1em;
-        }
-    }
-}
-
 .course-being-dragged-proxy {
     border: 0;
     color: $link-color;

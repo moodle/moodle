@@ -125,3 +125,5 @@ from,core
 aria-toggledropdown,core_grades
 aria:dropdowngrades,core_grades
 viewresults,core
+coursesearch,core
+coursesearch_help,core
