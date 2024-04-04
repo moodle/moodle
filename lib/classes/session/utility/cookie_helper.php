@@ -22,7 +22,7 @@ namespace core\session\utility;
  * This class primarily provides a means to augment outbound cookie headers, in order to satisfy browser-specific
  * requirements for setting 3rd party cookies.
  *
- * @package    core_session
+ * @package    core
  * @copyright  2024 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

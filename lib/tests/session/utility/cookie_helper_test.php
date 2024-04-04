@@ -19,7 +19,7 @@ namespace core\session\utility;
 /**
  * Tests for the cookie_helper utility class.
  *
- * @package    core_session
+ * @package    core
  * @copyright  2024 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \core\session\utility\cookie_helper
