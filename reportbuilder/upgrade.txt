@@ -1,6 +1,10 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.5 ===
+
+* The base datasource `add_all_from_entities` method accepts optional parameter to specify which entities to add elements from
+
 === 4.4 ===
 
 * New methods `get_identity_[columns|filters]` in user entity, for retrieving all user identity field report elements

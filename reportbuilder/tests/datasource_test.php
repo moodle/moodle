@@ -239,6 +239,56 @@ final class datasource_test extends advanced_testcase {
     }
 
     /**
+     * Data provider for {@see get_datasource_test_source}
+     *
+     * @return array[]
+     */
+    public static function add_all_from_entities_provider(): array {
+        return [
+            'All' => [
+                [],
+                9,
+                8,
+                8,
+            ],
+            'Entity' => [
+                ['datasource_test_entity'],
+                5,
+                4,
+                4,
+            ],
+        ];
+    }
+
+    /**
+     * Test adding from all entities
+     *
+     * @param string[] $entitynames
+     * @param int $expectedcountcolumns
+     * @param int $expectedcountfilters
+     * @param int $expectedcountconditions
+     *
+     * @covers ::add_all_from_entities
+     *
+     * @dataProvider add_all_from_entities_provider
+     */
+    public function test_add_all_from_entities(
+        array $entitynames,
+        int $expectedcountcolumns,
+        int $expectedcountfilters,
+        int $expectedcountconditions,
+    ): void {
+        $instance = $this->get_datasource_test_source();
+
+        $method = (new ReflectionClass($instance))->getMethod('add_all_from_entities');
+        $method->invoke($instance, $entitynames);
+
+        $this->assertCount($expectedcountcolumns, $instance->get_columns());
+        $this->assertCount($expectedcountfilters, $instance->get_filters());
+        $this->assertCount($expectedcountconditions, $instance->get_conditions());
+    }
+
+    /**
      * Create and return our test datasource instance
      *
      * @return datasource_test_source
@@ -263,11 +313,14 @@ class datasource_test_source extends datasource {
 
     protected function initialise(): void {
         $this->set_main_table('user', 'u');
+
+        // Because we must have at least one column in the report.
         $this->annotate_entity('dummy', new lang_string('yes'));
         $this->add_column(new column('test', null, 'dummy'));
 
-        // This is the entity from which we'll add our report elements.
+        // These are the entities from which we'll add additional report elements.
         $this->add_entity(new datasource_test_entity());
+        $this->add_entity((new datasource_test_entity())->set_entity_name('datasource_test_entity_second'));
     }
 
     public static function get_name(): string {
