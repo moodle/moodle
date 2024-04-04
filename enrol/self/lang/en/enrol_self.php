@@ -29,16 +29,6 @@ $string['cohortnonmemberinfo'] = 'Only members of cohort \'{$a}\' can self-enrol
 $string['cohortonly'] = 'Only cohort members';
 $string['cohortonly_help'] = 'Self enrolment may be restricted to members of a specified cohort only. Note that changing this setting has no effect on existing enrolments.';
 $string['confirmbulkdeleteenrolment'] = 'Are you sure you want to delete these user enrolments?';
-$string['customwelcomemessage'] = 'Custom welcome message';
-$string['customwelcomemessage_help'] = 'Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:
-<br>
-* Course name {$a->coursename}<br>
-* Link to user\'s profile page {$a->profileurl}<br>
-* User email {$a->email}<br>
-* User fullname {$a->fullname}<br>
-* User first name {$a->firstname}<br>
-* User last name {$a->lastname}<br>
-* User course role {$a->courserole}<br>';
 $string['defaultrole'] = 'Default role assignment';
 $string['defaultrole_desc'] = 'Select role which should be assigned to users during self enrolment';
 $string['deleteselectedusers'] = 'Delete selected user enrolments';
@@ -126,10 +116,22 @@ $string['unenroluser'] = 'Do you really want to unenrol "{$a->user}" from course
 $string['unenrolusers'] = 'Unenrol users';
 $string['usepasswordpolicy'] = 'Use password policy';
 $string['usepasswordpolicy_desc'] = 'Use standard password policy for enrolment keys.';
+$string['privacy:metadata'] = 'The Self enrolment plugin does not store any personal data.';
+
+// Deprecated since Moodle 4.4.
+$string['customwelcomemessage'] = 'Custom welcome message';
+$string['customwelcomemessage_help'] = 'Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:
+<br>
+* Course name {$a->coursename}<br>
+* Link to user\'s profile page {$a->profileurl}<br>
+* User email {$a->email}<br>
+* User fullname {$a->fullname}<br>
+* User first name {$a->firstname}<br>
+* User last name {$a->lastname}<br>
+* User course role {$a->courserole}<br>';
 $string['welcometocourse'] = 'Welcome to {$a}';
 $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
 
 If you have not done so already, you should edit your profile page so that we can learn more about you:
 
   {$a->profileurl}';
-$string['privacy:metadata'] = 'The Self enrolment plugin does not store any personal data.';
