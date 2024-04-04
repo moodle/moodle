@@ -126,6 +126,11 @@ class matrix_user_manager_test extends \advanced_testcase {
                 'colin.creavey',
                 '@colin.creavey:matrix.example.org',
             ],
+            'numeric username' => [
+                'https://matrix.example.org',
+                '123456',
+                '@' . matrix_user_manager::MATRIX_USER_PREFIX . '123456:matrix.example.org',
+            ],
         ];
     }
 
