@@ -39,6 +39,12 @@ The colors for all these purposes and the filters applied to outline them are de
  - When I am on the "Course > <section> "course > section" page logged in as "<username>". When utilizing 'Section x'
  it first searches by section name (Section x). If it's not found, then it searches by the section number (x).
 * The template core_course/course_search_form has been removed following its cessation of use upon MDL-69454 in version 3.11.
+* New parameter 'requiredfields' added to \core_course_external::get_enrolled_courses_by_timeline_classification() to allow
+  callers of this function to specify only the required course fields.
+* Set default values for the following course_summary_exporter properties:
+  - summary (null)
+  - summaryformat (FORMAT_MOODLE)
+  - pdfexportfont (null)
 
 === 4.3 ===
 * The `core_course_renderer::course_section_cm_completion` method has been removed, and can no longer be used
