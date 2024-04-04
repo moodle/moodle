@@ -424,11 +424,9 @@ class helper {
             $provider = $coursecommunication->get_provider();
         }
 
-        // This nasty logic is here because of hide course doesn't pass anything in the data object.
-        if (!empty($course->communicationroomname)) {
-            $coursecommunicationroomname = $course->communicationroomname;
-        } else {
-            $coursecommunicationroomname = $course->fullname ?? get_course($course->id)->fullname;
+        // Determine the communication room name if none was provided and add it to the course data.
+        if (empty($course->communicationroomname)) {
+            $course->communicationroomname = $course->fullname ?? get_course($course->id)->fullname;
         }
 
         // List of enrolled users for course communication.
@@ -460,7 +458,7 @@ class helper {
             $communication->configure_room_and_membership_by_provider(
                 provider: $provider,
                 instance: $course,
-                communicationroomname: $coursecommunicationroomname,
+                communicationroomname: $course->communicationroomname,
                 users: $enrolledusers,
                 instanceimage: $courseimage,
             );
@@ -481,7 +479,7 @@ class helper {
             if ($communication->get_processor() === null) {
                 // If a course communication instance is not created, create one.
                 $communication->create_and_configure_room(
-                    communicationroomname: $coursecommunicationroomname,
+                    communicationroomname: $course->communicationroomname,
                     avatar: $courseimage,
                     instance: $course,
                     queue: false,
@@ -493,7 +491,7 @@ class helper {
                 // If provider is none, then we will make the room inactive, otherwise always active in group mode.
                 $communication->update_room(
                     active: $provider === processor::PROVIDER_NONE ? processor::PROVIDER_INACTIVE : processor::PROVIDER_ACTIVE,
-                    communicationroomname: $coursecommunicationroomname,
+                    communicationroomname: $course->communicationroomname,
                     avatar: $courseimage,
                     instance: $course,
                     queue: false,
@@ -536,12 +534,31 @@ class helper {
                 groupid: $coursegroup->id,
                 context: $coursecontext,
             );
+
+            $communicationroomname = self::format_group_room_name(
+                baseroomname: $course->communicationroomname,
+                groupname: $coursegroup->name,
+            );
+
             $communication->configure_room_and_membership_by_provider(
                 provider: $provider,
                 instance: $course,
-                communicationroomname: $coursegroup->name,
+                communicationroomname: $communicationroomname,
                 users: $groupuserstoadd,
             );
         }
+    }
+
+    /**
+     * Format a group communication room name with the following syntax: 'Group A (Course 1)'.
+     *
+     * @param string $baseroomname The base room name.
+     * @param string $groupname The group name.
+     */
+    public static function format_group_room_name(
+        string $baseroomname,
+        string $groupname
+    ): string {
+        return "{$groupname} ({$baseroomname})";
     }
 }

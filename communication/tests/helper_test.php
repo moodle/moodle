@@ -220,4 +220,17 @@ class helper_test extends \advanced_testcase {
             memberaction: 'a_funny_action',
         );
     }
+
+    /**
+     * Test format_group_room_name.
+     *
+     * @covers ::format_group_room_name
+     */
+    public function test_format_group_room_name(): void {
+        $baseroomname = 'Course A';
+        $groupname = 'Group 1';
+        $formattedroomname = helper::format_group_room_name($baseroomname, $groupname);
+        // Check the room name is formatted as expected.
+        $this->assertEquals('Group 1 (Course A)', $formattedroomname);
+    }
 }

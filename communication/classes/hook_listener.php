@@ -86,6 +86,11 @@ class hook_listener {
             context: $coursecontext,
         );
 
+        // Check we have communication correctly set up before proceeding.
+        if ($coursecommunication->get_processor() === null) {
+            return;
+        }
+
         $communication = api::load_by_instance(
             context: $coursecontext,
             component: constants::GROUP_COMMUNICATION_COMPONENT,
@@ -94,8 +99,13 @@ class hook_listener {
             provider: $coursecommunication->get_provider(),
         );
 
+        $communicationroomname = helper::format_group_room_name(
+            baseroomname: $coursecommunication->get_room_name(),
+            groupname: $group->name,
+        );
+
         $communication->create_and_configure_room(
-            communicationroomname: $group->name,
+            communicationroomname: $communicationroomname,
             instance: $course,
         );
 
@@ -134,14 +144,25 @@ class hook_listener {
             context: $coursecontext,
         );
 
+        // Get the course communication instance so we can extract the base room name.
+        $coursecommunication = helper::load_by_course(
+            courseid: $course->id,
+            context: $coursecontext,
+        );
+
+        $communicationroomname = helper::format_group_room_name(
+            baseroomname: $coursecommunication->get_room_name(),
+            groupname: $group->name,
+        );
+
         // If the name didn't change, then we don't need to update the room.
-        if ($group->name === $communication->get_room_name()) {
+        if ($communicationroomname === $communication->get_room_name()) {
             return;
         }
 
         $communication->update_room(
             active: processor::PROVIDER_ACTIVE,
-            communicationroomname: $group->name,
+            communicationroomname: $communicationroomname,
             instance: $course,
         );
     }
