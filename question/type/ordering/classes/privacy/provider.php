@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Privacy Subsystem implementation for qtype_ordering.
- *
- * @package    qtype_ordering
- * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
- * @author     rdebleu@eWallah.net
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace qtype_ordering\privacy;
 
 /**
@@ -35,17 +26,13 @@ namespace qtype_ordering\privacy;
  */
 class provider implements \core_privacy\local\metadata\null_provider {
 
-    // This polyfill allows the provider to work on both old (pre-7)
-    // and new PHP versions. Thanks to Tim Hunt for this suggestion.
-    use \core_privacy\local\legacy_polyfill;
-
     /**
      * Get the language string identifier with the component's language
      * file to explain why this plugin stores no data.
      *
      * @return  string
      */
-    public static function _get_reason() { // phpcs:ignore
+    public static function get_reason(): string {
         return 'privacy:metadata';
     }
 }

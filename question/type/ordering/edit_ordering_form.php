@@ -81,7 +81,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = qtype_ordering_question::get_layout_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_my_default_value($name, qtype_ordering_question::LAYOUT_VERTICAL));
+        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::LAYOUT_VERTICAL));
 
         // Field for selecttype.
         $name = 'selecttype';
@@ -89,7 +89,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = qtype_ordering_question::get_select_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_my_default_value($name, qtype_ordering_question::SELECT_ALL));
+        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::SELECT_ALL));
 
         // Field for selectcount.
         $name = 'selectcount';
@@ -109,7 +109,7 @@ class qtype_ordering_edit_form extends question_edit_form {
         $options = qtype_ordering_question::get_grading_types();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_my_default_value($name, qtype_ordering_question::GRADING_ABSOLUTE_POSITION));
+        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::GRADING_ABSOLUTE_POSITION));
 
         // Field for showgrading.
         $name = 'showgrading';
@@ -118,14 +118,14 @@ class qtype_ordering_edit_form extends question_edit_form {
                          1 => get_string('show'));
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_my_default_value($name, 1));
+        $mform->setDefault($name, $this->get_default_value($name, 1));
 
         $name = 'numberingstyle';
         $label = get_string($name, $plugin);
         $options = qtype_ordering_question::get_numbering_styles();
         $mform->addElement('select', $name, $label, $options);
         $mform->addHelpButton($name, $name, $plugin);
-        $mform->setDefault($name, $this->get_my_default_value($name, qtype_ordering_question::NUMBERING_STYLE_DEFAULT));
+        $mform->setDefault($name, $this->get_default_value($name, qtype_ordering_question::NUMBERING_STYLE_DEFAULT));
 
         $elements = array();
         $options = array();
@@ -384,7 +384,7 @@ class qtype_ordering_edit_form extends question_edit_form {
             if (isset($question->options->$name)) {
                 $question->$name = $question->options->$name;
             } else {
-                $question->$name = $this->get_my_default_value($name, $default);
+                $question->$name = $this->get_default_value($name, $default);
             }
         }
 
@@ -458,7 +458,7 @@ class qtype_ordering_edit_form extends question_edit_form {
                             'gradingtype', 'showgrading', 'numberingstyle');
             foreach ($fields as $field) {
                 if (array_key_exists($field, $data)) {
-                    $this->set_my_default_value($field, $data[$field]);
+                    question_bank::get_qtype($this->qtype())->set_default_value($field, $data[$field]);
                 }
             }
         }
@@ -475,42 +475,6 @@ class qtype_ordering_edit_form extends question_edit_form {
      */
     protected function get_my_preference_name($name) {
         return $this->plugin_name()."_$name";
-    }
-
-    /**
-     * Saves default value for item
-     *
-     * @param string $name Item name
-     * @param string|mixed|null $value
-     * @return boolean (usually TRUE, unless there is an error)
-     */
-    protected function set_my_default_value($name, $value) {
-        if (method_exists($this, 'set_default_value')) {
-            // This method doesn't exist yet, but it might one day ;-).
-            return $this->set_default_value($name, $value);
-        } else {
-            // Until at least Moodle <= 4.0, we expect to come this way.
-            $name = $this->get_my_preference_name($name);
-            return set_user_preferences(array($name => $value));
-        }
-    }
-
-    /**
-     * Returns default value for item
-     *
-     * @param string $name Item name
-     * @param string|mixed|null $default Default value (optional, default = null)
-     * @return string|mixed|null Default value for field with this $name
-     */
-    protected function get_my_default_value($name, $default) {
-        if (method_exists($this, 'get_default_value')) {
-            // Moodle >= 3.10.
-            return $this->get_default_value($name, $default);
-        } else {
-            // Moodle <= 3.9.
-            $name = $this->get_my_preference_name($name);
-            return get_user_preferences($name, $default);
-        }
     }
 
     /**
