@@ -62,7 +62,7 @@ class maildigest_test extends \advanced_testcase {
         $this->mailsink = $this->redirectEmails();
 
         // Confirm that we have an empty message sink so far.
-        $messages = $this->messagesink->get_messages();
+        $messages = $this->messagesink->get_messages_by_component('mod_forum');
         $this->assertEquals(0, count($messages));
 
         $messages = $this->mailsink->get_messages();
@@ -405,7 +405,9 @@ class maildigest_test extends \advanced_testcase {
         $this->send_digests_and_assert($user, $posts);
 
         // The user does not, by default, have permission to view the fullname.
-        $messagecontent = $this->messagesink->get_messages()[0]->fullmessage;
+        $messages = $this->messagesink->get_messages_by_component('mod_forum');
+        $messages = reset($messages);
+        $messagecontent = $messages->fullmessage;
 
         // Assert that the expected name is present (lastname only).
         $this->assertStringContainsString(fullname($user, false), $messagecontent);
@@ -456,7 +458,9 @@ class maildigest_test extends \advanced_testcase {
 
         // The user does not, by default, have permission to view the fullname.
         // However we have given the user that capability so we expect to see both firstname and lastname.
-        $messagecontent = $this->messagesink->get_messages()[0]->fullmessage;
+        $messages = $this->messagesink->get_messages_by_component('mod_forum');
+        $messages = reset($messages);
+        $messagecontent = $messages->fullmessage;
 
         // Assert that the expected name is present (lastname only).
         $this->assertStringContainsString(fullname($user, false), $messagecontent);

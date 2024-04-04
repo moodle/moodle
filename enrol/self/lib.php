@@ -174,10 +174,6 @@ class enrol_self_plugin extends enrol_plugin {
                 }
             }
         }
-        // Send welcome message.
-        if ($instance->customint4 != ENROL_DO_NOT_SEND_EMAIL) {
-            $this->email_welcome_message($instance, $USER);
-        }
     }
 
     /**
@@ -392,43 +388,19 @@ class enrol_self_plugin extends enrol_plugin {
      * @param stdClass $instance
      * @param stdClass $user user record
      * @return void
+     * @deprecated since Moodle 4.4
+     * @see \enrol_plugin::send_course_welcome_message_to_user()
+     * @todo MDL-81185 Final deprecation in Moodle 4.8.
      */
+    #[\core\attribute\deprecated('enrol_plugin::send_course_welcome_message_to_user', since: '4.4', mdl: 'MDL-4188')]
     protected function email_welcome_message($instance, $user) {
-        global $CFG, $DB;
-
-        $course = $DB->get_record('course', array('id'=>$instance->courseid), '*', MUST_EXIST);
-        $context = context_course::instance($course->id);
-
-        $a = new stdClass();
-        $a->coursename = format_string($course->fullname, true, array('context'=>$context));
-        $a->profileurl = "$CFG->wwwroot/user/view.php?id=$user->id&course=$course->id";
-
-        if (!is_null($instance->customtext1) && trim($instance->customtext1) !== '') {
-            $message = $instance->customtext1;
-            $key = array('{$a->coursename}', '{$a->profileurl}', '{$a->fullname}', '{$a->email}');
-            $value = array($a->coursename, $a->profileurl, fullname($user), $user->email);
-            $message = str_replace($key, $value, $message);
-            if (strpos($message, '<') === false) {
-                // Plain text only.
-                $messagetext = $message;
-                $messagehtml = text_to_html($messagetext, null, false, true);
-            } else {
-                // This is most probably the tag/newline soup known as FORMAT_MOODLE.
-                $messagehtml = format_text($message, FORMAT_MOODLE, array('context'=>$context, 'para'=>false, 'newlines'=>true, 'filter'=>true));
-                $messagetext = html_to_text($messagehtml);
-            }
-        } else {
-            $messagetext = get_string('welcometocoursetext', 'enrol_self', $a);
-            $messagehtml = text_to_html($messagetext, null, false, true);
-        }
-
-        $subject = get_string('welcometocourse', 'enrol_self', format_string($course->fullname, true, array('context'=>$context)));
-
-        $sendoption = $instance->customint4;
-        $contact = $this->get_welcome_email_contact($sendoption, $context);
-
-        // Directly emailing welcome message rather than using messaging.
-        email_to_user($user, $contact, $subject, $messagetext, $messagehtml);
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        $this->send_course_welcome_message_to_user(
+            instance: $instance,
+            userid: $user->id,
+            sendoption: $instance->customint4,
+            message: $instance->customtext1,
+        );
     }
 
     /**
@@ -960,8 +932,33 @@ class enrol_self_plugin extends enrol_plugin {
         $mform->addHelpButton('customint4', 'sendcoursewelcomemessage', 'enrol_self');
 
         $options = array('cols' => '60', 'rows' => '8');
-        $mform->addElement('textarea', 'customtext1', get_string('customwelcomemessage', 'enrol_self'), $options);
-        $mform->addHelpButton('customtext1', 'customwelcomemessage', 'enrol_self');
+        $mform->addElement('textarea', 'customtext1', get_string('customwelcomemessage', 'core_enrol'), $options);
+        $mform->setDefault('customtext1', get_string('customwelcomemessageplaceholder', 'core_enrol'));
+        $mform->hideIf(
+            elementname: 'customtext1',
+            dependenton: 'customint4',
+            condition: 'eq',
+            value: ENROL_DO_NOT_SEND_EMAIL,
+        );
+
+        // Static form elements cannot be hidden by hideIf() so we need to add a dummy group.
+        // See: https://tracker.moodle.org/browse/MDL-66251.
+        $group[] = $mform->createElement(
+            'static',
+            'customwelcomemessage_extra_help',
+            null,
+            get_string(
+                identifier: 'customwelcomemessage_help',
+                component: 'core_enrol',
+            ),
+        );
+        $mform->addGroup($group, 'group_customwelcomemessage_extra_help', '', ' ', false);
+        $mform->hideIf(
+            elementname: 'group_customwelcomemessage_extra_help',
+            dependenton: 'customint4',
+            condition: 'eq',
+            value: ENROL_DO_NOT_SEND_EMAIL,
+        );
 
         if (enrol_accessing_via_instance($instance)) {
             $warntext = get_string('instanceeditselfwarningtext', 'core_enrol');
@@ -1154,46 +1151,17 @@ class enrol_self_plugin extends enrol_plugin {
      * @param int $sendoption send email from constant ENROL_SEND_EMAIL_FROM_*
      * @param $context context where the user will be fetched
      * @return mixed|stdClass the contact user object.
+     * @deprecated since Moodle 4.4
+     * @see \enrol_plugin::get_welcome_message_contact()
+     * @todo MDL-81185 Final deprecation in Moodle 4.8.
      */
+    #[\core\attribute\deprecated('enrol_plugin::get_welcome_message_contact', since: '4.4', mdl: 'MDL-4188')]
     public function get_welcome_email_contact($sendoption, $context) {
-        global $CFG;
-
-        $contact = null;
-        // Send as the first user assigned as the course contact.
-        if ($sendoption == ENROL_SEND_EMAIL_FROM_COURSE_CONTACT) {
-            $rusers = array();
-            if (!empty($CFG->coursecontact)) {
-                $croles = explode(',', $CFG->coursecontact);
-                list($sort, $sortparams) = users_order_by_sql('u');
-                // We only use the first user.
-                $i = 0;
-                do {
-                    $userfieldsapi = \core_user\fields::for_name();
-                    $allnames = $userfieldsapi->get_sql('u', false, '', '', false)->selects;
-                    $rusers = get_role_users($croles[$i], $context, true, 'u.id,  u.confirmed, u.username, '. $allnames . ',
-                    u.email, r.sortorder, ra.id', 'r.sortorder, ra.id ASC, ' . $sort, null, '', '', '', '', $sortparams);
-                    $i++;
-                } while (empty($rusers) && !empty($croles[$i]));
-            }
-            if ($rusers) {
-                $contact = array_values($rusers)[0];
-            }
-        } else if ($sendoption == ENROL_SEND_EMAIL_FROM_KEY_HOLDER) {
-            // Send as the first user with enrol/self:holdkey capability assigned in the course.
-            list($sort) = users_order_by_sql('u');
-            $keyholders = get_users_by_capability($context, 'enrol/self:holdkey', 'u.*', $sort);
-            if (!empty($keyholders)) {
-                $contact = array_values($keyholders)[0];
-            }
-        }
-
-        // If send welcome email option is set to no reply or if none of the previous options have
-        // returned a contact send welcome message as noreplyuser.
-        if ($sendoption == ENROL_SEND_EMAIL_FROM_NOREPLY || empty($contact)) {
-            $contact = core_user::get_noreply_user();
-        }
-
-        return $contact;
+        \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+        return $this->get_welcome_message_contact(
+            sendoption: $sendoption,
+            context: $context,
+        );
     }
 
     /**

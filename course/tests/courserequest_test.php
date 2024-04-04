@@ -113,7 +113,7 @@ class courserequest_test extends \advanced_testcase {
         $this->setAdminUser();
         $sink = $this->redirectMessages();
         $id = $cr->approve();
-        $this->assertCount(1, $sink->get_messages());
+        $this->assertCount(1, $sink->get_messages_by_component_and_type('core', 'courserequestapproved'));
         $sink->close();
         $course = $DB->get_record('course', array('id' => $id));
         $this->assertEquals($data->fullname, $course->fullname);
@@ -133,7 +133,7 @@ class courserequest_test extends \advanced_testcase {
         $this->setAdminUser();
         $sink = $this->redirectMessages();
         $id = $cr->approve();
-        $this->assertCount(1, $sink->get_messages());
+        $this->assertCount(1, $sink->get_messages_by_component_and_type('core', 'courserequestapproved'));
         $sink->close();
         $course = $DB->get_record('course', array('id' => $id));
         $this->assertEquals($data->category, $course->category);

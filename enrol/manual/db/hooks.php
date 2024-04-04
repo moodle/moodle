@@ -15,15 +15,18 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Manual enrolment plugin version specification.
+ * Hook callbacks for enrol_manual
  *
  * @package    enrol_manual
- * @copyright  2010 Petr Skoda {@link http://skodak.org}
+ * @copyright  2024 Huong Nguyen <huongnv13@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2023100901;        // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023100400;        // Requires this Moodle version.
-$plugin->component = 'enrol_manual';    // Full name of the plugin (used for diagnostics)
+$callbacks = [
+    [
+        'hook' => core_enrol\hook\after_user_enrolled::class,
+        'callback' => 'enrol_manual\user_enrolment_callbacks::send_course_welcome_message',
+    ],
+];

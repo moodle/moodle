@@ -49,4 +49,13 @@ class after_user_enrolled {
     public function get_userid(): int {
         return $this->userenrolmentinstance->userid;
     }
+
+    /**
+     * Get the enrol instance.
+     *
+     * @return stdClass The enrol instance.
+     */
+    public function get_enrolinstance(): stdClass {
+        return $this->enrolinstance;
+    }
 }

@@ -42,9 +42,19 @@ defined('MOODLE_INTERNAL') || die();
 class provider_test extends \core_privacy\tests\provider_testcase {
 
     /**
+     * Setup.
+     */
+    protected function setUp(): void {
+        parent::setUp();
+        // Turn off the course welcome message, so we can easily test other messages.
+        set_config('sendcoursewelcomemessage', 0, 'enrol_manual');
+    }
+
+    /**
      * Test for provider::get_metadata().
      */
     public function test_get_metadata() {
+        $this->resetAfterTest();
         $collection = new collection('core_message');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();

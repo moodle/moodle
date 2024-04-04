@@ -31,6 +31,17 @@ defined('MOODLE_INTERNAL') || die();
  * Note: execution may take many minutes especially on slower servers.
  */
 class accesslib_test extends advanced_testcase {
+
+    /**
+     * Setup.
+     */
+    protected function setUp(): void {
+        parent::setUp();
+        $this->resetAfterTest();
+        // Turn off the course welcome message, so we can easily test other messages.
+        set_config('sendcoursewelcomemessage', 0, 'enrol_manual');
+    }
+
     /**
      * Verify comparison of context instances in phpunit asserts.
      */

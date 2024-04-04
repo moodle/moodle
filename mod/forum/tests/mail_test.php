@@ -927,7 +927,7 @@ class mail_test extends \advanced_testcase {
         $this->queue_tasks_and_assert($expect);
 
         $this->send_notifications_and_assert($author, [$post]);
-        $messages = $this->messagesink->get_messages();
+        $messages = $this->messagesink->get_messages_by_component('mod_forum');
         $message = reset($messages);
         $this->assertEquals($author->id, $message->useridfrom);
         $this->assertEquals($expectedsubject, $message->subject);
@@ -1600,8 +1600,9 @@ class mail_test extends \advanced_testcase {
 
         $this->send_notifications_and_assert($author, [$post]);
         $this->send_notifications_and_assert($commenter, [$post]);
-        $messages = $this->messagesink->get_messages();
-        $customdata = json_decode($messages[0]->customdata);
+        $messages = $this->messagesink->get_messages_by_component('mod_forum');
+        $messages = reset($messages);
+        $customdata = json_decode($messages->customdata);
         $this->assertEquals($forum->id, $customdata->instance);
         $this->assertEquals($forum->cmid, $customdata->cmid);
         $this->assertEquals($post->id, $customdata->postid);

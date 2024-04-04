@@ -157,8 +157,12 @@ class mod_helper_trait_test extends \advanced_testcase {
         ob_start();
         $this->runAdhocTasks();
         ob_get_clean(); // Suppress output as it can fail the test.
-        $this->assertEquals(1, $messagesink->count());
-        $firstmessage = $messagesink->get_messages()[0];
+        $messages = $messagesink->get_messages_by_component_and_type(
+            component: 'core',
+            type: 'coursecontentupdated',
+        );
+        $this->assertEquals(1, count($messages));
+        $firstmessage = reset($messages);
         $this->assertStringContainsString('is new in', $firstmessage->smallmessage);
     }
 

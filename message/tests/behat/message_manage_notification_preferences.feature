@@ -9,8 +9,10 @@ Feature: Manage notification preferences - Email
       | username | firstname | lastname | email                |
       | student1 | Student   | 1        | student1@example.com |
       | student2 | Student   | 2        | student2@example.com |
+    # Turn off the course welcome message, so we can easily test other messages.
     And the following config values are set as admin:
-      | messaging | 1 |
+      | messaging                | 1 | core         |
+      | sendcoursewelcomemessage | 0 | enrol_manual |
 
   Scenario: Disable email notifications for everybody
     Given I log in as "admin"

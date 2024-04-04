@@ -81,4 +81,20 @@ if ($ADMIN->fulltree) {
     $settings->add(new admin_setting_configduration('enrol_manual/expirythreshold',
         get_string('expirythreshold', 'core_enrol'), get_string('expirythreshold_help', 'core_enrol'), 86400, 86400));
 
+    // Course welcome message.
+    $settings->add(
+        new admin_setting_configselect(
+            name: 'enrol_manual/sendcoursewelcomemessage',
+            visiblename: get_string(
+                identifier: 'sendcoursewelcomemessage',
+                component: 'core_enrol',
+            ),
+            description: get_string(
+                identifier: 'sendcoursewelcomemessage_help',
+                component: 'core_enrol',
+            ),
+            defaultsetting: ENROL_SEND_EMAIL_FROM_COURSE_CONTACT,
+            choices: enrol_send_welcome_email_options(),
+        ),
+    );
 }

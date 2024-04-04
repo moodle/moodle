@@ -34,6 +34,17 @@ $string['assignnotpermitted'] = 'You do not have permission or can not assign ro
 $string['bulkuseroperation'] = 'Bulk user operation';
 $string['configenrolplugins'] = 'Please select all required plugins and arrange then in appropriate order.';
 $string['custominstancename'] = 'Custom instance name';
+$string['customwelcomemessage'] = 'Custom welcome message';
+$string['customwelcomemessage_help'] = 'Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:
+<br>
+* Course name {$a->coursename}<br>
+* Link to user\'s profile page {$a->profileurl}<br>
+* User email {$a->email}<br>
+* User fullname {$a->fullname}<br>
+* User first name {$a->firstname}<br>
+* User last name {$a->lastname}<br>
+* User course role {$a->courserole}<br>';
+$string['customwelcomemessageplaceholder'] = 'Dear {$a->fullname}, you have successfully been enrolled to course {$a->coursename}';
 $string['defaultenrol'] = 'Add instance to new courses';
 $string['defaultenrol_desc'] = 'It is possible to add this plugin to all new courses by default.';
 $string['deleteinstanceconfirm'] = 'You are about to delete the enrolment method "{$a->name}". All {$a->users} users currently enrolled using this method will be unenrolled and any course-related data such as users\' grades, group membership or forum subscriptions will be deleted.
@@ -129,6 +140,8 @@ $string['rolefromsystem'] = '{$a->role} (Assigned at site level)';
 $string['sendfromcoursecontact'] = 'From the course contact';
 $string['sendfromkeyholder'] = 'From the key holder';
 $string['sendfromnoreply'] = 'From the no-reply address';
+$string['sendcoursewelcomemessage'] = 'Send course welcome message';
+$string['sendcoursewelcomemessage_help'] = 'When enrolling a user or cohort in the course, they may be sent a welcome message email. If sent from the course contact (by default the teacher), and more than one user has this role, the email is sent from the first user to be assigned the role.';
 $string['startdatetoday'] = 'Today';
 $string['synced'] = 'Synced';
 $string['testsettings'] = 'Test settings';

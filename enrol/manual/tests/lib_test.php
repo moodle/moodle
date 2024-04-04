@@ -789,4 +789,156 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($expected->id, $actual->id);
     }
 
+    /**
+     * Test send_course_welcome_message_to_user() method.
+     *
+     * @covers \enrol_plugin::send_course_welcome_message_to_user
+     */
+    public function test_send_course_welcome_message(): void {
+        global $DB;
+        $this->resetAfterTest();
+
+        // Create course.
+        $course = $this->getDataGenerator()->create_course([
+            'fullname' => 'Course 1',
+            'shortname' => 'C1',
+        ]);
+        // Create users.
+        $student = $this->getDataGenerator()->create_user();
+        $teacher1 = $this->getDataGenerator()->create_user();
+        $teacher2 = $this->getDataGenerator()->create_user();
+        $noreplyuser = \core_user::get_noreply_user();
+        // Enrol users.
+        $this->getDataGenerator()->enrol_user($teacher1->id, $course->id, 'editingteacher');
+        $this->getDataGenerator()->enrol_user($teacher2->id, $course->id, 'editingteacher');
+        // Get manual plugin.
+        $manualplugin = enrol_get_plugin('manual');
+        $maninstance = $DB->get_record(
+            'enrol',
+            ['courseid' => $course->id, 'enrol' => 'manual'],
+            '*',
+            MUST_EXIST,
+        );
+
+        // Test 1: Send welcome message to user from course contact with default message.
+        // Redirect messages.
+        $messagesink = $this->redirectMessages();
+        $manualplugin->send_course_welcome_message_to_user(
+            instance: $maninstance,
+            userid: $student->id,
+            sendoption: ENROL_SEND_EMAIL_FROM_COURSE_CONTACT,
+            message: '',
+        );
+        $messages = $messagesink->get_messages_by_component_and_type(
+            'moodle',
+            'enrolcoursewelcomemessage',
+        );
+        $this->assertNotEmpty($messages);
+        $message = reset($messages);
+
+        // The message should be sent from the first teacher.
+        $this->assertEquals($teacher1->id, $message->useridfrom);
+        $this->assertStringContainsString($course->fullname, $message->subject);
+        $this->assertEquals(
+            get_string(
+                'customwelcomemessageplaceholder',
+                'core_enrol',
+                ['fullname' => fullname($student), 'coursename' => $course->fullname],
+            ),
+            $message->fullmessage,
+        );
+
+        // Clear sink.
+        $messagesink->clear();
+
+        // Test 2: Send welcome message to user from course contact with a custom message.
+        // Unenrol the first teacher from course.
+        $manualplugin->unenrol_user($maninstance, $teacher1->id);
+        // Redirect messages.
+        $messagesink = $this->redirectMessages();
+        $manualplugin->send_course_welcome_message_to_user(
+            instance: $maninstance,
+            userid: $student->id,
+            sendoption: ENROL_SEND_EMAIL_FROM_COURSE_CONTACT,
+            message: 'Your email address: {$a->email}, your first name: {$a->firstname}, your last name: {$a->lastname}',
+        );
+        $messages = $messagesink->get_messages_by_component_and_type(
+            'moodle',
+            'enrolcoursewelcomemessage',
+        );
+        $this->assertNotEmpty($messages);
+        $message = reset($messages);
+
+        // The message should be sent from the second teacher.
+        $this->assertEquals($teacher2->id, $message->useridfrom);
+        $this->assertStringContainsString($course->fullname, $message->subject);
+        $this->assertEquals(
+            'Your email address: ' . $student->email . ', your first name: ' . $student->firstname . ', your last name: ' .
+                $student->lastname,
+            $message->fullmessage,
+        );
+        // Clear sink.
+        $messagesink->clear();
+
+        // Test 3: Send welcome message to user from no-reply user with a custom message.
+        // Redirect messages.
+        $messagesink = $this->redirectMessages();
+        $manualplugin->send_course_welcome_message_to_user(
+            instance: $maninstance,
+            userid: $student->id,
+            sendoption: ENROL_SEND_EMAIL_FROM_NOREPLY,
+            message: 'Your email address: {$a->email}, your first name: {$a->firstname}, your last name: {$a->lastname}',
+        );
+        $messages = $messagesink->get_messages_by_component_and_type(
+            'moodle',
+            'enrolcoursewelcomemessage',
+        );
+        $this->assertNotEmpty($messages);
+        $message = reset($messages);
+
+        // The message should be sent from the noreply user.
+        $this->assertEquals($noreplyuser->id, $message->useridfrom);
+        $this->assertStringContainsString($course->fullname, $message->subject);
+        $this->assertEquals(
+            'Your email address: ' . $student->email . ', your first name: ' . $student->firstname . ', your last name: ' .
+            $student->lastname,
+            $message->fullmessage,
+        );
+        // Clear sink.
+        $messagesink->clear();
+
+    }
+
+    /**
+     * Test send_course_welcome_message_to_user() method via hook.
+     *
+     * @covers \enrol_plugin::send_course_welcome_message_to_user
+     */
+    public function test_send_course_welcome_message_via_hook(): void {
+        global $DB;
+        $this->resetAfterTest();
+        $messagesink = $this->redirectMessages();
+        $course = $this->getDataGenerator()->create_course([
+            'fullname' => 'Course 1',
+            'shortname' => 'C1',
+        ]);
+        $maninstance = $DB->get_record(
+            'enrol',
+            ['courseid' => $course->id, 'enrol' => 'manual'],
+            '*',
+            MUST_EXIST,
+        );
+        $maninstance->customint1 = ENROL_SEND_EMAIL_FROM_NOREPLY;
+        $DB->update_record('enrol', $maninstance);
+        $student = $this->getDataGenerator()->create_user();
+        $this->getDataGenerator()->enrol_user($student->id, $course->id);
+        $messages = $messagesink->get_messages_by_component_and_type(
+            'moodle',
+            'enrolcoursewelcomemessage',
+        );
+        $this->assertNotEmpty($messages);
+        $message = reset($messages);
+        $this->assertStringContainsString($course->fullname, $message->subject);
+    }
+
 }
