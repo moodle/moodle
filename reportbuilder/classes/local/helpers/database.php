@@ -106,7 +106,7 @@ class database {
      * primarily to ensure uniqueness when the expression is to be used as part of a larger query
      *
      * @param string $sql
-     * @param array $params
+     * @param array $params Parameter names
      * @param callable $callback Method that takes a single string parameter, and returns another string
      * @return string
      */
@@ -122,6 +122,27 @@ class database {
         }
 
         return $sql;
+    }
+
+    /**
+     * Replace parameter names within given SQL expression, returning updated SQL and parameter elements
+     *
+     * {@see sql_replace_parameter_names}
+     *
+     * @param string $sql
+     * @param array $params Parameter name/values
+     * @param callable $callback
+     * @return array [$sql, $params]
+     */
+    public static function sql_replace_parameters(string $sql, array $params, callable $callback): array {
+        $transformedsql = static::sql_replace_parameter_names($sql, array_keys($params), $callback);
+
+        $transformedparams = [];
+        foreach ($params as $name => $value) {
+            $transformedparams[$callback($name)] = $value;
+        }
+
+        return [$transformedsql, $transformedparams];
     }
 
     /**
