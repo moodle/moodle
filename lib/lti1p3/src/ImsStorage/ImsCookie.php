@@ -2,7 +2,7 @@
 
 namespace Packback\Lti1p3\ImsStorage;
 
-use auth_lti\local\ltiadvantage\utility\cookie_helper;
+use core\session\utility\cookie_helper;
 use Packback\Lti1p3\Interfaces\ICookie;
 
 class ImsCookie implements ICookie
