@@ -904,7 +904,7 @@ class plugin_manager {
             $reqs->hasver = $otherplugin->versiondisk;
             $reqs->reqver = $requiredversion;
             // Check it has sufficient version.
-            if ($requiredversion == ANY_VERSION | $otherplugin->versiondisk >= $requiredversion) {
+            if ($requiredversion == ANY_VERSION || $otherplugin->versiondisk >= $requiredversion) {
                 $reqs->status = self::REQUIREMENT_STATUS_OK;
             } else {
                 $reqs->status = self::REQUIREMENT_STATUS_OUTDATED;
