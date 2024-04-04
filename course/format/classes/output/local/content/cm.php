@@ -122,6 +122,7 @@ class cm implements named_templatable, renderable {
             'classlist' => [],
             'cmid' => $mod->id,
             'editing' => $PAGE->user_is_editing(),
+            'sectionnum' => $this->section->section,
         ];
 
         // Add partial data segments.
