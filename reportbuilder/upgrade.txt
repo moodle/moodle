@@ -1,6 +1,10 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.4.1 ===
+
+* New database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
+
 === 4.4 ===
 
 * New methods `get_identity_[columns|filters]` in user entity, for retrieving all user identity field report elements
