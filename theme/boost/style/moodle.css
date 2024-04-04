@@ -28966,6 +28966,12 @@ span.editinstructions .alert-link {
 }
 .course-section .sectionbadges .badge {
   margin-left: 0.5rem;
+  font-weight: normal;
+}
+.course-section .sectionbadges .badge .icon {
+  font-size: 12px;
+  width: 12px;
+  height: 12px;
 }
 .course-section .course-section-header.draggable {
   cursor: move;

@@ -3,6 +3,10 @@ This files describes API changes for course formats
 Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/format
 
 === 4.4 ===
+* The core_courseformat\output\local\content\section::export_for_template() is not returning hiddenfromstudents and notavailable
+  directly in the data array anymore. Instead, it returns the visibility data in the 'visibility' key. It means that templates
+  derived from core should be adjusted to use $data->visibility->hiddenfromstudents and $data->visibility->notavailable instead
+  of $data->hiddenfromstudents and $data->notavailable.
 * The state mutations sectionMove is deprecated. From now on sectionMoveAfter is the only
   valid section move mutation.
 * The state action core_courseformat\stateactions::section_move is deprecated and
