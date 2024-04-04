@@ -917,4 +917,77 @@ final class adhoc_task_test extends \advanced_testcase {
             $output
         );
     }
+
+    /**
+     * Test send messages when adhoc task reaches the max fail delay time.
+     *
+     * @covers ::adhoc_task_failed
+     * @covers ::send_failed_task_max_delay_message
+     */
+    public function test_adhoc_message_max_fail_delay(): void {
+        $this->resetAfterTest();
+        $this->setAdminUser();
+
+        // Redirect messages.
+        $messagesink = $this->redirectMessages();
+
+        // Create an adhoc task.
+        $task = new adhoc_test_task();
+        manager::queue_adhoc_task($task);
+
+        $now = time();
+
+        // Get it from the scheduler, execute it, and mark it as failed.
+        $task = manager::get_next_adhoc_task($now);
+        $taskid = $task->get_id();
+        $task->execute();
+
+        // Catch the message. The task has not reach the max time delay yet.
+        manager::adhoc_task_failed($task);
+        $messages = $messagesink->get_messages();
+        $this->assertCount(0, $messages);
+
+        // Should get the adhoc task immediately.
+        $task = manager::get_adhoc_task($taskid);
+        $task->set_fail_delay(86400);
+        $this->assertInstanceOf('\\core\\task\\adhoc_test_task', $task);
+        $this->assertEquals($taskid, $task->get_id());
+        $task->execute();
+
+        // Catch the message.
+        manager::adhoc_task_failed($task);
+        $messages = $messagesink->get_messages();
+        $this->assertCount(1, $messages);
+
+        // Get the task and execute it second time.
+        $task = manager::get_adhoc_task($taskid);
+        // Set the fail delay to 12 hours.
+        $task->set_fail_delay(43200);
+        $task->execute();
+        manager::adhoc_task_failed($task);
+
+        // Catch the message.
+        $messages = $messagesink->get_messages();
+        $this->assertCount(2, $messages);
+
+        // Get the task and execute it third time.
+        $task = manager::get_adhoc_task($taskid);
+        // Set the fail delay to 48 hours.
+        $task->set_fail_delay(172800);
+        $task->execute();
+        manager::adhoc_task_failed($task);
+
+        // Catch the message.
+        $messages = $messagesink->get_messages();
+        $this->assertCount(3, $messages);
+
+        // Check first message information.
+        $this->assertStringContainsString('Task failed: Test adhoc class', $messages[0]->subject);
+        $this->assertEquals('failedtaskmaxdelay', $messages[0]->eventtype);
+        $this->assertEquals('-10', $messages[0]->useridfrom);
+        $this->assertEquals('2', $messages[0]->useridto);
+
+        // Close sink.
+        $messagesink->close();
+    }
 }

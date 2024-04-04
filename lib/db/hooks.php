@@ -102,4 +102,8 @@ $callbacks = [
         'callback' => \core_message\hook_callbacks::class . '::add_messaging_widget',
         'priority' => 0,
     ],
+    [
+        'hook' => \core\hook\task\after_failed_task_max_delay::class,
+        'callback' => core\task\failed_task_callbacks::class . '::send_failed_task_max_delay_message',
+    ],
 ];
