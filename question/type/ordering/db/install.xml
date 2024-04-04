@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="question/type/ordering/db" VERSION="2007021402" COMMENT="XMLDB file for Moodle question/type/ordering">
+<XMLDB PATH="question/type/ordering/db" VERSION="20240223" COMMENT="XMLDB file for Moodle question/type/ordering"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
+>
   <TABLES>
     <TABLE NAME="qtype_ordering_options" COMMENT="Options for ordering questions">
       <FIELDS>

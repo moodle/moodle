@@ -14,19 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The questiontype class for the multiple choice question type.
- *
- * @package    qtype_ordering
- * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 use qtype_ordering\question_hint_ordering;
 
 /**
  * The ordering question type.
  *
+ * @package    qtype_ordering
  * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -793,9 +786,9 @@ class qtype_ordering extends question_type {
     /**
      * Fix empty or long question name
      *
-     * @param string $name
-     * @param string $defaultname (optional, default='')
-     * @param integer $maxnamelength (optional, default=42)
+     * @param string $name The name of the question
+     * @param string $defaultname (optional, default='') The default name of the question
+     * @param integer $maxnamelength (optional, default=42) The maximum length of the name
      * @return string Fixed name
      */
     public function fix_questionname(string $name, string $defaultname = '', int $maxnamelength = 42): string {

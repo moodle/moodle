@@ -19,6 +19,7 @@ defined('MOODLE_INTERNAL') || die();
 /**
  * Coverage information for the qtype_ordering subsystem.
  *
+ * @package    qtype_ordering
  * @copyright  2023 Mathew May <mathew.solutions>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

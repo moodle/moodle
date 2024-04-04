@@ -14,13 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Question hint for ordering.
- *
- * @package    qtype_ordering
- * @copyright  2021 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 namespace qtype_ordering;
 
 use question_display_options;
@@ -38,7 +31,7 @@ use question_hint_with_parts;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_hint_ordering extends question_hint_with_parts {
-    /** Highlight response in the hint options. */
+    /** @var bool $highlightresponse Highlight response in the hint options. */
     public bool $highlightresponse;
 
     /**

@@ -15,19 +15,9 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Ordering question definition classes.
- *
- * @package    qtype_ordering
- *
- * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-// Prevent direct access to this script.
-
-/**
  * Represents an ordering question.
  *
+ * @package    qtype_ordering
  * @copyright  2013 Gordon Bateson (gordon.bateson@gmail.com)
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -196,6 +186,15 @@ class qtype_ordering_question extends question_graded_automatically {
         $this->correctresponse = array_filter(explode(',', $step->get_qt_var('_correctresponse')));
     }
 
+    /**
+     * When a question is updated to a new version, this method is called to
+     * check whether the question can be regraded with the new version.
+     *
+     * @param question_definition $otherversion The new version of the question.
+     * @return string|null If the question can be regraded, this method should return null.
+     *      If the question cannot be regraded, this method should return a string
+     *      explaining why not.
+     */
     public function validate_can_regrade_with_other_version(question_definition $otherversion): ?string {
         $basemessage = parent::validate_can_regrade_with_other_version($otherversion);
         if ($basemessage) {
@@ -209,6 +208,17 @@ class qtype_ordering_question extends question_graded_automatically {
         return null;
     }
 
+    /**
+     * Update the attempt state data for a new version of the question.
+     *
+     * This method is called when a question is updated to a new version, and
+     * the question_attempt_step data needs to be updated to reflect the new
+     * version of the question.
+     *
+     * @param question_attempt_step $oldstep The step data for the old version of the question.
+     * @param question_definition $otherversion The new version of the question.
+     * @return array An array of key-value pairs to be merged into the step data.
+     */
     public function update_attempt_state_data_for_new_version(
             question_attempt_step $oldstep, question_definition $otherversion) {
         parent::update_attempt_state_data_for_new_version($oldstep, $otherversion);

@@ -25,8 +25,6 @@
 // Prevent direct access to this script.
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->cron      = 0;
 $plugin->component = 'qtype_ordering';
-$plugin->maturity  = MATURITY_STABLE;
 $plugin->requires  = 2021051700; // Moodle 3.11.
 $plugin->version   = 2024040401; // The current plugin version (Date: YYYYMMDDXX).

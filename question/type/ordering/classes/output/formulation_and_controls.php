@@ -35,6 +35,7 @@ class formulation_and_controls extends renderable_base {
      * The class constructor.
      *
      * @param question_attempt $qa The question attempt object.
+     * @param question_display_options $options The question options.
      */
     public function __construct(question_attempt $qa, question_display_options $options) {
         $this->options = $options;
