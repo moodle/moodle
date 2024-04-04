@@ -209,7 +209,7 @@ class availability implements named_templatable, renderable {
         $text = info::format_info($availabilityinfo, $course);
         $data = ['text' => $text];
 
-        if (strlen(html_to_text($text)) > self::AVAILABILITY_EXCERPT_MAXSIZE) {
+        if (strlen(html_to_text($text, 0, false)) > self::AVAILABILITY_EXCERPT_MAXSIZE) {
             $data['excerpt'] = shorten_text($text, self::AVAILABILITY_EXCERPT_MAXSIZE);
         }
 
