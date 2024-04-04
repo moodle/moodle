@@ -114,11 +114,12 @@ function url_get_full_url($url, $cm, $course, $config=null) {
         $fullurl = str_replace('>', '%3E', $fullurl);
     }
 
+    if (!$config) {
+        $config = get_config('url');
+    }
+
     // add variable url parameters
-    if (!empty($parameters)) {
-        if (!$config) {
-            $config = get_config('url');
-        }
+    if ($config->allowvariables && !empty($parameters)) {
         $paramvalues = url_get_variable_values($url, $cm, $course, $config);
 
         foreach ($parameters as $parse=>$parameter) {

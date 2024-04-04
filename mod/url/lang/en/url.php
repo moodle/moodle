@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['allowvariables'] = 'Allow URL variables';
+$string['allowvariables_desc'] = 'Allow variables to be added to URLs. Variables enable you to pass internal information, such as the user\'s name, as part of the URL. Be aware of potential privacy risks when using this feature.';
 $string['clicktoopen'] = 'Click on {$a} to open the resource.';
 $string['configdisplayoptions'] = 'Select all options that should be available, existing settings are not modified. Hold CTRL key to select multiple fields.';
 $string['configframesize'] = 'When a web page or an uploaded file is displayed within a frame, this value is the height (in pixels) of the top frame (which contains the navigation).';
