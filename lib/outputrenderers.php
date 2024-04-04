@@ -37,6 +37,12 @@
 
 use core\di;
 use core\hook\manager as hook_manager;
+use core\hook\output\after_standard_main_region_html_generation;
+use core\hook\output\before_footer_html_generation;
+use core\hook\output\before_html_attributes;
+use core\hook\output\before_http_headers;
+use core\hook\output\before_standard_footer_html_generation;
+use core\hook\output\before_standard_top_of_body_html_generation;
 use core\output\named_templatable;
 use core_completion\cm_completion_details;
 use core_course\output\activity_information;
@@ -654,26 +660,22 @@ class core_renderer extends renderer_base {
      */
     public function htmlattributes() {
         $return = get_html_lang(true);
-        $attributes = array();
+
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_html_attributes.php');
+
+        $hook = new before_html_attributes($this);
+
         if ($this->page->theme->doctype !== 'html5') {
-            $attributes['xmlns'] = 'http://www.w3.org/1999/xhtml';
+            $hook->add_attribute('xmlns', 'http://www.w3.org/1999/xhtml');
         }
 
-        // Give plugins an opportunity to add things like xml namespaces to the html element.
-        // This function should return an array of html attribute names => values.
-        $pluginswithfunction = get_plugins_with_function('add_htmlattributes', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $newattrs = $function();
-                unset($newattrs['dir']);
-                unset($newattrs['lang']);
-                unset($newattrs['xmlns']);
-                unset($newattrs['xml:lang']);
-                $attributes += $newattrs;
-            }
-        }
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
 
-        foreach ($attributes as $key => $val) {
+        foreach ($hook->get_attributes() as $key => $val) {
             $val = s($val);
             $return .= " $key=\"$val\"";
         }
@@ -811,22 +813,16 @@ class core_renderer extends renderer_base {
             $output .= "\n".$CFG->additionalhtmltopofbody;
         }
 
-        // Give subsystems an opportunity to inject extra html content. The callback
-        // must always return a string containing valid html.
-        foreach (\core_component::get_core_subsystems() as $name => $path) {
-            if ($path) {
-                $output .= component_callback($name, 'before_standard_top_of_body_html', [], '');
-            }
-        }
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_standard_top_of_body_html_generation.php');
 
-        // Give plugins an opportunity to inject extra html content. The callback
-        // must always return a string containing valid html.
-        $pluginswithfunction = get_plugins_with_function('before_standard_top_of_body_html', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $output .= $function();
-            }
-        }
+        // Allow components to add content to the top of the body.
+        $hook = new before_standard_top_of_body_html_generation($this, $output);
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
+        $output = $hook->get_output();
 
         $output .= $this->maintenance_warning();
 
@@ -877,29 +873,21 @@ class core_renderer extends renderer_base {
      * @return string HTML fragment.
      */
     public function standard_footer_html() {
-        global $CFG;
-
-        $output = '';
         if (during_initial_install()) {
             // Debugging info can not work before install is finished,
             // in any case we do not want any links during installation!
-            return $output;
+            return '';
         }
 
-        // Give plugins an opportunity to add any footer elements.
-        // The callback must always return a string containing valid html footer content.
-        $pluginswithfunction = get_plugins_with_function('standard_footer_html', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $output .= $function();
-            }
-        }
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_standard_footer_html_generation.php');
 
-        if (core_userfeedback::can_give_feedback()) {
-            $output .= html_writer::div(
-                $this->render_from_template('core/userfeedback_footer_link', ['url' => core_userfeedback::make_link()->out(false)])
-            );
-        }
+        $hook = new before_standard_footer_html_generation($this);
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
+        $output = $hook->get_output();
 
         if ($this->page->devicetypeinuse == 'legacy') {
             // The legacy theme is in use print the notification
@@ -1121,29 +1109,23 @@ class core_renderer extends renderer_base {
      */
     public function standard_after_main_region_html() {
         global $CFG;
-        $output = '';
+
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/after_standard_main_region_html_generation.php');
+
+        $hook = new after_standard_main_region_html_generation($this);
+
         if ($this->page->pagelayout !== 'embedded' && !empty($CFG->additionalhtmlbottomofbody)) {
-            $output .= "\n".$CFG->additionalhtmlbottomofbody;
+            $hook->add_html("\n");
+            $hook->add_html($CFG->additionalhtmlbottomofbody);
         }
 
-        // Give subsystems an opportunity to inject extra html content. The callback
-        // must always return a string containing valid html.
-        foreach (\core_component::get_core_subsystems() as $name => $path) {
-            if ($path) {
-                $output .= component_callback($name, 'standard_after_main_region_html', [], '');
-            }
-        }
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
 
-        // Give plugins an opportunity to inject extra html content. The callback
-        // must always return a string containing valid html.
-        $pluginswithfunction = get_plugins_with_function('standard_after_main_region_html', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $output .= $function();
-            }
-        }
-
-        return $output;
+        return $hook->get_output();
     }
 
     /**
@@ -1378,14 +1360,12 @@ class core_renderer extends renderer_base {
     public function header() {
         global $USER, $CFG, $SESSION;
 
-        // Give plugins an opportunity touch things before the http headers are sent
-        // such as adding additional headers. The return value is ignored.
-        $pluginswithfunction = get_plugins_with_function('before_http_headers', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $function();
-            }
-        }
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_http_headers.php');
+
+        di::get(hook_manager::class)->dispatch(new before_http_headers($this));
 
         if (\core\session\manager::is_loggedinas()) {
             $this->page->add_body_class('userloggedinas');
@@ -1428,6 +1408,7 @@ class core_renderer extends renderer_base {
         if ($cutpos === false) {
             throw new coding_exception('page layout file ' . $layoutfile . ' does not contain the main content placeholder, please include "<?php echo $OUTPUT->main_content() ?>" in theme layout file.');
         }
+
         $header = substr($rendered, 0, $cutpos);
         $footer = substr($rendered, $cutpos + strlen($token));
 
@@ -1502,20 +1483,16 @@ class core_renderer extends renderer_base {
     public function footer() {
         global $CFG, $DB, $PERF;
 
-        $output = '';
+        // Ensure that the callback exists prior to cache purge.
+        // This is a critical page path.
+        // TODO MDL-81134 Remove after LTS+1.
+        require_once(__DIR__ . '/classes/hook/output/before_footer_html_generation.php');
 
-        // Give plugins an opportunity to touch the page before JS is finalized.
-        $pluginswithfunction = get_plugins_with_function('before_footer', 'lib.php');
-        foreach ($pluginswithfunction as $plugins) {
-            foreach ($plugins as $function) {
-                $extrafooter = $function();
-                if (is_string($extrafooter)) {
-                    $output .= $extrafooter;
-                }
-            }
-        }
-
-        $output .= $this->container_end_all(true);
+        $hook = new before_footer_html_generation($this);
+        di::get(hook_manager::class)->dispatch($hook);
+        $hook->process_legacy_callbacks();
+        $hook->add_html($this->container_end_all(true));
+        $output = $hook->get_output();
 
         $footer = $this->opencontainers->pop('header/footer');
 

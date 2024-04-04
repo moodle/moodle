@@ -22,7 +22,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+use core\hook\output\before_standard_footer_html_generation;
 
 /**
  * This Class contains helper functions for user feedback functionality.
@@ -144,6 +144,26 @@ class core_userfeedback {
         ]);
 
         return $url;
+    }
+
+    /**
+     * Callback for the before_standard_footer_html_generation hook to add a user feedback footer link if configured.
+     *
+     * @param before_standard_footer_html_generation $hook
+     */
+    public static function before_standard_footer_html_generation(
+        before_standard_footer_html_generation $hook,
+    ): void {
+        if (self::can_give_feedback()) {
+            $hook->add_html(html_writer::div(
+                $hook->renderer->render_from_template(
+                    'core/userfeedback_footer_link',
+                    [
+                        'url' => self::make_link()->out(false),
+                    ]
+                )
+            ));
+        }
     }
 
     /**

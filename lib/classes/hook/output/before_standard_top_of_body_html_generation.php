@@ -17,24 +17,25 @@
 namespace core\hook\output;
 
 /**
- * Allows plugins to add any elements to the page <head> html tag
+ * Hook to allow subscribers to add HTML content to the top of the page body.
  *
  * @package    core
- * @copyright  2023 Marina Glancy
+ * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @property-read \renderer_base $renderer The page renderer object
  */
 #[\core\attribute\tags('output')]
 #[\core\attribute\label('Allows plugins to add any elements to the page &lt;head&gt; html tag.')]
 #[\core\attribute\hook\replaces_callbacks('before_standard_html_head')]
-final class before_standard_head_html_generation {
+final class before_standard_top_of_body_html_generation {
     /**
-     * Hook to allow subscribers to add HTML content to page head tag.
+     * Hook to allow subscribers to add HTML content to the top of the page body.
      *
-     * @param renderer_base $renderer
+     * @param \renderer_base $renderer
      * @param string $output Initial output
      */
     public function __construct(
-        /** @var \renderer_base The core_renderer instance used for the generation */
+        /** @var \renderer_base The page renderer object */
         public readonly \renderer_base $renderer,
         /** @var string The collected output */
         private string $output = '',
@@ -43,9 +44,9 @@ final class before_standard_head_html_generation {
 
 
     /**
-     * Plugins implementing callback can add any HTML to the page.
+     * Plugins implementing callback can add any HTML to the top of the body.
      *
-     * Must be a string containing valid html head content
+     * Must be a string containing valid html head content.
      *
      * @param null|string $output
      */
@@ -67,14 +68,33 @@ final class before_standard_head_html_generation {
     /**
      * Process legacy callbacks.
      *
-     * Legacy callback 'before_standard_html_head' is deprecated since Moodle 4.4
+     * Legacy callback 'before_standard_top_of_body_html' is deprecated since Moodle 4.4
      */
     public function process_legacy_callbacks(): void {
-        $pluginswithfunction = get_plugins_with_function('before_standard_html_head', 'lib.php', true, true);
+        // Give subsystems an opportunity to inject extra html content. The callback
+        // must always return a string containing valid html.
+        foreach (\core_component::get_core_subsystems() as $name => $path) {
+            if ($path) {
+                $this->add_html(
+                    component_callback(
+                        component: $name,
+                        function: 'before_standard_top_of_body_html',
+                        default: '',
+                        migratedtohook: true,
+                    ),
+                );
+            }
+        }
+
+        // Give plugins an opportunity to inject extra html content. The callback
+        // must always return a string containing valid html.
+        $pluginswithfunction = get_plugins_with_function(
+            function: 'before_standard_top_of_body_html',
+            migratedtohook: true,
+        );
         foreach ($pluginswithfunction as $plugins) {
             foreach ($plugins as $function) {
-                $output = $function();
-                $this->add_html((string)$output);
+                $this->add_html($function() ?? '');
             }
         }
     }

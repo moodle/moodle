@@ -14,22 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tool_mobile\local\hook\output;
+namespace tool_mobile;
+
+use html_writer;
 
 /**
- * Allows plugins to add any elements to the page <head> html tag
+ * Allows plugins to add any elements to the footer.
  *
  * @package    tool_mobile
- * @copyright  2023 Marina Glancy
+ * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class before_standard_head_html_generation {
+class hook_callbacks {
     /**
      * Callback to add head elements.
      *
      * @param \core\hook\output\before_standard_head_html_generation $hook
      */
-    public static function callback(\core\hook\output\before_standard_head_html_generation $hook): void {
+    public static function before_standard_head_html_generation(
+        \core\hook\output\before_standard_head_html_generation $hook,
+    ): void {
         global $CFG, $PAGE;
         // Smart App Banners meta tag is only displayed if mobile services are enabled and configured.
         if (!empty($CFG->enablemobilewebservice)) {
@@ -38,7 +42,7 @@ class before_standard_head_html_generation {
                 if (!empty($mobilesettings->iosappid)) {
                     $hook->add_html(
                         '<meta name="apple-itunes-app" content="app-id=' . s($mobilesettings->iosappid) . ', ' .
-                        'app-argument=' . $PAGE->url->out() . '"/>'
+                            'app-argument=' . $PAGE->url->out() . '"/>'
                     );
                 }
 
@@ -48,5 +52,30 @@ class before_standard_head_html_generation {
                 }
             }
         }
+    }
+
+    /**
+     * Callback to add head elements.
+     *
+     * @param \core\hook\output\before_standard_footer_html_generation $hook
+     */
+    public static function before_standard_footer_html_generation(
+        \core\hook\output\before_standard_footer_html_generation $hook,
+    ): void {
+        global $CFG;
+
+        require_once(__DIR__ . '/../lib.php');
+
+        if (empty($CFG->enablemobilewebservice)) {
+            return;
+        }
+
+        $url = tool_mobile_create_app_download_url();
+        if (empty($url)) {
+            return;
+        }
+        $hook->add_html(
+            html_writer::link($url, get_string('getmoodleonyourmobile', 'tool_mobile'), ['class' => 'mobilelink']),
+        );
     }
 }

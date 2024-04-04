@@ -16,36 +16,37 @@
 
 namespace core\hook\output;
 
+use renderer_base;
+
 /**
- * Allows plugins to add any elements to the page <head> html tag
+ * Hook to allow subscribers to add HTML content to the footer.
  *
  * @package    core
- * @copyright  2023 Marina Glancy
+ * @copyright  2024 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\core\attribute\tags('output')]
-#[\core\attribute\label('Allows plugins to add any elements to the page &lt;head&gt; html tag.')]
-#[\core\attribute\hook\replaces_callbacks('before_standard_html_head')]
-final class before_standard_head_html_generation {
+#[\core\attribute\label('Allows plugins to add any elements to the page footer.')]
+#[\core\attribute\hook\replaces_callbacks('standard_footer_html')]
+final class before_standard_footer_html_generation {
     /**
-     * Hook to allow subscribers to add HTML content to page head tag.
+     * Hook to allow subscribers to add HTML content before the footer.
      *
      * @param renderer_base $renderer
      * @param string $output Initial output
      */
     public function __construct(
-        /** @var \renderer_base The core_renderer instance used for the generation */
-        public readonly \renderer_base $renderer,
+        /** @var renderer_base The page renderer object */
+        public readonly renderer_base $renderer,
         /** @var string The collected output */
         private string $output = '',
     ) {
     }
 
-
     /**
-     * Plugins implementing callback can add any HTML to the page.
+     * Plugins implementing callback can add any HTML to the top of the body.
      *
-     * Must be a string containing valid html head content
+     * Must be a string containing valid html head content.
      *
      * @param null|string $output
      */
@@ -67,14 +68,15 @@ final class before_standard_head_html_generation {
     /**
      * Process legacy callbacks.
      *
-     * Legacy callback 'before_standard_html_head' is deprecated since Moodle 4.4
+     * Legacy callback 'standard_footer_html' is deprecated since Moodle 4.4
      */
     public function process_legacy_callbacks(): void {
-        $pluginswithfunction = get_plugins_with_function('before_standard_html_head', 'lib.php', true, true);
+        // Give plugins an opportunity to add any footer elements.
+        // The callback must always return a string containing valid html footer content.
+        $pluginswithfunction = get_plugins_with_function(function: 'standard_footer_html', migratedtohook: true);
         foreach ($pluginswithfunction as $plugins) {
             foreach ($plugins as $function) {
-                $output = $function();
-                $this->add_html((string)$output);
+                $this->add_html($function());
             }
         }
     }
