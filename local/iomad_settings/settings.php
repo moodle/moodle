@@ -41,15 +41,25 @@ if ($hassiteconfig) {
                                                 get_string('iomad_allow_username_help', 'local_iomad_settings'),
                                                 0));
 
-    $settings->add(new admin_setting_configcheckbox('iomad_sync_institution',
+    $institutionsync = [get_string('no'),
+                        get_string('companyshortname', 'block_iomad_company_admin'),
+                        get_string('companyname', 'block_iomad_company_admin')];
+
+    $settings->add(new admin_setting_configselect('iomad_sync_institution',
                                                 get_string('iomad_sync_institution', 'local_iomad_settings'),
                                                 get_string('iomad_sync_institution_help', 'local_iomad_settings'),
-                                                1));
+                                                1,
+                                                $institutionsync));
 
-    $settings->add(new admin_setting_configcheckbox('iomad_sync_department',
+    $departmentsync = [get_string('no'),
+                      get_string('setfromcompany', 'block_iomad_company_admin'),
+                      get_string('settocompany', 'block_iomad_company_admin')];
+
+    $settings->add(new admin_setting_configselect('iomad_sync_department',
                                                 get_string('iomad_sync_department', 'local_iomad_settings'),
-                                                get_string('iomad_sync_department', 'local_iomad_settings'),
-                                                1));
+                                                get_string('iomad_sync_department_help', 'local_iomad_settings'),
+                                                1,
+                                                $departmentsync));
 
     $settings->add(new admin_setting_configcheckbox('iomad_autoenrol_managers',
                                                 get_string('iomad_autoenrol_managers', 'local_iomad_settings'),

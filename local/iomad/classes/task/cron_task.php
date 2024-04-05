@@ -46,7 +46,7 @@ class cron_task extends \core\task\scheduled_task {
         $runtime = time();
         // Are we copying Company to institution?
         if (!empty($CFG->iomad_sync_institution)) {
-            mtrace("Copying company shortnames to user institution fields\n");
+
             // Get the users in multiple companies
             $multiusers = $DB->get_records_sql("SELECT userid
                                                 FROM {company_users}
@@ -58,42 +58,45 @@ class cron_task extends \core\task\scheduled_task {
                 $notmultisql = " AND u.id NOT IN (" . implode(',', array_keys($multiusers)) . ")";
                 $multisql = " WHERE u.id IN (" . implode(',', array_keys($multiusers)) . ")";
             }
-            // Get the users where it's wrong.
-            $users = $DB->get_records_sql("SELECT u.*, c.id as companyid
-                                           FROM {user} u
-                                           JOIN {company_users} cu ON cu.userid = u.id
-                                           JOIN {company} c ON cu.companyid = c.id
-                                           WHERE u.institution != c.shortname
-                                           AND c.parentid = 0
-                                           $notmultisql
-                                           ");
-            // Get all of the companies.
-            $companies = $DB->get_records('company', array(), '', 'id,shortname');
-            foreach ($users as $user) {
-                $user->institution = $companies[$user->companyid]->shortname;
-                $DB->update_record('user', $user);
-            }
+            if ($CFG->iomad_sync_institution == 1) {
+                mtrace("Copying company shortnames to user institution fields\n");
 
-
-            // Deal with those in multiple companies.
-            if (!empty($multiusers)) {
-                $users = $DB->get_records_sql("SELECT DISTINCT u.*
+                // Get the users where it's wrong.
+                $users = $DB->get_records_sql("SELECT u.*, c.shortname as targetname
                                                FROM {user} u
-                                               $multisql");
-                foreach ($users as $user) {
-                    $string = get_string_manager()->get_string('blockmultiple', 'admin', '', $user->lang);
-                    $user->institution = $string;
-                    $DB->update_record('user', $user);
-                }
+                                               JOIN {company_users} cu ON cu.userid = u.id
+                                               JOIN {company} c ON cu.companyid = c.id
+                                               WHERE u.institution != c.shortname
+                                               AND c.parentid = 0
+                                               $notmultisql
+                                               LIMIT 1000");
+
+            } else if ($CFG->iomad_sync_institution == 2) {
+                mtrace("Copying company name to user institution fields\n");
+
+                // Get the users where it's wrong.
+                $users = $DB->get_records_sql("SELECT u.id, c.name as targetname
+                                               FROM {user} u
+                                               JOIN {company_users} cu ON cu.userid = u.id
+                                               JOIN {company} c ON cu.companyid = c.id
+                                               WHERE u.institution != c.name
+                                               AND c.parentid = 0
+                                               $notmultisql
+                                               LIMIT 1000");
             }
 
-            $companies = array();
-            $users = array();
+            // Update the users.
+            foreach ($users as $user) {
+                $DB->set_field('user', 'institution', $user->targetname, ['id' => $user->id]);
+            }
+            $users = [];
         }
 
         // Are we copying department to department?
-        if (!empty($CFG->iomad_sync_department)) {
+        if (!empty($CFG->iomad_sync_department &&
+            $CFG->iomad_sync_department == 1)) {
             mtrace("Copying company department name to user department fields\n");
+
             // Get the users where it's wrong.
             $multiusers = $DB->get_records_sql("SELECT userid
                                                 FROM {company_users}
@@ -105,19 +108,18 @@ class cron_task extends \core\task\scheduled_task {
                 $notmultisql = " AND u.id NOT IN (" . implode(',', array_keys($multiusers)) . ")";
                 $multisql = " WHERE u.id IN (" . implode(',', array_keys($multiusers)) . ")";
             }
-            $users = $DB->get_records_sql("SELECT DISTINCT u.*, d.id as departmentid
+            $users = $DB->get_records_sql("SELECT DISTINCT u.*, d.name as targetname
                                            FROM {user} u
                                            JOIN {company_users} cu ON cu.userid = u.id
                                            JOIN {company} c ON cu.companyid = c.id
                                            JOIN {department} d ON cu.departmentid = d.id
                                            WHERE u.department != d.name
                                            AND c.parentid = 0
-                                           $notmultisql");
-            // Get all of the companies.
-            $departments = $DB->get_records('department', array(), '', 'id,name');
+                                           $notmultisql
+                                           LIMIT 1000");
+            // Update the users.
             foreach ($users as $user) {
-                $user->department = $departments[$user->departmentid]->name;
-                $DB->update_record('user', $user);
+                $DB->set_field('user', 'department', $user->targetname, ['id' => $user->id]);
             }
 
             // Deal with those in multiple departments.
@@ -132,7 +134,6 @@ class cron_task extends \core\task\scheduled_task {
                 }
             }
             
-            $companies = array();
             $users = array();
         }
 
