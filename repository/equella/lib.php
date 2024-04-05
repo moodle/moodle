@@ -260,10 +260,12 @@ class repository_equella extends repository {
     /**
      * Add Instance settings input to Moodle form
      *
-     * @param moodleform $mform
+     * @param MoodleQuickForm $mform
      */
     public static function instance_config_form($mform) {
-        global $DB;
+        global $CFG;
+        require_once("{$CFG->dirroot}/user/profile/lib.php");
+
         $mform->addElement('text', 'equella_url', get_string('equellaurl', 'repository_equella'));
         $mform->setType('equella_url', PARAM_URL);
 
@@ -271,8 +273,11 @@ class repository_equella extends repository {
         $mform->addRule('equella_url', $strrequired, 'required', null, 'client');
 
         $userfieldoptions = ['default' => get_string('equellausername', 'repository_equella')];
-        foreach ($DB->get_records('user_info_field', ['datatype' => 'text']) as $params) {
-            $userfieldoptions[$params->shortname] = $params->name;
+        foreach (profile_get_custom_fields() as $field) {
+            if ($field->datatype != 'text') {
+                continue;
+            }
+            $userfieldoptions[$field->shortname] = format_string($field->name, true, ['context' => context_system::instance()]);
         }
         $mform->addElement('select', 'equella_userfield', get_string('equellauserfield', 'repository_equella'), $userfieldoptions);
         $mform->setDefault('equella_userfield', $userfieldoptions['default']);
