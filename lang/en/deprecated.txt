@@ -127,3 +127,4 @@ aria:dropdowngrades,core_grades
 viewresults,core
 coursesearch,core
 coursesearch_help,core
+coursecalendar,core_calendar
