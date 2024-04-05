@@ -723,6 +723,9 @@ class manager_test extends \advanced_testcase {
         $groupthree = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'participation' => 0]);
         $this->getDataGenerator()->create_group_member(['groupid' => $groupthree->id, 'userid' => $userfour->id]);
 
+        // Editing teacher in no group.
+        $editingteacher = $this->getDataGenerator()->create_and_enrol($course, 'editingteacher');
+
         $activity = $this->getDataGenerator()->create_module('h5pactivity', ['course' => $course]);
         $manager = manager::create_from_instance($activity);
 
@@ -732,7 +735,7 @@ class manager_test extends \advanced_testcase {
             $usersjoin->params);
 
         $this->assertEqualsCanonicalizing(
-                [$teacher->username, $userone->username, $usertwo->username, $userthree->username, $userfour->username], $users);
+                [$userone->username, $usertwo->username, $userthree->username, $userfour->username], $users);
 
         // Switch to teacher, who cannot view all participants.
         $this->setUser($teacher);
@@ -748,7 +751,17 @@ class manager_test extends \advanced_testcase {
         $users = $DB->get_fieldset_sql("SELECT u.username FROM {user} u {$usersjoin->joins} WHERE {$usersjoin->wheres}",
             $usersjoin->params);
 
-        $this->assertEqualsCanonicalizing([$teacher->username, $userone->username], $users);
+        $this->assertEqualsCanonicalizing([$userone->username], $users);
+
+        // Switch to editing teacher, who can view all participants.
+        $this->setUser($editingteacher);
+
+        $usersjoin = $manager->get_active_users_join(true, 0);
+        $users = $DB->get_fieldset_sql("SELECT u.username FROM {user} u {$usersjoin->joins} WHERE {$usersjoin->wheres}",
+            $usersjoin->params);
+
+        $this->assertEqualsCanonicalizing(
+                [$userone->username, $usertwo->username, $userthree->username, $userfour->username], $users);
     }
 
     /**
