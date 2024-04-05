@@ -145,7 +145,9 @@ function tool_mfa_pluginfile(stdClass $course, stdClass $cm, context $context, s
  * @param array $args Arguments to the form.
  * @return null|string The rendered form.
  */
-function tool_mfa_output_fragment_factor_action_confirmation_form($args) {
+function tool_mfa_output_fragment_factor_action_confirmation_form(
+    array $args,
+): ?string {
     // Check args are not empty.
     foreach ($args as $key => $arg) {
         if (empty($arg)) {

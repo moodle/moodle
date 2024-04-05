@@ -175,6 +175,7 @@ $string['yesreplace'] = 'Yes, replace';
 
 // Deprecated since Moodle 4.4.
 $string['created'] = 'Created';
+$string['createdfromip'] = 'Created from IP';
 $string['lastverified'] = 'Last verified';
 $string['revoke'] = 'Revoke';
-$string['createdfromip'] = 'Created from IP';
+$string['setup'] = 'Setup';

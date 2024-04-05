@@ -27,6 +27,7 @@ import Notification from 'core/notification';
 import {getString} from 'core/str';
 import Url from 'core/url';
 import Fragment from 'core/fragment';
+import * as Prefetch from 'core/prefetch';
 
 const SELECTORS = {
     ACTION: '.mfa-action-button',
@@ -36,9 +37,14 @@ const SELECTORS = {
  * Entrypoint of the js.
  *
  * @method init
- * @param {Number} contextId Context ID of the user.
+ * @param {Integer} contextId Context ID of the user.
  */
 export const init = (contextId) => {
+    // Prefetch the language strings.
+    Prefetch.prefetchStrings('tool_mfa', [
+        'yesremove',
+        'yesreplace',
+    ]);
     registerEventListeners(contextId);
 };
 
@@ -46,7 +52,7 @@ export const init = (contextId) => {
  * Register event listeners.
  *
  * @method registerEventListeners
- * @param {Number} contextId Context ID of the user.
+ * @param {Integer} contextId Context ID of the user.
  */
 const registerEventListeners = (contextId) => {
     document.addEventListener('click', (e) => {
@@ -61,7 +67,7 @@ const registerEventListeners = (contextId) => {
  * Build the modal with the provided data.
  *
  * @method buildModal
- * @param {object} element The button element.
+ * @param {HTMLElement} element The button element.
  * @param {Number} contextId Context ID of the user.
  */
 const buildModal = async(element, contextId) => {

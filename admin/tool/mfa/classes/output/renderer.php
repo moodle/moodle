@@ -88,7 +88,6 @@ class renderer extends \plugin_renderer_base {
             $params = [
                 'action' => 'setup',
                 'factor' => $factor->name,
-                'sesskey' => sesskey(),
             ];
 
             if (!$active) {
