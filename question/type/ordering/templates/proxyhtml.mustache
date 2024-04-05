@@ -1,0 +1,50 @@
+{{!
+    This file is part of Moodle - https://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template question_ordering/proxyhtml
+
+    The user actually drags a proxy object, which is constructed from this template.
+    The proxy node is then added directly as a child of <body>. Your CSS also needs to ensure
+    that this proxy has position: absolute.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * none
+
+    Context variables required for this template:
+    * listClassName The token is replaced with the class attribute of the list being dragged.
+    * itemClassName The token is replaced with the class attribute of the item being dragged.
+    Because of this, the styling of the contents of your list item needs to work for the proxy,
+    as well as for items in place in the context of the list
+    * itemHtml The token is replaced with the innerHtml of the item being dragged.
+    * proxyStyles Passed in styles detailing the size of the proxy, and its position relative to the mouse.
+
+    Example context (json):
+    {
+        "listClassName": "osep-list",
+        "itemClassName": "osep-item osep-itemmoving",
+        "itemHtml": "Item 1",
+        "proxyStyles": "left: 0px; top: 0px; width: 100px; height: 100px;"
+    }
+}}
+<div class="que ordering dragproxy" style="position: absolute; {{proxyStyles}}">
+    <ul class="{{listClassName}}">
+        <li class="{{itemClassName}} item-moving">{{{itemHtml}}}</li>
+    </ul>
+</div>

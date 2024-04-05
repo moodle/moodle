@@ -802,8 +802,11 @@ abstract class question_edit_form extends question_wizard_form {
 
     /**
      * Perform the necessary preprocessing for the hint fields.
-     * @param object $question the data being passed to the form.
-     * @return object $question the modified data.
+     *
+     * @param object $question The data being passed to the form.
+     * @param bool $withclearwrong Clear wrong hints.
+     * @param bool $withshownumpartscorrect Show number correct.
+     * @return stdClass The modified data.
      */
     protected function data_preprocessing_hints($question, $withclearwrong = false,
             $withshownumpartscorrect = false) {

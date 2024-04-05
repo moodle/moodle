@@ -562,10 +562,11 @@ class question_type {
     /**
      * Saves question-type specific options
      *
-     * This is called by {@link save_question()} to save the question-type specific data
-     * @return object $result->error or $result->notice
-     * @param object $question  This holds the information from the editing form,
+     * This is called by {@see save_question()} to save the question-type specific data
+     *
+     * @param object $question This holds the information from the editing form,
      *      it is not a standard question object.
+     * @return bool|stdClass $result->error or $result->notice
      */
     public function save_question_options($question) {
         global $DB;

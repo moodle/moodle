@@ -401,6 +401,7 @@
             "multianswer",
             "multichoice",
             "numerical",
+            "ordering",
             "random",
             "randomsamatch",
             "shortanswer",
