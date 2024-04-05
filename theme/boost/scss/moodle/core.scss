@@ -3154,3 +3154,8 @@ blockquote {
         vertical-align: middle;
     }
 }
+
+/* General card customisations. */
+.card.active {
+    border-color: $gray-500;
+}

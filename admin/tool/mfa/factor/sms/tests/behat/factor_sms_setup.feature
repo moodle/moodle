@@ -12,7 +12,7 @@ Feature: Set up SMS factor in user preferences
       | enabled | 1 | factor_sms |
     When I follow "Preferences" in the user menu
     And I click on "Multi-factor authentication preferences" "link"
-    And I click on "Set up SMS" "button"
+    And I click on "Set up" "button"
 
   Scenario: Phone number setup form validation
     Given I set the field "Mobile number" to "++5555sss"

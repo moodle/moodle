@@ -95,8 +95,7 @@ class factor extends object_factor_base {
         $uri = $this->generate_totp_uri($secret);
         $qrcode = new \TCPDF2DBarcode($uri, 'QRCODE');
         $image = $qrcode->getBarcodePngData(7, 7);
-        $html = \html_writer::tag('p', get_string('setupfactor:scanwithapp', 'factor_totp'));
-        $html .= \html_writer::img('data:image/png;base64,' . base64_encode($image), '', ['width' => '150px']);
+        $html = \html_writer::img('data:image/png;base64,' . base64_encode($image), '', ['width' => '150px']);
         return $html;
     }
 
@@ -143,33 +142,36 @@ class factor extends object_factor_base {
         // Array of elements to allow XSS.
         $xssallowedelements = [];
 
-        $mform->addElement('html', $OUTPUT->heading(get_string('setupfactor', 'factor_totp'), 2));
-        $mform->addElement('html', \html_writer::tag('p', get_string('info', 'factor_totp')));
-        $mform->addElement('html', \html_writer::tag('hr', ''));
+        $headingstring = $mform->elementExists('replaceid') ? 'replacefactor' : 'setupfactor';
+        $mform->addElement('html', $OUTPUT->heading(get_string($headingstring, 'factor_totp'), 2));
 
-        $mform->addElement('text', 'devicename', get_string('devicename', 'factor_totp'), [
+        $html = \html_writer::tag('p', get_string('setupfactor:intro', 'factor_totp'));
+        $mform->addElement('html', $html);
+
+        // Device name.
+        $html = \html_writer::tag('p', get_string('setupfactor:instructionsdevicename', 'factor_totp'), ['class' => 'bold']);
+        $mform->addElement('html', $html);
+
+        $mform->addElement('text', 'devicename', get_string('setupfactor:devicename', 'factor_totp'), [
             'placeholder' => get_string('devicenameexample', 'factor_totp'),
             'autofocus' => 'autofocus',
         ]);
-        $mform->addHelpButton('devicename', 'devicename', 'factor_totp');
         $mform->setType('devicename', PARAM_TEXT);
         $mform->addRule('devicename', get_string('required'), 'required', null, 'client');
 
-        // Scan.
+        $html = \html_writer::tag('p', get_string('setupfactor:devicenameinfo', 'factor_totp'));
+        $mform->addElement('static', 'devicenameinfo', '', $html);
+
+        // Scan QR code.
+        $html = \html_writer::tag('p', get_string('setupfactor:instructionsscan', 'factor_totp'), ['class' => 'bold']);
+        $mform->addElement('html', $html);
+
         $secretfield = $mform->getElement('secret');
         $secret = $secretfield->getValue();
         $qrcode = $this->generate_qrcode($secret);
 
         $html = \html_writer::tag('p', $qrcode);
-        $xssallowedelements[] = $mform->addElement('static', 'scan', get_string('setupfactor:scan', 'factor_totp'), $html);
-
-        // Link.
-        if (get_config('factor_totp', 'totplink')) {
-            $uri = $this->generate_totp_uri($secret);
-            $html = $OUTPUT->action_link($uri, get_string('setupfactor:linklabel', 'factor_totp'));
-            $xssallowedelements[] = $mform->addElement('static', 'link', get_string('setupfactor:link', 'factor_totp'), $html);
-            $mform->addHelpButton('link', 'setupfactor:link', 'factor_totp');
-        }
+        $mform->addElement('static', 'scan', '', $html);
 
         // Enter manually.
         $secret = wordwrap($secret, 4, ' ', true) . '</code>';
@@ -186,19 +188,15 @@ class factor extends object_factor_base {
         ];
 
         $html = \html_writer::table($manualtable);
-        $html = \html_writer::tag('p', get_string('setupfactor:enter', 'factor_totp')) . $html;
         // Wrap the table in a couple of divs to be controlled via bootstrap.
-        $html = \html_writer::div($html, 'card card-body', ['style' => 'padding-left: 0 !important;']);
         $html = \html_writer::div($html, 'collapse', ['id' => 'collapseManualAttributes']);
 
-        $togglelink = \html_writer::tag('btn', get_string('setupfactor:scanfail', 'factor_totp'), [
-            'class' => 'btn btn-secondary',
-            'type' => 'button',
+        $togglelink = \html_writer::tag('a', get_string('setupfactor:link', 'factor_totp'), [
             'data-toggle' => 'collapse',
             'data-target' => '#collapseManualAttributes',
             'aria-expanded' => 'false',
             'aria-controls' => 'collapseManualAttributes',
-            'style' => 'font-size: 14px;',
+            'href' => '#',
         ]);
 
         $html = $togglelink . $html;
@@ -211,9 +209,17 @@ class factor extends object_factor_base {
             }
         }
 
-        $mform->addElement(new \tool_mfa\local\form\verification_field(null, false));
+        // Verification.
+        $html = \html_writer::tag('p', get_string('setupfactor:instructionsverification', 'factor_totp'), ['class' => 'bold']);
+        $mform->addElement('html', $html);
+
+        $verificationfield = new \tool_mfa\local\form\verification_field(
+            attributes: ['class' => 'tool-mfa-verification-code'],
+            auth: false,
+            elementlabel: get_string('setupfactor:verificationcode', 'factor_totp'),
+        );
+        $mform->addElement($verificationfield);
         $mform->setType('verificationcode', PARAM_ALPHANUM);
-        $mform->addHelpButton('verificationcode', 'verificationcode', 'factor_totp');
         $mform->addRule('verificationcode', get_string('required'), 'required', null, 'client');
 
         return $mform;
@@ -366,7 +372,7 @@ class factor extends object_factor_base {
             ], '*', IGNORE_MULTIPLE);
             if ($record) {
                 \core\notification::warning(get_string('error:alreadyregistered', 'factor_totp'));
-                return $record;
+                return null;
             }
 
             $id = $DB->insert_record('tool_mfa', $row);
@@ -377,6 +383,35 @@ class factor extends object_factor_base {
         }
 
         return null;
+    }
+
+    /**
+     * TOTP Factor implementation with replacement of existing factor.
+     *
+     * @param stdClass $data The new factor data.
+     * @param int $id The id of the factor to replace.
+     * @return stdClass|null the factor record, or null.
+     */
+    public function replace_user_factor(stdClass $data, int $id): stdClass|null {
+        global $DB, $USER;
+
+        $oldrecord = $DB->get_record('tool_mfa', ['id' => $id]);
+        $newrecord = null;
+
+        // Ensure we have a valid existing record before setting the new one.
+        if ($oldrecord) {
+            $newrecord = $this->setup_user_factor($data);
+        }
+        // Ensure the new record was created before revoking the old.
+        if ($newrecord) {
+            $this->revoke_user_factor($id);
+        } else {
+            \core\notification::warning(get_string('error:couldnotreplace', 'tool_mfa'));
+            return null;
+        }
+        $this->create_event_after_factor_setup($USER);
+
+        return $newrecord ?? null;
     }
 
     /**
@@ -396,6 +431,13 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function has_revoke(): bool {
+        return true;
+    }
+
+    /**
+     * TOTP Factor implementation.
+     */
+    public function has_replace(): bool {
         return true;
     }
 
@@ -447,6 +489,15 @@ class factor extends object_factor_base {
      * {@inheritDoc}
      */
     public function get_setup_string(): string {
-        return get_string('factorsetup', 'factor_totp');
+        return get_string('setupfactorbutton', 'factor_totp');
+    }
+
+    /**
+     * Gets the string for manage button on preferences page.
+     *
+     * @return string
+     */
+    public function get_manage_string(): string {
+        return get_string('managefactorbutton', 'factor_totp');
     }
 }

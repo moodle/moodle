@@ -138,3 +138,33 @@ function tool_mfa_pluginfile(stdClass $course, stdClass $cm, context $context, s
 
     return true;
 }
+
+/**
+ * Fragment to confirm a factor action using the confirmation form.
+ *
+ * @param array $args Arguments to the form.
+ * @return null|string The rendered form.
+ */
+function tool_mfa_output_fragment_factor_action_confirmation_form($args) {
+    // Check args are not empty.
+    foreach ($args as $key => $arg) {
+        if (empty($arg)) {
+            throw new \moodle_exception('missingparam', 'error', '', $key);
+        }
+    }
+
+    $customdata = [
+        'action' => $args['action'],
+        'factor' => $args['factor'],
+        'factorid' => $args['factorid'],
+        'devicename' => $args['devicename'],
+    ];
+    // Indicate we are performing a replacement by include the replace id.
+    if ($args['action'] === 'replace') {
+        $customdata['replaceid'] = $args['factorid'];
+    }
+
+    $mform = new tool_mfa\local\form\factor_action_confirmation_form($args['actionurl'], $customdata);
+
+    return $mform->render();
+}

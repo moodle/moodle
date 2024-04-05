@@ -15,17 +15,16 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version and other meta-data are defined here.
+ * This file contains mappings for classes that have been renamed.
  *
- * @package     tool_mfa
- * @author      Mikhail Golenkov <golenkovm@gmail.com>
- * @copyright   Catalyst IT
- * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package    tool_mfa
+ * @copyright  2024 David Woloszyn <david.woloszyn@moodle.com>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024030402;      // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023100400;   // Requires this Moodle version.
-$plugin->component = 'tool_mfa';      // Full name of the plugin (used for diagnostics).
-$plugin->maturity  = MATURITY_STABLE;
+$renamedclasses = [
+    // Since Moodle 4.4.
+    'tool_mfa\\local\\form\\revoke_factor_form' => 'tool_mfa\\local\\form\\factor_action_confirmation_form',
+];

@@ -205,6 +205,8 @@ class factor extends \core\plugininfo\base {
         $actions[] = 'disable';
         $actions[] = 'up';
         $actions[] = 'down';
+        $actions[] = 'manage';
+        $actions[] = 'replace';
 
         return $actions;
     }
@@ -365,5 +367,20 @@ class factor extends \core\plugininfo\base {
         });
 
         return $factors;
+    }
+
+    /**
+     * Check if the current user has more than one active factor.
+     *
+     * @return bool Returns true if there are more than one.
+     */
+    public static function user_has_more_than_one_active_factors(): bool {
+        $factors = self::get_active_user_factor_types();
+        $count = count(array_filter($factors, function($factor) {
+            // Include only user factors that can be set.
+            return $factor->has_input();
+        }));
+
+        return $count > 1;
     }
 }

@@ -58,7 +58,6 @@ if (!empty($action)) {
     }
 }
 
-echo $OUTPUT->active_factors();
 echo $OUTPUT->available_factors();
 
 $renderer = $PAGE->get_renderer('tool_mfa');

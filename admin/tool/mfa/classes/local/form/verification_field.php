@@ -39,8 +39,9 @@ class verification_field extends \MoodleQuickForm_text {
      *
      * @param array $attributes
      * @param boolean $auth is this constructed in auth.php loginform_* definitions. Set to false to prevent autosubmission of form.
+     * @param string|null $elementlabel Provide a different element label.
      */
-    public function __construct($attributes = null, $auth = true) {
+    public function __construct($attributes = null, $auth = true, string $elementlabel = null) {
         global $PAGE;
 
         // Force attributes.
@@ -51,7 +52,8 @@ class verification_field extends \MoodleQuickForm_text {
         $attributes['autocomplete'] = 'one-time-code';
         $attributes['inputmode'] = 'numeric';
         $attributes['pattern'] = '[0-9]*';
-        $attributes['class'] = 'tool-mfa-verification-code font-weight-bold';
+        // Overwrite default classes if set.
+        $attributes['class'] = isset($attributes['class']) ? $attributes['class'] : 'tool-mfa-verification-code font-weight-bold';
         $attributes['maxlength'] = 6;
 
         // If we aren't on the auth page, this might be part of a larger form such as for setup.
@@ -68,7 +70,8 @@ class verification_field extends \MoodleQuickForm_text {
 
         // Force element name to match JS.
         $elementname = 'verificationcode';
-        $elementlabel = get_string('verificationcode', 'tool_mfa');
+        // Overwrite default element label if set.
+        $elementlabel = !empty($elementlabel) ? $elementlabel : get_string('entercode', 'tool_mfa');
 
         return parent::__construct($elementname, $elementlabel, $attributes);
     }

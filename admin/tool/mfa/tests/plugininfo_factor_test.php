@@ -75,4 +75,48 @@ class plugininfo_factor_test extends \advanced_testcase {
         $this->assertEquals(2, count(\tool_mfa\plugininfo\factor::get_active_user_factor_types()));
         $this->assertEquals('fallback', \tool_mfa\plugininfo\factor::get_next_user_login_factor()->name);
     }
+
+    /**
+     * Tests if a user has more than one active factor.
+     *
+     * @covers ::user_has_more_than_one_active_factors
+     */
+    public function test_user_has_more_than_one_active_factors(): void {
+        global $DB;
+
+        $this->resetAfterTest(true);
+
+        // Create a user.
+        $user = $this->getDataGenerator()->create_user();
+        $this->setUser($user);
+
+        // Create two active user factors.
+        set_config('enabled', 1, 'factor_totp');
+        set_config('enabled', 1, 'factor_webauthn');
+
+        $data = new \stdClass();
+        $data->userid = $user->id;
+        $data->factor = 'totp';
+        $data->label = 'testtotp';
+        $data->revoked = 0;
+        $DB->insert_record('tool_mfa', $data);
+
+        $data = new \stdClass();
+        $data->userid = $user->id;
+        $data->factor = 'webauthn';
+        $data->label = 'testwebauthn';
+        $data->revoked = 0;
+        $factorid = $DB->insert_record('tool_mfa', $data);
+
+        // Test there is more than one active factor.
+        $hasmorethanonefactor = \tool_mfa\plugininfo\factor::user_has_more_than_one_active_factors();
+        $this->assertTrue($hasmorethanonefactor);
+
+        // Revoke a factor.
+        $DB->set_field('tool_mfa', 'revoked', 1, ['id' => $factorid]);
+
+        // There should no longer be more than one active factor.
+        $hasmorethanonefactor = \tool_mfa\plugininfo\factor::user_has_more_than_one_active_factors();
+        $this->assertFalse($hasmorethanonefactor);
+    }
 }

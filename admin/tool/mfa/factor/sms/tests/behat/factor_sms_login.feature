@@ -14,20 +14,11 @@ Feature: Login user with sms authentication factor
     # Set up user SMS factor in user preferences.
     When I follow "Preferences" in the user menu
     And I click on "Multi-factor authentication preferences" "link"
-    And I click on "Set up SMS" "button"
+    And I click on "Set up" "button"
     And I set the field "Mobile number" to "+34649709233"
     And I press "Send code"
     And I set the field "Enter code" with valid code
     Then I press "Save"
-
-  Scenario: Revoke factor
-    Given I click on "Revoke" "link"
-    And I should see "Are you sure you want to revoke factor?"
-    And I press "Revoke"
-    And I should see "successfully revoked"
-    When I log out
-    And I log in as "admin"
-    Then I should see "Unable to authenticate"
 
   Scenario: Login user successfully with sms verification
     Given I log out
