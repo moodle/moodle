@@ -19,6 +19,8 @@ Feature: Test duplicating a quiz containing a Ordering question
       | quiz     | Test quiz | C1     | quiz1    |
     And quiz "Test quiz" contains the following questions:
       | Moodle | 1 |
+    And the following config values are set as admin:
+      | enableasyncbackup | 0 |
     And I am on the "Course 1" "Course" page logged in as "admin"
 
   @javascript
