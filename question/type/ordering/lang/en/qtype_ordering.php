@@ -28,14 +28,15 @@ $string['addsingleanswer'] = 'Add one more item';
 $string['allornothing'] = 'All or nothing';
 $string['answer'] = 'Item text';
 
+$string['correctitemsnumber'] = 'Correct items: {$a}';
 $string['correctorder'] = 'The correct order for these items is as follows:';
 
 $string['defaultanswerformat'] = 'Default answer format';
 $string['defaultquestionname'] = 'Drag the following items into the correct order.';
 
-$string['duplicatesnotallowed'] = 'Duplication of draggable items is not allowed. The string "{$a->text}" is already used in {$a->item}.';
-$string['draggableitems'] = 'Draggable items';
 $string['draggableitemno'] = 'Draggable item {no}';
+$string['draggableitems'] = 'Draggable items';
+$string['duplicatesnotallowed'] = 'Duplication of draggable items is not allowed. The string "{$a->text}" is already used in {$a->item}.';
 $string['editingordering'] = 'Editing ordering question';
 
 $string['gradedetails'] = 'Grade details';
@@ -72,8 +73,9 @@ $string['gradingtype_help'] = 'Choose the type of grading calculation.
 $string['highlightresponse'] = 'Highlight response as correct or incorrect';
 $string['horizontal'] = 'Horizontal';
 
-$string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
+$string['incorrectitemsnumber'] = 'Incorrect items: {$a}';
 $string['layouttype'] = 'Layout of items';
+$string['layouttype_help'] = 'Choose whether to display the items vertically or horizontally.';
 $string['longestcontiguoussubset'] = 'Longest contiguous subset';
 $string['longestorderedsubset'] = 'Longest ordered subset';
 
@@ -83,28 +85,29 @@ $string['notenoughanswers'] = 'Ordering questions must have more than {$a} answe
 $string['notenoughsubsetitems'] = 'A subset must have at least {$a} items.';
 
 $string['numberingstyle'] = 'Number the choices?';
-$string['numberingstylenone'] = 'No numbering';
 $string['numberingstyle123'] = '1., 2., 3., ...';
-$string['numberingstyleabc'] = 'a., b., c., ...';
 $string['numberingstyleABCD'] = 'A., B., C., ...';
-$string['numberingstyleiii'] = 'i., ii., iii., ...';
 $string['numberingstyleIIII'] = 'I., II., III., ...';
 $string['numberingstyle_desc'] = 'The default numbering style.';
 $string['numberingstyle_help'] = 'Choose the numbering style for draggable items in this question.';
+$string['numberingstyleabc'] = 'a., b., c., ...';
+$string['numberingstyleiii'] = 'i., ii., iii., ...';
+$string['numberingstylenone'] = 'No numbering';
 
-$string['positionx'] = 'Position {$a}';
+$string['partialitemsnumber'] = 'Partially correct items: {$a}';
 $string['pluginname'] = 'Ordering';
 $string['pluginname_help'] = 'Several items are displayed in a jumbled order. The items can be dragged into a meaningful order.';
 $string['pluginname_link'] = 'question/type/ordering';
 $string['pluginnameadding'] = 'Adding an Ordering question';
 $string['pluginnameediting'] = 'Editing an Ordering question';
 $string['pluginnamesummary'] = 'Put jumbled items into a meaningful order.';
-$string['privacy:preference:layouttype'] = 'layouttype.';
-$string['privacy:preference:selecttype'] = 'selecttype.';
-$string['privacy:preference:selectcount'] = 'selectcount.';
+$string['positionx'] = 'Position {$a}';
 $string['privacy:preference:gradingtype'] = 'gradingtype.';
-$string['privacy:preference:showgrading'] = 'showgrading.';
+$string['privacy:preference:layouttype'] = 'layouttype.';
 $string['privacy:preference:numberingstyle'] = 'numberingstyle.';
+$string['privacy:preference:selectcount'] = 'selectcount.';
+$string['privacy:preference:selecttype'] = 'selecttype.';
+$string['privacy:preference:showgrading'] = 'showgrading.';
 
 $string['regradeissuenumitemschanged'] = 'The number of draggable items has changed.';
 $string['relativeallpreviousandnext'] = 'Relative to ALL the previous and next items';
@@ -121,12 +124,9 @@ $string['selectcontiguous'] = 'Select a contiguous subset of items';
 $string['selectcount'] = 'Size of subset';
 $string['selectcount_help'] = 'The number of items that will be displayed when the question is appears in a quiz.';
 $string['selectrandom'] = 'Select a random subset of items';
-$string['selecttype_help'] = 'Choose whether to display all the items or a subset of the items.';
 $string['selecttype'] = 'Item selection type';
+$string['selecttype_help'] = 'Choose whether to display all the items or a subset of the items.';
 $string['showgrading'] = 'Grading details';
 $string['showgrading_help'] = 'Choose whether to show or hide details of the score calculation when a student reviews a response to this Ordering question.';
 
 $string['vertical'] = 'Vertical';
-$string['correctitemsnumber'] = 'Correct items: {$a}';
-$string['partialitemsnumber'] = 'Partially correct items: {$a}';
-$string['incorrectitemsnumber'] = 'Incorrect items: {$a}';
