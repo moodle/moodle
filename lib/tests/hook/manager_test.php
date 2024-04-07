@@ -16,6 +16,8 @@
 
 namespace core\hook;
 
+use core\di;
+
 /**
  * Hooks tests.
  *
@@ -49,27 +51,8 @@ final class manager_test extends \advanced_testcase {
         $componentfiles = [
             'test_plugin1' => __DIR__ . '/../fixtures/hook/hooks1_valid.php',
         ];
-        $testmanager = manager::phpunit_get_instance($componentfiles, true);
+        $testmanager = manager::phpunit_get_instance($componentfiles);
         $this->assertSame(['test_plugin\\hook\\hook'], $testmanager->get_hooks_with_callbacks());
-        // With $persist = true, get_instance() returns the test instance until reset.
-        $manager = manager::get_instance();
-        $this->assertSame($testmanager, $manager);
-    }
-
-    /**
-     * Test resetting the manager test instance.
-     *
-     * @covers ::phpunit_reset_instance
-     * @return void
-     */
-    public function test_phpunit_reset_instance(): void {
-        $testmanager = manager::phpunit_get_instance([], true);
-        $manager = manager::get_instance();
-        $this->assertSame($testmanager, $manager);
-
-        manager::phpunit_reset_instance();
-        $manager = manager::get_instance();
-        $this->assertNotSame($testmanager, $manager);
     }
 
     /**
@@ -377,11 +360,13 @@ final class manager_test extends \advanced_testcase {
         $this->setup_hooktest_plugin();
 
         // Register the fake plugin with the hook manager, but don't define any hook callbacks.
-        manager::phpunit_get_instance(
-            [
-                'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks_nocallbacks.php',
-            ],
-            true
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance(
+                [
+                    'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks_nocallbacks.php',
+                ],
+            ),
         );
 
         // Confirm a non-deprecated callback is called as expected.
@@ -419,11 +404,11 @@ final class manager_test extends \advanced_testcase {
         $this->setup_hooktest_plugin();
 
         // Register the fake plugin with the hook manager, including the hook callback.
-        manager::phpunit_get_instance(
-            [
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance([
                 'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks.php',
-            ],
-            true
+            ]),
         );
 
         // Confirm a non-deprecated callback is called as expected.
@@ -455,11 +440,11 @@ final class manager_test extends \advanced_testcase {
         $this->setup_hooktest_plugin();
 
         // Register the fake plugin with the hook manager, but don't define any hook callbacks.
-        manager::phpunit_get_instance(
-            [
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance([
                 'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks_nocallbacks.php',
-            ],
-            true
+            ]),
         );
 
         // Confirm a non-deprecated class callback is called as expected.
@@ -502,11 +487,11 @@ final class manager_test extends \advanced_testcase {
         $this->setup_hooktest_plugin();
 
         // Register the fake plugin with the hook manager, including the hook callback.
-        manager::phpunit_get_instance(
-            [
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance([
                 'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks.php',
-            ],
-            true
+            ]),
         );
 
         // Confirm a non-deprecated class callback is called as expected.

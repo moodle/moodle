@@ -82,32 +82,15 @@ final class manager implements
      * Factory method for testing of hook manager in PHPUnit tests.
      *
      * @param array $componentfiles list of hook callback files for each component.
-     * @param bool $persist If true, the test instance will be stored in self::$instance. Be sure to call $this->resetAfterTest()
-     *     in your test if you use this.
      * @return self
      */
-    public static function phpunit_get_instance(array $componentfiles, bool $persist = false): manager {
+    public static function phpunit_get_instance(array $componentfiles): manager {
         if (!PHPUNIT_TEST) {
             throw new \coding_exception('Invalid call of manager::phpunit_get_instance() outside of tests');
         }
         $instance = new self();
         $instance->load_callbacks($componentfiles);
-        if ($persist) {
-            self::$instance = $instance;
-        }
         return $instance;
-    }
-
-    /**
-     * Reset self::$instance so that future calls to ::get_instance() will return a regular instance.
-     *
-     * @return void
-     */
-    public static function phpunit_reset_instance(): void {
-        if (!PHPUNIT_TEST) {
-            throw new \coding_exception('Invalid call of manager::phpunit_reset_instance() outside of tests');
-        }
-        self::$instance = null;
     }
 
     /**
@@ -599,7 +582,7 @@ final class manager implements
     public function is_deprecated_plugin_callback(string $plugincallback): bool {
         debugging(
             'is_deprecated_plugin_callback method is deprecated, use get_hooks_deprecating_plugin_callback instead.',
-            DEBUG_DEVELOPER
+            DEBUG_DEVELOPER,
         );
         return (bool)$this->get_hooks_deprecating_plugin_callback($plugincallback);
     }
