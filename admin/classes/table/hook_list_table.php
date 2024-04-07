@@ -91,7 +91,7 @@ class hook_list_table extends flexible_table {
      */
     public function out(): void {
         // All hook consumers referenced from the db/hooks.php files.
-        $hookmanager = \core\hook\manager::get_instance();
+        $hookmanager = \core\di::get(\core\hook\manager::class);
         $allhooks = (array)$hookmanager->get_all_callbacks();
 
         // Add any unused hooks.

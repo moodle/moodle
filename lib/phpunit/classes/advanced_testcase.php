@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core\{
+    di,
+    hook,
+};
+
 /**
  * Advanced PHPUnit test case customised for Moodle.
  *
@@ -486,7 +491,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function redirectHook(string $hookname, callable $callback): void {
-        \core\hook\manager::get_instance()->phpunit_redirect_hook($hookname, $callback);
+        di::get(hook\manager::class)->phpunit_redirect_hook($hookname, $callback);
     }
 
     /**
@@ -495,7 +500,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function stopHookRedirections(): void {
-        \core\hook\manager::get_instance()->phpunit_stop_redirections();
+        di::get(hook\manager::class)->phpunit_stop_redirections();
     }
 
     /**

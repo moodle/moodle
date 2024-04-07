@@ -24,6 +24,10 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+use core\{
+    di,
+    hook,
+};
 use core_course\external\course_summary_exporter;
 use core_courseformat\base as course_format;
 use core_courseformat\formatactions;
@@ -2032,10 +2036,11 @@ function create_course($data, $editoroptions = NULL) {
     $data->id = $newcourseid;
 
     // Dispatch the hook for post course create actions.
-    $hook = new \core_course\hook\after_course_created(
-        course: $data,
+    di::get(hook\manager::class)->dispatch(
+        new \core_course\hook\after_course_created(
+            course: $data,
+        ),
     );
-    \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
     // Setup the blocks
     blocks_add_default_course_blocks($course);
@@ -2068,8 +2073,9 @@ function create_course($data, $editoroptions = NULL) {
     $data->id = $course->id;
     $handler->instance_form_save($data, true);
 
-    $hook = new \core_course\hook\after_form_submission($data, true);
-    \core\hook\manager::get_instance()->dispatch($hook);
+    di::get(hook\manager::class)->dispatch(
+        new \core_course\hook\after_form_submission($data, true),
+    );
 
     return $course;
 }
@@ -2186,8 +2192,9 @@ function update_course($data, $editoroptions = NULL) {
     $handler = core_course\customfield\course_handler::create();
     $handler->instance_form_save($data);
 
-    $hook = new \core_course\hook\after_form_submission($data);
-    \core\hook\manager::get_instance()->dispatch($hook);
+    di::get(hook\manager::class)->dispatch(
+        new \core_course\hook\after_form_submission($data),
+    );
 
     // Update with the new data
     $DB->update_record('course', $data);

@@ -1,5 +1,10 @@
 <?php
 
+use core\{
+    di,
+    hook,
+};
+
 defined('MOODLE_INTERNAL') || die;
 
 require_once($CFG->libdir.'/formslib.php');
@@ -419,7 +424,7 @@ class course_edit_form extends moodleform {
         $handler->instance_form_definition($mform, empty($course->id) ? 0 : $course->id);
 
         $hook = new \core_course\hook\after_form_definition($this, $mform);
-        \core\hook\manager::get_instance()->dispatch($hook);
+        di::get(hook\manager::class)->dispatch($hook);
 
         // When two elements we need a group.
         $buttonarray = array();
@@ -502,7 +507,7 @@ class course_edit_form extends moodleform {
         $handler->instance_form_definition_after_data($mform, empty($courseid) ? 0 : $courseid);
 
         $hook = new \core_course\hook\after_form_definition_after_data($this, $mform);
-        \core\hook\manager::get_instance()->dispatch($hook);
+        di::get(hook\manager::class)->dispatch($hook);
     }
 
     /**
@@ -550,7 +555,7 @@ class course_edit_form extends moodleform {
         $errors  = array_merge($errors, $handler->instance_form_validation($data, $files));
 
         $hook = new \core_course\hook\after_form_validation($this, $data, $files);
-        \core\hook\manager::get_instance()->dispatch($hook);
+        di::get(hook\manager::class)->dispatch($hook);
         $pluginerrors = $hook->get_errors();
         if (!empty($pluginerrors)) {
             $errors = array_merge($errors, $pluginerrors);
