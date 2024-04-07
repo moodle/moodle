@@ -327,8 +327,9 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->expectExceptionMessage($exception['message']);
             } else {
                 // Failed, only canview and exception are supported.
-                $this->markTestIncomplete('Incomplete, only canview and exception are supported');
+                throw new \coding_exception('Incomplete, only canview and exception are supported');
             }
+
             // Switch to the user and assign the role.
             $this->setUser(${$user});
             role_assign($roleid, $USER->id, $coursecontext);
