@@ -29,37 +29,37 @@
       <text>That is not right at all.</text>
     </incorrectfeedback>
     <shownumcorrect>1</shownumcorrect>
-    <answer fraction="1.0000000" format="html">
+    <answer fraction="1" format="html">
       <text>Modular</text>
       <feedback format="html">
         <text>Modular is correct.</text>
       </feedback>
     </answer>
-    <answer fraction="2.0000000" format="html">
+    <answer fraction="2" format="html">
       <text>Object</text>
       <feedback format="html">
         <text>Object is correct.</text>
       </feedback>
     </answer>
-    <answer fraction="3.0000000" format="html">
+    <answer fraction="3" format="html">
       <text>Oriented</text>
       <feedback format="html">
         <text>Oriented is correct.</text>
       </feedback>
     </answer>
-    <answer fraction="4.0000000" format="html">
+    <answer fraction="4" format="html">
       <text>Dynamic</text>
       <feedback format="html">
         <text>Dynamic is correct.</text>
       </feedback>
     </answer>
-    <answer fraction="5.0000000" format="html">
+    <answer fraction="5" format="html">
       <text>Learning</text>
       <feedback format="html">
         <text>Learning is correct.</text>
       </feedback>
     </answer>
-    <answer fraction="6.0000000" format="html">
+    <answer fraction="6" format="html">
       <text>Environment</text>
       <feedback format="html">
         <text>Environment is correct.</text>

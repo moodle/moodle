@@ -98,7 +98,8 @@ final class feedback_test extends qbehaviour_walkthrough_test_base {
             $attempt = $qa;
         } else {
             $this->start_attempt_at_question($question, 'interactive');
-            $this->process_submission(array_merge(['-submit' => 1], ['answers' => array_values($answeritems)]));
+            $response = qtype_ordering_test_helper::get_response($question, array_values($answeritems));
+            $this->process_submission(array_merge(['-submit' => 1], $response));
             $attempt = $this->get_question_attempt();
             // Omit the numparts as we are not testing it here, and it can be a bit flaky when manually processing an attempt.
             $this->displayoptions->numpartscorrect = false;

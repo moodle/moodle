@@ -197,7 +197,7 @@ final class specific_grade_detail_feedback_test extends advanced_testcase {
                 qtype_ordering_question::SELECT_ALL,
             ],
             'Incorrect question attempt (SELECT_RANDOM). Grading type: GRADING_ABSOLUTE_POSITION' => [
-                [14 => 'Object', 16 => 'Dynamic', 13 => 'Modular', 17 => 'Learning', 18 => 'Environment', 15 => 'Oriented'],
+                [16 => 'Dynamic', 14 => 'Object', 13 => 'Modular', 17 => 'Learning', 18 => 'Environment', 15 => 'Oriented'],
                 qtype_ordering_question::GRADING_ABSOLUTE_POSITION,
                 'vertical',
                 [
