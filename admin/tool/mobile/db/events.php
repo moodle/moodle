@@ -15,17 +15,19 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Plugin version info
+ * tool_mobile plugin event handler definition.
  *
- * @package    tool_mobile
- * @copyright  2016 Juan Leyva
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package tool_mobile
+ * @category event
+ * @copyright 2024 Juan Leyva
+ * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 defined('MOODLE_INTERNAL') || die();
-$plugin->version   = 2022112801; // The current plugin version (Date: YYYYMMDDXX).
-$plugin->requires  = 2022111800; // Requires this Moodle version.
-$plugin->component = 'tool_mobile'; // Full name of the plugin (used for diagnostics).
-$plugin->dependencies = array(
-    'webservice_rest' => 2022111800
-);
+
+$observers = [
+    [
+        'eventname' => '\core\event\user_loggedin',
+        'callback' => '\tool_mobile\event_handler::handle_user_loggedin',
+    ],
+];
