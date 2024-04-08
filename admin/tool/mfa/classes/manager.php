@@ -334,7 +334,7 @@ class manager {
 
             // Allow plugins to callback as soon possible after user has passed MFA.
             $hook = new \tool_mfa\hook\after_user_passed_mfa();
-            \core\hook\manager::get_instance()->dispatch($hook);
+            \core\di::get(\core\hook\manager::class)->dispatch($hook);
 
             // Add/update record in DB for users last mfa auth.
             self::update_pass_time();

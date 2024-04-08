@@ -17,6 +17,10 @@
 namespace mod_quiz;
 
 use coding_exception;
+use core\{
+    di,
+    hook,
+};
 use mod_quiz\event\quiz_grade_updated;
 use mod_quiz\hook\structure_modified;
 use question_engine_data_mapper;
@@ -100,7 +104,7 @@ class grade_calculator {
             component_class_callback($callbackclass, 'callback', [$quiz->id], null, true);
         }
 
-        \core\hook\manager::get_instance()->dispatch(new structure_modified($this->quizobj->get_structure()));
+        di::get(hook\manager::class)->dispatch(new structure_modified($this->quizobj->get_structure()));
     }
 
     /**

@@ -16,6 +16,8 @@
 
 namespace core\hook;
 
+use core\di;
+
 /**
  * Hooks tests.
  *
@@ -49,27 +51,8 @@ final class manager_test extends \advanced_testcase {
         $componentfiles = [
             'test_plugin1' => __DIR__ . '/../fixtures/hook/hooks1_valid.php',
         ];
-        $testmanager = manager::phpunit_get_instance($componentfiles, true);
+        $testmanager = manager::phpunit_get_instance($componentfiles);
         $this->assertSame(['test_plugin\\hook\\hook'], $testmanager->get_hooks_with_callbacks());
-        // With $persist = true, get_instance() returns the test instance until reset.
-        $manager = manager::get_instance();
-        $this->assertSame($testmanager, $manager);
-    }
-
-    /**
-     * Test resetting the manager test instance.
-     *
-     * @covers ::phpunit_reset_instance
-     * @return void
-     */
-    public function test_phpunit_reset_instance(): void {
-        $testmanager = manager::phpunit_get_instance([], true);
-        $manager = manager::get_instance();
-        $this->assertSame($testmanager, $manager);
-
-        manager::phpunit_reset_instance();
-        $manager = manager::get_instance();
-        $this->assertNotSame($testmanager, $manager);
     }
 
     /**
@@ -320,42 +303,13 @@ final class manager_test extends \advanced_testcase {
     /**
      * Register a fake plugin called hooktest in the component manager.
      *
-     * @return void
+     * Tests consuming this helpers must run in a separate process.
      */
     protected function setup_hooktest_plugin(): void {
         global $CFG;
 
-        $mockedcomponent = new \ReflectionClass(\core_component::class);
-        $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
-        $mockedplugintypes->setAccessible(true);
-        $plugintypes = $mockedplugintypes->getValue();
-        $plugintypes['fake'] = "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins";
-        $mockedplugintypes->setValue(null, $plugintypes);
-        $mockedplugins = $mockedcomponent->getProperty('plugins');
-        $mockedplugins->setAccessible(true);
-        $plugins = $mockedplugins->getValue();
-        $plugins['fake'] = ['hooktest' => "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/hooktest"];
-        $mockedplugins->setValue(null, $plugins);
-        $this->resetDebugging();
-    }
-
-    /**
-     * Remove the fake plugin to avoid interference with other tests.
-     *
-     * @return void
-     */
-    protected function remove_hooktest_plugin(): void {
-        $mockedcomponent = new \ReflectionClass(\core_component::class);
-        $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
-        $mockedplugintypes->setAccessible(true);
-        $plugintypes = $mockedplugintypes->getValue();
-        unset($plugintypes['fake']);
-        $mockedplugintypes->setValue(null, $plugintypes);
-        $mockedplugins = $mockedcomponent->getProperty('plugins');
-        $mockedplugins->setAccessible(true);
-        $plugins = $mockedplugins->getValue();
-        unset($plugins['fake']);
-        $mockedplugins->setValue(null, $plugins);
+        $this->add_mocked_plugintype('fake', "{$CFG->dirroot}/lib/tests/fixtures/hook/fakeplugins");
+        $this->add_mocked_plugin('fake', 'hooktest', "{$CFG->dirroot}/lib/tests/fixtures/hook/fakeplugins/hooktest");
     }
 
     /**
@@ -363,25 +317,24 @@ final class manager_test extends \advanced_testcase {
      *
      * The original callback should be called, but a debugging message should be output.
      *
-     * @covers ::get_hooks_deprecating_plugin_callback()
-     * @covers ::is_deprecating_hook_present()
-     * @return void
-     * @throws \coding_exception
+     * @runInSeparateProcess
      */
     public function test_migrated_callback(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, and the hook that replaces the callback.
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hooks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook/hook_replacing_callback.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hooks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook/hook_replacing_callback.php');
         // Register the fake plugin with the component manager.
         $this->setup_hooktest_plugin();
 
         // Register the fake plugin with the hook manager, but don't define any hook callbacks.
-        manager::phpunit_get_instance(
-            [
-                'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks_nocallbacks.php',
-            ],
-            true
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance(
+                [
+                    'fake_hooktest' => __DIR__ . '/../fixtures/hook/fakeplugins/hooktest/db/hooks_nocallbacks.php',
+                ],
+            ),
         );
 
         // Confirm a non-deprecated callback is called as expected.
@@ -393,10 +346,9 @@ final class manager_test extends \advanced_testcase {
             component_callback('fake_hooktest', 'old_callback', [], null, true)
         );
         $this->assertDebuggingCalled(
-            'Callback old_callback in fake_hooktest component should be migrated to new hook '.
+            'Callback old_callback in fake_hooktest component should be migrated to new hook ' .
                 'callback for fake_hooktest\hook\hook_replacing_callback'
         );
-        $this->remove_hooktest_plugin();
     }
 
     /**
@@ -404,26 +356,23 @@ final class manager_test extends \advanced_testcase {
      *
      * The original callback should not be called, and no debugging should be output.
      *
-     * @covers ::get_hooks_deprecating_plugin_callback()
-     * @covers ::is_deprecating_hook_present()
-     * @return void
-     * @throws \coding_exception
+     * @runInSeparateProcess
      */
     public function test_migrated_callback_with_replacement(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, and the hook that replaces the callback, and a hook callback for the hook.
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hooks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook/hook_replacing_callback.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook_callbacks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hooks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook/hook_replacing_callback.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook_callbacks.php');
         // Register the fake plugin with the component manager.
         $this->setup_hooktest_plugin();
 
         // Register the fake plugin with the hook manager, including the hook callback.
-        manager::phpunit_get_instance(
-            [
-                'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks.php',
-            ],
-            true
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance([
+                'fake_hooktest' => __DIR__ . '/../fixtures/hook/fakeplugins/hooktest/db/hooks.php',
+            ]),
         );
 
         // Confirm a non-deprecated callback is called as expected.
@@ -432,7 +381,6 @@ final class manager_test extends \advanced_testcase {
         // Confirm the deprecated callback is not called, as expected.
         $this->assertNull(component_callback('fake_hooktest', 'old_callback', [], null, true));
         $this->assertDebuggingNotCalled();
-        $this->remove_hooktest_plugin();
     }
 
     /**
@@ -440,26 +388,23 @@ final class manager_test extends \advanced_testcase {
      *
      * The original class callback should be called, but a debugging message should be output.
      *
-     * @covers ::get_hooks_deprecating_plugin_callback()
-     * @covers ::is_deprecating_hook_present()
-     * @return void
-     * @throws \coding_exception
+     * @runInSeparateProcess
      */
     public function test_migrated_class_callback(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, the class containing callbacks, and the hook that replaces the class callback.
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/callbacks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hooks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook/hook_replacing_class_callback.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/callbacks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hooks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook/hook_replacing_class_callback.php');
         // Register the fake plugin with the component manager.
         $this->setup_hooktest_plugin();
 
         // Register the fake plugin with the hook manager, but don't define any hook callbacks.
-        manager::phpunit_get_instance(
-            [
-                'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks_nocallbacks.php',
-            ],
-            true
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance([
+                'fake_hooktest' => __DIR__ . '/../fixtures/hook/fakeplugins/hooktest/db/hooks_nocallbacks.php',
+            ]),
         );
 
         // Confirm a non-deprecated class callback is called as expected.
@@ -474,10 +419,9 @@ final class manager_test extends \advanced_testcase {
             component_class_callback('fake_hooktest\callbacks', 'old_class_callback', [], null, true)
         );
         $this->assertDebuggingCalled(
-            'Callback callbacks::old_class_callback in fake_hooktest component should be migrated to new hook '.
+            'Callback callbacks::old_class_callback in fake_hooktest component should be migrated to new hook ' .
                 'callback for fake_hooktest\hook\hook_replacing_class_callback'
         );
-        $this->remove_hooktest_plugin();
     }
 
     /**
@@ -485,28 +429,25 @@ final class manager_test extends \advanced_testcase {
      *
      * The original callback should not be called, and no debugging should be output.
      *
-     * @covers ::get_hooks_deprecating_plugin_callback()
-     * @covers ::is_deprecating_hook_present()
-     * @return void
-     * @throws \coding_exception
+     * @runInSeparateProcess
      */
     public function test_migrated_class_callback_with_replacement(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, the class containing callbacks, the hook that replaces the class callback,
         // and a hook callback for the new hook.
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/callbacks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hooks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook/hook_replacing_class_callback.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook_callbacks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/callbacks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hooks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook/hook_replacing_class_callback.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook_callbacks.php');
         // Register the fake plugin with the component manager.
         $this->setup_hooktest_plugin();
 
         // Register the fake plugin with the hook manager, including the hook callback.
-        manager::phpunit_get_instance(
-            [
-                'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks.php',
-            ],
-            true
+        di::set(
+            manager::class,
+            manager::phpunit_get_instance([
+                'fake_hooktest' => __DIR__ . '/../fixtures/hook/fakeplugins/hooktest/db/hooks.php',
+            ]),
         );
 
         // Confirm a non-deprecated class callback is called as expected.
@@ -518,14 +459,12 @@ final class manager_test extends \advanced_testcase {
         // Confirm the deprecated class callback is not called, as expected.
         $this->assertNull(component_class_callback('fake_hooktest\callbacks', 'old_class_callback', [], null, true));
         $this->assertDebuggingNotCalled();
-        $this->remove_hooktest_plugin();
     }
 
     /**
      * Normalise the sort order of callbacks to help with asserts.
      *
      * @param array $callbacks
-     * @return void
      */
     private function normalise_callbacks(array &$callbacks): void {
         foreach ($callbacks as &$callback) {

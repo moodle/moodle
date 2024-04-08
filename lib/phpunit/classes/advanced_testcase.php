@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+use core\{
+    di,
+    hook,
+};
+
 /**
  * Advanced PHPUnit test case customised for Moodle.
  *
@@ -486,7 +491,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function redirectHook(string $hookname, callable $callback): void {
-        \core\hook\manager::get_instance()->phpunit_redirect_hook($hookname, $callback);
+        di::get(hook\manager::class)->phpunit_redirect_hook($hookname, $callback);
     }
 
     /**
@@ -495,7 +500,7 @@ abstract class advanced_testcase extends base_testcase {
      * @return void
      */
     public function stopHookRedirections(): void {
-        \core\hook\manager::get_instance()->phpunit_stop_redirections();
+        di::get(hook\manager::class)->phpunit_stop_redirections();
     }
 
     /**
@@ -762,5 +767,67 @@ abstract class advanced_testcase extends base_testcase {
         \core\di::set(\core\clock::class, $clock);
 
         return $clock;
+    }
+
+    /**
+     * Add a mocked plugintype to Moodle.
+     *
+     * A new plugintype name must be provided with a path to the plugintype's root.
+     *
+     * Please note that tests calling this method must be run in separate isolation mode.
+     * Please avoid using this if at all possible.
+     *
+     * @param string $plugintype The name of the plugintype
+     * @param string $path The path to the plugintype's root
+     */
+    protected function add_mocked_plugintype(
+        string $plugintype,
+        string $path,
+    ): void {
+        require_phpunit_isolation();
+
+        $mockedcomponent = new \ReflectionClass(\core_component::class);
+        $plugintypes = $mockedcomponent->getStaticPropertyValue('plugintypes');
+
+        if (array_key_exists($plugintype, $plugintypes)) {
+            throw new \coding_exception("The plugintype '{$plugintype}' already exists.");
+        }
+
+        $plugintypes[$plugintype] = $path;
+        $mockedcomponent->setStaticPropertyValue('plugintypes', $plugintypes);
+
+        $this->resetDebugging();
+    }
+
+    /**
+     * Add a mocked plugin to Moodle.
+     *
+     * A new plugin name must be provided with a path to the plugin's root.
+     * The plugin type must already exist (or have been mocked separately).
+     *
+     * Please note that tests calling this method must be run in separate isolation mode.
+     * Please avoid using this if at all possible.
+     *
+     * @param string $plugintype The name of the plugintype
+     * @param string $pluginname The name of the plugin
+     * @param string $path The path to the plugin's root
+     */
+    protected function add_mocked_plugin(
+        string $plugintype,
+        string $pluginname,
+        string $path,
+    ): void {
+        require_phpunit_isolation();
+
+        $mockedcomponent = new \ReflectionClass(\core_component::class);
+        $plugins = $mockedcomponent->getStaticPropertyValue('plugins');
+
+        if (!array_key_exists($plugintype, $plugins)) {
+            $plugins[$plugintype] = [];
+        }
+
+        $plugins[$plugintype][$pluginname] = $path;
+        $mockedcomponent->setStaticPropertyValue('plugins', $plugins);
+        $this->resetDebugging();
     }
 }

@@ -23,6 +23,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\{
+    di,
+    hook,
+};
+
 require_once(__DIR__.'/../../testing/classes/util.php');
 require_once(__DIR__ . "/coverage_info.php");
 
@@ -105,10 +110,7 @@ class phpunit_util extends testing_util {
         global $DB, $CFG, $USER, $SITE, $COURSE, $PAGE, $OUTPUT, $SESSION, $FULLME, $FILTERLIB_PRIVATE;
 
         // Stop all hook redirections.
-        \core\hook\manager::get_instance()->phpunit_stop_redirections();
-
-        // Reset the hook manager instance.
-        \core\hook\manager::phpunit_reset_instance();
+        di::get(hook\manager::class)->phpunit_stop_redirections();
 
         // Stop any message redirection.
         self::stop_message_redirection();

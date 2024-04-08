@@ -35,6 +35,10 @@ require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
+use core\{
+    di,
+    hook,
+};
 use core_question\local\bank\condition;
 use mod_quiz\access_manager;
 use mod_quiz\event\attempt_submitted;
@@ -147,7 +151,7 @@ function quiz_create_attempt(quiz_settings $quizobj, $attemptnumber, $lastattemp
         $attempt->timecheckstate = $timeclose;
     }
 
-    \core\hook\manager::get_instance()->dispatch(new attempt_state_changed(null, $attempt));
+    di::get(hook\manager::class)->dispatch(new attempt_state_changed(null, $attempt));
 
     return $attempt;
 }
@@ -459,7 +463,7 @@ function quiz_delete_attempt($attempt, $quiz) {
             component_class_callback($callbackclass, 'callback', [$quiz->id], null, true);
         }
 
-        \core\hook\manager::get_instance()->dispatch(new attempt_state_changed($attempt, null));
+        di::get(hook\manager::class)->dispatch(new attempt_state_changed($attempt, null));
     }
 
     // Search quiz_attempts for other instances by this user.

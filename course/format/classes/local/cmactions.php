@@ -72,8 +72,9 @@ class cmactions extends baseactions {
 
         // Modules may add some logic to renaming.
         $modinfo = get_fast_modinfo($cm->course);
-        $hook = new \core_courseformat\hook\after_cm_name_edited($modinfo->get_cm($cm->id), $name);
-        \core\hook\manager::get_instance()->dispatch($hook);
+        \core\di::get(\core\hook\manager::class)->dispatch(
+            new \core_courseformat\hook\after_cm_name_edited($modinfo->get_cm($cm->id), $name),
+        );
 
         // Attempt to update the grade item if relevant.
         $grademodule = $DB->get_record($cm->modname, ['id' => $cm->instance]);

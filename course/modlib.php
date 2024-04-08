@@ -27,8 +27,12 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-use \core_grades\component_gradeitems;
+use core\{
+    di,
+    hook,
+};
 use core_courseformat\formatactions;
+use core_grades\component_gradeitems;
 
 require_once($CFG->dirroot.'/course/lib.php');
 
@@ -725,11 +729,12 @@ function update_moduleinfo($cm, $moduleinfo, $course, $mform = null) {
     }
 
     if ($cm->name != $moduleinfo->name) {
-        $hook = new \core_courseformat\hook\after_cm_name_edited(
-            get_fast_modinfo($course)->get_cm($cm->id),
-            $moduleinfo->name
+        di::get(hook\manager::class)->dispatch(
+            new \core_courseformat\hook\after_cm_name_edited(
+                get_fast_modinfo($course)->get_cm($cm->id),
+                $moduleinfo->name
+            ),
         );
-        \core\hook\manager::get_instance()->dispatch($hook);
     }
 
     $cm->name = $moduleinfo->name;

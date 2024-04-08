@@ -28,6 +28,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\{
+    di,
+    hook,
+};
+
 defined('MOODLE_INTERNAL') || die();
 
 // CONSTANTS (Encased in phpdoc proper comments).
@@ -3581,7 +3586,7 @@ function delete_user(stdClass $user) {
     $hook = new \core_user\hook\before_user_deleted(
         user: $user,
     );
-    \core\di::get(\core\hook\manager::class)->dispatch($hook);
+    di::get(hook\manager::class)->dispatch($hook);
 
     // Keep user record before updating it, as we have to pass this to user_deleted event.
     $olduser = clone $user;
@@ -4085,8 +4090,7 @@ function complete_user_login($user, array $extrauserinfo = []) {
     $event->trigger();
 
     // Allow plugins to callback as soon possible after user has completed login.
-    $hook = new \core\hook\user\after_complete_login();
-    \core\hook\manager::get_instance()->dispatch($hook);
+    di::get(\core\hook\manager::class)->dispatch(new \core\hook\user\after_complete_login());
 
     // Check if the user is using a new browser or session (a new MoodleSession cookie is set in that case).
     // If the user is accessing from the same IP, ignore everything (most of the time will be a new session in the same browser).
@@ -7436,8 +7440,8 @@ function get_plugins_with_function($function, $file = 'lib.php', $include = true
         foreach ($pluginfunctions as $plugintype => $plugins) {
             foreach ($plugins as $plugin => $unusedfunction) {
                 $component = $plugintype . '_' . $plugin;
-                if ($hooks = \core\hook\manager::get_instance()->get_hooks_deprecating_plugin_callback($plugincallback)) {
-                    if (\core\hook\manager::get_instance()->is_deprecating_hook_present($component, $plugincallback)) {
+                if ($hooks = di::get(hook\manager::class)->get_hooks_deprecating_plugin_callback($plugincallback)) {
+                    if (di::get(hook\manager::class)->is_deprecating_hook_present($component, $plugincallback)) {
                         // Ignore the old callback, it is there only for older Moodle versions.
                         unset($pluginfunctions[$plugintype][$plugin]);
                     } else {
@@ -7675,8 +7679,9 @@ function component_callback($component, $function, array $params = array(), $def
 
     if ($functionname) {
         if ($migratedtohook) {
-            if ($hooks = \core\hook\manager::get_instance()->get_hooks_deprecating_plugin_callback($function)) {
-                if (\core\hook\manager::get_instance()->is_deprecating_hook_present($component, $function)) {
+            $hookmanager = di::get(hook\manager::class);
+            if ($hooks = $hookmanager->get_hooks_deprecating_plugin_callback($function)) {
+                if ($hookmanager->is_deprecating_hook_present($component, $function)) {
                     // Do not call the old lib.php callback,
                     // it is there for compatibility with older Moodle versions only.
                     return null;
@@ -7776,8 +7781,9 @@ function component_class_callback($classname, $methodname, array $params, $defau
         $functionparts = explode('\\', trim($fullfunction, '\\'));
         $component = $functionparts[0];
         $callback = end($functionparts);
-        if ($hooks = \core\hook\manager::get_instance()->get_hooks_deprecating_plugin_callback($callback)) {
-            if (\core\hook\manager::get_instance()->is_deprecating_hook_present($component, $callback)) {
+        $hookmanager = di::get(hook\manager::class);
+        if ($hooks = $hookmanager->get_hooks_deprecating_plugin_callback($callback)) {
+            if ($hookmanager->is_deprecating_hook_present($component, $callback)) {
                 // Do not call the old class callback,
                 // it is there for compatibility with older Moodle versions only.
                 return null;

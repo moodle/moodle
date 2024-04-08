@@ -45,7 +45,6 @@ use Psr\EventDispatcher\StoppableEventInterface;
 final class manager implements
     EventDispatcherInterface,
     ListenerProviderInterface {
-
     /** @var ?manager the one instance of listener provider and dispatcher */
     private static $instance = null;
 
@@ -81,33 +80,18 @@ final class manager implements
     /**
      * Factory method for testing of hook manager in PHPUnit tests.
      *
+     * Please note that the result of this method should typically be passed to \core\di::set().
+     *
      * @param array $componentfiles list of hook callback files for each component.
-     * @param bool $persist If true, the test instance will be stored in self::$instance. Be sure to call $this->resetAfterTest()
-     *     in your test if you use this.
      * @return self
      */
-    public static function phpunit_get_instance(array $componentfiles, bool $persist = false): manager {
+    public static function phpunit_get_instance(array $componentfiles): manager {
         if (!PHPUNIT_TEST) {
             throw new \coding_exception('Invalid call of manager::phpunit_get_instance() outside of tests');
         }
         $instance = new self();
         $instance->load_callbacks($componentfiles);
-        if ($persist) {
-            self::$instance = $instance;
-        }
         return $instance;
-    }
-
-    /**
-     * Reset self::$instance so that future calls to ::get_instance() will return a regular instance.
-     *
-     * @return void
-     */
-    public static function phpunit_reset_instance(): void {
-        if (!PHPUNIT_TEST) {
-            throw new \coding_exception('Invalid call of manager::phpunit_reset_instance() outside of tests');
-        }
-        self::$instance = null;
     }
 
     /**
@@ -115,7 +99,6 @@ final class manager implements
      *
      * @param string $hookname
      * @param callable $callback
-     * @return void
      */
     public function phpunit_redirect_hook(string $hookname, callable $callback): void {
         if (!PHPUNIT_TEST) {
@@ -126,8 +109,6 @@ final class manager implements
 
     /**
      * Cancel all redirections of hook callbacks.
-     *
-     * @return void
      */
     public function phpunit_stop_redirections(): void {
         if (!PHPUNIT_TEST) {
@@ -167,7 +148,7 @@ final class manager implements
      *   callable MUST be type-compatible with $event.
      *   Please note that in Moodle the callable must be a string.
      */
-    public function getListenersForEvent(object $event): iterable {
+    public function getListenersForEvent(object $event): iterable { // phpcs:ignore
         // Callbacks are sorted by priority, highest first at load-time.
         $hookclassname = get_class($event);
         $callbacks = $this->get_callbacks_for_hook($hookclassname);
@@ -254,7 +235,7 @@ final class manager implements
             debugging(
                 "Cannot execute callback '$callablename' from '$component'" .
                     "Callback method not callable.",
-                DEBUG_DEVELOPER
+                DEBUG_DEVELOPER,
             );
             return false;
         }
@@ -324,8 +305,6 @@ final class manager implements
 
     /**
      * Initialise list of all callbacks for each hook.
-     *
-     * @return void
      */
     private function init_standard_callbacks(): void {
         global $CFG;
@@ -380,7 +359,6 @@ final class manager implements
      * Load callbacks from component db/hooks.php files.
      *
      * @param array $componentfiles list of all components with their callback files
-     * @return void
      */
     private function load_callbacks(array $componentfiles): void {
         $this->allcallbacks = [];
@@ -504,14 +482,13 @@ final class manager implements
      *
      * @param string $component component where hook callbacks are defined
      * @param string $hookfile file with list of all callbacks for component
-     * @return void
      */
     private function add_component_callbacks(string $component, string $hookfile): void {
         if (!file_exists($hookfile)) {
             return;
         }
 
-        $parsecallbacks = function($hookfile) {
+        $parsecallbacks = function ($hookfile) {
             $callbacks = [];
             include($hookfile);
             return $callbacks;
@@ -577,7 +554,7 @@ final class manager implements
         if (!str_contains($classmethod, '::')) {
             debugging(
                 "Hook callback definition contains invalid 'callback' static class method string in '$component'",
-                DEBUG_DEVELOPER
+                DEBUG_DEVELOPER,
             );
             return null;
         }
@@ -599,7 +576,7 @@ final class manager implements
     public function is_deprecated_plugin_callback(string $plugincallback): bool {
         debugging(
             'is_deprecated_plugin_callback method is deprecated, use get_hooks_deprecating_plugin_callback instead.',
-            DEBUG_DEVELOPER
+            DEBUG_DEVELOPER,
         );
         return (bool)$this->get_hooks_deprecating_plugin_callback($plugincallback);
     }

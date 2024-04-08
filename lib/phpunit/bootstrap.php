@@ -262,6 +262,7 @@ if (PHPUNIT_UTIL) {
 
 // Make sure the hook manager gets initialised before anybody tries to override callbacks,
 // this is not using caches intentionally to help with development.
+// Note: We cannot use DI at this point in the bootstrap either.
 \core\hook\manager::get_instance();
 
 // Is database and dataroot ready for testing?
