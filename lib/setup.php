@@ -376,11 +376,16 @@ if (file_exists("$CFG->dataroot/climaintenance.html")) {
     }
 }
 
-// Sometimes people use different PHP binary for web and CLI, make 100% sure they have the supported PHP version.
-if (version_compare(PHP_VERSION, '5.6.5') < 0) {
+// Some core parts of Moodle may make use of language features not available in older PHP versions.s
+// When this happens as part of our core bootstrap, we can end up having confusing and spurious error
+// messages which are hard to diagnose.
+// This check allows us to insert a very basic check for the absolute minimum version of PHP for the
+// Moodle core to be able to load the environment and error pages.
+// It should only be updated in these circumstances, not with every PHP version.
+if (version_compare(PHP_VERSION, '8.1.0') < 0) {
     $phpversion = PHP_VERSION;
     // Do NOT localise - lang strings would not work here and we CAN NOT move it to later place.
-    echo "Moodle 3.2 or later requires at least PHP 5.6.5 (currently using version $phpversion).\n";
+    echo "Moodle 4.4 or later requires at least PHP 8.1 (currently using version $phpversion).\n";
     echo "Some servers may have multiple PHP versions installed, are you using the correct executable?\n";
     exit(1);
 }
