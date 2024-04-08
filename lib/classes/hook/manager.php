@@ -80,6 +80,8 @@ final class manager implements
     /**
      * Factory method for testing of hook manager in PHPUnit tests.
      *
+     * Please note that the result of this method should typically be passed to \core\di::set().
+     *
      * @param array $componentfiles list of hook callback files for each component.
      * @return self
      */
