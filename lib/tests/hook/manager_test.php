@@ -303,42 +303,13 @@ final class manager_test extends \advanced_testcase {
     /**
      * Register a fake plugin called hooktest in the component manager.
      *
-     * @return void
+     * Tests consuming this helpers must run in a separate process.
      */
     protected function setup_hooktest_plugin(): void {
         global $CFG;
 
-        $mockedcomponent = new \ReflectionClass(\core_component::class);
-        $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
-        $mockedplugintypes->setAccessible(true);
-        $plugintypes = $mockedplugintypes->getValue();
-        $plugintypes['fake'] = "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins";
-        $mockedplugintypes->setValue(null, $plugintypes);
-        $mockedplugins = $mockedcomponent->getProperty('plugins');
-        $mockedplugins->setAccessible(true);
-        $plugins = $mockedplugins->getValue();
-        $plugins['fake'] = ['hooktest' => "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/hooktest"];
-        $mockedplugins->setValue(null, $plugins);
-        $this->resetDebugging();
-    }
-
-    /**
-     * Remove the fake plugin to avoid interference with other tests.
-     *
-     * @return void
-     */
-    protected function remove_hooktest_plugin(): void {
-        $mockedcomponent = new \ReflectionClass(\core_component::class);
-        $mockedplugintypes = $mockedcomponent->getProperty('plugintypes');
-        $mockedplugintypes->setAccessible(true);
-        $plugintypes = $mockedplugintypes->getValue();
-        unset($plugintypes['fake']);
-        $mockedplugintypes->setValue(null, $plugintypes);
-        $mockedplugins = $mockedcomponent->getProperty('plugins');
-        $mockedplugins->setAccessible(true);
-        $plugins = $mockedplugins->getValue();
-        unset($plugins['fake']);
-        $mockedplugins->setValue(null, $plugins);
+        $this->add_mocked_plugintype('fake', "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins");
+        $this->add_mocked_plugin('fake', 'hooktest', "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/hooktest");
     }
 
     /**
@@ -348,8 +319,7 @@ final class manager_test extends \advanced_testcase {
      *
      * @covers ::get_hooks_deprecating_plugin_callback()
      * @covers ::is_deprecating_hook_present()
-     * @return void
-     * @throws \coding_exception
+     * @runInSeparateProcess
      */
     public function test_migrated_callback(): void {
         $this->resetAfterTest(true);
@@ -381,7 +351,6 @@ final class manager_test extends \advanced_testcase {
             'Callback old_callback in fake_hooktest component should be migrated to new hook '.
                 'callback for fake_hooktest\hook\hook_replacing_callback'
         );
-        $this->remove_hooktest_plugin();
     }
 
     /**
@@ -391,8 +360,7 @@ final class manager_test extends \advanced_testcase {
      *
      * @covers ::get_hooks_deprecating_plugin_callback()
      * @covers ::is_deprecating_hook_present()
-     * @return void
-     * @throws \coding_exception
+     * @runInSeparateProcess
      */
     public function test_migrated_callback_with_replacement(): void {
         $this->resetAfterTest(true);
@@ -417,7 +385,6 @@ final class manager_test extends \advanced_testcase {
         // Confirm the deprecated callback is not called, as expected.
         $this->assertNull(component_callback('fake_hooktest', 'old_callback', [], null, true));
         $this->assertDebuggingNotCalled();
-        $this->remove_hooktest_plugin();
     }
 
     /**
@@ -427,8 +394,7 @@ final class manager_test extends \advanced_testcase {
      *
      * @covers ::get_hooks_deprecating_plugin_callback()
      * @covers ::is_deprecating_hook_present()
-     * @return void
-     * @throws \coding_exception
+     * @runInSeparateProcess
      */
     public function test_migrated_class_callback(): void {
         $this->resetAfterTest(true);
@@ -462,7 +428,6 @@ final class manager_test extends \advanced_testcase {
             'Callback callbacks::old_class_callback in fake_hooktest component should be migrated to new hook '.
                 'callback for fake_hooktest\hook\hook_replacing_class_callback'
         );
-        $this->remove_hooktest_plugin();
     }
 
     /**
@@ -472,8 +437,7 @@ final class manager_test extends \advanced_testcase {
      *
      * @covers ::get_hooks_deprecating_plugin_callback()
      * @covers ::is_deprecating_hook_present()
-     * @return void
-     * @throws \coding_exception
+     * @runInSeparateProcess
      */
     public function test_migrated_class_callback_with_replacement(): void {
         $this->resetAfterTest(true);
@@ -503,7 +467,6 @@ final class manager_test extends \advanced_testcase {
         // Confirm the deprecated class callback is not called, as expected.
         $this->assertNull(component_class_callback('fake_hooktest\callbacks', 'old_class_callback', [], null, true));
         $this->assertDebuggingNotCalled();
-        $this->remove_hooktest_plugin();
     }
 
     /**
