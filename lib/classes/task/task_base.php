@@ -128,9 +128,18 @@ abstract class task_base {
 
     /**
      * Getter for $blocking.
+     *
      * @return bool
+     * @deprecated since Moodle 4.4 See MDL-67667
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.4',
+        reason: 'Blocking tasks are no longer supported',
+        emit: false,
+    )]
     public function is_blocking() {
+        \core\deprecation::emit_deprecation_if_present(([$this, __FUNCTION__]);
         return $this->blocking;
     }
 
