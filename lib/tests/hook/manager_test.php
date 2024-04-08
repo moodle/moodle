@@ -317,8 +317,6 @@ final class manager_test extends \advanced_testcase {
      *
      * The original callback should be called, but a debugging message should be output.
      *
-     * @covers ::get_hooks_deprecating_plugin_callback()
-     * @covers ::is_deprecating_hook_present()
      * @runInSeparateProcess
      */
     public function test_migrated_callback(): void {
@@ -358,8 +356,6 @@ final class manager_test extends \advanced_testcase {
      *
      * The original callback should not be called, and no debugging should be output.
      *
-     * @covers ::get_hooks_deprecating_plugin_callback()
-     * @covers ::is_deprecating_hook_present()
      * @runInSeparateProcess
      */
     public function test_migrated_callback_with_replacement(): void {
@@ -392,8 +388,6 @@ final class manager_test extends \advanced_testcase {
      *
      * The original class callback should be called, but a debugging message should be output.
      *
-     * @covers ::get_hooks_deprecating_plugin_callback()
-     * @covers ::is_deprecating_hook_present()
      * @runInSeparateProcess
      */
     public function test_migrated_class_callback(): void {
@@ -435,8 +429,6 @@ final class manager_test extends \advanced_testcase {
      *
      * The original callback should not be called, and no debugging should be output.
      *
-     * @covers ::get_hooks_deprecating_plugin_callback()
-     * @covers ::is_deprecating_hook_present()
      * @runInSeparateProcess
      */
     public function test_migrated_class_callback_with_replacement(): void {
