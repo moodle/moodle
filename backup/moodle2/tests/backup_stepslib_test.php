@@ -71,6 +71,7 @@ class backup_stepslib_test extends \advanced_testcase {
                 break;
             }
         }
+        $bc->destroy();
 
         $reflection = new \ReflectionClass($step);
         $method = $reflection->getMethod('define_structure');
