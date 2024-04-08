@@ -18,6 +18,7 @@
 
     Example context (json):
     {
+        "label": "You can drag and drop files here to upload or click to select.",
         "filetypes": "image/*,application/pdf"
     }
 }}
@@ -25,10 +26,10 @@
     <a class="dropzone-sr-only-focusable sr-only-focusable" href="#">{{# str }} addfiletext, repository {{/ str }}</a>
     <div class="dropzone p-2 text-center h-100 w-100">
         <div class="dropzone-icon">
-            {{# pix }} i/cloudupload, core, {{# str }} addfilesdrop {{/ str }} {{/ pix }}
+            {{# pix }} i/cloudupload, core, {{label}} {{/ pix }}
         </div>
         <div class="dropzone-label">
-            {{# str }} addfilesdrop {{/ str }}
+            {{label}}
         </div>
     </div>
     <input type="file" id="dropzone_fileinput_{{uniqid}}" accept="{{filetypes}}" class="drop-zone-fileinput hidden">

@@ -45,12 +45,12 @@ Feature: Tiny editor autosave
     And I set the field "Course summary" to "<p>Image test</p>"
     And I select the "p" element in position "1" of the "Course summary" TinyMCE editor
     And I click on the "Image" button for the "Course summary" TinyMCE editor
-    And I click on "Browse repositories..." "button"
+    And I click on "Browse repositories" "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "tinyscreenshot.png" "link"
     And I click on "Select this file" "button"
-    And I set the field "Describe this image" to "It's the Moodle"
-    And I click on "Save image" "button"
+    And I set the field "How would you describe this image to someone who can't see it:" to "It's the Moodle"
+    And I click on "Save" "button" in the "Image details" "dialogue"
     And I click on "Save and display" "button"
     When I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Settings" in current page administration

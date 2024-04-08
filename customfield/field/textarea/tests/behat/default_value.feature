@@ -36,12 +36,12 @@ Feature: Default value for the textarea custom field can contain images
       | Short name | testfield  |
     # Embed the image into Default value.
     And I click on "Image" "button" in the "Default value" "form_row"
-    And I click on "Browse repositories..." "button"
+    And I click on "Browse repositories" "button"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "gd-logo.png" "link"
     And I click on "Select this file" "button"
-    And I set the field "Describe this image for someone who cannot see it" to "Example"
-    And I click on "Save image" "button"
+    And I set the field "How would you describe this image to someone who can't see it:" to "Example"
+    And I click on "Save" "button" in the "Image details" "dialogue"
     And I click on "Save changes" "button" in the "Adding a new Text area" "dialogue"
     And I log out
 
