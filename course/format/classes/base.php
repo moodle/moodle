@@ -2063,6 +2063,9 @@ abstract class base {
         $newsectiondata->summaryformat = $originalsection->summaryformat;
         $newsectiondata->visible = $originalsection->visible;
         $newsectiondata->availability = $originalsection->availability;
+        foreach ($this->section_format_options() as $key => $value) {
+            $newsectiondata->$key = $originalsection->$key;
+        }
         course_update_section($course, $newsection, $newsectiondata);
 
         $modinfo = $this->get_modinfo();
