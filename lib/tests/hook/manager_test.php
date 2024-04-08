@@ -308,8 +308,8 @@ final class manager_test extends \advanced_testcase {
     protected function setup_hooktest_plugin(): void {
         global $CFG;
 
-        $this->add_mocked_plugintype('fake', "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins");
-        $this->add_mocked_plugin('fake', 'hooktest', "{$CFG->dirroot}/lib/tests/fixtures/fakeplugins/hooktest");
+        $this->add_mocked_plugintype('fake', "{$CFG->dirroot}/lib/tests/fixtures/hook/fakeplugins");
+        $this->add_mocked_plugin('fake', 'hooktest', "{$CFG->dirroot}/lib/tests/fixtures/hook/fakeplugins/hooktest");
     }
 
     /**
@@ -324,8 +324,8 @@ final class manager_test extends \advanced_testcase {
     public function test_migrated_callback(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, and the hook that replaces the callback.
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hooks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook/hook_replacing_callback.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hooks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook/hook_replacing_callback.php');
         // Register the fake plugin with the component manager.
         $this->setup_hooktest_plugin();
 
@@ -334,7 +334,7 @@ final class manager_test extends \advanced_testcase {
             manager::class,
             manager::phpunit_get_instance(
                 [
-                    'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks_nocallbacks.php',
+                    'fake_hooktest' => __DIR__ . '/../fixtures/hook/fakeplugins/hooktest/db/hooks_nocallbacks.php',
                 ],
             ),
         );
@@ -365,9 +365,9 @@ final class manager_test extends \advanced_testcase {
     public function test_migrated_callback_with_replacement(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, and the hook that replaces the callback, and a hook callback for the hook.
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hooks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook/hook_replacing_callback.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook_callbacks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hooks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook/hook_replacing_callback.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook_callbacks.php');
         // Register the fake plugin with the component manager.
         $this->setup_hooktest_plugin();
 
@@ -375,7 +375,7 @@ final class manager_test extends \advanced_testcase {
         di::set(
             manager::class,
             manager::phpunit_get_instance([
-                'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks.php',
+                'fake_hooktest' => __DIR__ . '/../fixtures/hook/fakeplugins/hooktest/db/hooks.php',
             ]),
         );
 
@@ -399,9 +399,9 @@ final class manager_test extends \advanced_testcase {
     public function test_migrated_class_callback(): void {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, the class containing callbacks, and the hook that replaces the class callback.
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/callbacks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hooks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook/hook_replacing_class_callback.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/callbacks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hooks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook/hook_replacing_class_callback.php');
         // Register the fake plugin with the component manager.
         $this->setup_hooktest_plugin();
 
@@ -409,7 +409,7 @@ final class manager_test extends \advanced_testcase {
         di::set(
             manager::class,
             manager::phpunit_get_instance([
-                'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks_nocallbacks.php',
+                'fake_hooktest' => __DIR__ . '/../fixtures/hook/fakeplugins/hooktest/db/hooks_nocallbacks.php',
             ]),
         );
 
@@ -443,10 +443,10 @@ final class manager_test extends \advanced_testcase {
         $this->resetAfterTest(true);
         // Include plugin hook discovery agent, the class containing callbacks, the hook that replaces the class callback,
         // and a hook callback for the new hook.
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/callbacks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hooks.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook/hook_replacing_class_callback.php');
-        require_once(__DIR__ . '/../fixtures/fakeplugins/hooktest/classes/hook_callbacks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/callbacks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hooks.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook/hook_replacing_class_callback.php');
+        require_once(__DIR__ . '/../fixtures/hook/fakeplugins/hooktest/classes/hook_callbacks.php');
         // Register the fake plugin with the component manager.
         $this->setup_hooktest_plugin();
 
@@ -454,7 +454,7 @@ final class manager_test extends \advanced_testcase {
         di::set(
             manager::class,
             manager::phpunit_get_instance([
-                'fake_hooktest' => __DIR__ . '/../fixtures/fakeplugins/hooktest/db/hooks.php',
+                'fake_hooktest' => __DIR__ . '/../fixtures/hook/fakeplugins/hooktest/db/hooks.php',
             ]),
         );
 
