@@ -1948,19 +1948,19 @@ abstract class base {
         }
 
         $course = $this->get_course();
-        $oldsectioninfo = get_fast_modinfo($course)->get_section_info($originalsection->section);
-        $newsection = course_create_section($course, $oldsectioninfo->section + 1); // Place new section after existing one.
+        $newsection = course_create_section($course, $originalsection->section + 1); // Place new section after existing one.
 
+        $newsectiondata = new stdClass();
         if (!empty($originalsection->name)) {
-            $newsection->name = get_string('duplicatedsection', 'moodle', $originalsection->name);
+            $newsectiondata->name = get_string('duplicatedsection', 'moodle', $originalsection->name);
         } else {
-            $newsection->name = $originalsection->name;
+            $newsectiondata->name = $originalsection->name;
         }
-        $newsection->summary = $originalsection->summary;
-        $newsection->summaryformat = $originalsection->summaryformat;
-        $newsection->visible = $originalsection->visible;
-        $newsection->availability = $originalsection->availability;
-        course_update_section($course, $newsection, $newsection);
+        $newsectiondata->summary = $originalsection->summary;
+        $newsectiondata->summaryformat = $originalsection->summaryformat;
+        $newsectiondata->visible = $originalsection->visible;
+        $newsectiondata->availability = $originalsection->availability;
+        course_update_section($course, $newsection, $newsectiondata);
 
         $modinfo = $this->get_modinfo();
 
