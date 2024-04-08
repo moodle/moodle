@@ -45,7 +45,6 @@ use Psr\EventDispatcher\StoppableEventInterface;
 final class manager implements
     EventDispatcherInterface,
     ListenerProviderInterface {
-
     /** @var ?manager the one instance of listener provider and dispatcher */
     private static $instance = null;
 
@@ -98,7 +97,6 @@ final class manager implements
      *
      * @param string $hookname
      * @param callable $callback
-     * @return void
      */
     public function phpunit_redirect_hook(string $hookname, callable $callback): void {
         if (!PHPUNIT_TEST) {
@@ -109,8 +107,6 @@ final class manager implements
 
     /**
      * Cancel all redirections of hook callbacks.
-     *
-     * @return void
      */
     public function phpunit_stop_redirections(): void {
         if (!PHPUNIT_TEST) {
@@ -150,7 +146,7 @@ final class manager implements
      *   callable MUST be type-compatible with $event.
      *   Please note that in Moodle the callable must be a string.
      */
-    public function getListenersForEvent(object $event): iterable {
+    public function getListenersForEvent(object $event): iterable { // phpcs:ignore
         // Callbacks are sorted by priority, highest first at load-time.
         $hookclassname = get_class($event);
         $callbacks = $this->get_callbacks_for_hook($hookclassname);
@@ -237,7 +233,7 @@ final class manager implements
             debugging(
                 "Cannot execute callback '$callablename' from '$component'" .
                     "Callback method not callable.",
-                DEBUG_DEVELOPER
+                DEBUG_DEVELOPER,
             );
             return false;
         }
@@ -307,8 +303,6 @@ final class manager implements
 
     /**
      * Initialise list of all callbacks for each hook.
-     *
-     * @return void
      */
     private function init_standard_callbacks(): void {
         global $CFG;
@@ -363,7 +357,6 @@ final class manager implements
      * Load callbacks from component db/hooks.php files.
      *
      * @param array $componentfiles list of all components with their callback files
-     * @return void
      */
     private function load_callbacks(array $componentfiles): void {
         $this->allcallbacks = [];
@@ -487,14 +480,13 @@ final class manager implements
      *
      * @param string $component component where hook callbacks are defined
      * @param string $hookfile file with list of all callbacks for component
-     * @return void
      */
     private function add_component_callbacks(string $component, string $hookfile): void {
         if (!file_exists($hookfile)) {
             return;
         }
 
-        $parsecallbacks = function($hookfile) {
+        $parsecallbacks = function ($hookfile) {
             $callbacks = [];
             include($hookfile);
             return $callbacks;
@@ -560,7 +552,7 @@ final class manager implements
         if (!str_contains($classmethod, '::')) {
             debugging(
                 "Hook callback definition contains invalid 'callback' static class method string in '$component'",
-                DEBUG_DEVELOPER
+                DEBUG_DEVELOPER,
             );
             return null;
         }

@@ -346,7 +346,7 @@ final class manager_test extends \advanced_testcase {
             component_callback('fake_hooktest', 'old_callback', [], null, true)
         );
         $this->assertDebuggingCalled(
-            'Callback old_callback in fake_hooktest component should be migrated to new hook '.
+            'Callback old_callback in fake_hooktest component should be migrated to new hook ' .
                 'callback for fake_hooktest\hook\hook_replacing_callback'
         );
     }
@@ -419,7 +419,7 @@ final class manager_test extends \advanced_testcase {
             component_class_callback('fake_hooktest\callbacks', 'old_class_callback', [], null, true)
         );
         $this->assertDebuggingCalled(
-            'Callback callbacks::old_class_callback in fake_hooktest component should be migrated to new hook '.
+            'Callback callbacks::old_class_callback in fake_hooktest component should be migrated to new hook ' .
                 'callback for fake_hooktest\hook\hook_replacing_class_callback'
         );
     }
@@ -465,7 +465,6 @@ final class manager_test extends \advanced_testcase {
      * Normalise the sort order of callbacks to help with asserts.
      *
      * @param array $callbacks
-     * @return void
      */
     private function normalise_callbacks(array &$callbacks): void {
         foreach ($callbacks as &$callback) {
