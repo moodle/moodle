@@ -27,13 +27,13 @@
     Example context (json):
     {
         "id": 0,
-        "num": 1,
+        "sectionnum": 1,
         "sectionreturn": 5
     }
 }}
 <button class="btn add-content section-modchooser section-modchooser-link activitychooser-button d-flex justify-content-center align-items-center p-1 icon-no-margin"
         data-action="open-chooser"
-        data-sectionid="{{num}}"
+        data-sectionid="{{sectionnum}}"
         {{#sectionreturn}}data-sectionreturnid="{{.}}"{{/sectionreturn}}
         data-beforemod="{{id}}"
         aria-label="{{#str}}insertresourceoractivitybefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}"
