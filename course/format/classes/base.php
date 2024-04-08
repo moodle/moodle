@@ -2051,6 +2051,7 @@ abstract class base {
         }
 
         $course = $this->get_course();
+        $context = context_course::instance($course->id);
         $newsection = course_create_section($course, $originalsection->section + 1); // Place new section after existing one.
 
         $newsectiondata = new stdClass();
@@ -2067,6 +2068,25 @@ abstract class base {
             $newsectiondata->$key = $originalsection->$key;
         }
         course_update_section($course, $newsection, $newsectiondata);
+
+        try {
+            $fs = get_file_storage();
+            $files = $fs->get_area_files($context->id, 'course', 'section', $originalsection->id);
+
+            foreach ($files as $f) {
+
+                $fileinfo = [
+                    'contextid' => $context->id,
+                    'component' => 'course',
+                    'filearea' => 'section',
+                    'itemid' => $newsection->id,
+                ];
+
+                $fs->create_file_from_storedfile($fileinfo, $f);
+            }
+        } catch (\Exception $e) {
+            debugging('Error copying section files.' . $e->getMessage(), DEBUG_DEVELOPER);
+        }
 
         $modinfo = $this->get_modinfo();
 
