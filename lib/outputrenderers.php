@@ -672,8 +672,8 @@ class core_renderer extends renderer_base {
             $hook->add_attribute('xmlns', 'http://www.w3.org/1999/xhtml');
         }
 
-        di::get(hook_manager::class)->dispatch($hook);
         $hook->process_legacy_callbacks();
+        di::get(hook_manager::class)->dispatch($hook);
 
         foreach ($hook->get_attributes() as $key => $val) {
             $val = s($val);
@@ -706,8 +706,8 @@ class core_renderer extends renderer_base {
         // must always return a string containing valid html head content.
 
         $hook = new \core\hook\output\before_standard_head_html_generation($this);
-        di::get(hook_manager::class)->dispatch($hook);
         $hook->process_legacy_callbacks();
+        di::get(hook_manager::class)->dispatch($hook);
 
         // Allow a url_rewrite plugin to setup any dynamic head content.
         if (isset($CFG->urlrewriteclass) && !isset($CFG->upgraderunning)) {
@@ -820,8 +820,8 @@ class core_renderer extends renderer_base {
 
         // Allow components to add content to the top of the body.
         $hook = new before_standard_top_of_body_html_generation($this, $output);
-        di::get(hook_manager::class)->dispatch($hook);
         $hook->process_legacy_callbacks();
+        di::get(hook_manager::class)->dispatch($hook);
         $output = $hook->get_output();
 
         $output .= $this->maintenance_warning();
@@ -885,8 +885,8 @@ class core_renderer extends renderer_base {
         require_once(__DIR__ . '/classes/hook/output/before_standard_footer_html_generation.php');
 
         $hook = new before_standard_footer_html_generation($this);
-        di::get(hook_manager::class)->dispatch($hook);
         $hook->process_legacy_callbacks();
+        di::get(hook_manager::class)->dispatch($hook);
         $output = $hook->get_output();
 
         if ($this->page->devicetypeinuse == 'legacy') {
@@ -1122,8 +1122,8 @@ class core_renderer extends renderer_base {
             $hook->add_html($CFG->additionalhtmlbottomofbody);
         }
 
-        di::get(hook_manager::class)->dispatch($hook);
         $hook->process_legacy_callbacks();
+        di::get(hook_manager::class)->dispatch($hook);
 
         return $hook->get_output();
     }
@@ -1491,8 +1491,8 @@ class core_renderer extends renderer_base {
         require_once(__DIR__ . '/classes/hook/output/before_footer_html_generation.php');
 
         $hook = new before_footer_html_generation($this);
-        di::get(hook_manager::class)->dispatch($hook);
         $hook->process_legacy_callbacks();
+        di::get(hook_manager::class)->dispatch($hook);
         $hook->add_html($this->container_end_all(true));
         $output = $hook->get_output();
 
