@@ -14,15 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace auth_lti\local\ltiadvantage\utility;
+namespace core\session\utility;
 
 /**
  * Tests for the cookie_helper utility class.
  *
- * @package    auth_lti
+ * @package    core
  * @copyright  2024 Jake Dallimore <jrhdallimore@gmail.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @covers \auth_lti\local\ltiadvantage\utility\cookie_helper
+ * @covers \core\session\utility\cookie_helper
  */
 class cookie_helper_test extends \advanced_testcase {
 

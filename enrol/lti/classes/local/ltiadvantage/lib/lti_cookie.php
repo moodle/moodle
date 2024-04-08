@@ -16,7 +16,7 @@
 
 namespace enrol_lti\local\ltiadvantage\lib;
 
-use auth_lti\local\ltiadvantage\utility\cookie_helper;
+use core\session\utility\cookie_helper;
 use Packback\Lti1p3\Interfaces\ICookie;
 
 /**
