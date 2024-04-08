@@ -195,8 +195,8 @@ class controlmenu implements named_templatable, renderable {
 
             if ($section->section) {
                 $duplicatesectionurl = clone($baseurl);
-                $duplicatesectionurl->param('section', $section->section);
-                $duplicatesectionurl->param('duplicatesection', $section->section);
+                $duplicatesectionurl->param('sectionid', $section->id);
+                $duplicatesectionurl->param('duplicatesection', 1);
                 if (!is_null($sectionreturn)) {
                     $duplicatesectionurl->param('sr', $sectionreturn);
                 }
