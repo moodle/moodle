@@ -1188,7 +1188,7 @@ function purge_all_caches() {
  *        'other'  Purge all other caches?
  */
 function purge_caches($options = []) {
-    $defaults = array_fill_keys(['muc', 'theme', 'lang', 'js', 'template', 'filter', 'other'], false);
+    $defaults = array_fill_keys(['muc', 'courses', 'theme', 'lang', 'js', 'template', 'filter', 'other'], false);
     if (empty(array_filter($options))) {
         $options = array_fill_keys(array_keys($defaults), true); // Set all options to true.
     } else {
@@ -1196,6 +1196,14 @@ function purge_caches($options = []) {
     }
     if ($options['muc']) {
         cache_helper::purge_all();
+    }
+    if ($options['courses']) {
+        if ($options['courses'] === true) {
+            $courseids = [];
+        } else {
+            $courseids = preg_split('/\s*,\s*/', $options['courses'], -1, PREG_SPLIT_NO_EMPTY);
+        }
+        course_modinfo::purge_course_caches($courseids);
     }
     if ($options['theme']) {
         theme_reset_all_caches();
