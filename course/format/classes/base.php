@@ -2094,7 +2094,9 @@ abstract class base {
         if (array_key_exists($originalsection->section, $modinfo->sections)) {
             foreach ($modinfo->sections[$originalsection->section] as $modnumber) {
                 $originalcm = $modinfo->cms[$modnumber];
-                duplicate_module($course, $originalcm, $newsection->id, false);
+                if (!$originalcm->deletioninprogress) {
+                    duplicate_module($course, $originalcm, $newsection->id, false);
+                }
             }
         }
 
