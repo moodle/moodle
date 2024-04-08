@@ -705,11 +705,7 @@ abstract class advanced_testcase extends base_testcase {
             }
 
             $task->set_lock($lock);
-            if (!$task->is_blocking()) {
-                $cronlock->release();
-            } else {
-                $task->set_cron_lock($cronlock);
-            }
+            $cronlock->release();
 
             \core\cron::prepare_core_renderer();
             \core\cron::setup_user($user);

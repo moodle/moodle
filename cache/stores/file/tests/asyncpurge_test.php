@@ -86,7 +86,6 @@ class asyncpurge_test extends \advanced_testcase {
 
         // Create / execute adhoc task to delete cache revision directory.
         $asynctask = new cachestore_file\task\asyncpurge();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(['path' => $cacherevdir]);
         $asynctask->set_userid($USER->id);
         \core\task\manager::queue_adhoc_task($asynctask);

@@ -189,11 +189,7 @@ if ($disable = $options['disable']) {
     }
 
     $task->set_lock($lock);
-    if (!$task->is_blocking()) {
-        $cronlock->release();
-    } else {
-        $task->set_cron_lock($cronlock);
-    }
+    $cronlock->release();
 
     \core\cron::run_inner_scheduled_task($task);
 }

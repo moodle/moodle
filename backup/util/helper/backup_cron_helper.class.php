@@ -378,7 +378,6 @@ abstract class backup_cron_automated_helper {
         global $DB;
 
         $asynctask = new \core\task\course_backup_task();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(array(
             'courseid' => $backupcourse->courseid,
             'adminid' => $admin->id

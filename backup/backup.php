@@ -203,7 +203,6 @@ if (!async_helper::is_async_pending($id, 'course', 'backup')) {
 
             // Create adhoc task for backup.
             $asynctask = new \core\task\asynchronous_backup_task();
-            $asynctask->set_blocking(false);
             $asynctask->set_custom_data(array('backupid' => $backupid));
             $asynctask->set_userid($USER->id);
             \core\task\manager::queue_adhoc_task($asynctask);
