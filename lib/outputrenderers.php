@@ -1365,7 +1365,9 @@ class core_renderer extends renderer_base {
         // TODO MDL-81134 Remove after LTS+1.
         require_once(__DIR__ . '/classes/hook/output/before_http_headers.php');
 
-        di::get(hook_manager::class)->dispatch(new before_http_headers($this));
+        $hook = new before_http_headers($this);
+        $hook->process_legacy_callbacks();
+        di::get(hook_manager::class)->dispatch($hook);
 
         if (\core\session\manager::is_loggedinas()) {
             $this->page->add_body_class('userloggedinas');
