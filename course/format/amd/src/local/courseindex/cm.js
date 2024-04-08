@@ -195,6 +195,8 @@ export default class Component extends DndCmItem {
         // the new url should be an anchor link.
         const element = document.getElementById(cm.anchor);
         if (element) {
+            // Make sure the section is expanded.
+            this.reactive.dispatch('sectionContentCollapsed', [cm.sectionid], false);
             // Marc the element as page item once the event is handled.
             setTimeout(() => {
                 this.reactive.dispatch('setPageItem', 'cm', cm.id);
