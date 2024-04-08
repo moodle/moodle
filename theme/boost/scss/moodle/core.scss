@@ -1521,8 +1521,8 @@ audio.mediaplugin_html5audio {
         .icon {
             display: block;
             font-size: 3em;
-            height: 1em;
-            width: 1em;
+            max-height: 3em;
+            max-width: 3em;
         }
     }
     .carousel-item .loading-icon .icon {
@@ -2338,9 +2338,9 @@ $footer-link-color: $bg-inverse-link-color !default;
         transform: translate(-50%, -50%);
 
         .icon {
-            height: 30px;
-            width: 30px;
-            font-size: 30px;
+            max-height: 2em;
+            max-width: 2em;
+            font-size: 2em;
         }
     }
 }

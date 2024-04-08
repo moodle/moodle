@@ -24546,8 +24546,8 @@ audio.mediaplugin_html5audio {
 .modchooser .modal-body .loading-icon .icon {
   display: block;
   font-size: 3em;
-  height: 1em;
-  width: 1em;
+  max-height: 3em;
+  max-width: 3em;
 }
 .modchooser .modal-body .carousel-item .loading-icon .icon {
   margin: 1em auto;
@@ -25282,9 +25282,9 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
   transform: translate(-50%, -50%);
 }
 .overlay-icon-container .loading-icon .icon {
-  height: 30px;
-  width: 30px;
-  font-size: 30px;
+  max-height: 2em;
+  max-width: 2em;
+  font-size: 2em;
 }
 
 .w-auto {
@@ -35146,8 +35146,8 @@ table .sticky-column {
   top: 200px;
 }
 .table-dynamic .loading-icon .icon {
-  height: 3rem;
-  width: 3rem;
+  max-height: 3rem;
+  max-width: 3rem;
   font-size: 3rem;
 }
 
@@ -36795,8 +36795,8 @@ span[data-flexitour=container][x-placement=right] div[data-role=arrow]:after, sp
   position: fixed;
 }
 .layout.fullscreen .loading-icon .icon {
-  width: 1em;
-  height: 1em;
+  max-width: 4em;
+  max-height: 4em;
   font-size: 4em;
 }
 
@@ -38571,9 +38571,9 @@ div.editor_atto_toolbar button .icon {
   padding: 1rem;
 }
 .moodlenet-share-dialog .modal-body .moodlenet-share-modal-content .loading-icon .icon {
-  width: 60px;
-  height: 60px;
-  font-size: 60px;
+  max-width: 4em;
+  max-height: 4em;
+  font-size: 4em;
 }
 .moodlenet-share-dialog .modal-body .moodlenet-share-modal-content .moodlenet-circle-status {
   height: 18rem;

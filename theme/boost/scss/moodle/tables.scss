@@ -76,8 +76,8 @@ table {
     left: calc(50% - 1.5rem);
     top: 200px;
     .icon {
-        height: 3rem;
-        width: 3rem;
+        max-height: 3rem;
+        max-width: 3rem;
         font-size: 3rem;
     }
 }
