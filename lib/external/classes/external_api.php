@@ -148,7 +148,7 @@ class external_api {
             } else if (method_exists($function->classname, $function->ajax_method)) {
                 if (call_user_func([$function->classname, $function->ajax_method]) === true) {
                     debugging('External function ' . $function->ajax_method . '() function is deprecated.' .
-                              'Set ajax=>true in db/service.php instead.', DEBUG_DEVELOPER);
+                              'Set ajax=>true in db/services.php instead.', DEBUG_DEVELOPER);
                     $function->allowed_from_ajax = true;
                 }
             }
