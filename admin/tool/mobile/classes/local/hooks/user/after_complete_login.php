@@ -15,6 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace tool_mobile\local\hooks\user;
+use core\session\utility\cookie_helper;
 
 /**
  * Handles mobile app launches when a third-party auth plugin did not properly set $SESSION->wantsurl.
@@ -38,6 +39,11 @@ class after_complete_login {
                 $params = json_decode($_COOKIE['tool_mobile_launch'], true);
                 $SESSION->wantsurl = (new \moodle_url("/$CFG->admin/tool/mobile/launch.php", $params))->out(false);
             }
+        }
+
+        // Set Partitioned and Secure attributes to the MoodleSession cookie if the user is using the Moodle app.
+        if (\core_useragent::is_moodle_app()) {
+            cookie_helper::add_attributes_to_cookie_response_header('MoodleSession'.$CFG->sessioncookie, ['Secure', 'Partitioned']);
         }
     }
 }
