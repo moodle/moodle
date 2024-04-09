@@ -451,17 +451,6 @@ class zip_packer extends file_packer {
             $done = 0;
         }
 
-        // Get user remaining space.
-        $areamaxbytes = FILE_AREA_MAX_BYTES_UNLIMITED;
-        $context = context::instance_by_id($contextid);
-        if (!has_capability('moodle/user:ignoreuserquota', $context)) {
-            // Get current used space for this user (private files only).
-            $fileareainfo = file_get_file_area_info($contextid, 'user', 'private');
-            $usedspace = $fileareainfo['filesize_without_references'];
-            $areamaxbytes = (int) $CFG->userquota - $usedspace;
-        }
-        $totalsizebytes = 0;
-
         foreach ($ziparch as $info) {
             // Notify progress.
             if ($progress) {
@@ -471,8 +460,6 @@ class zip_packer extends file_packer {
 
             $size = $info->size;
             $name = $info->pathname;
-
-            $realfilesize = 0;
 
             if ($name === '' or array_key_exists($name, $processed)) {
                 //probably filename collisions caused by filename cleaning/conversion
@@ -500,18 +487,15 @@ class zip_packer extends file_packer {
                     continue;
                 }
                 $content = '';
+                $realfilesize = 0;
                 while (!feof($fz)) {
                     $content .= fread($fz, 262143);
                     $realfilesize = strlen($content); // Current file size.
-                    $totalsizebytes = strlen($content);
-                    if ($realfilesize > $size ||
-                            ($areamaxbytes != FILE_AREA_MAX_BYTES_UNLIMITED && $totalsizebytes > $areamaxbytes)) {
-                        $processed[0] = 'cannotunzipquotaexceeded';
-                        // Close and unset the stream and the content.
-                        fclose($fz);
-                        unset($content);
-                        // Cancel all processes.
-                        break(2);
+
+                    // More was read than was expected, which indicates a malformed/malicious archive.
+                    // Break and let the error handling below take care of the file clean up.
+                    if ($realfilesize > $size) {
+                        break;
                     }
                 }
                 fclose($fz);
@@ -557,20 +541,16 @@ class zip_packer extends file_packer {
                     $processed[$name] = 'Can not read file from zip archive'; // TODO: localise
                     continue;
                 }
+                $realfilesize = 0;
                 while (!feof($fz)) {
                     $content = fread($fz, 262143);
                     $numofbytes = fwrite($fp, $content);
                     $realfilesize += $numofbytes; // Current file size.
-                    $totalsizebytes += $numofbytes;
-                    if ($realfilesize > $size ||
-                            ($areamaxbytes != FILE_AREA_MAX_BYTES_UNLIMITED && $totalsizebytes > $areamaxbytes)) {
-                        $processed[0] = 'cannotunzipquotaexceeded';
-                        // Close and remove the tmpfile.
-                        fclose($fz);
-                        fclose($fp);
-                        unlink($tmpfile);
-                        // Cancel all processes.
-                        break(2);
+
+                    // More was read than was expected, which indicates a malformed/malicious archive.
+                    // Break and let the error handling below take care of the file clean up.
+                    if ($realfilesize > $size) {
+                        break;
                     }
                 }
                 fclose($fz);
