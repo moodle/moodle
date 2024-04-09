@@ -1651,6 +1651,26 @@ $divider-hover-color: $primary !default;
     }
 }
 
+// Custom styles for bulk actions sticky footer in small devices.
+.sticky-footer-content.bulkactions {
+    @include media-breakpoint-down(sm) {
+        position: relative;
+        .form-check,
+        .bulkaction-name,
+        .bulkcount {
+            display: none;
+        }
+        .actions button {
+            padding: 0 map-get($spacers, 2);
+        }
+        .bulkcancel {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    }
+}
+
 /* Activity completion */
 
 .defaultactivitycompletion-item {

@@ -29810,6 +29810,25 @@ span.editinstructions .alert-link {
   }
 }
 
+@media (max-width: 767.98px) {
+  .sticky-footer-content.bulkactions {
+    position: relative;
+  }
+  .sticky-footer-content.bulkactions .form-check,
+  .sticky-footer-content.bulkactions .bulkaction-name,
+  .sticky-footer-content.bulkactions .bulkcount {
+    display: none;
+  }
+  .sticky-footer-content.bulkactions .actions button {
+    padding: 0 0.5rem;
+  }
+  .sticky-footer-content.bulkactions .bulkcancel {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+}
+
 /* Activity completion */
 .defaultactivitycompletion-item a {
   color: #000;
