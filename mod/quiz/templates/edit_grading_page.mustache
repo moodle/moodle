@@ -1,0 +1,194 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template mod_quiz/edit_grading_page
+
+    Display the Quiz complex grading page, from below tertiary nav, to above the footer.
+
+    Classes required for JS:
+    * none.
+
+    Data attributes required for JS:
+    * Many. See mod_quiz/edit_grading module.
+
+    Context variables required for this template:
+    * TBC
+
+    Example context (json):
+    {
+        "quizid": 42,
+        "hasgradeitems": true,
+        "gradeitems": [
+            {
+                "id": 123,
+                "sortorder": 1,
+                "name": "Reading & writing",
+                "displayname": "Reading &amp; writing",
+                "summarks": "10.00",
+                "isused": true
+            }
+        ],
+        "hasslots": true,
+        "sections": [
+            {
+                "displayname": "Section title",
+                "slots": [
+                    {
+                        "id": 234,
+                        "displaynumber": "1",
+                        "displayname": "Question name",
+                        "maxmark": "10.00",
+                        "choices": [
+                            {
+                                "id": 0,
+                                "choice": "[none]",
+                                "isselected": false
+                            },
+                            {
+                                "id": 123,
+                                "choice": "Reading &amp; writing",
+                                "isselected": true
+                            }
+                        ]
+                    }
+                ]
+            }
+        ],
+        "nogradeitems": {
+            "message": "This quiz does not yet have any grade items defined."
+        },
+        "noslots": {
+            "message": "No questions have been added to the quiz yet. Please add the questions to the quiz before setting up grading."
+        }
+    }
+}}
+
+<div id="edit_grading_page-contents">
+
+    <h2>{{#str}} gradeitemsetup, quiz {{/str}}</h2>
+
+    {{^hasgradeitems}}
+        {{#nogradeitems}}
+            {{> core/notification_info}}
+        {{/nogradeitems}}
+    {{/hasgradeitems}}
+
+    {{#hasgradeitems}}
+        <table class="generaltable table-responsive" id="mod_quiz-grade-item-list" data-quiz-id="{{quizid}}">
+            <caption class="sr-only"> {{#str}} gradeitems, grades {{/str}} </caption>
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
+                    <th scope="col">{{#str}} totalmarks, quiz {{/str}}</th>
+                    <th scope="col">{{#str}} actions {{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#gradeitems}}
+                    <tr data-quiz-grade-item-id="{{id}}">
+                        <th scope="row" class="align-middle font-weight-normal py-1">
+                            <span class="inplaceeditable inplaceeditable-text w-100"
+                                data-raw-name="{{name}}" data-edit-label="{{#str}} gradeitemnewname, quiz, {{{displayname}}} {{/str}}">
+                                    <a href="#" class="quickeditlink w-100" data-action-edit="1" title="{{#str}} gradeitemedit, quiz, {{{displayname}}} {{/str}}">
+                                        <span class="displayvalue">{{{displayname}}}</span>
+                                        <span class="quickediticon">
+                                            {{#pix}}t/editstring, core{{/pix}}
+                                        </span>
+                                    </a>
+                            </span>
+                        </th>
+                        <td class="align-middle text-right py-1">
+                            {{summarks}}
+                        </td>
+                        <td class="align-middle text-center py-1">
+                            {{^isused}}
+                                <a href="#" data-action-delete="1">
+                                    {{#pix}} t/delete, core, {{#str}} gradeitemdelete, quiz, {{{name}}} {{/str}} {{/pix}}
+                                </a>
+                            {{/isused}}
+                        </td>
+                    </tr>
+                {{/gradeitems}}
+            </tbody>
+        </table>
+    {{/hasgradeitems}}
+
+    <div class="mb-5">
+        <button type="button" class="btn btn-secondary" id="mod_quiz-add_grade_item"
+                data-quiz-id="{{quizid}}">{{#str}} additem, grades{{/str}}</button>
+        {{^hasgradeitems}}
+            {{#hasmultiplesections}}
+                <button type="button" class="btn btn-secondary" id="mod_quiz-grades_auto_setup"
+                    data-quiz-id="{{quizid}}">{{#str}} gradeitemsautosetup, quiz{{/str}}</button>
+            {{/hasmultiplesections}}
+        {{/hasgradeitems}}
+    </div>
+
+    <h3>{{#str}} gradeitemmarkscheme, quiz {{/str}}</h3>
+
+    {{^hasslots}}
+        {{#noslots}}
+            {{> core/notification_info}}
+        {{/noslots}}
+    {{/hasslots}}
+
+    {{#hasslots}}
+        <table class="generaltable table-responsive" id="mod_quiz-slot-list" data-quiz-id="{{quizid}}">
+            <caption class="sr-only"> {{#str}} gradeitemmarkscheme, quiz {{/str}} </caption>
+            <thead>
+                <tr>
+                    <th scope="col">{{#str}} numberabbr, quiz {{/str}}</th>
+                    <th scope="col">{{#str}} question, quiz {{/str}}</th>
+                    <th scope="col">{{#str}} marks, quiz {{/str}}</th>
+                    <th scope="col">{{#str}} gradeitem, grades {{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#sections}}
+                    <tr class="mod_quiz-new-section">
+                        <td colspan="4">
+                            <h4>{{{displayname}}}</h4>
+                        </td>
+                    </tr>
+
+                    {{#slots}}
+                        <tr>
+                            <td class="align-middle py-1">{{displaynumber}}</td>
+                            <th scope="row" class="align-middle py-1"><label for="grade-item-choice-{{id}}" class="my-1">{{{displayname}}}</label></th>
+                            <td class="align-middle text-right py-1">{{maxmark}}</td>
+                            <td class="align-middle py-1">
+                                <select id="grade-item-choice-{{id}}" class="form-control" data-slot-id="{{id}}">
+                                    {{#choices}}
+                                        <option value="{{id}}"{{#isselected}} selected="selected"{{/isselected}}>{{{choice}}}</option>
+                                    {{/choices}}
+                                </select>
+                            </td>
+                        </tr>
+                    {{/slots}}
+                {{/sections}}
+            </tbody>
+        </table>
+    {{/hasslots}}
+
+    <div>
+        {{#hasgradeitems}}
+            <h3>{{#str}} gradeitemsremovealltitle, quiz {{/str}}</h3>
+            <button type="button" class="btn btn-danger" id="mod_quiz-grades_reset_all"
+                data-quiz-id="{{quizid}}">{{#str}} gradeitemsremoveall, quiz {{/str}}</button>
+        {{/hasgradeitems}}
+    </div>
+</div>

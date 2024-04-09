@@ -18,6 +18,7 @@ namespace mod_quiz;
 
 use core_question\local\bank\question_version_status;
 use mod_quiz\output\view_page;
+use mod_quiz_generator;
 use question_engine;
 
 defined('MOODLE_INTERNAL') || die();
@@ -32,6 +33,7 @@ require_once($CFG->dirroot . '/mod/quiz/locallib.php');
  * @category  test
  * @copyright 2014 Tim Hunt
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_quiz\quiz_attempt
  */
 class attempt_test extends \advanced_testcase {
 
@@ -51,13 +53,9 @@ class attempt_test extends \advanced_testcase {
         // Make a quiz.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $quiz = $quizgenerator->create_instance(['course' => $course->id,
-            'grade' => 100.0, 'sumgrades' => 2, 'layout' => $layout, 'navmethod' => $navmethod]);
+            'grade' => 100.0, 'sumgrades' => 2, 'navmethod' => $navmethod]);
 
         $quizobj = quiz_settings::create($quiz->id, $user->id);
-
-
-        $quba = question_engine::make_questions_usage_by_activity('mod_quiz', $quizobj->get_context());
-        $quba->set_preferred_behaviour($quizobj->get_quiz()->preferredbehaviour);
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
@@ -73,11 +71,7 @@ class attempt_test extends \advanced_testcase {
             quiz_add_quiz_question($question->id, $quiz, $page);
         }
 
-        $timenow = time();
-        $attempt = quiz_create_attempt($quizobj, 1, false, $timenow, false, $user->id);
-        quiz_start_new_attempt($quizobj, $quba, $attempt, 1, $timenow);
-        quiz_attempt_save_started($quizobj, $quba, $attempt);
-
+        $attempt = quiz_prepare_and_start_new_attempt($quizobj, 1, null, false, [], [], $user->id);
         return quiz_attempt::create($attempt->id);
     }
 
@@ -506,5 +500,31 @@ class attempt_test extends \advanced_testcase {
 
         $this->expectExceptionObject(new \moodle_exception('questiondraftonly', 'mod_quiz', '', $question->name));
         quiz_start_attempt_built_on_last($quba, $newattempt, $attempt);
+    }
+
+    public function test_get_grade_item_totals(): void {
+        $attemptobj = $this->create_quiz_and_attempt_with_layout('1,2,3,0');
+        /** @var mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+
+        // Set up some section grades.
+        $listeninggrade = $quizgenerator->create_grade_item(['quizid' => $attemptobj->get_quizid(), 'name' => 'Listening']);
+        $readinggrade = $quizgenerator->create_grade_item(['quizid' => $attemptobj->get_quizid(), 'name' => 'Reading']);
+        $structure = $attemptobj->get_quizobj()->get_structure();
+        $structure->update_slot_grade_item($structure->get_slot_by_number(1), $listeninggrade->id);
+        $structure->update_slot_grade_item($structure->get_slot_by_number(2), $listeninggrade->id);
+        $structure->update_slot_grade_item($structure->get_slot_by_number(3), $readinggrade->id);
+
+        // Reload the attempt and verify.
+        $attemptobj = quiz_attempt::create($attemptobj->get_attemptid());
+        $grades = $attemptobj->get_grade_item_totals();
+
+        // All grades zero because student has not done the quiz yet, but this is a sufficent test.
+        $this->assertEquals('Listening', $grades[$listeninggrade->id]->name);
+        $this->assertEquals(0, $grades[$listeninggrade->id]->grade);
+        $this->assertEquals(2, $grades[$listeninggrade->id]->maxgrade);
+        $this->assertEquals('Reading', $grades[$readinggrade->id]->name);
+        $this->assertEquals(0, $grades[$readinggrade->id]->grade);
+        $this->assertEquals(1, $grades[$readinggrade->id]->maxgrade);
     }
 }

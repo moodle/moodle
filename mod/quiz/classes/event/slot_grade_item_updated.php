@@ -14,49 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * The mod_quiz quiz grade updated event.
- *
- * @package    mod_quiz
- * @copyright  2021 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace mod_quiz\event;
 
+use core\event\base;
+
 /**
- * The mod_quiz quiz grade updated event class.
+ * The quiz sub-grade that this slot contributes to has changed.
  *
  * @property-read array $other {
  *      Extra information about event.
  *
- *      - int newgrade: the new maximum grade value.
- *      - int oldgrade: the old maximum grade value.
+ *      - int quizid: the id of the quiz.
+ *      - int previousgradeitem: the previous max mark value.
+ *      - int newgradeitem: the new max mark value.
  * }
  *
- * @package    mod_quiz
- * @copyright  2021 The Open University
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @package   mod_quiz
+ * @copyright 2023 The Open University
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class quiz_grade_updated extends \core\event\base {
+class slot_grade_item_updated extends base {
     protected function init() {
-        $this->data['objecttable'] = 'quiz';
+        $this->data['objecttable'] = 'quiz_slots';
         $this->data['crud'] = 'u';
         $this->data['edulevel'] = self::LEVEL_TEACHING;
     }
 
     public static function get_name() {
-        return get_string('eventquizgradeupdated', 'mod_quiz');
+        return get_string('eventslotgradeitemupdated', 'mod_quiz');
     }
 
     public function get_description() {
-        return "The user with id '$this->userid' updated the maximum grade for the quiz with " .
-            "course module id '$this->contextinstanceid'. " .
-            "The maximum grade was changed from '{$this->other['oldgrade']}' to '{$this->other['newgrade']}'.";
+        return "The user with id '$this->userid' updated the slot with id '{$this->objectid}' " .
+            "belonging to the quiz with course module id '$this->contextinstanceid'. " .
+            "The grade item this slot contributes to was changed from '{$this->other['previousgradeitem']}' " .
+            "to '{$this->other['newgradeitem']}'.";
     }
 
     public function get_url() {
-        return new \moodle_url('/mod/quiz/edit.php', [
+        return new \moodle_url('/mod/quiz/editgrading.php', [
             'cmid' => $this->contextinstanceid,
         ]);
     }
@@ -72,20 +68,26 @@ class quiz_grade_updated extends \core\event\base {
             throw new \coding_exception('The \'contextinstanceid\' value must be set.');
         }
 
-        if (!isset($this->other['oldgrade'])) {
-            throw new \coding_exception('The \'oldgrade\' value must be set in other.');
+        if (!isset($this->other['quizid'])) {
+            throw new \coding_exception('The \'quizid\' value must be set in other.');
         }
 
-        if (!isset($this->other['newgrade'])) {
-            throw new \coding_exception('The \'newgrade\' value must be set in other.');
+        if (!array_key_exists('previousgradeitem', $this->other)) {
+            throw new \coding_exception('The \'previousgradeitem\' value must be set in other.');
+        }
+
+        if (!array_key_exists('newgradeitem', $this->other)) {
+            throw new \coding_exception('The \'newgradeitem\' value must be set in other.');
         }
     }
 
     public static function get_objectid_mapping() {
-        return ['db' => 'quiz', 'restore' => 'quiz'];
+        return ['db' => 'quiz_slots', 'restore' => 'quiz_question_instance'];
     }
 
     public static function get_other_mapping() {
-        return [];
+        return [
+            'quizid' => ['db' => 'quiz', 'restore' => 'quiz'],
+        ];
     }
 }

@@ -212,4 +212,36 @@ class mod_quiz_generator extends testing_module_generator {
         // Update any associated calendar events, if necessary.
         quiz_update_events($DB->get_record('quiz', ['id' => $data['quiz']], '*', MUST_EXIST));
     }
+
+    /**
+     * Create a quiz override (either user or group).
+     *
+     * @param array $data must specify quizid and a name.
+     * @return stdClass the newly created quiz_grade_items row.
+     */
+    public function create_grade_item(array $data): stdClass {
+        global $DB;
+
+        // Validate.
+        if (!isset($data['quizid'])) {
+            throw new coding_exception('Must specify quizid when creating a quiz grade item.');
+        }
+
+        if (!isset($data['name'])) {
+            throw new coding_exception('Must specify a name when creating a quiz grade item.');
+        }
+
+        if (clean_param($data['name'], PARAM_TEXT) !== $data['name']) {
+            throw new coding_exception('Grade item name must be PARAM_TEXT.');
+        }
+
+        $data['sortorder'] = $DB->get_field('quiz_grade_items',
+                'COALESCE(MAX(sortorder) + 1, 1)',
+                ['quizid' => $data['quizid']]);
+
+        // Create the grade item.
+        $gradeitem = (object) $data;
+        $gradeitem->id = $DB->insert_record('quiz_grade_items', $gradeitem);
+        return $gradeitem;
+    }
 }

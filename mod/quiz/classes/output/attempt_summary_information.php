@@ -19,6 +19,8 @@ namespace mod_quiz\output;
 use action_link;
 use core\output\named_templatable;
 use html_writer;
+use mod_quiz\grade_calculator;
+use mod_quiz\output\grades\grade_out_of;
 use mod_quiz\quiz_attempt;
 use moodle_url;
 use mod_quiz\question\display_options;
@@ -165,44 +167,7 @@ class attempt_summary_information implements renderable, named_templatable {
         }
 
         // Show marks (if the user is allowed to see marks at the moment).
-        $grade = quiz_rescale_grade($attempt->sumgrades, $quiz, false);
-        if ($options->marks >= question_display_options::MARK_AND_MAX && quiz_has_grades($quiz)) {
-
-            if ($attempt->state != quiz_attempt::FINISHED) {
-                // Cannot display grade.
-
-            } else if (is_null($grade)) {
-                $summary->add_item('grade', get_string('gradenoun'),
-                    quiz_format_grade($quiz, $grade));
-
-            } else {
-                // Show raw marks only if they are different from the grade (like on the view page).
-                if ($quiz->grade != $quiz->sumgrades) {
-                    $a = new stdClass();
-                    $a->grade = quiz_format_grade($quiz, $attempt->sumgrades);
-                    $a->maxgrade = quiz_format_grade($quiz, $quiz->sumgrades);
-                    $summary->add_item('marks', get_string('marks', 'quiz'),
-                            get_string('outofshort', 'quiz', $a));
-                }
-
-                // Now the scaled grade.
-                $a = new stdClass();
-                $a->grade = html_writer::tag('b', quiz_format_grade($quiz, $grade));
-                $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
-                if ($quiz->grade != 100) {
-                    // Show the percentage using the configured number of decimal places,
-                    // but without trailing zeroes.
-                    $a->percent = html_writer::tag('b', format_float(
-                            $attempt->sumgrades * 100 / $quiz->sumgrades,
-                            $quiz->decimalpoints, true, true));
-                    $formattedgrade = get_string('outofpercent', 'quiz', $a);
-                } else {
-                    $formattedgrade = get_string('outof', 'quiz', $a);
-                }
-                $summary->add_item('grade', get_string('gradenoun'),
-                    $formattedgrade);
-            }
-        }
+        $grade = $summary->add_attempt_grades_if_appropriate($attemptobj, $options);
 
         // Any additional summary data from the behaviour.
         foreach ($attemptobj->get_additional_summary_data($options) as $shortname => $data) {
@@ -216,6 +181,58 @@ class attempt_summary_information implements renderable, named_templatable {
         }
 
         return $summary;
+    }
+
+    /**
+     * Add the grade information to this summary information.
+     *
+     * This is a helper used by {@see create_for_attempt()}.
+     *
+     * @param quiz_attempt $attemptobj the attempt to summarise.
+     * @param display_options $options options for what can be seen.
+     * @return float|null the overall attempt grade, if it exists, else null. Raw value, not formatted.
+     */
+    public function add_attempt_grades_if_appropriate(
+        quiz_attempt $attemptobj,
+        display_options $options,
+    ): ?float {
+        $quiz = $attemptobj->get_quiz();
+        $grade = quiz_rescale_grade($attemptobj->get_sum_marks(), $quiz, false);
+
+        if ($options->marks < question_display_options::MARK_AND_MAX) {
+            // User can't see grades.
+            return $grade;
+        }
+
+        if (!quiz_has_grades($quiz) || $attemptobj->get_state() != quiz_attempt::FINISHED) {
+            // No grades to show.
+            return $grade;
+        }
+
+        if (is_null($grade)) {
+            // Attempt needs ot be graded.
+            $this->add_item('grade', get_string('gradenoun'), quiz_format_grade($quiz, $grade));
+            return $grade;
+        }
+
+        // Grades for extra grade items, if any.
+        foreach ($attemptobj->get_grade_item_totals() as $gradeitemid => $gradeoutof) {
+            $this->add_item('marks' . $gradeitemid, format_string($gradeoutof->name), $gradeoutof);
+        }
+
+        // Show raw marks only if they are different from the grade.
+        if ($quiz->grade != $quiz->sumgrades) {
+            $this->add_item('marks', get_string('marks', 'quiz'),
+                new grade_out_of($quiz, $attemptobj->get_sum_marks(), $quiz->sumgrades, style: grade_out_of::SHORT));
+        }
+
+        // Now the scaled grade.
+        $this->add_item('grade', get_string('gradenoun'),
+            new grade_out_of($quiz, $grade, $quiz->grade,
+                style: abs($quiz->grade - 100) < grade_calculator::ALMOST_ZERO ?
+                    grade_out_of::NORMAL : grade_out_of::WITH_PERCENT));
+
+        return $grade;
     }
 
     public function export_for_template(renderer_base $output): array {
@@ -243,7 +260,7 @@ class attempt_summary_information implements renderable, named_templatable {
         return $templatecontext;
     }
 
-    public function get_template_name(\renderer_base $renderer): string {
+    public function get_template_name(renderer_base $renderer): string {
         // Only reason we are forced to implement this is that we want the quiz renderer
         // passed to export_for_template, not a core_renderer.
         return 'mod_quiz/attempt_summary_information';

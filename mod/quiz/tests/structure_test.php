@@ -28,6 +28,7 @@ require_once($CFG->dirroot . '/mod/quiz/tests/quiz_question_helper_test_trait.ph
  * @category  test
  * @copyright 2013 Adrian Greeve
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers \mod_quiz\structure
  */
 class structure_test extends \advanced_testcase {
 
@@ -891,16 +892,51 @@ class structure_test extends \advanced_testcase {
         $slotid = $structure->get_slot_id_for_slot(2);
         $structure->update_question_dependency($slotid, true);
 
-        // Having called update page break, we need to reload $structure.
+        // Having done an update, we need to reload $structure.
         $structure = structure::create_for_quiz($quizobj);
         $this->assertEquals(1, $structure->is_question_dependent_on_previous_slot(2));
 
         // Test removing a dependency.
         $structure->update_question_dependency($slotid, false);
 
-        // Having called update page break, we need to reload $structure.
+        // Having done an update, we need to reload $structure.
         $structure = structure::create_for_quiz($quizobj);
         $this->assertEquals(0, $structure->is_question_dependent_on_previous_slot(2));
+    }
+
+    public function test_update_slot_grade_item(): void {
+        $quizobj = $this->create_test_quiz([
+                ['TF1', 1, 'truefalse'],
+                ['TF2', 1, 'truefalse'],
+        ]);
+        /** @var \mod_quiz_generator $quizgenerator */
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $gradeitem = $quizgenerator->create_grade_item(
+            ['quizid' => $quizobj->get_quizid(), 'name' => 'Awesomeness!']);
+         $structure = structure::create_for_quiz($quizobj);
+
+        // Test setting the grade item for a slot.
+        $slot = $structure->get_slot_by_number(1);
+        $this->assertTrue($structure->update_slot_grade_item($slot, $gradeitem->id));
+
+        // Having done an update, we need to reload $structure.
+        $structure = structure::create_for_quiz($quizobj);
+        $slot = $structure->get_slot_by_number(1);
+        $this->assertEquals($gradeitem->id, $slot->quizgradeitemid);
+
+        // Test returns false if no change.
+        $this->assertFalse($structure->update_slot_grade_item($slot, $gradeitem->id));
+
+        // Test unsetting grade item.
+        $this->assertTrue($structure->update_slot_grade_item($slot, 0));
+
+        // Having done an update, we need to reload $structure.
+        $structure = structure::create_for_quiz($quizobj);
+        $slot = $structure->get_slot_by_number(1);
+        $this->assertEquals(null, $slot->quizgradeitemid);
+
+        // Test returns false if no change.
+        $this->assertFalse($structure->update_slot_grade_item($slot, null));
     }
 
     /**

@@ -26,6 +26,7 @@ use core\hook;
 use Exception;
 use html_writer;
 use mod_quiz\hook\attempt_state_changed;
+use mod_quiz\output\grades\grade_out_of;
 use mod_quiz\output\links_to_other_attempts;
 use mod_quiz\output\renderer;
 use mod_quiz\question\bank\qbank_helper;
@@ -73,20 +74,37 @@ class quiz_attempt {
     /** @var stdClass the quiz_attempts row. */
     protected $attempt;
 
-    /** @var question_usage_by_activity the question usage for this quiz attempt. */
-    protected $quba;
+    /**
+     * @var question_usage_by_activity|null the question usage for this quiz attempt.
+     *
+     * Only available after load_questions is called, e.g. if the class is constructed
+     * with $loadquestions true (the default).
+     */
+    protected ?question_usage_by_activity $quba = null;
 
     /**
-     * @var array of slot information. These objects contain ->slot (int),
-     *      ->requireprevious (bool), ->questionids (int) the original question for random questions,
+     * @var array of slot information. These objects contain ->id (int), ->slot (int),
+     *      ->requireprevious (bool), ->displaynumber (string) and quizgradeitemid (int) from the DB.
+     *      They do not contain page - get that from {@see get_question_page()} -
+     *      or maxmark - get that from $this->quba. It is augmented with
      *      ->firstinsection (bool), ->section (stdClass from $this->sections).
-     *      This does not contain page - get that from {@see get_question_page()} -
-     *      or maxmark - get that from $this->quba.
      */
     protected $slots;
 
     /** @var array of quiz_sections rows, with a ->lastslot field added. */
     protected $sections;
+
+    /** @var grade_calculator instance for this quiz. */
+    protected grade_calculator $gradecalculator;
+
+    /**
+     * @var grade_out_of[]|null can be used to store the total grade for each section.
+     *
+     * This is typically done when one or more attempts are created without load_questions.
+     * This lets the mark totals be passed in and later used. Format of this array should
+     * match what {@see grade_calculator::compute_grade_item_totals()} would return.
+     */
+    protected ?array $gradeitemmarks = null;
 
     /** @var array page no => array of slot numbers on the page in order. */
     protected $pagelayout;
@@ -114,9 +132,11 @@ class quiz_attempt {
     public function __construct($attempt, $quiz, $cm, $course, $loadquestions = true) {
         $this->attempt = $attempt;
         $this->quizobj = new quiz_settings($quiz, $cm, $course);
+        $this->gradecalculator = $this->quizobj->get_grade_calculator();
 
         if ($loadquestions) {
             $this->load_questions();
+            $this->gradecalculator->set_slots($this->slots);
         }
     }
 
@@ -181,8 +201,8 @@ class quiz_attempt {
         }
 
         $this->quba = question_engine::load_questions_usage_by_activity($this->attempt->uniqueid);
-        $this->slots = $DB->get_records('quiz_slots',
-                ['quizid' => $this->get_quizid()], 'slot', 'slot, id, requireprevious, displaynumber');
+        $this->slots = $DB->get_records('quiz_slots', ['quizid' => $this->get_quizid()],
+                'slot', 'slot, id, requireprevious, displaynumber, quizgradeitemid');
         $this->sections = array_values($DB->get_records('quiz_sections',
                 ['quizid' => $this->get_quizid()], 'firstslot'));
 
@@ -476,6 +496,38 @@ class quiz_attempt {
      */
     public function get_currentpage() {
         return $this->attempt->currentpage;
+    }
+
+    /**
+     * Compute the grade and maximum grade for each grade item, for this attempt.
+     *
+     * @return grade_out_of[] the grade for each item where the total grade is not zero.
+     *      ->name will be set to the grade item name. Must be output through {@see format_string()}.
+     */
+    public function get_grade_item_totals(): array {
+        if ($this->gradeitemmarks !== null) {
+            return $this->gradeitemmarks;
+        } else if ($this->quba !== null) {
+            return $this->gradecalculator->compute_grade_item_totals($this->quba);
+        } else {
+            throw new coding_exception('To call get_grade_item_totals, you must either have ' .
+                '->quba set (e.g. create this class with $loadquestions true) or you must ' .
+                'previously have computed the totals (e.g. with ' .
+                'grade_calculator::compute_grade_item_totals_for_attempts() and pass them to ' .
+                '->set_grade_item_totals().');
+        }
+    }
+
+    /**
+     * Set the total grade for each grade_item for this quiz.
+     *
+     * You only need to do this if the instance of this class was created with $loadquestions false.
+     * Typically, you will have got the grades from {@see grade_calculator::compute_grade_item_totals_for_attempts()}.
+     *
+     * @param grade_out_of[] $grades same form as {@see grade_calculator::compute_grade_item_totals()} would return.
+     */
+    public function set_grade_item_totals(array $grades): void {
+        $this->gradeitemmarks = $grades;
     }
 
     /**

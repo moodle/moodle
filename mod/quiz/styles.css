@@ -1090,6 +1090,9 @@ table.quizreviewsummary td.cell {
     color: #000;
     text-align: right;
 }
+#page-mod-quiz-editgrading .inplaceeditable .quickeditlink {
+    color: var(--primary);
+}
 #page-mod-quiz-edit .inplaceeditable .quickeditlink {
     color: var(--primary);
     text-decoration: none;

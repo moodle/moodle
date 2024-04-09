@@ -25,6 +25,7 @@ use html_table_cell;
 use html_writer;
 use mod_quiz\access_manager;
 use mod_quiz\form\preflight_check_form;
+use mod_quiz\output\grades\grade_out_of;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
 use moodle_url;
@@ -463,6 +464,20 @@ class renderer extends plugin_renderer_base {
             }
         }
         return implode(', ', $attemptlinks);
+    }
+
+    /**
+     * Render a {@see grade_out_of}.
+     *
+     * Most of the logic is in methods of the grade_out_of class. However,
+     * having this renderer method allows themes to override the default rendering.
+     *
+     * @param grade_out_of $grade
+     * @return string HTML to output.
+     */
+    protected function render_grade_out_of(grade_out_of $grade): string {
+        return get_string($grade->get_string_key(), 'quiz',
+                $grade->style_formatted_values($grade->get_formatted_values()));
     }
 
     /**

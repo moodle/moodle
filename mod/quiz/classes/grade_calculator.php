@@ -19,9 +19,14 @@ namespace mod_quiz;
 use coding_exception;
 use core\di;
 use core\hook;
+use core_component;
 use mod_quiz\event\quiz_grade_updated;
 use mod_quiz\hook\structure_modified;
+use mod_quiz\output\grades\grade_out_of;
+use qubaid_condition;
+use qubaid_list;
 use question_engine_data_mapper;
+use question_usage_by_activity;
 use stdClass;
 
 /**
@@ -42,6 +47,21 @@ class grade_calculator {
 
     /** @var quiz_settings the quiz for which this instance computes grades. */
     protected $quizobj;
+
+    /**
+     * @var stdClass[]|null quiz_grade_items for this quiz indexed by id, sorted by sortorder, with a maxmark field added.
+     *
+     * Lazy-loaded when needed. See {@see ensure_grade_items_loaded()}.
+     */
+    protected ?array $gradeitems = null;
+
+    /**
+     * @var ?stdClass[]|null quiz_slot for this quiz. Only ->slot and ->quizgradeitemid fields are used.
+     *
+     * This is either set by another class that already has the data, using {@see set_slots()}
+     * or it is lazy-loaded when needed. See {@see ensure_slots_loaded()}.
+     */
+    protected ?array $slots = null;
 
     /**
      * Constructor. Recommended way to get an instance is $quizobj->get_grade_calculator();
@@ -97,7 +117,7 @@ class grade_calculator {
 
         // This class callback is deprecated, and will be removed in Moodle 4.8 (MDL-80327).
         // Use the structure_modified hook instead.
-        $callbackclasses = \core_component::get_plugin_list_with_class('quiz', 'quiz_structure_modified');
+        $callbackclasses = core_component::get_plugin_list_with_class('quiz', 'quiz_structure_modified');
         foreach ($callbackclasses as $callbackclass) {
             component_class_callback($callbackclass, 'callback', [$quiz->id], null, true);
         }
@@ -447,5 +467,191 @@ class grade_calculator {
         ])->trigger();
 
         $transaction->allow_commit();
+    }
+
+    /**
+     * Ensure the {@see grade_calculator::$gradeitems} field is ready to use.
+     */
+    protected function ensure_grade_items_loaded(): void {
+        global $DB;
+
+        if ($this->gradeitems !== null) {
+            return; // Already done.
+        }
+
+        $this->gradeitems = $DB->get_records_sql("
+            SELECT gi.id,
+                   gi.quizid,
+                   gi.sortorder,
+                   gi.name,
+                   COALESCE(SUM(slot.maxmark), 0) AS maxmark
+
+              FROM {quiz_grade_items} gi
+         LEFT JOIN {quiz_slots} slot ON slot.quizgradeitemid = gi.id
+
+             WHERE gi.quizid = ? AND slot.quizid = ?
+
+          GROUP BY gi.id, gi.quizid, gi.sortorder, gi.name
+
+          ORDER BY gi.sortorder
+            ", [$this->quizobj->get_quizid(), $this->quizobj->get_quizid()]);
+    }
+
+    /**
+     * Get the extra grade items for this quiz.
+     *
+     * Returned objects have fields ->id, ->quizid, ->sortorder, ->name and maxmark.
+     * @return stdClass[] the grade items for this quiz.
+     */
+    public function get_grade_items(): array {
+        $this->ensure_grade_items_loaded();
+        return $this->gradeitems;
+    }
+
+    /**
+     * Lets other code pass in the slot information, so it does note have to be re-loaded from the DB.
+     *
+     * @param stdClass[] $slots the data from quiz_slots. The only required fields are ->slot and ->quizgradeitemid.
+     */
+    public function set_slots(array $slots): void {
+        global $CFG;
+        $this->slots = $slots;
+
+        if ($CFG->debugdeveloper) {
+            foreach ($slots as $slot) {
+                if (!property_exists($slot, 'slot') || !property_exists($slot, 'quizgradeitemid')) {
+                    debugging('Slot data passed to grade_calculator::set_slots ' .
+                        'must have at least ->slot and ->quizgradeitemid set.', DEBUG_DEVELOPER);
+                    break; // Only necessary to say this once.
+                }
+            }
+        }
+    }
+
+    /**
+     * Ensure the {@see $gradeitems} field is ready to use.
+     */
+    protected function ensure_slots_loaded(): void {
+        global $DB;
+
+        if ($this->slots !== null) {
+            return; // Already done.
+        }
+
+        $this->slots = $DB->get_records('quiz_slots', ['quizid' => $this->quizobj->get_quizid()],
+            'slot', 'slot, id, quizgradeitemid');
+    }
+
+    /**
+     * Compute the grade and maximum for each item, for an attempt where the question_usage_by_activity is available.
+     *
+     * @param question_usage_by_activity $quba usage for the quiz attempt we want to calculate the grades of.
+     * @return grade_out_of[] the grade for each item where the total grade is not zero.
+     *      ->name will be set to the grade item name. Must be output through {@see format_string()}.
+     */
+    public function compute_grade_item_totals(question_usage_by_activity $quba): array {
+        $this->ensure_grade_items_loaded();
+        if (empty($this->gradeitems)) {
+            // No extra grade items.
+            return [];
+        }
+
+        $this->ensure_slots_loaded();
+
+        // Prepare a place to store the results for each grade-item.
+        $grades = [];
+        foreach ($this->gradeitems as $gradeitem) {
+            $grades[$gradeitem->id] = new grade_out_of(
+                $this->quizobj->get_quiz(), 0, $gradeitem->maxmark, name: $gradeitem->name);
+        }
+
+        // Add up the scores.
+        foreach ($this->slots as $slot) {
+            if (!$slot->quizgradeitemid) {
+                continue;
+            }
+            $grades[$slot->quizgradeitemid]->grade += $quba->get_question_mark($slot->slot);
+        }
+
+        // Remove any grade items where the total is 0.
+        foreach ($grades as $gradeitemid => $grade) {
+            if ($grade->maxgrade < self::ALMOST_ZERO) {
+                unset($grades[$gradeitemid]);
+            }
+        }
+
+        return $grades;
+    }
+
+    /**
+     * Compute the grade and maximum for each item, for some attempts where we only have the usage ids.
+     *
+     * @param int[] $qubaids array of usage ids.
+     * @return grade_out_of[][] question_usage.id => array of grade_out_of.
+     *      ->name will be set to the grade item name. Must be output through {@see format_string()}..
+     */
+    public function compute_grade_item_totals_for_attempts(array $qubaids): array {
+        $this->ensure_grade_items_loaded();
+        $grades = [];
+        foreach ($qubaids as $qubaid) {
+            $grades[$qubaid] = [];
+        }
+
+        if (empty($this->gradeitems || empty($qubaids))) {
+            // Nothing to do.
+            return $grades;
+        }
+
+        $gradesdata = $this->load_grade_item_totals(new qubaid_list($qubaids));
+        foreach ($qubaids as $qubaid) {
+            foreach ($this->gradeitems as $gradeitem) {
+                if ($gradeitem->maxmark < self::ALMOST_ZERO) {
+                    continue;
+                }
+                $grades[$qubaid][$gradeitem->id] = new grade_out_of(
+                    $this->quizobj->get_quiz(),
+                    $gradesdata[$qubaid][$gradeitem->id] ?? 0,
+                    $gradeitem->maxmark,
+                    name: $gradeitem->name,
+                );
+            }
+        }
+
+        return $grades;
+    }
+
+    /**
+     * Query the database return the total mark for each grade item for a set of attempts.
+     *
+     * @param qubaid_condition $qubaids which question_usages to computer the total marks for.
+     * @return float[][] Array question_usage.id => quiz_grade_item.id => mark.
+     */
+    public function load_grade_item_totals(qubaid_condition $qubaids): array {
+        global $DB;
+        $dm = new question_engine_data_mapper();
+
+        [$qalatestview, $viewparams] = $dm->question_attempt_latest_state_view('qalatest', $qubaids);
+
+        $totals = $DB->get_records_sql("
+            SELECT " . $DB->sql_concat('qalatest.questionusageid', "'#'", 'slot.quizgradeitemid') . " AS uniquefirstcolumn,
+                   qalatest.questionusageid,
+                   slot.quizgradeitemid,
+                   SUM(qalatest.fraction * qalatest.maxmark) AS summarks
+
+              FROM $qalatestview
+
+              JOIN {quiz_slots} slot ON slot.slot = qalatest.slot
+              JOIN {quiz_grade_items} qgi ON qgi.id = slot.quizgradeitemid
+
+          GROUP BY qalatest.questionusageid, slot.quizgradeitemid
+
+            ", $viewparams);
+
+        $marks = [];
+        foreach ($totals as $total) {
+            $marks[$total->questionusageid][$total->quizgradeitemid] = $total->summarks + 0; // Convert to float with + 0.
+        }
+
+        return $marks;
     }
 }

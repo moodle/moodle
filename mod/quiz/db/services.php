@@ -255,4 +255,52 @@ $functions = [
         'capabilities'  => 'mod/quiz:manageoverrides',
         'ajax'          => true,
     ],
+
+    'mod_quiz_create_grade_items' => [
+        'classname' => 'mod_quiz\external\create_grade_items',
+        'description' => 'Create quiz grade items. All grade items must belong to the same quiz.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_delete_grade_items' => [
+        'classname' => 'mod_quiz\external\delete_grade_items',
+        'description' => 'Delete quiz grade items. All grade items must belong to the same quiz.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_update_grade_items' => [
+        'classname' => 'mod_quiz\external\update_grade_items',
+        'description' => 'Update quiz grade items. All grade items must belong to the same quiz.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_update_slots' => [
+        'classname' => 'mod_quiz\external\update_slots',
+        'description' => 'Update the properties of slots in a quiz. All slots must belong to the same quiz.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_get_edit_grading_page_data' => [
+        'classname' => 'mod_quiz\external\get_edit_grading_page_data',
+        'description' => 'Get the data required to re-render the Quiz grading setup page',
+        'type' => 'read',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
+
+    'mod_quiz_create_grade_item_per_section' => [
+        'classname' => 'mod_quiz\external\create_grade_item_per_section',
+        'description' => 'For a quiz with no grade items yet, create a grade item for each section, with the questions in that section assigned.',
+        'type' => 'write',
+        'capabilities' => 'mod/quiz:manage',
+        'ajax' => true,
+    ],
 ];

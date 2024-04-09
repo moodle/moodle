@@ -28,6 +28,11 @@ This file describes API changes in the quiz code.
   - override_manager::delete_override_by_id
   - override_manager::delete_overrides
   - override_manager::delete_all_overrides
+* There is a new renderable grade_out_of to help with display a nicely formatted "42.00 out of 100.00" with a few variants.
+* The quiz now supports computing multiple total grades for each attempt. To support this there is a new database table
+  quiz_grade_items and a new column quizgradeitemid in quiz_slots. There are new methods in structure grade_calculator
+  and quiz_attempt to support this, and the new grades are shown on review.php, view.php and in some of the quiz reports.
+  Also, the external functions get_attempt_review and get_user_attempts return the information about the extra grades if applicable.
 
 === 4.3 ===
 
