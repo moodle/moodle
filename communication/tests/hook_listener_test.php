@@ -56,6 +56,7 @@ class hook_listener_test extends \advanced_testcase {
         global $DB;
 
         $course = $this->get_course(
+            roomname: 'Test room name',
             extrafields: ['groupmode' => SEPARATEGROUPS],
         );
         $coursecontext = \context_course::instance(courseid: $course->id);
@@ -132,8 +133,7 @@ class hook_listener_test extends \advanced_testcase {
         $this->assertCount(0, $adhoctask);
 
         // Now change the group name.
-        $changedgroupname = 'Changedgroupname';
-        $group->name = $changedgroupname;
+        $group->name = 'Changed group name';
         groups_update_group($group);
 
         // Now one task should be there to update the group room name.
@@ -142,7 +142,7 @@ class hook_listener_test extends \advanced_testcase {
 
         $groupcommunication->reload();
         $this->assertEquals(
-            expected: $changedgroupname,
+            expected: 'Changed group name (Test room name)',
             actual: $groupcommunication->get_processor()->get_room_name(),
         );
 
