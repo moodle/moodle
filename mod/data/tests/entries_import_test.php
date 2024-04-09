@@ -27,10 +27,12 @@ use zip_archive;
  *
  * @package    mod_data
  * @category   test
+ * @covers     \mod_data\local\importer\entries_importer
+ * @covers     \mod_data\local\importer\csv_entries_importer
  * @copyright  2019 Tobias Reischmann
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class entries_import_test extends \advanced_testcase {
+final class entries_import_test extends \advanced_testcase {
 
     /**
      * Set up function.
@@ -271,11 +273,74 @@ class entries_import_test extends \advanced_testcase {
     }
 
     /**
-     * Tests the import including files from a zip archive.
+     * Data provider for {@see test_import_without_approved}
      *
-     * @covers \mod_data\local\importer\entries_importer
-     * @covers \mod_data\local\importer\csv_entries_importer
-     * @return void
+     * @return array[]
+     */
+    public static function import_without_approved_provider(): array {
+        return [
+            'Teacher can approve entries' => ['teacher', [1, 1]],
+            'Student cannot approve entries' => ['student', [0, 0]],
+        ];
+    }
+
+    /**
+     * Test importing file without approved status column
+     *
+     * @param string $user
+     * @param int[] $expected
+     *
+     * @dataProvider import_without_approved_provider
+     */
+    public function test_import_without_approved(string $user, array $expected): void {
+        $testdata = $this->get_test_data();
+        ['data' => $data, 'cm' => $cm] = $testdata;
+
+        $this->setUser($testdata[$user]);
+
+        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import.csv', 'test_data_import.csv');
+        $importer->import_csv($cm, $data, 'UTF-8', 'comma');
+
+        $records = $this->get_data_records($data->id);
+        $this->assertEquals($expected, array_column($records, 'approved'));
+    }
+
+    /**
+     * Data provider for {@see test_import_with_approved}
+     *
+     * @return array[]
+     */
+    public static function import_with_approved_provider(): array {
+        return [
+            'Teacher can approve entries' => ['teacher', [1, 0]],
+            'Student cannot approve entries' => ['student', [0, 0]],
+        ];
+    }
+
+    /**
+     * Test importing file with approved status column
+     *
+     * @param string $user
+     * @param int[] $expected
+     *
+     * @dataProvider import_with_approved_provider
+     */
+    public function test_import_with_approved(string $user, array $expected): void {
+        $testdata = $this->get_test_data();
+        ['data' => $data, 'cm' => $cm] = $testdata;
+
+        $this->setUser($testdata[$user]);
+
+        $importer = new csv_entries_importer(__DIR__ . '/fixtures/test_data_import_with_approved.csv',
+            'test_data_import_with_approved.csv');
+        $importer->import_csv($cm, $data, 'UTF-8', 'comma');
+
+        $records = $this->get_data_records($data->id);
+        $this->assertEquals($expected, array_column($records, 'approved'));
+    }
+
+    /**
+     * Tests the import including files from a zip archive.
      */
     public function test_import_with_files(): void {
         [
@@ -323,10 +388,6 @@ class entries_import_test extends \advanced_testcase {
 
     /**
      * Tests the import including files from a zip archive.
-     *
-     * @covers \mod_data\local\importer\entries_importer
-     * @covers \mod_data\local\importer\csv_entries_importer
-     * @return void
      */
     public function test_import_with_files_missing_file(): void {
         [
@@ -377,8 +438,6 @@ class entries_import_test extends \advanced_testcase {
     /**
      * Tests if the amount of imported records is counted properly.
      *
-     * @covers \mod_data\local\importer\csv_entries_importer::import_csv
-     * @covers \mod_data\local\importer\csv_entries_importer::get_added_records_messages
      * @dataProvider get_added_record_messages_provider
      * @param string $datafilecontent the content of the datafile to test as string
      * @param int $expectedcount the expected count of messages depending on the datafile content
