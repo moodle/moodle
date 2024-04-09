@@ -23,10 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-use core\{
-    di,
-    hook,
-};
+use core\di;
+use core\hook;
 
 require_once(__DIR__.'/../../testing/classes/util.php');
 require_once(__DIR__ . "/coverage_info.php");

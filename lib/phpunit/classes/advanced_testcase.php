@@ -14,10 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-use core\{
-    di,
-    hook,
-};
+use core\di;
+use core\hook;
 
 /**
  * Advanced PHPUnit test case customised for Moodle.

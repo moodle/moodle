@@ -17,10 +17,8 @@
 namespace mod_quiz;
 
 use coding_exception;
-use core\{
-    di,
-    hook,
-};
+use core\di;
+use core\hook;
 use mod_quiz\event\quiz_grade_updated;
 use mod_quiz\hook\structure_modified;
 use question_engine_data_mapper;
