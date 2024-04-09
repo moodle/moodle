@@ -237,11 +237,7 @@ switch ($action) {
                 return $result !== true;
             });
             if (count($failed) > 0) {
-                if ($failed[0] == "cannotunzipquotaexceeded") {
-                    $return->error = get_string($failed[0],  'repository');
-                } else {
-                    $return->error = get_string('cannotunzipextractfileerror',  'repository');
-                }
+                $return->error = get_string('cannotunzipextractfileerror',  'repository');
                 die(json_encode($return));
             }
 
