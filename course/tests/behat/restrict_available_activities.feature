@@ -38,6 +38,6 @@ Feature: Restrict activities availability
     And I log out
     And I log in as "teacher1"
     When I am on "Course 1" course homepage with editing mode on
-    And I press "Add an activity or resource"
+    And I click on "Add an activity or resource" "button" in the "New section" "section"
     Then "Add a new Assignment" "link" should not exist in the "Add an activity or resource" "dialogue"
     Then "Add a new Glossary" "link" should not exist in the "Add an activity or resource" "dialogue"
