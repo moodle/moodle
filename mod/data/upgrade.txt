@@ -1,6 +1,9 @@
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
 
+=== 4.4.1 ===
+* The `data_add_record` method accepts a new `$approved` parameter to set the corresponding state of the new record
+
 === 4.4 ===
 * The following behat steps are now deprecated. Use data generators instead:
   - I add a ":fieldtype" field to ":activityname" database and I fill the form with:
