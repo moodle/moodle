@@ -1,9 +1,7 @@
 <?php
 
-use core\{
-    di,
-    hook,
-};
+use core\di;
+use core\hook;
 
 defined('MOODLE_INTERNAL') || die;
 

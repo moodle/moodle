@@ -24,10 +24,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-use core\{
-    di,
-    hook,
-};
+use core\di;
+use core\hook;
 use core_course\external\course_summary_exporter;
 use core_courseformat\base as course_format;
 use core_courseformat\formatactions;

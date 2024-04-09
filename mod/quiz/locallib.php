@@ -35,10 +35,8 @@ require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
-use core\{
-    di,
-    hook,
-};
+use core\di;
+use core\hook;
 use core_question\local\bank\condition;
 use mod_quiz\access_manager;
 use mod_quiz\event\attempt_submitted;

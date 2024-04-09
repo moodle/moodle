@@ -27,10 +27,8 @@
 
 defined('MOODLE_INTERNAL') || die;
 
-use core\{
-    di,
-    hook,
-};
+use core\di;
+use core\hook;
 use core_courseformat\formatactions;
 use core_grades\component_gradeitems;
 

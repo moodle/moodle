@@ -21,10 +21,8 @@ use block_contents;
 use cm_info;
 use coding_exception;
 use context_module;
-use core\{
-    di,
-    hook,
-};
+use core\di;
+use core\hook;
 use Exception;
 use html_writer;
 use mod_quiz\hook\attempt_state_changed;
