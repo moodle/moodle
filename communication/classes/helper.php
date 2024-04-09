@@ -559,6 +559,9 @@ class helper {
         string $baseroomname,
         string $groupname
     ): string {
-        return "{$groupname} ({$baseroomname})";
+        return get_string('communicationgrouproomnameformat', 'core_communication', [
+            'groupname' => $groupname,
+            'baseroomname' => $baseroomname,
+        ]);
     }
 }

@@ -223,8 +223,6 @@ class helper_test extends \advanced_testcase {
 
     /**
      * Test format_group_room_name.
-     *
-     * @covers ::format_group_room_name
      */
     public function test_format_group_room_name(): void {
         $baseroomname = 'Course A';

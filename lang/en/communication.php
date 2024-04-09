@@ -29,6 +29,7 @@ $string['communicationroomname'] = 'Room name';
 $string['communicationroomnameinfo'] = 'If the field is left blank, the course name is used as the room name.';
 $string['communicationroompending'] = 'Your {$a} room will be ready soon.';
 $string['communicationroomready'] = 'Your {$a} room is ready.';
+$string['communicationgrouproomnameformat'] = '{$a->groupname} ({$a->baseroomname})';
 $string['managecommunicationproviders'] = 'Manage communication providers';
 $string['nocommunicationinstance'] = 'No communication instance found.';
 $string['nocommunicationprovider'] = 'No communication provider found.';
