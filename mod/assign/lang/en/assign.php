@@ -95,7 +95,9 @@ $string['attemptreopenmethod_help'] = 'This setting controls how students are gr
 * Manually - After each attempt, you can grant the next one through the Submissions page or the Grader page.
 * Automatically until pass - After each attempt, the next will be granted automatically, until the student achieves the passing grade.';
 $string['attemptreopenmethod_manual'] = 'Manually';
+$string['attemptreopenmethod_manual_help'] = 'After each attempt, you can grant the next one through the Submissions page or the Grader page.';
 $string['attemptreopenmethod_untilpass'] = 'Automatically until pass';
+$string['attemptreopenmethod_untilpass_help'] = 'After each attempt, the next will be granted automatically, until the student achieves the passing grade.';
 $string['availability'] = 'Availability';
 $string['back'] = 'Back';
 $string['backtoassignment'] = 'Back to assignment';
