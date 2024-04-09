@@ -5,6 +5,9 @@ information provided here is intended especially for developers.
 
 * The `html_writer::select_time` method has a `$timezone` parameter to use when formatting the time parameter
 * New Behat `heading` named selector to more easily assert the presence of H1-H6 elements on the page
+* New behat behat_navigation::i_close_block_drawer_if_open() and behat_navigation::i_keep_block_drawer_closed()
+  to ensure in some test that the block drawer is closed. This helps with random failures due to the block drawer
+  being forced open in all behat tests.
 
 === 4.2.5 ===
 

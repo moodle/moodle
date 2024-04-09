@@ -1633,3 +1633,22 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
         margin-left: 2rem;
     }
 }
+
+// Custom styles for bulk actions sticky footer in small devices.
+.stickyfooter.bulkactions {
+    @include media-breakpoint-down(sm) {
+        .form-check,
+        .bulkaction-name,
+        .bulkcount {
+            display: none;
+        }
+        .actions button {
+            padding: 0 map-get($spacers, 2);
+        }
+        .bulkcancel {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    }
+}
