@@ -2019,9 +2019,11 @@ class questionlib_test extends \advanced_testcase {
         // Create a category tree.
         /** @var \core_question_generator $questiongenerator */
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
-        $context = \context_system::instance();
+        // Create a Course.
+        $course = $this->getDataGenerator()->create_course();
+        $coursecontext = \context_course::instance($course->id);
 
-        $top = question_get_top_category($context->id, true);
+        $top = question_get_top_category($coursecontext->id, true);
         $cat1 = $questiongenerator->create_question_category(['parent' => $top->id]);
         $sub11 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
         $sub12 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
@@ -2057,11 +2059,11 @@ class questionlib_test extends \advanced_testcase {
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $context = \context_system::instance();
 
-        $top = question_get_top_category($context->id, true);
+        $top = question_get_top_category($coursecontext->id, true);
         $cat1 = $questiongenerator->create_question_category(['parent' => $top->id]);
         $sub11 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
         $sub12 = $questiongenerator->create_question_category(['parent' => $cat1->id]);
-        $cat2 = $questiongenerator->create_question_category(['parent' => $top->id, 'contextid' => $coursecontext->id]);
+        $cat2 = $questiongenerator->create_question_category(['parent' => $top->id, 'contextid' => $context->id]);
         $sub22 = $questiongenerator->create_question_category(['parent' => $cat2->id]);
 
         // Test - returned array has keys and values the same.
