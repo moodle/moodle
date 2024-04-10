@@ -63,8 +63,10 @@ class report {
         }
 
         // Report tags.
-        core_tag_tag::set_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'),
-            $report->get_context(), $data->tags);
+        if (property_exists($data, "tags")) {
+            core_tag_tag::set_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'),
+                $report->get_context(), $data->tags);
+        }
 
         return $report;
     }
@@ -87,8 +89,10 @@ class report {
         ])->update();
 
         // Report tags.
-        core_tag_tag::set_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'),
-            $report->get_context(), $data->tags);
+        if (property_exists($data, "tags")) {
+            core_tag_tag::set_item_tags('core_reportbuilder', 'reportbuilder_report', $report->get('id'),
+                $report->get_context(), $data->tags);
+        }
 
         return $report;
     }
