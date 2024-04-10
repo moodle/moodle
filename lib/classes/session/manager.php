@@ -89,7 +89,9 @@ class manager {
     public static function restart_with_write_lock(bool $readonlysession) {
         global $CFG;
 
-        self::$requireslockdebug = !$readonlysession;
+        if (!empty($CFG->enable_read_only_sessions_debug)) {
+            self::$requireslockdebug = !$readonlysession;
+        }
 
         if (self::$sessionactive && !self::$handler->requires_write_lock()) {
             @self::$handler->abort();
