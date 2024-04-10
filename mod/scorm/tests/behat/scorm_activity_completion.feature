@@ -139,13 +139,13 @@ Feature: View activity completion in the SCORM activity
     And I expand all fieldsets
     When I set the field "completionscorerequired" to "0"
     And I click on "Save and display" "button"
-    Then I should see "Minimum score must be greater than 0"
+    Then I should see "Minimum score must be greater than 0."
     And "Enter" "button" should not exist
     And I set the field "completionscorerequired" to "-1"
     And I click on "Save and display" "button"
-    And I should see "Minimum score must be greater than 0"
+    And I should see "Minimum score must be greater than 0."
     And "Enter" "button" should not exist
     And I set the field "completionscorerequired" to "5"
     And I click on "Save and display" "button"
-    And I should not see "Minimum score must be greater than 0"
+    And I should not see "Minimum score must be greater than 0."
     And "Enter" "button" should exist

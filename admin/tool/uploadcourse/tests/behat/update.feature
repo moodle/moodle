@@ -118,7 +118,7 @@ Feature: An admin can update courses using a CSV file
     # Course C01 is in "our" category but can not be moved to Cat 2 because current user can not manage it.
     Then I should see "No permission to upload courses in category: Cat 2" in the "C01" "table_row"
     # Course C02 can not be updated (no capability in "Cat 2" context).
-    And I should see "Course with this shortname exists and you don't have permission to use upload course tool to update it" in the "C02" "table_row"
+    And I should see "A course with this short name exists but you don't have permission to use the upload courses functionality to update it." in the "C02" "table_row"
     # Course with short name "C05" does not exist.
     And I should see "The course does not exist and creating course is not allowed" in the "C05" "table_row"
     And I click on "Upload courses" "button"

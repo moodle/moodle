@@ -75,8 +75,8 @@ $string['search:activity'] = 'BigBlueButton - activity information';
 $string['search:tags'] = 'BigBlueButton - tags information';
 $string['settings'] = 'BigBlueButton settings';
 
-$string['settings_credential_warning_no_capability'] = 'The use of default server credentials will soon expire. To use BigBlueButton your site will require new server credentials. Please contact your site administrator for help with this.';
-$string['settings_credential_warning'] = 'Default BigBlueButton plugin credentials will soon expire. See BigBlueButton<a href="{$a->settingslink}" target="_blank"> plugin settings (opens in a new window)</a> for more information.';
+$string['settings_credential_warning_no_capability'] = 'The BigBlueButton server credentials will soon expire. Please contact your site administrator.';
+$string['settings_credential_warning'] = 'The BigBlueButton server credentials will soon expire. See the <a href="{$a->settingslink}" target="_blank">BigBlueButton general settings (opens in a new window)</a>.';
 
 $string['privacy:metadata:bigbluebuttonbn'] = 'BigBlueButton session configuration';
 $string['privacy:metadata:bigbluebuttonbn:participants'] = 'A list of rules that define the role users will have in the BigBlueButton session. A user ID may be stored as permissions can be granted per role or per user.';
@@ -135,7 +135,7 @@ $string['config_general_description'] = 'To set up BigBlueButton, you can either
 $string['config_profile_picture_enabled'] = 'Show profile pictures';
 $string['config_profile_picture_enabled_description'] = 'Should profile pictures of participants be shown in BigBlueButton sessions?';
 $string['config_server_url'] = 'BigBlueButton server URL';
-$string['config_server_url_description'] = 'The server URL of your BigBlueButton server ';
+$string['config_server_url_description'] = 'The URL of your BigBlueButton server.';
 $string['config_shared_secret'] = 'BigBlueButton shared secret';
 $string['config_shared_secret_description'] = 'The security secret of your BigBlueButton server.';
 $string['config_checksum_algorithm'] = 'BigBlueButton server checksum algorithm';

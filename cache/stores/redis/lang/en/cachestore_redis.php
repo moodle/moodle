@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $string['ca_file'] = 'CA file path';
 $string['ca_file_help'] = 'Location of Certificate Authority file on local filesystem';
-$string['clustermode'] = 'Cluster Mode';
-$string['clustermode_help'] = 'Enabling it will run the Redis cluster function, allowing your server to serve multiple servers to handle concurrent requests simultaneously.';
+$string['clustermode'] = 'Cluster mode';
+$string['clustermode_help'] = 'Enabling cluster mode will run the Redis Cluster function, allowing your server to serve multiple servers to handle concurrent requests simultaneously.';
 $string['clustermodeunavailable'] = 'Redis Cluster is currently unavailable. Please ensure that the PHP Redis extension supports Redis Cluster functionality.';
 $string['compressor_none'] = 'No compression.';
 $string['compressor_php_gzip'] = 'Use gzip compression.';
@@ -57,16 +57,16 @@ Some example values:
 * 1.2.3.4:1234 - To connect to a Redis server by IP address with a specific port.
 * unix:///var/redis.sock - To connect to a Redis server using a Unix socket.
 * /var/redis.sock - To connect to a Redis server using a Unix socket (alternative format).
-* If cluster mode is enabled, please specify servers separated by a new line:<br>
+
+If cluster mode is enabled, specify servers separated by a new line, for example:<br>
   172.23.0.11<br>
   172.23.0.12<br>
   172.23.0.13<br>
-  Refer to the above examples to write a server.
 
-See <a href="https://redis.io/docs/reference/clients/#accepting-client-connections" target="_new">Accepting Client Connections</a> and <a href="https://redis.io/resources/clients/#php" target="_new">Redis PHP clients</a> for more information.';
+For further information, see <a href="https://redis.io/docs/reference/clients/#accepting-client-connections">Accepting Client Connections</a> and <a href="https://redis.io/resources/clients/#php">Redis PHP clients</a>.';
 $string['task_ttl'] = 'Free up memory used by expired entries in Redis caches';
-$string['test_clustermode'] = 'Cluster Mode';
-$string['test_clustermode_desc'] = 'Enable Test in Redis cluster mode.';
+$string['test_clustermode'] = 'Cluster mode';
+$string['test_clustermode_desc'] = 'Enable Test in Redis Cluster mode.';
 $string['test_password'] = 'Test server password';
 $string['test_password_desc'] = 'Redis test server password.';
 $string['test_serializer'] = 'Serializer';
@@ -82,13 +82,13 @@ Some example values:
 * 1.2.3.4:1234 - To connect to a Redis server by IP address with a specific port.
 * unix:///var/redis.sock - To connect to a Redis server using a Unix socket.
 * /var/redis.sock - To connect to a Redis server using a Unix socket (alternative format).
-* If cluster mode is enabled, please specify servers separated by a new line:<br>
+
+If cluster mode is enabled, specify servers separated by a new line, for example:<br>
   172.23.0.11<br>
   172.23.0.12<br>
   172.23.0.13<br>
-  Refer to the above examples to write a server.
 
-See <a href="https://redis.io/docs/reference/clients/#accepting-client-connections" target="_new">Accepting Client Connections</a> and <a href="https://redis.io/resources/clients/#php" target="_new">Redis PHP clients</a> for more information.';
+For further information, see <a href="https://redis.io/docs/reference/clients/#accepting-client-connections">Accepting Client Connections</a> and <a href="https://redis.io/resources/clients/#php">Redis PHP clients</a>.';
 $string['test_ttl'] = 'Testing TTL';
 $string['test_ttl_desc'] = 'Run the performance test using a cache that requires TTL (slower sets).';
 $string['usecompressor'] = 'Use compressor';
