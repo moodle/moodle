@@ -10,8 +10,11 @@ body.behat-site {
     // Sticky footer can overlap with elements so we keep it relative for behat.
     &.hasstickyfooter .stickyfooter,
     .stickyfooter {
-        position: relative;
+        position: inherit;
         z-index: inherit;
+        .bulkcancel {
+            position: inherit;
+        }
     }
 
     // We need more spacing in action menus so behat does not click on the wrong menu item.

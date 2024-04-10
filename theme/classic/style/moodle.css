@@ -35337,8 +35337,12 @@ body.behat-site .fixed-top {
 }
 body.behat-site.hasstickyfooter .stickyfooter,
 body.behat-site .stickyfooter {
-  position: relative;
+  position: inherit;
   z-index: inherit;
+}
+body.behat-site.hasstickyfooter .stickyfooter .bulkcancel,
+body.behat-site .stickyfooter .bulkcancel {
+  position: inherit;
 }
 body.behat-site .dropdown-item {
   margin-top: 4px !important; /* stylelint-disable declaration-no-important */
