@@ -39,7 +39,7 @@ require_once($CFG->dirroot . '/question/type/ordering/edit_ordering_form.php');
 require_once($CFG->libdir . '/questionlib.php');
 require_once($CFG->dirroot . '/question/format.php');
 require_once($CFG->dirroot . '/question/format/gift/format.php');
-require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/format/xml/format.php');
 
 /**
  * Unit tests for the ordering question type class.

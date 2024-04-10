@@ -24,6 +24,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
+require_once($CFG->dirroot . '/question/type/ordering/questiontype.php');
 
 /**
  * A test class used to test question_hint_ordering.
