@@ -96,7 +96,8 @@ class number extends base {
         $mform->hideIf($this->name . '_value1', $this->name . '_operator', 'in',
             [self::ANY_VALUE,  self::IS_NOT_EMPTY,  self::IS_EMPTY]);
 
-        $objs['text2'] = $mform->createElement('text', $this->name . '_value2', get_string('torecipient'), ['size' => 3]);
+        $objs['text2'] = $mform->createElement('text', $this->name . '_value2',
+            get_string('filterfieldto', 'reportbuilder', $this->get_header()), ['size' => 3]);
         $mform->setType($this->name . '_value2', PARAM_INT);
         $mform->setDefault($this->name . '_value2', 0);
         $mform->hideIf($this->name . '_value2', $this->name . '_operator', 'noteq', self::RANGE);
