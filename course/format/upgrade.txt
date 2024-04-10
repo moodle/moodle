@@ -4,6 +4,8 @@ Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/forma
 
 === 4.2.7 ===
 * The core_courseformat\base::get_format_string last parameter has been removed because it was erroneous.
+* New core_courseformat\base::add_section_preference_ids() to add the section ids to course format preferences.
+* New core_courseformat\base::remove_section_preference_ids() to remove the section ids out of course format preferences.
 
 === 4.2 ===
 * New core_courseformat\base::get_context() to get the course context directly from the format instance.
