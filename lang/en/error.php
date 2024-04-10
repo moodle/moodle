@@ -511,6 +511,7 @@ $string['privatefilesupload'] = 'Uploading directly to user private files area i
 $string['processingstops'] = 'Processing stops here. Remaining records ignored.';
 $string['querystringcannotbeempty'] = 'The query string cannot be empty.';
 $string['redirecterrordetected'] = 'Unsupported redirect detected, script execution terminated';
+$string['redissessionhandlerproblem'] = 'Setting up of redis session failed. Please notify the server administrator.';
 $string['refoundto'] = 'Can be refunded to {$a}';
 $string['refoundtoorigi'] = 'Refunded to original amount: {$a}';
 $string['registrationdisabled'] = 'Registration is disabled on this site';

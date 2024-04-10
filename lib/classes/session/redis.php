@@ -213,6 +213,11 @@ class redis extends handler implements SessionHandlerInterface {
             throw new exception('sessionhandlerproblem', 'error', '', null, 'redis extension version must be at least 2.0');
         }
 
+        $result = session_set_save_handler($this);
+        if (!$result) {
+            throw new exception('redissessionhandlerproblem', 'error');
+        }
+
         $encrypt = (bool) ($this->sslopts ?? false);
         // Set Redis server(s).
         $trimmedservers = [];

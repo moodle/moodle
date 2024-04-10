@@ -68,6 +68,7 @@ class session_redis_cluster_test extends \advanced_testcase {
      *
      * It covers the behavior of session read and write operations under different compression configurations.
      *
+     * @runInSeparateProcess
      * @covers ::read
      * @covers ::write
      */
@@ -85,6 +86,7 @@ class session_redis_cluster_test extends \advanced_testcase {
      * It sets up the environment to simulate multiple failed connection attempts and
      * checks if the expected exception message is received.
      *
+     * @runInSeparateProcess
      * @covers ::init
      */
     public function test_exception_when_connection_attempts_exceeded(): void {
