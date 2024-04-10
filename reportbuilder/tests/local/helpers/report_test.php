@@ -45,15 +45,25 @@ class report_test extends advanced_testcase {
         $this->setAdminUser();
 
         $report = report::create_report((object) [
-            'name' => 'My report',
+            'name' => 'My report with tags',
             'source' => users::class,
             'tags' => ['cat', 'dog'],
         ]);
 
-        $this->assertEquals('My report', $report->get('name'));
+        $this->assertEquals('My report with tags', $report->get('name'));
         $this->assertEquals(datasource::TYPE_CUSTOM_REPORT, $report->get('type'));
         $this->assertEqualsCanonicalizing(['cat', 'dog'],
             core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $report->get('id')));
+
+        $report = report::create_report((object) [
+            'name' => 'My report without tags',
+            'source' => users::class,
+        ]);
+
+        $this->assertEquals('My report without tags', $report->get('name'));
+        $this->assertEquals(datasource::TYPE_CUSTOM_REPORT, $report->get('type'));
+        $this->assertEmpty(core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report',
+            $report->get('id')));
     }
 
     /**
@@ -69,12 +79,23 @@ class report_test extends advanced_testcase {
 
         $reportupdated = report::update_report((object) [
             'id' => $report->get('id'),
-            'name' => 'My renamed report',
+            'name' => 'My renamed report without add tags',
+            'uniquerows' => 1,
+        ]);
+
+        $this->assertEquals('My renamed report without add tags', $reportupdated->get('name'));
+        $this->assertTrue($reportupdated->get('uniquerows'));
+        $this->assertEmpty(core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report',
+            $reportupdated->get('id')));
+
+        $reportupdated = report::update_report((object) [
+            'id' => $report->get('id'),
+            'name' => 'My renamed report adding tags',
             'uniquerows' => 1,
             'tags' => ['cat', 'dog'],
         ]);
 
-        $this->assertEquals('My renamed report', $reportupdated->get('name'));
+        $this->assertEquals('My renamed report adding tags', $reportupdated->get('name'));
         $this->assertTrue($reportupdated->get('uniquerows'));
         $this->assertEqualsCanonicalizing(['cat', 'dog'],
             core_tag_tag::get_item_tags_array('core_reportbuilder', 'reportbuilder_report', $reportupdated->get('id')));
