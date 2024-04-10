@@ -473,12 +473,16 @@ export default class {
      * @param {boolean} collapsed the new collapsed value
      */
     async sectionIndexCollapsed(stateManager, sectionIds, collapsed) {
-        const collapsedIds = this._updateStateSectionPreference(stateManager, 'indexcollapsed', sectionIds, collapsed);
-        if (!collapsedIds) {
+        const affectedSections = this._updateStateSectionPreference(stateManager, 'indexcollapsed', sectionIds, collapsed);
+        if (!affectedSections) {
             return;
         }
         const course = stateManager.get('course');
-        await this._callEditWebservice('section_index_collapsed', course.id, collapsedIds);
+        let actionName = 'section_index_collapsed';
+        if (!collapsed) {
+            actionName = 'section_index_expanded';
+        }
+        await this._callEditWebservice(actionName, course.id, affectedSections);
     }
 
     /**
@@ -489,12 +493,16 @@ export default class {
      * @param {boolean} collapsed the new collapsed value
      */
     async sectionContentCollapsed(stateManager, sectionIds, collapsed) {
-        const collapsedIds = this._updateStateSectionPreference(stateManager, 'contentcollapsed', sectionIds, collapsed);
-        if (!collapsedIds) {
+        const affectedSections = this._updateStateSectionPreference(stateManager, 'contentcollapsed', sectionIds, collapsed);
+        if (!affectedSections) {
             return;
         }
         const course = stateManager.get('course');
-        await this._callEditWebservice('section_content_collapsed', course.id, collapsedIds);
+        let actionName = 'section_content_collapsed';
+        if (!collapsed) {
+            actionName = 'section_content_expanded';
+        }
+        await this._callEditWebservice(actionName, course.id, affectedSections);
     }
 
     /**
@@ -508,32 +516,22 @@ export default class {
      */
     _updateStateSectionPreference(stateManager, preferenceName, sectionIds, preferenceValue) {
         stateManager.setReadOnly(false);
-        const affectedSections = new Set();
+        const affectedSections = [];
         // Check if we need to update preferences.
         sectionIds.forEach(sectionId => {
             const section = stateManager.get('section', sectionId);
             if (section === undefined) {
+                stateManager.setReadOnly(true);
                 return null;
             }
             const newValue = preferenceValue ?? section[preferenceName];
             if (section[preferenceName] != newValue) {
                 section[preferenceName] = newValue;
-                affectedSections.add(section.id);
+                affectedSections.push(section.id);
             }
         });
         stateManager.setReadOnly(true);
-        if (affectedSections.size == 0) {
-            return null;
-        }
-        // Get all collapsed section ids.
-        const collapsedSectionIds = [];
-        const state = stateManager.state;
-        state.section.forEach(section => {
-            if (section[preferenceName]) {
-                collapsedSectionIds.push(section.id);
-            }
-        });
-        return collapsedSectionIds;
+        return affectedSections;
     }
 
     /**
