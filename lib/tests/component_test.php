@@ -411,6 +411,73 @@ class component_test extends advanced_testcase {
         }
     }
 
+    /**
+     * Unit tests for get_component_from_classname.
+     *
+     * @dataProvider get_component_from_classname_provider
+     * @param string $classname The class name to test
+     * @param string|null $expected The expected component
+     * @covers \core_component::get_component_from_classname
+     */
+    public function test_get_component_from_classname(
+        string $classname,
+        string|null $expected,
+    ): void {
+        $this->assertEquals(
+            $expected,
+            \core_component::get_component_from_classname($classname),
+        );
+    }
+
+    /**
+     * Data provider for get_component_from_classname tests.
+     *
+     * @return array
+     */
+    public static function get_component_from_classname_provider(): array {
+        // Start off with testcases which have the leading \.
+        $testcases = [
+            // Core.
+            [\core\example::class, 'core'],
+
+            // A core subsystem.
+            [\core_message\example::class, 'core_message'],
+
+            // A fake core subsystem.
+            [\core_fake\example::class, null],
+
+            // A plugin.
+            [\mod_forum\example::class, 'mod_forum'],
+
+            // A plugin in the old style is not supported.
+            [\mod_forum_example::class, null],
+
+            // A fake plugin.
+            [\mod_fake\example::class, null],
+
+            // A subplugin.
+            [\tiny_link\example::class, 'tiny_link'],
+        ];
+
+        // Duplicate the testcases, adding a nested namespace.
+        $testcases = array_merge(
+            $testcases,
+            array_map(
+                fn ($testcase) => [$testcase[0] . '\\in\\sub\\directory', $testcase[1]],
+                $testcases,
+            ),
+        );
+
+        // Duplicate the testcases, removing the leading \.
+        return array_merge(
+            $testcases,
+            array_map(
+                fn ($testcase) => [ltrim($testcase[0], '\\'), $testcase[1]],
+                $testcases,
+            ),
+        );
+    }
+
     public function test_deprecated_get_component_directory(): void {
         $plugintypes = core_component::get_plugin_types();
         foreach ($plugintypes as $plugintype => $fulldir) {
@@ -873,22 +940,31 @@ class component_test extends advanced_testcase {
 
     /**
      * Test the get_component_names() method.
+     *
+     * @dataProvider get_component_names_provider
+     * @param bool $includecore Whether to include core in the list.
+     * @param bool $coreexpected Whether core is expected to be in the list.
      */
-    public function test_get_component_names(): void {
+    public function test_get_component_names(
+        bool $includecore,
+        bool $coreexpected,
+    ): void {
         global $CFG;
-        $componentnames = \core_component::get_component_names();
+        $componentnames = \core_component::get_component_names($includecore);
 
         // We should have an entry for each plugin type.
         $plugintypes = \core_component::get_plugin_types();
         $numplugintypes = 0;
-        foreach ($plugintypes as $type => $typedir) {
-            foreach (\core_component::get_plugin_list($type) as $plugin) {
-                $numplugintypes++;
-            }
+        foreach (array_keys($plugintypes) as $type) {
+            $numplugintypes += count(\core_component::get_plugin_list($type));
         }
         // And an entry for each core subsystem.
         $numcomponents = $numplugintypes + count(\core_component::get_core_subsystems());
 
+        if ($coreexpected) {
+            // Add one for core.
+            $numcomponents++;
+        }
         $this->assertEquals($numcomponents, count($componentnames));
 
         // Check a few of the known plugin types to confirm their presence at their respective type index.
@@ -896,6 +972,23 @@ class component_test extends advanced_testcase {
         $this->assertContains('mod_forum', $componentnames);
         $this->assertContains('tool_usertours', $componentnames);
         $this->assertContains('core_favourites', $componentnames);
+        if ($coreexpected) {
+            $this->assertContains('core', $componentnames);
+        } else {
+            $this->assertNotContains('core', $componentnames);
+        }
+    }
+
+    /**
+     * Data provider for get_component_names() test.
+     *
+     * @return array
+     */
+    public static function get_component_names_provider(): array {
+        return [
+            [false, false],
+            [true, true],
+        ];
     }
 
     /**
