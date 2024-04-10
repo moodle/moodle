@@ -79,6 +79,7 @@ $string['iomad_showcharts'] = 'Show course completion charts as default';
 $string['iomad_showcharts_help'] = 'If checked, the charts will be shown first with an option to show as text instead';
 $string['iomad_sync_department'] = 'Sync company department with profile';
 $string['iomad_sync_department_help'] = 'Selecting this will either keep the user\'s profile field for department in sync with the name of the company department that the user is allocated to (Set from company department), or will assign the user to a company department which matches (Set to company department). If the user is in multiple departments, then this will show \'Multiple\' instead.';
+$string['iomad_sync_institution'] = 'Sync company name with profile';
 $string['iomad_sync_institution_help'] = 'Selecting this will keep the user\'s institution profile field in sync with either the shortname or name of the company that the user is allocated to. If the user is in multiple companies, then this will show \'Multiple\' instead.';
 $string['iomad_use_email_as_username'] = 'Use email address as user name';
 $string['iomad_use_email_as_username_help'] = 'Selecting this will change the way a user\'s username is automatically created for a new user account in IOMAD so that it simply uses their email address';
