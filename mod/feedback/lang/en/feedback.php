@@ -194,7 +194,10 @@ $string['multichoicerated'] = 'Multiple choice (rated)';
 $string['multichoicetype'] = 'Multiple choice type';
 $string['multichoice_values'] = 'Multiple choice values';
 $string['multiplesubmit'] = 'Allow multiple submissions';
-$string['multiplesubmit_help'] = 'If enabled for anonymous surveys, users can submit feedback an unlimited number of times.';
+$string['multiplesubmit_help'] = 'If set to Yes:
+
+* For anonymous surveys: participants can submit unlimited responses, and all responses will be recorded.
+* For non-anonymous surveys: participants can submit unlimited responses, but only their latest response will be recorded.';
 $string['name'] = 'Name';
 $string['name_required'] = 'Name required';
 $string['nameandlabelformat'] = '({$a->label}) {$a->name}';
