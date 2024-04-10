@@ -47,8 +47,14 @@ cp -v $SUB_DIR/LICENSE ../amd/src/beautify/LICENSE
 # Remove the temporary directory, node_modules directory and the js-beautify zip.
 rm -rf $TEMP_DIR
 
-echo 'Code mirror version: ' $(npm --json ls  codemirror | jq -r '.dependencies.codemirror.version')
-echo 'Beautify version:' $(curl -s $API_URL | jq -r '.tag_name')
+packages=($(npm list --json | jq -r '.dependencies | to_entries[] | select(.key | startswith("codemirror") or startswith("@codemirror")) | .key'))
 
+for package in "${packages[@]}"
+do
+  version=`npm --json ls $package | jq -r '.dependencies."'$package'".version'`
+  echo "Version of $package: $version"
+done
+echo 'Beautify version:' $(curl -s $API_URL | jq -r '.tag_name')
+echo "Node version: $(node -v)"
 rm -rf node_modules
 rm latest_release.zip
