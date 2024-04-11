@@ -1597,7 +1597,8 @@ class modinfolib_test extends advanced_testcase {
             ],
             [
                 'createsections' => true,
-            ]);
+            ]
+        );
         $coursetwo = $this->getDataGenerator()->create_course(
             [
                 'format' => 'topics',
@@ -1605,8 +1606,8 @@ class modinfolib_test extends advanced_testcase {
             ],
             [
                 'createsections' => true,
-            ]);
-
+            ]
+        );
         $coursethree = $this->getDataGenerator()->create_course(
             [
                 'format' => 'topics',
@@ -1614,7 +1615,8 @@ class modinfolib_test extends advanced_testcase {
             ],
             [
                 'createsections' => true,
-            ]);
+            ]
+        );
 
         // Make sure the cacherev is set for all three.
         $cacherevone = $DB->get_field('course', 'cacherev', ['id' => $courseone->id]);
@@ -1730,5 +1732,4 @@ class modinfolib_test extends advanced_testcase {
         $cacherevthree = $DB->get_field('course', 'cacherev', ['id' => $coursethree->id]);
         $this->assertGreaterThan($prevcacherevthree, $cacherevthree);
     }
-
 }
