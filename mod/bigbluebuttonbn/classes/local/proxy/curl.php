@@ -52,7 +52,7 @@ class curl extends \curl {
         parent::__construct($settings);
 
         $this->setopt(['SSL_VERIFYPEER' => true]);
-        $this->set_content_type('text/xml');
+        $this->set_content_type('application/xml');
     }
 
     /**
