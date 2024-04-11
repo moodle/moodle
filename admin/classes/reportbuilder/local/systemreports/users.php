@@ -317,9 +317,14 @@ class users extends system_report {
             false,
             new lang_string('denyaccess', 'mnet'),
         ))->add_callback(static function(\stdclass $row) use ($DB, $contextsystem): bool {
-            $acl = $DB->get_record('mnet_sso_access_control', ['username' => $row->username, 'mnet_host_id' => $row->mnethostid]);
+            if (!$accessctrl = $DB->get_field(table: 'mnet_sso_access_control', return: 'accessctrl',
+                conditions: ['username' => $row->username, 'mnet_host_id' => $row->mnethostid]
+            )) {
+                $accessctrl = 'allow';
+            }
+
             return has_capability('moodle/user:update', $contextsystem) && !$row->suspended &&
-                is_mnet_remote_user($row) && $acl->accessctrl == 'allow';
+                is_mnet_remote_user($row) && $accessctrl == 'allow';
         }));
 
         // Action to unsuspend users (mnet remote users).
@@ -330,9 +335,14 @@ class users extends system_report {
             false,
             new lang_string('allowaccess', 'mnet'),
         ))->add_callback(static function(\stdclass $row) use ($DB, $contextsystem): bool {
-            $acl = $DB->get_record('mnet_sso_access_control', ['username' => $row->username, 'mnet_host_id' => $row->mnethostid]);
+            if (!$accessctrl = $DB->get_field(table: 'mnet_sso_access_control', return: 'accessctrl',
+                conditions: ['username' => $row->username, 'mnet_host_id' => $row->mnethostid]
+            )) {
+                $accessctrl = 'allow';
+            }
+
             return has_capability('moodle/user:update', $contextsystem) && !$row->suspended &&
-                is_mnet_remote_user($row) && $acl->accessctrl == 'deny';
+                is_mnet_remote_user($row) && $accessctrl == 'deny';
         }));
 
         // Action to delete users.
