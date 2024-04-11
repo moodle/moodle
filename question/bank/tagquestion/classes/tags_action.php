@@ -48,6 +48,10 @@ class tags_action extends question_action_base {
         $this->managetags = get_string('managetags', 'tag');
     }
 
+    public function get_menu_position(): int {
+        return 300;
+    }
+
     protected function check_tags_status(): void {
         global $CFG;
         if (!$CFG->usetags) {

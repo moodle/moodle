@@ -38,6 +38,10 @@ class preview_action extends question_action_base {
         $this->strpreview = get_string('preview');
     }
 
+    public function get_menu_position(): int {
+        return 100;
+    }
+
     protected function get_url_icon_and_label(\stdClass $question): array {
         if (!\question_bank::is_qtype_installed($question->qtype)) {
             // It sometimes happens that people end up with junk questions
