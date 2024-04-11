@@ -375,8 +375,22 @@ class view {
             $menuactions = $plugin->get_question_actions($this);
             foreach ($menuactions as $menuaction) {
                 $this->questionactions[$menuaction::class] = $menuaction;
+                if ($menuaction->get_menu_position() === question_action_base::MENU_POSITION_NOT_SET) {
+                    debugging('Question bank actions must define the get_menu_position method. ' .
+                        $menuaction::class . ' does not.', DEBUG_DEVELOPER);
+                }
             }
         }
+
+        // Sort according to each action's desired position.
+        // Note, we are relying on the sort to be stable for
+        // equal values of get_menu_position.
+        uasort(
+            $this->questionactions,
+            function (question_action_base $a, question_action_base $b) {
+                return $a->get_menu_position() <=> $b->get_menu_position();
+            },
+        );
     }
 
     /**
