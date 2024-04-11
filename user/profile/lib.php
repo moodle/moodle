@@ -151,10 +151,10 @@ class profile_field_base {
      *
      * @return string
      */
-    public function display_name() {
-        $options = new stdClass();
-        $options->para = false;
-        return format_text($this->field->name, FORMAT_MOODLE, $options);
+    public function display_name(): string {
+        return format_text($this->field->name, FORMAT_MOODLE, [
+            'para' => false,
+        ]);
     }
 
     /**

@@ -39,7 +39,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/user/externallib.php');
 require_once($CFG->dirroot . '/files/externallib.php');
 
-class externallib_test extends externallib_advanced_testcase {
+/**
+ * Tests for the user external functions.
+ *
+ * @package core_user
+ * @covers \core_user_external
+ */
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test get_users
@@ -179,7 +185,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_users_by_field
      */
-    public function test_get_users_by_field() {
+    public function test_get_users_by_field(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest(true);
@@ -350,9 +356,10 @@ class externallib_test extends externallib_advanced_testcase {
         $return = new \stdClass();
 
         $generator = self::getDataGenerator();
+
         // Create complex user profile field supporting multi-lang.
         filter_set_global_state('multilang', TEXTFILTER_ON);
-        $name = '<span lang="en" class="multilang">Employment status</span>'.
+        $name = '<span lang="en" class="multilang">Employment status</span>' .
             '<span lang="es" class="multilang">Estado de Empleo</span>';
         $statuses = 'UE\nSE\n<span lang="en" class="multilang">Other</span><span lang="es" class="multilang">Otro</span>';
         $generator->create_custom_profile_field(
@@ -360,7 +367,7 @@ class externallib_test extends externallib_advanced_testcase {
                 'datatype' => 'menu',
                 'shortname' => 'employmentstatus',
                 'name' => $name,
-                'param1' => $statuses
+                'param1' => $statuses,
             ]
         );
 
