@@ -365,7 +365,7 @@ class cron {
         }
 
         // Only rerun the failed tasks that allow to be re-tried or have the remaining attempts available.
-        $where .= 'AND (attemptsavailable > 0 OR attemptsavailable IS NULL)';
+        $where .= ' AND (attemptsavailable > 0 OR attemptsavailable IS NULL)';
         $tasks = $DB->get_records_sql("SELECT * from {task_adhoc} WHERE $where", $params);
         foreach ($tasks as $t) {
             self::run_adhoc_task($t->id);
