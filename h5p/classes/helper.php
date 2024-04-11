@@ -26,6 +26,7 @@ namespace core_h5p;
 
 use context_system;
 use core_h5p\local\library\autoloader;
+use core_user;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -176,46 +177,50 @@ class helper {
 
     /**
      * Checks if the author of the .h5p file is "trustable". If the file hasn't been uploaded by a user with the
-     * required capability, the content won't be deployed.
+     * required capability, the content won't be deployed, unless the user has been deleted, in this
+     * case we check the capability against current user.
      *
      * @param  stored_file $file The .h5p file to be deployed
      * @return bool Returns true if the file can be deployed, false otherwise.
      */
     public static function can_deploy_package(\stored_file $file): bool {
-        if (null === $file->get_userid()) {
+        $userid = $file->get_userid();
+        if (null === $userid) {
             // If there is no userid, it is owned by the system.
             return true;
         }
 
         $context = \context::instance_by_id($file->get_contextid());
-        if (has_capability('moodle/h5p:deploy', $context, $file->get_userid())) {
-            return true;
+        $fileuser = core_user::get_user($userid);
+        if (empty($fileuser) || $fileuser->deleted) {
+            $userid = null;
         }
-
-        return false;
+        return has_capability('moodle/h5p:deploy', $context, $userid);
     }
 
     /**
      * Checks if the content-type libraries can be upgraded.
      * The H5P content-type libraries can only be upgraded if the author of the .h5p file can manage content-types or if all the
-     * content-types exist, to avoid users without the required capability to upload malicious content.
+     * content-types exist, to avoid users without the required capability to upload malicious content. If user has been deleted
+     * we check against current user.
      *
      * @param  stored_file $file The .h5p file to be deployed
      * @return bool Returns true if the content-type libraries can be created/updated, false otherwise.
      */
     public static function can_update_library(\stored_file $file): bool {
-        if (null === $file->get_userid()) {
+        $userid = $file->get_userid();
+        if (null === $userid) {
             // If there is no userid, it is owned by the system.
             return true;
         }
-
         // Check if the owner of the .h5p file has the capability to manage content-types.
         $context = \context::instance_by_id($file->get_contextid());
-        if (has_capability('moodle/h5p:updatelibraries', $context, $file->get_userid())) {
-            return true;
+        $fileuser = core_user::get_user($userid);
+        if (empty($fileuser) || $fileuser->deleted) {
+            $userid = null;
         }
 
-        return false;
+        return has_capability('moodle/h5p:updatelibraries', $context, $userid);
     }
 
     /**
