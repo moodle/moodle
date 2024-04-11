@@ -55,6 +55,7 @@ class renderable_test extends \advanced_testcase {
             'teacher0' => ['group0'],
             'teacher1' => ['group1'],
             'teacher2' => ['group0', 'group1'],
+            'teacher3' => [],
         ],
         // Make editingteacher also member of group1.
         'editingteacher' => [
@@ -96,19 +97,39 @@ class renderable_test extends \advanced_testcase {
             'separategroups: student 1' => [
                 self::COURSE_SEPARATE_GROUP,
                 'student1',
-                // All users in group 1.
+                // All users in group1.
                 [
-                    'student1', 'student2', 'teacher1', 'teacher2', 'editingteacher1',
-                    'editingteacher2',
+                    'student1', 'student2',
+                    'teacher1', 'teacher2',
+                    'editingteacher1', 'editingteacher2',
+                ],
+            ],
+            'separategroups: student 2' => [
+                self::COURSE_SEPARATE_GROUP,
+                'student2',
+                // All users in group0 and group1.
+                [
+                    'student0', 'student1', 'student2',
+                    'teacher0', 'teacher1', 'teacher2',
+                    'editingteacher0', 'editingteacher1', 'editingteacher2',
+                ],
+            ],
+            'separategroups: student3' => [
+                self::COURSE_SEPARATE_GROUP,
+                'student3',
+                // Student 3 is not in any group so should only see user without a group.
+                [
+                    'student3',
+                    'teacher3',
                 ],
             ],
             'separategroups: editing teacher 0' => [
                 self::COURSE_SEPARATE_GROUP,
                 'editingteacher0',
-                // All users (including student3 who is not in a group).
+                // All users including student 3 as we can see all users (event the one not in a group).
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
@@ -125,55 +146,32 @@ class renderable_test extends \advanced_testcase {
             'separategroups: teacher 2' => [
                 self::COURSE_SEPARATE_GROUP,
                 'teacher2',
-                // All users in group 0 and 1.
+                // All users in group0 and group1.
                 [
                     'student0', 'student1', 'student2',
                     'teacher0', 'teacher1', 'teacher2',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
-            'separategroups: teacher 2 with group0 selected' => [
+            'separategroups: teacher 3' => [
                 self::COURSE_SEPARATE_GROUP,
-                'teacher2',
-                // All users in group 0.
+                'teacher3',
+                // Teacher 3 is not in any group so should only see user without a group.
                 [
-                    'student0', 'student2',
-                    'teacher0', 'teacher2',
-                    'editingteacher0', 'editingteacher2',
+                    'student3',
+                    'teacher3',
                 ],
-                'group0',
             ],
-            'separategroups: teacher 2 with group1 selected' => [
+            'separategroups: teacher 2 with group set to group 1' => [
                 self::COURSE_SEPARATE_GROUP,
                 'teacher2',
-                // All users in group 1.
+                // All users in group1.
                 [
                     'student1', 'student2',
                     'teacher1', 'teacher2',
                     'editingteacher1', 'editingteacher2',
                 ],
                 'group1',
-            ],
-            'visiblegroup: teacher 0 with group1 selected' => [
-                self::COURSE_VISIBLE_GROUP,
-                'teacher2',
-                // All users in group 1.
-                [
-                    'student1', 'student2',
-                    'teacher1', 'teacher2',
-                    'editingteacher1', 'editingteacher2',
-                ],
-                'group1',
-            ],
-            'visiblegroup: teacher 0 without group selected' => [
-                self::COURSE_VISIBLE_GROUP,
-                'teacher2',
-                // All users.
-                [
-                    'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
-                    'editingteacher0', 'editingteacher1', 'editingteacher2',
-                ],
             ],
             'visiblegroup: editing teacher' => [
                 self::COURSE_VISIBLE_GROUP,
@@ -181,7 +179,7 @@ class renderable_test extends \advanced_testcase {
                 // All users.
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
@@ -191,39 +189,40 @@ class renderable_test extends \advanced_testcase {
                 // All users.
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
-            'nogroup: teacher 0' => [
+            'visiblegroup: teacher 0' => [
                 self::COURSE_VISIBLE_GROUP,
                 'teacher2',
                 // All users.
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
-            'nogroup: editing teacher 0' => [
+            'visiblegroup: editing teacher 0' => [
                 self::COURSE_VISIBLE_GROUP,
                 'editingteacher0',
                 // All users.
                 [
                     'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
+                    'teacher0', 'teacher1', 'teacher2', 'teacher3',
                     'editingteacher0', 'editingteacher1', 'editingteacher2',
                 ],
             ],
-            'nogroup: student' => [
+            'visiblegroup: teacher 2 with group set to group 1' => [
                 self::COURSE_VISIBLE_GROUP,
-                'student0',
-                // All users.
+                'teacher2',
+                // All users in group1.
                 [
-                    'student0', 'student1', 'student2', 'student3',
-                    'teacher0', 'teacher1', 'teacher2',
-                    'editingteacher0', 'editingteacher1', 'editingteacher2',
+                    'student1', 'student2',
+                    'teacher1', 'teacher2',
+                    'editingteacher1', 'editingteacher2',
                 ],
+                'group1',
             ],
         ];
     }
