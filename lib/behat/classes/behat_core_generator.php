@@ -1052,15 +1052,15 @@ class behat_core_generator extends behat_generator_base {
             if (!empty($data['filepath'])) {
                 $filename = basename($data['filepath']);
                 $fs = get_file_storage();
-                $filerecord = array(
+                $filerecord = [
                     'component' => 'contentbank',
                     'filearea' => 'public',
                     'contextid' => $context->id,
                     'userid' => $data['userid'],
                     'itemid' => $content->get_id(),
                     'filename' => $filename,
-                    'filepath' => '/'
-                );
+                    'filepath' => '/',
+                ];
                 $fs->create_file_from_pathname($filerecord, $CFG->dirroot . $data['filepath']);
             }
         } else {
