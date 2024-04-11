@@ -608,7 +608,8 @@ class cache implements cache_loader {
         // store; parent method will have set it to all stores if needed.
         if ($setaftervalidation) {
             $lock = null;
-            if (!empty($this->requirelockingbeforewrite)) {
+            // Only try to acquire a lock for this cache if we do not already have one.
+            if (!empty($this->requirelockingbeforewrite) && !$this->check_lock_state($key)) {
                 $lock = $this->acquire_lock($key);
             }
             if ($requiredversion === self::VERSION_NONE) {
