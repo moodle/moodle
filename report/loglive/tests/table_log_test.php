@@ -303,7 +303,10 @@ class table_log_test extends advanced_testcase {
         $this->setUser($currentuser->id);
         $store->flush();
         $table->query_db(100);
-        $filteredevents = array_filter($table->rawdata, fn($event) => get_class($event) === \core\event\course_viewed::class);
+        $filteredevents =
+            array_filter(
+                $table->rawdata, fn($event) => get_class($event) === \core\event\course_viewed::class
+            );
         $usernames = array_map(
             function($event) {
                 $user = core_user::get_user($event->userid, '*', MUST_EXIST);
