@@ -71,13 +71,48 @@ class controlmenu implements named_templatable, renderable {
      * @return array data context for a mustache template
      */
     public function export_for_template(\renderer_base $output): stdClass {
-
-        $section = $this->section;
-
-        $controls = $this->section_control_items();
-
-        if (empty($controls)) {
+        $menu = $this->get_action_menu($output);
+        if (empty($menu)) {
             return new stdClass();
+        }
+
+        $data = (object)[
+            'menu' => $output->render($menu),
+            'hasmenu' => true,
+            'id' => $this->section->id,
+        ];
+
+        return $data;
+    }
+
+    /**
+     * Generate the action menu element depending on the section.
+     *
+     * Sections controlled by a plugin will delegate the control menu to the plugin.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return action_menu|null the activity action menu or null if no action menu is available
+     */
+    public function get_action_menu(\renderer_base $output): ?action_menu {
+        $sectiondelegate = $this->section->get_component_instance();
+        if ($sectiondelegate) {
+            return $sectiondelegate->get_section_action_menu($this->format, $this, $output);
+        }
+        return $this->get_default_action_menu($output);
+    }
+
+    /**
+     * Generate the default section action menu.
+     *
+     * This method is public in case some block needs to modify the menu before output it.
+     *
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return action_menu|null the activity action menu
+     */
+    public function get_default_action_menu(\renderer_base $output): ?action_menu {
+        $controls = $this->section_control_items();
+        if (empty($controls)) {
+            return null;
         }
 
         // Convert control array into an action_menu.
@@ -98,14 +133,7 @@ class controlmenu implements named_templatable, renderable {
             );
             $menu->add($al);
         }
-
-        $data = (object)[
-            'menu' => $output->render($menu),
-            'hasmenu' => true,
-            'id' => $section->id,
-        ];
-
-        return $data;
+        return $menu;
     }
 
     /**

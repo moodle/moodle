@@ -299,7 +299,8 @@ class section implements named_templatable, renderable {
             return false;
         }
 
-        if (empty($this->hidecontrols)) {
+        // In a single section page the control menu is located in the page header.
+        if (empty($this->hidecontrols) && $this->format->get_sectionid() != $this->section->id) {
             $controlmenu = new $this->controlmenuclass($this->format, $this->section);
             $data->controlmenu = $controlmenu->export_for_template($output);
         }

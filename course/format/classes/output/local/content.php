@@ -14,14 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Contains the main course format out class.
- *
- * @package   core_courseformat
- * @copyright 2020 Ferran Recio <ferran@moodle.com>
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core_courseformat\output\local;
 
 use core\output\named_templatable;
@@ -39,7 +31,7 @@ use renderable;
 class content implements named_templatable, renderable {
     use courseformat_named_templatable;
 
-    /** @var core_courseformat\base the course format class */
+    /** @var \core_courseformat\base the course format class */
     protected $format;
 
     /** @var string the section format class */
@@ -53,6 +45,9 @@ class content implements named_templatable, renderable {
 
     /** @var string section selector class name */
     protected $sectionselectorclass;
+
+    /** @var string the section control menu class */
+    protected $sectioncontrolmenuclass;
 
     /** @var string bulk editor bar toolbox */
     protected $bulkedittoolsclass;
@@ -74,13 +69,14 @@ class content implements named_templatable, renderable {
         $this->sectionnavigationclass = $format->get_output_classname('content\\sectionnavigation');
         $this->sectionselectorclass = $format->get_output_classname('content\\sectionselector');
         $this->bulkedittoolsclass = $format->get_output_classname('content\\bulkedittools');
+        $this->sectioncontrolmenuclass = $format->get_output_classname('content\\section\\controlmenu');
     }
 
     /**
      * Export this data so it can be used as the context for a mustache template (core/inplace_editable).
      *
-     * @param renderer_base $output typically, the renderer that's calling this function
-     * @return stdClass data context for a mustache template
+     * @param \renderer_base $output typically, the renderer that's calling this function
+     * @return \stdClass data context for a mustache template
      */
     public function export_for_template(\renderer_base $output) {
         global $PAGE;
@@ -123,6 +119,24 @@ class content implements named_templatable, renderable {
         }
 
         return $data;
+    }
+
+    /**
+     * Retrieves the action menu for the page header of the local content section.
+     *
+     * @param \renderer_base $output The renderer object used for rendering the action menu.
+     * @return string|null The rendered action menu HTML, null if page no action menu is available.
+     */
+    public function get_page_header_action(\renderer_base $output): ?string {
+        $sectionid = $this->format->get_sectionid();
+        if ($sectionid !== null) {
+            $modinfo = $this->format->get_modinfo();
+            $sectioninfo = $modinfo->get_section_info_by_id($sectionid);
+            /** @var \core_courseformat\output\local\content\section\controlmenu */
+            $controlmenu = new $this->sectioncontrolmenuclass($this->format, $sectioninfo);
+            return $output->render($controlmenu->get_action_menu($output));
+        }
+        return null;
     }
 
     /**
