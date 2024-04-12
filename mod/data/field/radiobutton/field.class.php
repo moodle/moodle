@@ -69,7 +69,7 @@ class data_field_radiobutton extends data_field_base {
         }
 
         $str = '<div title="' . s($this->field->description) . '">';
-        $str .= '<fieldset><legend><span class="accesshide">' . $this->field->name;
+        $str .= '<fieldset><legend><span class="accesshide">' . s($this->field->name);
 
         if ($this->field->required) {
             $str .= '&nbsp;' . get_string('requiredelement', 'form') . '</span></legend>';
