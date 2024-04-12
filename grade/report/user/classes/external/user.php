@@ -88,7 +88,8 @@ class user extends external_api {
             core_user::require_active_user($user);
             // Check if we can view the user group (if any).
             // When userid == 0, we are retrieving all the users, we'll check then if a groupid is required.
-            if (!groups_user_groups_visible($course, $user->id)) {
+            // User are always in their own group, also when they don't have groups.
+            if ($userid != $USER->id && !groups_user_groups_visible($course, $user->id)) {
                 throw new moodle_exception('notingroup');
             }
         }
@@ -107,21 +108,24 @@ class user extends external_api {
             throw new moodle_exception('nopermissiontoviewgrades', 'error');
         }
 
-        if (!empty($groupid)) {
-            // Determine is the group is visible to user.
-            if (!groups_group_visible($groupid, $course)) {
-                throw new moodle_exception('notingroup');
-            }
-        } else {
-            // Check to see if groups are being used here.
-            if ($groupmode = groups_get_course_groupmode($course)) {
-                $groupid = groups_get_course_group($course);
-                // Determine is the group is visible to user (this is particullary for the group 0).
+        // User are always in their own group, also when they don't have groups.
+        if ($userid != $USER->id) {
+            if (!empty($groupid)) {
+                // Determine if the group is visible to user.
                 if (!groups_group_visible($groupid, $course)) {
                     throw new moodle_exception('notingroup');
                 }
             } else {
-                $groupid = 0;
+                // Check to see if groups are being used here.
+                if ($groupmode = groups_get_course_groupmode($course)) {
+                    $groupid = groups_get_course_group($course);
+                    // Determine if the group is visible to the user (this is particularly for group 0).
+                    if (!groups_group_visible($groupid, $course)) {
+                        throw new moodle_exception('notingroup');
+                    }
+                } else {
+                    $groupid = 0;
+                }
             }
         }
 
