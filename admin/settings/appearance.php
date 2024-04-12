@@ -353,11 +353,13 @@ if ($hassiteconfig or has_any_capability($capabilities, $systemcontext)) { // sp
     foreach (core_component::get_plugin_list('theme') as $theme => $themedir) {
         $settingspath = "$themedir/settings.php";
         if (file_exists($settingspath)) {
-            $settings = new admin_externalpage('themesetting' . $theme, new lang_string('pluginname', 'theme_'.$theme),
-                new moodle_url($settingspath), 'moodle/site:config', true);
+            $settings = new admin_settingpage("themesetting$theme", new lang_string('pluginname', "theme_$theme"),
+                'moodle/site:config', true
+            );
             include($settingspath);
-            if ($settings) {
-                $ADMIN->add('appearance', $settings);
+            // Add settings if not hidden (to avoid displaying the section if it appears empty in the UI).
+            if ($settings && !$settings->hidden) {
+                $ADMIN->add('themes', $settings);
             }
         }
     }
