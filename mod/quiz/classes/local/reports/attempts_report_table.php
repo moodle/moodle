@@ -671,28 +671,21 @@ abstract class attempts_report_table extends \table_sql {
      * @param int $gradeitemid the grade item to add information for.
      */
     protected function add_grade_item_mark(int $gradeitemid): void {
+        $dm = new question_engine_data_mapper();
+
         $alias = 'gimarks' . $gradeitemid;
 
-        // This condition roughly filters the list of attempts to be considered.
-        // It is only used in a sub-select to help database query optimisers (see MDL-30122).
-        // Therefore, it is better to use a very simple  which may include
-        // too many records, than to do a super-accurate join.
-        $qubaids = new qubaid_join("{quiz_slots} {$alias}slot2", 'quiza.uniqueid',
-                "{$alias}slot2.quizgradeitemid = :{$alias}gradeitemid2", [$alias . 'gradeitemid2' => $gradeitemid]);
-
-        $dm = new question_engine_data_mapper();
-        [$qalatestview, $viewparams] = $dm->question_attempt_latest_state_view($alias, $qubaids);
-
         $this->sql->fields .= ",\n(
-                SELECT SUM({$alias}.fraction * {$alias}.maxmark) AS summarks
+                SELECT SUM({$alias}qas.fraction * {$alias}qa.maxmark) AS summarks
 
-              FROM {quiz_slots} slot
-              JOIN $qalatestview ON {$alias}.slot = slot.slot
-
-              WHERE slot.quizgradeitemid = :{$alias}gradeitemid
-            ) marks$gradeitemid";
+                  FROM {quiz_slots} {$alias}slot
+                  JOIN {question_attempts} {$alias}qa ON {$alias}qa.slot = {$alias}slot.slot
+                  JOIN {question_attempt_steps} {$alias}qas ON {$alias}qas.questionattemptid = {$alias}qa.id
+                            AND {$alias}qas.sequencenumber = {$dm->latest_step_for_qa_subquery("{$alias}qa.id")}
+                 WHERE {$alias}qa.questionusageid = quiza.uniqueid
+                   AND {$alias}slot.quizgradeitemid = :{$alias}gradeitemid
+            ) AS marks$gradeitemid";
         $this->sql->params[$alias . 'gradeitemid'] = $gradeitemid;
-        $this->sql->params = array_merge($this->sql->params, $viewparams);
     }
 
     /**

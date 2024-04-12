@@ -1252,7 +1252,13 @@ ORDER BY
             ) {$alias}", $qubaids->from_where_params());
     }
 
-    protected function latest_step_for_qa_subquery($questionattemptid = 'qa.id') {
+    /**
+     * Get the subquery which selects the latest step for each question_attempt.
+     *
+     * @param string $questionattemptid column alias for the column to join on which is question_attempt.id.
+     * @return string SQL fragment to include in the query. Has not placeholders.
+     */
+    public function latest_step_for_qa_subquery($questionattemptid = 'qa.id') {
         return "(
                 SELECT MAX(sequencenumber)
                 FROM {question_attempt_steps}
