@@ -43,19 +43,21 @@
 
 <div data-region="items-list" role="list">
     {{#items}}
-        <a class="card mb-1" href="{{{viewurl}}}" title="{{{name}}}" role="listitem">
-            <div class="card-body p-2 m-1">
-                <div class="d-flex text-truncate">
-                    <div class="d-flex align-self-center activityiconcontainer">
-                        {{{icon}}}
-                    </div>
-                    <div class="w-100 line-height-3 text-truncate ml-2">
-                        <h6 class="mb-0 text-truncate"><span class="clickable">{{{name}}}</span></h6>
-                        <small class="text-truncate mb-0">{{{coursename}}}</small>
+        <div class="card" role="listitem">
+            <a class="mb-1" href="{{{viewurl}}}" title="{{{name}}}">
+                <div class="card-body p-2 m-1">
+                    <div class="d-flex text-truncate">
+                        <div class="d-flex align-self-center activityiconcontainer">
+                            {{{icon}}}
+                        </div>
+                        <div class="w-100 line-height-3 text-truncate ml-2">
+                            <h6 class="mb-0 text-truncate"><span class="clickable">{{{name}}}</span></h6>
+                            <small class="text-truncate mb-0">{{{coursename}}}</small>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </a>
+            </a>
+        </div>
     {{/items}}
 </div>
 {{#hasmoreitems}}

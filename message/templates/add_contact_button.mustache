@@ -28,7 +28,12 @@
     }
 }}
 <span>
-    {{#pix}} t/addcontact, core, {{#str}} addtoyourcontacts, message {{/str}} {{/pix}}
-    {{#displaytextlabel}}<span class="header-button-title">{{#str}} addtoyourcontacts, message {{/str}}</span>{{/displaytextlabel}}
+    {{^displaytextlabel}}
+        {{#pix}} t/addcontact, core, {{#str}} addtoyourcontacts, message {{/str}} {{/pix}}
+    {{/displaytextlabel}}
+    {{#displaytextlabel}}
+        {{#pix}} t/addcontact, core {{/pix}}
+        <span class="header-button-title">{{#str}} addtoyourcontacts, message {{/str}}</span>
+    {{/displaytextlabel}}
 </span>
 {{> core/loading }}

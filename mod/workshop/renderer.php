@@ -308,7 +308,7 @@ class mod_workshop_renderer extends plugin_renderer_base {
 
             if ($phase->active) {
                 // Mark the section as the current one.
-                $icon = $this->output->pix_icon('i/marked', '', 'moodle', ['role' => 'presentation']);
+                $icon = $this->output->pix_icon('i/marked', '');
                 $actions .= get_string('userplancurrentphase', 'workshop').' '.$icon;
 
             } else {
