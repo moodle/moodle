@@ -620,11 +620,66 @@ class moodle_url {
         if ($querystring !== '') {
             $uri .= '?' . $querystring;
         }
-        if (!is_null($this->anchor)) {
-            $uri .= '#'.$this->anchor;
-        }
+
+        $uri .= $this->get_encoded_anchor();
 
         return $uri;
+    }
+
+    /**
+     * Encode the anchor according to RFC 3986.
+     *
+     * @return string The encoded anchor
+     */
+    public function get_encoded_anchor(): string {
+        if (is_null($this->anchor)) {
+            return '';
+        }
+
+        // RFC 3986 allows the following characters in a fragment without them being encoded:
+        // pct-encoded: "%" HEXDIG HEXDIG
+        // unreserved:  ALPHA / DIGIT / "-" / "." / "_" / "~" /
+        // sub-delims:  "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "=" / ":" / "@"
+        // fragment:    "/" / "?"
+        //
+        // All other characters should be encoded.
+        // These should not be encoded in the fragment unless they were already encoded.
+
+        // The following characters are allowed in the fragment without encoding.
+        // In addition to this list is pct-encoded, but we can't easily handle this with a regular expression.
+        $allowed = 'a-zA-Z0-9\\-._~!$&\'()*+,;=:@\/?';
+        $anchor = '#';
+
+        $remainder = $this->anchor;
+        do {
+            // Split the string on any %.
+            $parts = explode('%', $remainder, 2);
+            $anchorparts = array_shift($parts);
+
+            // The first part can go through our preg_replace_callback to quote any relevant characters.
+            $anchor .= preg_replace_callback(
+                '/[^' . $allowed . ']/',
+                fn ($matches) => rawurlencode($matches[0]),
+                $anchorparts,
+            );
+
+            // The second part _might_ be a valid pct-encoded character.
+            if (count($parts) === 0) {
+                break;
+            }
+
+            // If the second part is a valid pct-encoded character, append it to the anchor.
+            $remainder = array_shift($parts);
+            if (preg_match('/^[a-fA-F0-9]{2}/', $remainder, $matches)) {
+                $anchor .= "%{$matches[0]}";
+                $remainder = substr($remainder, 2);
+            } else {
+                // This was not a valid pct-encoded character. Encode the % and continue with the next part.
+                $anchor .= rawurlencode('%');
+            }
+        } while (strlen($remainder) > 0);
+
+        return $anchor;
     }
 
     /**
@@ -640,8 +695,8 @@ class moodle_url {
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
-        if ($includeanchor and !is_null($this->anchor)) {
-            $uri .= '#' . $this->anchor;
+        if ($includeanchor) {
+            $uri .= $this->get_encoded_anchor();
         }
 
         return $uri;
@@ -717,15 +772,8 @@ class moodle_url {
         if (is_null($anchor)) {
             // Remove.
             $this->anchor = null;
-        } else if ($anchor === '') {
-            // Special case, used as empty link.
-            $this->anchor = '';
-        } else if (preg_match('|[a-zA-Z\_\:][a-zA-Z0-9\_\-\.\:]*|', $anchor)) {
-            // Match the anchor against the NMTOKEN spec.
-            $this->anchor = $anchor;
         } else {
-            // Bad luck, no valid anchor found.
-            $this->anchor = null;
+            $this->anchor = $anchor;
         }
     }
 
