@@ -82,3 +82,19 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     And I click on "Save changes" "button"
     Then I should see "Changes saved"
     And I should see "Student must achieve at least one of the following statuses: Completed"
+
+  @javascript @accessibility
+  Scenario: Evaluate the accessibility of the default activity completion page
+    Given the following "courses" exist:
+      | fullname | shortname | category | enablecompletion |
+      | Course 1 | C1        | 0        | 1                |
+    And the following "users" exist:
+      | username | firstname | lastname | email |
+      | teacher1 | Teacher | First | teacher1@example.com |
+    And the following "course enrolments" exist:
+      | user     | course | role           |
+      | teacher1 | C1     | editingteacher |
+    And I am on the "Course 1" course page logged in as teacher1
+    When I navigate to "Course completion" in current page administration
+    And I select "Default activity completion" from the "Course completion tertiary navigation" singleselect
+    And the page should meet accessibility standards
