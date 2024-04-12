@@ -70,3 +70,8 @@ Feature: Zero state on my overview block
     And "Create course" "button" should exist
     And I click on "Create course" "button"
     And I should see "Add a new course"
+
+  @accessibility
+  Scenario: Evaluate the accessibility of the My courses (zero state)
+    When I am on the "My courses" page logged in as "manager"
+    Then the page should meet accessibility standards

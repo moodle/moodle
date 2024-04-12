@@ -78,3 +78,10 @@ Feature: Allow teachers to bulk edit activity completion rules in a course.
     And I should see "With conditions" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
     And I should see "Passing grade" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
     And I should not see "Completion expected on" in the "//div[contains(concat(' ', normalize-space(@class), ' '), ' row ')][.//*[text() = 'Test assignment two']]" "xpath_element"
+
+  @accessibility
+  Scenario: Evaluate the accessibility of the bulk edit activity completion page
+    Given I am on the "Course 1" course page logged in as "teacher1"
+    When I navigate to "Course completion" in current page administration
+    And I set the field "Course completion tertiary navigation" to "Bulk edit activity completion"
+    And the page should meet "wcag21aa" accessibility standards

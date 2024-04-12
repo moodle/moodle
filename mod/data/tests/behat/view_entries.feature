@@ -191,3 +191,18 @@ Feature: Users can view and search database entries
       | param1 | param3 | autolink   |
       | 0      | 0      | should not |
       | 1      | 1      | should     |
+
+  @javascript @accessibility
+  Scenario: Check the accessibility of the database entries page (zero state)
+    When I am on the "Test database name" "data activity" page logged in as "teacher1"
+    Then I should see "No entries yet"
+    And the page should meet accessibility standards
+
+  @javascript @accessibility
+  Scenario: Check the accessibility of the database entries page
+    Given the following "mod_data > entries" exist:
+      | database | user     | Test field name | Test field 2 name      | Test field 3 name |
+      | data1    | student1 | Student entry 1 | Some student content 1 | http://moodle.com |
+      | data1    | teacher1 | Teacher entry 2 | Some teacher content 2 | http://moodle.com |
+    When I am on the "Test database name" "data activity" page logged in as teacher1
+    Then the page should meet accessibility standards
