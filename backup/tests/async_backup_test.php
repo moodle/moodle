@@ -105,7 +105,6 @@ class async_backup_test extends \advanced_testcase {
 
         // Create the adhoc task.
         $asynctask = new \core\task\asynchronous_backup_task();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(['backupid' => $backupid]);
         $asynctask->set_userid($USER->id);
         \core\task\manager::queue_adhoc_task($asynctask);
@@ -151,7 +150,6 @@ class async_backup_test extends \advanced_testcase {
 
         // Create the adhoc task.
         $asynctask = new \core\task\asynchronous_backup_task();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(['backupid' => $backupid]);
         \core\task\manager::queue_adhoc_task($asynctask);
 
@@ -242,7 +240,6 @@ class async_backup_test extends \advanced_testcase {
 
         // Now queue an adhoc task and check it handles and completes gracefully.
         $asynctask = new \core\task\asynchronous_backup_task();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(array('backupid' => $backupid));
         \core\task\manager::queue_adhoc_task($asynctask);
 

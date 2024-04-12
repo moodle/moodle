@@ -159,7 +159,6 @@ class restore_test extends \advanced_testcase {
 
         // Create the adhoc task.
         $asynctask = new \core\task\asynchronous_restore_task();
-        $asynctask->set_blocking(false);
         $asynctask->set_custom_data(array('backupid' => $restoreid));
         \core\task\manager::queue_adhoc_task($asynctask);
 

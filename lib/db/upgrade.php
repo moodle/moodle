@@ -1144,5 +1144,28 @@ function xmldb_main_upgrade($oldversion) {
         upgrade_main_savepoint(true, 2024032600.01);
     }
 
+    if ($oldversion < 2024041200.00) {
+        // Define field blocking to be dropped from task_adhoc.
+        $table = new xmldb_table('task_adhoc');
+        $field = new xmldb_field('blocking');
+
+        // Conditionally launch drop field blocking.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Define field blocking to be dropped from task_scheduled.
+        $table = new xmldb_table('task_scheduled');
+        $field = new xmldb_field('blocking');
+
+        // Conditionally launch drop field blocking.
+        if ($dbman->field_exists($table, $field)) {
+            $dbman->drop_field($table, $field);
+        }
+
+        // Main savepoint reached.
+        upgrade_main_savepoint(true, 2024041200.00);
+    }
+
     return true;
 }

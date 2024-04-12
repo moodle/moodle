@@ -34,7 +34,6 @@ use core\task\adhoc_task;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class asynchronous_sync_task extends adhoc_task {
-
     /** @var string Message prefix for mtrace */
     protected const MTRACE_MSG = 'Synced ldap users';
 
@@ -42,7 +41,6 @@ class asynchronous_sync_task extends adhoc_task {
      * Constructor
      */
     public function __construct() {
-        $this->set_blocking(false);
         $this->set_component('auth_ldap');
     }
 

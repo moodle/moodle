@@ -333,7 +333,6 @@ class copy_helper_test extends \advanced_testcase {
 
         $this->assertInstanceOf('\\core\\task\\asynchronous_copy_task', $task);
         $this->assertEquals($result, (array)$task->get_custom_data());
-        $this->assertFalse($task->is_blocking());
 
         \core\task\manager::adhoc_task_complete($task);
     }

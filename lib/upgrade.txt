@@ -35,6 +35,9 @@ information provided here is intended especially for developers.
       By default, tasks will be retried until they succeed, other tasks can override this method to change this behaviour.
     - set_attempts_available(): Used to set the number of attempts available for the task
     - get_attempts_available(): Used to get the number of attempts available for the task.
+* Support for blocking tasks has been removed. See MDL-67667 for further information.
+  Please note that this feature never worked correctly and can cause serious performance issues.
+  It is also not possible to deprecate this feature in a notifiable way.
 * There is a new DML method $DB->get_fieldset. For some reason, this did not exist even though get_fieldset_select etc. did.
 * The following callbacks have been migrated to hooks:
   - before_standard_html_head() -> core\hook\output\before_standard_head_html_generation
