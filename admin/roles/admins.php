@@ -44,7 +44,10 @@ if (array_key_exists('siteadmins', $CFG->config_php_settings)) {
     echo $OUTPUT->heading(get_string('manageadmins', 'core_role'), 3);
     echo $OUTPUT->notification(get_string('siteadministratorsconfigphp', 'core_role'), \core\output\notification::NOTIFY_INFO);
     echo $OUTPUT->box_start();
-    echo $OUTPUT->paragraph(get_string('existingadmins', 'core_role'));
+    echo html_writer::tag(
+        'p',
+        get_string('existingadmins', 'core_role'),
+    );
     $admisselector->display();
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
