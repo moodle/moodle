@@ -111,7 +111,7 @@ Feature: availability_group
 
   @javascript
   Scenario: Condition using a hidden group
-    And the following "groups" exist:
+    Given the following "groups" exist:
       | name         | course | idnumber | visibility |
       | Hidden Group | C1     | GA       | 3          |
     And I log in as "teacher1"
@@ -122,8 +122,8 @@ Feature: availability_group
     And I am on the "P1" "page activity editing" page
     And I expand all fieldsets
     And I click on "Add restriction..." "button"
-    Then "Group" "button" should exist in the "Add restriction..." "dialogue"
-    Given I click on "Group" "button" in the "Add restriction..." "dialogue"
+    And "Group" "button" should exist in the "Add restriction..." "dialogue"
+    And I click on "Group" "button" in the "Add restriction..." "dialogue"
     And I set the field "Group" to "(Any group)"
     And I click on ".availability-item .availability-eye img" "css_element"
     And I click on "Save and return to course" "button"
@@ -145,12 +145,12 @@ Feature: availability_group
     And I should not see "Hidden Group"
 
     # Add to groups and log out/in again.
-    Given the following "group members" exist:
+    And the following "group members" exist:
       | user     | group |
       | student1 | GA    |
     And I am on "Course 1" course homepage
 
     # P1 (any groups) and P2 should show. The user should not see the hidden group mentioned anywhere.
-    Then I should see "P1" in the "region-main" "region"
+    And I should see "P1" in the "region-main" "region"
     And I should see "P2" in the "region-main" "region"
     And I should not see "Hidden Group"
