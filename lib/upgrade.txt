@@ -145,6 +145,9 @@ information provided here is intended especially for developers.
 * There is a new method called enrol_plugin::get_welcome_message_contact() that returns the contact details for the course welcome message.
 * There is a new method called enrol_plugin::send_course_welcome_message_to_user() that sends the course welcome message to a user.
 * The list of standard, and deleted, plugins is now located as JSON at lib/plugins.json.
+* groups_get_user_groups() in grouplib has a new $includehidden paramater, which will return groups for user even if they have
+  GROUP_VISIBILITY_NONE. This is false by default, and should be used with care. The calling code must ensure that these groups
+  are not exposed to the user as this may be a privacy issue.
 
 === 4.3 ===
 
