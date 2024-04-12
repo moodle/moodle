@@ -119,6 +119,7 @@ Availability of built-in passkeys that automatically synchronize to all of a use
 ## Requirements
 * PHP >= 8.0 with [OpenSSL](http://php.net/manual/en/book.openssl.php) and [Multibyte String](https://www.php.net/manual/en/book.mbstring.php)
 * Browser with [WebAuthn support](https://caniuse.com/webauthn) (Firefox 60+, Chrome 67+, Edge 18+, Safari 13+)
+* PHP [Sodium](https://www.php.net/manual/en/book.sodium.php) (or [Sodium Compat](https://github.com/paragonie/sodium_compat) ) for [Ed25519](https://en.wikipedia.org/wiki/EdDSA#Ed25519) support
 
 ## Infos about WebAuthn
 * [Wikipedia](https://en.wikipedia.org/wiki/WebAuthn)
