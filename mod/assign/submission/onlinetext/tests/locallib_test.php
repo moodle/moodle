@@ -100,7 +100,7 @@ class locallib_test extends \advanced_testcase {
      *
      * @return array of testcases
      */
-    public function submission_is_empty_testcases() {
+    public static function submission_is_empty_testcases(): array {
         return [
             'Empty submission string' => ['', true],
             'Empty submission null' => [null, true],

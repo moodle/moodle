@@ -50,23 +50,26 @@ class folder_node_test extends \repository_googledocs_testcase {
      *
      * @return array
      */
-    public function create_node_array_provider(): array {
-
+    public static function create_node_array_provider(): array {
         $rootid = \repository_googledocs::REPOSITORY_ROOT_ID;
 
         return [
             'Google Drive folder with modified date.' =>
                 [
-                    $this->create_google_drive_folder_object('d85b21c0f86cb0', 'Folder', '01/01/21 0:30'),
+                    self::create_google_drive_folder_object('d85b21c0f86cb0', 'Folder', '01/01/21 0:30'),
                     "{$rootid}|Google+Drive",
-                    $this->create_folder_content_node_array('d85b21c0f86cb0', 'Folder',
-                        "{$rootid}|Google+Drive", '1609432200'),
+                    self::create_folder_content_node_array(
+                        'd85b21c0f86cb0',
+                        'Folder',
+                        "{$rootid}|Google+Drive",
+                        '1609432200',
+                    ),
                 ],
             'Google Drive folder without modified date.' =>
                 [
-                    $this->create_google_drive_folder_object('d85b21c0f86cb0', 'Folder', ''),
+                    self::create_google_drive_folder_object('d85b21c0f86cb0', 'Folder', ''),
                     '',
-                    $this->create_folder_content_node_array('d85b21c0f86cb0', 'Folder', '', ''),
+                    self::create_folder_content_node_array('d85b21c0f86cb0', 'Folder', '', ''),
                 ],
         ];
     }

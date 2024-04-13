@@ -191,7 +191,7 @@ class stateactions_test extends \advanced_testcase {
      *
      * @return array the testing scenarios
      */
-    public function basic_role_provider(): array {
+    public static function basic_role_provider(): array {
         return [
             'admin' => [
                 'role' => 'admin',

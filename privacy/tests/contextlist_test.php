@@ -137,7 +137,7 @@ class contextlist_test extends advanced_testcase {
      *
      * @return array
      */
-    public function data_guess_id_field_from_sql() {
+    public static function data_guess_id_field_from_sql(): array {
         return [
             'easy' => [
                 'SELECT contextid FROM {foo}',

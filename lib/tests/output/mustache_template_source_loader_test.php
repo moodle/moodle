@@ -134,13 +134,13 @@ TBC;
     /**
      * Data provider for the test_load function.
      */
-    public function load_test_cases() {
+    public static function load_test_cases(): array {
         $cache = [
             'core' => [
                 'test' => '{{! a comment }}The rest of the template'
             ]
         ];
-        $loader = $this->build_loader_from_static_cache($cache);
+        $loader = self::build_loader_from_static_cache($cache);
 
         return [
             'with comments' => [
@@ -177,7 +177,7 @@ TBC;
     /**
      * Data provider for the load_with_dependencies function.
      */
-    public function load_with_dependencies_test_cases() {
+    public static function load_with_dependencies_test_cases(): array {
         // Create a bunch of templates that include one another in various ways. There is
         // multiple instances of recursive inclusions to test that the code doensn't get
         // stuck in an infinite loop.
@@ -205,7 +205,7 @@ TBC;
                 'bim' => $bim
             ]
         ];
-        $loader = $this->build_loader_from_static_cache($cache);
+        $loader = self::build_loader_from_static_cache($cache);
 
         return [
             'no template includes w comments' => [
@@ -344,7 +344,7 @@ TBC;
     /**
      * Data provider for the test_load function.
      */
-    public function scan_template_source_for_dependencies_test_cases() {
+    public static function scan_template_source_for_dependencies_test_cases(): array {
         $foo = '{{! a comment }}{{> core/bar }}{{< test/bop }}{{/ test/bop}}{{#str}} help, core {{/str}}';
         $bar = '{{! a comment }}{{> core/baz }}';
         $baz = '{{! a comment }}{{#str}} hide, core {{/str}}';
@@ -388,7 +388,7 @@ TEMPLATE;
                 'multiline5' => $multiline5,
             ]
         ];
-        $loader = $this->build_loader_from_static_cache($cache);
+        $loader = self::build_loader_from_static_cache($cache);
 
         return [
             'single template include' => [
@@ -488,7 +488,7 @@ TEMPLATE;
     /**
      * Test the scan_template_source_for_dependencies function.
      *
-     * @dataProvider scan_template_source_for_dependencies_test_cases()
+     * @dataProvider scan_template_source_for_dependencies_test_cases
      * @param mustache_template_source_loader $loader The loader
      * @param string $source The template to test
      * @param string $expected The expected output
@@ -510,7 +510,7 @@ TEMPLATE;
      * @param array $cache A cache of templates
      * @return mustache_template_source_loader
      */
-    private function build_loader_from_static_cache(array $cache): mustache_template_source_loader {
+    private static function build_loader_from_static_cache(array $cache): mustache_template_source_loader {
         return new mustache_template_source_loader(function($component, $name, $themename) use ($cache) {
             return $cache[$component][$name];
         });

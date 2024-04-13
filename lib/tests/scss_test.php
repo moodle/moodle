@@ -32,7 +32,7 @@ class scss_test extends \advanced_testcase {
      * Data provider for is_valid_file
      * @return array
      */
-    public function is_valid_file_provider() {
+    public static function is_valid_file_provider(): array {
         $themedirectory = \core_component::get_component_directory('theme_boost');
         $realroot = realpath($themedirectory);
         return [
@@ -66,7 +66,7 @@ class scss_test extends \advanced_testcase {
     /**
      * Test cases for SassC compilation.
      */
-    public function scss_compilation_provider() {
+    public static function scss_compilation_provider(): array {
         return [
             'simple' => [
                 'scss' => '$font-stack: Helvetica, sans-serif;

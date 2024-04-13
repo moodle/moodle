@@ -747,7 +747,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function data_get_config_provider() {
+    public static function data_get_config_provider(): array {
         $initialdata = (object) [
             'template_foo' => true,
             'template_bar' => false,
@@ -838,7 +838,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function data_set_config_provider() {
+    public static function data_set_config_provider(): array {
         $basevalue = (object) ['id' => rand(1, 1000)];
         $config = [
             'template_foo'  => true,
@@ -2142,7 +2142,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array of scenarios
      */
-    public function data_append_new_field_to_templates_provider(): array {
+    public static function data_append_new_field_to_templates_provider(): array {
         return [
             'Plain template' => [
                 'hasfield' => false,

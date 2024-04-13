@@ -56,7 +56,7 @@ class repository_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function enable_plugin_provider(): array {
+    public static function enable_plugin_provider(): array {
         return [
             'Disable an enable and visible repository' => [
                 'pluginname' => 'contentbank',

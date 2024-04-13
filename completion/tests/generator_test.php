@@ -80,7 +80,7 @@ class generator_test extends \advanced_testcase {
      * Data provider for test_create_default_completion().
      * @return array[]
      */
-    public function create_default_completion_provider(): array {
+    public static function create_default_completion_provider(): array {
         global $SITE;
 
         return [

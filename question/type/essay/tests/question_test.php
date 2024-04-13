@@ -80,7 +80,7 @@ class question_test extends \advanced_testcase {
      *
      * @return array List of data sets (test cases)
      */
-    public function summarise_response_provider(): array {
+    public static function summarise_response_provider(): array {
         return [
             'text input required, not attachments required'  =>
                 [1, 0, 'This is the text input for this essay.', 0, 'This is the text input for this essay.'],
@@ -331,7 +331,7 @@ class question_test extends \advanced_testcase {
      *
      * (The tests are done with a fixed 14-word response.)
      *
-     * @dataProvider get_min_max_wordlimit_test_cases()
+     * @dataProvider get_min_max_wordlimit_test_cases
      * @param  int $responserequired whether response required (yes = 1, no = 0)
      * @param  int $minwordlimit minimum word limit
      * @param  int $maxwordlimit maximum word limit
@@ -353,7 +353,7 @@ class question_test extends \advanced_testcase {
      *
      * @return array the test cases.
      */
-    public function get_min_max_wordlimit_test_cases(): array {
+    public static function get_min_max_wordlimit_test_cases(): array {
         return [
             'text input required, min/max word limit not set'  => [1, 0, 0, ''],
             'text input required, min/max word limit valid (within the boundaries)'  => [1, 10, 25, ''],
@@ -370,7 +370,7 @@ class question_test extends \advanced_testcase {
      *
      * (The tests are done with a fixed 14-word response.)
      *
-     * @dataProvider get_word_count_message_for_review_test_cases()
+     * @dataProvider get_word_count_message_for_review_test_cases
      * @param int|null $minwordlimit minimum word limit
      * @param int|null $maxwordlimit maximum word limit
      * @param string $expected error message | null
@@ -389,7 +389,7 @@ class question_test extends \advanced_testcase {
      *
      * @return array the test cases.
      */
-    public function get_word_count_message_for_review_test_cases() {
+    public static function get_word_count_message_for_review_test_cases(): array {
         return [
             'No limit' =>
                     [null, null, ''],

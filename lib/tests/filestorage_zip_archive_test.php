@@ -54,7 +54,7 @@ class filestorage_zip_archive_test extends \advanced_testcase {
      *
      * @return array Array of tested pathnames and expected results.
      */
-    public function pathname_provider() {
+    public static function pathname_provider(): array {
         return [
             // Test a string.
             ['my file.pdf', 'my file.pdf'],

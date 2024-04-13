@@ -114,7 +114,7 @@ class report_viewed_test extends advanced_testcase {
      *
      * @return array
      */
-    public function report_viewed_data(): array {
+    public static function report_viewed_data(): array {
         return [
             // Exception cases.
             'Event withour other data (exception)' => [

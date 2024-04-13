@@ -914,7 +914,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array List of data sets (test cases)
      */
-    public function mod_quiz_inplace_editable_provider(): array {
+    public static function mod_quiz_inplace_editable_provider(): array {
         return [
             'set to A1' => [1, 'A1'],
             'set with HTML characters' => [2, 'A & &amp; <-:'],

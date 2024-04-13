@@ -190,7 +190,7 @@ class import_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function import_execute_provider(): array {
+    public static function import_execute_provider(): array {
         $fixturesfolder = __DIR__ . '/../../../../../presets/tests/fixtures/';
 
         return [

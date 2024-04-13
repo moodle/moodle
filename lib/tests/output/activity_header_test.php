@@ -60,7 +60,7 @@ class activity_header_test extends \advanced_testcase {
      * Provider for the test_set_title unit test.
      * @return array
      */
-    public function set_title_provider(): array {
+    public static function set_title_provider(): array {
         return [
             "Set the title with a plain text" => [
                 "Activity title", "Activity title"
@@ -129,7 +129,7 @@ class activity_header_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_heading_level_provider(): array {
+    public static function get_heading_level_provider(): array {
         return [
             'Title not allowed' => [false, '', 2],
             'Title allowed, no title' => [true, '', 2],
