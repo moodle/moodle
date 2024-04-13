@@ -97,14 +97,12 @@ class string_manager_standard_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_deprecated_strings_provider() {
+    public static function get_deprecated_strings_provider(): array {
         global $CFG;
 
-        $teststringman = testable_core_string_manager::instance($CFG->langotherroot, $CFG->langlocalroot, array());
+        $teststringman = testable_core_string_manager::instance($CFG->langotherroot, $CFG->langlocalroot, []);
         $allstrings = $teststringman->get_all_deprecated_strings();
-        return array_map(function($string) {
-            return [$string];
-        }, $allstrings);
+        return array_map(fn ($string): array => [$string], $allstrings);
     }
 
     /**

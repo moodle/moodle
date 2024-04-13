@@ -283,7 +283,7 @@ class base_test extends advanced_testcase {
      *
      * @return array the testing scenarios
      */
-    public function get_output_classname_provider(): array {
+    public static function get_output_classname_provider(): array {
         return [
             'overridden class' => [
                 'find' => 'state\\course',
@@ -518,7 +518,7 @@ class base_test extends advanced_testcase {
      *
      * @return array the testing scenarios
      */
-    public function delete_format_data_provider(): array {
+    public static function delete_format_data_provider(): array {
         return [
             'direct call' => [
                 'usehook' => false
@@ -600,7 +600,7 @@ class base_test extends advanced_testcase {
      *
      * @return array the testing scenarios
      */
-    public function get_format_string_provider(): array {
+    public static function get_format_string_provider(): array {
         return [
             'Existing in format lang' => [
                 'key' => 'sectionsdelete',
@@ -678,7 +678,7 @@ class base_test extends advanced_testcase {
      *
      * @return array the testing scenarios
      */
-    public function move_section_after_provider(): array {
+    public static function move_section_after_provider(): array {
         return [
             'Move top' => [
                 'movesection' => 'section3',
@@ -789,7 +789,7 @@ class base_test extends advanced_testcase {
      *
      * @return array the testing scenarios
      */
-    public function get_non_ajax_cm_action_url_provider(): array {
+    public static function get_non_ajax_cm_action_url_provider(): array {
         return [
             'duplicate' => [
                 'action' => 'cmDuplicate',

@@ -46,7 +46,7 @@ class user_filter_manager_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_provider(): array {
+    public static function get_provider(): array {
         return [
             'Small value' => ['foo'],
             'Large value' => [str_repeat('A', 4000)],
@@ -113,7 +113,7 @@ class user_filter_manager_test extends advanced_testcase {
      *
      * @return array
      */
-    public function reset_all_provider(): array {
+    public static function reset_all_provider(): array {
         return [
             'Small value' => ['foo'],
             'Large value' => [str_repeat('A', 4000)],

@@ -463,7 +463,7 @@ final class entries_import_test extends \advanced_testcase {
      *
      * @return array data for testing
      */
-    public function get_added_record_messages_provider(): array {
+    public static function get_added_record_messages_provider(): array {
         return [
             'only header' => [
                 'datafilecontent' => 'ID,Param2,filefield,picturefield' . PHP_EOL,

@@ -341,7 +341,7 @@ class events_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function preset_importer_provider(): array {
+    public static function preset_importer_provider(): array {
         // Image gallery preset is: ['title' => 'text', 'description' => 'textarea', 'image' => 'picture'];
 
         $titlefield = new \stdClass();

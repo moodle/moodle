@@ -40,7 +40,7 @@ class get_mapping_information_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_mapping_information_provider(): array {
+    public static function get_mapping_information_provider(): array {
         // Image gallery preset is: ['title' => 'text', 'description' => 'textarea', 'image' => 'picture'];
 
         $titlefield = new \stdClass();

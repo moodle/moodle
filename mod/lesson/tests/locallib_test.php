@@ -260,7 +260,7 @@ class locallib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_last_attempt_dataprovider() {
+    public static function get_last_attempt_dataprovider(): array {
         return [
             [0, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 3]],
             [1, [(object)['id' => 1], (object)['id' => 2], (object)['id' => 3]], (object)['id' => 1]],

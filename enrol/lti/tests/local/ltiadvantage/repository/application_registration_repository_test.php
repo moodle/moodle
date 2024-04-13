@@ -135,7 +135,7 @@ class application_registration_repository_test extends \advanced_testcase {
      *
      * @return array the array of test data.
      */
-    public function save_data_provider(): array {
+    public static function save_data_provider(): array {
         return [
             'minimal draft' => [
                 'registrationdata' => [

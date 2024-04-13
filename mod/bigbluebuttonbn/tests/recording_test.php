@@ -103,7 +103,7 @@ class recording_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_status_provider(): array {
+    public static function get_status_provider(): array {
         return [
             [recording::RECORDING_STATUS_PROCESSED],
             [recording::RECORDING_STATUS_DISMISSED],
@@ -137,7 +137,7 @@ class recording_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function get_allrecordings_types_provider(): array {
+    public static function get_allrecordings_types_provider(): array {
         return [
             'Instance Type ALL' => [
                 'type' => instance::TYPE_ALL

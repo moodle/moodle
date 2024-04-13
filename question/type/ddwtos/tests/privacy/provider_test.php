@@ -91,7 +91,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      *
      * @return array Array of valid user preferences.
      */
-    public function user_preference_provider() {
+    public static function user_preference_provider(): array {
         return [
                 'default mark 2' => ['defaultmark', 2, 2],
                 'penalty 33.33333%' => ['penalty', 0.3333333, '33.33333%'],

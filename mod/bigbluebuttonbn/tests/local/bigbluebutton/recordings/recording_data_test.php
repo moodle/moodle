@@ -44,7 +44,7 @@ class recording_data_test extends \advanced_testcase {
      *
      * @return \string[][]
      */
-    public function type_text_provider(): array {
+    public static function type_text_provider(): array {
         return [
             ['Presentation', 'presentation'],
             ['Video', 'video'],

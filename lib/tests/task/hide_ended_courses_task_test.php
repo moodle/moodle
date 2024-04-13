@@ -31,7 +31,6 @@ require_once(__DIR__ . '/show_started_courses_task_test.php');
  * @coversDefaultClass \core\task\hide_ended_courses_task
  */
 class hide_ended_courses_task_test extends \core\task\show_started_courses_task_test {
-
     /**
      * Test hide_ended_courses cron task.
      *

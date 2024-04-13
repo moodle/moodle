@@ -30,7 +30,7 @@ class field_value_validators_test extends \advanced_testcase {
     /**
      * Data provider for \field_value_validators_testcase::test_validate_theme().
      */
-    public function themes_provider() {
+    public static function themes_provider(): array {
         return [
             'User themes disabled' => [
                 false, 'boost', 'warning', get_string('userthemesnotallowed', 'tool_uploaduser')

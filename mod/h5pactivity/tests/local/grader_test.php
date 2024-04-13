@@ -160,7 +160,7 @@ class grader_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function grade_item_update_data(): array {
+    public static function grade_item_update_data(): array {
         return [
             'Change idnumber' => [
                 100, false, 'newidnumber'
@@ -258,7 +258,7 @@ class grader_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function update_grades_data(): array {
+    public static function update_grades_data(): array {
         return [
             // Quantitative grade, all attempts completed.
             'Same grademax, all users, all completed' => [

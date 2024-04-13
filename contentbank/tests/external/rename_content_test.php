@@ -50,7 +50,7 @@ class rename_content_test extends \externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function rename_content_provider() {
+    public static function rename_content_provider(): array {
         return [
             'Standard name' => ['New name', 'New name', true],
             'Name with digits' => ['Today is 17/04/2017', 'Today is 17/04/2017', true],

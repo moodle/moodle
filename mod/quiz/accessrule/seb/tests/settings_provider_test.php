@@ -93,7 +93,7 @@ class settings_provider_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function settings_capability_data_provider() {
+    public static function settings_capability_data_provider(): array {
         $data = [];
 
         // Build first level SEB config settings. Any of this setting let us use SEB manual config.

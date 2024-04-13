@@ -216,7 +216,7 @@ final class component_test extends advanced_testcase {
      *
      * @return array
      */
-    public function is_valid_plugin_name_provider(): array {
+    public static function is_valid_plugin_name_provider(): array {
         return [
             [['mod', 'example1'], true],
             [['mod', 'feedback360'], true],
@@ -684,7 +684,7 @@ final class component_test extends advanced_testcase {
     /**
      * Data provider for classloader test
      */
-    public function classloader_provider() {
+    public static function classloader_provider(): array {
         global $CFG;
 
         // As part of these tests, we Check that there are no unexpected problems with overlapping PSR namespaces.
@@ -784,7 +784,7 @@ final class component_test extends advanced_testcase {
     /**
      * Data provider for psr_classloader test
      */
-    public function psr_classloader_provider() {
+    public static function psr_classloader_provider(): array {
         global $CFG;
 
         // As part of these tests, we Check that there are no unexpected problems with overlapping PSR namespaces.
@@ -981,7 +981,7 @@ final class component_test extends advanced_testcase {
     /**
      * Data provider for get_class_file test
      */
-    public function get_class_file_provider() {
+    public static function get_class_file_provider(): array {
         global $CFG;
 
         return [

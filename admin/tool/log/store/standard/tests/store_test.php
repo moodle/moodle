@@ -389,7 +389,7 @@ class store_test extends \advanced_testcase {
      *
      * @return array Array of parameters
      */
-    public function decode_other_provider(): array {
+    public static function decode_other_provider(): array {
         return [
             [['info' => 'd2819896', 'logurl' => 'discuss.php?d=2819896']],
             [null],

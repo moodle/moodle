@@ -330,7 +330,7 @@ class moodle_page_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function set_title_provider(): array {
+    public static function set_title_provider(): array {
         return [
             'Do not append the site name' => [
                 'shortname', false, '', false
@@ -780,7 +780,7 @@ class moodle_page_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_user_theme_provider() {
+    public static function get_user_theme_provider(): array {
         return [
             'User not a member of any cohort' => [
                 'usertheme' => '',

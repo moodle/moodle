@@ -98,7 +98,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function delete_library_provider(): array {
+    public static function delete_library_provider(): array {
         return [
             'Delete MainLibrary' => [
                 'MainLibrary',
@@ -192,7 +192,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_dependent_libraries_provider(): array {
+    public static function get_dependent_libraries_provider(): array {
         return [
             'Main library of a content' => [
                 'MainLibrary',
@@ -256,7 +256,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_library_provider(): array {
+    public static function get_library_provider(): array {
         return [
             'Main library of a content' => [
                 'MainLibrary',
@@ -529,7 +529,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function can_edit_content_provider(): array {
+    public static function can_edit_content_provider(): array {
         return [
             // Component = user.
             'user: Admin user is author' => [
@@ -963,7 +963,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function set_library_enabled_provider(): array {
+    public static function set_library_enabled_provider(): array {
         return [
             'Disable existing library' => [
                 'libraryname' => 'MainLibrary',
@@ -1068,7 +1068,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_library_enabled_provider(): array {
+    public static function is_library_enabled_provider(): array {
         return [
             'Library with 2 versions, one of them disabled' => [
                 'libraryname' => 'H5P.Lib1',
@@ -1194,7 +1194,7 @@ class api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_valid_package_provider(): array {
+    public static function is_valid_package_provider(): array {
         return [
             'Valid H5P file (as admin)' => [
                 'filename' => '/fixtures/greeting-card.h5p',

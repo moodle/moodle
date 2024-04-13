@@ -257,7 +257,7 @@ class schedule_test extends advanced_testcase {
      *
      * @return string[]
      */
-    public function get_schedule_report_file_format(): array {
+    public static function get_schedule_report_file_format(): array {
         return [
             ['csv'],
             ['excel'],

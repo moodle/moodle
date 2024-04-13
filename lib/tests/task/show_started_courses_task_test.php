@@ -116,7 +116,7 @@ class show_started_courses_task_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_courses_provider(): array {
+    public static function get_courses_provider(): array {
         return [
             'No hidden courses' => [
                 'lastweek' => 0,

@@ -83,7 +83,7 @@ class auth_server_config_reader_test extends \advanced_testcase {
      *
      * @return array test data.
      */
-    public function config_provider(): array {
+    public static function config_provider(): array {
         return [
             'Valid, good issuer URL, good config' => [
                 'issuer_url' => 'https://app.example.com',

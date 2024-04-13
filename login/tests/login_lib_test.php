@@ -233,7 +233,7 @@ class login_lib_test extends \advanced_testcase {
     /**
      * Data provider for \core_login_lib_testcase::test_core_login_validate_forgot_password_data().
      */
-    public function forgot_password_data_provider() {
+    public static function forgot_password_data_provider(): array {
         return [
             'Both username and password supplied' => [
                 [

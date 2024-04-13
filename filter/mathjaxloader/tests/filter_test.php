@@ -52,7 +52,7 @@ class filter_test extends \advanced_testcase {
      *
      * @return array of [moodlelangcode, mathjaxcode] tuples
      */
-    public function map_language_code_expected_mappings() {
+    public static function map_language_code_expected_mappings(): array {
 
         return [
             ['cz', 'cs'], // Explicit mapping.

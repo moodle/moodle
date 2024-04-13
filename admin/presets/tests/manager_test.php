@@ -367,7 +367,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function export_preset_provider(): array {
+    public static function export_preset_provider(): array {
         return [
             'Export settings and plugins, excluding sensible' => [
                 'includesensible' => false,
@@ -530,7 +530,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function import_preset_provider(): array {
+    public static function import_preset_provider(): array {
         return [
             'Import settings from an empty file' => [
                 'filecontents' => '',

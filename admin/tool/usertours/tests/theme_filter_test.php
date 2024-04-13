@@ -30,7 +30,7 @@ class theme_filter_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function filter_matches_provider() {
+    public static function filter_matches_provider(): array {
         return [
             'No config set; Matches' => [
                 null,

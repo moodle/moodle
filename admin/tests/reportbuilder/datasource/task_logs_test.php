@@ -110,7 +110,7 @@ class task_logs_test extends core_reportbuilder_testcase {
      *
      * @return array[]
      */
-    public function datasource_filters_provider(): array {
+    public static function datasource_filters_provider(): array {
         return [
             'Filter name' => ['task_log:name', [
                 'task_log:name_values' => [send_schedules::class],

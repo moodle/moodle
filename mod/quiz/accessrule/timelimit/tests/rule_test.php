@@ -63,7 +63,7 @@ class rule_test extends \basic_testcase {
      *
      * @return array of ($timetoclose, $timelimit, $displaylimit, $actuallimit)
      */
-    public function time_limit_access_rule_with_time_close_provider() {
+    public static function time_limit_access_rule_with_time_close_provider(): array {
         return [
             'Close time is earlier than time limit' => [1800, 3600, 3600, 1800],
             'Close time is on time limit' => [3600, 3600, 3600, 3600],

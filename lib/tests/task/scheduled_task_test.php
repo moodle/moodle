@@ -949,7 +949,7 @@ class scheduled_task_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function is_component_enabled_provider(): array {
+    public static function is_component_enabled_provider(): array {
         return [
             'Enabled component' => ['auth_cas', true],
             'Disabled component' => ['auth_ldap', false],

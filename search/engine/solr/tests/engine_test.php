@@ -46,8 +46,7 @@ require_once($CFG->dirroot . '/search/engine/solr/tests/fixtures/testable_engine
  *
  * @runTestsInSeparateProcesses
  */
-class engine_test extends \advanced_testcase {
-
+final class engine_test extends \advanced_testcase {
     /**
      * @var \core_search\manager
      */
@@ -143,7 +142,7 @@ class engine_test extends \advanced_testcase {
     /**
      * Simple data provider to allow tests to be run with file indexing on and off.
      */
-    public function file_indexing_provider() {
+    public static function file_indexing_provider(): array {
         return array(
             'file-indexing-on' => array(1),
             'file-indexing-off' => array(0)

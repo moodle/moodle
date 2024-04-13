@@ -36,7 +36,7 @@ class graphlib_test extends \basic_testcase {
      *
      * @return array
      */
-    public function create_data(): array {
+    public static function create_data(): array {
         return [
             'data' =>
             [

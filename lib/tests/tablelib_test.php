@@ -363,7 +363,7 @@ class tablelib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function fullname_column_provider() {
+    public static function fullname_column_provider(): array {
         return [
             ['language'],
             ['alternatename lastname'],
@@ -782,7 +782,7 @@ class tablelib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function initials_provider(): array {
+    public static function initials_provider(): array {
         return [
             [null, null, null],
             ['A', null, 'A'],
