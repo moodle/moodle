@@ -386,7 +386,7 @@ class userlib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function data_create_user_invalid_username() {
+    public static function data_create_user_invalid_username(): array {
         return [
             'empty_string' => [
                 '',

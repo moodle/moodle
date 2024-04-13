@@ -53,10 +53,10 @@ class remote_resource_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function remote_resource_data_provider() {
+    public static function remote_resource_data_provider(): array {
         return [
             'With filename and extension' => [
-                $this->getExternalTestFileUrl('/test.html'),
+                self::getExternalTestFileUrl('/test.html'),
                 (object) [
                     'name' => 'Test html file',
                     'description' => 'Full description of the html file'
@@ -78,8 +78,8 @@ class remote_resource_test extends \advanced_testcase {
      * Test confirming the network based operations of a remote_resource.
      */
     public function test_network_features(): void {
-        $url = $this->getExternalTestFileUrl('/test.html');
-        $nonexistenturl = $this->getExternalTestFileUrl('/test.htmlzz');
+        $url = self::getExternalTestFileUrl('/test.html');
+        $nonexistenturl = self::getExternalTestFileUrl('/test.htmlzz');
 
         $remoteres = new remote_resource(
             new \curl(),

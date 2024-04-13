@@ -240,7 +240,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function upload_content_provider() {
+    public static function upload_content_provider(): array {
         return [
             'With record' => [true],
             'Without record' => [false],
@@ -449,7 +449,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function rename_content_provider() {
+    public static function rename_content_provider(): array {
         return [
             'Standard name' => ['New name', 'New name', true],
             'Name with digits' => ['Today is 17/04/2017', 'Today is 17/04/2017', true],

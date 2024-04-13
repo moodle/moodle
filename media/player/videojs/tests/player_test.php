@@ -289,7 +289,7 @@ class player_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function youtube_start_time_provider(): array {
+    public static function youtube_start_time_provider(): array {
         return [
             ['https://www.youtube.com/watch?v=JNJMF1l3udM&t=1h11s', 3611],
             ['https://www.youtube.com/watch?v=dv2f_xfmbD8&index=4&list=PLxcO_MFWQBDcyn9xpbmx601YSDlDcTcr0&t=1m5s', 65],

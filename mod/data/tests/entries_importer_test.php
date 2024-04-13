@@ -133,7 +133,7 @@ class entries_importer_test extends \advanced_testcase {
      *
      * @return array data for testing
      */
-    public function get_file_content_from_zip_provider(): array {
+    public static function get_file_content_from_zip_provider(): array {
         return [
             'some files in the zip archive' => [
                 'files' => [

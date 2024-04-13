@@ -156,7 +156,7 @@ class export_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function export_execute_provider(): array {
+    public static function export_execute_provider(): array {
         return [
             'Export settings and plugins, excluding sensible' => [
                 'includesensible' => false,

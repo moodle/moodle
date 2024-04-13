@@ -360,7 +360,7 @@ class weblib_test extends advanced_testcase {
     /**
      * Data provider for trusttext_pre_edit() tests.
      */
-    public function trusttext_pre_edit_provider(): array {
+    public static function trusttext_pre_edit_provider(): array {
         return [
             [true, 0, 'editingteacher', FORMAT_HTML, 1],
             [true, 0, 'editingteacher', FORMAT_MOODLE, 1],
@@ -629,7 +629,7 @@ EXPECTED;
     /**
      * Data provider for test_content_to_text.
      */
-    public static function provider_content_to_text() {
+    public static function provider_content_to_text(): array {
         return array(
             array('asd', false, 'asd'),
             // Trim '\r\n '.
@@ -655,7 +655,7 @@ EXPECTED;
      *
      * @return array Returns aray of test data for the test_validate_email function
      */
-    public function data_validate_email() {
+    public static function data_validate_email(): array {
         return [
             // Test addresses that should pass.
             [
@@ -823,7 +823,7 @@ EXPECTED;
     /**
      * Data provider for test_get_file_argument.
      */
-    public static function provider_get_file_argument() {
+    public static function provider_get_file_argument(): array {
         return array(
             // Serving SCORM content w/o HTTP GET params.
             array(array(
@@ -1071,7 +1071,7 @@ EXPECTED;
      *
      * @return string[][]
      */
-    public function get_html_lang_attribute_value_provider() {
+    public static function get_html_lang_attribute_value_provider(): array {
         return [
             'Empty lang code' => ['    ', 'en'],
             'English' => ['en', 'en'],
@@ -1098,7 +1098,7 @@ EXPECTED;
      *
      * @return array
      */
-    public function strip_querystring_provider(): array {
+    public static function strip_querystring_provider(): array {
         return [
             'Null' => [null, ''],
             'Empty string' => ['', ''],

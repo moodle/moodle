@@ -84,7 +84,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_preset_provider(): array {
+    public static function create_preset_provider(): array {
         return [
             'Default values' => [
             ],
@@ -177,7 +177,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function add_item_provider(): array {
+    public static function add_item_provider(): array {
         return [
             'Setting without plugin' => [
                 'name' => 'settingname',
@@ -239,7 +239,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function add_plugin_provider(): array {
+    public static function add_plugin_provider(): array {
         return [
             'Plugin: enabled (using int)' => [
                 'type' => 'plugintype',
@@ -321,7 +321,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function change_default_preset_provider(): array {
+    public static function change_default_preset_provider(): array {
         return [
             'Starter preset' => [
                 'preset' => 'starter',

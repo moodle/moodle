@@ -1276,7 +1276,7 @@ class course_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function enrolment_uploaddata_error_provider(): array {
+    public static function enrolment_uploaddata_error_provider(): array {
         return [
             ['errorcannotcreateorupdateenrolment', [
                 'shortname' => 'C1',

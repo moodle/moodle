@@ -53,7 +53,7 @@ class behat_form_text_test extends \basic_testcase {
      *
      * @return array of value and expectation pairs to be tested.
      */
-    public function provider_test_set_get_value() {
+    public static function provider_test_set_get_value(): array {
         return [
             'null' => [null, null],
             'int' => [3, 3],
@@ -68,7 +68,7 @@ class behat_form_text_test extends \basic_testcase {
      *
      * @param mixed $value value to be set.
      * @param mixed $expectation value to be checked.
-     * @dataProvider provider_test_set_get_value()
+     * @dataProvider provider_test_set_get_value
      */
     public function test_set_get_value($value, $expectation): void {
         $session = $this->createMock(Session::class);
@@ -85,7 +85,7 @@ class behat_form_text_test extends \basic_testcase {
      *
      * @return array of decsep, value, match and result pairs to be tested.
      */
-    public function provider_test_matches() {
+    public static function provider_test_matches(): array {
         return [
             'lazy true' => ['.', 'hello', 'hello', true],
             'lazy false' => ['.', 'hello', 'bye', false],
@@ -113,7 +113,7 @@ class behat_form_text_test extends \basic_testcase {
      * @param mixed $value value to be set.
      * @param mixed $match value to be matched.
      * @param bool  $result expected return status of the function.
-     * @dataProvider provider_test_matches()
+     * @dataProvider provider_test_matches
      */
     public function test_matches($decsep, $value, $match, $result): void {
         global $CFG;

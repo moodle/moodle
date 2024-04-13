@@ -537,7 +537,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array of (submissionstart, submissionend, assessmentstart, assessmentend, eventtype, expectedmin, expectedmax)
      */
-    public function mod_workshop_core_calendar_get_valid_event_timestart_range_due_no_limit_provider() {
+    public static function mod_workshop_core_calendar_get_valid_event_timestart_range_due_no_limit_provider(): array {
         $submissionstart = time() + DAYSECS;
         $submissionend = $submissionstart + DAYSECS;
         $assessmentstart = $submissionend + DAYSECS;
@@ -692,7 +692,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array of (submissionstart, submissionend, assessmentstart, assessmentend, eventtype, fieldtoupdate, newtime)
      */
-    public function mod_workshop_core_calendar_event_timestart_updated_provider() {
+    public static function mod_workshop_core_calendar_event_timestart_updated_provider(): array {
         $submissionstart = time() + DAYSECS;
         $submissionend = $submissionstart + DAYSECS;
         $assessmentstart = $submissionend + DAYSECS;

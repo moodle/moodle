@@ -62,7 +62,7 @@ class numeric_helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function lesson_unformat_dataprovider() {
+    public static function lesson_unformat_dataprovider(): array {
         return [
             "Using a decimal as a separator" => [
                 "decsep" => ".",
@@ -100,7 +100,7 @@ class numeric_helper_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function lesson_format_dataprovider() {
+    public static function lesson_format_dataprovider(): array {
         return [
             "Using a decimal as a separator" => [
                 "decsep" => ".",

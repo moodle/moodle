@@ -353,7 +353,7 @@ class htmlpurifier_test extends \basic_testcase {
     /**
      * Test cases for the test_media_tags test.
      */
-    public function media_tags_provider() {
+    public static function media_tags_provider(): array {
         // Takes an array of attributes, then generates a test for each of them.
         $generatetestcases = function($prefix, array $attrs, array $templates) {
             return array_reduce($attrs, function($carry, $attr) use ($prefix, $templates) {

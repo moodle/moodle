@@ -213,7 +213,7 @@ class document_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function document_author_visibility_provider(): array {
+    public static function document_author_visibility_provider(): array {
         return [
             'Teacher' => [
                 'rolename' => 'editingteacher',

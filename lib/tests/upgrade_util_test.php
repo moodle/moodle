@@ -38,7 +38,7 @@ class upgrade_util_test extends \advanced_testcase {
     /**
      * Test PHP/cURL validation.
      *
-     * @dataProvider validate_php_curl_tls_testcases()
+     * @dataProvider validate_php_curl_tls_testcases
      * @param array $curlinfo server curl_version array
      * @param int   $zts      0 or 1 as defined by PHP_ZTS
      * @param bool  $expected expected result
@@ -50,7 +50,7 @@ class upgrade_util_test extends \advanced_testcase {
     /**
      * Test cases for validate_php_curl_tls test.
      */
-    public function validate_php_curl_tls_testcases() {
+    public static function validate_php_curl_tls_testcases(): array {
         $base = curl_version();
 
         return [
@@ -125,7 +125,7 @@ class upgrade_util_test extends \advanced_testcase {
      *
      * @return array of testcases
      */
-    public function can_use_tls12_testcases() {
+    public static function can_use_tls12_testcases(): array {
         return [
             // Bad versions.
             ['OpenSSL/0.9.8o', null, false],

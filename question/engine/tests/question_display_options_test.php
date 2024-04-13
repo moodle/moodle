@@ -32,7 +32,7 @@ class question_display_options_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function has_question_identifier_provider(): array {
+    public static function has_question_identifier_provider(): array {
         return [
             'Empty string' => ['', false],
             'Empty space' => ['   ', false],
@@ -61,7 +61,7 @@ class question_display_options_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function add_question_identifier_to_label_provider(): array {
+    public static function add_question_identifier_to_label_provider(): array {
         return [
             'Empty string identifier' => ['Hello', '', false, false, "Hello"],
             'Null identifier' => ['Hello', null, false, false, "Hello"],

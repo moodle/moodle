@@ -370,7 +370,7 @@ class lib_test extends \advanced_testcase {
 
     /**
      * Tests that ungraded_counts calculates count and sum of grades correctly when there are hidden grades.
-     * @dataProvider ungraded_counts_hidden_grades_data()
+     * @dataProvider ungraded_counts_hidden_grades_data
      * @param bool $hidden Whether to inlcude hidden grades or not.
      * @param array $expectedcount expected count value (i.e. number of ugraded grades)
      * @param array $expectedsumarray expceted sum of grades
@@ -457,7 +457,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array of testing scenarios
      */
-    public function ungraded_counts_hidden_grades_data(): array {
+    public static function ungraded_counts_hidden_grades_data(): array {
         return [
             'nohidden' => [
                 'hidden' => false,
@@ -630,7 +630,7 @@ class lib_test extends \advanced_testcase {
 
     /**
      * Tests that ungraded_counts calculates count and sum of grades correctly when there are hidden grades.
-     * @dataProvider ungraded_counts_only_active_enrol_data()
+     * @dataProvider ungraded_counts_only_active_enrol_data
      * @param bool $onlyactive Site setting to show only active users.
      * @param int $hascapability Capability constant
      * @param bool|null $showonlyactiveenrolpref Show only active user preference.
@@ -730,7 +730,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array of testing scenarios
      */
-    public function ungraded_counts_only_active_enrol_data(): array {
+    public static function ungraded_counts_only_active_enrol_data(): array {
         return [
             'Show only active and no user preference' => [
                 'onlyactive' => true,
@@ -786,7 +786,7 @@ class lib_test extends \advanced_testcase {
 
     /**
      * Tests for calculate_average.
-     * @dataProvider calculate_average_data()
+     * @dataProvider calculate_average_data
      * @param int $meanselection Whether to inlcude all grades or non-empty grades in aggregation.
      * @param array $expectedmeancount expected meancount value
      * @param array $expectedaverage expceted average value
@@ -878,7 +878,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array of testing scenarios
      */
-    public function calculate_average_data(): array {
+    public static function calculate_average_data(): array {
         return [
             'Non-empty grades' => [
                 'meanselection' => 1,

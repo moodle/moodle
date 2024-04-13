@@ -56,7 +56,7 @@ class entries_exporter_test extends \advanced_testcase {
      *
      * @return array data for testing
      */
-    public function get_records_count_provider(): array {
+    public static function get_records_count_provider(): array {
         return [
             'onlyheader' => [
                 'rows' => [
@@ -109,7 +109,7 @@ class entries_exporter_test extends \advanced_testcase {
      *
      * @return array data for testing
      */
-    public function add_file_from_string_provider(): array {
+    public static function add_file_from_string_provider(): array {
         return [
             'one file' => [
                 'files' => [
@@ -187,7 +187,7 @@ class entries_exporter_test extends \advanced_testcase {
      *
      * @return array data for testing
      */
-    public function create_unique_filename_provider(): array {
+    public static function create_unique_filename_provider(): array {
         return [
             'does not exist yet' => [
                 'inputfilename' => 'someuniquename.txt',

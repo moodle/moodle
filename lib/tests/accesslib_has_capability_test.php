@@ -364,7 +364,7 @@ class accesslib_has_capability_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function locked_context_provider() {
+    public static function locked_context_provider(): array {
         return [
             'All unlocked' => [
                 'locked' => [
@@ -447,7 +447,7 @@ class accesslib_has_capability_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function login_as_provider(): array {
+    public static function login_as_provider(): array {
         return [
             [
                 'system',

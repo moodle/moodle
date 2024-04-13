@@ -157,7 +157,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public static function should_redirect_urls_provider() {
+    public static function should_redirect_urls_provider(): array {
         $badurl1 = new \moodle_url('/');
         $badparam1 = $badurl1->out();
         $badurl2 = new \moodle_url('admin/tool/mfa/auth.php');

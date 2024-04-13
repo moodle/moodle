@@ -30,7 +30,7 @@ use tool_brickfield\local\tool\tool;
 class tool_test extends \advanced_testcase {
 
     /** @var string base 64 image */
-    protected $base64img = <<<EOF
+    protected static string $base64img = <<<EOF
 <img src="data:image/gif;base64,R0lGODlhPQBEAPeoAJosM//AwO/AwHVYZ/z595kzAP/s7P+goOXMv8+fhw/v739/f+8PD98fH/
 8mJl+fn/9ZWb8/PzWlwv///6wWGbImAPgTEMImIN9gUFCEm/gDALULDN8PAD6atYdCTX9gUNKlj8wZAKUsAOzZz+UMAOsJAP/Z2ccMDA8PD/95eX5N
 WvsJCOVNQPtfX/8zM8+QePLl38MGBr8JCP+zs9myn/8GBqwpAP/GxgwJCPny78lzYLgjAJ8vAP9fX/+MjMUcAN8zM/9wcM8ZGcATEL+QePdZWf/29u
@@ -118,11 +118,11 @@ EOF;
      * Base64 image provider.
      * @return array
      */
-    public function base64_img_provider(): array {
+    public static function base64_img_provider(): array {
         $img = '<img src="myimage.jpg" />';
         return [
             'Image tag alone (base64)' => [
-                $this->base64img,
+                self::$base64img,
                 true,
             ],
             'Image tag alone (link)' => [
@@ -130,7 +130,7 @@ EOF;
                 false,
             ],
             'Image tag in string (base64)' => [
-                "This is my image {$this->base64img}.",
+                "This is my image " . self::$base64img,
                 true,
             ],
             'Image tag in string (link)' => [
@@ -162,7 +162,7 @@ EOF;
     }
 
     public function test_truncate_base64(): void {
-        $truncated = tool::truncate_base64($this->base64img);
+        $truncated = tool::truncate_base64(self::$base64img);
         $this->assertStringContainsString('<img src="data:image/gif;base64..."', $truncated);
     }
 }

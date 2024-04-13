@@ -482,7 +482,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function can_view_preset_provider(): array {
+    public static function can_view_preset_provider(): array {
         return [
             // User presets.
             'Teacher owned preset without user id param' => [
@@ -737,7 +737,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function reset_template_provider(): array {
+    public static function reset_template_provider(): array {
         return [
             // User presets.
             'listtemplate' => [

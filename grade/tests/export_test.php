@@ -127,7 +127,7 @@ class export_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function format_feedback_provider(): array {
+    public static function format_feedback_provider(): array {
         return [
             'Basic string (PLAIN)' => [
                 'This is an example string',

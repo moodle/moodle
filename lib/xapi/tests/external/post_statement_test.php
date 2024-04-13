@@ -188,7 +188,7 @@ class post_statement_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function components_provider(): array {
+    public static function components_provider(): array {
         return [
             'Inexistent component' => [
                 'inexistent_component', []
@@ -234,7 +234,7 @@ class post_statement_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function invalid_json_provider(): array {
+    public static function invalid_json_provider(): array {
         return [
             'Wrong json' => [
                 'This is not { a json object /'
@@ -377,7 +377,7 @@ class post_statement_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function statement_provider(): array {
+    public static function statement_provider(): array {
         return [
             // Single statement with group statements enabled.
             'Single, Valid actor, valid verb' => [
@@ -450,7 +450,7 @@ class post_statement_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function group_statement_provider(): array {
+    public static function group_statement_provider(): array {
         return [
             // Single statement with group statements enabled.
             'Group statement + group statement without group support' => [

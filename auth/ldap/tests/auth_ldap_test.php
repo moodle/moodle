@@ -66,7 +66,7 @@ class auth_ldap_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function auth_ldap_provider() {
+    public static function auth_ldap_provider(): array {
         $pagesizes = [1, 3, 5, 1000];
         $subcontexts = [0, 1];
         $combinations = [];
