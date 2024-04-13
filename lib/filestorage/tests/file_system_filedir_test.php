@@ -1093,7 +1093,7 @@ class file_system_filedir_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function contenthash_dataprovider() {
+    public static function contenthash_dataprovider(): array {
         return array(
             array(
                 'contenthash'   => 'eee4943847a35a4b6942c6f96daafde06bcfdfab',

@@ -372,7 +372,7 @@ class extension_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function classes_implementing_class(): array {
+    public static function classes_implementing_class(): array {
         return [
             'mod_instance_helper with plugin disabled' => [
                 'bbbenabled' => false,

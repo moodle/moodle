@@ -72,7 +72,7 @@ class post_state_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function components_provider(): array {
+    public static function components_provider(): array {
         return [
             'Inexistent component' => [
                 'component' => 'inexistent_component',
@@ -135,7 +135,7 @@ class post_state_test extends externallib_advanced_testcase {
      *
      * @return array
      */
-    public function states_provider(): array {
+    public static function states_provider(): array {
         return [
             'Empty stateid' => [
                 'stateid' => '',

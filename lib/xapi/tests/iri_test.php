@@ -76,7 +76,7 @@ class iri_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function iri_samples_provider(): array {
+    public static function iri_samples_provider(): array {
         global $CFG;
 
         return [
@@ -120,7 +120,7 @@ class iri_test extends advanced_testcase {
      *
      * @return  array
      */
-    public function iri_check_provider(): array {
+    public static function iri_check_provider(): array {
         return [
             'Real IRI http' => [
                 'http://adlnet.gov/expapi/activities/example',

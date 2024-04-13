@@ -195,7 +195,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function generate_h5p_data_files_creation_provider(): array {
+    public static function generate_h5p_data_files_creation_provider(): array {
         return [
             'Do not create library related files on the filesystem' => [
                 false,
@@ -304,7 +304,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function generate_h5p_data_xapistates_provider(): array {
+    public static function generate_h5p_data_xapistates_provider(): array {
         return [
             'Do not create the file nor xAPI states' => [
                 'filerecord' => null,
@@ -391,7 +391,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_h5p_record_provider(): array {
+    public static function create_h5p_record_provider(): array {
         $createdjsoncontent = json_encode(
             array(
                 'text' => '<p>Created dummy text<\/p>\n',
@@ -512,7 +512,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_contents_libraries_record_provider(): array {
+    public static function create_contents_libraries_record_provider(): array {
         return [
             'Create h5p content library with set dependency type' => [
                 [
@@ -572,7 +572,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function create_library_dependency_record_provider(): array {
+    public static function create_library_dependency_record_provider(): array {
         return [
             'Create h5p library dependency with set dependency type' => [
                 [
@@ -638,7 +638,7 @@ class generator_test extends \advanced_testcase {
      *
      * @return array
      **/
-    public function create_content_file_provider(): array {
+    public static function create_content_file_provider(): array {
         return [
             'Create file in content with id 4' => [
                 [

@@ -201,7 +201,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
      *
      * @return array Test cases
      */
-    public function get_submit_tags_form_testcases() {
+    public static function get_submit_tags_form_testcases(): array {
         return [
                 'course - course' => [
                         'editingcontext' => 'course',
@@ -283,7 +283,7 @@ class submit_tags_test extends \externallib_advanced_testcase {
      * Course tags can only be set on a course category or system context question that
      * is being editing in a course context.
      *
-     * @dataProvider get_submit_tags_form_testcases()
+     * @dataProvider get_submit_tags_form_testcases
      * @param string $editingcontext The type of the context the question is being edited in
      * @param string $questioncontext The type of the context the question belongs to
      * @param string[] $questiontags The tag names to set as question tags

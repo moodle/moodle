@@ -219,7 +219,7 @@ class events_test extends \advanced_testcase {
     /**
      * dataProvider for test_scoreraw_submitted_event_validations().
      */
-    public function get_scoreraw_submitted_event_validations() {
+    public static function get_scoreraw_submitted_event_validations(): array {
         return array(
             'scoreraw_submitted => missing cmielement' => array(
                 null, '50',
@@ -306,7 +306,7 @@ class events_test extends \advanced_testcase {
     /**
      * dataProvider for test_status_submitted_event_validations().
      */
-    public function get_status_submitted_event_validations() {
+    public static function get_status_submitted_event_validations(): array {
         return array(
             'status_submitted => missing cmielement' => array(
                 null, 'passed',

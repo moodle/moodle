@@ -374,7 +374,7 @@ class external_api_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function all_external_info_provider(): array {
+    public static function all_external_info_provider(): array {
         global $DB;
 
         // We are testing here that all the external function descriptions can be generated without

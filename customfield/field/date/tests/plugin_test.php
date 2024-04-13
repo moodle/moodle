@@ -169,7 +169,7 @@ class plugin_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function parse_value_provider(): array {
+    public static function parse_value_provider(): array {
         return [
             // Valid times.
             ['2019-10-01', strtotime('2019-10-01')],

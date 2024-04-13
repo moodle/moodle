@@ -98,7 +98,7 @@ class item_result_test extends advanced_testcase {
      *
      * @return array
      */
-    public function duration_values_data(): array {
+    public static function duration_values_data(): array {
         return [
             'No duration' => [
                 null, null, false

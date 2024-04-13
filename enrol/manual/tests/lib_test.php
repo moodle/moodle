@@ -586,7 +586,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function default_enrolment_instance_data_provider(): array {
+    public static function default_enrolment_instance_data_provider(): array {
         $studentroles = get_archetype_roles('student');
         $studentrole = array_shift($studentroles);
 
@@ -700,7 +700,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function update_enrolment_instance_data_provider(): array {
+    public static function update_enrolment_instance_data_provider(): array {
         $studentroles = get_archetype_roles('student');
         $studentrole = array_shift($studentroles);
 

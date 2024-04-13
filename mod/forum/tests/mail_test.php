@@ -994,7 +994,7 @@ class mail_test extends \advanced_testcase {
     /**
      * dataProvider for test_forum_post_email_templates().
      */
-    public function forum_post_email_templates_provider() {
+    public static function forum_post_email_templates_provider(): array {
         // Base information, we'll build variations based on it.
         $base = array(
             'user' => array('firstname' => 'Love', 'lastname' => 'Moodle', 'mailformat' => 0, 'maildigest' => 0),

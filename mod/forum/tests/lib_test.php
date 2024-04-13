@@ -3269,7 +3269,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function forum_discussion_is_locked_provider() {
+    public static function forum_discussion_is_locked_provider(): array {
         return [
             'Unlocked: lockdiscussionafter is false' => [
                 ['lockdiscussionafter' => false],
@@ -3323,7 +3323,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function forum_is_cutoff_date_reached_provider() {
+    public static function forum_is_cutoff_date_reached_provider(): array {
         $now = time();
         return [
             'cutoffdate is unset' => [
@@ -3371,7 +3371,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function forum_is_due_date_reached_provider() {
+    public static function forum_is_due_date_reached_provider(): array {
         $now = time();
         return [
             'duedate is unset' => [
@@ -4118,7 +4118,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function forum_check_throttling_early_returns_provider() {
+    public static function forum_check_throttling_early_returns_provider(): array {
         return [
             'Empty blockafter' => [(object)['id' => 1, 'course' => SITEID, 'blockafter' => 0]],
             'Empty blockperiod' => [(object)['id' => 1, 'course' => SITEID, 'blockafter' => DAYSECS, 'blockperiod' => 0]],
@@ -4141,7 +4141,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function forum_check_throttling_early_exceptions_provider() {
+    public static function forum_check_throttling_early_exceptions_provider(): array {
         return [
             'Non-object forum' => ['a'],
             'Forum ID not set' => [(object)['id' => false]],

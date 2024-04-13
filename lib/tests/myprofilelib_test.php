@@ -224,7 +224,7 @@ class myprofilelib_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function core_myprofile_navigation_contact_timezone_provider(): array {
+    public static function core_myprofile_navigation_contact_timezone_provider(): array {
         return [
             'Hidden field' => ['timezone', '99', '99', null],
             'Forced timezone' => ['', 'Europe/London', 'Pacific/Tahiti', 'Europe/London'],

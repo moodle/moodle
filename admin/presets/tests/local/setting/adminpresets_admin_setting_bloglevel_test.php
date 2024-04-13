@@ -72,7 +72,7 @@ class adminpresets_admin_setting_bloglevel_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function save_value_provider(): array {
+    public static function save_value_provider(): array {
         return [
             'Save the bloglevel and set blog_menu block visibility to true' => [
                 'setttingvalue' => BLOG_USER_LEVEL,

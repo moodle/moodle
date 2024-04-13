@@ -64,7 +64,7 @@ class userlist_base_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_userids_provider() {
+    public static function get_userids_provider(): array {
         return [
             'basic' => [
                 [1, 2, 3, 4, 5],

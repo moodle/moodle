@@ -130,7 +130,7 @@ class user_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_name_fields_select_provider(): array {
+    public static function get_name_fields_select_provider(): array {
         return [
             ['firstname', ['firstname']],
             ['firstname lastname', ['firstname', 'lastname']],

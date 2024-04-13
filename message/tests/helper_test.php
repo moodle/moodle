@@ -228,7 +228,7 @@ class helper_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function prevent_unclosed_html_tags_data(): array {
+    public static function prevent_unclosed_html_tags_data(): array {
         return [
             'Prevent unclosed html elements' => [
                 '<h1>Title</h1><p>Paragraph</p><b>Bold', '<h1>Title</h1><p>Paragraph</p><b>Bold</b>', true

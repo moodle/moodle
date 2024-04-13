@@ -2770,7 +2770,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * The test_get_participant_relative_dates data provider.
      */
-    public function get_participant_relative_dates_provider() {
+    public static function get_participant_relative_dates_provider(): array {
         $timenow = time();
 
         return [

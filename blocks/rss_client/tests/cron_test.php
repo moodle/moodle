@@ -67,7 +67,7 @@ class cron_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function skip_time_increase_provider(): array {
+    public static function skip_time_increase_provider(): array {
         return [
             'Never failed' => [
                 'skiptime' => 0,

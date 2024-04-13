@@ -106,7 +106,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function data_course_search_url(): array {
+    public static function data_course_search_url(): array {
         return [
             'defaults' => [null, null, null, '/course/search.php'],
             'enabled' => [true, true, true, '/search/index.php'],
@@ -155,7 +155,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function data_can_replace_course_search(): array {
+    public static function data_can_replace_course_search(): array {
         return [
             'defaults' => [null, null, null, false],
             'enabled' => [true, true, true, true],
@@ -1503,7 +1503,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function parse_search_area_id_data_provider() {
+    public static function parse_search_area_id_data_provider(): array {
         return [
             ['mod_book-chapter', ['mod_book', 'search_chapter']],
             ['mod_customcert-activity', ['mod_customcert', 'search_activity']],

@@ -36,7 +36,7 @@ class manage_badge_action_bar_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function generate_badge_navigation_provider(): array {
+    public static function generate_badge_navigation_provider(): array {
         return [
             "Test tertiary nav as an editing teacher" => [
                 "editingteacher", [

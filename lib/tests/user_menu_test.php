@@ -30,7 +30,7 @@ class user_menu_test extends \advanced_testcase {
      *
      * @return array containing testing data
      */
-    public function custom_user_menu_data() {
+    public static function custom_user_menu_data(): array {
         return array(
             // These are fillers only.
             array('###', 0, 1),

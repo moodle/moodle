@@ -182,7 +182,7 @@ class get_state_test extends \externallib_advanced_testcase {
      *
      * @return array
      */
-    public function get_state_provider(): array {
+    public static function get_state_provider(): array {
         return [
             // ROLES. Testing behaviour depending on the user role calling the method.
             'Admin user should work' => [

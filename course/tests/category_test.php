@@ -1289,7 +1289,7 @@ class category_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_nearest_editable_subcategory_provider(): array {
+    public static function get_nearest_editable_subcategory_provider(): array {
         return [
             'Hidden main category for manager. Checking create and manage' => [
                 0,

@@ -72,7 +72,7 @@ class set_plugin_order_test extends \externallib_advanced_testcase {
      *
      * @return array
      */
-    public function execute_editor_provider(): array {
+    public static function execute_editor_provider(): array {
         $pluginmanager = \core_plugin_manager::instance();
         $allplugins = array_keys($pluginmanager->get_plugins_of_type('editor'));
 
@@ -142,7 +142,7 @@ class set_plugin_order_test extends \externallib_advanced_testcase {
         $this->assertIsArray(set_plugin_order::execute($plugin, 1));
     }
 
-    public function execute_non_orderable_provider(): array {
+    public static function execute_non_orderable_provider(): array {
         return [
             // Activities do not support ordering.
             ['mod_assign'],

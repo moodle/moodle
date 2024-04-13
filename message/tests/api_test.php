@@ -1823,7 +1823,7 @@ final class api_test extends \advanced_testcase {
     * This provides sets of data to for testing.
     * @return array
     */
-   public function get_conversations_mixed_provider() {
+   public static function get_conversations_mixed_provider(): array {
        return array(
             'Test that conversations with messages contacts is correctly ordered.' => array(
                 'users' => array(
@@ -5589,7 +5589,7 @@ final class api_test extends \advanced_testcase {
     /**
      * Data provider for test_get_conversation_counts().
      */
-    public function get_conversation_counts_test_cases() {
+    public static function get_conversation_counts_test_cases(): array {
         $typeindividual = api::MESSAGE_CONVERSATION_TYPE_INDIVIDUAL;
         $typegroup = api::MESSAGE_CONVERSATION_TYPE_GROUP;
         $typeself = api::MESSAGE_CONVERSATION_TYPE_SELF;

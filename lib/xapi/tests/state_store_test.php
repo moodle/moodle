@@ -113,7 +113,7 @@ class state_store_test extends advanced_testcase {
      *
      * @return array
      */
-    public function states_provider(): array {
+    public static function states_provider(): array {
         return [
             'Existing and valid state' => [
                 'info' => [],
@@ -193,7 +193,7 @@ class state_store_test extends advanced_testcase {
      *
      * @return array
      */
-    public function put_states_provider(): array {
+    public static function put_states_provider(): array {
         return [
             'Update existing state' => [
                 'info' => [],
@@ -334,7 +334,7 @@ class state_store_test extends advanced_testcase {
      *
      * @return array
      */
-    public function reset_wipe_states_provider(): array {
+    public static function reset_wipe_states_provider(): array {
         return [
             'With fake_component' => [
                 'info' => [],
@@ -501,7 +501,7 @@ class state_store_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_state_ids_provider(): array {
+    public static function get_state_ids_provider(): array {
         return [
             'empty_component' => [
                 'component' => 'empty_component',
@@ -583,7 +583,7 @@ class state_store_test extends advanced_testcase {
      *
      * @return array
      */
-    public function invalid_activityid_format_provider(): array {
+    public static function invalid_activityid_format_provider(): array {
         return [
             'delete' => [
                 'operation' => 'delete',

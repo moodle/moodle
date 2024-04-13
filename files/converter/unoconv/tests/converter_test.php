@@ -114,7 +114,7 @@ class converter_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function provider_test_unoconv_path() {
+    public static function provider_test_unoconv_path(): array {
         return [
             'Empty path' => [
                 'path' => null,

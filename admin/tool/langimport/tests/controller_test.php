@@ -48,7 +48,7 @@ class controller_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function uninstall_lang_invalid_provider(): array {
+    public static function uninstall_lang_invalid_provider(): array {
         return [
             'Empty string' => [''],
             'Meaningless empty string' => [' '],

@@ -59,7 +59,7 @@ class primary_test extends \advanced_testcase {
     /**
      * Data provider for the test_setting_initialise function
      */
-    public function setting_initialise_provider() {
+    public static function setting_initialise_provider(): array {
         return [
             'Testing as a guest user' => ['guest', ['home']],
             'Testing as an admin' => ['admin', ['home', 'myhome', 'mycourses', 'siteadminnode']],
@@ -152,7 +152,7 @@ class primary_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function search_and_set_active_node_provider(): array {
+    public static function search_and_set_active_node_provider(): array {
         return [
             'Test by activating node which is part of the tree'
                 => ['tenthchild', 'tenthchild'],

@@ -123,7 +123,7 @@ class canedit_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function can_edit_content_provider(): array {
+    public static function can_edit_content_provider(): array {
         return [
             // Component = mod_forum.
             'mod_forum: Admin user is author' => [

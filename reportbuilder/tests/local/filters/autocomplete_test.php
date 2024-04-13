@@ -37,7 +37,7 @@ class autocomplete_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_provider(): array {
+    public static function get_sql_filter_provider(): array {
         return [
             [[], ["Course 1 full name", "Course 2 full name", "Course 3 full name", "PHPUnit test site"]],
             [["course1", "course3"], ["Course 1 full name", "Course 3 full name"]],

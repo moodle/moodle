@@ -40,8 +40,7 @@ require_once($CFG->dirroot.'/lib/dml/sqlsrv_native_moodle_database.php');
  * @copyright  2017 John Okely
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class sqlsrv_native_moodle_database_test extends \advanced_testcase {
-
+final class sqlsrv_native_moodle_database_test extends \advanced_testcase {
     public function setUp(): void {
         parent::setUp();
         $this->resetAfterTest();
@@ -51,7 +50,7 @@ class sqlsrv_native_moodle_database_test extends \advanced_testcase {
      * Dataprovider for test_add_no_lock_to_temp_tables
      * @return array Data for test_add_no_lock_to_temp_tables
      */
-    public function add_no_lock_to_temp_tables_provider() {
+    public static function add_no_lock_to_temp_tables_provider(): array {
         return [
             "Basic temp table, nothing following" => [
                 'input' => 'SELECT * FROM {table_temp}',
@@ -142,7 +141,7 @@ class sqlsrv_native_moodle_database_test extends \advanced_testcase {
      *
      * @return array data for test_has_query_order_by
      */
-    public function has_query_order_by_provider() {
+    public static function has_query_order_by_provider(): array {
         // Fixtures taken from https://docs.moodle.org/en/ad-hoc_contributed_reports.
 
         return [

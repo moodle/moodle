@@ -150,7 +150,7 @@ class locallib_test extends \advanced_testcase {
      *
      * @return array Provider data
      */
-    public function get_assign_perpage_provider() {
+    public static function get_assign_perpage_provider(): array {
         return array(
             array(
                 'maxperpage' => -1,
@@ -919,7 +919,7 @@ class locallib_test extends \advanced_testcase {
      *
      * @return array of testcases
      */
-    public function new_submission_empty_testcases() {
+    public static function new_submission_empty_testcases(): array {
         return [
             'With file and onlinetext' => [
                 [
@@ -3067,7 +3067,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($isenabled, (bool) $plugin->is_enabled('enabled'));
     }
 
-    public function submission_plugin_settings_provider() {
+    public static function submission_plugin_settings_provider(): array {
         return [
             'CFG->usecomments true, empty config => Enabled by default' => [
                 true,
@@ -3202,7 +3202,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
         $this->assertEquals($isenabled, (bool) $plugin->is_enabled('enabled'));
     }
 
-    public function feedback_plugin_settings_provider() {
+    public static function feedback_plugin_settings_provider(): array {
         return [
             'No configuration => disabled' => [
                 [],
@@ -3957,7 +3957,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
      * Data provider for test_fix_null_grades
      * @return array[] Test data for test_fix_null_grades. Each element should contain grade, expectedcount and gradebookvalue
      */
-    public function fix_null_grades_provider() {
+    public static function fix_null_grades_provider(): array {
         return [
             'Negative less than one is errant' => [
                 'grade' => -0.64,
@@ -4143,7 +4143,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     /**
      * The test_assign_get_instance data provider.
      */
-    public function assign_get_instance_provider() {
+    public static function assign_get_instance_provider(): array {
         $timenow = time();
 
         // The get_default_instance() method shouldn't calculate any properties per-user. It should just return the record data.
@@ -4224,7 +4224,7 @@ Anchor link 2:<a title=\"bananas\" href=\"../logo-240x60.gif\">Link text</a>
     /**
      * The test_assign_get_default_instance data provider.
      */
-    public function assign_get_default_instance_provider() {
+    public static function assign_get_default_instance_provider(): array {
         $timenow = time();
 
         // The get_default_instance() method shouldn't calculate any properties per-user. It should just return the record data.

@@ -45,7 +45,7 @@ class action_event_test extends \advanced_testcase {
     /**
      * Test event class getters.
      *
-     * @dataProvider getters_testcases()
+     * @dataProvider getters_testcases
      * @param array $constructorparams Associative array of constructor parameters.
      */
     public function test_getters($constructorparams): void {
@@ -64,7 +64,7 @@ class action_event_test extends \advanced_testcase {
     /**
      * Test cases for getters test.
      */
-    public function getters_testcases() {
+    public static function getters_testcases(): array {
         return [
             'Dataset 1' => [
                 'constructorparams' => [
