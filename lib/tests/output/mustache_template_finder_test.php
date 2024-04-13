@@ -35,7 +35,7 @@ class mustache_template_finder_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function valid_template_directories_provider(): array {
+    public static function valid_template_directories_provider(): array {
         return [
             'plugin: mod_assign' => [
                 'component' => 'mod_assign',
@@ -111,7 +111,7 @@ class mustache_template_finder_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function valid_template_filepath_provider(): array {
+    public static function valid_template_filepath_provider(): array {
         return [
             'Standard core template' => [
                 'template' => 'core/modal',

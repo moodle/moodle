@@ -77,7 +77,7 @@ class gradeitems_test extends advanced_testcase {
      *
      * @return array
      */
-    public function is_advancedgrading_itemname_provider(): array {
+    public static function is_advancedgrading_itemname_provider(): array {
         return [
             'rating is not advanced' => [
                 'rating',

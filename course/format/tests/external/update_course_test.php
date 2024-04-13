@@ -104,7 +104,7 @@ class update_course_test extends \externallib_advanced_testcase {
      *
      * @return array of testing scenarios
      */
-    public function execute_course_state_provider(): array {
+    public static function execute_course_state_provider(): array {
         return [
             'Execute a core state action (cm_state)' => [
                 'format' => 'topics',

@@ -48,7 +48,7 @@ class record_userfeedback_action_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function record_userfeedback_action_provider() {
+    public static function record_userfeedback_action_provider(): array {
         return [
             'give action' => ['give'],
             'remind action' => ['remind'],

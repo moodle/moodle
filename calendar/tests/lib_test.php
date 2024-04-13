@@ -1050,7 +1050,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function calendar_format_event_location_provider(): array {
+    public static function calendar_format_event_location_provider(): array {
         return [
             'Empty' => ['', ''],
             'Text' => ['Barcelona', 'Barcelona'],

@@ -231,7 +231,7 @@ class lib_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function label_get_name_data_provider(): array {
+    public static function label_get_name_data_provider(): array {
         return [
             'simple' => [
                 'content' => '<p>Simple textual content<p>',

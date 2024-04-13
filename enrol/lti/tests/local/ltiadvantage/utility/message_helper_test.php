@@ -43,7 +43,7 @@ class message_helper_test extends \base_testcase {
      *
      * @return array the array of test JWT data.
      */
-    public function message_roles_provider(): array {
+    public static function message_roles_provider(): array {
         return [
             'Roles claim present, includes learner role only' => [
                 'jwtdata' => [

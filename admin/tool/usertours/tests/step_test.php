@@ -73,7 +73,7 @@ class step_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function dirty_value_provider() {
+    public static function dirty_value_provider(): array {
         return [
                 'tourid' => [
                         'tourid',
@@ -160,7 +160,7 @@ class step_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function step_sortorder_provider() {
+    public static function step_sortorder_provider(): array {
         return [
                 [0, 5, true, false],
                 [1, 5, false, false],
@@ -254,7 +254,7 @@ class step_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_config_provider() {
+    public static function get_config_provider(): array {
         $allvalues = (object) [
                 'some' => 'value',
                 'another' => 42,
@@ -410,7 +410,7 @@ class step_test extends \advanced_testcase {
     /**
      * Data provider for set_config.
      */
-    public function set_config_provider() {
+    public static function set_config_provider(): array {
         $allvalues = (object) [
                 'some' => 'value',
                 'another' => 42,
@@ -764,7 +764,7 @@ class step_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function getter_provider() {
+    public static function getter_provider(): array {
         return [
                 'id' => [
                         'id',

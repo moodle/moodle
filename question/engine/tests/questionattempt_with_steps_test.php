@@ -169,7 +169,7 @@ class questionattempt_with_steps_test extends \advanced_testcase {
      *
      * @return array test cases
      */
-    public function validate_manual_mark_cases(): array {
+    public static function validate_manual_mark_cases(): array {
         // Recall, the DB schema stores question grade information to 7 decimal places.
         return [
             [0, 1, 2, null, ''],

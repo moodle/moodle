@@ -341,14 +341,14 @@ class prediction_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function provider_ml_training_and_prediction() {
+    public static function provider_ml_training_and_prediction(): array {
         $cases = array(
             'no_splitting' => array('\core\analytics\time_splitting\no_splitting', 0, 1),
             'quarters' => array('\core\analytics\time_splitting\quarters', 3, 4)
         );
 
         // We need to test all system prediction processors.
-        return $this->add_prediction_processors($cases);
+        return static::add_prediction_processors($cases);
     }
 
     /**
@@ -417,13 +417,13 @@ class prediction_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function provider_ml_processors() {
+    public static function provider_ml_processors(): array {
         $cases = [
             'case' => [],
         ];
 
         // We need to test all system prediction processors.
-        return $this->add_prediction_processors($cases);
+        return static::add_prediction_processors($cases);
     }
     /**
      * Test the system classifiers returns.
@@ -507,7 +507,7 @@ class prediction_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function provider_ml_classifiers_return() {
+    public static function provider_ml_classifiers_return(): array {
         // Using verbose options as the first argument for readability.
         $cases = array(
             '1-samples' => array('maybe', 1, [0]),
@@ -517,7 +517,7 @@ class prediction_test extends \advanced_testcase {
         );
 
         // We need to test all system prediction processors.
-        return $this->add_prediction_processors($cases);
+        return static::add_prediction_processors($cases);
     }
 
     /**
@@ -581,13 +581,13 @@ class prediction_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function provider_test_multi_classifier() {
+    public static function provider_test_multi_classifier(): array {
         $cases = array(
             'notimesplitting' => array('\core\analytics\time_splitting\no_splitting'),
         );
 
         // Add all system prediction processors.
-        return $this->add_prediction_processors($cases);
+        return static::add_prediction_processors($cases);
     }
 
     /**
@@ -777,8 +777,7 @@ class prediction_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function provider_ml_test_evaluation_configuration() {
-
+    public static function provider_ml_test_evaluation_configuration(): array {
         $cases = array(
             'bad' => array(
                 'modelquality' => 'random',
@@ -797,7 +796,7 @@ class prediction_test extends \advanced_testcase {
                 )
             )
         );
-        return $this->add_prediction_processors($cases);
+        return static::add_prediction_processors($cases);
     }
 
     /**
@@ -955,8 +954,7 @@ class prediction_test extends \advanced_testcase {
      * @param array $cases
      * @return array
      */
-    protected function add_prediction_processors($cases) {
-
+    protected static function add_prediction_processors($cases): array {
         $return = array();
 
         if (defined('TEST_MLBACKEND_PYTHON_HOST') && defined('TEST_MLBACKEND_PYTHON_PORT')

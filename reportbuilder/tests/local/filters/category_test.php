@@ -38,7 +38,7 @@ class category_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_provider(): array {
+    public static function get_sql_filter_provider(): array {
         return [
             ['One', false, ['One']],
             ['One', true, ['One', 'Two', 'Three']],

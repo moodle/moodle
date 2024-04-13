@@ -578,7 +578,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Data provider for \tool_dataprivacy_external_testcase::test_XX_options().
      */
-    public function get_options_provider() {
+    public static function get_options_provider(): array {
         return [
             [false, false],
             [false, true],
@@ -703,7 +703,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Data provider for \tool_dataprivacy_external_testcase::get_activity_options().
      */
-    public function get_activity_options_provider() {
+    public static function get_activity_options_provider(): array {
         return [
             [false, false, true],
             [false, true, true],

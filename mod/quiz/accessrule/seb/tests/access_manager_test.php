@@ -343,7 +343,7 @@ class access_manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function should_validate_basic_header_data_provider() {
+    public static function should_validate_basic_header_data_provider(): array {
         return [
             [settings_provider::USE_SEB_NO, false],
             [settings_provider::USE_SEB_CONFIG_MANUALLY, false],
@@ -377,7 +377,7 @@ class access_manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function should_validate_config_key_data_provider() {
+    public static function should_validate_config_key_data_provider(): array {
         return [
             [settings_provider::USE_SEB_NO, false],
             [settings_provider::USE_SEB_CONFIG_MANUALLY, true],
@@ -410,7 +410,7 @@ class access_manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function should_validate_browser_exam_key_data_provider() {
+    public static function should_validate_browser_exam_key_data_provider(): array {
         return [
             [settings_provider::USE_SEB_NO, false],
             [settings_provider::USE_SEB_CONFIG_MANUALLY, false],

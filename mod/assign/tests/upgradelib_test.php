@@ -38,7 +38,7 @@ class upgradelib_test extends \advanced_testcase {
      *
      * @return  array
      */
-    public function assignment_upgrade_provider() {
+    public static function assignment_upgrade_provider(): array {
         return [
             'upload' => [
                 'type' => 'upload',

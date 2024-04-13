@@ -57,7 +57,7 @@ class filter_test extends advanced_testcase {
      *
      * @return array
      */
-    public function constructor_provider(): array {
+    public static function constructor_provider(): array {
         return [
             'Name without values' => [['keyword'], filter::JOINTYPE_DEFAULT, []],
             'Name with valid join type ANY' => [[
@@ -147,7 +147,7 @@ class filter_test extends advanced_testcase {
      *
      * @return array
      */
-    public function constructor_invalid_join_provider(): array {
+    public static function constructor_invalid_join_provider(): array {
         return [
             'Too low' => [-1],
             'Too high' => [4],
@@ -255,7 +255,7 @@ class filter_test extends advanced_testcase {
      *
      * @return array
      */
-    public function filter_value_provider(): array {
+    public static function filter_value_provider(): array {
         return [
             'Empty' => [[], 0],
             'Single value' => [[10], 1],

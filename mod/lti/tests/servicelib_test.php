@@ -47,7 +47,7 @@ class servicelib_test extends \basic_testcase {
      *
      * @return array
      */
-    public function message_id_provider() {
+    public static function message_id_provider(): array {
         $valid = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <imsx_POXEnvelopeRequest xmlns="http://www.imsglobal.org/services/ltiv1p1/xsd/imsoms_v1p0">

@@ -331,7 +331,7 @@ class completionlib_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function internal_get_state_provider() {
+    public static function internal_get_state_provider(): array {
         return [
             'View required, but not viewed yet' => [
                 COMPLETION_VIEW_REQUIRED, 1, '', COMPLETION_INCOMPLETE
@@ -392,7 +392,7 @@ class completionlib_test extends advanced_testcase {
      *
      * @return array
      */
-    public function internal_get_state_with_grade_criteria_provider() {
+    public static function internal_get_state_with_grade_criteria_provider(): array {
         return [
             "Passing grade enabled and achieve. State should be COMPLETION_COMPLETE_PASS" => [
                 [
@@ -701,7 +701,7 @@ class completionlib_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function get_data_provider() {
+    public static function get_data_provider(): array {
         return [
             'No completion record' => [
                 false, true, false, COMPLETION_INCOMPLETE
@@ -1600,7 +1600,7 @@ class completionlib_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function get_grade_completion_provider() {
+    public static function get_grade_completion_provider(): array {
         return [
             'Grade not required' => [false, false, null, null, null],
             'Grade required, but has no grade yet' => [true, false, null, null, COMPLETION_INCOMPLETE],

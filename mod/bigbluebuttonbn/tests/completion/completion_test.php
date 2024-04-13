@@ -281,7 +281,7 @@ class completion_test extends \advanced_testcase {
      *
      * @return array[]
      */
-    public function custom_completion_data_provider() {
+    public static function custom_completion_data_provider(): array {
         return [
             'simple' => [
                 'customcompletionrules' => [

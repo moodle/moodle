@@ -72,7 +72,7 @@ class filter_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function texts_provider() {
+    public static function texts_provider(): array {
         global $CFG;
 
         return [

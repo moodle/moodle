@@ -159,7 +159,7 @@ class attempt_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function save_statement_data(): array {
+    public static function save_statement_data(): array {
         return [
             'Statement without definition and result' => [
                 '', false, false, [false, 0, 0, 0, 0, null, null]
@@ -291,7 +291,7 @@ class attempt_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function delete_all_attempts_data(): array {
+    public static function delete_all_attempts_data(): array {
         return [
             'Delete all attempts from activity' => [
                 false, [0, 0, 2, 2, 2, 4]
@@ -392,7 +392,7 @@ class attempt_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function basic_setters_data(): array {
+    public static function basic_setters_data(): array {
         return [
             'Set attempt duration' => [
                 'duration', 25, 35

@@ -48,7 +48,7 @@ class activity_custom_completion_test extends advanced_testcase {
     /**
      * Data provider for test_get_overall_completion_state().
      */
-    public function overall_completion_state_provider(): array {
+    public static function overall_completion_state_provider(): array {
         global $CFG;
         require_once($CFG->libdir . '/completionlib.php');
         return [
@@ -121,7 +121,7 @@ class activity_custom_completion_test extends advanced_testcase {
      *
      * @return array[]
      */
-    public function validate_rule_provider() {
+    public static function validate_rule_provider(): array {
         return [
             'Not defined' => [
                 false, true, coding_exception::class

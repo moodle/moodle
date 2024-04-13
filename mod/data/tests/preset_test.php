@@ -495,7 +495,7 @@ class preset_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_directory_a_preset_provider(): array {
+    public static function is_directory_a_preset_provider(): array {
         global $CFG;
 
         return [
@@ -608,7 +608,7 @@ class preset_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function generate_preset_xml_provider(): array {
+    public static function generate_preset_xml_provider(): array {
         return [
             'Generate preset.xml with the default params and empty description' => [
                 'params' => [],

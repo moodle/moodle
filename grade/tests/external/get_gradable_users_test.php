@@ -100,7 +100,7 @@ class get_gradable_users_test extends \externallib_advanced_testcase {
      *
      * @return array
      */
-    public function execute_data(): array {
+    public static function execute_data(): array {
         return [
             'All users' => [
                 false,

@@ -54,7 +54,7 @@ class handler_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_h5p_string_provider(): array {
+    public static function get_h5p_string_provider(): array {
         return [
             'Existing string in h5plib plugin' => [
                 'editor:add',

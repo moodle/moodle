@@ -155,7 +155,7 @@ class restore_test extends advanced_testcase {
      *
      * @return array
      */
-    public function backup_restore_data(): array {
+    public static function backup_restore_data(): array {
         return [
             'Activity attempts and restore with userdata' => [
                 true, true, [1, 1, 3], [1, 1, 3]

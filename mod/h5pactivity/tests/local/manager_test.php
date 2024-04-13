@@ -95,7 +95,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function is_tracking_enabled_data(): array {
+    public static function is_tracking_enabled_data(): array {
         return [
             'Logged student, tracking enabled' => [
                 true, 'student', 1, true
@@ -209,7 +209,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_users_scaled_score_data(): array {
+    public static function get_users_scaled_score_data(): array {
         return [
             'Tracking with max attempt method' => [
                 1, manager::GRADEHIGHESTATTEMPT, [1.00000, 31, 2], [0.66667, 32, 2]
@@ -286,7 +286,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_selected_attempt_data(): array {
+    public static function get_selected_attempt_data(): array {
         return [
             'Tracking with max attempt method' => [
                 1, manager::GRADEHIGHESTATTEMPT, manager::GRADEHIGHESTATTEMPT
@@ -395,7 +395,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function can_view_all_attempts_data(): array {
+    public static function can_view_all_attempts_data(): array {
         return [
             // No tracking cases.
             'No tracking with admin using $USER' => [
@@ -467,7 +467,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function can_view_own_attempts_data(): array {
+    public static function can_view_own_attempts_data(): array {
         return [
             // No tracking cases.
             'No tracking, review none, using $USER, without attempts' => [
@@ -606,7 +606,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function count_attempts_all_data(): array {
+    public static function count_attempts_all_data(): array {
         return [
             'Students with both view and submit capability' => [true, true, false, 6],
             'Students without view but with submit capability' => [false, true, false, 0],
@@ -672,7 +672,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_active_users_join_data(): array {
+    public static function get_active_users_join_data(): array {
         return [
             'All potential users' => [
                 'allpotentialusers' => true,
@@ -895,7 +895,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_report_data(): array {
+    public static function get_report_data(): array {
         return [
             // No tracking scenarios.
             'No tracking, review none, no attempts, teacher' => [
@@ -1030,7 +1030,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_report_data_groupmode(): array {
+    public static function get_report_data_groupmode(): array {
         return [
             // No tracking scenarios.
             'course groupmode is SEPARATEGROUPS' => [false],
@@ -1088,7 +1088,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_attempt_data(): array {
+    public static function get_attempt_data(): array {
         return [
             'Get the current activity attempt' => [
                 'current', 'current'

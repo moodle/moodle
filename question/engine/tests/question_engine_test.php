@@ -88,7 +88,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_behaviour_unused_display_options_provider(): array {
+    public static function get_behaviour_unused_display_options_provider(): array {
         return [
             'interactive' => [
                 'interactive',
@@ -126,7 +126,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function can_questions_finish_during_the_attempt_provider(): array {
+    public static function can_questions_finish_during_the_attempt_provider(): array {
         return [
             ['deferredfeedback', false],
             ['interactive', true],
@@ -150,7 +150,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function sort_behaviours_provider(): array {
+    public static function sort_behaviours_provider(): array {
         $in = [
             'b1' => 'Behave 1',
             'b2' => 'Behave 2',
@@ -221,7 +221,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function is_manual_grade_in_range_provider(): array {
+    public static function is_manual_grade_in_range_provider(): array {
         return [
             'In range' => [
                 'post' => [
@@ -309,7 +309,7 @@ class question_engine_test extends advanced_testcase {
      *
      * @return array
      */
-    public function render_question_number_provider(): array {
+    public static function render_question_number_provider(): array {
         return [
             'Test with number is i character' => [
                 'i',

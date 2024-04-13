@@ -74,7 +74,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function sesskey_required_provider() {
+    public static function sesskey_required_provider(): array {
         $tourid = rand(1, 100);
         $stepid = rand(1, 100);
 
@@ -121,7 +121,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function move_tour_provider() {
+    public static function move_tour_provider(): array {
         $alltours = [
             ['name' => 'Tour 1'],
             ['name' => 'Tour 2'],
@@ -198,7 +198,7 @@ class manager_test extends \advanced_testcase {
      *
      * @return array
      */
-    public function get_matching_tours_provider() {
+    public static function get_matching_tours_provider(): array {
         global $CFG;
 
         $alltours = [

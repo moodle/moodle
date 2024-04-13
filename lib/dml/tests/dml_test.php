@@ -4431,7 +4431,7 @@ EOD;
 
     }
 
-    public function sql_concat_join_provider() {
+    public static function sql_concat_join_provider(): array {
         return array(
             // All strings.
             array(

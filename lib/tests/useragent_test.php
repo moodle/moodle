@@ -36,7 +36,7 @@ class useragent_test extends advanced_testcase {
      *
      * @return array
      */
-    public function user_agents_providers() {
+    public static function user_agents_providers(): array {
         // Note: When adding new entries to this list, please ensure that any new browser versions are added to the corresponding list.
         // This ensures that regression tests are applied to all known user agents.
         return array(

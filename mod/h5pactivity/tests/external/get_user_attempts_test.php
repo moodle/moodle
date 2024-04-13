@@ -145,7 +145,7 @@ class get_user_attempts_test extends externallib_advanced_testcase {
      *
      * @return  array
      */
-    public function execute_multipleusers_data(): array {
+    public static function execute_multipleusers_data(): array {
         return [
             // Teacher checks.
             'Teacher checking students with attempts' => [
@@ -188,7 +188,7 @@ class get_user_attempts_test extends externallib_advanced_testcase {
      *
      * @return array[]
      */
-    public function execute_with_sortorder(): array {
+    public static function execute_with_sortorder(): array {
         return [
             'Sort by id' => ['id', ['user01', 'user02']],
             'Sort by id desc' => ['id desc', ['user02', 'user01']],

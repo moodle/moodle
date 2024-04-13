@@ -81,7 +81,7 @@ class stateupdates_test extends \advanced_testcase {
      *
      * @return array testing scenarios
      */
-    public function add_course_put_provider() {
+    public static function add_course_put_provider(): array {
         return [
             'Admin role' => [
                 'admin',
@@ -199,11 +199,11 @@ class stateupdates_test extends \advanced_testcase {
      *
      * @return array testing scenarios
      */
-    public function add_section_provider(): array {
+    public static function add_section_provider(): array {
         return array_merge(
-            $this->add_section_provider_helper('put'),
-            $this->add_section_provider_helper('create'),
-            $this->add_section_provider_helper('remove'),
+            self::add_section_provider_helper('put'),
+            self::add_section_provider_helper('create'),
+            self::add_section_provider_helper('remove'),
         );
     }
 
@@ -213,7 +213,7 @@ class stateupdates_test extends \advanced_testcase {
      * @param string $action the action to perform
      * @return array testing scenarios
      */
-    private function add_section_provider_helper(string $action): array {
+    private static function add_section_provider_helper(string $action): array {
         // Delete does not depends on user permissions.
         if ($action == 'remove') {
             $studentsections = [0, 1, 2];
@@ -343,11 +343,11 @@ class stateupdates_test extends \advanced_testcase {
      *
      * @return array testing scenarios
      */
-    public function add_cm_provider(): array {
+    public static function add_cm_provider(): array {
         return array_merge(
-            $this->add_cm_provider_helper('put'),
-            $this->add_cm_provider_helper('create'),
-            $this->add_cm_provider_helper('remove'),
+            self::add_cm_provider_helper('put'),
+            self::add_cm_provider_helper('create'),
+            self::add_cm_provider_helper('remove'),
         );
     }
 
@@ -357,7 +357,7 @@ class stateupdates_test extends \advanced_testcase {
      * @param string $action the action to perform
      * @return array testing scenarios
      */
-    private function add_cm_provider_helper(string $action): array {
+    private static function add_cm_provider_helper(string $action): array {
         // Delete does not depends on user permissions.
         if ($action == 'remove') {
             $studentcms = [0, 1, 2, 3];

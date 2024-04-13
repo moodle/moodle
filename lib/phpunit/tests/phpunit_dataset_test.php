@@ -83,7 +83,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_from_file() data provider.
      */
-    public function from_file_provider() {
+    public static function from_file_provider(): array {
         // Create an unreadable file with vfsStream.
         $vfsfile = vfsStream::newFile('unreadable', 0222);
         vfsStream::setup('root')->addChild($vfsfile);
@@ -183,7 +183,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_from_string() data provider.
      */
-    public function from_string_provider() {
+    public static function from_string_provider(): array {
 
         return [
             'wrong type' => [
@@ -276,7 +276,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_from_array() data provider.
      */
-    public function from_array_provider() {
+    public static function from_array_provider(): array {
         return [
             'repeated array table many structures' => [
                 'structure' => [
@@ -425,7 +425,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_load_csv() data provider.
      */
-    public function load_csv_provider() {
+    public static function load_csv_provider(): array {
 
         return [
             'repeated csv table many files' => [
@@ -516,7 +516,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_load_xml() data provider.
      */
-    public function load_xml_provider() {
+    public static function load_xml_provider(): array {
 
         return [
             'repeated xml table multiple files' => [
@@ -687,7 +687,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_to_database() data provider.
      */
-    public function to_database_provider() {
+    public static function to_database_provider(): array {
 
         return [
             'wrong table requested' => [
@@ -842,7 +842,7 @@ class phpunit_dataset_test extends advanced_testcase {
     /**
      * test_get_rows() data provider.
      */
-    public function get_rows_provider() {
+    public static function get_rows_provider(): array {
 
         return [
             'wrong table requested' => [

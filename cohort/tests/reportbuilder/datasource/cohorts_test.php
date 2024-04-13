@@ -80,7 +80,7 @@ class cohorts_test extends core_reportbuilder_testcase {
      *
      * @return array[]
      */
-    public function cohorts_datasource_user_select_provider(): array {
+    public static function datasource_filters_provider(): array {
         return [
             ['user01', 'Cohort01'],
             ['user02', 'Cohort02'],
@@ -93,7 +93,7 @@ class cohorts_test extends core_reportbuilder_testcase {
      * @param string $username
      * @param string $expectedcohort
      *
-     * @dataProvider cohorts_datasource_user_select_provider
+     * @dataProvider datasource_filters_provider
      */
     public function test_cohorts_datasource_user_select(string $username, string $expectedcohort): void {
         $this->resetAfterTest();

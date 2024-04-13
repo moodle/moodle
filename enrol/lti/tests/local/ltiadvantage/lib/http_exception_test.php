@@ -55,7 +55,7 @@ class http_exception_test extends \basic_testcase {
      *
      * @return array the test case data.
      */
-    public function exception_data_provider() {
+    public static function exception_data_provider(): array {
         return [
             'With only the response object' => [
                 'args' => [

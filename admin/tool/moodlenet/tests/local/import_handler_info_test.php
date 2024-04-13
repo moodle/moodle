@@ -59,7 +59,7 @@ class import_handler_info_test extends \advanced_testcase {
      *
      * @return array the data for creation of the info object.
      */
-    public function handler_info_data_provider() {
+    public static function handler_info_data_provider(): array {
         return [
             'All data present' => ['label', 'Add a label to the course', false],
             'Empty module name' => ['', 'Add a file resource to the course', true],
