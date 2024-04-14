@@ -28,6 +28,7 @@ use core\hook\stoppable_trait;
 #[\core\attribute\label('Allow plugins to callback as soon possible after user has passed MFA.')]
 #[\core\attribute\tags('user', 'login')]
 class after_user_passed_mfa implements
-    \Psr\EventDispatcher\StoppableEventInterface {
+    \Psr\EventDispatcher\StoppableEventInterface
+{
     use stoppable_trait;
 }
