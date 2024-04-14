@@ -29,11 +29,9 @@ use Psr\EventDispatcher\StoppableEventInterface;
 #[\core\attribute\label('Allows plugins or features to perform actions before a course is deleted.')]
 #[\core\attribute\tags('course')]
 class before_course_deleted implements
-    StoppableEventInterface {
-    /**
-     * @var bool Whether the propagation of this event has been stopped.
-     */
-    protected bool $stopped = false;
+    StoppableEventInterface
+{
+    use \core\hook\stoppable_trait;
 
     /**
      * Constructor for the hook.
@@ -43,16 +41,5 @@ class before_course_deleted implements
     public function __construct(
         public readonly stdClass $course,
     ) {
-    }
-
-    public function isPropagationStopped(): bool {
-        return $this->stopped;
-    }
-
-    /**
-     * Stop the propagation of this event.
-     */
-    public function stop(): void {
-        $this->stopped = true;
     }
 }
