@@ -16,6 +16,7 @@
 
 namespace tool_mobile;
 
+use core\session\utility\cookie_helper;
 use html_writer;
 
 /**
@@ -77,5 +78,32 @@ class hook_callbacks {
         $hook->add_html(
             html_writer::link($url, get_string('getmoodleonyourmobile', 'tool_mobile'), ['class' => 'mobilelink']),
         );
+    }
+
+    /**
+     * Callback to recover $SESSION->wantsurl.
+     *
+     * @param \core_user\hook\after_login_completed $hook
+     */
+    public static function after_login_completed(
+        \core_user\hook\after_login_completed $hook,
+    ): void {
+        global $SESSION, $CFG;
+
+        // Check if the user is doing a mobile app launch, if that's the case, ensure $SESSION->wantsurl is correctly set.
+        if (!NO_MOODLE_COOKIES && !empty($_COOKIE['tool_mobile_launch'])) {
+            if (empty($SESSION->wantsurl) || strpos($SESSION->wantsurl, '/tool/mobile/launch.php') === false) {
+                $params = json_decode($_COOKIE['tool_mobile_launch'], true);
+                $SESSION->wantsurl = (new \moodle_url("/$CFG->admin/tool/mobile/launch.php", $params))->out(false);
+            }
+        }
+
+        // Set Partitioned and Secure attributes to the MoodleSession cookie if the user is using the Moodle app.
+        if (\core_useragent::is_moodle_app()) {
+            cookie_helper::add_attributes_to_cookie_response_header(
+                'MoodleSession' . $CFG->sessioncookie,
+                ['Secure', 'Partitioned'],
+            );
+        }
     }
 }
