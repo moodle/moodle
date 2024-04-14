@@ -26,7 +26,7 @@ use context;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\core\attribute\label('Allows plugins or features to perform actions after a role is unassigned for a user.')]
-#[\core\attribute\tags('role,', 'user')]
+#[\core\attribute\tags('role', 'user')]
 class after_role_unassigned {
 
     /**
