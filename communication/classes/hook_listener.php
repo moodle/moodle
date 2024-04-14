@@ -19,11 +19,11 @@ namespace core_communication;
 use context_course;
 use core\hook\access\after_role_assigned;
 use core\hook\access\after_role_unassigned;
-use core_enrol\hook\before_enrol_instance_delete;
+use core_enrol\hook\before_enrol_instance_deleted;
 use core_enrol\hook\after_enrol_instance_status_updated;
 use core_enrol\hook\after_user_enrolled;
-use core_enrol\hook\before_user_enrolment_update;
-use core_enrol\hook\before_user_enrolment_remove;
+use core_enrol\hook\before_user_enrolment_updated;
+use core_enrol\hook\before_user_enrolment_removed;
 use core_course\hook\after_course_created;
 use core_course\hook\before_course_deleted;
 use core_course\hook\after_course_updated;
@@ -533,10 +533,10 @@ class hook_listener {
     /**
      * Remove the communication instance memberships when an enrolment instance is deleted.
      *
-     * @param before_enrol_instance_delete $hook The enrol instance deleted hook.
+     * @param before_enrol_instance_deleted $hook The enrol instance deleted hook.
      */
     public static function remove_communication_memberships_for_enrol_instance_deletion(
-        before_enrol_instance_delete $hook,
+        before_enrol_instance_deleted $hook,
     ): void {
         // If the communication subsystem is not enabled then just ignore.
         if (!api::is_available()) {
@@ -591,10 +591,10 @@ class hook_listener {
     /**
      * Update the communication instance membership for the user enrolment updates.
      *
-     * @param before_user_enrolment_update $hook The user enrolment updated hook.
+     * @param before_user_enrolment_updated $hook The user enrolment updated hook.
      */
     public static function update_communication_membership_for_updated_user_enrolment(
-        before_user_enrolment_update $hook,
+        before_user_enrolment_updated $hook,
     ): void {
         // If the communication subsystem is not enabled then just ignore.
         if (!api::is_available()) {
@@ -630,10 +630,10 @@ class hook_listener {
     /**
      * Remove communication instance membership for an enrolled user.
      *
-     * @param before_user_enrolment_remove $hook The user unenrolled hook.
+     * @param before_user_enrolment_removed $hook The user unenrolled hook.
      */
     public static function remove_communication_membership_for_unenrolled_user(
-        before_user_enrolment_remove $hook,
+        before_user_enrolment_removed $hook,
     ): void {
         // If the communication subsystem is not enabled then just ignore.
         if (!api::is_available()) {

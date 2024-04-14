@@ -17,40 +17,42 @@
 namespace core_enrol\hook;
 
 use stdClass;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
- * Hook before a user enrolment is updated.
+ * Hook before enrolment instance is deleted.
  *
  * @package    core_enrol
- * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
+ * @copyright  20234 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins or features to perform actions before a user enrolment is updated.')]
-#[\core\attribute\tags('enrol', 'user')]
-class before_user_enrolment_update {
+#[\core\attribute\label('Allows plugins or features to perform actions before the enrolment instance is deleted.')]
+#[\core\attribute\tags('enrol')]
+class before_enrol_instance_deleted implements
+    StoppableEventInterface {
+    /**
+     * @var bool Whether the propagation of this event has been stopped.
+     */
+    protected bool $stopped = false;
 
     /**
      * Constructor for the hook.
      *
      * @param stdClass $enrolinstance The enrol instance.
-     * @param stdClass $userenrolmentinstance The user enrolment instance.
-     * @param bool $statusmodified Whether the status of the enrolment has been modified.
-     * @param bool $timeendmodified Whether the time end of the enrolment has been modified.
      */
     public function __construct(
         public readonly stdClass $enrolinstance,
-        public readonly stdClass $userenrolmentinstance,
-        public readonly bool $statusmodified,
-        public readonly bool $timeendmodified,
     ) {
     }
 
+    public function isPropagationStopped(): bool {
+        return $this->stopped;
+    }
+
     /**
-     * Get the user id.
-     *
-     * @return int
+     * Stop the propagation of this event.
      */
-    public function get_userid(): int {
-        return $this->userenrolmentinstance->userid;
+    public function stop(): void {
+        $this->stopped = true;
     }
 }
