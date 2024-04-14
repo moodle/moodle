@@ -54,7 +54,7 @@ $callbacks = [
         'callback' => \core_communication\hook_listener::class . '::update_course_communication',
     ],
     [
-        'hook' => \core_course\hook\before_course_delete::class,
+        'hook' => \core_course\hook\before_course_deleted::class,
         'callback' => \core_communication\hook_listener::class . '::delete_course_communication',
     ],
     [

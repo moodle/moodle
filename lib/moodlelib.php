@@ -4650,7 +4650,7 @@ function delete_course($courseorid, $showfeedback = true) {
     }
 
     // Dispatch the hook for pre course delete actions.
-    $hook = new \core_course\hook\before_course_delete(
+    $hook = new \core_course\hook\before_course_deleted(
         course: $course,
     );
     \core\di::get(\core\hook\manager::class)->dispatch($hook);

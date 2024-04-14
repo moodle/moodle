@@ -25,7 +25,7 @@ use core_enrol\hook\after_user_enrolled;
 use core_enrol\hook\before_user_enrolment_update;
 use core_enrol\hook\before_user_enrolment_remove;
 use core_course\hook\after_course_created;
-use core_course\hook\before_course_delete;
+use core_course\hook\before_course_deleted;
 use core_course\hook\after_course_updated;
 use core_group\hook\after_group_created;
 use core_group\hook\after_group_deleted;
@@ -345,10 +345,10 @@ class hook_listener {
      * Course can have communication data if it is a group or a course.
      * This action is important to perform even if the experimental feature is disabled.
      *
-     * @param before_course_delete $hook The course deleted hook.
+     * @param before_course_deleted $hook The course deleted hook.
      */
     public static function delete_course_communication(
-        before_course_delete $hook,
+        before_course_deleted $hook,
     ): void {
         // If the communication subsystem is not enabled then just ignore.
         if (!api::is_available()) {

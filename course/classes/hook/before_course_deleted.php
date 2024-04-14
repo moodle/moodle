@@ -28,9 +28,8 @@ use Psr\EventDispatcher\StoppableEventInterface;
  */
 #[\core\attribute\label('Allows plugins or features to perform actions before a course is deleted.')]
 #[\core\attribute\tags('course')]
-class before_course_delete implements
+class before_course_deleted implements
     StoppableEventInterface {
-
     /**
      * @var bool Whether the propagation of this event has been stopped.
      */
