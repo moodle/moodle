@@ -27,8 +27,7 @@ use stdClass;
  */
 #[\core\attribute\label('Allows plugins or features to perform actions before a user is updated.')]
 #[\core\attribute\tags('user')]
-class before_user_update {
-
+class before_user_updated {
     /**
      * Constructor for the hook.
      *
@@ -36,7 +35,9 @@ class before_user_update {
      * @param stdClass $currentuserdata The old user instance
      */
     public function __construct(
+        /** @var stdClass The user instance */
         public readonly stdClass $user,
+        /** @var stdClass The old user instance */
         public readonly stdClass $currentuserdata,
     ) {
     }

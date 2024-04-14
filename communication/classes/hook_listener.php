@@ -33,7 +33,7 @@ use core_group\hook\after_group_membership_added;
 use core_group\hook\after_group_membership_removed;
 use core_group\hook\after_group_updated;
 use core_user\hook\before_user_deleted;
-use core_user\hook\before_user_update;
+use core_user\hook\before_user_updated;
 
 /**
  * Hook listener for communication api.
@@ -382,10 +382,10 @@ class hook_listener {
     /**
      * Update the room membership for the user updates.
      *
-     * @param before_user_update $hook The user updated hook.
+     * @param before_user_updated $hook The user updated hook.
      */
     public static function update_user_room_memberships(
-        before_user_update $hook,
+        before_user_updated $hook,
     ): void {
         // If the communication subsystem is not enabled then just ignore.
         if (!api::is_available()) {

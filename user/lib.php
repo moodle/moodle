@@ -160,7 +160,7 @@ function user_update_user($user, $updatepassword = true, $triggerevent = true) {
     $currentrecord = $DB->get_record('user', ['id' => $user->id]);
 
     // Dispatch the hook for pre user update actions.
-    $hook = new \core_user\hook\before_user_update(
+    $hook = new \core_user\hook\before_user_updated(
         user: $user,
         currentuserdata: $currentrecord,
     );
