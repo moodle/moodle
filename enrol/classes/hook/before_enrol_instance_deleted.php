@@ -27,7 +27,7 @@ use Psr\EventDispatcher\StoppableEventInterface;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\core\attribute\label('Allows plugins or features to perform actions before the enrolment instance is deleted.')]
-#[\core\attribute\tags('enrol')]
+#[\core\attribute\tags('enrol', 'user')]
 class before_enrol_instance_deleted implements
     StoppableEventInterface {
     /**
