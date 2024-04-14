@@ -28,7 +28,6 @@ use stdClass;
 #[\core\attribute\label('Allows plugins or features to perform actions after a course is updated.')]
 #[\core\attribute\tags('course')]
 class after_course_updated {
-
     /**
      * Constructor for the hook.
      *
@@ -37,8 +36,11 @@ class after_course_updated {
      * @param bool $changeincoursecat Whether the course category has changed.
      */
     public function __construct(
+        /** @var stdClass The course instance */
         public readonly stdClass $course,
+        /** @var stdClass The old course instance */
         public readonly stdClass $oldcourse,
+        /** @var bool Whether the course category has changed */
         public readonly bool $changeincoursecat = false,
     ) {
     }

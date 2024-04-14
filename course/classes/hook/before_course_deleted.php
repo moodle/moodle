@@ -39,6 +39,7 @@ class before_course_deleted implements
      * @param stdClass $course The course instance.
      */
     public function __construct(
+        /** @var stdClass The course instance */
         public readonly stdClass $course,
     ) {
     }

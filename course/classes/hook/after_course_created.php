@@ -30,13 +30,13 @@ use stdClass;
 #[\core\attribute\label('Allows plugins or features to perform actions after a course is created.')]
 #[\core\attribute\tags('course')]
 class after_course_created {
-
     /**
      * Constructor for the hook.
      *
      * @param stdClass $course The course instance.
      */
     public function __construct(
+        /** @var stdClass The course instance */
         public readonly stdClass $course,
     ) {
     }
