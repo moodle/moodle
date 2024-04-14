@@ -28,7 +28,6 @@ use stdClass;
 #[\core\attribute\label('Allows plugins or features to perform actions after members removed from the group.')]
 #[\core\attribute\tags('group', 'user')]
 class after_group_membership_removed {
-
     /**
      * Constructor for the hook.
      *
@@ -36,7 +35,9 @@ class after_group_membership_removed {
      * @param array $userids The user ids.
      */
     public function __construct(
+        /** @var stdClass The group instance */
         public readonly stdClass $groupinstance,
+        /** @var array The user ids */
         public readonly array $userids,
     ) {
     }
