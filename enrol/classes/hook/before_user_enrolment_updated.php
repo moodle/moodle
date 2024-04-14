@@ -37,9 +37,13 @@ class before_user_enrolment_updated {
      * @param bool $timeendmodified Whether the time end of the enrolment has been modified.
      */
     public function __construct(
+        /** @var stdClass The enrol instance */
         public readonly stdClass $enrolinstance,
+        /** @var stdClass The user enrolment instance */
         public readonly stdClass $userenrolmentinstance,
+        /** @var bool Whether the status of the enrolment has been modified */
         public readonly bool $statusmodified,
+        /** @var bool Whether the time end of the enrolment has been modified */
         public readonly bool $timeendmodified,
     ) {
     }

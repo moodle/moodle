@@ -21,14 +21,13 @@ use stdClass;
 /**
  * Hook before a user is un-enrolled from a course for an enrolment instance.
  *
- * @package    core
+ * @package    core_enrol
  * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\core\attribute\label('Allows plugins or features to perform actions before a user enrolment is removed.')]
 #[\core\attribute\tags('enrol', 'user')]
 class before_user_enrolment_removed {
-
     /**
      * Constructor for the hook.
      *
@@ -36,7 +35,9 @@ class before_user_enrolment_removed {
      * @param stdClass $userenrolmentinstance The user enrolment instance.
      */
     public function __construct(
+        /** @var stdClass The enrol instance */
         public readonly stdClass $enrolinstance,
+        /** @var stdClass The user enrolment instance */
         public readonly stdClass $userenrolmentinstance,
     ) {
     }

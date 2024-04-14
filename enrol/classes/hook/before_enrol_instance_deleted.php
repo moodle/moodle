@@ -41,6 +41,7 @@ class before_enrol_instance_deleted implements
      * @param stdClass $enrolinstance The enrol instance.
      */
     public function __construct(
+        /** @var stdClass The enrol instance */
         public readonly stdClass $enrolinstance,
     ) {
     }

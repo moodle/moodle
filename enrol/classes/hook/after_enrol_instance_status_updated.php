@@ -28,7 +28,6 @@ use stdClass;
 #[\core\attribute\label('Allows plugins or features to perform actions after the enrolment instance status is changed.')]
 #[\core\attribute\tags('enrol')]
 class after_enrol_instance_status_updated {
-
     /**
      * Constructor for the hook.
      *
@@ -36,7 +35,9 @@ class after_enrol_instance_status_updated {
      * @param int $newstatus The new status.
      */
     public function __construct(
+        /** @var stdClass The enrol instance */
         public readonly stdClass $enrolinstance,
+        /** @var int The new status */
         public readonly int $newstatus,
     ) {
     }
