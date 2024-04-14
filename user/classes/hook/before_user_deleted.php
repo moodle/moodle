@@ -39,6 +39,7 @@ class before_user_deleted implements
      * @param stdClass $user The user instance
      */
     public function __construct(
+        /** @var stdClass The user instance */
         public readonly stdClass $user,
     ) {
     }
