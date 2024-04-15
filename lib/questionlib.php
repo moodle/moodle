@@ -495,7 +495,7 @@ function question_delete_course_category($category, $newcategory, $notused=false
  * Creates a new category to save the questions in use.
  *
  * @param array $questionids of question ids
- * @param object $newcontextid the context to create the saved category in.
+ * @param int $newcontextid the context to create the saved category in.
  * @param string $oldplace a textual description of the think being deleted,
  *      e.g. from get_context_name
  * @param object $newcategory
@@ -1506,7 +1506,7 @@ function question_require_capability_on($question, $cap): bool {
  * Gets the question edit url.
  *
  * @param object $context a context
- * @return string|bool A URL for editing questions in this context.
+ * @return string|bool|void A URL for editing questions in this context.
  */
 function question_edit_url($context) {
     global $CFG, $SITE;

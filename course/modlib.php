@@ -499,7 +499,7 @@ function set_moduleinfo_defaults($moduleinfo) {
  * Check that the user can add a module. Also returns some information like the module, context and course section info.
  * The fucntion create the course section if it doesn't exist.
  *
- * @param object $course the course of the module
+ * @param stdClass $course the course of the module
  * @param string $modulename the module name
  * @param int $sectionnum the section of the module
  * @return array list containing module, context, course section.

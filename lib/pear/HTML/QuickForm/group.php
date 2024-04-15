@@ -392,7 +392,7 @@ class HTML_QuickForm_group extends HTML_QuickForm_element
      * @param     object    $caller calling object
      * @since     1.0
      * @access    public
-     * @return    void
+     * @return    ?bool
      */
     function onQuickFormEvent($event, $arg, &$caller)
     {

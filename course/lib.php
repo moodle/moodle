@@ -290,7 +290,7 @@ function build_mnet_logs_array($hostid, $course, $user=0, $date=0, $order="l.tim
  *     course modules from sequences. Only to be used in site maintenance mode when we are
  *     sure that another user is not in the middle of the process of moving/removing a module.
  * @param bool $checkonly Only performs the check without updating DB, outputs all errors as debug messages.
- * @return array array of messages with found problems. Empty output means everything is ok
+ * @return array|false array of messages with found problems. Empty output means everything is ok
  */
 function course_integrity_check($courseid, $rawmods = null, $sections = null, $fullcheck = false, $checkonly = false) {
     global $DB;
@@ -916,7 +916,7 @@ function course_delete_module($cmid, $async = false) {
  * The real deletion of the module is handled by the task, which calls 'course_delete_module($cmid)'.
  *
  * @param int $cmid the course module id.
- * @return bool whether the module was successfully scheduled for deletion.
+ * @return ?bool whether the module was successfully scheduled for deletion.
  * @throws \moodle_exception
  */
 function course_module_flag_for_async_deletion($cmid) {
@@ -1244,7 +1244,7 @@ function course_delete_section_async($section, $forcedeleteifnotempty = true) {
  * This function does not check permissions or clean values - this has to be done prior to calling it.
  *
  * @param int|stdClass $courseorid
- * @param stdClass $section record from course_sections table - it will be updated with the new values
+ * @param stdClass|section_info $section record from course_sections table - it will be updated with the new values
  * @param array|stdClass $data
  */
 function course_update_section($courseorid, $section, $data) {
@@ -1306,7 +1306,7 @@ function course_can_delete_section($course, $section) {
  * @param array $sections
  * @param int $origin_position
  * @param int $target_position
- * @return array
+ * @return array|false
  */
 function reorder_sections($sections, $origin_position, $target_position) {
     if (!is_array($sections)) {
@@ -1614,7 +1614,7 @@ function course_get_cm_edit_actions(cm_info $mod, $indent = -1, $sr = null) {
  *
  * @param cm_info $mod The module to produce a move button for
  * @param int $sr The section to link back to (used for creating the links)
- * @return The markup for the move action, or an empty string if not available.
+ * @return string The markup for the move action, or an empty string if not available.
  */
 function course_get_cm_move(cm_info $mod, $sr = null) {
     global $OUTPUT;
@@ -1861,7 +1861,7 @@ function can_delete_course($courseid) {
  * Save the Your name for 'Some role' strings.
  *
  * @param integer $courseid the id of this course.
- * @param array $data the data that came from the course settings form.
+ * @param array|stdClass $data the data that came from the course settings form.
  */
 function save_local_role_names($courseid, $data) {
     global $DB;
@@ -3100,7 +3100,7 @@ function update_module($moduleinfo) {
  * @param object $cm The course module to duplicate
  * @param int $sr The section to link back to (used for creating the links)
  * @throws moodle_exception if the plugin doesn't support duplication
- * @return Object containing:
+ * @return stdClass Object containing:
  * - fullcontent: The HTML markup for the created CM
  * - cmid: The CMID of the newly created CM
  * - redirect: Whether to trigger a redirect following this change
@@ -3476,7 +3476,7 @@ function course_get_tagged_courses($tag, $exclusivemode = false, $fromctx = 0, $
  * @param string $itemtype
  * @param int $itemid
  * @param mixed $newvalue
- * @return \core\output\inplace_editable
+ * @return ?\core\output\inplace_editable
  */
 function core_course_inplace_editable($itemtype, $itemid, $newvalue) {
     if ($itemtype === 'activityname') {
@@ -3565,7 +3565,7 @@ function core_course_drawer(): string {
  * @param int $contextid context id where to search for records
  * @param bool $recursivecontext search in subcontexts as well
  * @param int $page 0-based number of page being displayed
- * @return \core_tag\output\tagindex
+ * @return ?\core_tag\output\tagindex
  */
 function course_get_tagged_course_modules($tag, $exclusivemode = false, $fromcontextid = 0, $contextid = 0,
                                           $recursivecontext = 1, $page = 0) {

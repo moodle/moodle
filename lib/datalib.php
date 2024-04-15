@@ -63,7 +63,7 @@ define('USER_SEARCH_EXACT_MATCH', 2);
  * Returns $user object of the main admin user
  *
  * @static stdClass $mainadmin
- * @return stdClass {@link $USER} record from DB, false if not found
+ * @return stdClass|false {user} record from DB, false if not found
  */
 function get_admin() {
     global $CFG, $DB;
@@ -1205,7 +1205,7 @@ function increment_revision_number($table, $field, $select, array $params = null
  *
  * @global object
  * @param int $courseid The id of the course as found in the 'course' table.
- * @return array
+ * @return array|false
  */
 function get_course_mods($courseid) {
     global $DB;
@@ -1236,7 +1236,7 @@ function get_course_mods($courseid) {
  * @param int $strictness IGNORE_MISSING means compatible mode, false returned if record not found, debug message if more found;
  *                        IGNORE_MULTIPLE means return first, ignore multiple records found(not recommended);
  *                        MUST_EXIST means throw exception if no record or multiple records found
- * @return stdClass
+ * @return stdClass|false
  */
 function get_coursemodule_from_id($modulename, $cmid, $courseid=0, $sectionnum=false, $strictness=IGNORE_MISSING) {
     global $DB;

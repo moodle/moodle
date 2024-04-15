@@ -2084,10 +2084,10 @@ class bootstrap_renderer {
      * Returns nicely formatted error message in a div box.
      * @static
      * @param string $message error message
-     * @param string $moreinfourl (ignored in early errors)
-     * @param string $link (ignored in early errors)
-     * @param array $backtrace
-     * @param string $debuginfo
+     * @param ?string $moreinfourl (ignored in early errors)
+     * @param ?string $link (ignored in early errors)
+     * @param ?array $backtrace
+     * @param ?string $debuginfo
      * @return string
      */
     public static function early_error_content($message, $moreinfourl, $link, $backtrace, $debuginfo = null) {
@@ -2129,7 +2129,7 @@ class bootstrap_renderer {
      * @param string $link (ignored in early errors)
      * @param array $backtrace
      * @param string $debuginfo extra information for developers
-     * @return string
+     * @return ?string
      */
     public static function early_error($message, $moreinfourl, $link, $backtrace, $debuginfo = null, $errorcode = null) {
         global $CFG;

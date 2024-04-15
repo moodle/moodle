@@ -1906,7 +1906,7 @@ class core_renderer extends renderer_base {
     /**
      * Renders a primary action_menu_filler item.
      *
-     * @param action_menu_link_filler $action
+     * @param action_menu_filler $action
      * @return string HTML fragment
      */
     protected function render_action_menu_filler(action_menu_filler $action) {
@@ -2942,7 +2942,7 @@ EOD;
      *
      * @param moodle_url $url The URL + params to send through when clicking the button
      * @param string $method
-     * @return string HTML the button
+     * @return ?string HTML the button
      */
     public function edit_button(moodle_url $url, string $method = 'post') {
 
@@ -2964,7 +2964,7 @@ EOD;
     /**
      * Create a navbar switch for toggling editing mode.
      *
-     * @return string Html containing the edit switch
+     * @return ?string Html containing the edit switch
      */
     public function edit_switch() {
         if ($this->page->user_allowed_editing()) {
@@ -5110,7 +5110,7 @@ EOD;
     /**
      * Render the login signup form into a nice template for the theme.
      *
-     * @param mform $form
+     * @param moodleform $form
      * @return string
      */
     public function render_login_signup_form($form) {
@@ -5211,7 +5211,7 @@ EOD;
 
     /**
      * Renders release information in the footer popup
-     * @return string Moodle release info.
+     * @return ?string Moodle release info.
      */
     public function moodle_release() {
         global $CFG;
@@ -5416,7 +5416,7 @@ class core_renderer_cli extends core_renderer {
     /**
      * Renders a Check API result
      *
-     * @param result $result
+     * @param core\check\result $result
      * @return string fragment
      */
     public function check_result(core\check\result $result) {
@@ -5904,7 +5904,7 @@ class core_renderer_maintenance extends core_renderer {
     /**
      * Does nothing. The maintenance renderer has no need for login information.
      *
-     * @param null $withlinks
+     * @param mixed $withlinks
      * @return string
      */
     public function login_info($withlinks = null) {

@@ -1183,7 +1183,7 @@ class moodle_page {
     /**
      * Set the main context to which this page belongs.
      *
-     * @param context $context a context object. You normally get this with context_xxxx::instance().
+     * @param ?context $context a context object. You normally get this with context_xxxx::instance().
      */
     public function set_context($context) {
         if ($context === null) {
@@ -1892,8 +1892,6 @@ class moodle_page {
     /**
      * Reset the theme and output for a new context. This only makes sense from
      * external::validate_context(). Do not cheat.
-     *
-     * @return string the name of the theme that should be used on this page.
      */
     public function reset_theme_and_output() {
         global $COURSE, $SITE;

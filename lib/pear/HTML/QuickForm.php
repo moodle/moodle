@@ -721,7 +721,7 @@ class HTML_QuickForm extends HTML_Common {
      * @param    array      $elements       array of elements composing the group
      * @param    string     $name           (optional)group name
      * @param    string     $groupLabel     (optional)group label
-     * @param    string     $separator      (optional)string to separate elements
+     * @param    string|array $separator    (optional) Use a string for one separator, or use an array to alternate the separators
      * @param    bool       $appendName     (optional)specify whether the group name should be
      *                                      used in the form element name ex: group[element]
      * @param     mixed     $attributes     Either a typical HTML attribute string or an associative array
@@ -904,7 +904,7 @@ class HTML_QuickForm extends HTML_Common {
      * @param     string    $element        Name of form element to check
      * @since     1.0
      * @access    public
-     * @return    string    error message corresponding to checked element
+     * @return    ?string    error message corresponding to checked element
      */
     function getElementError($element)
     {
@@ -1242,7 +1242,7 @@ class HTML_QuickForm extends HTML_Common {
      * @param     mixed    $value     submitted values
      * @since     2.0
      * @access    private
-     * @return    cleaned values
+     * @return    mixed cleaned values
      */
     function _recursiveFilter($filter, $value)
     {

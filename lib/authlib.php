@@ -162,7 +162,7 @@ class auth_plugin_base {
      * If you are using a plugin config variable in this method, please make sure it is set before using it,
      * as this method can be called even if the plugin is disabled, in which case the config values won't be set.
      *
-     * @return moodle_url url of the profile page or null if standard used
+     * @return ?moodle_url url of the profile page or null if standard used
      */
     function change_password_url() {
         //override if needed
@@ -187,7 +187,7 @@ class auth_plugin_base {
      * This method is used if can_edit_profile() returns true.
      * This method is called only when user is logged in, it may use global $USER.
      *
-     * @return moodle_url url of the profile page or null if standard used
+     * @return ?moodle_url url of the profile page or null if standard used
      */
     function edit_profile_url() {
         //override if needed
@@ -314,7 +314,7 @@ class auth_plugin_base {
     /**
      * Return a form to capture user details for account creation.
      * This is used in /login/signup.php.
-     * @return moodle_form A form which edits a record from the user table.
+     * @return moodleform A form which edits a record from the user table.
      */
     function signup_form() {
         global $CFG;
@@ -1265,7 +1265,7 @@ function signup_setup_new_user($user) {
 /**
  * Check if user confirmation is enabled on this site and return the auth plugin handling registration if enabled.
  *
- * @return stdClass the current auth plugin handling user registration or false if registration not enabled
+ * @return auth_plugin_base|false the current auth plugin handling user registration or false if registration not enabled
  * @since Moodle 3.2
  */
 function signup_get_user_confirmation_authplugin() {

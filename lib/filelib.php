@@ -482,7 +482,7 @@ function file_prepare_draft_area(&$draftitemid, $contextid, $component, $fileare
  * @param   int     $contextid This parameter and the next two identify the file area to use.
  * @param   string  $component
  * @param   string  $filearea helps identify the file area.
- * @param   int     $itemid helps identify the file area.
+ * @param   ?int    $itemid helps identify the file area.
  * @param   array   $options
  *          bool    $options.forcehttps Force the user of https
  *          bool    $options.reverse Reverse the behaviour of the function
@@ -926,7 +926,7 @@ function file_restore_source_field_from_draft_file($storedfile) {
 /**
  * Removes those files from the user drafts filearea which are not referenced in the editor text.
  *
- * @param stdClass $editor The online text editor element from the submitted form data.
+ * @param array $editor The online text editor element from the submitted form data.
  */
 function file_remove_editor_orphaned_files($editor) {
     global $CFG, $USER;
@@ -1475,7 +1475,7 @@ function format_array_postdata_for_curlcall($arraydata, $currentdata, &$data) {
  * Transform a PHP array into POST parameter
  * (see the recursive function format_array_postdata_for_curlcall)
  * @param array $postdata
- * @return array containing all POST parameters  (1 row = 1 POST parameter)
+ * @return string containing all POST parameters  (1 row = 1 POST parameter)
  */
 function format_postdata_for_curlcall($postdata) {
         $data = array();
@@ -1860,7 +1860,7 @@ function mimeinfo_from_type($element, $mimetype) {
  *
  * @param stored_file|file_info|stdClass|array $file (in case of object attributes $file->filename
  *     and $file->mimetype are expected)
- * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
+ * @param mixed $unused This parameter has been deprecated since 4.3 and should not be used anymore.
  * @return string
  */
 function file_file_icon($file, $unused = null) {
@@ -1911,7 +1911,7 @@ function file_file_icon($file, $unused = null) {
  * echo $OUTPUT->pix_icon(file_folder_icon(), '');
  * </code>
  *
- * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
+ * @param mixed $unused This parameter has been deprecated since 4.3 and should not be used anymore.
  * @return string
  */
 function file_folder_icon($unused = null) {
@@ -1940,7 +1940,7 @@ function file_folder_icon($unused = null) {
  * @todo MDL-31074 When an $OUTPUT->icon method is available this function should be altered
  * to conform with that.
  * @param string $mimetype The mimetype to fetch an icon for
- * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
+ * @param mixed $unused This parameter has been deprecated since 4.3 and should not be used anymore.
  * @return string The relative path to the icon
  */
 function file_mimetype_icon($mimetype, $unused = null) {
@@ -1964,7 +1964,7 @@ function file_mimetype_icon($mimetype, $unused = null) {
  * @todo MDL-31074 Implement $size
  * @category files
  * @param string $filename The filename to get the icon for
- * @param null $unused This parameter has been deprecated since 4.3 and should not be used anymore.
+ * @param mixed $unused This parameter has been deprecated since 4.3 and should not be used anymore.
  * @return string
  */
 function file_extension_icon($filename, $unused = null) {
@@ -3149,7 +3149,7 @@ class curl {
     private $cookie   = false;
     /** @var bool tracks multiple headers in response - redirect detection */
     private $responsefinished = false;
-    /** @var security helper class, responsible for checking host/ports against allowed/blocked entries.*/
+    /** @var ?\core\files\curl_security_helper security helper class, responsible for checking host/ports against allowed/blocked entries.*/
     private $securityhelper;
     /** @var bool ignoresecurity a flag which can be supplied to the constructor, allowing security to be bypassed. */
     private $ignoresecurity;
@@ -3177,7 +3177,7 @@ class curl {
         if (!function_exists('curl_init')) {
             $this->error = 'cURL module must be enabled!';
             trigger_error($this->error, E_USER_ERROR);
-            return false;
+            return;
         }
 
         // All settings of this class should be init here.
@@ -3379,7 +3379,7 @@ class curl {
     /**
      * Set HTTP Request Header
      *
-     * @param array $header
+     * @param array|string $header
      */
     public function setHeader($header) {
         if (is_array($header)) {
@@ -3719,7 +3719,7 @@ class curl {
      * This augments all installed plugin's security helpers if there is any.
      *
      * @param string $url the url to check.
-     * @return string - an error message if URL is blocked or null if URL is not blocked.
+     * @return ?string - an error message if URL is blocked or null if URL is not blocked.
      */
     protected function check_securityhelper_blocklist(string $url): ?string {
 
@@ -3761,7 +3761,7 @@ class curl {
      *
      * @param string $url The URL to request
      * @param array $options
-     * @return bool
+     * @return string
      */
     protected function request($url, $options = array()) {
         // Reset here so that the data is valid when result returned from cache, or if we return due to a blocked URL hit.
@@ -3962,14 +3962,14 @@ class curl {
         $event->trigger();
     }
 
-     /**
+    /**
      * HTTP HEAD method
      *
      * @see request()
      *
      * @param string $url
      * @param array $options
-     * @return bool
+     * @return string
      */
     public function head($url, $options = array()) {
         $options['CURLOPT_HTTPGET'] = 0;
@@ -3984,7 +3984,7 @@ class curl {
      * @param string $url
      * @param array|string $params
      * @param array $options
-     * @return bool
+     * @return string
      */
     public function patch($url, $params = '', $options = array()) {
         $options['CURLOPT_CUSTOMREQUEST'] = 'PATCH';
@@ -4012,7 +4012,7 @@ class curl {
      * @param string $url
      * @param array|string $params
      * @param array $options
-     * @return bool
+     * @return string
      */
     public function post($url, $params = '', $options = array()) {
         $options['CURLOPT_POST']       = 1;
@@ -4038,9 +4038,9 @@ class curl {
      * HTTP GET method
      *
      * @param string $url
-     * @param array $params
+     * @param ?array $params
      * @param array $options
-     * @return bool
+     * @return string
      */
     public function get($url, $params = array(), $options = array()) {
         $options['CURLOPT_HTTPGET'] = 1;
@@ -4113,7 +4113,7 @@ class curl {
      * @param string $url
      * @param array $params
      * @param array $options
-     * @return bool
+     * @return ?string
      */
     public function put($url, $params = array(), $options = array()) {
         $file = '';
@@ -4150,7 +4150,7 @@ class curl {
      * @param string $url
      * @param array $param
      * @param array $options
-     * @return bool
+     * @return string
      */
     public function delete($url, $param = array(), $options = array()) {
         $options['CURLOPT_CUSTOMREQUEST'] = 'DELETE';
@@ -4166,7 +4166,7 @@ class curl {
      *
      * @param string $url
      * @param array $options
-     * @return bool
+     * @return string
      */
     public function trace($url, $options = array()) {
         $options['CURLOPT_CUSTOMREQUEST'] = 'TRACE';
@@ -4179,7 +4179,7 @@ class curl {
      *
      * @param string $url
      * @param array $options
-     * @return bool
+     * @return string
      */
     public function options($url, $options = array()) {
         $options['CURLOPT_CUSTOMREQUEST'] = 'OPTIONS';

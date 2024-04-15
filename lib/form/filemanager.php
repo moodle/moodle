@@ -63,7 +63,7 @@ class MoodleQuickForm_filemanager extends HTML_QuickForm_element implements temp
      * @param string $elementLabel (optional) filemanager label
      * @param array $attributes (optional) Either a typical HTML attribute string
      *              or an associative array
-     * @param array $options set of options to initalize filemanager
+     * @param array|stdClass $options set of options to initalize filemanager
      */
     public function __construct($elementName=null, $elementLabel=null, $attributes=null, $options=null) {
         global $CFG, $PAGE;

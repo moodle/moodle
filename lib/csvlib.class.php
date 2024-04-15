@@ -190,7 +190,7 @@ class csv_import_reader {
     /**
      * Returns list of columns
      *
-     * @return array
+     * @return array|false
      */
     public function get_columns() {
         if (isset($this->_columns)) {
@@ -456,7 +456,7 @@ class csv_export_writer {
      * Echos or returns a csv data line by line for displaying.
      *
      * @param bool $return  Set to true to return a string with the csv data.
-     * @return string       csv data.
+     * @return ?string       csv data.
      */
     public function print_csv_data($return = false) {
         fseek($this->fp, 0);
@@ -548,7 +548,7 @@ class csv_export_writer {
      * @param string $delimiter  The name of the delimiter. Supported types(comma, tab, semicolon, colon, cfg)
      * @param string $enclosure  How speical fields are enclosed.
      * @param bool $return       If true will return a string with the csv data.
-     * @return string            csv data.
+     * @return ?string           csv data.
      */
     public static function print_array(array &$records, $delimiter = 'comma', $enclosure = '"', $return = false) {
         $csvdata = new csv_export_writer($delimiter, $enclosure);

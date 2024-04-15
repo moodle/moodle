@@ -92,7 +92,7 @@ function external_generate_token($tokentype, $serviceorid, $userid, $contextorid
  *
  * @param string $servicename name of the web service. Service name as defined in db/services.php
  * @param int $context context within which the web service can operate.
- * @return int returns token id.
+ * @return string returns token id.
  * @since Moodle 2.0
  */
 function external_create_service_token($servicename, $contextid) {

@@ -704,7 +704,7 @@ class flexible_table {
     }
 
     /**
-     * @return string sql to add to where statement.
+     * @return array sql to add to where statement.
      */
     function get_sql_where() {
         global $DB;

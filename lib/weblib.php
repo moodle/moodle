@@ -867,7 +867,7 @@ class moodle_url {
      * @param int $contextid
      * @param string $component
      * @param string $area
-     * @param int $itemid
+     * @param ?int $itemid
      * @param string $pathname
      * @param string $filename
      * @param bool $forcedownload
@@ -1494,7 +1494,7 @@ function reset_text_filters_cache($phpunitreset = false) {
  * @staticvar bool $strcache
  * @param string $string The string to be filtered. Should be plain text, expect
  * possibly for multilang tags.
- * @param boolean $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
+ * @param ?bool $striplinks To strip any link in the result text. Moodle 1.8 default changed from false to true! MDL-8713
  * @param array $options options array/object or courseid
  * @return string
  */
@@ -2691,7 +2691,7 @@ function print_group_picture($group, $courseid, $large = false, $return = false,
  *                 user whose id is the value indicated.
  *                 If the group picture is included in an e-mail or some other location where the audience is a specific
  *                 user who will not be logged in when viewing, then we use a token to authenticate the user.
- * @return moodle_url Returns the url for the group picture.
+ * @return ?moodle_url Returns the url for the group picture.
  */
 function get_group_picture_url($group, $courseid, $large = false, $includetoken = false) {
     global $CFG;
@@ -2726,7 +2726,7 @@ function get_group_picture_url($group, $courseid, $large = false, $includetoken 
  * @param string $link The link to wrap around the text
  * @param bool $return If set to true the HTML is returned rather than echo'd
  * @param string $viewfullnames
- * @return string If $retrun was true returns HTML for a recent activity notice.
+ * @return ?string If $retrun was true returns HTML for a recent activity notice.
  */
 function print_recent_activity_note($time, $user, $text, $link, $return=false, $viewfullnames=null) {
     static $strftimerecent = null;
@@ -2861,7 +2861,7 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
  * @param string $current
  * @param boolean $includenograde Include those with no grades
  * @param boolean $return If set to true returns rather than echo's
- * @return string|bool Depending on value of $return
+ * @return string|bool|null Depending on value of $return
  */
 function print_grade_menu($courseid, $name, $current, $includenograde=true, $return=false) {
     global $OUTPUT;

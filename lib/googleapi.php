@@ -250,7 +250,7 @@ class google_oauth extends oauth2_client {
      * @param string $url The URL to request
      * @param array $options
      * @param mixed $acceptheader Not used.
-     * @return bool
+     * @return string
      */
     protected function request($url, $options = array(), $acceptheader = 'application/json') {
         return parent::request($url, $options, false);

@@ -34,19 +34,19 @@ defined('MOODLE_INTERNAL') || die();
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_collator {
-    /** @var compare items using general PHP comparison, equivalent to Collator::SORT_REGULAR, this may bot be locale aware! */
+    /** @var int compare items using general PHP comparison, equivalent to Collator::SORT_REGULAR, this may bot be locale aware! */
     const SORT_REGULAR = 0;
 
-    /** @var compare items as strings, equivalent to Collator::SORT_STRING */
+    /** @var int compare items as strings, equivalent to Collator::SORT_STRING */
     const SORT_STRING = 1;
 
-    /** @var compare items as numbers, equivalent to Collator::SORT_NUMERIC */
+    /** @var int compare items as numbers, equivalent to Collator::SORT_NUMERIC */
     const SORT_NUMERIC = 2;
 
-    /** @var compare items like natsort(), equivalent to SORT_NATURAL */
+    /** @var int compare items like natsort(), equivalent to SORT_NATURAL */
     const SORT_NATURAL = 6;
 
-    /** @var do not ignore case when sorting, use bitwise "|" with SORT_NATURAL or SORT_STRING, equivalent to Collator::UPPER_FIRST */
+    /** @var int do not ignore case when sorting, use bitwise "|" with SORT_NATURAL or SORT_STRING, equivalent to Collator::UPPER_FIRST */
     const CASE_SENSITIVE = 64;
 
     /** @var Collator|false|null **/

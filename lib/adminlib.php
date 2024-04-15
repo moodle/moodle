@@ -729,7 +729,7 @@ interface part_of_admin_tree {
     /**
      * Mostly useful for removing of some parts of the tree in admin tree block.
      *
-     * @return True is hidden from normal list view
+     * @return bool True is hidden from normal list view
      */
     public function is_hidden();
 
@@ -1723,7 +1723,7 @@ abstract class admin_setting {
     public $description;
     /** @var mixed Can be string or array of string */
     public $defaultsetting;
-    /** @var string */
+    /** @var ?callable */
     public $updatedcallback;
     /** @var mixed can be String or Null.  Null means main config table */
     public $plugin; // null means main config table
@@ -1888,7 +1888,7 @@ abstract class admin_setting {
     /**
      * Write the values of the flags for this admin setting.
      *
-     * @param array $data - The data submitted from the form or null to set the default value for new installs.
+     * @param ?array $data - The data submitted from the form or null to set the default value for new installs.
      * @return bool - true if successful.
      */
     public function write_setting_flags($data) {
@@ -2065,7 +2065,7 @@ abstract class admin_setting {
 
     /**
      * Function called if setting updated - cleanup, cache reset, etc.
-     * @param string $functionname Sets the function name
+     * @param callable $functionname Sets the function name
      * @return void
      */
     public function set_updatedcallback($functionname) {
@@ -2196,9 +2196,9 @@ class admin_setting_flag {
     private $shortname = '';
     /** @var string String used as the label for this flag */
     private $displayname = '';
-    /** @var Checkbox for this flag is displayed in admin page */
+    /** @var bool Checkbox for this flag is displayed in admin page */
     const ENABLED = true;
-    /** @var Checkbox for this flag is not displayed in admin page */
+    /** @var bool Checkbox for this flag is not displayed in admin page */
     const DISABLED = false;
 
     /**
@@ -3175,8 +3175,8 @@ class admin_setting_configmulticheckbox extends admin_setting {
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
-     * @param array $defaultsetting array of selected
-     * @param array|callable $choices array of $value => $label for each checkbox, or a callback
+     * @param ?array $defaultsetting array of selected
+     * @param array|callable|null $choices array of $value => $label for each checkbox, or a callback
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         if (is_array($choices)) {
@@ -3421,7 +3421,7 @@ class admin_setting_configselect extends admin_setting {
      * @param string $name unique ascii name, either 'mysetting' for settings that in config, or 'myplugin/mysetting' for ones in config_plugins.
      * @param string $visiblename localised
      * @param string $description long localised info
-     * @param string|int $defaultsetting
+     * @param string|int|array $defaultsetting
      * @param array|callable|null $choices array of $value=>$label for each selection, or callback
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
@@ -3658,7 +3658,7 @@ class admin_setting_configmultiselect extends admin_setting_configselect {
      * @param string $visiblename localised
      * @param string $description long localised info
      * @param array $defaultsetting array of selected items
-     * @param array $choices array of $value=>$label for each list item
+     * @param ?array $choices array of $value=>$label for each list item
      */
     public function __construct($name, $visiblename, $description, $defaultsetting, $choices) {
         parent::__construct($name, $visiblename, $description, $defaultsetting, $choices);
@@ -3856,7 +3856,7 @@ class admin_setting_configtime extends admin_setting {
      * Store the time (hours and minutes)
      *
      * @param array $data Must be form 'h'=>xx, 'm'=>xx
-     * @return bool true if success, false if not
+     * @return string error message or empty string on success
      */
     public function write_setting($data) {
         if (!is_array($data)) {
@@ -4097,7 +4097,7 @@ class admin_setting_configduration extends admin_setting {
      * Store the duration as seconds.
      *
      * @param array $data Must be form 'h'=>xx, 'm'=>xx
-     * @return bool true if success, false if not
+     * @return string error message or empty string on success
      */
     public function write_setting($data) {
         if (!is_array($data)) {
@@ -5098,7 +5098,7 @@ class admin_setting_emoticons extends admin_setting {
     /**
      * Return the current setting(s)
      *
-     * @return array Current settings array
+     * @return ?array Current settings array
      */
     public function get_setting() {
         global $CFG;
@@ -5122,7 +5122,7 @@ class admin_setting_emoticons extends admin_setting {
      * Save selected settings
      *
      * @param array $data Array of settings to save
-     * @return bool
+     * @return string error message or empty string on success
      */
     public function write_setting($data) {
 
@@ -5321,7 +5321,7 @@ class admin_setting_langlist extends admin_setting_configtext {
      * Save the new setting
      *
      * @param string $data The new setting
-     * @return bool
+     * @return string error message or empty string on success
      */
     public function write_setting($data) {
         $return = parent::write_setting($data);
@@ -5620,7 +5620,7 @@ class admin_setting_special_calendar_weekend extends admin_setting {
      * Save the new settings
      *
      * @param array $data Array of new settings
-     * @return bool
+     * @return string error message or empty string on success
      */
     public function write_setting($data) {
         if (!is_array($data)) {
@@ -5740,7 +5740,7 @@ class admin_setting_pickroles extends admin_setting_configmulticheckbox {
     /**
      * Return the default setting for this control
      *
-     * @return array Array of default settings
+     * @return ?array Array of default settings
      */
     public function get_defaultsetting() {
         global $CFG;
@@ -6364,7 +6364,7 @@ class admin_setting_gradecat_combo extends admin_setting {
     /**
      * Return the current setting(s) array
      *
-     * @return array Array of value=>xx, forced=>xx
+     * @return ?array Array of value=>xx, forced=>xx
      */
     public function get_setting() {
         global $CFG;
@@ -7130,7 +7130,7 @@ class admin_page_manageportfolios extends admin_externalpage {
     /**
      * Searches page for the specified string.
      * @param string $query The string to search for
-     * @return bool True if it is found on this page
+     * @return array
      */
     public function search($query) {
         global $CFG;
@@ -7181,7 +7181,7 @@ class admin_page_managerepositories extends admin_externalpage {
     /**
      * Searches page for the specified string.
      * @param string $query The string to search for
-     * @return bool True if it is found on this page
+     * @return array
      */
     public function search($query) {
         global $CFG;
@@ -8150,7 +8150,7 @@ abstract class admin_setting_manage_plugins extends admin_setting {
     /**
      * Get the type of plugin to manage.
      *
-     * @param plugininfo The plugin info class.
+     * @param \core\plugininfo\base $plugininfo The plugin info class.
      * @return string
      */
     abstract public function get_info_column($plugininfo);
@@ -9194,7 +9194,7 @@ function admin_output_new_settings_by_page($node) {
  * @param string $description
  * @param mixed $label link label to id, true by default or string being the label to connect it to
  * @param string $warning warning text
- * @param sting $defaultinfo defaults info, null means nothing, '' is converted to "Empty" string, defaults to null
+ * @param ?string $defaultinfo defaults info, null means nothing, '' is converted to "Empty" string, defaults to null
  * @param string $query search query to be highlighted
  * @return string XHTML
  */
@@ -9692,7 +9692,7 @@ class admin_setting_enablemobileservice extends admin_setting_configcheckbox {
 
     /**
      * Set the 'webservice/rest:use' to the Authenticated user role (allow or not)
-     * @param type $status true to allow, false to not set
+     * @param bool $status true to allow, false to not set
      */
     private function set_protocol_cap($status) {
         global $CFG;
@@ -10472,7 +10472,7 @@ class admin_setting_configcolourpicker extends admin_setting {
      * Saves the setting
      *
      * @param string $data
-     * @return bool
+     * @return string error message or empty string on success
      */
     public function write_setting($data) {
         $data = $this->validate($data);
@@ -10794,7 +10794,7 @@ class admin_setting_devicedetectregex extends admin_setting {
      *
      * @deprecated Moodle 4.3 MDL-78468 - No longer used since the devicedetectregex was removed.
      * @todo Final deprecation on Moodle 4.7 MDL-79052
-     * @return array Current settings array
+     * @return ?array Current settings array
      */
     public function get_setting() {
         debugging(
@@ -10818,7 +10818,7 @@ class admin_setting_devicedetectregex extends admin_setting {
      * @deprecated Moodle 4.3 MDL-78468 - No longer used since the devicedetectregex was removed.
      * @todo Final deprecation on Moodle 4.7 MDL-79052
      * @param array $data Array of settings to save
-     * @return bool
+     * @return string error message or empty string on success
      */
     public function write_setting($data) {
         debugging(

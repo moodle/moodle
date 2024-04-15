@@ -918,7 +918,8 @@ function html_is_blank($string) {
  * NOTE: this function is called from lib/db/upgrade.php
  *
  * @param string $name the key to set
- * @param string $value the value to set (without magic quotes)
+ * @param string|int|bool|null $value the value to set (without magic quotes),
+ *               null to unset the value
  * @param string $plugin (optional) the plugin scope, default null
  * @return bool true or exception
  */
@@ -1465,7 +1466,7 @@ function mark_user_preferences_changed($userid) {
  * @category preference
  * @access   public
  * @param    string            $name  The key to set as preference for the specified user
- * @param    string            $value The value to set for the $name key in the specified user's
+ * @param    string|int|bool|null $value The value to set for the $name key in the specified user's
  *                                    record, null means delete current value.
  * @param    stdClass|int|null $user  A moodle user object or id, null means current user
  * @throws   coding_exception
@@ -6242,7 +6243,7 @@ function email_is_not_allowed($email) {
 /**
  * Returns local file storage instance
  *
- * @return file_storage
+ * @return ?file_storage
  */
 function get_file_storage($reset = false) {
     global $CFG;
@@ -6290,7 +6291,7 @@ function get_file_browser() {
  * Returns file packer
  *
  * @param string $mimetype default application/zip
- * @return file_packer
+ * @return file_packer|false
  */
 function get_file_packer($mimetype='application/zip') {
     global $CFG;
@@ -6404,7 +6405,7 @@ function get_max_upload_file_size($sitebytes=0, $coursebytes=0, $modulebytes=0, 
  * @param int $sitebytes Set maximum size
  * @param int $coursebytes Current course $course->maxbytes (in bytes)
  * @param int $modulebytes Current module ->maxbytes (in bytes)
- * @param stdClass $user The user
+ * @param stdClass|int|null $user The user
  * @param bool $unused This parameter has been deprecated and is not used any more.
  * @return int The maximum size for uploading files.
  */
@@ -10090,7 +10091,7 @@ function get_mnet_environment() {
  * during xmlrpc server code execution, any code wishing to access
  * information about the remote peer must use this to get it.
  *
- * @return mnet_remote_client the equivalent of old $MNETREMOTE_CLIENT global
+ * @return mnet_remote_client|false the equivalent of old $MNETREMOTE_CLIENT global
  */
 function get_mnet_remote_client() {
     if (!defined('MNET_SERVER')) {
@@ -10470,7 +10471,7 @@ class lang_string {
      * string properties... the string cannot be regenerated so we need to ensure
      * it is generated for this.
      *
-     * @return string
+     * @return array
      */
     public function __sleep() {
         $this->get_string();

@@ -60,7 +60,7 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
      * @param string $elementName (optional) name of the group
      * @param string $elementLabel (optional) group label
      * @param array $elements (optional) array of HTML_QuickForm_element elements to group
-     * @param string $separator (optional) string to seperate elements.
+     * @param string|array $separator (optional) Use a string for one separator, or use an array to alternate the separators
      * @param string $appendName (optional) string to appened to grouped elements.
      * @param mixed $attributes (optional) Either a typical HTML attribute string
      *              or an associative array
@@ -159,6 +159,7 @@ class MoodleQuickForm_group extends HTML_QuickForm_group implements templatable 
      * @param     string $event Name of event
      * @param     mixed $arg event arguments
      * @param     mixed $caller calling object
+     * @return    ?bool
      */
     public function onQuickFormEvent($event, $arg, &$caller) {
         $this->setMoodleForm($caller);
