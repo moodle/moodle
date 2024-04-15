@@ -24,13 +24,11 @@
 
 define([
     'factor_webauthn/utils',
-    'core/log',
     'core/prefetch',
     'core/str',
     'core/toast',
 ], function(
     utils,
-    Log,
     Prefetch,
     Str,
     Toast,
@@ -68,7 +66,8 @@ define([
             // Enable the submit button so that we can proceed.
             document.getElementById('id_submitbutton').disabled = false;
         } catch (e) {
-            Log.debug('The request timed out or you have canceled the request. Please try again later.');
+            const registerError = await Str.getString('registererror', 'factor_webauthn', e.message);
+            await Toast.add(registerError, {type: 'warning'});
         }
     }
 
@@ -79,6 +78,7 @@ define([
 
             Prefetch.prefetchStrings('factor_webauthn', [
                 'registersuccess',
+                'registererror',
             ]);
 
             // Register event listeners.
