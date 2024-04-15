@@ -26,7 +26,7 @@ use core\attribute\label;
  * @copyright  2023 Andrew Lyons <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[label('The DI container, which allows plugins to register any service requiring configuration or initialisation.')]
+#[label('A hook to allow per-component configuration of the DI container.')]
 class di_configuration {
     /**
      * Create the Dependency Injection configuration hook instance.
@@ -34,6 +34,7 @@ class di_configuration {
      * @param ContainerBuilder $builder
      */
     public function __construct(
+        /** @var ContainerBuilder The PHP-DI Builder */
         protected ContainerBuilder $builder,
     ) {
     }
