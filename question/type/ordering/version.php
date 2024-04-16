@@ -26,5 +26,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'qtype_ordering';
-$plugin->requires  = 2024041600; // Moodle 3.11.
+$plugin->requires  = 2024041600;
 $plugin->version   = 2024042200; // The current plugin version (Date: YYYYMMDDXX).
