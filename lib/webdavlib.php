@@ -50,8 +50,6 @@ class webdav_client {
     private $_socket = '';
     private $_path ='/';
     private $_auth = false;
-    private $_user;
-    private $_pass;
 
     private $_socket_timeout = 5;
     private $_errno;
@@ -89,10 +87,10 @@ class webdav_client {
     private $oauthtoken;
 
     /** @var string Username (for basic/digest auth, see $auth). */
-    private $user;
+    private $_user;
 
     /** @var string Password (for basic/digest auth, see $auth). */
-    private $pass;
+    private $_pass;
 
     /** @var mixed to store xml data that need to be handled. */
     private $_lock_ref_cdata;
@@ -119,8 +117,8 @@ class webdav_client {
             $this->_server = $server;
         }
         if (!empty($user) && !empty($pass)) {
-            $this->user = $user;
-            $this->pass = $pass;
+            $this->_user = $user;
+            $this->_pass = $pass;
         }
         $this->_auth = $auth;
         $this->_socket = $socket;
