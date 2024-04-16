@@ -66,7 +66,7 @@ class edit_renderer extends \plugin_renderer_base {
         $output .= html_writer::start_div('mod_quiz-edit-top-controls');
 
         $output .= html_writer::start_div('d-flex justify-content-between flex-wrap mb-1');
-        $output .= html_writer::start_div('d-flex flex-column justify-content-around');
+        $output .= html_writer::start_div('d-flex align-items-center justify-content-around');
         $output .= $this->quiz_information($structure);
         $output .= html_writer::end_tag('div');
         $output .= $this->maximum_grade_input($structure, $pageurl);
@@ -179,14 +179,14 @@ class edit_renderer extends \plugin_renderer_base {
      */
     public function maximum_grade_input($structure, \moodle_url $pageurl) {
         $output = '';
-        $output .= html_writer::start_div('maxgrade');
+        $output .= html_writer::start_div('maxgrade', ['class' => 'mt-2 mt-sm-0']);
         $output .= html_writer::start_tag('form', ['method' => 'post', 'action' => 'edit.php',
                 'class' => 'quizsavegradesform']);
-        $output .= html_writer::start_tag('fieldset', ['class' => 'invisiblefieldset']);
+        $output .= html_writer::start_tag('fieldset', ['class' => 'invisiblefieldset d-flex align-items-center']);
         $output .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => 'sesskey', 'value' => sesskey()]);
         $output .= html_writer::input_hidden_params($pageurl);
         $output .= html_writer::tag('label', get_string('maximumgrade') . ' ',
-                ['for' => 'inputmaxgrade', 'class' => 'd-inline-block w-auto']);
+                ['for' => 'inputmaxgrade', 'class' => 'd-inline-block w-auto mb-0']);
         $output .= html_writer::empty_tag('input', ['type' => 'text', 'id' => 'inputmaxgrade',
                 'name' => 'maxgrade', 'size' => ($structure->get_decimal_places_for_grades() + 2),
                 'value' => $structure->formatted_quiz_grade(),
