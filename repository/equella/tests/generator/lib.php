@@ -59,17 +59,15 @@ class repository_equella_generator extends testing_repository_generator {
         if (!isset($record['equella_sharedsecret'])) {
             $record['equella_sharedsecret'] = 'secret';
         }
-        if (!isset($record['equella_manager_shareid'])) {
-            $record['equella_manager_shareid'] = '';
-        }
-        if (!isset($record['equella_manager_sharedsecret'])) {
-            $record['equella_manager_sharedsecret'] = '';
-        }
-        if (!isset($record['equella_editingteacher_shareid'])) {
-            $record['equella_editingteacher_shareid'] = '';
-        }
-        if (!isset($record['equella_editingteacher_sharedsecret'])) {
-            $record['equella_editingteacher_sharedsecret'] = '';
+        // Set defaults for all generated options for each role with editing capabilities.
+        $editingroles = get_roles_with_capability('moodle/course:manageactivities', CAP_ALLOW);
+        foreach ($editingroles as $role) {
+            if (!isset($record["equella_{$role->shortname}_shareid"])) {
+                $record["equella_{$role->shortname}_shareid"] = '';
+            }
+            if (!isset($record["equella_{$role->shortname}_sharedsecret"])) {
+                $record["equella_{$role->shortname}_sharedsecret"] = '';
+            }
         }
         return $record;
     }
