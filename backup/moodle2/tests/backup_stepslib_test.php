@@ -71,11 +71,11 @@ class backup_stepslib_test extends \advanced_testcase {
                 break;
             }
         }
-        $bc->destroy();
 
         $reflection = new \ReflectionClass($step);
         $method = $reflection->getMethod('define_structure');
         $structure = $method->invoke($step);
+        $bc->destroy();
 
         $elements = $structure->get_final_elements();
         $this->assertArrayHasKey('number', $elements);
