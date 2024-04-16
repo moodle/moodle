@@ -24,6 +24,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version   = 2024011600;       // The current module version (Date: YYYYMMDDXX).
-$plugin->requires  = 2023041800;       // Requires this Moodle version.
+$plugin->version   = 2024042200;       // The current module version (Date: YYYYMMDDXX).
+$plugin->requires  = 2024041600;       // Requires this Moodle version.
 $plugin->component = 'h5plib_v126';    // Full name of the plugin (used for diagnostics).
