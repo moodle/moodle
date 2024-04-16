@@ -417,9 +417,9 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
             $OUTPUT->render_from_template('core/action_menu', $actionmenutemplate)
         ];
 
-        if (!empty($missingfieldtypes)) {
-            echo $OUTPUT->notification(get_string('missingfieldtypes', 'data') . html_writer::alist($missingfieldtypes));
-        }
+    }
+    if (!empty($missingfieldtypes)) {
+        echo $OUTPUT->notification(get_string('missingfieldtypes', 'data') . html_writer::alist($missingfieldtypes));
     }
     echo html_writer::table($table);
 
