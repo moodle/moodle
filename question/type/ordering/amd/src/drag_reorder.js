@@ -26,9 +26,10 @@
 
 import $ from 'jquery';
 import drag from 'core/dragdrop';
-import keys from 'core/key_codes';
 import Templates from 'core/templates';
 import Notification from 'core/notification';
+import {getString} from 'core/str';
+import {prefetchString} from 'core/prefetch';
 
 export default class DragReorder {
 
@@ -101,10 +102,6 @@ export default class DragReorder {
         this.orderList = document.querySelector(this.config.list);
 
         this.startListeners();
-
-        // Make the items tabbable.
-        // TODO: This can be removed once we move to templates and add the tabindex there.
-        $(this.combineSelectors(config.list, config.item)).attr('tabindex', '0');
     }
 
     /**
@@ -117,7 +114,7 @@ export default class DragReorder {
          * @param {Event} e The event.
          */
         const pointerHandle = e => {
-            if (e.target.closest(this.config.item)) {
+            if (e.target.closest(this.config.item) && !e.target.closest(this.config.actionButton)) {
                 this.itemDragging = $(e.target.closest(this.config.item));
                 const details = drag.prepare(e);
                 if (details.start) {
@@ -128,7 +125,7 @@ export default class DragReorder {
         // Set up the list listeners for moving list items around.
         this.orderList.addEventListener('mousedown', pointerHandle);
         this.orderList.addEventListener('touchstart', pointerHandle);
-        this.orderList.addEventListener('keydown', this.itemMovedByKeyboard.bind(this));
+        this.orderList.addEventListener('click', this.itemMovedByClick.bind(this));
     }
 
     /**
@@ -213,11 +210,8 @@ export default class DragReorder {
 
     /**
      * End dragging.
-     *
-     * @param {number} x X co-ordinate
-     * @param {number} y Y co-ordinate
      */
-    dragEnd(x, y) {
+    dragEnd() {
         if (typeof this.config.reorderEnd !== 'undefined') {
             this.config.reorderEnd(this.itemDragging.closest(this.config.list), this.itemDragging);
         }
@@ -226,10 +220,13 @@ export default class DragReorder {
             // Order has changed, call the callback.
             this.config.reorderDone(this.itemDragging.closest(this.config.list), this.itemDragging, this.getCurrentOrder());
 
-        } else if (new Date().getTime() - this.dragStart.time < 500 &&
-            Math.abs(this.dragStart.x - x) < 10 && Math.abs(this.dragStart.y - y) < 10) {
-            // This was really a click. Set the focus on the current item.
-            this.itemDragging[0].focus();
+            getString('moved', 'qtype_ordering', {
+                item: this.itemDragging.find('[data-itemcontent]').text().trim(),
+                position: this.itemDragging.index() + 1,
+                total: this.orderList.querySelectorAll(this.config.item).length
+            }).then((str) => {
+                this.config.announcementRegion.innerHTML = str;
+            });
         }
 
         // Clean up after the drag is finished.
@@ -241,37 +238,31 @@ export default class DragReorder {
     }
 
     /**
-     * Items can be moved and placed using certain keys.
-     * Tab for tabbing though and choose the item to be moved
-     * space, arrow-right arrow-down for moving current element forwards.
-     * arrow-right arrow-down for moving the current element backwards.
+     * Handles the movement of an item by click.
      *
-     * @param {Event} e The keyboard event.
+     * @param {MouseEvent} e The pointer event.
      */
-    itemMovedByKeyboard(e) {
-        if (e.target.closest(this.config.item)) {
+    itemMovedByClick(e) {
+        const actionButton = e.target.closest(this.config.actionButton);
+        if (actionButton) {
             this.itemDragging = $(e.target.closest(this.config.item));
 
             // Store the current state of the list.
             this.originalOrder = this.getCurrentOrder();
 
-            switch (e.keyCode) {
-                case keys.space:
-                case keys.arrowRight:
-                case keys.arrowDown:
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (this.itemDragging.next().length) {
-                        this.itemDragging.next().insertBefore(this.itemDragging);
-                    }
-                    break;
-
-                case keys.arrowLeft:
-                case keys.arrowUp:
+            switch (actionButton.dataset.action) {
+                case 'move-backward':
                     e.preventDefault();
                     e.stopPropagation();
                     if (this.itemDragging.prev().length) {
                         this.itemDragging.prev().insertAfter(this.itemDragging);
+                    }
+                    break;
+                case 'move-forward':
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (this.itemDragging.next().length) {
+                        this.itemDragging.next().insertBefore(this.itemDragging);
                     }
                     break;
             }
@@ -280,28 +271,26 @@ export default class DragReorder {
             if (!this.arrayEquals(this.originalOrder, this.getCurrentOrder())) {
                 // Order has changed, call the callback.
                 this.config.reorderDone(this.itemDragging.closest(this.config.list), this.itemDragging, this.getCurrentOrder());
+
+                // When moving an item to the first or last position, the button that was clicked will be hidden.
+                // In this case, we need to focus the other button.
+                if (!this.itemDragging.prev().length) {
+                    // Focus the 'next' action button.
+                    this.itemDragging.find('[data-action="move-forward"]').focus();
+                } else if (!this.itemDragging.next().length) {
+                    // Focus the 'previous' action button.
+                    this.itemDragging.find('[data-action="move-backward"]').focus();
+                }
+
+                getString('moved', 'qtype_ordering', {
+                    item: this.itemDragging.find('[data-itemcontent]').text().trim(),
+                    position: this.itemDragging.index() + 1,
+                    total: this.orderList.querySelectorAll(this.config.item).length
+                }).then((str) => {
+                    this.config.announcementRegion.innerHTML = str;
+                });
             }
         }
-    }
-
-    /**
-     * TODO: Once the tabindex is added to the template, this can be removed.
-     * Our outer and inner are two CSS selectors, which may contain commas.
-     * We want to combine them safely. So for instance combineSelectors('a, b', 'c, d')
-     * gives 'a c, a d, b c, b d'.
-     *
-     * @param {String} outer The selector for the outer element.
-     * @param {String} inner The selector for the inner element.
-     * @returns {String} The combined selector used to listen to the list item.
-     */
-    combineSelectors(outer, inner) {
-        let combined = [];
-        outer.split(',').forEach(firstSelector => {
-            inner.split(',').forEach(secondSelector => {
-                combined.push(firstSelector.trim() + ' ' + secondSelector.trim());
-            });
-        });
-        return combined.join(', ');
     }
 
     /**
@@ -369,6 +358,8 @@ export default class DragReorder {
      */
     static init(sortableid, responseid) {
         new DragReorder({
+            actionButton: '[data-action]',
+            announcementRegion: document.querySelector(`#${sortableid}-announcement`),
             list: 'ul#' + sortableid,
             item: 'li.sortableitem',
             itemMovingClass: "current-drop",
@@ -379,5 +370,7 @@ export default class DragReorder {
                 $('input#' + responseid)[0].value = newOrder.join(',');
             }
         });
+
+        prefetchString('qtype_ordering', 'moved');
     }
 }

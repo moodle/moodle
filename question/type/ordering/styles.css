@@ -21,7 +21,10 @@
     border-radius: 4px;
     list-style-type: none;
     margin: 4px;
-    padding: 6px 12px;
+}
+
+.que.ordering .sortablelist li .grip {
+    opacity: 0.45;
 }
 
 .que.ordering .sortablelist li.sortableitem {
@@ -29,9 +32,16 @@
     cursor: move;
     margin-left: 26px; /* The margin is needed for the list-style-type in numberingxxx classes */
 }
-.que.ordering .sortablelist li.sortableitem:focus {
-    border-color: #0a0;
-    box-shadow: 0 0 5px 5px rgba(255, 255, 150, 1);
+
+.que.ordering .sortablelist li.sortableitem:first-of-type [data-action="move-backward"],
+.que.ordering .sortablelist li.sortableitem:last-of-type [data-action="move-forward"] {
+    visibility: hidden;
+}
+
+.que.ordering .sortableitem .btn.btn-icon {
+    height: 32px;
+    width: 32px;
+    border-radius: 0.5rem;
 }
 
 .que.ordering .sortablelist.numbering123 li,

@@ -71,6 +71,8 @@ class formulation_and_controls extends renderable_base {
             $data['numberingstyle'] = $numberingstyle;
         }
 
+        $data['horizontallayout'] = $question->layouttype == \qtype_ordering_question::LAYOUT_HORIZONTAL;
+
         // In the multi-tries, the highlight response base on the hint highlight option.
         if (
             (isset($this->options->highlightresponse) && $this->options->highlightresponse) ||

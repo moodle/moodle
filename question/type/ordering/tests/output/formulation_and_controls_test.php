@@ -119,6 +119,7 @@ final class formulation_and_controls_test extends advanced_testcase {
                     'ablockid' => 'id_ablock_0',
                     'layoutclass' => 'horizontal',
                     'numberingstyle' => 'none',
+                    'horizontallayout' => true,
                     'active' => false,
                     'sortableid' => 'id_sortable_0',
                     'answers' => [
@@ -179,6 +180,7 @@ final class formulation_and_controls_test extends advanced_testcase {
                     'ablockid' => 'id_ablock_0',
                     'layoutclass' => 'vertical',
                     'numberingstyle' => 'none',
+                    'horizontallayout' => false,
                     'active' => false,
                     'sortableid' => 'id_sortable_0',
                     'answers' => [
@@ -239,6 +241,7 @@ final class formulation_and_controls_test extends advanced_testcase {
                     'ablockid' => 'id_ablock_0',
                     'layoutclass' => 'horizontal',
                     'numberingstyle' => 'none',
+                    'horizontallayout' => true,
                     'active' => true,
                     'sortableid' => 'id_sortable_0',
                     'answers' => [
