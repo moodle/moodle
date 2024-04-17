@@ -686,6 +686,8 @@ class document implements \renderable, \templatable {
         if ($docicon = $this->get_doc_icon()) {
             $data['icon'] = $output->image_url($docicon->get_name(), $docicon->get_component());
             $data['iconurl'] = $data['icon']->out(false);
+            $data['iconname'] = $docicon->get_name();
+            $data['iconcomponent'] = $docicon->get_component();
         }
         $data['textformat'] = $this->get_text_format();
 

@@ -45,6 +45,10 @@
     * contextid
     * userid
     * timemodified
+    * iconname
+    * iconcomponent
+    * icon
+    * iconurl
 
     Example context (json):
     {
@@ -61,12 +65,16 @@
         [
             "file1.txt",
             "file2.txt"
-        ]
+        ],
+        "iconname": "i/customfield"
     }
 }}
 <div class="result">
     <h4 class="result-title">
-        {{#icon}}<img class="icon" alt="" src="{{{icon}}}">{{/icon}}<a href="{{{docurl}}}">{{{title}}}</a>
+        {{#iconname}}
+            {{#pix}}{{iconname}}, {{iconcomponent}}{{/pix}}
+        {{/iconname}}
+        <a href="{{{docurl}}}">{{{title}}}</a>
     </h4>
     {{#content}}
         <div class="result-content">{{{content}}}</div>
