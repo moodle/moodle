@@ -72,6 +72,8 @@ class user extends base {
         $mform->setType("{$this->name}_operator", PARAM_INT);
         $mform->setDefault("{$this->name}_operator", self::USER_ANY);
 
+        // Specific user selection.
+        $valuelabel = get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header());
         $options = [
             'ajax' => 'core_user/form_user_selector',
             'multiple' => true,
@@ -80,7 +82,7 @@ class user extends base {
                 return fullname($user, has_capability('moodle/site:viewfullnames', context_system::instance()));
             }
         ];
-        $mform->addElement('autocomplete', "{$this->name}_value", get_string('user'), [], $options)
+        $mform->addElement('autocomplete', "{$this->name}_value", $valuelabel, [], $options)
             ->setHiddenLabel(true);
         $mform->hideIf("{$this->name}_value", "{$this->name}_operator", 'neq', self::USER_SELECT);
     }

@@ -174,6 +174,25 @@ Feature: Manage custom reports
       | Report source | Users    |
       | Tags          | Cat      |
 
+  Scenario: Filter custom reports by date
+    Given the following "core_reportbuilder > Report" exists:
+      | name    | My report                                |
+      | source  | core_user\reportbuilder\datasource\users |
+    And I log in as "admin"
+    When I navigate to "Reports > Report builder > Custom reports" in site administration
+    And I click on "Filters" "button"
+    And I set the following fields in the "Time created" "core_reportbuilder > Filter" to these values:
+      | Time created operator | Range          |
+      | Time created from     | ##2 days ago## |
+      | Time created to       | ##tomorrow##   |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "Filters applied"
+    And I should see "My report" in the "Reports list" "table"
+    And I set the field "Time created to" in the "Time created" "core_reportbuilder > Filter" to "##yesterday##"
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "Nothing to display"
+    And "Reports list" "table" should not exist
+
   Scenario: Custom report tags are not displayed if tagging is disabled
     Given the following config values are set as admin:
       | usetags | 0 |
