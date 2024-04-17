@@ -46,17 +46,6 @@ class question_type_test extends \question_testcase {
         $this->qtype = null;
     }
 
-    /**
-     * Asserts that two strings containing XML are the same ignoring the line-endings.
-     *
-     * @param string $expectedxml
-     * @param string $xml
-     */
-    public function assert_same_xml($expectedxml, $xml) {
-        $this->assertEquals(str_replace("\r\n", "\n", $expectedxml),
-                str_replace("\r\n", "\n", $xml));
-    }
-
     public function test_save_question() {
         $this->resetAfterTest();
 
