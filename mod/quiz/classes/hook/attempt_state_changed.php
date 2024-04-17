@@ -36,7 +36,9 @@ class attempt_state_changed {
      * @param ?\stdClass $updatedattempt The updated database record of the new attempt, null if it has just been deleted.
      */
     public function __construct(
+        /** @var ?\stdClass The original database record for the attempt, null if it has just been created. */
         protected ?\stdClass $originalattempt,
+        /** @var ?\stdClass The updated database record of the new attempt, null if it has just been deleted. */
         protected ?\stdClass $updatedattempt,
     ) {
         if (is_null($this->originalattempt) && is_null($this->updatedattempt)) {

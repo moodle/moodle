@@ -733,7 +733,7 @@ A callback with a higher priority will be called before one with lower priority.
 $string['hookcallbacknotcallable'] = 'This callback is not callable. This could be because the class or method does not exist, or because the method is not public.';
 $string['hookconfigoverride'] = 'Overridden';
 $string['hookconfigoverride_help'] = 'The definition of this callback has been overridden in the site configuration file, config.php';
-$string['hookdeprecates'] = 'Deprecated lib.php callbacks';
+$string['hookdeprecates'] = 'Deprecated callbacks';
 $string['hookdescription'] = 'Description';
 $string['hookdescriptionmissing'] = 'Hook does not have a description method';
 $string['hookclassmissing'] = 'Hook class not found';

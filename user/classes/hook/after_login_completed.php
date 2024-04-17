@@ -16,28 +16,19 @@
 
 namespace core_user\hook;
 
-use stdClass;
+use core\hook\stoppable_trait;
 
 /**
- * Hook before user information and data updates.
+ * Allow plugins to callback as soon possible after user has completed login.
  *
  * @package    core_user
- * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
+ * @copyright  2024 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins or features to perform actions before a user is updated.')]
-#[\core\attribute\tags('user')]
-class before_user_update {
-
-    /**
-     * Constructor for the hook.
-     *
-     * @param stdClass $user The user instance
-     * @param stdClass $currentuserdata The old user instance
-     */
-    public function __construct(
-        public readonly stdClass $user,
-        public readonly stdClass $currentuserdata,
-    ) {
-    }
+#[\core\attribute\label('Allow plugins to callback as soon possible after user has completed login.')]
+#[\core\attribute\tags('user', 'login')]
+class after_login_completed implements
+    \Psr\EventDispatcher\StoppableEventInterface
+{
+    use stoppable_trait;
 }

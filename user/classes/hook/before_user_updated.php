@@ -14,39 +14,31 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_enrol\hook;
+namespace core_user\hook;
 
 use stdClass;
 
 /**
- * Hook before a user is un-enrolled from a course for an enrolment instance.
+ * Hook before user information and data updates.
  *
- * @package    core
+ * @package    core_user
  * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins or features to perform actions before a user enrolment is removed.')]
-#[\core\attribute\tags('enrol', 'user')]
-class before_user_enrolment_remove {
-
+#[\core\attribute\label('Allows plugins or features to perform actions before a user is updated.')]
+#[\core\attribute\tags('user')]
+class before_user_updated {
     /**
      * Constructor for the hook.
      *
-     * @param stdClass $enrolinstance The enrol instance.
-     * @param stdClass $userenrolmentinstance The user enrolment instance.
+     * @param stdClass $user The user instance
+     * @param stdClass $currentuserdata The old user instance
      */
     public function __construct(
-        public readonly stdClass $enrolinstance,
-        public readonly stdClass $userenrolmentinstance,
+        /** @var stdClass The user instance */
+        public readonly stdClass $user,
+        /** @var stdClass The old user instance */
+        public readonly stdClass $currentuserdata,
     ) {
-    }
-
-    /**
-     * Get the user id.
-     *
-     * @return int
-     */
-    public function get_userid(): int {
-        return $this->userenrolmentinstance->userid;
     }
 }

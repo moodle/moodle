@@ -27,8 +27,7 @@ use core\hook\deprecated_callback_replacement;
  * @copyright  2024 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class extend_bulk_user_actions implements described_hook, deprecated_callback_replacement {
-
+class extend_bulk_user_actions implements deprecated_callback_replacement, described_hook {
     /**
      * Describes the hook purpose.
      *
@@ -56,7 +55,7 @@ class extend_bulk_user_actions implements described_hook, deprecated_callback_re
         return ['bulk_user_actions'];
     }
 
-    /** @var array $actions Stores all added user actions */
+    /** @var array Stores all added user actions */
     private $actions = [];
 
     /**

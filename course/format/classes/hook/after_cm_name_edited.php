@@ -34,7 +34,9 @@ class after_cm_name_edited implements described_hook {
      * @param string $newname the new name
      */
     public function __construct(
+        /** @var cm_info the course module */
         protected cm_info $cm,
+        /** @var string the new name */
         protected string $newname,
     ) {
     }

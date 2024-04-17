@@ -36,6 +36,7 @@ class structure_modified {
      * @param structure $structure The new structure.
      */
     public function __construct(
+        /** @var structure The new structure */
         protected structure $structure
     ) {
     }

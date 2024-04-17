@@ -26,7 +26,7 @@ namespace core\hook\output;
  */
 #[\core\attribute\tags('output')]
 #[\core\attribute\label('Allows plugins to add any elements to the page &lt;head&gt; html tag.')]
-#[\core\attribute\hook\replaces_callbacks('before_standard_html_head')]
+#[\core\attribute\hook\replaces_callbacks('before_standard_top_of_body_html')]
 final class before_standard_top_of_body_html_generation {
     /**
      * Hook to allow subscribers to add HTML content to the top of the page body.

@@ -4097,7 +4097,7 @@ function complete_user_login($user, array $extrauserinfo = []) {
     $event->trigger();
 
     // Allow plugins to callback as soon possible after user has completed login.
-    di::get(\core\hook\manager::class)->dispatch(new \core\hook\user\after_complete_login());
+    di::get(\core\hook\manager::class)->dispatch(new \core_user\hook\after_login_completed());
 
     // Check if the user is using a new browser or session (a new MoodleSession cookie is set in that case).
     // If the user is accessing from the same IP, ignore everything (most of the time will be a new session in the same browser).
@@ -4651,7 +4651,7 @@ function delete_course($courseorid, $showfeedback = true) {
     }
 
     // Dispatch the hook for pre course delete actions.
-    $hook = new \core_course\hook\before_course_delete(
+    $hook = new \core_course\hook\before_course_deleted(
         course: $course,
     );
     \core\di::get(\core\hook\manager::class)->dispatch($hook);

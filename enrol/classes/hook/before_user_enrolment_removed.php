@@ -19,29 +19,26 @@ namespace core_enrol\hook;
 use stdClass;
 
 /**
- * Hook before a user enrolment is updated.
+ * Hook before a user is un-enrolled from a course for an enrolment instance.
  *
  * @package    core_enrol
  * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins or features to perform actions before a user enrolment is updated.')]
+#[\core\attribute\label('Allows plugins or features to perform actions before a user enrolment is removed.')]
 #[\core\attribute\tags('enrol', 'user')]
-class before_user_enrolment_update {
-
+class before_user_enrolment_removed {
     /**
      * Constructor for the hook.
      *
      * @param stdClass $enrolinstance The enrol instance.
      * @param stdClass $userenrolmentinstance The user enrolment instance.
-     * @param bool $statusmodified Whether the status of the enrolment has been modified.
-     * @param bool $timeendmodified Whether the time end of the enrolment has been modified.
      */
     public function __construct(
+        /** @var stdClass The enrol instance */
         public readonly stdClass $enrolinstance,
+        /** @var stdClass The user enrolment instance */
         public readonly stdClass $userenrolmentinstance,
-        public readonly bool $statusmodified,
-        public readonly bool $timeendmodified,
     ) {
     }
 

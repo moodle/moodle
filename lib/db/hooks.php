@@ -54,11 +54,11 @@ $callbacks = [
         'callback' => \core_communication\hook_listener::class . '::update_course_communication',
     ],
     [
-        'hook' => \core_course\hook\before_course_delete::class,
+        'hook' => \core_course\hook\before_course_deleted::class,
         'callback' => \core_communication\hook_listener::class . '::delete_course_communication',
     ],
     [
-        'hook' => \core_user\hook\before_user_update::class,
+        'hook' => \core_user\hook\before_user_updated::class,
         'callback' => \core_communication\hook_listener::class . '::update_user_room_memberships',
     ],
     [
@@ -78,7 +78,7 @@ $callbacks = [
         'callback' => \core_communication\hook_listener::class . '::update_communication_memberships_for_enrol_status_change',
     ],
     [
-        'hook' => \core_enrol\hook\before_enrol_instance_delete::class,
+        'hook' => \core_enrol\hook\before_enrol_instance_deleted::class,
         'callback' => \core_communication\hook_listener::class . '::remove_communication_memberships_for_enrol_instance_deletion',
     ],
     [
@@ -86,11 +86,11 @@ $callbacks = [
         'callback' => \core_communication\hook_listener::class . '::add_communication_membership_for_enrolled_user',
     ],
     [
-        'hook' => \core_enrol\hook\before_user_enrolment_update::class,
+        'hook' => \core_enrol\hook\before_user_enrolment_updated::class,
         'callback' => \core_communication\hook_listener::class . '::update_communication_membership_for_updated_user_enrolment',
     ],
     [
-        'hook' => \core_enrol\hook\before_user_enrolment_remove::class,
+        'hook' => \core_enrol\hook\before_user_enrolment_removed::class,
         'callback' => \core_communication\hook_listener::class . '::remove_communication_membership_for_unenrolled_user',
     ],
     [

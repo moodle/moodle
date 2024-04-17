@@ -28,13 +28,13 @@ use stdClass;
 #[\core\attribute\label('Allows plugins or features to perform actions after a group is deleted.')]
 #[\core\attribute\tags('group')]
 class after_group_deleted {
-
     /**
      * Constructor for the hook.
      *
      * @param stdClass $groupinstance The group instance.
      */
     public function __construct(
+        /** @var stdClass The group instance */
         public readonly stdClass $groupinstance,
     ) {
     }

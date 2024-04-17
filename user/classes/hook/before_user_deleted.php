@@ -29,12 +29,9 @@ use Psr\EventDispatcher\StoppableEventInterface;
 #[\core\attribute\label('Allows plugins or features to perform actions before a user is deleted.')]
 #[\core\attribute\tags('user')]
 class before_user_deleted implements
-    StoppableEventInterface {
-
-    /**
-     * @var bool Whether the propagation of this event has been stopped.
-     */
-    protected bool $stopped = false;
+    StoppableEventInterface
+{
+    use \core\hook\stoppable_trait;
 
     /**
      * Constructor for the hook.
@@ -42,18 +39,8 @@ class before_user_deleted implements
      * @param stdClass $user The user instance
      */
     public function __construct(
+        /** @var stdClass The user instance */
         public readonly stdClass $user,
     ) {
-    }
-
-    public function isPropagationStopped(): bool {
-        return $this->stopped;
-    }
-
-    /**
-     * Stop the propagation of this event.
-     */
-    public function stop(): void {
-        $this->stopped = true;
     }
 }

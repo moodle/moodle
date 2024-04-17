@@ -14,46 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core_enrol\hook;
+namespace core_course\hook;
 
 use stdClass;
 use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
- * Hook before enrolment instance is deleted.
+ * Hook before course deletion.
  *
- * @package    core_enrol
- * @copyright  20234 Safat Shahin <safat.shahin@moodle.com>
+ * @package    core_course
+ * @copyright  2024 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-#[\core\attribute\label('Allows plugins or features to perform actions before the enrolment instance is deleted.')]
-#[\core\attribute\tags('enrol')]
-class before_enrol_instance_delete implements
-    StoppableEventInterface {
-
-    /**
-     * @var bool Whether the propagation of this event has been stopped.
-     */
-    protected bool $stopped = false;
+#[\core\attribute\label('Allows plugins or features to perform actions before a course is deleted.')]
+#[\core\attribute\tags('course')]
+class before_course_deleted implements
+    StoppableEventInterface
+{
+    use \core\hook\stoppable_trait;
 
     /**
      * Constructor for the hook.
      *
-     * @param stdClass $enrolinstance The enrol instance.
+     * @param stdClass $course The course instance.
      */
     public function __construct(
-        public readonly stdClass $enrolinstance,
+        /** @var stdClass The course instance */
+        public readonly stdClass $course,
     ) {
-    }
-
-    public function isPropagationStopped(): bool {
-        return $this->stopped;
-    }
-
-    /**
-     * Stop the propagation of this event.
-     */
-    public function stop(): void {
-        $this->stopped = true;
     }
 }

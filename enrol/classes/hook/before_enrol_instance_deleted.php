@@ -14,38 +14,33 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace core\hook\user;
+namespace core_enrol\hook;
 
-use core\hook\described_hook;
-use core\hook\stoppable_trait;
+use stdClass;
+use Psr\EventDispatcher\StoppableEventInterface;
 
 /**
- * Allow plugins to callback as soon possible after user has completed login.
+ * Hook before enrolment instance is deleted.
  *
- * @package    core
- * @copyright  2024 Juan Leyva
+ * @package    core_enrol
+ * @copyright  20234 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class after_complete_login implements
-    described_hook,
-    \Psr\EventDispatcher\StoppableEventInterface {
-    use stoppable_trait;
+#[\core\attribute\label('Allows plugins or features to perform actions before the enrolment instance is deleted.')]
+#[\core\attribute\tags('enrol', 'user')]
+class before_enrol_instance_deleted implements
+    StoppableEventInterface
+{
+    use \core\hook\stoppable_trait;
 
     /**
-     * Describes the hook purpose.
+     * Constructor for the hook.
      *
-     * @return string
+     * @param stdClass $enrolinstance The enrol instance.
      */
-    public static function get_hook_description(): string {
-        return 'Allow plugins to callback as soon possible after user has completed login.';
-    }
-
-    /**
-     * List of tags that describe this hook.
-     *
-     * @return string[]
-     */
-    public static function get_hook_tags(): array {
-        return ['login'];
+    public function __construct(
+        /** @var stdClass The enrol instance */
+        public readonly stdClass $enrolinstance,
+    ) {
     }
 }

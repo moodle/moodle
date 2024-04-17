@@ -16,7 +16,6 @@
 
 namespace tool_mfa\hook;
 
-use core\hook\described_hook;
 use core\hook\stoppable_trait;
 
 /**
@@ -26,26 +25,10 @@ use core\hook\stoppable_trait;
  * @copyright  2024 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+#[\core\attribute\label('Allow plugins to callback as soon possible after user has passed MFA.')]
+#[\core\attribute\tags('user', 'login')]
 class after_user_passed_mfa implements
-    described_hook,
-    \Psr\EventDispatcher\StoppableEventInterface {
+    \Psr\EventDispatcher\StoppableEventInterface
+{
     use stoppable_trait;
-
-    /**
-     * Describes the hook purpose.
-     *
-     * @return string
-     */
-    public static function get_hook_description(): string {
-        return 'Allow plugins to callback as soon possible after user has passed MFA.';
-    }
-
-    /**
-     * List of tags that describe this hook.
-     *
-     * @return string[]
-     */
-    public static function get_hook_tags(): array {
-        return ['login'];
-    }
 }

@@ -26,18 +26,18 @@ use context;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 #[\core\attribute\label('Allows plugins or features to perform actions after a role is assigned to a user.')]
-#[\core\attribute\tags('role,', 'user')]
+#[\core\attribute\tags('role', 'user')]
 class after_role_assigned {
-
     /**
      * Constructor for the hook.
      *
      * @param context $context The context of the role assignment.
      * @param int $userid The user id of the user.
-     *
      */
     public function __construct(
+        /** @var context The context of the role assignment */
         public readonly context $context,
+        /** @var int The user id of the user */
         public readonly int $userid,
     ) {
     }
