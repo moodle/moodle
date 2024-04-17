@@ -315,4 +315,33 @@ class manager {
             timecreated: $record->timecreated,
         );
     }
+
+    /**
+     * This function internationalises a number to E.164 standard.
+     * https://46elks.com/kb/e164
+     *
+     * @param string $phonenumber the phone number to format.
+     * @param ?string $countrycode The country code of the phone number.
+     * @return string the formatted phone number.
+     */
+    public static function format_number(
+        string $phonenumber,
+        ?string $countrycode = null,
+    ): string {
+        // Remove all whitespace, dashes, and brackets in one step.
+        $phonenumber = preg_replace('/[ ()-]/', '', $phonenumber);
+
+        // Check if the number is already in international format or if it starts with a 0.
+        if (!str_starts_with($phonenumber, '+')) {
+            // Strip leading 0.
+            if (str_starts_with($phonenumber, '0')) {
+                $phonenumber = substr($phonenumber, 1);
+            }
+
+            // Prepend country code if not already in international format.
+            $phonenumber = !empty($countrycode) ? '+' . $countrycode . $phonenumber : $phonenumber;
+        }
+
+        return $phonenumber;
+    }
 }
