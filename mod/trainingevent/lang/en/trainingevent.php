@@ -86,6 +86,7 @@ $string['publish'] = 'Publish this event by email';
 $string['publishwaitlist'] =  'Publish this event by email to waiting list only';
 $string['remove'] = 'Remove';
 $string['resetattending'] = 'Clear attendees';
+$string['resetattendingfull'] = 'This will remove all users who are signed up for this event (and are on any waiting list). There is no recovery from this.';
 $string['removerequest'] = 'Withdraw approval request';
 $string['request'] = 'Request approval to attend';
 $string['requestagain'] = 'Re-request approval to attend';
