@@ -72,17 +72,6 @@ final class questiontype_test extends \question_testcase {
         ];
     }
 
-    /**
-     * Asserts that two XML strings are the same, ignoring differences in line endings.
-     *
-     * @param string $expectedxml
-     * @param string $xml
-     */
-    public function assert_same_xml(string $expectedxml, string $xml): void {
-        $this->assertEquals(str_replace("\r\n", "\n", $expectedxml),
-            str_replace("\r\n", "\n", $xml));
-    }
-
     public function test_name(): void {
         $ordering = new qtype_ordering();
         $this->assertEquals('ordering', $ordering->name());

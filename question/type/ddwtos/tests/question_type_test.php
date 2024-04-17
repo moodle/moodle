@@ -47,11 +47,6 @@ class question_type_test extends \question_testcase {
         $this->qtype = null;
     }
 
-    public function assert_same_xml($expectedxml, $xml) {
-        $this->assertEquals(str_replace("\r\n", "\n", $expectedxml),
-                str_replace("\r\n", "\n", $xml));
-    }
-
     /**
      * Get some test question data.
      *
