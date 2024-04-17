@@ -26,8 +26,8 @@ defined('MOODLE_INTERNAL') || die();
 
 $callbacks = [
     [
-        'hook' => core\hook\user\after_complete_login::class,
-        'callback' => 'tool_mobile\local\hooks\user\after_complete_login::callback',
+        'hook' => \core_user\hook\after_login_completed::class,
+        'callback' => \tool_mobile\hook_callbacks::class . '::after_login_completed',
         'priority' => 500,
     ],
     [

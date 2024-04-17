@@ -14,23 +14,26 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-namespace tool_mobile\local\hooks\user;
+namespace tool_mobile;
+
 use core\session\utility\cookie_helper;
 
 /**
- * Handles mobile app launches when a third-party auth plugin did not properly set $SESSION->wantsurl.
+ * Allows plugins to add any elements to the footer.
  *
  * @package    tool_mobile
  * @copyright  2024 Juan Leyva
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class after_complete_login {
+class hook_callbacks {
     /**
      * Callback to recover $SESSION->wantsurl.
      *
-     * @param \core\hook\user\after_complete_login $hook
+     * @param \core_user\hook\after_login_completed $hook
      */
-    public static function callback(\core\hook\user\after_complete_login $hook): void {
+    public static function after_login_completed(
+        \core_user\hook\after_login_completed $hook,
+    ): void {
         global $SESSION, $CFG;
 
         // Check if the user is doing a mobile app launch, if that's the case, ensure $SESSION->wantsurl is correctly set.
@@ -43,7 +46,10 @@ class after_complete_login {
 
         // Set Partitioned and Secure attributes to the MoodleSession cookie if the user is using the Moodle app.
         if (\core_useragent::is_moodle_app()) {
-            cookie_helper::add_attributes_to_cookie_response_header('MoodleSession'.$CFG->sessioncookie, ['Secure', 'Partitioned']);
+            cookie_helper::add_attributes_to_cookie_response_header(
+                'MoodleSession' . $CFG->sessioncookie,
+                ['Secure', 'Partitioned'],
+            );
         }
     }
 }
