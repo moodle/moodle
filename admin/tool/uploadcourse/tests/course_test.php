@@ -254,7 +254,7 @@ class course_test extends \advanced_testcase {
             $data = ['shortname' => 'newcourse', 'fullname' => 'New course', 'summary' => 'New', 'category' => 1];
             $co = new tool_uploadcourse_course($mode, $updatemode, $data);
 
-            if (in_array($role->shortname, $rolesallowed)) {
+            if (in_array($role->archetype, $rolesallowed)) {
                 $this->assertTrue($co->prepare());
                 $co->proceed();
                 $courseid = $DB->get_field('course', 'id', ['shortname' => 'newcourse'], MUST_EXIST);
