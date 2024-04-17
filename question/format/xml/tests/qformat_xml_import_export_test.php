@@ -78,7 +78,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
      */
     protected function normalise_xml($xml) {
         // Normalise line endings.
-        $xml = str_replace("\r\n", "\n", $xml);
+        $xml = phpunit_util::normalise_line_endings($xml);
         $xml = preg_replace("~\n$~", "", $xml); // Strip final newline in file.
 
         // Replace all numbers in question id comments with 0.
