@@ -148,6 +148,10 @@ class user_bulk_action_form extends moodleform {
     public function definition() {
         $mform =& $this->_form;
 
+        // Most bulk actions perform a redirect on selection, so we shouldn't trigger formchange warnings (specifically because
+        // the user must have _already_ changed the current form by selecting users to perform the action on).
+        $mform->disable_form_change_checker();
+
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_LOCALURL);
 
