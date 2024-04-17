@@ -31,14 +31,22 @@ class preview_action_column extends \core_question\local\bank\column_base {
         return ['iconcol'];
     }
 
+    #[\Override]
     public function get_title(): string {
         return '&#160;';
     }
 
+    #[\Override]
     public function get_name() {
         return 'previewquestionaction';
     }
 
+    #[\Override]
+    public function get_default_width(): int {
+        return 45;
+    }
+
+    #[\Override]
     protected function display_content($question, $rowclasses) {
         global $PAGE;
         if (!question_has_capability_on($question, 'use')) {

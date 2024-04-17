@@ -16,6 +16,8 @@
 
 namespace mod_quiz\question\bank;
 
+use qbank_viewquestiontype\question_type_column;
+
 /**
  * Subclass to customise the view of the question bank for the quiz editing screen.
  *
@@ -25,24 +27,16 @@ namespace mod_quiz\question\bank;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class random_question_view extends custom_view {
-    /**
-     * Init required columns.
-     *
-     * @return void
-     */
-    protected function init_required_columns(): void {
-        // Override core columns.
-        $this->corequestionbankcolumns = [
-            'question_type_column',
-            'question_name_text_column',
-            'preview_action_column'
+    #[\Override]
+    protected function get_question_bank_plugins(): array {
+        return [
+            new question_type_column($this),
+            new question_name_text_column($this),
+            new preview_action_column($this),
         ];
     }
 
-    /**
-     * Prints the table of questions in a category with interactions
-     *
-     * @param \context $catcontext*/
+    #[\Override]
     protected function display_bottom_controls(\context $catcontext): void {
     }
 }
