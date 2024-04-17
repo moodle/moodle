@@ -147,12 +147,7 @@ table.question-bank-table {
     table-layout: fixed;
     overflow-x: scroll;
     width: min-content;
-
-    td,
-    th {
-        max-width: 40vw;
-        width: max-content;
-    }
+    max-width: 100%;
 
     th {
         text-align: left;
@@ -681,14 +676,5 @@ body.path-question-type .mform fieldset.hidden {
     }
     .que .content {
         margin: 0;
-    }
-}
-
-@include media-breakpoint-down(md) {
-    .question-bank-table {
-        td,
-        th {
-            max-width: 75vw;
-        }
     }
 }
