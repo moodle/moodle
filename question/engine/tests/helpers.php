@@ -611,8 +611,8 @@ abstract class question_testcase extends advanced_testcase {
      */
     public function assert_same_xml($expectedxml, $xml) {
         $this->assertEquals(
-            str_replace("\r\n", "\n", $expectedxml),
-            str_replace("\r\n", "\n", $xml)
+            phpunit_util::normalise_line_endings($expectedxml),
+            phpunit_util::normalise_line_endings($xml)
         );
     }
 }

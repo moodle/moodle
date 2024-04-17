@@ -991,6 +991,16 @@ class phpunit_util extends testing_util {
     }
 
     /**
+     * Normalise any text to always use unix line endings (line-feeds).
+     *
+     * @param   string  $text The text to normalize
+     * @return  string
+     */
+    public static function normalise_line_endings(string $text): string {
+        return str_replace(["\r\n", "\r"], "\n", $text);
+    }
+
+    /**
      * Get the coverage config for the supplied includelist and excludelist configuration.
      *
      * @param   string[] $includelists The list of files/folders in the includelist.

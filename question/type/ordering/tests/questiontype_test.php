@@ -17,6 +17,7 @@
 namespace qtype_ordering;
 
 use core_question_generator;
+use phpunit_util;
 use qtype_ordering;
 use qtype_ordering_test_helper;
 use qtype_ordering_edit_form;
@@ -315,6 +316,9 @@ final class questiontype_test extends \question_testcase {
 
         $expectedgift = file_get_contents(__DIR__ . '/fixtures/testexport.gift.txt');
 
-        $this->assertEquals($expectedgift, $gift);
+        $this->assertEquals(
+            phpunit_util::normalise_line_endings($expectedgift),
+            phpunit_util::normalise_line_endings($gift)
+        );
     }
 }
