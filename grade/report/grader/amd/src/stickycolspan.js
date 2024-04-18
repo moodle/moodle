@@ -93,12 +93,12 @@ const defineLastRowIntersectionObserver = (stickyFooterEnabled) => {
         // values. If the page has a sticky footer, we need to make sure that the bottom root margin of the observer
         // subtracts the height of the sticky footer to prevent the row being cut-off by the footer.
         const intersectionObserver = new IntersectionObserver(
-            ([e]) => e.target.classList.toggle('pinned', e.intersectionRatio < 1),
+            ([e]) => lastRow.classList.toggle('pinned', e.intersectionRatio < 1),
             {
                 rootMargin: stickyFooterHeight ? `0px 0px -${stickyFooterHeight}px 0px` : "0px",
                 threshold: [1]
             }
         );
-        intersectionObserver.observe(lastRow);
+        intersectionObserver.observe(lastRow.querySelector('th'));
     }
 };
