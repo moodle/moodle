@@ -793,24 +793,25 @@ function setup_get_remote_url() {
         $rurl['fullpath'] = $_SERVER['REQUEST_URI'];
 
         // Fixing a known issue with:
-        // - Apache versions lesser than 2.4.11
+        // - Apache
         // - PHP deployed in Apache as PHP-FPM via mod_proxy_fcgi
-        // - PHP versions lesser than 5.6.3 and 5.5.18.
+        // - PHP versions lesser than 8.1.18 or 8.2.5.
         if (isset($_SERVER['PATH_INFO']) && (php_sapi_name() === 'fpm-fcgi') && isset($_SERVER['SCRIPT_NAME'])) {
-            $pathinfodec = rawurldecode($_SERVER['PATH_INFO']);
-            $lenneedle = strlen($pathinfodec);
-            // Checks whether SCRIPT_NAME ends with PATH_INFO, URL-decoded.
-            if (substr($_SERVER['SCRIPT_NAME'], -$lenneedle) === $pathinfodec) {
-                // This is the "Apache 2.4.10- running PHP-FPM via mod_proxy_fcgi" fingerprint,
-                // at least on CentOS 7 (Apache/2.4.6 PHP/5.4.16) and Ubuntu 14.04 (Apache/2.4.7 PHP/5.5.9)
-                // => SCRIPT_NAME contains 'slash arguments' data too, which is wrongly exposed via PATH_INFO as URL-encoded.
-                // Fix both $_SERVER['PATH_INFO'] and $_SERVER['SCRIPT_NAME'].
-                $lenhaystack = strlen($_SERVER['SCRIPT_NAME']);
-                $pos = $lenhaystack - $lenneedle;
-                // Here $pos is greater than 0 but let's double check it.
-                if ($pos > 0) {
-                    $_SERVER['PATH_INFO'] = $pathinfodec;
-                    $_SERVER['SCRIPT_NAME'] = substr($_SERVER['SCRIPT_NAME'], 0, $pos);
+            $_SERVER['PATH_INFO'] = rawurldecode($_SERVER['PATH_INFO']);
+            if (PHP_VERSION_ID < 80118 || (PHP_VERSION_ID >= 80200 && PHP_VERSION_ID < 80205)) {
+                $lenneedle = strlen($_SERVER['PATH_INFO']);
+                // Checks whether SCRIPT_NAME ends with PATH_INFO, URL-decoded.
+                if (substr($_SERVER['SCRIPT_NAME'], -$lenneedle) === $_SERVER['PATH_INFO']) {
+                    // This is the "Apache running PHP-FPM via mod_proxy_fcgi with PHP < 8.1.18 or PHP < 8.2.5" fingerprint,
+                    // at least on CentOS 7 (Apache/2.4.6 PHP/8.0.30)
+                    // => SCRIPT_NAME contains 'slash arguments' data too, which is wrongly exposed via PATH_INFO as URL-encoded.
+                    // Fix $_SERVER['SCRIPT_NAME'].
+                    $lenhaystack = strlen($_SERVER['SCRIPT_NAME']);
+                    $pos = $lenhaystack - $lenneedle;
+                    // Here $pos is greater than 0 but let's double check it.
+                    if ($pos > 0) {
+                        $_SERVER['SCRIPT_NAME'] = substr($_SERVER['SCRIPT_NAME'], 0, $pos);
+                    }
                 }
             }
         }
