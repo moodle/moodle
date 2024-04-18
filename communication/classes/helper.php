@@ -480,30 +480,21 @@ class helper {
             $communication = self::load_by_course(
                 courseid: $course->id,
                 context: $coursecontext,
-                provider: $provider === processor::PROVIDER_NONE ? null : $provider,
             );
 
-            if ($communication->get_processor() === null) {
-                // If a course communication instance is not created, create one.
-                $communication->create_and_configure_room(
-                    communicationroomname: $course->communicationroomname,
-                    avatar: $courseimage,
-                    instance: $course,
-                    queue: false,
-                );
-            } else {
-                $communication->remove_all_members_from_room();
-                // Now update the course communication instance with the latest changes.
-                // We are not making room for this instance as it is a group mode enabled course.
-                // If provider is none, then we will make the room inactive, otherwise always active in group mode.
-                $communication->update_room(
-                    active: $provider === processor::PROVIDER_NONE ? processor::PROVIDER_INACTIVE : processor::PROVIDER_ACTIVE,
-                    communicationroomname: $course->communicationroomname,
-                    avatar: $courseimage,
-                    instance: $course,
-                    queue: false,
-                );
-            }
+            // Now handle the course communication according to the provider.
+            $communication->configure_room_and_membership_by_provider(
+                provider: $provider,
+                instance: $course,
+                communicationroomname: $course->communicationroomname,
+                users: $enrolledusers,
+                instanceimage: $courseimage,
+                queue: false,
+            );
+
+            // As the course is in group mode, make sure no users are in the course room.
+            $communication->reload();
+            $communication->remove_all_members_from_room();
         }
     }
 

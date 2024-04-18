@@ -427,6 +427,7 @@ class api {
      * @param string $communicationroomname The communication room name
      * @param array $users The user ids to add to the room
      * @param null|\stored_file $instanceimage The stored file for the avatar
+     * @param bool $queue Queue the task for the provider room or not
      */
     public function configure_room_and_membership_by_provider(
         string $provider,
@@ -434,6 +435,7 @@ class api {
         string $communicationroomname,
         array $users,
         ?\stored_file $instanceimage = null,
+        bool $queue = true,
     ): void {
         // If the current provider is inactive and the new provider is also none, then nothing to do.
         if (
@@ -456,6 +458,7 @@ class api {
                 communicationroomname: $communicationroomname,
                 avatar: $instanceimage,
                 instance: $instance,
+                queue: $queue,
             );
             return;
         }
@@ -474,6 +477,7 @@ class api {
                 communicationroomname: $communicationroomname,
                 avatar: $instanceimage,
                 instance: $instance,
+                queue: $queue,
             );
         }
 
@@ -492,8 +496,9 @@ class api {
                 communicationroomname: $communicationroomname,
                 avatar: $instanceimage,
                 instance: $instance,
+                queue: $queue,
             );
-            $queue = false;
+            $queueusertask = false;
         } else {
             // Otherwise update the room.
             $this->update_room(
@@ -501,14 +506,15 @@ class api {
                 communicationroomname: $communicationroomname,
                 avatar: $instanceimage,
                 instance: $instance,
+                queue: $queue,
             );
-            $queue = true;
+            $queueusertask = true;
         }
 
         // Now add the members.
         $this->add_members_to_room(
             userids: $users,
-            queue: $queue,
+            queue: $queueusertask,
         );
 
     }
