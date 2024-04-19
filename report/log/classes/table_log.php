@@ -191,11 +191,13 @@ class report_log_table_log extends table_sql {
 
         } else if ($eventusername) {
             if (empty($this->download)) {
-                $params = array('id' => $event->userid);
+                $params = ['id' => $event->userid];
                 if ($event->courseid) {
                     $params['course'] = $event->courseid;
                 }
                 $username = html_writer::link(new moodle_url('/user/view.php', $params), $eventusername);
+            } else {
+                $username = $eventusername;
             }
         } else {
             $username = '-';
