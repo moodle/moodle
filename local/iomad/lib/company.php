@@ -313,15 +313,29 @@ class company {
      *
      */
     public static function get_companies_select($showsuspended=false, $useprepend = true, $showchildren = true, $sort = 'name', $search = '') {
-        global $DB, $USER;
+        global $CFG, $DB, $USER;
 
         // Is this an admin, or a normal user?
         if (iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
-            if ($showsuspended) {
-                $companies = $DB->get_recordset('company', ['parentid' => 0], 'name', '*');
-            } else {
-                $companies = $DB->get_recordset('company', ['suspended' => 0, 'parentid' => 0], 'name', '*');
+            $sqlparams = [];
+            $sqlwhere = "";
+            if (!empty($CFG->iomad_show_company_structure)) {
+                $sqlparams['parentid'] = 0;
+                $sqlwhere .= " AND parentid = :parentid ";
             }
+            if (!$showsuspended) {
+                $sqlparams['suspended'] = 0;
+                $sqlwhere .= " AND suspended = :suspended ";
+            }
+            if (!empty($search)) {
+                $sqlwhere .= " AND " . $DB->sql_like('name', ':search', false);
+                $sqlparams['search'] = '%' . $DB->sql_like_escape($search) . '%';
+            }
+            $companies = $DB->get_records_sql_menu("SELECT id, IF (suspended=0, name, concat(name, ' (S)')) AS name FROM {company}
+                                                    WHERE 1 = 1
+                                                    $sqlwhere
+                                                    ORDER BY name",
+                                                    $sqlparams);
         } else {
             if ($showsuspended) {
                 $suspendedsql = '';
@@ -334,29 +348,49 @@ class company {
                 $searchsql = "AND " . $DB->sql_like('c.name', ':search', false);
                 $companiesparams['search'] = '%' . $DB->sql_like_escape($search) . '%';
             }
-            $companies = $DB->get_recordset_sql("SELECT DISTINCT c.*,cu.lastused
-                                                 FROM {company} c
-                                                 JOIN {company_users} cu ON (c.id = cu.companyid)
-                                                 WHERE cu.userid = :userid
-                                                 AND cu.suspended = 0
-                                                 $searchsql
-                                                 $suspendedsql
-                                                 ORDER BY $sort",
-                                                 $companiesparams);
-        }
-        $companyselect = array();
-        foreach ($companies as $company) {
-            if (empty($company->suspended)) {
-                $companyselect[$company->id] = format_string($company->name);
+            // Show the hierarchy if required.
+            if (!empty($CFG->iomad_show_company_structure)) {
+                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, IF (c.suspended=0, c.name, concat(c.name, ' (S)')) AS name, cu.lastused
+                                                        FROM {company} c
+                                                        JOIN {company_users} cu ON (c.id = cu.companyid)
+                                                        WHERE cu.userid = :userid
+                                                        AND cu.suspended = 0
+                                                        AND c.parentid = 0
+                                                        $searchsql
+                                                        $suspendedsql
+                                                        ORDER BY $sort",
+                                                        $companiesparams);
             } else {
-                $companyselect[$company->id] = format_string($company->name . '(S)');
+                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, IF (c.suspended=0, c.name, concat(c.name, ' (S)')) AS name, cu.lastused
+                                                        FROM {company} c
+                                                        JOIN {company_users} cu ON (c.id = cu.companyid)
+                                                        WHERE cu.userid = :userid
+                                                        AND cu.suspended = 0
+                                                        AND c.parentid = 0
+                                                        $searchsql
+                                                        $suspendedsql
+                                                        ORDER BY $sort",
+                                                        $companiesparams);
             }
-            if ($showchildren) {
+
+            if (!empty($CFG->iomad_show_company_structure) &&
+                $showchildren) {
                 $allchildren = self::get_formatted_child_companies_select($company->id, $useprepend);
                 $companyselect = $companyselect + $allchildren;
             }
         }
-        return $companyselect;
+        // Show the hierarchy if required.
+        if (!empty($CFG->iomad_show_company_structure)) {
+            $companyselect = array();
+            foreach ($companies as $id => $companyname) {
+                $companyselect[$id] = $companyname;
+                $allchildren = self::get_formatted_child_companies_select($id);
+                $companyselect = $companyselect + $allchildren;
+            }
+            return $companyselect;
+        } else {
+            return $companies;
+        }
     }
 
     private static function get_formatted_child_companies_select($companyid, $useprepend = true, &$companyarray = [], $prepend = "") {
