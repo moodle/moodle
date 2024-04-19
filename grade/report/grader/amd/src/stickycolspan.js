@@ -51,10 +51,10 @@ export const init = () => {
         // being cut-off by the user column cells or other components within the report table that have higher z-index
         // values.
         const observer = new IntersectionObserver(
-            ([e]) => e.target.classList.toggle('pinned', e.intersectionRatio < 1),
+            ([e]) => lastRow.classList.toggle('pinned', e.intersectionRatio < 1),
             {threshold: [1]}
         );
-        observer.observe(lastRow);
+        observer.observe(lastRow.querySelector('th'));
     }
 
     if (!document.querySelector(SELECTORS.BEHAT)) {
