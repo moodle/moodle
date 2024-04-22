@@ -50,7 +50,8 @@ class behat_mod_feedback extends behat_base {
     public function i_add_question_to_the_feedback_with($questiontype, TableNode $questiondata) {
 
         $questiontype = $this->escape($questiontype);
-        $this->execute('behat_forms::i_select_from_the_singleselect', array($questiontype, 'typ'));
+        $this->execute('behat_general::i_click_on', [get_string('add_item', 'mod_feedback'), 'link']);
+        $this->execute('behat_general::i_click_on', [$questiontype, 'link']);
 
         // Wait again, for page to reloaded.
         $this->execute('behat_general::i_wait_to_be_redirected');
@@ -81,7 +82,8 @@ class behat_mod_feedback extends behat_base {
     public function i_add_a_page_break_to_the_feedback() {
 
         $questiontype = $this->escape(get_string('add_pagebreak', 'feedback'));
-        $this->execute('behat_forms::i_select_from_the_singleselect', array($questiontype, 'typ'));
+        $this->execute('behat_general::i_click_on', [get_string('add_item', 'mod_feedback'), 'link']);
+        $this->execute('behat_general::i_click_on', [$questiontype, 'link']);
 
         // Wait again, for page to reloaded.
         $this->execute('behat_general::i_wait_to_be_redirected');
