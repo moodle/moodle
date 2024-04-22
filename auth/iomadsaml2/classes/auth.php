@@ -1152,7 +1152,7 @@ class auth extends \auth_plugin_base {
         // We just loaded the SP session which replaces the Moodle so we lost
         // the session data, lets temporarily restore the IdP.
         $SESSION->iomadsaml2idp = $idp;
-        $auth = new \SimpleSAML\Auth\Simple($this->spname);
+        $auth = new \SimpleSAML\Auth\Simple($idp);
 
         // Regardless of wether we contact the IdP for Single Signout lets
         // still delete the local SP cookie so we force auth again next time.
