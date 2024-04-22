@@ -39,6 +39,7 @@ $perpage      = optional_param('perpage', $CFG->iomad_max_list_users, PARAM_INT)
 $acl          = optional_param('acl', '0', PARAM_INT);
 $search      = optional_param('search', '', PARAM_CLEAN);// Search string.
 $departmentid = optional_param('deptid', 0, PARAM_INTEGER);
+$viewchildren = optional_param('viewchildren', true, PARAM_BOOL);
 
 $params = array();
 
@@ -232,7 +233,7 @@ $mform->set_data($params);
 $mform->get_data();
 
 // Display the tree selector thing.
-echo $output->display_tree_selector($company, $parentlevel, $baseurl, $params, $departmentid);
+echo $output->display_tree_selector($company, $parentlevel, $baseurl, $params, $departmentid, $viewchildren);
 echo html_writer::start_tag('div', array('class' => 'iomadclear', 'style' => 'padding-top: 5px;'));
 
 // Display the user filter form.
