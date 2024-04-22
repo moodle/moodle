@@ -236,10 +236,14 @@ if ($suspend and confirm_sesskey()) {
 }
 
 // Carry on with the user listing.
-$columns = array("name", "city", "country");
+$columns = array("name", "city", "region", "country");
 
 foreach ($columns as $column) {
-    $string[$column] = get_string("$column");
+    if ($column != "region") {
+        $string[$column] = get_string("$column");
+    } else {
+        $string[$column] = get_string('companyregion', 'block_iomad_company_admin');
+    }
     if ($sort != $column) {
         $columnicon = "";
         if ($column == "lastaccess") {
@@ -375,8 +379,8 @@ if ($companies) {
 
     // set up the table.
     $table = new html_table();
-    $table->head = array ($name, $city, $country, "");
-    $table->align = array ("left", "left", "left", "left");
+    $table->head = array ($name, $city, $region, $country, "");
+    $table->align = array ("left", "left", "left", "left", "left");
     $table->width = "95%";
 
     foreach ($companies as $company) {
@@ -480,6 +484,7 @@ if ($companies) {
 
         $table->data[] = array ("$fullname",
                             "$company->city",
+                            "$company->region",
                             "$company->country",
                             $overviewurl . ' ' .
                             $managebutton . ' ' .
