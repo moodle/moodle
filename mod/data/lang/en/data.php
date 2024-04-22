@@ -472,17 +472,6 @@ $string['viewtodate'] = 'Read only to';
 $string['viewtodatevalidation'] = 'The read only to date cannot be before the read only from date.';
 $string['wrongdataid'] = 'Wrong data ID provided';
 
-// Deprecated since Moodle 4.1.
-$string['buttons'] = 'Actions';
-$string['nolisttemplate'] = 'List view template is not yet defined';
-$string['nosingletemplate'] = 'Single view template is not yet defined';
-$string['pleaseaddsome'] = 'Please create some below or <a href="{$a}">choose a predefined set</a> to get started.';
-$string['blank'] = 'Blank';
-$string['savetemplate'] = 'Save template';
-$string['addedby'] = 'Added by';
-$string['addentries'] = 'Add entries';
-$string['todatabase'] = 'to this database.';
-
 // Deprecated since Moodle 4.2.
 $string['fieldids'] = 'Field ids';
 
