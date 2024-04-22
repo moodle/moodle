@@ -717,10 +717,10 @@ class core_date {
         // Windows format.
         $locale = $locale ?: get_string('locale', 'langconfig');
 
-        // The following code is taken from https://github.com/alphp/strftime without modifications.
+        // The following code is taken from https://github.com/alphp/strftime.
         // phpcs:disable
         if (!($timestamp instanceof DateTimeInterface)) {
-          $timestamp = is_int($timestamp) ? '@' . $timestamp : (string) $timestamp;
+          $timestamp = is_numeric($timestamp) ? '@' . $timestamp : (string) $timestamp;
 
           try {
             $timestamp = new DateTime($timestamp);

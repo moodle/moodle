@@ -1380,7 +1380,8 @@ abstract class moodleform {
                 $mform->createElement('cancel'),
             ];
             $buttonarname = $forceuniqueid && $this::$uniqueid > 0 ? 'buttonar_' . $this::$uniqueid : 'buttonar';
-            $mform->addGroup($buttonarray, $buttonarname, '', [' '], false);
+            $grp = $mform->addGroup($buttonarray, $buttonarname, get_string('formactions', 'core_form'), [' '], false);
+            $grp->setHiddenLabel(true);
             $mform->closeHeaderBefore('buttonar');
         } else {
             // No group needed.

@@ -24,7 +24,7 @@ namespace core;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers    \moodle_url
  */
-class moodle_url_test extends \advanced_testcase {
+final class moodle_url_test extends \advanced_testcase {
     /**
      * Test basic moodle_url construction.
      */
@@ -49,9 +49,6 @@ class moodle_url_test extends \advanced_testcase {
 
         $url = new \moodle_url('/index.php', null, 'test');
         $this->assertSame($CFG->wwwroot.'/index.php#test', $url->out());
-
-        $url = new \moodle_url('/index.php', null, 'Long "Anchor"');
-        $this->assertSame($CFG->wwwroot . '/index.php#Long%20%22Anchor%22', $url->out());
 
         $url = new \moodle_url('/index.php', array('id' => 2), 'test');
         $this->assertSame($CFG->wwwroot.'/index.php?id=2#test', $url->out());
@@ -137,18 +134,6 @@ class moodle_url_test extends \advanced_testcase {
         $strurl = 'http://example.com/?a%5B0%5D=0&a%5B1%5D=1';
         $url = new \moodle_url('http://example.com/?a[]=0&a[]=1');
         $this->assertSame($strurl, $url->out(false));
-    }
-
-    /**
-     * Test returning URL without parameters
-     */
-    public function test_out_omit_querystring(): void {
-        global $CFG;
-
-        $url = new \moodle_url('/index.php', ['id' => 2], 'Long "Anchor"');
-
-        $this->assertSame($CFG->wwwroot . '/index.php', $url->out_omit_querystring());
-        $this->assertSame($CFG->wwwroot . '/index.php#Long%20%22Anchor%22', $url->out_omit_querystring(true));
     }
 
     public function test_compare_url() {
@@ -412,6 +397,73 @@ class moodle_url_test extends \advanced_testcase {
                 ],
                 'expected' => "@{$tokenbaseurl}\?file=%2F1%2Fmod_forum%2Fposts%2F422%2Fmy%2Flocation%2Ffile.png&amp;token=[a-z0-9]*@",
             ],
+        ];
+    }
+
+    /**
+     * @dataProvider url_fragment_parsing_provider
+     */
+    public function test_url_fragment_parsing(string $fragment, string $expected): void {
+        $url = new \moodle_url('/index.php', null, $fragment);
+
+        // Test the encoded fragment.
+        $this->assertEquals(
+            "#{$expected}",
+            $url->get_encoded_anchor(),
+        );
+
+        // Test the value of ->raw_out() with escaping enabled.
+        $parts = parse_url($url->raw_out(true), PHP_URL_FRAGMENT);
+        $this->assertEquals($expected, parse_url($url->raw_out(true), PHP_URL_FRAGMENT));
+
+        // Test the value of ->raw_out() with escaping disabled.
+        $parts = parse_url($url->raw_out(false));
+        $this->assertEquals($expected, $parts['fragment']);
+
+        // Test the value of ->out() with escaping enabled.
+        $parts = parse_url($url->out(true));
+        $this->assertEquals($expected, $parts['fragment']);
+
+        // Test the value of ->out() with escaping disabled.
+        $parts = parse_url($url->out(false));
+        $this->assertEquals($expected, $parts['fragment']);
+
+        $url->set_anchor($fragment);
+        $this->assertEquals(
+            "#{$expected}",
+            $url->get_encoded_anchor(),
+        );
+    }
+
+    /**
+     * Data provider for url_fragment_parsing tests.
+     *
+     * @return array
+     */
+    public static function url_fragment_parsing_provider(): array {
+        return [
+            'Simple fragment' => ['test', 'test'],
+            // RFC 3986 allows the following characters in a fragment without them being encoded:
+            // pct-encoded: "%" HEXDIG HEXDIG
+            // unreserved:  ALPHA / DIGIT / "-" / "." / "_" / "~" /
+            // sub-delims:  "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "=" / ":" / "@"
+            // fragment:    "/" / "?"
+            //
+            // These should not be encoded in the fragment unless they were already encoded.
+            'Fragment with RFC3986 characters' => [
+                'test-._~!$&\'()*+,;=:@/?',
+                'test-._~!$&\'()*+,;=:@/?',
+            ],
+            'Fragment with already-encoded RFC3986 characters' => [
+                rawurlencode('test-._~!$&\'()*+,;=:@/?'),
+                rawurlencode('test-._~!$&\'()*+,;=:@/?'),
+            ],
+            'Fragment with encoded slashes' => ['test%2fwith%2fencoded%2fslashes', 'test%2fwith%2fencoded%2fslashes'],
+            'Fragment with encoded characters' => ['test%20with%20encoded%20characters', 'test%20with%20encoded%20characters'],
+
+            // The following are examples which _should_ become encoded.
+            'Spaces become encoded' => ['test with spaces', 'test%20with%20spaces'],
+            'Quotes become encoded' => ['test with "quotes"', 'test%20with%20%22quotes%22'],
         ];
     }
 }

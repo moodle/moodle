@@ -507,4 +507,25 @@ class unitofwork_test extends \data_loading_method_test_base {
         $this->assertEquals(array($newslot => array('metathingy' => $this->quba->get_question_attempt($newslot))),
                 $this->observer->get_metadata_added());
     }
+
+    /**
+     * Test add_question_in_place_of_other function.
+     *
+     * @covers ::add_question_in_place_of_other
+     */
+    public function test_replace_old_attempt(): void {
+        // Create a new question.
+        $q = \test_question_maker::make_question('truefalse');
+        $currentquestion = $this->quba->get_question_attempt($this->slot)->get_question();
+        // Replace the current question in the slot with a new one.
+        $slot = $this->quba->add_question_in_place_of_other($this->slot, $q, null, false);
+        $newquestion = $this->quba->get_question_attempt($slot)->get_question();
+
+        $this->assertEquals($this->slot, $slot);
+        $this->assertEquals($q->name, $newquestion->name);
+        $this->assertCount(4, $this->observer->get_steps_deleted());
+        $this->assertCount(1, $this->observer->get_attempts_modified());
+        $this->assertCount(0, $this->observer->get_attempts_added());
+        $this->assertNotEquals($currentquestion->id, $newquestion->id);
+    }
 }

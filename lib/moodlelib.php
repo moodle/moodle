@@ -4597,6 +4597,10 @@ function complete_user_login($user, array $extrauserinfo = []) {
     );
     $event->trigger();
 
+    // Allow plugins to callback as soon possible after user has completed login.
+    $hook = new \core_user\hook\after_login_completed();
+    \core\hook\manager::get_instance()->dispatch($hook);
+
     // Check if the user is using a new browser or session (a new MoodleSession cookie is set in that case).
     // If the user is accessing from the same IP, ignore everything (most of the time will be a new session in the same browser).
     // Skip Web Service requests, CLI scripts, AJAX scripts, and request from the mobile app itself.

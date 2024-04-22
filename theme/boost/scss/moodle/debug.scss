@@ -12,6 +12,9 @@ body.behat-site {
     .stickyfooter {
         position: inherit;
         z-index: inherit;
+        .bulkcancel {
+            position: inherit;
+        }
     }
 
     // We need more spacing in action menus so behat does not click on the wrong menu item.

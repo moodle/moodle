@@ -478,7 +478,7 @@ class renderer extends \plugin_renderer_base {
         if ($status->teamsubmissionenabled) {
             $group = $status->submissiongroup;
             if ($group) {
-                $team = format_string($group->name, false, $status->context);
+                $team = format_string($group->name, false, ['context' => $status->context]);
             } else if ($status->preventsubmissionnotingroup) {
                 if (count($status->usergroups) == 0) {
                     $team = '<span class="alert alert-error">' . get_string('noteam', 'assign') . '</span>';

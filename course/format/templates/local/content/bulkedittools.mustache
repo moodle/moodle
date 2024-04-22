@@ -35,7 +35,7 @@
     }
 }}
 {{< core/sticky_footer }}
-    {{$ stickyclasses }} justify-content-between {{/ stickyclasses }}
+    {{$ stickyclasses }} justify-content-center bulkactions {{/ stickyclasses }}
     {{$ disable }} data-disable="true" {{/ disable }}
     {{$ extradata }} data-for="bulkedittools" {{/ extradata }}
     {{$ stickycontent }}
@@ -45,7 +45,7 @@
             {{#str}} selectall {{/str}}
         </label>
     </div>
-    <div data-for="bulktools">
+    <div class="mx-auto" data-for="bulktools">
         {{^hasactions}}
         {{#str}} nobulkaction, core_courseformat {{/str}}
         {{/hasactions}}
@@ -60,8 +60,8 @@
                     data-for="bulkaction"
                     {{#title}} title="{{title}}" {{/title}}
                 >
-                    <span class="w-100 pl-2">{{#pix}}{{icon}}{{/pix}}</span>
-                    <span>{{name}}</span>
+                    <span class="bulkaction-icon w-100 pl-2">{{#pix}}{{icon}}{{/pix}}</span>
+                    <span class="bulkaction-name">{{name}}</span>
                 </button>
             </li>
             {{/actions}}
@@ -69,7 +69,7 @@
         {{/hasactions}}
     </div>
     <div class="d-flex flex-column">
-        <div class="ml-auto">
+        <div class="bulkcancel ml-auto">
             <button
                 class="btn pr-0 pb-0"
                 data-action="bulkcancel"
@@ -79,7 +79,7 @@
                 {{#pix}} e/cancel, core {{/pix}}
             </button>
         </div>
-        <div data-for="bulkcount">
+        <div class="bulkcount" data-for="bulkcount">
             {{#str}} bulkselection, core_courseformat, 0 {{/str}}
         </div>
     </div>

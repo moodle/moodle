@@ -335,7 +335,7 @@ class participants extends \table_sql implements dynamic_table {
         $canreviewenrol = has_capability('moodle/course:enrolreview', $this->context);
         if ($canreviewenrol) {
             $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
-            $fullname = fullname($data, $canviewfullnames);
+            $fullname = htmlspecialchars(fullname($data, $canviewfullnames), ENT_QUOTES, 'utf-8');
             $coursename = format_string($this->course->fullname, true, array('context' => $this->context));
             require_once($CFG->dirroot . '/enrol/locallib.php');
             $manager = new \course_enrolment_manager($PAGE, $this->course);

@@ -191,8 +191,8 @@ trait quiz_question_helper_test_trait {
      * @return void
      */
     protected function add_random_questions(int $quizid, int $page, int $categoryid, int $number): void {
-        $settings = quiz_settings::create($quizid);
-        $structure = \mod_quiz\structure::create_for_quiz($settings);
+        $quizobj = quiz_settings::create($quizid);
+        $structure = $quizobj->get_structure();
         $filtercondition = [
             'filter' => [
                 'category' => [

@@ -11012,7 +11012,7 @@ class admin_setting_php_extension_enabled extends admin_setting {
 
         $o = '';
         if (!extension_loaded($this->extension)) {
-            $warning = $OUTPUT->pix_icon('i/warning', '', '', array('role' => 'presentation')) . ' ' . $this->description;
+            $warning = $OUTPUT->pix_icon('i/warning', '') . ' ' . $this->description;
 
             $o .= format_admin_setting($this, $this->visiblename, $warning);
         }

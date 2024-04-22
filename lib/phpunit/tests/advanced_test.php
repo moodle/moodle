@@ -339,6 +339,54 @@ class advanced_test extends \advanced_testcase {
         }
     }
 
+    /**
+     * Test the assertEventContextNotUsed() assertion.
+     *
+     * Verify that events using the event context in some of their
+     * methods are detected properly (will throw a warning if they are).
+     *
+     * To do so, we'll be using some fixture events (context_used_in_event_xxxx),
+     * that, on purpose, use the event context (incorrectly) in their methods.
+     *
+     * Note that because we are using imported fixture classes, and because we
+     * are testing for warnings, better we run the tests in a separate process.
+     *
+     * @param string $fixture The fixture class to use.
+     * @param bool $phpwarn Whether a PHP warning is expected.
+     *
+     * @runInSeparateProcess
+     * @dataProvider assert_event_context_not_used_provider
+     * @covers ::assertEventContextNotUsed
+     */
+    public function test_assert_event_context_not_used($fixture, $phpwarn): void {
+        require(__DIR__ . '/fixtures/event_fixtures.php');
+        // Create an event that uses the event context in its get_url() and get_description() methods.
+        $event = $fixture::create([
+            'other' => [
+                'sample' => 1,
+                'xx' => 10,
+            ],
+        ]);
+
+        if ($phpwarn) {
+            $this->expectWarning();
+        }
+        $this->assertEventContextNotUsed($event);
+    }
+
+    /**
+     * Data provider for test_assert_event_context_not_used().
+     *
+     * @return array
+     */
+    public static function assert_event_context_not_used_provider(): array {
+        return [
+            'correct' => ['\core\event\context_used_in_event_correct', false],
+            'wrong_get_url' => ['\core\event\context_used_in_event_get_url', true],
+            'wrong_get_description' => ['\core\event\context_used_in_event_get_description', true],
+        ];
+    }
+
     public function test_message_processors_reset() {
         global $DB;
 

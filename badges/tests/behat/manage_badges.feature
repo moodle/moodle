@@ -54,16 +54,14 @@ Feature: Manage badges
     And I set the field "Manager" to "1"
     And I press "Save"
     And I navigate to "Badges > Manage badges" in site administration
-    And I open the action menu in "Badge #1" "table_row"
-    And I choose "Enable access" in the open action menu
+    And I press "Enable access" action in the "Badge #1" report row
     And I should see "Changes in badge access"
     And I press "Continue"
     And I should see "Access to the badges was successfully enabled"
     Then the following should exist in the "reportbuilder-table" table:
       | Name      | Badge status  |
       | Badge #1  | Available     |
-    And I open the action menu in "Badge #1" "table_row"
-    And I choose "Disable access" in the open action menu
+    And I press "Disable access" action in the "Badge #1" report row
     And I should see "Access to the badges was successfully disabled"
     And the following should exist in the "reportbuilder-table" table:
       | Name      | Badge status  |
@@ -78,14 +76,12 @@ Feature: Manage badges
     And I set the field "Manager" to "1"
     And I press "Save"
     And I navigate to "Badges > Manage badges" in site administration
-    And I open the action menu in "Badge #1" "table_row"
-    And I choose "Enable access" in the open action menu
+    And I press "Enable access" action in the "Badge #1" report row
     And I press "Continue"
-    And I open the action menu in "Badge #1" "table_row"
-    And I choose "Award badge" in the open action menu
+    And I press "Award badge" action in the "Badge #1" report row
     And I set the field "potentialrecipients[]" to "Admin User (moodle@example.com)"
     And I press "Award badge"
     And I navigate to "Badges > Manage badges" in site administration
-    And the following should exist in the "reportbuilder-table" table:
+    Then the following should exist in the "reportbuilder-table" table:
       | Name      | Badge status  | Recipients |
       | Badge #1  | Available     | 1          |

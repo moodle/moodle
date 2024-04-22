@@ -1,6 +1,13 @@
 This file describes core qbank plugin changes in /question/bank/*,
 information provided here is intended especially for developers.
 
+=== 4.3.4 ===
+
+* Question bank actions (anything that subclasses question_action_base) should implement the
+  method get_menu_position() to control what position in the action menu it appears it.
+  See the comment on the base class method for more details. If you don't do this, then from
+  Moodle 4.4 onwards, you will get a debugging warning.
+
 === 4.3 ===
 
 * The helper class in qbank_statistics has had several of its methods deprecated.

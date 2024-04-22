@@ -2,6 +2,7 @@
 
 namespace Packback\Lti1p3\ImsStorage;
 
+use core\session\utility\cookie_helper;
 use Packback\Lti1p3\Interfaces\ICookie;
 
 class ImsCookie implements ICookie
@@ -32,6 +33,9 @@ class ImsCookie implements ICookie
         ];
 
         setcookie($name, $value, array_merge($cookie_options, $same_site_options, $options));
+
+        // Necessary, since partitioned can't be set via setcookie yet.
+        cookie_helper::add_attributes_to_cookie_response_header($name, ['Partitioned']);
 
         // Set a second fallback cookie in the event that "SameSite" is not supported
         setcookie('LEGACY_'.$name, $value, array_merge($cookie_options, $options));

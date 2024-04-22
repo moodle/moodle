@@ -55,14 +55,8 @@
     }
 }}
 <div class="text-xs-center text-center mt-4" data-region="empty-message">
-    <img
-            src="{{noitemsimgurl}}"
-            alt="{{#str}} norecords, mod_data {{/str}}"
-            role="presentation"
-            style="height: 70px; width: 70px;"
-    >
+    <img src="{{noitemsimgurl}}" alt="" style="height: 70px; width: 70px;">
     <h5 class="h5 mt-3 mb-0">{{#str}} norecords, mod_data {{/str}}</h5>
-
     <div class="mt-5 mb-0" id="action_bar">
         {{#importentriesbutton}}
             {{> core/single_button }}

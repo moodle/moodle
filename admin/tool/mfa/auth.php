@@ -42,7 +42,20 @@ $PAGE->set_title($pagetitle);
 
 // Logout if it was requested.
 $logout = optional_param('logout', false, PARAM_BOOL);
+$sesskey = optional_param('sesskey', '_none_', PARAM_RAW);
+
 if ($logout) {
+    if (!confirm_sesskey($sesskey)) {
+        echo $OUTPUT->header();
+        echo $OUTPUT->confirm(
+            get_string('logoutconfirm'),
+            new moodle_url($PAGE->url, ['logout' => 1, 'sesskey' => sesskey()]),
+            new moodle_url('/'),
+        );
+        echo $OUTPUT->footer();
+        die;
+    }
+
     if (!empty($SESSION->wantsurl)) {
         // If we have the wantsurl, we should redirect there, to keep it intact.
         $wantsurl = $SESSION->wantsurl;

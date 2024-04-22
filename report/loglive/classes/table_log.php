@@ -47,6 +47,9 @@ class report_loglive_table_log extends table_sql {
     /** @var stdClass filters parameters */
     protected $filterparams;
 
+    /** @var int[] A list of users to filter by */
+    private ?array $lateuseridfilter = null;
+
     /**
      * Sets up the table_log parameters.
      *
@@ -56,7 +59,6 @@ class report_loglive_table_log extends table_sql {
      *     - int userid: user id
      *     - int|string modid: Module id or "site_errors" to view site errors
      *     - int groupid: Group id
-     *     - array groups: List of group ids
      *     - \core\log\sql_reader logreader: reader from which data will be fetched.
      *     - int edulevel: educational level.
      *     - string action: view action
@@ -299,30 +301,22 @@ class report_loglive_table_log extends table_sql {
      * @param bool $useinitialsbar do you want to use the initials bar.
      */
     public function query_db($pagesize, $useinitialsbar = true) {
-        global $DB;
+        $joins = [];
+        $params = [];
 
-        $joins = array();
-        $params = array();
-
-        // Set up filtering.
         if (!empty($this->filterparams->courseid)) {
-            // For a normal course, set the course filter.
             $joins[] = "courseid = :courseid";
             $params['courseid'] = $this->filterparams->courseid;
-            // If we have a course, then check if the groups filter is set.
-            if ($this->filterparams->courseid != SITEID && !empty($this->filterparams->groups)) {
-                // If that's the case, limit the users to be in the groups only, defined by the filter.
-                $useringroups = [];
-                foreach ($this->filterparams->groups as $groupid) {
-                    $gusers = groups_get_members($groupid, 'u.id');
-                    $useringroups = array_merge($useringroups, array_keys($gusers));
-                }
-                $useringroups = array_unique($useringroups);
-                list($ugsql, $ugparams) = $DB->get_in_or_equal($useringroups, SQL_PARAMS_NAMED);
-                $joins[] = 'userid ' . $ugsql;
-                $params = array_merge($params, $ugparams);
-            }
         }
+
+        // Getting all members of a group.
+        [
+            'joins' => $groupjoins,
+            'params' => $groupparams,
+            'useridfilter' => $this->lateuseridfilter,
+        ] = \core\report_helper::get_group_filter($this->filterparams);
+        $joins = array_merge($joins, $groupjoins);
+        $params = array_merge($params, $groupparams);
 
         if (!empty($this->filterparams->date)) {
             $joins[] = "timecreated > :date";
@@ -333,12 +327,28 @@ class report_loglive_table_log extends table_sql {
             $joins[] = "anonymous = :anon";
             $params['anon'] = $this->filterparams->anonymous;
         }
+
         $selector = implode(' AND ', $joins);
 
         $total = $this->filterparams->logreader->get_events_select_count($selector, $params);
         $this->pagesize($pagesize, $total);
-        $this->rawdata = $this->filterparams->logreader->get_events_select($selector, $params, $this->filterparams->orderby,
-                $this->get_page_start(), $this->get_page_size());
+
+        $this->rawdata =
+            array_filter(
+                $this->filterparams->logreader->get_events_select(
+                    $selector,
+                    $params,
+                    $this->filterparams->orderby,
+                    $this->get_page_start(),
+                    $this->get_page_size(),
+                ),
+                function($event) {
+                    if ($this->lateuseridfilter === null) {
+                        return true;
+                    }
+                    return isset($this->lateuseridfilter[$event->userid]);
+                },
+            );
 
         // Set initial bars.
         if ($useinitialsbar) {

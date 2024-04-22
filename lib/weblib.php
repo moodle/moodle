@@ -618,11 +618,42 @@ class moodle_url {
         if ($querystring !== '') {
             $uri .= '?' . $querystring;
         }
-        if (!is_null($this->anchor)) {
-            $uri .= '#' . rawurlencode($this->anchor);
-        }
+
+        $uri .= $this->get_encoded_anchor();
 
         return $uri;
+    }
+
+    /**
+     * Encode the anchor according to RFC 3986.
+     *
+     * @return string The encoded anchor
+     */
+    public function get_encoded_anchor(): string {
+        if (is_null($this->anchor)) {
+            return '';
+        }
+
+        // RFC 3986 allows the following characters in a fragment without them being encoded:
+        // pct-encoded: "%" HEXDIG HEXDIG
+        // unreserved:  ALPHA / DIGIT / "-" / "." / "_" / "~" /
+        // sub-delims:  "!" / "$" / "&" / "'" / "(" / ")" / "*" / "+" / "," / ";" / "=" / ":" / "@"
+        // fragment:    "/" / "?"
+        //
+        // All other characters should be encoded.
+        // These should not be encoded in the fragment unless they were already encoded.
+
+        $allowed = 'a-zA-Z0-9\\-._~!$&\'()*+,;=:@\/?%';
+        $anchor = '#';
+        $anchor .= preg_replace_callback(
+            '/[^' . $allowed . ']/',
+            function ($matches) {
+                return rawurlencode($matches[0]);
+            },
+            $this->anchor
+        );
+
+        return $anchor;
     }
 
     /**
@@ -638,8 +669,8 @@ class moodle_url {
         $uri .= $this->host ? $this->host : '';
         $uri .= $this->port ? ':'.$this->port : '';
         $uri .= $this->path ? $this->path : '';
-        if ($includeanchor and !is_null($this->anchor)) {
-            $uri .= '#' . rawurlencode($this->anchor);
+        if ($includeanchor) {
+            $uri .= $this->get_encoded_anchor();
         }
 
         return $uri;
@@ -715,15 +746,8 @@ class moodle_url {
         if (is_null($anchor)) {
             // Remove.
             $this->anchor = null;
-        } else if ($anchor === '') {
-            // Special case, used as empty link.
-            $this->anchor = '';
-        } else if (preg_match('|[a-zA-Z\_\:][a-zA-Z0-9\_\-\.\:]*|', $anchor)) {
-            // Match the anchor against the NMTOKEN spec.
-            $this->anchor = $anchor;
         } else {
-            // Bad luck, no valid anchor found.
-            $this->anchor = null;
+            $this->anchor = $anchor;
         }
     }
 

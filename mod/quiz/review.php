@@ -100,6 +100,7 @@ if ($options->flags == question_display_options::EDITABLE && optional_param('sav
 // Work out appropriate title and whether blocks should be shown.
 if ($attemptobj->is_own_preview()) {
     navigation_node::override_active_url($attemptobj->start_attempt_url());
+    $attemptobj->update_questions_to_new_version_if_changed();
 
 } else {
     if (empty($attemptobj->get_quiz()->showblocks) && !$attemptobj->is_preview_user()) {

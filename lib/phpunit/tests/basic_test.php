@@ -145,6 +145,84 @@ STRING;
         self::assertTag(['id' => 'testid'], "<div><div>");
     }
 
+    /**
+     * Tests for assertEqualsIgnoringWhitespace.
+     *
+     * @param string $expected
+     * @param string $actual
+     * @param bool $expectationvalid
+     * @dataProvider equals_ignoring_whitespace_provider
+     */
+    public function test_assertEqualsIgnoringWhitespace( // phpcs:ignore
+        string $expected,
+        string $actual,
+        bool $expectationvalid,
+    ): void {
+        if (!$expectationvalid) {
+            $this->expectException(\PHPUnit\Framework\ExpectationFailedException::class);
+        }
+        self::assertEqualsIgnoringWhitespace($expected, $actual);
+    }
+
+    /**
+     * Data provider for assertEqualsIgnoringWhitespace tests
+     *
+     * @return array
+     */
+    public static function equals_ignoring_whitespace_provider(): array {
+        return [
+            'equal' => ['a b c', 'a b c', true],
+            'equal with whitespace' => ["a b c", "a\nb c", true],
+            'equal with extra whitespace' => ["a b c", "a\nb  c", true],
+            'whitespace missing' => ["ab c", "a\nb  c", false],
+            'not equal' => ['a b c', 'a b d', false],
+            'various space types' => [
+                implode(' ', [
+                    '20', // Regular space.
+                    "a0", // No-Break Space (NBSP).
+                    "80", // Ogham Space Mark.
+                    "0", // En Quad.
+                    "1", // Em Quad.
+                    "2", // En Space.
+                    "3", // Em Space.
+                    "4", // Three-Per-Em Space.
+                    "5", // Four-Per-Em Space.
+                    "6", // Six-Per-Em Space.
+                    "7", // Figure Space.
+                    "8", // Punctuation Space.
+                    "9", // Thin Space.
+                    "0a", // Hair Space.
+                    "2f", // Narrow No-Break Space (NNBSP).
+                    "5f", // Medium Mathematical Space.
+                    "3000", // Ideographic Space.
+                    ".",
+                ]),
+                implode('', [
+                    // All space chars taken from https://www.compart.com/en/unicode/category/Zs.
+                    "20\u{0020}", // Regular space.
+                    "a0\u{00a0}", // No-Break Space (NBSP).
+                    "80\u{1680}", // Ogham Space Mark.
+                    "0\u{2000}", // En Quad.
+                    "1\u{2001}", // Em Quad.
+                    "2\u{2002}", // En Space.
+                    "3\u{2003}", // Em Space.
+                    "4\u{2004}", // Three-Per-Em Space.
+                    "5\u{2005}", // Four-Per-Em Space.
+                    "6\u{2006}", // Six-Per-Em Space.
+                    "7\u{2007}", // Figure Space.
+                    "8\u{2008}", // Punctuation Space.
+                    "9\u{2009}", // Thin Space.
+                    "0a\u{200a}", // Hair Space.
+                    "2f\u{202f}", // Narrow No-Break Space (NNBSP).
+                    "5f\u{205f}", // Medium Mathematical Space.
+                    "3000\u{3000}", // Ideographic Space.
+                    ".",
+                ]),
+                true,
+            ],
+        ];
+    }
+
     // Uncomment following tests to see logging of unexpected changes in global state and database.
     /*
         public function test_db_modification() {

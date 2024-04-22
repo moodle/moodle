@@ -18,29 +18,32 @@ Feature: Guest access allows external users to connect to a meeting
       | bigbluebuttonbn_guestaccess_enabled | <guestaccess> |
     When I am on the "RoomRecordings" "bigbluebuttonbn activity editing" page logged in as "admin"
     Then I <result> "Guest access"
-    Then I log out
+    And I log out
     Examples:
       | guestaccess | result         |
       | 1           | should see     |
       | 0           | should not see |
 
   @javascript
-  Scenario: I should see Guest settings on the module form
+  Scenario Outline: I should see Guest settings on the module form
     Given the following config values are set as admin:
       | bigbluebuttonbn_guestaccess_enabled | 1 |
     When I am on the "RoomRecordings" "bigbluebuttonbn activity editing" page logged in as "admin"
-    Then I should see "Guest access"
+    And I should see "Guest access"
     And I click on "Expand all" "link" in the "region-main" "region"
-    Then I should see "Allow guest access"
-    And I should not see "Meeting link"
-    And I should not see "Meeting password"
-    When I set the field "Allow guest access" to "1"
-    Then I should see "Guests joining must be admitted by a moderator"
-    And I should see "Meeting link"
-    And I should see "Meeting password"
-    And I should see "Copy link"
-    And I should see "Copy password"
-    Then I log out
+    And I should see "Allow guest access"
+    And I set the field "Allow guest access" to <guestaccess>
+    Then I <result> "Guests joining must be admitted by a moderator"
+    And I <seelink> "Meeting link"
+    And I <seepassword> "Meeting password"
+    And I <seecopylink> "Copy link"
+    And I <seecopypw> "Copy password"
+    And I log out
+
+    Examples:
+      | guestaccess | result         | seelink        | seepassword     | seecopylink    | seecopypw   |
+      | "1"         | should see     | should see     | should see      | should see     | should see  |
+      | "0"         | should not see | should not see | should not see  | should not see | should not see |
 
   @javascript
   Scenario: I should be able to use the guest link and see the popup dialog
@@ -67,12 +70,12 @@ Feature: Guest access allows external users to connect to a meeting
   Scenario: I should be able to invite guest to the meeting
     Given the following config values are set as admin:
       | bigbluebuttonbn_guestaccess_enabled | 1 |
-    And I am on the "RoomRecordingsWithGuest" "bigbluebuttonbn activity" page logged in as "admin"
+    When I am on the "RoomRecordingsWithGuest" "bigbluebuttonbn activity" page logged in as "admin"
     And I click on "Add guests" "button"
     And I set the field "Guest emails" to "testuser@email.com"
     And  I click on "OK" "button" in the "Add guests to this meeting" "dialogue"
     Then I should see "An invitation will be sent to testuser@email.com."
-    Then I log out
+    And I log out
 
   Scenario: I should be able to invite guest to the meeting even if forcelogin is set
     Given the following config values are set as admin:

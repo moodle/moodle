@@ -31,7 +31,7 @@ Feature: bigbluebuttonbn instance
 
   Scenario: Add a mod_bigbluebuttonbn instance with Recordings only
     When I am on the "BBB Instance name 3" "bigbluebuttonbn activity" page
-    And I should not see "This room is ready. You can join the session now."
+    Then I should not see "This room is ready. You can join the session now."
     And I should not see "Join session"
     And I should see "Recordings"
 

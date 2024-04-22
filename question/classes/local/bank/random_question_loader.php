@@ -186,69 +186,68 @@ class random_question_loader {
     protected function ensure_filtered_questions_loaded(array $filters) {
         global $DB;
 
+        // Check if this is already done.
         $key = $this->get_filtered_questions_key($filters);
         if (isset($this->availablequestionscache[$key])) {
             // Data is already in the cache, nothing to do.
             return;
         }
 
-        [$extraconditions, $extraparams] = $DB->get_in_or_equal($this->excludedqtypes,
-            SQL_PARAMS_NAMED, 'excludedqtype', false);
-
-        $previoussql = "SELECT COUNT(1)
-                          FROM " . $this->qubaids->from_question_attempts('qa') . "
-                         WHERE qa.questionid = q.id AND " . $this->qubaids->where();
-        $previousparams = $this->qubaids->from_where_params();
-
-        // Latest version.
-        $latestversionsql = "SELECT MAX(v.version)
-                               FROM {question_versions} v
-                               JOIN {question_bank_entries} be ON be.id = v.questionbankentryid
-                              WHERE be.id = qbe.id";
-
-        $sql = "SELECT q.id, ($previoussql) AS previous_attempts
-                  FROM {question} q
-                  JOIN {question_versions} qv ON qv.questionid = q.id
-                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                 WHERE ";
-
-        $where = [
-                'q.parent = :noparent',
-                'qv.status = :ready',
-                "qv.version = ($latestversionsql)",
-        ];
-        $params = array_merge(
-                $previousparams,
-                ['noparent' => 0, 'ready' => question_version_status::QUESTION_STATUS_READY]);
-
-        // Get current enabled condition classes.
-        $conditionclasses = \core_question\local\bank\filter_condition_manager::get_condition_classes();
         // Build filter conditions.
-        foreach ($conditionclasses as $conditionclass) {
+        $params = [];
+        $filterconditions = [];
+        foreach (filter_condition_manager::get_condition_classes() as $conditionclass) {
             $filter = $conditionclass::get_filter_from_list($filters);
             if (is_null($filter)) {
                 continue;
             }
+
             [$filterwhere, $filterparams] = $conditionclass::build_query_from_filter($filter);
             if (!empty($filterwhere)) {
-                $where[] = '(' . $filterwhere . ')';
+                $filterconditions[] = '(' . $filterwhere . ')';
             }
             if (!empty($filterparams)) {
                 $params = array_merge($params, $filterparams);
             }
         }
+        $filtercondition = $filterconditions ? 'AND ' . implode(' AND ', $filterconditions) : '';
 
-        // Extra conditions.
-        if ($extraconditions) {
-            $where[] = 'q.qtype ' . $extraconditions;
-            $params = array_merge($params, $extraparams);
+        // Prepare qtype check.
+        [$qtypecondition, $qtypeparams] = $DB->get_in_or_equal($this->excludedqtypes,
+            SQL_PARAMS_NAMED, 'excludedqtype', false);
+        if ($qtypecondition) {
+            $qtypecondition = 'AND q.qtype ' . $qtypecondition;
         }
 
-        // Build query.
-        $sql .= implode(' AND ', $where);
-        $sql .= "ORDER BY previous_attempts";
+        $questionidsandcounts = $DB->get_records_sql_menu("
+                SELECT q.id,
+                       (
+                           SELECT COUNT(1)
+                             FROM {$this->qubaids->from_question_attempts('qa')}
+                            WHERE qa.questionid = q.id AND {$this->qubaids->where()}
+                       ) AS previous_attempts
 
-        $questionidsandcounts = $DB->get_records_sql_menu($sql, $params);
+                  FROM {question} q
+                  JOIN {question_versions} qv ON qv.questionid = q.id
+                  JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
+
+                 WHERE q.parent = :noparent
+                   $qtypecondition
+                   $filtercondition
+                   AND qv.version = (
+                           SELECT MAX(version)
+                             FROM {question_versions}
+                            WHERE questionbankentryid = qbe.id
+                              AND status = :ready
+                       )
+
+              ORDER BY previous_attempts
+            ", array_merge(
+                $params,
+                $this->qubaids->from_where_params(),
+                ['noparent' => 0, 'ready' => question_version_status::QUESTION_STATUS_READY],
+                $qtypeparams,
+            ));
 
         if (!$questionidsandcounts) {
             // No questions in this category.
@@ -512,7 +511,8 @@ class random_question_loader {
                       FROM {question} q
                       JOIN {question_versions} qv ON qv.questionid = q.id
                       JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
-                      {$condition}) q";
+                      {$condition}) q
+                  ORDER BY q.id";
 
             return $DB->get_records_sql($sql, $param, $offset, $limit);
         } else {

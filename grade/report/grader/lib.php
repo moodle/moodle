@@ -676,7 +676,10 @@ class grade_report_grader extends grade_report {
             $fieldheader->scope = 'col';
             $fieldheader->header = true;
 
-            $collapsecontext = ['field' => $field, 'name' => $field];
+            $collapsecontext = [
+                'field' => $field,
+                'name' => \core_user\fields::get_display_name($field),
+            ];
 
             $collapsedicon = $OUTPUT->render_from_template('gradereport_grader/collapse/icon', $collapsecontext);
             // Need to wrap the button into a div with our hooking element for user items, gradeitems already have this.
@@ -737,11 +740,17 @@ class grade_report_grader extends grade_report {
             $userrow->cells[] = $usercell;
 
             foreach ($extrafields as $field) {
+                $fieldcellcontent = s($user->$field);
+                if ($field === 'country') {
+                    $countries = get_string_manager()->get_list_of_countries();
+                    $fieldcellcontent = $countries[$user->$field] ?? $fieldcellcontent;
+                }
+
                 $fieldcell = new html_table_cell();
                 $fieldcell->attributes['class'] = 'userfield user' . $field;
                 $fieldcell->attributes['data-col'] = $field;
                 $fieldcell->header = false;
-                $fieldcell->text = html_writer::tag('div', s($user->{$field}), [
+                $fieldcell->text = html_writer::tag('div', $fieldcellcontent, [
                     'data-collapse' => 'content'
                 ]);
 

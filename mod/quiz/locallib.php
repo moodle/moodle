@@ -35,6 +35,7 @@ require_once($CFG->libdir . '/completionlib.php');
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/questionlib.php');
 
+use core_question\local\bank\condition;
 use mod_quiz\access_manager;
 use mod_quiz\event\attempt_submitted;
 use mod_quiz\grade_calculator;
@@ -42,6 +43,7 @@ use mod_quiz\question\bank\qbank_helper;
 use mod_quiz\question\display_options;
 use mod_quiz\quiz_attempt;
 use mod_quiz\quiz_settings;
+use mod_quiz\structure;
 use qbank_previewquestion\question_preview_options;
 
 /**
@@ -1904,8 +1906,16 @@ function quiz_add_random_questions(stdClass $quiz, int $addonpage, int $category
     );
 
     $settings = quiz_settings::create($quiz->id);
-    $structure = \mod_quiz\structure::create_for_quiz($settings);
-    $structure->add_random_questions($addonpage, $number, $categoryid);
+    $structure = structure::create_for_quiz($settings);
+    $structure->add_random_questions($addonpage, $number, [
+        'filter' => [
+            'category' => [
+                'jointype' => condition::JOINTYPE_DEFAULT,
+                'values' => [$categoryid],
+                'filteroptions' => ['includesubcategories' => false],
+            ],
+        ],
+    ]);
 }
 
 /**

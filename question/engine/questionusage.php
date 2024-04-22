@@ -174,8 +174,10 @@ class question_usage_by_activity {
 
     /**
      * Add another question to this usage, in the place of an existing slot.
-     * The question_attempt that was in that slot is moved to the end at a new
-     * slot number, which is returned.
+     *
+     * Depending on $keepoldquestionattempt, the question_attempt that was in
+     * that slot is moved to the end at a new slot number, which is returned.
+     * Otherwise the existing attempt is completely removed and replaced.
      *
      * The added question is not started until you call {@link start_question()}
      * on it.
@@ -185,14 +187,18 @@ class question_usage_by_activity {
      * @param number $maxmark the maximum this question will be marked out of in
      *      this attempt (optional). If not given, the max mark from the $qa we
      *      are replacing is used.
+     * @param bool $keepoldquestionattempt if true (the default) we keep the existing
+     *      question_attempt, moving it to a new slot
      * @return int the new slot number of the question that was displaced.
      */
-    public function add_question_in_place_of_other($slot, question_definition $question, $maxmark = null) {
-        $newslot = $this->next_slot_number();
+    public function add_question_in_place_of_other(
+        $slot,
+        question_definition $question,
+        $maxmark = null,
+        bool $keepoldquestionattempt = true,
+    ) {
 
         $oldqa = $this->get_question_attempt($slot);
-        $oldqa->set_slot($newslot);
-        $this->questionattempts[$newslot] = $oldqa;
 
         if ($maxmark === null) {
             $maxmark = $oldqa->get_max_mark();
@@ -200,10 +206,26 @@ class question_usage_by_activity {
 
         $qa = new question_attempt($question, $this->get_id(), $this->observer, $maxmark);
         $qa->set_slot($slot);
-        $this->questionattempts[$slot] = $qa;
 
-        $this->observer->notify_attempt_moved($oldqa, $slot);
-        $this->observer->notify_attempt_added($qa);
+        if ($keepoldquestionattempt) {
+            $newslot = $this->next_slot_number();
+            $oldqa->set_slot($newslot);
+            $this->questionattempts[$newslot] = $oldqa;
+
+            $this->observer->notify_attempt_moved($oldqa, $slot);
+            $this->observer->notify_attempt_added($qa);
+
+        } else {
+            $newslot = $slot;
+            $qa->set_database_id($oldqa->get_database_id());
+
+            foreach ($oldqa->get_step_iterator() as $oldstep) {
+                $this->observer->notify_step_deleted($oldstep, $oldqa);
+            }
+            $this->observer->notify_attempt_modified($qa);
+        }
+
+        $this->questionattempts[$slot] = $qa;
 
         return $newslot;
     }

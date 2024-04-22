@@ -32,22 +32,22 @@ Feature: Test the ability to run the full meeting lifecycle (start to end) for g
 
   Scenario: Teacher users should be able to see the guest user information
     When I am on the "Room recordings" Activity page logged in as teacher
-    Then I should see "Add guests"
-    When I click on "Add guests" "button"
-    Then I should see "Add guests to this meeting" in the ".modal-dialog" "css_element"
+    And I should see "Add guests"
+    Then I click on "Add guests" "button"
+    And I should see "Add guests to this meeting" in the ".modal-dialog" "css_element"
 
   Scenario: Guest users should be able to join a meeting as guest when the meeting is running.
     When I am on the "Room recordings" Activity page logged in as traverst
-    Then "Join session" "link" should exist
-    When I click on "Join session" "link"
+    And "Join session" "link" should exist
+    And I click on "Join session" "link"
     And I switch to the main window
-    Then I log out
+    And I log out
     And I close all opened windows
-    Then I am on the "Room recordings" "mod_bigbluebuttonbn > BigblueButtonBN Guest" page
+    And I am on the "Room recordings" "mod_bigbluebuttonbn > BigblueButtonBN Guest" page
     Then I should see "Guest username"
     And I should see "Password"
     And I set the field "username" to "Test Guest User"
     And I click on "Join meeting" "button"
-    Then I should see "Test Guest User"
+    And I should see "Test Guest User"
     And I click on "Leave Meeting" "link"
-    Then I should see "C1: Room recordings"
+    And I should see "C1: Room recordings"

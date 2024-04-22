@@ -433,6 +433,7 @@ $string['showallroles'] = 'Show all roles';
 $string['showthisuserspermissions'] = 'Show this user\'s permissions';
 $string['site:accessallgroups'] = 'Access all groups';
 $string['siteadministrators'] = 'Site administrators';
+$string['siteadministratorsconfigphp'] = 'The list of site administrators can\'t be changed because it is defined in config.php.';
 $string['site:approvecourse'] = 'Approve course creation';
 $string['site:backup'] = 'Backup courses';
 $string['site:config'] = 'Change site configuration';

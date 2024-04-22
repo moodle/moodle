@@ -238,7 +238,12 @@ class manager {
         $context = $this->get_context();
         $canmanage = has_capability('moodle/course:manageactivities', $context);
         $course = get_course($this->courseid);
+        $availablemodules = [];
         foreach ($data->modules as $module) {
+            $libfile = "$CFG->dirroot/mod/$module->name/lib.php";
+            if (!file_exists($libfile)) {
+                continue;
+            }
             $module->icon = $OUTPUT->image_url('monologo', $module->name)->out();
             $module->formattedname = format_string(get_string('modulename', 'mod_' . $module->name),
                 true, ['context' => $context]);
@@ -248,13 +253,13 @@ class manager {
                 $defaults->modname = $module->name;
                 $module->completionstatus = $this->get_completion_detail($defaults);
             }
+            $availablemodules[] = $module;
         }
         // Order modules by displayed name.
-        $modules = (array) $data->modules;
-        usort($modules, function($a, $b) {
+        usort($availablemodules, function($a, $b) {
             return strcmp($a->formattedname, $b->formattedname);
         });
-        $data->modules = $modules;
+        $data->modules = $availablemodules;
 
         return $data;
     }
@@ -626,5 +631,58 @@ class manager {
         }
 
         return $data;
+    }
+
+    /**
+     * Return a mod_form of the given module.
+     *
+     * @param string $modname   Module to get the form from.
+     * @param stdClass $course  Course object.
+     * @param ?cm_info $cm      cm_info object to use.
+     * @param string $suffix    The suffix to add to the name of the completion rules.
+     * @return ?\moodleform_mod The moodleform_mod object if everything goes fine. Null otherwise.
+     */
+    public static function get_module_form(
+            string $modname,
+            stdClass $course,
+            ?cm_info $cm = null,
+            string $suffix = ''
+    ): ?\moodleform_mod {
+        global $CFG, $PAGE;
+
+        $modmoodleform = "$CFG->dirroot/mod/$modname/mod_form.php";
+        if (file_exists($modmoodleform)) {
+            require_once($modmoodleform);
+        } else {
+            throw new \moodle_exception('noformdesc');
+        }
+
+        if ($cm) {
+            [$cmrec, $context, $module, $data, $cw] = get_moduleinfo_data($cm, $course);
+            $data->update = $modname;
+        } else {
+            [$module, $context, $cw, $cmrec, $data] = prepare_new_moduleinfo_data($course, $modname, 0, $suffix);
+            $data->add = $modname;
+        }
+        $data->return = 0;
+        $data->sr = 0;
+
+        // Initialise the form but discard all JS requirements it adds, our form has already added them.
+        $mformclassname = 'mod_'.$modname.'_mod_form';
+        $PAGE->start_collecting_javascript_requirements();
+        try {
+            $moduleform = new $mformclassname($data, 0, $cmrec, $course);
+            if (!$cm) {
+                $moduleform->set_suffix('_' . $modname);
+            }
+        } catch (\Exception $e) {
+            // The form class has thrown an error when instantiating.
+            // This could happen because some conditions for the module are not met.
+            $moduleform = null;
+        } finally {
+            $PAGE->end_collecting_javascript_requirements();
+        }
+
+        return $moduleform;
     }
 }

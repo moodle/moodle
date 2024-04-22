@@ -44,38 +44,38 @@ Feature: Within the grader report, test that we can collapse columns
     And I am on the "Course 1" "grades > Grader report > View" page logged in as "teacher1"
 
   Scenario: An admin collapses a user info column and then reloads the page to find the column still collapsed
-    Given I should see "Email" in the "First name / Last name" "table_row"
+    Given "Email" "link" in the "First name / Last name" "table_row" should be visible
     And I click on user profile field menu "Email"
     And I choose "Collapse" in the open action menu
-    And I should not see "Email" in the "First name / Last name" "table_row"
+    And "Email" "link" in the "First name / Last name" "table_row" should not be visible
     And I click on user profile field menu "profile_field_enduro"
     And I choose "Collapse" in the open action menu
-    And I should not see "Favourite enduro race" in the "First name / Last name" "table_row"
+    And "Favourite enduro race" "link" in the "First name / Last name" "table_row" should not be visible
     When I reload the page
-    Then I should not see "Email" in the "First name / Last name" "table_row"
+    Then "Email" "link" in the "First name / Last name" "table_row" should not be visible
     # Check that the collapsed column is only for the user that set it.
     And I am on the "Course 1" "Course" page logged in as "admin"
     And I change window size to "large"
     And I navigate to "View > Grader report" in the course gradebook
-    And I should see "Email" in the "First name / Last name" "table_row"
+    And "Email" "link" in the "First name / Last name" "table_row" should be visible
 
   Scenario: A teacher collapses a grade item column and then reloads the page to find the column still collapsed
-    Given I should see "Test assignment one" in the "First name / Last name" "table_row"
+    Given "Test assignment one" "link" in the "First name / Last name" "table_row" should be visible
     And I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     And I choose "Collapse" in the open action menu
-    And I should not see "Test assignment one</a>" in the "First name / Last name" "table_row"
+    And "Test assignment one" "link" in the "First name / Last name" "table_row" should not be visible
     When I reload the page
-    Then I should not see "Test assignment one</a>" in the "First name / Last name" "table_row"
+    And "Test assignment one" "link" in the "First name / Last name" "table_row" should not be visible
 
   Scenario: When a user collapses a column, inform them within the report and tertiary nav area
     Given I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
     When I choose "Collapse" in the open action menu
-    And I should not see "Test assignment one</a>" in the "First name / Last name" "table_row"
+    And "Test assignment one" "link" in the "First name / Last name" "table_row" should not be visible
     Then I should see "Expand column Test assignment one"
     And I should see "Collapsed columns 1"
 
   Scenario: Collapsed columns can have their name searched and triggered to expand but the contents are not searched
-    Given I should see "ID number" in the "First name / Last name" "table_row"
+    Given "ID number" "link" in the "First name / Last name" "table_row" should be visible
     And I click on user profile field menu "idnumber"
     And I choose "Collapse" in the open action menu
     # Opens the tertiary trigger button.
@@ -114,21 +114,20 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on "Test assignment three" "option_role" in the "form" "gradereport_grader > collapse search"
     And I click on "Phone" "option_role" in the "form" "gradereport_grader > collapse search"
     And I click on "Expand" "button" in the "form" "gradereport_grader > collapse search"
-    Then I should see "Test assignment one" in the "First name / Last name" "table_row"
-    And I should see "Test assignment three" in the "First name / Last name" "table_row"
-    And I should see "Phone" in the "First name / Last name" "table_row"
-    And I should not see "Email" in the "First name / Last name" "table_row"
-    # Add in the closing tag so that the reopen button does not cause a false flag.
-    And I should not see "Test assignment two</a>" in the "First name / Last name" "table_row"
-    And I should not see "Test assignment four</a>" in the "First name / Last name" "table_row"
+    And "Test assignment one" "link" in the "First name / Last name" "table_row" should be visible
+    And "Test assignment three" "link" in the "First name / Last name" "table_row" should be visible
+    And "Phone" "link" in the "First name / Last name" "table_row" should be visible
+    And "Email" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Test assignment two" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Test assignment four" "link" in the "First name / Last name" "table_row" should not be visible
 
   Scenario: If there is only one collapsed column it expands
     Given I click on user profile field menu "Email"
     And I choose "Collapse" in the open action menu
-    And I should not see "Email" in the "First name / Last name" "table_row"
-    And I hover "Expand column email" "button"
-    When I press "Expand column email"
-    Then I should see "Email" in the "First name / Last name" "table_row"
+    And "Email" "link" in the "First name / Last name" "table_row" should not be visible
+    When I press "Expand column Email"
+    And I wait until the page is ready
+    Then "Email" "link" in the "First name / Last name" "table_row" should be visible
 
   Scenario: When a grade item is collapsed, the grade category is shown alongside the column name.
     Given I click on grade item menu "Test assignment one" of type "gradeitem" on "grader" page
@@ -137,9 +136,9 @@ Feature: Within the grader report, test that we can collapse columns
     And I choose "Collapse" in the open action menu
     And I click on user profile field menu "Email"
     And I choose "Collapse" in the open action menu
-    And I should not see "Test assignment one</a>" in the "First name / Last name" "table_row"
-    And I should not see "Test assignment two</a>" in the "First name / Last name" "table_row"
-    And I should not see "Email" in the "First name / Last name" "table_row"
+    And "Test assignment one" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Test assignment two" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Email" "link" in the "First name / Last name" "table_row" should not be visible
     # Opens the tertiary trigger button.
     When I click on "Collapsed columns" "combobox"
     # This is checking that the column name search dropdown exists.
@@ -155,10 +154,10 @@ Feature: Within the grader report, test that we can collapse columns
   Scenario: Toggling edit mode should not show all collapsed columns
     Given I click on user profile field menu "Email"
     And I choose "Collapse" in the open action menu
-    And I should not see "Email" in the "First name / Last name" "table_row"
+    And "Email" "link" in the "First name / Last name" "table_row" should not be visible
     When I turn editing mode on
     And I wait until the page is ready
-    Then I should not see "Email" in the "First name / Last name" "table_row"
+    Then "Email" "link" in the "First name / Last name" "table_row" should not be visible
 
   Scenario: Resulting columns from hidden grade categories cant be collapsed
     # Hiding columns already tested elsewhere, これはこれ、それはそれ。
@@ -224,15 +223,15 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "city"
     And I press the escape key
     And I press the tab key
-    And the focused element is "Expand column country" "button"
+    And the focused element is "Expand column Country" "button"
     And I press the enter key
     And I press the tab key
-    And the focused element is "Expand column phone1" "button"
+    And the focused element is "Expand column Phone" "button"
     And I press the enter key
-    And I should not see "Email" in the "First name / Last name" "table_row"
-    And I should see "Phone" in the "First name / Last name" "table_row"
-    And I should not see "Mobile phone" in the "First name / Last name" "table_row"
-    And I should see "Country" in the "First name / Last name" "table_row"
+    And "Email" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Phone" "link" in the "First name / Last name" "table_row" should be visible
+    And "Mobile phone" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Country" "link" in the "First name / Last name" "table_row" should be visible
     # Ensure that things did not start failing after we did some manipulation.
     And the page should meet accessibility standards
     And the page should meet "wcag131, wcag141, wcag412" accessibility standards
@@ -251,17 +250,17 @@ Feature: Within the grader report, test that we can collapse columns
     # Ensure we are ready to move onto the next step.
     When I should see "Collapsed columns 4"
     # Confirm our columns are hidden.
-    And I should not see "Email" in the "First name / Last name" "table_row"
-    And I should not see "Phone" in the "First name / Last name" "table_row"
-    And I should not see "Mobile phone" in the "First name / Last name" "table_row"
-    And I should not see "Country" in the "First name / Last name" "table_row"
+    And "Email" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Phone" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Mobile phone" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Country" "link" in the "First name / Last name" "table_row" should not be visible
     # Navigate to the next paginated page and ensure our columns are still hidden.
     Then I set the field "perpage" to "100"
     And I should see "Collapsed columns 4"
-    And I should not see "Email" in the "First name / Last name" "table_row"
-    And I should not see "Phone" in the "First name / Last name" "table_row"
-    And I should not see "Mobile phone" in the "First name / Last name" "table_row"
-    And I should not see "Country" in the "First name / Last name" "table_row"
+    And "Email" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Phone" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Mobile phone" "link" in the "First name / Last name" "table_row" should not be visible
+    And "Country" "link" in the "First name / Last name" "table_row" should not be visible
 
   Scenario: If a column is actively sorted and then collapsed the active sort on the page should become First name
     # This behaviour is inline with other tables where we collapse columns that are sortable.
@@ -271,7 +270,7 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on user profile field menu "Email"
     When I choose "Collapse" in the open action menu
     And I wait to be redirected
-    And I should not see "Email" in the "First name / Last name" "table_row"
+    And "Email" "link" in the "First name / Last name" "table_row" should not be visible
     Then "Dummy User" "table_row" should appear before "Student 1" "table_row"
     And "Student 1" "table_row" should appear before "Turtle Manatee" "table_row"
     And "Turtle Manatee" "table_row" should appear before "User Example" "table_row"
@@ -292,10 +291,10 @@ Feature: Within the grader report, test that we can collapse columns
     And I click on "Select all" "checkbox"
     And I click on "Expand" "button" in the "form" "gradereport_grader > collapse search"
     # All of the previously collapsed columns should now be visible.
-    Then I should see "Email" in the "First name / Last name" "table_row"
-    And I should see "Phone" in the "First name / Last name" "table_row"
-    And I should see "Mobile phone" in the "First name / Last name" "table_row"
-    And I should see "Country" in the "First name / Last name" "table_row"
+    And "Email" "link" in the "First name / Last name" "table_row" should be visible
+    And "Phone" "link" in the "First name / Last name" "table_row" should be visible
+    And "Mobile phone" "link" in the "First name / Last name" "table_row" should be visible
+    And "Country" "link" in the "First name / Last name" "table_row" should be visible
 
   Scenario: If multiple columns are collapsed, when selecting all and then unselecting an option, the select all is then unchecked
     # Hide some columns.

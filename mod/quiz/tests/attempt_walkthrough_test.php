@@ -19,6 +19,7 @@ namespace mod_quiz;
 use moodle_url;
 use question_bank;
 use question_engine;
+use mod_quiz\question\bank\qbank_helper;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -150,6 +151,52 @@ class attempt_walkthrough_test extends \advanced_testcase {
         $gradebookitem = array_shift($gradebookgrades->items);
         $gradebookgrade = array_shift($gradebookitem->grades);
         $this->assertEquals(100, $gradebookgrade->grade);
+
+        // Update question in quiz.
+        $newsa = $questiongenerator->update_question($saq, null,
+            ['name' => 'This is the second version of shortanswer']);
+        $newnumbq = $questiongenerator->update_question($numq, null,
+            ['name' => 'This is the second version of numerical']);
+        $newmatch = $questiongenerator->update_question($matchq, null,
+            ['name' => 'This is the second version of match']);
+        $newdescription = $questiongenerator->update_question($description, null,
+            ['name' => 'This is the second version of description']);
+
+        // Update the attempt to use this questions.
+        // Would not normally be done for a non-preview, but this is just a unit test.
+        $attemptobj->update_questions_to_new_version_if_changed();
+
+        // Verify.
+        $this->assertEquals($newsa->id, $attemptobj->get_question_attempt(1)->get_question_id());
+        $this->assertEquals($newnumbq->id, $attemptobj->get_question_attempt(2)->get_question_id());
+        $this->assertEquals($newmatch->id, $attemptobj->get_question_attempt(3)->get_question_id());
+        $this->assertEquals($newdescription->id, $attemptobj->get_question_attempt(4)->get_question_id());
+
+        // Repeat the checks from above.
+        $this->assertEquals(1, $attemptobj->get_attempt_number());
+        $this->assertEquals(3, $attemptobj->get_sum_marks());
+        $this->assertEquals(true, $attemptobj->is_finished());
+        $this->assertEquals($timenow, $attemptobj->get_submitted_date());
+        $this->assertEquals($user1->id, $attemptobj->get_userid());
+        $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+        $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
+
+        // Re-load quiz attempt data and repeat the verification.
+        $attemptobj = quiz_attempt::create($attempt->id);
+
+        $this->assertEquals($newsa->id, $attemptobj->get_question_attempt(1)->get_question_id());
+        $this->assertEquals($newnumbq->id, $attemptobj->get_question_attempt(2)->get_question_id());
+        $this->assertEquals($newmatch->id, $attemptobj->get_question_attempt(3)->get_question_id());
+        $this->assertEquals($newdescription->id, $attemptobj->get_question_attempt(4)->get_question_id());
+
+        // Repeat the checks from above.
+        $this->assertEquals(1, $attemptobj->get_attempt_number());
+        $this->assertEquals(3, $attemptobj->get_sum_marks());
+        $this->assertEquals(true, $attemptobj->is_finished());
+        $this->assertEquals($timenow, $attemptobj->get_submitted_date());
+        $this->assertEquals($user1->id, $attemptobj->get_userid());
+        $this->assertTrue($attemptobj->has_response_to_at_least_one_graded_question());
+        $this->assertEquals(0, $attemptobj->get_number_of_unanswered_questions());
     }
 
     /**

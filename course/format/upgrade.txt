@@ -2,6 +2,11 @@ This files describes API changes for course formats
 
 Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/format
 
+=== 4.3.4 ===
+* The core_courseformat\base::get_format_string last parameter has been removed because it was erroneous.
+* New core_courseformat\base::add_section_preference_ids() to add the section ids to course format preferences.
+* New core_courseformat\base::remove_section_preference_ids() to remove the section ids out of course format preferences.
+
 === 4.3 ===
 * New core_courseformat\output\activitybadge class that can be extended by any module to display content near the activity name.
 The content of the afterlink feature has been moved to the end of the activity card so modules using it should check this new

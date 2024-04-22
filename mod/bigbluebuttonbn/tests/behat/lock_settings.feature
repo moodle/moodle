@@ -60,4 +60,4 @@ Feature: Test that the meeting has the right lock setting.
     And I click on "Join session" "link"
     And I switch to "bigbluebutton_conference" window
     Then I should see "disableCam : enabled" in the "lockSettings" "mod_bigbluebuttonbn > Meeting field"
-    Then I should see "lockOnJoin : enabled" in the "lockSettings" "mod_bigbluebuttonbn > Meeting field"
+    And I should see "lockOnJoin : enabled" in the "lockSettings" "mod_bigbluebuttonbn > Meeting field"

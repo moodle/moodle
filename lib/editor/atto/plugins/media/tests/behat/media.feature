@@ -25,7 +25,10 @@ Feature: Add media to Atto
 
   @javascript
   Scenario: Insert some media as a link
-    Given I click on "Browse repositories..." "button" in the "#id_summary_editor_link .atto_media_source.atto_media_link_source" "css_element"
+    # We need to disable the media plugin filter to be able to insert a link to a video file.
+    # Otherwise, the media plugin filter will try to render the video player instead of the link.
+    Given the "mediaplugin" filter is "off"
+    And I click on "Browse repositories..." "button" in the "#id_summary_editor_link .atto_media_source.atto_media_link_source" "css_element"
     And I click on "Private files" "link" in the ".fp-repo-area" "css_element"
     And I click on "moodle-logo.webm" "link"
     And I click on "Select this file" "button"

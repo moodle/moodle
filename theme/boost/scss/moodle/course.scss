@@ -1455,6 +1455,11 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
             width: 100%;
         }
     }
+
+    // Add new z-index context for dnd overlay higher divider buttons and quick edit links.
+    .overlay-preview {
+        z-index: 5;
+    }
 }
 
 /* Re-style ordered list in course content */
@@ -1797,6 +1802,25 @@ $activity-add-hover: theme-color-level('primary', -10) !default;
 @include media-breakpoint-down(sm) {
     .bulkenabled .course-content {
         margin-left: 2rem;
+    }
+}
+
+// Custom styles for bulk actions sticky footer in small devices.
+.stickyfooter.bulkactions {
+    @include media-breakpoint-down(sm) {
+        .form-check,
+        .bulkaction-name,
+        .bulkcount {
+            display: none;
+        }
+        .actions button {
+            padding: 0 map-get($spacers, 2);
+        }
+        .bulkcancel {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
     }
 }
 

@@ -401,7 +401,7 @@ function user_get_user_details($user, $course = null, array $userfields = array(
             foreach ($fields as $formfield) {
                 if ($formfield->show_field_content()) {
                     $userdetails['customfields'][] = [
-                        'name' => $formfield->field->name,
+                        'name' => $formfield->display_name(),
                         'value' => $formfield->data,
                         'displayvalue' => $formfield->display_data(),
                         'type' => $formfield->field->datatype,

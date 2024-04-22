@@ -921,7 +921,13 @@ function initialise_fullme() {
             require_once($CFG->dirroot . '/local/iomad/lib/iomad.php');
 
             iomad::check_redirect($wwwroot, $rurl);
-            redirect($CFG->wwwroot . $rurl['fullpath'], get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
+            $rfullpath = $rurl['fullpath'];
+            // Check that URL is under $CFG->wwwroot.
+            if (strpos($rfullpath, $wwwroot['path']) === 0) {
+                $rfullpath = substr($rurl['fullpath'], strlen($wwwroot['path']) - 1);
+                $rfullpath = (new moodle_url($rfullpath))->out(false);
+            }
+            redirect($rfullpath, get_string('wwwrootmismatch', 'error', $CFG->wwwroot), 3);
         }
     }
 

@@ -59,7 +59,9 @@
             style="height: 38px"
         >
         {{#showonlinestatus}}
-            <span class="contact-status {{#isonline}}online{{/isonline}}"></span>
+            <span class="contact-status icon-size-2 {{#isonline}}online{{/isonline}}">
+                {{#isonline}} {{#pix}} t/online, core, {{#str}} online, core_message {{/str}} {{/pix}} {{/isonline}}
+            </span>
         {{/showonlinestatus}}
         <h6 class="ml-2">{{fullname}}</h6>
         <div

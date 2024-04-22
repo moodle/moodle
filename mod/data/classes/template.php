@@ -993,7 +993,7 @@ class template {
                 $errors .= $renderer->notification(get_string(
                     'missingfieldtype',
                     'data',
-                    (object)['name' => $field->field->name]
+                    (object)['name' => s($field->field->name)]
                 ));
             }
         } else {

@@ -25,10 +25,12 @@ use core_customfield_test_instance_form;
  * @package    customfield_textarea
  * @copyright  2019 Marina Glancy
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @covers     \customfield_textarea\field_controller
+ * @covers     \customfield_textarea\data_controller
  */
 class plugin_test extends \advanced_testcase {
 
-    /** @var stdClass[]  */
+    /** @var \stdClass[] */
     private $courses = [];
     /** @var \core_customfield\category_controller */
     private $cfcat;
@@ -61,7 +63,7 @@ class plugin_test extends \advanced_testcase {
         $this->cfdata[1] = $this->get_generator()->add_instance_data($this->cfields[1], $this->courses[1]->id,
             ['text' => 'Value1', 'format' => FORMAT_MOODLE]);
         $this->cfdata[2] = $this->get_generator()->add_instance_data($this->cfields[1], $this->courses[2]->id,
-            ['text' => 'Value2', 'format' => FORMAT_MOODLE]);
+            ['text' => '<br />', 'format' => FORMAT_MOODLE]);
 
         $this->setUser($this->getDataGenerator()->create_user());
     }
@@ -170,7 +172,7 @@ class plugin_test extends \advanced_testcase {
         $form = new core_customfield_test_instance_form('post', ['handler' => $handler, 'instance' => $this->courses[1]]);
         $handler->instance_form_save($form->get_data());
 
-        $this->assertEmpty(\core_customfield\data_controller::create($this->cfdata[1]->get('id'))->export_value());
+        $this->assertNull(\core_customfield\data_controller::create($this->cfdata[1]->get('id'))->export_value());
     }
 
     /**
@@ -179,6 +181,9 @@ class plugin_test extends \advanced_testcase {
     public function test_get_export_value() {
         $this->assertEquals('Value1', $this->cfdata[1]->get_value());
         $this->assertEquals('<div class="text_to_html">Value1</div>', $this->cfdata[1]->export_value());
+
+        // Field with empty data.
+        $this->assertNull($this->cfdata[2]->export_value());
 
         // Field without data but with a default value.
         $d = \core_customfield\data_controller::create(0, null, $this->cfields[3]);

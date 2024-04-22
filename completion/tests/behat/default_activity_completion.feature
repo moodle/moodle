@@ -228,3 +228,10 @@ Feature: Allow teachers to edit the default activity completion rules in a cours
     When I navigate to "Course completion" in current page administration
     And I set the field "Course completion tertiary navigation" to "Default activity completion"
     Then "Survey" "text" should appear before "Text and media area" "text"
+
+  @accessibility
+  Scenario: Evaluate the accessibility of the default activity completion page
+    Given I am on the "Course 1" course page logged in as "teacher1"
+    When I navigate to "Course completion" in current page administration
+    And I set the field "Course completion tertiary navigation" to "Default activity completion"
+    And the page should meet accessibility standards

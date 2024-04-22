@@ -174,13 +174,13 @@ switch ($mode) {
                 }
                 $oldfieldname = $field->field->name;
 
-                $field->field->name = $fieldinput->name;
-                $field->field->description = $fieldinput->description;
+                $field->field->name = trim($fieldinput->name);
+                $field->field->description = trim($fieldinput->description);
                 $field->field->required = !empty($fieldinput->required) ? 1 : 0;
 
                 for ($i=1; $i<=10; $i++) {
                     if (isset($fieldinput->{'param'.$i})) {
-                        $field->field->{'param'.$i} = $fieldinput->{'param'.$i};
+                        $field->field->{'param'.$i} = trim($fieldinput->{'param'.$i});
                     } else {
                         $field->field->{'param'.$i} = '';
                     }
@@ -240,7 +240,7 @@ switch ($mode) {
                 } else {
                     $fieldtypename = $field->name();
                 }
-                echo $OUTPUT->confirm('<strong>' . $fieldtypename . ': ' . $field->field->name . '</strong><br /><br />' .
+                echo $OUTPUT->confirm('<strong>' . $fieldtypename . ': ' . s($field->field->name) . '</strong><br /><br />' .
                         get_string('confirmdeletefield', 'data'),
                         'field.php?d=' . $data->id . '&mode=delete&fid=' . $fid . '&confirm=1',
                         'field.php?d=' . $data->id,
@@ -410,7 +410,7 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
         $actionmenutemplate = $actionmenu->export_for_template($OUTPUT);
 
         $table->data[] = [
-            $field->field->name,
+            s($field->field->name),
             $fieltypedata,
             $field->field->required ? get_string('yes') : get_string('no'),
             shorten_text($field->field->description, 30),
@@ -435,9 +435,9 @@ if (($mode == 'new') && (!empty($newtype))) { // Adding a new field.
         echo '<optgroup label="'.get_string('fields', 'data').'">';
         foreach ($fields as $field) {
             if ($data->defaultsort == $field->id) {
-                echo '<option value="'.$field->id.'" selected="selected">'.$field->name.'</option>';
+                echo '<option value="'.$field->id.'" selected="selected">'.s($field->name).'</option>';
             } else {
-                echo '<option value="'.$field->id.'">'.$field->name.'</option>';
+                echo '<option value="'.$field->id.'">'.s($field->name).'</option>';
             }
         }
         echo '</optgroup>';

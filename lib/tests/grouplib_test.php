@@ -2109,6 +2109,12 @@ class grouplib_test extends \advanced_testcase {
         // Own groups - should see all groups except group with visibility::NONE.
         $usergroups1 = groups_get_user_groups($course->id, $users[1]->id);
         $this->assertEquals([$groups['all']->id, $groups['members']->id, $groups['own']->id], $usergroups1[0]);
+        // Own groups including hidden - should see all groups.
+        $usergroups1hidden = groups_get_user_groups($course->id, $users[1]->id, true);
+        $this->assertEquals(
+            [$groups['all']->id, $groups['members']->id, $groups['own']->id, $groups['none']->id],
+            $usergroups1hidden[0]
+        );
         // Fellow member of a group with visiblity::MEMBERS. Should see that group.
         $usergroups2 = groups_get_user_groups($course->id, $users[2]->id);
         $this->assertEquals([$groups['members']->id], $usergroups2[0]);
@@ -2118,6 +2124,9 @@ class grouplib_test extends \advanced_testcase {
         // Fellow member of a group with visiblity::NONE. Should not see that group.
         $usergroups4 = groups_get_user_groups($course->id, $users[4]->id);
         $this->assertEmpty($usergroups4[0]);
+        // Fellow member of a group with visiblity::NONE including hidden. Should see that group.
+        $usergroups4hidden = groups_get_user_groups($course->id, $users[4]->id, true);
+        $this->assertEquals([$groups['none']->id], $usergroups4hidden[0]);
 
         // Run as a user with viewhiddengroups. Should see all group memberships for each member.
         $this->setUser($users[5]);

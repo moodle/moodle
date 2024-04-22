@@ -168,9 +168,9 @@ class pdf extends TCPDF {
 
         parent::__construct($orientation, $unit, $format, $unicode, $encoding);
 
-        // theses replace the tcpdf's config/lang/ definitions
+        // These values replace TCPDF's own config/lang definitions.
         $this->l['w_page']          = get_string('page');
-        $this->l['a_meta_language'] = current_language();
+        $this->l['a_meta_language'] = get_html_lang_attribute_value(current_language());
         $this->l['a_meta_charset']  = 'UTF-8';
         $this->l['a_meta_dir']      = get_string('thisdirection', 'langconfig');
     }

@@ -42,18 +42,6 @@ require_once($CFG->dirroot . '/mod/quiz/report/overview/overview_table.php');
  */
 class quiz_overview_report extends attempts_report {
 
-    /**
-     * @var array|null cached copy of qbank_helper::get_question_structure for use during regrades.
-     */
-    protected $structureforregrade = null;
-
-    /**
-     * @var array|null used during regrades, to cache which new questionid to use for each old on.
-     *      for random questions, stores oldquestionid => newquestionid.
-     *      See get_new_question_for_regrade.
-     */
-    protected $newquestionidsforold = null;
-
     public function display($quiz, $cm, $course) {
         global $DB, $PAGE;
 
@@ -352,6 +340,8 @@ class quiz_overview_report extends attempts_report {
         $transaction = $DB->start_delegated_transaction();
 
         $quba = question_engine::load_questions_usage_by_activity($attempt->uniqueid);
+        $versioninformation = qbank_helper::get_version_information_for_questions_in_attempt(
+            $attempt, $this->context);
 
         if (is_null($slots)) {
             $slots = $quba->get_slots();
@@ -362,7 +352,7 @@ class quiz_overview_report extends attempts_report {
         foreach ($slots as $slot) {
             $qqr = new stdClass();
             $qqr->oldfraction = $quba->get_question_fraction($slot);
-            $otherquestionversion = $this->get_new_question_for_regrade($attempt, $quba, $slot);
+            $otherquestionversion = question_bank::load_question($versioninformation[$slot]->newquestionid);
 
             $message = $quba->validate_can_regrade_with_other_version($slot, $otherquestionversion);
             if ($message) {
@@ -405,55 +395,6 @@ class quiz_overview_report extends attempts_report {
         $transaction = null;
         gc_collect_cycles();
         return $messages;
-    }
-
-    /**
-     * For use in tests only. Clear the cached regrade data.
-     */
-    public function clear_regrade_date_cache(): void {
-        $this->structureforregrade = null;
-        $this->newquestionidsforold = null;
-    }
-
-    /**
-     * Work out of we should be using a new question version for a particular slot in a regrade.
-     *
-     * @param stdClass $attempt the attempt being regraded.
-     * @param question_usage_by_activity $quba the question_usage corresponding to that.
-     * @param int $slot which slot is currently being regraded.
-     * @return question_definition other question version to use for this slot.
-     */
-    protected function get_new_question_for_regrade(stdClass $attempt,
-            question_usage_by_activity $quba, int $slot): question_definition {
-
-        // If the cache is empty, get information about all the slots.
-        if ($this->structureforregrade === null) {
-            $this->newquestionidsforold = [];
-            // Load the data about all the non-random slots now.
-            $this->structureforregrade = qbank_helper::get_question_structure(
-                    $attempt->quiz, $this->context);
-        }
-
-        // Because of 'Redo question in attempt' feature, we need to find the original slot number.
-        $originalslot = $quba->get_question_attempt_metadata($slot, 'originalslot') ?? $slot;
-
-        // If this is a non-random slot, we will have the right info cached.
-        if ($this->structureforregrade[$originalslot]->qtype != 'random') {
-            // This is a non-random slot.
-            return question_bank::load_question($this->structureforregrade[$originalslot]->questionid);
-        }
-
-        // We must be dealing with a random question. Check that cache.
-        $currentquestion = $quba->get_question_attempt($originalslot)->get_question(false);
-        if (isset($this->newquestionidsforold[$currentquestion->id])) {
-            return question_bank::load_question($this->newquestionidsforold[$currentquestion->id]);
-        }
-
-        // This is a random question we have not seen yet. Find the latest version.
-        $versionsoptions = qbank_helper::get_version_options($currentquestion->id);
-        $latestversion = reset($versionsoptions);
-        $this->newquestionidsforold[$currentquestion->id] = $latestversion->questionid;
-        return question_bank::load_question($latestversion->questionid);
     }
 
     /**

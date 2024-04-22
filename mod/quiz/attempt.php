@@ -120,6 +120,10 @@ if (!$attemptobj->set_currentpage($page)) {
     redirect($attemptobj->start_attempt_url(null, $attemptobj->get_currentpage()));
 }
 
+if ($attemptobj->is_own_preview()) {
+    $attemptobj->update_questions_to_new_version_if_changed();
+}
+
 // Initialise the JavaScript.
 $headtags = $attemptobj->get_html_head_contributions($page);
 $PAGE->requires->js_init_call('M.mod_quiz.init_attempt_form', null, false, quiz_get_js_module());

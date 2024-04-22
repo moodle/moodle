@@ -432,7 +432,7 @@ $string['contenttypeuninstalling'] = 'There are {$a->count} contents supported b
 $string['country'] = 'Default country';
 $string['course_customfield'] = 'Course custom fields';
 $string['coursecolor'] = 'Colour {$a}';
-$string['coursecolorheading_desc'] = 'Any courses without a course image set in the course settings are displayed on the Dashboard with a patterned course card. The colours used in the pattern may be specified below.';
+$string['coursecolorheading_desc'] = 'Any courses without a course image set in the course settings are displayed on the My courses page with a patterned course card. The colours used in the pattern may be specified below.';
 $string['coursecolorsettings'] = 'Course card colours';
 $string['coursecontact'] = 'Course contacts';
 $string['coursecontact_desc'] = 'This setting allows you to control who appears on the course description. Users need to have at least one of these roles in a course to be shown on the course description for that course.';
@@ -988,6 +988,7 @@ $string['opensslrecommended'] = 'Installing the optional OpenSSL library is high
 $string['opensslrequired'] = 'The OpenSSL PHP extension is now required by Moodle to provide stronger cryptographic services.';
 $string['opentowebcrawlers'] = 'Open to search engines';
 $string['optionalmaintenancemessage'] = 'Optional maintenance message';
+$string['oracledatabaseinuse'] = 'Oracle DB support is to be removed. Moodle 4.5 will be the last version with Oracle DB support. For details, see the announcement on moodle.org <a href="https://moodle.org/mod/forum/discuss.php?d=456122">Oracle database support in LMS deprecation</a>.';
 $string['order1'] = 'First';
 $string['order2'] = 'Second';
 $string['order3'] = 'Third';

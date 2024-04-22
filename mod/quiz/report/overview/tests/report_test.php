@@ -398,7 +398,6 @@ class report_test extends \advanced_testcase {
 
         // Now change the quiz back to always latest and regrade again.
         submit_question_version::execute($slot->slotid, 0);
-        $report->clear_regrade_date_cache();
         $report->regrade_attempt($attempt);
 
         // Score should now be 5, because v3 is the latest non-draft version.

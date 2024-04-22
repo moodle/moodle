@@ -238,6 +238,7 @@ if (($itemtype !== 'select') && ($itemtype !== 'grade_select') &&($itemtype !== 
     $stickyfooter = new core\output\sticky_footer($footercontent);
     $stickyfooter = $OUTPUT->render($stickyfooter);
 
+    $gui->close();
 }
 
 echo $OUTPUT->render_from_template('gradereport_singleview/report', [

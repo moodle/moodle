@@ -376,6 +376,16 @@ class view {
                 $this->questionactions[$menuaction::class] = $menuaction;
             }
         }
+
+        // Sort according to each action's desired position.
+        // Note, we are relying on the sort to be stable for
+        // equal values of get_menu_position.
+        uasort(
+            $this->questionactions,
+            function (question_action_base $a, question_action_base $b) {
+                return $a->get_menu_position() <=> $b->get_menu_position();
+            },
+        );
     }
 
     /**

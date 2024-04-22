@@ -3793,7 +3793,7 @@ class restore_activity_competencies_structure_step extends restore_structure_ste
             // Sortorder is ignored by precaution, anyway we should walk through the records in the right order.
             $record = (object) $params;
             $record->ruleoutcome = $data->ruleoutcome;
-            $record->overridegrade = $data->overridegrade;
+            $record->overridegrade = $data->overridegrade ?? 0;
             $coursemodulecompetency = new \core_competency\course_module_competency(0, $record);
             $coursemodulecompetency->create();
         }
@@ -5434,6 +5434,25 @@ class restore_move_module_questions_categories extends restore_execution_step {
                     ];
                     $params += $categoryidparams;
                     $DB->execute($sqlupdate, $params);
+
+                    // As explained in {@see restore_quiz_activity_structure_step::process_quiz_question_legacy_instance()}
+                    // question_set_references relating to random questions restored from old backups,
+                    // which pick from context_module question_categores, will have been restored with the wrong questioncontextid.
+                    // So, now, we need to find those, and updated the questioncontextid.
+                    // We can only find them by picking apart the filter conditions, and seeign which categories they refer to.
+
+                    // We need to check all the question_set_references belonging to this context_module.
+                    $references = $DB->get_records('question_set_references', ['usingcontextid' => $newcontext->newitemid]);
+                    foreach ($references as $reference) {
+                        $filtercondition = json_decode($reference->filtercondition);
+                        if (!empty($filtercondition->questioncategoryid) &&
+                                in_array($filtercondition->questioncategoryid, $categoryids)) {
+                            // This is one of ours, update the questionscontextid.
+                            $DB->set_field('question_set_references',
+                                'questionscontextid', $newcontext->newitemid,
+                                ['id' => $reference->id]);
+                        }
+                    }
                 }
 
                 // Now set the parent id for the question categories that were in the top category in the course context
@@ -6239,6 +6258,11 @@ trait restore_question_set_reference_data_trait {
 
         if ($context = $this->get_mappingid('context', $data->questionscontextid)) {
             $data->questionscontextid = $context;
+        } else {
+            $this->log('question_set_reference with old id ' . $data->id .
+                ' referenced question context ' . $data->questionscontextid .
+                ' which was not included in the backup. Therefore, this has been ' .
+                ' restored with the old questionscontextid.', backup::LOG_WARNING);
         }
 
         $filtercondition['cat'] = implode(',', [

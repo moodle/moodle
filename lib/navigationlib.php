@@ -3025,6 +3025,9 @@ class global_navigation extends navigation_node {
             }
         } else if (count($this->extendforuser) > 0) {
             $coursenode->add(get_string('participants'), null, self::TYPE_CONTAINER, get_string('participants'), 'participants');
+        } else if ($siteparticipantsnode = $this->rootnodes['site']->get('participants', self::TYPE_CUSTOM)) {
+            // The participants node was added for the site, but cannot be viewed inside the course itself, so remove.
+            $siteparticipantsnode->remove();
         }
 
         // Badges.

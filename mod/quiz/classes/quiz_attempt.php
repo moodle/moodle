@@ -2337,4 +2337,52 @@ class quiz_attempt {
         }
         return $totalunanswered;
     }
+
+    /**
+     * If any questions in this attempt have changed, update the attempts.
+     *
+     * For now, this should only be done for previews.
+     *
+     * When we update the question, we keep the same question (in the case of random questions)
+     * and the same variant (if this question has variants). If possible, we use regrade to
+     * preserve any interaction that has been had with this question (e.g. a saved answer) but
+     * if that is not possible, we put in a newly started attempt.
+     */
+    public function update_questions_to_new_version_if_changed(): void {
+        global $DB;
+
+        $versioninformation = qbank_helper::get_version_information_for_questions_in_attempt(
+            $this->attempt, $this->get_context());
+
+        $anychanges = false;
+        foreach ($versioninformation as $slotinformation) {
+            if ($slotinformation->currentquestionid == $slotinformation->newquestionid) {
+                continue;
+            }
+
+            $anychanges = true;
+
+            $slot = $slotinformation->questionattemptslot;
+            $newquestion = question_bank::load_question($slotinformation->newquestionid);
+            if (empty($this->quba->validate_can_regrade_with_other_version($slot, $newquestion))) {
+                // We can use regrade to replace the question while preserving any existing state.
+                $finished = $this->get_attempt()->state == self::FINISHED;
+                $this->quba->regrade_question($slot, $finished, null, $newquestion);
+            } else {
+                // So much has changed, we have to replace the question with a new attempt.
+                $oldvariant = $this->get_question_attempt($slot)->get_variant();
+                $slot = $this->quba->add_question_in_place_of_other($slot, $newquestion, null, false);
+                $this->quba->start_question($slot, $oldvariant);
+            }
+        }
+
+        if ($anychanges) {
+            question_engine::save_questions_usage_by_activity($this->quba);
+            if ($this->attempt->state == self::FINISHED) {
+                $this->attempt->sumgrades = $this->quba->get_total_mark();
+                $DB->update_record('quiz_attempts', $this->attempt);
+                $this->recompute_final_grade();
+            }
+        }
+    }
 }

@@ -1063,7 +1063,7 @@ function lesson_get_overview_report_table_and_data(lesson $lesson, $currentgroup
             $row = [$studentname];
 
             foreach ($extrafields as $field) {
-                $row[] = $student->$field;
+                $row[] = s($student->$field);
             }
 
             $row[] = $attempts;
@@ -1386,8 +1386,9 @@ abstract class lesson_add_page_form_base extends moodleform {
             $mform->addElement('hidden', 'qtype');
             $mform->setType('qtype', PARAM_INT);
 
-            $mform->addElement('text', 'title', get_string('pagetitle', 'lesson'), array('size'=>70));
+            $mform->addElement('text', 'title', get_string('pagetitle', 'lesson'), ['size' => 70, 'maxlength' => 255]);
             $mform->addRule('title', get_string('required'), 'required', null, 'client');
+            $mform->addRule('title', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
             if (!empty($CFG->formatstringstriptags)) {
                 $mform->setType('title', PARAM_TEXT);
             } else {

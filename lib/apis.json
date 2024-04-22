@@ -134,6 +134,11 @@
         "allowedlevel2": true,
         "allowedspread": true
     },
+    "hook": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
     "lock": {
         "component": "core",
         "allowedlevel2": true,

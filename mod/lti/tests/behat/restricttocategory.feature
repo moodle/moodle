@@ -102,8 +102,7 @@ Feature: Make an LTI only available to specific course categories
     When I click on "Add tool" "link"
     And I should not see "Restrict to category"
     And I press "Cancel"
-    And I open the action menu in "Course Tool 1" "table_row"
-    And I choose "Edit" in the open action menu
+    And I press "Edit" action in the "Course Tool 1" report row
     And I should not see "Restrict to category"
     And I navigate to "Plugins > Activity modules > External tool > Manage tools" in site administration
     And I follow "Manage preconfigured tools"

@@ -39,7 +39,13 @@ require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 require_once($CFG->dirroot . '/user/externallib.php');
 require_once($CFG->dirroot . '/files/externallib.php');
 
-class externallib_test extends externallib_advanced_testcase {
+/**
+ * Tests for the user external functions.
+ *
+ * @package core_user
+ * @covers \core_user_external
+ */
+final class externallib_test extends externallib_advanced_testcase {
 
     /**
      * Test get_users
@@ -179,7 +185,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_users_by_field
      */
-    public function test_get_users_by_field() {
+    public function test_get_users_by_field(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest(true);
@@ -188,11 +194,14 @@ class externallib_test extends externallib_advanced_testcase {
 
         // Create complex user profile field supporting multi-lang.
         filter_set_global_state('multilang', TEXTFILTER_ON);
+        $name = '<span lang="en" class="multilang">Employment status</span>'.
+            '<span lang="es" class="multilang">Estado de Empleo</span>';
         $statuses = 'UE\nSE\n<span lang="en" class="multilang">Other</span><span lang="es" class="multilang">Otro</span>';
         $generator->create_custom_profile_field(
             [
                 'datatype' => 'menu',
-                'shortname' => 'employmentstatus', 'name' => 'Employment status',
+                'shortname' => 'employmentstatus',
+                'name' => $name,
                 'param1' => $statuses
             ]
         );
@@ -310,6 +319,7 @@ class externallib_test extends externallib_advanced_testcase {
                     $this->assertCount(1, $returneduser['customfields']);
                     $dbvalue = explode('\n', $statuses)[2];
                     $this->assertEquals($dbvalue, $returneduser['customfields'][0]['value']);
+                    $this->assertEquals('Employment status', $returneduser['customfields'][0]['name']);
                     $this->assertEquals('Other', $returneduser['customfields'][0]['displayvalue']);
                 }
             }
@@ -345,6 +355,22 @@ class externallib_test extends externallib_advanced_testcase {
 
         $return = new \stdClass();
 
+        $generator = self::getDataGenerator();
+
+        // Create complex user profile field supporting multi-lang.
+        filter_set_global_state('multilang', TEXTFILTER_ON);
+        $name = '<span lang="en" class="multilang">Employment status</span>' .
+            '<span lang="es" class="multilang">Estado de Empleo</span>';
+        $statuses = 'UE\nSE\n<span lang="en" class="multilang">Other</span><span lang="es" class="multilang">Otro</span>';
+        $generator->create_custom_profile_field(
+            [
+                'datatype' => 'menu',
+                'shortname' => 'employmentstatus',
+                'name' => $name,
+                'param1' => $statuses,
+            ]
+        );
+
         // Create the course and fetch its context.
         $return->course = self::getDataGenerator()->create_course();
         $return->user1 = array(
@@ -361,7 +387,8 @@ class externallib_test extends externallib_advanced_testcase {
             'description' => 'This is a description for user 1',
             'descriptionformat' => FORMAT_MOODLE,
             'city' => 'Perth',
-            'country' => 'AU'
+            'country' => 'AU',
+            'profile_field_employmentstatus' => explode('\n', $statuses)[2],
         );
         $return->user1 = self::getDataGenerator()->create_user($return->user1);
         if (!empty($CFG->usetags)) {
@@ -447,6 +474,11 @@ class externallib_test extends externallib_advanced_testcase {
                 $this->assertEquals(FORMAT_HTML, $enrolleduser['descriptionformat']);
                 $this->assertEquals($data->user1->city, $enrolleduser['city']);
                 $this->assertEquals($data->user1->country, $enrolleduser['country']);
+                // Default language was used for the user.
+                $this->assertEquals($CFG->lang, $enrolleduser['lang']);
+                $this->assertEquals('Employment status', $enrolleduser['customfields'][0]['name']);
+                $this->assertEquals('Other', $enrolleduser['customfields'][0]['displayvalue']);
+
                 if (!empty($CFG->usetags)) {
                     $this->assertEquals(implode(', ', $data->user1->interests), $enrolleduser['interests']);
                 }
