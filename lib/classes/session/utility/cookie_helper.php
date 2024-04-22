@@ -147,9 +147,9 @@ final class cookie_helper {
             bool $casesensitive): bool {
 
         if ($casesensitive) {
-            return str_contains($headerstring, $attribute);
+            return strpos($headerstring, $attribute) !== false;
         }
-        return str_contains(strtolower($headerstring), strtolower($attribute));
+        return strpos(strtolower($headerstring), strtolower($attribute)) !== false;
     }
 
     /**
