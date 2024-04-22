@@ -141,3 +141,38 @@ Feature: Set question bank column order and size
     Then I should see "Question bank"
     And "Create a new question" "button" should exist
     # Really, we are just checking the question bank displayed without errors.
+
+  Scenario: Deleting a custom field which a user had removed from his preferences
+    Given the following "custom field categories" exist:
+      | name              | component          | area     | itemid |
+      | Category for test | qbank_customfields | question | 0      |
+    And the following "custom fields" exist:
+      | name    | category          | type | shortname | configdata         |
+      | Field 1 | Category for test | text | f1        | {"visibility":"2"} |
+      | Field 2 | Category for test | text | f2        | {"visibility":"2"} |
+    And I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Question category 1"
+    And I click on "Actions menu" "link" in the "Field 1" "qbank_columnsortorder > column header"
+    And I choose "Remove" in the open action menu
+    And I click on "Actions menu" "link" in the "Field 2" "qbank_columnsortorder > column header"
+    And I choose "Remove" in the open action menu
+    And "Field 2" "qbank_columnsortorder > column header" should not exist
+
+    # Delete a question custom field.
+    And I log in as "admin"
+    And I navigate to "Plugins > Question bank plugins > Question custom fields" in site administration
+    And I click on "Delete" "link" in the "Field 1" "table_row"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
+    And I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Question category 1"
+    Then I should see "Question bank"
+
+    # Delete the question custom category.
+    And I log in as "admin"
+    And I navigate to "Plugins > Question bank plugins > Question custom fields" in site administration
+    And I click on "[data-role='deletecategory']" "css_element"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
+    And I should not see "Category for test" in the "#customfield_catlist" "css_element"
+    And I am on the "Test quiz Q001" "mod_quiz > question bank" page logged in as "teacher1"
+    And I apply question bank filter "Category" with value "Question category 1"
+    And I should see "Question bank"
