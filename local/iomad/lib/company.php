@@ -3588,7 +3588,17 @@ class company {
                                                            'userid' => $userid))) {
             return true;
         } else {
-            return false;
+            // is the user in a child company?
+            $company = new company($companyid);
+            $children = $company->get_child_companies_recursive();
+            if ($DB->get_records_sql("SELECT id FROM {company_users}
+                                      WHERE userid = :userid
+                                      and companyid IN (" . join(',', array_keys($children)) . ")",
+                                      ['userid' => $userid])) {
+                return true;
+            } else {
+                return false;
+            }
         }
         // Shouldn't get here.  Return a false in case.
         return false;

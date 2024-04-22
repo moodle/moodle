@@ -442,7 +442,14 @@ if ($validonly) {
     $validsql = "";
 }
 
-$wheresql = " lit.userid = :userid AND lit.companyid = :companyid AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) .") $validsql";
+if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+    $companysql = "";
+} else {
+    $companysql = " AND lit.companyid IN (SELECT DISTINCT companyid FROM {company_users} WHERE userid = :myuserid AND managertype !=0) ";
+    $sqlparams['myuserid'] = $USER->id;
+}
+
+$wheresql = " lit.userid = :userid $companysql AND lit.courseid IN (" . join(',', array_keys($company->get_menu_courses(true))) .") $validsql";
 
 // Set up the headers for the form.
 $headers = array(get_string('course', 'local_report_completion'),
