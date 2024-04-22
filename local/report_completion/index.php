@@ -1105,9 +1105,7 @@ if (empty($courseid)) {
         echo html_writer::start_tag('div', array('class' => 'tablecontainer'));
     }
 
-$DB->set_debug(true);
     $table->out($CFG->iomad_max_list_courses, true);
-$DB->set_debug(false);
 
     if (!$table->is_downloading()) {
         if (!empty($USER->editing)) {
