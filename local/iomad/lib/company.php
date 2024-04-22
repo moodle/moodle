@@ -842,6 +842,8 @@ class company {
 
         $errors = false;
         $gone = false;
+        require_once(__DIR__ . '/../../../course/format/lib.php');
+
         $transaction = $DB->start_delegated_transaction();
 
         if (!$course = $DB->get_record('course', array('id' => $courseid))) {
