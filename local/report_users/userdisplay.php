@@ -442,7 +442,7 @@ if ($validonly) {
     $validsql = "";
 }
 
-if (iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
+if (iomad::has_capability('block/iomad_company_admin:company_add', $companycontext)) {
     $companysql = "";
 } else {
     $companysql = " AND lit.companyid IN (SELECT DISTINCT companyid FROM {company_users} WHERE userid = :myuserid AND managertype !=0) ";
