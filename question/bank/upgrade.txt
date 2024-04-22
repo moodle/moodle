@@ -1,6 +1,11 @@
 This file describes core qbank plugin changes in /question/bank/*,
 information provided here is intended especially for developers.
 
+=== 4.3.5 ===
+
+* column_base::from_column_name now has an ignoremissing field, which can be used to ignore
+  if the class does not exist, instead of throwing an exception.
+
 === 4.3.4 ===
 
 * Question bank actions (anything that subclasses question_action_base) should implement the

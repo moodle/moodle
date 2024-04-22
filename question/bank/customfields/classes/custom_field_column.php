@@ -44,14 +44,18 @@ class custom_field_column extends column_base {
         $this->field = $field;
     }
 
-    public static function from_column_name(view $view, string $columnname): custom_field_column {
+    public static function from_column_name(view $view, string $columnname, bool $ingoremissing = false): ?custom_field_column {
         $handler = question_handler::create();
         foreach ($handler->get_fields() as $field) {
             if ($field->get('shortname') == $columnname) {
                 return new static($view, $field);
             }
         }
-        throw new \coding_exception('Custom field ' . $columnname . ' does not exist.');
+        if ($ingoremissing) {
+            return null;
+        } else {
+            throw new \coding_exception('Custom field ' . $columnname . ' does not exist.');
+        }
     }
 
     /**
