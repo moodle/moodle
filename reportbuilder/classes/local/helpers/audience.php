@@ -255,66 +255,10 @@ class audience {
     }
 
     /**
-     * Returns the list of audiences types in the system.
-     *
-     * @return array
-     */
-    private static function get_audience_types(): array {
-        $sources = [];
-
-        $audiences = core_component::get_component_classes_in_namespace(null, 'reportbuilder\\audience');
-        foreach ($audiences as $class => $path) {
-            $audienceclass = $class::instance();
-            if (is_subclass_of($class, base::class) && $audienceclass->user_can_add()) {
-                $componentname = $audienceclass->get_component_displayname();
-                $sources[$componentname][$class] = $audienceclass->get_name();
-            }
-        }
-
-        return $sources;
-    }
-
-    /**
-     * Get all the audiences types the current user can add to, organised by categories.
-     *
-     * @return array
-     *
      * @deprecated since Moodle 4.1 - please do not use this function any more, {@see custom_report_audience_cards_exporter}
      */
-    public static function get_all_audiences_menu_types(): array {
-        debugging('The function ' . __FUNCTION__ . '() is deprecated, please do not use it any more. ' .
-            'See \'custom_report_audience_cards_exporter\' class for replacement', DEBUG_DEVELOPER);
-
-        $menucardsarray = [];
-        $notavailablestr = get_string('notavailable', 'moodle');
-
-        $audiencetypes = self::get_audience_types();
-        $audiencetypeindex = 0;
-        foreach ($audiencetypes as $categoryname => $audience) {
-            $menucards = [
-                'name' => $categoryname,
-                'key' => 'index' . ++$audiencetypeindex,
-            ];
-
-            foreach ($audience as $classname => $name) {
-                $class = $classname::instance();
-                $title = $class->is_available() ? get_string('addaudience', 'core_reportbuilder', $class->get_name()) :
-                    $notavailablestr;
-                $menucard['title'] = $title;
-                $menucard['name'] = $class->get_name();
-                $menucard['disabled'] = !$class->is_available();
-                $menucard['identifier'] = get_class($class);
-                $menucard['action'] = 'add-audience';
-                $menucards['items'][] = $menucard;
-            }
-
-            // Order audience types on each category alphabetically.
-            core_collator::asort_array_of_arrays_by_key($menucards['items'], 'name');
-            $menucards['items'] = array_values($menucards['items']);
-
-            $menucardsarray[] = $menucards;
-        }
-
-        return $menucardsarray;
+    #[\core\attribute\deprecated('custom_report_audience_cards_exporter', since: '4.1', final: true)]
+    public static function get_all_audiences_menu_types() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 }

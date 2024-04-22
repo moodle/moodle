@@ -416,42 +416,11 @@ class report {
     }
 
     /**
-     * Get available columns for a given report
-     *
-     * @param report_model $persistent
-     * @return array
-     *
      * @deprecated since Moodle 4.1 - please do not use this function any more, {@see custom_report_column_cards_exporter}
      */
-    public static function get_available_columns(report_model $persistent): array {
-        debugging('The function ' . __FUNCTION__ . '() is deprecated, please do not use it any more. ' .
-            'See \'custom_report_column_cards_exporter\' class for replacement', DEBUG_DEVELOPER);
-
-        $available = [];
-
-        $report = manager::get_report_from_persistent($persistent);
-
-        // Get current report columns.
-        foreach ($report->get_columns() as $column) {
-            $entityname = $column->get_entity_name();
-            $entitytitle = $column->get_title();
-            if (!array_key_exists($entityname, $available)) {
-                $available[$entityname] = [
-                    'name' => (string) $report->get_entity_title($entityname),
-                    'key' => $entityname,
-                    'items' => [],
-                ];
-            }
-
-            $available[$entityname]['items'][] = [
-                'name' => $entitytitle,
-                'identifier' => $column->get_unique_identifier(),
-                'title' => get_string('addcolumn', 'core_reportbuilder', $entitytitle),
-                'action' => 'report-add-column'
-            ];
-        }
-
-        return array_values($available);
+    #[\core\attribute\deprecated('custom_report_column_cards_exporter', since: '4.1', final: true)]
+    public static function get_available_columns() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
