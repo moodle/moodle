@@ -445,6 +445,7 @@ if ($companies) {
 
         unset($linkparams['suspend']);
         unset($linkparams['unsuspend']);
+        unset($linkparams['delete']);
 
         if (empty($CFG->commerce_admin_enableall) && iomad::has_capability('block/iomad_company_admin:company_add', $context)) {
             if (!empty($company->ecommerce)) {
