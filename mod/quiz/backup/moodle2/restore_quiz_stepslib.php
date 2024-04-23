@@ -443,7 +443,7 @@ class restore_quiz_activity_structure_step extends restore_questions_activity_st
         }
 
         if (isset($data->quizgradeitemid)) {
-            $data->quizgradeitemid = $this->get_mappingid('quiz_grade_items', $data->quizgradeitemid);
+            $data->quizgradeitemid = $this->get_mappingid('quiz_grade_item', $data->quizgradeitemid);
         }
 
         $data->quizid = $this->get_new_parentid('quiz');
