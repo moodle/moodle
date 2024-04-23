@@ -32,5 +32,8 @@ function xmldb_enrol_mnet_upgrade($oldversion) {
     // Automatically generated Moodle v4.3.0 release upgrade line.
     // Put any upgrade step following this.
 
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }

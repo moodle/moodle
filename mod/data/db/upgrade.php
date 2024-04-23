@@ -79,5 +79,8 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2023100901, 'data');
     }
 
+    // Automatically generated Moodle v4.4.0 release upgrade line.
+    // Put any upgrade step following this.
+
     return true;
 }
