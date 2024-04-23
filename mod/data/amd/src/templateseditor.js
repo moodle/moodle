@@ -24,7 +24,7 @@
 import {getString} from 'core/str';
 import {prefetchStrings} from 'core/prefetch';
 import {relativeUrl} from 'core/url';
-import {saveCancel} from 'core/notification';
+import {saveCancel, deleteCancel} from 'core/notification';
 import Templates from 'core/templates';
 
 prefetchStrings('admin', ['confirmation']);
@@ -78,7 +78,7 @@ const registerResetButton = (mode) => {
             resetallname: "resetallcheck",
             templatename: await getString(mode, 'mod_data'),
         };
-        saveCancel(
+        deleteCancel(
             getString('resettemplateconfirmtitle', 'mod_data'),
             Templates.render('mod_data/template_editor_resetmodal', params),
             getString('reset', 'core'),
