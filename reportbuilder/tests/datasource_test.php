@@ -28,7 +28,8 @@ namespace core_reportbuilder;
 
 use advanced_testcase;
 use core_reportbuilder_generator;
-use core_reportbuilder\local\entities\user;
+use core_reportbuilder\local\entities\base;
+use core_reportbuilder\local\filters\text;
 use core_reportbuilder\local\report\{column, filter};
 use lang_string;
 use ReflectionClass;
@@ -43,7 +44,7 @@ defined('MOODLE_INTERNAL') || die();
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class datasource_test extends advanced_testcase {
+final class datasource_test extends advanced_testcase {
 
     /**
      * Data provider for {@see test_add_columns_from_entity}
@@ -52,20 +53,20 @@ class datasource_test extends advanced_testcase {
      */
     public static function add_columns_from_entity_provider(): array {
         return [
-            'All column' => [
+            'All columns' => [
                 [],
                 [],
-                31,
+                4,
             ],
-            'Include columns (picture, fullname, fullnamewithlink, fullnamewithpicture, fullnamewithpicturelink)' => [
-                ['picture', 'fullname*'],
+            'Include columns (first, extra1, extra2)' => [
+                ['first', 'extra*'],
                 [],
-                5,
+                3,
             ],
-            'Exclude columns (picture, fullname, fullnamewithlink, fullnamewithpicture, fullnamewithpicturelink)' => [
+            'Exclude columns (first, extra1, extra2)' => [
                 [],
-                ['picture', 'fullname*'],
-                26,
+                ['first', 'extra*'],
+                1,
             ],
         ];
     }
@@ -89,12 +90,12 @@ class datasource_test extends advanced_testcase {
         $instance = $this->get_datasource_test_source();
 
         $method = (new ReflectionClass($instance))->getMethod('add_columns_from_entity');
-        $method->invoke($instance, 'user', $include, $exclude);
+        $method->invoke($instance, 'datasource_test_entity', $include, $exclude);
 
-        // Get all our user entity columns.
+        // Get all our entity columns.
         $columns = array_filter(
             $instance->get_columns(),
-            fn(string $columnname) => strpos($columnname, 'user:') === 0,
+            fn(string $columnname) => strpos($columnname, 'datasource_test_entity:') === 0,
             ARRAY_FILTER_USE_KEY,
         );
 
@@ -111,17 +112,17 @@ class datasource_test extends advanced_testcase {
             'All filters' => [
                 [],
                 [],
-                28,
+                4,
             ],
-            'Include filters (department, phone1, phone2)' => [
-                ['department', 'phone*'],
+            'Include filters (first, extra1, extra2)' => [
+                ['first', 'extra*'],
                 [],
                 3,
             ],
-            'Exclude filters (department, phone1, phone2)' => [
+            'Exclude filters (first, extra1, extra2)' => [
                 [],
-                ['department', 'phone*'],
-                25,
+                ['first', 'extra*'],
+                1,
             ],
         ];
     }
@@ -145,12 +146,12 @@ class datasource_test extends advanced_testcase {
         $instance = $this->get_datasource_test_source();
 
         $method = (new ReflectionClass($instance))->getMethod('add_filters_from_entity');
-        $method->invoke($instance, 'user', $include, $exclude);
+        $method->invoke($instance, 'datasource_test_entity', $include, $exclude);
 
-        // Get all our user entity filters.
+        // Get all our entity filters.
         $filters = array_filter(
             $instance->get_filters(),
-            fn(string $filtername) => strpos($filtername, 'user:') === 0,
+            fn(string $filtername) => strpos($filtername, 'datasource_test_entity:') === 0,
             ARRAY_FILTER_USE_KEY,
         );
 
@@ -167,17 +168,17 @@ class datasource_test extends advanced_testcase {
             'All conditions' => [
                 [],
                 [],
-                28,
+                4,
             ],
-            'Include conditions (department, phone1, phone2)' => [
-                ['department', 'phone*'],
+            'Include conditions (first, extra1, extra2)' => [
+                ['first', 'extra*'],
                 [],
                 3,
             ],
-            'Exclude conditions (department, phone1, phone2)' => [
+            'Exclude conditions (first, extra1, extra2)' => [
                 [],
-                ['department', 'phone*'],
-                25,
+                ['first', 'extra*'],
+                1,
             ],
         ];
     }
@@ -201,12 +202,12 @@ class datasource_test extends advanced_testcase {
         $instance = $this->get_datasource_test_source();
 
         $method = (new ReflectionClass($instance))->getMethod('add_conditions_from_entity');
-        $method->invoke($instance, 'user', $include, $exclude);
+        $method->invoke($instance, 'datasource_test_entity', $include, $exclude);
 
-        // Get all our user entity conditions.
+        // Get all our entity conditions.
         $conditions = array_filter(
             $instance->get_conditions(),
-            fn(string $conditionname) => strpos($conditionname, 'user:') === 0,
+            fn(string $conditionname) => strpos($conditionname, 'datasource_test_entity:') === 0,
             ARRAY_FILTER_USE_KEY,
         );
 
@@ -222,19 +223,19 @@ class datasource_test extends advanced_testcase {
         $instance = $this->get_datasource_test_source();
 
         $method = (new ReflectionClass($instance))->getMethod('add_all_from_entity');
-        $method->invoke($instance, 'user', ['username'], ['firstname'], ['lastname']);
+        $method->invoke($instance, 'datasource_test_entity', ['first'], ['second'], ['extra1']);
 
         // Assert the column we added (plus one we didn't).
-        $this->assertInstanceOf(column::class, $instance->get_column('user:username'));
-        $this->assertNull($instance->get_column('user:email'));
+        $this->assertInstanceOf(column::class, $instance->get_column('datasource_test_entity:first'));
+        $this->assertNull($instance->get_column('datasource_test_entity:second'));
 
         // Assert the filter we added (plus one we didn't).
-        $this->assertInstanceOf(filter::class, $instance->get_filter('user:firstname'));
-        $this->assertNull($instance->get_filter('user:email'));
+        $this->assertInstanceOf(filter::class, $instance->get_filter('datasource_test_entity:second'));
+        $this->assertNull($instance->get_filter('datasource_test_entity:first'));
 
         // Assert the condition we added (plus one we didn't).
-        $this->assertInstanceOf(filter::class, $instance->get_condition('user:lastname'));
-        $this->assertNull($instance->get_condition('user:email'));
+        $this->assertInstanceOf(filter::class, $instance->get_condition('datasource_test_entity:extra1'));
+        $this->assertNull($instance->get_condition('datasource_test_entity:extra2'));
     }
 
     /**
@@ -266,7 +267,7 @@ class datasource_test_source extends datasource {
         $this->add_column(new column('test', null, 'dummy'));
 
         // This is the entity from which we'll add our report elements.
-        $this->add_entity(new user());
+        $this->add_entity(new datasource_test_entity());
     }
 
     public static function get_name(): string {
@@ -283,5 +284,38 @@ class datasource_test_source extends datasource {
 
     public function get_default_conditions(): array {
         return [];
+    }
+}
+
+/**
+ * Simple implementation of the base entity
+ */
+class datasource_test_entity extends base {
+
+    protected function get_default_tables(): array {
+        return ['course'];
+    }
+
+    protected function get_default_entity_title(): lang_string {
+        return new lang_string('course');
+    }
+
+    /**
+     * We're going to add multiple columns/filters/conditions, each named as following:
+     *
+     * [first, second, extra1, extra2]
+     *
+     * @return base
+     */
+    public function initialise(): base {
+        foreach (['first', 'second', 'extra1', 'extra2'] as $field) {
+            $name = new lang_string('customfieldcolumn', 'core_reportbuilder', $field);
+
+            $this->add_column(new column($field, $name, $this->get_entity_name()));
+            $this->add_filter(new filter(text::class, $field, $name, $this->get_entity_name()));
+            $this->add_condition(new filter(text::class, $field, $name, $this->get_entity_name()));
+        }
+
+        return $this;
     }
 }
