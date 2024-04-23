@@ -43,7 +43,7 @@ Feature: Show users who have not responded to the feedback survey
       | Record user names   | User's name will be logged and shown with answers |
       | Access restrictions | Grouping: GX1                                     |
     And I am on the Frogs "feedback activity" page
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Short text answer" question to the feedback with:
       | Question | Y/N? |
     And I log out

@@ -27,7 +27,7 @@ Feature: Non anonymous feedback
       | feedback   | Site feedback   | Acceptance test site | feedback0 | 2         | 1             | 1       |
       | feedback   | Course feedback | C1                   | feedback1 | 2         | 1             | 0       |
     When I am on the "Site feedback" "feedback activity" page logged in as manager
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like our site?              |
       | Label                          | multichoice2                       |
@@ -91,7 +91,7 @@ Feature: Non anonymous feedback
   @javascript
   Scenario: Non anonymous feedback in a course
     When I am on the "Course feedback" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like this course?           |
       | Label                          | multichoice1                       |

@@ -43,7 +43,7 @@ Feature: Mapping courses in a feedback
     When I log in as "manager"
     And I am on site homepage
     And I follow "Course feedback"
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
@@ -132,7 +132,7 @@ Feature: Mapping courses in a feedback
     And I log in as "manager"
     And I am on site homepage
     And I follow "Course feedback"
-    And I follow "Mapped courses"
+    And I navigate to "Mapped courses" in current page administration
     And I set the field "Courses" to "Course 2, Course 3"
     And I press "Save changes"
     And I should see "Course mapping has been changed"

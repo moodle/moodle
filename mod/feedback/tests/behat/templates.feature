@@ -26,7 +26,7 @@ Feature: Saving, using and deleting feedback templates
       | feedback   | Another feedback in course 1 | C1     | feedback2   |
       | feedback   | Learning experience course 2 | C2     | feedback3   |
     And I am on the "Learning experience course 1" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Multiple choice" question to the feedback with:
       | Question         | this is a multiple choice 1 |
       | Label            | multichoice1                |
@@ -38,7 +38,7 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Teacher can save template and re-use it in the same course only
     # Go to feedback templates and make sure none exist yet
     When I am on the "Learning experience course 1" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I select "Use a template" from the "jump" singleselect
     Then I should see "No templates available yet"
     And "Use a template" "field" should not exist
@@ -55,7 +55,7 @@ Feature: Saving, using and deleting feedback templates
     And I should see "My first template"
     # Create a feedback from this template in the same course
     And I am on the "Another feedback in course 1" "feedback activity" page
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I select "Use a template" from the "jump" singleselect
     And I follow "My first template"
     And I should see "this is a multiple choice 1"
@@ -64,7 +64,7 @@ Feature: Saving, using and deleting feedback templates
     And I should see "this is a multiple choice 1"
     # Make sure this template is not available in another course
     And I am on the "Learning experience course 2" "feedback activity" page
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I select "Use a template" from the "jump" singleselect
     And I should see "No templates available yet"
     And I log out
@@ -73,7 +73,7 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Teacher can append template to existing questions or remove them
     # Save feedback as a course template
     When I am on the "Learning experience course 1" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I press "Save as new template"
     And I should see "Save as new template" in the ".modal-title" "css_element"
     And I should see "Name" in the ".modal-body" "css_element"
@@ -82,7 +82,7 @@ Feature: Saving, using and deleting feedback templates
     And I press "Save as new template"
     # Add questions to another feedback
     And I am on the "Another feedback in course 1" "feedback activity" page
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Multiple choice" question to the feedback with:
       | Question         | What is your favourite subject |
       | Label            | subjectchoice                  |
@@ -108,14 +108,14 @@ Feature: Saving, using and deleting feedback templates
   @javascript
   Scenario: Manager can save template as public and it will be available in any course
     When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I press "Save as new template"
     And I set the field "Name" to "My first template"
     And I set the field "Public" to "1"
     And I click on "Save" "button" in the ".modal-dialog" "css_element"
     And I log out
     And I am on the "Learning experience course 2" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I select "Use a template" from the "jump" singleselect
     And I follow "My first template"
     And I should see "this is a multiple choice 1"
@@ -129,7 +129,7 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Teacher can delete course templates but can not delete public templates
     # Save feedback as both public and course template
     When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I press "Save as new template"
     And I set the field "Name" to "My public template"
     And I set the field "Public" to "1"
@@ -140,7 +140,7 @@ Feature: Saving, using and deleting feedback templates
     And I log out
     # Login as teacher and try to delete templates
     And I am on the "Another feedback in course 1" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I select "Use a template" from the "jump" singleselect
     And I follow "My public template"
     Then I should not see "Delete"
@@ -158,7 +158,7 @@ Feature: Saving, using and deleting feedback templates
   Scenario: Manager can delete both course and public templates
     # Save feedback as both public and course template
     When I am on the "Learning experience course 1" "feedback activity" page logged in as manager
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I press "Save as new template"
     And I set the field "Name" to "My public template"
     And I set the field "Public" to "1"

@@ -22,7 +22,7 @@ Feature: Testing multichoice questions in feedback
       | activity   | name                | course | idnumber    |
       | feedback   | Learning experience | C1     | feedback0   |
     And I am on the "Learning experience" "feedback activity" page logged in as teacher1
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
 
   @javascript
   Scenario: Non-rated single-answer multiple choice questions in feedback
@@ -150,7 +150,7 @@ Feature: Testing multichoice questions in feedback
     And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
     And I am on the "Learning experience" "feedback activity" page
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I choose "Edit question" in the open action menu
     And I set the field "Omit empty submits in analysis" to "Yes"
@@ -290,7 +290,7 @@ Feature: Testing multichoice questions in feedback
     And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
     And I am on the "Learning experience" "feedback activity" page
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I choose "Edit question" in the open action menu
     And I set the field "Omit empty submits in analysis" to "Yes"
@@ -409,7 +409,7 @@ Feature: Testing multichoice questions in feedback
     And I should see "1 (100.00 %)" in the "option i" "table_row"
     # Change the settings so we don't analyse empty submits
     And I am on the "Learning experience" "feedback activity" page
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I open the action menu in "//div[contains(@class, 'feedback_itemlist') and contains(.,'multichoice1')]" "xpath_element"
     And I choose "Edit question" in the open action menu
     And I set the field "Omit empty submits in analysis" to "Yes"

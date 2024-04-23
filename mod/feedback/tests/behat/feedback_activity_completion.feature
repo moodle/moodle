@@ -26,7 +26,7 @@ Feature: View activity completion in the feedback activity
       | completionview   | 1             |
       | completionsubmit | 1             |
     And I am on the "Music history" "feedback activity" page logged in as teacher1
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Multiple choice" question to the feedback with:
         | Question               | What is your favourite instrument |
         | Label                  | instrument1                       |

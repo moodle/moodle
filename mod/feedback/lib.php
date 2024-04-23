@@ -2822,16 +2822,9 @@ function feedback_extend_settings_navigation(settings_navigation $settings, navi
     }
 
     if (has_capability('mod/feedback:edititems', $context)) {
-        $questionnode = $feedbacknode->add(get_string('questions', 'feedback'), null,
+        $feedbacknode->add(get_string('questions', 'feedback'),
+            new moodle_url('/mod/feedback/edit.php', ['id' => $settings->get_page()->cm->id]),
             navigation_node::TYPE_CUSTOM, null, 'questionnode');
-        $questionnode->add(get_string('edit_items', 'feedback'),
-            new moodle_url('/mod/feedback/edit.php', ['id' => $settings->get_page()->cm->id]));
-
-        $questionnode->add(get_string('export_questions', 'feedback'),
-            new moodle_url('/mod/feedback/export.php', ['id' => $settings->get_page()->cm->id, 'action' => 'exportfile']));
-
-        $questionnode->add(get_string('import_questions', 'feedback'),
-            new moodle_url('/mod/feedback/import.php', ['id' => $settings->get_page()->cm->id]));
 
         $feedbacknode->add(get_string('templates', 'feedback'),
             new moodle_url('/mod/feedback/manage_templates.php', ['id' => $settings->get_page()->cm->id, 'mode' => 'manage']),

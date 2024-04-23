@@ -23,7 +23,7 @@ Feature: Exporting and importing feedbacks
 
   Scenario: Export sample feedback and compare with the fixture
     When I am on the "Learning experience" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And "Export questions" "link" should not exist in the ".tertiary-navigation" "css_element"
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
@@ -73,7 +73,7 @@ Feature: Exporting and importing feedbacks
   @javascript @_file_upload
   Scenario: Import feedback deleting old items
     When I am on the "Learning experience" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Numeric answer" question to the feedback with:
       | Question               | Existing question |
       | Label                  | numeric           |
@@ -96,7 +96,7 @@ Feature: Exporting and importing feedbacks
   @javascript @_file_upload
   Scenario: Import feedback appending new items
     When I am on the "Learning experience" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Numeric answer" question to the feedback with:
       | Question               | Existing question |
       | Label                  | numeric           |
