@@ -133,12 +133,10 @@ final class random_question_loader_test extends \advanced_testcase {
 
         // Try to a random question from that category - should not be one.
         $filtercondition = [
-            'filter' => [
-                'category' => [
-                    'jointype' => condition::JOINTYPE_DEFAULT,
-                    'values' => [$category->id],
-                    'filteroptions' => ['includesubcategories' => false],
-                ],
+            'category' => [
+                'jointype' => condition::JOINTYPE_DEFAULT,
+                'values' => [$category->id],
+                'filteroptions' => ['includesubcategories' => false],
             ],
         ];
         $loader = new random_question_loader(new qubaid_list([]));
@@ -160,12 +158,10 @@ final class random_question_loader_test extends \advanced_testcase {
 
         // Try to a random question from that category - should get V1.
         $filtercondition = [
-            'filter' => [
-                'category' => [
-                    'jointype' => condition::JOINTYPE_DEFAULT,
-                    'values' => [$category->id],
-                    'filteroptions' => ['includesubcategories' => false],
-                ],
+            'category' => [
+                'jointype' => condition::JOINTYPE_DEFAULT,
+                'values' => [$category->id],
+                'filteroptions' => ['includesubcategories' => false],
             ],
         ];
         $loader = new random_question_loader(new qubaid_list([]));
