@@ -19,7 +19,11 @@ namespace mod_feedback\output;
 use confirm_action;
 use context_system;
 use moodle_url;
-use action_link;
+use pix_icon;
+use core\output\action_menu;
+use core\output\action_link;
+use core\output\action_menu\link as action_menu_link;
+use mod_feedback\manager;
 
 /**
  * Class actionbar - Display the action bar
@@ -31,19 +35,22 @@ use action_link;
 class edit_template_action_bar extends base_action_bar {
     /** @var int $templateid The template that is being edited/used */
     private $templateid;
-    /** @var string $mode The type of view we are dealing with  */
-    private $mode;
 
     /**
      * edit_template_action_bar constructor.
      * @param int $cmid
      * @param int $templateid
-     * @param string $mode
+     * @param string|null $mode This parameter has been deprecated since 4.5 and should not be used anymore.
      */
-    public function __construct(int $cmid, int $templateid, string $mode) {
+    public function __construct(int $cmid, int $templateid, ?string $mode = null) {
+        if ($mode !== null) {
+            debugging(
+                'The age argument has been deprecated. Please remove it from your method calls.',
+                DEBUG_DEVELOPER,
+            );
+        }
         parent::__construct($cmid);
         $this->templateid = $templateid;
-        $this->mode = $mode;
     }
 
     /**
@@ -52,34 +59,55 @@ class edit_template_action_bar extends base_action_bar {
      * @return array
      */
     public function get_items(): array {
-        global $DB;
-        $additionalparams = ($this->mode ? ['mode' => $this->mode] : []);
-        $templateurl = new moodle_url('/mod/feedback/manage_templates.php', $this->urlparams + $additionalparams);
+        global $PAGE;
+
+        $templateurl = new moodle_url('/mod/feedback/manage_templates.php', $this->urlparams);
+        $template = manager::get_template_record($this->templateid);
+
+        // Back button.
         $items['left'][]['actionlink'] = new action_link($templateurl, get_string('back'), null, ['class' => 'btn btn-secondary']);
 
+        // Actions.
         if (has_capability('mod/feedback:edititems', $this->context)) {
-            $items['usetemplate'] = $this->urlparams + [
-                'templateid' => $this->templateid
-            ];
+            $actionsselect = new action_menu();
+            $actionsselect->set_menu_trigger(get_string('actions'), 'btn btn-outline-primary');
+            $PAGE->requires->js_call_amd('mod_feedback/usetemplate', 'init');
+
+            // Use template.
+            $actionsselect->add(new action_menu_link(
+                new moodle_url('#'),
+                new pix_icon('i/files', get_string('preview')),
+                get_string('use_this_template', 'mod_feedback'),
+                false,
+                ['data-action' => 'usetemplate', 'data-dataid' => $this->cmid, 'data-templateid' => $this->templateid],
+            ));
         }
 
-        $template = $DB->get_record('feedback_template', array('id' => $this->templateid), '*', MUST_EXIST);
-        $systemcontext = context_system::instance();
+        // Delete.
         $showdelete = has_capability('mod/feedback:deletetemplate', $this->context);
         if ($template->ispublic) {
-            $showdelete = has_capability('mod/feedback:createpublictemplate', $systemcontext) &&
-                has_capability('mod/feedback:deletetemplate', $systemcontext);
+            $showdelete = has_all_capabilities(
+                ['mod/feedback:createpublictemplate', 'mod/feedback:deletetemplate'],
+                context_system::instance()
+            );
         }
-
         if ($showdelete) {
-            $params = $this->urlparams + $additionalparams + [
+            $params = $this->urlparams + [
                 'deletetemplate' => $this->templateid,
                 'sesskey' => sesskey()
             ];
             $deleteurl = new moodle_url('/mod/feedback/manage_templates.php', $params);
-            $deleteaction = new confirm_action(get_string('confirmdeletetemplate', 'feedback'));
-            $items['export'] = new action_link($deleteurl, get_string('delete'), $deleteaction, ['class' => 'btn btn-secondary']);
+            $deleteaction = new action_link(
+                $deleteurl,
+                get_string('delete'),
+                new confirm_action(get_string('confirmdeletetemplate', 'feedback')),
+                ['class' => 'text-danger'],
+                new pix_icon('t/delete', get_string('delete_template', 'feedback')),
+            );
+            $actionsselect->add_secondary_action($deleteaction);
         }
+
+        $items['actionsselect'] = count($actionsselect->get_primary_actions()) > 0 ? $actionsselect : null;
 
         return $items;
     }

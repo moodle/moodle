@@ -1,0 +1,11 @@
+issueNumber: MDL-81744
+notes:
+  mod_feedback:
+    - message: >-
+        The 'mode' parameter has been deprecated from 'edit_template_action_bar'
+        and 'templates_table' contructors.
+      type: deprecated
+    - message: >-
+        The 'use_template' template has been removed as it is not needed
+        anymore.
+      type: removed

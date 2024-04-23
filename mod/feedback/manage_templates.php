@@ -27,7 +27,6 @@ require_once("../../config.php");
 require_once("lib.php");
 
 $id = required_param('id', PARAM_INT);
-$mode = optional_param('mode', '', PARAM_ALPHA);
 $templateid = optional_param('deletetemplate', 0, PARAM_INT);
 
 list($course, $cm) = get_course_and_cm_from_cmid($id, 'feedback');
@@ -40,16 +39,13 @@ $feedback = $PAGE->activityrecord;
 $systemcontext = context_system::instance();
 
 $params = ['id' => $id];
-if ($mode) {
-    $params += ['mode' => $mode];
-}
 $url = new moodle_url('/mod/feedback/manage_templates.php', $params);
 
 $PAGE->set_url($url);
-$actionbar = new \mod_feedback\output\edit_action_bar($cm->id, $url);
 
 $PAGE->set_heading($course->fullname);
 $PAGE->set_title($feedback->name);
+$PAGE->add_body_class('limitedwidth');
 
 // Process template deletion.
 if ($templateid) {
@@ -73,25 +69,22 @@ $PAGE->activityheader->set_attrs([
 echo $OUTPUT->header();
 /** @var \mod_feedback\output\renderer $renderer */
 $renderer = $PAGE->get_renderer('mod_feedback');
-if (!$mode) {
-    echo $renderer->main_action_bar($actionbar);
-}
 echo $OUTPUT->heading(get_string('templates', 'mod_feedback'), 3);
 
 // First we get the course templates.
 $templates = feedback_get_template_list($course, 'own');
 echo $OUTPUT->box_start('coursetemplates');
-echo $OUTPUT->heading(get_string('course'), 4);
+echo $OUTPUT->heading(get_string('coursetemplates', 'mod_feedback'), 4);
 
 $baseurl = new moodle_url('/mod/feedback/use_templ.php', $params);
-$tablecourse = new mod_feedback_templates_table('feedback_template_course_table', $baseurl, $mode);
+$tablecourse = new mod_feedback_templates_table('feedback_template_course_table', $baseurl);
 $tablecourse->display($templates);
 echo $OUTPUT->box_end();
 
 $templates = feedback_get_template_list($course, 'public');
 echo $OUTPUT->box_start('publictemplates');
-echo $OUTPUT->heading(get_string('public', 'feedback'), 4);
-$tablepublic = new mod_feedback_templates_table('feedback_template_public_table', $baseurl, $mode);
+echo $OUTPUT->heading(get_string('sitetemplates', 'mod_feedback'), 4);
+$tablepublic = new mod_feedback_templates_table('feedback_template_public_table', $baseurl);
 $tablepublic->display($templates);
 echo $OUTPUT->box_end();
 echo $OUTPUT->footer();

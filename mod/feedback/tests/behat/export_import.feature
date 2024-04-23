@@ -102,7 +102,7 @@ Feature: Exporting and importing feedbacks
       | Range to               | 100               |
     And I press "Actions"
     And I choose "Import" in the open action menu
-    And I set the field "Append new items" to "1"
+    And I set the field "Keep existing questions and add new questions at the end" to "1"
     And I upload "mod/feedback/tests/fixtures/testexport.xml" file to "File" filemanager
     And I press "Import"
     Then I should see "Existing question"
