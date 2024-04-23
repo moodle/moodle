@@ -22,8 +22,7 @@
  * @copyright  2013 Petr Skoda {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class component_test extends advanced_testcase {
-
+final class component_test extends advanced_testcase {
     /**
      * To be changed if number of subsystems increases/decreases,
      * this is defined here to annoy devs that try to add more without any thinking,
@@ -491,8 +490,10 @@ class component_test extends advanced_testcase {
         $this->assertEquals(array(), array_keys($list));
     }
 
-    public function test_get_component_classes_in_namespace() {
-
+    /**
+     * Tests for get_component_classes_in_namespace.
+     */
+    public function test_get_component_classes_in_namespace(): void {
         // Unexisting.
         $this->assertCount(0, core_component::get_component_classes_in_namespace('core_unexistingcomponent', 'something'));
         $this->assertCount(0, core_component::get_component_classes_in_namespace('auth_cas', 'something'));
@@ -502,40 +503,125 @@ class component_test extends advanced_testcase {
         $this->assertCount(0, core_component::get_component_classes_in_namespace('core_user', 'course'));
         $this->assertCount(0, core_component::get_component_classes_in_namespace('mod_forum', 'output\\emaildigest'));
         $this->assertCount(0, core_component::get_component_classes_in_namespace('mod_forum', '\\output\\emaildigest'));
-        $this->assertCount(2, core_component::get_component_classes_in_namespace('mod_forum', 'output\\email'));
-        $this->assertCount(2, core_component::get_component_classes_in_namespace('mod_forum', '\\output\\email'));
-        $this->assertCount(2, core_component::get_component_classes_in_namespace('mod_forum', 'output\\email\\'));
-        $this->assertCount(2, core_component::get_component_classes_in_namespace('mod_forum', '\\output\\email\\'));
-
-        // Prefix with backslash if it doesn\'t come prefixed.
-        $this->assertCount(1, core_component::get_component_classes_in_namespace('auth_cas', 'task'));
-        $this->assertCount(1, core_component::get_component_classes_in_namespace('auth_cas', '\\task'));
-
-        // Core as a component works, the function can normalise the component name.
-        $this->assertCount(7, core_component::get_component_classes_in_namespace('core', 'update'));
-        $this->assertCount(7, core_component::get_component_classes_in_namespace('', 'update'));
-        $this->assertCount(7, core_component::get_component_classes_in_namespace('moodle', 'update'));
-
-        // Multiple levels.
-        $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', '\\output\\myprofile\\'));
-        $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', 'output\\myprofile\\'));
-        $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', '\\output\\myprofile'));
-        $this->assertCount(5, core_component::get_component_classes_in_namespace('core_user', 'output\\myprofile'));
-
-        // Without namespace it returns classes/ classes.
-        $this->assertCount(6, core_component::get_component_classes_in_namespace('tool_mobile', ''));
-        $this->assertCount(2, core_component::get_component_classes_in_namespace('tool_filetypes'));
-
-        // When no component is specified, classes are returned for the namespace in all components.
-        // (We don't assert exact amounts here as the count of `output` classes will change depending on plugins installed).
-        $this->assertGreaterThan(
-            count(\core_component::get_component_classes_in_namespace('core', 'output')),
-            count(\core_component::get_component_classes_in_namespace(null, 'output')));
 
         // Without either a component or namespace it returns an empty array.
         $this->assertEmpty(\core_component::get_component_classes_in_namespace());
         $this->assertEmpty(\core_component::get_component_classes_in_namespace(null));
         $this->assertEmpty(\core_component::get_component_classes_in_namespace(null, ''));
+    }
+
+    /**
+     * Test that the get_component_classes_in_namespace() function returns classes in the correct namespace.
+     *
+     * @dataProvider get_component_classes_in_namespace_provider
+     * @param array $methodargs
+     * @param string $expectedclassnameformat
+     */
+    public function test_get_component_classes_in_namespace_provider(
+        array $methodargs,
+        string $expectedclassnameformat
+    ): void {
+        $classlist = core_component::get_component_classes_in_namespace(...$methodargs);
+        $this->assertGreaterThan(0, count($classlist));
+
+        foreach (array_keys($classlist) as $classname) {
+            $this->assertStringMatchesFormat($expectedclassnameformat, $classname);
+        }
+    }
+
+    /**
+     * Data provider for get_component_classes_in_namespace tests.
+     *
+     * @return array
+     */
+    public static function get_component_classes_in_namespace_provider(): array {
+        return [
+            // Matches the last namespace level name not partials.
+            [
+                ['mod_forum', 'output\\email'],
+                'mod_forum\output\email\%s',
+            ],
+            [
+                ['mod_forum', '\\output\\email'],
+                'mod_forum\output\email\%s',
+            ],
+            [
+                ['mod_forum', 'output\\email\\'],
+                'mod_forum\output\email\%s',
+            ],
+            [
+                ['mod_forum', '\\output\\email\\'],
+                'mod_forum\output\email\%s',
+            ],
+            // Prefix with backslash if it doesn\'t come prefixed.
+            [
+                ['auth_cas', 'task'],
+                'auth_cas\task\%s',
+            ],
+            [
+                ['auth_cas', '\\task'],
+                'auth_cas\task\%s',
+            ],
+
+            // Core as a component works, the function can normalise the component name.
+            [
+                ['core', 'update'],
+                'core\update\%s',
+            ],
+            [
+                ['', 'update'],
+                'core\update\%s',
+            ],
+            [
+                ['moodle', 'update'],
+                'core\update\%s',
+            ],
+
+            // Multiple levels.
+            [
+                ['core_user', '\\output\\myprofile\\'],
+                'core_user\output\myprofile\%s',
+            ],
+            [
+                ['core_user', 'output\\myprofile\\'],
+                'core_user\output\myprofile\%s',
+            ],
+            [
+                ['core_user', '\\output\\myprofile'],
+                'core_user\output\myprofile\%s',
+            ],
+            [
+                ['core_user', 'output\\myprofile'],
+                'core_user\output\myprofile\%s',
+            ],
+
+            // Without namespace it returns classes/ classes.
+            [
+                ['tool_mobile', ''],
+                'tool_mobile\%s',
+            ],
+            [
+                ['tool_filetypes'],
+                'tool_filetypes\%s',
+            ],
+
+            // Multiple levels.
+            [
+                ['core_user', '\\output\\myprofile\\'],
+                'core_user\output\myprofile\%s',
+            ],
+
+            // When no component is specified, classes are returned for the namespace in all components.
+            // (We don't assert exact amounts here as the count of `output` classes will change depending on plugins installed).
+            [
+                ['core', 'output'],
+                'core\%s',
+            ],
+            [
+                [null, 'output'],
+                '%s',
+            ],
+        ];
     }
 
     /**
