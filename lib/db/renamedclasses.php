@@ -42,7 +42,6 @@ $renamedclasses = [
     'core_course\\local\\entities\\course_category' => 'core_course\\reportbuilder\\local\\entities\\course_category',
     'core_cohort\\local\\entities\\cohort' => 'core_cohort\\reportbuilder\\local\\entities\\cohort',
     'core_cohort\\local\\entities\\cohort_member' => 'core_cohort\\reportbuilder\\local\\entities\\cohort_member',
-    'core_block\\local\\views\\secondary' => 'core_block\\navigation\\views\\secondary',
     // Since Moodle 4.2.
     'Box\\Spout' => 'OpenSpout',
     // Since Moodle 4.3.
