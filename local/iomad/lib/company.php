@@ -372,13 +372,8 @@ class company {
                                                         ORDER BY $sort",
                                                         $companiesparams);
             }
-
-            if (!empty($CFG->iomad_show_company_structure) &&
-                $showchildren) {
-                $allchildren = self::get_formatted_child_companies_select($company->id, $useprepend);
-                $companyselect = $companyselect + $allchildren;
-            }
         }
+
         // Show the hierarchy if required.
         if (!empty($CFG->iomad_show_company_structure)) {
             $companyselect = array();
