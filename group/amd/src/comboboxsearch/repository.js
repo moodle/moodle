@@ -28,13 +28,15 @@ import ajax from "core/ajax";
  *
  * @method groupFetch
  * @param {int} courseid ID of the course to fetch the users of.
+ * @param {null|int} cmid ID of the course module to fetch the users of.
  * @return {object} jQuery promise
  */
-export const groupFetch = (courseid) => {
+export const groupFetch = (courseid, cmid) => {
     const request = {
         methodname: 'core_group_get_groups_for_selector',
         args: {
-            courseid: courseid,
+            courseid,
+            cmid,
         },
     };
     return ajax.call([request])[0];

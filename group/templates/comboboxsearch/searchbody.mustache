@@ -20,18 +20,21 @@
     * courseid - The id of the course to search within.
     * groupid - The id of the group to search within.
     * currentvalue - The prefill value for the search input if provided
+    * cmid - The cmid value
 
     Example context (json):
     {
         "courseid": 2,
         "groupid": 25,
-        "currentvalue": "bar"
+        "currentvalue": "bar",
+        "cmid": 2
     }
 }}
 <div class="flex-column h-100 w-100">
     <span class="d-none" data-region="courseid" data-courseid="{{courseid}}"></span>
     <span class="d-none" data-region="groupid" data-groupid="{{groupid}}"></span>
     <span class="d-none" data-region="instance" data-instance="{{instance}}"></span>
+    <span class="d-none" data-region="cmid" data-cmid="{{cmid}}" aria-hidden="true"></span>
 
     {{< core/search_input_auto }}
         {{$label}}{{#str}}

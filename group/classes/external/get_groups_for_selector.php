@@ -49,6 +49,7 @@ class get_groups_for_selector extends external_api {
         return new external_function_parameters (
             [
                 'courseid' => new external_value(PARAM_INT, 'Course Id', VALUE_REQUIRED),
+                'cmid' => new external_value(PARAM_INT, 'Course module Id', VALUE_DEFAULT),
             ]
         );
     }
@@ -56,38 +57,62 @@ class get_groups_for_selector extends external_api {
     /**
      * Given a course ID find the existing user groups and map some fields to the returned array of group objects.
      *
-     * @param int $courseid
+     * @param int $courseid Course id data.
+     * @param null|int $cmid Course module id, it optional for course context.
      * @return array Groups and warnings to pass back to the calling widget.
      */
-    public static function execute(int $courseid): array {
+    public static function execute(int $courseid, ?int $cmid = null): array {
         global $DB, $USER, $OUTPUT;
 
         $params = self::validate_parameters(
             self::execute_parameters(),
             [
                 'courseid' => $courseid,
+                'cmid' => $cmid,
             ]
         );
 
         $warnings = [];
-        $context = context_course::instance($params['courseid']);
+
+        if (is_null($cmid)) {
+            $context = context_course::instance($params['courseid']);
+            $course = $DB->get_record('course', ['id' => $params['courseid']]);
+            $groupmode = $course->groupmode;
+        } else {
+            $cm = get_coursemodule_from_id('', $cmid, 0, false, MUST_EXIST);
+            $context = context_course::instance($cm->course);
+            $groupmode = groups_get_activity_groupmode($cm);
+        }
+
         parent::validate_context($context);
 
         $mappedgroups = [];
-        $course = $DB->get_record('course', ['id' => $params['courseid']]);
         // Initialise the grade tracking object.
-        if ($groupmode = $course->groupmode) {
+        if ($groupmode) {
             $aag = has_capability('moodle/site:accessallgroups', $context);
 
             $usergroups = [];
             $groupuserid = 0;
-            if ($groupmode == VISIBLEGROUPS || $aag) {
-                // Get user's own groups and put to the top.
-                $usergroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
+
+            if (is_null($cmid)) {
+                if ($groupmode == VISIBLEGROUPS || $aag) {
+                    // Get user's own groups and put to the top.
+                    $usergroups = groups_get_all_groups($course->id, $USER->id, $course->defaultgroupingid);
+                } else {
+                    $groupuserid = $USER->id;
+                }
+                $allowedgroups = groups_get_all_groups($course->id, $groupuserid, $course->defaultgroupingid);
             } else {
-                $groupuserid = $USER->id;
+                if ($groupmode == VISIBLEGROUPS || $aag) {
+                    $allowedgroups = groups_get_all_groups($cm->course, 0, $cm->groupingid,
+                        'g.*', false, true); // Any group in grouping.
+                    // Get user's own groups and put to the top.
+                    $usergroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, true);
+                } else {
+                    // Only assigned groups.
+                    $allowedgroups = groups_get_all_groups($cm->course, $USER->id, $cm->groupingid, 'g.*', false, true);
+                }
             }
-            $allowedgroups = groups_get_all_groups($course->id, $groupuserid, $course->defaultgroupingid);
 
             $allgroups = array_merge($allowedgroups, $usergroups);
             // Filter out any duplicate groups.
@@ -101,9 +126,11 @@ class get_groups_for_selector extends external_api {
             }
 
             $mappedgroups = array_map(function($group) use ($context, $OUTPUT) {
-                if ($group->id) { // Particular group. Get the group picture if it exists, otherwise return a generic image.
+                if ($group->id) {
+                    // Particular group. Get the group picture if it exists, otherwise return a generic image.
                     $picture = get_group_picture_url($group, $group->courseid, true) ??
-                        moodle_url::make_pluginfile_url($context->id, 'group', 'generated', $group->id, '/', 'group.svg');
+                        moodle_url::make_pluginfile_url($context->id, 'group',
+                            'generated', $group->id, '/', 'group.svg');
                 } else { // All participants.
                     $picture = $OUTPUT->image_url('g/g1');
                 }
