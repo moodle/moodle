@@ -24,6 +24,7 @@
  */
 namespace mod_quiz;
 
+use context_module;
 use core_external\external_api;
 use mod_quiz\quiz_settings;
 
@@ -106,6 +107,7 @@ class lib_test extends \advanced_testcase {
         // Setup a quiz with 1 standard and 1 random question.
         $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
         $quiz = $quizgenerator->create_instance(['course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0]);
+        $context = context_module::instance($quiz->cmid);
 
         $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $questiongenerator->create_question_category();
@@ -121,20 +123,20 @@ class lib_test extends \advanced_testcase {
 
         // Check that the random question was deleted.
         if ($randomq) {
-            $count = $DB->count_records('question', ['id' => $randomq->id]);
-            $this->assertEquals(0, $count);
+            $this->assertEquals(0, $DB->count_records('question', ['id' => $randomq->id]));
         }
         // Check that the standard question was not deleted.
-        $count = $DB->count_records('question', ['id' => $standardq->id]);
-        $this->assertEquals(1, $count);
+        $this->assertEquals(1, $DB->count_records('question', ['id' => $standardq->id]));
 
         // Check that all the slots were removed.
-        $count = $DB->count_records('quiz_slots', ['quizid' => $quiz->id]);
-        $this->assertEquals(0, $count);
+        $this->assertEquals(0, $DB->count_records('quiz_slots', ['quizid' => $quiz->id]));
 
         // Check that the quiz was removed.
-        $count = $DB->count_records('quiz', ['id' => $quiz->id]);
-        $this->assertEquals(0, $count);
+        $this->assertEquals(0, $DB->count_records('quiz', ['id' => $quiz->id]));
+
+        // Check that any question references linked to this quiz are gone.
+        $this->assertEquals(0, $DB->count_records('question_references', ['usingcontextid' => $context->id]));
+        $this->assertEquals(0, $DB->count_records('question_set_references', ['usingcontextid' => $context->id]));
     }
 
     public function test_quiz_get_user_attempts() {
