@@ -2509,24 +2509,24 @@ function mod_quiz_core_calendar_get_event_action_string(string $eventtype): stri
 }
 
 /**
- * Delete question reference data.
+ * Delete all question references for a quiz.
  *
  * @param int $quizid The id of quiz.
  */
 function quiz_delete_references($quizid): void {
     global $DB;
-    $slots = $DB->get_records('quiz_slots', ['quizid' => $quizid]);
-    foreach ($slots as $slot) {
-        $params = [
-            'itemid' => $slot->id,
-            'component' => 'mod_quiz',
-            'questionarea' => 'slot'
-        ];
-        // Delete any set references.
-        $DB->delete_records('question_set_references', $params);
-        // Delete any references.
-        $DB->delete_records('question_references', $params);
-    }
+
+    $cm = get_coursemodule_from_instance('quiz', $quizid);
+    $context = context_module::instance($cm->id);
+
+    $conditions = [
+        'usingcontextid' => $context->id,
+        'component' => 'mod_quiz',
+        'questionarea' => 'slot',
+    ];
+
+    $DB->delete_records('question_references', $conditions);
+    $DB->delete_records('question_set_references', $conditions);
 }
 
 /**
