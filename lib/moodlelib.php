@@ -10016,9 +10016,11 @@ function check_consecutive_identical_characters($password, $maxchars) {
 
 /**
  * Helper function to do partial function binding.
- * so we can use it for preg_replace_callback, for example
- * this works with php functions, user functions, static methods and class methods
- * it returns you a callback that you can pass on like so:
+ *
+ * This is useful for cases such as preg_replace_callback where you may want to partially bind values.
+ *
+ * The use of named arguments is recommended for clarity.
+ * Please note that providing arguments in a different order may have mixed results for built-in functions.
  *
  * $callback = partial('somefunction', $arg1, $arg2);
  *     or
@@ -10029,45 +10031,12 @@ function check_consecutive_identical_characters($password, $maxchars) {
  *
  * and then the arguments that are passed through at calltime are appended to the argument list.
  *
- * @param mixed $function a php callback
- * @param mixed $arg1,... $argv arguments to partially bind with
- * @return array Array callback
+ * @param callable $function a php callback
+ * @param mixed ...$initialargs The arguments to provide for the initial bind
+ * @return callable
  */
-function partial() {
-    if (!class_exists('partial')) {
-        /**
-         * Used to manage function binding.
-         * @copyright  2009 Penny Leach
-         * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
-         */
-        class partial{
-            /** @var array */
-            public $values = array();
-            /** @var string The function to call as a callback. */
-            public $func;
-            /**
-             * Constructor
-             * @param string $func
-             * @param array $args
-             */
-            public function __construct($func, $args) {
-                $this->values = $args;
-                $this->func = $func;
-            }
-            /**
-             * Calls the callback function.
-             * @return mixed
-             */
-            public function method() {
-                $args = func_get_args();
-                return call_user_func_array($this->func, array_merge($this->values, $args));
-            }
-        }
-    }
-    $args = func_get_args();
-    $func = array_shift($args);
-    $p = new partial($func, $args);
-    return array($p, 'method');
+function partial(callable $callable, ...$initialargs): callable {
+    return fn (...$args) => $callable(...$initialargs, ...$args);
 }
 
 /**
