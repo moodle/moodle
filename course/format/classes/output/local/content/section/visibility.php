@@ -104,7 +104,15 @@ class visibility implements named_templatable, renderable {
     private function get_option_data(string $name, string $action): array {
         $baseurl = course_get_url($this->section->course, $this->section);
         $baseurl->param('sesskey', sesskey());
-        $baseurl->param($action,  $this->section->section);
+        $baseurl->param($name,  $this->section->section);
+
+        // The section page is not yet fully reactive and it needs to use the old non-ajax links.
+        $pagesectionid = $this->format->get_sectionid();
+        if ($this->section->id == $pagesectionid) {
+            $baseurl->param('sectionid', $pagesectionid);
+            $action = '';
+        }
+
         return [
             'description' => get_string("availability_{$name}_help", 'core_courseformat'),
             'icon' => $this->get_icon($name),
