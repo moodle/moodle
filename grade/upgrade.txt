@@ -6,6 +6,14 @@ This file has been replaced by UPGRADING.md. See MDL-81125 for further informati
 This file describes API changes in /grade/* ;
 Information provided here is intended especially for developers.
 
+=== 4.5 ===
+* These files have been moved to 'lib/' to make them reusable in other components:
+  - `grade/amd/src/searchwidget/initials.js` -> `lib/amd/src/searchwidget/initials.js`
+  - `grade/report/grader/amd/src/group.js` -> `lib/amd/src/comboboxsearch/group.js`
+  - `grade/report/grader/amd/src/user.js` -> `lib/amd/src/searchwidget/user.js`
+  - `grade/report/grader/templates/action_bar.mustache` -> `lib/templates/action_bar.mustache`
+  - `grade/templates/general_action_bar.mustache` -> `lib/templates/general_action_bar.mustache`
+
 === 4.4 ===
 * The grade_structure::get_element_icon() function has been deprecated. Please use grade_helper::get_element_icon() instead.
 * The grade_structure::get_element_type_string() function has been deprecated. Please use grade_helper::get_element_type_string() instead.

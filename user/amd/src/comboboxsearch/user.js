@@ -32,6 +32,21 @@ export default class UserSearch extends search_combobox {
 
     // A map of user profile field names that is human-readable.
     profilestringmap = null;
+    // Required string allow to search user.
+    requiredString = [
+        'username',
+        'fullname',
+        'firstname',
+        'lastname',
+        'email',
+        'city',
+        'country',
+        'department',
+        'institution',
+        'idnumber',
+        'phone1',
+        'phone2',
+    ];
 
     constructor() {
         super();
@@ -277,26 +292,27 @@ export default class UserSearch extends search_combobox {
      * @returns {Promise<void>}
      */
     getStringMap() {
+        const requiredStrings = this.requiredString;
         if (!this.profilestringmap) {
-            const requiredStrings = [
-                'username',
-                'fullname',
-                'firstname',
-                'lastname',
-                'email',
-                'city',
-                'country',
-                'department',
-                'institution',
-                'idnumber',
-                'phone1',
-                'phone2',
-            ];
             this.profilestringmap = getStrings(requiredStrings.map((key) => ({key})))
                 .then((stringArray) => new Map(
                     requiredStrings.map((key, index) => ([key, stringArray[index]]))
                 ));
         }
         return this.profilestringmap;
+    }
+
+    /**
+     * In some cases, the provided 'requiredString' is not sufficient. This function will allow for
+     * adding more extra strings to enable searching across additional fields.
+     *
+     * @param {Array} extraStrings Extra string data needs to be added.
+     * @returns {void}
+     */
+    updateRequiredStrings(extraStrings = []) {
+        this.requiredString = [
+            ...this.requiredString,
+            ...extraStrings,
+        ];
     }
 }

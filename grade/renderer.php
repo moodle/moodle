@@ -125,12 +125,19 @@ class core_grades_renderer extends plugin_renderer_base {
      * @param string $slug The slug for the report that called this function.
      * @return stdClass The data to output.
      */
+    #[\core\attribute\deprecated(
+        replacement: null,
+        since: '4.5',
+        reason: 'Moved to \core\output\initials_bar\initials_selector.'
+    )]
     public function initials_selector(
         object $course,
         context $context,
         string $slug
     ): stdClass {
         global $SESSION, $COURSE;
+
+        \core\deprecation::emit_deprecation_if_present([$this, __FUNCTION__]);
         // User search.
         $searchvalue = optional_param('gpr_search', null, PARAM_NOTAGS);
         $userid = optional_param('grp_userid', null, PARAM_INT);

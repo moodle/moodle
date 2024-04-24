@@ -5,6 +5,11 @@ This file has been replaced by UPGRADING.md. See MDL-81125 for further informati
 ===
 This files describes API changes for code that uses the user API.
 
+=== 4.5 ===
+
+* core_user_renderer::partial_user_search has new optional param $prefix to adjust prefix for filter.
+* Added a new method `updateRequiredStrings` in the class UserSearch to allow updating the required strings.
+
 === 4.4 ===
 
 * The `profile_field_base` class now contains a `show_field_content` method to determine whether the field and

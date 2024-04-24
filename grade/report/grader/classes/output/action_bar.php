@@ -31,7 +31,6 @@ class action_bar extends \core_grades\output\action_bar {
 
     /** @var string $usersearch The content that the current user is looking for. */
     protected string $usersearch = '';
-
     /** @var int $userid The ID of the user that the current user is looking for. */
     protected int $userid = 0;
 
@@ -58,7 +57,7 @@ class action_bar extends \core_grades\output\action_bar {
      * @return string
      */
     public function get_template(): string {
-        return 'gradereport_grader/action_bar';
+        return 'core/action_bar';
     }
 
     /**
@@ -82,39 +81,29 @@ class action_bar extends \core_grades\output\action_bar {
         // and the view mode selector (if applicable).
         if (has_capability('moodle/grade:viewall', $this->context)) {
             $course = get_course($courseid);
-            $gradesrenderer = $PAGE->get_renderer('core_grades');
-
-            $initialscontent = $gradesrenderer->initials_selector(
-                $course,
-                $this->context,
-                '/grade/report/grader/index.php'
-            );
+            $filter = new \stdClass();
+            $filter->usersearch = $this->usersearch;
+            $filter->userid = $this->userid;
+            $params = ['id' => $course->id];
 
             $firstnameinitial = $SESSION->gradereport["filterfirstname-{$this->context->id}"] ?? '';
             $lastnameinitial  = $SESSION->gradereport["filtersurname-{$this->context->id}"] ?? '';
 
-            $initialselector = new comboboxsearch(
-                false,
-                $initialscontent->buttoncontent,
-                $initialscontent->dropdowncontent,
-                'initials-selector',
-                'initialswidget',
-                'initialsdropdown',
-                $initialscontent->buttonheader,
-                true,
-                get_string('filterbyname', 'core_grades'),
-                'nameinitials',
-                json_encode([
-                    'first' => $firstnameinitial,
-                    'last' => $lastnameinitial,
-                ])
+            $initialselector = \core\output\initials_bar::initials_selector(
+                $course,
+                $this->context,
+                '/grade/report/grader/index.php',
+                $params,
+                $filter,
             );
+
             $data['initialselector'] = $initialselector->export_for_template($output);
 
-            if ($course->groupmode) {
-                $actionbarrenderer = $PAGE->get_renderer('core_course', 'actionbar');
-                $data['groupselector'] = $actionbarrenderer->render(new \core_course\output\actionbar\group_selector($course));
-            }
+//            if ($course->groupmode) {
+//                $actionbarrenderer = $PAGE->get_renderer('core_course', 'actionbar');
+//                $data['groupselector'] = $actionbarrenderer->render(new \core_course\output\actionbar\group_selector($course));
+//            }
+            $data['groupselector'] = \core\output\groups_bar::group_selector($course, $output);
 
             $resetlink = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
             $searchinput = $OUTPUT->render_from_template('core_user/comboboxsearch/user_selector', [

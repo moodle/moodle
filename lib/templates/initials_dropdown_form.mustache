@@ -15,21 +15,23 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template core_grades/initials_dropdown_form
+    @template core/initials_dropdown_form
 
     The form component of our dropdown within the tertiary navigation.
 
     Context variables required for this template:
     * courseid - The course ID.
+    * cmid - The cm ID.
     * initialsbars - The rendered mini renderer from the user renderer.
 
     Example context (json):
     {
         "courseid": "2",
+        "cmid": "2",
         "initialsbars": "Output from renderer method"
     }
 }}
-<form class="initialsdropdownform" action="#" data-courseid="{{courseid}}">
+<form class="initialsdropdownform" action="#" data-courseid="{{courseid}}" data-cmid="{{cmid}}">
     {{{initialsbars}}}
     <div class="d-flex flex-row justify-content-end">
         <input class="btn btn-outline-secondary pull-right mx-2" data-action="cancel" type="submit" value="{{#str}}closebuttontitle{{/str}}">

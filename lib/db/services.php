@@ -1201,7 +1201,7 @@ $functions = array(
     ),
     'core_group_get_groups_for_selector' => [
         'classname' => 'core_group\external\get_groups_for_selector',
-        'description' => 'Get the group/(s) for a course',
+        'description' => 'Get the group/(s) for a course or course module',
         'type' => 'read',
         'ajax' => true,
         'services' => [MOODLE_OFFICIAL_MOBILE_SERVICE],

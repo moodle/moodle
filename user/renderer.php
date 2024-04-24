@@ -82,10 +82,12 @@ class core_user_renderer extends plugin_renderer_base {
      * @param string $firstinitial the first initial of the firstname
      * @param string $lastinitial the first initial of the lastname
      * @param bool $minirender Return a trimmed down view of the initials bar.
+     * @param string $prefix Prefix for filter letter.
      * @return string html output
      * @throws coding_exception
      */
-    public function partial_user_search(String $url, String $firstinitial, String $lastinitial, Bool $minirender = false): String {
+    public function partial_user_search(string $url, string $firstinitial, string $lastinitial,
+            bool $minirender = false, string $prefix = 'si'): string {
 
         $content = '';
 
@@ -97,8 +99,8 @@ class core_user_renderer extends plugin_renderer_base {
         }
 
         // Initials bar.
-        $prefixfirst = 'sifirst';
-        $prefixlast = 'silast';
+        $prefixfirst = $prefix . 'first';
+        $prefixlast = $prefix . 'last';
         $content .= $this->output->initials_bar(
             $firstinitial,
             'firstinitial',
