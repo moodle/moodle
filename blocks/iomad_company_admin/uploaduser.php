@@ -1053,7 +1053,7 @@ if (!empty($cancelled)) {
                     // add the user to the courses selected in the upload form.
                     $courseids = array();
                     foreach ($formdata->selectedcourses as $selectedcourse) {
-                        $courseids[] = $selectedcourse;
+                        $courseids[] = $selectedcourse->id;
                     }
                     company_user::enrol($user, $courseids, $companyid);
                 }
