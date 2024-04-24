@@ -3662,7 +3662,7 @@ abstract class enrol_plugin {
         );
 
         $a = new stdClass();
-        $a->coursename = format_string($course->fullname, true, ['context' => $context]);
+        $a->coursename = format_string($course->fullname, true, ['context' => $context, 'escape' => false]);
         $a->profileurl = (new moodle_url(
             url: '/user/view.php',
             params: [
@@ -3707,7 +3707,6 @@ abstract class enrol_plugin {
             $messagehtml = text_to_html($messagetext, null, false, true);
         }
 
-        $subject = get_string('welcometocourse', 'moodle', format_string($course->fullname, true, ['context' => $context]));
         $contact = $this->get_welcome_message_contact(
             sendoption: $sendoption,
             context: $context,
@@ -3723,7 +3722,7 @@ abstract class enrol_plugin {
         $message->name = 'enrolcoursewelcomemessage';
         $message->userfrom = $contact;
         $message->userto = $user;
-        $message->subject = $subject;
+        $message->subject = get_string('welcometocourse', 'moodle', $a->coursename);
         $message->fullmessage = $messagetext;
         $message->fullmessageformat = FORMAT_MARKDOWN;
         $message->fullmessagehtml = $messagehtml;
