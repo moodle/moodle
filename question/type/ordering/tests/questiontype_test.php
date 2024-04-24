@@ -293,7 +293,7 @@ final class questiontype_test extends \question_testcase {
         // Import a question from GIFT.
         $gift = file_get_contents(__DIR__ . '/fixtures/testimport.gift.txt');
         $format = new qformat_gift();
-        $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
+        $lines = preg_split('/[\\n\\r]/', phpunit_util::normalise_line_endings($gift));
         $imported = $format->readquestion($lines);
 
         $this->assert(new question_check_specified_fields_expectation(self::expectedimport()), $imported);
