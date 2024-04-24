@@ -432,6 +432,10 @@ class secondary extends view {
                     self::TYPE_COURSE, null, 'coursehome'), reset($nodekeys)
             );
         }
+
+        // Allow plugins to add nodes to the secondary navigation.
+        $hook = new \core\hook\navigation\secondary_extend($this);
+        \core\di::get(\core\hook\manager::class)->dispatch($hook);
     }
 
     /**
