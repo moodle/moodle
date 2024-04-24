@@ -1,0 +1,143 @@
+name: One by One Testing
+# Run all the individual unit tests one by one, with
+# fully independent PHPUnit executions. Useful to
+# detect issues with some tests that are using stuff
+# that has been made available by others, but is not
+# available when running individually.
+#
+# Note that we aren't using PHPUnit's own isolation
+# here but completely separated runs, one for each
+# test.
+#
+# The workflow will fail reporting all the tests
+# that have failed (and will pass if no failure is
+# detected, of course).
+#
+# It's only executed via workflow dispatch (automated
+# or manual), not by push/tag. And acceptd configuration
+# of phpunit, specially useful to run it with PHPUnit's
+# own isolation or any other option.
+
+on:
+  workflow_dispatch:
+    inputs:
+      phpunit_extra_options:
+        description: Additional options to apply to PHPUnit
+        required: false
+        default: ''
+
+env:
+  chunks: 7
+
+jobs:
+  collect:
+    name: Collect individual unit tests
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{steps.individual-tests.outputs.matrix }}
+
+    steps:
+      - name: Checking out code
+        uses: actions/checkout@v4
+
+      - name: Looking for all individual tests
+        id: individual-tests
+        run: |
+          count=0  # Number of individual tests found.
+          while read -r testfile; do # For each test file.
+              while read -r testname; do # For each unit test in a file.
+                  count=$((count + 1))
+                  # Sent it to the correct chunk file.
+                  chunk=$(((($count % $chunks)) + 1))
+                  echo "$testname $testfile" >> ./chunk_$chunk.txt
+              done < <(grep "function test_" "${testfile}" | sed -r "s/^.*function (test_[a-zA-Z0-9_]+).*/\1/")
+          done < <(find . -name "*_test.php")
+          # Generate the matrix to run tests.
+          echo "matrix=$(ls -1 chunk_*.txt | jq -R -s -c 'split("\n")[:-1]')" >> $GITHUB_OUTPUT
+          echo "$count individual tests collected in $chunks files"
+
+      - name: Upload individual tests files
+        uses: actions/upload-artifact@v4
+        with:
+          name: individual_tests
+          path: chunk_*.txt
+          retention-days: 1
+
+  test:
+    name: Run tests
+    needs: collect
+    runs-on: ubuntu-latest
+    services:
+      exttests:
+        image: moodlehq/moodle-exttests
+        ports:
+          - 8080:80
+      redis:
+        image: redis
+        ports:
+          - 6379:6379
+    strategy:
+      fail-fast: false
+      matrix:
+        file: ${{ fromJson(needs.collect.outputs.matrix) }}
+
+    steps:
+      - name: Setting up DB pgsql
+        uses: m4nu56/postgresql-action@v1
+        with:
+          postgresql version: 13
+          postgresql db: test
+          postgresql user: test
+          postgresql password: test
+
+      - name: Setting up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.3
+          ini-values: max_input_vars=5000
+          coverage: none
+
+      - name: Checking out code
+        uses: actions/checkout@v4
+
+      - name: Download individual test files
+        uses: actions/download-artifact@v4
+        with:
+          name: individual_tests # Make all the chunk files available for the next steps.
+
+      - name: Setting up PHPUnit
+        env:
+          dbtype: pgsql
+        run: |
+          echo "pathtophp=$(which php)" >> $GITHUB_ENV
+          cp .github/workflows/config-template.php config.php
+          mkdir ../moodledata
+          sudo locale-gen en_AU.UTF-8
+          php admin/tool/phpunit/cli/init.php --no-composer-self-update
+
+      - name: Run PHPUnit test (one by one)
+        env:
+          dbtype: pgsql
+        run: |
+          status=0
+          count=0
+          while read -r line; do # For each line in the chunk file
+              count=$((count + 1))
+              filter="${line% *}"
+              file="${line#* }"
+              # Run the individual unit test and report problems if needed to.
+              if ! php vendor/bin/phpunit \
+                      --fail-on-empty-test-suite \
+                      --fail-on-warning \
+                      --fail-on-risky \
+                      --filter "$filter" ${{ inputs.phpunit_extra_options }} \
+                      "$file" >/dev/null 2>&1; then
+                  if [ $status -eq 0 ]; then
+                      echo "Problems found, list of PHPUnit commands failing:"
+                  fi
+                  echo "vendor/bin/phpunit --filter '${filter}' ${{ inputs.phpunit_extra_options }} $file"
+                  status=$((status + 1))
+              fi
+          done < ${{ matrix.file }}
+          echo "Finished: $count individual tests executed, $status tests failed"
+          exit $status
