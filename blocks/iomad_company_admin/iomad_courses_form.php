@@ -290,9 +290,14 @@ $wheresql = "$companysql $searchsql";
 $sqlparams = $params;
 
 // Set up the headers for the table.
-$tableheaders = [
-    get_string('company', 'block_iomad_company_admin'),
-    get_string('course'),
+$tableheaders = [];
+$tablecolumns = [];
+if (iomad::has_capability('block/iomad_company_admin:company_view_all', $companycontext)) {
+    $tableheaders[] = get_string('company', 'block_iomad_company_admin');
+    $tablecolumns[] = 'company';
+}
+$tableheaders = $tableheaders + 
+   [get_string('course'),
     get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
     get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
     get_string('expireafter', 'block_iomad_company_admin') . $OUTPUT->help_icon('expireafter', 'block_iomad_company_admin'),
@@ -301,8 +306,8 @@ $tableheaders = [
     get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
     get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
     get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin')];
-$tablecolumns = ['company',
-                 'coursename',
+$tablecolumns =  $tablecolumns +
+                ['coursename',
                  'licensed',
                  'validlength',
                  'expireafter',
