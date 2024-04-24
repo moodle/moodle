@@ -16,6 +16,7 @@ Feature: Basic use of the Grades report
       | student1 | S1        | Student1 | student1@example.com | S1000    | Apple               |
       | student2 | S2        | Student2 | student2@example.com | S2000    | Banana              |
       | student3 | S3        | Student3 | student3@example.com | S3000    | Pear                |
+      | student4 | Four      | Student  | student4@example.com | S4000    | Melon               |
     And the following "courses" exist:
       | fullname | shortname | category |
       | Course 1 | C1        | 0        |
@@ -25,6 +26,7 @@ Feature: Basic use of the Grades report
       | student1 | C1     | student        |
       | student2 | C1     | student        |
       | student3 | C1     | student        |
+      | student4 | C1     | student        |
     And the following "groups" exist:
       | course | idnumber | name    |
       | C1     | G1       | <span class="multilang" lang="en">English</span><span class="multilang" lang="es">Spanish</span> |
@@ -33,6 +35,7 @@ Feature: Basic use of the Grades report
       | group | user     |
       | G1    | student1 |
       | G1    | student2 |
+      | G2    | student4 |
       | G2    | student3 |
     And the following "question categories" exist:
       | contextlevel | reference | name           |
@@ -58,13 +61,17 @@ Feature: Basic use of the Grades report
       | slot | response |
       |   2  | True     |
       |   3  | True     |
+    And user "student4" has attempted "Quiz 1" with responses:
+      | slot | response |
+      | 2    | False    |
+      | 3    | False    |
 
   @javascript
   Scenario: Using the Grades report
     # Basic check of the Grades report
     When I am on the "Quiz 1" "quiz activity" page logged in as teacher1
     And I navigate to "Results" in current page administration
-    Then I should see "Attempts: 2"
+    Then I should see "Attempts: 3"
 
     # Verify that the right columns are visible
     And I should see "Q. 1"
@@ -100,7 +107,11 @@ Feature: Basic use of the Grades report
     And I should see "100.00" in the "S2 Student2" "table_row"
 
     # Verify groups are displayed correctly.
-    And I set the field "Visible groups" to "English"
+    And I click on "All participants" in the "group" search widget
+    And I wait until "English" "option_role" exists
+    And I click on "English" in the "group" search widget
+    And "Full regrade for group 'English'" "button" should exist
+    And "Dry run a full regrade for group 'English'" "button" should exist
     And I should see "Number of students in group 'English' achieving grade ranges"
 
   @javascript
@@ -111,3 +122,73 @@ Feature: Basic use of the Grades report
     And I navigate to "Results" in current page administration
     Then I should see "Apple" in the "S1 Student1" "table_row"
     And I should see "Banana" in the "S2 Student2" "table_row"
+
+  @javascript
+  Scenario: A teacher can search the user attempt by user profile field in the grades report.
+    Given the following config values are set as admin:
+      | showuseridentity | email,profile_field_fruit |
+    And I am on the "Quiz 1" "quiz activity" page logged in as teacher1
+    And I navigate to "Results" in current page administration
+    And I set the field "Search users" to "Apple"
+    And I wait until "S2 Student2" "option_role" does not exist
+    And I click on "S1 Student1" "list_item"
+    And I wait until the page is ready
+    Then the following should exist in the "attempts" table:
+      | First name / Last name |
+      | S1 Student1            |
+    And the following should not exist in the "attempts" table:
+      | First name / Last name |
+      | S2 Student2            |
+      | Four Student           |
+
+  @javascript
+  Scenario: A teacher can filter the user attempt by name in the grades report.
+    When I am on the "Quiz 1" "quiz activity" page logged in as teacher1
+    And I navigate to "Results" in current page administration
+    And I click on "Filter by name" "combobox"
+    # To prevent the help icon from overlapping the apply button.
+    And I change viewport size to "1200x1000"
+    And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.firstinitial" "css_element"
+    And ".initialbarall.page-item.active" "css_element" should exist in the ".initialbar.lastinitial" "css_element"
+    And I select "Z" in the "Last name" "core_grades > initials bar"
+    And I press "Apply"
+    And I should see "Nothing to display"
+    And I should not see "S1 Student1"
+    And I should not see "S2 Student2"
+    And I click on "Last (Z)" "combobox"
+    And I select "F" in the "First name" "core_grades > initials bar"
+    And I select "S" in the "Last name" "core_grades > initials bar"
+    And I press "Apply"
+    Then I should not see "Nothing to display"
+    And the following should exist in the "attempts" table:
+      | First name / Last name |
+      | Four Student           |
+    And the following should not exist in the "attempts" table:
+      | First name / Last name |
+      | S1 Student1            |
+      | S2 Student2            |
+
+  @javascript
+  Scenario: A teacher can filter the user attempt by group in the grades report.
+    When I am on the "Quiz 1" "quiz activity" page logged in as teacher1
+    And I navigate to "Results" in current page administration
+    And I click on "All participants" in the "group" search widget
+    And I wait until "Group 2" "option_role" exists
+    And I click on "Group 2" in the "group" search widget
+    And the following should exist in the "attempts" table:
+      | First name / Last name |
+      | Four Student           |
+    And the following should not exist in the "attempts" table:
+      | First name / Last name |
+      | S1 Student1            |
+      | S2 Student2            |
+    And I click on "Group 2" in the "group" search widget
+    And I wait until "English" "option_role" exists
+    And I click on "English" in the "group" search widget
+    Then the following should not exist in the "attempts" table:
+      | First name / Last name |
+      | Four Student           |
+    And the following should exist in the "attempts" table:
+      | First name / Last name |
+      | S1 Student1            |
+      | S2 Student2            |

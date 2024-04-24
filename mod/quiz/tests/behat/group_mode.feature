@@ -46,9 +46,9 @@ Feature: Viewing results by group
       | contextlevel | reference | name           |
       | Course       | C1        | Test questions |
     And the following "questions" exist:
-      | questioncategory | qtype       | name  | questiontext    |
-      | Test questions   | truefalse   | TF1   | First question  |
-      | Test questions   | truefalse   | TF2   | Second question |
+      | questioncategory | qtype     | name | questiontext    |
+      | Test questions   | truefalse | TF1  | First question  |
+      | Test questions   | truefalse | TF2  | Second question |
     And quiz "Separate quiz" contains the following questions:
       | question | page |
       | TF1      | 1    |
@@ -56,21 +56,22 @@ Feature: Viewing results by group
       | question | page |
       | TF1      | 1    |
 
+  @javascript
   Scenario Outline: Editing teachers should see all groups on the Results page. Non-editing teachers should see just their own
-    groups in Separate groups mode, all groups in Visible groups mode.
+  groups in Separate groups mode, all groups in Visible groups mode.
     Given I am on the "<quiz>" "quiz activity" page logged in as "<user>"
     And I follow "Results"
-    Then I <all> "All participants"
-    And I <G1> "Group 1"
-    And I <G2> "Group 2"
+    Then I <all> "All participants" in the ".groupsearchwidget" "css_element"
+    And I confirm "Group 1" in "group" search within the gradebook widget <G1>
+    And I confirm "Group 2" in "group" search within the gradebook widget <G2>
     And I <error> "Sorry, but you need to be part of a group to see this page."
     And I should not see "Group 3"
 
     Examples:
       | quiz  | user       | all            | G1             | G2             | error          |
-      | quiz1 | teacher1   | should see     | should see     | should see     | should not see |
-      | quiz1 | noneditor1 | should not see | should see     | should not see | should not see |
-      | quiz1 | noneditor2 | should see     | should not see | should not see | should see     |
-      | quiz2 | teacher1   | should see     | should see     | should see     | should not see |
-      | quiz2 | noneditor1 | should see     | should see     | should see     | should not see |
-      | quiz2 | noneditor2 | should see     | should see     | should see     | should not see |
+      | quiz1 | teacher1   | should see     | exists         | exists         | should not see |
+      | quiz1 | noneditor1 | should not see | exists         | does not exist | should not see |
+      | quiz1 | noneditor2 | should see     | does not exist | does not exist | should see     |
+      | quiz2 | teacher1   | should see     | exists         | exists         | should not see |
+      | quiz2 | noneditor1 | should not see | exists         | exists         | should not see |
+      | quiz2 | noneditor2 | should not see | exists         | exists         | should not see |

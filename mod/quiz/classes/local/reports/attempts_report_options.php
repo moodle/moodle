@@ -86,6 +86,12 @@ class attempts_report_options {
     /** @var bool whether the report table should have a column of checkboxes. */
     public $checkboxcolumn = false;
 
+    /** @var string user search data used to filter user. */
+    public $usersearch = '';
+
+    /** @var int userid data used to filter user. */
+    public $userid = -1;
+
     /**
      * Constructor.
      *
@@ -113,6 +119,7 @@ class attempts_report_options {
             'mode'       => $this->mode,
             'attempts'   => $this->attempts,
             'onlygraded' => $this->onlygraded,
+            'gpr_search' => $this->usersearch,
         ];
 
         if ($this->states) {
@@ -199,6 +206,8 @@ class attempts_report_options {
         $this->group      = groups_get_activity_group($this->cm, true);
         $this->onlygraded = optional_param('onlygraded', $this->onlygraded, PARAM_BOOL);
         $this->pagesize   = optional_param('pagesize', $this->pagesize, PARAM_INT);
+        $this->usersearch = optional_param('gpr_search', '', PARAM_NOTAGS);
+        $this->userid     = optional_param('gpr_userid', -1, PARAM_INT);
 
         $states = optional_param('states', '', PARAM_ALPHAEXT);
         if (!empty($states)) {

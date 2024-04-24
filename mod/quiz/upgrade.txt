@@ -5,6 +5,16 @@ This file has been replaced by UPGRADING.md. See MDL-81125 for further informati
 ===
 This file describes API changes in the quiz code.
 
+=== 4.5 ===
+* attempts_report::print_standard_header_and_messages has extra params $table, to support to new quiz filter.
+* report_base::print_action_bar has created to allow render new quiz filter.
+* Added a new get_users_in_report() to allow to search user in report.
+* Added a new file `general_action_bar.php` in mod/quiz/classes/output/ to take responsibility for
+  rendering the general navigation select menu in the quiz report pages.
+* Added a new file `quiz_action_bar.php` in mod/quiz/classes/output/ to take responsibility for rendering quiz action bar.
+* Added a new method render_action_bar() in mod/quiz/classes/output/renderer.php to renders that action bar for
+  quiz report pages.
+
 === 4.4 ===
 * A quiz_structure_modified callback has been added for quiz_ plugins, called from
   grade_calculator::recompute_quiz_sumgrades(). Plugins can implement this by creating a `quiz_structure_modified`

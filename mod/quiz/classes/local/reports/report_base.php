@@ -87,10 +87,42 @@ abstract class report_base {
         $groupmode = groups_get_activity_groupmode($cm, $course);
         $currentgroup = groups_get_activity_group($cm, true);
 
-        if ($groupmode == SEPARATEGROUPS && !$currentgroup && !has_capability('moodle/site:accessallgroups', $context)) {
+        if ($groupmode == SEPARATEGROUPS && !$currentgroup &&
+                !has_capability('moodle/site:accessallgroups', $context)) {
             $currentgroup = self::NO_GROUPS_ALLOWED;
         }
 
         return $currentgroup;
+    }
+
+    /**
+     * Print action bar filter.
+     *
+     * @param string $reportmode The quiz report type.
+     * @param attempts_report_options $options The current report settings.
+     * @param mixed $table The table class for each report type.
+     *      With each type of report, the table's type varies, so 'mixed' is selected.
+     * @param \cm_info $cm Course-module object.
+     */
+    public function print_action_bar(string $reportmode, attempts_report_options $options, mixed $table,
+            \cm_info $cm = null): void {
+        global $PAGE;
+        $renderer = $PAGE->get_renderer('mod_quiz');
+        $params = new stdClass();
+        $params->path = '/mod/quiz/report.php';
+        $params->params = $options->get_url()->params();
+        $params->reportmode = $reportmode;
+        $params->cmid = $cm->id;
+        $params->optionclass = get_class($options);
+        $params->service = 'mod_quiz_get_users_in_report';
+        $params->tableclass = get_class($table);
+        // Conditionally add the group JS if we have groups enabled.
+        if (groups_get_activity_groupmode($cm)) {
+            $PAGE->requires->js_call_amd('core/comboboxsearch/group', 'init', [$params]);
+        }
+        $PAGE->requires->js_call_amd('core/searchwidget/user', 'init', [$params]);
+        $actionbar = new \mod_quiz\output\quiz_action_bar(\context_module::instance($cm->id),
+            $options, $reportmode, $table);
+        echo $renderer->render_action_bar($actionbar);
     }
 }

@@ -117,7 +117,7 @@ class quiz_responses_report extends attempts_report {
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
             $this->print_standard_header_and_messages($cm, $course, $quiz,
-                    $options, $currentgroup, $hasquestions, $hasstudents);
+                    $options, $currentgroup, $hasquestions, $hasstudents, $table);
 
             // Print the display options.
             $this->form->display();
@@ -186,7 +186,7 @@ class quiz_responses_report extends attempts_report {
 
             $table->collapsible(true);
 
-            $table->out($options->pagesize, true);
+            $table->out($options->pagesize, false);
         }
         return true;
     }

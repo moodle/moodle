@@ -164,16 +164,20 @@ abstract class attempts_report extends report_base {
      * @param int $currentgroup the current group.
      * @param bool $hasquestions whether there are any questions in the quiz.
      * @param bool $hasstudents whether there are any relevant students.
+     * @param null|mixed $table $table The table class for each report type.
+     *       With each type of report, the table's type varies, so 'mixed' is selected.
      */
     protected function print_standard_header_and_messages($cm, $course, $quiz,
-            $options, $currentgroup, $hasquestions, $hasstudents) {
-        global $OUTPUT;
+            $options, $currentgroup, $hasquestions, $hasstudents, $table = null) {
+        global $OUTPUT, $PAGE;
 
-        $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
-
-        if (groups_get_activity_groupmode($cm)) {
-            // Groups are being used, so output the group selector if we are not downloading.
-            groups_print_activity_menu($cm, $options->get_url());
+        if (is_null($table)) {
+            $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
+        } else {
+            $PAGE->set_navigation_overflow_state(false);
+            $this->print_header_and_tabs($cm, $course, $quiz, $this->mode);
+            $PAGE->set_navigation_overflow_state(true);
+            $this->print_action_bar($this->mode, $options, $table, $cm);
         }
 
         // Print information on the number of existing attempts.
@@ -331,7 +335,6 @@ abstract class attempts_report extends report_base {
         $table->define_columns($columns);
         $table->define_headers($headers);
         $table->sortable(true, 'uniqueid');
-
         $table->define_baseurl($options->get_url());
 
         $this->configure_user_columns($table);

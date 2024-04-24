@@ -104,7 +104,7 @@ class quiz_overview_report extends attempts_report {
         if (!$table->is_downloading()) {
             // Only print headers if not asked to download data.
             $this->print_standard_header_and_messages($cm, $course, $quiz,
-                    $options, $currentgroup, $hasquestions, $hasstudents);
+                    $options, $currentgroup, $hasquestions, $hasstudents, $table);
 
             // Print the display options.
             $this->form->display();
@@ -163,10 +163,10 @@ class quiz_overview_report extends attempts_report {
             $this->set_up_table_columns($table, $columns, $headers, $this->get_base_url(), $options, false);
             $table->set_attribute('class', 'generaltable generalbox grades');
 
-            $table->out($options->pagesize, true);
+            $table->out($options->pagesize, false);
 
             if ($canregrade && !$table->is_downloading()) {
-                $this->display_commit_regrade_if_required($quiz, $groupstudentsjoins, $options);
+            $this->display_commit_regrade_if_required($quiz, $groupstudentsjoins, $options);
             }
         }
 

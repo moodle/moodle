@@ -530,7 +530,7 @@ abstract class attempts_report_table extends \table_sql {
         }
 
         $userfieldsapi = \core_user\fields::for_identity($this->context)->with_name()
-                ->excluding('id', 'idnumber', 'picture', 'imagealt', 'institution', 'department', 'email');
+                ->excluding('id', 'picture', 'imagealt', 'institution', 'department', 'email');
         $userfields = $userfieldsapi->get_sql('u', true, '', '', false);
 
         $fields .= '
@@ -589,6 +589,32 @@ abstract class attempts_report_table extends \table_sql {
                 $where = "(quiza.preview = 0 OR quiza.preview IS NULL) AND " . $allowedstudentsjoins->wheres;
                 $params = array_merge($params, $allowedstudentsjoins->params);
                 break;
+        }
+
+        // When a user wants to view a particular user rather than a set of users.
+        // By omission when selecting one user, also allow passing the search value around.
+        if ($this->options->userid !== -1) {
+            $where .= " AND u.id = :uid";
+            $params = array_merge($params, $allowedstudentsjoins->params);
+            $params['uid'] = $this->options->userid;
+        }
+
+        if ($this->options->usersearch !== '' && $this->options->userid === -1) {
+            ['mappings' => $mappings] = (array) $userfields;
+            // These fields are not displayed in the table, so users are not allowed to search by them:
+            // firstnamephonetic, lastnamephonetic, middlename, alternatename.
+            $excludingfields = ['u.firstnamephonetic', 'u.lastnamephonetic', 'u.middlename',
+                'u.alternatename'];
+            $extrafields = array_filter(array_values($mappings), function($field) use ($excludingfields) {
+                return !in_array($field, $excludingfields);
+            });
+            // Allow to search by email.
+            $extrafields[] = 'u.email';
+            [$keywordswhere, $keywordsparams] = users_search_sql($this->options->usersearch,
+                'u', USER_SEARCH_CONTAINS, $extrafields);
+
+            $where .= " AND $keywordswhere";
+            $params = array_merge($params, $keywordsparams);
         }
 
         if ($this->options->states) {

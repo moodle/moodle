@@ -183,6 +183,17 @@
     border-top: 3px solid #800;
 }
 
+.path-mod-quiz .initialsdropdown {
+    width: 460px;
+}
+
+.path-mod-quiz .usersearchdropdown {
+    max-height: 400px;
+    width: 300px;
+    pointer-events: all;
+    padding: 0;
+}
+
 .path-mod-quiz .othernav {
     clear: both;
     margin: 0.5em 0;

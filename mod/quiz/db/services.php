@@ -303,4 +303,13 @@ $functions = [
         'capabilities' => 'mod/quiz:manage',
         'ajax' => true,
     ],
+
+    'mod_quiz_get_users_in_report' => [
+        'classname' => 'mod_quiz\\external\\get_users_in_report',
+        'methodname' => 'execute',
+        'description' => 'Returns the dataset of users within the quiz report',
+        'type' => 'read',
+        'ajax' => true,
+        'capabilities' => 'mod/quiz:reviewmyattempts',
+    ],
 ];
