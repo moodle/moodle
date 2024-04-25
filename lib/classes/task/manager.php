@@ -879,8 +879,11 @@ class manager {
 
             if ($lock = $cronlockfactory->get_lock('adhoc_' . $record->id, 0)) {
 
-                // Safety check, see if the task has been already processed by another cron run.
-                $record = $DB->get_record('task_adhoc', array('id' => $record->id));
+                // Safety check, see if the task has already been processed by another cron run (or attempted and failed).
+                // If another cron run attempted to process the task and failed, nextruntime will be in the future.
+                $record = $DB->get_record_select('task_adhoc',
+                    "id = :id AND nextruntime < :timestart",
+                    ['id' => $record->id, 'timestart' => $timestart]);
                 if (!$record) {
                     $lock->release();
                     unset(self::$miniqueue[$taskid]);
