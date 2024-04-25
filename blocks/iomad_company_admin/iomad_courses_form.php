@@ -296,7 +296,7 @@ if (iomad::has_capability('block/iomad_company_admin:company_view_all', $company
     $tableheaders[] = get_string('company', 'block_iomad_company_admin');
     $tablecolumns[] = 'company';
 }
-$tableheaders = $tableheaders + 
+$tableheaders = array_merge($tableheaders,
    [get_string('course'),
     get_string('licensed', 'block_iomad_company_admin') . $OUTPUT->help_icon('licensed', 'block_iomad_company_admin'),
     get_string('validfor', 'block_iomad_company_admin') . $OUTPUT->help_icon('validfor', 'block_iomad_company_admin'),
@@ -305,8 +305,8 @@ $tableheaders = $tableheaders +
     get_string('warnnotstarted', 'block_iomad_company_admin') . $OUTPUT->help_icon('warnnotstarted', 'block_iomad_company_admin'),
     get_string('warncompletion', 'block_iomad_company_admin') . $OUTPUT->help_icon('warncompletion', 'block_iomad_company_admin'),
     get_string('notifyperiod', 'block_iomad_company_admin') . $OUTPUT->help_icon('notifyperiod', 'block_iomad_company_admin'),
-    get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin')];
-$tablecolumns =  $tablecolumns +
+    get_string('hasgrade', 'block_iomad_company_admin') . $OUTPUT->help_icon('hasgrade', 'block_iomad_company_admin')]);
+$tablecolumns = array_merge($tablecolumns,
                 ['coursename',
                  'licensed',
                  'validlength',
@@ -315,7 +315,7 @@ $tablecolumns =  $tablecolumns +
                  'warnnotstarted',
                  'warncompletion',
                  'notifyperiod',
-                 'hasgrade'];
+                 'hasgrade']);
 if (!empty($companyid) && $companyid != "-1") {
     $tableheaders[] = get_string('autocourses', 'block_iomad_company_admin');
     $tablecolumns[] = 'autoenrol';
