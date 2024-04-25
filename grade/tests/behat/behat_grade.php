@@ -235,39 +235,11 @@ class behat_grade extends behat_base {
     }
 
     /**
-     * Select the tab in the gradebook. We must be on one of the gradebook pages already.
-     *
      * @deprecated since 4.0 - use behat_forms::i_set_the_field_to() instead.
-     * @param string $gradepath examples: "View > User report", "Letters > View", "Scales"
      */
-    protected function select_in_gradebook_tabs($gradepath) {
-        debugging('The function select_in_gradebook_tabs() is deprecated, please use ' .
-            'behat_forms::i_set_the_field_to() instead.', DEBUG_DEVELOPER);
-
-        $gradepath = preg_split('/\s*>\s*/', trim($gradepath));
-        if (count($gradepath) > 2) {
-            throw new coding_exception('Grade path is too long (must have no more than two items separated with ">")');
-        }
-
-        $xpath = '//div[contains(@class,\'grade-navigation\')]';
-
-        // If the first row of the grade-navigation tabs does not have $gradepath[0] as active tab, click on it.
-        $link = '\'' . $this->escape($gradepath[0]) . '\'';
-        $xpathrow1 = $xpath . '//ul[1]//*[contains(@class,\'active\') and contains(normalize-space(.), ' . $link . ')]';
-        if (!$this->getSession()->getPage()->findAll('xpath', $xpathrow1)) {
-            $this->find('xpath', $xpath . '//ul[1]/li/a[text()=' . $link . ']')->click();
-            $this->wait_for_pending_js();
-        }
-
-        if (isset($gradepath[1])) {
-            // If the second row of the grade-navigation tabs does not have $gradepath[1] as active tab, click on it.
-            $link = '\'' . $this->escape($gradepath[1]) . '\'';
-            $xpathrow2 = $xpath . '//ul[2]//*[contains(@class,\'active\') and contains(normalize-space(.), ' . $link . ')]';
-            if (!$this->getSession()->getPage()->findAll('xpath', $xpathrow2)) {
-                $this->find('xpath', $xpath . '//ul[2]/li/a[text()=' . $link . ']')->click();
-                $this->wait_for_pending_js();
-            }
-        }
+    #[\core\attribute\deprecated('behat_forms::i_set_the_field_to', since: '4.0', final: true)]
+    protected function select_in_gradebook_tabs() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
@@ -326,58 +298,11 @@ class behat_grade extends behat_base {
     }
 
     /**
-     * Select a given option from a navigation URL selector in the gradebook. We must be on one of the gradebook pages
-     * already.
-     *
      * @deprecated since 4.1 - use behat_forms::i_set_the_field_to() instead.
-     * @param string $path The string path that is used to identify an item within the navigation selector. If the path
-     *                     has two items (ex. "More > Grade letters"), the first item ("More") will be used to identify
-     *                     an option group in the navigation selector, while the second ("Grade letters") will be used to
-     *                     identify an option within that option group. Otherwise, a single item in a path (ex. "Scales")
-     *                     will be used to identify an option in the navigation selector regardless of the option group.
-     * @param string $formid The ID of the form element which contains the navigation URL selector element.
      */
-    protected function select_in_gradebook_navigation_selector(string $path, string $formid) {
-        debugging('The function select_in_gradebook_navigation_selector() is deprecated, please use ' .
-            'behat_forms::i_set_the_field_to() instead.', DEBUG_DEVELOPER);
-
-        // Split the path string by ">".
-        $path = preg_split('/\s*>\s*/', trim($path));
-
-        // Make sure that the path does not have more than two items separated with ">".
-        if (count($path) > 2) {
-            throw new coding_exception('The path is too long (must have no more than two items separated with ">")');
-        }
-
-        // Get the select element.
-        $selectxpath = "//form[contains(@id,'{$formid}')]//select";
-        $select = $this->find('xpath', $selectxpath);
-
-        // Define the xpath to the option element depending on the provided path.
-        // If two items are provided in the path, the first item will be considered as an identifier of an existing
-        // option group in the select select element, while the second item will identify an existing option within
-        // that option group.
-        // If one item is provided in the path, this item will identify any existing option in the select element
-        // regardless of the option group. Also, this is useful when option elements are not a part of an option group
-        // which is possible.
-        if (count($path) === 2) {
-            $optionxpath = $selectxpath . '/optgroup[@label="' . $this->escape($path[0]) . '"]' .
-                '/option[contains(.,"' . $this->escape($path[1]) . '")]';
-        } else {
-            $optionxpath = $selectxpath . '//option[contains(.,"' . $this->escape($path[0]) . '")]';
-        }
-
-        // Get the option element that we are looking to select.
-        $option = $this->find('xpath', $optionxpath);
-
-        // Select the given option in the select element.
-        $field = behat_field_manager::get_field_instance('select', $select, $this->getSession());
-        $field->set_value($this->escape($option->getValue()));
-
-        if (!$this->running_javascript()) {
-            $this->execute('behat_general::i_click_on_in_the', [get_string('go'), 'button',
-                "#{$formid}", 'css_element']);
-        }
+    #[\core\attribute\deprecated('behat_forms::i_set_the_field_to', since: '4.1', final: true)]
+    protected function select_in_gradebook_navigation_selector() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
