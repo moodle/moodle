@@ -1030,9 +1030,8 @@ class question_usage_by_activity {
         // Update user information for steps.
         foreach ($this->questionattempts as $qa) {
             foreach ($qa->get_full_step_iterator() as $step) {
-                $user = $users[$step->get_user_id()];
-                if (isset($user)) {
-                    $step->add_full_user_object($user);
+                if (isset($users[$step->get_user_id()])) {
+                    $step->add_full_user_object($users[$step->get_user_id()]);
                 }
             }
         }
