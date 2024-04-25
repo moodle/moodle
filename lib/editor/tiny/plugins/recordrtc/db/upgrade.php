@@ -15,15 +15,27 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Tiny media plugin version details.
+ * Tiny text editor recordrtc plugin upgrade script.
  *
  * @package    tiny_recordrtc
- * @copyright  2022 Stevani Andolo <stevani@hotmail.com.au>
+ * @copyright  2024 The Open University
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
+/**
+ * Run all Tiny recordrtc upgrade steps between the current DB version and the current version on disk.
+ * @param int $oldversion The old version of atto equation in the DB.
+ * @return bool
+ */
+function xmldb_tiny_recordrtc_upgrade($oldversion) {
+    if ($oldversion < 2024042400) {
+        $allowedtypes = get_config('tiny_recordrtc', 'allowedtypes');
+        if ($allowedtypes === 'both') {
+            set_config('allowedtypes', 'audio,video', 'tiny_recordrtc');
+        }
 
-$plugin->version   = 2024042400;
-$plugin->requires  = 2024041600;
-$plugin->component = 'tiny_recordrtc';
+        upgrade_plugin_savepoint(true, 2024042400, 'tiny', 'recordrtc');
+    }
+
+    return true;
+}
