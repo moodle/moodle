@@ -89,7 +89,7 @@ Feature: Navigate and use preferences page
     And I press "Add a new rule"
     And I set the following fields to these values:
       | Rule name       | Testing1            |
-      | Area to monitor | Subsystem (core)    |
+      | Area to monitor | Core                |
       | Event           | Allow role override |
     And I press "Save changes"
     When I follow "Preferences" in the user menu
