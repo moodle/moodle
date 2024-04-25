@@ -385,7 +385,7 @@ class qtype_ordering_question extends question_graded_automatically {
                 $answerid = reset($args); // Value of "itemid" is answer id.
                 return array_key_exists($answerid, $this->answers);
             }
-            if (in_array($filearea, $this->qtype->feedbackfields)) {
+            if (in_array($filearea, ['correctfeedback', 'partiallycorrectfeedback', 'incorrectfeedback'])) {
                 return $this->check_combined_feedback_file_access($qa, $options, $filearea, $args);
             }
             if ($filearea == 'hint') {
