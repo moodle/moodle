@@ -126,7 +126,12 @@ class grade_grade_test extends \grade_base_testcase {
         $this->assertEquals(40, \grade_grade::standardise_score(50, 30, 80, 0, 100));
     }
 
-    public function test_grade_grade_set_locked() {
+    /**
+     * Tests grade_grade::set_locked()
+     *
+     * @covers \grade_grade::set_locked
+     */
+    public function test_grade_grade_set_locked(): void {
         // Skip this test because set_locked() arguments have been modified, rendering these tests
         // useless until they are re-written. Note this comes from MDL-32323 (2012!).
         $this->markTestSkipped('Useless set_locked() tests until they are re-written');
