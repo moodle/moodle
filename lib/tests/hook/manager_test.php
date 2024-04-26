@@ -152,6 +152,9 @@ class manager_test extends \advanced_testcase {
      * @covers ::dispatch
      */
     public function test_dispatch_with_invalid(): void {
+        require_once(__DIR__ . '/../fixtures/hook/hook.php');
+        require_once(__DIR__ . '/../fixtures/hook/callbacks.php');
+
         // Missing callbacks is ignored.
         $componentfiles = [
             'test_plugin1' => __DIR__ . '/../fixtures/hook/hooks1_missing.php',
