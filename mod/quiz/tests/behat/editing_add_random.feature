@@ -53,19 +53,20 @@ Feature: Adding random questions to a quiz based on category and tags
     Given I am on the "Quiz 1" "mod_quiz > Edit" page logged in as "teacher1"
     When I open the "last" add to quiz menu
     And I follow "a random question"
-    And I apply question bank filter "Category" with value "Questions Category 1"
     And I apply question bank filter "Tag" with value "foo"
-    And I click on "Apply filters" "button"
     And I wait until the page is ready
     And I should see "question 1 name"
-    And I should not see "question 3 name"
+    And I should see "\"listen\" & \"answer\""
     And I should not see "question 2 name"
+    And I should not see "question 3 name"
     And I should not see "question 4 name"
+    # Ensure tagged questions inside subcategories are also matched.
     And I set the field "Also show questions from subcategories" to "1"
     And I click on "Apply filters" "button"
     And I wait until the page is ready
     And I should see "question 1 name"
     And I should see "question 3 name"
+    And I should see "\"listen\" & \"answer\""
     And I should not see "question 2 name"
     And I should not see "question 4 name"
 
