@@ -223,43 +223,50 @@ STRING;
         ];
     }
 
-    // Uncomment following tests to see logging of unexpected changes in global state and database.
-    /*
-        public function test_db_modification() {
-            global $DB;
-            $DB->set_field('user', 'confirmed', 1, array('id'=>-1));
-        }
+    // The following tests are only useful when modifying the reset code and need to check tha
+    // changes in global state are being properly detected. Hence, they are skipped by default.
+    // To run them, remove the markTestSkipped() call when working in that area.
 
-        public function test_cfg_modification() {
-            global $CFG;
-            $CFG->xx = 'yy';
-            unset($CFG->admin);
-            $CFG->rolesactive = 0;
-        }
+    public function test_db_modification() {
+        global $DB;
+        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
+        $DB->set_field('user', 'confirmed', 1, ['id' => -1]);
+    }
 
-        public function test_user_modification() {
-            global $USER;
-            $USER->id = 10;
-        }
+    public function test_cfg_modification() {
+        global $CFG;
+        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
+        $CFG->xx = 'yy';
+        unset($CFG->admin);
+        $CFG->rolesactive = 0;
+    }
 
-        public function test_course_modification() {
-            global $COURSE;
-            $COURSE->id = 10;
-        }
+    public function test_user_modification() {
+        global $USER;
+        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
+        $USER->id = 10;
+    }
 
-        public function test_all_modifications() {
-            global $DB, $CFG, $USER, $COURSE;
-            $DB->set_field('user', 'confirmed', 1, array('id'=>-1));
-            $CFG->xx = 'yy';
-            unset($CFG->admin);
-            $CFG->rolesactive = 0;
-            $USER->id = 10;
-            $COURSE->id = 10;
-        }
+    public function test_course_modification() {
+        global $COURSE;
+        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
+        $COURSE->id = 10;
+    }
 
-        public function test_transaction_problem() {
-            global $DB;
-            $DB->start_delegated_transaction();
-        }
-    */
+    public function test_all_modifications() {
+        global $DB, $CFG, $USER, $COURSE;
+        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
+        $DB->set_field('user', 'confirmed', 1, ['id' => -1]);
+        $CFG->xx = 'yy';
+        unset($CFG->admin);
+        $CFG->rolesactive = 0;
+        $USER->id = 10;
+        $COURSE->id = 10;
+    }
+
+    public function test_transaction_problem() {
+        global $DB;
+        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
+        $DB->start_delegated_transaction();
+    }
 }
