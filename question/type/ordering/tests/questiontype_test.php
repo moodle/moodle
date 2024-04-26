@@ -17,6 +17,7 @@
 namespace qtype_ordering;
 
 use core_question_generator;
+use phpunit_util;
 use qtype_ordering;
 use qtype_ordering_test_helper;
 use qtype_ordering_edit_form;
@@ -70,17 +71,6 @@ final class questiontype_test extends \question_testcase {
             'generalfeedbackformat' => 1,
             'defaultmark' => 1,
         ];
-    }
-
-    /**
-     * Asserts that two XML strings are the same, ignoring differences in line endings.
-     *
-     * @param string $expectedxml
-     * @param string $xml
-     */
-    public function assert_same_xml(string $expectedxml, string $xml): void {
-        $this->assertEquals(str_replace("\r\n", "\n", $expectedxml),
-            str_replace("\r\n", "\n", $xml));
     }
 
     public function test_name(): void {
@@ -303,7 +293,7 @@ final class questiontype_test extends \question_testcase {
         // Import a question from GIFT.
         $gift = file_get_contents(__DIR__ . '/fixtures/testimport.gift.txt');
         $format = new qformat_gift();
-        $lines = preg_split('/[\\n\\r]/', str_replace("\r\n", "\n", $gift));
+        $lines = preg_split('/[\\n\\r]/', phpunit_util::normalise_line_endings($gift));
         $imported = $format->readquestion($lines);
 
         $this->assert(new question_check_specified_fields_expectation(self::expectedimport()), $imported);
@@ -326,6 +316,9 @@ final class questiontype_test extends \question_testcase {
 
         $expectedgift = file_get_contents(__DIR__ . '/fixtures/testexport.gift.txt');
 
-        $this->assertEquals($expectedgift, $gift);
+        $this->assertEquals(
+            phpunit_util::normalise_line_endings($expectedgift),
+            phpunit_util::normalise_line_endings($gift)
+        );
     }
 }
