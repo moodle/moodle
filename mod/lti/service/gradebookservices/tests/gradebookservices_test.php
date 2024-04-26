@@ -28,6 +28,13 @@ use ltiservice_gradebookservices\local\service\gradebookservices;
  * @coversDefaultClass \mod_lti\service\gradebookservices\local\gradebookservices
  */
 class gradebookservices_test extends \advanced_testcase {
+    /**
+     * Load the necessary libs for the tests.
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/mod/lti/locallib.php');
+    }
 
     /**
      * @covers ::instance_added
@@ -37,9 +44,6 @@ class gradebookservices_test extends \advanced_testcase {
      * that can be retrieved using the gradebook service API.
      */
     public function test_lti_add_coupled_lineitem() {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/lti/locallib.php');
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -75,9 +79,6 @@ class gradebookservices_test extends \advanced_testcase {
      * that can be retrieved using the gradebook service API.
      */
     public function test_lti_add_coupled_lineitem_default_subreview() {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/lti/locallib.php');
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -128,9 +129,6 @@ class gradebookservices_test extends \advanced_testcase {
      * the line items should be actually passed.
      */
     public function test_get_launch_parameters_coupled() {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/lti/locallib.php');
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -162,9 +160,6 @@ class gradebookservices_test extends \advanced_testcase {
      * launch is submission review.
      */
     public function test_get_launch_parameters_coupled_subreview_override() {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/lti/locallib.php');
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -193,9 +188,6 @@ class gradebookservices_test extends \advanced_testcase {
      * launch is submission review.
      */
     public function test_get_launch_parameters_coupled_subreview_override_default() {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/lti/locallib.php');
-
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -224,9 +216,6 @@ class gradebookservices_test extends \advanced_testcase {
      * if there is a single line item attached to that lti instance.
      */
     public function test_get_launch_parameters_decoupled() {
-        global $CFG;
-        require_once($CFG->dirroot . '/mod/lti/locallib.php');
-
         $this->resetAfterTest();
         $this->setAdminUser();
 

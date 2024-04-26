@@ -31,7 +31,9 @@ use restore_controller;
 final class restore_39_test extends advanced_testcase {
 
     public function test_restore_random_question_39(): void {
-        global $DB, $USER;
+        global $DB, $CFG, $USER;
+
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
 
         $this->resetAfterTest();
         $this->setAdminUser();

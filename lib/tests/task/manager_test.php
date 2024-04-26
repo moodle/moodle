@@ -16,6 +16,14 @@
 
 namespace core\task;
 
+defined('MOODLE_INTERNAL') || die();
+
+// We need to keep this here because there is a provider
+// needing \core\task\adhoc_test_task and cannot move it
+// to setUpBeforeClass() or similar. Whenever we allow to
+// autoload fixtures, this can be removed.
+require_once(__DIR__ . '/../fixtures/task_fixtures.php');
+
 /**
  * This file contains the unit tests for the task manager.
  *
@@ -26,10 +34,6 @@ namespace core\task;
  * @covers \core\task\manager
  */
 final class manager_test extends \advanced_testcase {
-    public static function setUpBeforeClass(): void {
-        require_once(__DIR__ . '/../fixtures/task_fixtures.php');
-    }
-
     /**
      * Data provider for test_get_candidate_adhoc_tasks.
      *
