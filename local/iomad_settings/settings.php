@@ -86,6 +86,11 @@ if ($hassiteconfig) {
                                                 get_string('iomad_showcharts', 'local_iomad_settings'),
                                                 1));
 
+    $settings->add(new admin_setting_configcheckbox('iomad_downloaddetails',
+                                                get_string('iomad_downloaddetails', 'local_iomad_settings'),
+                                                get_string('iomad_downloaddetails_help', 'local_iomad_settings'),
+                                                1));
+
     $settings->add(new admin_setting_configcheckbox('iomad_useicons',
                                                 get_string('iomad_useicons', 'local_iomad_settings'),
                                                 get_string('iomad_useicons', 'local_iomad_settings'),

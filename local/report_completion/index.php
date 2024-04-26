@@ -782,7 +782,7 @@ if (empty($courseid)) {
     $completionsqlselect = "";
 
     // Get the completion information if we need it.
-    if ($table->is_downloading() && $courseid != 1) {
+    if ($table->is_downloading() && $courseid != 1 && $CFG->iomad_downloaddetails) {
         // Get the course completion criteria.
         $info = new completion_info(get_course($courseid));
         $coursecompletioncrits = $info->get_criteria(null);
