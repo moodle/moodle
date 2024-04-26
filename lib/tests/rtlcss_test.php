@@ -1129,12 +1129,11 @@ class rtlcss_test extends basic_testcase {
      * @param array $data the provider data.
      * @dataProvider background_image_provider
      */
-    /* Not supported by MoodleHQ/RTLCSS yet.
     public function test_background_image($data) {
+        $this->markTestSkipped('Not yet supported!');
         $output = new OutputFormat();
         $this->assert_sample($data, $output);
     }
-    */
 
     /**
      * Test background position.
@@ -1197,14 +1196,13 @@ class rtlcss_test extends basic_testcase {
      * @param array $data the provider data.
      * @dataProvider special_provider
      */
-    /* Not supported by MoodleHQ/RTLCSS yet.
     public function test_special($data) {
+        $this->markTestSkipped('Not yet supported!');
         $output = new OutputFormat();
         $output->set('SpaceBeforeRules', ' ');
         $output->set('SpaceAfterListArgumentSeparator', array('default' => '', ',' => ' '));
         $this->assert_sample($data, $output);
     }
-    */
 
     /**
      * Test transform original.
@@ -1226,15 +1224,14 @@ class rtlcss_test extends basic_testcase {
      * @param array $data the provider data.
      * @dataProvider transforms_provider
      */
-    /* Not supported by MoodleHQ/RTLCSS yet.
     public function test_transforms($data) {
+        $this->markTestSkipped('Not yet supported!');
         $output = new OutputFormat();
         $output->set('SpaceBeforeRules', ' ');
         $output->set('SpaceAfterRules', ' ');
         $output->set('SpaceAfterListArgumentSeparator', array('default' => '', ',' => ' '));
         $this->assert_sample($data, $output);
     }
-    */
 
     /**
      * Test values n-syntax.
