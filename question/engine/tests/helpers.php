@@ -602,6 +602,19 @@ abstract class question_testcase extends advanced_testcase {
         }
         return;
     }
+
+    /**
+     * Check that 2 XML strings are the same, ignoring differences in line endings.
+     *
+     * @param string $expectedxml The expected XML string
+     * @param string $xml The XML string to check
+     */
+    public function assert_same_xml($expectedxml, $xml) {
+        $this->assertEquals(
+            phpunit_util::normalise_line_endings($expectedxml),
+            phpunit_util::normalise_line_endings($xml)
+        );
+    }
 }
 
 
