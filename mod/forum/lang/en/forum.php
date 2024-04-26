@@ -600,9 +600,6 @@ $string['privacy:metadata:preference:markasreadonnotification'] = 'Whether to ma
 $string['privacy:metadata:preference:trackforums'] = 'Whether to enable read tracking.';
 $string['privacy:postwasread'] = 'This post was first read on {$a->firstread} and most recently read on {$a->lastread}';
 $string['privacy:readtrackingdisabled'] = 'You have chosen to not track posts you have read within this forum.';
-$string['privacy:request:delete:discussion:name'] = 'Delete at the request of the author';
-$string['privacy:request:delete:post:message'] = 'The content of this post has been deleted at the request of its author.';
-$string['privacy:request:delete:post:subject'] = 'Delete at the request of the author';
 $string['privacy:subscribedtoforum'] = 'You are subscribed to this forum.';
 $string['privatereply'] = 'Reply privately';
 $string['privatereply_help'] = 'When you reply privately, your post is also visible to users with the capability to view private replies, such as teachers.';
@@ -798,3 +795,8 @@ $string['completiondiscussionsgroup'] = 'Require discussions';
 $string['completiondiscussionshelp'] = 'requiring discussions to complete';
 $string['completionrepliesgroup'] = 'Require replies';
 $string['completionreplieshelp'] = 'requiring replies to complete';
+
+// Deprecated since Moodle 4.5.
+$string['privacy:request:delete:discussion:name'] = 'Delete at the request of the author';
+$string['privacy:request:delete:post:message'] = 'The content of this post has been deleted at the request of its author.';
+$string['privacy:request:delete:post:subject'] = 'Delete at the request of the author';
