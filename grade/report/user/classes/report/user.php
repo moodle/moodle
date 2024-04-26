@@ -713,7 +713,7 @@ class user extends grade_report {
                         $gradestatusclass = '';
                         $gradepassicon = '';
                         $ispassinggrade = $gradegrade->is_passed($gradegrade->grade_item);
-                        if (!is_null($ispassinggrade)) {
+                        if (!is_null($gradeval) && !is_null($ispassinggrade)) {
                             $gradestatusclass = $ispassinggrade ? 'gradepass' : 'gradefail';
                             if ($ispassinggrade) {
                                 $gradepassicon = $OUTPUT->pix_icon(
