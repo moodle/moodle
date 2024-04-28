@@ -309,7 +309,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
             'value' => $response,
             'id' => $qa->get_qt_field_name($fieldname),
             'size' => $size,
-            'class' => 'form-control mb-1',
+            'class' => 'form-control d-inline mb-1',
         );
         if ($options->readonly) {
             $inputattributes['readonly'] = 'readonly';
@@ -332,7 +332,7 @@ class qtype_multianswer_textfield_renderer extends qtype_multianswer_subq_render
                         $qa, 'question', 'answerfeedback', $matchinganswer->id),
                 s($correctanswer->answer), $options);
 
-        $output = html_writer::start_tag('span', ['class' => 'subquestion d-flex flex-wrap align-items-center']);
+        $output = html_writer::start_tag('span', ['class' => 'subquestion']);
 
         $output .= html_writer::tag('label', $this->get_answer_label(),
                 array('class' => 'subq accesshide', 'for' => $inputattributes['id']));
