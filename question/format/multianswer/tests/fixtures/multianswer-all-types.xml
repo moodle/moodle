@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiz>
+<!-- question: 3911  -->
+  <question type="cloze">
+    <name>
+      <text>All CLOZE types in one question</text>
+    </name>
+    <questiontext format="html">
+      <text><![CDATA[<h5>MULTICHOICE</h5>
+<p>Whenever we talk about Asterix we have to imagine the times {1:MULTICHOICE:200 B.C.#too early~=50 B.C.#Correct~50 A.C.#100 years too late~200 A.C.#too late}</p>
+<p>Asterix is best know to be a brave warrior. With his best friend {1:MULTICHOICE_H:Idefix#That's the dog of Obelix~=Obelix#His mate~Troubadix#He is the bard and sings horribly} he experiences many adventures.</p>
+<p>According to the story Asterix has never been traveled to {1:MULTICHOICE_V:America#Asterix and the great crossing~=Australia#That was too far away at that time~India#Asterix and the Magic Carpet}</p>
+<p>Many quotes in the comics are written in {1:MULTICHOICE_S:Greek#While the olympic games were known at the time and Asterix actually participated at the games, the greek language was not widely used.~Hebrew#The heroes haven't been to the middle east.~=Latin#Yes, many quotes are in latin.} language.</p>
+<p>Obelix owns a company. In some of the episodes he first delivers {1:MULTICHOICE_HS:Fish#No, that's the quarrel between to other citizens of the village.~=a Menhir#Yes, he fabricates these types of obelisks.~a wild boar#No, he actually would eat, rather than delivering them.} before he can head off with Asterix to new adventures.</p>
+<p>In the name of Obelix, Methusalix and Miraculix hides a roman number. Which one is it? {1:MULTICHOICE_VS:=59#Yes~51#No, that's LI~109#No, that's CIX~509#No, that's DIX}</p>
+<hr>
+<h5>MULTIRESPONSE</h5>
+<p>To the Simpsons family belong the following persons: {1:MULTIRESPONSE:=Marge#Correct, she is the mother~Fred#No, he's not the husband of Marge~=Lisa#She's the daughter of Marge~Anna#Nope, she is from Frozen}</p>
+<p>Marge is known for her {1:MULTIRESPONSE_H:%100%blue hair#yes, that's true~%0%being very greedy#Not that we know of~%50%being a soccer mom#Not in all aspects}</p>
+<p>Whenever the children {1:MULTIRESPONSE_S:=Bart#first born son~=Lisa#first born daughter~Marge#Nope, that is the mother~=Maggie#Last born child~Abraham#He is the grandfather} need the help of her parents, they try to be there for them.</p>
+<p>The Simpsons series is known to "forsee" the future. These events {1:MULTIRESPONSE_HS:%100%Trump becomes president#in "Bart to the future"~%100%20th Century Fox as a division of The Walt Disney Company.#in "When You Dish Upon a Star"~O.J Simpson was convicted as a murderer#no, that is made up~=The Titanic submarine implosion#In one episode in 2006} were a topic in an episode many years before they actually happened.</p>
+<hr>
+<h5>NUMERICAL and SHORTANSWER</h5>
+<p>Let's start easy. Water freezes at 0°C and {1:NUMERICAL:=32:0#Must be exact} Farenheit. But, do you know that water is boiling at {1:NUMERICAL:=212:0#Exact~%50%212:10#Close, you get at least half the points.} Fahrenkeit?</p>
+<p>Let's be fair: Anders Celsius, after whom a temperature scale was named was born in which year? {3:NUMERICAL:%100%1701:0#Exact match~%66%1701:20#Within the tolerance of 20 years.~%33%1701:50#Within the tolerance of 20 years.} This answer is worth 3 points when you know the exact year, 2 points when you are off by 20 years, and still 1 point when you are off by 50 years.</p>
+<p>Fahrnheit lived some years before Celcius. You may have noticed already that the spelling of the scientist was different every time he was mentioned. Please spell his name correctly: {1:SHORTANSWER:=Fahrenheit#That's correct.}</p>
+<p>Water consists of Hydrogen and Oxygen. Please write down the correct formula: {1:SHORTANSWER_C:=H<sub>2</sub>O#That is correct.~=H2O#That's correct (the 2 is usually subscripted but not possible during input).~h2O#Both Oxygen and Hydrogen are used with upper case letters.~H2o#Both Oxygen and Hydrogen are used with upper case letters.~h2o#Both Oxygen and Hydrogen are used with upper case letters.}</p>
+<p>The word used for a famous beverage made from fermented grain mash was derived from "<i>uisge beatha</i>" or "<i>uisce beatha</i>" which means "water of life". Under which name is the beverage worldwide known for? {1:SHORTANSWER:=Whisky#english~=Whiskey#mostly in Scottland and the US.~%50%Wiskey#That's not spelled correctly.~%25%Wisky#That's hardly recognizable.}</p>]]></text>
+    </questiontext>
+    <generalfeedback format="html">
+      <text><![CDATA[<p>To get to know more about Asterix and his friends, read the more than 40 comic books.</p>]]></text>
+    </generalfeedback>
+    <penalty>0.3333333</penalty>
+    <hidden>0</hidden>
+    <idnumber></idnumber>
+  </question>
+
+</quiz>
