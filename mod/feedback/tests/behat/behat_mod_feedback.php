@@ -237,7 +237,8 @@ class behat_mod_feedback extends behat_base {
     public static function get_partial_named_selectors(): array {
         return [
             new behat_component_named_selector('Question', [
-                ".//*[starts-with(@id, 'fitem_feedback_item_')][.//*[contains(text(), %locator%)]]",
+                ".//*[starts-with(@id, 'fitem_feedback_item_') or starts-with(@id, 'fgroup_feedback_item_')]" .
+                "[.//*[contains(text(), %locator%)]]",
             ]),
         ];
     }
