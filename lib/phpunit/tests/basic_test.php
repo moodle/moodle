@@ -16,6 +16,8 @@
 
 namespace core;
 
+use phpunit_util;
+
 /**
  * Test basic_testcase extra features and PHPUnit Moodle integration.
  *
@@ -223,50 +225,156 @@ STRING;
         ];
     }
 
-    // The following tests are only useful when modifying the reset code and need to check tha
-    // changes in global state are being properly detected. Hence, they are skipped by default.
-    // To run them, remove the markTestSkipped() call when working in that area.
-
-    public function test_db_modification() {
+    /**
+     * Test that a database modification is detected.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_db_modification(): void {
         global $DB;
-        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
         $DB->set_field('user', 'confirmed', 1, ['id' => -1]);
+
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Warning: unexpected database modification');
+        phpunit_util::reset_all_data(true);
     }
 
-    public function test_cfg_modification() {
+    /**
+     * Test that a $CFG modification is detected.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_cfg_modification(): void {
         global $CFG;
-        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
         $CFG->xx = 'yy';
         unset($CFG->admin);
         $CFG->rolesactive = 0;
+
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageMatches('/rolesactive.*xx value.*removal.*admin/ms'); // 3 messages matched.
+        phpunit_util::reset_all_data(true);
     }
 
-    public function test_user_modification() {
+    /**
+     * Test that a $USER modification is detected.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_user_modification(): void {
         global $USER;
-        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
         $USER->id = 10;
+
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Warning: unexpected change of $USER');
+        phpunit_util::reset_all_data(true);
     }
 
-    public function test_course_modification() {
+    /**
+     * Test that a $COURSE modification is detected.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_course_modification(): void {
         global $COURSE;
-        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
         $COURSE->id = 10;
+
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('Warning: unexpected change of $COURSE');
+        phpunit_util::reset_all_data(true);
     }
 
-    public function test_all_modifications() {
+    /**
+     * Test that all modifications are detected together.
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_all_modifications(): void {
         global $DB, $CFG, $USER, $COURSE;
-        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
         $DB->set_field('user', 'confirmed', 1, ['id' => -1]);
         $CFG->xx = 'yy';
         unset($CFG->admin);
         $CFG->rolesactive = 0;
         $USER->id = 10;
         $COURSE->id = 10;
+
+        // Let's convert the user warnings into an assert-able exception.
+        set_error_handler(
+            static function ($errno, $errstr) {
+                restore_error_handler();
+                throw new \Exception($errstr, $errno);
+            },
+            E_USER_WARNING // Or any other specific E_ that we want to assert.
+        );
+
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessageMatches('/resetting.*rolesactive.*new.*removal.*USER.*COURSE/ms'); // 6 messages matched.
+        phpunit_util::reset_all_data(true);
     }
 
-    public function test_transaction_problem() {
-        global $DB;
-        $this->markTestSkipped('This test is only useful to confirm that the reset stuff works as expected.');
+    /**
+     * Test that an open transaction are managed ok by the reset code (silently rolled back).
+     *
+     * @runInSeparateProcess
+     * @covers \phpunit_util
+     */
+    public function test_transaction_problem(): void {
+        global $DB, $COURSE;
+        $originalname = $DB->get_field('course', 'fullname', ['id' => $COURSE->id]); // Normally "PHPUnit test site".
+        $changedname = 'Ongoing transaction test site';
+
+        // Start a transaction and make some database changes.
         $DB->start_delegated_transaction();
+        $DB->set_field('course', 'fullname', $changedname, ['id' => $COURSE->id]);
+
+        // Assert that the transaction is open and the changes were made.
+        $this->assertTrue($DB->is_transaction_started());
+        $this->assertEquals($changedname, $DB->get_field('course', 'fullname', ['id' => $COURSE->id]));
+
+        phpunit_util::reset_all_data(false); // We don't want to detect/warn on database changes for this test.
+
+        // Assert that the transaction is now closed and the changes were rolled back.
+        $this->assertFalse($DB->is_transaction_started());
+        $this->assertEquals($originalname, $DB->get_field('course', 'fullname', ['id' => $COURSE->id]));
     }
 }
