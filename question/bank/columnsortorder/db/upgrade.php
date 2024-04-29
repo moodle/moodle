@@ -30,7 +30,7 @@ use core_question\local\bank\column_base;
  * @param int $oldversion the version of this plugin we are upgrading from.
  * @return bool success/failure.
  */
-function xmldb_qbank_columnsortorder_upgrade($oldversion) {
+function xmldb_qbank_columnsortorder_upgrade(int $oldversion): bool {
     global $DB;
 
     if ($oldversion < 2023100901) {
