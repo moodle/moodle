@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 if ($hassiteconfig) {
     // phpcs:ignore Generic.CodeAnalysis.EmptyStatement.DetectedIf
     if ($ADMIN->fulltree) {
+        // Set API key.
         $setting = new admin_setting_configpasswordunmask(
             'tiny_premium/apikey',
             get_string('apikey', 'tiny_premium'),
@@ -35,5 +36,8 @@ if ($hassiteconfig) {
             '',
         );
         $settings->add($setting);
+
+        // Set individual Tiny Premium plugins.
+        $settings->add(new \tiny_premium\local\admin_setting_tiny_premium_plugins());
     }
 }
