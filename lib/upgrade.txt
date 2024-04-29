@@ -1,6 +1,10 @@
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
 
+=== 4.5 ===
+
+* The previously deprecated function `search_generate_text_SQL` has been removed and can no longer be used.
+
 === 4.4 ===
 
 * New modinfo methods related to delegated sections (sections controlled by a component):

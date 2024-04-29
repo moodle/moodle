@@ -382,23 +382,6 @@ class search_parser {
 }
 
 /**
- * Primitive function to generate a SQL string from a parse tree
- * using TEXT indexes. If searches aren't suitable to use TEXT
- * this function calls the default search_generate_SQL() one.
- *
- * @deprecated since Moodle 2.9 MDL-48939
- * @todo MDL-48940 This will be deleted in Moodle 3.2
- * @see search_generate_SQL()
- */
-function search_generate_text_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
-                             $userfirstnamefield, $userlastnamefield, $timefield, $instancefield) {
-    debugging('search_generate_text_SQL() is deprecated, please use search_generate_SQL() instead.', DEBUG_DEVELOPER);
-
-    return search_generate_SQL($parsetree, $datafield, $metafield, $mainidfield, $useridfield,
-                               $userfirstnamefield, $userlastnamefield, $timefield, $instancefield);
-}
-
-/**
  * Primitive function to generate a SQL string from a parse tree.
  * Parameters:
  *

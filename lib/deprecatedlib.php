@@ -3216,3 +3216,11 @@ function question_add_context_in_key() {
 function question_fix_top_names() {
     throw new coding_exception(__FUNCTION__ . '() has been removed.');
 }
+
+/**
+ * @deprecated since Moodle 2.9
+ */
+#[\core\attribute\deprecated('search_generate_SQL', since: '2.9', mdl: 'MDL-48939', final: true)]
+function search_generate_text_SQL() {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
