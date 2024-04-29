@@ -580,9 +580,5 @@ class mod_feedback_complete_form extends moodleform {
         }
 
         $this->_form->display();
-
-        if ($this->mode == self::MODE_EDIT) {
-            $PAGE->requires->js_call_amd('mod_feedback/edit', 'setup');
-        }
     }
 }
