@@ -246,6 +246,7 @@ $string['privacy:metadata:value:value'] = 'The chosen answer.';
 $string['privacy:metadata:valuetmp'] = 'A record of the answer to a question in a submission in progress.';
 $string['question'] = 'Question';
 $string['questionandsubmission'] = 'Question and submission settings';
+$string['questionmoved'] = 'Question moved';
 $string['questions'] = 'Questions';
 $string['questionslimited'] = 'Showing only {$a} first questions, view individual answers or download table data to view all.';
 $string['radio'] = 'Multiple choice - single answer';

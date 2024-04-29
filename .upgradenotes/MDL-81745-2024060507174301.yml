@@ -1,0 +1,5 @@
+issueNumber: MDL-81745
+notes:
+  mod_feedback:
+    - message: Added new `mod_feedback_questions_reorder` external function
+      type: improved
