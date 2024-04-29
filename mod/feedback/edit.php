@@ -86,6 +86,7 @@ $PAGE->activityheader->set_attrs([
     'description' => ''
 ]);
 $PAGE->add_body_class('limitedwidth');
+$PAGE->requires->js_call_amd('mod_feedback/edit', 'init');
 
 //Adding the javascript module for the items dragdrop.
 if (count($feedbackitems) > 1) {

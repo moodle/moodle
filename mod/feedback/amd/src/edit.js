@@ -18,48 +18,59 @@
  *
  * @module     mod_feedback/edit
  * @copyright  2016 Marina Glancy
+ * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-define(['jquery', 'core/ajax', 'core/str', 'core/notification'],
-function($, ajax, str, notification) {
-    var manager = {
-        deleteItem: function(e) {
-            e.preventDefault();
-            var targetUrl = $(e.currentTarget).attr('href');
 
-            str.get_strings([
-                {
-                    key:        'confirmation',
-                    component:  'admin'
-                },
-                {
-                    key:        'confirmdeleteitem',
-                    component:  'mod_feedback'
-                },
-                {
-                    key:        'yes',
-                    component:  'moodle'
-                },
-                {
-                    key:        'no',
-                    component:  'moodle'
-                }
-            ])
-            .then(function(s) {
-                notification.confirm(s[0], s[1], s[2], s[3], function() {
-                    window.location = targetUrl;
-                });
+"use strict";
 
-                return;
-            })
-            .catch();
-        },
+import {prefetchStrings} from 'core/prefetch';
+import {getStrings} from 'core/str';
+import Notification from 'core/notification';
 
-        setup: function() {
-            $('body').delegate('[data-action="delete"]', 'click', manager.deleteItem);
+const Selectors = {
+    deleteQuestionButton: '[data-action="delete"]',
+};
+
+let initialized = false;
+
+/**
+ * Initialise editor and all it's modules
+ */
+export const init = () => {
+    // Ensure we only add our listeners once (can be called multiple times).
+    if (initialized) {
+        return;
+    }
+
+    prefetchStrings('core', [
+        'yes',
+        'no',
+    ]);
+    prefetchStrings('admin', [
+        'confirmation',
+    ]);
+    prefetchStrings('mod_feedback', [
+        'confirmdeleteitem',
+    ]);
+
+    document.addEventListener('click', async event => {
+
+        // Delete question.
+        const deleteButton = event.target.closest(Selectors.deleteQuestionButton);
+        if (deleteButton) {
+            event.preventDefault();
+            const confirmationStrings = await getStrings([
+                {key: 'confirmation', component: 'admin'},
+                {key: 'confirmdeleteitem', component: 'mod_feedback'},
+                {key: 'yes', component: 'core'},
+                {key: 'no', component: 'core'},
+            ]);
+            Notification.confirm(...confirmationStrings, () => {
+                window.location = deleteButton.getAttribute('href');
+            });
+            return;
         }
-    };
+    });
 
-    return {
-        setup: manager.setup
-    };
-});
+    initialized = true;
+};
