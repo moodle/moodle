@@ -2,6 +2,10 @@ This files describes API changes for course formats
 
 Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/format
 
+=== 4.3.5 ===
+* The constructor of core_courseformat\output\local\state\cm has been updated to accept a new optional parameter called is_tracked_user.
+  If is_tracked_user is pre-computed for this CM's course, it can be provided here to avoid an additional function call.
+
 === 4.3.4 ===
 * The core_courseformat\base::get_format_string last parameter has been removed because it was erroneous.
 * New core_courseformat\base::add_section_preference_ids() to add the section ids to course format preferences.
