@@ -38,7 +38,7 @@ function xmldb_tiny_premium_upgrade($oldversion) {
 
     // Automatically generated Moodle v4.3.0 release upgrade line.
     // Put any upgrade step following this.
-    if ($oldversion < 2024042400) {
+    if ($oldversion < 2023100901) {
 
         // Only enable the premium plugins if we have an API key.
         if (!empty(get_config('tiny_premium', 'apikey'))) {
@@ -48,7 +48,7 @@ function xmldb_tiny_premium_upgrade($oldversion) {
             };
         }
 
-        upgrade_plugin_savepoint(true, 2024042400, 'tiny', 'premium');
+        upgrade_plugin_savepoint(true, 2023100901, 'tiny', 'premium');
     }
 
     return true;
