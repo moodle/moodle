@@ -39,6 +39,8 @@ Feature: Students will be marked as completed if they have achieved a passing gr
     When I am on the "Course 1" course page logged in as student1
     Then the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "failed"
+    And "Failed" "icon" should exist in the "courseindex-content" "region"
     And I am on the "Course 1" course page logged in as student2
     And the "Receive a grade" completion condition of "Test assignment name" is displayed as "done"
     And the "Receive a passing grade" completion condition of "Test assignment name" is displayed as "done"
+    And "Done" "icon" should exist in the "courseindex-content" "region"

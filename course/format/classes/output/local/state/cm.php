@@ -103,8 +103,9 @@ class cm implements renderable {
         $completioninfo = new completion_info($course);
         $data->istrackeduser = $this->istrackeduser ?? $completioninfo->is_tracked_user($USER->id);
         if ($data->istrackeduser && $completioninfo->is_enabled($cm)) {
-            $completiondata = $completioninfo->get_data($cm);
-            $data->completionstate = $completiondata->completionstate;
+            $completiondata = new \core_completion\cm_completion_details($completioninfo, $cm, $USER->id, false);
+            $data->completionstate = $completiondata->get_overall_completion();
+            $data->isoverallcomplete = $completiondata->is_overall_complete();
         }
 
         $data->allowstealth = !empty($CFG->allowstealth) && $format->allow_stealth_module_visibility($cm, $section);
