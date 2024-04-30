@@ -46,13 +46,13 @@ M.availability_grade.form.getNode = function(json) {
         html += '<option value="' + grade.id + '">' + grade.name + '</option>';
     }
     html += '</select></span></label> <br><span class="availability-group mb-3">' +
-            '<label><input type="checkbox" class="form-check-input mx-1" name="min"/>' +
+            '<label><input type="checkbox" class="form-check-input position-static mt-0 mx-1" name="min"/>' +
             M.util.get_string('option_min', 'availability_grade') +
             '</label> <label><span class="accesshide">' + M.util.get_string('label_min', 'availability_grade') +
             '</span><input type="text" class="form-control mx-1" name="minval" title="' +
             M.util.get_string('label_min', 'availability_grade') + '"/></label>%</span><br>' +
             '<span class="availability-group mb-3">' +
-            '<label><input type="checkbox" class="form-check-input mx-1" name="max"/>' +
+            '<label><input type="checkbox" class="form-check-input position-static mt-0 mx-1" name="max"/>' +
             M.util.get_string('option_max', 'availability_grade') +
             '</label> <label><span class="accesshide">' + M.util.get_string('label_max', 'availability_grade') +
             '</span><input type="text" class="form-control mx-1" name="maxval" title="' +

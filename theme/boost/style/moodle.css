@@ -33113,13 +33113,6 @@ div#dateselector-calendar-panel {
   display: none;
 }
 
-.availability-field label {
-  display: inline-flex;
-}
-.availability-field .availability-group label {
-  vertical-align: top;
-}
-
 .availability-eye {
   clear: left;
   float: left;
