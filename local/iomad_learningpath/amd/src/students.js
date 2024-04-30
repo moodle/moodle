@@ -1,17 +1,29 @@
-// Javascript module for courselist page
-// Copyright 2018 Howard Miller (howardsmiller@gmail.com)
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @module    local_learningpath
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], function($, jqui, mdlcfg, ajax, notification) {
 
     return {
 
         init: function(companyid, pathid) {
-
-
-            /**
-             * Handle response from filter ajax
-             * @param array users
-             */
             function apply_filter(users) {
 
                 // Check if there are any students
@@ -41,11 +53,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 $('#prospectivelist').append(items.join(''));
             }
 
-
-            /*
-             * Populate/filter user list
-             * @param string filter
-             */
             function user_list() {
 
                 var filter = $('#userfilter').val();
@@ -63,9 +70,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 }]);
             }
 
-            /**
-             * Bind events for user_list function
-             */
             $(window).on('load', user_list(''));
             $('#userfilter').on('input', function() {
                 user_list();
@@ -74,11 +78,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 user_list();
             });
 
-
-            /**
-             * Add hover effect.
-             * Bind on ul as li entries are dynamic!
-             */
             $('#prospectivelist, #pathuserlist').on('mouseenter', 'li', function() {
                 $(this).addClass("text-primary");
             });
@@ -86,11 +85,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 $(this).removeClass("text-primary");
             });
 
-
-            /**
-             * Handle response from add/display path users
-             * @param array users
-             */
             function apply_pathusers(users) {
 
                 // Check if there are any users
@@ -110,11 +104,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 $('#pathuserlist').append(items.join(''));
             }
 
-
-            /*
-             * Populate pathuser list
-             * @param string filter
-             */
             function pathuser_list() {
 
                 // Ajax stuff to get list
@@ -129,17 +118,8 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 }]);
             }
 
-
-            /**
-             * Bind events for user_list function
-             */
             $(window).on('load', pathuser_list());
 
-
-            /**
-             * Add click handler for adding user
-             * (bind on list as li's are dynamic)
-             */
             $('#prospectivelist').on('click', 'li', function() {
                 var userid = $(this).data('userid');
 
@@ -155,10 +135,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                 }]);
             });
 
-
-            /**
-             * Add click handler for removing user
-             */
             $('#pathuserlist').on('click', 'li', function() {
                 var userid = $(this).data('userid');
 
@@ -175,10 +151,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification'], 
                     fail: notification.exception
                 }]);
             });
-
-
-
         }
     };
-
 });

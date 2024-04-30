@@ -8,7 +8,7 @@
   * @module block_iomad_company_admin/admin
   */
 
-define(['jquery', 'theme_boost/tab'], function($, tab) {
+define(['jquery', 'theme_boost/bootstrap/tab'], function($) {
     return {
         init: function() {
 

@@ -1,5 +1,23 @@
-// Javascript module for courselist page
-// Copyright 2018 Howard Miller (howardsmiller@gmail.com)
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @module    local_learningpath
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', 'core/templates'],
     function($, jqui, mdlcfg, ajax, notification, templates) {
@@ -8,20 +26,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
 
         init: function(companyid, pathid) {
 
-
-            /**
-             * Enable Bootstrap tooltips
-             */
-            //require(['theme_boost/loader']);
-            //require(['theme_boost/tooltip'], function() {
-                $('[data-toggle="tooltip"]').tooltip();
-            //});
-
-
-            /**
-             * Handle response from filter ajax
-             * @param array courses - full course objects
-             */
             function apply_filter(courses) {
 
                 // Show/hide 'no courses' message.
@@ -39,7 +43,6 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                     wwwroot: mdlcfg.wwwroot,
                     prospective: true
                 };
-//window.alert("template prospective list()");
 
                 templates.render('local_iomad_learningpath/prospectivelist', context)
                     .done(function(html) {
@@ -48,20 +51,11 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                     .fail(notification.exception);
             }
 
-
-            /**
-             * Setup filter on prospective courses box.
-             * @param string filter
-             */
             function course_list() {
 
                 var filter = $('#coursefilter').val();
                 var category = $('#category').val();
                 var program = $('#program').val();
-
-//window.alert("course_list()");
-//window.alert(program);
-
 
                 // Ajax stuff to get list
                 // call the web service
@@ -69,20 +63,13 @@ define(['jquery', 'jqueryui', 'core/config', 'core/ajax', 'core/notification', '
                     methodname: 'local_iomad_learningpath_getprospectivecourses',
                     args: {pathid: pathid, filter: filter, category: category, program: program},
                     done: function(courses) {
-/*window.alert("apply_filter()");
-window.alert(program);
-*/
                         apply_filter(courses);
                     },
                     fail: notification.exception,
                 }]);
-//window.alert("course_list() complete");
             }
 
 
-            /**
-             * Bind events for course_list function
-             */
             $(window).on('load', course_list());
             $('#program').on('change', function() {
                 course_list();
@@ -96,11 +83,6 @@ window.alert(program);
             });
 
 
-
-            /**
-             * Add hover effect.
-             * Bind on ul as li entries are dynamic!
-             */
             $('#prospectivelist, .pathcourselist').on('mouseenter', 'li', function() {
                 $(this).addClass("text-primary");
             });
@@ -108,12 +90,6 @@ window.alert(program);
                 $(this).removeClass("text-primary");
             });
 
-
-            /**
-             * Handle response from add/display selected courses
-             * @param object pcl - the selected list (= group)
-             * @param array courses - full course objects
-             */
             function apply_pathcourses(pcl, courses) {
 
                 // Show/hide 'no courses' message.
@@ -133,7 +109,6 @@ window.alert(program);
                     wwwroot: mdlcfg.wwwroot,
                     prospective: false
                 };
-//window.alert("template apply pathcourses");
 
                 templates.render('local_iomad_learningpath/pathcourselist', context)
                     .done(function(html) {
@@ -142,14 +117,7 @@ window.alert(program);
                     .fail(notification.exception);
             }
 
-
-            /*
-             * Populate pathcourse list
-             * @param string filter
-             */
             function pathcourse_list() {
-
-//window.alert("pathcourse_list()");
 
                 // Ajax stuff to get list
                 // call the web service
@@ -160,7 +128,6 @@ window.alert(program);
                         methodname: 'local_iomad_learningpath_getcourses',
                         args: {pathid: pathid, groupid: groupid},
                         done: function(courses) {
-//window.alert("apply_pathcourses()");
                             apply_pathcourses(pcl, courses);
                         },
                         fail: notification.exception,
@@ -168,16 +135,8 @@ window.alert(program);
                 });
             }
 
-
-            /**
-             * Bind events for user_list function
-             */
             $(window).on('load', pathcourse_list());
 
-
-            /**
-             * Add click handler for adding course
-             */
             $('#prospectivelist').on('click', '.path-add', function() {
                 var courseid = $(this).data('courseid');
 
@@ -193,10 +152,6 @@ window.alert(program);
                 }]);
             });
 
-
-            /**
-             * Add click handler for removing course
-             */
             $('.pathcourselist').on('click', '.path-delete', function() {
                 var courseid = $(this).data('courseid');
 
@@ -212,19 +167,11 @@ window.alert(program);
                 }]);
             });
 
-
-            /**
-             * Fix plus/trash icons so they are correct for the list they are in
-             */
             function fix_icons() {
                 $("#prospectivelist .path-delete").removeClass('fa-trash path-delete').addClass('fa-plus path-add');
                 $(".pathcourselist .path-add").removeClass('fa-plus path-add').addClass('fa-trash path-delete');
             }
 
-
-            /**
-             * Sort added courses list into order
-             */
             $(".pathcourselist").sortable({
                 handle: '.lphandle',
                 connectWith: '#prospectivelist, .pathcourselist',
@@ -251,9 +198,6 @@ window.alert(program);
                 }
             });
 
-            /**
-             * Permit drag to add
-             */
             $('#prospectivelist').sortable({
                 handle: '.lphandle',
                 connectWith: '.pathcourselist',
@@ -262,8 +206,6 @@ window.alert(program);
                     fix_icons();
                 }
             });
-
         }
     };
-
 });

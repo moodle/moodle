@@ -1,3 +1,24 @@
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @module    local_email
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+
 define(['jquery'], function($) {
 
     return {
@@ -5,9 +26,9 @@ define(['jquery'], function($) {
 
             function InsertAtCaret(myValue) {
 
-                return $(".insertatcaretactive").each(function(i) {
+                return $(".insertatcaretactive").each(function() {
                     if (typeof this.value === 'undefined') {
-                        var sel, range, html;
+                        var sel, range;
                         if (window.getSelection) {
                             sel = window.getSelection();
                             if (sel.getRangeAt && sel.rangeCount) {
@@ -30,7 +51,9 @@ define(['jquery'], function($) {
                             var startPos = this.selectionStart;
                             var endPos = this.selectionEnd;
                             var scrollTop = this.scrollTop;
-                            this.value = this.value.substring(0, startPos) + myValue + this.value.substring(endPos, this.value.length);
+                            this.value = this.value.substring(0, startPos) +
+                                         myValue +
+                                         this.value.substring(endPos, this.value.length);
                             this.focus();
                             this.selectionStart = startPos + myValue.length;
                             this.selectionEnd = startPos + myValue.length;
@@ -40,12 +63,11 @@ define(['jquery'], function($) {
                             this.focus();
                         }
                     }
-                })
+                });
             }
 
 
             $(".inputholder").on("focus", function() {
-                var EditorInput = $(this).parent().find(".ftext");
                 $(".insertatcaretactive").removeClass("insertatcaretactive");
                 $(this).addClass("insertatcaretactive");
             });

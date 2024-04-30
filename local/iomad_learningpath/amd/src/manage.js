@@ -1,5 +1,23 @@
-// Javascript module for manage page
-// Copyright 2018 Howard Miller (howardsmiller@gmail.com)
+//
+// Moodle is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// Moodle is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+/**
+ * @module    local_learningpath
+ * @copyright 2021 Derick Turner
+ * @author    Derick Turner
+ * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
 
 define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], function($, mdlcfg, ajax, notification, str) {
 
@@ -7,13 +25,11 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], 
 
         init: function() {
 
-
             // Enable Bootstrap tooltips
             require(['theme_boost/loader']);
             require(['theme_boost/tooltip'], function() {
                 $('[data-toggle="tooltip"]').tooltip();
             });
-
 
             // Update the eye icon
             function _redraw(icon, state) {
@@ -24,7 +40,6 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], 
                     icon.addClass('fa-eye-slash');
                 }
             }
-
 
             // Handle active/hidden
             $('.lp_active').click(function() {
@@ -52,7 +67,6 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], 
                 return false;
             });
 
-
             // Handle delete button
             $('.lp_delete').click(function() {
                 var id = $(this).data('id');
@@ -78,8 +92,6 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], 
                 return false;
             });
 
-
-
             // Handle copy button
             $('.lp_copy').click(function() {
                 var id = $(this).data('id');
@@ -104,8 +116,6 @@ define(['jquery', 'core/config', 'core/ajax', 'core/notification', 'core/str'], 
                 // False stops normal link behaviour!!
                 return false;
             });
-
         }
     };
-
 });
