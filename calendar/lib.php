@@ -3555,6 +3555,18 @@ function calendar_get_view(\calendar_information $calendar, $view, $includenavig
         }
     }
 
+    // Check if $data has events.
+    if (isset($data->events)) {
+        // Let's check and sanitize all "name" in $data->events before it's sent to front end.
+        foreach ($data->events as $d) {
+            $name = $d->name ?? null;
+            // Encode special characters if our decoded name does not match the original name.
+            if ($name && (html_entity_decode($name) !== $name)) {
+                $d->name = htmlspecialchars(html_entity_decode($name), ENT_QUOTES, 'utf-8');
+            }
+        }
+    }
+
     return [$data, $template];
 }
 
