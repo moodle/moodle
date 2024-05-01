@@ -37,6 +37,9 @@ define('SQL_PARAMS_QM', 2);
 /** SQL_PARAMS_DOLLAR - Bitmask, indicates $1, $2, ... type parameters are supported by db backend. */
 define('SQL_PARAMS_DOLLAR', 4);
 
+/** SQL_INT_MAX - Size of a large integer with cross database platform support. */
+define('SQL_INT_MAX', 9999999999);
+
 /** SQL_QUERY_SELECT - Normal select query, reading only. */
 define('SQL_QUERY_SELECT', 1);
 

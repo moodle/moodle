@@ -1,0 +1,7 @@
+issueNumber: MDL-81282
+notes:
+  core:
+    - message: >-
+        New DML constant `SQL_INT_MAX` to define the size of a large integer
+        with cross database platform support
+      type: improved
