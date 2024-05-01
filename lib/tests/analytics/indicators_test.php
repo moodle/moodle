@@ -86,8 +86,8 @@ class indicators_test extends \advanced_testcase {
 
         // Test any access before start.
         $params = array(
-            'startdate' => 9999999998,
-            'enddate' => 9999999999
+            'startdate' => SQL_INT_MAX - 1,
+            'enddate' => SQL_INT_MAX,
         );
         // Resetting $course var.
         $course = $this->getDataGenerator()->create_course($params);
