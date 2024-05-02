@@ -16,7 +16,9 @@
 
 namespace mod_bigbluebuttonbn\external;
 
+use context_course;
 use external_api;
+use restricted_context_exception;
 use mod_bigbluebuttonbn\instance;
 use mod_bigbluebuttonbn\local\config;
 use mod_bigbluebuttonbn\test\testcase_helper_trait;
@@ -83,6 +85,28 @@ class get_join_url_test extends \externallib_advanced_testcase {
         $instance = instance::get_from_instanceid($record->id);
 
         $this->expectException(moodle_exception::class);
+        $this->get_join_url($instance->get_cm_id());
+    }
+
+    /**
+     * Test execution with a user who doesn't have the capability to join the meeting
+     */
+    public function test_execute_without_capability(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course();
+        $record = $this->getDataGenerator()->create_module('bigbluebuttonbn', ['course' => $course->id]);
+        $instance = instance::get_from_instanceid($record->id);
+
+        $user = $this->getDataGenerator()->create_and_enrol($course);
+        $this->setUser($user);
+
+        $student = $DB->get_field('role', 'id', ['shortname' => 'student'], MUST_EXIST);
+        assign_capability('mod/bigbluebuttonbn:join', CAP_PROHIBIT, $student, context_course::instance($course->id), true);
+
+        $this->expectException(restricted_context_exception::class);
         $this->get_join_url($instance->get_cm_id());
     }
 
