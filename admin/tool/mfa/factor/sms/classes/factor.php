@@ -323,14 +323,6 @@ class factor extends object_factor_base {
      * @return bool
      */
     public function is_enabled(): bool {
-        if (empty(get_config('factor_sms', 'gateway'))) {
-            return false;
-        }
-
-        $class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
-        if (!call_user_func($class . '::is_gateway_enabled')) {
-            return false;
-        }
         return parent::is_enabled();
     }
 
@@ -412,9 +404,16 @@ class factor extends object_factor_base {
         ];
         $message = get_string('smsstring', 'factor_sms', $content);
 
-        $class = '\factor_sms\local\smsgateway\\' . get_config('factor_sms', 'gateway');
-        $gateway = new $class();
-        $gateway->send_sms_message($message, $phonenumber);
+        $manager = \core\di::get(\core_sms\manager::class);
+        $manager->send(
+            recipientnumber: $phonenumber,
+            content: $message,
+            component: 'factor_sms',
+            messagetype: 'factor',
+            recipientuserid: null,
+            sensitive: true,
+            async: false,
+        );
     }
 
     /**
