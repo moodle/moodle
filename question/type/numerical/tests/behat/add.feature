@@ -71,24 +71,30 @@ Feature: Test creating a Numerical question
       | id_multichoicedisplay              | a drop-down menu                            |
       | id_unitsleft                       | on the right, for example 1.00cm or 1.00km  |
 
-  @javascript
   Scenario: Create a Numerical question with optional units
-    When I am on the "Course 1" "core_question > course question bank" page logged in as teacher
+    Given I am on the "Course 1" "core_question > course question bank" page logged in as teacher
     # Add the numerical question with optional units.
     And I add a "Numerical" question filling the form with:
-      | Question name    | Numerical Question 1                                                                                       |
-      | Question text    | What is the sum of $8 + $9? <img src="http://download.moodle.org/unittest/test.jpg"> |
-      | Default mark     | 1                                                                                                          |
-      | General feedback | The correct answer is $17 <img src="http://download.moodle.org/unittest/test.jpg">   |
-      | id_answer_0      | 17                                                                                                         |
-      | id_tolerance_0   | 0                                                                                                          |
-      | id_fraction_0    | 100%                                                                                                       |
-      | id_answer_1      | *                                                                                                         |
-      | id_tolerance_1   | 0                                                                                                          |
-      | id_fraction_1    | 0%                                                                                                         |
-      | id_unitrole      | Units are optional. If a unit is entered, it is used to convert the response to Unit 1 before grading.     |
-      | id_unitsleft     | on the left, for example $1.00 or £1.00                                                                    |
-      | id_unit_0        | $                                                                                                          |
-      | id_multiplier_0  | 1                                                                                                          |
+      | Question name    | Numerical Question (optional)              |
+      | Question text    | How many meter is 1m + 20cm + 50mm?        |
+      | Default mark     | 1                                          |
+      | General feedback | The correct answer is 1.25m                |
+      | id_answer_0      | 1.25                                       |
+      | id_tolerance_0   | 0                                          |
+      | id_fraction_0    | 100%                                       |
+      | id_answer_1      | 125                                        |
+      | id_tolerance_1   | 0                                          |
+      | id_fraction_1    | 0%                                         |
+      | id_unitrole      | Units are optional.                        |
+      | id_unitsleft     | on the right, for example 1.00cm or 1.00km |
+      | id_unit_0        | m                                          |
     # Confirm that the numerical question with optional units is added successfully.
-    Then I should see "Numerical Question 1"
+    When I choose "Edit question" action for "Numerical Question (optional)" in the question bank
+    Then the following fields match these values:
+      | Question name    | Numerical Question (optional)                                                                          |
+      | Question text    | How many meter is 1m + 20cm + 50mm?                                                                    |
+      | Default mark     | 1                                                                                                      |
+      | General feedback | The correct answer is 1.25m                                                                            |
+      | id_unitrole      | Units are optional. If a unit is entered, it is used to convert the response to Unit 1 before grading. |
+      | id_unitsleft     | on the right, for example 1.00cm or 1.00km                                                             |
+      | id_unit_0        | m                                                                                                      |
