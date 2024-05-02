@@ -32104,11 +32104,7 @@ table.question-bank-table {
   table-layout: fixed;
   overflow-x: scroll;
   width: min-content;
-}
-table.question-bank-table td,
-table.question-bank-table th {
-  max-width: 40vw;
-  width: max-content;
+  max-width: 100%;
 }
 table.question-bank-table th {
   text-align: left;
@@ -32658,12 +32654,6 @@ body.path-question-type .mform fieldset.hidden {
   }
   .que .content {
     margin: 0;
-  }
-}
-@media (max-width: 991.98px) {
-  .question-bank-table td,
-  .question-bank-table th {
-    max-width: 75vw;
   }
 }
 /* user.less */
