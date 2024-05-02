@@ -159,3 +159,24 @@ Feature: An administrator can filter user accounts by role, cohort and other pro
     And I should not see "User One" in the "reportbuilder-table" "table"
     And I should not see "User Three" in the "reportbuilder-table" "table"
     And I should not see "User Four" in the "reportbuilder-table" "table"
+
+  @javascript
+  Scenario: Filter users by full name
+    When I click on "Filters" "button"
+    And I set the following fields in the "Full name" "core_reportbuilder > Filter" to these values:
+      | Full name operator | Is equal to |
+      | Full name value    | User One    |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    Then I should see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
+    And I click on "Reset all" "button" in the "[data-region='report-filters']" "css_element"
+    And I set the following fields in the "Full name" "core_reportbuilder > Filter" to these values:
+      | Full name operator | Is equal to |
+      | Full name value    | User Two    |
+    And I click on "Apply" "button" in the "[data-region='report-filters']" "css_element"
+    And I should see "User Two" in the "reportbuilder-table" "table"
+    And I should not see "User One" in the "reportbuilder-table" "table"
+    And I should not see "User Three" in the "reportbuilder-table" "table"
+    And I should not see "User Four" in the "reportbuilder-table" "table"
