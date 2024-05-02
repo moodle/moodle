@@ -104,6 +104,11 @@
         "allowedlevel2": true,
         "allowedspread": true
     },
+    "exception": {
+        "component": "core",
+        "allowedlevel2": true,
+        "allowedspread": true
+    },
     "external": {
         "component": "core",
         "allowedlevel2": true,
