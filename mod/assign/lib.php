@@ -1400,6 +1400,8 @@ function assign_pluginfile($course,
 function mod_assign_output_fragment_gradingpanel($args) {
     global $CFG;
 
+    \core\session\manager::write_close(); // No changes to session in this function.
+
     $context = $args['context'];
 
     if ($context->contextlevel != CONTEXT_MODULE) {
