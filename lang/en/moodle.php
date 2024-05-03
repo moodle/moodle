@@ -968,6 +968,7 @@ $string['general'] = 'General';
 $string['geolocation'] = 'latitude - longitude';
 $string['gettheselogs'] = 'Get these logs';
 $string['go'] = 'Go';
+$string['gobacktosite'] = 'Go back to site';
 $string['gpl'] = 'Copyright (C) 1999 onwards Martin Dougiamas (https://moodle.com)
 
 This program is free software; you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.
