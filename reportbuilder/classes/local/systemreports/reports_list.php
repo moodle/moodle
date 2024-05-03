@@ -181,7 +181,7 @@ class reports_list extends system_report {
                    AND ti.itemid = {$tablealias}.id
             )", 'tags')
             ->set_is_sortable(true)
-            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report'))
+            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report') === true)
             ->add_callback(static function(?string $tags): string {
                 return implode(', ', array_map(static function(string $tag): string {
                     [$name, $rawname] = explode('|', $tag);
@@ -265,7 +265,7 @@ class reports_list extends system_report {
                 'component' => 'core_reportbuilder',
                 'itemtype' => 'reportbuilder_report',
             ])
-            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report'))
+            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report') === true)
         );
 
         // Time created filter.
