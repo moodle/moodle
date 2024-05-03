@@ -22952,6 +22952,7 @@ a.text-dark:hover, a.text-dark:focus {
 .dir-rtl .popover.bs-popover-right .arrow, .dir-rtl .popover.bs-popover-auto[x-placement^=right] .arrow {
   transform: rotate(180deg);
   left: calc(-0.5rem - 1px);
+  right: auto;
 }
 .dir-rtl .popover.bs-popover-left, .dir-rtl .popover.bs-popover-auto[x-placement^=left] {
   margin-right: 0.5rem;
@@ -22959,6 +22960,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 .dir-rtl .popover.bs-popover-left .arrow, .dir-rtl .popover.bs-popover-auto[x-placement^=left] .arrow {
   transform: rotate(180deg);
+  left: auto;
   right: calc(-0.5rem - 1px);
 }
 
