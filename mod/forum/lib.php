@@ -3272,7 +3272,10 @@ function forum_add_discussion($discussion, $mform=null, $unused=null, $userid=nu
     }
 
     if (isset($discussion->tags)) {
-        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id, context_module::instance($cm->id), $discussion->tags);
+        $tags = is_array($discussion->tags) ? $discussion->tags : explode(',', $discussion->tags);
+
+        core_tag_tag::set_item_tags('mod_forum', 'forum_posts', $post->id,
+            context_module::instance($cm->id), $tags);
     }
 
     if (forum_tp_can_track_forums($forum) && forum_tp_is_tracked($forum)) {
