@@ -4,6 +4,7 @@ information provided here is intended especially for developers.
 === 4.5 ===
 
 * Final deprecation and removal of the function core_text::reset_caches().
+* The previously deprecated function `search_generate_text_SQL` has been removed and can no longer be used.
 
 === 4.4 ===
 
