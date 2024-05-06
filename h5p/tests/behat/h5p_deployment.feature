@@ -20,12 +20,12 @@ Feature: Undeployed H5P content should be only available to users that can deplo
       | capability                 | permission | role           | contextlevel | reference |
       | moodle/h5p:updatelibraries | Allow      | editingteacher | System       |           |
     And the following "activities" exist:
-      | activity | name      | intro     | introformat | course | content | contentformat | idnumber |
+      | activity | name    | intro     | introformat | course | content | contentformat | idnumber |
       | page     | H5PPage | PageDesc1 | 1           | C1     | H5Ptest | 1             | 1        |
     And I am on the H5PPage "page activity editing" page logged in as teacher1
     And the following "contentbank content" exist:
-      | contextlevel | reference | contenttype     | user     | contentname | filepath                        |
-      | Course       | C1        | contenttype_h5p | teacher1 | filltheblanks.h5p  | /h5p/tests/fixtures/filltheblanks.h5p  |
+      | contextlevel | reference | contenttype     | user     | contentname       | filepath                              |
+      | Course       | C1        | contenttype_h5p | teacher1 | filltheblanks.h5p | /h5p/tests/fixtures/filltheblanks.h5p |
     And I click on the "Configure H5P content" button for the "Page content" TinyMCE editor
     And I click on "Browse repositories..." "button" in the "Insert H5P content" "dialogue"
     And I click on "Content bank" "link" in the ".fp-repo-area" "css_element"
