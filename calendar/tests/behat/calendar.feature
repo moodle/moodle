@@ -146,6 +146,25 @@ Feature: Perform basic calendar functionality
     Then I should see "Mediocre event"
     And ".location-content" "css_element" should not exist
 
+  @javascript @editor_tiny
+  Scenario: Edit a newly created event using TinyMCE editor
+    Given I log in as "teacher1"
+    And I follow "Dashboard"
+    And I click on "New event" "button"
+    And I set the field "Event title" to "Newly created event"
+    When I press "Save"
+    Then I should see "Newly created event"
+    And I click on "Newly created event" "link"
+    And I click on "Edit" "button" in the "Newly created event" "dialogue"
+    And I click on "Show more..." "link"
+    And I click on the "Link" button for the "Description" TinyMCE editor
+    And I set the field "Text to display" to "Read more..."
+    And I set the field "Enter a URL" to "https://moodle.org/"
+    And I click on "Create link" "button" in the "Create link" "dialogue"
+    And I press "Save"
+    And I click on "Newly created event" "link"
+    And I should see "Read more..."
+
   @javascript
   Scenario: Module events editing
     Given I log in as "teacher1"
