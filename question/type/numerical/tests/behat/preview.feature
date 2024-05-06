@@ -45,3 +45,25 @@ Feature: Preview a Numerical question
     And I press "Check"
     And I should see "Very good."
     And I should see "Mark 1#00 out of 1#00"
+
+  Scenario: Preview a Numerical question with optional units
+    Given I am on the "Numerical-001" "core_question > edit" page logged in as teacher
+    # Edit the existing numerical question, add in the optional units.
+    And I set the following fields to these values:
+      | Question name                      | Numerical Question (optional)              |
+      | Question text                      | How many meter is 1m + 20cm + 50mm?        |
+      | Default mark                       | 1                                          |
+      | General feedback                   | The correct answer is 1.25m                |
+      | id_answer_0                        | 1.25                                       |
+      | id_tolerance_0                     | 0                                          |
+      | id_fraction_0                      | 100%                                       |
+      | id_answer_1                        | 125                                        |
+      | id_tolerance_1                     | 0                                          |
+      | id_fraction_1                      | 0%                                         |
+      | id_unitrole                        | Units are optional.                        |
+      | id_unitsleft                       | on the right, for example 1.00cm or 1.00km |
+      | id_unit_0                          | m                                          |
+    And I press "submitbutton"
+    When I choose "Preview" action for "Numerical Question (optional)" in the question bank
+    # Unit is optional, so the unit select box should not be exist.
+    Then "Select one unit" "select" should not exist
