@@ -46,7 +46,7 @@ class runner_test extends \advanced_testcase {
         $feature = $runner->parse_feature($contents);
 
         $this->assertEquals(2, count($feature->get_scenarios()));
-        $this->assertEquals(6, count($feature->get_all_steps()));
+        $this->assertEquals(7, count($feature->get_all_steps()));
         $this->assertTrue($feature->is_valid());
 
         $result = $runner->execute($feature);

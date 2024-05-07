@@ -21,6 +21,11 @@ Feature: Create testing scenarios using generators
     And I should see "Student Test3"
     And I should see "Student Test4"
     And I should see "Student Test5"
+    And I set the field "Participants tertiary navigation" to "Enrolment methods"
+    And I click on "Edit" "link" in the "Manual enrolments" "table_row"
+    And the field "Send course welcome message" matches value "No"
+    And I navigate to "Plugins > Enrolments > Manual enrolments" in site administration
+    And the field "Send course welcome message" matches value "No"
 
   @javascript
   Scenario: Prevent creating a testing scenario with no steps to execute

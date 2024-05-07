@@ -58,6 +58,31 @@ class steprunner_test extends \advanced_testcase {
     }
 
     /**
+     * Get the list of valid behat steps for the tests.
+     * @return array the valid steps details.
+     */
+    private function get_valid_steps(): array {
+        $generator = new behat_data_generators();
+        return [
+            '/^the following "(?P<element_string>(?:[^"]|\\")*)" exist:$/' => (object) [
+                'name' => 'the_following_entities_exist',
+                'given' => '/^the following "(?P<element_string>(?:[^"]|\\")*)" exist:$/',
+                'generator' => $generator,
+            ],
+            ':count :entitytype exist with the following data:' => (object) [
+                'name' => 'the_following_repeated_entities_exist',
+                'given' => ':count :entitytype exist with the following data:',
+                'generator' => $generator,
+            ],
+            'the following :entitytype exists:' => (object) [
+                'name' => 'the_following_entity_exists',
+                'given' => 'the following :entitytype exists:',
+                'generator' => $generator,
+            ],
+        ];
+    }
+
+    /**
      * Test for parse_feature.
      * @covers ::is_valid
      * @param string $step the step to validate.
@@ -65,15 +90,9 @@ class steprunner_test extends \advanced_testcase {
      * @dataProvider execute_steps_provider
      */
     public function test_is_valid(string $step, bool $expected): void {
-        $generator = new behat_data_generators();
-        $validsteps = [
-            '/^the following "(?P<element_string>(?:[^"]|\\")*)" exist:$/' => 'the_following_entities_exist',
-            ':count :entitytype exist with the following data:' => 'the_following_repeated_entities_exist',
-            'the following :entitytype exists:' => 'the_following_entity_exists',
-        ];
-
+        $validsteps = $this->get_valid_steps();
         $step = $this->get_step($step);
-        $steprunner = new steprunner($generator, $validsteps, $step);
+        $steprunner = new steprunner(null, $validsteps, $step);
         $this->assertEquals($expected, $steprunner->is_valid());
     }
 
@@ -91,15 +110,10 @@ class steprunner_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        $generator = new behat_data_generators();
-        $validsteps = [
-            '/^the following "(?P<element_string>(?:[^"]|\\")*)" exist:$/' => 'the_following_entities_exist',
-            ':count :entitytype exist with the following data:' => 'the_following_repeated_entities_exist',
-            'the following :entitytype exists:' => 'the_following_entity_exists',
-        ];
+        $validsteps = $this->get_valid_steps();
 
         $step = $this->get_step($step);
-        $steprunner = new steprunner($generator, $validsteps, $step);
+        $steprunner = new steprunner(null, $validsteps, $step);
 
         $this->assertFalse($steprunner->is_executed());
 
@@ -162,18 +176,13 @@ class steprunner_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        $generator = new behat_data_generators();
-        $validsteps = [
-            '/^the following "(?P<element_string>(?:[^"]|\\")*)" exist:$/' => 'the_following_entities_exist',
-            ':count :entitytype exist with the following data:' => 'the_following_repeated_entities_exist',
-            'the following :entitytype exists:' => 'the_following_entity_exists',
-        ];
+        $validsteps = $this->get_valid_steps();
 
         $step = $this->get_step('Given the following "course" exists:
             | fullname         | Course test |
             | shortname        | C1          |
             | category         | 0           |');
-        $steprunner = new steprunner($generator, $validsteps, $step);
+        $steprunner = new steprunner(null, $validsteps, $step);
 
         $this->assertFalse($steprunner->is_executed());
 
@@ -190,7 +199,7 @@ class steprunner_test extends \advanced_testcase {
         );
 
         // Execute the same course creation.
-        $steprunner = new steprunner($generator, $validsteps, $step);
+        $steprunner = new steprunner(null, $validsteps, $step);
         $this->assertFalse($steprunner->is_executed());
         $result = $steprunner->execute();
         $this->assertFalse($result);
@@ -204,19 +213,14 @@ class steprunner_test extends \advanced_testcase {
      * @covers ::get_arguments_string
      */
     public function test_get_step_content(): void {
-        $generator = new behat_data_generators();
-        $validsteps = [
-            '/^the following "(?P<element_string>(?:[^"]|\\")*)" exist:$/' => 'the_following_entities_exist',
-            ':count :entitytype exist with the following data:' => 'the_following_repeated_entities_exist',
-            'the following :entitytype exists:' => 'the_following_entity_exists',
-        ];
-
         $step = $this->get_step('Given the following "course" exists:
-            | fullname    | Course test |
-            | shortname   | C1          |
-            | category    | 0           |
-            | numsections | 3           |');
-        $steprunner = new steprunner($generator, $validsteps, $step);
+        | fullname    | Course test |
+        | shortname   | C1          |
+        | category    | 0           |
+        | numsections | 3           |');
+
+        $validsteps = $this->get_valid_steps();
+        $steprunner = new steprunner(null, $validsteps, $step);
 
         $this->assertEquals(
             'the following "course" exists:',
