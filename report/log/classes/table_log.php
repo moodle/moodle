@@ -22,9 +22,11 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core\dataformat;
 use core\report_helper;
 
 defined('MOODLE_INTERNAL') || die;
+
 global $CFG;
 require_once($CFG->libdir . '/tablelib.php');
 
@@ -299,8 +301,11 @@ class report_log_table_log extends table_sql {
      * @return string HTML for the description column
      */
     public function col_description($event) {
-        // Description.
-        return format_text($event->get_description(), FORMAT_PLAIN);
+        if (empty($this->download) || dataformat::get_format_instance($this->download)->supports_html()) {
+            return format_text($event->get_description(), FORMAT_PLAIN);
+        } else {
+            return $event->get_description();
+        }
     }
 
     /**
