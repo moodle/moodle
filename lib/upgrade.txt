@@ -5,6 +5,8 @@ information provided here is intended especially for developers.
 
 * Final deprecation and removal of the function core_text::reset_caches().
 * The previously deprecated function `search_generate_text_SQL` has been removed and can no longer be used.
+* The following previously deprecated methods have been removed and can no longer be used:
+  - `renderer_base::should_display_main_logo`
 
 === 4.4 ===
 
