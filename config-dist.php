@@ -721,7 +721,7 @@ $CFG->admin = 'admin';
 //
 // Uninstall plugins from CLI only. This stops admins from uninstalling plugins from the graphical admin
 // user interface, and forces plugins to be uninstalled from the Command Line tool only, found at
-// admin/cli/plugin_uninstall.php.
+// admin/cli/uninstall_plugins.php.
 //
 //      $CFG->uninstallclionly = true;
 //
