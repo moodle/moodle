@@ -22,6 +22,7 @@ use behat_base;
 use Behat\Gherkin\Parser;
 use Behat\Gherkin\Lexer;
 use Behat\Gherkin\Keywords\ArrayKeywords;
+use Behat\Gherkin\Node\OutlineNode;
 use ReflectionClass;
 use ReflectionMethod;
 use stdClass;
@@ -170,8 +171,7 @@ class runner {
             $scenarios = $feature->getScenarios();
             foreach ($scenarios as $scenario) {
                 if ($scenario->getNodeType() == 'Outline') {
-                    $result->add_scenario($scenario->getNodeType(), $scenario->getTitle());
-                    $result->add_error(get_string('testscenario_outline', 'tool_generator'));
+                    $this->parse_scenario_outline($scenario, $result);
                     continue;
                 }
                 $result->add_scenario($scenario->getNodeType(), $scenario->getTitle());
@@ -182,6 +182,23 @@ class runner {
             }
         }
         return $result;
+    }
+
+    /**
+     * Parse a scenario outline.
+     * @param OutlineNode $scenario the scenario outline to parse.
+     * @param parsedfeature $result the parsed feature to add the scenario.
+     */
+    private function parse_scenario_outline(OutlineNode $scenario, parsedfeature $result) {
+        $count = 1;
+        foreach ($scenario->getExamples() as $example) {
+            $result->add_scenario($example->getNodeType(), $example->getOutlineTitle() . " ($count)");
+            $steps = $example->getSteps();
+            foreach ($steps as $step) {
+                $result->add_step(new steprunner(null, $this->validsteps, $step));
+            }
+            $count++;
+        }
     }
 
     /**

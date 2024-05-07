@@ -60,10 +60,17 @@ Feature: Create testing scenarios using generators
     Then I should see "The file format is not valid or contains invalid steps"
 
   @javascript
-  Scenario: Prevent creating a testing scenario from a scenario outline
+  Scenario: Create a testing scenario from a scenario outline
     Given I log in as "admin"
     And I navigate to "Development > Create testing scenarios" in site administration
-    When I upload "admin/tool/generator/tests/fixtures/testscenario/scenario_wrongoutline.feature" file to "Feature file" filemanager
+    When I upload "admin/tool/generator/tests/fixtures/testscenario/scenario_outline.feature" file to "Feature file" filemanager
     And I press "Import"
-    Then I should see "Scenario outlines are not supported"
-    Then I should see "There are no steps to execute in the file"
+    And I should see "Example: creating test scenarios using an outline (1)"
+    And I should see "Example: creating test scenarios using an outline (2)"
+    And I should see "Example: creating test scenarios using an outline (3)"
+    Then I am on the "C1" "Course" page
+    And I should see "Course 1" in the "page-header" "region"
+    And I am on the "C2" "Course" page
+    And I should see "Course 2" in the "page-header" "region"
+    And I am on the "C3" "Course" page
+    And I should see "Course 3" in the "page-header" "region"

@@ -1,6 +1,6 @@
-Feature: Prepare scenario for testing
+Feature: Fixture to prepare scenario for testing from an outline
 
-  Scenario Outline: test outline scenarios are not supported yet
+  Scenario Outline: creating test scenarios using an outline
     Given the following "course" exists:
       | fullname    | <name>      |
       | shortname   | <shortname> |

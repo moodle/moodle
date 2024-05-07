@@ -1,4 +1,4 @@
-Feature: Prepare scenario for testing
+Feature: Fixture to prepare scenario for testing
   Scenario: Create course content
     Given the following config values are set as admin:
       | sendcoursewelcomemessage | 0 | enrol_manual |
