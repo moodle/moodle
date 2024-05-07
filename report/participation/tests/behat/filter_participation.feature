@@ -24,7 +24,6 @@ Feature: In a participation report, admin can filter student actions
       | name        | Test forum name |
       | idnumber    | forum1          |
 
-  @javascript
   Scenario: Filter participation report when standard log reader is enabled later
     Given I log in as "admin"
     And I navigate to "Plugins > Logging > Manage log stores" in site administration
@@ -51,7 +50,6 @@ Feature: In a participation report, admin can filter student actions
       | -1-       | All actions |
       | Student 1 | Yes (1)     |
 
-  @javascript
   Scenario: Filter participation report when only standard log reader is enabled by default
     Given I am on the "Test forum name" "forum activity" page logged in as student1
     When I am on the "Course 1" course page logged in as admin
@@ -65,7 +63,6 @@ Feature: In a participation report, admin can filter student actions
       | -1-       | All actions |
       | Student 1 | Yes (1)     |
 
-  @javascript
   Scenario Outline: Filter participation report by viewable roles
     Given I am on the "Course 1" course page logged in as "teacher1"
     When I navigate to "Reports" in current page administration
