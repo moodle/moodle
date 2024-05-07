@@ -14,35 +14,45 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Tests for the dataformat plugins
- *
- * @package    core
- * @copyright  2020 Paul Holden <paulh@moodle.com>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core;
 
+use coding_exception;
 use context_system;
 use core_component;
 
 /**
- * Dataformat tests
+ * Tests for the dataformat plugins
  *
  * @package    core
  * @covers     \core\dataformat
  * @copyright  2020 Paul Holden <paulh@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class dataformat_test extends \advanced_testcase {
+final class dataformat_test extends \advanced_testcase {
+
+    /**
+     * Test getting writer instance for given dataformat
+     */
+    public function test_get_format_instance(): void {
+        $instance = dataformat::get_format_instance('pdf');
+        $this->assertInstanceOf(\dataformat_pdf\writer::class, $instance);
+    }
+
+    /**
+     * Test getting writer instance for invalid dataformat
+     */
+    public function test_get_format_instance_invalid(): void {
+        $this->expectException(coding_exception::class);
+        $this->expectExceptionMessage('Invalid dataformat (weird)');
+        dataformat::get_format_instance('weird');
+    }
 
     /**
      * Data provider to return array of dataformat types
      *
      * @return array
      */
-    public function write_data_provider(): array {
+    public static function write_data_provider(): array {
         $data = [];
 
         $dataformats = core_component::get_plugin_list('dataformat');

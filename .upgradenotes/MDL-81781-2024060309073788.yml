@@ -1,0 +1,7 @@
+issueNumber: MDL-81781
+notes:
+  core:
+    - message: >
+        The `\core\dataformat::get_format_instance` method is now public, and
+        can be used to retrieve a writer instance for a given dataformat
+      type: changed
