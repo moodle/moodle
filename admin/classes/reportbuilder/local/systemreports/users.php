@@ -184,6 +184,7 @@ class users extends system_report {
         $entityuseralias = $entityuser->get_table_alias('user');
 
         $filters = [
+            'user:fullname',
             'user:firstname',
             'user:lastname',
             'user:username',
