@@ -29,7 +29,7 @@ require_once($CFG->libdir . '/licenselib.php');
 require_admin();
 
 $action = optional_param('action', '', PARAM_ALPHANUMEXT);
-$license = optional_param('license', '', PARAM_SAFEDIR);
+$license = optional_param('license', '', PARAM_NOTAGS);
 
 // Route via the manager.
 $licensemanager = new \tool_licensemanager\manager();
