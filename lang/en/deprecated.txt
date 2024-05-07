@@ -113,4 +113,6 @@ coursesearch_help,core
 blocknotexist,core_debug
 modulenotexist,core_debug
 coursecalendar,core_calendar
+importcalendarexternal,core_calendar
+nocalendarsubscriptions,core_calendar
 datechanged,core
