@@ -14,24 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Report plugins helper class
- *
- * @package core
- * @subpackage report
- * @copyright 2021 Sujith Haridasan
- * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace core;
+
 use context_course;
-use moodle_url;
 use stdClass;
 
 /**
  * A helper class with static methods to help report plugins
  *
  * @package core
+ * @subpackage report
  * @copyright 2021 Sujith Haridasan
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -93,24 +85,11 @@ class report_helper {
     }
 
     /**
-     * Save the last selected report in the session
-     *
      * @deprecated since Moodle 4.0
-     * @param int $id The course id
-     * @param moodle_url $url The moodle url
-     * @return void
      */
-    public static function save_selected_report(int $id, moodle_url $url): void {
-        global $USER;
-
-        debugging('save_selected_report() has been deprecated because it is no longer used and will be '.
-            'removed in future versions of Moodle', DEBUG_DEVELOPER);
-
-        // Last selected report.
-        if (!isset($USER->course_last_report)) {
-            $USER->course_last_report = [];
-        }
-        $USER->course_last_report[$id] = $url;
+    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.0', final: true)]
+    public static function save_selected_report() {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
 
     /**
