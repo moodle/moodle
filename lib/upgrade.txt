@@ -1,13 +1,11 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
+
 This files describes API changes in core libraries and APIs,
 information provided here is intended especially for developers.
-
-=== 4.5 ===
-
-* Final deprecation and removal of the function core_text::reset_caches().
-* The previously deprecated function `search_generate_text_SQL` has been removed and can no longer be used.
-* The following previously deprecated methods have been removed and can no longer be used:
-  - `renderer_base::should_display_main_logo`
-* Final deprecation of print_error(). Use moodle_exception instead.
 
 === 4.4 ===
 

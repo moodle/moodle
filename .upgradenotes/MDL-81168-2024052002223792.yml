@@ -1,0 +1,11 @@
+issueNumber: MDL-81168
+notes:
+  core_reportbuilder:
+    - message: >
+        In order to better support float values in filter forms, the following
+        filter types now cast given SQL prior to comparison:
+
+          - `duration`
+          - `filesize`
+          - `number`
+      type: changed

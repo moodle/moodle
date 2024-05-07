@@ -1,0 +1,8 @@
+issueNumber: MDL-81433
+notes:
+  core_reportbuilder:
+    - message: >
+        The following external methods now return tags data relevant to each custom report:
+          - `core_reportbuilder_list_reports`
+          - `core_reportbuilder_retrieve_report`
+      type: improved

@@ -1,0 +1,6 @@
+issueNumber: MDL-81330
+notes:
+  core_reportbuilder:
+    - message: >
+        The base datasource `add_all_from_entities` method accepts a new optional parameter to specify which entities to add elements from
+      type: changed

@@ -1,8 +1,10 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /mod/data - plugins,
 information provided here is intended especially for developers.
-
-=== 4.5 ===
-* The `data_add_record` method accepts a new `$approved` parameter to set the corresponding state of the new record
 
 === 4.4 ===
 * The following behat steps are now deprecated. Use data generators instead:

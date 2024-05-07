@@ -1,3 +1,8 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in the bigbluebuttonbn code.
 === 4.3 ===
 * Make instance class constructor private and use the factory method to create instances.

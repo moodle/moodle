@@ -1,0 +1,6 @@
+issueNumber: MDL-72353
+notes:
+  report:
+    - message: >-
+        The previously deprecated `report_helper::save_selected_report` method has been removed and can no longer be used
+      type: removed

@@ -1,0 +1,6 @@
+issueNumber: MDL-81274
+notes:
+  mod_data:
+    - message: >-
+        The `data_add_record` method accepts a new `$approved` parameter to set the corresponding state of the new record
+      type: improved

@@ -1,20 +1,10 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
-
-=== 4.5 ===
-
-* New database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
-* The following external methods now return tags data relevant to each custom report:
-  - `core_reportbuilder_list_reports`
-  - `core_reportbuilder_retrieve_report`
-* The following previously deprecated local helper methods have been removed and can no longer be used:
-  - `audience::get_all_audiences_menu_types`
-  - `report::get_available_columns`
-* The base datasource `add_all_from_entities` method accepts optional parameter to specify which entities to add elements from
-* In order to better support float values in filter forms, the following filter types now cast given SQL prior to comparison:
-  - `duration`
-  - `filesize`
-  - `number`
 
 === 4.4 ===
 

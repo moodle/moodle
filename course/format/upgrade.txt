@@ -1,10 +1,11 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes for course formats
 
 Overview of this plugin type at https://moodledev.io/docs/apis/plugintypes/format
-
-=== 4.5 ===
-* The constructor of core_courseformat\output\local\state\cm has been updated to accept a new optional parameter called is_tracked_user.
-  If is_tracked_user is pre-computed for this CM's course, it can be provided here to avoid an additional function call.
 
 === 4.4 ===
 * The core_courseformat\output\local\content\section::export_for_template() is not returning hiddenfromstudents and notavailable
