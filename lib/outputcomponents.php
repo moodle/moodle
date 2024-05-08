@@ -27,6 +27,7 @@
  */
 
  use core\output\local\action_menu\subpanel;
+ use core\output\named_templatable;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -4109,7 +4110,7 @@ class tabobject implements renderable, templatable {
  * @copyright 2015 Adrian Greeve <adrian@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class context_header implements renderable {
+class context_header implements renderable, named_templatable {
 
     /**
      * @var string $heading Main heading.
@@ -4189,6 +4190,57 @@ class context_header implements renderable {
             $this->additionalbuttons[$buttontype]['linkattributes'] = array_merge($button['linkattributes'],
                 array('class' => $class));
         }
+    }
+
+    /**
+     * Export for template.
+     *
+     * @param renderer_base $output Renderer.
+     * @return array
+     */
+    public function export_for_template(renderer_base $output): array {
+        // Heading.
+        $headingtext = isset($this->heading) ? $this->heading : $output->get_page()->heading;
+        $heading = $output->heading($headingtext, $this->headinglevel, "h2 mb-0");
+
+        // Buttons.
+        if (isset($this->additionalbuttons)) {
+            $additionalbuttons = [];
+            foreach ($this->additionalbuttons as $button) {
+                if (!isset($button->page)) {
+                    // Include js for messaging.
+                    if ($button['buttontype'] === 'togglecontact') {
+                        \core_message\helper::togglecontact_requirejs();
+                    }
+                    if ($button['buttontype'] === 'message') {
+                        \core_message\helper::messageuser_requirejs();
+                    }
+                }
+                foreach ($button['linkattributes'] as $key => $value) {
+                    $button['attributes'][] = ['name' => $key, 'value' => $value];
+                }
+                $additionalbuttons[] = $button;
+            }
+        }
+
+        return [
+            'heading' => $heading,
+            'headinglevel' => $this->headinglevel,
+            'imagedata' => $this->imagedata,
+            'prefix' => $this->prefix,
+            'hasadditionalbuttons' => !empty($additionalbuttons),
+            'additionalbuttons' => $additionalbuttons ?? [],
+        ];
+    }
+
+    /**
+     * Get the template name.
+     *
+     * @param renderer_base $renderer Renderer.
+     * @return string
+     */
+    public function get_template_name(renderer_base $renderer): string {
+        return 'core/contextheader';
     }
 }
 

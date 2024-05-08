@@ -1955,24 +1955,14 @@ nav.navbar .logo img {
     overflow: hidden;
     padding: 0.25rem 0;
 
-    display: flex;
-
     .page-header-image {
         & > a {
             display: inline-block;
         }
-    }
-
-    .page-header-headings,
-    .header-button-group {
-        position: relative;
-        line-height: 24px;
-        vertical-align: middle;
-    }
-
-    .header-button-group {
-        display: block;
-        float: left;
+        .userinitials,
+        .userpicture {
+            margin-right: map-get($spacers, 3);
+        }
     }
 }
 
