@@ -836,7 +836,8 @@ function lesson_process_post_save(&$lesson) {
  */
 function lesson_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'lessonheader', get_string('modulenameplural', 'lesson'));
-    $mform->addElement('advcheckbox', 'reset_lesson', get_string('deleteallattempts','lesson'));
+    $mform->addElement('static', 'lessondelete', get_string('delete'));
+    $mform->addElement('advcheckbox', 'reset_lesson', get_string('deleteallattempts', 'lesson'));
     $mform->addElement('advcheckbox', 'reset_lesson_user_overrides',
             get_string('removealluseroverrides', 'lesson'));
     $mform->addElement('advcheckbox', 'reset_lesson_group_overrides',

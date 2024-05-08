@@ -725,7 +725,8 @@ function choice_get_post_actions() {
  */
 function choice_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'choiceheader', get_string('modulenameplural', 'choice'));
-    $mform->addElement('advcheckbox', 'reset_choice', get_string('removeresponses','choice'));
+    $mform->addElement('static', 'choicedelete', get_string('delete'));
+    $mform->addElement('advcheckbox', 'reset_choice', get_string('removeresponses', 'choice'));
 }
 
 /**

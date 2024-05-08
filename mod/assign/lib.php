@@ -207,6 +207,7 @@ function assign_reset_gradebook($courseid, $type='') {
  */
 function assign_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'assignheader', get_string('modulenameplural', 'assign'));
+    $mform->addElement('static', 'assigndelete', get_string('delete'));
     $name = get_string('deleteallsubmissions', 'assign');
     $mform->addElement('advcheckbox', 'reset_assign_submissions', $name);
     $mform->addElement('advcheckbox', 'reset_assign_user_overrides',

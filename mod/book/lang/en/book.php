@@ -111,7 +111,7 @@ $string['subchapternotice'] = '(Only available once the first chapter has been c
 $string['subplugintype_booktool'] = 'Book tool';
 $string['subplugintype_booktool_plural'] = 'Book tools';
 
-$string['removeallbooktags'] = 'Remove all book tags';
+$string['removeallbooktags'] = 'All book tags';
 $string['tagarea_book_chapters'] = 'Book chapters';
 $string['tagsdeleted'] = 'Book tags have been deleted';
 

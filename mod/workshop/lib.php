@@ -1985,15 +1985,17 @@ function workshop_reset_course_form_definition($mform) {
 
     $mform->addElement('header', 'workshopheader', get_string('modulenameplural', 'mod_workshop'));
 
+    $mform->addElement('advcheckbox', 'reset_workshop_phase', get_string('resetphase', 'mod_workshop'));
+    $mform->addHelpButton('reset_workshop_phase', 'resetphase', 'mod_workshop');
+
+    $mform->addElement('static', 'workshopdelete', get_string('delete'));
+
     $mform->addElement('advcheckbox', 'reset_workshop_submissions', get_string('resetsubmissions', 'mod_workshop'));
     $mform->addHelpButton('reset_workshop_submissions', 'resetsubmissions', 'mod_workshop');
 
     $mform->addElement('advcheckbox', 'reset_workshop_assessments', get_string('resetassessments', 'mod_workshop'));
     $mform->addHelpButton('reset_workshop_assessments', 'resetassessments', 'mod_workshop');
-    $mform->disabledIf('reset_workshop_assessments', 'reset_workshop_submissions', 'checked');
-
-    $mform->addElement('advcheckbox', 'reset_workshop_phase', get_string('resetphase', 'mod_workshop'));
-    $mform->addHelpButton('reset_workshop_phase', 'resetphase', 'mod_workshop');
+    $mform->hideIf('reset_workshop_assessments', 'reset_workshop_submissions', 'checked');
 }
 
 /**

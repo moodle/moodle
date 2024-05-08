@@ -726,9 +726,10 @@ function survey_get_post_actions() {
  */
 function survey_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'surveyheader', get_string('modulenameplural', 'survey'));
-    $mform->addElement('checkbox', 'reset_survey_answers', get_string('deleteallanswers','survey'));
-    $mform->addElement('checkbox', 'reset_survey_analysis', get_string('deleteanalysis','survey'));
-    $mform->disabledIf('reset_survey_analysis', 'reset_survey_answers', 'checked');
+    $mform->addElement('static', 'surveydelete', get_string('delete'));
+    $mform->addElement('checkbox', 'reset_survey_answers', get_string('deleteallanswers', 'survey'));
+    $mform->addElement('checkbox', 'reset_survey_analysis', get_string('deleteanalysis', 'survey'));
+    $mform->hideIf('reset_survey_analysis', 'reset_survey_answers', 'checked');
 }
 
 /**

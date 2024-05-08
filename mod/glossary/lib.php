@@ -2795,24 +2795,24 @@ function glossary_get_post_actions() {
  */
 function glossary_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'glossaryheader', get_string('modulenameplural', 'glossary'));
+    $mform->addElement('static', 'glossarydelete', get_string('delete'));
     $mform->addElement('checkbox', 'reset_glossary_all', get_string('resetglossariesall','glossary'));
 
     $mform->addElement('select', 'reset_glossary_types', get_string('resetglossaries', 'glossary'),
                        array('main'=>get_string('mainglossary', 'glossary'), 'secondary'=>get_string('secondaryglossary', 'glossary')), array('multiple' => 'multiple'));
-    $mform->setAdvanced('reset_glossary_types');
-    $mform->disabledIf('reset_glossary_types', 'reset_glossary_all', 'checked');
+    $mform->hideIf('reset_glossary_types', 'reset_glossary_all', 'checked');
 
     $mform->addElement('checkbox', 'reset_glossary_notenrolled', get_string('deletenotenrolled', 'glossary'));
-    $mform->disabledIf('reset_glossary_notenrolled', 'reset_glossary_all', 'checked');
+    $mform->hideIf('reset_glossary_notenrolled', 'reset_glossary_all', 'checked');
 
     $mform->addElement('checkbox', 'reset_glossary_ratings', get_string('deleteallratings'));
-    $mform->disabledIf('reset_glossary_ratings', 'reset_glossary_all', 'checked');
+    $mform->hideIf('reset_glossary_ratings', 'reset_glossary_all', 'checked');
 
     $mform->addElement('checkbox', 'reset_glossary_comments', get_string('deleteallcomments'));
-    $mform->disabledIf('reset_glossary_comments', 'reset_glossary_all', 'checked');
+    $mform->hideIf('reset_glossary_comments', 'reset_glossary_all', 'checked');
 
     $mform->addElement('checkbox', 'reset_glossary_tags', get_string('removeallglossarytags', 'glossary'));
-    $mform->disabledIf('reset_glossary_tags', 'reset_glossary_all', 'checked');
+    $mform->hideIf('reset_glossary_tags', 'reset_glossary_all', 'checked');
 }
 
 /**

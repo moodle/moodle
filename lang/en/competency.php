@@ -37,7 +37,7 @@ $string['coursemodulecompetencyoutcome_complete'] = 'Complete the competency';
 $string['coursemodulecompetencyoutcome_evidence'] = 'Attach evidence';
 $string['coursemodulecompetencyoutcome_none'] = 'Do nothing';
 $string['coursemodulecompetencyoutcome_recommend'] = 'Send for review';
-$string['deletecompetencyratings'] = 'Delete competency ratings';
+$string['deletecompetencyratings'] = 'Competency ratings';
 $string['duplicateditemname'] = '{$a} (copy)';
 $string['enablecompetencies'] = 'Enable competencies';
 $string['enablecompetencies_desc'] = 'Competencies allow users to be assessed according to learning plans.';
@@ -200,4 +200,3 @@ $string['usercompetencystatus_idle'] = 'Idle';
 $string['usercompetencystatus_inreview'] = 'In review';
 $string['usercompetencystatus_waitingforreview'] = 'Waiting for review';
 $string['userplans'] = 'Learning plans';
-

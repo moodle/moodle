@@ -1208,6 +1208,7 @@ function chat_print_overview() {
  */
 function chat_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'chatheader', get_string('modulenameplural', 'chat'));
+    $mform->addElement('static', 'chatdelete', get_string('delete'));
     $mform->addElement('advcheckbox', 'reset_chat', get_string('removemessages', 'chat'));
 }
 

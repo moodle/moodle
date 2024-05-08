@@ -1415,6 +1415,7 @@ function quiz_questions_in_use($questionids) {
  */
 function quiz_reset_course_form_definition($mform) {
     $mform->addElement('header', 'quizheader', get_string('modulenameplural', 'quiz'));
+    $mform->addElement('static', 'quizdelete', get_string('delete'));
     $mform->addElement('advcheckbox', 'reset_quiz_attempts',
             get_string('removeallquizattempts', 'quiz'));
     $mform->addElement('advcheckbox', 'reset_quiz_user_overrides',

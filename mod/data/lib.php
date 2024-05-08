@@ -2833,6 +2833,7 @@ function data_preset_path($course, $userid, $shortname) {
  */
 function data_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'dataheader', get_string('modulenameplural', 'data'));
+    $mform->addElement('static', 'datadelete', get_string('delete'));
     $mform->addElement('checkbox', 'reset_data', get_string('deleteallentries','data'));
 
     $mform->addElement('checkbox', 'reset_data_notenrolled', get_string('deletenotenrolled', 'data'));

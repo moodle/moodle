@@ -5255,28 +5255,31 @@ function forum_reset_userdata($data) {
  */
 function forum_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'forumheader', get_string('modulenameplural', 'forum'));
+    $mform->addElement('static', 'forumdelete', get_string('delete'));
 
-    $mform->addElement('checkbox', 'reset_forum_all', get_string('resetforumsall','forum'));
+    $mform->addElement('checkbox', 'reset_forum_digests', get_string('resetdigests', 'forum'));
 
-    $mform->addElement('select', 'reset_forum_types', get_string('resetforums', 'forum'), forum_get_forum_types_all(), array('multiple' => 'multiple'));
-    $mform->setAdvanced('reset_forum_types');
-    $mform->disabledIf('reset_forum_types', 'reset_forum_all', 'checked');
+    $mform->addElement('checkbox', 'reset_forum_subscriptions', get_string('resetsubscriptions', 'forum'));
 
-    $mform->addElement('checkbox', 'reset_forum_digests', get_string('resetdigests','forum'));
-    $mform->setAdvanced('reset_forum_digests');
+    $mform->addElement('checkbox', 'reset_forum_all', get_string('resetforumsall', 'forum'));
 
-    $mform->addElement('checkbox', 'reset_forum_subscriptions', get_string('resetsubscriptions','forum'));
-    $mform->setAdvanced('reset_forum_subscriptions');
+    $mform->addElement(
+        'select',
+        'reset_forum_types',
+        get_string('resetforums', 'forum'),
+        forum_get_forum_types_all(),
+        ['multiple' => 'multiple'],
+    );
+    $mform->hideIf('reset_forum_types', 'reset_forum_all', 'checked');
 
-    $mform->addElement('checkbox', 'reset_forum_track_prefs', get_string('resettrackprefs','forum'));
-    $mform->setAdvanced('reset_forum_track_prefs');
-    $mform->disabledIf('reset_forum_track_prefs', 'reset_forum_all', 'checked');
+    $mform->addElement('checkbox', 'reset_forum_track_prefs', get_string('resettrackprefs', 'forum'));
+    $mform->hideIf('reset_forum_track_prefs', 'reset_forum_all', 'checked');
 
     $mform->addElement('checkbox', 'reset_forum_ratings', get_string('deleteallratings'));
-    $mform->disabledIf('reset_forum_ratings', 'reset_forum_all', 'checked');
+    $mform->hideIf('reset_forum_ratings', 'reset_forum_all', 'checked');
 
     $mform->addElement('checkbox', 'reset_forum_tags', get_string('removeallforumtags', 'forum'));
-    $mform->disabledIf('reset_forum_tags', 'reset_forum_all', 'checked');
+    $mform->hideIf('reset_forum_tags', 'reset_forum_all', 'checked');
 }
 
 /**
