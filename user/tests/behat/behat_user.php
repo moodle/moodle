@@ -53,6 +53,21 @@ class behat_user extends behat_base {
     }
 
     /**
+     * Deletes a user.
+     *
+     * @Given the user :identifier is deleted
+     * @param string $identifier
+     */
+    public function the_user_is_deleted($identifier) {
+        global $DB;
+        $userid = $this->get_user_id_by_identifier($identifier);
+        if (!$userid) {
+            throw new moodle_exception('The specified user with username or email "' . $identifier . '" does not exist');
+        }
+        delete_user($DB->get_record('user', ['id' => $userid]));
+    }
+
+    /**
      * The input field should have autocomplete set to this value.
      *
      * @Then /^the field "(?P<field_string>(?:[^"]|\\")*)" should have purpose "(?P<purpose_string>(?:[^"]|\\")*)"$/

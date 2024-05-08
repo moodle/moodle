@@ -57,10 +57,12 @@ class parsingresult implements renderable, templatable {
         $haslines = false;
         foreach ($this->parsedfeature->get_scenarios() as $scenario) {
             $scenariodata = [
-                'type' => $scenario->type,
-                'name' => $scenario->name,
+                'type' => ucfirst($scenario->type),
                 'steps' => [],
             ];
+            if (!empty($scenario->name)) {
+                $scenariodata['name'] = $scenario->name;
+            }
             if (!empty($scenario->error)) {
                 $scenariodata['scenarioerror'] = $scenario->error;
             }

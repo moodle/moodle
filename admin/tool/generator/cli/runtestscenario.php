@@ -43,10 +43,12 @@ list($options, $unrecognised) = cli_get_params(
         'disable-composer' => false,
         'composer-upgrade' => true,
         'composer-self-update' => true,
+        'cleanup' => false,
     ],
     [
         'h' => 'help',
         'f' => 'feature',
+        'c' => 'cleanup',
     ]
 );
 
@@ -60,10 +62,12 @@ steps.
 Usage:
     php runtestscenario.php    [--feature=\"value\"] [--help]
                             [--no-composer-self-update] [--no-composer-upgrade]
-                            [--disable-composer]
+                            [--disable-composer] [--cleanup]
 
 Options:
 -f, --feature      Execute specified feature file (Absolute path of feature file).
+
+-c, --cleanup      Execute the scenarios with @cleanup tag.
 
 --no-composer-self-update
 Prevent upgrade of the composer utility using its self-update command
@@ -79,6 +83,7 @@ Note: Installation of composer and/or dependencies will still happen as required
 
 Example from Moodle root directory:
 \$ php admin/tool/generator/cli/runtestscenario.php --feature=/path/to/some/testing/scenario.feature
+\$ php admin/tool/generator/cli/runtestscenario.php --feature=/path/to/some/testing/scenario.feature --cleanup
 ";
 
 if (!empty($options['help'])) {
@@ -139,7 +144,11 @@ if (empty($content)) {
 }
 
 try {
-    $parsedfeature = $runner->parse_feature($content);
+    if (!empty($options['cleanup'])) {
+        $parsedfeature = $runner->parse_cleanup($content);
+    } else {
+        $parsedfeature = $runner->parse_feature($content);
+    }
 } catch (\Exception $error) {
     echo "Error parsing feature file: {$error->getMessage()}\n";
     echo "Use the web version of the tool to see the parsing details:\n";
