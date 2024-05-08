@@ -111,15 +111,49 @@ class course_reset_form extends moodleform {
             }
         }
 
+        $elements = $mform->_elements;
+        foreach ($elements as $element) {
+            if (is_a($element, 'HTML_QuickForm_header')) {
+                $mform->setExpanded($element->getName());
+            }
+        }
+
         $mform->addElement('hidden', 'id', $COURSE->id);
         $mform->setType('id', PARAM_INT);
 
         $buttonarray = [];
-        $buttonarray[] = &$mform->createElement('submit', 'submitbutton', get_string('resetcourse'));
-        $buttonarray[] = &$mform->createElement('submit', 'selectdefault', get_string('selectdefault'));
-        $buttonarray[] = &$mform->createElement('submit', 'deselectall', get_string('deselectall'));
-        $buttonarray[] = &$mform->createElement('cancel');
+        $buttonarray[] = $mform->createElement(
+            'submit',
+            'selectdefault',
+            get_string('selectdefault'),
+            null,
+            null,
+            ['customclassoverride' => 'btn-secondary'],
+        );
+        $buttonarray[] = $mform->createElement(
+            'submit',
+            'deselectall',
+            get_string('deselectall'),
+            null,
+            null,
+            ['customclassoverride' => 'btn-secondary'],
+        );
         $mform->addGroup($buttonarray, 'buttonar', '', [' '], false);
+
+        $mform->addElement(
+            'submit',
+            'submitbutton',
+            get_string('resetcourse'),
+            [
+                'data-action' => 'resetcourse',
+                'data-courseid' => $COURSE->id,
+                'data-coursename' => $COURSE->fullname,
+            ],
+            null,
+            ['customclassoverride' => 'btn-danger'],
+        );
+        $mform->set_sticky_footer('submitbutton');
+
         $mform->closeHeaderBefore('buttonar');
     }
 

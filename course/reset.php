@@ -39,7 +39,7 @@ if (!$course = $DB->get_record('course', ['id' => $id])) {
 }
 
 $PAGE->set_url('/course/reset.php', ['id' => $id]);
-$PAGE->set_pagelayout('admin');
+$PAGE->set_pagelayout('standard');
 
 require_login($course);
 require_capability('moodle/course:reset', context_course::instance($course->id));
@@ -103,12 +103,17 @@ if ($mform->is_cancelled()) {
         echo $OUTPUT->footer();
         exit;
     }
+} else {
+    $mform = new course_reset_form();
+    $mform->load_defaults();
 }
 
+$PAGE->requires->js_call_amd('core_course/resetcourse', 'init');
 echo $OUTPUT->header();
 \backup_helper::print_coursereuse_selector('reset');
 
 echo $OUTPUT->box(get_string('resetinfo'));
+echo $OUTPUT->box(get_string('resetinfoselect'));
 
 $mform->display();
 echo $OUTPUT->footer();
