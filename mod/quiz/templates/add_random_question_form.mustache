@@ -33,6 +33,19 @@
                 {"name": "Category 3", "value": "2"}
             ]
         },
+        "questioncategoryhelp": {
+            "title": "Help with something",
+            "text": "Help with something",
+            "url": "http://example.org/help",
+            "linktext": "",
+            "icon": {
+                "extraclasses": "iconhelp",
+                "attributes": [
+                    {"name": "src", "value": "../../../pix/help.svg"},
+                    {"name": "alt", "value": "Help icon"}
+                ]
+            }
+        },
         "questionbank": "<pre>Question bank HTML goes here</pre>"
     }
 }}
@@ -70,6 +83,9 @@
 
             <!-- Select number of random question -->
             <label class="mr-md-2 mb-md-0" for="parentcategory">{{#str}} parentcategory, question {{/str}} </label>
+                {{#questioncategoryhelp}}
+                    {{>core/help_icon}}
+                {{/questioncategoryhelp}}
             <select id="parentcategory" name="parentcategory" class="form-control">
                 {{#questioncategoryoptions}}
                     <optgroup label="{{label}}">
