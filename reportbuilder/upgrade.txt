@@ -6,6 +6,9 @@ Information provided here is intended especially for developers.
 * The following external methods now return tags data relevant to each custom report:
   - `core_reportbuilder_list_reports`
   - `core_reportbuilder_retrieve_report`
+* The following previously deprecated local helper methods have been removed and can no longer be used:
+  - `audience::get_all_audiences_menu_types`
+  - `report::get_available_columns`
 
 === 4.4 ===
 
