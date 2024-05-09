@@ -33,11 +33,24 @@
                 {"name": "Category 3", "value": "2"}
             ]
         },
+        "questioncategoryhelp": {
+            "title": "Help with something",
+            "text": "Help with something",
+            "url": "http://example.org/help",
+            "linktext": "",
+            "icon": {
+                "extraclasses": "iconhelp",
+                "attributes": [
+                    {"name": "src", "value": "../../../pix/help.svg"},
+                    {"name": "alt", "value": "Help icon"}
+                ]
+            }
+        },
         "questionbank": "<pre>Question bank HTML goes here</pre>"
     }
 }}
 <div class="mt-2 position-relative" data-region="add_random_question_form-container">
-    <form action="{{returnurl}}" method="POST" id="add_random_question_form">
+    <form action="{{returnurl}}" method="POST" id="add_random_question_form" class="mform">
         <fieldset id="id_existingcategoryheader">
             <legend>{{#str}} randomfromexistingcategory, mod_quiz {{/str}}</legend>
             <!-- Question bank -->
@@ -65,20 +78,35 @@
         <fieldset id="id_newcategoryheader">
             <legend>{{#str}} randomquestionusinganewcategory, mod_quiz {{/str}}</legend>
             <!-- New categoryname -->
-            <label class="mr-md-2 mb-md-0" for="categoryname">{{#str}} name {{/str}} </label>
-            <input type="text" class="form-control" id="categoryname" name="categoryname" maxlength="254" size="50">
+            <div class="mb-3 row fitem">
+                <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
+                    <label class="mr-md-2 mb-md-0" for="categoryname">{{#str}} name {{/str}} </label>
+                </div>
+                <div class="col-md-9 d-flex flex-wrap align-items-start felement" data-fieldtype="text">
+                    <input type="text" class="form-control" id="categoryname" name="categoryname" maxlength="254" size="50">
+                </div>
+            </div>
 
-            <!-- Select number of random question -->
-            <label class="mr-md-2 mb-md-0" for="parentcategory">{{#str}} parentcategory, question {{/str}} </label>
-            <select id="parentcategory" name="parentcategory" class="form-control">
-                {{#questioncategoryoptions}}
-                    <optgroup label="{{label}}">
-                        {{#options}}
-                            <option value="{{value}}">{{{name}}}</option>
-                        {{/options}}
-                    </optgroup>
-                {{/questioncategoryoptions}}
-            </select>
+            <!-- Select parent of new category -->
+            <div class="mb-3 row fitem">
+                <div class="col-md-3 col-form-label d-flex pb-0 pr-md-0">
+                    <label class="mr-md-2 mb-md-0" for="parentcategory">{{#str}} parentcategory, question {{/str}} </label>
+                    {{#questioncategoryhelp}}
+                        {{>core/help_icon}}
+                    {{/questioncategoryhelp}}
+                </div>
+                <div class="col-md-9 d-flex flex-wrap align-items-start felement" data-fieldtype="select">
+                    <select id="parentcategory" name="parentcategory" class="form-control">
+                        {{#questioncategoryoptions}}
+                            <optgroup label="{{label}}">
+                                {{#options}}
+                                    <option value="{{value}}">{{{name}}}</option>
+                                {{/options}}
+                            </optgroup>
+                        {{/questioncategoryoptions}}
+                    </select>
+                </div>
+            </div>
 
             <!-- Buttons -->
             <div class="modal-footer mt-1" data-region="footer">
