@@ -1,6 +1,12 @@
 This file describes API changes in /reportbuilder/*
 Information provided here is intended especially for developers.
 
+=== 4.5 ===
+
+* The following external methods now return tags data relevant to each custom report:
+  - `core_reportbuilder_list_reports`
+  - `core_reportbuilder_retrieve_report`
+
 === 4.4 ===
 
 * New methods `get_identity_[columns|filters]` in user entity, for retrieving all user identity field report elements
