@@ -9,6 +9,7 @@ Information provided here is intended especially for developers.
 * The following previously deprecated local helper methods have been removed and can no longer be used:
   - `audience::get_all_audiences_menu_types`
   - `report::get_available_columns`
+* The base datasource `add_all_from_entities` method accepts optional parameter to specify which entities to add elements from
 
 === 4.4 ===
 

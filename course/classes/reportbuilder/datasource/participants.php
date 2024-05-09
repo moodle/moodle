@@ -18,6 +18,7 @@ declare(strict_types=1);
 
 namespace core_course\reportbuilder\datasource;
 
+use core_cohort\reportbuilder\local\entities\cohort;
 use core_course\reportbuilder\local\entities\course_category;
 use core_course\reportbuilder\local\entities\access;
 use core_course\reportbuilder\local\entities\completion;
@@ -113,6 +114,18 @@ class participants extends datasource {
                        ON {$groups}.courseid = {$course}.id AND {$groups}.userid = {$user}.id")
         );
 
+        // Join cohort entity.
+        $cohortentity = new cohort();
+        $cohortalias = $cohortentity->get_table_alias('cohort');
+        $cohortmemberalias = database::generate_alias();
+        $this->add_entity($cohortentity
+            ->add_joins($userentity->get_joins())
+            ->add_joins([
+                "LEFT JOIN {cohort_members} {$cohortmemberalias} ON {$cohortmemberalias}.userid = {$user}.id",
+                "LEFT JOIN {cohort} {$cohortalias} ON {$cohortalias}.id = {$cohortmemberalias}.cohortid",
+            ])
+        );
+
         // Join completion entity.
         $completionentity = (new completion())
             ->set_table_aliases([
@@ -138,7 +151,23 @@ class participants extends datasource {
                        ON {$lastaccess}.userid = {$user}.id AND {$lastaccess}.courseid = {$course}.id"));
 
         // Add all entities columns/filters/conditions.
-        $this->add_all_from_entities();
+        $this->add_all_from_entities([
+            $courseentity->get_entity_name(),
+            $coursecatentity->get_entity_name(),
+            $enrolmententity->get_entity_name(),
+            $enrolentity->get_entity_name(),
+            $userentity->get_entity_name(),
+            $roleentity->get_entity_name(),
+            $groupentity->get_entity_name(),
+        ]);
+
+        $this->add_all_from_entity($cohortentity->get_entity_name(), ['name', 'idnumber', 'description', 'customfield*'],
+            ['cohortselect', 'name', 'idnumber', 'customfield*'], ['cohortselect', 'name', 'idnumber', 'customfield*']);
+
+        $this->add_all_from_entities([
+            $completionentity->get_entity_name(),
+            $accessentity->get_entity_name(),
+        ]);
     }
 
     /**
