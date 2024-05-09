@@ -2405,6 +2405,9 @@ function mod_quiz_output_fragment_add_random_question_form($args) {
         'questioncategoryoptions' => $catoptions,
     ];
 
+    $helpicon = new \help_icon('parentcategory', 'question');
+    $data['questioncategoryhelp'] = $helpicon->export_for_template($renderer);
+
     $result = $OUTPUT->render_from_template('mod_quiz/add_random_question_form', $data);
 
     return $result;
