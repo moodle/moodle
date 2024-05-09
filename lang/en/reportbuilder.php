@@ -126,7 +126,6 @@ $string['filterdateafter'] = 'After';
 $string['filterdatebefore'] = 'Before';
 $string['filterdatecurrent'] = 'Current';
 $string['filterdatedays'] = 'day(s)';
-$string['filterdatefrom'] = 'Date from';
 $string['filterdatefuture'] = 'In the future';
 $string['filterdatehours'] = 'hour(s)';
 $string['filterdatelast'] = 'Last';
@@ -135,7 +134,6 @@ $string['filterdatemonths'] = 'month(s)';
 $string['filterdatenext'] = 'Next';
 $string['filterdatepast'] = 'In the past';
 $string['filterdateseconds'] = 'second(s)';
-$string['filterdateto'] = 'Date to';
 $string['filterdateweeks'] = 'week(s)';
 $string['filterdateyears'] = 'year(s)';
 $string['filterdeleted'] = 'Deleted filter \'{$a}\'';
@@ -143,6 +141,7 @@ $string['filterdoesnotcontain'] = 'Does not contain';
 $string['filterendswith'] = 'Ends with';
 $string['filterequalorgreaterthan'] = 'Greater than or equal';
 $string['filterequalorlessthan'] = 'Less than or equal';
+$string['filterfieldfrom'] = '{$a} from';
 $string['filterfieldoperator'] = '{$a} operator';
 $string['filterfieldto'] = '{$a} to';
 $string['filterfieldunit'] = '{$a} unit';
@@ -287,3 +286,7 @@ $string['viewreport'] = 'View report';
 
 // Deprecated since Moodle 4.4.
 $string['filterdurationunit'] = '{$a} unit';
+
+// Deprecated since Moodle 4.5.
+$string['filterdatefrom'] = 'Date from';
+$string['filterdateto'] = 'Date to';

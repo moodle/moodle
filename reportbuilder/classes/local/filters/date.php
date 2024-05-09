@@ -151,14 +151,14 @@ class date extends base {
             ->setHiddenLabel(true);
 
         // Date selectors for range operator.
-        $mform->addElement('date_selector', "{$this->name}_from", get_string('filterdatefrom', 'core_reportbuilder'),
-            ['optional' => true]);
+        $mform->addElement('date_selector', "{$this->name}_from",
+            get_string('filterfieldfrom', 'core_reportbuilder', $this->get_header()), ['optional' => true]);
         $mform->setType("{$this->name}_from", PARAM_INT);
         $mform->setDefault("{$this->name}_from", 0);
         $mform->hideIf("{$this->name}_from", "{$this->name}_operator", 'neq', self::DATE_RANGE);
 
-        $mform->addElement('date_selector', "{$this->name}_to", get_string('filterdateto', 'core_reportbuilder'),
-            ['optional' => true]);
+        $mform->addElement('date_selector', "{$this->name}_to",
+            get_string('filterfieldto', 'core_reportbuilder', $this->get_header()), ['optional' => true]);
         $mform->setType("{$this->name}_to", PARAM_INT);
         $mform->setDefault("{$this->name}_to", 0);
         $mform->hideIf("{$this->name}_to", "{$this->name}_operator", 'neq', self::DATE_RANGE);
