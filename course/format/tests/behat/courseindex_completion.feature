@@ -108,13 +108,33 @@ Feature: Course index completion icons
       | questioncategory | qtype     | name           | questiontext              |
       | Test questions   | truefalse | First question | Answer the first question |
     And the following "activities" exist:
-      | activity | name           | course | idnumber | attempts | gradepass | completion | completionusegrade | completionpass | completionattemptsexhausted |
-      | quiz     | Test quiz name | C1     | quiz1    | 1        | 5.00      | 2          | 1                  | 1              | 1                           |
+      | activity | name           | course | idnumber | attempts | gradepass | completion | completionusegrade | completionpassgrade | completionattemptsexhausted |
+      | quiz     | Test quiz name | C1     | quiz1    | 1        | 5.00      | 2          | 1                  | 1                   | 1                           |
     And quiz "Test quiz name" contains the following questions:
       | question       | page |
       | First question | 1    |
     And user "student1" has attempted "Test quiz name" with responses:
       | slot | response |
       | 1    | True    |
+    When I am on the "C1" "Course" page logged in as "student1"
+    And "Done" "icon" should exist in the "courseindex-content" "region"
+
+  @javascript
+  Scenario: Completion done should appear in the course index when the requirement is any grade
+    Given the following "question categories" exist:
+      | contextlevel | reference | name           |
+      | Course       | C1        | Test questions |
+    And the following "questions" exist:
+      | questioncategory | qtype     | name           | questiontext              |
+      | Test questions   | truefalse | First question | Answer the first question |
+    And the following "activities" exist:
+      | activity | name           | course | idnumber | attempts | gradepass | completion | completionusegrade | completionpassgrade | completionattemptsexhausted |
+      | quiz     | Test quiz name | C1     | quiz1    | 1        | 5.00      | 2          | 1                  | 0                   | 1                           |
+    And quiz "Test quiz name" contains the following questions:
+      | question       | page |
+      | First question | 1    |
+    And user "student1" has attempted "Test quiz name" with responses:
+      | slot | response |
+      | 1    | False    |
     When I am on the "C1" "Course" page logged in as "student1"
     And "Done" "icon" should exist in the "courseindex-content" "region"
