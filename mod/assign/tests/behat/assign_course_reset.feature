@@ -56,7 +56,7 @@ Feature: Assign reset
     Then I should not see "Submitted for grading"
 
   @javascript
-  Scenario: Use course reset to remove user overrides.
+  Scenario: Use course reset to remove user overrides
     And I am on the "Test assignment name" Activity page logged in as teacher1
     And I navigate to "Overrides" in current page administration
     And I press "Add user override"
@@ -71,9 +71,11 @@ Feature: Assign reset
     And I press "Save"
     And I should see "Sam1 Student1"
     When I am on the "Course 1" "reset" page
+    And I press "Deselect all"
     And I set the following fields to these values:
         | All user overrides | 1  |
     And I press "Reset course"
+    And I click on "Reset course" "button" in the "Reset course?" "dialogue"
     And I press "Continue"
     And I am on "Course 1" course homepage
     And I click on "Test assignment name" "link" in the "region-main" "region"
