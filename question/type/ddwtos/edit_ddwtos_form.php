@@ -66,4 +66,10 @@ class qtype_ddwtos_edit_form extends qtype_gapselect_edit_form_base {
         }
         return null;
     }
+
+    protected function definition_inner($mform): void {
+        parent::definition_inner($mform);
+        $mform->insertElementBefore($mform->createElement('static', 'previewarea', '',
+            get_string('choicesacceptedtext', 'qtype_ddwtos')), 'shuffleanswers');
+    }
 }

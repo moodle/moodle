@@ -27,6 +27,8 @@ $string['answer'] = 'Answer';
 $string['blank'] = 'blank';
 $string['blanknumber'] = 'Blank {$a}';
 $string['correctansweris'] = 'The correct answer is: {$a}';
+$string['choicesacceptedtext'] = 'Write the answer to be dragged into each gap. You can include extra answers to increase difficulty. <br/>
+Accepted text formatting: &lt;sub&gt;, &lt;sup&gt;, &lt;b&gt;, &lt;i&gt;, &lt;em&gt;, &lt;strong&gt;. TeX is also accepted, using $$ at the start and at the end.';
 $string['errorlimitedchoice'] = 'Choice [[{$a}]] has been used more than once without being set to "Unlimited". Please recheck this question.';
 $string['infinite'] = 'Unlimited';
 $string['pleaseputananswerineachbox'] = 'Please put an answer in each box.';
