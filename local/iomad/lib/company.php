@@ -355,7 +355,6 @@ class company {
                                                         JOIN {company_users} cu ON (c.id = cu.companyid)
                                                         WHERE cu.userid = :userid
                                                         AND cu.suspended = 0
-                                                        AND c.parentid = 0
                                                         $searchsql
                                                         $suspendedsql
                                                         ORDER BY $sort",
@@ -366,7 +365,6 @@ class company {
                                                         JOIN {company_users} cu ON (c.id = cu.companyid)
                                                         WHERE cu.userid = :userid
                                                         AND cu.suspended = 0
-                                                        AND c.parentid = 0
                                                         $searchsql
                                                         $suspendedsql
                                                         ORDER BY $sort",
