@@ -440,6 +440,15 @@ class renderer_base {
         return false;
     }
 
+
+    /**
+     * Returns the moodle page object.
+     *
+     * @return moodle_page
+     */
+    public function get_page(): moodle_page {
+        return $this->page;
+    }
 }
 
 

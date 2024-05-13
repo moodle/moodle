@@ -37,9 +37,6 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class core_question_renderer extends plugin_renderer_base {
-    public function get_page() {
-        return $this->page;
-    }
 
     /**
      * @deprecated since Moodle 4.0
