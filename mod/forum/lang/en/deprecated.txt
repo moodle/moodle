@@ -3,3 +3,6 @@ completiondiscussionsgroup,mod_forum
 completiondiscussionshelp,mod_forum
 completionrepliesgroup,mod_forum
 completionreplieshelp,mod_forum
+privacy:request:delete:discussion:name,mod_forum
+privacy:request:delete:post:message,mod_forum
+privacy:request:delete:post:subject,mod_forum

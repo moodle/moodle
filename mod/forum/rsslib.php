@@ -360,8 +360,8 @@ function forum_rss_feed_contents($forum, $sql, $params, $context) {
                     $item->author = get_string('forumauthorhidden', 'forum');
                 } else {
                     // This is a post which has been deleted.
-                    $item->title = get_string('privacy:request:delete:post:subject', 'mod_forum');
-                    $message = get_string('privacy:request:delete:post:subject', 'mod_forum');
+                    $item->title = get_string('forumsubjectdeleted', 'mod_forum');
+                    $message = get_string('forumbodydeleted', 'mod_forum');
                     $item->author = get_string('forumauthorhidden', 'forum');
                 }
             } else {
