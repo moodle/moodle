@@ -46,7 +46,7 @@ Feature: Chat reset
       | reset_start_date[month]     | January |
       | reset_start_date[year]      | 2030 |
     And I press "Reset course"
-    And I should see "Date changed" in the "Chats" "table_row"
+    And I should see "Date" in the "Chats" "table_row"
     And I press "Continue"
     Then I am on "Course 1" course homepage
     And I follow "Test chat name"

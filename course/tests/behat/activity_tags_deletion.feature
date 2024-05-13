@@ -31,10 +31,10 @@ Feature: Delete activity tags during course reset
     # Delete book chapter tags using course reset.
     And I am on the "Course 1" "reset" page
     And I expand all fieldsets
-    And I click on "Remove all book tags" "checkbox"
+    And I click on "All book tags" "checkbox"
     And I press "Reset"
     # Confirm that book chapter tags are deleted.
-    And I should see "Book tags have been deleted" in the "Books" "table_row"
+    And I should see "All book tags" in the "Books" "table_row"
     And I press "Continue"
     And I am on the "Test Book" "book activity" page
     And I should not see "SampleTag"
@@ -59,7 +59,7 @@ Feature: Delete activity tags during course reset
     # Depending on <resetcheck> value, either delete all discussion posts or remove all forum discussion tags only.
     And I click on "<resetcheck>" "checkbox"
     # Confirm `Remove all forum tags` is disabled when `Delete all posts` on previous step is checked.
-    And the "Remove all forum tags" "checkbox" should be <canbechecked>
+    And the "All forum tags" "checkbox" should be <canbechecked>
     And I press "Reset"
     And I should see "<resetmessage>" in the "Forums" "table_row"
     And I press "Continue"
@@ -71,9 +71,9 @@ Feature: Delete activity tags during course reset
     And I should not see "DiscussionTag"
 
     Examples:
-      | resetcheck            | resetmessage                 | canbechecked | forumview  |
-      | Delete all posts      | Delete all posts             | disabled     | should     |
-      | Remove all forum tags | Forum tags have been deleted | enabled      | should not |
+      | resetcheck     | resetmessage   | canbechecked | forumview  |
+      | All posts      | All posts      | disabled     | should     |
+      | All forum tags | All forum tags | enabled      | should not |
 
   @javascript
   Scenario Outline: Delete glossary entry tags using course reuse
@@ -93,7 +93,7 @@ Feature: Delete activity tags during course reset
     # Depending on <resetcheck> value, either delete all glossary entries or remove all glossary entry tags only.
     And I click on "<resetcheck>" "checkbox"
     # Confirm `Remove all forum tags` is disabled when `Delete entries from all glossaries` on previous step is checked.
-    And the "Remove all glossary tags" "checkbox" should be <canbechecked>
+    And the "All glossary tags" "checkbox" should be <canbechecked>
     And I press "Reset"
     And I should see "<resetmessage>" in the "Glossaries" "table_row"
     And I press "Continue"
@@ -105,6 +105,6 @@ Feature: Delete activity tags during course reset
     And I should not see "GlossaryTag"
 
     Examples:
-      | resetcheck                         | resetmessage                       | canbechecked | glossaryview |
-      | Delete entries from all glossaries | Delete entries from all glossaries | disabled     | should       |
-      | Remove all glossary tags           | Glossary tags have been deleted    | enabled      | should not   |
+      | resetcheck                  | resetmessage                | canbechecked | glossaryview |
+      | Entries from all glossaries | Entries from all glossaries | disabled     | should       |
+      | All glossary tags           | All glossary tags           | enabled      | should not   |
