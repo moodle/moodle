@@ -66,8 +66,15 @@ function xmldb_qbank_columnsortorder_upgrade(int $oldversion): bool {
             $updatedconfig = implode(',', $updatedcols);
             set_config($config->name, $updatedconfig, 'qbank_columnsortorder');
         }
+
         // Custom sort order savepoint reached.
-        upgrade_plugin_savepoint(true, 2023100901, 'qbank', 'qbank_columnsortorder');
+        upgrade_plugin_savepoint(true, 2023100901, 'qbank', 'columnsortorder');
+    }
+
+    if ($oldversion < 2023100902) {
+        // Remove plugin entry created by previously incorrect 2023100901 savepoint.
+        $DB->delete_records('config_plugins', ['plugin' => 'qbank_qbank_columnsortorder']);
+        upgrade_plugin_savepoint(true, 2023100902, 'qbank', 'columnsortorder');
     }
 
     return true;
