@@ -1,0 +1,5 @@
+issueNumber: MDL-81597
+notes:
+  output:
+    - message: 'Added a new `renderer_base::get_page` getter method'
+      type: improved

@@ -427,6 +427,15 @@ class renderer_base {
     public function should_display_main_logo() {
         \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
     }
+
+    /**
+     * Returns the moodle page object.
+     *
+     * @return moodle_page
+     */
+    public function get_page(): moodle_page {
+        return $this->page;
+    }
 }
 
 
