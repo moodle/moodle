@@ -116,9 +116,11 @@ class core_renderer_cli extends core_renderer {
      * @param  float $percent
      * @param  string $msg Message
      * @param  string $estimate time remaining message
+     * @param  bool $error (Unused in cli)
      * @return string ascii fragment
      */
-    public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate): string {
+    public function render_progress_bar_update(string $id, float $percent, string $msg, string $estimate,
+        bool $error = false): string {
         $size = 55; // The width of the progress bar in chars.
         $ascii = '';
 

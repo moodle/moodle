@@ -476,4 +476,14 @@ $tasks = array(
         'dayofweek' => 'R',
         'disabled' => true,
     ],
+    [
+        'classname' => 'core\task\stored_progress_bar_cleanup_task',
+        'blocking' => 0,
+        'minute' => '00',
+        'hour' => '01',
+        'day' => '*',
+        'dayofweek' => '*',
+        'month' => '*',
+        'disabled' => false,
+    ],
 );

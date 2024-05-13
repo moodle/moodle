@@ -27,6 +27,7 @@ namespace core\task;
  * Simple task to delete user accounts for users who have not confirmed in time.
  */
 class delete_unconfirmed_users_task extends scheduled_task {
+    use stored_progress_task_trait;
 
     /**
      * Get a descriptive name for this task (shown to admins).
@@ -48,14 +49,23 @@ class delete_unconfirmed_users_task extends scheduled_task {
 
         // Delete users who haven't confirmed within required period.
         if (!empty($CFG->deleteunconfirmed)) {
+            $this->start_stored_progress();
             $cuttime = $timenow - ($CFG->deleteunconfirmed * 3600);
-            $rs = $DB->get_recordset_sql ("SELECT *
-                                             FROM {user}
-                                            WHERE confirmed = 0 AND timecreated > 0
-                                                  AND timecreated < ? AND deleted = 0", array($cuttime));
+            $selectcount = "SELECT COUNT(*)";
+            $select = "SELECT *";
+            $sql = "
+                  FROM {user}
+                 WHERE confirmed = 0 AND timecreated > 0
+                       AND timecreated < ? AND deleted = 0";
+            $params = [$cuttime];
+            $count = $DB->count_records_sql($selectcount . $sql, $params);
+            $rs = $DB->get_recordset_sql($select . $sql, $params);
+            $processed = 0;
             foreach ($rs as $user) {
                 delete_user($user);
-                mtrace(" Deleted unconfirmed user ".fullname($user, true)." ($user->id)");
+                $message = " Deleted unconfirmed user ".fullname($user, true)." ($user->id)";
+                $processed++;
+                $this->progress->update($processed, $count, $message);
             }
             $rs->close();
         }
