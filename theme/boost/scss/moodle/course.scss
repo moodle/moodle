@@ -549,9 +549,9 @@ span.editinstructions {
     width: fit-content;
 
     @include alert-variant(
-        theme-color-level('info', $alert-bg-level),
-        theme-color-level('info', $alert-border-level),
-        theme-color-level('info', $alert-color-level)
+        shift-color($info, $alert-bg-scale),
+        shift-color($info, $alert-border-scale),
+        shift-color($info, $alert-color-scale)
     );
 }
 
@@ -1101,9 +1101,9 @@ $divider-hover-color: $primary !default;
     }
     @each $color, $value in $theme-colors {
         &.btn-#{$color} {
-            $bg-color: theme-color-level($color, $alert-bg-level);
+            $bg-color: shift-color($value, $alert-bg-scale);
             @include button-variant($bg-color, $bg-color, $value);
-            color: theme-color-level($color, $alert-color-level);
+            color: shift-color($value, $alert-color-scale);
             &:hover {
                 color: color-yiq($value);
             }
@@ -1632,8 +1632,8 @@ $divider-hover-color: $primary !default;
     @include border-radius();
     font-size: $font-size-sm;
     font-weight: bold;
-    color: theme-color-level("primary", $alert-color-level);
-    background-color: theme-color-level("primary", $alert-bg-level);
+    color: shift-color($primary, $alert-color-scale);
+    background-color: shift-color($primary, $alert-bg-scale);
     &:hover,
     &:focus {
         color: color-yiq($primary);
@@ -1758,10 +1758,10 @@ $divider-hover-color: $primary !default;
 
         &:hover,
         &:focus {
-            background-color: theme-color-level("primary", $alert-bg-level);
+            background-color: shift-color($primary, $alert-bg-scale);
 
             a {
-                color: theme-color-level("primary", $alert-color-level);
+                color: shift-color($primary, $alert-color-scale);
             }
         }
 

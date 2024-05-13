@@ -1475,7 +1475,7 @@ $popout-header-height: 4rem;
     margin-bottom: $alert-margin-bottom;
     border: $alert-border-width solid transparent;
     @include border-radius($alert-border-radius);
-    @include alert-variant(theme-color-level('info', $alert-bg-level), theme-color-level('info', $alert-border-level), theme-color-level('info', $alert-color-level)); /* stylelint-disable-line max-line-length */
+    @include alert-variant(shift-color($info, $alert-bg-scale), shift-color($info, $alert-border-scale), shift-color($info, $alert-color-scale)); /* stylelint-disable-line max-line-length */
 }
 
 .assignfeedback_editpdf_menu {
