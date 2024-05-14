@@ -636,7 +636,10 @@ class mysql_sql_generator extends sql_generator {
             '_filename', 'admin', 'cume_dist', 'dense_rank', 'empty', 'except', 'first_value', 'grouping', 'groups',
             'json_table', 'lag', 'last_value', 'lead', 'nth_value', 'ntile',
             'of', 'over', 'percent_rank', 'persist', 'persist_only', 'rank', 'recursive', 'row_number',
-            'system', 'window'
+            'system', 'window',
+            // Added in Amazon Aurora MySQL version 3.06.0:
+            // https://docs.aws.amazon.com/AmazonRDS/latest/AuroraMySQLReleaseNotes/AuroraMySQL.Updates.3060.html .
+            'accept', 'aws_bedrock_invoke_model', 'aws_sagemaker_invoke_endpoint', 'content_type', 'timeout_ms',
         );
         return $reserved_words;
     }
