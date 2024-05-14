@@ -889,14 +889,14 @@ function lesson_reset_userdata($data) {
     global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', 'lesson');
-    $status = array();
+    $status = [];
 
     if (!empty($data->reset_lesson)) {
         $lessonssql = "SELECT l.id
                          FROM {lesson} l
                         WHERE l.course=:course";
 
-        $params = array ("course" => $data->courseid);
+        $params = ["course" => $data->courseid];
         $lessons = $DB->get_records_sql($lessonssql, $params);
 
         // Get rid of attempts files.
@@ -917,12 +917,16 @@ function lesson_reset_userdata($data) {
         $DB->delete_records_select('lesson_attempts', "lessonid IN ($lessonssql)", $params);
         $DB->delete_records_select('lesson_branch', "lessonid IN ($lessonssql)", $params);
 
-        // remove all grades from gradebook
+        // Remove all grades from gradebook.
         if (empty($data->reset_gradebook_grades)) {
             lesson_reset_gradebook($data->courseid);
         }
 
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallattempts', 'lesson'), 'error'=>false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('deleteallattempts', 'lesson'),
+            'error' => false,
+        ];
     }
 
     $purgeoverrides = false;
@@ -930,40 +934,46 @@ function lesson_reset_userdata($data) {
     // Remove user overrides.
     if (!empty($data->reset_lesson_user_overrides)) {
         $DB->delete_records_select('lesson_overrides',
-                'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
-        $status[] = array(
+                'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND userid IS NOT NULL', [$data->courseid]);
+        $status[] = [
             'component' => $componentstr,
             'item' => get_string('useroverridesdeleted', 'lesson'),
-            'error' => false);
+            'error' => false,
+        ];
         $purgeoverrides = true;
     }
     // Remove group overrides.
     if (!empty($data->reset_lesson_group_overrides)) {
         $DB->delete_records_select('lesson_overrides',
-        'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
-        $status[] = array(
+        'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND groupid IS NOT NULL', [$data->courseid]);
+        $status[] = [
             'component' => $componentstr,
             'item' => get_string('groupoverridesdeleted', 'lesson'),
-            'error' => false);
+            'error' => false,
+        ];
         $purgeoverrides = true;
     }
-    /// updating dates - shift may be negative too
+    // Updating dates - shift may be negative too.
     if ($data->timeshift) {
         $DB->execute("UPDATE {lesson_overrides}
                          SET available = available + ?
                        WHERE lessonid IN (SELECT id FROM {lesson} WHERE course = ?)
-                         AND available <> 0", array($data->timeshift, $data->courseid));
+                         AND available <> 0", [$data->timeshift, $data->courseid]);
         $DB->execute("UPDATE {lesson_overrides}
                          SET deadline = deadline + ?
                        WHERE lessonid IN (SELECT id FROM {lesson} WHERE course = ?)
-                         AND deadline <> 0", array($data->timeshift, $data->courseid));
+                         AND deadline <> 0", [$data->timeshift, $data->courseid]);
 
         $purgeoverrides = true;
 
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        shift_course_mod_dates('lesson', array('available', 'deadline'), $data->timeshift, $data->courseid);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+        shift_course_mod_dates('lesson', ['available', 'deadline'], $data->timeshift, $data->courseid);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('datechanged'),
+            'error' => false,
+        ];
     }
 
     if ($purgeoverrides) {
