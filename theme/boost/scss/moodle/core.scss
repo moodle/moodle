@@ -314,12 +314,8 @@ a.autolink {
     display: none;
 }
 
-.visibleifjs {
+body:not(.jsenabled) .visibleifjs {
     display: none;
-}
-
-.jsenabled .visibleifjs {
-    display: inline;
 }
 
 .jsenabled .collapsibleregion {
