@@ -625,12 +625,12 @@ function feedback_get_post_actions() {
 function feedback_reset_userdata($data) {
     global $CFG, $DB;
 
-    $resetfeedbacks = array();
-    $dropfeedbacks = array();
-    $status = array();
+    $resetfeedbacks = [];
+    $dropfeedbacks = [];
+    $status = [];
     $componentstr = get_string('modulenameplural', 'feedback');
 
-    //get the relevant entries from $data
+    // Get the relevant entries from $data.
     foreach ($data as $key => $value) {
         switch(true) {
             case substr($key, 0, strlen(FEEDBACK_RESETFORM_RESET)) == FEEDBACK_RESETFORM_RESET:
@@ -652,21 +652,27 @@ function feedback_reset_userdata($data) {
         }
     }
 
-    //reset the selected feedbacks
+    // Reset the selected feedbacks.
     foreach ($resetfeedbacks as $id) {
-        $feedback = $DB->get_record('feedback', array('id'=>$id));
+        $feedback = $DB->get_record('feedback', ['id' => $id]);
         feedback_delete_all_completeds($feedback);
-        $status[] = array('component'=>$componentstr.':'.$feedback->name,
-                        'item'=>get_string('resetting_data', 'feedback'),
-                        'error'=>false);
+        $status[] = [
+            'component' => $componentstr.':'.$feedback->name,
+            'item' => get_string('resetting_data', 'feedback'),
+            'error' => false,
+        ];
     }
 
     // Updating dates - shift may be negative too.
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        $shifterror = !shift_course_mod_dates('feedback', array('timeopen', 'timeclose'), $data->timeshift, $data->courseid);
-        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => $shifterror);
+        $shifterror = !shift_course_mod_dates('feedback', ['timeopen', 'timeclose'], $data->timeshift, $data->courseid);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('datechanged'),
+            'error' => $shifterror,
+        ];
     }
 
     return $status;
@@ -731,7 +737,7 @@ function feedback_reset_course_form($course) {
     global $DB, $OUTPUT;
 
     echo get_string('resetting_feedbacks', 'feedback'); echo ':<br />';
-    if (!$feedbacks = $DB->get_records('feedback', array('course'=>$course->id), 'name')) {
+    if (!$feedbacks = $DB->get_records('feedback', ['course' => $course->id], 'name')) {
         return;
     }
 
