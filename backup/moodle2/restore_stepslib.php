@@ -490,7 +490,7 @@ class restore_gradebook_structure_step extends restore_structure_step {
         rebuild_course_cache($this->get_courseid(), true);
 
         // Restore marks items as needing update. Update everything now.
-        grade_regrade_final_grades($this->get_courseid());
+        grade_regrade_final_grades($this->get_courseid(), async: true);
     }
 
     /**

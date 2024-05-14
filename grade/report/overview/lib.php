@@ -137,7 +137,7 @@ class grade_report_overview extends grade_report {
             if ($frontend) {
                 grade_regrade_final_grades_if_required($course);
             } else {
-                grade_regrade_final_grades($course->id);
+                grade_regrade_final_grades($course->id, async: true);
             }
         }
     }

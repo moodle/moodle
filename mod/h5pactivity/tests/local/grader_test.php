@@ -139,6 +139,7 @@ final class grader_test extends \advanced_testcase {
         $grader->grade_item_update($param);
 
         // Check new grade item and grades.
+        grade_regrade_final_grades($course->id);
         $gradeinfo = grade_get_grades($course->id, 'mod', 'h5pactivity', $activity->id, $user->id);
         $item = array_shift($gradeinfo->items);
         $this->assertEquals($scaleid, $item->scaleid);
@@ -245,6 +246,7 @@ final class grader_test extends \advanced_testcase {
         $grader->update_grades($userid);
 
         // Check new grade item and grades.
+        grade_regrade_final_grades($course->id);
         $gradeinfo = grade_get_grades($course->id, 'mod', 'h5pactivity', $activity->id, [$user1->id, $user2->id]);
         $item = array_shift($gradeinfo->items);
         $this->assertArrayHasKey($user1->id, $item->grades);

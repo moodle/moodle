@@ -5327,7 +5327,7 @@ function reset_course_userdata($data) {
     if (!empty($data->reset_gradebook_items)) {
         remove_course_grades($data->courseid, false);
         grade_grab_course_grades($data->courseid);
-        grade_regrade_final_grades($data->courseid);
+        grade_regrade_final_grades($data->courseid, async: true);
         $status[] = array('component' => $componentstr, 'item' => get_string('removeallcourseitems', 'grades'), 'error' => false);
 
     } else if (!empty($data->reset_gradebook_grades)) {

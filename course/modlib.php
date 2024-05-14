@@ -404,13 +404,17 @@ function edit_module_post_actions($moduleinfo, $course) {
             // And if it actually needs regrading...
             $courseitem = grade_item::fetch_course_item($course->id);
             if ($courseitem->needsupdate) {
-                // Then don't do it as part of this form save, do it on an extra web request with a
-                // progress bar.
-                $moduleinfo->needsfrontendregrade = true;
+                // Queue an asynchronous regrade.
+                grade_regrade_final_grades($course->id, async: true);
             }
         } else {
             // Regrade now.
-            grade_regrade_final_grades($course->id);
+            $result = grade_regrade_final_grades($course->id);
+            if (is_array($result)) {
+                foreach ($result as $error) {
+                    \core\notification::add($error, \core\output\notification::NOTIFY_ERROR);
+                }
+            }
         }
     }
 

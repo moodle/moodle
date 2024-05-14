@@ -114,6 +114,10 @@ final class lib_test extends \advanced_testcase {
         $gpr = new \stdClass();
         $report = new \grade_report_overview($user->id, $gpr, '');
         $report->regrade_all_courses_if_needed($frontend);
+        if (!$frontend) {
+            $this->expectOutputRegex("~^Recalculating grades for course ID {$course->id}~");
+            $this->run_all_adhoc_tasks();
+        }
 
         // This should have regraded courses 1 and 3, but not 2 (because the user doesn't belong).
         $this->assertEqualsWithDelta(50.0, $DB->get_field('grade_grades', 'finalgrade',

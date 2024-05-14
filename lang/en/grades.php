@@ -707,6 +707,7 @@ $string['real'] = 'Real';
 $string['realletter'] = 'Real (letter)';
 $string['realpercentage'] = 'Real (percentage)';
 $string['recalculatinggrades'] = 'Recalculating grades';
+$string['recalculatinggradesadhoc'] = 'Grade recalculations are being performed in the background. Displayed grades may be incorrect until the process is complete.';
 $string['recovergradesdefault'] = 'Recover grades default';
 $string['recovergradesdefault_help'] = 'By default recover old grades when re-enrolling a user in a course.';
 $string['refreshpreview'] = 'Refresh preview';
