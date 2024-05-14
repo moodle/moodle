@@ -25,6 +25,8 @@ use MoodleQuickForm;
 /**
  * Filesize report filter
  *
+ * This filter accepts a number value to perform filtering on (note that the value will be cast to float prior to comparison)
+ *
  * @package     core_reportbuilder
  * @copyright   2023 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -82,7 +84,7 @@ class filesize extends base {
         // Value selector.
         $elements[] = $mform->createElement('text', "{$this->name}_value1",
             get_string('filterfieldvalue', 'core_reportbuilder', $this->get_header()), ['size' => 4]);
-        $mform->setType("{$this->name}_value1", PARAM_FLOAT);
+        $mform->setType("{$this->name}_value1", PARAM_LOCALISEDFLOAT);
         $mform->setDefault("{$this->name}_value1", 1);
         $mform->hideIf("{$this->name}_value1", "{$this->name}_operator", 'eq', self::ANY_VALUE);
 
@@ -111,6 +113,8 @@ class filesize extends base {
      * @return array
      */
     public function get_sql_filter(array $values): array {
+        global $DB;
+
         $fieldsql = $this->filter->get_field_sql();
         $params = $this->filter->get_field_params();
 
@@ -124,10 +128,10 @@ class filesize extends base {
 
         switch ($operator) {
             case self::LESS_THAN:
-                $sql = "{$fieldsql} < :{$paramfilesize}";
+                $sql = $DB->sql_cast_char2real("({$fieldsql})") . " < :{$paramfilesize}";
                 break;
             case self::GREATER_THAN:
-                $sql = "{$fieldsql} > :{$paramfilesize}";
+                $sql = $DB->sql_cast_char2real("({$fieldsql})") . " > :{$paramfilesize}";
                 break;
             default:
                 // Invalid or inactive filter.

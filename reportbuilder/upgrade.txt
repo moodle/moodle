@@ -11,6 +11,10 @@ Information provided here is intended especially for developers.
   - `audience::get_all_audiences_menu_types`
   - `report::get_available_columns`
 * The base datasource `add_all_from_entities` method accepts optional parameter to specify which entities to add elements from
+* In order to better support float values in filter forms, the following filter types now cast given SQL prior to comparison:
+  - `duration`
+  - `filesize`
+  - `number`
 
 === 4.4 ===
 
