@@ -47174,6 +47174,28 @@ input[type=button].btn-block {
   width: 100%;
 }
 
+.task-indicator {
+  padding-top: 2rem;
+}
+.task-indicator img.icon {
+  width: 145px;
+  height: 145px;
+  max-height: 145px;
+  max-width: 145px;
+  font-size: 145px;
+  padding-bottom: 2rem;
+}
+.task-indicator .progressbar_container {
+  padding-top: 2rem;
+}
+.task-indicator .stored-progress-bar {
+  opacity: 1;
+  transition: opacity 0.5s;
+}
+.task-indicator .stored-progress-notstarted {
+  opacity: 0;
+}
+
 body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

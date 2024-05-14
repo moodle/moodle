@@ -194,7 +194,7 @@ class manager {
      * @param adhoc_task $task
      * @return \stdClass|false
      */
-    protected static function get_queued_adhoc_task_record($task) {
+    public static function get_queued_adhoc_task_record($task) {
         global $DB;
 
         $record = self::record_from_adhoc_task($task);

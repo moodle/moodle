@@ -161,7 +161,7 @@ class user extends external_api {
         require_once($CFG->dirroot . '/grade/report/user/lib.php');
 
         // Force regrade to update items marked as 'needupdate'.
-        grade_regrade_final_grades($course->id);
+        grade_regrade_final_grades($course->id, async: false);
 
         $gpr = new grade_plugin_return(
             [

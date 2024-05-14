@@ -133,8 +133,6 @@ switch ($itemtype) {
         break;
 }
 
-$report = new gradereport_singleview\report\singleview($courseid, $gpr, $context, $itemtype, $itemid);
-
 $pageparams = [
     'id'        => $courseid,
     'userid'    => $userid,
@@ -149,6 +147,31 @@ if (!is_null($groupid)) {
 }
 
 $PAGE->set_url(new moodle_url('/grade/report/singleview/index.php', $pageparams));
+
+// Make sure we have proper final grades.
+$taskindicator = new \core\output\task_indicator(
+    \core_course\task\regrade_final_grades::create($courseid),
+    get_string('recalculatinggrades', 'grades'),
+    get_string('recalculatinggradesadhoc', 'grades'),
+    $PAGE->url,
+);
+
+if ($taskindicator->has_task_record()) {
+    // We need to bail out early as the report requires recalculations to be complete, so just display a basic header
+    // with navigation, and the indicator.
+    $actionbar = new \core_grades\output\general_action_bar(
+        $context,
+        new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid]),
+        'report',
+        'singleview'
+    );
+    print_grade_page_head($course->id, 'report', 'singleview', actionbar: $actionbar);
+    echo $OUTPUT->render($taskindicator);
+    echo $OUTPUT->footer();
+    exit;
+}
+
+$report = new gradereport_singleview\report\singleview($courseid, $gpr, $context, $itemtype, $itemid);
 
 // Build editing on/off button for themes that need it.
 $button = '';
@@ -210,6 +233,12 @@ if ($data = data_submitted()) {
 
 // Make sure we have proper final grades.
 grade_regrade_final_grades_if_required($course);
+
+if ($taskindicator->has_task_record()) {
+    echo $OUTPUT->render($taskindicator);
+    echo $OUTPUT->footer();
+    exit;
+}
 
 // Save the screen state in a session variable as last viewed state.
 $SESSION->gradereport_singleview["itemtype-{$context->id}"] = $itemtype;

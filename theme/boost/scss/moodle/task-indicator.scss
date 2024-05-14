@@ -1,0 +1,25 @@
+.task-indicator {
+    padding-top: 2rem;
+
+    img.icon {
+        width: 145px;
+        height: 145px;
+        max-height: 145px;
+        max-width: 145px;
+        font-size: 145px;
+        padding-bottom: 2rem;
+    }
+
+    .progressbar_container {
+        padding-top: 2rem;
+    }
+
+    .stored-progress-bar {
+        opacity: 1;
+        transition: opacity 0.5s;
+    }
+
+    .stored-progress-notstarted {
+        opacity: 0;
+    }
+}

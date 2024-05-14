@@ -45,11 +45,20 @@ $PAGE->add_body_class('limitedwidth');
 require_capability('gradereport/summary:view', $context);
 require_capability('moodle/grade:viewall', $context);
 
-print_grade_page_head($courseid, 'report', 'summary', false,
-    false, false, true, null, null,
-    null, null);
+$taskindicator = new \core\output\task_indicator(
+    \core_course\task\regrade_final_grades::create($courseid),
+    get_string('recalculatinggrades', 'grades'),
+    get_string('recalculatinggradesadhoc', 'grades'),
+    $PAGE->url,
+);
 
-$report = system_report_factory::create(summary::class, context_course::instance($courseid));
+print_grade_page_head($courseid, 'report', 'summary');
 
-echo $report->output();
+if ($taskindicator->has_task_record()) {
+    echo $OUTPUT->render($taskindicator);
+} else {
+    $report = system_report_factory::create(summary::class, context_course::instance($courseid));
+    echo $report->output();
+}
+
 echo $OUTPUT->footer();

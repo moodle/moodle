@@ -174,7 +174,18 @@ function grade_report_user_settings_definition(&$mform) {
  * @param boolean $viewasuser True when we are viewing this as the targetted user sees it.
  */
 function grade_report_user_profilereport(object $course, object $user, bool $viewasuser = false) {
-    if (!empty($course->showgrades)) {
+    global $OUTPUT;
+
+    $taskindicator = new \core\output\task_indicator(
+        \core_course\task\regrade_final_grades::create($course->id),
+        get_string('recalculatinggrades', 'grades'),
+        get_string('recalculatinggradesadhoc', 'grades'),
+        new \core\url('/course/user.php', ['mode' => 'grade', 'id' => $course->id, 'user' => $user->id]),
+    );
+
+    if ($taskindicator->has_task_record()) {
+        echo $OUTPUT->render($taskindicator);
+    } else if (!empty($course->showgrades)) {
 
         $context = context_course::instance($course->id);
 

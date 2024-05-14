@@ -1153,6 +1153,11 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
     } else {
         if (!$course_item->needsupdate) {
             // nothing to do :-)
+            if ($progress instanceof \core\progress\stored) {
+                // The regrade was already run elsewhere without the stored progress, so just start and end it now.
+                $progress->start_progress(get_string('recalculatinggrades', 'grades'));
+                $progress->end_progress();
+            }
             return true;
         }
         // Defer recalculation to an ad-hoc task.
@@ -1219,7 +1224,7 @@ function grade_regrade_final_grades($courseid, $userid=null, $updated_item=null,
         }
     }
 
-    $progress->start_progress('regrade_course', $progresstotal);
+    $progress->start_progress(get_string('recalculatinggrades', 'grades'), $progresstotal);
 
     $errors = array();
     $finalids = array();

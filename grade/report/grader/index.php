@@ -53,10 +53,6 @@ $baseurl = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid])
 
 $PAGE->set_url(new moodle_url('/grade/report/grader/index.php', array('id'=>$courseid)));
 $PAGE->set_pagelayout('report');
-$PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
-$PAGE->requires->js_call_amd('gradereport_grader/user', 'init', [$baseurl->out(false)]);
-$PAGE->requires->js_call_amd('gradereport_grader/feedback_modal', 'init');
-$PAGE->requires->js_call_amd('core_grades/gradebooksetup_forms', 'init');
 
 // basic access checks
 if (!$course = $DB->get_record('course', array('id' => $courseid))) {
@@ -129,9 +125,14 @@ if (!empty($target) && !empty($action) && confirm_sesskey()) {
 }
 
 $reportname = get_string('pluginname', 'gradereport_grader');
-
-// Do this check just before printing the grade header (and only do it once).
-grade_regrade_final_grades_if_required($course);
+$regradetask = \core_course\task\regrade_final_grades::create($courseid);
+$indicatorheading = get_string('recalculatinggrades', 'grades');
+$indicatormessage = get_string('recalculatinggradesadhoc', 'grades');
+$taskindicator = new \core\output\task_indicator($regradetask, $indicatorheading, $indicatormessage, $PAGE->url);
+if (!$taskindicator->has_task_record()) {
+    // Do this check just before printing the grade header (and only do it once).
+    grade_regrade_final_grades_if_required($course);
+}
 
 //Initialise the grader report object that produces the table
 //the class grade_report_grader_ajax was removed as part of MDL-21562
@@ -142,13 +143,6 @@ if ($sort && strcasecmp($sort, 'desc') !== 0) {
 $sort = strtoupper($sort);
 
 $report = new grade_report_grader($courseid, $gpr, $context, $page, $sortitemid, $sort);
-
-// We call this a little later since we need some info from the grader report.
-$PAGE->requires->js_call_amd('gradereport_grader/collapse', 'init', [
-    'userID' => $USER->id,
-    'courseID' => $courseid,
-    'defaultSort' => $report->get_default_sortable()
-]);
 
 $numusers = $report->get_numusers(true, true);
 
@@ -169,6 +163,23 @@ if ($isediting && ($data = data_submitted()) && confirm_sesskey()) {
     // Processing posted grades here.
     $warnings = $report->process_data($data);
 }
+
+if ($taskindicator->has_task_record()) {
+    echo $OUTPUT->render($taskindicator);
+    echo $OUTPUT->footer();
+    exit;
+}
+
+// We call this a little later since we need some info from the grader report.
+$PAGE->requires->js_call_amd('gradereport_grader/collapse', 'init', [
+    'userID' => $USER->id,
+    'courseID' => $courseid,
+    'defaultSort' => $report->get_default_sortable(),
+]);
+$PAGE->requires->js_call_amd('gradereport_grader/stickycolspan', 'init');
+$PAGE->requires->js_call_amd('gradereport_grader/user', 'init', [$baseurl->out(false)]);
+$PAGE->requires->js_call_amd('gradereport_grader/feedback_modal', 'init');
+$PAGE->requires->js_call_amd('core_grades/gradebooksetup_forms', 'init');
 
 // Final grades MUST be loaded after the processing.
 $report->load_users();
