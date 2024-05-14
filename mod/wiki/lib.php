@@ -162,15 +162,15 @@ function wiki_delete_instance($id) {
  * @return boolean|array
  */
 function wiki_reset_userdata($data) {
-    global $CFG,$DB;
+    global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/wiki/pagelib.php');
     require_once($CFG->dirroot . "/mod/wiki/locallib.php");
 
     $componentstr = get_string('modulenameplural', 'wiki');
-    $status = array();
+    $status = [];
 
-    //get the wiki(s) in this course.
-    if (!$wikis = $DB->get_records('wiki', array('course' => $data->courseid))) {
+    // Get the wiki(s) in this course.
+    if (!$wikis = $DB->get_records('wiki', ['course' => $data->courseid])) {
         return false;
     }
     if (empty($data->reset_wiki_comments) && empty($data->reset_wiki_tags) && empty($data->reset_wiki_pages)) {
@@ -205,7 +205,7 @@ function wiki_reset_userdata($data) {
                 }
                 if (!empty($data->reset_wiki_pages)) {
                     // Delete any subwikis.
-                    $DB->delete_records('wiki_subwikis', array('id' => $subwiki->id), IGNORE_MISSING);
+                    $DB->delete_records('wiki_subwikis', ['id' => $subwiki->id]);
 
                     // Delete any attached files.
                     $fs = get_file_storage();
@@ -214,27 +214,42 @@ function wiki_reset_userdata($data) {
             }
 
             if (!empty($data->reset_wiki_pages)) {
-                $status[] = array('component' => $componentstr, 'item' => get_string('deleteallpages', 'wiki'),
-                    'error' => false);
+                $status[] = [
+                    'component' => $componentstr,
+                    'item' => get_string('deleteallpages', 'wiki'),
+                    'error' => false,
+                ];
             }
             if (!empty($data->reset_wiki_tags)) {
-                $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'wiki'), 'error' => false);
+                $status[] = [
+                    'component' => $componentstr,
+                    'item' => get_string('tagsdeleted', 'wiki'),
+                    'error' => false,
+                ];
             }
         }
 
         // Remove all comments.
         if (!empty($data->reset_wiki_comments) || !empty($data->reset_wiki_pages)) {
-            $DB->delete_records_select('comments', "contextid = ? AND commentarea='wiki_page'", array($context->id));
+            $DB->delete_records_select('comments', "contextid = ? AND commentarea='wiki_page'", [$context->id]);
             if (!empty($data->reset_wiki_comments)) {
-                $status[] = array('component' => $componentstr, 'item' => get_string('deleteallcomments'), 'error' => false);
+                $status[] = [
+                    'component' => $componentstr,
+                    'item' => get_string('deleteallcomments'),
+                    'error' => false,
+                ];
             }
         }
     }
 
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
     // See MDL-9367.
-    shift_course_mod_dates('wiki', array('editbegin', 'editend'), $data->timeshift, $data->courseid);
-    $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
+    shift_course_mod_dates('wiki', ['editbegin', 'editend'], $data->timeshift, $data->courseid);
+    $status[] = [
+        'component' => $componentstr,
+        'item' => get_string('datechanged'),
+        'error' => false,
+    ];
 
     return $status;
 }
