@@ -74,10 +74,13 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
             $wheres[] = $where;
         }
 
+        // Track the index of conditions/filters as we iterate over them.
+        $conditionindex = $filterindex = 0;
+
         // For each condition, we need to ensure their values are always accounted for in the report.
         $conditionvalues = $this->report->get_condition_values();
         foreach ($this->report->get_active_conditions() as $condition) {
-            [$conditionsql, $conditionparams] = $this->get_filter_sql($condition, $conditionvalues);
+            [$conditionsql, $conditionparams] = $this->get_filter_sql($condition, $conditionvalues, 'c' . $conditionindex++);
             if ($conditionsql !== '') {
                 $joins = array_merge($joins, $condition->get_joins());
                 $wheres[] = "({$conditionsql})";
@@ -89,7 +92,7 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
         if (!$this->editing) {
             $filtervalues = $this->report->get_filter_values();
             foreach ($this->report->get_active_filters() as $filter) {
-                [$filtersql, $filterparams] = $this->get_filter_sql($filter, $filtervalues);
+                [$filtersql, $filterparams] = $this->get_filter_sql($filter, $filtervalues, 'f' . $filterindex++);
                 if ($filtersql !== '') {
                     $joins = array_merge($joins, $filter->get_joins());
                     $wheres[] = "({$filtersql})";
@@ -139,13 +142,24 @@ abstract class base_report_table extends table_sql implements dynamic, renderabl
      *
      * @param filter $filter
      * @param array $filtervalues
+     * @param string $paramprefix
      * @return array [$sql, $params]
      */
-    private function get_filter_sql(filter $filter, array $filtervalues): array {
+    private function get_filter_sql(filter $filter, array $filtervalues, string $paramprefix): array {
         /** @var base $filterclass */
         $filterclass = $filter->get_filter_class();
 
-        return $filterclass::create($filter)->get_sql_filter($filtervalues);
+        // Retrieve SQL fragments from the filter instance, process parameters if required.
+        [$sql, $params] = $filterclass::create($filter)->get_sql_filter($filtervalues);
+        if ($paramprefix !== '' && count($params) > 0) {
+            return database::sql_replace_parameters(
+                $sql,
+                $params,
+                fn(string $param) => "{$paramprefix}_{$param}",
+            );
+        }
+
+        return [$sql, $params];
     }
 
     /**

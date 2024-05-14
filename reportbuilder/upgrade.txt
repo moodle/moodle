@@ -3,6 +3,7 @@ Information provided here is intended especially for developers.
 
 === 4.5 ===
 
+* New database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
 * The following external methods now return tags data relevant to each custom report:
   - `core_reportbuilder_list_reports`
   - `core_reportbuilder_retrieve_report`
