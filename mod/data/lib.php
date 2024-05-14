@@ -2893,7 +2893,7 @@ function data_reset_userdata($data) {
     require_once($CFG->dirroot.'/rating/lib.php');
 
     $componentstr = get_string('modulenameplural', 'data');
-    $status = array();
+    $status = [];
 
     $allrecordssql = "SELECT r.id
                         FROM {data_records} r
@@ -2912,13 +2912,13 @@ function data_reset_userdata($data) {
     // Set the file storage - may need it to remove files later.
     $fs = get_file_storage();
 
-    // delete entries if requested
+    // Delete entries if requested.
     if (!empty($data->reset_data)) {
-        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
-        $DB->delete_records_select('data_content', "recordid IN ($allrecordssql)", array($data->courseid));
-        $DB->delete_records_select('data_records', "dataid IN ($alldatassql)", array($data->courseid));
+        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", [$data->courseid]);
+        $DB->delete_records_select('data_content', "recordid IN ($allrecordssql)", [$data->courseid]);
+        $DB->delete_records_select('data_records', "dataid IN ($alldatassql)", [$data->courseid]);
 
-        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
+        if ($datas = $DB->get_records_sql($alldatassql, [$data->courseid])) {
             foreach ($datas as $dataid=>$unused) {
                 if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
                     continue;
@@ -2936,13 +2936,17 @@ function data_reset_userdata($data) {
         }
 
         if (empty($data->reset_gradebook_grades)) {
-            // remove all grades from gradebook
+            // Remove all grades from gradebook.
             data_reset_gradebook($data->courseid);
         }
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallentries', 'data'), 'error'=>false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('deleteallentries', 'data'),
+            'error' => false,
+        ];
     }
 
-    // remove entries by users not enrolled into course
+    // Remove entries by users not enrolled into course.
     if (!empty($data->reset_data_notenrolled)) {
         $recordssql = "SELECT r.id, r.userid, r.dataid, u.id AS userexists, u.deleted AS userdeleted
                          FROM {data_records} r
@@ -2951,13 +2955,13 @@ function data_reset_userdata($data) {
                         WHERE d.course = ? AND r.userid > 0";
 
         $course_context = context_course::instance($data->courseid);
-        $notenrolled = array();
-        $fields = array();
-        $rs = $DB->get_recordset_sql($recordssql, array($data->courseid));
+        $notenrolled = [];
+        $fields = [];
+        $rs = $DB->get_recordset_sql($recordssql, [$data->courseid]);
         foreach ($rs as $record) {
             if (array_key_exists($record->userid, $notenrolled) or !$record->userexists or $record->userdeleted
               or !is_enrolled($course_context, $record->userid)) {
-                //delete ratings
+                // Delete ratings.
                 if (!$cm = get_coursemodule_from_instance('data', $record->dataid)) {
                     continue;
                 }
@@ -2967,7 +2971,7 @@ function data_reset_userdata($data) {
                 $rm->delete_ratings($ratingdeloptions);
 
                 // Delete any files that may exist.
-                if ($contents = $DB->get_records('data_content', array('recordid' => $record->id), '', 'id')) {
+                if ($contents = $DB->get_records('data_content', ['recordid' => $record->id], '', 'id')) {
                     foreach ($contents as $content) {
                         $fs->delete_area_files($datacontext->id, 'mod_data', 'content', $content->id);
                     }
@@ -2976,18 +2980,22 @@ function data_reset_userdata($data) {
 
                 core_tag_tag::remove_all_item_tags('mod_data', 'data_records', $record->id);
 
-                $DB->delete_records('comments', array('itemid' => $record->id, 'commentarea' => 'database_entry'));
-                $DB->delete_records('data_content', array('recordid' => $record->id));
-                $DB->delete_records('data_records', array('id' => $record->id));
+                $DB->delete_records('comments', ['itemid' => $record->id, 'commentarea' => 'database_entry']);
+                $DB->delete_records('data_content', ['recordid' => $record->id]);
+                $DB->delete_records('data_records', ['id' => $record->id]);
             }
         }
         $rs->close();
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deletenotenrolled', 'data'), 'error'=>false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('deletenotenrolled', 'data'),
+            'error' => false,
+        ];
     }
 
-    // remove all ratings
+    // Remove all ratings.
     if (!empty($data->reset_data_ratings)) {
-        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
+        if ($datas = $DB->get_records_sql($alldatassql, [$data->courseid])) {
             foreach ($datas as $dataid=>$unused) {
                 if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
                     continue;
@@ -3000,22 +3008,30 @@ function data_reset_userdata($data) {
         }
 
         if (empty($data->reset_gradebook_grades)) {
-            // remove all grades from gradebook
+            // Remove all grades from gradebook.
             data_reset_gradebook($data->courseid);
         }
 
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallratings'), 'error'=>false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('deleteallratings'),
+            'error' => false,
+        ];
     }
 
-    // remove all comments
+    // Remove all comments.
     if (!empty($data->reset_data_comments)) {
-        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", array($data->courseid));
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('deleteallcomments'), 'error'=>false);
+        $DB->delete_records_select('comments', "itemid IN ($allrecordssql) AND commentarea='database_entry'", [$data->courseid]);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('deleteallcomments'),
+            'error' => false,
+        ];
     }
 
     // Remove all the tags.
     if (!empty($data->reset_data_tags)) {
-        if ($datas = $DB->get_records_sql($alldatassql, array($data->courseid))) {
+        if ($datas = $DB->get_records_sql($alldatassql, [$data->courseid])) {
             foreach ($datas as $dataid => $unused) {
                 if (!$cm = get_coursemodule_from_instance('data', $dataid)) {
                     continue;
@@ -3026,16 +3042,35 @@ function data_reset_userdata($data) {
 
             }
         }
-        $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'data'), 'error' => false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('tagsdeleted', 'data'),
+            'error' => false,
+        ];
     }
 
-    // updating dates - shift may be negative too
+    // Updating dates - shift may be negative too.
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        shift_course_mod_dates('data', array('timeavailablefrom', 'timeavailableto',
-            'timeviewfrom', 'timeviewto', 'assesstimestart', 'assesstimefinish'), $data->timeshift, $data->courseid);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+        shift_course_mod_dates(
+            'data',
+            [
+                'timeavailablefrom',
+                'timeavailableto',
+                'timeviewfrom',
+                'timeviewto',
+                'assesstimestart',
+                'assesstimefinish',
+            ],
+            $data->timeshift,
+            $data->courseid,
+        );
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('datechanged'),
+            'error' => false,
+        ];
     }
 
     return $status;
