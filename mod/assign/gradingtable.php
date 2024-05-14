@@ -650,15 +650,20 @@ class assign_grading_table extends table_sql implements renderable {
         if ($this->quickgrading && !$gradingdisabled) {
             $notmarked = get_string('markingworkflowstatenotmarked', 'assign');
             $name = 'quickgrade_' . $row->id . '_workflowstate';
-            $o .= html_writer::select($workflowstates, $name, $workflowstate, array('' => $notmarked));
-            // Check if this user is a marker that can't manage allocations and doesn't have the marker column added.
-            if ($this->assignment->get_instance()->markingworkflow &&
-                $this->assignment->get_instance()->markingallocation &&
-                !has_capability('mod/assign:manageallocations', $this->assignment->get_context())) {
+            if ($workflowstate !== ASSIGN_MARKING_WORKFLOW_STATE_NOTMARKED && !array_key_exists($workflowstate, $workflowstates)) {
+                $allworkflowstates = $this->assignment->get_all_marking_workflow_states();
+                $o .= html_writer::div($allworkflowstates[$workflowstate]);
+            } else {
+                $o .= html_writer::select($workflowstates, $name, $workflowstate, ['' => $notmarked]);
+                // Check if this user is a marker that can't manage allocations and doesn't have the marker column added.
+                if ($this->assignment->get_instance()->markingworkflow &&
+                    $this->assignment->get_instance()->markingallocation &&
+                    !has_capability('mod/assign:manageallocations', $this->assignment->get_context())) {
 
-                $name = 'quickgrade_' . $row->id . '_allocatedmarker';
-                $o .= html_writer::empty_tag('input', array('type' => 'hidden', 'name' => $name,
-                        'value' => $row->allocatedmarker));
+                    $name = 'quickgrade_' . $row->id . '_allocatedmarker';
+                    $o .= html_writer::empty_tag('input', ['type' => 'hidden', 'name' => $name,
+                            'value' => $row->allocatedmarker]);
+                }
             }
         } else {
             $o .= $this->output->container(get_string('markingworkflowstate' . $workflowstate, 'assign'), $workflowstate);
