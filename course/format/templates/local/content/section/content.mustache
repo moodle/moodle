@@ -85,58 +85,62 @@
         "highlightedlabel" : "Highlighted"
     }
 }}
-{{#singleheader}}
-{{$ core_courseformat/local/content/section/header }}
-    {{> core_courseformat/local/content/section/header }}
-{{/ core_courseformat/local/content/section/header }}
-{{/singleheader}}
-{{#header}}
-{{$ core_courseformat/local/content/section/header }}
-    {{> core_courseformat/local/content/section/header }}
-{{/ core_courseformat/local/content/section/header }}
-{{/header}}
-{{#restrictionlock}}
-    <div class="align-self-center ml-2">
-        {{#pix}}t/unlock, core{{/pix}}
+<div class="course-section-header d-flex"
+     data-for="section_title"
+     data-id="{{id}}"
+     data-number="{{num}}"
+>
+    {{#singleheader}}
+        {{$ core_courseformat/local/content/section/header }}
+            {{> core_courseformat/local/content/section/header }}
+        {{/ core_courseformat/local/content/section/header }}
+    {{/singleheader}}
+    {{#header}}
+        {{$ core_courseformat/local/content/section/header }}
+            {{> core_courseformat/local/content/section/header }}
+        {{/ core_courseformat/local/content/section/header }}
+    {{/header}}
+    {{#restrictionlock}}
+        <div class="align-self-center ml-2">
+            {{#pix}}t/unlock, core{{/pix}}
+        </div>
+    {{/restrictionlock}}
+    <div data-region="sectionbadges" class="sectionbadges d-flex align-items-center">
+        {{$ core_courseformat/local/content/section/badges }}
+            {{> core_courseformat/local/content/section/badges }}
+        {{/ core_courseformat/local/content/section/badges }}
     </div>
-{{/restrictionlock}}
-<div data-region="sectionbadges" class="sectionbadges d-flex align-items-center">
-    {{$ core_courseformat/local/content/section/badges }}
-        {{> core_courseformat/local/content/section/badges }}
-    {{/ core_courseformat/local/content/section/badges }}
-</div>
-{{#collapsemenu}}
-    {{^displayonesection}}
-    <div class="flex-fill d-flex justify-content-end mr-2 align-self-start mt-2">
-        <a
-            id="collapsesections"
-            class="section-collapsemenu"
-            href="#"
-            aria-expanded="true"
-            role="button"
-            data-toggle="toggleall"
-        >
-            <span class="collapseall text-nowrap">{{#str}}collapseall{{/str}}</span>
-            <span class="expandall text-nowrap">{{#str}}expandall{{/str}}</span>
-        </a>
-    </div>
-    {{/displayonesection}}
-{{/collapsemenu}}
-{{#controlmenu}}
-    {{^displayonesection}}
-        {{$ core_courseformat/local/content/section/controlmenu }}
-            {{> core_courseformat/local/content/section/controlmenu }}
-        {{/ core_courseformat/local/content/section/controlmenu }}
-    {{/displayonesection}}
-{{/controlmenu}}
-{{#header}}
-    {{#headerdisplaymultipage}}
+    {{#collapsemenu}}
         {{^displayonesection}}
-            {{^controlmenu}}
-                <div class="section_goto bulk-hidden ml-auto" data-sectionid="{{id}}">
-                    <a href="{{{url}}}"
-                    class="btn btn-icon d-flex align-items-center justify-content-center icon-no-margin"
-                    title="{{#str}}gotosection, course, {{name}}{{/str}}">
+            <div class="flex-fill d-flex justify-content-end mr-2 align-self-start mt-2">
+                <a id="collapsesections"
+                   class="section-collapsemenu"
+                   href="#"
+                   aria-expanded="true"
+                   role="button"
+                   data-toggle="toggleall"
+                >
+                    <span class="collapseall text-nowrap">{{#str}}collapseall{{/str}}</span>
+                    <span class="expandall text-nowrap">{{#str}}expandall{{/str}}</span>
+                </a>
+            </div>
+        {{/displayonesection}}
+    {{/collapsemenu}}
+    {{#controlmenu}}
+        {{^displayonesection}}
+            {{$ core_courseformat/local/content/section/controlmenu }}
+                {{> core_courseformat/local/content/section/controlmenu }}
+            {{/ core_courseformat/local/content/section/controlmenu }}
+        {{/displayonesection}}
+    {{/controlmenu}}
+    {{#header}}
+        {{#headerdisplaymultipage}}
+            {{^displayonesection}}
+                {{^controlmenu}}
+                    <div class="section_goto bulk-hidden ml-auto" data-sectionid="{{id}}">
+                        <a href="{{{url}}}"
+                           class="btn btn-icon d-flex align-items-center justify-content-center icon-no-margin"
+                           title="{{#str}}gotosection, course, {{name}}{{/str}}">
                             <span class="dir-rtl-hide">
                                 {{#pix}}t/right, moodle{{/pix}}
                             </span>
@@ -146,35 +150,36 @@
                             <span class="sr-only">
                                 {{#str}}gotosection, course, {{name}}{{/str}}
                             </span>
-                    </a>
-                </div>
-            {{/controlmenu}}
-        {{/displayonesection}}
-    {{/headerdisplaymultipage}}
-{{/header}}
+                        </a>
+                    </div>
+                {{/controlmenu}}
+            {{/displayonesection}}
+        {{/headerdisplaymultipage}}
+    {{/header}}
 </div>
 <div id="coursecontentcollapse{{num}}"
-    class="content {{^iscoursedisplaymultipage}}{{^sitehome}}{{^displayonesection}}course-content-item-content collapse {{^contentcollapsed}}show{{/contentcollapsed}}{{/displayonesection}}{{/sitehome}}{{/iscoursedisplaymultipage}}">
+     class="content {{^iscoursedisplaymultipage}}{{^sitehome}}{{^displayonesection}}course-content-item-content collapse {{^contentcollapsed}}show{{/contentcollapsed}}{{/displayonesection}}{{/sitehome}}{{/iscoursedisplaymultipage}}">
     <div class="{{#hasavailability}}description{{/hasavailability}} my-3" data-for="sectioninfo">
-    {{#summary}}
-        {{$ core_courseformat/local/content/section/summary }}
-            {{> core_courseformat/local/content/section/summary }}
-        {{/ core_courseformat/local/content/section/summary }}
-    {{/summary}}
-    {{#availability}}
-        {{$ core_courseformat/local/content/section/availability }}
-            {{> core_courseformat/local/content/section/availability }}
-        {{/ core_courseformat/local/content/section/availability }}
-    {{/availability}}
+        {{#summary}}
+            {{$ core_courseformat/local/content/section/summary }}
+                {{> core_courseformat/local/content/section/summary }}
+            {{/ core_courseformat/local/content/section/summary }}
+        {{/summary}}
+        {{#availability}}
+            {{$ core_courseformat/local/content/section/availability }}
+                {{> core_courseformat/local/content/section/availability }}
+            {{/ core_courseformat/local/content/section/availability }}
+        {{/availability}}
+    </div>
+    {{#cmsummary}}
+        {{$ core_courseformat/local/content/section/cmsummary }}
+            {{> core_courseformat/local/content/section/cmsummary }}
+        {{/ core_courseformat/local/content/section/cmsummary }}
+    {{/cmsummary}}
+    {{#cmlist}}
+        {{$ core_courseformat/local/content/section/cmlist }}
+            {{> core_courseformat/local/content/section/cmlist }}
+        {{/ core_courseformat/local/content/section/cmlist }}
+    {{/cmlist}}
+    {{{cmcontrols}}}
 </div>
-{{#cmsummary}}
-    {{$ core_courseformat/local/content/section/cmsummary }}
-        {{> core_courseformat/local/content/section/cmsummary }}
-    {{/ core_courseformat/local/content/section/cmsummary }}
-{{/cmsummary}}
-{{#cmlist}}
-    {{$ core_courseformat/local/content/section/cmlist }}
-        {{> core_courseformat/local/content/section/cmlist }}
-    {{/ core_courseformat/local/content/section/cmlist }}
-{{/cmlist}}
-{{{cmcontrols}}}
