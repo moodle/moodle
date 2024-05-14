@@ -3045,7 +3045,7 @@ function data_reset_userdata($data) {
         }
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('tagsdeleted', 'data'),
+            'item' => get_string('removealldatatags', 'data'),
             'error' => false,
         ];
     }
@@ -3069,7 +3069,7 @@ function data_reset_userdata($data) {
         );
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('datechanged'),
+            'item' => get_string('date'),
             'error' => false,
         ];
     }

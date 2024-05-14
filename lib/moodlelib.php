@@ -5113,7 +5113,7 @@ function reset_course_userdata($data) {
             \completion_criteria_date::update_date($data->courseid, $data->timeshift);
         }
 
-        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
+        $status[] = ['component' => $componentstr, 'item' => get_string('date'), 'error' => false];
     }
 
     if (!empty($data->reset_end_date)) {

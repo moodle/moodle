@@ -2032,7 +2032,7 @@ function workshop_reset_userdata(stdClass $data) {
     );
     $status[] = [
         'component' => get_string('modulenameplural', 'workshop'),
-        'item' => get_string('datechanged'),
+        'item' => get_string('date'),
         'error' => false,
     ];
 

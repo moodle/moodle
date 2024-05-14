@@ -10,3 +10,4 @@ todatabase,mod_data
 fieldids,mod_data
 completionentries,mod_data
 fieldallowautolink,mod_data
+tagsdeleted,mod_data

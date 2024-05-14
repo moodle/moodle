@@ -156,7 +156,7 @@ function book_reset_userdata($data) {
 
         $status[] = [
             'component' => get_string('modulenameplural', 'book'),
-            'item' => get_string('tagsdeleted', 'book'),
+            'item' => get_string('removeallbooktags', 'book'),
             'error' => false,
         ];
     }

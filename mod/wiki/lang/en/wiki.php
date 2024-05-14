@@ -257,9 +257,8 @@ $string['searchwikis'] = 'Search wikis';
 $string['special'] = 'Special';
 $string['tableofcontents'] = 'Table of contents';
 $string['tagarea_wiki_pages'] = 'Wiki pages';
-$string['tagsdeleted'] = 'Wiki tags have been deleted';
 $string['teacherrating'] = 'Teacher rating';
-$string['timesrating']='This page has been rated  {$a->c} times with an average of: {$a->s}';
+$string['timesrating'] = 'This page has been rated  {$a->c} times with an average of: {$a->s}';
 $string['updatedpages'] = "Updated pages";
 $string['updatedpages_help'] = "Recently updated wiki pages";
 $string['updatedwikipages'] = "Updated wiki pages";
@@ -311,3 +310,6 @@ $string['wiki:viewpage'] = 'View wiki pages';
 $string['wikipages'] = 'Wiki pages';
 $string['wrongversionlock'] = 'Another user has edited this page while you were editing and your content is obsolete.';
 $string['wrongversionsave'] = 'Another user has created a version while you were editing and you have overwritten his changes, check the page history.';
+
+// Deprecated since Moodle 4.5.
+$string['tagsdeleted'] = 'Wiki tags have been deleted';

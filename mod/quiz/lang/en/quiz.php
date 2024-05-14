@@ -107,7 +107,6 @@ $string['attemptreviewtitlepaged'] = '{$a->name}: Attempt review (page {$a->curr
 $string['attempts'] = 'Attempts';
 $string['attempts_help'] = 'The total number of attempts allowed (not the number of extra attempts).';
 $string['attemptsallowed'] = 'Attempts allowed';
-$string['attemptsdeleted'] = 'Quiz attempts deleted';
 $string['attemptselection'] = 'Select which attempts to analyze per user:';
 $string['attemptsexist'] = 'You can no longer add or remove questions.';
 $string['attemptsnum'] = 'Attempts: {$a}';
@@ -461,7 +460,6 @@ $string['grademethod_help'] = 'When multiple attempts are allowed, the following
 * Average (mean) grade of all attempts
 * First attempt (all other attempts are ignored)
 * Last attempt (all other attempts are ignored)';
-$string['gradesdeleted'] = 'Quiz grades deleted';
 $string['gradesofar'] = '{$a->method}: {$a->mygrade} / {$a->quizgrade}.';
 $string['gradetopassmustbeset'] = 'Grade to pass cannot be zero as this quiz has its completion method set to require passing grade. Please set a non-zero value.';
 $string['gradetopassoutof'] = 'Grade to pass: {$a->grade} out of {$a->maxgrade}';
@@ -471,7 +469,6 @@ $string['gradingdetailspenalty'] = 'This submission attracted a penalty of {$a}.
 $string['gradingdetailszeropenalty'] = 'You were not penalized for this submission.';
 $string['gradingmethod'] = 'Grading method: {$a}';
 $string['groupoverrides'] = 'Group overrides';
-$string['groupoverridesdeleted'] = 'Group overrides deleted';
 $string['groupsnone'] = 'No groups you can access.';
 $string['guestsno'] = 'Sorry, guests cannot see or attempt quizzes';
 $string['hidebreaks'] = 'Hide page breaks';
@@ -644,7 +641,7 @@ $string['onlyteachersimport'] = 'Only teachers with editing rights can import qu
 $string['onthispage'] = 'This page';
 $string['open'] = 'Not answered';
 $string['openafterclose'] = 'Could not update the quiz. You have specified an open date after the close date.';
-$string['openclosedatesupdated'] = 'Quiz open and close dates updated';
+$string['openclosedatesupdated'] = 'Open and close dates';
 $string['optional'] = 'optional';
 $string['orderandpaging'] = 'Order and paging';
 $string['orderandpaging_help'] = 'The numbers 10, 20, 30, ... opposite each question indicate the order of the questions. The numbers increase in steps of 10 to leave space for additional questions to be inserted. To reorder the questions, change the numbers then click the "Reorder questions" button.
@@ -1091,7 +1088,6 @@ $string['upgradingveryoldquizattempts'] = 'Upgrading very old quiz attempts: {$a
 $string['url'] = 'URL';
 $string['usedcategorymoved'] = 'This category has been preserved and moved to the site level because it is a published category still in use by other courses.';
 $string['useroverrides'] = 'User overrides';
-$string['useroverridesdeleted'] = 'User overrides deleted';
 $string['usersnone'] = 'No students have access to this quiz';
 $string['validate'] = 'Validate';
 $string['viewallanswers'] = 'View {$a} quiz attempts';
@@ -1117,3 +1113,9 @@ $string['completionminattemptsgroup'] = 'Require attempts';
 // Deprecated since Moodle 4.4.
 $string['grade'] = 'Grade';
 $string['timetaken'] = 'Time taken';
+
+// Deprecated since Moodle 4.5.
+$string['attemptsdeleted'] = 'Quiz attempts deleted';
+$string['gradesdeleted'] = 'Quiz grades deleted';
+$string['useroverridesdeleted'] = 'User overrides deleted';
+$string['groupoverridesdeleted'] = 'Group overrides deleted';

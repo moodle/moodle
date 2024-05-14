@@ -5197,7 +5197,7 @@ function forum_reset_userdata($data) {
 
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('tagsdeleted', 'forum'),
+            'item' => get_string('removeallforumtags', 'forum'),
             'error' => false,
         ];
     }
@@ -5240,7 +5240,7 @@ function forum_reset_userdata($data) {
         shift_course_mod_dates('forum', ['assesstimestart', 'assesstimefinish'], $data->timeshift, $data->courseid);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('datechanged'),
+            'item' => get_string('date'),
             'error' => false,
         ];
     }

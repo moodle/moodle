@@ -3085,7 +3085,7 @@ function glossary_reset_userdata($data) {
 
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('tagsdeleted', 'glossary'),
+            'item' => get_string('removeallglossarytags', 'glossary'),
             'error' => false,
         ];
     }
@@ -3097,7 +3097,7 @@ function glossary_reset_userdata($data) {
         shift_course_mod_dates('glossary', ['assesstimestart', 'assesstimefinish'], $data->timeshift, $data->courseid);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('datechanged'),
+            'item' => get_string('date'),
             'error' => false,
         ];
     }

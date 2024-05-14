@@ -128,3 +128,4 @@ viewresults,core
 coursesearch,core
 coursesearch_help,core
 coursecalendar,core_calendar
+datechanged,core

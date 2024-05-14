@@ -670,7 +670,7 @@ function feedback_reset_userdata($data) {
         $shifterror = !shift_course_mod_dates('feedback', ['timeopen', 'timeclose'], $data->timeshift, $data->courseid);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('datechanged'),
+            'item' => get_string('date'),
             'error' => $shifterror,
         ];
     }
@@ -694,7 +694,7 @@ function feedback_reset_course_form_definition(&$mform) {
         return;
     }
 
-    $mform->addElement('static', 'hint', get_string('resetting_data', 'feedback'));
+    $mform->addElement('static', 'hint', get_string('resetting_delete', 'feedback'));
     foreach ($feedbacks as $feedback) {
         $mform->addElement('checkbox', FEEDBACK_RESETFORM_RESET.$feedback->id, $feedback->name);
     }

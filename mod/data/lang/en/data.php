@@ -437,7 +437,6 @@ $string['subplugintype_datapreset'] = 'Preset';
 $string['subplugintype_datapreset_plural'] = 'Presets';
 $string['tagarea_data_records'] = 'Data records';
 $string['tags'] = 'Tags';
-$string['tagsdeleted'] = 'Database tags have been deleted';
 $string['teachersandstudents'] = '{$a->teachers} and {$a->students}';
 $string['templates'] = 'Templates';
 $string['templatereset'] = 'Template reset';
@@ -491,3 +490,6 @@ $string['completionentries'] = 'Require entries';
 
 // Deprecated since Moodle 4.4.
 $string['fieldallowautolink'] = 'Allow autolink';
+
+// Deprecated since Moodle 4.5.
+$string['tagsdeleted'] = 'Database tags have been deleted';

@@ -938,7 +938,7 @@ function lesson_reset_userdata($data) {
                 'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND userid IS NOT NULL', [$data->courseid]);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('useroverridesdeleted', 'lesson'),
+            'item' => get_string('useroverrides', 'lesson'),
             'error' => false,
         ];
         $purgeoverrides = true;
@@ -949,7 +949,7 @@ function lesson_reset_userdata($data) {
         'lessonid IN (SELECT id FROM {lesson} WHERE course = ?) AND groupid IS NOT NULL', [$data->courseid]);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('groupoverridesdeleted', 'lesson'),
+            'item' => get_string('groupoverrides', 'lesson'),
             'error' => false,
         ];
         $purgeoverrides = true;
@@ -972,7 +972,7 @@ function lesson_reset_userdata($data) {
         shift_course_mod_dates('lesson', ['available', 'deadline'], $data->timeshift, $data->courseid);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('datechanged'),
+            'item' => get_string('date'),
             'error' => false,
         ];
     }

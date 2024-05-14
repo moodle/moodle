@@ -1483,7 +1483,7 @@ function quiz_reset_userdata($data) {
                 'quiz IN (SELECT id FROM {quiz} WHERE course = ?)', [$data->courseid]);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('attemptsdeleted', 'quiz'),
+            'item' => get_string('removeallquizattempts', 'quiz'),
             'error' => false];
 
         // Remove all grades from gradebook.
@@ -1494,7 +1494,7 @@ function quiz_reset_userdata($data) {
         }
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('gradesdeleted', 'quiz'),
+            'item' => get_string('grades'),
             'error' => false];
     }
 
@@ -1506,7 +1506,7 @@ function quiz_reset_userdata($data) {
                 'quiz IN (SELECT id FROM {quiz} WHERE course = ?) AND userid IS NOT NULL', [$data->courseid]);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('useroverridesdeleted', 'quiz'),
+            'item' => get_string('useroverrides', 'quiz'),
             'error' => false];
         $purgeoverrides = true;
     }
@@ -1516,7 +1516,7 @@ function quiz_reset_userdata($data) {
                 'quiz IN (SELECT id FROM {quiz} WHERE course = ?) AND groupid IS NOT NULL', [$data->courseid]);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('groupoverridesdeleted', 'quiz'),
+            'item' => get_string('groupoverrides', 'quiz'),
             'error' => false];
         $purgeoverrides = true;
     }

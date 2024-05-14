@@ -494,7 +494,6 @@ $string['databaseupgradelocal'] = 'Local database customisations version is now 
 $string['databaseupgrades'] = 'Upgrading database';
 $string['dataformats'] = 'Data formats';
 $string['date'] = 'Date';
-$string['datechanged'] = 'Date changed';
 $string['datemostrecentfirst'] = 'Date - most recent first';
 $string['datemostrecentlast'] = 'Date - most recent last';
 $string['day'] = 'day';
@@ -1870,7 +1869,7 @@ $string['resetrecordexpired'] = 'The password reset link you used is more than {
 $string['resetstartdate'] = 'Reset start date';
 $string['resetstatus'] = 'Status';
 $string['resettable'] = 'Reset table preferences';
-$string['resettask'] = 'Task';
+$string['resettask'] = 'Reset';
 $string['resettodefaults'] = 'Reset to defaults';
 $string['resortsubcategoriesby'] = 'Sort subcategories by {$a} ascending';
 $string['resortsubcategoriesbyreverse'] = 'Sort subcategories by {$a} descending';
@@ -2172,6 +2171,7 @@ $string['statswrites'] = 'Posts';
 $string['status'] = 'Status';
 $string['statuschecks'] = 'Status checks';
 $string['statuscritical'] = 'Critical';
+$string['statusdone'] = 'Done';
 $string['statusinfo'] = 'Info';
 $string['statusna'] = 'N/A';
 $string['statusok'] = 'OK';
@@ -2513,3 +2513,6 @@ $string['coursesearch_help'] = 'You can search for multiple words at once and ca
 * word - find any match of this word within the text
 * +word - only exact matching words will be found
 * -word - don\'t include results containing this word.';
+
+// Deprecated since Moodle 4.5.
+$string['datechanged'] = 'Date changed';

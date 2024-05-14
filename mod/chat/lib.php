@@ -1260,7 +1260,7 @@ function chat_reset_userdata($data) {
         shift_course_mod_dates('chat', ['chattime'], $data->timeshift, $data->courseid);
         $status[] = [
             'component' => $componentstr,
-            'item' => get_string('datechanged'),
+            'item' => get_string('date'),
             'error' => false,
         ];
     }

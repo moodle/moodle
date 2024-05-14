@@ -223,7 +223,7 @@ function wiki_reset_userdata($data) {
             if (!empty($data->reset_wiki_tags)) {
                 $status[] = [
                     'component' => $componentstr,
-                    'item' => get_string('tagsdeleted', 'wiki'),
+                    'item' => get_string('removeallwikitags', 'wiki'),
                     'error' => false,
                 ];
             }
@@ -247,7 +247,7 @@ function wiki_reset_userdata($data) {
     shift_course_mod_dates('wiki', ['editbegin', 'editend'], $data->timeshift, $data->courseid);
     $status[] = [
         'component' => $componentstr,
-        'item' => get_string('datechanged'),
+        'item' => get_string('date'),
         'error' => false,
     ];
 

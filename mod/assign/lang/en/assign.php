@@ -303,7 +303,6 @@ $string['gradingstatus'] = 'Grading status';
 $string['gradingstudent'] = 'Grading student';
 $string['gradingsummary'] = 'Grading summary';
 $string['groupoverrides'] = 'Group overrides';
-$string['groupoverridesdeleted'] = 'Group overrides deleted';
 $string['groupsnone'] = 'No groups you can access.';
 $string['hidegrader'] = 'Hide grader identity from students';
 $string['hidegrader_help'] = 'If enabled, the identity of any user who grades an assignment submission is not shown, so students can\'t see who marked their work.
@@ -639,7 +638,6 @@ $string['userextensiondate'] = 'Extension granted until: {$a}';
 $string['userassignmentdefaults'] = 'User assignment defaults';
 $string['useridlistnotcached'] = 'The grade changes were NOT saved, as it was not possible to determine which submission they were for.';
 $string['useroverrides'] = 'User overrides';
-$string['useroverridesdeleted'] = 'User overrides deleted';
 $string['usersubmissioncannotberemoved'] = 'The submission of {$a} cannot be removed.';
 $string['usersnone'] = 'No students have access to this assignment.';
 $string['userswhoneedtosubmit'] = 'Users who need to submit: {$a}';
@@ -665,5 +663,7 @@ $string['viewrevealidentitiesconfirm'] = 'View reveal student identities confirm
 $string['workflowfilter'] = 'Workflow filter';
 $string['xofy'] = '{$a->x} of {$a->y}';
 
-// Deprecated since Moodle 4.4.
+// Deprecated since Moodle 4.5.
 $string['attemptreopenmethod_none'] = 'Never';
+$string['groupoverridesdeleted'] = 'Group overrides deleted';
+$string['useroverridesdeleted'] = 'User overrides deleted';
