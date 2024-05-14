@@ -5042,26 +5042,26 @@ function forum_reset_userdata($data) {
     require_once($CFG->dirroot.'/rating/lib.php');
 
     $componentstr = get_string('modulenameplural', 'forum');
-    $status = array();
+    $status = [];
 
-    $params = array($data->courseid);
+    $params = [$data->courseid];
 
     $removeposts = false;
-    $typesql     = "";
+    $typesql = '';
     if (!empty($data->reset_forum_all)) {
         $removeposts = true;
-        $typesstr    = get_string('resetforumsall', 'forum');
-        $types       = array();
-    } else if (!empty($data->reset_forum_types)){
+        $typesstr = get_string('resetforumsall', 'forum');
+        $types = [];
+    } else if (!empty($data->reset_forum_types)) {
         $removeposts = true;
-        $types       = array();
-        $sqltypes    = array();
-        $forum_types_all = forum_get_forum_types_all();
+        $types = [];
+        $sqltypes = [];
+        $forumtypesall = forum_get_forum_types_all();
         foreach ($data->reset_forum_types as $type) {
-            if (!array_key_exists($type, $forum_types_all)) {
+            if (!array_key_exists($type, $forumtypesall)) {
                 continue;
             }
-            $types[] = $forum_types_all[$type];
+            $types[] = $forumtypesall[$type];
             $sqltypes[] = $type;
         }
         if (!empty($sqltypes)) {
@@ -5075,13 +5075,13 @@ function forum_reset_userdata($data) {
                             FROM {forum_discussions} fd, {forum} f
                            WHERE f.course=? AND f.id=fd.forum";
 
-    $allforumssql      = "SELECT f.id
-                            FROM {forum} f
-                           WHERE f.course=?";
+    $allforumssql = "SELECT f.id
+                       FROM {forum} f
+                      WHERE f.course=?";
 
-    $allpostssql       = "SELECT fp.id
-                            FROM {forum_posts} fp, {forum_discussions} fd, {forum} f
-                           WHERE f.course=? AND f.id=fd.forum AND fd.id=fp.discussion";
+    $allpostssql = "SELECT fp.id
+                      FROM {forum_posts} fp, {forum_discussions} fd, {forum} f
+                     WHERE f.course=? AND f.id=fd.forum AND fd.id=fp.discussion";
 
     $forumssql = $forums = $rm = null;
 
@@ -5100,12 +5100,12 @@ function forum_reset_userdata($data) {
 
     if ($removeposts) {
         $discussionssql = "$alldiscussionssql $typesql";
-        $postssql       = "$allpostssql $typesql";
+        $postssql = "$allpostssql $typesql";
 
-        // now get rid of all attachments
+        // Now get rid of all attachments.
         $fs = get_file_storage();
         if ($forums) {
-            foreach ($forums as $forumid=>$unused) {
+            foreach ($forums as $forumid => $unused) {
                 if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
                     continue;
                 }
@@ -5113,7 +5113,7 @@ function forum_reset_userdata($data) {
                 $fs->delete_area_files($context->id, 'mod_forum', 'attachment');
                 $fs->delete_area_files($context->id, 'mod_forum', 'post');
 
-                //remove ratings
+                // Remove ratings.
                 $ratingdeloptions->contextid = $context->id;
                 $rm->delete_ratings($ratingdeloptions);
 
@@ -5121,23 +5121,29 @@ function forum_reset_userdata($data) {
             }
         }
 
-        // first delete all read flags
+        // First delete all read flags.
         $DB->delete_records_select('forum_read', "forumid IN ($forumssql)", $params);
 
-        // remove tracking prefs
+        // Remove tracking prefs.
         $DB->delete_records_select('forum_track_prefs', "forumid IN ($forumssql)", $params);
 
-        // remove posts from queue
+        // Remove posts from queue.
         $DB->delete_records_select('forum_queue', "discussionid IN ($discussionssql)", $params);
 
-        // all posts - initial posts must be kept in single simple discussion forums
-        $DB->delete_records_select('forum_posts', "discussion IN ($discussionssql) AND parent <> 0", $params); // first all children
-        $DB->delete_records_select('forum_posts', "discussion IN ($discussionssql AND f.type <> 'single') AND parent = 0", $params); // now the initial posts for non single simple
+        // All posts - initial posts must be kept in single simple discussion forums.
+        // First all children.
+        $DB->delete_records_select('forum_posts', "discussion IN ($discussionssql) AND parent <> 0", $params);
+        // Now the initial posts for non single simple.
+        $DB->delete_records_select(
+            'forum_posts',
+            "discussion IN ($discussionssql AND f.type <> 'single') AND parent = 0",
+            $params
+        );
 
-        // finally all discussions except single simple forums
+        // Finally all discussions except single simple forums.
         $DB->delete_records_select('forum_discussions', "forum IN ($forumssql AND f.type <> 'single')", $params);
 
-        // remove all grades from gradebook
+        // Remove all grades from gradebook.
         if (empty($data->reset_gradebook_grades)) {
             if (empty($types)) {
                 forum_reset_gradebook($data->courseid);
@@ -5148,25 +5154,29 @@ function forum_reset_userdata($data) {
             }
         }
 
-        $status[] = array('component'=>$componentstr, 'item'=>$typesstr, 'error'=>false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => $typesstr,
+            'error' => false,
+        ];
     }
 
-    // remove all ratings in this course's forums
+    // Remove all ratings in this course's forums.
     if (!empty($data->reset_forum_ratings)) {
         if ($forums) {
-            foreach ($forums as $forumid=>$unused) {
+            foreach ($forums as $forumid => $unused) {
                 if (!$cm = get_coursemodule_from_instance('forum', $forumid)) {
                     continue;
                 }
                 $context = context_module::instance($cm->id);
 
-                //remove ratings
+                // Remove ratings.
                 $ratingdeloptions->contextid = $context->id;
                 $rm->delete_ratings($ratingdeloptions);
             }
         }
 
-        // remove all grades from gradebook
+        // Remove all grades from gradebook.
         if (empty($data->reset_gradebook_grades)) {
             forum_reset_gradebook($data->courseid);
         }
@@ -5185,34 +5195,54 @@ function forum_reset_userdata($data) {
             }
         }
 
-        $status[] = array('component' => $componentstr, 'item' => get_string('tagsdeleted', 'forum'), 'error' => false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('tagsdeleted', 'forum'),
+            'error' => false,
+        ];
     }
 
-    // remove all digest settings unconditionally - even for users still enrolled in course.
+    // Remove all digest settings unconditionally - even for users still enrolled in course.
     if (!empty($data->reset_forum_digests)) {
         $DB->delete_records_select('forum_digests', "forum IN ($allforumssql)", $params);
-        $status[] = array('component' => $componentstr, 'item' => get_string('resetdigests', 'forum'), 'error' => false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('resetdigests', 'forum'),
+            'error' => false,
+        ];
     }
 
-    // remove all subscriptions unconditionally - even for users still enrolled in course
+    // Remove all subscriptions unconditionally - even for users still enrolled in course.
     if (!empty($data->reset_forum_subscriptions)) {
         $DB->delete_records_select('forum_subscriptions', "forum IN ($allforumssql)", $params);
         $DB->delete_records_select('forum_discussion_subs', "forum IN ($allforumssql)", $params);
-        $status[] = array('component' => $componentstr, 'item' => get_string('resetsubscriptions', 'forum'), 'error' => false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('resetsubscriptions', 'forum'),
+            'error' => false,
+        ];
     }
 
-    // remove all tracking prefs unconditionally - even for users still enrolled in course
+    // Remove all tracking prefs unconditionally - even for users still enrolled in course.
     if (!empty($data->reset_forum_track_prefs)) {
         $DB->delete_records_select('forum_track_prefs', "forumid IN ($allforumssql)", $params);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('resettrackprefs','forum'), 'error'=>false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('resettrackprefs', 'forum'),
+            'error' => false,
+        ];
     }
 
-    /// updating dates - shift may be negative too
+    // Updating dates - shift may be negative too.
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        shift_course_mod_dates('forum', array('assesstimestart', 'assesstimefinish'), $data->timeshift, $data->courseid);
-        $status[] = array('component'=>$componentstr, 'item'=>get_string('datechanged'), 'error'=>false);
+        shift_course_mod_dates('forum', ['assesstimestart', 'assesstimefinish'], $data->timeshift, $data->courseid);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('datechanged'),
+            'error' => false,
+        ];
     }
 
     return $status;
