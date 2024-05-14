@@ -26,6 +26,9 @@ namespace core;
  * @covers \core\system_clock
  */
 final class system_clock_test extends \advanced_testcase {
+    /**
+     * Test that the now method returns a DateTimeImmutable object.
+     */
     public function test_now(): void {
         $starttime = time();
 
@@ -33,5 +36,46 @@ final class system_clock_test extends \advanced_testcase {
         $now = $clock->now();
         $this->assertInstanceOf(\DateTimeImmutable::class, $now);
         $this->assertGreaterThanOrEqual($starttime, $now->getTimestamp());
+    }
+
+    /**
+     * Test that the time method returns a timestamp.
+     */
+    public function test_time(): void {
+        $starttime = time();
+
+        $clock = new system_clock();
+        $time = $clock->time();
+        $this->assertGreaterThanOrEqual($starttime, $time);
+    }
+
+    /**
+     * Test that the now method returns a DateTimeImmutable object in the server timezone.
+     *
+     * @dataProvider timezone_provider
+     * @param string $timezone
+     */
+    public function test_now_timezone(string $timezone): void {
+        global $CFG;
+        $this->resetAfterTest();
+
+        $CFG->timezone = $timezone;
+
+        $clock = new system_clock();
+        $now = $clock->now();
+        $this->assertEquals(\core_date::normalise_timezone($CFG->timezone), $now->getTimezone()->getName());
+    }
+
+    /**
+     * Data provider for the test_now_timezone method.
+     *
+     * @return array
+     */
+    public static function timezone_provider(): array {
+        return [
+            ['UTC'],
+            ['Europe/London'],
+            ['America/New_York'],
+        ];
     }
 }
