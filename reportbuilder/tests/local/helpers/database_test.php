@@ -30,7 +30,7 @@ use core_user;
  * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class database_test extends advanced_testcase {
+final class database_test extends advanced_testcase {
 
     /**
      * Test generating alias
@@ -150,15 +150,42 @@ class database_test extends advanced_testcase {
         [$param0, $param1, $param10] = ['rbparam0', 'rbparam1', 'rbparam10'];
 
         $sql = "SELECT :{$param0} AS field0, :{$param1} AS field1, :{$param10} AS field10" . $DB->sql_null_from_clause();
-        $sql = database::sql_replace_parameter_names($sql, [$param0, $param1, $param10], static function(string $param): string {
-            return "prefix_{$param}";
-        });
+        $sql = database::sql_replace_parameter_names(
+            $sql,
+            [$param0, $param1, $param10],
+            fn(string $param) => "prefix_{$param}",
+        );
 
         $record = $DB->get_record_sql($sql, [
             "prefix_{$param0}" => 'Zero',
             "prefix_{$param1}" => 'One',
             "prefix_{$param10}" => 'Ten',
         ]);
+
+        $this->assertEquals((object) [
+            'field0' => 'Zero',
+            'field1' => 'One',
+            'field10' => 'Ten',
+        ], $record);
+    }
+
+    /**
+     * Test replacement of parameter names within query, returning both modified query and parameters
+     */
+    public function test_sql_replace_parameters(): void {
+        global $DB;
+
+        // Predefine parameter names, to ensure they don't overwrite each other.
+        [$param0, $param1, $param10] = ['rbparam0', 'rbparam1', 'rbparam10'];
+
+        $sql = "SELECT :{$param0} AS field0, :{$param1} AS field1, :{$param10} AS field10" . $DB->sql_null_from_clause();
+        [$sql, $params] = database::sql_replace_parameters(
+            $sql,
+            [$param0 => 'Zero', $param1 => 'One', $param10 => 'Ten'],
+            fn(string $param) => "prefix_{$param}",
+        );
+
+        $record = $DB->get_record_sql($sql, $params);
 
         $this->assertEquals((object) [
             'field0' => 'Zero',
