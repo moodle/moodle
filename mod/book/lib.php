@@ -143,7 +143,7 @@ function book_reset_userdata($data) {
 
     if (!empty($data->reset_book_tags)) {
         // Loop through the books and remove the tags from the chapters.
-        if ($books = $DB->get_records('book', array('course' => $data->courseid))) {
+        if ($books = $DB->get_records('book', ['course' => $data->courseid])) {
             foreach ($books as $book) {
                 if (!$cm = get_coursemodule_from_instance('book', $book->id)) {
                     continue;
@@ -154,11 +154,10 @@ function book_reset_userdata($data) {
             }
         }
 
-
         $status[] = [
             'component' => get_string('modulenameplural', 'book'),
             'item' => get_string('tagsdeleted', 'book'),
-            'error' => false
+            'error' => false,
         ];
     }
 
