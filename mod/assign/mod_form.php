@@ -151,6 +151,11 @@ class mod_assign_mod_form extends moodleform_mod {
             definition: ['description' => get_string('attemptreopenmethod_manual_help', 'mod_assign')]
         );
         $choice->add_option(
+            value: ASSIGN_ATTEMPT_REOPEN_METHOD_AUTOMATIC,
+            name: get_string('attemptreopenmethod_automatic', 'mod_assign'),
+            definition: ['description' => get_string('attemptreopenmethod_automatic_help', 'mod_assign')]
+        );
+        $choice->add_option(
             value: ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS,
             name: get_string('attemptreopenmethod_untilpass', 'mod_assign'),
             definition: ['description' => get_string('attemptreopenmethod_untilpass_help', 'mod_assign')]
