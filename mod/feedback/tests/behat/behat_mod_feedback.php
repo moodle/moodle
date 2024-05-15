@@ -228,4 +228,17 @@ class behat_mod_feedback extends behat_base {
             $itemactual = next($dataactual);
         }
     }
+
+    /**
+     * Return the list of partial named selectors
+     *
+     * @return behat_component_named_selector[]
+     */
+    public static function get_partial_named_selectors(): array {
+        return [
+            new behat_component_named_selector('Question', [
+                ".//*[starts-with(@id, 'fitem_feedback_item_')][.//*[contains(text(), %locator%)]]",
+            ]),
+        ];
+    }
 }
