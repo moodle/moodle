@@ -7884,7 +7884,7 @@ class assign {
             $options = array('' => get_string('markingworkflowstatenotmarked', 'assign')) + $states;
             $select = $mform->addElement('select', 'workflowstate', get_string('markingworkflowstate', 'assign'), $options);
             $mform->addHelpButton('workflowstate', 'markingworkflowstate', 'assign');
-            if (isset($data->workflowstate) && !array_key_exists($data->workflowstate, $states)) {
+            if (!empty($data->workflowstate) && !array_key_exists($data->workflowstate, $states)) {
                 // In a workflow state that user should not be able to change, so freeze workflow selector.
                 // Have to add the state so it shows in the frozen selector.
                 $allworkflowstates = $this->get_all_marking_workflow_states();
