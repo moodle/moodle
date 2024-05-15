@@ -2654,15 +2654,15 @@ class locallib_test extends \advanced_testcase {
         $this->add_submission($student, $assign);
         $this->submit_for_grading($student, $assign);
 
-        // Mark the submission as passing.
-        $this->mark_submission($teacher, $assign, $student, 80.0);
+        // Mark the second submission as passing.
+        $this->mark_submission($teacher, $assign, $student, 80.0, [], 1);
 
         // Check that the student does not have a button for Add a new attempt.
         $this->setUser($student);
         $output = $assign->view_student_summary($student, true);
         $this->assertEquals(false, strpos($output, get_string('addnewattempt', 'assign')));
 
-        // Re-mark the submission as not passing.
+        // Re-mark the second submission as not passing.
         $this->mark_submission($teacher, $assign, $student, 40.0, [], 1);
 
         // Check that the student now has a button for Add a new attempt.
