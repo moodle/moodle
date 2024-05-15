@@ -115,21 +115,33 @@ if (!$canpreview) {
 $mygradeoverridden = false;
 $gradebookfeedback = '';
 
-$item = null;
+$gradeitem = grade_item::fetch([
+    'itemtype' => 'mod',
+    'itemmodule' => 'quiz',
+    'iteminstance' => $quiz->id,
+    'itemnumber' => 0,
+    'courseid' => $course->id,
+]);
 
-$gradinginfo = grade_get_grades($course->id, 'mod', 'quiz', $quiz->id, $USER->id);
-if (!empty($gradinginfo->items)) {
-    $item = $gradinginfo->items[0];
-    if (isset($item->grades[$USER->id])) {
-        $grade = $item->grades[$USER->id];
-
+if ($gradeitem) {
+    if ($gradeitem->refresh_grades($USER->id)) {
+        $grade = $gradeitem->get_grade($USER->id, false);
         if ($grade->overridden) {
-            $mygrade = $grade->grade + 0; // Convert to number.
+            if ($gradeitem->needsupdate) {
+                // It is Error, but let's be consistent with the old code.
+                $mygrade = 0;
+            } else {
+                $mygrade = $grade->finalgrade;
+            }
             $mygradeoverridden = true;
         }
-        if (!empty($grade->str_feedback)) {
-            $gradebookfeedback = $grade->str_feedback;
+
+        if (!empty($grade->feedback)) {
+            $gradebookfeedback = $grade->feedback;
         }
+    } else {
+        // It is Error, but let's be consistent with the old code.
+        $mygrade = 0;
     }
 }
 
@@ -186,9 +198,9 @@ if ($quiz->attempts != 1) {
 }
 
 // Inform user of the grade to pass if non-zero.
-if ($item && grade_floats_different($item->gradepass, 0)) {
+if ($gradeitem && grade_floats_different($gradeitem->gradepass, 0)) {
     $a = new stdClass();
-    $a->grade = quiz_format_grade($quiz, $item->gradepass);
+    $a->grade = quiz_format_grade($quiz, $gradeitem->gradepass);
     $a->maxgrade = quiz_format_grade($quiz, $quiz->grade);
     $viewobj->infomessages[] = get_string('gradetopassoutof', 'quiz', $a);
 }
