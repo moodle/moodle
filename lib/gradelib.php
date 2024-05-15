@@ -430,10 +430,14 @@ function grade_regrade_final_grades_if_required($course, callable $callback = nu
 }
 
 /**
- * Returns grading information for given activity, optionally with user grades
+ * Returns grading information for given activity, optionally with user grades.
  * Manual, course or category items can not be queried.
  *
- * @category grade
+ * This function can be VERY costly - it is doing full course grades recalculation if needsupdate = 1
+ * for course grade item. So be sure you really need it.
+ * If you need just certain grades consider using grade_item::refresh_grades()
+ * together with grade_item::get_grade() instead.
+ *
  * @param int    $courseid ID of course
  * @param string $itemtype Type of grade item. For example, 'mod' or 'block'
  * @param string $itemmodule More specific then $itemtype. For example, 'forum' or 'quiz'. May be NULL for some item types
@@ -441,6 +445,7 @@ function grade_regrade_final_grades_if_required($course, callable $callback = nu
  * @param mixed  $userid_or_ids Either a single user ID, an array of user IDs or null. If user ID or IDs are not supplied returns information about grade_item
  * @return stdClass Object with keys {items, outcomes, errors}, where 'items' is an array of grade
  *               information objects (scaleid, name, grade and locked status, etc.) indexed with itemnumbers
+ * @category grade
  */
 function grade_get_grades($courseid, $itemtype, $itemmodule, $iteminstance, $userid_or_ids=null) {
     global $CFG;
