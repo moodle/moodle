@@ -24,6 +24,7 @@
 namespace core_competency;
 defined('MOODLE_INTERNAL') || die();
 
+use core\invalid_persistent_exception;
 use stdClass;
 use cm_info;
 use context;
