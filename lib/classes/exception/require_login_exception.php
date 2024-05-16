@@ -14,12 +14,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\exception;
+
 /**
  * Course/activity access exception.
  *
  * This exception is thrown from require_login()
  *
  * @package    core
+ * @subpackage exception
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -33,3 +36,8 @@ class require_login_exception extends moodle_exception {
         parent::__construct('requireloginerror', 'error', '', null, $debuginfo);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(require_login_exception::class, \require_login_exception::class);

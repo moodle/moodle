@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\exception;
+
 /**
  * Base Moodle Exception class
  *
@@ -21,7 +23,7 @@
  * after moodlelib.php has been included (which will happen very soon).
  *
  * @package    core
- * @subpackage lib
+ * @subpackage exception
  * @copyright  2008 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -99,3 +101,8 @@ class moodle_exception extends \Exception {
         parent::__construct($message, 0);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(moodle_exception::class, \moodle_exception::class);

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-
+namespace core\exception;
 /**
  * Web service parameter exception class.
  *
@@ -22,7 +22,8 @@
  * This exception must be thrown to the web service client when a web service parameter is invalid
  * The error string is gotten from webservice.php
  * @package    core
- * @copyright  Jerome Mouneray
+ * @subpackage exception
+ * @copyright  Jerome Mounerac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class webservice_parameter_exception extends moodle_exception {
@@ -37,3 +38,8 @@ class webservice_parameter_exception extends moodle_exception {
         parent::__construct($errorcode, 'webservice', '', $a, $debuginfo);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(webservice_parameter_exception::class, \webservice_parameter_exception::class);

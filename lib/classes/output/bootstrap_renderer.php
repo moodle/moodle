@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output;
+
+use coding_exception;
+
 /**
  * This class solves the problem of how to initialise $OUTPUT.
  *
@@ -109,7 +113,7 @@ class bootstrap_renderer {
 
         // Too soon to initialise $OUTPUT, provide a couple of key methods.
         if (array_key_exists($method, $earlymethods)) {
-            return call_user_func_array(['bootstrap_renderer', $earlymethods[$method]], $arguments);
+            return call_user_func_array([self::class, $earlymethods[$method]], $arguments);
         }
 
         throw new coding_exception('Attempt to start output before enough information is known to initialise the theme.');
@@ -184,21 +188,22 @@ class bootstrap_renderer {
             }
             return;
         } else if (AJAX_SCRIPT) {
-            $e = new stdClass();
-            $e->error      = $message;
-            $e->stacktrace = null;
-            $e->debuginfo  = null;
+            $error = (object) [
+                'error' => $message,
+                'stacktrace' => null,
+                'debuginfo' => null,
+                'errorcode' => $errorcode,
+            ];
             if (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER) {
                 if (!empty($debuginfo)) {
-                    $e->debuginfo = $debuginfo;
+                    $error->debuginfo = $debuginfo;
                 }
                 if (!empty($backtrace)) {
-                    $e->stacktrace = format_backtrace($backtrace, true);
+                    $error->stacktrace = format_backtrace($backtrace, true);
                 }
             }
-            $e->errorcode  = $errorcode;
             @header('Content-Type: application/json; charset=utf-8');
-            echo json_encode($e);
+            echo json_encode($error);
             return;
         }
 
@@ -300,3 +305,8 @@ class bootstrap_renderer {
         return $html;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(bootstrap_renderer::class, \bootstrap_renderer::class);

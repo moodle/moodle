@@ -14,11 +14,14 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\exception;
+
 /**
  * Exceptions indicating user does not have permissions to do something
  * and the execution can not continue.
  *
  * @package    core
+ * @subpackage exception
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,7 +29,7 @@ class required_capability_exception extends moodle_exception {
     /**
      * Constructor.
      *
-     * @param context $context The context used for the capability check
+     * @param \core\context $context The context used for the capability check
      * @param string $capability The required capability
      * @param string $errormessage The error message to show the user
      * @param string $stringfile
@@ -44,3 +47,8 @@ class required_capability_exception extends moodle_exception {
         parent::__construct($errormessage, $stringfile, $link, $capabilityname);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(required_capability_exception::class, \required_capability_exception::class);

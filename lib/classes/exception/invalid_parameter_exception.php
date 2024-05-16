@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\exception;
+
 /**
  * Exception indicating malformed parameter problem.
  * This exception is not supposed to be thrown when processing
@@ -21,7 +23,7 @@
  * for WS and other low level stuff.
  *
  * @package    core
- * @subpackage lib
+ * @subpackage exception
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -35,3 +37,8 @@ class invalid_parameter_exception extends moodle_exception {
         parent::__construct('invalidparameter', 'debug', '', null, $debuginfo);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(invalid_parameter_exception::class, \invalid_parameter_exception::class);

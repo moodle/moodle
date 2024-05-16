@@ -1423,10 +1423,7 @@ $cache = ' . var_export($cache, true) . ';
             require($file);
             if (is_array($legacyclasses)) {
                 foreach ($legacyclasses as $classname => $path) {
-                    $fullpath = "{$fulldir}/classes/{$path}";
-                    if (file_exists($fullpath)) {
-                        self::$classmap[$classname] = $fullpath;
-                    }
+                    self::$classmap[$classname] = "{$fulldir}/classes/{$path}";
                 }
             }
         }

@@ -1,0 +1,19 @@
+issueNumber: MDL-81919
+notes:
+  core:
+    - message: >
+        The following exceptions are now also available in the `\core\exception`
+        namespace:
+
+          - `\coding_exception`
+          - `\file_serving_exception`
+          - `\invalid_dataroot_permissions`
+          - `\invalid_parameter_exception`
+          - `\invalid_response_exception`
+          - `\invalid_state_exception`
+          - `\moodle_exception`
+          - `\require_login_exception`
+          - `\require_login_session_timeout_exception`
+          - `\required_capability_exception`
+          - `\webservice_parameter_exception`
+      type: improved
