@@ -33,6 +33,7 @@ $legacyclasses = [
     \bootstrap_renderer::class => 'output/bootstrap_renderer.php',
 
     // Core API.
+    \emoticon_manager::class => 'emoticon_manager.php',
     \lang_string::class => 'lang_string.php',
 
     // Exception API.

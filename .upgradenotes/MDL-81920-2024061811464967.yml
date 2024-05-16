@@ -1,0 +1,12 @@
+issueNumber: MDL-81920
+notes:
+  core:
+    - message: >
+        The following classes have been moved into the `\core` namespace and now
+        support autoloading:
+
+
+        - `emoticon_manager`
+
+        - `lang_string`
+      type: improved
