@@ -690,17 +690,20 @@ $cache = ' . var_export($cache, true) . ';
         self::$classmap = [];
 
         self::load_classes('core', "$CFG->dirroot/lib/classes");
+        self::load_legacy_classes($CFG->libdir);
 
         foreach (self::$subsystems as $subsystem => $fulldir) {
             if (!$fulldir) {
                 continue;
             }
             self::load_classes('core_' . $subsystem, "$fulldir/classes");
+            self::load_legacy_classes($fulldir);
         }
 
         foreach (self::$plugins as $plugintype => $plugins) {
             foreach ($plugins as $pluginname => $fulldir) {
                 self::load_classes($plugintype . '_' . $pluginname, "$fulldir/classes");
+                self::load_legacy_classes($fulldir);
             }
         }
         ksort(self::$classmap);
@@ -1396,6 +1399,34 @@ $cache = ' . var_export($cache, true) . ';
             if (is_array($renamedclasses)) {
                 foreach ($renamedclasses as $oldclass => $newclass) {
                     self::$classmaprenames[(string)$oldclass] = (string)$newclass;
+                }
+            }
+        }
+    }
+
+    /**
+     * Load legacy classes based upon the db/legacyclasses.php file.
+     *
+     * The legacyclasses.php should contain a key => value array ($legacyclasses) where the key is the class name,
+     * and the value is the path to the class file within the relative ../classes/ directory.
+     *
+     * @param string|null $fulldir The directory to the legacy classes.
+     */
+    protected static function load_legacy_classes(?string $fulldir): void {
+        if (is_null($fulldir)) {
+            return;
+        }
+
+        $file = $fulldir . '/db/legacyclasses.php';
+        if (is_readable($file)) {
+            $legacyclasses = null;
+            require($file);
+            if (is_array($legacyclasses)) {
+                foreach ($legacyclasses as $classname => $path) {
+                    $fullpath = "{$fulldir}/classes/{$path}";
+                    if (file_exists($fullpath)) {
+                        self::$classmap[$classname] = $fullpath;
+                    }
                 }
             }
         }
