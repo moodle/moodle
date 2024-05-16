@@ -32,7 +32,29 @@ $sectionid = required_param('id', PARAM_INT);
 // This parameter is used by the classic theme to force editing on.
 $edit = optional_param('edit', -1, PARAM_BOOL);
 
-$section = $DB->get_record('course_sections', ['id' => $sectionid], '*', MUST_EXIST);
+if (!$section = $DB->get_record('course_sections', ['id' => $sectionid], '*')) {
+    $url = new moodle_url('/');
+    $PAGE->set_context(\core\context\system::instance());
+    $PAGE->set_url($url);
+    $PAGE->set_pagelayout('course');
+    $PAGE->add_body_classes(['limitedwidth', 'single-section-page']);
+    $PAGE->set_title(get_string('notfound', 'error'));
+    $PAGE->set_heading($SITE->fullname);
+    echo $OUTPUT->header();
+
+    $errortext = new \core\output\notification(
+            get_string('sectioncantbefound', 'error'),
+            \core\output\notification::NOTIFY_ERROR
+    );
+    echo $OUTPUT->render($errortext);
+
+    $button = new single_button($url, get_string('gobacktosite'), 'get', single_button::BUTTON_PRIMARY);
+    $button->class = 'continuebutton';
+    echo $OUTPUT->render($button);
+
+    echo $OUTPUT->footer();
+    die();
+}
 
 // Defined here to avoid notices on errors.
 $PAGE->set_url('/course/section.php', ['id' => $sectionid]);
