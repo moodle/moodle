@@ -26,41 +26,35 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class moodle_exception extends \Exception {
-
-    /**
-     * @var string The name of the string from error.php to print
-     */
+    /** @var string The name of the string from error.php to print */
     public $errorcode;
 
-    /**
-     * @var string The name of module
-     */
+    /** @var string The name of module */
     public $module;
 
-    /**
-     * @var mixed Extra words and phrases that might be required in the error string
-     */
+    /** @var mixed Extra words and phrases that might be required in the error string */
     public $a;
 
     /**
-     * @var string The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+     * The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+     *
+     * @var string
      */
     public $link;
 
-    /**
-     * @var string Optional information to aid the debugging process
-     */
+    /** @var string Optional information to aid the debugging process */
     public $debuginfo;
 
     /**
      * Constructor
      * @param string $errorcode The name of the string from error.php to print
      * @param string $module name of module
-     * @param string $link The url where the user will be prompted to continue. If no url is provided the user will be directed to the site index page.
+     * @param string $link The url where the user will be prompted to continue.
+     * If no url is provided the user will be directed to the site index page.
      * @param mixed $a Extra words and phrases that might be required in the error string
      * @param string $debuginfo optional debugging information
      */
-    function __construct($errorcode, $module='', $link='', $a=NULL, $debuginfo=null) {
+    public function __construct($errorcode, $module = '', $link = '', $a = null, $debuginfo = null) {
         global $CFG;
 
         if (empty($module) || $module == 'moodle' || $module == 'core') {
@@ -95,11 +89,11 @@ class moodle_exception extends \Exception {
             }
         }
 
-        if (!$haserrorstring and $isinphpunittest) {
+        if (!$haserrorstring && $isinphpunittest) {
             // Append the contents of $a to $debuginfo so helpful information isn't lost.
             // This emulates what {@link get_exception_info()} does. Unfortunately that
             // function is not used by phpunit.
-            $message .= PHP_EOL.'$a contents: '.print_r($a, true);
+            $message .= PHP_EOL . '$a contents: ' . print_r($a, true); // phpcs:ignore moodle.PHP.ForbiddenFunctions.Found
         }
 
         parent::__construct($message, 0);

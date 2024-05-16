@@ -19,16 +19,17 @@
  *
  * This exception is thrown from require_login()
  *
- * @package    core_access
+ * @package    core
  * @copyright  2010 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class require_login_exception extends moodle_exception {
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $debuginfo Information to aid the debugging process
      */
-    function __construct($debuginfo) {
-        parent::__construct('requireloginerror', 'error', '', NULL, $debuginfo);
+    public function __construct($debuginfo) {
+        parent::__construct('requireloginerror', 'error', '', null, $debuginfo);
     }
 }

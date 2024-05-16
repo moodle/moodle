@@ -18,22 +18,24 @@
  * Exceptions indicating user does not have permissions to do something
  * and the execution can not continue.
  *
- * @package    core_access
+ * @package    core
  * @copyright  2009 Petr Skoda  {@link http://skodak.org}
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class required_capability_exception extends moodle_exception {
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param context $context The context used for the capability check
      * @param string $capability The required capability
      * @param string $errormessage The error message to show the user
      * @param string $stringfile
      */
-    function __construct($context, $capability, $errormessage, $stringfile) {
+    public function __construct($context, $capability, $errormessage, $stringfile) {
         $capabilityname = get_capability_string($capability);
-        if ($context->contextlevel == CONTEXT_MODULE and preg_match('/:view$/', $capability)) {
-            // we can not go to mod/xx/view.php because we most probably do not have cap to view it, let's go to course instead
+        if ($context->contextlevel == CONTEXT_MODULE && preg_match('/:view$/', $capability)) {
+            // Cannot redirect to mod/xx/view.php because we most probably do not have cap to view it.
+            // Redirect to the course instead.
             $parentcontext = $context->get_parent_context();
             $link = $parentcontext->get_url();
         } else {

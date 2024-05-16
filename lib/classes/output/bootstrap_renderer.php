@@ -55,13 +55,15 @@ class bootstrap_renderer {
     /**
      * Handles re-entrancy. Without this, errors or debugging output that occur
      * during the initialisation of $OUTPUT, cause infinite recursion.
-     * @var boolean
+     *
+     * @var bool
      */
     protected $initialising = false;
 
     /**
-     * Have we started output yet?
-     * @return boolean true if the header has been printed.
+     * Whether output has started yet.
+     *
+     * @return bool true if the header has been printed.
      */
     public function has_started() {
         return false;
@@ -69,42 +71,45 @@ class bootstrap_renderer {
 
     /**
      * Constructor - to be used by core code only.
+     *
      * @param string $method The method to call
      * @param array $arguments Arguments to pass to the method being called
      * @return string
      */
     public function __call($method, $arguments) {
+        // phpcs:disable moodle.PHP.ForbiddenGlobalUse.BadGlobal
         global $OUTPUT, $PAGE;
 
         $recursing = false;
         if ($method == 'notification') {
             // Catch infinite recursion caused by debugging output during print_header.
+            // phpcs:ignore PHPCompatibility.FunctionUse.ArgumentFunctionsReportCurrentValue.NeedsInspection
             $backtrace = debug_backtrace();
             array_shift($backtrace);
             array_shift($backtrace);
             $recursing = is_early_init($backtrace);
         }
 
-        $earlymethods = array(
+        $earlymethods = [
             'fatal_error' => 'early_error',
             'notification' => 'early_notification',
-        );
+        ];
 
         // If lib/outputlib.php has been loaded, call it.
         if (!empty($PAGE) && !$recursing) {
             if (array_key_exists($method, $earlymethods)) {
-                //prevent PAGE->context warnings - exceptions might appear before we set any context
+                // Prevent PAGE->context warnings - exceptions might appear before we set any context.
                 $PAGE->set_context(null);
             }
             $PAGE->initialise_theme_and_output();
-            return call_user_func_array(array($OUTPUT, $method), $arguments);
+            return call_user_func_array([$OUTPUT, $method], $arguments);
         }
 
         $this->initialising = true;
 
         // Too soon to initialise $OUTPUT, provide a couple of key methods.
         if (array_key_exists($method, $earlymethods)) {
-            return call_user_func_array(array('bootstrap_renderer', $earlymethods[$method]), $arguments);
+            return call_user_func_array(['bootstrap_renderer', $earlymethods[$method]], $arguments);
         }
 
         throw new coding_exception('Attempt to start output before enough information is known to initialise the theme.');
@@ -112,7 +117,7 @@ class bootstrap_renderer {
 
     /**
      * Returns nicely formatted error message in a div box.
-     * @static
+     *
      * @param string $message error message
      * @param ?string $moreinfourl (ignored in early errors)
      * @param ?string $link (ignored in early errors)
@@ -137,10 +142,13 @@ class bootstrap_renderer {
                 } else {
                     // Because weblib is not available for these early errors, we
                     // just duplicate s() code here to be safe.
-                    $debuginfo = preg_replace('/&amp;#(\d+|x[0-9a-f]+);/i', '&#$1;',
-                    htmlspecialchars($debuginfo, ENT_QUOTES | ENT_HTML401 | ENT_SUBSTITUTE));
+                    $debuginfo = preg_replace(
+                        '/&amp;#(\d+|x[0-9a-f]+);/i',
+                        '&#$1;',
+                        htmlspecialchars($debuginfo, ENT_QUOTES | ENT_HTML401 | ENT_SUBSTITUTE)
+                    );
                 }
-                $debuginfo = str_replace("\n", '<br />', $debuginfo); // keep newlines
+                $debuginfo = str_replace("\n", '<br />', $debuginfo); // Keep newlines.
                 $content .= '<div class="notifytiny">Debug info: ' . $debuginfo . '</div>';
             }
             if (!empty($backtrace)) {
@@ -153,7 +161,7 @@ class bootstrap_renderer {
 
     /**
      * This function should only be called by this class, or from exception handlers
-     * @static
+     *
      * @param string $message error message
      * @param string $moreinfourl (ignored in early errors)
      * @param string $link (ignored in early errors)
@@ -166,7 +174,7 @@ class bootstrap_renderer {
 
         if (CLI_SCRIPT) {
             echo "!!! $message !!!\n";
-            if (!empty($CFG->debug) and $CFG->debug >= DEBUG_DEVELOPER) {
+            if (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER) {
                 if (!empty($debuginfo)) {
                     echo "\nDebug info: $debuginfo";
                 }
@@ -175,13 +183,12 @@ class bootstrap_renderer {
                 }
             }
             return;
-
         } else if (AJAX_SCRIPT) {
             $e = new stdClass();
             $e->error      = $message;
-            $e->stacktrace = NULL;
-            $e->debuginfo  = NULL;
-            if (!empty($CFG->debug) and $CFG->debug >= DEBUG_DEVELOPER) {
+            $e->stacktrace = null;
+            $e->debuginfo  = null;
+            if (!empty($CFG->debug) && $CFG->debug >= DEBUG_DEVELOPER) {
                 if (!empty($debuginfo)) {
                     $e->debuginfo = $debuginfo;
                 }
@@ -200,7 +207,7 @@ class bootstrap_renderer {
         $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
         @header($protocol . ' 500 Internal Server Error');
 
-        // better disable any caching
+        // Better disable any caching.
         @header('Content-Type: text/html; charset=utf-8');
         @header('X-UA-Compatible: IE=edge');
         @header('Cache-Control: no-store, no-cache, must-revalidate');
@@ -222,7 +229,7 @@ class bootstrap_renderer {
 
     /**
      * Early notification message
-     * @static
+     *
      * @param string $message
      * @param string $classes usually notifyproblem or notifysuccess
      * @return string
@@ -233,26 +240,27 @@ class bootstrap_renderer {
 
     /**
      * Page should redirect message.
-     * @static
+     *
      * @param string $encodedurl redirect url
      * @return string
      */
     public static function plain_redirect_message($encodedurl) {
-        $message = '<div style="margin-top: 3em; margin-left:auto; margin-right:auto; text-align:center;">' . get_string('pageshouldredirect') . '<br /><a href="'.
-                $encodedurl .'">'. get_string('continue') .'</a></div>';
+        $message = '<div style="margin-top: 3em; margin-left:auto; margin-right:auto; text-align:center;">';
+        $message .= get_string('pageshouldredirect') . '<br /><a href="';
+        $message .= $encodedurl . '">' . get_string('continue') . '</a></div>';
         return self::plain_page(get_string('redirect'), $message);
     }
 
     /**
-     * Early redirection page, used before full init of $PAGE global
-     * @static
+     * Early redirection page, used before full init of $PAGE global.
+     *
      * @param string $encodedurl redirect url
      * @param string $message redirect message
      * @param int $delay time in seconds
      * @return string redirect page
      */
     public static function early_redirect_message($encodedurl, $message, $delay) {
-        $meta = '<meta http-equiv="refresh" content="'. $delay .'; url='. $encodedurl .'" />';
+        $meta = '<meta http-equiv="refresh" content="' . $delay . '; url=' . $encodedurl . '" />';
         $content = self::early_error_content($message, null, null, null);
         $content .= self::plain_redirect_message($encodedurl);
 
@@ -261,7 +269,7 @@ class bootstrap_renderer {
 
     /**
      * Output basic html page.
-     * @static
+     *
      * @param string $title page title
      * @param string $content page content
      * @param string $meta meta tag

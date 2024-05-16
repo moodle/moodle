@@ -28,11 +28,12 @@
  */
 class invalid_state_exception extends moodle_exception {
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $hint short description of problem
      * @param string $debuginfo optional more detailed information
      */
-    function __construct($hint, $debuginfo=null) {
+    public function __construct($hint, $debuginfo = null) {
         parent::__construct('invalidstatedetected', 'debug', '', $hint, $debuginfo);
     }
 }

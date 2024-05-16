@@ -19,13 +19,19 @@
  * This exception is not supposed to be thrown when processing
  * user submitted data in forms. It is more suitable
  * for WS and other low level stuff.
+ *
+ * @package    core
+ * @subpackage lib
+ * @copyright  Jerome Mounerac
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class invalid_response_exception extends moodle_exception {
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $debuginfo some detailed information
      */
-    function __construct($debuginfo=null) {
+    public function __construct($debuginfo = null) {
         parent::__construct('invalidresponse', 'debug', '', null, $debuginfo);
     }
 }

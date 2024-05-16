@@ -27,10 +27,11 @@
  */
 class invalid_parameter_exception extends moodle_exception {
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $debuginfo some detailed information
      */
-    function __construct($debuginfo=null) {
+    public function __construct($debuginfo = null) {
         parent::__construct('invalidparameter', 'debug', '', null, $debuginfo);
     }
 }

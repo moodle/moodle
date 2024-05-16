@@ -25,10 +25,11 @@
  */
 class file_serving_exception extends moodle_exception {
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $debuginfo optional more detailed information
      */
-    function __construct($debuginfo = NULL) {
-        parent::__construct('cannotservefile', 'error', '', NULL, $debuginfo);
+    public function __construct($debuginfo = null) {
+        parent::__construct('cannotservefile', 'error', '', null, $debuginfo);
     }
 }

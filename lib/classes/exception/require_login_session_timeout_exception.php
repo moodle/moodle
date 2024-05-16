@@ -19,7 +19,7 @@
  *
  * This exception is thrown from require_login()
  *
- * @package    core_access
+ * @package    core
  * @copyright  2015 Andrew Nicols <andrew@nicols.co.uk>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */

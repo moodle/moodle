@@ -25,11 +25,12 @@
  */
 class coding_exception extends moodle_exception {
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $hint short description of problem
      * @param string $debuginfo detailed information how to fix problem
      */
-    function __construct($hint, $debuginfo=null) {
+    public function __construct($hint, $debuginfo = null) {
         parent::__construct('codingerror', 'debug', '', $hint, $debuginfo);
     }
 }

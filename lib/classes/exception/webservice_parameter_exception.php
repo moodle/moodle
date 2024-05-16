@@ -21,15 +21,19 @@
  * @deprecated since Moodle 2.2 - use moodle exception instead
  * This exception must be thrown to the web service client when a web service parameter is invalid
  * The error string is gotten from webservice.php
+ * @package    core
+ * @copyright  Jerome Mouneray
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class webservice_parameter_exception extends moodle_exception {
     /**
-     * Constructor
+     * Constructor.
+     *
      * @param string $errorcode The name of the string from webservice.php to print
      * @param string $a The name of the parameter
      * @param string $debuginfo Optional information to aid debugging
      */
-    function __construct($errorcode=null, $a = '', $debuginfo = null) {
+    public function __construct($errorcode = null, $a = '', $debuginfo = null) {
         parent::__construct($errorcode, 'webservice', '', $a, $debuginfo);
     }
 }
