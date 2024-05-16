@@ -16,8 +16,6 @@
 
 namespace core;
 
-use lang_string;
-
 /**
  * Unit tests for (some of) ../moodlelib.php.
  *
@@ -2115,13 +2113,13 @@ class moodlelib_test extends \advanced_testcase {
         $leadingbackslash = (version_compare(PHP_VERSION, '8.2.0', '>=')) ? '\\' : '';
 
         $expected1 = <<<EOF
-{$leadingbackslash}lang_string::__set_state(array(
-   'identifier' => 'no',
+{$leadingbackslash}core\lang_string::__set_state(array(
    'component' => 'moodle',
    'a' => NULL,
-   'lang' => NULL,
    'string' => NULL,
    'forcedstring' => false,
+   'identifier' => 'no',
+   'lang' => NULL,
 ))
 EOF;
 
@@ -4656,7 +4654,7 @@ EOT;
             ],
             'method_of_object' => [
                 [new lang_string('parentlanguage', 'core_langconfig'), 'my_foobar_method'],
-                'lang_string::my_foobar_method',
+                'core\lang_string::my_foobar_method',
             ],
             'function_as_literal' => [
                 'my_foobar_callback',
