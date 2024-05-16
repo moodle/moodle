@@ -259,64 +259,64 @@ abstract class backup_activity_task extends backup_task {
 // Protected API starts here
 
     /**
-     * Defines the common setting that any backup activity will have
+     * Defines the common setting that any backup activity will have.
      */
     protected function define_settings() {
         global $CFG;
         require_once($CFG->libdir.'/questionlib.php');
 
-        // All the settings related to this activity will include this prefix
+        // All the settings related to this activity will include this prefix.
         $settingprefix = $this->modulename . '_' . $this->moduleid . '_';
 
-        // All these are common settings to be shared by all activities
+        // All these are common settings to be shared by all activities.
 
         // Define activity_include (to decide if the whole task must be really executed)
         // Dependent of:
-        // - activities root setting
-        // - section_included setting (if exists)
+        // - activities root setting.
+        // - section_included setting (if exists).
         $settingname = $settingprefix . 'included';
-        $activity_included = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
-        $activity_included->get_ui()->set_icon(new image_icon('monologo', get_string('pluginname', $this->modulename),
+        $activityincluded = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
+        $activityincluded->get_ui()->set_icon(new image_icon('monologo', get_string('pluginname', $this->modulename),
             $this->modulename, array('class' => 'iconlarge icon-post ml-1')));
-        $this->add_setting($activity_included);
-        // Look for "activities" root setting
+        $this->add_setting($activityincluded);
+        // Look for "activities" root setting.
         $activities = $this->plan->get_setting('activities');
-        $activities->add_dependency($activity_included);
+        $activities->add_dependency($activityincluded);
 
         if (question_module_uses_questions($this->modulename)) {
             $questionbank = $this->plan->get_setting('questionbank');
-            $questionbank->add_dependency($activity_included);
+            $questionbank->add_dependency($activityincluded);
         }
 
-        // Look for "section_included" section setting (if exists)
+        // Look for "sectionincluded" section setting (if exists).
         $settingname = 'section_' . $this->sectionid . '_included';
         if ($this->plan->setting_exists($settingname)) {
-            $section_included = $this->plan->get_setting($settingname);
-            $section_included->add_dependency($activity_included);
+            $sectionincluded = $this->plan->get_setting($settingname);
+            $sectionincluded->add_dependency($activityincluded);
         }
 
-        // Define activity_userinfo. Dependent of:
-        // - users root setting
-        // - section_userinfo setting (if exists)
-        // - activity_included setting
+        // Define activityuserinfo. Dependent of:
+        // - users root setting.
+        // - sectionuserinfo setting (if exists).
+        // - activityincluded setting.
         $settingname = $settingprefix . 'userinfo';
-        $activity_userinfo = new backup_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
-        //$activity_userinfo->get_ui()->set_label(get_string('includeuserinfo','backup'));
-        $activity_userinfo->get_ui()->set_label('-');
-        $this->add_setting($activity_userinfo);
-        // Look for "users" root setting
+        $activityuserinfo = new backup_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
+        $activityuserinfo->get_ui()->set_label('-');
+        $this->add_setting($activityuserinfo);
+
+        // Look for "users" root setting.
         $users = $this->plan->get_setting('users');
-        $users->add_dependency($activity_userinfo);
-        // Look for "section_userinfo" section setting (if exists)
+        $users->add_dependency($activityuserinfo);
+        // Look for "sectionuserinfo" section setting (if exists).
         $settingname = 'section_' . $this->sectionid . '_userinfo';
         if ($this->plan->setting_exists($settingname)) {
-            $section_userinfo = $this->plan->get_setting($settingname);
-            $section_userinfo->add_dependency($activity_userinfo);
+            $sectionuserinfo = $this->plan->get_setting($settingname);
+            $sectionuserinfo->add_dependency($activityuserinfo);
         }
-        // Look for "activity_included" setting
-        $activity_included->add_dependency($activity_userinfo);
+        // Look for "activityincluded" setting.
+        $activityincluded->add_dependency($activityuserinfo);
 
-        // End of common activity settings, let's add the particular ones
+        // End of common activity settings, let's add the particular ones.
         $this->define_my_settings();
     }
 
