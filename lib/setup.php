@@ -551,9 +551,40 @@ global $SCRIPT;
 // The httpswwwroot has been deprecated, we keep it as an alias for backwards compatibility with plugins only.
 $CFG->httpswwwroot = $CFG->wwwroot;
 
+// We have to call this always before starting session because it discards headers!
 if (NO_OUTPUT_BUFFERING) {
-    // we have to call this always before starting session because it discards headers!
-    disable_output_buffering();
+    // Try to disable all output buffering and purge all headers.
+    $olddebug = error_reporting(0);
+
+    // Disable compression, it would prevent closing of buffers.
+    if ($outputcompression = ini_get('zlib.output_compression')) {
+        switch(strtolower($outputcompression)) {
+            case 'on':
+            case '1':
+                ini_set('zlib.output_compression', 'Off');
+                break;
+        }
+    }
+
+    // Try to flush everything all the time.
+    ob_implicit_flush(true);
+
+    // Close all buffers if possible and discard any existing output.
+    // This can actually work around some whitespace problems in config.php.
+    while (ob_get_level()) {
+        if (!ob_end_clean()) {
+            // Prevent infinite loop when buffer can not be closed.
+            break;
+        }
+    }
+
+    // Disable any other output handlers.
+    ini_set('output_handler', '');
+
+    error_reporting($olddebug);
+
+    // Disable buffering in nginx.
+    header('X-Accel-Buffering: no');
 }
 
 // Point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else

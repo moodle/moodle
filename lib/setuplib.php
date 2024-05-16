@@ -1465,43 +1465,6 @@ function get_real_size($size = 0) {
 }
 
 /**
- * Try to disable all output buffering and purge
- * all headers.
- *
- * @access private to be called only from lib/setup.php !
- * @return void
- */
-function disable_output_buffering() {
-    $olddebug = error_reporting(0);
-
-    // disable compression, it would prevent closing of buffers
-    if (ini_get_bool('zlib.output_compression')) {
-        ini_set('zlib.output_compression', 'Off');
-    }
-
-    // try to flush everything all the time
-    ob_implicit_flush(true);
-
-    // close all buffers if possible and discard any existing output
-    // this can actually work around some whitespace problems in config.php
-    while(ob_get_level()) {
-        if (!ob_end_clean()) {
-            // prevent infinite loop when buffer can not be closed
-            break;
-        }
-    }
-
-    // disable any other output handlers
-    ini_set('output_handler', '');
-
-    error_reporting($olddebug);
-
-    // Disable buffering in nginx.
-    header('X-Accel-Buffering: no');
-
-}
-
-/**
  * Check whether a major upgrade is needed.
  *
  * That is defined as an upgrade that changes something really fundamental

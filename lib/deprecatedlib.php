@@ -3216,3 +3216,11 @@ function question_fix_top_names() {
 function search_generate_text_SQL() {
     \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
 }
+
+/**
+ * @deprecated Since Moodle 4.5
+ */
+#[\core\attribute\deprecated('This method should not be used', since: '4.5', mdl: 'MDL-80275', final: true)]
+function disable_output_buffering(): void {
+    \core\deprecation::emit_deprecation_if_present(__FUNCTION__);
+}
