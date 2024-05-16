@@ -141,7 +141,7 @@ Feature: The timeline block allows users to search for upcoming activities
     And I should see "Test choice 7" in the ".block-timeline [data-region='view-courses']" "css_element"
     And I should see "Test choice 8" in the ".block-timeline [data-region='view-courses']" "css_element"
     When I set the field "Search by activity type or name" to "choice 1"
-    And I wait until "Course 4" "text" does not exist
+    And I wait until "//h4[contains(@class, 'h5') and contains(.,'Course 4')]" "xpath_element" does not exist
     Then I should see "Test choice 1" in the "Timeline" "block"
     And I should see "Course 2" in the ".block-timeline [data-region='view-courses']" "css_element"
     And I should not see "Course 1" in the ".block-timeline [data-region='view-courses']" "css_element"

@@ -206,7 +206,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
 
         $contextrecords = [];
-        $courses = calendar_get_default_courses($courseid, 'id, shortname');
+        $courses = calendar_get_default_courses($courseid, 'id, fullname');
 
         if (!empty($courses) && count($courses) > CONTEXT_CACHE_MAX_SIZE) {
             // We need to pull the context records from the DB to preload them
@@ -235,7 +235,9 @@ class core_calendar_renderer extends plugin_renderer_base {
                 context_helper::preload_from_record($contextrecords[$course->id]);
             }
             $coursecontext = context_course::instance($course->id);
-            $courseoptions[$course->id] = format_string($course->shortname, true, array('context' => $coursecontext));
+            // Limit the displayed course name to prevent the dropdown from getting too wide.
+            $coursename = shorten_text($course->fullname, 50, true);
+            $courseoptions[$course->id] = format_string($coursename, true, ['context' => $coursecontext]);
         }
 
         if ($courseid) {
@@ -260,7 +262,7 @@ class core_calendar_renderer extends plugin_renderer_base {
         }
         $select = html_writer::label($label, $filterid, false, $labelattributes);
         $select .= html_writer::select($courseoptions, 'course', $selected, false,
-                ['class' => 'cal_courses_flt ml-1 mr-auto', 'id' => $filterid]);
+                ['class' => 'cal_courses_flt ml-1 mr-auto mr-2 mb-2', 'id' => $filterid]);
 
         return $select;
     }
