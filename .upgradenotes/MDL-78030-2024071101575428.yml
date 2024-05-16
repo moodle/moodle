@@ -1,0 +1,7 @@
+issueNumber: MDL-78030
+notes:
+  core_user:
+    - message: >-
+        The participants_search::get_total_participants_count() is no longer
+        used since the total count can be obtained from ::get_participants()
+      type: deprecated
