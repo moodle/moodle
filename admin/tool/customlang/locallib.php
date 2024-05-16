@@ -506,7 +506,6 @@ class tool_customlang_translator implements renderable {
 
         list($insql, $inparams) = $DB->get_in_or_equal($filter->component, SQL_PARAMS_NAMED);
 
-        $csql = "SELECT COUNT(*)";
         $fsql = "SELECT s.*, c.name AS component";
         $sql  = "  FROM {tool_customlang_components} c
                    JOIN {tool_customlang} s ON s.componentid = c.id
@@ -545,9 +544,16 @@ class tool_customlang_translator implements renderable {
             $params['link'] = '%\_link';
         }
 
-        $osql = " ORDER BY c.name, s.stringid";
+        $osql = "component, stringid";
 
-        $this->numofrows = $DB->count_records_sql($csql.$sql, $params);
-        $this->strings = $DB->get_records_sql($fsql.$sql.$osql, $params, ($this->currentpage) * self::PERPAGE, self::PERPAGE);
+        $this->strings = $DB->get_counted_records_sql(
+            sql: $fsql.$sql,
+            fullcountcolumn: 'fullcount',
+            sort: $osql,
+            params: $params,
+            limitfrom: ($this->currentpage) * self::PERPAGE,
+            limitnum: self::PERPAGE,
+        );
+        $this->numofrows = reset($this->strings)->fullcount ?? 0;
     }
 }
