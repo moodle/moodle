@@ -1196,7 +1196,8 @@ img.userpicture {
     width: auto;
     max-width: none;
 }
-#page-mod-quiz-mod #id_reviewoptionshdr .fitem {
+
+#page-mod-quiz-mod #id_reviewoptionshdr .fcontainer > .fitem {
     float: left;
     width: 20rem;
     display: inline-block;
