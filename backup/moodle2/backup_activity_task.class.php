@@ -302,6 +302,9 @@ abstract class backup_activity_task extends backup_task {
         $settingname = $settingprefix . 'userinfo';
         $activityuserinfo = new backup_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
         $activityuserinfo->get_ui()->set_label('-');
+        $activityuserinfo->get_ui()->set_visually_hidden_label(
+            get_string('includeuserinfo_instance', 'core_backup', $this->name)
+        );
         $this->add_setting($activityuserinfo);
 
         // Look for "users" root setting.

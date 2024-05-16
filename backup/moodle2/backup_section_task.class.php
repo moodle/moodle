@@ -162,6 +162,9 @@ class backup_section_task extends backup_task {
         $settingname = $settingprefix . 'userinfo';
         $sectionuserinfo = new backup_section_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
         $sectionuserinfo->get_ui()->set_label(get_string('includeuserinfo', 'backup'));
+        $sectionuserinfo->get_ui()->set_visually_hidden_label(
+            get_string('section_prefix', 'core_backup', $section->name ?: $section->section)
+        );
         $this->add_setting($sectionuserinfo);
 
         // Look for "users" root setting.
