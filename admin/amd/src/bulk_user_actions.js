@@ -65,7 +65,13 @@ export const init = () => {
         const selectedUsers = [...userReport.querySelectorAll(Selectors.checkedRows)];
         const selectedUserIds = selectedUsers.map(check => parseInt(check.value));
         userBulkForm.querySelector('[name="userids"]').value = selectedUserIds.join(',');
+
+        // Disable the action selector if nothing selected, and reset the current selection.
         actionSelect.disabled = selectedUsers.length === 0;
+        if (actionSelect.disabled) {
+            actionSelect.value = "0";
+        }
+
         const selectedUsersNames = selectedUsers.map(check => document.querySelector(`label[for="${check.id}"]`).textContent);
         // Add the user ids and names to the form data attributes so they can be available from the
         // other JS modules that listen to the form submit event.
