@@ -170,7 +170,10 @@ class editor extends \texteditor {
             'context' => $context->id,
 
             // File picker options.
-            'filepicker' => $fpoptions,
+            'filepicker' => (object) $fpoptions,
+
+            // Default draft item ID.
+            'draftitemid' => 0,
 
             'currentLanguage' => current_language(),
 
