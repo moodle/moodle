@@ -1722,4 +1722,13 @@ class pgsql_native_moodle_database extends moodle_database {
     public function is_fulltext_search_supported() {
         return true;
     }
+
+    /**
+     * Postgresql supports the COUNT() window function and provides a performance improvement.
+     *
+     * @return bool
+     */
+    public function is_count_window_function_supported(): bool {
+        return true;
+    }
 }
