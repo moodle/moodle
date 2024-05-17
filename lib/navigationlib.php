@@ -2295,10 +2295,20 @@ class global_navigation extends navigation_node {
                     continue;
                 }
 
+                $parentnode = $coursenode;
+
+                // Set the parent node to the parent section if this is a delegated section.
+                if ($section->is_delegated()) {
+                    $parentsection = $section->get_component_instance()->get_parent_section();
+                    if ($parentsection) {
+                        $parentnode = $coursenode->find($parentsection->id, self::TYPE_SECTION) ?: $coursenode;
+                    }
+                }
+
                 $sectionname = get_section_name($course, $section);
                 $url = course_get_url($course, $section->section, array('navigation' => true));
 
-                $sectionnode = $coursenode->add($sectionname, $url, navigation_node::TYPE_SECTION,
+                $sectionnode = $parentnode->add($sectionname, $url, navigation_node::TYPE_SECTION,
                     null, $section->id, new pix_icon('i/section', ''));
                 $sectionnode->nodetype = navigation_node::NODETYPE_BRANCH;
                 $sectionnode->hidden = (!$section->visible || !$section->available);
