@@ -1,0 +1,5 @@
+issueNumber: MDL-81962
+notes:
+  core:
+    - message: The `moodle-core-notification-confirm` YUI module has been removed after an extensive deprecation period. Please use the AMD `core/modal` module as a replacement.
+      type: removed
