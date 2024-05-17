@@ -38,6 +38,7 @@ $legacyclasses = [
     \invalid_response_exception::class => 'exception/invalid_response_exception.php',
     \invalid_state_exception::class => 'exception/invalid_state_exception.php',
     \moodle_exception::class => 'exception/moodle_exception.php',
+    \moodle_url::class => 'url.php',
     \require_login_exception::class => 'exception/require_login_exception.php',
     \require_login_session_timeout_exception::class => 'exception/require_login_session_timeout_exception.php',
     \required_capability_exception::class => 'exception/required_capability_exception.php',
