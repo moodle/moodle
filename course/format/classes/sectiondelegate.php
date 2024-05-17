@@ -124,4 +124,13 @@ abstract class sectiondelegate {
     ): ?action_menu {
         return $controlmenu->get_default_action_menu($output);
     }
+
+    /**
+     * Get the parent section of the current delegated section if any.
+     *
+     * @return section_info|null
+     */
+    public function get_parent_section(): ?section_info {
+        return null;
+    }
 }

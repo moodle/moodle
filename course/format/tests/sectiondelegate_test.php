@@ -141,4 +141,21 @@ class sectiondelegate_test extends \advanced_testcase {
         $result = $delegated->get_section_action_menu($format, $controlmenu, $renderer);
         $this->assertNull($result);
     }
+
+    /**
+     * Test get_parent_section().
+     *
+     * @covers ::get_parent_section
+     */
+    public function test_get_parent_section(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
+        $sectioninfo = formatactions::section($course)->create_delegated('test_component', 1);
+
+        /** @var testsectiondelegate */
+        $delegated = $sectioninfo->get_component_instance();
+
+        $this->assertNull($delegated->get_parent_section());
+    }
 }
