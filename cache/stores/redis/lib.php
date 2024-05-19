@@ -261,6 +261,10 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             } else {
                 // We only need the first record for the single redis.
                 list($server, $port) = explode(':', $trimmedservers[0]);
+                // If $port is null, an error message will be displayed:
+                // PHP Deprecated:  Redis::connect(): Passing null to parameter #2 ($port) of type int is deprecated
+                // To solve this problem, change null to 0.
+                if ($port == null) $port = 0;
                 $redis = new Redis();
                 $redis->connect($server, $port, 1, null, 100, 1, $opts);
                 if (!empty($password)) {
