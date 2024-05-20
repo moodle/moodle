@@ -346,7 +346,7 @@ class assign_submission_file extends assign_submission_plugin {
                                      'assignsubmission_file',
                                      ASSIGNSUBMISSION_FILE_FILEAREA,
                                      $submission->id,
-                                     'timemodified',
+                                     'timemodified, id',
                                      false);
 
         foreach ($files as $file) {
