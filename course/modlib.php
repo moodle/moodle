@@ -748,6 +748,7 @@ function include_modulelib($modulename) {
  */
 function get_moduleinfo_data($cm, $course) {
     global $CFG;
+    require_once($CFG->libdir . '/gradelib.php');
 
     list($cm, $context, $module, $data, $cw) = can_update_moduleinfo($cm);
 
