@@ -26,6 +26,14 @@ defined('MOODLE_INTERNAL') || die();
 function xmldb_local_report_user_logins_install() {
     global $CFG, $DB;
 
+    // We use SQL IF statements here.  These could be different depending on the dbtype.
+    $SQLIF = "IF";
+    $SQLIFNULL = "IFNULL";
+    if ($CFG->dbtype == 'sqlsrv') {
+        $SQLIF = "IIF";
+        $SQLIFNULL = "ISNULL";
+    }
+
     // Only do this if the logstore table exists.
     $dbman = $DB->get_manager();
     if (!$dbman->table_exists('logstore_standard_log')) {
@@ -46,7 +54,7 @@ function xmldb_local_report_user_logins_install() {
                          timecreated,
                          NULLIF(firstaccess,0) AS firstaccess,
                          NULLIF(currentlogin,0) AS currentlogin,
-                         IF (currentlogin = 0, 0, IFNULL((SELECT COUNT(id) FROM {logstore_standard_log} l WHERE u.id = l.userid AND eventname = :eventname),0)) AS totallogins,
+                         $SQLIF (currentlogin = 0, 0, $SQLIFNULL((SELECT COUNT(id) FROM {logstore_standard_log} l WHERE u.id = l.userid AND eventname = :eventname),0)) AS totallogins,
                          " . time() . " as modifiedtime
                          FROM {user} u",
                   array('eventname' => '\core\event\user_loggedin'));

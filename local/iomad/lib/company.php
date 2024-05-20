@@ -91,8 +91,7 @@ class company {
             if ($companies = $DB->get_records_sql("SELECT DISTINCT companyid,lastused
                                                    FROM {company_users}
                                                    WHERE userid = :userid
-                                                   ORDER BY lastused, companyid DESC
-                                                   LIMIT 1",
+                                                   ORDER BY lastused, companyid DESC",
                                                   ['userid' => $userid])) {
                 $company = array_shift($companies);
                 return new company($company->companyid);
@@ -315,6 +314,12 @@ class company {
     public static function get_companies_select($showsuspended=false, $useprepend = true, $showchildren = true, $sort = 'name', $search = '') {
         global $CFG, $DB, $USER;
 
+        // We use SQL IF statements here.  These could be different depending on the dbtype.
+        $SQLIF = "IF";
+        if ($CFG->dbtype == 'sqlsrv') {
+            $SQLIF = "IIF";
+        }
+
         // Is this an admin, or a normal user?
         if (iomad::has_capability('block/iomad_company_admin:company_view_all', context_system::instance())) {
             $sqlparams = [];
@@ -331,7 +336,7 @@ class company {
                 $sqlwhere .= " AND " . $DB->sql_like('name', ':search', false);
                 $sqlparams['search'] = '%' . $DB->sql_like_escape($search) . '%';
             }
-            $companies = $DB->get_records_sql_menu("SELECT id, IF (suspended=0, name, concat(name, ' (S)')) AS name FROM {company}
+            $companies = $DB->get_records_sql_menu("SELECT id, $SQLIF (suspended=0, name, concat(name, ' (S)')) AS name FROM {company}
                                                     WHERE 1 = 1
                                                     $sqlwhere
                                                     ORDER BY name",
@@ -350,7 +355,7 @@ class company {
             }
             // Show the hierarchy if required.
             if (!empty($CFG->iomad_show_company_structure)) {
-                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, IF (c.suspended=0, c.name, concat(c.name, ' (S)')) AS name, cu.lastused
+                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, $SQLIF (c.suspended=0, c.name, concat(c.name, ' (S)')) AS name, cu.lastused
                                                         FROM {company} c
                                                         JOIN {company_users} cu ON (c.id = cu.companyid)
                                                         WHERE cu.userid = :userid
@@ -360,7 +365,7 @@ class company {
                                                         ORDER BY $sort",
                                                         $companiesparams);
             } else {
-                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, IF (c.suspended=0, c.name, concat(c.name, ' (S)')) AS name, cu.lastused
+                $companies = $DB->get_records_sql_menu("SELECT DISTINCT c.id, $SQLIF (c.suspended=0, c.name, concat(c.name, ' (S)')) AS name, cu.lastused
                                                         FROM {company} c
                                                         JOIN {company_users} cu ON (c.id = cu.companyid)
                                                         WHERE cu.userid = :userid
