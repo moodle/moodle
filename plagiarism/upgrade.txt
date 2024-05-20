@@ -22,8 +22,8 @@ This files describes API changes for code that uses the plagiarism API.
 
 === 3.9 ===
 
-* The method get_form_elements_module has been deprecated. Please use {plugin name}_coursemodule_edit_post_actions() instead.
-* The method save_form_elements has been deprecated. Please use {plugin name}_coursemodule_standard_elements() instead.
+* The method get_form_elements_module has been deprecated. Please use {plugin name}_coursemodule_standard_elements() instead.
+* The method save_form_elements has been deprecated. Please use {plugin name}_coursemodule_edit_post_actions() instead.
 
 === 3.7 ===
 
