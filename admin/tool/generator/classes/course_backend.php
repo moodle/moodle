@@ -374,8 +374,9 @@ class tool_generator_course_backend extends tool_generator_backend {
     private function create_user_accounts($first, $last) {
         global $CFG;
 
-        $this->log('createaccounts', (object)array('from' => $first, 'to' => $last), true);
         $count = $last - $first + 1;
+        $this->log('createusers', $count, true);
+
         $done = 0;
         for ($number = $first; $number <= $last; $number++, $done++) {
             // Work out username with 6-digit number.

@@ -78,6 +78,7 @@ $string['progress_createcourse'] = 'Creating course {$a}';
 $string['progress_createforum'] = 'Creating forum ({$a} posts)';
 $string['progress_createpages'] = 'Creating pages ({$a})';
 $string['progress_createsmallfiles'] = 'Creating small files ({$a})';
+$string['progress_createusers'] = 'Creating user accounts ({$a})';
 $string['progress_enrol'] = 'Enrolling users into course ({$a})';
 $string['progress_sitecompleted'] = 'Site completed ({$a}s)';
 $string['shortsize_0'] = 'XS';
