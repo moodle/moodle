@@ -309,14 +309,21 @@ class helper {
      * @param object $user User object.
      * @param bool $iscontact
      * @param bool $displaytextlabel Instructs whether to display a text label.
+     * @param bool $isrequested Whether the contact request is sent or not.
      * @return array
      */
-    public static function togglecontact_link_params($user, $iscontact = false, bool $displaytextlabel = true) {
+    public static function togglecontact_link_params(
+        $user,
+        $iscontact = false,
+        bool $displaytextlabel = true,
+        bool $isrequested = false,
+    ) {
         global $USER;
         $params = array(
             'data-currentuserid' => $USER->id,
             'data-userid' => $user->id,
             'data-is-contact' => $iscontact,
+            'data-is-requested' => $isrequested,
             'data-display-text-label' => $displaytextlabel,
             'id' => 'toggle-contact-button',
             'role' => 'button',

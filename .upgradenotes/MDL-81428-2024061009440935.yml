@@ -1,0 +1,12 @@
+issueNumber: MDL-81428
+notes:
+  core_message:
+    - message: >
+        The `\core_message\helper::togglecontact_link_params` now accepts a new
+        optional param called `isrequested` to indicate the status of the
+        contact request
+      type: changed
+    - message: >
+        The `core_message/remove_contact_button` template is deprecated and will
+        be removed in the future version
+      type: deprecated
