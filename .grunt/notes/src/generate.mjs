@@ -175,7 +175,7 @@ const getBeforeAndAfterContent = (lines) => {
 /**
  * Get the notes for the component.
  *
- * @param {string} type
+ * @param {string} types
  * @param {Number} headingLevel
  * @returns {string}
  */
@@ -299,7 +299,7 @@ export default async (version, options = {}) => {
     // - a title with the release name
     // - the change types
     // - which contain the components
-    // - which document each changev
+    // - which document each change
     let upgradeNotes = `## ${version}\n\n`;
 
     Object.entries(notes).forEach(([component, types]) => {
