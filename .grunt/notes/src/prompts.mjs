@@ -130,7 +130,7 @@ export const getMessagePromptEditor = (defaultData) => ({
  * Get a message prompt.
  *
  * @param {string} defaultData
- * @returns 
+ * @returns
  */
 export const getMessagePromptInput = (defaultData) => ({
     default: defaultData,
