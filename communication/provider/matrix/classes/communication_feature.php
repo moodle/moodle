@@ -722,14 +722,7 @@ class communication_feature implements
             );
         }
 
-        $powerdata = $this->get_body($response);
-        $powerdata = array_filter(
-            $powerdata->rooms->join->{$roomid}->state->events,
-            fn($value) => $value->type === 'm.room.power_levels'
-        );
-        $powerdata = reset($powerdata);
-
-        return $powerdata->content;
+        return $this->get_body($response);
     }
 
     /**
