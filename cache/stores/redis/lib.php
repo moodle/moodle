@@ -234,6 +234,15 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
 
                 // We only need the first record for the single redis.
                 if (!$clustermode) {
+                    // Handle the case when the server is not a Unix domain socket.
+                    if ($port !== 0) {
+                        // We only need the first record for the single redis.
+                        $serverchunks = explode(':', $trimmedservers[0]);
+                        // Get the last chunk as the port.
+                        $port = array_pop($serverchunks);
+                        // Combine the rest of the chunks back into a string as the server.
+                        $server = implode(':', $serverchunks);
+                    }
                     break;
                 }
             }
@@ -259,8 +268,6 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
             if ($clustermode) {
                 $redis = new RedisCluster(null, $trimmedservers, 1, 1, true, $password, !empty($opts) ? $opts : null);
             } else {
-                // We only need the first record for the single redis.
-                list($server, $port) = explode(':', $trimmedservers[0]);
                 $redis = new Redis();
                 $redis->connect($server, $port, 1, null, 100, 1, $opts);
                 if (!empty($password)) {
