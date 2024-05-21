@@ -41031,50 +41031,130 @@ div.editor_atto_toolbar button .icon {
 }
 
 .dropdown-item:hover.text-primary,
-.dropdown-item:hover a.text-primary, .dropdown-item:focus.text-primary,
-.dropdown-item:focus a.text-primary {
+.dropdown-item:hover a.text-primary,
+.dropdown-item:hover span.text-primary, .dropdown-item:focus.text-primary,
+.dropdown-item:focus a.text-primary,
+.dropdown-item:focus span.text-primary {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .dropdown-item:hover.text-secondary,
-.dropdown-item:hover a.text-secondary, .dropdown-item:focus.text-secondary,
-.dropdown-item:focus a.text-secondary {
+.dropdown-item:hover a.text-secondary,
+.dropdown-item:hover span.text-secondary, .dropdown-item:focus.text-secondary,
+.dropdown-item:focus a.text-secondary,
+.dropdown-item:focus span.text-secondary {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .dropdown-item:hover.text-success,
-.dropdown-item:hover a.text-success, .dropdown-item:focus.text-success,
-.dropdown-item:focus a.text-success {
+.dropdown-item:hover a.text-success,
+.dropdown-item:hover span.text-success, .dropdown-item:focus.text-success,
+.dropdown-item:focus a.text-success,
+.dropdown-item:focus span.text-success {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .dropdown-item:hover.text-info,
-.dropdown-item:hover a.text-info, .dropdown-item:focus.text-info,
-.dropdown-item:focus a.text-info {
+.dropdown-item:hover a.text-info,
+.dropdown-item:hover span.text-info, .dropdown-item:focus.text-info,
+.dropdown-item:focus a.text-info,
+.dropdown-item:focus span.text-info {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .dropdown-item:hover.text-warning,
-.dropdown-item:hover a.text-warning, .dropdown-item:focus.text-warning,
-.dropdown-item:focus a.text-warning {
+.dropdown-item:hover a.text-warning,
+.dropdown-item:hover span.text-warning, .dropdown-item:focus.text-warning,
+.dropdown-item:focus a.text-warning,
+.dropdown-item:focus span.text-warning {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .dropdown-item:hover.text-danger,
-.dropdown-item:hover a.text-danger, .dropdown-item:focus.text-danger,
-.dropdown-item:focus a.text-danger {
+.dropdown-item:hover a.text-danger,
+.dropdown-item:hover span.text-danger, .dropdown-item:focus.text-danger,
+.dropdown-item:focus a.text-danger,
+.dropdown-item:focus span.text-danger {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .dropdown-item:hover.text-light,
-.dropdown-item:hover a.text-light, .dropdown-item:focus.text-light,
-.dropdown-item:focus a.text-light {
+.dropdown-item:hover a.text-light,
+.dropdown-item:hover span.text-light, .dropdown-item:focus.text-light,
+.dropdown-item:focus a.text-light,
+.dropdown-item:focus span.text-light {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
 .dropdown-item:hover.text-dark,
-.dropdown-item:hover a.text-dark, .dropdown-item:focus.text-dark,
-.dropdown-item:focus a.text-dark {
+.dropdown-item:hover a.text-dark,
+.dropdown-item:hover span.text-dark, .dropdown-item:focus.text-dark,
+.dropdown-item:focus a.text-dark,
+.dropdown-item:focus span.text-dark {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item:hover.text-primary-emphasis,
+.dropdown-item:hover a.text-primary-emphasis,
+.dropdown-item:hover span.text-primary-emphasis, .dropdown-item:focus.text-primary-emphasis,
+.dropdown-item:focus a.text-primary-emphasis,
+.dropdown-item:focus span.text-primary-emphasis {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item:hover.text-secondary-emphasis,
+.dropdown-item:hover a.text-secondary-emphasis,
+.dropdown-item:hover span.text-secondary-emphasis, .dropdown-item:focus.text-secondary-emphasis,
+.dropdown-item:focus a.text-secondary-emphasis,
+.dropdown-item:focus span.text-secondary-emphasis {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item:hover.text-success-emphasis,
+.dropdown-item:hover a.text-success-emphasis,
+.dropdown-item:hover span.text-success-emphasis, .dropdown-item:focus.text-success-emphasis,
+.dropdown-item:focus a.text-success-emphasis,
+.dropdown-item:focus span.text-success-emphasis {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item:hover.text-info-emphasis,
+.dropdown-item:hover a.text-info-emphasis,
+.dropdown-item:hover span.text-info-emphasis, .dropdown-item:focus.text-info-emphasis,
+.dropdown-item:focus a.text-info-emphasis,
+.dropdown-item:focus span.text-info-emphasis {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item:hover.text-warning-emphasis,
+.dropdown-item:hover a.text-warning-emphasis,
+.dropdown-item:hover span.text-warning-emphasis, .dropdown-item:focus.text-warning-emphasis,
+.dropdown-item:focus a.text-warning-emphasis,
+.dropdown-item:focus span.text-warning-emphasis {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item:hover.text-danger-emphasis,
+.dropdown-item:hover a.text-danger-emphasis,
+.dropdown-item:hover span.text-danger-emphasis, .dropdown-item:focus.text-danger-emphasis,
+.dropdown-item:focus a.text-danger-emphasis,
+.dropdown-item:focus span.text-danger-emphasis {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item:hover.text-light-emphasis,
+.dropdown-item:hover a.text-light-emphasis,
+.dropdown-item:hover span.text-light-emphasis, .dropdown-item:focus.text-light-emphasis,
+.dropdown-item:focus a.text-light-emphasis,
+.dropdown-item:focus span.text-light-emphasis {
+  color: #fff !important; /* stylelint-disable-line declaration-no-important */
+}
+
+.dropdown-item:hover.text-dark-emphasis,
+.dropdown-item:hover a.text-dark-emphasis,
+.dropdown-item:hover span.text-dark-emphasis, .dropdown-item:focus.text-dark-emphasis,
+.dropdown-item:focus a.text-dark-emphasis,
+.dropdown-item:focus span.text-dark-emphasis {
   color: #fff !important; /* stylelint-disable-line declaration-no-important */
 }
 
