@@ -109,7 +109,7 @@ class assign_grading_table extends table_sql implements renderable {
         $this->define_baseurl($url);
 
         // Do some business - then set the sql.
-        $currentgroup = groups_get_activity_group($assignment->get_course_module(), true);
+        $currentgroup = groups_get_activity_group($assignment->get_course_module(), true, participationonly: false);
 
         if ($rowoffset) {
             $this->rownum = $rowoffset - 1;
