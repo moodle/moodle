@@ -26,10 +26,11 @@ require_once('data_privacy_testcase.php');
  * Expired data requests tests.
  *
  * @package    tool_dataprivacy
+ * @covers     \tool_dataprivacy\data_request
  * @copyright  2018 Michael Hawkins
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class expired_data_requests_test extends data_privacy_testcase {
+final class expired_data_requests_test extends data_privacy_testcase {
 
     /**
      * Test tearDown.
@@ -105,6 +106,52 @@ class expired_data_requests_test extends data_privacy_testcase {
         $request = new data_request($requestid);
         $this->assertEquals(api::DATAREQUEST_STATUS_EXPIRED, $request->get('status'));
         $this->assertEquals(0, $DB->count_records('files', $fileconditions));
+    }
+
+    /**
+     * Test that data requests are not expired when expiration is disabled (set to zero)
+     */
+    public function test_data_request_expiry_never(): void {
+        global $DB;
+
+        $this->resetAfterTest();
+
+        \core_privacy\local\request\writer::setup_real_writer_instance();
+
+        // Disable request expiry.
+        set_config('privacyrequestexpiry', 0, 'tool_dataprivacy');
+
+        // Create and approve data request.
+        $user = $this->getDataGenerator()->create_user();
+        $usercontext = \context_user::instance($user->id);
+
+        $this->setUser($user->id);
+        $datarequest = api::create_data_request($user->id, api::DATAREQUEST_TYPE_EXPORT);
+        $requestid = $datarequest->get('id');
+
+        $this->setAdminUser();
+        api::approve_data_request($requestid);
+
+        ob_start();
+        $this->runAdhocTasks('\tool_dataprivacy\task\process_data_request_task');
+        ob_end_clean();
+
+        // Run expiry deletion - should not affect test export.
+        $expiredrequests = data_request::get_expired_requests();
+        $this->assertEmpty($expiredrequests);
+        data_request::expire($expiredrequests);
+
+        // Confirm approved and exported.
+        $request = new data_request($requestid);
+        $this->assertEquals(api::DATAREQUEST_STATUS_DOWNLOAD_READY, $request->get('status'));
+        $fileconditions = [
+            'userid' => $user->id,
+            'component' => 'tool_dataprivacy',
+            'filearea' => 'export',
+            'itemid' => $requestid,
+            'contextid' => $usercontext->id,
+        ];
+        $this->assertEquals(2, $DB->count_records('files', $fileconditions));
     }
 
     /**
