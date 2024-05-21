@@ -393,11 +393,7 @@ class enrol_meta_plugin extends enrol_plugin {
     public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null): array {
         global $DB;
 
-        $errors = [];
-        if (!enrol_is_enabled('meta')) {
-            $errors['plugindisabled'] =
-                new lang_string('plugindisabled', 'plugin');
-        }
+        $errors = parent::validate_enrol_plugin_data($enrolmentdata, $courseid);
 
         if (isset($enrolmentdata['addtogroup'])) {
             $addtogroup = $enrolmentdata['addtogroup'];

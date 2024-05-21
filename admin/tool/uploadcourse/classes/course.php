@@ -247,10 +247,10 @@ class tool_uploadcourse_course {
      * Log an error
      *
      * @param string $code error code.
-     * @param lang_string $message error message.
+     * @param string $message error message.
      * @return void
      */
-    protected function error($code, lang_string $message) {
+    protected function error($code, string $message) {
         if (array_key_exists($code, $this->errors)) {
             throw new coding_exception('Error code already defined');
         }
@@ -1129,34 +1129,7 @@ class tool_uploadcourse_course {
                         break;
                     }
 
-                    // Now update values.
-                    $modifiedinstance = $instance;
-
-                    // Sort out the start, end and date.
-                    $modifiedinstance->enrolstartdate = (isset($method['startdate']) ? strtotime($method['startdate']) : 0);
-                    $modifiedinstance->enrolenddate = (isset($method['enddate']) ? strtotime($method['enddate']) : 0);
-
-                    // Is the enrolment period set?
-                    if (isset($method['enrolperiod']) && !empty($method['enrolperiod'])) {
-                        if (preg_match('/^\d+$/', $method['enrolperiod'])) {
-                            $method['enrolperiod'] = (int)$method['enrolperiod'];
-                        } else {
-                            // Try and convert period to seconds.
-                            $method['enrolperiod'] = strtotime('1970-01-01 GMT + ' . $method['enrolperiod']);
-                        }
-                        $modifiedinstance->enrolperiod = $method['enrolperiod'];
-                    }
-                    if ($instance->enrolstartdate > 0 && isset($method['enrolperiod'])) {
-                        $modifiedinstance->enrolenddate = $instance->enrolstartdate + $method['enrolperiod'];
-                    }
-                    if ($instance->enrolenddate > 0) {
-                        $modifiedinstance->enrolperiod = $instance->enrolenddate - $instance->enrolstartdate;
-                    }
-                    if ($instance->enrolenddate < $instance->enrolstartdate) {
-                        $modifiedinstance->enrolenddate = $instance->enrolstartdate;
-                    }
-
-                    // Sort out the given role.
+                    // Validate role context again since course is created.
                     if (isset($method['role']) || isset($method['roleid'])) {
                         if (isset($method['role'])) {
                             $role = $method['role'];
@@ -1166,22 +1139,14 @@ class tool_uploadcourse_course {
                             $role = $DB->get_field('role', 'shortname', ['id' => $roleid], MUST_EXIST);
                         }
                         if (!$this->validate_role_context($course->id, $roleid)) {
-                            $this->error('contextrolenotallowed',
-                                new lang_string('contextrolenotallowed', 'core_role', $role));
+                            $this->error('contextrolenotallowed', new lang_string('contextrolenotallowed', 'core_role', $role));
                             break;
                         }
-
-                        $roleids = tool_uploadcourse_helper::get_role_ids();
-                        if (in_array($roleid, $roleids)) {
-                            $modifiedinstance->roleid = $roleid;
-                        }
                     }
 
-                    // Sort out custom instance name.
-                    if (isset($method['name'])) {
-                        $modifiedinstance->name = $method['name'];
-                    }
-
+                    // Now update values.
+                    // Sort out plugin specific fields.
+                    $modifiedinstance = $plugin->update_enrol_plugin_data($course->id, $method, $instance);
                     $plugin->update_instance($instance, $modifiedinstance);
                 } else {
                     foreach ($errors as $key => $message) {
