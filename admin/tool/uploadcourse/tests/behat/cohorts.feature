@@ -31,7 +31,7 @@ Feature: An admin can create courses with cohort enrolments using a CSV file
       | enrol_plugins_enabled | manual,guest,self |
     And I upload "admin/tool/uploadcourse/tests/fixtures/enrolment_cohort.csv" file to "File" filemanager
     When I click on "Preview" "button"
-    Then I should see "Cohort sync plugin is disabled"
+    Then I should see "Cohort sync enrol plugin is disabled"
 
   @javascript
   Scenario: Validation of cohorts for uploaded courses

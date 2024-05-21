@@ -1015,18 +1015,19 @@ class enrol_self_plugin extends enrol_plugin {
 
         if ($checkpassword) {
             $require = $this->get_config('requirepassword');
-            $policy  = $this->get_config('usepasswordpolicy');
+            $policy = $this->get_config('usepasswordpolicy');
             if ($require and trim($data['password']) === '') {
                 $errors['password'] = get_string('required');
-            } else if (!empty($data['password']) && $policy) {
-                $errmsg = '';
-                if (!check_password_policy($data['password'], $errmsg)) {
-                    $errors['password'] = $errmsg;
+            } else if (!empty($data['password'])) {
+                if ($policy) {
+                    $errmsg = '';
+                    if (!check_password_policy($data['password'], $errmsg)) {
+                        $errors['password'] = $errmsg;
+                    }
                 }
-            } else if (!empty($data['password']) && $data['customint1'] &&
-                    enrol_self_check_group_enrolment_key($data['courseid'], $data['password'])) {
-
-                $errors['password'] = get_string('passwordmatchesgroupkey', 'enrol_self');
+                if ($data['customint1'] && enrol_self_check_group_enrolment_key($instance->courseid, $data['password'])) {
+                    $errors['password'] = get_string('passwordmatchesgroupkey', 'enrol_self');
+                }
             }
         }
 
@@ -1203,6 +1204,59 @@ class enrol_self_plugin extends enrol_plugin {
      */
     public function fill_enrol_custom_fields(array $enrolmentdata, int $courseid): array {
         return $enrolmentdata + ['password' => ''];
+    }
+
+    /**
+     * Updates enrol plugin instance with provided data.
+     * @param int $courseid Course ID.
+     * @param array $enrolmentdata enrolment data.
+     * @param stdClass $instance Instance to update.
+     *
+     * @return stdClass updated instance
+     */
+    public function update_enrol_plugin_data(int $courseid, array $enrolmentdata, stdClass $instance): stdClass {
+        if (!empty($enrolmentdata['password'])) {
+            $instance->password = $enrolmentdata['password'];
+        }
+        return parent::update_enrol_plugin_data($courseid, $enrolmentdata, $instance);
+    }
+
+    /**
+     * Check if data is valid for a given enrolment plugin
+     *
+     * @param array $enrolmentdata enrolment data to validate.
+     * @param int|null $courseid Course ID.
+     * @return array Errors
+     */
+    public function validate_enrol_plugin_data(array $enrolmentdata, ?int $courseid = null): array {
+        global $CFG, $DB;
+
+        require_once($CFG->dirroot . "/enrol/self/locallib.php");
+
+        // If password is omitted or empty in csv it will be generated automatically if it is a required policy.
+
+        $errors = parent::validate_enrol_plugin_data($enrolmentdata, $courseid);
+        $policy = $this->get_config('usepasswordpolicy');
+        if (!empty($enrolmentdata['password'])) {
+            if ($policy) {
+                $errarray = get_password_policy_errors($enrolmentdata['password']);
+                foreach ($errarray as $i => $err) {
+                    $errors['enrol_self' . $i] = $err;
+                }
+            }
+
+            if ($courseid) {
+                // This is bad - no way to identify which instance it is.
+                // So if any instance in course uses group key we should error.
+                $usegroupenrolmentkeys =
+                    $DB->count_records('enrol', ['courseid' => $courseid, 'enrol' => 'self', 'customint1' => 1]);
+                if ($usegroupenrolmentkeys && enrol_self_check_group_enrolment_key($courseid, $enrolmentdata['password'])) {
+                    $errors['errorpasswordmatchesgroupkey'] =
+                        new lang_string('passwordmatchesgroupkey', 'enrol_self', $enrolmentdata['password']);
+                }
+            }
+        }
+        return $errors;
     }
 }
 
