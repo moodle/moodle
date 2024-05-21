@@ -53,6 +53,8 @@ class edit_action_bar extends base_action_bar {
      * @return array
      */
     public function get_items(): array {
+        global $DB;
+
         $url = new moodle_url('/mod/feedback/view.php', ['id' => $this->cmid]);
         $items['left'][]['actionlink'] = new action_link($url, get_string('back'), null, ['class' => 'btn btn-secondary']);
 
@@ -82,12 +84,14 @@ class edit_action_bar extends base_action_bar {
                     'typ', feedback_load_feedback_items_options());
                 $items['left'][]['singleselect'] = $select;
 
-                $exporturl = new moodle_url('/mod/feedback/export.php', $this->urlparams + ['action' => 'exportfile']);
-                $items['export'] = new action_link(
-                    $exporturl,
-                    get_string('export_questions', 'feedback'),
-                    null,
-                    ['class' => 'btn btn-secondary']);
+                if ($DB->record_exists('feedback_item', ['feedback' => $this->feedback->id])) {
+                    $items['export'] = new action_link(
+                        new moodle_url('/mod/feedback/export.php', $this->urlparams + ['action' => 'exportfile']),
+                        get_string('export_questions', 'feedback'),
+                        null,
+                        ['class' => 'btn btn-secondary'],
+                    );
+                }
             }
         }
 
