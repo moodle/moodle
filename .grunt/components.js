@@ -40,9 +40,20 @@ const fetchComponentData = () => {
     if (!Object.entries(componentData).length) {
         componentData.subsystems = {};
         componentData.pathList = [];
+        componentData.components = {};
+        componentData.standardComponents = {};
 
         // Fetch the component definiitions from the distributed JSON file.
         const components = JSON.parse(fs.readFileSync(`${gruntFilePath}/lib/components.json`));
+        const pluginData = JSON.parse(fs.readFileSync(`${gruntFilePath}/lib/plugins.json`));
+
+        componentData.pluginTypes = components.plugintypes;
+
+        const standardPlugins = Object.entries(pluginData.standard).map(
+            ([pluginType, pluginNames]) => {
+                return pluginNames.map(pluginName => `${pluginType}_${pluginName}`);
+            }
+        ).reduce((acc, val) => acc.concat(val), []);
 
         // Build the list of moodle subsystems.
         componentData.subsystems.lib = 'core';
@@ -55,8 +66,8 @@ const fetchComponentData = () => {
             }
         }
 
-        // The list of components incldues the list of subsystems.
-        componentData.components = componentData.subsystems;
+        // The list of components includes the list of subsystems.
+        componentData.components = {...componentData.subsystems};
 
         // Go through each of the plugintypes.
         Object.entries(components.plugintypes).forEach(([pluginType, pluginTypePath]) => {
@@ -87,6 +98,20 @@ const fetchComponentData = () => {
             });
         });
 
+
+        // Create a list of the standard subsystem and plugins.
+        componentData.standardComponents = Object.fromEntries(
+            Object.entries(componentData.components).filter(([, name]) => {
+                if (name === 'core' || name.startsWith('core_')) {
+                    return true;
+                }
+                return standardPlugins.indexOf(name) !== -1;
+            })
+        );
+
+        componentData.componentMapping = Object.fromEntries(
+            Object.entries(componentData.components).map(([path, name]) => [name, path])
+        );
     }
 
     return componentData;

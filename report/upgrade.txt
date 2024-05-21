@@ -1,9 +1,10 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes in /report/* - plugins,
 information provided here is intended especially for developers.
-
-=== 4.5 ===
-
-* The previously deprecated `report_helper::save_selected_report` method has been removed
 
 === 4.2 ===
 

@@ -1,3 +1,8 @@
+=== 4.5 Onwards ===
+
+This file has been replaced by UPGRADING.md. See MDL-81125 for further information.
+
+===
 This files describes API changes for quiz access rule plugins.
 
 Overview of this plugin type at http://docs.moodle.org/dev/Quiz_access_rules

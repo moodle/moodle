@@ -1,0 +1,6 @@
+issueNumber: MDL-81434
+notes:
+  core_reportbuilder:
+    - message: |2
+         Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
+      type: improved

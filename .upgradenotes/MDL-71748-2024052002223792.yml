@@ -1,0 +1,6 @@
+issueNumber: MDL-71748
+notes:
+  core:
+    - message: >
+        The previously deprecated function `core_text::reset_caches()` has been removed and can no longer be used.
+      type: removed
