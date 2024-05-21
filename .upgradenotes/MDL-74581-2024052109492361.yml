@@ -1,0 +1,9 @@
+issueNumber: MDL-74581
+notes:
+  core_grades:
+    - message: >
+        The following previously deprecated Behat step helper methods have been
+        removed and can no longer be used:
+         - `behat_grade::select_in_gradebook_navigation_selector`
+         - `behat_grade::select_in_gradebook_tabs`
+      type: removed
