@@ -35,8 +35,18 @@ class group_selector extends comboboxsearch {
      * The class constructor.
      *
      * @param stdClass $context The context object.
+     * @param bool $participationonly Only include participation groups?
      */
-    public function __construct(private stdClass $context) {
+    public function __construct(
+        /**
+         * @var stdClass The context object.
+         */
+        private stdClass $context,
+        /**
+         * @var bool Only include participation groups?
+         */
+        protected bool $participationonly = true,
+    ) {
         $this->activegroup = $this->get_active_group();
         $this->label = $this->get_label();
 
@@ -100,22 +110,20 @@ class group_selector extends comboboxsearch {
         if ($this->context->contextlevel === CONTEXT_MODULE) {
             $cm = get_coursemodule_from_id(false, $this->context->instanceid);
             $groupingid = $cm->groupingid;
-            $participationonly = true;
         } else {
             $cm = null;
             $groupingid = $course->defaultgroupingid;
-            $participationonly = false;
         }
 
         $allowedgroups = groups_get_all_groups(
             courseid: $course->id,
             userid: $userid,
             groupingid: $groupingid,
-            participationonly: $participationonly
+            participationonly: $this->participationonly,
         );
 
         if ($cm) {
-            return groups_get_activity_group($cm, true, $allowedgroups);
+            return groups_get_activity_group($cm, true, $allowedgroups, $this->participationonly);
         }
         return groups_get_course_group($course, true, $allowedgroups);
     }

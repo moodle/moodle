@@ -37,6 +37,11 @@
             <span class="d-block w-100 p-0 text-truncate">
                 {{name}}
             </span>
+            {{^participation}}
+                <span class="d-block w-100 pull-left text-truncate small text-secondary-emphasis">
+                    {{#str}} nonparticipation, group {{/str}}
+                </span>
+            {{/participation}}
         </div>
     {{/content}}
 {{/core/local/comboboxsearch/resultitem}}

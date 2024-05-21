@@ -175,6 +175,7 @@ export default class GroupSearch extends search_combobox {
                     id: group.id,
                     name: group.name,
                     groupimageurl: group.groupimageurl,
+                    participation: group.participation,
                 };
             })
         );
