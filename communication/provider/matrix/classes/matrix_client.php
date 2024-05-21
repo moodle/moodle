@@ -59,17 +59,21 @@ abstract class matrix_client {
      *
      * @param string $serverurl The URL of the API server
      * @param string $accesstoken The admin access token to use
-     * @return matrix_client
+     * @return matrix_client|null
      */
     public static function instance(
         string $serverurl,
         string $accesstoken,
-    ): matrix_client {
+    ): ?matrix_client {
         // Fetch the list of supported API versions.
         $clientversions = self::get_supported_versions();
 
         // Fetch the supported versions from the server.
         $serversupports = self::query_server_supports($serverurl);
+        if ($serversupports === null) {
+            // Unable to fetch the server versions.
+            return null;
+        }
         $serverversions = $serversupports->versions;
 
         // Calculate the intersections and sort to determine the highest combined version.
@@ -189,9 +193,9 @@ abstract class matrix_client {
      * - https://spec.matrix.org/latest/client-server-api/#get_matrixclientversions
      *
      * @param string $serverurl The server base
-     * @return \stdClass The list of supported versions and a list of enabled unstable features
+     * @return null|\stdClass The list of supported versions and a list of enabled unstable features
      */
-    protected static function query_server_supports(string $serverurl): \stdClass {
+    protected static function query_server_supports(string $serverurl): ?\stdClass {
         // Attempt to return from the cache first.
         $cache = \cache::make('communication_matrix', 'serverversions');
         $serverkey = sha1($serverurl);
@@ -200,17 +204,21 @@ abstract class matrix_client {
         }
 
         // Not in the cache - fetch and store in the cache.
-        $client = static::get_http_client();
-        $response = $client->get("{$serverurl}/_matrix/client/versions");
-        $supportsdata = json_decode(
-            json: $response->getBody(),
-            associative: false,
-            flags: JSON_THROW_ON_ERROR,
-        );
+        try {
+            $client = static::get_http_client();
+            $response = $client->get("{$serverurl}/_matrix/client/versions");
 
-        $cache->set($serverkey, $supportsdata);
+            $supportsdata = json_decode(
+                json: $response->getBody(),
+                associative: false,
+                flags: JSON_THROW_ON_ERROR,
+            );
 
-        return $supportsdata;
+            $cache->set($serverkey, $supportsdata);
+            return $supportsdata;
+        } catch (\GuzzleHttp\Exception\TransferException $e) {
+            return null;
+        }
     }
 
     /**
