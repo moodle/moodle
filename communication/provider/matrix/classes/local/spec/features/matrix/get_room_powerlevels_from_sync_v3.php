@@ -37,7 +37,7 @@ trait get_room_powerlevels_from_sync_v3 {
      * @param string $roomid The room ID
      * @return Response
      */
-    public function get_room_power_levels(string $roomid): Response {
+    public function get_room_power_levels_from_sync(string $roomid): Response {
         // Filter the event data according to the API:
         // https://spec.matrix.org/v1.1/client-server-api/#filtering
         // We have to filter out all of the object data that we do not want,
