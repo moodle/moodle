@@ -128,8 +128,7 @@ class qtype_ddmarker_edit_form extends qtype_ddtoimage_edit_form_base {
                 array('rows' => 5), $this->editoroptions);
         $repeatedoptions['hint']['type'] = PARAM_RAW;
 
-        $repeated[] = $mform->createElement('checkbox', 'hintshownumcorrect',
-                        get_string('options', 'question'),
+        $repeated[] = $mform->createElement('checkbox', 'hintshownumcorrect', '',
                         get_string('shownumpartscorrect', 'question'));
         $repeated[] = $mform->createElement('checkbox', 'hintoptions',
                         '',
