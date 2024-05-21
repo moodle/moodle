@@ -26,6 +26,7 @@ use coding_exception;
 use core_course_renderer;
 use core_courseformat\base as course_format;
 use html_writer;
+use moodle_page;
 use renderable;
 use section_info;
 use stdClass;
@@ -38,6 +39,23 @@ use stdClass;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 abstract class section_renderer extends core_course_renderer {
+
+    /**
+     * Constructor method, calls the parent constructor.
+     *
+     * @param moodle_page $page
+     * @param string $target one of rendering target constants
+     */
+    public function __construct(moodle_page $page, $target) {
+        parent::__construct($page, $target);
+
+        // Ensure capabilities for section editing controls match those defined in course/view.php to ensure that they work
+        // when called via an AJAX request.
+        if (course_get_format($page->course)->uses_sections()) {
+            $page->set_other_editing_capability('moodle/course:sectionvisibility');
+            $page->set_other_editing_capability('moodle/course:movesections');
+        }
+    }
 
     /**
      * Renders the provided widget and returns the HTML to display it.
