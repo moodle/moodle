@@ -88,6 +88,22 @@ class communication_feature_test extends \advanced_testcase {
         $communicationprocessor->get_form_provider()->save_form_data($formdatainstance);
         $fetchedurl = $communicationprocessor->get_room_provider()->get_chat_room_url();
         $this->assertEquals($customlinkurl, $fetchedurl);
+
+        // Test with empty customlinkurl.
+        $customlinkurlempty = '';
+        $formdatainstance = (object) ['customlinkurl' => $customlinkurlempty];
+        $communicationprocessor->get_form_provider()->save_form_data($formdatainstance);
+        $fetchedurl = $communicationprocessor->get_room_provider()->get_chat_room_url();
+        // It should not update the url to an empty one.
+        $this->assertEquals($customlinkurl, $fetchedurl);
+
+        // Test with null customlinkurl.
+        $customlinkurlempty = null;
+        $formdatainstance = (object) ['customlinkurl' => $customlinkurlempty];
+        $communicationprocessor->get_form_provider()->save_form_data($formdatainstance);
+        $fetchedurl = $communicationprocessor->get_room_provider()->get_chat_room_url();
+        // It should not update the url to a null one.
+        $this->assertEquals($customlinkurl, $fetchedurl);
     }
 
     /**
