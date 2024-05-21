@@ -58,6 +58,7 @@ abstract class externallib_advanced_testcase extends \externallib_advanced_testc
             'submissiondrafts' => 1,
             'assignfeedback_file_enabled' => 1,
             'assignfeedback_comments_enabled' => 1,
+            'maxattempts' => ASSIGN_UNLIMITED_ATTEMPTS,
             'attemptreopenmethod' => ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL,
             'sendnotifications' => 0
         ], $params);

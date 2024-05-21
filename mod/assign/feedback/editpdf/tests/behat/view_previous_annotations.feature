@@ -28,6 +28,7 @@ Feature: In an assignment, teacher can view the feedback for a previous attempt.
       | assignsubmission_file_maxsizebytes | 102400               |
       | assignfeedback_editpdf_enabled     | 1                    |
       | submissiondrafts                   | 0                    |
+      | maxattempts                        | -1                   |
       | attemptreopenmethod                | manual               |
     And the following "mod_assign > submission" exists:
       | assign  | Test assignment name                                                                                              |

@@ -25,6 +25,7 @@ Feature: Submissions are unlocked when a new attempt is given
       | name                                 | Test assignment name  |
       | submissiondrafts                     | 0                     |
       | assignsubmission_onlinetext_enabled  | 1                     |
+      | maxattempts                          | -1                    |
       | attemptreopenmethod                  | untilpass             |
       | gradepass                            | 50                    |
       | submissiondrafts                     | 0                     |
@@ -53,6 +54,7 @@ Feature: Submissions are unlocked when a new attempt is given
       | name                                | Test assignment name    |
       | submissiondrafts                    | 0                       |
       | assignsubmission_onlinetext_enabled | 1                       |
+      | maxattempts                         | -1                      |
       | attemptreopenmethod                 | manual                  |
     And the following "mod_assign > submissions" exist:
       | assign                | user      | onlinetext                   |

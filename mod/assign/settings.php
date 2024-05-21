@@ -31,6 +31,8 @@ $ADMIN->add('modsettings', new admin_category('modassignfolder', new lang_string
 $settings = new admin_settingpage($section, get_string('settings', 'mod_assign'), 'moodle/site:config', $module->is_enabled() === false);
 
 if ($ADMIN->fulltree) {
+    require_once($CFG->dirroot . '/mod/assign/locallib.php');
+
     $menu = array();
     foreach (core_component::get_plugin_list('assignfeedback') as $type => $notused) {
         $visible = !get_config('assignfeedback_' . $type, 'disabled');
@@ -191,33 +193,22 @@ if ($ADMIN->fulltree) {
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
-    // Constants from "locallib.php".
-    $options = array(
-        'none' => get_string('attemptreopenmethod_none', 'mod_assign'),
-        'manual' => get_string('attemptreopenmethod_manual', 'mod_assign'),
-        'untilpass' => get_string('attemptreopenmethod_untilpass', 'mod_assign')
-    );
-    $name = new lang_string('attemptreopenmethod', 'mod_assign');
-    $description = new lang_string('attemptreopenmethod_help', 'mod_assign');
-    $setting = new admin_setting_configselect('assign/attemptreopenmethod',
-                                                    $name,
-                                                    $description,
-                                                    'none',
-                                                    $options);
+    $options = [ASSIGN_UNLIMITED_ATTEMPTS => new lang_string('unlimitedattempts', 'mod_assign')];
+    $options += array_combine(range(1, 30), range(1, 30));
+    $name = new lang_string('maxattempts', 'mod_assign');
+    $description = new lang_string('maxattempts_help', 'mod_assign');
+    $setting = new admin_setting_configselect('assign/maxattempts', $name, $description, 1, $options);
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
 
-    // Constants from "locallib.php".
-    $options = array(-1 => get_string('unlimitedattempts', 'mod_assign'));
-    $options += array_combine(range(1, 30), range(1, 30));
-    $name = new lang_string('maxattempts', 'mod_assign');
-    $description = new lang_string('maxattempts_help', 'mod_assign');
-    $setting = new admin_setting_configselect('assign/maxattempts',
-                                                    $name,
-                                                    $description,
-                                                    -1,
-                                                    $options);
+    $options = [
+        ASSIGN_ATTEMPT_REOPEN_METHOD_MANUAL => new lang_string('attemptreopenmethod_manual', 'mod_assign'),
+        ASSIGN_ATTEMPT_REOPEN_METHOD_UNTILPASS => new lang_string('attemptreopenmethod_untilpass', 'mod_assign'),
+    ];
+    $name = new lang_string('attemptreopenmethod', 'mod_assign');
+    $description = new lang_string('attemptreopenmethod_help', 'mod_assign');
+    $setting = new admin_setting_configselect('assign/attemptreopenmethod', $name, $description, 'untilpass', $options);
     $setting->set_advanced_flag_options(admin_setting_flag::ENABLED, false);
     $setting->set_locked_flag_options(admin_setting_flag::ENABLED, false);
     $settings->add($setting);
