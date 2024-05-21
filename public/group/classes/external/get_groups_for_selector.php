@@ -85,7 +85,7 @@ class get_groups_for_selector extends external_api {
             $cm = get_coursemodule_from_id('', $params['cmid']);
             $groupmode = groups_get_activity_groupmode($cm, $course);
             $groupingid = $cm->groupingid;
-            $participationonly = true;
+            $participationonly = false;
         } else {
             $context = context_course::instance($params['courseid']);
             $groupmode = $course->groupmode;
@@ -130,19 +130,22 @@ class get_groups_for_selector extends external_api {
                 ]);
             }
 
-            $mappedgroups = array_map(function($group) use ($context, $OUTPUT) {
+            $mappedgroups = array_map(function ($group) use ($context, $OUTPUT) {
                 if ($group->id) { // Particular group. Get the group picture if it exists, otherwise return a generic image.
                     $picture = get_group_picture_url($group, $group->courseid, true) ??
                         moodle_url::make_pluginfile_url($context->get_course_context()->id, 'group', 'generated', $group->id,
                             '/', 'group.svg');
+                    $participation = $group->participation;
                 } else { // All participants.
                     $picture = $OUTPUT->image_url('g/g1');
+                    $participation = true;
                 }
 
                 return (object) [
                     'id' => $group->id,
                     'name' => format_string($group->name, true, ['context' => $context]),
                     'groupimageurl' => $picture->out(false),
+                    'participation' => $participation,
                 ];
             }, $groupsmenu);
         }
@@ -175,6 +178,7 @@ class get_groups_for_selector extends external_api {
             'id' => new external_value(PARAM_ALPHANUM, 'An ID for the group', VALUE_REQUIRED),
             'name' => new external_value(PARAM_TEXT, 'The full name of the group', VALUE_REQUIRED),
             'groupimageurl' => new external_value(PARAM_URL, 'Group image URL', VALUE_OPTIONAL),
+            'participation' => new external_value(PARAM_BOOL, 'Is this a participation group?', VALUE_REQUIRED),
         ];
         return new external_single_structure($groupfields);
     }
