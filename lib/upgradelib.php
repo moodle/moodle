@@ -459,17 +459,16 @@ function upgrade_block_savepoint($result, $version, $blockname, $allowabort=true
 }
 
 /**
- * Plugins upgrade savepoint, marks end of blocks upgrade blocks
+ * Plugins upgrade savepoint, marks end of plugin upgrade blocks
  * It stores plugin version, resets upgrade timeout
  * and abort upgrade if user cancels page loading.
  *
  * @category upgrade
  * @param bool $result false if upgrade step failed, true if completed
- * @param string or float $version main version
+ * @param string|float $version main version
  * @param string $type The type of the plugin.
  * @param string $plugin The name of the plugin.
  * @param bool $allowabort allow user to abort script execution here
- * @return void
  */
 function upgrade_plugin_savepoint($result, $version, $type, $plugin, $allowabort=true) {
     global $DB;
@@ -478,6 +477,11 @@ function upgrade_plugin_savepoint($result, $version, $type, $plugin, $allowabort
 
     if (!$result) {
         throw new upgrade_exception($component, $version);
+    }
+
+    // Ensure we're dealing with a real component.
+    if (core_component::get_component_directory($component) === null) {
+        throw new moodle_exception('pluginnotexist', 'error', '', $component);
     }
 
     $dbversion = $DB->get_field('config_plugins', 'value', array('plugin'=>$component, 'name'=>'version'));
