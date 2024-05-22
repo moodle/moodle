@@ -34,12 +34,16 @@ function Chooser() {
 
 Y.extend(Chooser, M.core.chooserdialogue, {
     initializer: function() {
-        Y.all('form').each(function(node) {
-            if (/question\/bank\/editquestion\/addquestion\.php/.test(node.getAttribute('action'))) {
-                node.on('submit', this.displayQuestionChooser, this);
+        Y.all(SELECTORS.CREATENEWQUESTIONFORM).each(function(createForm) {
+            if (createForm.get('id') === 'chooserform') {
+                // Not the singlebutton form. Ignore.
+                return;
             }
+            createForm.on('submit', this.displayQuestionChooser, this);
+            createForm.one('button').set('disabled', false);
         }, this);
     },
+
     displayQuestionChooser: function(e) {
         var dialogue = Y.one(SELECTORS.CREATENEWQUESTION + ' ' + SELECTORS.CHOOSERDIALOGUE),
             header = Y.one(SELECTORS.CREATENEWQUESTION + ' ' + SELECTORS.CHOOSERHEADER);

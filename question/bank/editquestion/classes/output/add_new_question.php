@@ -59,7 +59,8 @@ class add_new_question implements \renderable, \templatable {
             $addquestiondisplay['buttonhtml'] = $output->single_button(
                 $url,
                 get_string('createnewquestion', 'question'),
-                'get'
+                'get',
+                ['disabled' => 'disabled'],
             );
             $addquestiondisplay['qtypeform'] = editquestion_helper::print_choose_qtype_to_add_form([]);
         }
