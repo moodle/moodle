@@ -1878,7 +1878,7 @@ class core_renderer extends renderer_base {
     public function doc_link($path, $text = '', $forcepopup = false, array $attributes = []) {
         global $CFG;
 
-        $icon = $this->pix_icon('book', '', 'moodle', ['class' => 'iconhelp icon-pre']);
+        $icon = $this->pix_icon('book', '', 'moodle');
 
         $attributes['href'] = new moodle_url(get_docs_url($path));
         $newwindowicon = '';
@@ -2079,7 +2079,7 @@ class core_renderer extends renderer_base {
     public function heading_with_help($text, $helpidentifier, $component = 'moodle', $icon = '', $iconalt = '', $level = 2, $classnames = null) {
         $image = '';
         if ($icon) {
-            $image = $this->pix_icon($icon, $iconalt, $component, ['class' => 'icon iconlarge']);
+            $image = $this->pix_icon($icon, $iconalt, $component);
         }
 
         $help = '';
@@ -2146,7 +2146,7 @@ class core_renderer extends renderer_base {
 
         $title = get_string('helpprefix2', '', $scale->name) . ' (' . get_string('newwindow') . ')';
 
-        $icon = $this->pix_icon('help', get_string('scales'), 'moodle', ['class' => 'iconhelp']);
+        $icon = $this->pix_icon('help', get_string('scales'), 'moodle');
 
         $scaleid = abs($scale->id);
 
@@ -2521,7 +2521,7 @@ EOD;
         if (empty($message)) {
             return '';
         }
-        $message = $this->pix_icon('i/warning', get_string('error'), '', ['class' => 'icon icon-pre', 'title' => '']) . $message;
+        $message = $this->pix_icon('i/warning', get_string('error'), '', ['class' => 'icon', 'title' => '']) . $message;
         return html_writer::tag('span', $message, ['class' => 'error']);
     }
 

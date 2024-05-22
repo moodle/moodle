@@ -162,7 +162,7 @@ function install_helpbutton($url, $title='') {
     echo "<a href=\"javascript:void(0)\" ";
     echo "onclick=\"return window.open('$url','Help','menubar=0,location=0,scrollbars,resizable,width=500,height=400')\"";
     echo ">";
-    echo "<img src=\"pix/help.gif\" class=\"iconhelp\" alt=\"$title\" title=\"$title\"/>";
+    echo "<img src=\"pix/help.gif\" alt=\"$title\" title=\"$title\"/>";
     echo "</a>\n";
 }
 

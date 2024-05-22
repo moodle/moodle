@@ -221,16 +221,17 @@ abstract class column_base extends view_component {
     }
 
     /**
-     * Get an icon representing the corrent sort state.
+     * Get an icon representing the current sort state.
+     *
      * @param bool $reverse sort is descending, not ascending.
      * @return string HTML image tag.
      */
     protected function get_sort_icon($reverse): string {
         global $OUTPUT;
         if ($reverse) {
-            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'), '', ['class' => 'iconsort']);
+            return $OUTPUT->pix_icon('t/sort_desc', get_string('desc'));
         } else {
-            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'), '', ['class' => 'iconsort']);
+            return $OUTPUT->pix_icon('t/sort_asc', get_string('asc'));
         }
     }
 

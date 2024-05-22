@@ -100,7 +100,7 @@ class help_icon implements renderable, templatable {
         $data = get_formatted_help_string($this->identifier, $this->component, false, $this->a);
 
         $data->alt = $alt;
-        $data->icon = (new pix_icon('help', $alt, 'core', ['class' => 'iconhelp']))->export_for_template($output);
+        $data->icon = (new pix_icon('help', $alt, 'core'))->export_for_template($output);
         $data->linktext = $this->linktext;
         $data->title = get_string('helpprefix2', '', trim($title, ". \t"));
 
