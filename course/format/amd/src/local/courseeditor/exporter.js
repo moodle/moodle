@@ -112,6 +112,10 @@ export default class {
             ...cminfo,
             isactive: false,
         };
+        if (cminfo.hasdelegatedsection) {
+            const sectioninfo = state.section.get(cminfo.delegatesectionid);
+            cm.sectioninfo = this.section(state, sectioninfo);
+        }
         return cm;
     }
 
