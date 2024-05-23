@@ -44,72 +44,28 @@ require_once($CFG->dirroot.'/user/profile/lib.php');
  */
 class user_profile_fields {
 
-    /** @var array user profile fields */
-    private $userprofilefields;
+    use join_trait;
 
-    /** @var string $entityname Name of the entity */
-    private $entityname;
-
-    /** @var int $usertablefieldalias The user table/field alias */
-    private $usertablefieldalias;
-
-    /** @var array additional joins */
-    private $joins = [];
+    /** @var profile_field_base[] User profile fields */
+    private array $userprofilefields;
 
     /**
-     * Class userprofilefields constructor.
+     * Constructor
      *
-     * @param string $usertablefieldalias The user table/field alias used when adding columns and filters.
+     * @param string $usertablefieldalias The table/field alias to match the user ID when adding columns and filters.
      * @param string $entityname The entity name used when adding columns and filters.
      */
-    public function __construct(string $usertablefieldalias, string $entityname) {
-        $this->usertablefieldalias = $usertablefieldalias;
-        $this->entityname = $entityname;
-        $this->userprofilefields = $this->get_user_profile_fields();
-    }
-
-    /**
-     * Retrieves the list of available/visible user profile fields
-     *
-     * @return profile_field_base[]
-     */
-    private function get_user_profile_fields(): array {
-        return array_filter(profile_get_user_fields_with_data(0), static function(profile_field_base $profilefield): bool {
-            return $profilefield->is_visible();
-        });
-    }
-
-    /**
-     * Additional join that is needed.
-     *
-     * @param string $join
-     * @return self
-     */
-    public function add_join(string $join): self {
-        $this->joins[trim($join)] = trim($join);
-        return $this;
-    }
-
-    /**
-     * Additional joins that are needed.
-     *
-     * @param array $joins
-     * @return self
-     */
-    public function add_joins(array $joins): self {
-        foreach ($joins as $join) {
-            $this->add_join($join);
-        }
-        return $this;
-    }
-
-    /**
-     * Return joins
-     *
-     * @return string[]
-     */
-    private function get_joins(): array {
-        return array_values($this->joins);
+    public function __construct(
+        /** @var string The table/field alias to match the user ID when adding columns and filters */
+        private readonly string $usertablefieldalias,
+        /** @var string The entity name used when adding columns and filters */
+        private readonly string $entityname,
+    ) {
+        // Retrieve the list of available/visible user profile fields.
+        $this->userprofilefields = array_filter(
+            profile_get_user_fields_with_data(0),
+            fn(profile_field_base $field) => $field->is_visible(),
+        );
     }
 
     /**

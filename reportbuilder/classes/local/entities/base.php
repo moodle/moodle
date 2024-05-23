@@ -19,7 +19,7 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\entities;
 
 use coding_exception;
-use core_reportbuilder\local\helpers\database;
+use core_reportbuilder\local\helpers\{database, join_trait};
 use core_reportbuilder\local\report\column;
 use core_reportbuilder\local\report\filter;
 use lang_string;
@@ -33,6 +33,8 @@ use lang_string;
  */
 abstract class base {
 
+    use join_trait;
+
     /** @var string $entityname Internal reference to name of entity */
     private $entityname = null;
 
@@ -44,9 +46,6 @@ abstract class base {
 
     /** @var array $tablejoinaliases Database tables that have already been joined to the report and their aliases */
     private $tablejoinaliases = [];
-
-    /** @var string[] $joins List of SQL joins for the entity */
-    private $joins = [];
 
     /** @var column[] $columns List of columns for the entity */
     private $columns = [];
@@ -251,39 +250,6 @@ abstract class base {
      */
     final public function has_table_join_alias(string $tablename): bool {
         return array_key_exists($tablename, $this->tablejoinaliases);
-    }
-
-    /**
-     * Add join clause required for this entity to join to existing tables/entities
-     *
-     * @param string $join
-     * @return self
-     */
-    final public function add_join(string $join): self {
-        $this->joins[trim($join)] = trim($join);
-        return $this;
-    }
-
-    /**
-     * Add multiple join clauses required for this entity {@see add_join}
-     *
-     * @param string[] $joins
-     * @return self
-     */
-    final public function add_joins(array $joins): self {
-        foreach ($joins as $join) {
-            $this->add_join($join);
-        }
-        return $this;
-    }
-
-    /**
-     * Return entity joins
-     *
-     * @return string[]
-     */
-    final public function get_joins(): array {
-        return array_values($this->joins);
     }
 
     /**
