@@ -1,0 +1,8 @@
+issueNumber: MDL-81125
+notes:
+  core_question:
+    - message: >
+        column_base::from_column_name now has an ignoremissing field, which can
+        be used to ignore if the class does not exist, instead of throwing an
+        exception.
+      type: changed
