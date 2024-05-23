@@ -354,7 +354,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * @param int $nocohortroles    The number of tool_cohortroles to create for the user.
      * @param string $rolename      The name of the role to be created.
      * @param string $roleshortname The short name of the role to be created.
-     * @throws \core_competency\invalid_persistent_exception
+     * @throws \core\invalid_persistent_exception
      * @throws coding_exception
      */
     protected function setup_test_scenario_data($userid, $context, $nocohortroles, $rolename = 'Sausage Roll',

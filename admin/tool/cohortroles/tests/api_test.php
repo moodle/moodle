@@ -71,7 +71,7 @@ class api_test extends \advanced_testcase {
             'roleid' => -8,
             'cohortid' => $this->cohort->id
         );
-        $this->expectException(\core_competency\invalid_persistent_exception::class);
+        $this->expectException(\core\invalid_persistent_exception::class);
         api::create_cohort_role_assignment($params);
     }
 
