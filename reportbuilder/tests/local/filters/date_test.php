@@ -19,8 +19,9 @@ declare(strict_types=1);
 namespace core_reportbuilder\local\filters;
 
 use advanced_testcase;
-use lang_string;
+use core\clock;
 use core_reportbuilder\local\report\filter;
+use lang_string;
 
 /**
  * Unit tests for date report filter
@@ -31,14 +32,25 @@ use core_reportbuilder\local\report\filter;
  * @copyright   2021 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class date_test extends advanced_testcase {
+final class date_test extends advanced_testcase {
+
+    /** @var clock $clock */
+    private readonly clock $clock;
+
+    /**
+     * Mock the clock
+     */
+    protected function setUp(): void {
+        parent::setUp();
+        $this->clock = $this->mock_clock_with_frozen(1622502000);
+    }
 
     /**
      * Data provider for {@see test_get_sql_filter_simple}
      *
      * @return array
      */
-    public function get_sql_filter_simple_provider(): array {
+    public static function get_sql_filter_simple_provider(): array {
         return [
             [date::DATE_ANY, true],
             [date::DATE_NOT_EMPTY, true],
@@ -120,7 +132,7 @@ class date_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_current_week_provider(): array {
+    public static function get_sql_filter_current_week_provider(): array {
         return array_map(static function(int $day): array {
             return [$day];
         }, range(0, 6));
@@ -141,7 +153,8 @@ class date_test extends advanced_testcase {
 
         set_config('calendar_startwday', $startweekday);
 
-        $user = $this->getDataGenerator()->create_user(['timecreated' => time()]);
+        $usertimecreated = $this->clock->time();
+        $user = $this->getDataGenerator()->create_user(['timecreated' => $usertimecreated]);
 
         $filter = new filter(
             date::class,
@@ -165,14 +178,14 @@ class date_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_current_week_no_match_provider(): array {
+    public static function get_sql_filter_current_week_no_match_provider(): array {
         $data = [];
 
-        // For each day, create provider data for -/+ 8 days.
+        // For each day, create provider data for -/+ 7 days.
         foreach (range(0, 6) as $day) {
             $data = array_merge($data, [
-                [$day, '-8 day'],
-                [$day, '+8 day'],
+                [$day, '-7 day'],
+                [$day, '+7 day'],
             ]);
         }
 
@@ -194,7 +207,7 @@ class date_test extends advanced_testcase {
 
         set_config('calendar_startwday', $startweekday);
 
-        $usertimecreated = strtotime($timecreated);
+        $usertimecreated = strtotime($timecreated, $this->clock->time());
         $user = $this->getDataGenerator()->create_user(['timecreated' => $usertimecreated]);
 
         $filter = new filter(
@@ -219,7 +232,7 @@ class date_test extends advanced_testcase {
      *
      * @return array
      */
-    public function get_sql_filter_relative_provider(): array {
+    public static function get_sql_filter_relative_provider(): array {
         return [
             'Before hour' => [date::DATE_BEFORE, 1, date::DATE_UNIT_HOUR, '-90 minute'],
             'Before day' => [date::DATE_BEFORE, 1, date::DATE_UNIT_DAY, '-25 hour'],
@@ -271,8 +284,8 @@ class date_test extends advanced_testcase {
             'Next two months' => [date::DATE_NEXT, 2, date::DATE_UNIT_MONTH, '+7 week'],
             'Next two years' => [date::DATE_NEXT, 2, date::DATE_UNIT_YEAR, '+15 month'],
 
-            'In the past' => [date::DATE_PAST, null, null, '-3 hour'],
-            'In the future' => [date::DATE_FUTURE, null, null, '+3 hour'],
+            'In the past' => [date::DATE_PAST, null, null, '-1 minute'],
+            'In the future' => [date::DATE_FUTURE, null, null, '+1 minute'],
         ];
     }
 
@@ -291,7 +304,12 @@ class date_test extends advanced_testcase {
 
         $this->resetAfterTest();
 
-        $usertimecreated = ($timecreated !== null ? strtotime($timecreated) : time());
+        // Use relative time period if present, otherwise default to current clock time.
+        $usertimecreated = $this->clock->time();
+        if ($timecreated !== null) {
+            $usertimecreated = strtotime($timecreated, $usertimecreated);
+        }
+
         $user = $this->getDataGenerator()->create_user(['timecreated' => $usertimecreated]);
 
         $filter = new filter(
