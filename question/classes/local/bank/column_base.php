@@ -57,9 +57,10 @@ abstract class column_base extends view_component {
      *
      * @param view $view Question bank view
      * @param string $columnname The column name for this instance, as returned by {@see get_column_name()}
-     * @return column_base An instance of this class.
+     * @param bool $ingoremissing Whether to ignore if the class does not exist.
+     * @return column_base|null An instance of this class.
      */
-    public static function from_column_name(view $view, string $columnname): column_base {
+    public static function from_column_name(view $view, string $columnname, bool $ingoremissing = false): ?column_base {
         return new static($view);
     }
 
