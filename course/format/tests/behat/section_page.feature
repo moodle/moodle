@@ -100,3 +100,13 @@ Feature: Single section course page
     And I click on "View" "link" in the "Section 1" "section"
     When I set the field "Edit section name" in the "page-header" "region" to "Custom section name"
     Then "Custom section name" "text" should exist in the ".breadcrumb" "css_element"
+
+  Scenario: Blocks are displayed in section page too
+    Given I log out
+    And the following "blocks" exist:
+      | blockname    | contextlevel | reference | pagetypepattern | defaultregion |
+      | online_users | Course       | C1        | course-view-*   | site-pre      |
+    When I am on the "C1" "Course" page logged in as "teacher1"
+    Then I should see "Online users"
+    And I am on the "Course 1 > Section 1" "course > section" page
+    And I should see "Online users"
