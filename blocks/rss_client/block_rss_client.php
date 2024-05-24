@@ -61,19 +61,6 @@
     protected function get_footer($feedrecords) {
         $footer = null;
 
-        if ($this->config->block_rss_client_show_channel_link) {
-            global $CFG;
-            require_once($CFG->libdir.'/simplepie/moodle_simplepie.php');
-
-            $feedrecord     = array_pop($feedrecords);
-            $feed           = new moodle_simplepie($feedrecord->url);
-            $channellink    = new moodle_url($feed->get_link());
-
-            if (!empty($channellink)) {
-                $footer = new block_rss_client\output\footer($channellink);
-            }
-        }
-
         if ($this->hasfailedfeeds) {
             if (has_any_capability(['block/rss_client:manageownfeeds', 'block/rss_client:manageanyfeeds'], $this->context)) {
                 if ($footer === null) {
@@ -104,6 +91,15 @@
             return $this->content;
         }
 
+        $managefeedfooterlink = '';
+        if (has_any_capability(['block/rss_client:manageanyfeeds', 'block/rss_client:manageownfeeds'], $this->context)) {
+            $managefeedfooterlink = html_writer::link(
+                new moodle_url('/blocks/rss_client/managefeeds.php', ['courseid' => $this->page->course->id]),
+                get_string('managefeeds', 'block_rss_client'),
+                ['class' => 'btn btn-primary', 'role' => 'button'],
+            );
+        }
+
         if (!isset($this->config)) {
             // The block has yet to be configured - just display configure message in
             // the block if user has permission to configure it
@@ -111,6 +107,8 @@
             if (has_capability('block/rss_client:manageanyfeeds', $this->context)) {
                 $this->content->text = get_string('feedsconfigurenewinstance2', 'block_rss_client');
             }
+
+            $this->content->footer = $managefeedfooterlink;
 
             return $this->content;
         }
@@ -155,6 +153,8 @@
         if (isset($footer)) {
             $this->content->footer = $renderer->render_footer($footer);
         }
+
+        $this->content->footer .= $managefeedfooterlink;
 
         return $this->content;
     }
@@ -257,6 +257,12 @@
                 // exception if the param is an extremely malformed url.
                 debugging($e->getMessage());
             }
+        }
+
+        // Feed channel link.
+        if ($this->config->block_rss_client_show_channel_link) {
+            $channellink = $simplepiefeed->get_link();
+            $feed->set_channellink($channellink ? new moodle_url($channellink) : null);
         }
 
         return $feed;
