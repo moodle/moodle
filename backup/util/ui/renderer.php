@@ -522,7 +522,7 @@ class core_backup_renderer extends plugin_renderer_base {
     public function substage_buttons($haserrors) {
         $output  = html_writer::start_tag('div', array('continuebutton'));
         if (!$haserrors) {
-            $attrs = array('type' => 'submit', 'value' => get_string('continue'), 'class' => 'btn btn-primary');
+            $attrs = ['type' => 'submit', 'value' => get_string('continue'), 'class' => 'btn btn-primary mr-1'];
             $output .= html_writer::empty_tag('input', $attrs);
         }
         $attrs = array('type' => 'submit', 'name' => 'cancel', 'value' => get_string('cancel'), 'class' => 'btn btn-secondary');
