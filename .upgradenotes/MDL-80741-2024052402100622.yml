@@ -1,0 +1,18 @@
+issueNumber: MDL-80741
+notes:
+  mod_assign:
+    - message: >
+        The default option "Never" for `attemptreopenmethod` setting, which
+        disallowed multiple attempts at the assignment, has been removed. This
+        option was unnecessary because limiting attempts to 1 through the
+        `maxattempts` setting achieves the same behavior.
+      type: removed
+    - message: >
+        The constant `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` has been deprecated,
+        and a new default value for `attemptreopenmethod` has been set to
+        "Automatically until pass".
+      type: deprecated
+    - message: >
+        A new default value for `attemptreopenmethod` has been set to
+        "Automatically until pass".
+      type: improved
