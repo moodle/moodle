@@ -95,7 +95,8 @@ if (has_capability('moodle/grade:viewall', $context)) {
     $currentgroup = $gpr->groupid;
     // Conditionally add the group JS if we have groups enabled.
     if ($groupmode) {
-        $PAGE->requires->js_call_amd('gradereport_user/group', 'init');
+        $baseurl = new moodle_url('/grade/report/user/index.php', ['id' => $courseid]);
+        $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$baseurl->out(false)]);
     }
 
     // To make some other functions work better later.

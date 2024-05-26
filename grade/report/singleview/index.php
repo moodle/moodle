@@ -175,7 +175,8 @@ if ($itemtype == 'user' || $itemtype == 'user_select') {
         ['id' => $courseid]), 'report', 'singleview');
 }
 if ($course->groupmode && $itemtype !== 'select') {
-    $PAGE->requires->js_call_amd('gradereport_singleview/group', 'init', [$itemtype]);
+    $baseurl = new moodle_url('/grade/report/singleview/index.php', ['id' => $courseid, 'item' => $itemtype]);
+    $PAGE->requires->js_call_amd('core_course/actionbar/group', 'init', [$baseurl->out(false)]);
 }
 
 if ($itemtype == 'user') {
