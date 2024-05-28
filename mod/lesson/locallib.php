@@ -2329,11 +2329,17 @@ class lesson extends lesson_base {
             if ($modname) {
                 $instancename = $DB->get_field($modname, 'name', array('id' => $module->instance));
                 if ($instancename) {
-                    return html_writer::link(new moodle_url('/mod/'.$modname.'/view.php',
-                        ['id' => $this->properties->activitylink]),
-                        get_string('activitylinkname', 'lesson',
-                        format_string($instancename, true, ['context' => $this->get_context()])),
-                        ['class' => 'centerpadded lessonbutton standardbutton pr-3']);
+                    return html_writer::link(
+                        new moodle_url('/mod/'.$modname.'/view.php', [
+                            'id' => $this->properties->activitylink,
+                        ]),
+                        get_string(
+                            'activitylinkname',
+                            'lesson',
+                            format_string($instancename, true, ['context' => $this->get_context()]),
+                        ),
+                        ['class' => 'centerpadded lessonbutton standardbutton pr-3'],
+                    );
                 }
             }
         }
