@@ -1,0 +1,7 @@
+issueNumber: MDL-72786
+notes:
+  report_eventlist:
+    - message: >-
+        The report_eventlist_list_generator methods deprecated previously have
+        been removed
+      type: deprecated
