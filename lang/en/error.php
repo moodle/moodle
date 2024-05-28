@@ -650,9 +650,6 @@ $string['alreadyloggedin'] = 'You are already logged in as {$a}, you need to log
 $string['youcannotdeletecategory'] = 'You cannot delete category \'{$a}\' because you can neither delete the contents, nor move them elsewhere.';
 $string['protected_cc_not_supported'] = 'Protected cartridges not supported.';
 
-// Deprecated since Moodle 4.1.
-$string['cannotswitcheditmodeon'] = 'Could not switch edit mode on';
-
 // Deprecated since Moodle 4.3.
 $string['prefixtoolong'] = '<p>Error: database table prefix is too long ({$a->dbfamily})</p>
 <p>The site administrator must fix this problem. Maximum length for table prefixes in {$a->dbfamily} is {$a->maxlength} characters.</p>';

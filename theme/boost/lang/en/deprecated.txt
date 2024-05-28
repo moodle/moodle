@@ -1,3 +1,0 @@
-privacy:drawernavclosed,theme_boost
-privacy:drawernavopen,theme_boost
-currentinparentheses,theme_boost

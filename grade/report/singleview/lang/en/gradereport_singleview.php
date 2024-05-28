@@ -86,8 +86,5 @@ $string['selectgradeitemlink'] = 'Select a grade item';
 $string['singleviewdescription'] = 'In single view you can override or exclude selected grades and bulk insert grades.';
 $string['unsaveddatawarning'] = 'Unsaved data warning';
 
-// Deprecated since Moodle 4.1.
-$string['filtergrades'] = 'Show grades for {$a}.';
-
 // Deprecated since Moodle 4.3.
 $string['viewsingleuserorgradeitem'] = 'View all the grades of a single user or grade item.';
