@@ -24954,20 +24954,13 @@ nav.navbar .logo img {
 .page-context-header {
   overflow: hidden;
   padding: 0.25rem 0;
-  display: flex;
 }
 .page-context-header .page-header-image > a {
   display: inline-block;
 }
-.page-context-header .page-header-headings,
-.page-context-header .header-button-group {
-  position: relative;
-  line-height: 24px;
-  vertical-align: middle;
-}
-.page-context-header .header-button-group {
-  display: block;
-  float: left;
+.page-context-header .page-header-image .userinitials,
+.page-context-header .page-header-image .userpicture {
+  margin-right: 1rem;
 }
 
 ul.dragdrop-keyboard-drag li {
