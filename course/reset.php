@@ -84,9 +84,9 @@ if ($mform->is_cancelled()) {
             if ($item['error'] === false) {
                 $line[] = get_string('statusdone');
             } else {
-                $line[] = '<div class="text-danger">' .
-                              $OUTPUT->pix_icon('i/invalid', get_string('error')) . $item['error'] .
-                          '</div>';
+                $line[] = html_writer::div(
+                    $OUTPUT->pix_icon('i/invalid', get_string('error')) . $item['error'],
+                );
             }
             $data[] = $line;
         }
