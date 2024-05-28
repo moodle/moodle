@@ -1,0 +1,11 @@
+issueNumber: MDL-54105
+notes:
+  mod_assign:
+    - message: |
+        Added 2 new settings:
+          - `mod_assign/defaultgradetype`
+            - The value of this setting dictates which of the GRADE_TYPE_X constants is the default option when creating new instances of the assignment.
+            - The default value is GRADE_TYPE_VALUE (Point)
+          - `mod_assign/defaultgradescale`
+            - The value of this setting dictates which of the existing scales is the default option when creating new instances of the assignment.
+      type: improved
