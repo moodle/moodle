@@ -2,6 +2,10 @@ issueNumber: MDL-72786
 notes:
   report_eventlist:
     - message: >-
-        The report_eventlist_list_generator methods deprecated previously have
-        been removed
+        The following deprecated methods in `report_eventlist_list_generator` have
+        been removed:
+
+        - `get_core_events_list()`
+
+        - `get_non_core_event_list()`
       type: deprecated
