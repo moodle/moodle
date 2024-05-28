@@ -25,6 +25,10 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace tool_behat;
+
+use behat_config_util;
+
 defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
@@ -39,7 +43,7 @@ require_once($CFG->libdir . '/behat/classes/behat_config_manager.php');
  * @copyright  2016 Rajesh Taneja
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class tool_behat_manager_util_testcase extends advanced_testcase {
+class manager_util_test extends \advanced_testcase {
 
     /** @var array Fixtures features which are available. */
     private $featurepaths = array(

@@ -3505,9 +3505,9 @@ class accesslib_test extends advanced_testcase {
         // Test context_helper::reset_caches() method.
 
         context_helper::reset_caches();
-        $this->assertEquals(0, context_inspection::test_context_cache_size());
+        $this->assertEquals(0, context_inspection::check_context_cache_size());
         context_course::instance($SITE->id);
-        $this->assertEquals(1, context_inspection::test_context_cache_size());
+        $this->assertEquals(1, context_inspection::check_context_cache_size());
 
 
         // Test context preloading.
@@ -3526,14 +3526,15 @@ class accesslib_test extends advanced_testcase {
             context_helper::preload_from_record($record);
             $this->assertEquals(new stdClass(), $record);
         }
-        $this->assertEquals(count($records), context_inspection::test_context_cache_size());
+        $this->assertEquals(count($records), context_inspection::check_context_cache_size());
         unset($records);
         unset($columns);
 
         context_helper::reset_caches();
         context_helper::preload_course($SITE->id);
         $numfrontpagemodules = $DB->count_records('course_modules', array('course' => $SITE->id));
-        $this->assertEquals(3 + $numfrontpagemodules, context_inspection::test_context_cache_size()); // Depends on number of default blocks.
+        $this->assertEquals(3 + $numfrontpagemodules,
+            context_inspection::check_context_cache_size()); // Depends on number of default blocks.
 
         // Test assign_capability(), unassign_capability() functions.
 
@@ -3957,13 +3958,13 @@ class accesslib_test extends advanced_testcase {
         $lastcourse = array_pop($testcourses);
         $this->assertTrue($DB->record_exists('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$lastcourse)));
         $coursecontext = context_course::instance($lastcourse);
-        $this->assertEquals(1, context_inspection::test_context_cache_size());
+        $this->assertEquals(1, context_inspection::check_context_cache_size());
         $this->assertNotEquals(CONTEXT_COURSE, $coursecontext->instanceid);
         $DB->delete_records('cache_flags', array());
         context_helper::delete_instance(CONTEXT_COURSE, $lastcourse);
         $dirty = get_cache_flags('accesslib/dirtycontexts', time()-2);
         $this->assertFalse(isset($dirty[$coursecontext->path]));
-        $this->assertEquals(0, context_inspection::test_context_cache_size());
+        $this->assertEquals(0, context_inspection::check_context_cache_size());
         $this->assertFalse($DB->record_exists('context', array('contextlevel'=>CONTEXT_COURSE, 'instanceid'=>$lastcourse)));
         context_course::instance($lastcourse);
 
@@ -4018,20 +4019,21 @@ class accesslib_test extends advanced_testcase {
         for ($i=0; $i<CONTEXT_CACHE_MAX_SIZE + 100; $i++) {
             context_user::instance($testusers[$i]);
             if ($i == CONTEXT_CACHE_MAX_SIZE - 1) {
-                $this->assertEquals(CONTEXT_CACHE_MAX_SIZE, context_inspection::test_context_cache_size());
+                $this->assertEquals(CONTEXT_CACHE_MAX_SIZE, context_inspection::check_context_cache_size());
             } else if ($i == CONTEXT_CACHE_MAX_SIZE) {
                 // Once the limit is reached roughly 1/3 of records should be removed from cache.
-                $this->assertEquals((int)ceil(CONTEXT_CACHE_MAX_SIZE * (2/3) + 101), context_inspection::test_context_cache_size());
+                $this->assertEquals((int)ceil(CONTEXT_CACHE_MAX_SIZE * (2 / 3) + 101),
+                    context_inspection::check_context_cache_size());
             }
         }
         // We keep the first 100 cached.
-        $prevsize = context_inspection::test_context_cache_size();
+        $prevsize = context_inspection::check_context_cache_size();
         for ($i=0; $i<100; $i++) {
             context_user::instance($testusers[$i]);
-            $this->assertEquals($prevsize, context_inspection::test_context_cache_size());
+            $this->assertEquals($prevsize, context_inspection::check_context_cache_size());
         }
         context_user::instance($testusers[102]);
-        $this->assertEquals($prevsize+1, context_inspection::test_context_cache_size());
+        $this->assertEquals($prevsize + 1, context_inspection::check_context_cache_size());
         unset($testusers);
 
 
@@ -5277,7 +5279,12 @@ class accesslib_test extends advanced_testcase {
  * Context caching fixture
  */
 abstract class context_inspection extends \core\context_helper {
-    public static function test_context_cache_size() {
+    /**
+     * Return the cached contexts count for testing purposes.
+     *
+     * @return int
+     */
+    public static function check_context_cache_size() {
         return self::$cache_count;
     }
 }

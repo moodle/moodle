@@ -126,11 +126,15 @@ class grade_grade_test extends \grade_base_testcase {
         $this->assertEquals(40, \grade_grade::standardise_score(50, 30, 80, 0, 100));
     }
 
-
-    /*
-     * Disabling this test: the set_locked() arguments have been modified, rendering these tests useless until they are re-written
-
-    protected function test_grade_grade_set_locked() {
+    /**
+     * Tests grade_grade::set_locked()
+     *
+     * @covers \grade_grade::set_locked
+     */
+    public function test_grade_grade_set_locked(): void {
+        // Skip this test because set_locked() arguments have been modified, rendering these tests
+        // useless until they are re-written. Note this comes from MDL-32323 (2012!).
+        $this->markTestSkipped('Useless set_locked() tests until they are re-written');
         $grade_item = new \grade_item($this->grade_items[0]);
         $grade = new \grade_grade($grade_item->get_final(1));
         $this->assertTrue(method_exists($grade, 'set_locked'));
@@ -154,7 +158,6 @@ class grade_grade_test extends \grade_base_testcase {
 
         $this->assertTrue($grade->set_locked(true, false));
     }
-    */
 
     protected function sub_test_grade_grade_is_locked() {
         $grade = new \grade_grade($this->grade_grades[0], false);

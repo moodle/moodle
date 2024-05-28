@@ -16,11 +16,6 @@
 
 namespace core;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->dirroot . '/lib/myprofilelib.php');
-
 /**
  * Tests for myprofilelib apis.
  *
@@ -44,6 +39,16 @@ class myprofilelib_test extends \advanced_testcase {
      * @var \core_user\output\myprofile\tree The navigation tree.
      */
     private $tree;
+
+    /**
+     * Load required test libraries
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/lib/myprofilelib.php');
+        require_once($CFG->dirroot . '/user/profile/lib.php');
+    }
+
     public function setUp(): void {
         // Set the $PAGE->url value so core_myprofile_navigation() doesn't complain.
         global $PAGE;

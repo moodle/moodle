@@ -226,7 +226,9 @@ class generator_test extends \advanced_testcase {
      * @param string $type Type of page to test: LESSON_PAGE_CLUSTER, LESSON_PAGE_ENDOFCLUSTER or LESSON_PAGE_ENDOFBRANCH.
      */
     public function test_create_cluster_pages(string $type): void {
-        global $DB;
+        global $CFG, $DB;
+        require_once($CFG->dirroot . '/mod/lesson/locallib.php');
+        require_once($CFG->dirroot . '/mod/lesson/pagetypes/cluster.php');
         $this->resetAfterTest();
         $this->setAdminUser();
 
