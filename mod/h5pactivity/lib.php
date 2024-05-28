@@ -253,6 +253,7 @@ function h5pactivity_rescale_activity_grades(stdClass $course, stdClass $cm, flo
  */
 function h5pactivity_reset_course_form_definition(&$mform): void {
     $mform->addElement('header', 'h5pactivityheader', get_string('modulenameplural', 'mod_h5pactivity'));
+    $mform->addElement('static', 'h5pactivitydelete', get_string('delete'));
     $mform->addElement('advcheckbox', 'reset_h5pactivity', get_string('deleteallattempts', 'mod_h5pactivity'));
 }
 

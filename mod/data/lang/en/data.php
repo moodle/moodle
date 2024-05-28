@@ -114,13 +114,13 @@ $string['defaultfieldenclosure'] = '(default is none)';
 $string['defaultsortfield'] = 'Default sort field';
 $string['delcheck'] = 'Bulk delete checkbox';
 $string['delete'] = 'Delete';
-$string['deleteallentries'] = 'Delete all entries';
+$string['deleteallentries'] = 'All entries';
 $string['deletecomment'] = 'Are you sure you want to delete this comment?';
 $string['deleteconfirm'] = 'Delete preset {$a}?';
 $string['deleted'] = 'deleted';
 $string['deleteentry'] = 'Delete entry';
 $string['deletefield'] = 'Delete field';
-$string['deletenotenrolled'] = 'Delete entries by users not enrolled';
+$string['deletenotenrolled'] = 'Entries by users not enrolled';
 $string['deletewarning'] = 'Deleting a preset removes it from the list of available presets in all courses.';
 $string['descending'] = 'Descending';
 $string['directorynotapreset'] = '{$a->directory} Not a preset: missing files: {$a->missing_files}';
@@ -381,7 +381,7 @@ $string['recorddeleted'] = 'Entry deleted';
 $string['recorddisapproved'] = 'Entry unapproved';
 $string['recordsnotsaved'] = 'No entry was saved. Please check the format of the uploaded file.';
 $string['recordssaved'] = 'entries saved';
-$string['removealldatatags'] = 'Remove all database tags';
+$string['removealldatatags'] = 'All database tags';
 $string['requireapproval'] = 'Approval required';
 $string['requireapproval_help'] = 'A teacher has to approve entries before they’re visible to everyone.';
 $string['required'] = 'Required';
@@ -437,7 +437,6 @@ $string['subplugintype_datapreset'] = 'Preset';
 $string['subplugintype_datapreset_plural'] = 'Presets';
 $string['tagarea_data_records'] = 'Data records';
 $string['tags'] = 'Tags';
-$string['tagsdeleted'] = 'Database tags have been deleted';
 $string['teachersandstudents'] = '{$a->teachers} and {$a->students}';
 $string['templates'] = 'Templates';
 $string['templatereset'] = 'Template reset';
@@ -491,3 +490,6 @@ $string['completionentries'] = 'Require entries';
 
 // Deprecated since Moodle 4.4.
 $string['fieldallowautolink'] = 'Allow autolink';
+
+// Deprecated since Moodle 4.5.
+$string['tagsdeleted'] = 'Database tags have been deleted';

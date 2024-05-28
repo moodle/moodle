@@ -776,6 +776,7 @@ function scorm_option2text($scorm) {
  */
 function scorm_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'scormheader', get_string('modulenameplural', 'scorm'));
+    $mform->addElement('static', 'scormdelete', get_string('delete'));
     $mform->addElement('advcheckbox', 'reset_scorm', get_string('deleteallattempts', 'scorm'));
 }
 
@@ -845,7 +846,7 @@ function scorm_reset_userdata($data) {
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
     // See MDL-9367.
     shift_course_mod_dates('scorm', array('timeopen', 'timeclose'), $data->timeshift, $data->courseid);
-    $status[] = ['component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false];
+    $status[] = ['component' => $componentstr, 'item' => get_string('date'), 'error' => false];
 
     return $status;
 }

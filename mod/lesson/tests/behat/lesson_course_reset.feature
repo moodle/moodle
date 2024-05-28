@@ -46,7 +46,7 @@ Feature: Lesson reset
     And I should see "Sam1 Student1"
     And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
-        | Delete all lesson attempts | 1  |
+        | All lesson attempts | 1  |
     And I press "Reset course"
     And I press "Continue"
     And I am on the "Test lesson name" "lesson activity" page
@@ -65,7 +65,7 @@ Feature: Lesson reset
     And I should see "Sam1 Student1"
     And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
-        | Delete all user overrides | 1  |
+        | All user overrides | 1  |
     And I press "Reset course"
     And I press "Continue"
     And I am on the "Test lesson name" "lesson activity" page
@@ -84,7 +84,7 @@ Feature: Lesson reset
     And I should see "Group 1"
     And I am on the "Course 1" "reset" page
     And I set the following fields to these values:
-        | Delete all group overrides | 1  |
+        | All group overrides | 1  |
     And I press "Reset course"
     And I press "Continue"
     And I am on the "Test lesson name" "lesson activity" page

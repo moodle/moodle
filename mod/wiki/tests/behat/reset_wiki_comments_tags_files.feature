@@ -42,13 +42,13 @@ Feature: Teachers can reset wiki pages, tags and files
 
   Scenario: Reset page, tags and files
     Given I set the following fields to these values:
-      | Delete all wiki pages | 1 |
-      | Remove all wiki tags | 1 |
+      | All wiki pages | 1 |
+      | All wiki tags  | 1 |
       | reset_wiki_comments | 1 |
     And I press "Reset course"
-    And I should see "Delete all wiki pages"
-    And I should see "Wiki tags have been deleted"
-    And I should see "Delete all comments"
+    And I should see "All wiki pages"
+    And I should see "All wiki tags"
+    And I should see "All comments"
     And I press "Continue"
     And I am on the "Test wiki name" "wiki activity" page
     And I press "Create page"
@@ -62,11 +62,11 @@ Feature: Teachers can reset wiki pages, tags and files
 
   Scenario: Reset only tags
     Given I set the following fields to these values:
-      | Remove all wiki tags | 1 |
+      | All wiki tags | 1 |
     When I press "Reset course"
-    And I should not see "Delete all wiki pages"
-    And I should see "Wiki tags have been deleted"
-    And I should not see "Delete all comments"
+    And I should not see "All wiki pages"
+    And I should see "All wiki tags"
+    And I should not see "All comments"
     And I press "Continue"
     And I am on the "Test wiki name" "wiki activity" page
     Then I should not see "Test tag 1"
@@ -80,9 +80,9 @@ Feature: Teachers can reset wiki pages, tags and files
     Given I set the following fields to these values:
       | reset_wiki_comments | 1 |
     When I press "Reset course"
-    And I should not see "Delete all wiki pages"
-    And I should not see "Wiki tags have been deleted"
-    And I should see "Delete all comments"
+    And I should not see "All wiki pages"
+    And I should not see "All wiki tags"
+    And I should see "All comments"
     And I press "Continue"
     And I am on the "Test wiki name" "wiki activity" page
     Then I should see "Test tag 1"

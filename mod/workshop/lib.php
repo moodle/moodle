@@ -1985,15 +1985,17 @@ function workshop_reset_course_form_definition($mform) {
 
     $mform->addElement('header', 'workshopheader', get_string('modulenameplural', 'mod_workshop'));
 
+    $mform->addElement('advcheckbox', 'reset_workshop_phase', get_string('resetphase', 'mod_workshop'));
+    $mform->addHelpButton('reset_workshop_phase', 'resetphase', 'mod_workshop');
+
+    $mform->addElement('static', 'workshopdelete', get_string('delete'));
+
     $mform->addElement('advcheckbox', 'reset_workshop_submissions', get_string('resetsubmissions', 'mod_workshop'));
     $mform->addHelpButton('reset_workshop_submissions', 'resetsubmissions', 'mod_workshop');
 
     $mform->addElement('advcheckbox', 'reset_workshop_assessments', get_string('resetassessments', 'mod_workshop'));
     $mform->addHelpButton('reset_workshop_assessments', 'resetassessments', 'mod_workshop');
-    $mform->disabledIf('reset_workshop_assessments', 'reset_workshop_submissions', 'checked');
-
-    $mform->addElement('advcheckbox', 'reset_workshop_phase', get_string('resetphase', 'mod_workshop'));
-    $mform->addHelpButton('reset_workshop_phase', 'resetphase', 'mod_workshop');
+    $mform->hideIf('reset_workshop_assessments', 'reset_workshop_submissions', 'checked');
 }
 
 /**
@@ -2023,11 +2025,16 @@ function workshop_reset_userdata(stdClass $data) {
 
     // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
     // See MDL-9367.
-    shift_course_mod_dates('workshop', array('submissionstart', 'submissionend', 'assessmentstart', 'assessmentend'),
-        $data->timeshift, $data->courseid);
-    $status = array();
-    $status[] = array('component' => get_string('modulenameplural', 'workshop'), 'item' => get_string('datechanged'),
-        'error' => false);
+    shift_course_mod_dates(
+        'workshop',
+        ['submissionstart', 'submissionend', 'assessmentstart', 'assessmentend'],
+        $data->timeshift, $data->courseid,
+    );
+    $status[] = [
+        'component' => get_string('modulenameplural', 'workshop'),
+        'item' => get_string('date'),
+        'error' => false,
+    ];
 
     if (empty($data->reset_workshop_submissions)
             and empty($data->reset_workshop_assessments)
@@ -2036,16 +2043,16 @@ function workshop_reset_userdata(stdClass $data) {
         return $status;
     }
 
-    $workshoprecords = $DB->get_records('workshop', array('course' => $data->courseid));
+    $workshoprecords = $DB->get_records('workshop', ['course' => $data->courseid]);
 
     if (empty($workshoprecords)) {
-        // What a boring course - no workshops here!
+        // What a boring course - no workshops here.
         return $status;
     }
 
     require_once($CFG->dirroot . '/mod/workshop/locallib.php');
 
-    $course = $DB->get_record('course', array('id' => $data->courseid), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $data->courseid], '*', MUST_EXIST);
 
     foreach ($workshoprecords as $workshoprecord) {
         $cm = get_coursemodule_from_instance('workshop', $workshoprecord->id, $course->id, false, MUST_EXIST);

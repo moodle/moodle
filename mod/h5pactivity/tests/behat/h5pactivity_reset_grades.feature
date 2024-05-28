@@ -40,9 +40,9 @@ Feature: Teacher can reset H5P activity grades
     When I am on the "Course 1" "reset" page
     And I expand all fieldsets
     # Check `Delete all grades` in course reset page to reset grades
-    And I click on "Delete all grades" "checkbox"
+    And I click on "All grades" "checkbox"
     And I press "Reset"
-    Then I should see "OK" in the "Gradebook" "table_row"
+    Then I should see "Done" in the "Gradebook" "table_row"
     And I press "Continue"
     # Confirm that previously saved grades are gone
     And I navigate to "View > Grader report" in the course gradebook

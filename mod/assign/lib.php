@@ -70,22 +70,25 @@ function assign_reset_userdata($data) {
     global $CFG, $DB;
     require_once($CFG->dirroot . '/mod/assign/locallib.php');
 
-    $status = array();
-    $params = array('courseid'=>$data->courseid);
+    $status = [];
+    $params = ['courseid' => $data->courseid];
     $sql = "SELECT a.id FROM {assign} a WHERE a.course=:courseid";
-    $course = $DB->get_record('course', array('id'=>$data->courseid), '*', MUST_EXIST);
+    $course = $DB->get_record('course', ['id' => $data->courseid], '*', MUST_EXIST);
     if ($assigns = $DB->get_records_sql($sql, $params)) {
         foreach ($assigns as $assign) {
-            $cm = get_coursemodule_from_instance('assign',
-                                                 $assign->id,
-                                                 $data->courseid,
-                                                 false,
-                                                 MUST_EXIST);
+            $cm = get_coursemodule_from_instance(
+                'assign',
+                $assign->id,
+                $data->courseid,
+                false,
+                MUST_EXIST,
+            );
             $context = context_module::instance($cm->id);
             $assignment = new assign($context, $cm, $course);
             $status = array_merge($status, $assignment->reset_userdata($data));
         }
     }
+
     return $status;
 }
 
@@ -204,6 +207,7 @@ function assign_reset_gradebook($courseid, $type='') {
  */
 function assign_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'assignheader', get_string('modulenameplural', 'assign'));
+    $mform->addElement('static', 'assigndelete', get_string('delete'));
     $name = get_string('deleteallsubmissions', 'assign');
     $mform->addElement('advcheckbox', 'reset_assign_submissions', $name);
     $mform->addElement('advcheckbox', 'reset_assign_user_overrides',

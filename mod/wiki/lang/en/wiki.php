@@ -44,7 +44,7 @@ $string['defaultformat_help'] = 'This setting determines the default format used
 * HTML - The HTML editor is available
 * Creole - A common wiki markup language for which a small edit toolbar is available
 * Nwiki - Mediawiki-like markup language used in the contributed Nwiki module';
-$string['deleteallpages'] = 'Delete all wiki pages';
+$string['deleteallpages'] = 'All wiki pages';
 $string['deletecomment'] = 'Deleting comment';
 $string['deletecommentcheck'] = 'Delete comment';
 $string['deletecommentcheckfull'] = 'Are you sure you want to delete the comment?';
@@ -237,7 +237,7 @@ $string['ratingmode'] = 'Rating mode';
 $string['reparsetimeout'] = 'Reparsing default timeout';
 $string['repeatedsection'] = 'Wiki error: Section name cannot be repeated \'{$a}\'';
 $string['restore'] = 'Restore';
-$string['removeallwikitags'] = 'Remove all wiki tags';
+$string['removeallwikitags'] = 'All wiki tags';
 $string['removepages'] = 'Remove pages';
 $string['restoreconfirm'] = 'Are you sure you want to restore version #{$a}?';
 $string['restoreerror'] = 'Version #{$a} could not be restored';
@@ -257,9 +257,8 @@ $string['searchwikis'] = 'Search wikis';
 $string['special'] = 'Special';
 $string['tableofcontents'] = 'Table of contents';
 $string['tagarea_wiki_pages'] = 'Wiki pages';
-$string['tagsdeleted'] = 'Wiki tags have been deleted';
 $string['teacherrating'] = 'Teacher rating';
-$string['timesrating']='This page has been rated  {$a->c} times with an average of: {$a->s}';
+$string['timesrating'] = 'This page has been rated  {$a->c} times with an average of: {$a->s}';
 $string['updatedpages'] = "Updated pages";
 $string['updatedpages_help'] = "Recently updated wiki pages";
 $string['updatedwikipages'] = "Updated wiki pages";
@@ -312,3 +311,5 @@ $string['wikipages'] = 'Wiki pages';
 $string['wrongversionlock'] = 'Another user has edited this page while you were editing and your content is obsolete.';
 $string['wrongversionsave'] = 'Another user has created a version while you were editing and you have overwritten his changes, check the page history.';
 
+// Deprecated since Moodle 4.5.
+$string['tagsdeleted'] = 'Wiki tags have been deleted';

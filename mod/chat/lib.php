@@ -1208,6 +1208,7 @@ function chat_print_overview() {
  */
 function chat_reset_course_form_definition(&$mform) {
     $mform->addElement('header', 'chatheader', get_string('modulenameplural', 'chat'));
+    $mform->addElement('static', 'chatdelete', get_string('delete'));
     $mform->addElement('advcheckbox', 'reset_chat', get_string('removemessages', 'chat'));
 }
 
@@ -1234,26 +1235,34 @@ function chat_reset_userdata($data) {
     global $CFG, $DB;
 
     $componentstr = get_string('modulenameplural', 'chat');
-    $status = array();
+    $status = [];
 
     if (!empty($data->reset_chat)) {
         $chatessql = "SELECT ch.id
                         FROM {chat} ch
                        WHERE ch.course=?";
-        $params = array($data->courseid);
+        $params = [$data->courseid];
 
         $DB->delete_records_select('chat_messages', "chatid IN ($chatessql)", $params);
         $DB->delete_records_select('chat_messages_current', "chatid IN ($chatessql)", $params);
         $DB->delete_records_select('chat_users', "chatid IN ($chatessql)", $params);
-        $status[] = array('component' => $componentstr, 'item' => get_string('removemessages', 'chat'), 'error' => false);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('removemessages', 'chat'),
+            'error' => false,
+        ];
     }
 
     // Updating dates - shift may be negative too.
     if ($data->timeshift) {
         // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
         // See MDL-9367.
-        shift_course_mod_dates('chat', array('chattime'), $data->timeshift, $data->courseid);
-        $status[] = array('component' => $componentstr, 'item' => get_string('datechanged'), 'error' => false);
+        shift_course_mod_dates('chat', ['chattime'], $data->timeshift, $data->courseid);
+        $status[] = [
+            'component' => $componentstr,
+            'item' => get_string('date'),
+            'error' => false,
+        ];
     }
 
     return $status;

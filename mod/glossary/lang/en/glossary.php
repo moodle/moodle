@@ -109,7 +109,7 @@ $string['definitions'] = 'Definitions';
 $string['deleteentry'] = 'Delete entry';
 $string['deletecategory'] = 'Delete category';
 $string['deleteentrya'] = 'Delete entry: {$a}';
-$string['deletenotenrolled'] = 'Delete entries by users not enrolled';
+$string['deletenotenrolled'] = 'Entries by users not enrolled';
 $string['deletingcomment'] = 'Deleting comment';
 $string['deletingnoneemptycategory'] = 'Deleting this category will not delete the entries it contains - they will be marked as uncategorised.';
 $string['descending'] = 'descending';
@@ -301,9 +301,9 @@ $string['privacy:metadata:glossary_entries:timemodified'] = 'The timestamp indic
 $string['question'] = 'Question';
 $string['rejectedentries'] = 'Rejected entries';
 $string['rejectionrpt'] = 'Rejection report';
-$string['removeallglossarytags'] = 'Remove all glossary tags';
+$string['removeallglossarytags'] = 'All glossary tags';
 $string['resetglossaries'] = 'Delete entries from';
-$string['resetglossariesall'] = 'Delete entries from all glossaries';
+$string['resetglossariesall'] = 'Entries from all glossaries';
 $string['rssarticles'] = 'Number of RSS recent articles';
 $string['rssarticles_help'] = 'This setting specifies the number of glossary entry concepts to include in the RSS feed. Between 5 and 20 generally acceptable.';
 $string['rsssubscriberss'] = 'Display the RSS feed for \'{$a}\' concepts';
@@ -328,7 +328,6 @@ $string['special'] = 'Special';
 $string['standardview'] = 'Browse by alphabet';
 $string['studentcanpost'] = 'Students can add entries';
 $string['tagarea_glossary_entries'] = 'Glossary entries';
-$string['tagsdeleted'] = 'Glossary tags have been deleted';
 $string['totalentries'] = 'Total entries';
 $string['usedynalink'] = 'Automatically link glossary entries';
 $string['usedynalink_help'] = 'If site-wide glossary auto-linking has been enabled by an administrator and this setting is enabled, the "Add a new entry" form includes the option to automatically link the entry wherever the concept words and phrases appear throughout the rest of the course.';
@@ -341,3 +340,6 @@ $string['youarenottheauthor'] = 'You are not the author of this comment, so you 
 
 // Deprecated since 4.3.
 $string['completionentriesgroup'] = 'Require entries';
+
+// Deprecated since 4.5.
+$string['tagsdeleted'] = 'Glossary tags have been deleted';

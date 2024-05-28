@@ -1,1 +1,2 @@
 completionentriesgroup,mod_glossary
+tagsdeleted,mod_glossary

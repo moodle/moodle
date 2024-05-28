@@ -1187,13 +1187,13 @@ class assign {
         global $CFG, $DB;
 
         $componentstr = get_string('modulenameplural', 'assign');
-        $status = array();
+        $status = [];
 
         $fs = get_file_storage();
         if (!empty($data->reset_assign_submissions)) {
             // Delete files associated with this assignment.
             foreach ($this->submissionplugins as $plugin) {
-                $fileareas = array();
+                $fileareas = [];
                 $plugincomponent = $plugin->get_subtype() . '_' . $plugin->get_type();
                 $fileareas = $plugin->get_file_areas();
                 foreach ($fileareas as $filearea => $notused) {
@@ -1201,9 +1201,11 @@ class assign {
                 }
 
                 if (!$plugin->delete_instance()) {
-                    $status[] = array('component'=>$componentstr,
-                                      'item'=>get_string('deleteallsubmissions', 'assign'),
-                                      'error'=>$plugin->get_error());
+                    $status[] = [
+                        'component' => $componentstr,
+                        'item' => get_string('deleteallsubmissions', 'assign'),
+                        'error' => $plugin->get_error(),
+                    ];
                 }
             }
 
@@ -1216,32 +1218,36 @@ class assign {
                 }
 
                 if (!$plugin->delete_instance()) {
-                    $status[] = array('component'=>$componentstr,
-                                      'item'=>get_string('deleteallsubmissions', 'assign'),
-                                      'error'=>$plugin->get_error());
+                    $status[] = [
+                        'component' => $componentstr,
+                        'item ' => get_string('deleteallsubmissions', 'assign'),
+                        'error' => $plugin->get_error(),
+                    ];
                 }
             }
 
-            $assignids = $DB->get_records('assign', array('course' => $data->courseid), '', 'id');
+            $assignids = $DB->get_records('assign', ['course' => $data->courseid], '', 'id');
             list($sql, $params) = $DB->get_in_or_equal(array_keys($assignids));
 
             $DB->delete_records_select('assign_submission', "assignment $sql", $params);
             $DB->delete_records_select('assign_user_flags', "assignment $sql", $params);
 
-            $status[] = array('component'=>$componentstr,
-                              'item'=>get_string('deleteallsubmissions', 'assign'),
-                              'error'=>false);
+            $status[] = [
+                'component' => $componentstr,
+                'item' => get_string('deleteallsubmissions', 'assign'),
+                'error' => false,
+            ];
 
             if (!empty($data->reset_gradebook_grades)) {
                 $DB->delete_records_select('assign_grades', "assignment $sql", $params);
                 // Remove all grades from gradebook.
-                require_once($CFG->dirroot.'/mod/assign/lib.php');
+                require_once($CFG->dirroot . '/mod/assign/lib.php');
                 assign_reset_gradebook($data->courseid);
             }
 
             // Reset revealidentities for assign if blindmarking is enabled.
             if ($this->get_instance()->blindmarking) {
-                $DB->set_field('assign', 'revealidentities', 0, array('id' => $this->get_instance()->id));
+                $DB->set_field('assign', 'revealidentities', 0, ['id' => $this->get_instance()->id]);
             }
         }
 
@@ -1250,50 +1256,65 @@ class assign {
         // Remove user overrides.
         if (!empty($data->reset_assign_user_overrides)) {
             $DB->delete_records_select('assign_overrides',
-                'assignid IN (SELECT id FROM {assign} WHERE course = ?) AND userid IS NOT NULL', array($data->courseid));
-            $status[] = array(
+                'assignid IN (SELECT id FROM {assign} WHERE course = ?) AND userid IS NOT NULL', [$data->courseid]);
+            $status[] = [
                 'component' => $componentstr,
-                'item' => get_string('useroverridesdeleted', 'assign'),
-                'error' => false);
+                'item' => get_string('useroverrides', 'assign'),
+                'error' => false,
+            ];
             $purgeoverrides = true;
         }
         // Remove group overrides.
         if (!empty($data->reset_assign_group_overrides)) {
             $DB->delete_records_select('assign_overrides',
-                'assignid IN (SELECT id FROM {assign} WHERE course = ?) AND groupid IS NOT NULL', array($data->courseid));
-            $status[] = array(
+                'assignid IN (SELECT id FROM {assign} WHERE course = ?) AND groupid IS NOT NULL', [$data->courseid]);
+            $status[] = [
                 'component' => $componentstr,
-                'item' => get_string('groupoverridesdeleted', 'assign'),
-                'error' => false);
+                'item' => get_string('groupoverrides', 'assign'),
+                'error' => false,
+            ];
             $purgeoverrides = true;
         }
 
         // Updating dates - shift may be negative too.
         if ($data->timeshift) {
-            $DB->execute("UPDATE {assign_overrides}
-                         SET allowsubmissionsfromdate = allowsubmissionsfromdate + ?
-                       WHERE assignid = ? AND allowsubmissionsfromdate <> 0",
-                array($data->timeshift, $this->get_instance()->id));
-            $DB->execute("UPDATE {assign_overrides}
-                         SET duedate = duedate + ?
-                       WHERE assignid = ? AND duedate <> 0",
-                array($data->timeshift, $this->get_instance()->id));
-            $DB->execute("UPDATE {assign_overrides}
-                         SET cutoffdate = cutoffdate + ?
-                       WHERE assignid =? AND cutoffdate <> 0",
-                array($data->timeshift, $this->get_instance()->id));
+            $sql = "UPDATE {assign_overrides}
+                       SET allowsubmissionsfromdate = allowsubmissionsfromdate + ?
+                     WHERE assignid = ? AND allowsubmissionsfromdate <> 0";
+            $DB->execute(
+                $sql,
+                [$data->timeshift, $this->get_instance()->id],
+            );
+            $sql = "UPDATE {assign_overrides}
+                       SET duedate = duedate + ?
+                     WHERE assignid = ? AND duedate <> 0";
+            $DB->execute(
+                $sql,
+                [$data->timeshift, $this->get_instance()->id],
+            );
+            $sql = "UPDATE {assign_overrides}
+                       SET cutoffdate = cutoffdate + ?
+                     WHERE assignid =? AND cutoffdate <> 0";
+            $DB->execute(
+                $sql,
+                [$data->timeshift, $this->get_instance()->id],
+            );
 
             $purgeoverrides = true;
 
             // Any changes to the list of dates that needs to be rolled should be same during course restore and course reset.
             // See MDL-9367.
-            shift_course_mod_dates('assign',
-                                    array('duedate', 'allowsubmissionsfromdate', 'cutoffdate'),
-                                    $data->timeshift,
-                                    $data->courseid, $this->get_instance()->id);
-            $status[] = array('component'=>$componentstr,
-                              'item'=>get_string('datechanged'),
-                              'error'=>false);
+            shift_course_mod_dates(
+                'assign',
+                ['duedate', 'allowsubmissionsfromdate', 'cutoffdate'],
+                $data->timeshift,
+                $data->courseid, $this->get_instance()->id,
+            );
+            $status[] = [
+                'component' => $componentstr,
+                'item' => get_string('date'),
+                'error' => false,
+            ];
         }
 
         if ($purgeoverrides) {
