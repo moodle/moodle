@@ -33,6 +33,7 @@ use xmldb_table;
 class persistent_test extends advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->make_persistent_table();
         $this->make_second_persistent_table();
         $this->resetAfterTest();

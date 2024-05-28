@@ -46,6 +46,7 @@ class groupconcatdistinct_test extends core_reportbuilder_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         if (!groupconcatdistinct::compatible(column::TYPE_TEXT)) {
             $this->markTestSkipped('Distinct group concatenation not supported in ' . $DB->get_dbfamily());

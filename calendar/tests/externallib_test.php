@@ -43,6 +43,7 @@ class externallib_test extends externallib_advanced_testcase {
     protected function setUp(): void {
         global $CFG;
         require_once($CFG->dirroot . '/calendar/externallib.php');
+        parent::setUp();
     }
 
     /** Create calendar events or update them

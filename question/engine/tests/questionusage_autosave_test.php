@@ -747,5 +747,6 @@ class questionusage_autosave_test extends \qbehaviour_walkthrough_test_base {
         // This test relies on the destructor for the second DB connection being called before running the next test.
         // Without this change - there will be unit test failures on "some" DBs (MySQL).
         gc_collect_cycles();
+        parent::tearDown();
     }
 }

@@ -29,6 +29,7 @@ class events_test extends \advanced_testcase {
      * Setup is called before calling test case.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

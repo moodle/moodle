@@ -49,6 +49,7 @@ require_once(__DIR__ . '/../fixtures/event.php');
 class provider_test extends provider_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Logging waits till the transaction gets committed.
     }

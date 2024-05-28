@@ -63,9 +63,11 @@ class test_response_answer_comparer implements \question_response_answer_compare
  */
 class question_first_matching_answer_grading_strategy_test extends \advanced_testcase {
     protected function setUp(): void {
+        parent::setUp();
     }
 
     protected function tearDown(): void {
+        parent::tearDown();
     }
 
     public function test_no_answers_gives_null(): void {

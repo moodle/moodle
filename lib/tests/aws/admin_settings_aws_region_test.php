@@ -44,6 +44,7 @@ class admin_settings_aws_region_test extends \advanced_testcase {
     public function tearDown(): void {
         $admin = admin_get_root();
         $admin->purge_children(true);
+        parent::tearDown();
     }
     /**
      * Test that output_html() method works and returns HTML string with expected content.

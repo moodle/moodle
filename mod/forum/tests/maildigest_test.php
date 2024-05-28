@@ -53,6 +53,7 @@ class maildigest_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         // Messaging is not compatible with transactions...
         $this->preventResetByRollback();
@@ -94,6 +95,7 @@ class maildigest_test extends \advanced_testcase {
 
         $this->mailsink->clear();
         $this->mailsink->close();
+        parent::tearDown();
     }
 
     /**

@@ -34,6 +34,7 @@ require_once($CFG->dirroot . '/message/tests/messagelib_test.php');
 class helper_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 

@@ -41,6 +41,7 @@ class subscriptions_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
@@ -56,6 +57,7 @@ class subscriptions_test extends \advanced_testcase {
         // tests using these functions.
         \mod_forum\subscriptions::reset_forum_cache();
         \mod_forum\subscriptions::reset_discussion_cache();
+        parent::tearDown();
     }
 
     /**

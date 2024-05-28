@@ -39,6 +39,7 @@ class provider_test extends provider_testcase {
      * Basic setup for these tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 

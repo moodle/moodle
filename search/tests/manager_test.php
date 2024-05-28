@@ -47,6 +47,7 @@ class manager_test extends \advanced_testcase {
     protected $coursesareaid = null;
 
     public function setUp(): void {
+        parent::setUp();
         $this->forumpostareaid = \core_search\manager::generate_areaid('mod_forum', 'post');
         $this->coursesareaid = \core_search\manager::generate_areaid('core_course', 'course');
     }

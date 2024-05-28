@@ -44,6 +44,7 @@ class search_test extends \advanced_testcase {
     protected $userareaid = null;
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         set_config('enableglobalsearch', true);
 

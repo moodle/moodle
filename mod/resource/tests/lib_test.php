@@ -46,6 +46,7 @@ class lib_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/resource/lib.php');
+        parent::setUpBeforeClass();
     }
 
     /**

@@ -265,6 +265,7 @@ class renderable_test extends \advanced_testcase {
      * @throws \coding_exception
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->courses[self::COURSE_SEPARATE_GROUP] = $this->getDataGenerator()->create_course(['groupmode' => SEPARATEGROUPS]);
         $this->courses[self::COURSE_VISIBLE_GROUP] = $this->getDataGenerator()->create_course(['groupmode' => VISIBLEGROUPS]);

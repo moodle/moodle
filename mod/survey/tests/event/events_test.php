@@ -37,6 +37,7 @@ class events_test extends \advanced_testcase {
      * Setup.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         // Survey module is disabled by default, enable it for testing.
         $manager = \core_plugin_manager::resolve_plugininfo_class('mod');

@@ -38,11 +38,13 @@ require_once($CFG->libdir . '/filestorage/file_system.php');
 class file_system_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         get_file_storage(true);
     }
 
     public function tearDown(): void {
         get_file_storage(true);
+        parent::tearDown();
     }
 
     /**

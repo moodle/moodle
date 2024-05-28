@@ -59,6 +59,7 @@ class prediction_actions_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->setAdminUser();
         $target = \core_analytics\manager::get_target('test_target_shortname');

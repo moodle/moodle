@@ -41,6 +41,7 @@ class provider_test extends provider_testcase {
      * Overriding setUp() function to always reset after tests.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
     }
 

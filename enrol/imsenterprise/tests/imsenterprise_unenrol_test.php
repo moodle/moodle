@@ -47,6 +47,7 @@ class imsenterprise_unenrol_test extends \advanced_testcase {
      * Setup required for all tests.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
         $this->imsplugin = enrol_get_plugin('imsenterprise');
         $this->set_test_config();

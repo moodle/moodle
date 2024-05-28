@@ -32,12 +32,14 @@ class geoplugin_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once("{$CFG->dirroot}/iplookup/lib.php");
+        parent::setUpBeforeClass();
     }
 
     /**
      * In order to execute this test PHPUNIT_LONGTEST should be defined as true in phpunit.xml or directly in config.php
      */
     public function setUp(): void {
+        parent::setUp();
         if (!PHPUNIT_LONGTEST) {
             $this->markTestSkipped('PHPUNIT_LONGTEST is not defined');
         }

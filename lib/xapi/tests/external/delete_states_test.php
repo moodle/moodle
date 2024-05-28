@@ -47,6 +47,7 @@ class delete_states_test extends externallib_advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->dirroot . '/lib/xapi/tests/helper.php');
+        parent::setUpBeforeClass();
     }
 
     /**

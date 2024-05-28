@@ -36,6 +36,7 @@ class completion_criteria_test extends \advanced_testcase {
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_duration.php');
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_grade.php');
         require_once($CFG->dirroot.'/completion/criteria/completion_criteria_date.php');
+        parent::setUp();
 
         $this->setAdminUser();
         $this->resetAfterTest();

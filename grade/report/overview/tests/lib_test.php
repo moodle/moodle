@@ -33,6 +33,7 @@ class lib_test extends \advanced_testcase {
         global $CFG;
         require_once($CFG->dirroot . '/grade/report/overview/lib.php');
         require_once($CFG->dirroot . '/grade/querylib.php');
+        parent::setUp();
     }
 
     /**

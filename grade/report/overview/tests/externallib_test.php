@@ -65,6 +65,7 @@ class externallib_test extends externallib_advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
         $this->resetAfterTest(true);
 
         $s1grade1 = 80;

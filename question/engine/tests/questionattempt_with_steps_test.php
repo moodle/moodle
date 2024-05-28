@@ -43,6 +43,7 @@ class questionattempt_with_steps_test extends \advanced_testcase {
     private $qa;
 
     protected function setUp(): void {
+        parent::setUp();
         $this->question = \test_question_maker::make_question('description');
         $this->qa = new testable_question_attempt($this->question, 0, null, 2);
         for ($i = 0; $i < 3; $i++) {
@@ -53,6 +54,7 @@ class questionattempt_with_steps_test extends \advanced_testcase {
 
     protected function tearDown(): void {
         $this->qa = null;
+        parent::tearDown();
     }
 
     public function test_get_step_before_start(): void {

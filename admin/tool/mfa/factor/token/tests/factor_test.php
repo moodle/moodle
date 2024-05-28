@@ -35,6 +35,7 @@ class factor_test extends \advanced_testcase {
     public \factor_token\factor $factor;
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
         $this->factor = new \factor_token\factor('token');
     }

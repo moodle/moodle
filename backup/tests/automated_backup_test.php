@@ -52,6 +52,7 @@ class automated_backup_test extends \advanced_testcase {
 
     protected function setUp(): void {
         global $DB, $CFG;
+        parent::setUp();
 
         $this->resetAfterTest(true);
         $this->setAdminUser();

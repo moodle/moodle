@@ -37,6 +37,7 @@ defined('MOODLE_INTERNAL') || die();
 class lib_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         // Chat module is disabled by default, enable it for testing.

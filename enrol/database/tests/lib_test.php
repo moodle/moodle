@@ -46,6 +46,7 @@ class lib_test extends \advanced_testcase {
             sqlsrv_configure("LogSubsystems", SQLSRV_LOG_SYSTEM_OFF);
             sqlsrv_configure("LogSeverity", SQLSRV_LOG_SEVERITY_ERROR);
         }
+        parent::tearDownAfterClass();
     }
 
     /**

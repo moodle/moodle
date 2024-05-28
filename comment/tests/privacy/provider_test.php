@@ -42,6 +42,7 @@ use core_privacy\tests\request\approved_contextlist;
 class provider_test extends provider_testcase {
 
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

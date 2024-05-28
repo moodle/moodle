@@ -60,6 +60,7 @@ class calendartype_test extends \advanced_testcase {
      * Test set up.
      */
     protected function setUp(): void {
+        parent::setUp();
         // The user we are going to test this on.
         $this->user = self::getDataGenerator()->create_user();
         self::setUser($this->user);

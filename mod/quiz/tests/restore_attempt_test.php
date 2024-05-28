@@ -37,6 +37,7 @@ class restore_attempt_test extends \advanced_testcase {
         global $CFG;
 
         require_once("{$CFG->dirroot}/backup/util/includes/restore_includes.php");
+        parent::setUpBeforeClass();
     }
 
     /**

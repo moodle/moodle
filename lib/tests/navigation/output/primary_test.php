@@ -32,6 +32,7 @@ class primary_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $PAGE;
+        parent::setUp();
         $this->resetAfterTest();
         $pagecourse = $this->getDataGenerator()->create_course();
         $assign = $this->getDataGenerator()->create_module('assign', ['course' => $pagecourse->id]);

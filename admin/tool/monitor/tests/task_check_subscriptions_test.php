@@ -39,6 +39,7 @@ class task_check_subscriptions_test extends \advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
         set_config('enablemonitor', 1, 'tool_monitor');
         $this->resetAfterTest(true);
 

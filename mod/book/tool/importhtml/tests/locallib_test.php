@@ -40,6 +40,7 @@ require_once($CFG->dirroot.'/mod/book/tool/importhtml/locallib.php');
 class locallib_test extends \advanced_testcase {
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

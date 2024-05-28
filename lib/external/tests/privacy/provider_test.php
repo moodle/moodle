@@ -43,6 +43,7 @@ use core_privacy\tests\provider_testcase;
  */
 class provider_test extends provider_testcase {
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

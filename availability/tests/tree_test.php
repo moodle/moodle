@@ -28,6 +28,7 @@ class tree_test extends \advanced_testcase {
         // Load the mock classes so they can be used.
         require_once(__DIR__ . '/fixtures/mock_condition.php');
         require_once(__DIR__ . '/fixtures/mock_info.php');
+        parent::setUp();
     }
 
     /**

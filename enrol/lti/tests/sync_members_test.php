@@ -59,6 +59,7 @@ class sync_members_test extends \advanced_testcase {
     protected $resourcelink;
 
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         // Set this user as the admin.

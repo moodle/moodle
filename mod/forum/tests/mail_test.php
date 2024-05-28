@@ -57,6 +57,7 @@ class mail_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         // We must clear the subscription caches. This has to be done both before each test, and after in case of other
         // tests using these functions.
@@ -87,6 +88,7 @@ class mail_test extends \advanced_testcase {
         $this->mailsink->clear();
         $this->mailsink->close();
         unset($this->mailsink);
+        parent::tearDown();
     }
 
     /**

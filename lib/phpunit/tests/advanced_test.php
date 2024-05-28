@@ -29,6 +29,7 @@ class advanced_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once(__DIR__ . '/fixtures/adhoc_test_task.php');
+        parent::setUpBeforeClass();
     }
 
     public function test_debugging(): void {

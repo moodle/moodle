@@ -46,6 +46,7 @@ class plugin_test extends \advanced_testcase {
      * Tests set up.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         $this->cfcat = $this->get_generator()->create_category();

@@ -88,6 +88,7 @@ class cachestore_cluster_redis_test extends \advanced_testcase {
      * Set up the test environment.
      */
     public function setUp(): void {
+        parent::setUp();
         if (!cachestore_redis::are_requirements_met()) {
             $this->markTestSkipped('Could not test cachestore_redis with cluster, missing requirements.');
         } else if (!\cache_helper::is_cluster_available()) {

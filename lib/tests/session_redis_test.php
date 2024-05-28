@@ -51,6 +51,7 @@ class session_redis_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
 
         if (!extension_loaded('redis')) {
             $this->markTestSkipped('Redis extension not loaded.');
@@ -108,6 +109,7 @@ class session_redis_test extends \advanced_testcase {
             $this->redis->del($keyname);
         }
         $this->redis->close();
+        parent::tearDown();
     }
 
     public function test_normal_session_read_only(): void {

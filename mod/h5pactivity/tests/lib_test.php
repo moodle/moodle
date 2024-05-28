@@ -35,6 +35,7 @@ class lib_test extends advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once("{$CFG->dirroot}/mod/h5pactivity/lib.php");
+        parent::setUpBeforeClass();
     }
 
     /**

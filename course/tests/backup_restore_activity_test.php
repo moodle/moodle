@@ -34,6 +34,7 @@ class backup_restore_activity_test extends \advanced_testcase {
         global $CFG;
         require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
         require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+        parent::setUpBeforeClass();
     }
 
     /**

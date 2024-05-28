@@ -35,6 +35,7 @@ class formatactions_test extends \advanced_testcase {
         require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest_courseactions.php');
         require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest_sectionactions.php');
         require_once($CFG->dirroot . '/course/format/tests/fixtures/format_theunittest_cmactions.php');
+        parent::setUpBeforeClass();
     }
 
     /**

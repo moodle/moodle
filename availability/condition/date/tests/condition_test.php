@@ -33,6 +33,7 @@ class condition_test extends \advanced_testcase {
         // Load the mock info class so that it can be used.
         global $CFG;
         require_once($CFG->dirroot . '/availability/tests/fixtures/mock_info.php');
+        parent::setUp();
     }
 
     /**

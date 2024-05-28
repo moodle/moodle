@@ -46,6 +46,7 @@ class externallib_test extends \advanced_testcase {
      * This is executed before running any test in this file.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->preventResetByRollback(); // Messaging is not compatible with transactions.
         $this->messagesink = $this->redirectMessages();
         $this->resetAfterTest();

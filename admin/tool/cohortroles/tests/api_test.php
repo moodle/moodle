@@ -43,6 +43,7 @@ class api_test extends \advanced_testcase {
      * Setup function- we will create a course and add an assign instance to it.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
 
         // Create some users.

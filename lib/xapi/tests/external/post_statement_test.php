@@ -66,6 +66,7 @@ class post_statement_test extends externallib_advanced_testcase {
      */
     public function setUp(): void {
         global $CFG;
+        parent::setUp();
         // We disable group actors on the test xapi_handler.
         $CFG->xapitestforcegroupactors = false;
     }

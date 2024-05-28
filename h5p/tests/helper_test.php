@@ -35,6 +35,7 @@ class helper_test extends \advanced_testcase {
      * Register the H5P autoloader
      */
     protected function setUp(): void {
+        parent::setUp();
         autoloader::register();
     }
 

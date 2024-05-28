@@ -30,6 +30,7 @@ class generator_test extends \advanced_testcase {
      * Setup testcase.
      */
     public function setUp(): void {
+        parent::setUp();
         // Survey module is disabled by default, enable it for testing.
         $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
         $manager::enable_plugin('survey', 1);

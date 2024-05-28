@@ -53,6 +53,7 @@ class engine_test extends \advanced_testcase {
      * @return void
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
 
         if ($this->requires_manual_index_update()) {
@@ -86,6 +87,7 @@ class engine_test extends \advanced_testcase {
             $this->generator->teardown();
             $this->generator = null;
         }
+        parent::tearDown();
     }
 
     /**

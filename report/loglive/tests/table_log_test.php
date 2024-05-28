@@ -224,6 +224,7 @@ class table_log_test extends advanced_testcase {
      */
     public function setUp(): void {
         global $DB;
+        parent::setUp();
         $this->resetAfterTest();
         $this->preventResetByRollback(); // This is to ensure that we can actually trigger event and record them in the log store.
         $this->courses[self::COURSE_SEPARATE_GROUP] = $this->getDataGenerator()->create_course(['groupmode' => SEPARATEGROUPS]);

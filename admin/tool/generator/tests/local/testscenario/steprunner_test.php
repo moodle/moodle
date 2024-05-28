@@ -32,6 +32,7 @@ use Behat\Gherkin\Node\StepNode;
  */
 class steprunner_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
+        parent::setUpBeforeClass();
         // Call the init method to include all behat libraries and attributes.
         $runner = new runner();
         $runner->init();

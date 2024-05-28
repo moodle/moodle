@@ -33,6 +33,7 @@ class globalsearch_test extends advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/../../moodleblock.class.php');
         require_once(__DIR__ . '/../block_globalsearch.php');
+        parent::setUpBeforeClass();
     }
 
     /**

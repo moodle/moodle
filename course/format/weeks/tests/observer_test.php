@@ -29,6 +29,7 @@ class observer_test extends \advanced_testcase {
      * Test setup.
      */
     public function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest();
     }
 

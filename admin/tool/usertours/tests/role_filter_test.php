@@ -55,6 +55,7 @@ class role_filter_test extends \advanced_testcase {
 
     public function setUp(): void {
         global $DB;
+        parent::setUp();
 
         $this->resetAfterTest(true);
         $generator = $this->getDataGenerator();

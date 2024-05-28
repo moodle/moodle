@@ -41,6 +41,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Setup testcase.
      */
     public function setUp(): void {
+        parent::setUp();
         // Chat module is disabled by default, enable it for testing.
         $manager = \core_plugin_manager::resolve_plugininfo_class('mod');
         $manager::enable_plugin('chat', 1);

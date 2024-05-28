@@ -35,6 +35,7 @@ class ocs_test extends \advanced_testcase {
      * SetUp to create issuer and endpoints for OCS testing.
      */
     protected function setUp(): void {
+        parent::setUp();
         $this->resetAfterTest(true);
 
         // Admin is neccessary to create issuer object.

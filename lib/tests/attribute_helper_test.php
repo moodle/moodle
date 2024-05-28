@@ -28,6 +28,7 @@ namespace core;
 final class attribute_helper_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         require_once(__DIR__ . '/fixtures/attribute_helper_example.php');
+        parent::setUpBeforeClass();
     }
 
     /**

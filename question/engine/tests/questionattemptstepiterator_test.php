@@ -38,6 +38,7 @@ class questionattemptstepiterator_test extends \advanced_testcase {
     private $iterator;
 
     protected function setUp(): void {
+        parent::setUp();
         $question = \test_question_maker::make_question('description');
         $this->qa = new testable_question_attempt($question, 0);
         for ($i = 0; $i < 3; $i++) {
@@ -50,6 +51,7 @@ class questionattemptstepiterator_test extends \advanced_testcase {
     protected function tearDown(): void {
         $this->qa = null;
         $this->iterator = null;
+        parent::tearDown();
     }
 
     public function test_foreach_loop(): void {

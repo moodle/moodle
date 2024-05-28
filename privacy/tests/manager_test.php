@@ -41,6 +41,7 @@ class manager_test extends \advanced_testcase {
      */
     public function tearDown(): void {
         \core_privacy\local\request\writer::reset();
+        parent::tearDown();
     }
 
     /**

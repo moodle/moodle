@@ -35,6 +35,7 @@ class sectiondelegate_test extends \advanced_testcase {
     public static function setUpBeforeClass(): void {
         global $CFG;
         require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
+        parent::setUpBeforeClass();
     }
 
     /**

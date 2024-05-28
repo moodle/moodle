@@ -547,5 +547,6 @@ class store_test extends \advanced_testcase {
             gc_enable();
         }
         $this->wedisabledgc = false;
+        parent::tearDown();
     }
 }
