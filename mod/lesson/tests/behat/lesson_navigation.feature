@@ -17,10 +17,13 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | teacher1 | C1 | editingteacher |
       | student1 | C1 | student |
     And the following "activities" exist:
-      | activity   | name             | course | idnumber    |
-      | lesson     | Test lesson name | C1     | lesson1     |
+      | activity | name                                                                                                       | course | idnumber |
+      | lesson   | Test lesson name                                                                                           | C1     | lesson1  |
+      | page     | <span class="multilang" lang="en">A page (EN)</span><span class="multilang" lang="eu">Orri bat (EU)</span> | C1     | PAGE1    |
 
   Scenario: Student navigation with pages and questions
+    Given the "multilang" filter is "on"
+    And the "multilang" filter applies to "content and headings"
     Given the following "mod_lesson > pages" exist:
       | lesson           | qtype   | title                 | content              |
       | Test lesson name | content | First page name       | First page contents  |
@@ -33,7 +36,11 @@ Feature: In a lesson activity, students can navigate through a series of pages i
       | Second page name      | Next page     |                  | Next page        | 0     |
       | Hardest question ever | 2             | Correct answer   | End of lesson    | 1     |
       | Hardest question ever | 1             | Incorrect answer | Second page name | 0     |
-    When I am on the "Test lesson name" "lesson activity" page logged in as student1
+    When I am on the "Test lesson name" "lesson activity editing" page logged in as teacher1
+    And I expand all fieldsets
+    And I set the field "Link to next activity" to "Page - A page (EN)"
+    And I press "Save and display"
+    And I am on the "Test lesson name" "lesson activity" page logged in as student1
     Then I should see "First page contents"
     And I press "Next page"
     And I should see "Second page contents"
@@ -60,6 +67,8 @@ Feature: In a lesson activity, students can navigate through a series of pages i
     And I press "Continue"
     And I should see "Congratulations - end of lesson reached"
     And I should see "Your score is 0 (out of 1)."
+    And I should see "Go to A page (EN)"
+    And I should not see "Orri bat (EU)"
 
   Scenario: Student reattempts a question until out of attempts
     Given the following "mod_lesson > page" exist:
