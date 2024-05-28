@@ -67,18 +67,6 @@ function xmldb_data_upgrade($oldversion) {
     // Automatically generated Moodle v4.3.0 release upgrade line.
     // Put any upgrade step following this.
 
-    if ($oldversion < 2023100901) {
-        // Clean param1 for "text" fields because it was unused.
-        $DB->execute(
-            "UPDATE {data_fields}
-                SET param1 = ''
-              WHERE type = 'text'"
-        );
-
-        // Data savepoint reached.
-        upgrade_mod_savepoint(true, 2023100901, 'data');
-    }
-
     // Automatically generated Moodle v4.4.0 release upgrade line.
     // Put any upgrade step following this.
 
