@@ -172,7 +172,7 @@ export default class extends DndSection {
             newAction = 'sectionShow';
         }
         // Find the affected action.
-        const affectedAction = this.getElement(selector);
+        const affectedAction = this._getActionMenu(selector);
         if (!affectedAction) {
             return;
         }
@@ -194,5 +194,19 @@ export default class extends DndSection {
                 Templates.replaceNode(icon, pixHtml, '');
             }
         }
+    }
+
+    /**
+     * Get the action menu element from the selector.
+     *
+     * @param {string} selector The selector to find the action menu.
+     * @returns The action menu element.
+     */
+    _getActionMenu(selector) {
+        if (this.getElement('.section_action_menu')) {
+            return this.getElement(selector);
+        }
+
+        return document.querySelector(selector);
     }
 }

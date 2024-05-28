@@ -1183,7 +1183,7 @@ class behat_course extends behat_base {
                     "/descendant::div[contains(concat(' ', @class, ' '), ' lightbox ')][contains(@style, 'display: none')]";
 
             // Component based courses do not use lightboxes anymore but js depending.
-            $sectionreadyxpath = "//*[contains(@id,'page-content')]" .
+            $sectionreadyxpath = "//*[contains(@id,'page')]" .
                     "/descendant::*[contains(concat(' ', normalize-space(@class), ' '), ' stateready ')]";
 
             $duplicationreadyxpath = "$hiddenlightboxxpath | $sectionreadyxpath";

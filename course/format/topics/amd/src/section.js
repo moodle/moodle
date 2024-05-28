@@ -35,7 +35,6 @@ class HighlightSection extends BaseComponent {
         this.name = 'format_topics_section';
         // Default query selectors.
         this.selectors = {
-            SECTION: `[data-for='section']`,
             SETMARKER: `[data-action="sectionHighlight"]`,
             REMOVEMARKER: `[data-action="sectionUnhighlight"]`,
             ACTIONTEXT: `.menu-action-text`,
@@ -80,7 +79,7 @@ class HighlightSection extends BaseComponent {
             newAction = this.formatActions.HIGHLIGHT;
         }
         // Find the affected action.
-        const affectedAction = this.getElement(`${this.selectors.SECTION} ${selector}`, element.id);
+        const affectedAction = this.getElement(`${selector}`, element.id);
         if (!affectedAction) {
             return;
         }
@@ -108,7 +107,7 @@ export const init = () => {
     const courseEditor = getCurrentCourseEditor();
     if (courseEditor.supportComponents && courseEditor.isEditing) {
         new HighlightSection({
-            element: document.getElementById('region-main'),
+            element: document.getElementById('page'),
             reactive: courseEditor,
         });
     }
