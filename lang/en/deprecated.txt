@@ -110,5 +110,7 @@ aria:dropdowngrades,core_grades
 viewresults,core
 coursesearch,core
 coursesearch_help,core
+blocknotexist,core_debug
+modulenotexist,core_debug
 coursecalendar,core_calendar
 datechanged,core
