@@ -33,8 +33,8 @@
 }}
 <button class="btn add-content section-modchooser section-modchooser-link activitychooser-button d-flex justify-content-center align-items-center p-1 icon-no-margin"
         data-action="open-chooser"
-        data-sectionid="{{sectionnum}}"
-        {{#sectionreturn}}data-sectionreturnid="{{.}}"{{/sectionreturn}}
+        data-sectionnum="{{sectionnum}}"
+        {{#sectionreturn}}data-sectionreturnnum="{{.}}"{{/sectionreturn}}
         data-beforemod="{{id}}"
         aria-label="{{#str}}insertresourceoractivitybefore, core, { "activityname": {{#quote}} {{activityname}} {{/quote}} } {{/str}}"
         tabindex="0"

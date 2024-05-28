@@ -98,10 +98,10 @@ const registerListenerEvents = (courseId, chooserConfig) => {
     const fetchFooterData = (() => {
         let footerInnerPromise = null;
 
-        return (sectionId) => {
+        return (sectionnum) => {
             if (!footerInnerPromise) {
                 footerInnerPromise = new Promise((resolve) => {
-                    resolve(Repository.fetchFooterData(courseId, sectionId));
+                    resolve(Repository.fetchFooterData(courseId, sectionnum));
                 });
             }
 
@@ -116,21 +116,32 @@ const registerListenerEvents = (courseId, chooserConfig) => {
         document.addEventListener(event, async(e) => {
             if (e.target.closest(selectors.elements.sectionmodchooser)) {
                 let caller;
+                let sectionnum;
                 // We need to know who called this.
                 // Standard courses use the ID in the main section info.
                 const sectionDiv = e.target.closest(selectors.elements.section);
                 // Front page courses need some special handling.
                 const button = e.target.closest(selectors.elements.sectionmodchooser);
 
-                // If we don't have a section ID use the fallback ID.
-                // We always want the sectionDiv caller first as it keeps track of section ID's after DnD changes.
+                // If we don't have a section number use the fallback ID.
+                // We always want the sectionDiv caller first as it keeps track of section number's after DnD changes.
                 // The button attribute is always just a fallback for us as the section div is not always available.
                 // A YUI change could be done maybe to only update the button attribute but we are going for minimal change here.
-                if (sectionDiv !== null && sectionDiv.hasAttribute('data-sectionid')) {
+                if (sectionDiv !== null && sectionDiv.hasAttribute('data-number')) {
                     // We check for attributes just in case of outdated contrib course formats.
                     caller = sectionDiv;
+                    sectionnum = sectionDiv.getAttribute('data-number');
                 } else {
                     caller = button;
+
+                    if (caller.hasAttribute('data-sectionid')) {
+                        window.console.warn(
+                            'The data-sectionid attribute has been deprecated. ' +
+                            'Please update your code to use data-sectionnum instead.'
+                        );
+                        caller.setAttribute('data-sectionnum', caller.dataset.sectionid);
+                    }
+                    sectionnum = caller.dataset.sectionnum;
                 }
 
                 // We want to show the modal instantly but loading whilst waiting for our data.
@@ -139,7 +150,7 @@ const registerListenerEvents = (courseId, chooserConfig) => {
                     bodyPromiseResolver = resolve;
                 });
 
-                const footerData = await fetchFooterData(caller.dataset.sectionid);
+                const footerData = await fetchFooterData(sectionnum);
                 const sectionModal = buildModal(bodyPromise, footerData);
 
                 // Now we have a modal we should start fetching data.
@@ -156,18 +167,18 @@ const registerListenerEvents = (courseId, chooserConfig) => {
                     return;
                 }
 
-                // Apply the section id to all the module instance links.
-                const builtModuleData = sectionIdMapper(
+                // Apply the section num to all the module instance links.
+                const builtModuleData = sectionMapper(
                     data,
-                    caller.dataset.sectionid,
-                    caller.dataset.sectionreturnid,
+                    sectionnum,
+                    caller.dataset.sectionreturnnum,
                     caller.dataset.beforemod
                 );
 
                 ChooserDialogue.displayChooser(
                     sectionModal,
                     builtModuleData,
-                    partiallyAppliedFavouriteManager(data, caller.dataset.sectionid),
+                    partiallyAppliedFavouriteManager(data, sectionnum),
                     footerData,
                 );
 
@@ -184,22 +195,22 @@ const registerListenerEvents = (courseId, chooserConfig) => {
 
 /**
  * Given the web service data and an ID we want to make a deep copy
- * of the WS data then add on the section ID to the addoption URL
+ * of the WS data then add on the section num to the addoption URL
  *
- * @method sectionIdMapper
+ * @method sectionMapper
  * @param {Object} webServiceData Our original data from the Web service call
- * @param {Number} id The ID of the section we need to append to the links
- * @param {Number|null} sectionreturnid The ID of the section return we need to append to the links
+ * @param {Number} num The number of the section we need to append to the links
+ * @param {Number|null} sectionreturnnum The number of the section return we need to append to the links
  * @param {Number|null} beforemod The ID of the cm we need to append to the links
  * @return {Array} [modules] with URL's built
  */
-const sectionIdMapper = (webServiceData, id, sectionreturnid, beforemod) => {
+const sectionMapper = (webServiceData, num, sectionreturnnum, beforemod) => {
     // We need to take a fresh deep copy of the original data as an object is a reference type.
     const newData = JSON.parse(JSON.stringify(webServiceData));
     newData.content_items.forEach((module) => {
-        module.link += '&section=' + id + '&beforemod=' + (beforemod ?? 0);
-        if (sectionreturnid) {
-            module.link += '&sr=' + sectionreturnid;
+        module.link += '&section=' + num + '&beforemod=' + (beforemod ?? 0);
+        if (sectionreturnnum) {
+            module.link += '&sr=' + sectionreturnnum;
         }
     });
     return newData.content_items;
@@ -352,10 +363,10 @@ const nullFavouriteDomManager = (favouriteTabNav, modalBody) => {
  *
  * @method partiallyAppliedFavouriteManager
  * @param {Array} moduleData This is our raw WS data that we need to manipulate
- * @param {Number} sectionId We need this to add the sectionID to the URL's in the faves area after rerender
+ * @param {Number} sectionnum We need this to add the sectionnum to the URL's in the faves area after rerender
  * @return {Function} partially applied function so we can manipulate DOM nodes easily & update our internal array
  */
-const partiallyAppliedFavouriteManager = (moduleData, sectionId) => {
+const partiallyAppliedFavouriteManager = (moduleData, sectionnum) => {
     /**
      * Curried function that is being returned.
      *
@@ -378,7 +389,7 @@ const partiallyAppliedFavouriteManager = (moduleData, sectionId) => {
                 // eslint-disable-next-line camelcase
                 newFaves.content_items = moduleData.content_items.filter(mod => mod.favourite === true);
 
-                const builtFaves = sectionIdMapper(newFaves, sectionId);
+                const builtFaves = sectionMapper(newFaves, sectionnum);
 
                 const {html, js} = await Templates.renderForPromise('core_course/local/activitychooser/favourites',
                     {favourites: builtFaves});

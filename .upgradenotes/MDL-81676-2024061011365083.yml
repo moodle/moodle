@@ -1,0 +1,7 @@
+issueNumber: MDL-81676
+notes:
+  core_course:
+    - message: >-
+        The data-sectionid attribute in the activity chooser has been
+        deprecated. Please update your code to use data-sectionnum instead.
+      type: deprecated
