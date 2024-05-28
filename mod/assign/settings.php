@@ -24,7 +24,9 @@
 
 defined('MOODLE_INTERNAL') || die;
 
+global $CFG;
 require_once($CFG->dirroot . '/mod/assign/adminlib.php');
+require_once($CFG->dirroot . '/grade/lib.php');
 
 $ADMIN->add('modsettings', new admin_category('modassignfolder', new lang_string('pluginname', 'mod_assign'), $module->is_enabled() === false));
 
@@ -161,6 +163,39 @@ if ($ADMIN->fulltree) {
         $description,
         0
     );
+    $settings->add($setting);
+
+    $name = new lang_string('defaultgradetype', 'mod_assign');
+    $description = new lang_string('defaultgradetype_help', 'mod_assign');
+    $setting = new admin_setting_configselect('mod_assign/defaultgradetype',
+                                                    $name,
+                                                    $description,
+                                                    GRADE_TYPE_VALUE, [
+                                                        GRADE_TYPE_NONE => new lang_string('modgradetypenone', 'grades'),
+                                                        GRADE_TYPE_SCALE => new lang_string('modgradetypescale', 'grades'),
+                                                        GRADE_TYPE_VALUE => new lang_string('modgradetypepoint', 'grades'),
+                                                    ]);
+    $settings->add($setting);
+
+    /** @var grade_scale[] $scales */
+    $scales = grade_scale::fetch_all_global();
+    $choices = ['' => new lang_string('choosedots')];
+    foreach ($scales as $scale) {
+        $choices[$scale->id] = $scale->get_name();
+    }
+    $name = new lang_string('defaultgradescale', 'mod_assign');
+    $description = new lang_string('defaultgradescale_help', 'mod_assign');
+    if (count($choices) > 1) {
+        $setting = new admin_setting_configselect('mod_assign/defaultgradescale',
+            $name,
+            $description,
+            '', $choices);
+    } else {
+        $setting = new admin_setting_configempty('mod_assign/defaultgradescale',
+            $name,
+            $description
+        );
+    }
     $settings->add($setting);
 
     $name = new lang_string('gradingduedate', 'mod_assign');

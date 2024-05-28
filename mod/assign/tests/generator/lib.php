@@ -16,6 +16,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+require_once($CFG->libdir . '/gradelib.php');
+
 /**
  * assign module data generator class
  *
@@ -64,6 +67,18 @@ class mod_assign_generator extends testing_module_generator {
 
         if (property_exists($record, 'teamsubmissiongroupingid')) {
             $record->teamsubmissiongroupingid = $this->get_grouping_id($record->teamsubmissiongroupingid);
+        }
+
+        if (property_exists($record, 'gradetype')) {
+            if ((int)$record->gradetype === GRADE_TYPE_SCALE && property_exists($record, 'gradescale')) {
+                // Get the scale id and apply it.
+                $defaultsettings['grade[modgrade_type]'] = GRADE_TYPE_SCALE;
+                $defaultsettings['grade[modgrade_scale]'] = $record->gradescale;
+                $defaultsettings['grade'] = -$record->gradescale;
+            } else if ((int)$record->gradetype === GRADE_TYPE_NONE) {
+                $defaultsettings['grade[modgrade_type]'] = GRADE_TYPE_NONE;
+                $defaultsettings['grade'] = 0;
+            }
         }
 
         foreach ($defaultsettings as $name => $value) {

@@ -62,8 +62,8 @@ Feature: Manage scheduled tasks
     And I press "Save changes"
     Then I should see "Changes saved"
     And the following should not exist in the "admintable" table:
-      | Name               | Component    | Minute | Hour | Day | Day of week | Month |
-      | Log table cleanup  | Standard log | */5    | 1    | 2   | 4           | 3     |
+      | Name              | Minute | Hour | Day | Day of week | Month |
+      | Log table cleanup | */5    | 1    | 2   | 4           | 3     |
     And I should see "Log table cleanup" in the "tr.table-primary" "css_element"
 
   Scenario: Disabled plugin's tasks are labelled as disabled too
