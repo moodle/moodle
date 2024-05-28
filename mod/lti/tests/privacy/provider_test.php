@@ -30,6 +30,10 @@ use mod_lti\privacy\provider;
 
 defined('MOODLE_INTERNAL') || die();
 
+global $CFG;
+
+require_once($CFG->dirroot . '/mod/lti/locallib.php');
+
 /**
  * Privacy provider tests class.
  *
