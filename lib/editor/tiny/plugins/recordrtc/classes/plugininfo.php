@@ -87,17 +87,17 @@ class plugininfo extends plugin implements plugin_with_buttons, plugin_with_menu
         $screenallowed = false;
         foreach ($allowedtypes as $value) {
             switch ($value) {
-                case 'audio':
+                case constants::TINYRECORDRTC_AUDIO_TYPE:
                     if (has_capability('tiny/recordrtc:recordaudio', $context)) {
                         $audioallowed = true;
                     }
                     break;
-                case 'video':
+                case constants::TINYRECORDRTC_VIDEO_TYPE:
                     if (has_capability('tiny/recordrtc:recordvideo', $context)) {
                         $videoallowed = true;
                     }
                     break;
-                case 'screen':
+                case constants::TINYRECORDRTC_SCREEN_TYPE:
                     if (has_capability('tiny/recordrtc:recordscreen', $context)) {
                         $screenallowed = true;
                     }

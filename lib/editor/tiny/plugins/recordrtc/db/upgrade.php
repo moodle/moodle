@@ -29,9 +29,17 @@
  */
 function xmldb_tiny_recordrtc_upgrade($oldversion) {
     if ($oldversion < 2024042400) {
+        // Convert the old setting to the new one.
         $allowedtypes = get_config('tiny_recordrtc', 'allowedtypes');
         if ($allowedtypes === 'both') {
-            set_config('allowedtypes', 'audio,video', 'tiny_recordrtc');
+            set_config(
+                'allowedtypes',
+                implode(',', [
+                    tiny_recordrtc\constants::TINYRECORDRTC_AUDIO_TYPE,
+                    tiny_recordrtc\constants::TINYRECORDRTC_VIDEO_TYPE,
+                ]),
+                'tiny_recordrtc'
+            );
         }
 
         upgrade_plugin_savepoint(true, 2024042400, 'tiny', 'recordrtc');

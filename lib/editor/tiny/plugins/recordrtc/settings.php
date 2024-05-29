@@ -45,13 +45,16 @@ if ($ADMIN->fulltree) {
 
     // Types allowed.
     $options = [
-        'audio' => new lang_string('onlyaudio', 'tiny_recordrtc'),
-        'video' => new lang_string('onlyvideo', 'tiny_recordrtc'),
-        'screen' => new lang_string('onlyscreen', 'tiny_recordrtc'),
+        \tiny_recordrtc\constants::TINYRECORDRTC_AUDIO_TYPE => new lang_string('onlyaudio', 'tiny_recordrtc'),
+        \tiny_recordrtc\constants::TINYRECORDRTC_VIDEO_TYPE => new lang_string('onlyvideo', 'tiny_recordrtc'),
+        \tiny_recordrtc\constants::TINYRECORDRTC_SCREEN_TYPE => new lang_string('onlyscreen', 'tiny_recordrtc'),
     ];
     $name = get_string('allowedtypes', 'tiny_recordrtc');
     $desc = get_string('allowedtypes_desc', 'tiny_recordrtc');
-    $default = ['audio' => 1, 'video' => 1];
+    $default = [
+        \tiny_recordrtc\constants::TINYRECORDRTC_AUDIO_TYPE => 1,
+        \tiny_recordrtc\constants::TINYRECORDRTC_VIDEO_TYPE => 1,
+    ];
     $setting = new admin_setting_configmulticheckbox('tiny_recordrtc/allowedtypes', $name, $desc, $default, $options);
     $settings->add($setting);
 
@@ -118,8 +121,8 @@ if ($ADMIN->fulltree) {
     // Screen output settings.
     // Number of items to display in a box.
     $options = [
-            '1280,720' => '1280 x 720 (16:9)',
-            '1920,1080' => '1920 x 1080 (16:9)',
+        \tiny_recordrtc\constants::TINYRECORDRTC_SCREEN_HD => get_string('screenresolution_hd', 'tiny_recordrtc'),
+        \tiny_recordrtc\constants::TINYRECORDRTC_SCREEN_FHD => get_string('screenresolution_fhd', 'tiny_recordrtc'),
     ];
     $name = get_string('screensize', 'tiny_recordrtc');
     $desc = get_string('screensize_desc', 'tiny_recordrtc');
