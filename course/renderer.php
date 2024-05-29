@@ -141,9 +141,10 @@ class core_course_renderer extends plugin_renderer_base {
      * Build the HTML for the module chooser javascript popup.
      *
      * @param int $courseid The course id to fetch modules for.
+     * @param int|null $sectionnum The section number to fetch modules for.
      * @return string
      */
-    public function course_activitychooser($courseid) {
+    public function course_activitychooser($courseid, ?int $sectionnum = null) {
 
         if (!$this->page->requires->should_create_one_time_item_now('core_course_modchooser')) {
             return '';
@@ -153,7 +154,7 @@ class core_course_renderer extends plugin_renderer_base {
         $chooserconfig = (object) [
             'tabmode' => get_config('core', 'activitychoosertabmode'),
         ];
-        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid, $chooserconfig]);
+        $this->page->requires->js_call_amd('core_course/activitychooser', 'init', [$courseid, $chooserconfig, $sectionnum]);
 
         return '';
     }
@@ -231,7 +232,7 @@ class core_course_renderer extends plugin_renderer_base {
         $ajaxcontrol = $this->render_from_template('course/activitychooserbutton', $data);
 
         // Load the JS for the modal.
-        $this->course_activitychooser($course->id);
+        $this->course_activitychooser($course->id, $section);
 
         return $ajaxcontrol;
     }

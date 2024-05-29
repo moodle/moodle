@@ -52,11 +52,12 @@ let initialized = false;
  * @method init
  * @param {Number} courseId Course ID to use later on in fetchModules()
  * @param {Object} chooserConfig Any PHP config settings that we may need to reference
+ * @param {Number} sectionNum Section number to use later on in fetchModules()
  */
-export const init = (courseId, chooserConfig) => {
+export const init = (courseId, chooserConfig, sectionNum) => {
     const pendingPromise = new Pending();
 
-    registerListenerEvents(courseId, chooserConfig);
+    registerListenerEvents(courseId, chooserConfig, sectionNum);
 
     pendingPromise.resolve();
 };
@@ -67,8 +68,9 @@ export const init = (courseId, chooserConfig) => {
  * @method registerListenerEvents
  * @param {Number} courseId
  * @param {Object} chooserConfig Any PHP config settings that we may need to reference
+ * @param {Number} sectionNum Section number to use later on in fetchModules()
  */
-const registerListenerEvents = (courseId, chooserConfig) => {
+const registerListenerEvents = (courseId, chooserConfig, sectionNum) => {
 
     // Ensure we only add our listeners once.
     if (initialized) {
@@ -87,7 +89,7 @@ const registerListenerEvents = (courseId, chooserConfig) => {
         return () => {
             if (!innerPromise) {
                 innerPromise = new Promise((resolve) => {
-                    resolve(Repository.activityModules(courseId));
+                    resolve(Repository.activityModules(courseId, sectionNum));
                 });
             }
 
