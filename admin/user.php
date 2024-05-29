@@ -26,10 +26,6 @@
     $sitecontext = context_system::instance();
     $site = get_site();
 
-    if (!has_capability('moodle/user:update', $sitecontext) and !has_capability('moodle/user:delete', $sitecontext)) {
-        throw new \moodle_exception('nopermissions', 'error', '', 'edit/delete users');
-    }
-
     $stredit   = get_string('edit');
     $strdelete = get_string('delete');
     $strdeletecheck = get_string('deletecheck');
