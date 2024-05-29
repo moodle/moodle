@@ -34,7 +34,6 @@ Feature: Teacher can delete marking guide
     And I grade by filling the marking guide with:
       | Criterion 1 | 70 | Well done! |
     And I press "Save changes"
-    And I am on the "Course 1" course page
     And I go to "Assign 1" advanced grading page
     When I click on "Delete the currently defined form" "link"
     Then I should see "You are going to delete the grading form 'Marking guide 1' and all the associated information from 'Assign 1 (Submissions)'"
@@ -48,8 +47,7 @@ Feature: Teacher can delete marking guide
     And I should see "Please note: the advanced grading form is not ready at the moment. Simple grading method will be used until the form has a valid status."
     And I should not see "Marking guide 1 Ready for use"
     And I should not see "Criterion 1"
-    And I am on the "Course 1" course page
-    And I navigate to "View > Grader report" in the course gradebook
+    And I am on the "Course 1" "grades > Grader report > View" page
     And the following should exist in the "user-grades" table:
-      | -1-         | -1-                  | -3- |
+      | -1-         | -1-                  | -4- |
       | Student One | student1@example.com | 70  |
