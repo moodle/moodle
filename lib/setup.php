@@ -437,28 +437,8 @@ if (!defined('MOODLE_INTERNAL')) { // Necessary because cli installer has to def
 // core_component can be used in any scripts, it does not need anything else.
 require_once($CFG->libdir .'/classes/component.php');
 
-// special support for highly optimised scripts that do not need libraries and DB connection
-if (defined('ABORT_AFTER_CONFIG')) {
-    if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
-        // hide debugging if not enabled in config.php - we do not want to disclose sensitive info
-        error_reporting($CFG->debug);
-        if (NO_DEBUG_DISPLAY) {
-            // Some parts of Moodle cannot display errors and debug at all.
-            ini_set('display_errors', '0');
-            ini_set('log_errors', '1');
-        } else if (empty($CFG->debugdisplay)) {
-            ini_set('display_errors', '0');
-            ini_set('log_errors', '1');
-        } else {
-            ini_set('display_errors', '1');
-        }
-        require_once("$CFG->dirroot/lib/configonlylib.php");
-        return;
-    }
-}
-
 // Early profiling start, based exclusively on config.php $CFG settings
-if (!empty($CFG->earlyprofilingenabled)) {
+if (!empty($CFG->earlyprofilingenabled) && !defined('ABORT_AFTER_CONFIG_CANCEL')) {
     require_once($CFG->libdir . '/xhprof/xhprof_moodle.php');
     profiling_start();
 }
@@ -571,14 +551,97 @@ global $SCRIPT;
 // The httpswwwroot has been deprecated, we keep it as an alias for backwards compatibility with plugins only.
 $CFG->httpswwwroot = $CFG->wwwroot;
 
-require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first
-
+// We have to call this always before starting session because it discards headers!
 if (NO_OUTPUT_BUFFERING) {
-    // we have to call this always before starting session because it discards headers!
-    disable_output_buffering();
+    // Try to disable all output buffering and purge all headers.
+    $olddebug = error_reporting(0);
+
+    // Disable compression, it would prevent closing of buffers.
+    if ($outputcompression = ini_get('zlib.output_compression')) {
+        switch(strtolower($outputcompression)) {
+            case 'on':
+            case '1':
+                ini_set('zlib.output_compression', 'Off');
+                break;
+        }
+    }
+
+    // Try to flush everything all the time.
+    ob_implicit_flush(true);
+
+    // Close all buffers if possible and discard any existing output.
+    // This can actually work around some whitespace problems in config.php.
+    while (ob_get_level()) {
+        if (!ob_end_clean()) {
+            // Prevent infinite loop when buffer can not be closed.
+            break;
+        }
+    }
+
+    // Disable any other output handlers.
+    ini_set('output_handler', '');
+
+    error_reporting($olddebug);
+
+    // Disable buffering in nginx.
+    header('X-Accel-Buffering: no');
 }
 
-// Increase memory limits if possible
+// Point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
+// the problem is that we need specific version of quickforms and hacked excel files :-(.
+ini_set('include_path', $CFG->libdir . '/pear' . PATH_SEPARATOR . ini_get('include_path'));
+
+// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
+if (defined('COMPONENT_CLASSLOADER')) {
+    spl_autoload_register(COMPONENT_CLASSLOADER);
+} else {
+    spl_autoload_register([\core_component::class, 'classloader']);
+}
+
+// Special support for highly optimised scripts that do not need libraries and DB connection.
+if (defined('ABORT_AFTER_CONFIG')) {
+    if (!defined('ABORT_AFTER_CONFIG_CANCEL')) {
+        // Hide debugging if not enabled in config.php - we do not want to disclose sensitive info.
+        error_reporting($CFG->debug);
+        if (NO_DEBUG_DISPLAY) {
+            // Some parts of Moodle cannot display errors and debug at all.
+            ini_set('display_errors', '0');
+            ini_set('log_errors', '1');
+        } else if (empty($CFG->debugdisplay)) {
+            ini_set('display_errors', '0');
+            ini_set('log_errors', '1');
+        } else {
+            ini_set('display_errors', '1');
+        }
+        require_once("$CFG->dirroot/lib/configonlylib.php");
+        return;
+    }
+}
+
+require_once($CFG->libdir .'/setuplib.php');        // Functions that MUST be loaded first.
+
+// Load up standard libraries.
+require_once($CFG->libdir .'/filterlib.php');       // Functions for filtering test as it is output.
+require_once($CFG->libdir .'/ajax/ajaxlib.php');    // Functions for managing our use of JavaScript and YUI.
+require_once($CFG->libdir .'/weblib.php');          // Functions relating to HTTP and content.
+require_once($CFG->libdir .'/outputlib.php');       // Functions for generating output.
+require_once($CFG->libdir .'/navigationlib.php');   // Class for generating Navigation structure.
+require_once($CFG->libdir .'/dmllib.php');          // Database access.
+require_once($CFG->libdir .'/datalib.php');         // Legacy lib with a big-mix of functions..
+require_once($CFG->libdir .'/accesslib.php');       // Access control functions.
+require_once($CFG->libdir .'/deprecatedlib.php');   // Deprecated functions included for backward compatibility.
+require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions.
+require_once($CFG->libdir .'/enrollib.php');        // Enrolment related functions.
+require_once($CFG->libdir .'/pagelib.php');         // Library that defines the moodle_page class, used for $PAGE.
+require_once($CFG->libdir .'/blocklib.php');        // Library for controlling blocks.
+require_once($CFG->libdir .'/grouplib.php');        // Groups functions.
+require_once($CFG->libdir .'/sessionlib.php');      // All session and cookie related stuff.
+require_once($CFG->libdir .'/editorlib.php');       // All text editor related functions and classes.
+require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions.
+require_once($CFG->libdir .'/modinfolib.php');      // Cached information on course-module instances.
+require_once($CFG->dirroot.'/cache/lib.php');       // Cache API.
+
+// Increase memory limits if possible.
 raise_memory_limit(MEMORY_STANDARD);
 
 // Time to start counting
@@ -616,40 +679,8 @@ if (!empty($_SERVER['HTTP_X_moz']) && $_SERVER['HTTP_X_moz'] === 'prefetch'){
     exit(1);
 }
 
-//point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
-//the problem is that we need specific version of quickforms and hacked excel files :-(
-ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
-
-// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
-if (defined('COMPONENT_CLASSLOADER')) {
-    spl_autoload_register(COMPONENT_CLASSLOADER);
-} else {
-    spl_autoload_register('core_component::classloader');
-}
-
 // Remember the default PHP timezone, we will need it later.
 core_date::store_default_php_timezone();
-
-// Load up standard libraries
-require_once($CFG->libdir .'/filterlib.php');       // Functions for filtering test as it is output
-require_once($CFG->libdir .'/ajax/ajaxlib.php');    // Functions for managing our use of JavaScript and YUI
-require_once($CFG->libdir .'/weblib.php');          // Functions relating to HTTP and content
-require_once($CFG->libdir .'/outputlib.php');       // Functions for generating output
-require_once($CFG->libdir .'/navigationlib.php');   // Class for generating Navigation structure
-require_once($CFG->libdir .'/dmllib.php');          // Database access
-require_once($CFG->libdir .'/datalib.php');         // Legacy lib with a big-mix of functions.
-require_once($CFG->libdir .'/accesslib.php');       // Access control functions
-require_once($CFG->libdir .'/deprecatedlib.php');   // Deprecated functions included for backward compatibility
-require_once($CFG->libdir .'/moodlelib.php');       // Other general-purpose functions
-require_once($CFG->libdir .'/enrollib.php');        // Enrolment related functions
-require_once($CFG->libdir .'/pagelib.php');         // Library that defines the moodle_page class, used for $PAGE
-require_once($CFG->libdir .'/blocklib.php');        // Library for controlling blocks
-require_once($CFG->libdir .'/grouplib.php');        // Groups functions
-require_once($CFG->libdir .'/sessionlib.php');      // All session and cookie related stuff
-require_once($CFG->libdir .'/editorlib.php');       // All text editor related functions and classes
-require_once($CFG->libdir .'/messagelib.php');      // Messagelib functions
-require_once($CFG->libdir .'/modinfolib.php');      // Cached information on course-module instances
-require_once($CFG->dirroot.'/cache/lib.php');       // Cache API
 
 // make sure PHP is not severly misconfigured
 setup_validate_php_configuration();
