@@ -121,14 +121,15 @@ $string['privacy:metadata'] = 'The Self enrolment plugin does not store any pers
 // Deprecated since Moodle 4.4.
 $string['customwelcomemessage'] = 'Custom welcome message';
 $string['customwelcomemessage_help'] = 'Accepted formats: Plain text or Moodle-auto format. HTML tags and multi-lang tags are also accepted, as well as the following placeholders:
-<br>
-* Course name {$a->coursename}<br>
-* Link to user\'s profile page {$a->profileurl}<br>
-* User email {$a->email}<br>
-* User fullname {$a->fullname}<br>
-* User first name {$a->firstname}<br>
-* User last name {$a->lastname}<br>
-* User course role {$a->courserole}<br>';
+<ul>
+<li>Course name {$a->coursename}</li>
+<li>Link to user\'s profile page {$a->profileurl}</li>
+<li>User email {$a->email}</li>
+<li>User fullname {$a->fullname}</li>
+<li>User first name {$a->firstname}</li>
+<li>User last name {$a->lastname}</li>
+<li>User course role {$a->courserole}</li>
+</ul>';
 $string['welcometocourse'] = 'Welcome to {$a}';
 $string['welcometocoursetext'] = 'Welcome to {$a->coursename}!
 
