@@ -218,12 +218,6 @@ EOF;
                 'type' > 'tag',
                 'values' => array_merge($standardtags, $extratags),
             ],
-            // TODO: MDL-80831 - Disable the target-size rule for now until we start working towards WCAG 2.2 Level AA compliance.
-            'rules' => [
-                'target-size' => [
-                    'enabled' => false,
-                ],
-            ],
         ]);
     }
 }
