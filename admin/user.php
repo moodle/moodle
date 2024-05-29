@@ -20,10 +20,6 @@
     $sitecontext = context_system::instance();
     $site = get_site();
 
-    if (!has_capability('moodle/user:update', $sitecontext) and !has_capability('moodle/user:delete', $sitecontext)) {
-        throw new \moodle_exception('nopermissions', 'error', '', 'edit/delete users');
-    }
-
     $returnurl = new moodle_url('/admin/user.php');
 
     $PAGE->set_primary_active_tab('siteadminnode');
