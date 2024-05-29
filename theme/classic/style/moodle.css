@@ -25160,6 +25160,8 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 .footer-dark a {
   color: #fff;
   text-decoration: underline;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 .footer-dark a .icon {
   color: #fff;
