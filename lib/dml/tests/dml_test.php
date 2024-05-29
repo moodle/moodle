@@ -4673,6 +4673,44 @@ EOD;
         ], $DB->get_records_sql($sql));
     }
 
+    /**
+     * Test that the SQL_MAX_INT constant can be used for all insert, update, select and delete queries
+     */
+    public function test_sql_max_int(): void {
+        $DB = $this->tdb;
+        $dbman = $DB->get_manager();
+
+        $table = $this->get_test_table();
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('intfield', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('charfield', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $dbman->create_table($table);
+
+        $tablename = $table->getName();
+
+        // Insert.
+        $id = $DB->insert_record($tablename, ['intfield' => SQL_INT_MAX, 'charfield' => 'Test']);
+        $this->assertEquals((object) [
+            'intfield' => SQL_INT_MAX,
+            'charfield' => 'Test',
+        ], $DB->get_record($tablename, ['id' => $id], 'intfield, charfield'));
+
+        // Update.
+        $DB->set_field($tablename, 'charfield', 'Test 2', ['intfield' => SQL_INT_MAX]);
+        $this->assertEquals((object) [
+            'intfield' => SQL_INT_MAX,
+            'charfield' => 'Test 2',
+        ], $DB->get_record($tablename, ['id' => $id], 'intfield, charfield'));
+
+        // Select.
+        $this->assertEquals('Test 2', $DB->get_field($tablename, 'charfield', ['intfield' => SQL_INT_MAX]));
+
+        // Delete.
+        $DB->delete_records($tablename, ['intfield' => SQL_INT_MAX]);
+        $this->assertFalse($DB->record_exists($tablename, ['id' => $id]));
+    }
+
     public function test_sql_fullname() {
         $DB = $this->tdb;
         $sql = "SELECT ".$DB->sql_fullname(':first', ':last')." AS fullname ".$DB->sql_null_from_clause();

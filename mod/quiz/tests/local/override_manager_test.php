@@ -666,7 +666,7 @@ final class override_manager_test extends \advanced_testcase {
             'existing id given to update is invalid' => [
                 'existingdata' => [],
                 'formdata' => [
-                    'id' => 999999999999,
+                    'id' => SQL_INT_MAX,
                     'userid' => ':userid',
                     'groupid' => null,
                     'timeopen' => 50,

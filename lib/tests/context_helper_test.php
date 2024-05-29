@@ -281,7 +281,7 @@ class context_helper_test extends \advanced_testcase {
             }
             $record = new \stdClass();
             $record->contextlevel = $classname::LEVEL;
-            $record->instanceid = 9999999999;
+            $record->instanceid = SQL_INT_MAX;
             $record->path = null;
             $record->depth = '2';
             $record->id = $DB->insert_record('context', $record);

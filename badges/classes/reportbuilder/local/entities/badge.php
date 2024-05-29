@@ -326,17 +326,17 @@ class badge extends base {
             ]);
 
         // Expiry date/period.
-        [$parammaxint, $paramtime] = database::generate_param_names(2);
+        $paramtime = database::generate_param_name();
         $filters[] = (new filter(
             date::class,
             'expiry',
             new lang_string('expirydate', 'core_badges'),
             $this->get_entity_name(),
             "CASE WHEN {$badgealias}.expiredate IS NULL AND {$badgealias}.expireperiod IS NULL
-                  THEN " . $DB->sql_cast_char2int(":{$parammaxint}") . "
+                  THEN " . SQL_INT_MAX . "
                   ELSE COALESCE({$badgealias}.expiredate, {$badgealias}.expireperiod + :{$paramtime})
              END",
-            [$parammaxint => 2147483647, $paramtime => time()]
+            [$paramtime => time()]
         ))
             ->add_joins($this->get_joins())
             ->set_limited_operators([
