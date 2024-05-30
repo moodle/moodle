@@ -54,7 +54,7 @@ class api_test extends \advanced_testcase {
      * This replicates what is happening when categories are moved
      * in the interface using drag-drop.
      */
-    public function test_move_category() {
+    public function test_move_category(): void {
         $this->resetAfterTest();
 
         // Create the categories.
@@ -105,7 +105,7 @@ class api_test extends \advanced_testcase {
     /**
      * Tests for \core_customfield\api::get_categories_with_fields() behaviour.
      */
-    public function test_get_categories_with_fields() {
+    public function test_get_categories_with_fields(): void {
         $this->resetAfterTest();
 
         // Create the categories.
@@ -141,7 +141,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test for functions api::save_category() and rename_category)
      */
-    public function test_save_category() {
+    public function test_save_category(): void {
         $this->resetAfterTest();
 
         $params = ['component' => 'core_course', 'area' => 'course', 'itemid' => 0, 'name' => 'Cat1',
@@ -176,7 +176,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test for function handler::create_category
      */
-    public function test_create_category() {
+    public function test_create_category(): void {
         $this->resetAfterTest();
 
         $handler = \core_course\customfield\course_handler::create();
@@ -200,7 +200,7 @@ class api_test extends \advanced_testcase {
     /**
      * Tests for \core_customfield\api::delete_category() behaviour.
      */
-    public function test_delete_category_with_fields() {
+    public function test_delete_category_with_fields(): void {
         $this->resetAfterTest();
 
         global $DB;

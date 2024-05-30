@@ -46,7 +46,7 @@ class store_test extends \cachestore_tests {
     /**
      * Test the maxsize option.
      */
-    public function test_maxsize() {
+    public function test_maxsize(): void {
         $defid = 'phpunit/testmaxsize';
         $config = \cache_config_testing::instance();
         $config->phpunit_add_definition($defid, array(
@@ -119,7 +119,7 @@ class store_test extends \cachestore_tests {
     /**
      * Simple test to verify igbinary availability and check basic serialization is working ok.
      */
-    public function test_igbinary_serializer() {
+    public function test_igbinary_serializer(): void {
         // Skip if igbinary is not available.
         if (!extension_loaded('igbinary')) {
             $this->markTestSkipped('Cannot test igbinary serializer. Extension missing');

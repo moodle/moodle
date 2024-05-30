@@ -52,7 +52,7 @@ class proxy_base_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_get_checksum() {
+    public function test_get_checksum(): void {
         $this->resetAfterTest();
         foreach (['SHA1', 'SHA512', 'SHA256'] as $algo) {
             set_config('bigbluebuttonbn_checksum_algorithm', $algo);
@@ -67,7 +67,7 @@ class proxy_base_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_get_checksum_not_supported() {
+    public function test_get_checksum_not_supported(): void {
         $this->resetAfterTest();
         $bbbgenerator = $this->getDataGenerator()->get_plugin_generator('mod_bigbluebuttonbn');
         $bbbgenerator->set_value('checksum_algorithms', ['SHA1', 'SHA256']);

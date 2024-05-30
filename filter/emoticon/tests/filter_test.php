@@ -83,7 +83,7 @@ class filter_test extends \advanced_testcase {
      *
      * @dataProvider filter_emoticon_provider
      */
-    public function test_filter_emoticon($input, $format, $expected) {
+    public function test_filter_emoticon($input, $format, $expected): void {
         $this->resetAfterTest();
 
         $filter = new testable_filter_emoticon();
@@ -166,7 +166,7 @@ class filter_test extends \advanced_testcase {
      * Tests the filter doesn't break anything if activated but invalid format passed.
      *
      */
-    public function test_filter_invalidformat() {
+    public function test_filter_invalidformat(): void {
         global $PAGE;
         $this->resetAfterTest();
 
@@ -183,7 +183,7 @@ class filter_test extends \advanced_testcase {
      * Tests the filter doesn't break anything if activated but no emoticons available.
      *
      */
-    public function test_filter_emptyemoticons() {
+    public function test_filter_emptyemoticons(): void {
         global $CFG;
         $this->resetAfterTest();
         // Empty the emoticons array.

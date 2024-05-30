@@ -49,7 +49,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      * @param array $expected the array detailing expectations.
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool(?array $legacydata, ?array $launchdata, array $expected) {
+    public function test_user_launches_tool(?array $legacydata, ?array $launchdata, array $expected): void {
         $this->resetAfterTest();
         // Setup.
         $contextrepo = new context_repository();
@@ -272,7 +272,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_missing_custom_id() {
+    public function test_user_launches_tool_missing_custom_id(): void {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();
@@ -290,7 +290,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_invalid_custom_id() {
+    public function test_user_launches_tool_invalid_custom_id(): void {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();
@@ -308,7 +308,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_missing_registration() {
+    public function test_user_launches_tool_missing_registration(): void {
         $this->resetAfterTest();
         // Setup.
         [
@@ -341,7 +341,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_missing_deployment() {
+    public function test_user_launches_tool_missing_deployment(): void {
         $this->resetAfterTest();
         // Setup.
         [
@@ -374,7 +374,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_role_mapping() {
+    public function test_user_launches_tool_role_mapping(): void {
         $this->resetAfterTest();
         // Create mock launches for 3 different user types: instructor, admin, learner.
         [$course, $modresource] = $this->create_test_environment();
@@ -429,7 +429,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_user_fields_updated() {
+    public function test_user_launches_tool_user_fields_updated(): void {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
         $user = $this->getDataGenerator()->create_user();
@@ -476,7 +476,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_max_enrolment_start_restriction() {
+    public function test_user_launches_tool_max_enrolment_start_restriction(): void {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment(true, true, false,
             \enrol_lti\helper::MEMBER_SYNC_ENROL_NEW, false, false, time() + DAYSECS);
@@ -494,7 +494,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      *
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_force_embedding_custom_param() {
+    public function test_user_launches_tool_force_embedding_custom_param(): void {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();
@@ -529,7 +529,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      * @dataProvider aud_data_provider
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_aud_variations($aud, array $expected) {
+    public function test_user_launches_tool_aud_variations($aud, array $expected): void {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();
@@ -618,7 +618,7 @@ class tool_launch_service_test extends \lti_advantage_testcase {
      * @dataProvider ags_claim_provider
      * @covers ::user_launches_tool
      */
-    public function test_user_launches_tool_ags_claim_handling(array $agsclaim1, array $agsclaim2, array $expected) {
+    public function test_user_launches_tool_ags_claim_handling(array $agsclaim1, array $agsclaim2, array $expected): void {
         $this->resetAfterTest();
         [$course, $modresource] = $this->create_test_environment();
         $instructoruser = $this->getDataGenerator()->create_user();

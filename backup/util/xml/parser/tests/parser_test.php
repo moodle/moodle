@@ -53,7 +53,7 @@ class parser_test extends \advanced_testcase {
     /*
      * test progressive_parser public methods
      */
-    function test_parser_public_api() {
+    function test_parser_public_api(): void {
         global $CFG;
         // Instantiate progressive_parser
         $pp = new progressive_parser();
@@ -168,7 +168,7 @@ class parser_test extends \advanced_testcase {
      * test progressive_parser parsing results using testing_parser_processor and test1.xml
      * auto-described file from fixtures
      */
-    function test_parser_results() {
+    function test_parser_results(): void {
         global $CFG;
         // Instantiate progressive_parser
         $pp = new progressive_parser();
@@ -193,7 +193,7 @@ class parser_test extends \advanced_testcase {
      * test progressive_parser parsing results using simplified_parser_processor and test4.xml
      * (one simple glossary backup file example)
      */
-    function test_simplified_parser_results() {
+    function test_simplified_parser_results(): void {
         global $CFG;
         // Instantiate progressive_parser
         $pp =  new progressive_parser();
@@ -353,7 +353,7 @@ class parser_test extends \advanced_testcase {
      * with one real fragment of one backup 1.9 file, where some problems
      * were found by David, hence we honor him in the name of the test ;-)
      */
-    function test_simplified_david_backup19_file_fragment() {
+    function test_simplified_david_backup19_file_fragment(): void {
         global $CFG;
         // Instantiate progressive_parser
         $pp =  new progressive_parser();
@@ -419,7 +419,7 @@ class parser_test extends \advanced_testcase {
      * test progressive_parser parsing results using grouped_parser_processor and test4.xml
      * (one simple glossary backup file example)
      */
-    function test_grouped_parser_results() {
+    function test_grouped_parser_results(): void {
         global $CFG;
         // Instantiate progressive_parser
         $pp =  new progressive_parser();
@@ -595,7 +595,7 @@ class parser_test extends \advanced_testcase {
      * with one real fragment of one backup 1.9 file, where some problems
      * were found by David, hence we honor him in the name of the test ;-)
      */
-    function test_grouped_david_backup19_file_fragment() {
+    function test_grouped_david_backup19_file_fragment(): void {
         global $CFG;
         // Instantiate progressive_parser
         $pp =  new progressive_parser();
@@ -649,7 +649,7 @@ class parser_test extends \advanced_testcase {
 
     /**
      */
-    function test_grouped_at_empty_node() {
+    function test_grouped_at_empty_node(): void {
         global $CFG;
         // Instantiate progressive_parser.
         $pp =  new progressive_parser();

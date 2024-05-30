@@ -159,7 +159,7 @@ class external_test extends externallib_advanced_testcase {
      * Test get user badges.
      * These is a basic test since the badges_get_my_user_badges used by the external function already has unit tests.
      */
-    public function test_get_my_user_badges() {
+    public function test_get_my_user_badges(): void {
 
         $this->setUser($this->student);
 
@@ -229,7 +229,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get user badges.
      */
-    public function test_get_other_user_badges() {
+    public function test_get_other_user_badges(): void {
 
         $this->setUser($this->teacher);
 

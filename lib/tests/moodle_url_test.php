@@ -30,7 +30,7 @@ final class moodle_url_test extends \advanced_testcase {
     /**
      * Test basic moodle_url construction.
      */
-    public function test_moodle_url_constructor() {
+    public function test_moodle_url_constructor(): void {
         global $CFG;
 
         $url = new \moodle_url('/index.php');
@@ -59,7 +59,7 @@ final class moodle_url_test extends \advanced_testcase {
     /**
      * Tests \moodle_url::get_path().
      */
-    public function test_moodle_url_get_path() {
+    public function test_moodle_url_get_path(): void {
         $url = new \moodle_url('http://www.example.org:447/my/file/is/here.txt?really=1');
         $this->assertSame('/my/file/is/here.txt', $url->get_path());
 
@@ -71,7 +71,7 @@ final class moodle_url_test extends \advanced_testcase {
         $this->assertSame('/pluginfile.php', $url->get_path(false));
     }
 
-    public function test_moodle_url_round_trip() {
+    public function test_moodle_url_round_trip(): void {
         $strurl = 'http://moodle.org/course/view.php?id=5';
         $url = new \moodle_url($strurl);
         $this->assertSame($strurl, $url->out(false));
@@ -84,7 +84,7 @@ final class moodle_url_test extends \advanced_testcase {
     /**
      * Test Moodle URL objects created with a param with empty value.
      */
-    public function test_moodle_url_empty_param_values() {
+    public function test_moodle_url_empty_param_values(): void {
         $strurl = 'http://moodle.org/course/view.php?id=0';
         $url = new \moodle_url($strurl, array('id' => 0));
         $this->assertSame($strurl, $url->out(false));
@@ -109,7 +109,7 @@ final class moodle_url_test extends \advanced_testcase {
     /**
      * Test set good scheme on Moodle URL objects.
      */
-    public function test_moodle_url_set_good_scheme() {
+    public function test_moodle_url_set_good_scheme(): void {
         $url = new \moodle_url('http://moodle.org/foo/bar');
         $url->set_scheme('myscheme');
         $this->assertSame('myscheme://moodle.org/foo/bar', $url->out());
@@ -118,13 +118,13 @@ final class moodle_url_test extends \advanced_testcase {
     /**
      * Test set bad scheme on Moodle URL objects.
      */
-    public function test_moodle_url_set_bad_scheme() {
+    public function test_moodle_url_set_bad_scheme(): void {
         $url = new \moodle_url('http://moodle.org/foo/bar');
         $this->expectException(\coding_exception::class);
         $url->set_scheme('not a valid $ scheme');
     }
 
-    public function test_moodle_url_round_trip_array_params() {
+    public function test_moodle_url_round_trip_array_params(): void {
         $strurl = 'http://example.com/?a%5B1%5D=1&a%5B2%5D=2';
         $url = new \moodle_url($strurl);
         $this->assertSame($strurl, $url->out(false));
@@ -138,7 +138,7 @@ final class moodle_url_test extends \advanced_testcase {
         $this->assertSame($strurl, $url->out(false));
     }
 
-    public function test_compare_url() {
+    public function test_compare_url(): void {
         $url1 = new \moodle_url('index.php', array('var1' => 1, 'var2' => 2));
         $url2 = new \moodle_url('index2.php', array('var1' => 1, 'var2' => 2, 'var3' => 3));
 
@@ -175,7 +175,7 @@ final class moodle_url_test extends \advanced_testcase {
         $this->assertTrue($url1->compare($url2, URL_MATCH_EXACT));
     }
 
-    public function test_out_as_local_url() {
+    public function test_out_as_local_url(): void {
         global $CFG;
         // Test http url.
         $url1 = new \moodle_url('/lib/tests/weblib_test.php');
@@ -195,7 +195,7 @@ final class moodle_url_test extends \advanced_testcase {
         $this->assertSame('/', $url3->out_as_local_url());
     }
 
-    public function test_out_as_local_url_error() {
+    public function test_out_as_local_url_error(): void {
         $url2 = new \moodle_url('http://www.google.com/lib/tests/weblib_test.php');
         $this->expectException(\coding_exception::class);
         $url2->out_as_local_url();
@@ -204,7 +204,7 @@ final class moodle_url_test extends \advanced_testcase {
     /**
      * You should get error with modified url
      */
-    public function test_modified_url_out_as_local_url_error() {
+    public function test_modified_url_out_as_local_url_error(): void {
         global $CFG;
 
         $modifiedurl = $CFG->wwwroot.'1';
@@ -216,13 +216,13 @@ final class moodle_url_test extends \advanced_testcase {
     /**
      * Try get local url from external https url and you should get error
      */
-    public function test_https_out_as_local_url_error() {
+    public function test_https_out_as_local_url_error(): void {
         $url4 = new \moodle_url('https://www.google.com/lib/tests/weblib_test.php');
         $this->expectException(\coding_exception::class);
         $url4->out_as_local_url();
     }
 
-    public function test_moodle_url_get_scheme() {
+    public function test_moodle_url_get_scheme(): void {
         // Should return the scheme only.
         $url = new \moodle_url('http://www.example.org:447/my/file/is/here.txt?really=1');
         $this->assertSame('http', $url->get_scheme());
@@ -236,13 +236,13 @@ final class moodle_url_test extends \advanced_testcase {
         $this->assertSame('', $url->get_scheme());
     }
 
-    public function test_moodle_url_get_host() {
+    public function test_moodle_url_get_host(): void {
         // Should return the host part only.
         $url = new \moodle_url('http://www.example.org:447/my/file/is/here.txt?really=1');
         $this->assertSame('www.example.org', $url->get_host());
     }
 
-    public function test_moodle_url_get_port() {
+    public function test_moodle_url_get_port(): void {
         // Should return the port if one provided.
         $url = new \moodle_url('http://www.example.org:447/my/file/is/here.txt?really=1');
         $this->assertSame(447, $url->get_port());
@@ -328,7 +328,7 @@ final class moodle_url_test extends \advanced_testcase {
      * @param   array   $args Args to be provided to make_pluginfile_url
      * @param   string  $expected The expected result
      */
-    public function test_make_pluginfile_url($slashargs, $args, $expected) {
+    public function test_make_pluginfile_url($slashargs, $args, $expected): void {
         global $CFG;
 
         $this->resetAfterTest();

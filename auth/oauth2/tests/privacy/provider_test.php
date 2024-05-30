@@ -51,7 +51,7 @@ class provider_test extends provider_testcase {
     /**
      * Check that a user context is returned if there is any user data for this user.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $user = $this->getDataGenerator()->create_user();
         $this->assertEmpty(provider::get_contexts_for_userid($user->id));
 
@@ -73,7 +73,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is exported correctly.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $user = $this->getDataGenerator()->create_user();
         $issuer = \core\oauth2\api::create_standard_issuer('google');
         $info = [];
@@ -94,7 +94,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deleting all user data for a specific context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -134,7 +134,7 @@ class provider_test extends provider_testcase {
     /**
      * This should work identical to the above test.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -175,7 +175,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users with a user context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $component = 'auth_oauth2';
@@ -211,7 +211,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $this->resetAfterTest();
 
         $component = 'auth_oauth2';

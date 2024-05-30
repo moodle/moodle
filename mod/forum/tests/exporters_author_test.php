@@ -30,7 +30,7 @@ class exporters_author_test extends \advanced_testcase {
     /**
      * Test the export function returns expected values.
      */
-    public function test_export_author() {
+    public function test_export_author(): void {
         global $PAGE;
         $this->resetAfterTest();
 
@@ -70,7 +70,7 @@ class exporters_author_test extends \advanced_testcase {
     /**
      * Test the export function with groups.
      */
-    public function test_export_author_with_groups() {
+    public function test_export_author_with_groups(): void {
         global $PAGE;
         $this->resetAfterTest();
 
@@ -109,7 +109,7 @@ class exporters_author_test extends \advanced_testcase {
     /**
      * Test the export function with no view capability.
      */
-    public function test_export_author_no_view_capability() {
+    public function test_export_author_no_view_capability(): void {
         global $PAGE;
         $this->resetAfterTest();
 

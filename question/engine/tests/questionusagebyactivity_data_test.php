@@ -35,7 +35,7 @@ require_once(__DIR__ . '/helpers.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class questionusagebyactivity_data_test extends \data_loading_method_test_base {
-    public function test_load() {
+    public function test_load(): void {
         $scid = \context_system::instance()->id;
         $records = new question_test_recordset(array(
         array('qubaid', 'contextid', 'component', 'preferredbehaviour',
@@ -90,7 +90,7 @@ class questionusagebyactivity_data_test extends \data_loading_method_test_base {
         $this->assertEquals(array('-finish' => '1'), $step->get_all_data());
     }
 
-    public function test_load_data_no_steps() {
+    public function test_load_data_no_steps(): void {
         // The code had a bug where if one question_attempt had no steps,
         // load_from_records got stuck in an infinite loop. This test is to
         // verify that no longer happens.
@@ -122,7 +122,7 @@ class questionusagebyactivity_data_test extends \data_loading_method_test_base {
         $this->assertEquals(0, $qa->get_num_steps());
     }
 
-    public function test_load_data_no_qas() {
+    public function test_load_data_no_qas(): void {
         // The code had a bug where if a question_usage had no question_attempts,
         // load_from_records got stuck in an infinite loop. This test is to
         // verify that no longer happens.

@@ -40,7 +40,7 @@ global $CFG;
  */
 class lib_test extends \advanced_testcase {
 
-    public function test_comment_add_user_competency() {
+    public function test_comment_add_user_competency(): void {
         global $DB, $PAGE;
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
@@ -185,7 +185,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Commenting on a plan.
      */
-    public function test_comment_add_plan() {
+    public function test_comment_add_plan(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');

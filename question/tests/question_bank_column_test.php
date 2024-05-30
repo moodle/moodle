@@ -39,7 +39,7 @@ class question_bank_column_test extends \advanced_testcase {
      * Test function display_header multiple sorts with no custom tooltips.
      *
      */
-    public function test_column_header_multi_sort_no_tooltips() {
+    public function test_column_header_multi_sort_no_tooltips(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $questionbank = new view(
@@ -73,7 +73,7 @@ class question_bank_column_test extends \advanced_testcase {
      * Test function display_header multiple sorts with custom tooltips.
      *
      */
-    public function test_column_header_multi_sort_with_tooltips() {
+    public function test_column_header_multi_sort_with_tooltips(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $questionbank = new view(

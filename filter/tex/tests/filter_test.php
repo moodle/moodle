@@ -66,7 +66,7 @@ class filter_test extends \advanced_testcase {
         }
     }
 
-    function test_delimiters() {
+    function test_delimiters(): void {
         // First test the list of supported delimiters.
         $this->run_with_delimiters('$$', '$$', true);
         $this->run_with_delimiters('\\(', '\\)', true);

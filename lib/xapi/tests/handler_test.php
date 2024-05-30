@@ -47,7 +47,7 @@ class handler_test extends advanced_testcase {
     /**
      * Test handler creation.
      */
-    public function test_handler_create() {
+    public function test_handler_create(): void {
         // Get an existent handler.
         $handler = handler::create('fake_component');
         $this->assertEquals(get_class($handler), 'fake_component\\xapi\\handler');
@@ -60,7 +60,7 @@ class handler_test extends advanced_testcase {
     /**
      * Test xAPI support.
      */
-    public function test_supports_xapi() {
+    public function test_supports_xapi(): void {
         // Get an existent handler.
         $result = handler::supports_xapi('fake_component');
         $this->assertTrue($result);
@@ -73,7 +73,7 @@ class handler_test extends advanced_testcase {
     /**
      * Test support group.
      */
-    public function test_support_group_actor() {
+    public function test_support_group_actor(): void {
         global $CFG;
         // Get an existent handler.
         $this->resetAfterTest();
@@ -86,7 +86,7 @@ class handler_test extends advanced_testcase {
     /**
      * Test for process_statements method.
      */
-    public function test_process_statements() {
+    public function test_process_statements(): void {
 
         $this->resetAfterTest();
         $this->preventResetByRollback(); // Logging waits till the transaction gets committed.

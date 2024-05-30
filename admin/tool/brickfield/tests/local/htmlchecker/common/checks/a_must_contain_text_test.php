@@ -64,7 +64,7 @@ EOD;
     /**
      * Test for anchor tags containing text
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail);
         $this->assertTrue($results[0]->element->tagName == 'a');
 

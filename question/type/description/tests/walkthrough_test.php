@@ -31,7 +31,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
-    public function test_informationitem_feedback_description() {
+    public function test_informationitem_feedback_description(): void {
 
         // Create a description question.
         $description = \test_question_maker::make_question('description');

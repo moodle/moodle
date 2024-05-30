@@ -45,7 +45,7 @@ class helper_test extends advanced_testcase {
         return true;
     }
 
-    public function test_create_account() {
+    public function test_create_account(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -54,7 +54,7 @@ class helper_test extends advanced_testcase {
         $this->assertEquals('Test 1', $DB->get_field('payment_accounts', 'name', ['id' => $account->get('id')]));
     }
 
-    public function test_update_account_details() {
+    public function test_update_account_details(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -66,7 +66,7 @@ class helper_test extends advanced_testcase {
         $this->assertEquals('Edited name', $DB->get_field('payment_accounts', 'name', ['id' => $account->get('id')]));
     }
 
-    public function test_update_account_gateways() {
+    public function test_update_account_gateways(): void {
         global $DB;
         if (!$this->enable_paypal_gateway()) {
             $this->markTestSkipped('Paypal payment gateway plugin not found');
@@ -93,7 +93,7 @@ class helper_test extends advanced_testcase {
         $this->assertEquals('T3', $DB->get_field('payment_gateways', 'config', ['id' => $gateway->get('id')]));
     }
 
-    public function test_delete_account() {
+    public function test_delete_account(): void {
         global $DB;
         if (!$this->enable_paypal_gateway()) {
             $this->markTestSkipped('Paypal payment gateway plugin not found');
@@ -110,7 +110,7 @@ class helper_test extends advanced_testcase {
         $this->assertEmpty($DB->get_records('payment_gateways', ['id' => $gateway->get('id')]));
     }
 
-    public function test_archive_restore_account() {
+    public function test_archive_restore_account(): void {
         global $DB, $USER;
         $this->resetAfterTest();
 
@@ -169,7 +169,7 @@ class helper_test extends advanced_testcase {
      * @param float $surcharge
      * @param string $expected
      */
-    public function test_get_rounded_cost(float $amount, string $currency, float $surcharge, float $expected) {
+    public function test_get_rounded_cost(float $amount, string $currency, float $surcharge, float $expected): void {
         $this->assertEquals($expected, helper::get_rounded_cost($amount, $currency, $surcharge));
     }
 
@@ -182,7 +182,7 @@ class helper_test extends advanced_testcase {
      * @param float $surcharge
      * @param string $expected
      */
-    public function test_get_cost_as_string(float $amount, string $currency, float $surcharge, string $expected) {
+    public function test_get_cost_as_string(float $amount, string $currency, float $surcharge, string $expected): void {
         // Some old ICU versions have a bug, where they don't follow the CLDR and they are
         // missing the non-breaking-space between the currency abbreviation and the value.
         // i.e. it returns AUD50 instead of AU\xc2\xa050). See the following issues @ ICU:

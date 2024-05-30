@@ -52,7 +52,7 @@ class search_test extends \advanced_testcase {
      * Test survey_view
      * @return void
      */
-    public function test_survey_indexing() {
+    public function test_survey_indexing(): void {
         global $CFG;
 
         $this->resetAfterTest();

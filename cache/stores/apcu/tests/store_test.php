@@ -53,7 +53,7 @@ class store_test extends \cachestore_tests {
     /**
      * Test that the Moodle APCu store doesn't cross paths with other code using APCu as well.
      */
-    public function test_cross_application_interaction() {
+    public function test_cross_application_interaction(): void {
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test');
         $instance = new cachestore_apcu('Test', cachestore_apcu::unit_test_configuration());
         $instance->initialise($definition);
@@ -72,7 +72,7 @@ class store_test extends \cachestore_tests {
         $this->assertSame('pirate', apcu_fetch('test'));
     }
 
-    public function test_different_caches_have_different_prefixes() {
+    public function test_different_caches_have_different_prefixes(): void {
         $definition = cache_definition::load_adhoc(cache_store::MODE_APPLICATION, 'cachestore_apcu', 'phpunit_test');
         $instance = new cachestore_apcu('Test', cachestore_apcu::unit_test_configuration());
         $instance->initialise($definition);

@@ -44,7 +44,7 @@ require_once($CFG->dirroot . '/backup/util/helper/convert_helper.class.php');
  */
 class converterhelper_test extends \basic_testcase {
 
-    public function test_choose_conversion_path() {
+    public function test_choose_conversion_path(): void {
 
         // no converters available
         $descriptions = array();

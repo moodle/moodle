@@ -32,7 +32,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the info_module class (is_available, get_full_information).
      */
-    public function test_info_module() {
+    public function test_info_module(): void {
         global $DB, $CFG;
 
         // Create a course and pages.
@@ -91,7 +91,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the info_section class (is_available, get_full_information).
      */
-    public function test_info_section() {
+    public function test_info_section(): void {
         global $DB;
 
         // Create a course.
@@ -145,7 +145,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the is_user_visible() static function in info_module.
      */
-    public function test_is_user_visible() {
+    public function test_is_user_visible(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/course/lib.php');
         $this->resetAfterTest();
@@ -243,7 +243,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the convert_legacy_fields function used in restore.
      */
-    public function test_convert_legacy_fields() {
+    public function test_convert_legacy_fields(): void {
         // Check with no availability conditions first.
         $rec = (object)array('availablefrom' => 0, 'availableuntil' => 0,
                 'groupingid' => 7, 'showavailability' => 1);
@@ -310,7 +310,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the add_legacy_availability_condition function used in restore.
      */
-    public function test_add_legacy_availability_condition() {
+    public function test_add_legacy_availability_condition(): void {
         // Completion condition tests.
         $rec = (object)array('sourcecmid' => 7, 'requiredcompletion' => 1);
         // No previous availability, show = true.
@@ -354,7 +354,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the add_legacy_availability_field_condition function used in restore.
      */
-    public function test_add_legacy_availability_field_condition() {
+    public function test_add_legacy_availability_field_condition(): void {
         // User field, normal operator.
         $rec = (object)array('userfield' => 'email', 'shortname' => null,
                 'operator' => 'contains', 'value' => '@');
@@ -383,7 +383,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the filter_user_list() and get_user_list_sql() functions.
      */
-    public function test_filter_user_list() {
+    public function test_filter_user_list(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/course/lib.php');
         $this->resetAfterTest();
@@ -503,7 +503,7 @@ class info_test extends \advanced_testcase {
     /**
      * Tests the info_module class when involved in a recursive call to $cm->name.
      */
-    public function test_info_recursive_name_call() {
+    public function test_info_recursive_name_call(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -533,7 +533,7 @@ class info_test extends \advanced_testcase {
      * Test for the is_available_for_all() method of the info base class.
      * @covers \core_availability\info_module::is_available_for_all
      */
-    public function test_is_available_for_all() {
+    public function test_is_available_for_all(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
         $CFG->enableavailability = 0;

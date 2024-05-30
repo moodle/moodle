@@ -57,7 +57,7 @@ class course_bin_test extends \advanced_testcase {
     /**
      * Check that our hook is called when an activity is deleted.
      */
-    public function test_pre_course_module_delete_hook() {
+    public function test_pre_course_module_delete_hook(): void {
         global $DB;
 
         // Should have nothing in the recycle bin.
@@ -80,7 +80,7 @@ class course_bin_test extends \advanced_testcase {
     /**
      * Test that we can restore recycle bin items.
      */
-    public function test_restore() {
+    public function test_restore(): void {
         global $DB;
 
         $startcount = $DB->count_records('course_modules');
@@ -102,7 +102,7 @@ class course_bin_test extends \advanced_testcase {
     /**
      * Test that we can delete recycle bin items.
      */
-    public function test_delete() {
+    public function test_delete(): void {
         global $DB;
 
         $startcount = $DB->count_records('course_modules');
@@ -127,7 +127,7 @@ class course_bin_test extends \advanced_testcase {
     /**
      * Test the cleanup task.
      */
-    public function test_cleanup_task() {
+    public function test_cleanup_task(): void {
         global $DB;
 
         set_config('coursebinexpiry', WEEKSECS, 'tool_recyclebin');
@@ -204,7 +204,7 @@ class course_bin_test extends \advanced_testcase {
      * @dataProvider recycle_bin_settings_provider
      * @param array $settings array of plugin, name, value stdClass().
      */
-    public function test_coursemodule_restore_with_userdata($settings) {
+    public function test_coursemodule_restore_with_userdata($settings): void {
         // Force configuration changes from provider.
         foreach ($settings as $setting) {
             // Need to create a directory for backup_auto_destination.
@@ -252,7 +252,7 @@ class course_bin_test extends \advanced_testcase {
      * @dataProvider recycle_bin_settings_provider
      * @covers ::store_item
      */
-    public function test_coursemodule_restore_with_activity_setting_disabled() {
+    public function test_coursemodule_restore_with_activity_setting_disabled(): void {
 
         // Set the configuration to not include activities in the automated backup.
         set_config('backup_auto_activities', false, 'backup');
@@ -274,7 +274,7 @@ class course_bin_test extends \advanced_testcase {
      * @dataProvider recycle_bin_settings_provider
      * @param array $settings array of plugin, name, value stdClass().
      */
-    public function test_coursemodule_restore_without_userdata($settings) {
+    public function test_coursemodule_restore_without_userdata($settings): void {
         // Force configuration changes from provider.
         foreach ($settings as $setting) {
             // Need to create a directory for backup_auto_destination.

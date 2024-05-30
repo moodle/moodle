@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
-    public function test_multianswer_adaptivenopenalty_qsession104() {
+    public function test_multianswer_adaptivenopenalty_qsession104(): void {
         $quiz = (object) array(
             'id' => '5',
             'course' => '2',
@@ -233,7 +233,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_multianswer_adaptivenopenalty_qsession106() {
+    public function test_multianswer_adaptivenopenalty_qsession106(): void {
         $quiz = (object) array(
             'id' => '5',
             'course' => '2',
@@ -415,7 +415,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_multianswer_adaptivenopenalty_qsession108() {
+    public function test_multianswer_adaptivenopenalty_qsession108(): void {
         $quiz = (object) array(
             'id' => '5',
             'course' => '2',
@@ -639,7 +639,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_multianswer_adaptivenopenalty_qsession105() {
+    public function test_multianswer_adaptivenopenalty_qsession105(): void {
         $quiz = (object) array(
             'id' => '5',
             'course' => '2',
@@ -1324,7 +1324,7 @@ b) What grade would you give it? _____',
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_multianswer_adaptivenopenalty_qsession107() {
+    public function test_multianswer_adaptivenopenalty_qsession107(): void {
         $quiz = (object) array(
             'id' => '5',
             'course' => '2',
@@ -1981,7 +1981,7 @@ b) What grade would you give it? _____',
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_multianswer_adaptivenopenalty_qsession109() {
+    public function test_multianswer_adaptivenopenalty_qsession109(): void {
         $quiz = (object) array(
             'id' => '5',
             'course' => '2',

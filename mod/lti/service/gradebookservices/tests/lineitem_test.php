@@ -35,7 +35,7 @@ class lineitem_test extends \advanced_testcase {
      *
      * Test updating the line item with submission review.
      */
-    public function test_execute_put_nosubreview() {
+    public function test_execute_put_nosubreview(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/lti/locallib.php');
         $this->resetAfterTest();
@@ -79,7 +79,7 @@ class lineitem_test extends \advanced_testcase {
      *
      * Test updating the line item with submission review.
      */
-    public function test_execute_put_withsubreview() {
+    public function test_execute_put_withsubreview(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/lti/locallib.php');
         $this->resetAfterTest();
@@ -130,7 +130,7 @@ class lineitem_test extends \advanced_testcase {
      *
      * Test updating the line item with submission review.
      */
-    public function test_execute_put_addsubreview() {
+    public function test_execute_put_addsubreview(): void {
         global $CFG;
         require_once($CFG->dirroot . '/mod/lti/locallib.php');
         $this->resetAfterTest();

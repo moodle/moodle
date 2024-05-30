@@ -71,7 +71,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         global $CFG;
 
         // When there are no policies or agreements context list is empty.
@@ -106,7 +106,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test getting the user IDs within the context related to this plugin.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $CFG;
         $component = 'tool_policy';
 
@@ -185,7 +185,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertCount(0, $userlist);
     }
 
-    public function test_export_agreements() {
+    public function test_export_agreements(): void {
         global $CFG;
 
         $otheruser = $this->getDataGenerator()->create_user();
@@ -246,7 +246,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertEquals(strip_tags($policy2->get('content')), strip_tags($datauser->content));
     }
 
-    public function test_export_agreements_for_other() {
+    public function test_export_agreements_for_other(): void {
         global $CFG;
 
         $managercontext = \context_user::instance($this->manager->id);
@@ -305,7 +305,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
         $this->assertEquals(strip_tags($policy2->get('content')), strip_tags($datauser->content));
     }
 
-    public function test_export_created_policies() {
+    public function test_export_created_policies(): void {
         global $CFG;
 
         // Create policies and agree to them as manager.

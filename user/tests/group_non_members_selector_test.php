@@ -36,7 +36,7 @@ class group_non_members_selector_test extends \advanced_testcase {
     /**
      * Test find_users that only return group non members
      */
-    public function test_find_users_only_return_group_non_member() {
+    public function test_find_users_only_return_group_non_member(): void {
         $this->resetAfterTest();
 
         // Create course.

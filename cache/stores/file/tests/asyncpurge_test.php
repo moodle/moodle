@@ -39,7 +39,7 @@ class asyncpurge_test extends \advanced_testcase {
      * @covers ::get
      * @covers ::purge
      */
-    public function test_cache_async_purge() {
+    public function test_cache_async_purge(): void {
         $this->resetAfterTest(true);
 
         // Cache definition.
@@ -72,7 +72,7 @@ class asyncpurge_test extends \advanced_testcase {
      *
      * @covers \cachestore_file\task
      */
-    public function test_cache_async_purge_cron() {
+    public function test_cache_async_purge_cron(): void {
         global $CFG, $USER;
 
         $this->resetAfterTest(true);

@@ -30,7 +30,7 @@ class preset_downloaded_test extends \advanced_testcase {
     /**
      * Test preset_downloaded event.
      */
-    public function test_preset_downloaded_event() {
+    public function test_preset_downloaded_event(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

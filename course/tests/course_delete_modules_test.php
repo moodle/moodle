@@ -37,7 +37,7 @@ class course_delete_modules_test extends \advanced_testcase {
     /**
      * Test to have a no message for usual process.
      */
-    public function test_delete_module_execution() {
+    public function test_delete_module_execution(): void {
         $this->resetAfterTest();
 
         // Generate test data.

@@ -84,7 +84,7 @@ class provider_test extends \advanced_testcase {
      * @param   string  $component The name of the component.
      * @param   string  $classname The name of the class for privacy
      */
-    public function test_null_provider($component, $classname) {
+    public function test_null_provider($component, $classname): void {
         $reason = $classname::get_reason();
         $this->assertIsString($reason);
 
@@ -113,7 +113,7 @@ class provider_test extends \advanced_testcase {
      * @param   string  $component The name of the component.
      * @param   string  $classname The name of the class for privacy
      */
-    public function test_metadata_provider($component, $classname) {
+    public function test_metadata_provider($component, $classname): void {
         global $DB;
 
         $collection = new collection($component);
@@ -174,7 +174,7 @@ class provider_test extends \advanced_testcase {
      * @param string $component frankenstyle component name, e.g. 'mod_assign'
      * @param string $classname the fully qualified provider classname
      */
-    public function test_all_providers_compliant($component, $classname) {
+    public function test_all_providers_compliant($component, $classname): void {
         $manager = new manager();
         $this->assertTrue($manager->component_is_compliant($component));
     }
@@ -185,7 +185,7 @@ class provider_test extends \advanced_testcase {
      * @dataProvider    is_user_data_provider
      * @param   string  $component
      */
-    public function test_component_understands_deleted_users($component) {
+    public function test_component_understands_deleted_users($component): void {
         $this->resetAfterTest();
 
         // Create a user.
@@ -208,7 +208,7 @@ class provider_test extends \advanced_testcase {
      * @dataProvider    is_user_data_provider
      * @param   string  $component
      */
-    public function test_userdata_provider_implements_userlist($component) {
+    public function test_userdata_provider_implements_userlist($component): void {
         $classname = manager::get_provider_classname_for_component($component);
         $this->assertTrue(is_subclass_of($classname, \core_privacy\local\request\core_userlist_provider::class));
     }
@@ -290,7 +290,7 @@ class provider_test extends \advanced_testcase {
     /**
      * Test that all tables with user fields are covered by metadata providers
      */
-    public function test_table_coverage() {
+    public function test_table_coverage(): void {
         global $DB;
         $dbman = $DB->get_manager();
         $tables = [];

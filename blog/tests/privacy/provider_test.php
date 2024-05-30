@@ -52,7 +52,7 @@ class provider_test extends provider_testcase {
         $this->resetAfterTest();
     }
 
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
@@ -112,7 +112,7 @@ class provider_test extends provider_testcase {
         $this->assertTrue(in_array($u1ctx->id, $contextids));
     }
 
-    public function test_get_contexts_for_userid_with_one_associated_post_only() {
+    public function test_get_contexts_for_userid_with_one_associated_post_only(): void {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $u1 = $dg->create_user();
@@ -133,7 +133,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user IDs are returned for a specificed course or module context.
      */
-    public function test_get_users_in_context_course_and_module() {
+    public function test_get_users_in_context_course_and_module(): void {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $course = $this->getDataGenerator()->create_course();
@@ -170,7 +170,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user IDs are returned for a specificed user context.
      */
-    public function test_get_users_in_context_user_context() {
+    public function test_get_users_in_context_user_context(): void {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $u1ctx = \context_user::instance($user1->id);
@@ -192,7 +192,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user IDs are returned for a specificed user context for an external blog.
      */
-    public function test_get_users_in_context_external_blog() {
+    public function test_get_users_in_context_external_blog(): void {
         $user1 = $this->getDataGenerator()->create_user();
         $u1ctx = \context_user::instance($user1->id);
         $extu1 = $this->create_external_blog(['userid' => $user1->id]);
@@ -203,7 +203,7 @@ class provider_test extends provider_testcase {
         $this->assertCount(1, $userids);
     }
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $dg = $this->getDataGenerator();
@@ -376,7 +376,7 @@ class provider_test extends provider_testcase {
      *
      * @return void
      */
-    public function test_delete_data_for_user_empty_context() {
+    public function test_delete_data_for_user_empty_context(): void {
         global $DB;
 
         $user = $this->getDataGenerator()->create_user();
@@ -402,7 +402,7 @@ class provider_test extends provider_testcase {
         $this->assertEmpty($DB->get_records('blog_association', ['contextid' => $context->id]));
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $dg = $this->getDataGenerator();
@@ -539,7 +539,7 @@ class provider_test extends provider_testcase {
         $this->assertCount(1, $DB->get_records('blog_external', ['userid' => $u2->id]));
     }
 
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
 
@@ -737,7 +737,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that deleting of blog information in a user context works as desired.
      */
-    public function test_delete_data_for_users_user_context() {
+    public function test_delete_data_for_users_user_context(): void {
         global $DB;
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -780,7 +780,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that deleting of an external blog in a user context works as desired.
      */
-    public function test_delete_data_for_users_external_blog() {
+    public function test_delete_data_for_users_external_blog(): void {
         global $DB;
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -800,7 +800,7 @@ class provider_test extends provider_testcase {
         $this->assertCount(1, $DB->get_records('blog_external'));
     }
 
-    public function test_delete_data_for_users_course_and_module_context() {
+    public function test_delete_data_for_users_course_and_module_context(): void {
         global $DB;
 
         $u1 = $this->getDataGenerator()->create_user();

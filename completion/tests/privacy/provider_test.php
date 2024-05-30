@@ -43,7 +43,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test joining course completion data to an sql statement.
      */
-    public function test_get_course_completion_join_sql() {
+    public function test_get_course_completion_join_sql(): void {
         global $DB;
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
@@ -63,7 +63,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test fetching users' course completion by context and adding to a userlist.
      */
-    public function test_add_course_completion_users_to_userlist() {
+    public function test_add_course_completion_users_to_userlist(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -93,7 +93,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test getting course completion information.
      */
-    public function test_get_course_completion_info() {
+    public function test_get_course_completion_info(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->create_course_completion();
@@ -106,7 +106,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test getting activity completion information.
      */
-    public function test_get_activity_completion_info() {
+    public function test_get_activity_completion_info(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->create_course_completion();
@@ -121,7 +121,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting activity completion information for a user.
      */
-    public function test_delete_completion_activity_user() {
+    public function test_delete_completion_activity_user(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->create_course_completion();
@@ -135,7 +135,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting course completion information.
      */
-    public function test_delete_completion_course() {
+    public function test_delete_completion_course(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->create_course_completion();
@@ -150,7 +150,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting course completion information by approved userlist.
      */
-    public function test_delete_completion_by_approved_userlist() {
+    public function test_delete_completion_by_approved_userlist(): void {
         $this->resetAfterTest();
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
@@ -207,7 +207,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test getting course completion information with completion disabled.
      */
-    public function test_get_course_completion_info_completion_disabled() {
+    public function test_get_course_completion_info_completion_disabled(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();

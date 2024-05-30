@@ -37,7 +37,7 @@ class primary_test extends \advanced_testcase {
      * @param string $expected The expected nodes
      * @dataProvider setting_initialise_provider
      */
-    public function test_setting_initialise($usertype, $expected) {
+    public function test_setting_initialise($usertype, $expected): void {
         global $PAGE;
         $PAGE->set_url("/");
         $this->resetAfterTest();

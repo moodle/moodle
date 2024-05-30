@@ -44,7 +44,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::get_contexts_for_userid
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $user = $this->getDataGenerator()->create_user();
         $this->assertEmpty(provider::get_contexts_for_userid($user->id));
 
@@ -65,7 +65,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::export_user_data
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $user = $this->getDataGenerator()->create_user();
         $auth = get_auth_plugin('lti');
         $auth->create_user_binding('https://lms.example.com', 'abc123', $user->id);
@@ -87,7 +87,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::delete_data_for_all_users_in_context
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $auth = get_auth_plugin('lti');
 
@@ -119,7 +119,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::delete_data_for_user
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $auth = get_auth_plugin('lti');
 
@@ -152,7 +152,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::get_users_in_context
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $auth = get_auth_plugin('lti');
         $component = 'auth_lti';
         $user = $this->getDataGenerator()->create_user();
@@ -184,7 +184,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::delete_data_for_users
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $auth = get_auth_plugin('lti');
         $component = 'auth_lti';
         $user1 = $this->getDataGenerator()->create_user();

@@ -37,7 +37,7 @@ class question_history_view_test extends \advanced_testcase {
      *
      * @covers ::display
      */
-    public function test_question_history_shows_all_versions() {
+    public function test_question_history_shows_all_versions(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $generator = $this->getDataGenerator();
@@ -89,7 +89,7 @@ class question_history_view_test extends \advanced_testcase {
      *
      * @covers ::display_question_bank_header
      */
-    public function test_display_question_bank_header() {
+    public function test_display_question_bank_header(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $generator = $this->getDataGenerator();

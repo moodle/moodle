@@ -46,7 +46,7 @@ class modinfolib_test extends advanced_testcase {
         require_once($CFG->libdir . '/tests/fixtures/sectiondelegatetest.php');
     }
 
-    public function test_section_info_properties() {
+    public function test_section_info_properties(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -114,7 +114,7 @@ class modinfolib_test extends advanced_testcase {
         set_config('enablecompletion', $oldcfgenablecompletion);
     }
 
-    public function test_cm_info_properties() {
+    public function test_cm_info_properties(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -248,7 +248,7 @@ class modinfolib_test extends advanced_testcase {
         set_config('enablecompletion', $oldcfgenablecompletion);
     }
 
-    public function test_matching_cacherev() {
+    public function test_matching_cacherev(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -407,7 +407,7 @@ class modinfolib_test extends advanced_testcase {
         $this->assertEquals($newcourse->cacherev, $SITE->cacherev);
     }
 
-    public function test_course_modinfo_properties() {
+    public function test_course_modinfo_properties(): void {
         global $USER, $DB;
 
         $this->resetAfterTest();
@@ -491,7 +491,7 @@ class modinfolib_test extends advanced_testcase {
         $this->assertNotEquals('Illegal overwriting', $modinfo->cms);
     }
 
-    public function test_is_user_access_restricted_by_capability() {
+    public function test_is_user_access_restricted_by_capability(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -549,7 +549,7 @@ class modinfolib_test extends advanced_testcase {
     /**
      * Tests for function cm_info::get_course_module_record()
      */
-    public function test_cm_info_get_course_module_record() {
+    public function test_cm_info_get_course_module_record(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -693,7 +693,7 @@ class modinfolib_test extends advanced_testcase {
      * Tests the availability property that has been added to course modules
      * and sections (just to see that it is correctly saved and accessed).
      */
-    public function test_availability_property() {
+    public function test_availability_property(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();
@@ -739,7 +739,7 @@ class modinfolib_test extends advanced_testcase {
     /**
      * Tests for get_groups() method.
      */
-    public function test_get_groups() {
+    public function test_get_groups(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
 
@@ -802,7 +802,7 @@ class modinfolib_test extends advanced_testcase {
     /**
      * Tests the function for constructing a cm_info from mixed data.
      */
-    public function test_create() {
+    public function test_create(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -861,7 +861,7 @@ class modinfolib_test extends advanced_testcase {
      * Tests function for getting $course and $cm at once quickly from modinfo
      * based on cmid or cm record.
      */
-    public function test_get_course_and_cm_from_cmid() {
+    public function test_get_course_and_cm_from_cmid(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -954,7 +954,7 @@ class modinfolib_test extends advanced_testcase {
      * Tests function for getting $course and $cm at once quickly from modinfo
      * based on instance id or record.
      */
-    public function test_get_course_and_cm_from_instance() {
+    public function test_get_course_and_cm_from_instance(): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -1084,7 +1084,7 @@ class modinfolib_test extends advanced_testcase {
         int $strictness = IGNORE_MISSING,
         bool $expectnull = false,
         bool $expectexception = false
-    ) {
+    ): void {
         global $DB;
 
         $this->resetAfterTest();

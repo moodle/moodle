@@ -122,7 +122,7 @@ EOD;
     /**
      * Test the header following an h3 must be h1, h2, h3 or h4.
      */
-    public function test_check() {
+    public function test_check(): void {
         $results = $this->get_checker_results($this->htmlfail1);
         $this->assertTrue($results[0]->element->tagName == 'h5');
 

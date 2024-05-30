@@ -43,7 +43,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
 
@@ -89,7 +89,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test getting users in the context ID related to this plugin.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $component = 'block_recentlyaccesseditems';
@@ -146,7 +146,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test fetching information about user data stored.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('block_recentlyaccesseditems');
         $newcollection = provider::get_metadata($collection);
         $itemcollection = $newcollection->get_collection();
@@ -168,7 +168,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test exporting data for an approved contextlist.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -221,7 +221,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test exporting data for an approved contextlist with a deleted course
      */
-    public function test_export_user_data_with_deleted_course() {
+    public function test_export_user_data_with_deleted_course(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -268,7 +268,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting data for all users within an approved contextlist.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -336,7 +336,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting data within an approved contextlist for a user.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -416,7 +416,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test deleting data within a context for an approved userlist.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();

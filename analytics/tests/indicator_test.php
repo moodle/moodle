@@ -39,7 +39,7 @@ class indicator_test extends \advanced_testcase {
      * @dataProvider validate_calculated_value
      * @return null
      */
-    public function test_validate_calculated_value($indicatorclass, $returnedvalue) {
+    public function test_validate_calculated_value($indicatorclass, $returnedvalue): void {
         $indicator = new $indicatorclass();
         list($values, $unused) = $indicator->calculate([1], 'notrelevanthere');
         $this->assertEquals($returnedvalue, $values[0]);
@@ -66,7 +66,7 @@ class indicator_test extends \advanced_testcase {
      * @dataProvider validate_calculated_value_exceptions
      * @return null
      */
-    public function test_validate_calculated_value_exceptions($indicatorclass, $willreturn) {
+    public function test_validate_calculated_value_exceptions($indicatorclass, $willreturn): void {
 
         $indicator = new $indicatorclass();
         $indicatormock = $this->getMockBuilder(get_class($indicator))

@@ -34,7 +34,7 @@ class legacy_consumer_repository_test extends \lti_advantage_testcase {
      *
      * @covers ::get_consumer_secrets
      */
-    public function test_get_consumer_secrets() {
+    public function test_get_consumer_secrets(): void {
         $this->resetAfterTest();
         // Set up legacy consumer information.
         $course = $this->getDataGenerator()->create_course();

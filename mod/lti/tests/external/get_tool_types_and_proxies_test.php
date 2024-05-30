@@ -45,7 +45,7 @@ class get_tool_types_and_proxies_test extends \mod_lti_testcase {
     /**
      * Test get_tool_types_and_proxies.
      */
-    public function test_mod_lti_get_tool_types_and_proxies() {
+    public function test_mod_lti_get_tool_types_and_proxies(): void {
         $proxy = $this->generate_tool_proxy(1);
         $this->generate_tool_type(1, $proxy->id);
 
@@ -66,7 +66,7 @@ class get_tool_types_and_proxies_test extends \mod_lti_testcase {
     /**
      * Test get_tool_types_and_proxies with multiple pages of tool types.
      */
-    public function test_mod_lti_get_tool_types_and_proxies_with_multiple_pages() {
+    public function test_mod_lti_get_tool_types_and_proxies_with_multiple_pages(): void {
         for ($i = 0; $i < 3; $i++) {
             $proxy = $this->generate_tool_proxy($i);
             $this->generate_tool_type($i, $proxy->id);
@@ -84,7 +84,7 @@ class get_tool_types_and_proxies_test extends \mod_lti_testcase {
     /**
      * Test get_tool_types_and_proxies with multiple pages of tool types and offset.
      */
-    public function test_mod_lti_get_tool_types_and_proxies_with_multiple_pages_last_page() {
+    public function test_mod_lti_get_tool_types_and_proxies_with_multiple_pages_last_page(): void {
         for ($i = 0; $i < 6; $i++) {
             $proxy = $this->generate_tool_proxy($i);
             $this->generate_tool_type($i, $proxy->id);
@@ -102,7 +102,7 @@ class get_tool_types_and_proxies_test extends \mod_lti_testcase {
     /**
      * Test get_tool_types_and_proxies without pagination.
      */
-    public function test_mod_lti_get_tool_types_and_proxies_without_pagination() {
+    public function test_mod_lti_get_tool_types_and_proxies_without_pagination(): void {
         for ($i = 0; $i < 10; $i++) {
             $proxy = $this->generate_tool_proxy($i);
             $this->generate_tool_type($i, $proxy->id);

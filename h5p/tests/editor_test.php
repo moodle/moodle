@@ -76,7 +76,7 @@ class editor_test extends advanced_testcase {
     /**
      * Test that existing content is properly set.
      */
-    public function test_set_content() {
+    public function test_set_content(): void {
         $this->resetAfterTest();
 
         autoloader::register();
@@ -136,7 +136,7 @@ class editor_test extends advanced_testcase {
     /**
      * Tests that library and file area are properly set.
      */
-    public function test_set_library() {
+    public function test_set_library(): void {
         global $USER;
 
         $library = 'H5P.Accordion 1.5';
@@ -175,7 +175,7 @@ class editor_test extends advanced_testcase {
     /**
      * Test that required assets (js and css) and form will be loaded in page.
      */
-    public function test_add_editor_to_form() {
+    public function test_add_editor_to_form(): void {
         global $PAGE, $CFG;
 
         $this->resetAfterTest();
@@ -233,7 +233,7 @@ class editor_test extends advanced_testcase {
     /**
      * Test new content creation.
      */
-    public function test_save_content() {
+    public function test_save_content(): void {
         global $DB;
 
         $this->resetAfterTest();

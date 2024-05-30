@@ -51,7 +51,7 @@ class contentbank_content_updated_test extends \advanced_testcase {
      *
      * @covers ::create_from_record
      */
-    public function test_content_updated() {
+    public function test_content_updated(): void {
 
         $this->resetAfterTest();
         $this->setAdminUser();

@@ -37,7 +37,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers ::question_get_export_single_question_url
      */
-    public function test_question_get_export_single_question_url() {
+    public function test_question_get_export_single_question_url(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
 

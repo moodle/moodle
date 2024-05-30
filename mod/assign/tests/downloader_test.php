@@ -57,7 +57,7 @@ class downloader_test extends \advanced_testcase {
         bool $blindmarking,
         bool $downloadasfolder,
         array $expected
-    ) {
+    ): void {
         global $CFG;
         $this->resetAfterTest();
         $this->setAdminUser();

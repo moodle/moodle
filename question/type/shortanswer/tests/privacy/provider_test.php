@@ -44,13 +44,13 @@ require_once($CFG->dirroot . '/question/type/shortanswer/classes/privacy/provide
 class provider_test extends \core_privacy\tests\provider_testcase {
     // Include the privacy helper which has assertions on it.
 
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('qtype_shortanswer');
         $actual = \qtype_shortanswer\privacy\provider::get_metadata($collection);
         $this->assertEquals($collection, $actual);
     }
 
-    public function test_export_user_preferences_no_pref() {
+    public function test_export_user_preferences_no_pref(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -67,7 +67,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * @param string $value The value stored in the database
      * @param string $expected The expected transformed value
      */
-    public function test_export_user_preferences($name, $value, $expected) {
+    public function test_export_user_preferences($name, $value, $expected): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         set_user_preference("qtype_shortanswer_$name", $value, $user);

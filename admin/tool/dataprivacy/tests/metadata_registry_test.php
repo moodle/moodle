@@ -47,7 +47,7 @@ class metadata_registry_test extends \advanced_testcase {
     /**
      * Test that we can fetch metadata about users for the whole system and that it matches the system count.
      */
-    public function test_get_registry_metadata_count() {
+    public function test_get_registry_metadata_count(): void {
         $data = $this->get_meta_data();
 
         $plugintypes = \core_component::get_plugin_types();
@@ -71,7 +71,7 @@ class metadata_registry_test extends \advanced_testcase {
     /**
      * Check that the expected null provider information is returned.
      */
-    public function test_get_registry_metadata_null_provider_details() {
+    public function test_get_registry_metadata_null_provider_details(): void {
         $data = $this->get_meta_data();
 
         // Check details of core privacy (a null privder) are correct.
@@ -83,7 +83,7 @@ class metadata_registry_test extends \advanced_testcase {
     /**
      * Check that the expected privacy provider information is returned.
      */
-    public function test_get_registry_metadata_provider_details() {
+    public function test_get_registry_metadata_provider_details(): void {
         $data = $this->get_meta_data();
 
         // Check details of core rating (a normal provider) are correct.

@@ -31,7 +31,7 @@ class published_resource_test extends \advanced_testcase {
      *
      * @covers ::__construct
      */
-    public function test_create() {
+    public function test_create(): void {
         $pr = new published_resource(
             'Assignment one',
             'Course 1',

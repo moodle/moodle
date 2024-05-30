@@ -38,7 +38,7 @@ class event_vault_test extends \advanced_testcase {
      * Test that get_action_events_by_timesort returns events after the
      * provided timesort value.
      */
-    public function test_get_action_events_by_timesort_after_time() {
+    public function test_get_action_events_by_timesort_after_time(): void {
         $this->resetAfterTest(true);
 
         $user = $this->getDataGenerator()->create_user();
@@ -79,7 +79,7 @@ class event_vault_test extends \advanced_testcase {
      * Test that get_action_events_by_timesort returns events before the
      * provided timesort value.
      */
-    public function test_get_action_events_by_timesort_before_time() {
+    public function test_get_action_events_by_timesort_before_time(): void {
         $this->resetAfterTest(true);
         $this->setAdminuser();
 
@@ -120,7 +120,7 @@ class event_vault_test extends \advanced_testcase {
      * Test that get_action_events_by_timesort returns events between the
      * provided timesort values.
      */
-    public function test_get_action_events_by_timesort_between_time() {
+    public function test_get_action_events_by_timesort_between_time(): void {
         $this->resetAfterTest(true);
         $this->setAdminuser();
 
@@ -158,7 +158,7 @@ class event_vault_test extends \advanced_testcase {
      * provided timesort values and after the last seen event when one is
      * provided.
      */
-    public function test_get_action_events_by_timesort_between_time_after_event() {
+    public function test_get_action_events_by_timesort_between_time_after_event(): void {
         $this->resetAfterTest(true);
         $this->setAdminuser();
 
@@ -293,7 +293,7 @@ class event_vault_test extends \advanced_testcase {
      * provided. This should work even when the event ids aren't ordered the
      * same as the timesort order.
      */
-    public function test_get_action_events_by_timesort_non_consecutive_ids() {
+    public function test_get_action_events_by_timesort_non_consecutive_ids(): void {
         $this->resetAfterTest(true);
         $this->setAdminuser();
 
@@ -556,7 +556,7 @@ class event_vault_test extends \advanced_testcase {
      * Test that if a user is suspended that events related to that course are not shown.
      * User 1 is suspended. User 2 is active.
      */
-    public function test_get_action_events_by_timesort_with_suspended_user() {
+    public function test_get_action_events_by_timesort_with_suspended_user(): void {
         $this->resetAfterTest();
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
@@ -587,7 +587,7 @@ class event_vault_test extends \advanced_testcase {
      * Test that get_action_events_by_course returns events after the
      * provided timesort value.
      */
-    public function test_get_action_events_by_course_after_time() {
+    public function test_get_action_events_by_course_after_time(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -642,7 +642,7 @@ class event_vault_test extends \advanced_testcase {
      * Test that get_action_events_by_course returns events before the
      * provided timesort value.
      */
-    public function test_get_action_events_by_course_before_time() {
+    public function test_get_action_events_by_course_before_time(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -698,7 +698,7 @@ class event_vault_test extends \advanced_testcase {
      * Test that get_action_events_by_course returns events between the
      * provided timesort values.
      */
-    public function test_get_action_events_by_course_between_time() {
+    public function test_get_action_events_by_course_between_time(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -751,7 +751,7 @@ class event_vault_test extends \advanced_testcase {
      * provided timesort values and after the last seen event when one is
      * provided.
      */
-    public function test_get_action_events_by_course_between_time_after_event() {
+    public function test_get_action_events_by_course_between_time_after_event(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -931,7 +931,7 @@ class event_vault_test extends \advanced_testcase {
      * provided. This should work even when the event ids aren't ordered the
      * same as the timesort order.
      */
-    public function test_get_action_events_by_course_non_consecutive_ids() {
+    public function test_get_action_events_by_course_non_consecutive_ids(): void {
         $this->resetAfterTest(true);
         $this->setAdminuser();
 

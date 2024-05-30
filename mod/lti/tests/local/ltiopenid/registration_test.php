@@ -138,7 +138,7 @@ EOD;
     /**
      * Test the mapping from Registration JSON to LTI Config for a has-it-all tool registration.
      */
-    public function test_to_config_full() {
+    public function test_to_config_full(): void {
         $registration = json_decode($this->registrationfulljson, true);
         $registration['scope'] .= ' https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly';
         $config = registration_helper::get()->registration_to_config($registration, 'TheClientId');
@@ -168,7 +168,7 @@ EOD;
     /**
      * Test the mapping from Registration JSON to LTI Config for a minimal tool registration.
      */
-    public function test_to_config_minimal() {
+    public function test_to_config_minimal(): void {
         $registration = json_decode($this->registrationminimaljson, true);
         $config = registration_helper::get()->registration_to_config($registration, 'TheClientId');
         $this->assertEquals('JWK_KEYSET', $config->lti_keytype);
@@ -196,7 +196,7 @@ EOD;
      * Test the mapping from Registration JSON to LTI Config for a minimal tool with
      * deep linking support registration.
      */
-    public function test_to_config_minimal_with_deeplinking() {
+    public function test_to_config_minimal_with_deeplinking(): void {
         $registration = json_decode($this->registrationminimaldljson, true);
         $config = registration_helper::get()->registration_to_config($registration, 'TheClientId');
         $this->assertEquals(1, $config->lti_contentitem);
@@ -206,7 +206,7 @@ EOD;
     /**
      * Validation Test: initiation login.
      */
-    public function test_validation_initlogin() {
+    public function test_validation_initlogin(): void {
         $registration = json_decode($this->registrationfulljson, true);
         $this->expectException(registration_exception::class);
         $this->expectExceptionCode(400);
@@ -217,7 +217,7 @@ EOD;
     /**
      * Validation Test: redirect uris.
      */
-    public function test_validation_redirecturis() {
+    public function test_validation_redirecturis(): void {
         $registration = json_decode($this->registrationfulljson, true);
         $this->expectException(registration_exception::class);
         $this->expectExceptionCode(400);
@@ -228,7 +228,7 @@ EOD;
     /**
      * Validation Test: jwks uri empty.
      */
-    public function test_validation_jwks() {
+    public function test_validation_jwks(): void {
         $registration = json_decode($this->registrationfulljson, true);
         $this->expectException(registration_exception::class);
         $this->expectExceptionCode(400);
@@ -239,7 +239,7 @@ EOD;
     /**
      * Validation Test: no domain nor targetlinkuri is rejected.
      */
-    public function test_validation_missing_domain_targetlinkuri() {
+    public function test_validation_missing_domain_targetlinkuri(): void {
         $registration = json_decode($this->registrationminimaljson, true);
         $this->expectException(registration_exception::class);
         $this->expectExceptionCode(400);
@@ -251,7 +251,7 @@ EOD;
     /**
      * Validation Test: mismatch between domain and targetlinkuri is rejected.
      */
-    public function test_validation_domain_targetlinkuri_match() {
+    public function test_validation_domain_targetlinkuri_match(): void {
         $registration = json_decode($this->registrationminimaljson, true);
         $this->expectException(registration_exception::class);
         $this->expectExceptionCode(400);
@@ -262,7 +262,7 @@ EOD;
     /**
      * Validation Test: domain is required.
      */
-    public function test_validation_domain_targetlinkuri_onlylink() {
+    public function test_validation_domain_targetlinkuri_onlylink(): void {
         $registration = json_decode($this->registrationminimaljson, true);
         unset($registration['https://purl.imsglobal.org/spec/lti-tool-configuration']['domain']);
         $this->expectException(registration_exception::class);
@@ -273,7 +273,7 @@ EOD;
     /**
      * Validation Test: base url (targetlinkuri) is built from domain if not present.
      */
-    public function test_validation_domain_targetlinkuri_onlydomain() {
+    public function test_validation_domain_targetlinkuri_onlydomain(): void {
         $registration = json_decode($this->registrationminimaljson, true);
         unset($registration['https://purl.imsglobal.org/spec/lti-tool-configuration']['target_link_uri']);
         $config = registration_helper::get()->registration_to_config($registration, 'TheClientId');
@@ -284,7 +284,7 @@ EOD;
     /**
      * Test the transformation from lti config to OpenId LTI Client Registration response.
      */
-    public function test_config_to_registration() {
+    public function test_config_to_registration(): void {
         $orig = json_decode($this->registrationfulljson, true);
         $orig['scope'] .= ' https://purl.imsglobal.org/spec/lti-nrps/scope/contextmembership.readonly';
         $reghelper = registration_helper::get();
@@ -322,7 +322,7 @@ EOD;
     /**
      * Test the transformation from lti config to OpenId LTI Client Registration response for the minimal version.
      */
-    public function test_config_to_registration_minimal() {
+    public function test_config_to_registration_minimal(): void {
         $orig = json_decode($this->registrationminimaljson, true);
         $reghelper = registration_helper::get();
         $reg = $reghelper->config_to_registration($reghelper->registration_to_config($orig, 'clid'), 12);
@@ -345,7 +345,7 @@ EOD;
     /**
      * Test the transformation from lti config 1.1 to Registration Response.
      */
-    public function test_config_to_registration_lti11() {
+    public function test_config_to_registration_lti11(): void {
         $config = [];
         $config['contentitem'] = 1;
         $config['toolurl_ContentItemSelectionRequest'] = '';
@@ -389,7 +389,7 @@ EOD;
      * Test the transformation from lti config 2.0 to Registration Response.
      * For LTI 2.0 we limit to just passing the previous key/secret.
      */
-    public function test_config_to_registration_lti20() {
+    public function test_config_to_registration_lti20(): void {
         $config = [];
         $config['contentitem'] = 1;
         $config['toolurl_ContentItemSelectionRequest'] = '';

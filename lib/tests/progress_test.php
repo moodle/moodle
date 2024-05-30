@@ -31,7 +31,7 @@ class progress_test extends \basic_testcase {
     /**
      * Tests for basic use with simple numeric progress.
      */
-    public function test_basic() {
+    public function test_basic(): void {
         $progress = new core_mock_progress();
 
         // Check values of empty progress things.
@@ -78,7 +78,7 @@ class progress_test extends \basic_testcase {
     /**
      * Tests progress that is nested and/or indeterminate.
      */
-    public function test_nested() {
+    public function test_nested(): void {
         // Outer progress goes from 0 to 10.
         $progress = new core_mock_progress();
         $progress->start_progress('hello', 10);
@@ -156,7 +156,7 @@ class progress_test extends \basic_testcase {
     /**
      * Tests the feature for 'weighting' nested progress.
      */
-    public function test_nested_weighted() {
+    public function test_nested_weighted(): void {
         $progress = new core_mock_progress();
         $progress->start_progress('', 10);
 
@@ -189,7 +189,7 @@ class progress_test extends \basic_testcase {
      * I had some issues with real use in backup/restore, this test is intended
      * to be similar.
      */
-    public function test_realistic() {
+    public function test_realistic(): void {
         $progress = new core_mock_progress();
         $progress->start_progress('parent', 100);
         $progress->start_progress('child', 1);
@@ -203,7 +203,7 @@ class progress_test extends \basic_testcase {
      * To avoid causing problems, progress needs to work for sections that have
      * zero entries.
      */
-    public function test_zero() {
+    public function test_zero(): void {
         $progress = new core_mock_progress();
         $progress->start_progress('parent', 100);
         $progress->progress(1);
@@ -222,7 +222,7 @@ class progress_test extends \basic_testcase {
     /**
      * Tests for any exceptions due to invalid calls.
      */
-    public function test_exceptions() {
+    public function test_exceptions(): void {
         $progress = new core_mock_progress();
 
         // Check errors when empty.
@@ -315,7 +315,7 @@ class progress_test extends \basic_testcase {
         }
     }
 
-    public function test_progress_change() {
+    public function test_progress_change(): void {
 
         $progress = new core_mock_progress();
 

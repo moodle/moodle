@@ -50,7 +50,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test comment_created event.
      */
-    public function test_comment_created() {
+    public function test_comment_created(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
@@ -92,7 +92,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test comment_deleted event.
      */
-    public function test_comment_deleted() {
+    public function test_comment_deleted(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');

@@ -30,7 +30,7 @@ namespace filter_glossary;
  */
 class filter_test extends \advanced_testcase {
 
-    public function test_link_to_entry_with_alias() {
+    public function test_link_to_entry_with_alias(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -71,7 +71,7 @@ class filter_test extends \advanced_testcase {
         $this->assertEquals($glossary->name . ': second alias', $matches[2][2]);
     }
 
-    public function test_longest_link_used() {
+    public function test_longest_link_used(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -108,7 +108,7 @@ class filter_test extends \advanced_testcase {
         $this->assertEquals($glossary->name . ': Time',   $matches[2][0]);
     }
 
-    public function test_link_to_category() {
+    public function test_link_to_category(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -146,7 +146,7 @@ class filter_test extends \advanced_testcase {
     /**
      * Test ampersands.
      */
-    public function test_ampersands() {
+    public function test_ampersands(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -192,7 +192,7 @@ class filter_test extends \advanced_testcase {
     /**
      * Test brackets.
      */
-    public function test_brackets() {
+    public function test_brackets(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -235,7 +235,7 @@ class filter_test extends \advanced_testcase {
         $this->assertEquals($glossary->name . ': Test (2)', $matches[2][2]);
     }
 
-    public function test_exclude_excludes_link_to_entry_with_alias() {
+    public function test_exclude_excludes_link_to_entry_with_alias(): void {
         global $CFG, $GLOSSARY_EXCLUDEENTRY;
 
         $this->resetAfterTest(true);
@@ -275,7 +275,7 @@ class filter_test extends \advanced_testcase {
         $this->assertEquals($glossary->name . ': other entry', $matches[2][0]);
     }
 
-    public function test_exclude_does_not_exclude_categories() {
+    public function test_exclude_does_not_exclude_categories(): void {
         global $CFG, $GLOSSARY_EXCLUDEENTRY;
         $this->resetAfterTest(true);
 

@@ -60,7 +60,7 @@ class provider_test extends provider_testcase {
     /**
      * Test confirming that contexts of favourited items can be added to the contextlist.
      */
-    public function test_add_contexts_for_userid() {
+    public function test_add_contexts_for_userid(): void {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 courses for user1 and 1 course for user2, all at the site context.
@@ -92,7 +92,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deletion of user favourites based on an approved_contextlist and component area.
      */
-    public function test_delete_favourites_for_user() {
+    public function test_delete_favourites_for_user(): void {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 courses for user1 and 1 course for user2, all at the user context.
@@ -113,7 +113,7 @@ class provider_test extends provider_testcase {
         $this->assertCount(1, $ufservice2->find_favourites_by_type('core_course', 'courses'));
     }
 
-    public function test_delete_favourites_for_all_users() {
+    public function test_delete_favourites_for_all_users(): void {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 course modules for user1 and 1 course module for user2 all in course 1 context.
@@ -140,7 +140,7 @@ class provider_test extends provider_testcase {
     /**
      * Test confirming that user ID's of favourited items can be added to the userlist.
      */
-    public function test_add_userids_for_context() {
+    public function test_add_userids_for_context(): void {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 courses for user1 and 1 course for user2, all at the site context.
@@ -185,7 +185,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deletion of user favourites based on an approved_userlist, component area and item type.
      */
-    public function test_delete_favourites_for_userlist() {
+    public function test_delete_favourites_for_userlist(): void {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 courses for user1 and 1 course for user2.
@@ -252,7 +252,7 @@ class provider_test extends provider_testcase {
     /**
      * Test fetching the favourites data for a specified user in a specified component, item type and item ID.
      */
-    public function test_get_favourites_info_for_user() {
+    public function test_get_favourites_info_for_user(): void {
         list($user1, $user2, $user1context, $user2context, $course1context, $course2context) = $this->set_up_courses_and_users();
 
         // Favourite 2 courses for user1 and 1 course for user2.

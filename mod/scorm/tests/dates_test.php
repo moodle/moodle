@@ -93,7 +93,7 @@ class dates_test extends advanced_testcase {
      * @param int|null $timeclose The 'available to' value of the scorm.
      * @param array $expected The expected value of calling get_dates_for_module()
      */
-    public function test_get_dates_for_module(?int $timeopen, ?int $timeclose, array $expected) {
+    public function test_get_dates_for_module(?int $timeopen, ?int $timeclose, array $expected): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();

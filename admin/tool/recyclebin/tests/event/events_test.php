@@ -51,7 +51,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the category bin item created event.
      */
-    public function test_category_bin_item_created() {
+    public function test_category_bin_item_created(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -78,7 +78,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the category bin item deleted event.
      */
-    public function test_category_bin_item_deleted() {
+    public function test_category_bin_item_deleted(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -107,7 +107,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the category bin item restored event.
      */
-    public function test_category_bin_item_restored() {
+    public function test_category_bin_item_restored(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -135,7 +135,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the course bin item created event.
      */
-    public function test_course_bin_item_created() {
+    public function test_course_bin_item_created(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -164,7 +164,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the course bin item deleted event.
      */
-    public function test_course_bin_item_deleted() {
+    public function test_course_bin_item_deleted(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 
@@ -197,7 +197,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the course bin item restored event.
      */
-    public function test_course_bin_item_restored() {
+    public function test_course_bin_item_restored(): void {
         // Create a course.
         $course = $this->getDataGenerator()->create_course();
 

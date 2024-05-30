@@ -89,7 +89,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers ::question_remove_stale_questions_from_category
      */
-    public function test_question_remove_stale_questions_from_category() {
+    public function test_question_remove_stale_questions_from_category(): void {
         global $DB;
 
         $qcat1 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
@@ -152,7 +152,7 @@ class helper_test extends \advanced_testcase {
      * @covers ::question_can_delete_cat
      * @covers ::question_is_top_category
      */
-    public function test_question_can_delete_cat_top_category() {
+    public function test_question_can_delete_cat_top_category(): void {
 
         $qcategory1 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
 
@@ -169,7 +169,7 @@ class helper_test extends \advanced_testcase {
      * @covers ::question_can_delete_cat
      * @covers ::question_is_only_child_of_top_category_in_context
      */
-    public function test_question_can_delete_cat_child_category() {
+    public function test_question_can_delete_cat_child_category(): void {
 
         $qcategory1 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
 
@@ -184,7 +184,7 @@ class helper_test extends \advanced_testcase {
      *
      * @covers ::question_can_delete_cat
      */
-    public function test_question_can_delete_cat_capability() {
+    public function test_question_can_delete_cat_capability(): void {
 
         $qcategory1 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
         $qcategory2 = $this->qgenerator->create_question_category(['contextid' => $this->context->id, 'parent' => $qcategory1->id]);
@@ -207,7 +207,7 @@ class helper_test extends \advanced_testcase {
      * @covers ::question_category_select_menu
      * @covers ::question_category_options
      */
-    public function test_question_category_select_menu() {
+    public function test_question_category_select_menu(): void {
 
         $this->qgenerator->create_question_category(['contextid' => $this->context->id, 'name' => 'Test this question category']);
         $contexts = new \core_question\local\bank\question_edit_contexts($this->context);
@@ -230,7 +230,7 @@ class helper_test extends \advanced_testcase {
      * @covers ::question_add_context_in_key
      * @covers ::add_indented_names
      */
-    public function test_question_category_options() {
+    public function test_question_category_options(): void {
 
         $qcategory1 = $this->qgenerator->create_question_category(['contextid' => $this->context->id]);
         $qcategory2 = $this->qgenerator->create_question_category(['contextid' => $this->context->id, 'parent' => $qcategory1->id]);

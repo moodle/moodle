@@ -44,7 +44,7 @@ class add_instances_test extends \externallib_advanced_testcase {
     /**
      * Test add_instances no instances.
      */
-    public function test_add_instances_no_instances() {
+    public function test_add_instances_no_instances(): void {
         $this->expectException(\invalid_parameter_exception::class);
         add_instances::execute([]);
     }
@@ -52,7 +52,7 @@ class add_instances_test extends \externallib_advanced_testcase {
     /**
      * Test add_instances missing courses.
      */
-    public function test_add_instances_missing_courses() {
+    public function test_add_instances_missing_courses(): void {
         $course = self::getDataGenerator()->create_course();
 
         // Missing meta course.
@@ -75,7 +75,7 @@ class add_instances_test extends \externallib_advanced_testcase {
     /**
      * Test add_instances missing capabilities.
      */
-    public function test_add_instances_missing_capabilities() {
+    public function test_add_instances_missing_capabilities(): void {
         $metacourse = self::getDataGenerator()->create_course();
         $course = self::getDataGenerator()->create_course();
         $user = self::getDataGenerator()->create_user();
@@ -115,7 +115,7 @@ class add_instances_test extends \externallib_advanced_testcase {
     /**
      * Test add_instances.
      */
-    public function test_add_instances() {
+    public function test_add_instances(): void {
         global $DB;
         $metacourse = self::getDataGenerator()->create_course();
         $course = self::getDataGenerator()->create_course();

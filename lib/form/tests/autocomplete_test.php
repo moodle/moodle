@@ -36,7 +36,7 @@ class autocomplete_test extends \basic_testcase {
     /**
      * Testcase for validation
      */
-    public function test_validation() {
+    public function test_validation(): void {
         // A default select with single values validates the data.
         $options = array('1' => 'One', 2 => 'Two');
         $element = new MoodleQuickForm_autocomplete('testel', null, $options);

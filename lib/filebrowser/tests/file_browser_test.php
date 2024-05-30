@@ -170,7 +170,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the course category context, only look for .jpg
      */
-    public function test_file_info_context_coursecat_jpg() {
+    public function test_file_info_context_coursecat_jpg(): void {
 
         // There is one non-empty category child and two category children.
 
@@ -236,7 +236,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the course context (module1)
      */
-    public function test_file_info_context_module_1() {
+    public function test_file_info_context_module_1(): void {
 
         $module1context = \context_module::instance($this->module1->cmid);
         $browser = get_file_browser();
@@ -252,7 +252,7 @@ class file_browser_test extends \advanced_testcase {
     /**
      * Test "Server files" from the course context (module1)
      */
-    public function test_file_info_context_module_2() {
+    public function test_file_info_context_module_2(): void {
 
         $module2context = \context_module::instance($this->module2->cmid);
         $browser = get_file_browser();

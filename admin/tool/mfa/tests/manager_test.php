@@ -38,7 +38,7 @@ class manager_test extends \advanced_testcase {
      * @covers ::get_total_weight
      * @covers ::setup_user_factor
      */
-    public function test_get_total_weight() {
+    public function test_get_total_weight(): void {
         $this->resetAfterTest(true);
 
         // Create and login a user.
@@ -83,7 +83,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_status
      */
-    public function test_get_status() {
+    public function test_get_status(): void {
         $this->resetAfterTest(true);
 
         // Create and login a user.
@@ -121,7 +121,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::passed_enough_factors
      */
-    public function test_passed_enough_factors() {
+    public function test_passed_enough_factors(): void {
         $this->resetAfterTest(true);
 
         // Create and login a user.
@@ -186,7 +186,7 @@ class manager_test extends \advanced_testcase {
      * @param array|null $params
      * @dataProvider should_redirect_urls_provider
      */
-    public function test_should_require_mfa_urls($urlstring, $webroot, $status, $params = null) {
+    public function test_should_require_mfa_urls($urlstring, $webroot, $status, $params = null): void {
         $this->resetAfterTest(true);
         global $CFG;
         $user = $this->getDataGenerator()->create_user();
@@ -201,7 +201,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::should_require_mfa
      */
-    public function test_should_require_mfa_checks() {
+    public function test_should_require_mfa_checks(): void {
         // Setup test and user.
         global $CFG;
         $this->resetAfterTest(true);
@@ -273,7 +273,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::should_require_mfa
      */
-    public function test_should_require_mfa_redirection_loop() {
+    public function test_should_require_mfa_redirection_loop(): void {
         // Setup test and user.
         global $CFG, $SESSION;
         $CFG->wwwroot = 'http://phpunit.test';
@@ -330,7 +330,7 @@ class manager_test extends \advanced_testcase {
      * @covers ::possible_factor_setup
      * @covers ::setup_user_factor
      */
-    public function test_possible_factor_setup() {
+    public function test_possible_factor_setup(): void {
         // Setup test and user.
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
@@ -365,7 +365,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::is_ready
      */
-    public function test_is_ready() {
+    public function test_is_ready(): void {
         // Setup test and user.
         global $CFG;
         $this->resetAfterTest(true);
@@ -406,7 +406,7 @@ class manager_test extends \advanced_testcase {
      * @covers ::mfa_config_hook_test
      * @covers ::mfa_login_hook_test
      */
-    public function test_core_hooks() {
+    public function test_core_hooks(): void {
         // Setup test and user.
         global $CFG, $SESSION;
         $this->resetAfterTest(true);
@@ -425,7 +425,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::should_require_mfa
      */
-    public function test_circular_redirect_auth() {
+    public function test_circular_redirect_auth(): void {
         // Setup test and user.
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();

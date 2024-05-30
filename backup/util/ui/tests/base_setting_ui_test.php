@@ -38,7 +38,7 @@ class base_setting_ui_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_set_label() {
+    public function test_set_label(): void {
         $this->resetAfterTest();
 
         $bs = new mock_base_setting('test', base_setting::IS_BOOLEAN);

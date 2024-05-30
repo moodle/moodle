@@ -29,14 +29,14 @@ class profile_manager_test extends \advanced_testcase {
     /**
      * Test that on this site we use the user table to hold moodle net profile information.
      */
-    public function test_official_profile_exists() {
+    public function test_official_profile_exists(): void {
         $this->assertTrue(\tool_moodlenet\profile_manager::official_profile_exists());
     }
 
     /**
      * Test a null is returned when the user's mnet profile field is not set.
      */
-    public function test_get_moodlenet_user_profile_no_profile_set() {
+    public function test_get_moodlenet_user_profile_no_profile_set(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
 
@@ -47,7 +47,7 @@ class profile_manager_test extends \advanced_testcase {
     /**
      * Test a null is returned when the user's mnet profile field is not set.
      */
-    public function test_moodlenet_user_profile_creation_no_profile_set() {
+    public function test_moodlenet_user_profile_creation_no_profile_set(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
 
@@ -59,7 +59,7 @@ class profile_manager_test extends \advanced_testcase {
     /**
      * Test the return of a moodle net profile.
      */
-    public function test_get_moodlenet_user_profile() {
+    public function test_get_moodlenet_user_profile(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user(['moodlenetprofile' => '@matt@hq.mnet']);
 
@@ -70,7 +70,7 @@ class profile_manager_test extends \advanced_testcase {
     /**
      * Test the creation of a user profile category.
      */
-    public function test_create_user_profile_category() {
+    public function test_create_user_profile_category(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -95,7 +95,7 @@ class profile_manager_test extends \advanced_testcase {
     /**
      * Test the creating of the custom user profile field to hold the moodle net profile.
      */
-    public function test_create_user_profile_text_field() {
+    public function test_create_user_profile_text_field(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -120,7 +120,7 @@ class profile_manager_test extends \advanced_testcase {
     /**
      * Test that the user moodlenet profile is saved.
      */
-    public function test_save_moodlenet_user_profile() {
+    public function test_save_moodlenet_user_profile(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();

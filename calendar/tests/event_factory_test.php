@@ -50,7 +50,7 @@ class event_factory_test extends \advanced_testcase {
         callable $bailoutcheck,
         $expectedclass,
         $expectedattributevalue
-    ) {
+    ): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $event = $this->create_event();

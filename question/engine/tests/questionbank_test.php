@@ -37,7 +37,7 @@ require_once(__DIR__ . '/../lib.php');
  */
 class questionbank_test extends \advanced_testcase {
 
-    public function test_sort_qtype_array() {
+    public function test_sort_qtype_array(): void {
         $config = new \stdClass();
         $config->multichoice_sortorder = '1';
         $config->calculated_sortorder = '2';
@@ -53,7 +53,7 @@ class questionbank_test extends \advanced_testcase {
         ));
     }
 
-    public function test_fraction_options() {
+    public function test_fraction_options(): void {
         $fractions = question_bank::fraction_options();
         $this->assertSame(get_string('none'), reset($fractions));
         $this->assertSame('0.0', key($fractions));
@@ -68,7 +68,7 @@ class questionbank_test extends \advanced_testcase {
         $this->assertSame('0.1111111', key($fractions));
     }
 
-    public function test_fraction_options_full() {
+    public function test_fraction_options_full(): void {
         $fractions = question_bank::fraction_options_full();
         $this->assertSame(get_string('none'), reset($fractions));
         $this->assertSame('0.0', key($fractions));
@@ -83,7 +83,7 @@ class questionbank_test extends \advanced_testcase {
         $this->assertSame('-0.8333333', key($fractions));
     }
 
-    public function test_load_many_for_cache() {
+    public function test_load_many_for_cache(): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $cat = $generator->create_question_category();
@@ -93,7 +93,7 @@ class questionbank_test extends \advanced_testcase {
         $this->assertArrayHasKey($q1->id, $qs);
     }
 
-    public function test_load_many_for_cache_missing_id() {
+    public function test_load_many_for_cache_missing_id(): void {
         // Try to load a non-existent question.
         $this->expectException(\dml_missing_record_exception::class);
         question_finder::get_instance()->load_many_for_cache([-1]);

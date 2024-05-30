@@ -193,7 +193,7 @@ class h5p_core_test extends \advanced_testcase {
     /**
      * Test if no handler has been defined.
      */
-    public function test_get_default_handler() {
+    public function test_get_default_handler(): void {
         global $CFG;
 
         $this->resetAfterTest(true);

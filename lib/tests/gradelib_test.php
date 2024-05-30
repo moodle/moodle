@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/gradelib.php');
  */
 class gradelib_test extends \advanced_testcase {
 
-    public function test_grade_update_mod_grades() {
+    public function test_grade_update_mod_grades(): void {
 
         $this->resetAfterTest(true);
 
@@ -61,7 +61,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Tests the function remove_grade_letters().
      */
-    public function test_remove_grade_letters() {
+    public function test_remove_grade_letters(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -104,7 +104,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Tests the function grade_course_category_delete().
      */
-    public function test_grade_course_category_delete() {
+    public function test_grade_course_category_delete(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -127,7 +127,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Tests the function grade_regrade_final_grades().
      */
-    public function test_grade_regrade_final_grades() {
+    public function test_grade_regrade_final_grades(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -251,7 +251,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Test the caching of grade letters.
      */
-    public function test_get_grade_letters() {
+    public function test_get_grade_letters(): void {
 
         $this->resetAfterTest();
 
@@ -276,7 +276,7 @@ class gradelib_test extends \advanced_testcase {
     /**
      * Test custom letters.
      */
-    public function test_get_grade_letters_custom() {
+    public function test_get_grade_letters_custom(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -309,7 +309,7 @@ class gradelib_test extends \advanced_testcase {
      * @covers \grade_get_grades()
      * @return void
      */
-    public function test_grade_get_grades_errors() {
+    public function test_grade_get_grades_errors(): void {
         $this->resetAfterTest();
 
         // Setup some basics.

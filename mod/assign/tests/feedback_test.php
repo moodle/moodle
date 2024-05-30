@@ -86,7 +86,7 @@ class feedback_test extends \advanced_testcase {
     /**
      * Test fetching combined.pdf for state checking.
      */
-    public function test_get_combined_document_for_attempt() {
+    public function test_get_combined_document_for_attempt(): void {
 
         $this->resetAfterTest(true);
 

@@ -40,7 +40,7 @@ class item_score_test extends advanced_testcase {
     /**
      * Test item creation.
      */
-    public function test_create() {
+    public function test_create(): void {
 
         $data = (object) [
             'scaled' => 0.5,

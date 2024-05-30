@@ -53,7 +53,7 @@ class provider_test extends provider_testcase {
         $PAGE->get_renderer('core');
     }
 
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
 
@@ -113,7 +113,7 @@ class provider_test extends provider_testcase {
     /*
      * Test for provider::get_users_in_context().
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $component = 'mod_lesson';
@@ -164,7 +164,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals([$u6->id], $userids);
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -257,7 +257,7 @@ class provider_test extends provider_testcase {
         $this->assertFalse($DB->record_exists('lesson_overrides', ['userid' => $u2->id, 'lessonid' => $cm1->id]));
     }
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -352,7 +352,7 @@ class provider_test extends provider_testcase {
     /*
      * Test for provider::delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -428,7 +428,7 @@ class provider_test extends provider_testcase {
         $assertnochange($u2, $cm2);
     }
 
-    public function test_export_data_for_user_overrides() {
+    public function test_export_data_for_user_overrides(): void {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $u1 = $dg->create_user();
@@ -499,7 +499,7 @@ class provider_test extends provider_testcase {
         $this->assertEmpty($data);
     }
 
-    public function test_export_data_for_user_grades() {
+    public function test_export_data_for_user_grades(): void {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $u1 = $dg->create_user();
@@ -540,7 +540,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(transform::datetime($now - 86400), $data->grades[0]->completed);
     }
 
-    public function test_export_data_for_user_timers() {
+    public function test_export_data_for_user_timers(): void {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $u1 = $dg->create_user();
@@ -591,7 +591,7 @@ class provider_test extends provider_testcase {
         $this->assertNull($data->timers[0]->timemodifiedoffline);
     }
 
-    public function test_export_data_for_user_attempts() {
+    public function test_export_data_for_user_attempts(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $lg = $dg->get_plugin_generator('mod_lesson');

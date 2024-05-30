@@ -91,7 +91,7 @@ class lib_test extends \advanced_testcase {
         parent::tearDown();
     }
 
-    public function test_calculate_peer_grade_null_grade() {
+    public function test_calculate_peer_grade_null_grade(): void {
         // fixture set-up
         $grades = array();
         // exercise SUT
@@ -100,7 +100,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($suggested);
     }
 
-    public function test_calculate_peer_grade_worst_possible() {
+    public function test_calculate_peer_grade_worst_possible(): void {
         // fixture set-up
         $grades[6] = (object)array('dimensionid' => 6, 'grade' => 0);
         $grades[8] = (object)array('dimensionid' => 8, 'grade' => 0);
@@ -111,7 +111,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(grade_floatval($suggested), 0.00000);
     }
 
-    public function test_calculate_peer_grade_best_possible() {
+    public function test_calculate_peer_grade_best_possible(): void {
         // fixture set-up
         $grades[6] = (object)array('dimensionid' => 6, 'grade' => 8);
         $grades[8] = (object)array('dimensionid' => 8, 'grade' => 3);
@@ -122,7 +122,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals(grade_floatval($suggested), 100.00000);
     }
 
-    public function test_calculate_peer_grade_something() {
+    public function test_calculate_peer_grade_something(): void {
         // fixture set-up
         $grades[6] = (object)array('dimensionid' => 6, 'grade' => 2);
         $grades[8] = (object)array('dimensionid' => 8, 'grade' => 2);

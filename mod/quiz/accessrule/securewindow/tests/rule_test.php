@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/securewindow/rule.php');
  */
 class rule_test extends \basic_testcase {
     // Nothing very testable in this class, just test that it obeys the general access rule contact.
-    public function test_securewindow_access_rule() {
+    public function test_securewindow_access_rule(): void {
         $quiz = new \stdClass();
         $quiz->browsersecurity = 'securewindow';
         $cm = new \stdClass();

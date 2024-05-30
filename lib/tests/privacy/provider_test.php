@@ -37,7 +37,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::get_contexts_for_userid
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
 
@@ -61,7 +61,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::get_users_in_context
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         // Create some users.
@@ -100,7 +100,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::export_user_data
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -146,7 +146,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::delete_data_for_all_users_in_context
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -177,7 +177,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::delete_data_for_user
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -209,7 +209,7 @@ class provider_test extends provider_testcase {
      *
      * @covers ::delete_data_for_users
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $this->resetAfterTest();
 

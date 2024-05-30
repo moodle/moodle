@@ -42,7 +42,7 @@ class messaging_cleanup_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_cleanup_all_notifications() {
+    public function test_cleanup_all_notifications(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -73,7 +73,7 @@ class messaging_cleanup_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_cleanup_read_notifications() {
+    public function test_cleanup_read_notifications(): void {
         global $DB;
 
         $this->resetAfterTest();

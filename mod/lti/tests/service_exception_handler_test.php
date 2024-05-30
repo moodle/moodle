@@ -27,7 +27,7 @@ class service_exception_handler_test extends \advanced_testcase {
     /**
      * Testing service error handling.
      */
-    public function test_handle() {
+    public function test_handle(): void {
         $handler = new service_exception_handler(false);
         $handler->set_message_id('123');
         $handler->set_message_type('testRequest');
@@ -43,7 +43,7 @@ class service_exception_handler_test extends \advanced_testcase {
     /**
      * Testing service error handling when message ID and type are not known yet.
      */
-    public function test_handle_early_error() {
+    public function test_handle_early_error(): void {
         $handler = new service_exception_handler(false);
         $handler->handle(new \Exception('Error happened'));
 
@@ -57,7 +57,7 @@ class service_exception_handler_test extends \advanced_testcase {
     /**
      * Testing that a log file is generated when logging is turned on.
      */
-    public function test_handle_log() {
+    public function test_handle_log(): void {
         global $CFG;
 
         $this->resetAfterTest();

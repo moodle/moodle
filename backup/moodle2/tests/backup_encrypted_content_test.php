@@ -48,7 +48,7 @@ class backup_encrypted_content_test extends \advanced_testcase {
         }
     }
 
-    public function test_encrypted_final_element() {
+    public function test_encrypted_final_element(): void {
 
         $this->resetAfterTest(true);
 

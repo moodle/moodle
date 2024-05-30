@@ -100,7 +100,7 @@ class provider_test extends provider_testcase {
     /**
      * Test confirming that user ID's of xapi states can be added to the userlist.
      */
-    public function test_add_userids_for_context() {
+    public function test_add_userids_for_context(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -140,7 +140,7 @@ class provider_test extends provider_testcase {
     /**
      * Test fetching the xapi state data for a specified user in a specified component and itemid.
      */
-    public function test_get_xapi_states_for_user() {
+    public function test_get_xapi_states_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -226,7 +226,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deletion of user xapi states based on an approved_userlist and component area.
      */
-    public function test_delete_states_for_userlist() {
+    public function test_delete_states_for_userlist(): void {
         global $DB;
 
         $this->resetAfterTest();

@@ -27,7 +27,7 @@ use core_role_preset;
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class preset_test extends \advanced_testcase {
-    public function test_xml() {
+    public function test_xml(): void {
         global $DB;
 
         $roles = $DB->get_records('role');
@@ -81,7 +81,7 @@ class preset_test extends \advanced_testcase {
      * Tests covered method.
      * @covers \core_role_preset::parse_preset
      */
-    public function test_mixed_levels() {
+    public function test_mixed_levels(): void {
         // The problem here is that we cannot guarantee plugin contexts
         // have unique short names, so we have to also support level numbers.
         $xml = file_get_contents(__DIR__ . '/fixtures/mixed_levels.xml');

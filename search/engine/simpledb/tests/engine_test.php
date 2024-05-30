@@ -93,7 +93,7 @@ class engine_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_index() {
+    public function test_index(): void {
         global $DB;
 
         $this->add_mock_search_area();
@@ -120,7 +120,7 @@ class engine_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_search() {
+    public function test_search(): void {
         global $USER, $DB;
 
         $this->add_mock_search_area();
@@ -207,7 +207,7 @@ class engine_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_delete() {
+    public function test_delete(): void {
 
         $this->add_mock_search_area();
 
@@ -232,7 +232,7 @@ class engine_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_alloweduserid() {
+    public function test_alloweduserid(): void {
 
         $this->add_mock_search_area();
 
@@ -306,7 +306,7 @@ class engine_test extends \advanced_testcase {
         $this->assertEquals($originalid, $results[0]->get('id'));
     }
 
-    public function test_delete_by_id() {
+    public function test_delete_by_id(): void {
 
         $this->add_mock_search_area();
 
@@ -338,7 +338,7 @@ class engine_test extends \advanced_testcase {
     /**
      * Tries out deleting data for a context or a course.
      */
-    public function test_deleted_contexts_and_courses() {
+    public function test_deleted_contexts_and_courses(): void {
         // Create some courses and activities.
         $generator = $this->getDataGenerator();
         $course1 = $generator->create_course(['fullname' => 'C1', 'summary' => 'xyzzy']);

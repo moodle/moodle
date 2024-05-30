@@ -63,7 +63,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test get listing
      */
-    public function test_get_listing_with_duplicate_file() {
+    public function test_get_listing_with_duplicate_file(): void {
         global $itemid;
         $this->resetAfterTest(true);
 
@@ -93,7 +93,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test get listing reference file
      */
-    public function test_get_listing_with_reference_file() {
+    public function test_get_listing_with_reference_file(): void {
         $this->resetAfterTest(true);
         // Create test file 1.
         $file1 = $this->create_test_file('TestFile1', 'private');
@@ -114,7 +114,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test number limit
      */
-    public function test_get_listing_number_limit() {
+    public function test_get_listing_number_limit(): void {
         $this->resetAfterTest(true);
         $this->create_multiple_test_files('private', 75);
         $filelist = $this->repo->get_listing()['list'];
@@ -131,7 +131,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test time limit
      */
-    public function test_get_listing_time_limit() {
+    public function test_get_listing_time_limit(): void {
         $this->resetAfterTest(true);
         $this->create_multiple_test_files('private', 25);
         $file1 = $this->create_test_file('TestFileTimeLimit', 'private');

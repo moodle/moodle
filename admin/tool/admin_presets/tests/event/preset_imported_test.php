@@ -30,7 +30,7 @@ class preset_imported_test extends \advanced_testcase {
     /**
      * Test preset_imported event.
      */
-    public function test_preset_imported_event() {
+    public function test_preset_imported_event(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

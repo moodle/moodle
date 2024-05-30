@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/offlineattempts/rule.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rule_test extends \basic_testcase {
-    public function test_offlineattempts_access_rule() {
+    public function test_offlineattempts_access_rule(): void {
         $quiz = new \stdClass();
         $quiz->allowofflineattempts = 1;
         $cm = new \stdClass();

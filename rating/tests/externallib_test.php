@@ -132,7 +132,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_item_ratings
      */
-    public function test_get_item_ratings() {
+    public function test_get_item_ratings(): void {
         global $DB;
 
         // Rete the discussion as teacher1.
@@ -242,7 +242,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_rating
      */
-    public function test_add_rating() {
+    public function test_add_rating(): void {
         $this->setUser($this->teacher1);
 
         // First rating of 50.

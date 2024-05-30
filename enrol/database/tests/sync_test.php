@@ -237,7 +237,7 @@ class sync_test extends \advanced_testcase {
         $this->assertFalse($DB->record_exists('user_enrolments', array('enrolid' => $dbinstance->id, 'userid' => self::$users[$userindex]->id)));
     }
 
-    public function test_sync_user_enrolments() {
+    public function test_sync_user_enrolments(): void {
         global $DB;
 
         $this->init_enrol_database();
@@ -427,7 +427,7 @@ class sync_test extends \advanced_testcase {
     /**
      * @depends test_sync_user_enrolments
      */
-    public function test_sync_users() {
+    public function test_sync_users(): void {
         global $DB;
 
         $this->resetAfterTest(false);
@@ -699,7 +699,7 @@ class sync_test extends \advanced_testcase {
     /**
      * @depends test_sync_users
      */
-    public function test_sync_courses() {
+    public function test_sync_courses(): void {
         global $DB;
 
         $this->resetAfterTest(true);

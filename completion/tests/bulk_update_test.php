@@ -113,7 +113,7 @@ class bulk_update_test extends \advanced_testcase {
      * @param array $submitdata data to use in mock form submit
      * @param array|null $validatedata data to validate the
      */
-    public function test_bulk_form_submit_single($modname, $submitdata, $validatedata = null) {
+    public function test_bulk_form_submit_single($modname, $submitdata, $validatedata = null): void {
         global $DB;
 
         if ($validatedata === null) {
@@ -231,7 +231,7 @@ class bulk_update_test extends \advanced_testcase {
      * @dataProvider bulk_form_submit_multiple_provider
      * @param array $providerdata
      */
-    public function test_bulk_form_submit_multiple($providerdata) {
+    public function test_bulk_form_submit_multiple($providerdata): void {
         global $DB;
 
         $modulenames = $providerdata['modulenames'];

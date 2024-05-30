@@ -41,7 +41,7 @@ class reportuserlib_test extends \advanced_testcase {
      * inject_rowspans() returns the count of the number of elements, sets maxdepth on the
      *  report object and sets the rowspan property on any element that has children.
      */
-    public function test_inject_rowspans() {
+    public function test_inject_rowspans(): void {
         global $CFG, $USER, $DB;
 
         parent::setUp();

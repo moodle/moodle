@@ -48,7 +48,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for viewing a category, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_course_category_viewed_event() {
+    public function test_course_category_viewed_event(): void {
 
         // Create a category.
         $category = $this->getDataGenerator()->create_category();
@@ -80,7 +80,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for viewing course information so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_course_information_viewed_event() {
+    public function test_course_information_viewed_event(): void {
 
         // Create a course.
         $data = new \stdClass();
@@ -113,7 +113,7 @@ class events_test extends \advanced_testcase {
      * There is no external API for viewing course information so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_courses_searched_event() {
+    public function test_courses_searched_event(): void {
 
         // Trigger an event: courses searched.
         $search = 'mysearch';

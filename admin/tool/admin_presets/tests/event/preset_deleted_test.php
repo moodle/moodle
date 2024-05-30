@@ -30,7 +30,7 @@ class preset_deleted_test extends \advanced_testcase {
     /**
      * Test preset_deleted event.
      */
-    public function test_preset_deleted_event() {
+    public function test_preset_deleted_event(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

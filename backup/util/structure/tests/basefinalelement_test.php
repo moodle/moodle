@@ -43,7 +43,7 @@ class basefinalelement_test extends \basic_testcase {
     /**
      * Correct base_final_element tests
      */
-    function test_base_final_element() {
+    function test_base_final_element(): void {
 
         // Create instance with name
         $instance = new mock_base_final_element('TEST');
@@ -130,7 +130,7 @@ class basefinalelement_test extends \basic_testcase {
     /**
      * Exception base_final_element tests
      */
-    function test_base_final_element_exceptions() {
+    function test_base_final_element_exceptions(): void {
 
         // Create instance with invalid name
         try {

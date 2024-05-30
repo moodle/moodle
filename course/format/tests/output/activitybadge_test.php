@@ -35,7 +35,7 @@ class activitybadge_test extends \advanced_testcase {
      * @covers ::export_for_template
      * @covers ::create_instance
      */
-    public function test_activitybadge_export_for_template() {
+    public function test_activitybadge_export_for_template(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

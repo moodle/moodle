@@ -42,7 +42,7 @@ class get_feedback_test extends \externallib_advanced_testcase {
      * @param array $expected The expected feedback data.
      * @return void
      */
-    public function test_get_feedback(?string $feedback, array $expected) {
+    public function test_get_feedback(?string $feedback, array $expected): void {
 
         $this->resetAfterTest(true);
         $course = $this->getDataGenerator()->create_course();
@@ -111,7 +111,7 @@ class get_feedback_test extends \externallib_advanced_testcase {
      * @return void
      */
     public function test_get_feedback_invalid_request(string $loggeduserrole, bool $feedbacknotincourse,
-            array $expectedexception = []) {
+            array $expectedexception = []): void {
 
         $this->resetAfterTest(true);
         // Create a course with a user and a grade item.

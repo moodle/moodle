@@ -26,7 +26,7 @@ namespace mod_wiki;
  */
 class generator_test extends \advanced_testcase {
 
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -46,7 +46,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('Another wiki', $records[$wiki->id]->name);
     }
 
-    public function test_create_content() {
+    public function test_create_content(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -75,7 +75,7 @@ class generator_test extends \advanced_testcase {
                 array_values(\core_tag_tag::get_item_tags_array('mod_wiki', 'wiki_pages', $page4->id)));
     }
 
-    public function test_create_content_individual() {
+    public function test_create_content_individual(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

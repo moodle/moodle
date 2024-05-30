@@ -41,7 +41,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test get_plugins_supporting_mobile.
      * This is a very basic test because currently there aren't plugins supporting Mobile in core.
      */
-    public function test_get_plugins_supporting_mobile() {
+    public function test_get_plugins_supporting_mobile(): void {
         $result = external::get_plugins_supporting_mobile();
         $result = external_api::clean_returnvalue(external::get_plugins_supporting_mobile_returns(), $result);
         $this->assertCount(0, $result['warnings']);
@@ -49,7 +49,7 @@ class externallib_test extends externallib_advanced_testcase {
         $this->assertTrue(is_array($result['plugins']));
     }
 
-    public function test_get_public_config() {
+    public function test_get_public_config(): void {
         global $CFG, $SITE, $OUTPUT;
 
         $this->resetAfterTest(true);
@@ -305,7 +305,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get_autologin_key.
      */
-    public function test_get_autologin_key() {
+    public function test_get_autologin_key(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -349,7 +349,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key missing ws.
      */
-    public function test_get_autologin_key_missing_ws() {
+    public function test_get_autologin_key_missing_ws(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -370,7 +370,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key missing https.
      */
-    public function test_get_autologin_key_missing_https() {
+    public function test_get_autologin_key_missing_https(): void {
         global $CFG;
 
         // Fake the app.
@@ -391,7 +391,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key missing admin.
      */
-    public function test_get_autologin_key_missing_admin() {
+    public function test_get_autologin_key_missing_admin(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -409,7 +409,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key locked.
      */
-    public function test_get_autologin_key_missing_locked() {
+    public function test_get_autologin_key_missing_locked(): void {
         global $CFG, $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -452,7 +452,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_autologin_key missing app_request.
      */
-    public function test_get_autologin_key_missing_app_request() {
+    public function test_get_autologin_key_missing_app_request(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -466,7 +466,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_content.
      */
-    public function test_get_content() {
+    public function test_get_content(): void {
 
         $paramval = 16;
         $result = external::get_content('tool_mobile', 'test_view', array(array('name' => 'param1', 'value' => $paramval)));
@@ -489,7 +489,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_content disabled.
      */
-    public function test_get_content_disabled() {
+    public function test_get_content_disabled(): void {
 
         $paramval = 16;
         $result = external::get_content('tool_mobile', 'test_view_disabled',
@@ -501,7 +501,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_content non existent function in valid component.
      */
-    public function test_get_content_non_existent_function() {
+    public function test_get_content_non_existent_function(): void {
 
         $this->expectException('coding_exception');
         $result = external::get_content('tool_mobile', 'test_blahblah');
@@ -510,7 +510,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_content incorrect component.
      */
-    public function test_get_content_invalid_component() {
+    public function test_get_content_invalid_component(): void {
 
         $this->expectException('moodle_exception');
         $result = external::get_content('tool_mobile\hack', 'test_view');
@@ -519,13 +519,13 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_content non existent component.
      */
-    public function test_get_content_non_existent_component() {
+    public function test_get_content_non_existent_component(): void {
 
         $this->expectException('moodle_exception');
         $result = external::get_content('tool_blahblahblah', 'test_view');
     }
 
-    public function test_call_external_functions() {
+    public function test_call_external_functions(): void {
         global $SESSION;
 
         $this->resetAfterTest(true);
@@ -670,7 +670,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get_tokens_for_qr_login.
      */
-    public function test_get_tokens_for_qr_login() {
+    public function test_get_tokens_for_qr_login(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -706,7 +706,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get_tokens_for_qr_login ignore ip check.
      */
-    public function test_get_tokens_for_qr_login_ignore_ip_check() {
+    public function test_get_tokens_for_qr_login_ignore_ip_check(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -745,7 +745,7 @@ class externallib_test extends externallib_advanced_testcase {
     /*
      * Test get_tokens_for_qr_login ip check fails.
      */
-    public function test_get_tokens_for_qr_login_ip_check_mismatch() {
+    public function test_get_tokens_for_qr_login_ip_check_mismatch(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -776,7 +776,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing QR code enabled.
      */
-    public function test_get_tokens_for_qr_login_missing_enableqr() {
+    public function test_get_tokens_for_qr_login_missing_enableqr(): void {
         global $CFG, $USER;
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -790,7 +790,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing ws.
      */
-    public function test_get_tokens_for_qr_login_missing_ws() {
+    public function test_get_tokens_for_qr_login_missing_ws(): void {
         global $CFG;
         $this->resetAfterTest(true);
 
@@ -814,7 +814,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing https.
      */
-    public function test_get_tokens_for_qr_login_missing_https() {
+    public function test_get_tokens_for_qr_login_missing_https(): void {
         global $CFG, $USER;
 
         // Fake the app.
@@ -835,7 +835,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing admin.
      */
-    public function test_get_tokens_for_qr_login_missing_admin() {
+    public function test_get_tokens_for_qr_login_missing_admin(): void {
         global $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -853,7 +853,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_tokens_for_qr_login missing app_request.
      */
-    public function test_get_tokens_for_qr_login_missing_app_request() {
+    public function test_get_tokens_for_qr_login_missing_app_request(): void {
         global $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -867,7 +867,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test validate subscription key.
      */
-    public function test_validate_subscription_key_valid() {
+    public function test_validate_subscription_key_valid(): void {
         $this->resetAfterTest(true);
 
         $sitesubscriptionkey = ['validuntil' => time() + MINSECS, 'key' => complex_random_string(32)];
@@ -882,7 +882,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test validate subscription key invalid first and then a valid one.
      */
-    public function test_validate_subscription_key_invalid_key_first() {
+    public function test_validate_subscription_key_invalid_key_first(): void {
         $this->resetAfterTest(true);
 
         $sitesubscriptionkey = ['validuntil' => time() + MINSECS, 'key' => complex_random_string(32)];
@@ -903,7 +903,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test validate subscription key invalid.
      */
-    public function test_validate_subscription_key_invalid_key() {
+    public function test_validate_subscription_key_invalid_key(): void {
         $this->resetAfterTest(true);
 
         $result = external::validate_subscription_key('fakekey');
@@ -915,7 +915,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test validate subscription key invalid.
      */
-    public function test_validate_subscription_key_outdated() {
+    public function test_validate_subscription_key_outdated(): void {
         $this->resetAfterTest(true);
 
         $sitesubscriptionkey = ['validuntil' => time() - MINSECS, 'key' => complex_random_string(32)];

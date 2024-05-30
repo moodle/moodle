@@ -37,7 +37,7 @@ class backup_test extends \advanced_testcase {
     /**
      * Duplicate quiz with a matching question, and check it worked.
      */
-    public function test_duplicate_match_question() {
+    public function test_duplicate_match_question(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

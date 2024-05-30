@@ -46,7 +46,7 @@ class provider_test extends provider_testcase {
      *
      * @return void
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -65,7 +65,7 @@ class provider_test extends provider_testcase {
      *
      * @return void
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -82,7 +82,7 @@ class provider_test extends provider_testcase {
      *
      * @return void
      */
-    public function test_get_users_in_context_non_user_context() {
+    public function test_get_users_in_context_non_user_context(): void {
         $context = \context_system::instance();
 
         $userlist = new userlist($context, 'tool_dataprivacy');
@@ -96,7 +96,7 @@ class provider_test extends provider_testcase {
      *
      * @return void
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -152,7 +152,7 @@ class provider_test extends provider_testcase {
      *
      * @return void
      */
-    public function test_export_user_preferences() {
+    public function test_export_user_preferences(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();

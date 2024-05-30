@@ -214,7 +214,7 @@ class auth_test extends \advanced_testcase {
      * @param array $expected the test case expectations.
      * @covers ::find_or_create_user_from_launch
      */
-    public function test_find_or_create_user_from_launch(?array $legacydata, array $launchdata, array $expected = []) {
+    public function test_find_or_create_user_from_launch(?array $legacydata, array $launchdata, array $expected = []): void {
         $this->resetAfterTest();
         global $DB;
         $auth = get_auth_plugin('lti');
@@ -716,7 +716,7 @@ class auth_test extends \advanced_testcase {
      * @covers ::find_or_create_user_from_membership
      */
     public function test_find_or_create_user_from_membership(?array $legacydata, array $memberdata, string $iss,
-            ?string $legacyconsumerkey, array $expected) {
+            ?string $legacyconsumerkey, array $expected): void {
 
         $this->resetAfterTest();
         global $DB;
@@ -1051,7 +1051,7 @@ class auth_test extends \advanced_testcase {
      *
      * @covers ::create_user_binding
      */
-    public function test_create_user_binding() {
+    public function test_create_user_binding(): void {
         $this->resetAfterTest();
         global $DB;
         $auth = get_auth_plugin('lti');

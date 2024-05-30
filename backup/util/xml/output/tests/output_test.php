@@ -51,7 +51,7 @@ class output_test extends \advanced_testcase {
     /*
      * test memory_xml_output
      */
-    function test_memory_xml_output() {
+    function test_memory_xml_output(): void {
         // Instantiate xml_output
         $xo = new memory_xml_output();
         $this->assertTrue($xo instanceof xml_output);
@@ -224,7 +224,7 @@ class output_test extends \advanced_testcase {
     /*
      * test file_xml_output
      */
-    function test_file_xml_output() {
+    function test_file_xml_output(): void {
         global $CFG;
 
         $this->resetAfterTest();

@@ -42,7 +42,7 @@ require_once(__DIR__ . '/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class questionattempt_db_test extends \data_loading_method_test_base {
-    public function test_load() {
+    public function test_load(): void {
         $records = new question_test_recordset(array(
             array('questionattemptid', 'contextid', 'questionusageid', 'slot',
                                    'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'maxfraction', 'flagged',
@@ -115,7 +115,7 @@ class questionattempt_db_test extends \data_loading_method_test_base {
                 $step->get_all_data());
     }
 
-    public function test_load_missing_question() {
+    public function test_load_missing_question(): void {
         $records = new question_test_recordset(array(
             array('questionattemptid', 'contextid', 'questionusageid', 'slot',
                                    'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'maxfraction', 'flagged',
@@ -142,7 +142,7 @@ class questionattempt_db_test extends \data_loading_method_test_base {
         $this->assertEquals(array(), $step->get_all_data());
     }
 
-    public function test_load_with_autosaved_data() {
+    public function test_load_with_autosaved_data(): void {
         $records = new question_test_recordset(array(
             array('questionattemptid', 'contextid', 'questionusageid', 'slot',
                                    'behaviour', 'questionid', 'variant', 'maxmark', 'minfraction', 'maxfraction', 'flagged',
@@ -197,7 +197,7 @@ class questionattempt_db_test extends \data_loading_method_test_base {
         $this->assertEquals(array('answer' => '1'), $step->get_all_data());
     }
 
-    public function test_load_with_unnecessary_autosaved_data() {
+    public function test_load_with_unnecessary_autosaved_data(): void {
         // The point here is that the somehow (probably due to two things
         // happening concurrently, we have autosaved data in the database that
         // has already been superceded by real data, so it should be ignored.

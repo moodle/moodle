@@ -66,7 +66,7 @@ class reportlib_test extends advanced_testcase {
     /**
      * Tests grade_report::blank_hidden_total_and_adjust_bounds()
      */
-    public function test_blank_hidden_total_and_adjust_bounds() {
+    public function test_blank_hidden_total_and_adjust_bounds(): void {
         global $DB;
 
         $this->resetAfterTest(true);

@@ -38,7 +38,7 @@ class object_factor_base_test extends \advanced_testcase {
      * @covers ::setup_user_factor
      * @return void
      */
-    public function test_revoke_user_factor() {
+    public function test_revoke_user_factor(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);

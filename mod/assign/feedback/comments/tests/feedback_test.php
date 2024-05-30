@@ -38,7 +38,7 @@ class feedback_test extends \advanced_testcase {
     /**
      * Test the is_feedback_modified() method for the comments feedback.
      */
-    public function test_is_feedback_modified() {
+    public function test_is_feedback_modified(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');

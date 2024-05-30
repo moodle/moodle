@@ -32,7 +32,7 @@ class sitepolicy_handler_test extends \advanced_testcase {
     /**
      * Test behaviour of the {@link \tool_policy\privacy\local\sitepolicy\handler::get_redirect_url()} method.
      */
-    public function test_get_redirect_url() {
+    public function test_get_redirect_url(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -56,7 +56,7 @@ class sitepolicy_handler_test extends \advanced_testcase {
     /**
      * Test behaviour of the {@link \tool_policy\privacy\local\sitepolicy\handler::get_embed_url()} method.
      */
-    public function test_get_embed_url() {
+    public function test_get_embed_url(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -82,7 +82,7 @@ class sitepolicy_handler_test extends \advanced_testcase {
     /**
      * Test behaviour of the {@link \tool_policy\privacy\local\sitepolicy\handler::accept()} method.
      */
-    public function test_accept() {
+    public function test_accept(): void {
         global $DB, $USER;
         $this->resetAfterTest();
 
@@ -120,7 +120,7 @@ class sitepolicy_handler_test extends \advanced_testcase {
     /**
      * Test presence of the {@link \tool_policy\privacy\local\sitepolicy\handler::signup_form()} method.
      */
-    public function test_signup_form() {
+    public function test_signup_form(): void {
         $this->assertTrue(method_exists('\tool_policy\privacy\local\sitepolicy\handler', 'signup_form'));
     }
 }

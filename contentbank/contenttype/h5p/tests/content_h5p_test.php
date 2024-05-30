@@ -32,7 +32,7 @@ class content_h5p_test extends \advanced_testcase {
      *
      * @covers ::get_file
      */
-    public function test_upload_file() {
+    public function test_upload_file(): void {
         $this->resetAfterTest();
 
         // Create content.

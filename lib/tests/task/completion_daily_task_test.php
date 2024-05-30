@@ -30,7 +30,7 @@ class completion_daily_task_test extends advanced_testcase {
     /**
      * Test calendar cron task with a broken subscription URL.
      */
-    public function test_completion_daily_cron() {
+    public function test_completion_daily_cron(): void {
         global $DB;
 
         $this->resetAfterTest();

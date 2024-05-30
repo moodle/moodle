@@ -48,7 +48,7 @@ class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test start_submission if assignment doesn't exist matching id.
      */
-    public function test_start_submission_with_invalid_assign_id() {
+    public function test_start_submission_with_invalid_assign_id(): void {
         $this->expectException(\dml_exception::class);
         start_submission::execute(123);
     }
@@ -56,7 +56,7 @@ class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test start_submission if user is not able to access activity or course.
      */
-    public function test_start_submission_when_user_has_no_capability_to_view_assignment() {
+    public function test_start_submission_when_user_has_no_capability_to_view_assignment(): void {
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
         $generator = $this->getDataGenerator()->get_plugin_generator('mod_assign');
@@ -164,7 +164,7 @@ class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test start_submission if user has no open submissions.
      */
-    public function test_start_submission_with_new_submission() {
+    public function test_start_submission_with_new_submission(): void {
         global $DB;
         set_config('enabletimelimit', '1', 'assign');
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status(

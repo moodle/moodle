@@ -28,7 +28,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests for the function manager::get_all_areas()
      */
-    public function test_get_areas() {
+    public function test_get_areas(): void {
         $this->resetAfterTest();
         $areas = manager::get_all_areas();
         $areaclassnames = array_map('get_class', $areas);

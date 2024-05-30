@@ -69,7 +69,7 @@ class checks_test extends \advanced_testcase {
     /*
      * test backup_check class
      */
-    public function test_backup_check() {
+    public function test_backup_check(): void {
 
         // Check against existing course module/section course or fail
         $this->assertTrue(backup_check::check_id(backup::TYPE_1ACTIVITY, $this->moduleid));

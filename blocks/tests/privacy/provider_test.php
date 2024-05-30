@@ -49,7 +49,7 @@ class provider_test extends provider_testcase {
         $this->resetAfterTest();
     }
 
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
         $c2 = $dg->create_course();
@@ -97,7 +97,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user IDs are returned for a given context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $DB;
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -125,7 +125,7 @@ class provider_test extends provider_testcase {
     }
 
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -195,7 +195,7 @@ class provider_test extends provider_testcase {
             'name' => "docked_block_instance_{$blockmentees->instance->id}"]));
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();
@@ -301,7 +301,7 @@ class provider_test extends provider_testcase {
     /**
      * Test the deletion of data related to a context and a list of users.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $u1 = $this->getDataGenerator()->create_user();
         $u2 = $this->getDataGenerator()->create_user();
@@ -339,7 +339,7 @@ class provider_test extends provider_testcase {
                 ['name' => "block{$blockcontext->instanceid}hidden"]));
     }
 
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $c1 = $dg->create_course();

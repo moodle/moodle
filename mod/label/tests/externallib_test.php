@@ -40,7 +40,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test test_mod_label_get_labels_by_courses
      */
-    public function test_mod_label_get_labels_by_courses() {
+    public function test_mod_label_get_labels_by_courses(): void {
         global $DB;
 
         $this->resetAfterTest(true);

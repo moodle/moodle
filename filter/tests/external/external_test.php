@@ -50,7 +50,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_available_in_context_system
      */
-    public function test_get_available_in_context_system() {
+    public function test_get_available_in_context_system(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -63,7 +63,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_available_in_context_category
      */
-    public function test_get_available_in_context_category() {
+    public function test_get_available_in_context_category(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -107,7 +107,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_available_in_context_course
      */
-    public function test_get_available_in_context_course() {
+    public function test_get_available_in_context_course(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -151,7 +151,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_available_in_context_module
      */
-    public function test_get_available_in_context_module() {
+    public function test_get_available_in_context_module(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -207,7 +207,7 @@ class external_test extends externallib_advanced_testcase {
      * Test get_all_states
      * @covers \core_filters\external\get_all_states::execute
      */
-    public function test_get_all_states() {
+    public function test_get_all_states(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 

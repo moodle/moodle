@@ -50,7 +50,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         return new \question_no_pattern_expectation($penaltypattern);
     }
 
-    public function test_multichoice() {
+    public function test_multichoice(): void {
 
         // Create a multiple choice, single response question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -160,7 +160,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEqualsWithDelta($autogradedstep->get_fraction(), 1, 0.0000001);
     }
 
-    public function test_multichoice2() {
+    public function test_multichoice2(): void {
 
         // Create a multiple choice, multiple response question.
         $mc = \test_question_maker::make_a_multichoice_multi_question();
@@ -211,7 +211,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_correct_expectation());
     }
 
-    public function test_numerical_invalid() {
+    public function test_numerical_invalid(): void {
 
         // Create a numerical question
         $numq = \test_question_maker::make_question('numerical', 'pi');

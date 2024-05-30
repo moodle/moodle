@@ -121,7 +121,7 @@ CSS
     /**
      * @dataProvider is_valid_file_provider
      */
-    public function test_is_valid_file($path, $valid) {
+    public function test_is_valid_file($path, $valid): void {
         $scss = new \core_scss();
         $pathvalid = \phpunit_util::call_internal_method($scss, 'is_valid_file', [$path], \core_scss::class);
         $this->assertSame($valid, $pathvalid);
@@ -134,7 +134,7 @@ CSS
      * @param string $scss The raw scss to compile.
      * @param string $expectedcss The expected CSS output.
      */
-    public function test_scss_compilation_with_sassc($scss, $expectedcss) {
+    public function test_scss_compilation_with_sassc($scss, $expectedcss): void {
         if (!defined('PHPUNIT_PATH_TO_SASSC')) {
             $this->markTestSkipped('Path to SassC not provided');
         }

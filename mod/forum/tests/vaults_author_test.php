@@ -27,7 +27,7 @@ class vaults_author_test extends \advanced_testcase {
     /**
      * Test get_from_id.
      */
-    public function test_get_from_id() {
+    public function test_get_from_id(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -42,7 +42,7 @@ class vaults_author_test extends \advanced_testcase {
     /**
      * Test get_context_ids_for_author_ids.
      */
-    public function test_get_context_ids_for_author_ids() {
+    public function test_get_context_ids_for_author_ids(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();

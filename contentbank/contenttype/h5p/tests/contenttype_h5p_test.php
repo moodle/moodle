@@ -30,7 +30,7 @@ class contenttype_h5p_test extends \advanced_testcase {
     /**
      * Test the behaviour of delete_content().
      */
-    public function test_delete_content() {
+    public function test_delete_content(): void {
         global $CFG, $USER, $DB;
 
         $this->resetAfterTest();
@@ -73,7 +73,7 @@ class contenttype_h5p_test extends \advanced_testcase {
      *
      * @covers ::can_upload
      */
-    public function test_can_upload() {
+    public function test_can_upload(): void {
         $this->resetAfterTest();
 
         $systemcontext = \context_system::instance();
@@ -104,7 +104,7 @@ class contenttype_h5p_test extends \advanced_testcase {
      *
      * @covers ::get_icon
      */
-    public function test_get_icon() {
+    public function test_get_icon(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -146,7 +146,7 @@ class contenttype_h5p_test extends \advanced_testcase {
      *
      * @covers ::get_download_url
      */
-    public function test_get_download_url() {
+    public function test_get_download_url(): void {
         global $CFG;
 
         $this->resetAfterTest();

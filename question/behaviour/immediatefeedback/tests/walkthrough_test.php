@@ -33,7 +33,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
-    public function test_immediatefeedback_feedback_multichoice_right() {
+    public function test_immediatefeedback_feedback_multichoice_right(): void {
 
         // Create a true-false question with correct answer true.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -134,7 +134,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEqualsWithDelta($autogradedstep->get_fraction(), -0.3333333, 0.0000001);
     }
 
-    public function test_immediatefeedback_feedback_multichoice_try_to_submit_blank() {
+    public function test_immediatefeedback_feedback_multichoice_try_to_submit_blank(): void {
 
         // Create a true-false question with correct answer true.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -189,7 +189,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 new \question_pattern_expectation('/' . preg_quote('Not good enough!', '/') . '/'));
     }
 
-    public function test_immediatefeedback_feedback_multichoice_wrong_on_finish() {
+    public function test_immediatefeedback_feedback_multichoice_wrong_on_finish(): void {
 
         // Create a true-false question with correct answer true.
         $mc = \test_question_maker::make_a_multichoice_single_question();

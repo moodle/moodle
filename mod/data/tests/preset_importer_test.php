@@ -138,7 +138,7 @@ class preset_importer_test extends \advanced_testcase {
         array $newfields,
         string $pluginname,
         bool $expectedresult
-    ) {
+    ): void {
 
         global $USER;
 
@@ -240,7 +240,7 @@ class preset_importer_test extends \advanced_testcase {
         int $fieldstocreate,
         int $fieldstoremove,
         int $fieldstoupdate
-    ) {
+    ): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -302,7 +302,7 @@ class preset_importer_test extends \advanced_testcase {
         int $fieldstocreate,
         int $fieldstoremove,
         int $fieldstoupdate
-    ) {
+    ): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -383,7 +383,7 @@ class preset_importer_test extends \advanced_testcase {
      * @param array $fields List of fields to get the names from.
      * @param string $expected The list of field names expected.
      */
-    public function test_get_field_names(array $fields, string $expected) {
+    public function test_get_field_names(array $fields, string $expected): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -417,7 +417,7 @@ class preset_importer_test extends \advanced_testcase {
      * @covers ::create_from_plugin_or_directory
      *
      */
-    public function test_create_from_plugin_or_directory() {
+    public function test_create_from_plugin_or_directory(): void {
 
         global $USER;
 

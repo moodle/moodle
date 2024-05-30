@@ -30,7 +30,7 @@ require_once(__DIR__.'/fixtures/lib.php');
  */
 class grade_grade_test extends \grade_base_testcase {
 
-    public function test_grade_grade() {
+    public function test_grade_grade(): void {
         $this->sub_test_grade_grade_construct();
         $this->sub_test_grade_grade_insert();
         $this->sub_test_grade_grade_update();
@@ -206,7 +206,7 @@ class grade_grade_test extends \grade_base_testcase {
      *
      * @covers \grade_grade::flatten_dependencies_array()
      */
-    public function test_flatten_dependencies() {
+    public function test_flatten_dependencies(): void {
         // First test a simple normal case.
         $a = array(1 => array(2, 3), 2 => array(), 3 => array(4), 4 => array());
         $b = array();
@@ -303,7 +303,7 @@ class grade_grade_test extends \grade_base_testcase {
         $this->assertSame($expectedb, $b);
     }
 
-    public function test_grade_grade_min_max() {
+    public function test_grade_grade_min_max(): void {
         global $CFG;
         $initialminmaxtouse = $CFG->grade_minmaxtouse;
 
@@ -372,7 +372,7 @@ class grade_grade_test extends \grade_base_testcase {
         $CFG->grade_minmaxtouse = $initialminmaxtouse;
     }
 
-    public function test_grade_grade_min_max_with_course_item() {
+    public function test_grade_grade_min_max_with_course_item(): void {
         global $CFG, $DB;
         $initialminmaxtouse = $CFG->grade_minmaxtouse;
 
@@ -432,7 +432,7 @@ class grade_grade_test extends \grade_base_testcase {
         $CFG->grade_minmaxtouse = $initialminmaxtouse;
     }
 
-    public function test_grade_grade_min_max_with_category_item() {
+    public function test_grade_grade_min_max_with_category_item(): void {
         global $CFG, $DB;
         $initialminmaxtouse = $CFG->grade_minmaxtouse;
 
@@ -644,7 +644,7 @@ class grade_grade_test extends \grade_base_testcase {
     /**
      * Tests get_hiding_affected by locked category and overridden grades.
      */
-    public function test_category_get_hiding_affected() {
+    public function test_category_get_hiding_affected(): void {
         $generator = $this->getDataGenerator();
 
         // Create the data we need for the tests.

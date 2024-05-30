@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/quiz/report/statistics/statistics_table.php')
  */
 class statistics_table_test extends \advanced_testcase {
 
-    public function test_format_percentage() {
+    public function test_format_percentage(): void {
         $table = new quiz_statistics_table();
 
         // The format_percentage method is protected. Use Reflection to call the method.
@@ -51,7 +51,7 @@ class statistics_table_test extends \advanced_testcase {
         );
     }
 
-    public function test_format_percentage_range() {
+    public function test_format_percentage_range(): void {
         $table = new quiz_statistics_table();
 
         // The format_percentage_range method is protected. Use Reflection to call the method.
@@ -69,7 +69,7 @@ class statistics_table_test extends \advanced_testcase {
         );
     }
 
-    public function test_format_range() {
+    public function test_format_range(): void {
         $table = new quiz_statistics_table();
 
         // The format_range method is protected. Use Reflection to call the method.

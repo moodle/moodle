@@ -33,7 +33,7 @@ class restore_override_test extends \restore_date_testcase {
     /**
      * Test restore overrides.
      */
-    public function test_restore_overrides() {
+    public function test_restore_overrides(): void {
         global $DB, $USER;
         $this->resetAfterTest();
 

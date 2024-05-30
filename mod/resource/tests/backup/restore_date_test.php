@@ -30,7 +30,7 @@ require_once($CFG->libdir . "/phpunit/classes/restore_date_testcase.php");
  */
 class restore_date_test extends \restore_date_testcase {
 
-    public function test_restore_dates() {
+    public function test_restore_dates(): void {
         global $DB;
 
         $time = 10000;

@@ -68,7 +68,7 @@ class edit_form_test extends \advanced_testcase {
     /**
      * Test the form correctly validates the HTML allowed in items.
      */
-    public function test_item_validation() {
+    public function test_item_validation(): void {
         list($form, $category) = $this->get_form();
 
         $submitteddata = [

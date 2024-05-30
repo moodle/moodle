@@ -47,19 +47,19 @@ class question_type_test extends \advanced_testcase {
         $this->qtype = null;
     }
 
-    public function test_name() {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'truefalse');
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $this->assertEquals(0.5, $this->qtype->get_random_guess_score(null));
     }
 
-    public function test_load_question() {
+    public function test_load_question(): void {
         $this->resetAfterTest();
 
         $syscontext = \context_system::instance();
@@ -117,7 +117,7 @@ class question_type_test extends \advanced_testcase {
         $this->assertEquals([], $questiondata->hints);
     }
 
-    public function test_get_possible_responses() {
+    public function test_get_possible_responses(): void {
         $q = new \stdClass();
         $q->id = 1;
         $q->options = new \stdClass();
@@ -134,7 +134,7 @@ class question_type_test extends \advanced_testcase {
         ), $this->qtype->get_possible_responses($q));
     }
 
-    public function test_question_saving_true() {
+    public function test_question_saving_true(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 

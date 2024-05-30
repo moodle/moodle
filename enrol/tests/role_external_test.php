@@ -45,7 +45,7 @@ class role_external_test extends \externallib_advanced_testcase {
     /**
      * Test assign_roles
      */
-    public function test_assign_roles() {
+    public function test_assign_roles(): void {
         global $USER;
 
         $this->resetAfterTest(true);
@@ -94,7 +94,7 @@ class role_external_test extends \externallib_advanced_testcase {
     /**
      * Test unassign_roles
      */
-    public function test_unassign_roles() {
+    public function test_unassign_roles(): void {
         global $USER;
 
         $this->resetAfterTest(true);

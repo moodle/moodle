@@ -85,7 +85,7 @@ class auth_ldap_test extends \advanced_testcase {
      * @param int $pagesize Value to be configured in settings controlling page size.
      * @param int $subcontext Value to be configured in settings controlling searching in subcontexts.
      */
-    public function test_auth_ldap(int $pagesize, int $subcontext) {
+    public function test_auth_ldap(int $pagesize, int $subcontext): void {
         global $DB;
 
         if (!extension_loaded('ldap')) {
@@ -397,7 +397,7 @@ class auth_ldap_test extends \advanced_testcase {
     /**
      * Test logging in via LDAP calls a user_loggedin event.
      */
-    public function test_ldap_user_loggedin_event() {
+    public function test_ldap_user_loggedin_event(): void {
         global $CFG, $DB, $USER;
 
         $this->resetAfterTest();
@@ -435,7 +435,7 @@ class auth_ldap_test extends \advanced_testcase {
     /**
      * Test logging in via LDAP calls a user_loggedin event.
      */
-    public function test_ldap_user_signup() {
+    public function test_ldap_user_signup(): void {
         global $CFG, $DB;
 
         // User to create.

@@ -46,7 +46,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that export_user_preferences returns no data if the user has no data.
      */
-    public function test_export_user_preferences_not_defined() {
+    public function test_export_user_preferences_not_defined(): void {
         $user = \core_user::get_user_by_username('admin');
         provider::export_user_preferences($user->id);
 
@@ -58,7 +58,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Ensure that export_user_preferences returns single preferences.
      * These preferences can be set on each course, but the value is shared in the whole site.
      */
-    public function test_export_user_preferences_single() {
+    public function test_export_user_preferences_single(): void {
         // Define a user preference.
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);

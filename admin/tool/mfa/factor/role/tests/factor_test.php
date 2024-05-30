@@ -32,7 +32,7 @@ class factor_test extends \advanced_testcase {
      * @covers ::get_summary_condition
      * @covers ::get_roles
      */
-    public function test_get_summary_condition() {
+    public function test_get_summary_condition(): void {
         global $DB;
 
         $this->resetAfterTest();

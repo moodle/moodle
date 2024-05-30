@@ -37,7 +37,7 @@ require_once(__DIR__ . '/../../../engine/tests/helpers.php');
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
-    public function test_interactive_feedback_multichoice_right() {
+    public function test_interactive_feedback_multichoice_right(): void {
 
         // Create a multichoice single question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -177,7 +177,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertEqualsWithDelta($autogradedstep->get_fraction(), 0.6666667, 0.0000001);
     }
 
-    public function test_interactive_finish_when_try_again_showing() {
+    public function test_interactive_finish_when_try_again_showing(): void {
 
         // Create a multichoice single question.
         $mc = \test_question_maker::make_a_multichoice_single_question();
@@ -238,7 +238,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_no_hint_visible_expectation());
     }
 
-    public function test_interactive_shortanswer_try_to_submit_blank() {
+    public function test_interactive_shortanswer_try_to_submit_blank(): void {
 
         // Create a short answer question.
         $sa = \test_question_maker::make_question('shortanswer');
@@ -333,7 +333,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->quba->get_response_summary($this->slot));
     }
 
-    public function test_interactive_feedback_multichoice_multiple_reset() {
+    public function test_interactive_feedback_multichoice_multiple_reset(): void {
 
         // Create a multichoice multiple question.
         $mc = \test_question_maker::make_a_multichoice_multi_question();
@@ -414,7 +414,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_no_hint_visible_expectation());
     }
 
-    public function test_interactive_regrade_changing_num_tries_leaving_open() {
+    public function test_interactive_regrade_changing_num_tries_leaving_open(): void {
         // Create a multichoice multiple question.
         $q = \test_question_maker::make_question('shortanswer');
         $q->hints = array(
@@ -447,7 +447,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(null);
     }
 
-    public function test_interactive_regrade_changing_num_tries_finished() {
+    public function test_interactive_regrade_changing_num_tries_finished(): void {
         // Create a multichoice multiple question.
         $q = \test_question_maker::make_question('shortanswer');
         $q->hints = array(
@@ -483,7 +483,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_current_mark(1);
     }
 
-    public function test_review_of_interactive_questions_before_finished() {
+    public function test_review_of_interactive_questions_before_finished(): void {
         // Create a multichoice multiple question.
         $q = \test_question_maker::make_question('shortanswer');
         $q->hints = array(

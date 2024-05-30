@@ -49,7 +49,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_instance_info
      */
-    public function test_get_instance_info() {
+    public function test_get_instance_info(): void {
         global $DB;
 
         $this->resetAfterTest(true);

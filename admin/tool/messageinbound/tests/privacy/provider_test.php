@@ -57,7 +57,7 @@ class provider_test extends provider_testcase {
         $CFG->messageinbound_domain = 'example.com';
     }
 
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();
@@ -76,7 +76,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::test_get_users_in_context().
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'tool_messageinbound';
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
@@ -118,7 +118,7 @@ class provider_test extends provider_testcase {
         $this->assertCount(0, $userids);
     }
 
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
@@ -161,7 +161,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for provider::test_delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $component = 'tool_messageinbound';
         $dg = $this->getDataGenerator();
@@ -210,7 +210,7 @@ class provider_test extends provider_testcase {
         $this->assertTrue($DB->record_exists('messageinbound_messagelist', ['userid' => $u2->id]));
     }
 
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
@@ -243,7 +243,7 @@ class provider_test extends provider_testcase {
         $this->assertTrue($DB->record_exists('messageinbound_messagelist', ['userid' => $u2->id]));
     }
 
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         $dg = $this->getDataGenerator();
         $u1 = $dg->create_user();
         $u2 = $dg->create_user();

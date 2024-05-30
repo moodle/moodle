@@ -35,7 +35,7 @@ class entities_forum_test extends \advanced_testcase {
     /**
      * Test the entity returns expected values.
      */
-    public function test_entity() {
+    public function test_entity(): void {
         $this->resetAfterTest();
 
         $time = time() - 10;

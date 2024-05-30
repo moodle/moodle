@@ -38,7 +38,7 @@ class grading_external_test extends \externallib_advanced_testcase {
     /**
      * Test get_definitions
      */
-    public function test_get_definitions() {
+    public function test_get_definitions(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -182,7 +182,7 @@ class grading_external_test extends \externallib_advanced_testcase {
     /**
      * Test get_gradingform_instances
      */
-    public function test_get_gradingform_instances() {
+    public function test_get_gradingform_instances(): void {
         global $DB, $USER;
 
         $this->resetAfterTest(true);
@@ -310,7 +310,7 @@ class grading_external_test extends \externallib_advanced_testcase {
      *
      * Test save_definitions for rubric grading method
      */
-    public function test_save_definitions_rubric() {
+    public function test_save_definitions_rubric(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -549,7 +549,7 @@ class grading_external_test extends \externallib_advanced_testcase {
      *
      * Tests save_definitions for the marking guide grading method
      */
-    public function test_save_definitions_marking_guide() {
+    public function test_save_definitions_marking_guide(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest(true);

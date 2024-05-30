@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
-    public function test_interactive_single_response() {
+    public function test_interactive_single_response(): void {
 
         // Create a gapselect question.
         $q = \test_question_maker::make_question('calculatedmulti', 'singleresponse');
@@ -98,7 +98,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_no_hint_visible_expectation());
     }
 
-    public function test_interactive_multi_response() {
+    public function test_interactive_multi_response(): void {
 
         // Create a gapselect question.
         $q = \test_question_maker::make_question('calculatedmulti', 'multiresponse');

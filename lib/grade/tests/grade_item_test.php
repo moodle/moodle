@@ -29,7 +29,7 @@ require_once(__DIR__.'/fixtures/lib.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class grade_item_test extends \grade_base_testcase {
-    public function test_grade_item() {
+    public function test_grade_item(): void {
         $this->sub_test_grade_item_construct();
         $this->sub_test_grade_item_insert();
         $this->sub_test_grade_item_delete();
@@ -818,7 +818,7 @@ class grade_item_test extends \grade_base_testcase {
         return $DB->get_record('grade_items', array('id' => $item->id));
     }
 
-    public function test_set_aggregation_fields_for_aggregation() {
+    public function test_set_aggregation_fields_for_aggregation(): void {
         $course = $this->getDataGenerator()->create_course();
         $gi = new \grade_item(array('courseid' => $course->id, 'itemtype' => 'manual'), false);
 
@@ -1071,7 +1071,7 @@ class grade_item_test extends \grade_base_testcase {
     /**
      * Test grade item duplication expecting success.
      */
-    public function test_grade_duplicate_grade_item_success() {
+    public function test_grade_duplicate_grade_item_success(): void {
         $cat = new \grade_category();
         $cat->courseid = $this->courseid;
         $cat->fullname = 'Grade category';
@@ -1111,7 +1111,7 @@ class grade_item_test extends \grade_base_testcase {
     /**
      * Test grade item duplication exception expected with incomplete grade item.
      */
-    public function test_grade_duplicate_grade_item_incomplete() {
+    public function test_grade_duplicate_grade_item_incomplete(): void {
         // Grade item is not valid because it is empty.
         $gi = new \grade_item();
         $gi->courseid = $this->courseid;
@@ -1122,7 +1122,7 @@ class grade_item_test extends \grade_base_testcase {
     /**
      * Test grade item duplication exception expected because item must be in db.
      */
-    public function test_grade_duplicate_grade_item_not_in_db() {
+    public function test_grade_duplicate_grade_item_not_in_db(): void {
         $cat = new \grade_category();
         $cat->courseid = $this->courseid;
         $cat->fullname = 'Grade category';
