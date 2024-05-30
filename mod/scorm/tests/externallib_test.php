@@ -227,7 +227,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get scorm scoes
      */
-    public function test_mod_scorm_get_scorm_scoes() {
+    public function test_mod_scorm_get_scorm_scoes(): void {
         global $DB;
 
         $this->resetAfterTest(true);

@@ -1999,7 +1999,7 @@ class provider_test extends provider_testcase {
         $this->assert_exported_comments(['Hi.'], $data->comments);
     }
 
-    public function test_export_data_for_user_with_related_competencies() {
+    public function test_export_data_for_user_with_related_competencies(): void {
         $path = [
             get_string('competencies', 'core_competency'),
             get_string('privacy:path:relatedtome', 'core_competency'),

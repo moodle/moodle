@@ -705,7 +705,7 @@ class moodle_content_writer_test extends advanced_testcase {
      *
      * @covers ::export_user_preference
      */
-    public function test_export_user_preference_context_block_multiple_instances() {
+    public function test_export_user_preference_context_block_multiple_instances(): void {
         $this->resetAfterTest();
 
         $generator = $this->getDataGenerator();
@@ -1323,7 +1323,7 @@ class moodle_content_writer_test extends advanced_testcase {
         ];
     }
 
-    public function test_export_html_functions() {
+    public function test_export_html_functions(): void {
         $this->resetAfterTest();
 
         $data = (object) ['key' => 'value'];

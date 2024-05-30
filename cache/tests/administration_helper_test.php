@@ -60,7 +60,7 @@ class administration_helper_test extends \advanced_testcase {
     /**
      * Test the numerous summaries the helper can produce.
      */
-    public function test_get_summaries() {
+    public function test_get_summaries(): void {
         // First the preparation.
         $config = cache_config_writer::instance();
         $this->assertTrue($config->add_store_instance('summariesstore', 'file'));

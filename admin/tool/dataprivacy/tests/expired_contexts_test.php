@@ -867,7 +867,7 @@ class expired_contexts_test extends \advanced_testcase {
     /**
      * Ensure that a module context previously flagged as approved is removed with appropriate unexpiredroles kept.
      */
-    public function test_process_course_context_with_override_unexpired_role() {
+    public function test_process_course_context_with_override_unexpired_role(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -955,7 +955,7 @@ class expired_contexts_test extends \advanced_testcase {
     /**
      * Ensure that a module context previously flagged as approved is removed with appropriate expiredroles kept.
      */
-    public function test_process_course_context_with_override_expired_role() {
+    public function test_process_course_context_with_override_expired_role(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -1043,7 +1043,7 @@ class expired_contexts_test extends \advanced_testcase {
     /**
      * Ensure that a module context previously flagged as approved is removed with appropriate expiredroles kept.
      */
-    public function test_process_course_context_with_user_in_both_lists() {
+    public function test_process_course_context_with_user_in_both_lists(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -1132,7 +1132,7 @@ class expired_contexts_test extends \advanced_testcase {
     /**
      * Ensure that a module context previously flagged as approved is removed with appropriate expiredroles kept.
      */
-    public function test_process_course_context_with_user_in_both_lists_expired() {
+    public function test_process_course_context_with_user_in_both_lists_expired(): void {
         global $DB;
         $this->resetAfterTest();
 

@@ -327,7 +327,7 @@ class provider_test extends provider_testcase {
     /**
      * Export data for user 1
      */
-    public function test_export_user_data1() {
+    public function test_export_user_data1(): void {
 
         // Export all contexts for the first user.
         $contextids = array_values(array_map(function($c) {
@@ -383,7 +383,7 @@ class provider_test extends provider_testcase {
     /**
      * Test export data for user 2
      */
-    public function test_export_user_data2() {
+    public function test_export_user_data2(): void {
 
         // Export all contexts for the second user.
         $contextids = array_values(array_map(function($c) {
@@ -434,7 +434,7 @@ class provider_test extends provider_testcase {
     /**
      * Test export data for user 3 (locks, empty individual wiki)
      */
-    public function test_export_user_data3() {
+    public function test_export_user_data3(): void {
 
         // Export all contexts for the third user.
         $contextids = array_values(array_map(function($c) {
@@ -515,7 +515,7 @@ class provider_test extends provider_testcase {
     /**
      * Test export data when there are comments.
      */
-    public function test_export_user_data_with_comments() {
+    public function test_export_user_data_with_comments(): void {
         global $DB;
         // Comment on each page in the first wiki as the first user.
         $this->setUser($this->users[1]);

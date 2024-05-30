@@ -695,7 +695,7 @@ class questionlib_test extends \advanced_testcase {
      * get_question_options includes the tags and course tags for all questions in the list
      * if each question has course and question level tags.
      */
-    public function test_get_question_options_includes_question_and_course_tags() {
+    public function test_get_question_options_includes_question_and_course_tags(): void {
         list($category, $course, $quiz, $qcat, $questions) = $this->setup_quiz_and_questions('category');
         $question1 = $questions[0];
         $question2 = $questions[1];

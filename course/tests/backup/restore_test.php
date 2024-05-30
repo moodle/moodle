@@ -387,7 +387,7 @@ class restore_test extends \advanced_testcase {
         $this->assertEquals($startdate, $c2->startdate);
     }
 
-    public function test_restore_course_with_users() {
+    public function test_restore_course_with_users(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

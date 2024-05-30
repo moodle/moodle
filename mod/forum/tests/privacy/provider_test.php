@@ -1063,7 +1063,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all user data is deleted from a context.
      */
-    public function test_all_users_deleted_from_context() {
+    public function test_all_users_deleted_from_context(): void {
         global $DB;
 
         $fs = get_file_storage();
@@ -1268,7 +1268,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that all user data is deleted for a specific context.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $fs = get_file_storage();
@@ -1483,7 +1483,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that user data for specific users is deleted from a specified context.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $fs = get_file_storage();

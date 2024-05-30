@@ -39,7 +39,7 @@ class caching_content_item_readonly_repository_test extends \advanced_testcase {
     /**
      * Test verifying that content items are cached and returned from the cache in subsequent same-request calls.
      */
-    public function test_find_all_for_course() {
+    public function test_find_all_for_course(): void {
         $this->resetAfterTest();
         global $DB;
 

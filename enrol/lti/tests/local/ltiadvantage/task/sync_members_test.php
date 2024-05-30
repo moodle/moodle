@@ -726,7 +726,7 @@ class sync_members_test extends \lti_advantage_testcase {
      * @covers ::execute
      */
     public function test_sync_enrolments_and_migration(?array $legacydata, ?array $resourceconfig, array $launchdata,
-            ?array $syncmembers, array $expected) {
+            ?array $syncmembers, array $expected): void {
 
         $this->resetAfterTest();
 

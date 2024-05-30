@@ -167,7 +167,7 @@ class resource_link_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_resource
      */
-    public function test_find_by_resource() {
+    public function test_find_by_resource(): void {
         $this->resetAfterTest();
         $resourcelink = $this->generate_resource_link();
         $repository = new resource_link_repository();
@@ -196,7 +196,7 @@ class resource_link_repository_test extends \advanced_testcase {
      *
      * @covers ::find_by_resource_and_user
      */
-    public function test_find_by_resource_and_user() {
+    public function test_find_by_resource_and_user(): void {
         global $CFG;
         $this->resetAfterTest();
         $resourcelink = $this->generate_resource_link();

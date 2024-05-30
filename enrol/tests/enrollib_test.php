@@ -1308,7 +1308,7 @@ class enrollib_test extends advanced_testcase {
         $limit,
         $offset,
         $expectedcourses
-    ) {
+    ): void {
         global $DB, $CFG;
 
         $this->resetAfterTest();

@@ -3747,7 +3747,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectednextoffset,
         $expectedexception = null,
         $searchvalue = null
-    ) {
+    ): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
 
@@ -3979,7 +3979,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Verify that content items can be added to user favourites.
      */
-    public function test_add_content_item_to_user_favourites() {
+    public function test_add_content_item_to_user_favourites(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -4017,7 +4017,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Verify that content items can be removed from user favourites.
      */
-    public function test_remove_content_item_from_user_favourites() {
+    public function test_remove_content_item_from_user_favourites(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -4057,7 +4057,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test the web service returning course content items for inclusion in activity choosers, etc.
      */
-    public function test_get_course_content_items() {
+    public function test_get_course_content_items(): void {
         $this->resetAfterTest();
 
         $course  = self::getDataGenerator()->create_course();

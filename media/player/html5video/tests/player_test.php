@@ -67,7 +67,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test method list_supported_urls()
      */
-    public function test_list_supported_urls() {
+    public function test_list_supported_urls(): void {
         global $CFG;
         require_once($CFG->libdir . '/filelib.php');
 

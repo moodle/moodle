@@ -208,7 +208,7 @@ class preset_test extends \advanced_testcase {
      *
      * @covers ::save
      */
-    public function test_save_new_preset() {
+    public function test_save_new_preset(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

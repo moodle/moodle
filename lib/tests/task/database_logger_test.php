@@ -212,7 +212,7 @@ class database_logger_test extends \advanced_testcase {
      * @dataProvider    delete_task_logs_provider
      * @param   mixed   $ids
      */
-    public function test_delete_task_logs($ids) {
+    public function test_delete_task_logs($ids): void {
         $DB = $this->mock_database();
         $DB->expects($this->once())
             ->method('delete_records_list')

@@ -226,7 +226,7 @@ class local_structure_slot_random_test extends \advanced_testcase {
             (array)json_decode($tagspropery)->filters->qtagids->values);
     }
 
-    public function test_insert() {
+    public function test_insert(): void {
         global $SITE;
 
         $this->resetAfterTest();

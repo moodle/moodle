@@ -195,7 +195,7 @@ class externallib_test extends externallib_advanced_testcase {
         $includesubcategories,
         $usetagnames,
         $expectedquestionindexes
-    ) {
+    ): void {
         $this->resetAfterTest();
 
         $context = \context_system::instance();
@@ -365,7 +365,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * get_random_question_summaries should allow limiting and offsetting of the result set.
      */
-    public function test_get_random_question_summaries_with_limit_and_offset() {
+    public function test_get_random_question_summaries_with_limit_and_offset(): void {
         $this->resetAfterTest();
         $numberofquestions = 5;
         $includesubcategories = false;

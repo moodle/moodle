@@ -222,7 +222,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_available_presets
      */
-    public function test_get_available_presets() {
+    public function test_get_available_presets(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -323,7 +323,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_available_plugin_presets
      */
-    public function test_get_available_plugin_presets() {
+    public function test_get_available_plugin_presets(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -369,7 +369,7 @@ class manager_test extends \advanced_testcase {
      *
      * @covers ::get_available_saved_presets
      */
-    public function test_get_available_saved_presets() {
+    public function test_get_available_saved_presets(): void {
         global $DB;
 
         $this->resetAfterTest();

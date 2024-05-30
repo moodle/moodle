@@ -76,7 +76,7 @@ class content_item_readonly_repository_test extends \advanced_testcase {
     /**
      * Test confirming that all content items can be fetched, even those which require certain caps when in a course.
      */
-    public function test_find_all() {
+    public function test_find_all(): void {
         $this->resetAfterTest();
 
         global $DB, $CFG;

@@ -32,7 +32,7 @@ class manager_observer_test extends data_privacy_testcase {
     /**
      * Ensure that when users are configured as DPO, they are sent an message upon failure.
      */
-    public function test_handle_component_failure() {
+    public function test_handle_component_failure(): void {
         $this->resetAfterTest();
 
         // Create another user who is not a DPO.

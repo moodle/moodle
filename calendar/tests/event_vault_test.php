@@ -196,7 +196,7 @@ class event_vault_test extends \advanced_testcase {
      * provided timesort values and the last seen event can be provided to
      * get paginated results.
      */
-    public function test_get_action_events_by_timesort_between_time_skip_even_records() {
+    public function test_get_action_events_by_timesort_between_time_skip_even_records(): void {
         $this->resetAfterTest(true);
         $this->setAdminuser();
 
@@ -247,7 +247,7 @@ class event_vault_test extends \advanced_testcase {
      * number of events requested has been satisfied. In this case the first
      * five events are rejected so it should require two database requests.
      */
-    public function test_get_action_events_by_timesort_between_time_skip_first_records() {
+    public function test_get_action_events_by_timesort_between_time_skip_first_records(): void {
         $this->resetAfterTest(true);
         $this->setAdminuser();
 
@@ -423,7 +423,7 @@ class event_vault_test extends \advanced_testcase {
      * - A user in group B should see only the B override
      * - A user in both A and B should see both
      */
-    public function test_get_action_events_by_timesort_with_identical_group_override_priorities() {
+    public function test_get_action_events_by_timesort_with_identical_group_override_priorities(): void {
         $this->resetAfterTest();
         $this->setAdminuser();
 
@@ -804,7 +804,7 @@ class event_vault_test extends \advanced_testcase {
      * provided timesort values and the last seen event can be provided to
      * get paginated results.
      */
-    public function test_get_action_events_by_course_between_time_skip_even_records() {
+    public function test_get_action_events_by_course_between_time_skip_even_records(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -870,7 +870,7 @@ class event_vault_test extends \advanced_testcase {
      * number of events requested has been satisfied. In this case the first
      * five events are rejected so it should require two database requests.
      */
-    public function test_get_action_events_by_course_between_time_skip_first_records() {
+    public function test_get_action_events_by_course_between_time_skip_first_records(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -1080,7 +1080,7 @@ class event_vault_test extends \advanced_testcase {
      * - A user in group B should see only the B override
      * - A user in both A and B should see both
      */
-    public function test_get_action_events_by_course_with_identical_group_override_priorities() {
+    public function test_get_action_events_by_course_with_identical_group_override_priorities(): void {
         $this->resetAfterTest();
         $this->setAdminuser();
 
