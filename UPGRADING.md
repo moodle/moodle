@@ -26,6 +26,50 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-74484](https://tracker.moodle.org/browse/MDL-74484)
 
+#### Changed
+
+- The class autoloader has been moved to an earlier point in the Moodle bootstrap.
+  Autoloaded classes are now available to scripts using the `ABORT_AFTER_CONFIG` constant.
+
+  For more information see [MDL-80275](https://tracker.moodle.org/browse/MDL-80275)
+
+#### Added
+
+- New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
+
+  For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)
+- Added an `exception` L2 Namespace to APIs
+
+  For more information see [MDL-81903](https://tracker.moodle.org/browse/MDL-81903)
+
+### mod_assign
+
+#### Added
+
+- Added 2 new settings:
+    - `mod_assign/defaultgradetype`
+      - The value of this setting dictates which of the GRADE_TYPE_X constants is the default option when creating new instances of the assignment.
+      - The default value is GRADE_TYPE_VALUE (Point)
+    - `mod_assign/defaultgradescale`
+      - The value of this setting dictates which of the existing scales is the default option when creating new instances of the assignment.
+
+  For more information see [MDL-54105](https://tracker.moodle.org/browse/MDL-54105)
+- A new default value for `attemptreopenmethod` has been set to "Automatically until pass".
+
+  For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+
+#### Removed
+
+- The default option "Never" for `attemptreopenmethod` setting, which disallowed multiple attempts at the assignment, has been removed. This option was unnecessary because limiting attempts to 1 through the `maxattempts` setting achieves the same behavior.
+
+  For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+
+#### Deprecated
+
+- The constant `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` has been deprecated, and a new default value for `attemptreopenmethod` has been set to "Automatically until pass".
+
+  For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
+
 ### report
 
 #### Removed
@@ -33,6 +77,16 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 - The previously deprecated `report_helper::save_selected_report` method has been removed and can no longer be used
 
   For more information see [MDL-72353](https://tracker.moodle.org/browse/MDL-72353)
+
+### report_eventlist
+
+#### Deprecated
+
+- The following deprecated methods in `report_eventlist_list_generator` have been removed:
+  - `get_core_events_list()`
+  - `get_non_core_event_list()`
+
+  For more information see [MDL-72786](https://tracker.moodle.org/browse/MDL-72786)
 
 ### core_grades
 
@@ -77,26 +131,6 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
 
-### mod_assign
-
-#### Removed
-
-- The default option "Never" for `attemptreopenmethod` setting, which disallowed multiple attempts at the assignment, has been removed. This option was unnecessary because limiting attempts to 1 through the `maxattempts` setting achieves the same behavior.
-
-  For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
-
-#### Deprecated
-
-- The constant `ASSIGN_ATTEMPT_REOPEN_METHOD_NONE` has been deprecated, and a new default value for `attemptreopenmethod` has been set to "Automatically until pass".
-
-  For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
-
-#### Added
-
-- A new default value for `attemptreopenmethod` has been set to "Automatically until pass".
-
-  For more information see [MDL-80741](https://tracker.moodle.org/browse/MDL-80741)
-
 ### core_question
 
 #### Changed
@@ -113,6 +147,22 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81274](https://tracker.moodle.org/browse/MDL-81274)
 
+### output
+
+#### Added
+
+- Added a new `renderer_base::get_page` getter method
+
+  For more information see [MDL-81597](https://tracker.moodle.org/browse/MDL-81597)
+
+### theme
+
+#### Added
+
+- New `core/contextheader` mustache template has been added. This template can be overridden by themes to modify the context header
+
+  For more information see [MDL-81597](https://tracker.moodle.org/browse/MDL-81597)
+
 ### core_courseformat
 
 #### Added
@@ -121,3 +171,14 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   If `istrackeduser` is pre-computed for the course module's course, it can be provided here to avoid an additional function call.
 
   For more information see [MDL-81610](https://tracker.moodle.org/browse/MDL-81610)
+
+### core_course
+
+#### Changed
+
+- The reset course page has been improved. The words "Delete" and "Remove" have been removed from all the options to make it easier to focus on the data to be removed and avoid inconsistencies and duplicated information. Third party plugins implementing reset methods might need to:
+  - Add static element in the _reset_course_form_definition method before all the options with the Delete string:
+      `$mform->addElement('static', 'assigndelete', get_string('delete'));`
+  - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
+
+  For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)

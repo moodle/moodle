@@ -18,3 +18,18 @@
 
   For more information see [MDL-74484](https://tracker.moodle.org/browse/MDL-74484)
 
+### Changed
+
+- The class autoloader has been moved to an earlier point in the Moodle bootstrap.
+  Autoloaded classes are now available to scripts using the `ABORT_AFTER_CONFIG` constant.
+
+  For more information see [MDL-80275](https://tracker.moodle.org/browse/MDL-80275)
+
+### Added
+
+- New DML constant `SQL_INT_MAX` to define the size of a large integer with cross database platform support
+
+  For more information see [MDL-81282](https://tracker.moodle.org/browse/MDL-81282)
+- Added an `exception` L2 Namespace to APIs
+
+  For more information see [MDL-81903](https://tracker.moodle.org/browse/MDL-81903)

@@ -9,4 +9,3 @@
    - `behat_grade::select_in_gradebook_tabs`
 
   For more information see [MDL-74581](https://tracker.moodle.org/browse/MDL-74581)
-

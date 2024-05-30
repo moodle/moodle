@@ -32,4 +32,3 @@
 - Added a new database helper method `sql_replace_parameters` to help ensure uniqueness of parameters within a SQL expression
 
   For more information see [MDL-81434](https://tracker.moodle.org/browse/MDL-81434)
-
