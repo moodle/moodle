@@ -63,7 +63,7 @@ if ($ADMIN->fulltree) {
     // Authentication method name.
     $settings->add(new admin_setting_configtext('auth_shibboleth/login_name',
             get_string('auth_shib_auth_method', 'auth_shibboleth'),
-            get_string('auth_shib_auth_method_description', 'auth_shibboleth'), 'Shibboleth Login', PARAM_RAW_TRIMMED));
+            get_string('auth_shib_auth_method_description', 'auth_shibboleth'), 'Shibboleth Login', PARAM_TEXT));
 
     // Authentication method logo.
     $settings->add(new admin_setting_configstoredfile('auth_shibboleth/auth_logo',
