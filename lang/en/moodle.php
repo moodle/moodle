@@ -768,7 +768,7 @@ $string['emailresetconfirmation'] = 'Hi {$a->firstname},
 A password reset was requested for your account \'{$a->username}\' at {$a->sitename}.
 
 To confirm this request, and set a new password for your account, please go to the following web address:
-{$a->link}
+<a href="{$a->link}">{$a->link}</a>
 
 (This link is valid for {$a->resetminutes} minutes from the time this reset was first requested.)
 
