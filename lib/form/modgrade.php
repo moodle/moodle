@@ -60,8 +60,8 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
     /** @var int $currentscaleid The current scale id */
     public $currentscaleid = null;
 
-    /** @var ?string $currentgradetype The current gradetype - can either be 'none', 'scale', or 'point' */
-    public $currentgradetype = null;
+    /** @var string $currentgradetype The current gradetype - can either be 'none', 'scale', or 'point' */
+    public $currentgradetype = 'none';
 
     /** @var boolean $useratings Set to true if the activity is using ratings, false otherwise */
     public $useratings = false;
@@ -514,30 +514,18 @@ class MoodleQuickForm_modgrade extends MoodleQuickForm_group {
                 // This means that the subelements data (inc const and default values) can be overridden by form code.
                 // So - when we call this code really we can't be sure that will be the end value for the element.
                 if (!empty($this->_elements)) {
-                    if (!$this->currentgradetype) {
-                        if (!empty($value)) {
-                            $this->currentgradetype = $value < 0 ? 'scale' : 'point';
-                        } else {
-                            $this->currentgradetype = 'none';
+                    if (!empty($value)) {
+                        if ($value < 0) {
+                            $this->gradetypeformelement->setValue('scale');
+                            $this->scaleformelement->setValue(($value * -1));
+                        } else if ($value > 0) {
+                            $this->gradetypeformelement->setValue('point');
+                            $maxvalue = !empty($this->currentgrade) ? (string)unformat_float($this->currentgrade) : $value;
+                            $this->maxgradeformelement->setValue($maxvalue);
                         }
-                    }
-
-                    $this->gradetypeformelement->setValue($this->currentgradetype);
-
-                    switch ($this->currentgradetype) {
-                        case 'scale':
-                            if (!empty($value)) {
-                                $this->currentscaleid = $value * -1;
-                            }
-                            $this->scaleformelement->setValue($this->currentscaleid);
-                            break;
-                        case 'point':
-                        case 'none':
-                            if (!empty($value)) {
-                                $maxvalue = !empty($this->currentgrade) ? (string)unformat_float($this->currentgrade) : $value;
-                            }
-                            $this->maxgradeformelement->setValue($maxvalue ?? 100);
-                            break;
+                    } else {
+                        $this->gradetypeformelement->setValue('none');
+                        $this->maxgradeformelement->setValue(100);
                     }
                 }
                 break;

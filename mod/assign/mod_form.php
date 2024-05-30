@@ -377,15 +377,16 @@ class mod_assign_mod_form extends moodleform_mod {
             $element = $mform->getElement('grade');
 
             if (property_exists($settings, 'defaultgradetype')) {
+                $modgradetype = $element->getName() . '[modgrade_type]';
                 switch ((int)$settings->defaultgradetype) {
                     case GRADE_TYPE_NONE :
-                        $element->currentgradetype = 'none';
+                        $mform->setDefault($modgradetype, 'none');
                         break;
                     case GRADE_TYPE_SCALE :
-                        $element->currentgradetype = 'scale';
+                        $mform->setDefault($modgradetype, 'scale');
                         break;
                     case GRADE_TYPE_VALUE :
-                        $element->currentgradetype = 'point';
+                        $mform->setDefault($modgradetype, 'point');
                         break;
                 }
             }
@@ -395,11 +396,9 @@ class mod_assign_mod_form extends moodleform_mod {
                 $gradescale = grade_scale::fetch(['id' => (int)$settings->defaultgradescale, 'courseid' => 0]);
 
                 if ($gradescale) {
-                    $element->currentscaleid = $gradescale->id;
+                    $mform->setDefault($element->getName() . '[modgrade_scale]', $gradescale->id);
                 }
             }
-
-            $element->onQuickFormEvent('updateValue', null, $mform);
         }
     }
 }
