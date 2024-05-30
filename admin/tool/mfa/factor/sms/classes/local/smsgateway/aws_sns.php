@@ -36,8 +36,6 @@ class aws_sns implements gateway_interface {
     public function __construct() {
         global $CFG;
         require_once($CFG->libdir . '/aws-sdk/src/functions.php');
-        require_once($CFG->libdir . '/guzzlehttp/guzzle/src/functions_include.php');
-        require_once($CFG->libdir . '/guzzlehttp/promises/src/functions_include.php');
     }
 
     /**

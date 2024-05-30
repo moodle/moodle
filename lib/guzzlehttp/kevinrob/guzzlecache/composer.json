@@ -15,12 +15,13 @@
   "require": {
     "php": ">=7.2.0",
     "guzzlehttp/guzzle": "^6.0 || ^7.0",
+    "guzzlehttp/promises": "^1.4 || ^2.0",
     "guzzlehttp/psr7": "^1.7.0 || ^2.0.0"
   },
   "require-dev": {
     "phpunit/phpunit": "^8.5.15 || ^9.5",
     "doctrine/cache": "^1.10",
-    "league/flysystem": "^1.0",
+    "league/flysystem": "^2.5",
     "psr/cache": "^1.0",
     "cache/array-adapter": "^0.4 || ^0.5 || ^1.0",
     "illuminate/cache": "^5.0",
