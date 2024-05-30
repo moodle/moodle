@@ -23,12 +23,11 @@ namespace core_group\external;
  * @copyright 2024 The Open University.
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @since     Moodle 4.4
+ * @covers \core_group\external\get_groups_for_selector
  */
-class events_test extends \advanced_testcase {
+final class get_groups_for_selector_test extends \advanced_testcase {
     /**
      * Test test_get_groups_for_selector service.
-     *
-     * @covers ::get_groups_for_selector
      */
     public function test_get_groups_for_selector(): void {
         global $DB;
@@ -38,11 +37,28 @@ class events_test extends \advanced_testcase {
         $quiz = $this->getDataGenerator()->create_module('quiz', ['course' => $course->id]);
         $this->setAdminUser();
 
-        // Setup group.
+        // Setup user.
         $user = $this->getDataGenerator()->create_user();
         $this->getDataGenerator()->enrol_user($user->id, $course->id);
-        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
-        $this->getDataGenerator()->create_group_member(['groupid' => $group->id, 'userid' => $user->id]);
+
+        // Setup group 1.
+        $groupinga = $this->getDataGenerator()->create_grouping(['courseid' => $course->id, 'name' => 'Grouping A']);
+        $group1 = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'Group 1 in Grouping A']);
+        $this->getDataGenerator()->create_grouping_group([
+            'groupid' => $group1->id,
+            'groupingid' => $groupinga->id,
+        ]);
+        $this->getDataGenerator()->create_group_member(['groupid' => $group1->id, 'userid' => $user->id]);
+
+        // Setup group 2.
+        $groupingb = $this->getDataGenerator()->create_grouping(['courseid' => $course->id, 'name' => 'Grouping B']);
+        $group2 = $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'Group 2 in Grouping B']);
+        $this->getDataGenerator()->create_grouping_group([
+            'groupid' => $group2->id,
+            'groupingid' => $groupingb->id,
+        ]);
+
+        $this->getDataGenerator()->create_group(['courseid' => $course->id, 'name' => 'Group not in any grouping']);
 
         // By default, group mode of quiz is no group.
         $groups = get_groups_for_selector::execute($course->id, $quiz->cmid);
@@ -57,14 +73,28 @@ class events_test extends \advanced_testcase {
         $DB->set_field('course_modules', 'groupmode', SEPARATEGROUPS, ['id' => $quiz->cmid]);
         $groups = get_groups_for_selector::execute($course->id, $quiz->cmid);
 
-        // It contains two item: All participant and the new group.
-        $this->assertCount(2, $groups['groups']);
+        $groupnames = [
+            'All participants',
+            'Group 1 in Grouping A',
+            'Group 2 in Grouping B',
+            'Group not in any grouping',
+        ];
+        // It contains two item: All participant and the new groups: Group 1 in Grouping A,
+        // Group 2 in Grouping B, Group not in any grouping.
+        $this->assertCount(4, $groups['groups']);
+
+        foreach ($groups['groups'] as $key => $group) {
+            $this->assertEquals($groupnames[$key], $group->name);
+        }
 
         // Similarly, set up a group for the course.
         $DB->set_field('course', 'groupmode', SEPARATEGROUPS, ['id' => $course->id]);
         $coursegroups = get_groups_for_selector::execute($course->id);
 
         // It contains two item: All participant and the new group.
-        $this->assertCount(2, $coursegroups['groups']);
+        $this->assertCount(4, $coursegroups['groups']);
+        foreach ($coursegroups['groups'] as $key => $group) {
+            $this->assertEquals($groupnames[$key], $group->name);
+        }
     }
 }

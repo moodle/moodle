@@ -76,15 +76,19 @@ class get_groups_for_selector extends external_api {
 
         if (is_null($cmid)) {
             $context = context_course::instance($params['courseid']);
-            $course = $DB->get_record('course', ['id' => $params['courseid']]);
-            $groupmode = $course->groupmode;
         } else {
             $cm = get_coursemodule_from_id('', $cmid, 0, false, MUST_EXIST);
             $context = context_course::instance($cm->course);
-            $groupmode = groups_get_activity_groupmode($cm);
         }
 
         parent::validate_context($context);
+
+        if (is_null($cmid)) {
+            $course = $DB->get_record('course', ['id' => $params['courseid']]);
+            $groupmode = $course->groupmode;
+        } else {
+            $groupmode = groups_get_activity_groupmode($cm);
+        }
 
         $mappedgroups = [];
         // Initialise the grade tracking object.
@@ -126,11 +130,9 @@ class get_groups_for_selector extends external_api {
             }
 
             $mappedgroups = array_map(function($group) use ($context, $OUTPUT) {
-                if ($group->id) {
-                    // Particular group. Get the group picture if it exists, otherwise return a generic image.
+                if ($group->id) { // Particular group. Get the group picture if it exists, otherwise return a generic image.
                     $picture = get_group_picture_url($group, $group->courseid, true) ??
-                        moodle_url::make_pluginfile_url($context->id, 'group',
-                            'generated', $group->id, '/', 'group.svg');
+                        moodle_url::make_pluginfile_url($context->id, 'group', 'generated', $group->id, '/', 'group.svg');
                 } else { // All participants.
                     $picture = $OUTPUT->image_url('g/g1');
                 }
