@@ -49,7 +49,7 @@ final class document_services_test extends \advanced_testcase {
 
         $filearea = document_services::TMP_ROTATED_JPG_FILEAREA;
         $content = 'some random content';
-        $tempfile = make_request_directory('assignfeedback_editpdf') . DIRECTORY_SEPARATOR . 'mock.file';
+        $tempfile = make_request_directory() . DIRECTORY_SEPARATOR . 'mock.file';
         file_put_contents($tempfile, $content);
 
         // Invoke the method and confirm, that the file is saved.
