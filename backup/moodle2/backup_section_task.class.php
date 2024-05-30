@@ -43,6 +43,11 @@ class backup_section_task extends backup_task {
     protected stdClass $section;
 
     /**
+     * @var int|null $delegatedcmid the course module that is delegating this section (if any)
+     */
+    protected ?int $delegatedcmid = null;
+
+    /**
      * Constructor - instantiates one object of this class
      */
     public function __construct($name, $sectionid, $plan = null) {
@@ -57,6 +62,39 @@ class backup_section_task extends backup_task {
         $this->sectionid  = $sectionid;
 
         parent::__construct($name, $plan);
+    }
+
+    /**
+     * Set the course module that is delegating this section.
+     *
+     * Delegated section can belong to any kind of plugin. However, when a delegated
+     * section belongs to a course module, the UI will present all settings according.
+     *
+     * @param int $cmid the course module id that is delegating this section
+     */
+    public function set_delegated_cm(int $cmid) {
+        $this->delegatedcmid = $cmid;
+    }
+
+    /**
+     * Get the course module that is delegating this section.
+     *
+     * @return int|null the course module id that is delegating this section
+     */
+    public function get_delegated_cm(): ?int {
+        return $this->delegatedcmid;
+    }
+
+    /**
+     * Get the delegate activity modname (if any).
+     *
+     * @return string|null the modname of the delegated activity
+     */
+    public function get_modname(): ?string {
+        if (empty($this->section->component)) {
+            return null;
+        }
+        return core_component::normalize_component($this->section->component)[1];
     }
 
     public function get_sectionid() {

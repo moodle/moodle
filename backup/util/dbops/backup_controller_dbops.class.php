@@ -268,7 +268,10 @@ abstract class backup_controller_dbops extends backup_dbops {
         $contentinfo = array(
             'sectionid'  => $task->get_sectionid(),
             'title'      => $task->get_name(),
-            'directory'  => 'sections/' . 'section_' . $task->get_sectionid());
+            'directory'  => 'sections/' . 'section_' . $task->get_sectionid(),
+            'parentcmid' => $task->get_delegated_cm() ?? '',
+            'modname' => $task->get_modname() ?? '',
+        );
 
         // Now get section settings
         // Calculate prefix to find valid settings

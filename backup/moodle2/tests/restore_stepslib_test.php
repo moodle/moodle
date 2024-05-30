@@ -103,7 +103,7 @@ class restore_stepslib_test extends \advanced_testcase {
     }
 
     /**
-     * Test for the section structure step included elements.
+     * Test for delegate section behaviour.
      *
      * @covers \restore_section_structure_step::process_section
      */
@@ -114,7 +114,7 @@ class restore_stepslib_test extends \advanced_testcase {
         $this->setAdminUser();
 
         $course = $this->getDataGenerator()->create_course(['numsections' => 2, 'format' => 'topics']);
-        // Section 2 has an existing delegate class.
+        // Section 2 has an existing delegate class for component that is not an activity.
         course_update_section(
             $course,
             $DB->get_record('course_sections', ['course' => $course->id, 'section' => 2]),
@@ -130,16 +130,18 @@ class restore_stepslib_test extends \advanced_testcase {
         $originalsections = get_fast_modinfo($course->id)->get_section_info_all();
         $restoredsections = get_fast_modinfo($newcourseid)->get_section_info_all();
 
-        $this->assertEquals(count($originalsections), count($restoredsections));
+        // Delegated sections depends on the plugin to be backuped and restored.
+        // In this case, the plugin is not backuped and restored, so the section is not restored.
+        $this->assertEquals(3, count($originalsections));
+        $this->assertEquals(2, count($restoredsections));
 
         $validatefields = ['name', 'summary', 'summaryformat', 'visible', 'component', 'itemid'];
 
         $this->assertEquals($originalsections[1]->name, $restoredsections[1]->name);
 
         foreach ($validatefields as $field) {
+            $this->assertEquals($originalsections[0]->$field, $restoredsections[0]->$field);
             $this->assertEquals($originalsections[1]->$field, $restoredsections[1]->$field);
-            $this->assertEquals($originalsections[2]->$field, $restoredsections[2]->$field);
         }
-
     }
 }

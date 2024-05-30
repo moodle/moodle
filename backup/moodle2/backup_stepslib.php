@@ -119,6 +119,20 @@ abstract class backup_activity_structure_step extends backup_structure_step {
         // Return the root element (activity)
         return $activity;
     }
+
+    /**
+     * Set a delegate section itemid mapping.
+     *
+     * @param string $pluginname the name of the plugin that is delegating the section.
+     * @param int $itemid the itemid of the section being delegated.
+     */
+    protected function set_delegated_section_mapping(string $pluginname, int $itemid) {
+        backup_structure_dbops::insert_backup_ids_record(
+            $this->get_backupid(),
+            "course_section::$pluginname::$itemid",
+            $this->task->get_moduleid()
+        );
+    }
 }
 
 /**
@@ -2128,8 +2142,11 @@ class backup_main_structure_step extends backup_structure_step {
 
         $sections = new backup_nested_element('sections');
 
-        $section = new backup_nested_element('section', null, array(
-            'sectionid', 'title', 'directory'));
+        $section = new backup_nested_element(
+            'section',
+            null,
+            ['sectionid', 'title', 'directory', 'parentcmid', 'modname']
+        );
 
         $course = new backup_nested_element('course', null, array(
             'courseid', 'title', 'directory'));
