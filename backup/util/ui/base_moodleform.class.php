@@ -263,6 +263,16 @@ abstract class base_moodleform extends moodleform {
                     $this->push_group_start('activity', 'grouped_settings activity_level');
                     $this->push_group_start(null, 'include_setting activity_level');
                     break;
+                case backup_setting::SUBSECTION_LEVEL:
+                    $this->pop_groups_to('section');
+                    $this->push_group_start('subsection', 'grouped_settings subsection_level');
+                    $this->push_group_start(null, 'normal_setting');
+                    break;
+                case backup_setting::SUBACTIVITY_LEVEL:
+                    $this->pop_groups_to('subsection');
+                    $this->push_group_start('subactivity', 'grouped_settings activity_level');
+                    $this->push_group_start(null, 'include_setting activity_level');
+                    break;
                 default:
                     $this->push_group_start(null, 'normal_setting');
                     break;

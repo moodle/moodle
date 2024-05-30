@@ -417,6 +417,7 @@ $string['skipmodifdayshelp'] = 'Choose to skip courses that have not been modifi
 $string['skipmodifprev'] = 'Skip courses not modified since previous backup';
 $string['skipmodifprevhelp'] = 'Choose whether to skip courses that have not been modified since the last automatic backup. This requires logging to be enabled.';
 $string['status'] = 'Status';
+$string['subsectioncontent'] = 'Subsection content';
 $string['successful'] = 'Backup successful';
 $string['successfulcopy'] = 'Copy successful';
 $string['successfulrestore'] = 'Restore successful';

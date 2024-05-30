@@ -256,9 +256,11 @@ abstract class backup_setting_ui extends base_setting_ui {
                 $this->name = 'course_'.$setting->get_name();
                 break;
             case backup_setting::SECTION_LEVEL :
+            case backup_setting::SUBSECTION_LEVEL:
                 $this->name = 'section_'.$setting->get_name();
                 break;
             case backup_setting::ACTIVITY_LEVEL :
+            case backup_setting::SUBACTIVITY_LEVEL:
                 $this->name = 'activity_'.$setting->get_name();
                 break;
         }
@@ -329,9 +331,10 @@ abstract class backup_setting_ui extends base_setting_ui {
         // If a task has been provided and the label is not already set meaningfully
         // we will attempt to improve it.
         if (!is_null($task) && $this->label == $this->setting->get_name() && strpos($this->setting->get_name(), '_include') !== false) {
-            if ($this->setting->get_level() == backup_setting::SECTION_LEVEL) {
+            $level = $this->setting->get_level();
+            if ($level == backup_setting::SECTION_LEVEL || $level == backup_setting::SUBSECTION_LEVEL) {
                 $this->label = get_string('includesection', 'backup', $task->get_name());
-            } else if ($this->setting->get_level() == backup_setting::ACTIVITY_LEVEL) {
+            } else if ($level == backup_setting::ACTIVITY_LEVEL || $level == backup_setting::SUBACTIVITY_LEVEL) {
                 $this->label = $task->get_name();
             }
         }

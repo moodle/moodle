@@ -38,6 +38,9 @@ abstract class backup_activity_task extends backup_task {
 
     protected $moduleid;
     protected $sectionid;
+
+    /** @var stdClass the section object */
+    protected $section;
     protected $modulename;
     protected $activityid;
     protected $contextid;
@@ -50,6 +53,7 @@ abstract class backup_activity_task extends backup_task {
      * @param backup_plan|null $plan the backup plan instance this task is part of
      */
     public function __construct($name, $moduleid, $plan = null) {
+        global $DB;
 
         // Check moduleid exists
         if (!$coursemodule = get_coursemodule_from_id(false, $moduleid)) {
@@ -65,6 +69,7 @@ abstract class backup_activity_task extends backup_task {
         $this->modulename = $coursemodule->modname;
         $this->activityid = $coursemodule->instance;
         $this->contextid  = context_module::instance($this->moduleid)->id;
+        $this->section = $DB->get_record('course_sections', ['id' => $this->sectionid]);
 
         parent::__construct($name, $plan);
     }
@@ -89,6 +94,16 @@ abstract class backup_activity_task extends backup_task {
     public function get_modulename() {
         return $this->modulename;
     }
+
+    /**
+     * Return if the activity is inside a subsection.
+     *
+     * @return bool
+     */
+    public function is_in_subsection(): bool {
+        return !empty($this->section->component);
+    }
+
 
     /**
      * @return int the id of the activity instance (id in the activity's instances table)
@@ -291,7 +306,11 @@ abstract class backup_activity_task extends backup_task {
      * @return section_backup_setting the setting added
      */
     protected function add_section_setting(int|string $identifier, string $type, string|int $value): activity_backup_setting {
-        $setting = new backup_activity_generic_setting($identifier, $type, $value);
+        if ($this->is_in_subsection()) {
+            $setting = new backup_subactivity_generic_setting($identifier, $type, $value);
+        } else {
+            $setting = new backup_activity_generic_setting($identifier, $type, $value);
+        }
         $this->add_setting($setting);
         return $setting;
     }
@@ -308,7 +327,11 @@ abstract class backup_activity_task extends backup_task {
         // - activities root setting.
         // - sectionincluded setting (if exists).
         $settingname = $settingprefix . 'included';
-        $activityincluded = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
+        if ($this->is_in_subsection()) {
+            $activityincluded = new backup_subactivity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
+        } else {
+            $activityincluded = new backup_activity_generic_setting($settingname, base_setting::IS_BOOLEAN, true);
+        }
         $activityincluded->get_ui()->set_icon(new image_icon('monologo', get_string('pluginname', $this->modulename),
             $this->modulename, array('class' => 'iconlarge icon-post ml-1')));
         $this->add_setting($activityincluded);
@@ -342,7 +365,11 @@ abstract class backup_activity_task extends backup_task {
         // - sectionuserinfo setting (if exists).
         // - includefield setting.
         $settingname = $settingprefix . 'userinfo';
-        $activityuserinfo = new backup_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
+        if ($this->is_in_subsection()) {
+            $activityuserinfo = new backup_subactivity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
+        } else {
+            $activityuserinfo = new backup_activity_userinfo_setting($settingname, base_setting::IS_BOOLEAN, true);
+        }
 
         $activityuserinfo->get_ui()->set_label('-');
         $activityuserinfo->get_ui()->set_visually_hidden_label(
