@@ -45,6 +45,7 @@ class hook_callbacks {
             $hook->add_html(
                 html_writer::div(
                     html_writer::link($url, get_string('dataretentionsummary', 'tool_dataprivacy')),
+                    'tool_dataprivacy',
                 ),
             );
         }
