@@ -2136,9 +2136,11 @@ class backup_main_structure_step extends backup_structure_step {
 
         $activities = new backup_nested_element('activities');
 
-        $activity = new backup_nested_element('activity', null, array(
-            'moduleid', 'sectionid', 'modulename', 'title',
-            'directory'));
+        $activity = new backup_nested_element(
+            'activity',
+            null,
+            ['moduleid', 'sectionid', 'modulename', 'title', 'directory', 'insubsection']
+        );
 
         $sections = new backup_nested_element('sections');
 

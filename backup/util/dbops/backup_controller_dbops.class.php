@@ -234,7 +234,9 @@ abstract class backup_controller_dbops extends backup_dbops {
             'sectionid'  => $task->get_sectionid(),
             'modulename' => $task->get_modulename(),
             'title'      => $task->get_name(),
-            'directory'  => 'activities/' . $task->get_modulename() . '_' . $task->get_moduleid());
+            'directory'  => 'activities/' . $task->get_modulename() . '_' . $task->get_moduleid(),
+            'insubsection' => ($task->is_in_subsection()) ? 1 : '',
+        );
 
         // Now get activity settings
         // Calculate prefix to find valid settings
