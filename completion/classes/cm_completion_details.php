@@ -207,7 +207,10 @@ class cm_completion_details {
             $completionstates = [COMPLETION_COMPLETE];
         } else if ($this->is_automatic()) {
             // Successfull completion states depend on the completion settings.
-            if (isset($this->completiondata->passgrade)) {
+            if (property_exists($this->completiondata, 'customcompletion') && !empty($this->completiondata->customcompletion)) {
+                // If the module has any failed custom completion rule the state could be COMPLETION_COMPLETE_FAIL.
+                $completionstates = [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS];
+            } else if (isset($this->completiondata->passgrade)) {
                 // Passing grade is required. Don't mark it as complete when state is COMPLETION_COMPLETE_FAIL.
                 $completionstates = [COMPLETION_COMPLETE, COMPLETION_COMPLETE_PASS];
             } else {
