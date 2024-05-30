@@ -63,7 +63,7 @@ $string['settings:countrycode_help'] = 'The calling code without the leading + a
 See this link for a list of calling codes: {$a}';
 $string['settings:duration'] = 'Validity duration';
 $string['settings:duration_help'] = 'The period of time that the code is valid.';
-$string['settings:gateway'] = 'SMS Gateway';
+$string['settings:gateway'] = 'SMS gateway';
 $string['settings:gateway_help'] = 'The SMS provider you wish to send messages via';
 $string['setupfactor'] = 'Set up SMS';
 $string['setupfactorbutton'] = 'Set up';

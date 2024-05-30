@@ -28,5 +28,5 @@ $string['helplinktext'] = 'No auto-link helper';
 $string['infoaddsuccess'] = 'Auto-link prevention added.';
 $string['infoemptyselection'] = 'Select a URL and try again.';
 $string['inforemovesuccess'] = 'Auto-link prevention removed.';
-$string['pluginname'] = 'Tiny no auto-link';
+$string['pluginname'] = 'No auto-link';
 $string['privacy:metadata'] = 'The tiny_noautolink plugin does not store any personal data.';
