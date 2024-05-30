@@ -4,6 +4,9 @@ $breadcrumb-divider-rtl: "◀" !default;
 // Specific overrides to make Bootstrap RTL.
 @import "moodle/bootstrap-rtl";
 
+// Specific SCSS to make some Bootstrap 5 syntax work with Moodle.
+@import "moodle/bs5-bridge";
+
 // Old Moodle stuff from base theme.
 // Massive, needs broken up.
 @import "moodle/variables";

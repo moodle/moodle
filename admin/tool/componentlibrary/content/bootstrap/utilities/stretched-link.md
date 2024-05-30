@@ -38,7 +38,7 @@ Media objects do not have `position: relative` by default, so we need to add the
 Columns are `position: relative` by default, so clickable columns only require the `.stretched-link` class on a link. However, stretching a link over an entire `.row` requires `.position-static` on the column and `.position-relative` on the row.
 
 {{< example >}}
-<div class="row no-gutters bg-light position-relative">
+<div class="row g-0 bg-light position-relative">
   <div class="col-md-6 mb-md-0 p-md-4">
     {{< placeholder width="100%" height="200" class="w-100" text=" " title="Generic placeholder image" >}}
   </div>
