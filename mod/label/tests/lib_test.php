@@ -34,7 +34,7 @@ class lib_test extends \advanced_testcase {
         $this->setAdminUser();
     }
 
-    public function test_label_core_calendar_provide_event_action() {
+    public function test_label_core_calendar_provide_event_action(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id));
@@ -57,7 +57,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_label_core_calendar_provide_event_action_as_non_user() {
+    public function test_label_core_calendar_provide_event_action_as_non_user(): void {
         global $CFG;
 
         // Create the activity.
@@ -82,7 +82,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_label_core_calendar_provide_event_action_in_hidden_section() {
+    public function test_label_core_calendar_provide_event_action_in_hidden_section(): void {
         // Create the activity.
         $course = $this->getDataGenerator()->create_course();
         $label = $this->getDataGenerator()->create_module('label', array('course' => $course->id));
@@ -107,7 +107,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_label_core_calendar_provide_event_action_for_user() {
+    public function test_label_core_calendar_provide_event_action_for_user(): void {
         global $CFG;
 
         // Create the activity.
@@ -139,7 +139,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($actionevent->is_actionable());
     }
 
-    public function test_label_core_calendar_provide_event_action_already_completed() {
+    public function test_label_core_calendar_provide_event_action_already_completed(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;
@@ -170,7 +170,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_label_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_label_core_calendar_provide_event_action_already_completed_for_user(): void {
         global $CFG;
 
         $CFG->enablecompletion = 1;

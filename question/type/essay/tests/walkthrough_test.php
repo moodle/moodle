@@ -69,7 +69,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $fs->create_file_from_string($filerecord, $contents);
     }
 
-    public function test_deferred_feedback_html_editor() {
+    public function test_deferred_feedback_html_editor(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -127,7 +127,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_general_feedback_expectation($q));
     }
 
-    public function test_deferred_feedback_plain_text() {
+    public function test_deferred_feedback_plain_text(): void {
 
         // Create an essay question.
         $q = \test_question_maker::make_question('essay', 'plain');
@@ -179,7 +179,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_general_feedback_expectation($q));
     }
 
-    public function test_responsetemplate() {
+    public function test_responsetemplate(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.
@@ -237,7 +237,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_general_feedback_expectation($q));
     }
 
-    public function test_deferred_feedback_html_editor_with_files_attempt_on_last() {
+    public function test_deferred_feedback_html_editor_with_files_attempt_on_last(): void {
         global $CFG, $USER, $PAGE;
 
         $this->resetAfterTest(true);
@@ -361,7 +361,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->check_step_count(1);
     }
 
-    public function test_deferred_feedback_html_editor_with_files_attempt_on_last_no_files_uploaded() {
+    public function test_deferred_feedback_html_editor_with_files_attempt_on_last_no_files_uploaded(): void {
         global $CFG, $USER, $PAGE;
 
         $this->resetAfterTest(true);
@@ -436,7 +436,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertMatchesRegularExpression('/I refuse to draw you a picture, so there!/', $this->currentoutput);
     }
 
-    public function test_deferred_feedback_plain_attempt_on_last() {
+    public function test_deferred_feedback_plain_attempt_on_last(): void {
         global $CFG, $USER;
 
         $this->resetAfterTest(true);
@@ -501,7 +501,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->assertStringNotContainsString('d41d8cd98f00b204e9800998ecf8427e', $this->currentoutput);
     }
 
-    public function test_deferred_feedback_html_editor_with_files_attempt_wrong_filetypes() {
+    public function test_deferred_feedback_html_editor_with_files_attempt_wrong_filetypes(): void {
         global $CFG, $USER, $PAGE;
 
         $this->resetAfterTest(true);
@@ -560,7 +560,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->save_quba();
     }
 
-    public function test_deferred_feedback_html_editor_with_files_attempt_correct_filetypes() {
+    public function test_deferred_feedback_html_editor_with_files_attempt_correct_filetypes(): void {
         global $CFG, $USER, $PAGE;
 
         $this->resetAfterTest(true);
@@ -619,7 +619,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
         $this->save_quba();
     }
 
-    public function test_deferred_feedback_word_limits() {
+    public function test_deferred_feedback_word_limits(): void {
         global $PAGE;
 
         // The current text editor depends on the users profile setting - so it needs a valid user.

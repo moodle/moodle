@@ -33,7 +33,7 @@ class filtered_userlist_test extends \advanced_testcase {
      * @param   array   $unexpired The set of userids considered as unexpired.
      * @param   array   $expected The expected values.
      */
-    public function test_apply_expired_contexts_filters(array $initial, array $expired, array $unexpired, array $expected) {
+    public function test_apply_expired_contexts_filters(array $initial, array $expired, array $unexpired, array $expected): void {
         $userlist = $this->getMockBuilder(\tool_dataprivacy\filtered_userlist::class)
             ->disableOriginalConstructor()
             ->onlyMethods([])

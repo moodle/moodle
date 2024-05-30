@@ -37,7 +37,7 @@ class remote_resource_test extends \advanced_testcase {
      * @param string $metadata the resource metadata like name, description, etc.
      * @param string $expectedextension the extension we expect to find when querying the remote resource.
      */
-    public function test_getters($url, $metadata, $expectedextension) {
+    public function test_getters($url, $metadata, $expectedextension): void {
         $this->resetAfterTest();
 
         $remoteres = new remote_resource(new \curl(), new url($url), $metadata);
@@ -77,7 +77,7 @@ class remote_resource_test extends \advanced_testcase {
     /**
      * Test confirming the network based operations of a remote_resource.
      */
-    public function test_network_features() {
+    public function test_network_features(): void {
         $url = $this->getExternalTestFileUrl('/test.html');
         $nonexistenturl = $this->getExternalTestFileUrl('/test.htmlzz');
 

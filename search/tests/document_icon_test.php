@@ -27,7 +27,7 @@ class document_icon_test extends \advanced_testcase {
     /**
      * Test that default component gets returned correctly.
      */
-    public function test_default_component() {
+    public function test_default_component(): void {
         $docicon = new \core_search\document_icon('test_name');
         $this->assertEquals('test_name', $docicon->get_name());
         $this->assertEquals('moodle', $docicon->get_component());
@@ -36,7 +36,7 @@ class document_icon_test extends \advanced_testcase {
     /**
      * Test that name and component get returned correctly.
      */
-    public function test_can_get_name_and_component() {
+    public function test_can_get_name_and_component(): void {
         $docicon = new \core_search\document_icon('test_name', 'test_component');
         $this->assertEquals('test_name', $docicon->get_name());
         $this->assertEquals('test_component', $docicon->get_component());

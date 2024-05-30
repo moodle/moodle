@@ -58,7 +58,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_users_indexing() {
+    public function test_users_indexing(): void {
         global $SITE;
 
         // Returns the instance as long as the area is supported.
@@ -106,7 +106,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_users_document() {
+    public function test_users_document(): void {
 
         // Returns the instance as long as the area is supported.
         $searcharea = \core_search\manager::get_search_area($this->userareaid);
@@ -130,7 +130,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_users_access() {
+    public function test_users_access(): void {
         global $CFG;
 
         // Returns the instance as long as the area is supported.
@@ -221,7 +221,7 @@ class search_test extends \advanced_testcase {
     /**
      * Test document icon.
      */
-    public function test_get_doc_icon() {
+    public function test_get_doc_icon(): void {
         $searcharea = \core_search\manager::get_search_area($this->userareaid);
         $user = self::getDataGenerator()->create_user();
         $doc = $searcharea->get_document($user);
@@ -235,7 +235,7 @@ class search_test extends \advanced_testcase {
     /**
      * Test assigned search categories.
      */
-    public function test_get_category_names() {
+    public function test_get_category_names(): void {
         $searcharea = \core_search\manager::get_search_area($this->userareaid);
 
         $expected = ['core-users'];

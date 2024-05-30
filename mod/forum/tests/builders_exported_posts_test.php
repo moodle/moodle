@@ -92,7 +92,7 @@ class builders_exported_posts_test extends \advanced_testcase {
      * Test the build function throws exception if not given all of the forums for
      * the list of posts.
      */
-    public function test_build_throws_exception_on_missing_forums() {
+    public function test_build_throws_exception_on_missing_forums(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -117,7 +117,7 @@ class builders_exported_posts_test extends \advanced_testcase {
      * Test the build function throws exception if not given all of the discussions for
      * the list of posts.
      */
-    public function test_build_throws_exception_on_missing_discussions() {
+    public function test_build_throws_exception_on_missing_discussions(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();

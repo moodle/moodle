@@ -39,7 +39,7 @@ class restore_dbops_test extends \advanced_testcase {
      * Note that those private implementations are tested here by using the public
      * backup_ids API and later performing low-level tests.
      */
-    public function test_backup_ids_cached() {
+    public function test_backup_ids_cached(): void {
         global $DB;
         $dbman = $DB->get_manager(); // We are going to use database_manager services.
 
@@ -309,7 +309,7 @@ class restore_dbops_test extends \advanced_testcase {
      * @param bool $samesite
      * @param mixed $outcome
      **/
-    public function test_precheck_user($dbuser, $backupuser, $samesite, $outcome) {
+    public function test_precheck_user($dbuser, $backupuser, $samesite, $outcome): void {
         global $DB;
 
         $this->resetAfterTest();

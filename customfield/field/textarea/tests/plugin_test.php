@@ -82,7 +82,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for initialising field and data controllers
      */
-    public function test_initialise() {
+    public function test_initialise(): void {
         $f = \core_customfield\field_controller::create($this->cfields[1]->get('id'));
         $this->assertTrue($f instanceof field_controller);
 
@@ -101,7 +101,7 @@ class plugin_test extends \advanced_testcase {
      *
      * Create a configuration form and submit it with the same values as in the field
      */
-    public function test_config_form() {
+    public function test_config_form(): void {
         $this->setAdminUser();
         $submitdata = (array)$this->cfields[3]->to_record();
         $submitdata['configdata'] = $this->cfields[3]->get('configdata');
@@ -117,7 +117,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for instance form functions
      */
-    public function test_instance_form() {
+    public function test_instance_form(): void {
         global $CFG;
         require_once($CFG->dirroot . '/customfield/tests/fixtures/test_instance_form.php');
         $this->setAdminUser();
@@ -181,7 +181,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Test for data_controller::get_value and export_value
      */
-    public function test_get_export_value() {
+    public function test_get_export_value(): void {
         $this->assertEquals('Value1', $this->cfdata[1]->get_value());
         $this->assertEquals('<div class="text_to_html">Value1</div>', $this->cfdata[1]->export_value());
 
@@ -197,7 +197,7 @@ class plugin_test extends \advanced_testcase {
     /**
      * Deleting fields and data
      */
-    public function test_delete() {
+    public function test_delete(): void {
         $this->cfcat->get_handler()->delete_all();
     }
 

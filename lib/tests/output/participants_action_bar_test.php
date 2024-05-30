@@ -35,7 +35,7 @@ class participants_action_bar_test extends \advanced_testcase {
      * @param int    $expectedcount Expected number of 1st level tertiary items
      * @param array  $expecteditems Expected keys of the 1st level tertiary items.
      */
-    public function test_get_content_for_select($type, $expectedcount, $expecteditems) {
+    public function test_get_content_for_select($type, $expectedcount, $expecteditems): void {
         global $PAGE;
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();

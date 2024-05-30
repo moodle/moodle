@@ -166,7 +166,7 @@ class processor_test extends \advanced_testcase {
         $this->cmcs = $cmcs;
     }
 
-    public function test_simple_migration() {
+    public function test_simple_migration(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -202,7 +202,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyExists($this->cms[$this->c1->id]['F1'], $this->f1comps['X1']);
     }
 
-    public function test_remove_when_missing() {
+    public function test_remove_when_missing(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -228,7 +228,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyNotExists($this->cms[$this->c1->id]['F1'], $this->f1comps['X1']);
     }
 
-    public function test_allowed_courses() {
+    public function test_allowed_courses(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -261,7 +261,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyNotMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A3'], $this->f2comps['A3']);
     }
 
-    public function test_disallowed_courses() {
+    public function test_disallowed_courses(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -294,7 +294,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyNotMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A3'], $this->f2comps['A3']);
     }
 
-    public function test_course_start_date_from() {
+    public function test_course_start_date_from(): void {
         $this->setAdminUser();
 
         $mapper = new framework_mapper($this->f1->get('id'), $this->f2->get('id'));
@@ -327,7 +327,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyMigrated($this->cms[$this->c2->id]['F1'], $this->f1comps['A3'], $this->f2comps['A3']);
     }
 
-    public function test_destination_competency_exists() {
+    public function test_destination_competency_exists(): void {
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
@@ -375,7 +375,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyExists($this->cms[$this->c2->id]['F1'], $this->f1comps['A2']);
     }
 
-    public function test_destination_competency_exists_remove_original() {
+    public function test_destination_competency_exists_remove_original(): void {
         $this->setAdminUser();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
@@ -411,7 +411,7 @@ class processor_test extends \advanced_testcase {
         $this->assertModuleCompetencyNotExists($this->cms[$this->c2->id]['F1'], $this->f1comps['A2']);
     }
 
-    public function test_permission_exception() {
+    public function test_permission_exception(): void {
 
         $this->preventResetByRollback(); // Test uses transactions, so we cannot use them for speedy reset.
 

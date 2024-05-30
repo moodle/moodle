@@ -36,7 +36,7 @@ class import_handler_registry_test extends \advanced_testcase {
     /**
      * Test confirming the behaviour of get_resource_handlers_for_strategy with different params.
      */
-    public function test_get_resource_handlers_for_strategy() {
+    public function test_get_resource_handlers_for_strategy(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -61,7 +61,7 @@ class import_handler_registry_test extends \advanced_testcase {
     /**
      * Test confirming that the results are scoped to the provided user.
      */
-    public function test_get_resource_handlers_for_strategy_user_scoping() {
+    public function test_get_resource_handlers_for_strategy_user_scoping(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();
@@ -86,7 +86,7 @@ class import_handler_registry_test extends \advanced_testcase {
     /**
      * Test confirming that we can find a unique handler based on the module and strategy name.
      */
-    public function test_get_resource_handler_for_module_and_strategy() {
+    public function test_get_resource_handler_for_module_and_strategy(): void {
         $this->resetAfterTest();
 
         $course = $this->getDataGenerator()->create_course();

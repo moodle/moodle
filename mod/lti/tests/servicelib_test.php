@@ -37,7 +37,7 @@ class servicelib_test extends \basic_testcase {
      * @param mixed $expected Expected message ID.
      * @param string $xml XML to parse.
      */
-    public function test_lti_parse_message_id($expected, $xml) {
+    public function test_lti_parse_message_id($expected, $xml): void {
         $xml = simplexml_load_string($xml);
         $this->assertEquals($expected, lti_parse_message_id($xml));
     }

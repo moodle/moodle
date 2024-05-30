@@ -76,7 +76,7 @@ class provider_test extends provider_testcase {
     /**
      * Test returning metadata.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('message_airnotifier');
         $collection = \message_airnotifier\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
@@ -85,7 +85,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the context for the user ID related to this plugin.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
 
         $user = $this->getDataGenerator()->create_user();
         $context = \context_user::instance($user->id);
@@ -100,7 +100,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data is exported correctly for this plugin.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $user = $this->getDataGenerator()->create_user();
         $context = \context_user::instance($user->id);
 
@@ -123,7 +123,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is deleted using the context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $user = $this->getDataGenerator()->create_user();
@@ -145,7 +145,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is deleted for this user.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $user = $this->getDataGenerator()->create_user();
@@ -168,7 +168,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that only users with a user context are fetched.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'message_airnotifier';
 
         // Create user.
@@ -201,7 +201,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that data for users in approved userlist is deleted.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $component = 'message_airnotifier';
 
         // Create user1.

@@ -25,7 +25,7 @@ namespace core;
  * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
 class regex_test extends \advanced_testcase {
-    public function test_whitespace_replacement_with_u() {
+    public function test_whitespace_replacement_with_u(): void {
         $unicode = "Теорія і практика використання системи управління навчанням Moo
 dleКиївський національний університет будівництва і архітектури, 21-22 тра
 вня 2015 р.http://2015.moodlemoot.in.ua/";

@@ -36,7 +36,7 @@ class manager_test extends \advanced_testcase {
     /**
      * test_deleted_context
      */
-    public function test_deleted_context() {
+    public function test_deleted_context(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -103,7 +103,7 @@ class manager_test extends \advanced_testcase {
     /**
      * test_deleted_analysable
      */
-    public function test_deleted_analysable() {
+    public function test_deleted_analysable(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -150,7 +150,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests for the {@link \core_analytics\manager::load_default_models_for_component()} implementation.
      */
-    public function test_load_default_models_for_component() {
+    public function test_load_default_models_for_component(): void {
         $this->resetAfterTest();
 
         // Attempting to load builtin models should always work without throwing exception.
@@ -172,7 +172,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests for the {@link \core_analytics\manager::load_default_models_for_all_components()} implementation.
      */
-    public function test_load_default_models_for_all_components() {
+    public function test_load_default_models_for_all_components(): void {
         $this->resetAfterTest();
 
         $models = \core_analytics\manager::load_default_models_for_all_components();
@@ -186,7 +186,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests for the successful execution of the {@link \core_analytics\manager::validate_models_declaration()}.
      */
-    public function test_validate_models_declaration() {
+    public function test_validate_models_declaration(): void {
         $this->resetAfterTest();
 
         // This is expected to run without an exception.
@@ -201,7 +201,7 @@ class manager_test extends \advanced_testcase {
      * @param array $models Models declaration.
      * @param string $exception Expected coding exception message.
      */
-    public function test_validate_models_declaration_exceptions(array $models, string $exception) {
+    public function test_validate_models_declaration_exceptions(array $models, string $exception): void {
         $this->resetAfterTest();
 
         $this->expectException(\coding_exception::class);
@@ -266,7 +266,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test the implementation of the {@link \core_analytics\manager::create_declared_model()}.
      */
-    public function test_create_declared_model() {
+    public function test_create_declared_model(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -352,7 +352,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test the implementation of the {@link \core_analytics\manager::update_default_models_for_component()}.
      */
-    public function test_update_default_models_for_component() {
+    public function test_update_default_models_for_component(): void {
 
         $this->resetAfterTest();
         $this->setAdminuser();
@@ -402,7 +402,7 @@ class manager_test extends \advanced_testcase {
      * test_get_time_splitting_methods description
      * @return null
      */
-    public function test_get_time_splitting_methods() {
+    public function test_get_time_splitting_methods(): void {
         $this->resetAfterTest(true);
 
         $all = \core_analytics\manager::get_all_time_splittings();
@@ -428,7 +428,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Test the implementation of the {@link \core_analytics\manager::model_declaration_identifier()}.
      */
-    public function test_model_declaration_identifier() {
+    public function test_model_declaration_identifier(): void {
 
         $noteaching1 = $this->load_models_from_fixture_file('no_teaching');
         $noteaching2 = $this->load_models_from_fixture_file('no_teaching');
@@ -471,7 +471,7 @@ class manager_test extends \advanced_testcase {
     /**
      * Tests for the {@link \core_analytics\manager::get_declared_target_and_indicators_instances()}.
      */
-    public function test_get_declared_target_and_indicators_instances() {
+    public function test_get_declared_target_and_indicators_instances(): void {
         $this->resetAfterTest();
 
         $definition = $this->load_models_from_fixture_file('no_teaching');
@@ -486,7 +486,7 @@ class manager_test extends \advanced_testcase {
     /**
      * test_get_potential_context_restrictions description
      */
-    public function test_get_potential_context_restrictions() {
+    public function test_get_potential_context_restrictions(): void {
         $this->resetAfterTest();
 
         // No potential context restrictions.

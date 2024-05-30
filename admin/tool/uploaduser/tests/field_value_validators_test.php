@@ -56,7 +56,7 @@ class field_value_validators_test extends \advanced_testcase {
      * @param string $expectedstatus The expected status.
      * @param string $expectedmessage The expected validation message.
      */
-    public function test_validate_theme($userthemesallowed, $themename, $expectedstatus, $expectedmessage) {
+    public function test_validate_theme($userthemesallowed, $themename, $expectedstatus, $expectedmessage): void {
         $this->resetAfterTest();
 
         // Set value for $CFG->allowuserthemes.

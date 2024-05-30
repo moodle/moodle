@@ -42,7 +42,7 @@ class reopen_attempt_test extends externallib_advanced_testcase {
     /** @var stdClass|null if we make a quiz attempt, we store the student object here. */
     protected $student;
 
-    public function test_reopen_attempt_service_works() {
+    public function test_reopen_attempt_service_works(): void {
         [$attemptid] = $this->create_attempt_at_quiz_with_one_shortanswer_question();
 
         reopen_attempt::execute($attemptid);
@@ -51,7 +51,7 @@ class reopen_attempt_test extends externallib_advanced_testcase {
         $this->assertEquals(quiz_attempt::IN_PROGRESS, $attemptobj->get_state());
     }
 
-    public function test_reopen_attempt_service_checks_permissions() {
+    public function test_reopen_attempt_service_checks_permissions(): void {
         [$attemptid] = $this->create_attempt_at_quiz_with_one_shortanswer_question();
 
         $unprivilegeduser = $this->getDataGenerator()->create_user();
@@ -61,14 +61,14 @@ class reopen_attempt_test extends externallib_advanced_testcase {
         reopen_attempt::execute($attemptid);
     }
 
-    public function test_reopen_attempt_service_checks_attempt_state() {
+    public function test_reopen_attempt_service_checks_attempt_state(): void {
         [$attemptid] = $this->create_attempt_at_quiz_with_one_shortanswer_question(quiz_attempt::IN_PROGRESS);
 
         $this->expectExceptionMessage("Attempt $attemptid is in the wrong state (In progress) to be reopened.");
         reopen_attempt::execute($attemptid);
     }
 
-    public function test_get_reopen_attempt_confirmation_staying_open() {
+    public function test_get_reopen_attempt_confirmation_staying_open(): void {
         global $DB;
         [$attemptid, $quizid] = $this->create_attempt_at_quiz_with_one_shortanswer_question();
         $DB->set_field('quiz', 'timeclose', 0, ['id' => $quizid]);
@@ -80,7 +80,7 @@ class reopen_attempt_test extends externallib_advanced_testcase {
                 $message);
     }
 
-    public function test_get_reopen_attempt_confirmation_staying_open_until() {
+    public function test_get_reopen_attempt_confirmation_staying_open_until(): void {
         global $DB;
         [$attemptid, $quizid] = $this->create_attempt_at_quiz_with_one_shortanswer_question();
         $timeclose = time() + HOURSECS;
@@ -94,7 +94,7 @@ class reopen_attempt_test extends externallib_advanced_testcase {
                 $message);
     }
 
-    public function test_get_reopen_attempt_confirmation_submitting() {
+    public function test_get_reopen_attempt_confirmation_submitting(): void {
         global $DB;
         [$attemptid, $quizid] = $this->create_attempt_at_quiz_with_one_shortanswer_question();
         $timeclose = time() - HOURSECS;
@@ -107,7 +107,7 @@ class reopen_attempt_test extends externallib_advanced_testcase {
                 $message);
     }
 
-    public function test_get_reopen_attempt_confirmation_service_checks_permissions() {
+    public function test_get_reopen_attempt_confirmation_service_checks_permissions(): void {
         [$attemptid] = $this->create_attempt_at_quiz_with_one_shortanswer_question();
 
         $unprivilegeduser = $this->getDataGenerator()->create_user();
@@ -117,7 +117,7 @@ class reopen_attempt_test extends externallib_advanced_testcase {
         get_reopen_attempt_confirmation::execute($attemptid);
     }
 
-    public function test_get_reopen_attempt_confirmation_service_checks_attempt_state() {
+    public function test_get_reopen_attempt_confirmation_service_checks_attempt_state(): void {
         [$attemptid] = $this->create_attempt_at_quiz_with_one_shortanswer_question(quiz_attempt::IN_PROGRESS);
 
         $this->expectExceptionMessage("Attempt $attemptid is in the wrong state (In progress) to be reopened.");

@@ -71,7 +71,7 @@ class create_template_form_test extends \advanced_testcase {
      * @dataProvider createtemplate_form_with_modified_capabilities_provider
      */
     public function test_createtemplate_form_with_modified_capabilities(array $unassignedroles, bool $accessallowed,
-            bool $public = false, bool $expectedispublicvalue = false) {
+            bool $public = false, bool $expectedispublicvalue = false): void {
         global $DB;
         [$manager, $teacher, $user, $managerrole, $feedback] = $this->setup_instance();
         $this->setAdminUser();
@@ -134,7 +134,7 @@ class create_template_form_test extends \advanced_testcase {
      * @dataProvider createtemplate_form_provider
      */
     public function test_createtemplate_form(string $loginas, bool $public,
-            bool $accessallowed = true) {
+            bool $accessallowed = true): void {
         global $DB;
         [$manager, $teacher, $user, $managerrole, $feedback] = $this->setup_instance();
         switch($loginas) {

@@ -64,7 +64,7 @@ class ldap_test extends \advanced_testcase {
      * @param int $pagesize Value to be configured in settings controlling page size.
      * @param int $subcontext Value to be configured in settings controlling searching in subcontexts.
      */
-    public function test_enrol_ldap(int $pagesize, int $subcontext) {
+    public function test_enrol_ldap(int $pagesize, int $subcontext): void {
         global $CFG, $DB;
 
         if (!extension_loaded('ldap')) {
@@ -502,7 +502,7 @@ class ldap_test extends \advanced_testcase {
      * @param string $usertype The supported user type
      * @param string $expected The expected filter value
      */
-    public function test_objectclass_fetch($usertype, $expected) {
+    public function test_objectclass_fetch($usertype, $expected): void {
         $this->resetAfterTest();
         // Set the user type - this must be performed before the plugin is instantiated.
         set_config('user_type', $usertype, 'enrol_ldap');

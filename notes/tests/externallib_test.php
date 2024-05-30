@@ -41,7 +41,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test create_notes
      */
-    public function test_create_notes() {
+    public function test_create_notes(): void {
 
         global $DB, $USER;
 
@@ -82,7 +82,7 @@ class externallib_test extends externallib_advanced_testcase {
         $creatednotes = core_notes_external::create_notes($notes);
     }
 
-    public function test_delete_notes() {
+    public function test_delete_notes(): void {
 
         global $DB, $USER;
 
@@ -134,7 +134,7 @@ class externallib_test extends externallib_advanced_testcase {
         $deletednotes = external_api::clean_returnvalue(core_notes_external::delete_notes_returns(), $deletednotes);
     }
 
-    public function test_get_notes() {
+    public function test_get_notes(): void {
 
         global $DB, $USER;
 
@@ -188,7 +188,7 @@ class externallib_test extends externallib_advanced_testcase {
         $creatednotes = core_notes_external::get_notes($gnotes);
     }
 
-    public function test_update_notes() {
+    public function test_update_notes(): void {
 
         global $DB, $USER;
 
@@ -254,7 +254,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_course_notes
      */
-    public function test_get_course_notes() {
+    public function test_get_course_notes(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);
@@ -412,7 +412,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_notes
      */
-    public function test_view_notes() {
+    public function test_view_notes(): void {
         global $DB, $CFG;
 
         $this->resetAfterTest(true);

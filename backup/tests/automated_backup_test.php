@@ -95,7 +95,7 @@ class automated_backup_test extends \advanced_testcase {
     /**
      * Tests the automated backup run when the there is course backup should be skipped.
      */
-    public function test_automated_backup_skipped_run() {
+    public function test_automated_backup_skipped_run(): void {
         global $DB;
 
         // Enable automated back up.
@@ -131,7 +131,7 @@ class automated_backup_test extends \advanced_testcase {
     /**
      * Tests the automated backup run when the there is course backup can be pushed to adhoc task.
      */
-    public function test_automated_backup_push_run() {
+    public function test_automated_backup_push_run(): void {
         global $DB;
 
         // Enable automated back up.
@@ -171,7 +171,7 @@ class automated_backup_test extends \advanced_testcase {
     /**
      * Tests the automated backup inactive run.
      */
-    public function test_inactive_run() {
+    public function test_inactive_run(): void {
         backup_cron_automated_helper::run_automated_backup();
         $this->expectOutputString("Checking automated backup status...INACTIVE\n");
     }
@@ -179,7 +179,7 @@ class automated_backup_test extends \advanced_testcase {
     /**
      * Tests the invisible course being skipped.
      */
-    public function test_should_skip_invisible_course() {
+    public function test_should_skip_invisible_course(): void {
         global $DB;
 
         set_config('backup_auto_active', true, 'backup');
@@ -209,7 +209,7 @@ class automated_backup_test extends \advanced_testcase {
     /**
      * Tests the not modified course being skipped.
      */
-    public function test_should_skip_not_modified_course_in_days() {
+    public function test_should_skip_not_modified_course_in_days(): void {
         global $DB;
 
         set_config('backup_auto_active', true, 'backup');
@@ -243,7 +243,7 @@ class automated_backup_test extends \advanced_testcase {
     /**
      * Tests the backup not modified course being skipped.
      */
-    public function test_should_skip_not_modified_course_since_prev() {
+    public function test_should_skip_not_modified_course_since_prev(): void {
         global $DB;
 
         set_config('backup_auto_active', true, 'backup');
@@ -277,7 +277,7 @@ class automated_backup_test extends \advanced_testcase {
     /**
      * Test the task completes when coureid is missing.
      */
-    public function test_task_complete_when_courseid_is_missing() {
+    public function test_task_complete_when_courseid_is_missing(): void {
         global $DB;
         $admin = get_admin();
         $classobject = $this->backupcronautomatedhelper->return_this();
@@ -309,7 +309,7 @@ class automated_backup_test extends \advanced_testcase {
     /**
      * Test the task completes when backup course is missing.
      */
-    public function test_task_complete_when_backup_course_is_missing() {
+    public function test_task_complete_when_backup_course_is_missing(): void {
         global $DB;
         $admin = get_admin();
         $classobject = $this->backupcronautomatedhelper->return_this();

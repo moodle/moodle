@@ -28,7 +28,7 @@ class user_password_updated_test extends \advanced_testcase {
     /**
      * Test the event.
      */
-    public function test_event() {
+    public function test_event(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();

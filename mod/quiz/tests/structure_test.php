@@ -186,7 +186,7 @@ class structure_test extends \advanced_testcase {
         }
     }
 
-    public function test_get_quiz_slots() {
+    public function test_get_quiz_slots(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 1, 'truefalse'],
@@ -198,7 +198,7 @@ class structure_test extends \advanced_testcase {
         $this->assertCount(2, $structure->get_slots());
     }
 
-    public function test_quiz_has_one_section_by_default() {
+    public function test_quiz_has_one_section_by_default(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
         ]);
@@ -213,7 +213,7 @@ class structure_test extends \advanced_testcase {
         $this->assertEquals(0, $section->shufflequestions);
     }
 
-    public function test_get_sections() {
+    public function test_get_sections(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1*',
                 ['TF1', 1, 'truefalse'],
@@ -236,7 +236,7 @@ class structure_test extends \advanced_testcase {
         $this->assertEquals(1, $section->shufflequestions);
     }
 
-    public function test_remove_section_heading() {
+    public function test_remove_section_heading(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -257,7 +257,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_cannot_remove_first_section() {
+    public function test_cannot_remove_first_section(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -271,7 +271,7 @@ class structure_test extends \advanced_testcase {
         $structure->remove_section_heading($section->id);
     }
 
-    public function test_move_slot_to_the_same_place_does_nothing() {
+    public function test_move_slot_to_the_same_place_does_nothing(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 1, 'truefalse'],
@@ -291,7 +291,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_slot_end_of_one_page_to_start_of_next() {
+    public function test_move_slot_end_of_one_page_to_start_of_next(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 1, 'truefalse'],
@@ -311,7 +311,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_last_slot_to_previous_page_emptying_the_last_page() {
+    public function test_move_last_slot_to_previous_page_emptying_the_last_page(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 2, 'truefalse'],
@@ -329,7 +329,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_end_of_one_section_to_start_of_next() {
+    public function test_end_of_one_section_to_start_of_next(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 1, 'truefalse'],
@@ -351,7 +351,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_start_of_one_section_to_end_of_previous() {
+    public function test_start_of_one_section_to_end_of_previous(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 'Heading',
@@ -372,7 +372,7 @@ class structure_test extends \advanced_testcase {
                 ['TF3', 2, 'truefalse'],
         ], $structure);
     }
-    public function test_move_slot_on_same_page() {
+    public function test_move_slot_on_same_page(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 1, 'truefalse'],
@@ -392,7 +392,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_slot_up_onto_previous_page() {
+    public function test_move_slot_up_onto_previous_page(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 2, 'truefalse'],
@@ -412,7 +412,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_slot_emptying_a_page_renumbers_pages() {
+    public function test_move_slot_emptying_a_page_renumbers_pages(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 2, 'truefalse'],
@@ -432,7 +432,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_slot_too_small_page_number_detected() {
+    public function test_move_slot_too_small_page_number_detected(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 2, 'truefalse'],
@@ -446,7 +446,7 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '1');
     }
 
-    public function test_move_slot_too_large_page_number_detected() {
+    public function test_move_slot_too_large_page_number_detected(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 2, 'truefalse'],
@@ -460,7 +460,7 @@ class structure_test extends \advanced_testcase {
         $structure->move_slot($idtomove, $idmoveafter, '4');
     }
 
-    public function test_move_slot_within_section() {
+    public function test_move_slot_within_section(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -484,7 +484,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_slot_to_new_section() {
+    public function test_move_slot_to_new_section(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -508,7 +508,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_slot_to_start() {
+    public function test_move_slot_to_start(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -531,7 +531,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_slot_down_to_start_of_second_section() {
+    public function test_move_slot_down_to_start_of_second_section(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -555,7 +555,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_first_slot_down_to_start_of_page_2() {
+    public function test_move_first_slot_down_to_start_of_page_2(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -574,7 +574,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_first_slot_to_same_place_on_page_1() {
+    public function test_move_first_slot_to_same_place_on_page_1(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -593,7 +593,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_first_slot_to_before_page_1() {
+    public function test_move_first_slot_to_before_page_1(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -612,7 +612,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_slot_up_to_start_of_second_section() {
+    public function test_move_slot_up_to_start_of_second_section(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -640,7 +640,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_move_slot_does_not_violate_heading_unique_key() {
+    public function test_move_slot_does_not_violate_heading_unique_key(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -668,7 +668,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_quiz_remove_slot() {
+    public function test_quiz_remove_slot(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 1, 'truefalse'],
@@ -687,7 +687,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_quiz_removing_a_random_question_deletes_the_question() {
+    public function test_quiz_removing_a_random_question_deletes_the_question(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -722,7 +722,7 @@ class structure_test extends \advanced_testcase {
     /**
      * Unit test to make sue it is not possible to remove all slots in a section at once.
      */
-    public function test_cannot_remove_all_slots_in_a_section() {
+    public function test_cannot_remove_all_slots_in_a_section(): void {
         $quizobj = $this->create_test_quiz([
             ['TF1', 1, 'truefalse'],
             ['TF2', 1, 'truefalse'],
@@ -736,7 +736,7 @@ class structure_test extends \advanced_testcase {
         $structure->remove_slot(2);
     }
 
-    public function test_cannot_remove_last_slot_in_a_section() {
+    public function test_cannot_remove_last_slot_in_a_section(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 1, 'truefalse'],
@@ -749,7 +749,7 @@ class structure_test extends \advanced_testcase {
         $structure->remove_slot(3);
     }
 
-    public function test_can_remove_last_question_in_a_quiz() {
+    public function test_can_remove_last_question_in_a_quiz(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -772,7 +772,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_add_question_updates_headings() {
+    public function test_add_question_updates_headings(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 'Heading 2',
@@ -795,7 +795,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_add_question_updates_headings_even_with_one_question_sections() {
+    public function test_add_question_updates_headings_even_with_one_question_sections(): void {
         $quizobj = $this->create_test_quiz([
                 'Heading 1',
                 ['TF1', 1, 'truefalse'],
@@ -824,7 +824,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_add_question_at_end_does_not_update_headings() {
+    public function test_add_question_at_end_does_not_update_headings(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 'Heading 2',
@@ -847,7 +847,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_remove_page_break() {
+    public function test_remove_page_break(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 2, 'truefalse'],
@@ -864,7 +864,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_add_page_break() {
+    public function test_add_page_break(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 1, 'truefalse'],
@@ -881,7 +881,7 @@ class structure_test extends \advanced_testcase {
         ], $structure);
     }
 
-    public function test_update_question_dependency() {
+    public function test_update_question_dependency(): void {
         $quizobj = $this->create_test_quiz([
                 ['TF1', 1, 'truefalse'],
                 ['TF2', 1, 'truefalse'],
@@ -942,7 +942,7 @@ class structure_test extends \advanced_testcase {
     /**
      * Test for can_add_random_questions.
      */
-    public function test_can_add_random_questions() {
+    public function test_can_add_random_questions(): void {
         $this->resetAfterTest();
 
         $quiz = $this->create_test_quiz([]);
@@ -966,7 +966,7 @@ class structure_test extends \advanced_testcase {
      *
      * @covers ::get_question_version_info
      */
-    public function test_get_version_choices_for_slot() {
+    public function test_get_version_choices_for_slot(): void {
         $this->resetAfterTest();
 
         $quizobj = $this->create_test_quiz([]);
@@ -999,7 +999,7 @@ class structure_test extends \advanced_testcase {
      *
      * @covers ::has_use_capability
      */
-    public function test_has_use_capability() {
+    public function test_has_use_capability(): void {
         $this->resetAfterTest();
 
         // Create a quiz with question.

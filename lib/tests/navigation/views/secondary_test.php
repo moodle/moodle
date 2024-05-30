@@ -39,7 +39,7 @@ class secondary_test extends \advanced_testcase {
      * @param float $moduleorder The order for the module node
      * @dataProvider leaf_nodes_order_provider
      */
-    public function test_get_leaf_nodes(float $siteorder, float $courseorder, float $moduleorder) {
+    public function test_get_leaf_nodes(float $siteorder, float $courseorder, float $moduleorder): void {
         global $PAGE;
 
         // Create a secondary navigation and populate with some dummy nodes.
@@ -262,7 +262,7 @@ class secondary_test extends \advanced_testcase {
      * @dataProvider force_nodes_into_more_menu_provider
      */
     public function test_force_nodes_into_more_menu(array $secondarynavnodesdata, array $defaultmoremenunodes,
-            ?int $maxdisplayednodes, array $expecedmoremenunodes) {
+            ?int $maxdisplayednodes, array $expecedmoremenunodes): void {
         global $PAGE;
 
         // Create a dummy secondary navigation.
@@ -445,7 +445,7 @@ class secondary_test extends \advanced_testcase {
      * @param string $expectednode
      * @dataProvider nodes_match_current_url_provider
      */
-    public function test_nodes_match_current_url(string $selectedurl, string $expectednode) {
+    public function test_nodes_match_current_url(string $selectedurl, string $expectednode): void {
         global $PAGE;
         $structure = [
             'parentnode1' => [
@@ -494,7 +494,7 @@ class secondary_test extends \advanced_testcase {
      * @param array $expected
      * @dataProvider get_menu_array_provider
      */
-    public function test_get_menu_array(string $selected, array $expected) {
+    public function test_get_menu_array(string $selected, array $expected): void {
         global $PAGE;
 
         // Custom nodes - mimicing nodes added via 3rd party plugins.
@@ -586,7 +586,7 @@ class secondary_test extends \advanced_testcase {
      * @param string|null $expectedkey
      * @dataProvider get_node_with_first_action_provider
      */
-    public function test_get_node_with_first_action(string $selectedkey, ?string $expectedkey) {
+    public function test_get_node_with_first_action(string $selectedkey, ?string $expectedkey): void {
         global $PAGE;
         $structure = [
             'parentnode1' => [
@@ -664,7 +664,7 @@ class secondary_test extends \advanced_testcase {
      * @param bool $separatenode Whether or not to create a separate node to add nodes to.
      * @dataProvider add_external_nodes_to_secondary_provider
      */
-    public function test_add_external_nodes_to_secondary(array $structure, array $expectednodes, bool $separatenode = false) {
+    public function test_add_external_nodes_to_secondary(array $structure, array $expectednodes, bool $separatenode = false): void {
         global $PAGE;
 
         $this->resetAfterTest();
@@ -803,7 +803,7 @@ class secondary_test extends \advanced_testcase {
      * @param bool $emptynode
      * @dataProvider get_overflow_menu_data_provider
      */
-    public function test_get_overflow_menu_data(string $selectedurl, bool $expectednull, bool $emptynode = false) {
+    public function test_get_overflow_menu_data(string $selectedurl, bool $expectednull, bool $emptynode = false): void {
         global $PAGE;
 
         $this->resetAfterTest();

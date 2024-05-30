@@ -338,7 +338,7 @@ class targets_test extends \advanced_testcase {
      * @param true|string $isvalid True when analysable is valid, string when it is not
      * @param boolean $fortraining True if the course is for training the model
      */
-    public function test_core_target_course_completion_analysable($courseparams, $isvalid, $fortraining = true) {
+    public function test_core_target_course_completion_analysable($courseparams, $isvalid, $fortraining = true): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -395,7 +395,7 @@ class targets_test extends \advanced_testcase {
      * @param boolean $isvalidforprediction True when sample is valid for prediction, false when it is not
      */
     public function test_core_target_course_completion_samples($coursestart, $courseend, $timestart, $timeend,
-            $isvalidfortraining, $isvalidforprediction) {
+            $isvalidfortraining, $isvalidforprediction): void {
 
         $this->resetAfterTest(true);
 
@@ -433,7 +433,7 @@ class targets_test extends \advanced_testcase {
      * @param boolean $nullcalculation Whether the calculation should be null or not
      */
     public function test_core_target_course_completion_active_during_analysis_time($starttime, $endtime, $timestart, $timeend,
-            $nullcalculation) {
+            $nullcalculation): void {
 
         $this->resetAfterTest(true);
 
@@ -503,7 +503,7 @@ class targets_test extends \advanced_testcase {
      /**
       * Test the specific conditions of a valid analysable for the course_competencies target.
       */
-    public function test_core_target_course_competencies_analysable() {
+    public function test_core_target_course_competencies_analysable(): void {
 
         $data = $this->setup_competencies_environment();
 
@@ -519,7 +519,7 @@ class targets_test extends \advanced_testcase {
     /**
      * Test the target value calculation.
      */
-    public function test_core_target_course_competencies_calculate() {
+    public function test_core_target_course_competencies_calculate(): void {
 
         $data = $this->setup_competencies_environment();
 
@@ -552,7 +552,7 @@ class targets_test extends \advanced_testcase {
     /**
      * Test the specific conditions of a valid analysable for the course_gradetopass target.
      */
-    public function test_core_target_course_gradetopass_analysable() {
+    public function test_core_target_course_gradetopass_analysable(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -583,7 +583,7 @@ class targets_test extends \advanced_testcase {
     /**
      * Test the target value calculation of the course_gradetopass target.
      */
-    public function test_core_target_course_gradetopass_calculate() {
+    public function test_core_target_course_gradetopass_calculate(): void {
         global $DB;
 
         $this->resetAfterTest(true);

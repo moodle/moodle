@@ -60,7 +60,7 @@ class logger_test extends \basic_testcase {
     /**
      * test base_logger class
      */
-    function test_base_logger() {
+    function test_base_logger(): void {
         // Test logger with simple action (message * level)
         $lo = new mock_base_logger1(backup::LOG_ERROR);
         $msg = 13;
@@ -141,7 +141,7 @@ class logger_test extends \basic_testcase {
     /**
      * test error_log_logger class
      */
-    function test_error_log_logger() {
+    function test_error_log_logger(): void {
         // Not much really to test, just instantiate and execute, should return true
         $lo = new error_log_logger(backup::LOG_ERROR);
         $this->assertTrue($lo instanceof error_log_logger);
@@ -153,7 +153,7 @@ class logger_test extends \basic_testcase {
     /**
      * test output_text_logger class
      */
-    function test_output_text_logger() {
+    function test_output_text_logger(): void {
         // Instantiate without date nor level output
         $lo = new output_text_logger(backup::LOG_ERROR);
         $this->assertTrue($lo instanceof output_text_logger);
@@ -183,7 +183,7 @@ class logger_test extends \basic_testcase {
     /**
      * test output_indented_logger class
      */
-    function test_output_indented_logger() {
+    function test_output_indented_logger(): void {
         // Instantiate without date nor level output
         $options = array('depth' => 2);
         $lo = new output_indented_logger(backup::LOG_ERROR);
@@ -226,7 +226,7 @@ class logger_test extends \basic_testcase {
     /**
      * test database_logger class
      */
-    function test_database_logger() {
+    function test_database_logger(): void {
         // Instantiate with date and level output (and with specs from the global moodle "log" table so checks will pass
         $now = time();
         $datecol = 'time';
@@ -250,7 +250,7 @@ class logger_test extends \basic_testcase {
     /**
      * test file_logger class
      */
-    function test_file_logger() {
+    function test_file_logger(): void {
         global $CFG;
 
         $file = $CFG->tempdir . '/test/test_file_logger.txt';

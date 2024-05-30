@@ -144,7 +144,7 @@ class search_test extends \advanced_testcase {
      * Test 6: data_get_all_recordids() again. This time we are testing approved database records. We only want to
      * display the records that have been approved. In this record set we have 89 approved records.
      */
-    public function test_advanced_search_sql_section() {
+    public function test_advanced_search_sql_section(): void {
         global $DB;
 
         // we already have 2 users, we need 98 more - let's ignore the fact that guest can not post anywhere
@@ -259,7 +259,7 @@ class search_test extends \advanced_testcase {
         $this->assertEquals($this->approvedatarecordcount, count($recordids));
     }
 
-    public function test_advanced_search_tags() {
+    public function test_advanced_search_tags(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -298,7 +298,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_data_entries_indexing() {
+    public function test_data_entries_indexing(): void {
         global $DB;
 
         // Returns the instance as long as the area is supported.
@@ -373,7 +373,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_data_entries_document() {
+    public function test_data_entries_document(): void {
         global $DB;
 
         // Returns the instance as long as the area is supported.
@@ -580,7 +580,7 @@ class search_test extends \advanced_testcase {
     /**
      * Group support for data entries.
      */
-    public function test_data_entries_group_support() {
+    public function test_data_entries_group_support(): void {
         global $DB;
 
         // Get the search area and test generators.
@@ -653,7 +653,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_data_entries_access() {
+    public function test_data_entries_access(): void {
         global $DB;
 
         // Returns the instance as long as the area is supported.
@@ -851,7 +851,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_attach_files() {
+    public function test_attach_files(): void {
         global $DB, $USER;
 
         $fs = get_file_storage();

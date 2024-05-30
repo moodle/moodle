@@ -55,7 +55,7 @@ class application_registration_service_test extends \lti_advantage_testcase {
      *
      * @covers ::create_draft_application_registration
      */
-    public function test_create_draft_application() {
+    public function test_create_draft_application(): void {
         $this->resetAfterTest();
         $service = $this->get_application_registration_service();
 
@@ -79,7 +79,7 @@ class application_registration_service_test extends \lti_advantage_testcase {
      *
      * @covers ::update_application_registration
      */
-    public function test_update_application_registration() {
+    public function test_update_application_registration(): void {
         $this->resetAfterTest();
 
         // Create a registration in the draft state.
@@ -141,7 +141,7 @@ class application_registration_service_test extends \lti_advantage_testcase {
      *
      * @covers ::delete_application_registration
      */
-    public function test_delete_application_registration() {
+    public function test_delete_application_registration(): void {
         $this->resetAfterTest();
         // Setup.
         $registrationrepo = new application_registration_repository();

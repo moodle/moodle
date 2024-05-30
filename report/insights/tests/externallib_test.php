@@ -41,7 +41,7 @@ class externallib_test extends \advanced_testcase {
     /**
      * test_action_executed
      */
-    public function test_action_executed() {
+    public function test_action_executed(): void {
         global $DB;
 
         $this->setAdminUser();

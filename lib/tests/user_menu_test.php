@@ -79,7 +79,7 @@ test
      * @param string $input The menu text to test
      * @param int $entrycount The numbers of entries expected
      */
-    public function test_custom_user_menu($data, $entrycount, $dividercount) {
+    public function test_custom_user_menu($data, $entrycount, $dividercount): void {
         global $CFG, $OUTPUT, $USER, $PAGE;
 
         // Must reset because of config and user modifications.

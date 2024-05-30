@@ -30,7 +30,7 @@ require_once(__DIR__.'/../fixtures/event_fixtures.php');
  */
 class unknown_logged_test extends \advanced_testcase {
 
-    public function test_restore_event() {
+    public function test_restore_event(): void {
         $event1 = \core_tests\event\unittest_executed::create(array('context' => \context_system::instance(), 'other' => array('sample' => 1, 'xx' => 10)));
         $data1 = $event1->get_data();
 

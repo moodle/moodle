@@ -52,7 +52,7 @@ class questionattemptstepiterator_test extends \advanced_testcase {
         $this->iterator = null;
     }
 
-    public function test_foreach_loop() {
+    public function test_foreach_loop(): void {
         $i = 0;
         foreach ($this->iterator as $key => $step) {
             $this->assertEquals($i, $key);
@@ -61,7 +61,7 @@ class questionattemptstepiterator_test extends \advanced_testcase {
         }
     }
 
-    public function test_foreach_loop_add_step_during() {
+    public function test_foreach_loop_add_step_during(): void {
         $i = 0;
         foreach ($this->iterator as $key => $step) {
             $this->assertEquals($i, $key);
@@ -75,7 +75,7 @@ class questionattemptstepiterator_test extends \advanced_testcase {
         $this->assertEquals(4, $i);
     }
 
-    public function test_reverse_foreach_loop() {
+    public function test_reverse_foreach_loop(): void {
         $i = 2;
         foreach ($this->qa->get_reverse_step_iterator() as $key => $step) {
             $this->assertEquals($i, $key);
@@ -84,48 +84,48 @@ class questionattemptstepiterator_test extends \advanced_testcase {
         }
     }
 
-    public function test_offsetExists_before_start() {
+    public function test_offsetExists_before_start(): void {
         $this->assertFalse(isset($this->iterator[-1]));
     }
 
-    public function test_offsetExists_at_start() {
+    public function test_offsetExists_at_start(): void {
         $this->assertTrue(isset($this->iterator[0]));
     }
 
-    public function test_offsetExists_at_endt() {
+    public function test_offsetExists_at_endt(): void {
         $this->assertTrue(isset($this->iterator[2]));
     }
 
-    public function test_offsetExists_past_end() {
+    public function test_offsetExists_past_end(): void {
         $this->assertFalse(isset($this->iterator[3]));
     }
 
-    public function test_offsetGet_before_start() {
+    public function test_offsetGet_before_start(): void {
         $this->expectException(\moodle_exception::class);
         $step = $this->iterator[-1];
     }
 
-    public function test_offsetGet_at_start() {
+    public function test_offsetGet_at_start(): void {
         $step = $this->iterator[0];
         $this->assertEquals(0, $step->get_qt_var('i'));
     }
 
-    public function test_offsetGet_at_end() {
+    public function test_offsetGet_at_end(): void {
         $step = $this->iterator[2];
         $this->assertEquals(2, $step->get_qt_var('i'));
     }
 
-    public function test_offsetGet_past_end() {
+    public function test_offsetGet_past_end(): void {
         $this->expectException(\moodle_exception::class);
         $step = $this->iterator[3];
     }
 
-    public function test_cannot_set() {
+    public function test_cannot_set(): void {
         $this->expectException(\moodle_exception::class);
         $this->iterator[0] = null;
     }
 
-    public function test_cannot_unset() {
+    public function test_cannot_unset(): void {
         $this->expectException(\moodle_exception::class);
         unset($this->iterator[2]);
     }

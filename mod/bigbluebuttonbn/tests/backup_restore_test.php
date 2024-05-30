@@ -185,7 +185,7 @@ class backup_restore_test extends restore_date_testcase {
      *
      * @dataProvider bbb_type_provider
      */
-    public function test_duplicate_module_no_meetingid(int $type) {
+    public function test_duplicate_module_no_meetingid(int $type): void {
         list($bbactivitycontext, $bbactivitycm, $bbactivity)
             = $this->create_instance($this->get_course(), ['type' => $type]);
         $newcm = duplicate_module($this->get_course(), $bbactivitycm);
@@ -200,7 +200,7 @@ class backup_restore_test extends restore_date_testcase {
      *
      * @dataProvider bbb_type_provider
      */
-    public function test_recycle_module_keep_meetingid(int $type) {
+    public function test_recycle_module_keep_meetingid(int $type): void {
         list($bbactivitycontext, $bbactivitycm, $bbactivity)
             = $this->create_instance($this->get_course(), ['type' => $type]);
         // Delete the course module.

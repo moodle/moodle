@@ -33,7 +33,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests constructing a tree with errors.
      */
-    public function test_construct_errors() {
+    public function test_construct_errors(): void {
         try {
             new tree('frog');
             $this->fail();
@@ -130,7 +130,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests constructing a tree with plugin that does not exist (ignored).
      */
-    public function test_construct_ignore_missing_plugin() {
+    public function test_construct_ignore_missing_plugin(): void {
         // Construct a tree with & combination of one condition that doesn't exist.
         $tree = new tree(tree::get_root_json(array(
                 (object)array('type' => 'doesnotexist')), tree::OP_OR), true);
@@ -141,7 +141,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests constructing a tree with subtrees using all available operators.
      */
-    public function test_construct_just_trees() {
+    public function test_construct_just_trees(): void {
         $structure = tree::get_root_json(array(
                 tree::get_nested_json(array(), tree::OP_OR),
                 tree::get_nested_json(array(
@@ -154,7 +154,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests constructing tree using the mock plugin.
      */
-    public function test_construct_with_mock_plugin() {
+    public function test_construct_with_mock_plugin(): void {
         $structure = tree::get_root_json(array(
                 self::mock(array('a' => true, 'm' => ''))), tree::OP_OR);
         $tree = new tree($structure);
@@ -164,7 +164,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests the check_available and get_result_information functions.
      */
-    public function test_check_available() {
+    public function test_check_available(): void {
         global $USER;
 
         // Setup.
@@ -359,7 +359,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests the is_available_for_all() function.
      */
-    public function test_is_available_for_all() {
+    public function test_is_available_for_all(): void {
         // Empty tree is always available.
         $structure = tree::get_root_json(array(), tree::OP_OR);
         $tree = new tree($structure);
@@ -398,7 +398,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests the get_full_information() function.
      */
-    public function test_get_full_information() {
+    public function test_get_full_information(): void {
         global $PAGE;
         // Setup.
         $info = new \core_availability\mock_info();
@@ -497,7 +497,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests the is_empty() function.
      */
-    public function test_is_empty() {
+    public function test_is_empty(): void {
         // Tree with nothing in should be empty.
         $structure = tree::get_root_json(array(), tree::OP_OR);
         $tree = new tree($structure);
@@ -512,7 +512,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests the get_all_children() function.
      */
-    public function test_get_all_children() {
+    public function test_get_all_children(): void {
         // Create a tree with nothing in.
         $structure = tree::get_root_json(array(), tree::OP_OR);
         $tree1 = new tree($structure);
@@ -542,7 +542,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests the update_dependency_id() function.
      */
-    public function test_update_dependency_id() {
+    public function test_update_dependency_id(): void {
         // Create tree with structure of 3 mocks.
         $structure = tree::get_root_json(array(
                 tree::get_nested_json(array(
@@ -575,7 +575,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests the filter_users function.
      */
-    public function test_filter_users() {
+    public function test_filter_users(): void {
         $info = new \core_availability\mock_info();
         $checker = new capability_checker($info->get_context());
 
@@ -637,7 +637,7 @@ class tree_test extends \advanced_testcase {
      * Tests the get_json methods in tree (which are mainly for use in testing
      * but might be used elsewhere).
      */
-    public function test_get_json() {
+    public function test_get_json(): void {
         // Create a simple child object (fake).
         $child = (object)array('type' => 'fake');
         $childstr = json_encode($child);
@@ -685,7 +685,7 @@ class tree_test extends \advanced_testcase {
      * used. We also use higher number of condition instances to increase the
      * risk of the counter collision, should there remain a problem.
      */
-    public function test_unique_sql_parameter_behaviour() {
+    public function test_unique_sql_parameter_behaviour(): void {
         global $DB;
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
@@ -732,7 +732,7 @@ class tree_test extends \advanced_testcase {
     /**
      * Tests get_user_list_sql.
      */
-    public function test_get_user_list_sql() {
+    public function test_get_user_list_sql(): void {
         global $DB;
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();

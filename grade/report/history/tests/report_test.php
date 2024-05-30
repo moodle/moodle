@@ -30,7 +30,7 @@ class report_test extends \advanced_testcase {
     /**
      * Create some grades.
      */
-    public function test_query_db() {
+    public function test_query_db(): void {
         $this->resetAfterTest();
 
         // Making the setup.
@@ -194,7 +194,7 @@ class report_test extends \advanced_testcase {
     /**
      * Test the get users helper method.
      */
-    public function test_get_users() {
+    public function test_get_users(): void {
         $this->resetAfterTest();
 
         // Making the setup.
@@ -436,7 +436,7 @@ class report_test extends \advanced_testcase {
      * @param $teachergroups
      * @param $expectedusers
      */
-    public function test_get_users_with_groups($groupmode, $teacherrole, $teachergroups, $expectedusers) {
+    public function test_get_users_with_groups($groupmode, $teacherrole, $teachergroups, $expectedusers): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -513,7 +513,7 @@ class report_test extends \advanced_testcase {
     /**
      * Test the get graders helper method.
      */
-    public function test_graders() {
+    public function test_graders(): void {
         $this->resetAfterTest();
 
         // Making the setup.

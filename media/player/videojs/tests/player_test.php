@@ -57,7 +57,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that plugin is returned as enabled media plugin.
      */
-    public function test_is_installed() {
+    public function test_is_installed(): void {
         $sortorder = \core\plugininfo\media::get_enabled_plugins();
         $this->assertEquals(['videojs' => 'videojs'], $sortorder);
     }
@@ -65,7 +65,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test method get_supported_extensions()
      */
-    public function test_supported_extensions() {
+    public function test_supported_extensions(): void {
         $supportedextensions = array_merge(file_get_typegroup('extension', 'html_video'),
             file_get_typegroup('extension', 'html_audio'), file_get_typegroup('extension', 'media_source'));
 
@@ -92,7 +92,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test embedding without media filter (for example for displaying file resorce).
      */
-    public function test_embed_url() {
+    public function test_embed_url(): void {
         global $CFG;
 
         $url = new moodle_url('http://example.org/1.webm');
@@ -128,7 +128,7 @@ class player_test extends \advanced_testcase {
      *
      * filter_mediaplugin is enabled by default.
      */
-    public function test_embed_link() {
+    public function test_embed_link(): void {
         global $CFG;
         $url = new moodle_url('http://example.org/some_filename.mp4');
         $text = html_writer::link($url, 'Watch this one');
@@ -144,7 +144,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that only supported URLs are listed as sources but all URLs are present in links fallbacks.
      */
-    public function test_fallback() {
+    public function test_fallback(): void {
 
         $urls = [
             new moodle_url('http://example.org/1.rv'), // Not supported.
@@ -175,7 +175,7 @@ class player_test extends \advanced_testcase {
     /**
      * Assert other players do not apply after videojs was applied.
      */
-    public function test_prevent_other_players() {
+    public function test_prevent_other_players(): void {
         \core\plugininfo\media::set_enabled_plugins('videojs,html5video');
         $url = new moodle_url('http://example.org/some_filename.webm');
         $text = html_writer::link($url, 'Apply one player only');
@@ -193,7 +193,7 @@ class player_test extends \advanced_testcase {
      *
      * filter_mediaplugin is enabled by default.
      */
-    public function test_embed_media() {
+    public function test_embed_media(): void {
         global $CFG;
         $url = new moodle_url('http://example.org/some_filename.mp4');
         $trackurl = new moodle_url('http://example.org/some_filename.vtt');
@@ -253,7 +253,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that VideoJS can embed youtube videos.
      */
-    public function test_youtube() {
+    public function test_youtube(): void {
         set_config('youtube', 1, 'media_videojs');
 
         $manager = core_media_manager::instance();
@@ -309,7 +309,7 @@ class player_test extends \advanced_testcase {
      *
      * @dataProvider youtube_start_time_provider
      */
-    public function test_youtube_start_time(string $url, int $expectedstart) {
+    public function test_youtube_start_time(string $url, int $expectedstart): void {
         set_config('youtube', 1, 'media_videojs');
 
         $embedcode = core_media_manager::instance()->embed_url(new moodle_url($url));
@@ -331,7 +331,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that VideoJS can not embed flash videos.
      */
-    public function test_flash_behaviour() {
+    public function test_flash_behaviour(): void {
         $manager = core_media_manager::instance();
 
         $url = new moodle_url('http://example.org/some_filename.flv');
@@ -344,7 +344,7 @@ class player_test extends \advanced_testcase {
     /**
      * Test that VideoJS can not embed RTMP streams.
      */
-    public function test_rtmp_behaviour() {
+    public function test_rtmp_behaviour(): void {
         $manager = core_media_manager::instance();
 
         $url = new moodle_url('rtmp://example.com/fms&mp4:path/to/file.mp4');

@@ -28,7 +28,7 @@ use Google_Service_YouTube;
  */
 class googlelib_test extends \advanced_testcase {
 
-    public function test_invalid_google_api_key() {
+    public function test_invalid_google_api_key(): void {
         global $CFG;
         require_once($CFG->libdir . '/google/lib.php');
         $client = get_google_client();

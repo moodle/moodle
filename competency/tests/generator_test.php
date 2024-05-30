@@ -26,7 +26,7 @@ namespace core_competency;
  */
 class generator_test extends \advanced_testcase {
 
-    public function test_create_framework() {
+    public function test_create_framework(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -37,7 +37,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\competency_framework', $framework);
     }
 
-    public function test_create_competency() {
+    public function test_create_competency(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -49,7 +49,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\competency', $competency);
     }
 
-    public function test_create_related_competency() {
+    public function test_create_related_competency(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -64,7 +64,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\related_competency', $rc);
     }
 
-    public function test_create_plan() {
+    public function test_create_plan(): void {
         $this->resetAfterTest(true);
 
         $user = $this->getDataGenerator()->create_user();
@@ -75,7 +75,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\plan', $plan);
     }
 
-    public function test_create_user_competency() {
+    public function test_create_user_competency(): void {
         $this->resetAfterTest(true);
 
         $user = $this->getDataGenerator()->create_user();
@@ -91,7 +91,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\user_competency', $rc);
     }
 
-    public function test_create_user_competency_plan() {
+    public function test_create_user_competency_plan(): void {
         $this->resetAfterTest(true);
 
         $user = $this->getDataGenerator()->create_user();
@@ -115,7 +115,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\user_competency_plan', $ucp);
     }
 
-    public function test_create_template() {
+    public function test_create_template(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -126,7 +126,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\template', $template);
     }
 
-    public function test_create_template_competency() {
+    public function test_create_template_competency(): void {
         $this->resetAfterTest(true);
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
@@ -141,7 +141,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\template_competency', $relation);
     }
 
-    public function test_create_plan_competency() {
+    public function test_create_plan_competency(): void {
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -161,7 +161,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals($plan->get('id'), $pc1->get('planid'));
     }
 
-    public function test_create_template_cohort() {
+    public function test_create_template_cohort(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -176,7 +176,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\template_cohort', $tc);
     }
 
-    public function test_create_evidence() {
+    public function test_create_evidence(): void {
         $this->resetAfterTest(true);
 
         $user = $this->getDataGenerator()->create_user();
@@ -192,7 +192,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\evidence', $e);
     }
 
-    public function test_create_course_competency() {
+    public function test_create_course_competency(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -212,7 +212,7 @@ class generator_test extends \advanced_testcase {
         $this->assertInstanceOf('\core_competency\course_competency', $rc);
     }
 
-    public function test_create_course_module_competency() {
+    public function test_create_course_module_competency(): void {
         $this->resetAfterTest(true);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');

@@ -28,7 +28,7 @@ class helper_test extends \advanced_testcase {
     /**
      * Tests that the get recent items method can handle getting records when courses have been deleted.
      */
-    public function test_get_recent_items() {
+    public function test_get_recent_items(): void {
         $this->resetAfterTest();
         $course = self::getDataGenerator()->create_course();
         $coursetodelete = self::getDataGenerator()->create_course();

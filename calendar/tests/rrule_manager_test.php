@@ -78,7 +78,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parse_rrule() method.
      */
-    public function test_parse_rrule() {
+    public function test_parse_rrule(): void {
         $rules = [
             'FREQ=YEARLY',
             'COUNT=3',
@@ -131,7 +131,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test exception is thrown for invalid property.
      */
-    public function test_parse_rrule_validation() {
+    public function test_parse_rrule_validation(): void {
         $rrule = "RANDOM=PROPERTY;";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -141,7 +141,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test exception is thrown for invalid frequency.
      */
-    public function test_freq_validation() {
+    public function test_freq_validation(): void {
         $rrule = "FREQ=RANDOMLY;";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -151,7 +151,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of rules with both COUNT and UNTIL parameters.
      */
-    public function test_until_count_validation() {
+    public function test_until_count_validation(): void {
         $until = $this->event->timestart + DAYSECS * 4;
         $until = date('Y-m-d', $until);
         $rrule = "FREQ=DAILY;COUNT=2;UNTIL=$until";
@@ -163,7 +163,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of INTERVAL rule.
      */
-    public function test_interval_validation() {
+    public function test_interval_validation(): void {
         $rrule = "INTERVAL=0";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -173,7 +173,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYSECOND rule.
      */
-    public function test_bysecond_validation() {
+    public function test_bysecond_validation(): void {
         $rrule = "BYSECOND=30,45,60";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -183,7 +183,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYMINUTE rule.
      */
-    public function test_byminute_validation() {
+    public function test_byminute_validation(): void {
         $rrule = "BYMINUTE=30,45,60";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -193,7 +193,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYMINUTE rule.
      */
-    public function test_byhour_validation() {
+    public function test_byhour_validation(): void {
         $rrule = "BYHOUR=23,45";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -203,7 +203,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYDAY rule.
      */
-    public function test_byday_validation() {
+    public function test_byday_validation(): void {
         $rrule = "BYDAY=MO,2SE";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -213,7 +213,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYDAY rule with prefixes.
      */
-    public function test_byday_with_prefix_validation() {
+    public function test_byday_with_prefix_validation(): void {
         // This is acceptable.
         $rrule = "FREQ=MONTHLY;BYDAY=-1MO,2SA";
         $mang = new rrule_manager($rrule);
@@ -234,7 +234,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYMONTHDAY rule.
      */
-    public function test_bymonthday_upper_bound_validation() {
+    public function test_bymonthday_upper_bound_validation(): void {
         $rrule = "BYMONTHDAY=1,32";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -244,7 +244,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYMONTHDAY rule.
      */
-    public function test_bymonthday_0_validation() {
+    public function test_bymonthday_0_validation(): void {
         $rrule = "BYMONTHDAY=1,0";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -254,7 +254,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYMONTHDAY rule.
      */
-    public function test_bymonthday_lower_bound_validation() {
+    public function test_bymonthday_lower_bound_validation(): void {
         $rrule = "BYMONTHDAY=1,-31,-32";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -264,7 +264,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYYEARDAY rule.
      */
-    public function test_byyearday_upper_bound_validation() {
+    public function test_byyearday_upper_bound_validation(): void {
         $rrule = "BYYEARDAY=1,366,367";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -274,7 +274,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYYEARDAY rule.
      */
-    public function test_byyearday_0_validation() {
+    public function test_byyearday_0_validation(): void {
         $rrule = "BYYEARDAY=0";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -284,7 +284,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYYEARDAY rule.
      */
-    public function test_byyearday_lower_bound_validation() {
+    public function test_byyearday_lower_bound_validation(): void {
         $rrule = "BYYEARDAY=-1,-366,-367";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -294,7 +294,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYWEEKNO rule.
      */
-    public function test_non_yearly_freq_with_byweekno() {
+    public function test_non_yearly_freq_with_byweekno(): void {
         $rrule = "BYWEEKNO=1,53";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -304,7 +304,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYWEEKNO rule.
      */
-    public function test_byweekno_upper_bound_validation() {
+    public function test_byweekno_upper_bound_validation(): void {
         $rrule = "FREQ=YEARLY;BYWEEKNO=1,53,54";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -314,7 +314,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYWEEKNO rule.
      */
-    public function test_byweekno_0_validation() {
+    public function test_byweekno_0_validation(): void {
         $rrule = "FREQ=YEARLY;BYWEEKNO=0";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -324,7 +324,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYWEEKNO rule.
      */
-    public function test_byweekno_lower_bound_validation() {
+    public function test_byweekno_lower_bound_validation(): void {
         $rrule = "FREQ=YEARLY;BYWEEKNO=-1,-53,-54";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -334,7 +334,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYMONTH rule.
      */
-    public function test_bymonth_upper_bound_validation() {
+    public function test_bymonth_upper_bound_validation(): void {
         $rrule = "BYMONTH=1,12,13";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -344,7 +344,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYMONTH rule.
      */
-    public function test_bymonth_lower_bound_validation() {
+    public function test_bymonth_lower_bound_validation(): void {
         $rrule = "BYMONTH=0";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -354,7 +354,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYSETPOS rule.
      */
-    public function test_bysetpos_without_other_byrules() {
+    public function test_bysetpos_without_other_byrules(): void {
         $rrule = "BYSETPOS=1,366";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -364,7 +364,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYSETPOS rule.
      */
-    public function test_bysetpos_upper_bound_validation() {
+    public function test_bysetpos_upper_bound_validation(): void {
         $rrule = "BYSETPOS=1,366,367";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -374,7 +374,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYSETPOS rule.
      */
-    public function test_bysetpos_0_validation() {
+    public function test_bysetpos_0_validation(): void {
         $rrule = "BYSETPOS=0";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -384,7 +384,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test parsing of BYSETPOS rule.
      */
-    public function test_bysetpos_lower_bound_validation() {
+    public function test_bysetpos_lower_bound_validation(): void {
         $rrule = "BYSETPOS=-1,-366,-367";
         $mang = new rrule_manager($rrule);
         $this->expectException('moodle_exception');
@@ -394,7 +394,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for daily frequency.
      */
-    public function test_daily_events() {
+    public function test_daily_events(): void {
         global $DB;
 
         $rrule = 'FREQ=DAILY;COUNT=3'; // This should generate 2 child events + 1 parent.
@@ -439,7 +439,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Every 300 days, forever.
      */
-    public function test_every_300_days_forever() {
+    public function test_every_300_days_forever(): void {
         global $DB;
 
         // Change the start date for forever events to 9am of the current date.
@@ -481,7 +481,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for weekly frequency.
      */
-    public function test_weekly_events() {
+    public function test_weekly_events(): void {
         global $DB;
 
         $rrule = 'FREQ=WEEKLY;COUNT=1';
@@ -551,7 +551,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for weekly frequency for RRULE with BYDAY rule set, recurring forever.
      */
-    public function test_weekly_byday_forever() {
+    public function test_weekly_byday_forever(): void {
         global $DB;
 
         // Set the next Monday as the starting date of this event.
@@ -591,7 +591,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for monthly frequency for RRULE with COUNT and BYMONTHDAY rules set.
      */
-    public function test_monthly_events_with_count_bymonthday() {
+    public function test_monthly_events_with_count_bymonthday(): void {
         global $DB;
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
@@ -615,7 +615,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for monthly frequency for RRULE with BYMONTHDAY and UNTIL rules set.
      */
-    public function test_monthly_events_with_until_bymonthday() {
+    public function test_monthly_events_with_until_bymonthday(): void {
         global $DB;
 
         // This should generate 10 child event + 1 parent, since by then until bound would be hit.
@@ -637,7 +637,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for monthly frequency for RRULE with BYMONTHDAY and UNTIL rules set.
      */
-    public function test_monthly_events_with_until_bymonthday_multi() {
+    public function test_monthly_events_with_until_bymonthday_multi(): void {
         global $DB;
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
@@ -680,7 +680,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for monthly frequency for RRULE with BYMONTHDAY forever.
      */
-    public function test_monthly_events_with_bymonthday_forever() {
+    public function test_monthly_events_with_bymonthday_forever(): void {
         global $DB;
 
         // Change the start date for forever events to 9am of the 2nd day of the current month and year.
@@ -723,7 +723,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for monthly frequency for RRULE with COUNT and BYDAY rules set.
      */
-    public function test_monthly_events_with_count_byday() {
+    public function test_monthly_events_with_count_byday(): void {
         global $DB;
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
@@ -756,7 +756,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for monthly frequency for RRULE with BYDAY and UNTIL rules set.
      */
-    public function test_monthly_events_with_until_byday() {
+    public function test_monthly_events_with_until_byday(): void {
         global $DB;
 
         // This much seconds after the start of the day.
@@ -794,7 +794,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for monthly frequency for RRULE with BYMONTHDAY and UNTIL rules set.
      */
-    public function test_monthly_events_with_until_byday_multi() {
+    public function test_monthly_events_with_until_byday_multi(): void {
         global $DB;
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
@@ -836,7 +836,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for monthly frequency for RRULE with BYDAY forever.
      */
-    public function test_monthly_events_with_byday_forever() {
+    public function test_monthly_events_with_byday_forever(): void {
         global $DB;
 
         // Change the start date for forever events to 9am of the 2nd day of the current month and year.
@@ -882,7 +882,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test recurrence rules for yearly frequency.
      */
-    public function test_yearly_events() {
+    public function test_yearly_events(): void {
         global $DB;
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
@@ -1015,7 +1015,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test for rrule with FREQ=YEARLY and INTERVAL=2 with BYMONTH rule set, recurring forever.
      */
-    public function test_yearly_september_every_two_years_forever() {
+    public function test_yearly_september_every_two_years_forever(): void {
         global $DB;
 
         // Change the start date for forever events to 9am on the 2nd day of September of the current year.
@@ -1045,7 +1045,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test for rrule with FREQ=YEARLY with BYMONTH and BYDAY rules set, recurring forever.
      */
-    public function test_yearly_bymonth_byday_forever() {
+    public function test_yearly_bymonth_byday_forever(): void {
         global $DB;
 
         // Change the start date for forever events to the first day of September of the current year at 9am.
@@ -1088,7 +1088,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Test for rrule with FREQ=YEARLY recurring forever.
      */
-    public function test_yearly_forever() {
+    public function test_yearly_forever(): void {
         global $DB;
 
         // Change the start date for forever events to 9am of the current date.
@@ -1130,7 +1130,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=DAILY;COUNT=10
      *   ==> (1997 9:00 AM EDT)September 2-11
      */
-    public function test_daily_count() {
+    public function test_daily_count(): void {
         global $DB;
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
@@ -1161,7 +1161,7 @@ class rrule_manager_test extends \advanced_testcase {
      *   ==> (1997 9:00 AM EDT)September 2-30;October 1-25
      *       (1997 9:00 AM EST)October 26-31;November 1-30;December 1-23
      */
-    public function test_daily_until() {
+    public function test_daily_until(): void {
         global $DB;
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
@@ -1198,7 +1198,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (1997 9:00 AM EDT)September2,4,6,8...24,26,28,30;October 2,4,6...20,22,24
      *  (1997 9:00 AM EST)October 26,28,30;November 1,3,5,7...25,27,29;Dec 1,3,...
      */
-    public function test_every_other_day_forever() {
+    public function test_every_other_day_forever(): void {
         global $DB;
 
         // Change the start date for forever events to 9am of the current date in US/Eastern time.
@@ -1236,7 +1236,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=DAILY;INTERVAL=10;COUNT=5
      *   ==> (1997 9:00 AM EDT)September 2,12,22;October 2,12
      */
-    public function test_every_10_days_5_count() {
+    public function test_every_10_days_5_count(): void {
         global $DB;
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
@@ -1267,7 +1267,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (1999 9:00 AM EDT)January 1-31
      *       (2000 9:00 AM EDT)January 1-31
      */
-    public function test_everyday_in_jan_for_3_years_yearly() {
+    public function test_everyday_in_jan_for_3_years_yearly(): void {
         global $DB;
 
         // Change our event's date to 01-01-1998, based on the example from the RFC.
@@ -1301,7 +1301,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (1999 9:00 AM EDT)January 1-31
      *       (2000 9:00 AM EDT)January 1-31
      */
-    public function test_everyday_in_jan_for_3_years_daily() {
+    public function test_everyday_in_jan_for_3_years_daily(): void {
         global $DB;
 
         // Change our event's date to 01-01-1998, based on the example from the RFC.
@@ -1334,7 +1334,7 @@ class rrule_manager_test extends \advanced_testcase {
      *   ==> (1997 9:00 AM EDT)September 2,9,16,23,30;October 7,14,21
      *       (1997 9:00 AM EST)October 28;November 4
      */
-    public function test_weekly_10_count() {
+    public function test_weekly_10_count(): void {
         global $DB;
 
         $interval = new \DateInterval('P1W');
@@ -1363,7 +1363,7 @@ class rrule_manager_test extends \advanced_testcase {
      *   ==> (1997 9:00 AM EDT)September 2,9,16,23,30;October 7,14,21,28
      *       (1997 9:00 AM EST)November 4,11,18,25;December 2,9,16,23
      */
-    public function test_weekly_until_24_dec_1997() {
+    public function test_weekly_until_24_dec_1997(): void {
         global $DB;
 
         $interval = new \DateInterval('P1W');
@@ -1400,7 +1400,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (1998 9:00 AM EST)January 6,20;February
      *  ...
      */
-    public function test_every_other_week_forever() {
+    public function test_every_other_week_forever(): void {
         global $DB;
 
         // Change the start date for forever events to 9am of the current date in US/Eastern time.
@@ -1437,7 +1437,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=WEEKLY;UNTIL=19971007T000000Z;WKST=SU;BYDAY=TU,TH
      *   ==> (1997 9:00 AM EDT)September 2,4,9,11,16,18,23,25,30;October 2
      */
-    public function test_weekly_on_tue_thu_for_5_weeks_by_until() {
+    public function test_weekly_on_tue_thu_for_5_weeks_by_until(): void {
         global $DB;
 
         $rrule = 'FREQ=WEEKLY;UNTIL=19971007T000000Z;WKST=SU;BYDAY=TU,TH';
@@ -1475,7 +1475,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=WEEKLY;COUNT=10;WKST=SU;BYDAY=TU,TH
      *   ==> (1997 9:00 AM EDT)September 2,4,9,11,16,18,23,25,30;October 2
      */
-    public function test_weekly_on_tue_thu_for_5_weeks_by_count() {
+    public function test_weekly_on_tue_thu_for_5_weeks_by_count(): void {
         global $DB;
 
         $rrule = 'FREQ=WEEKLY;COUNT=10;WKST=SU;BYDAY=TU,TH';
@@ -1510,7 +1510,7 @@ class rrule_manager_test extends \advanced_testcase {
      *   ==> (1997 9:00 AM EDT)September 3,5,15,17,19,29;October 1,3,13,15,17
      *       (1997 9:00 AM EST)October 27,29,31;November 10,12,14,24,26,28;December 8,10,12,22
      */
-    public function test_every_other_week_until_24_dec_1997_byday() {
+    public function test_every_other_week_until_24_dec_1997_byday(): void {
         global $DB;
 
         $rrule = 'FREQ=WEEKLY;INTERVAL=2;UNTIL=19971224T000000Z;WKST=SU;BYDAY=MO,WE,FR';
@@ -1563,7 +1563,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=8;WKST=SU;BYDAY=TU,TH
      *   ==> (1997 9:00 AM EDT)September 2,4,16,18,30;October 2,14,16
      */
-    public function test_every_other_week_byday_8_count() {
+    public function test_every_other_week_byday_8_count(): void {
         global $DB;
 
         $rrule = 'FREQ=WEEKLY;INTERVAL=2;COUNT=8;WKST=SU;BYDAY=TU,TH';
@@ -1610,7 +1610,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (1998 9:00 AM EST)January 2;February 6;March 6;April 3
      *       (1998 9:00 AM EDT)May 1;June 5
      */
-    public function test_monthly_every_first_friday_10_count() {
+    public function test_monthly_every_first_friday_10_count(): void {
         global $DB;
 
         // Change our event's date to 05-09-1997, based on the example from the RFC.
@@ -1646,7 +1646,7 @@ class rrule_manager_test extends \advanced_testcase {
      *   ==> (1997 9:00 AM EDT)September 5;October 3
      *       (1997 9:00 AM EST)November 7;December 5
      */
-    public function test_monthly_every_first_friday_until() {
+    public function test_monthly_every_first_friday_until(): void {
         global $DB;
 
         // Change our event's date to 05-09-1997, based on the example from the RFC.
@@ -1684,7 +1684,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (1998 9:00 AM EST)January 4,25;March 1,29
      *       (1998 9:00 AM EDT)May 3,31
      */
-    public function test_every_other_month_1st_and_last_sunday_10_count() {
+    public function test_every_other_month_1st_and_last_sunday_10_count(): void {
         global $DB;
 
         // Change our event's date to 05-09-1997, based on the example from the RFC.
@@ -1727,7 +1727,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (1997 9:00 AM EST)November 17;December 22
      *       (1998 9:00 AM EST)January 19;February 16
      */
-    public function test_monthly_last_monday_for_6_months() {
+    public function test_monthly_last_monday_for_6_months(): void {
         global $DB;
 
         // Change our event's date to 05-09-1997, based on the example from the RFC.
@@ -1769,7 +1769,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (1998 9:00 AM EST)January 29;February 26
      *  ...
      */
-    public function test_third_to_the_last_day_of_the_month_forever() {
+    public function test_third_to_the_last_day_of_the_month_forever(): void {
         global $DB;
 
         // Change our event's date to 28 September of the current year, based on the example from the RFC.
@@ -1812,7 +1812,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (1997 9:00 AM EST)November 2,15;December 2,15
      *       (1998 9:00 AM EST)January 2,15
      */
-    public function test_every_2nd_and_15th_of_the_month_10_count() {
+    public function test_every_2nd_and_15th_of_the_month_10_count(): void {
         global $DB;
 
         $startdatetime = new \DateTime(date('Y-m-d H:i:s', $this->event->timestart));
@@ -1856,7 +1856,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (1997 9:00 AM EST)October 31;November 1,30;December 1,31
      *       (1998 9:00 AM EST)January 1,31;February 1
      */
-    public function test_every_first_and_last_day_of_the_month_10_count() {
+    public function test_every_first_and_last_day_of_the_month_10_count(): void {
         global $DB;
 
         $startdatetime = $this->change_event_startdate('19970930T090000', 'US/Eastern');
@@ -1901,7 +1901,7 @@ class rrule_manager_test extends \advanced_testcase {
      *   ==> (1997 9:00 AM EDT)September 10,11,12,13,14,15
      *       (1999 9:00 AM EST)March 10,11,12,13
      */
-    public function test_every_18_months_days_10_to_15_10_count() {
+    public function test_every_18_months_days_10_to_15_10_count(): void {
         global $DB;
 
         $startdatetime = $this->change_event_startdate('19970910T090000', 'US/Eastern');
@@ -1946,7 +1946,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (1998 9:00 AM EST)January 6,13,20,27;March 3,10,17,24,31
      *  ...
      */
-    public function test_every_tuesday_every_other_month_forever() {
+    public function test_every_tuesday_every_other_month_forever(): void {
         global $DB;
 
         // Change the start date for forever events to 9am of the Tuesday on or before of the current date in US/Eastern time.
@@ -2001,7 +2001,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (2001 9:00 AM EDT)June 10;July 10
      * Note: Since none of the BYDAY, BYMONTHDAY or BYYEARDAY components are specified, the day is gotten from DTSTART.
      */
-    public function test_yearly_in_june_july_10_count() {
+    public function test_yearly_in_june_july_10_count(): void {
         global $DB;
 
         $startdatetime = $this->change_event_startdate('19970610T090000', 'US/Eastern');
@@ -2044,7 +2044,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (2001 9:00 AM EST)January 10;February 10;March 10
      *       (2003 9:00 AM EST)January 10;February 10;March 10
      */
-    public function test_every_other_year_in_june_july_10_count() {
+    public function test_every_other_year_in_june_july_10_count(): void {
         global $DB;
 
         $startdatetime = $this->change_event_startdate('19970310T090000', 'US/Eastern');
@@ -2091,7 +2091,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (2003 9:00 AM EDT)April 10;July 19
      *       (2006 9:00 AM EST)January 1
      */
-    public function test_every_3_years_1st_100th_200th_days_10_count() {
+    public function test_every_3_years_1st_100th_200th_days_10_count(): void {
         global $DB;
 
         $startdatetime = $this->change_event_startdate('19970101T090000', 'US/Eastern');
@@ -2138,7 +2138,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (1999 9:00 AM EDT)May 17
      *  ...
      */
-    public function test_yearly_every_20th_monday_forever() {
+    public function test_yearly_every_20th_monday_forever(): void {
         global $DB;
 
         // Change our event's date to the 20th Monday of the current year.
@@ -2184,7 +2184,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (1999 9:00 AM EDT)May 17
      *  ...
      */
-    public function test_yearly_byweekno_forever() {
+    public function test_yearly_byweekno_forever(): void {
         global $DB;
 
         // Change our event's date to the start of the 20th week of the current year.
@@ -2234,7 +2234,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (1999 9:00 AM EST)March 4,11,18,25
      *  ...
      */
-    public function test_every_thursday_in_march_forever() {
+    public function test_every_thursday_in_march_forever(): void {
         global $DB;
 
         // Change our event's date to the first Thursday of March of the current year at 9am US/Eastern time.
@@ -2293,7 +2293,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (1999 9:00 AM EDT)June 3,10,17,24;July 1,8,15,22,29;August 5,12,19,26
      *  ...
      */
-    public function test_every_thursday_june_july_august_forever() {
+    public function test_every_thursday_june_july_august_forever(): void {
         global $DB;
 
         // Change our event's date to the first Thursday of June in the current year at 9am US/Eastern time.
@@ -2350,7 +2350,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (2000 9:00 AM EDT)October 13
      *  ...
      */
-    public function test_friday_the_thirteenth_forever() {
+    public function test_friday_the_thirteenth_forever(): void {
         global $DB;
 
         // Change our event's date to the first Thursday of June in the current year at 9am US/Eastern time.
@@ -2387,7 +2387,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (1998 9:00 AM EST)January 10;February 7;March 7
      *  (1998 9:00 AM EDT)April 11;May 9;June 13...
      */
-    public function test_first_saturday_following_first_sunday_forever() {
+    public function test_first_saturday_following_first_sunday_forever(): void {
         global $DB;
 
         // Change our event's date to the next Saturday after the first Sunday of the the current month at 9am US/Eastern time.
@@ -2438,7 +2438,7 @@ class rrule_manager_test extends \advanced_testcase {
      *  (2004 9:00 AM EST)November 2
      *  ...
      */
-    public function test_every_us_presidential_election_forever() {
+    public function test_every_us_presidential_election_forever(): void {
         global $DB;
 
         // Calculate the most recent election date, starting from 1996 (e.g. today's 2017 so the most recent election was in 2016).
@@ -2491,7 +2491,7 @@ class rrule_manager_test extends \advanced_testcase {
      *   ==> (1997 9:00 AM EDT)September 4;October 7
      *       (1997 9:00 AM EST)November 6
      */
-    public function test_monthly_bysetpos_3_count() {
+    public function test_monthly_bysetpos_3_count(): void {
         global $DB;
 
         $this->change_event_startdate('19970904T090000', 'US/Eastern');
@@ -2528,7 +2528,7 @@ class rrule_manager_test extends \advanced_testcase {
      * (Original RFC example is set to recur forever. But we just want to verify that the results match the dates listed from
      * the RFC example. So just limit the count to 7.)
      */
-    public function test_second_to_the_last_weekday_of_the_month() {
+    public function test_second_to_the_last_weekday_of_the_month(): void {
         global $DB;
 
         $this->change_event_startdate('19970929T090000', 'US/Eastern');
@@ -2572,7 +2572,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T210000Z
      *   ==> (September 2, 1997 EDT)09:00,12:00,15:00
      */
-    public function test_every_3hours_9am_to_5pm() {
+    public function test_every_3hours_9am_to_5pm(): void {
         global $DB;
 
         $rrule = 'FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T210000Z';
@@ -2601,7 +2601,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=MINUTELY;INTERVAL=15;COUNT=6
      *   ==> (September 2, 1997 EDT)09:00,09:15,09:30,09:45,10:00,10:15
      */
-    public function test_every_15minutes_6_count() {
+    public function test_every_15minutes_6_count(): void {
         global $DB;
 
         $rrule = 'FREQ=MINUTELY;INTERVAL=15;COUNT=6';
@@ -2633,7 +2633,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=MINUTELY;INTERVAL=90;COUNT=4
      *   ==> (September 2, 1997 EDT)09:00,10:30;12:00;13:30
      */
-    public function test_every_90minutes_4_count() {
+    public function test_every_90minutes_4_count(): void {
         global $DB;
 
         $rrule = 'FREQ=MINUTELY;INTERVAL=90;COUNT=4';
@@ -2668,7 +2668,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (September 3, 1997 EDT)9:00,9:20,9:40,10:00,10:20,...16:00,16:20,16:40
      *       ...
      */
-    public function test_every_20minutes_daily_byhour_byminute_50_count() {
+    public function test_every_20minutes_daily_byhour_byminute_50_count(): void {
         global $DB;
 
         $rrule = 'FREQ=DAILY;BYHOUR=9,10,11,12,13,14,15,16;BYMINUTE=0,20,40;COUNT=50';
@@ -2713,7 +2713,7 @@ class rrule_manager_test extends \advanced_testcase {
      *       (September 3, 1997 EDT)9:00,9:20,9:40,10:00,10:20,...16:00,16:20,16:40
      *       ...
      */
-    public function test_every_20minutes_minutely_byhour_50_count() {
+    public function test_every_20minutes_minutely_byhour_50_count(): void {
         global $DB;
 
         $rrule = 'FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16;COUNT=50';
@@ -2753,7 +2753,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO
      *   ==> (1997 EDT)Aug 5,10,19,24
      */
-    public function test_weekly_byday_with_wkst_mo() {
+    public function test_weekly_byday_with_wkst_mo(): void {
         global $DB;
 
         $this->change_event_startdate('19970805T090000', 'US/Eastern');
@@ -2786,7 +2786,7 @@ class rrule_manager_test extends \advanced_testcase {
      * RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU
      *   ==> (1997 EDT)August 5,17,19,31
      */
-    public function test_weekly_byday_with_wkst_su() {
+    public function test_weekly_byday_with_wkst_su(): void {
         global $DB;
 
         $this->change_event_startdate('19970805T090000', 'US/Eastern');
@@ -2820,7 +2820,7 @@ class rrule_manager_test extends \advanced_testcase {
      * Tests for MONTHLY RRULE with BYMONTHDAY set to 31.
      * Should not include February, April, June, September and November.
      */
-    public function test_monthly_bymonthday_31() {
+    public function test_monthly_bymonthday_31(): void {
         global $DB;
 
         $rrule = 'FREQ=MONTHLY;BYMONTHDAY=31;COUNT=20';
@@ -2842,7 +2842,7 @@ class rrule_manager_test extends \advanced_testcase {
     /**
      * Tests for the last day in February. (Leap year test)
      */
-    public function test_yearly_on_the_last_day_of_february() {
+    public function test_yearly_on_the_last_day_of_february(): void {
         global $DB;
 
         $rrule = 'FREQ=YEARLY;BYMONTH=2;BYMONTHDAY=-1;COUNT=30';

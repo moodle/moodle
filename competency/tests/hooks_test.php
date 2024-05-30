@@ -25,7 +25,7 @@ namespace core_competency;
  */
 class hooks_test extends \advanced_testcase {
 
-    public function test_hook_course_deleted() {
+    public function test_hook_course_deleted(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -72,7 +72,7 @@ class hooks_test extends \advanced_testcase {
         $this->assertEquals(2, user_competency_course::count_records(['courseid' => $c2->id, 'userid' => $u1->id]));
     }
 
-    public function test_hook_course_module_deleted() {
+    public function test_hook_course_module_deleted(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -120,7 +120,7 @@ class hooks_test extends \advanced_testcase {
         $this->assertEquals(2, user_competency_course::count_records(['courseid' => $c2->id, 'userid' => $u1->id]));
     }
 
-    public function test_hook_course_reset_competency_ratings() {
+    public function test_hook_course_reset_competency_ratings(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');
@@ -167,7 +167,7 @@ class hooks_test extends \advanced_testcase {
         $this->assertEquals(2, user_competency_course::count_records(['courseid' => $c2->id, 'userid' => $u1->id]));
     }
 
-    public function test_hook_cohort_deleted() {
+    public function test_hook_cohort_deleted(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -196,7 +196,7 @@ class hooks_test extends \advanced_testcase {
         $this->assertEquals(0, \core_competency\template_cohort::count_records(array('templateid' => $t2->get('id'))));
     }
 
-    public function test_hook_user_deleted() {
+    public function test_hook_user_deleted(): void {
         $this->resetAfterTest();
         $dg = $this->getDataGenerator();
         $ccg = $dg->get_plugin_generator('core_competency');

@@ -56,7 +56,7 @@ class float_test extends \advanced_testcase {
     /**
      * Testcase to check generated timestamp
      */
-    public function test_exportValue() {
+    public function test_exportValue(): void {
         $element = new MoodleQuickForm_float('testel');
 
         $value = ['testel' => 3.14];

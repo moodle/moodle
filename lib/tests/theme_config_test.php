@@ -41,7 +41,7 @@ class theme_config_test extends advanced_testcase {
      * This function will test directives used to serve SVG images to make sure
      * this are making the right decisions.
      */
-    public function test_svg_image_use() {
+    public function test_svg_image_use(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -106,7 +106,7 @@ class theme_config_test extends advanced_testcase {
      * Confirm that the editor_css_url contains the theme revision and the
      * theme subrevision if not in theme designer mode.
      */
-    public function test_editor_css_url_has_revision_and_subrevision() {
+    public function test_editor_css_url_has_revision_and_subrevision(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -127,7 +127,7 @@ class theme_config_test extends advanced_testcase {
     /**
      * Confirm that editor_scss_to_css is correctly compiling for themes with no parent.
      */
-    public function test_editor_scss_to_css_root_theme() {
+    public function test_editor_scss_to_css_root_theme(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -146,7 +146,7 @@ class theme_config_test extends advanced_testcase {
     /**
      * Confirm that editor_scss_to_css is compiling for a child theme not overriding its parent's editor SCSS.
      */
-    public function test_editor_scss_to_css_child_theme() {
+    public function test_editor_scss_to_css_child_theme(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -167,7 +167,7 @@ class theme_config_test extends advanced_testcase {
      *
      * @covers ::get_all_block_regions
      */
-    public function test_get_all_block_regions() {
+    public function test_get_all_block_regions(): void {
         $this->resetAfterTest();
 
         $theme = theme_config::load(theme_config::DEFAULT_THEME);

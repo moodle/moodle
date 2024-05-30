@@ -26,19 +26,19 @@ namespace core;
  * @covers \core\testing_data_generator
  */
 class testing_generator_test extends \advanced_testcase {
-    public function test_get_plugin_generator_good_case() {
+    public function test_get_plugin_generator_good_case(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
         $this->assertInstanceOf('core_question_generator', $generator);
     }
 
-    public function test_get_plugin_generator_sloppy_name() {
+    public function test_get_plugin_generator_sloppy_name(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('quiz');
         $this->assertDebuggingCalled('Please specify the component you want a generator for as ' .
                     'mod_quiz, not quiz.', DEBUG_DEVELOPER);
         $this->assertInstanceOf('mod_quiz_generator', $generator);
     }
 
-    public function test_get_default_generator() {
+    public function test_get_default_generator(): void {
         $generator = $this->getDataGenerator()->get_plugin_generator('block_somethingthatdoesnotexist');
         $this->assertInstanceOf('default_block_generator', $generator);
     }
@@ -46,13 +46,13 @@ class testing_generator_test extends \advanced_testcase {
     /**
      * Test plugin generator, with no component directory.
      */
-    public function test_get_plugin_generator_no_component_dir() {
+    public function test_get_plugin_generator_no_component_dir(): void {
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage('Component core_cohort does not support generators yet. Missing tests/generator/lib.php.');
         $generator = $this->getDataGenerator()->get_plugin_generator('core_cohort');
     }
 
-    public function test_create_user() {
+    public function test_create_user(): void {
         global $DB, $CFG;
         require_once($CFG->dirroot.'/user/lib.php');
 
@@ -129,7 +129,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertSame('Cats, Dogs', $userdetails['interests']);
     }
 
-    public function test_create() {
+    public function test_create(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -212,7 +212,7 @@ class testing_generator_test extends \advanced_testcase {
         }
     }
 
-    public function test_create_module() {
+    public function test_create_module(): void {
         global $CFG, $SITE, $DB;
 
         $this->setAdminUser();
@@ -370,7 +370,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertEquals($optionsavailability['availability'], $cm4->availability);
     }
 
-    public function test_create_block() {
+    public function test_create_block(): void {
         global $CFG;
         if (!file_exists("$CFG->dirroot/blocks/online_users/")) {
             $this->markTestSkipped('Can not find standard Online users block');
@@ -383,7 +383,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertNotEmpty($page);
     }
 
-    public function test_enrol_user() {
+    public function test_enrol_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -470,7 +470,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertFalse($result);
     }
 
-    public function test_create_grade_category() {
+    public function test_create_grade_category(): void {
         global $DB, $CFG;
         require_once $CFG->libdir . '/grade/constants.php';
 
@@ -500,7 +500,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertEquals($gradecategory->id, $gradecategory2->parent);
     }
 
-    public function test_create_custom_profile_field_category() {
+    public function test_create_custom_profile_field_category(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -532,7 +532,7 @@ class testing_generator_test extends \advanced_testcase {
         $this->assertEquals(10, $record->sortorder);
     }
 
-    public function test_create_custom_profile_field() {
+    public function test_create_custom_profile_field(): void {
         global $DB;
 
         $this->resetAfterTest();

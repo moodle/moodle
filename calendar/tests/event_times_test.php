@@ -32,7 +32,7 @@ class event_times_test extends \advanced_testcase {
      * @dataProvider getters_testcases()
      * @param array $constructorparams Associative array of constructor parameters.
      */
-    public function test_getters($constructorparams) {
+    public function test_getters($constructorparams): void {
         $eventtimes = new event_times(
             $constructorparams['start_time'],
             $constructorparams['end_time'],

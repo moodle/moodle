@@ -65,7 +65,7 @@ class manager_observer_test extends data_privacy_testcase {
     /**
      * Ensure that when no user is configured as DPO, the message is sent to admin instead.
      */
-    public function test_handle_component_failure_no_dpo() {
+    public function test_handle_component_failure_no_dpo(): void {
         $this->resetAfterTest();
 
         // Create another user who is not a DPO or admin.

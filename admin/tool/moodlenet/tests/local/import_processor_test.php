@@ -36,7 +36,7 @@ class import_processor_test extends \advanced_testcase {
     /**
      * An integration test, this confirms the ability to construct an import processor and run the import for the current user.
      */
-    public function test_process_valid_resource() {
+    public function test_process_valid_resource(): void {
         $this->resetAfterTest();
 
         // Set up a user as a teacher in a course.
@@ -83,7 +83,7 @@ class import_processor_test extends \advanced_testcase {
     /**
      * Test confirming that an exception is thrown when trying to process a resource which does not exist.
      */
-    public function test_process_invalid_resource() {
+    public function test_process_invalid_resource(): void {
         $this->resetAfterTest();
 
         // Set up a user as a teacher in a course.
@@ -115,7 +115,7 @@ class import_processor_test extends \advanced_testcase {
     /**
      * Test confirming that imports can be completed using alternative import strategies.
      */
-    public function test_process_alternative_import_strategies() {
+    public function test_process_alternative_import_strategies(): void {
         $this->resetAfterTest();
 
         // Set up a user as a teacher in a course.

@@ -26,7 +26,7 @@ namespace tool_brickfield;
  */
 class scheduler_test extends \advanced_testcase {
 
-    public function test_request_analysis() {
+    public function test_request_analysis(): void {
         $this->resetAfterTest();
 
         // I believe there is a bug where the code won't work with the default constructor values.
@@ -48,7 +48,7 @@ class scheduler_test extends \advanced_testcase {
 
     }
 
-    public function test_mark_analyzed() {
+    public function test_mark_analyzed(): void {
         $this->resetAfterTest();
         $object = new scheduler();
         $output = $object->mark_analyzed();
@@ -59,7 +59,7 @@ class scheduler_test extends \advanced_testcase {
         $this->assertTrue($output);
     }
 
-    public function test_create_schedule() {
+    public function test_create_schedule(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -76,7 +76,7 @@ class scheduler_test extends \advanced_testcase {
         $this->assertEquals($record->instanceid, 1);
     }
 
-    public function test_delete_schedule() {
+    public function test_delete_schedule(): void {
         global $DB;
 
         // Call create_record() to insert a record into the table.
@@ -95,7 +95,7 @@ class scheduler_test extends \advanced_testcase {
         $this->assertFalse($record);
     }
 
-    public function test_is_in_schedule() {
+    public function test_is_in_schedule(): void {
         $this->resetAfterTest();
 
         // This should assert to false as no record has been inserted.
@@ -109,7 +109,7 @@ class scheduler_test extends \advanced_testcase {
         $this->assertTrue($output);
     }
 
-    public function test_is_scheduled() {
+    public function test_is_scheduled(): void {
         $this->resetAfterTest();
 
         // This should assert to false as no record has been inserted.
@@ -129,7 +129,7 @@ class scheduler_test extends \advanced_testcase {
         $this->assertTrue($output);
     }
 
-    public function test_is_submitted() {
+    public function test_is_submitted(): void {
         $this->resetAfterTest();
 
         // This should assert to false as no record has been inserted.
@@ -149,7 +149,7 @@ class scheduler_test extends \advanced_testcase {
         $this->assertTrue($output);
     }
 
-    public function test_is_analyzed() {
+    public function test_is_analyzed(): void {
         $this->resetAfterTest();
 
         // This should assert to false as no record has been inserted.
@@ -170,14 +170,14 @@ class scheduler_test extends \advanced_testcase {
     }
 
     // Can't test because it's a protected function.
-    public function test_standard_search_params() {
+    public function test_standard_search_params(): void {
     }
 
     // Can't test because it's a protected function.
-    public function test_get_contextid() {
+    public function test_get_contextid(): void {
     }
 
-    public function test_get_datarecord() {
+    public function test_get_datarecord(): void {
         $this->resetAfterTest();
 
         $object = new scheduler();
@@ -200,11 +200,11 @@ class scheduler_test extends \advanced_testcase {
     }
 
     // No return statement.
-    public function test_process_scheduled_requests() {
+    public function test_process_scheduled_requests(): void {
 
     }
 
-    public function test_initialize_schedule() {
+    public function test_initialize_schedule(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -219,14 +219,14 @@ class scheduler_test extends \advanced_testcase {
         $this->assertEquals($record->contextlevel, 20);
     }
 
-    public function test_request_course_analysis() {
+    public function test_request_course_analysis(): void {
         $this->resetAfterTest();
 
         $output = scheduler::request_course_analysis(1);
         $this->assertTrue($output);
     }
 
-    public function test_create_course_schedule() {
+    public function test_create_course_schedule(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -237,7 +237,7 @@ class scheduler_test extends \advanced_testcase {
 
     }
 
-    public function test_delete_course_schedule() {
+    public function test_delete_course_schedule(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -251,7 +251,7 @@ class scheduler_test extends \advanced_testcase {
         $this->assertFalse($record);
     }
 
-    public function test_is_course_in_schedule() {
+    public function test_is_course_in_schedule(): void {
         $this->resetAfterTest();
 
         // This should assert to false as no record has been inserted.
@@ -264,7 +264,7 @@ class scheduler_test extends \advanced_testcase {
         $this->assertTrue($output);
     }
 
-    public function test_is_course_scheduled() {
+    public function test_is_course_scheduled(): void {
         $this->resetAfterTest();
 
         // This should assert to false as no record has been inserted.
@@ -283,7 +283,7 @@ class scheduler_test extends \advanced_testcase {
         $this->assertTrue($output);
     }
 
-    public function test_is_course_analyzed() {
+    public function test_is_course_analyzed(): void {
         $this->resetAfterTest();
         $object = new scheduler(10, 1);
 

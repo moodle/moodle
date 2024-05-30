@@ -127,7 +127,7 @@ class output_email_test extends \advanced_testcase {
      * @param array  $discussionconfig  The configuration for this discussion
      * @param string $expectation       The expected date
      */
-    public function test_postdate($globalconfig, $forumconfig, $postconfig, $discussionconfig, $expectation) {
+    public function test_postdate($globalconfig, $forumconfig, $postconfig, $discussionconfig, $expectation): void {
         global $CFG, $DB;
         $this->resetAfterTest(true);
 

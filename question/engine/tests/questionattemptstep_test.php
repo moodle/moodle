@@ -34,29 +34,29 @@ require_once(__DIR__ . '/helpers.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class questionattemptstep_test extends \advanced_testcase {
-    public function test_initial_state_unprocessed() {
+    public function test_initial_state_unprocessed(): void {
         $step = new question_attempt_step();
         $this->assertEquals(question_state::$unprocessed, $step->get_state());
     }
 
-    public function test_get_set_state() {
+    public function test_get_set_state(): void {
         $step = new question_attempt_step();
         $step->set_state(question_state::$gradedright);
         $this->assertEquals(question_state::$gradedright, $step->get_state());
     }
 
-    public function test_initial_fraction_null() {
+    public function test_initial_fraction_null(): void {
         $step = new question_attempt_step();
         $this->assertNull($step->get_fraction());
     }
 
-    public function test_get_set_fraction() {
+    public function test_get_set_fraction(): void {
         $step = new question_attempt_step();
         $step->set_fraction(0.5);
         $this->assertEquals(0.5, $step->get_fraction());
     }
 
-    public function test_has_var() {
+    public function test_has_var(): void {
         $step = new question_attempt_step(array('x' => 1, '-y' => 'frog'));
         $this->assertTrue($step->has_qt_var('x'));
         $this->assertTrue($step->has_behaviour_var('y'));
@@ -64,14 +64,14 @@ class questionattemptstep_test extends \advanced_testcase {
         $this->assertFalse($step->has_behaviour_var('x'));
     }
 
-    public function test_get_var() {
+    public function test_get_var(): void {
         $step = new question_attempt_step(array('x' => 1, '-y' => 'frog'));
         $this->assertEquals('1', $step->get_qt_var('x'));
         $this->assertEquals('frog', $step->get_behaviour_var('y'));
         $this->assertNull($step->get_qt_var('y'));
     }
 
-    public function test_set_var() {
+    public function test_set_var(): void {
         $step = new question_attempt_step();
         $step->set_qt_var('_x', 1);
         $step->set_behaviour_var('_x', 2);
@@ -79,33 +79,33 @@ class questionattemptstep_test extends \advanced_testcase {
         $this->assertEquals('2', $step->get_behaviour_var('_x'));
     }
 
-    public function test_cannot_set_qt_var_without_underscore() {
+    public function test_cannot_set_qt_var_without_underscore(): void {
         $step = new question_attempt_step();
         $this->expectException('moodle_exception');
         $step->set_qt_var('x', 1);
     }
 
-    public function test_cannot_set_behaviour_var_without_underscore() {
+    public function test_cannot_set_behaviour_var_without_underscore(): void {
         $step = new question_attempt_step();
         $this->expectException('moodle_exception');
         $step->set_behaviour_var('x', 1);
     }
 
-    public function test_get_data() {
+    public function test_get_data(): void {
         $step = new question_attempt_step(array('x' => 1, '-y' => 'frog', ':flagged' => 1));
         $this->assertEquals(array('x' => '1'), $step->get_qt_data());
         $this->assertEquals(array('y' => 'frog'), $step->get_behaviour_data());
         $this->assertEquals(array('x' => 1, '-y' => 'frog', ':flagged' => 1), $step->get_all_data());
     }
 
-    public function test_get_submitted_data() {
+    public function test_get_submitted_data(): void {
         $step = new question_attempt_step(array('x' => 1, '-y' => 'frog'));
         $step->set_qt_var('_x', 1);
         $step->set_behaviour_var('_x', 2);
         $this->assertEquals(array('x' => 1, '-y' => 'frog'), $step->get_submitted_data());
     }
 
-    public function test_constructor_default_params() {
+    public function test_constructor_default_params(): void {
         global $USER;
         $step = new question_attempt_step();
         $this->assertEquals(time(), $step->get_timecreated(), 5);
@@ -115,7 +115,7 @@ class questionattemptstep_test extends \advanced_testcase {
 
     }
 
-    public function test_constructor_given_params() {
+    public function test_constructor_given_params(): void {
         global $USER;
         $step = new question_attempt_step(array(), 123, 5);
         $this->assertEquals(123, $step->get_timecreated());
@@ -128,7 +128,7 @@ class questionattemptstep_test extends \advanced_testcase {
     /**
      * Test get_user function.
      */
-    public function test_get_user() {
+    public function test_get_user(): void {
         $this->resetAfterTest(true);
         $student = $this->getDataGenerator()->create_user();
 
@@ -141,7 +141,7 @@ class questionattemptstep_test extends \advanced_testcase {
     /**
      * Test get_user_fullname function.
      */
-    public function test_get_user_fullname() {
+    public function test_get_user_fullname(): void {
         $this->resetAfterTest(true);
         $student = $this->getDataGenerator()->create_user();
 
@@ -154,7 +154,7 @@ class questionattemptstep_test extends \advanced_testcase {
     /**
      * Test add_full_user_object function.
      */
-    public function test_add_full_user_object() {
+    public function test_add_full_user_object(): void {
         $this->resetAfterTest(true);
         $student1 = $this->getDataGenerator()->create_user();
         $student2 = $this->getDataGenerator()->create_user();

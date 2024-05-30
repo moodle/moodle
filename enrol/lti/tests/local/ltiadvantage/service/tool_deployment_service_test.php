@@ -78,7 +78,7 @@ class tool_deployment_service_test extends \lti_advantage_testcase {
      *
      * @covers ::add_tool_deployment
      */
-    public function test_add_tool_deployment() {
+    public function test_add_tool_deployment(): void {
         $this->resetAfterTest();
         $testreg = $this->generate_application_registration();
         $deploymentrepo = new deployment_repository();
@@ -101,7 +101,7 @@ class tool_deployment_service_test extends \lti_advantage_testcase {
      *
      * @covers ::add_tool_deployment
      */
-    public function test_add_tool_deployment_registration_missing() {
+    public function test_add_tool_deployment_registration_missing(): void {
         $this->resetAfterTest();
         $service = $this->get_tool_deployment_service();
 
@@ -121,7 +121,7 @@ class tool_deployment_service_test extends \lti_advantage_testcase {
      *
      * @covers ::delete_tool_deployment
      */
-    public function test_delete_deployment() {
+    public function test_delete_deployment(): void {
         $this->resetAfterTest();
         // Setup.
         $registrationrepo = new application_registration_repository();

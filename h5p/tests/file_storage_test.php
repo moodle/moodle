@@ -318,7 +318,7 @@ class file_storage_test extends \advanced_testcase {
     /**
      * Test that cached files can be retrieved via a key.
      */
-    public function test_getCachedAssets() {
+    public function test_getCachedAssets(): void {
 
         $basedirectory = $this->h5p_tempath . '/' . 'test-1.0';
 
@@ -414,7 +414,7 @@ class file_storage_test extends \advanced_testcase {
     /**
      * Retrieve content from a file given a specific path.
      */
-    public function test_getContent() {
+    public function test_getContent(): void {
         $basedirectory = $this->h5p_tempath . '/' . 'test-1.0';
 
         $machinename = 'TestLib';
@@ -438,7 +438,7 @@ class file_storage_test extends \advanced_testcase {
     /**
      * Test that an upgrade script can be found on the file system.
      */
-    public function test_getUpgradeScript() {
+    public function test_getUpgradeScript(): void {
         // Upload an upgrade file.
         $machinename = 'TestLib';
         $majorversion = 3;
@@ -472,7 +472,7 @@ class file_storage_test extends \advanced_testcase {
      * |     |- testscript.min.js
      * |- h5p.json
      */
-    public function test_saveFileFromZip() {
+    public function test_saveFileFromZip(): void {
 
         $ziparchive = new zip_archive();
         $path = __DIR__ . '/fixtures/h5ptest.zip';
@@ -500,7 +500,7 @@ class file_storage_test extends \advanced_testcase {
     /**
      * Test that a library is fully deleted from the file system
      */
-    public function test_delete_library() {
+    public function test_delete_library(): void {
 
         $basedirectory = $this->h5p_tempath . '/' . 'test-1.0';
 

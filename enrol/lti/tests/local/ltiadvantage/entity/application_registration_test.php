@@ -34,7 +34,7 @@ class application_registration_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create
      */
-    public function test_creation(array $args, array $expectations) {
+    public function test_creation(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $reg = application_registration::create(...array_values($args));
             $this->assertEquals($args['name'], $reg->get_name());
@@ -149,7 +149,7 @@ class application_registration_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create_draft
      */
-    public function test_create_draft(array $args, array $expectations) {
+    public function test_create_draft(array $args, array $expectations): void {
         if ($expectations['valid']) {
             $reg = application_registration::create_draft(...array_values($args));
             $this->assertEquals($args['name'], $reg->get_name());
@@ -174,7 +174,7 @@ class application_registration_test extends \advanced_testcase {
      *
      * @covers ::complete_registration
      */
-    public function test_complete_registration() {
+    public function test_complete_registration(): void {
         // Create a draft registration which should initially be incomplete.
         $draft = application_registration::create_draft('Test platform name', '1234bfda');
         $this->assertFalse($draft->is_complete());
@@ -246,7 +246,7 @@ class application_registration_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::add_tool_deployment
      */
-    public function test_add_tool_deployment(array $args, array $expectations) {
+    public function test_add_tool_deployment(array $args, array $expectations): void {
 
         if ($expectations['valid']) {
             $reg = application_registration::create(...array_values($args['registration']));

@@ -40,7 +40,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_instance_info
      */
-    public function test_get_instance_info() {
+    public function test_get_instance_info(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -117,7 +117,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test enrol_user
      */
-    public function test_enrol_user() {
+    public function test_enrol_user(): void {
         global $DB;
 
         self::resetAfterTest(true);

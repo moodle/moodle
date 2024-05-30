@@ -121,7 +121,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Quick test to make sure that get_metadata returns something.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('assignfeedback_editpdf');
         $collection = \assignfeedback_editpdf\privacy\provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
@@ -130,7 +130,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that feedback comments are exported for a user.
      */
-    public function test_export_feedback_user_data() {
+    public function test_export_feedback_user_data(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -169,7 +169,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that all feedback is deleted for a context.
      */
-    public function test_delete_feedback_for_context() {
+    public function test_delete_feedback_for_context(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -207,7 +207,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that a grade item is deleted for a user.
      */
-    public function test_delete_feedback_for_grade() {
+    public function test_delete_feedback_for_grade(): void {
         $this->resetAfterTest();
         // Create course, assignment, submission, and then a feedback comment.
         $course = $this->getDataGenerator()->create_course();
@@ -246,7 +246,7 @@ class provider_test extends \mod_assign\privacy\provider_test {
     /**
      * Test that a grade item is deleted for a user.
      */
-    public function test_delete_feedback_for_grades() {
+    public function test_delete_feedback_for_grades(): void {
         global $DB;
 
         $this->resetAfterTest();

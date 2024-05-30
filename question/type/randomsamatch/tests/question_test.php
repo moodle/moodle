@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  */
 class question_test extends \advanced_testcase {
 
-    public function test_get_expected_data() {
+    public function test_get_expected_data(): void {
         $question = \test_question_maker::make_question('randomsamatch');
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -42,7 +42,7 @@ class question_test extends \advanced_testcase {
                 'sub2' => PARAM_INT, 'sub3' => PARAM_INT), $question->get_expected_data());
     }
 
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         $question = \test_question_maker::make_question('randomsamatch');
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -54,7 +54,7 @@ class question_test extends \advanced_testcase {
                 array('sub0' => '1', 'sub1' => '1', 'sub2' => '1', 'sub3' => '1')));
     }
 
-    public function test_is_gradable_response() {
+    public function test_is_gradable_response(): void {
         $question = \test_question_maker::make_question('randomsamatch');
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -68,7 +68,7 @@ class question_test extends \advanced_testcase {
                 array('sub0' => '1', 'sub1' => '1', 'sub2' => '3', 'sub3' => '1')));
     }
 
-    public function test_is_same_response() {
+    public function test_is_same_response(): void {
         $question = \test_question_maker::make_question('randomsamatch');
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -93,7 +93,7 @@ class question_test extends \advanced_testcase {
                 array('sub0' => '1', 'sub1' => '2', 'sub2' => '3', 'sub3' => '1')));
     }
 
-    public function test_grading() {
+    public function test_grading(): void {
         $question = \test_question_maker::make_question('randomsamatch');
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -111,7 +111,7 @@ class question_test extends \advanced_testcase {
                         'sub3' => $orderforchoice[16])));
     }
 
-    public function test_get_correct_response() {
+    public function test_get_correct_response(): void {
         $question = \test_question_maker::make_question('randomsamatch');
         $question->start_attempt(new question_attempt_step(), 1);
 
@@ -123,7 +123,7 @@ class question_test extends \advanced_testcase {
                 $question->get_correct_response());
     }
 
-    public function test_get_question_summary() {
+    public function test_get_question_summary(): void {
         $question = \test_question_maker::make_question('randomsamatch');
         $question->start_attempt(new question_attempt_step(), 1);
         $qsummary = $question->get_question_summary();
@@ -136,7 +136,7 @@ class question_test extends \advanced_testcase {
         }
     }
 
-    public function test_summarise_response() {
+    public function test_summarise_response(): void {
         $question = \test_question_maker::make_question('randomsamatch');
         $question->shufflestems = false;
         $question->start_attempt(new question_attempt_step(), 1);

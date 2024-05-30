@@ -44,7 +44,7 @@ class approved_userlist_test extends advanced_testcase {
      * @covers ::__construct
      * @covers \core_privacy\local\request\approved_userlist<extended>
      */
-    public function test_default_values_set() {
+    public function test_default_values_set(): void {
         $this->resetAfterTest();
 
         $u1 = $this->getDataGenerator()->create_user();
@@ -76,7 +76,7 @@ class approved_userlist_test extends advanced_testcase {
      * @covers ::create_from_userlist
      * @covers \core_privacy\local\request\approved_userlist<extended>
      */
-    public function test_create_from_userlist() {
+    public function test_create_from_userlist(): void {
         $this->resetAfterTest();
 
         $u1 = $this->getDataGenerator()->create_user();

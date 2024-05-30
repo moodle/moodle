@@ -39,7 +39,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Restoring a manual grade item does not result in the timecreated or
      * timemodified dates being changed.
      */
-    public function test_grade_item_date_restore() {
+    public function test_grade_item_date_restore(): void {
 
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
 
@@ -98,7 +98,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * The course section timemodified date does not get rolled forward
      * when the course is restored.
      */
-    public function test_course_section_date_restore() {
+    public function test_course_section_date_restore(): void {
         global $DB;
         // Create a course.
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
@@ -117,7 +117,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Test that the timecreated and timemodified dates are not rolled forward when restoring
      * badge data.
      */
-    public function test_badge_date_restore() {
+    public function test_badge_date_restore(): void {
         global $DB, $USER;
         // Create a course.
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
@@ -164,7 +164,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Test that course calendar events timemodified field is not rolled forward
      * when restoring the course.
      */
-    public function test_calendarevents_date_restore() {
+    public function test_calendarevents_date_restore(): void {
         global $USER, $DB;
         // Create course.
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);
@@ -200,7 +200,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Testing that the timeenrolled, timestarted, and timecompleted fields are not rolled forward / back
      * when doing a course restore.
      */
-    public function test_course_completion_date_restore() {
+    public function test_course_completion_date_restore(): void {
         global $DB;
 
         // Create course with course completion enabled.
@@ -236,7 +236,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Testing that the grade grade date information is not changed in the gradebook when a course
      * restore is performed.
      */
-    public function test_grade_grade_date_restore() {
+    public function test_grade_grade_date_restore(): void {
         global $USER, $DB;
         // Testing the restore of an overridden grade.
         list($course, $assign) = $this->create_course_and_module('assign', []);
@@ -287,7 +287,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Checking that the user completion of an activity relating to the timemodified field does not change
      * when doing a course restore.
      */
-    public function test_usercompletion_date_restore() {
+    public function test_usercompletion_date_restore(): void {
         global $USER, $DB;
         // More completion...
         $course = $this->getDataGenerator()->create_course(['startdate' => time(), 'enablecompletion' => 1]);
@@ -322,7 +322,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * when doing a course restore.
      * @covers ::backup_and_restore
      */
-    public function test_usercompletion_view_restore() {
+    public function test_usercompletion_view_restore(): void {
         global $DB;
         // More completion...
         $course = $this->getDataGenerator()->create_course(['startdate' => time(), 'enablecompletion' => 1]);
@@ -356,7 +356,7 @@ class restore_stepslib_date_test extends \restore_date_testcase {
      * Ensuring that the timemodified field of the question attempt steps table does not change when
      * a course restore is done.
      */
-    public function test_question_attempt_steps_date_restore() {
+    public function test_question_attempt_steps_date_restore(): void {
         global $DB;
 
         $course = $this->getDataGenerator()->create_course(['startdate' => time()]);

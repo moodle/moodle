@@ -28,7 +28,7 @@ class util_test extends \advanced_testcase {
     /**
      * @dataProvider set_table_modified_by_sql_provider
      */
-    public function test_set_table_modified_by_sql($sql, $expectations) {
+    public function test_set_table_modified_by_sql($sql, $expectations): void {
         \phpunit_util::reset_updated_table_list();
         \phpunit_util::set_table_modified_by_sql($sql);
         foreach ($expectations as $table => $present) {

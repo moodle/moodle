@@ -45,7 +45,7 @@ class factor_test extends \advanced_testcase {
     /**
      * Test code validation of the TOTP factor
      */
-    public function test_validate_code() {
+    public function test_validate_code(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -123,7 +123,7 @@ class factor_test extends \advanced_testcase {
      *
      * @covers ::setup_user_factor
      */
-    public function test_wont_store_same_secret_twice() {
+    public function test_wont_store_same_secret_twice(): void {
         global $DB;
         $this->resetAfterTest(true);
         $user = $this->getDataGenerator()->create_user();

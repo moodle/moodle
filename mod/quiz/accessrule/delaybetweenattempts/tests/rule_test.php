@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/delaybetweenattempts/rule.php
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rule_test extends \basic_testcase {
-    public function test_just_first_delay() {
+    public function test_just_first_delay(): void {
         $quiz = new \stdClass();
         $quiz->attempts = 3;
         $quiz->timelimit = 0;
@@ -68,7 +68,7 @@ class rule_test extends \basic_testcase {
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
     }
 
-    public function test_just_second_delay() {
+    public function test_just_second_delay(): void {
         $quiz = new \stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 0;
@@ -107,7 +107,7 @@ class rule_test extends \basic_testcase {
             get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
     }
 
-    public function test_just_both_delays() {
+    public function test_just_both_delays(): void {
         $quiz = new \stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 0;
@@ -158,7 +158,7 @@ class rule_test extends \basic_testcase {
             get_string('youmustwait', 'quizaccess_delaybetweenattempts', userdate(10001)));
     }
 
-    public function test_with_close_date() {
+    public function test_with_close_date(): void {
         $quiz = new \stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 0;
@@ -214,7 +214,7 @@ class rule_test extends \basic_testcase {
         $this->assertFalse($rule->prevent_new_attempt(2, $attempt));
     }
 
-    public function test_time_limit_and_overdue() {
+    public function test_time_limit_and_overdue(): void {
         $quiz = new \stdClass();
         $quiz->attempts = 5;
         $quiz->timelimit = 100;

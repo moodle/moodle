@@ -66,7 +66,7 @@ class area_category_test extends \advanced_testcase {
     /**
      * Test default values.
      */
-    public function test_default_values() {
+    public function test_default_values(): void {
         $category = new \core_search\area_category('test_name', 'test_visiblename');
 
         $this->assertEquals('test_name', $category->get_name());
@@ -78,7 +78,7 @@ class area_category_test extends \advanced_testcase {
     /**
      * Test that all get functions work as expected.
      */
-    public function test_getters() {
+    public function test_getters(): void {
         $category = new \core_search\area_category('test_name', 'test_visiblename', 4, $this->get_areas());
 
         $this->assertEquals('test_name', $category->get_name());
@@ -95,7 +95,7 @@ class area_category_test extends \advanced_testcase {
     /**
      * Test that a list of areas could be set correctly.
      */
-    public function test_list_of_areas_could_be_set() {
+    public function test_list_of_areas_could_be_set(): void {
         $category = new \core_search\area_category('test_name', 'test_visiblename');
         $this->assertEquals([], $category->get_areas());
 

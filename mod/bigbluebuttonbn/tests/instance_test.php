@@ -593,7 +593,7 @@ class instance_test extends advanced_testcase {
      *
      * @covers ::get_guest_access_url
      */
-    public function test_get_guest_access_url() {
+    public function test_get_guest_access_url(): void {
         global $CFG;
         $this->resetAfterTest();
         ['record' => $record ] = $this->get_test_instance(['guestallowed' => true]);
@@ -607,7 +607,7 @@ class instance_test extends advanced_testcase {
      *
      * @covers ::is_guest_allowed
      */
-    public function test_is_guest_allowed() {
+    public function test_is_guest_allowed(): void {
         global $CFG;
         $this->resetAfterTest();
         ['record' => $record ] = $this->get_test_instance(['guestallowed' => true]);
@@ -623,7 +623,7 @@ class instance_test extends advanced_testcase {
      *
      * @covers ::get_instance_info_retriever
      */
-    public function test_get_instance_info_retriever() {
+    public function test_get_instance_info_retriever(): void {
         $this->resetAfterTest();
         [
             'record' => $record,

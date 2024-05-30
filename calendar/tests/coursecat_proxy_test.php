@@ -27,7 +27,7 @@ use core_calendar\local\event\proxies\coursecat_proxy;
  */
 class coursecat_proxy_test extends \advanced_testcase {
 
-    public function test_valid_coursecat() {
+    public function test_valid_coursecat(): void {
         global $DB;
         $this->resetAfterTest();
 

@@ -307,7 +307,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can't create a competency framework with only read permissions.
      */
-    public function test_create_competency_frameworks_with_read_permissions() {
+    public function test_create_competency_frameworks_with_read_permissions(): void {
         $this->setUser($this->user);
 
         $this->expectException(\required_capability_exception::class);
@@ -317,7 +317,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can't create a competency framework with only read permissions.
      */
-    public function test_create_competency_frameworks_with_read_permissions_in_category() {
+    public function test_create_competency_frameworks_with_read_permissions_in_category(): void {
         $this->setUser($this->catuser);
         $this->expectException(\required_capability_exception::class);
         $result = $this->create_competency_framework(1, false);
@@ -326,7 +326,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can create a competency framework with manage permissions.
      */
-    public function test_create_competency_frameworks_with_manage_permissions() {
+    public function test_create_competency_frameworks_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
@@ -345,7 +345,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can create a competency framework with manage permissions.
      */
-    public function test_create_competency_frameworks_with_manage_permissions_in_category() {
+    public function test_create_competency_frameworks_with_manage_permissions_in_category(): void {
         $this->setUser($this->catcreator);
         $result = $this->create_competency_framework(1, false);
 
@@ -371,7 +371,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we cannot create a competency framework with nasty data.
      */
-    public function test_create_competency_frameworks_with_nasty_data() {
+    public function test_create_competency_frameworks_with_nasty_data(): void {
         $this->setUser($this->creator);
         $framework = array(
             'shortname' => 'short<a href="">',
@@ -390,7 +390,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can read a competency framework with manage permissions.
      */
-    public function test_read_competency_frameworks_with_manage_permissions() {
+    public function test_read_competency_frameworks_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
@@ -413,7 +413,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can read a competency framework with manage permissions.
      */
-    public function test_read_competency_frameworks_with_manage_permissions_in_category() {
+    public function test_read_competency_frameworks_with_manage_permissions_in_category(): void {
         $this->setUser($this->creator);
 
         $insystem = $this->create_competency_framework(1, true);
@@ -448,7 +448,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can read a competency framework with read permissions.
      */
-    public function test_read_competency_frameworks_with_read_permissions() {
+    public function test_read_competency_frameworks_with_read_permissions(): void {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
@@ -472,7 +472,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can read a competency framework with read permissions.
      */
-    public function test_read_competency_frameworks_with_read_permissions_in_category() {
+    public function test_read_competency_frameworks_with_read_permissions_in_category(): void {
         $this->setUser($this->creator);
 
         $insystem = $this->create_competency_framework(1, true);
@@ -507,7 +507,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can delete a competency framework with manage permissions.
      */
-    public function test_delete_competency_frameworks_with_manage_permissions() {
+    public function test_delete_competency_frameworks_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
@@ -521,7 +521,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can delete a competency framework with manage permissions.
      */
-    public function test_delete_competency_frameworks_with_manage_permissions_in_category() {
+    public function test_delete_competency_frameworks_with_manage_permissions_in_category(): void {
         $this->setUser($this->creator);
 
         $insystem = $this->create_competency_framework(1, true);
@@ -547,7 +547,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can delete a competency framework with read permissions.
      */
-    public function test_delete_competency_frameworks_with_read_permissions() {
+    public function test_delete_competency_frameworks_with_read_permissions(): void {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
@@ -561,7 +561,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can update a competency framework with manage permissions.
      */
-    public function test_update_competency_frameworks_with_manage_permissions() {
+    public function test_update_competency_frameworks_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
@@ -573,7 +573,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can update a competency framework with manage permissions.
      */
-    public function test_update_competency_frameworks_with_manage_permissions_in_category() {
+    public function test_update_competency_frameworks_with_manage_permissions_in_category(): void {
         $this->setUser($this->creator);
 
         $insystem = $this->create_competency_framework(1, true);
@@ -594,7 +594,7 @@ class external_test extends externallib_advanced_testcase {
         }
     }
 
-    public function test_update_framework_scale() {
+    public function test_update_framework_scale(): void {
         $this->setUser($this->creator);
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
 
@@ -628,7 +628,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can update a competency framework with read permissions.
      */
-    public function test_update_competency_frameworks_with_read_permissions() {
+    public function test_update_competency_frameworks_with_read_permissions(): void {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
 
@@ -640,7 +640,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can list and count competency frameworks with manage permissions.
      */
-    public function test_list_and_count_competency_frameworks_with_manage_permissions() {
+    public function test_list_and_count_competency_frameworks_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
         $result = $this->create_competency_framework(2, true);
@@ -671,7 +671,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(true, $result->visible);
     }
 
-    public function test_list_competency_frameworks_with_query() {
+    public function test_list_competency_frameworks_with_query(): void {
         $this->setUser($this->creator);
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework1 = $lpg->create_framework(array(
@@ -727,7 +727,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can list and count competency frameworks with read permissions.
      */
-    public function test_list_and_count_competency_frameworks_with_read_permissions() {
+    public function test_list_and_count_competency_frameworks_with_read_permissions(): void {
         $this->setUser($this->creator);
         $result = $this->create_competency_framework(1, true);
         $result = $this->create_competency_framework(2, true);
@@ -761,7 +761,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can't create a competency with only read permissions.
      */
-    public function test_create_competency_with_read_permissions() {
+    public function test_create_competency_with_read_permissions(): void {
         $framework = $this->getDataGenerator()->get_plugin_generator('core_competency')->create_framework();
         $this->setUser($this->user);
         $this->expectException(\required_capability_exception::class);
@@ -771,7 +771,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can create a competency with manage permissions.
      */
-    public function test_create_competency_with_manage_permissions() {
+    public function test_create_competency_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $competency = $this->create_competency(1, $framework->id);
@@ -791,7 +791,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can create a competency with manage permissions.
      */
-    public function test_create_competency_with_manage_permissions_in_category() {
+    public function test_create_competency_with_manage_permissions_in_category(): void {
         $this->setUser($this->creator);
 
         $insystem = $this->create_competency_framework(1, true);
@@ -822,7 +822,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we cannot create a competency with nasty data.
      */
-    public function test_create_competency_with_nasty_data() {
+    public function test_create_competency_with_nasty_data(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $competency = array(
@@ -842,7 +842,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can read a competency with manage permissions.
      */
-    public function test_read_competencies_with_manage_permissions() {
+    public function test_read_competencies_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $competency = $this->create_competency(1, $framework->id);
@@ -865,7 +865,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can read a competency with manage permissions.
      */
-    public function test_read_competencies_with_manage_permissions_in_category() {
+    public function test_read_competencies_with_manage_permissions_in_category(): void {
         $this->setUser($this->creator);
 
         $sysframework = $this->create_competency_framework(1, true);
@@ -900,7 +900,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can read a competency with read permissions.
      */
-    public function test_read_competencies_with_read_permissions() {
+    public function test_read_competencies_with_read_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $competency = $this->create_competency(1, $framework->id);
@@ -925,7 +925,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can read a competency with read permissions.
      */
-    public function test_read_competencies_with_read_permissions_in_category() {
+    public function test_read_competencies_with_read_permissions_in_category(): void {
         $this->setUser($this->creator);
         $sysframework = $this->create_competency_framework(1, true);
         $insystem = $this->create_competency(1, $sysframework->id);
@@ -959,7 +959,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can delete a competency with manage permissions.
      */
-    public function test_delete_competency_with_manage_permissions() {
+    public function test_delete_competency_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $result = $this->create_competency(1, $framework->id);
@@ -974,7 +974,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can delete a competency with manage permissions.
      */
-    public function test_delete_competency_with_manage_permissions_in_category() {
+    public function test_delete_competency_with_manage_permissions_in_category(): void {
         $this->setUser($this->creator);
 
         $sysframework = $this->create_competency_framework(1, true);
@@ -1000,7 +1000,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can delete a competency with read permissions.
      */
-    public function test_delete_competency_with_read_permissions() {
+    public function test_delete_competency_with_read_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $result = $this->create_competency(1, $framework->id);
@@ -1015,7 +1015,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can update a competency with manage permissions.
      */
-    public function test_update_competency_with_manage_permissions() {
+    public function test_update_competency_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $result = $this->create_competency(1, $framework->id);
@@ -1028,7 +1028,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can update a competency with manage permissions.
      */
-    public function test_update_competency_with_manage_permissions_in_category() {
+    public function test_update_competency_with_manage_permissions_in_category(): void {
         $this->setUser($this->creator);
 
         $sysframework = $this->create_competency_framework(1, true);
@@ -1053,7 +1053,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can update a competency with read permissions.
      */
-    public function test_update_competency_with_read_permissions() {
+    public function test_update_competency_with_read_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $result = $this->create_competency(1, $framework->id);
@@ -1066,7 +1066,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test count competencies with filters.
      */
-    public function test_count_competencies_with_filters() {
+    public function test_count_competencies_with_filters(): void {
         $this->setUser($this->creator);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -1094,7 +1094,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can list and count competencies with manage permissions.
      */
-    public function test_list_and_count_competencies_with_manage_permissions() {
+    public function test_list_and_count_competencies_with_manage_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $result = $this->create_competency(1, $framework->id);
@@ -1123,7 +1123,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can list and count competencies with read permissions.
      */
-    public function test_list_and_count_competencies_with_read_permissions() {
+    public function test_list_and_count_competencies_with_read_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $result = $this->create_competency(1, $framework->id);
@@ -1154,7 +1154,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can search for competencies.
      */
-    public function test_search_competencies_with_read_permissions() {
+    public function test_search_competencies_with_read_permissions(): void {
         $this->setUser($this->creator);
         $framework = $this->create_competency_framework(1, true);
         $result = $this->create_competency(1, $framework->id);
@@ -1180,7 +1180,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test plans creation and updates.
      */
-    public function test_create_and_update_plans() {
+    public function test_create_and_update_plans(): void {
         $syscontext = \context_system::instance();
 
         $this->setUser($this->creator);
@@ -1253,7 +1253,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test complete plan.
      */
-    public function test_complete_plan() {
+    public function test_complete_plan(): void {
         $syscontext = \context_system::instance();
 
         $this->setUser($this->creator);
@@ -1275,7 +1275,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test reopen plan.
      */
-    public function test_reopen_plan() {
+    public function test_reopen_plan(): void {
         $syscontext = \context_system::instance();
 
         $this->setUser($this->creator);
@@ -1298,7 +1298,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test that we can read plans.
      */
-    public function test_read_plans() {
+    public function test_read_plans(): void {
         global $OUTPUT;
         $this->setUser($this->creator);
 
@@ -1442,7 +1442,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals((array)$plan3, external::read_plan($plan3->id));
     }
 
-    public function test_delete_plans() {
+    public function test_delete_plans(): void {
         $this->setUser($this->creator);
 
         $syscontext = \context_system::instance();
@@ -1490,7 +1490,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertTrue(external::delete_plan($plan4->id));
     }
 
-    public function test_delete_plan_removes_relations() {
+    public function test_delete_plan_removes_relations(): void {
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
         $lpg = $dg->get_plugin_generator('core_competency');
@@ -1518,7 +1518,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(0, user_competency_plan::count_records(array('planid' => $plan->get('id'), 'userid' => $user->id)));
     }
 
-    public function test_list_plan_competencies() {
+    public function test_list_plan_competencies(): void {
         $this->setUser($this->creator);
 
         $dg = $this->getDataGenerator();
@@ -1596,7 +1596,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(1, $result[2]['usercompetencyplan']['proficiency']);
     }
 
-    public function test_add_competency_to_template() {
+    public function test_add_competency_to_template(): void {
         $this->setUser($this->creator);
 
         $syscontext = \context_system::instance();
@@ -1627,7 +1627,7 @@ class external_test extends externallib_advanced_testcase {
         }
     }
 
-    public function test_remove_competency_from_template() {
+    public function test_remove_competency_from_template(): void {
         $syscontext = \context_system::instance();
         $this->setUser($this->creator);
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -1667,7 +1667,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can re-order competency frameworks.
      */
-    public function test_reorder_template_competencies() {
+    public function test_reorder_template_competencies(): void {
         $this->setUser($this->creator);
 
         $syscontext = \context_system::instance();
@@ -1734,7 +1734,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test we can duplicate learning plan template.
      */
-    public function test_duplicate_learning_plan_template() {
+    public function test_duplicate_learning_plan_template(): void {
         $this->setUser($this->creator);
 
         $syscontext = \context_system::instance();
@@ -1772,7 +1772,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test that we can return scale values for a scale with the scale ID.
      */
-    public function test_get_scale_values() {
+    public function test_get_scale_values(): void {
         global $DB;
 
         $this->setUser($this->creator);
@@ -1813,7 +1813,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Create a template.
      */
-    public function test_create_template() {
+    public function test_create_template(): void {
         $syscontextid = \context_system::instance()->id;
         $catcontextid = \context_coursecat::instance($this->category->id)->id;
 
@@ -1865,7 +1865,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Read a template.
      */
-    public function test_read_template() {
+    public function test_read_template(): void {
         $syscontextid = \context_system::instance()->id;
         $catcontextid = \context_coursecat::instance($this->category->id)->id;
 
@@ -1948,7 +1948,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Update a template.
      */
-    public function test_update_template() {
+    public function test_update_template(): void {
         $syscontextid = \context_system::instance()->id;
         $catcontextid = \context_coursecat::instance($this->category->id)->id;
 
@@ -2029,7 +2029,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Delete a template.
      */
-    public function test_delete_template() {
+    public function test_delete_template(): void {
         global $DB;
         $syscontextid = \context_system::instance()->id;
         $catcontextid = \context_coursecat::instance($this->category->id)->id;
@@ -2087,7 +2087,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * List templates.
      */
-    public function test_list_templates() {
+    public function test_list_templates(): void {
         $syscontextid = \context_system::instance()->id;
         $catcontextid = \context_coursecat::instance($this->category->id)->id;
 
@@ -2133,7 +2133,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * List templates using competency.
      */
-    public function test_list_templates_using_competency() {
+    public function test_list_templates_using_competency(): void {
         $this->setUser($this->creator);
 
         // Create a template.
@@ -2177,7 +2177,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals($template4->id, $comptemp4->id);
     }
 
-    public function test_count_templates() {
+    public function test_count_templates(): void {
         $syscontextid = \context_system::instance()->id;
         $catcontextid = \context_coursecat::instance($this->category->id)->id;
 
@@ -2221,7 +2221,7 @@ class external_test extends externallib_advanced_testcase {
      *
      * @return void
      */
-    public function test_add_related_competency() {
+    public function test_add_related_competency(): void {
         global $DB;
         $this->setUser($this->creator);
 
@@ -2313,7 +2313,7 @@ class external_test extends externallib_advanced_testcase {
      *
      * @return void
      */
-    public function test_remove_related_competency() {
+    public function test_remove_related_competency(): void {
         $this->setUser($this->creator);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -2349,7 +2349,7 @@ class external_test extends externallib_advanced_testcase {
      *
      * @return void
      */
-    public function test_search_competencies_including_related() {
+    public function test_search_competencies_including_related(): void {
         $this->setUser($this->creator);
 
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -2377,7 +2377,7 @@ class external_test extends externallib_advanced_testcase {
      *
      * @return void
      */
-    public function test_add_competency_to_plan() {
+    public function test_add_competency_to_plan(): void {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -2439,7 +2439,7 @@ class external_test extends externallib_advanced_testcase {
      *
      * @return void
      */
-    public function test_remove_competency_from_plan() {
+    public function test_remove_competency_from_plan(): void {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -2484,7 +2484,7 @@ class external_test extends externallib_advanced_testcase {
      *
      * @return void
      */
-    public function test_reorder_plan_competency() {
+    public function test_reorder_plan_competency(): void {
         $this->resetAfterTest(true);
         $dg = $this->getDataGenerator();
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -2549,7 +2549,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test resolving sortorder when we creating competency.
      */
-    public function test_fix_sortorder_when_creating_competency() {
+    public function test_fix_sortorder_when_creating_competency(): void {
         $this->resetAfterTest(true);
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
         $framework = $lpg->create_framework();
@@ -2566,7 +2566,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test resolving sortorder when we delete competency.
      */
-    public function test_fix_sortorder_when_delete_competency() {
+    public function test_fix_sortorder_when_delete_competency(): void {
         $this->resetAfterTest(true);
         $this->setUser($this->creator);
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -2619,7 +2619,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test resolving sortorder when moving a competency.
      */
-    public function test_fix_sortorder_when_moving_competency() {
+    public function test_fix_sortorder_when_moving_competency(): void {
         $this->resetAfterTest(true);
         $this->setUser($this->creator);
         $lpg = $this->getDataGenerator()->get_plugin_generator('core_competency');
@@ -2676,7 +2676,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals(2, $c2a->get('sortorder'));
     }
 
-    public function test_grade_competency() {
+    public function test_grade_competency(): void {
         global $CFG;
 
         $this->setUser($this->creator);
@@ -2697,7 +2697,7 @@ class external_test extends externallib_advanced_testcase {
         $evidence = external::grade_competency($this->user->id, $c1->get('id'), 1);
     }
 
-    public function test_grade_competency_in_course() {
+    public function test_grade_competency_in_course(): void {
         global $CFG;
 
         $this->setUser($this->creator);
@@ -2723,7 +2723,7 @@ class external_test extends externallib_advanced_testcase {
         $evidence = external::grade_competency_in_course($course->id, $this->user->id, $c1->get('id'), 1);
     }
 
-    public function test_grade_competency_in_plan() {
+    public function test_grade_competency_in_plan(): void {
         global $CFG;
 
         $this->setUser($this->creator);
@@ -2757,7 +2757,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test update course competency settings.
      */
-    public function test_update_course_competency_settings() {
+    public function test_update_course_competency_settings(): void {
         $this->resetAfterTest(true);
 
         $dg = $this->getDataGenerator();
@@ -2803,7 +2803,7 @@ class external_test extends externallib_advanced_testcase {
      *
      * @return void
      */
-    public function test_list_competencies_with_filter() {
+    public function test_list_competencies_with_filter(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();
@@ -2842,7 +2842,7 @@ class external_test extends externallib_advanced_testcase {
      *
      * @return void
      */
-    public function test_list_competencies_with_course_module() {
+    public function test_list_competencies_with_course_module(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
         $dg = $this->getDataGenerator();

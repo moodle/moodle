@@ -58,7 +58,7 @@ w==" alt="This is a bus." />';
 EOF;
 
 
-    public function test_build_all_accessibilitytools() {
+    public function test_build_all_accessibilitytools(): void {
         $tools = tool::build_all_accessibilitytools();
 
         $this->assertEquals($tools['errors']::toolshortname(), 'Error list');
@@ -68,14 +68,14 @@ EOF;
         $this->assertEquals($tools['advanced']::toolshortname(), 'Advanced');
     }
 
-    public function test_data_is_valid() {
+    public function test_data_is_valid(): void {
         $object = $this->getMockForAbstractClass(tool::class);
         $object->set_filter(new filter());
         $output = $object->data_is_valid();
         $this->assertFalse($output);
     }
 
-    public function test_can_access() {
+    public function test_can_access(): void {
         $this->resetAfterTest();
         $category = $this->getDataGenerator()->create_category();
         $filter = new filter(1, $category->id, 'tab', 3, 4);
@@ -86,14 +86,14 @@ EOF;
         $this->assertFalse($output);
     }
 
-    public function test_get_error_message() {
+    public function test_get_error_message(): void {
         $tool = $this->getMockForAbstractClass(tool::class);
 
         $output = $tool->get_error_message();
         $this->assertEquals($output, '');
     }
 
-    public function test_get_module_label() {
+    public function test_get_module_label(): void {
         $output = tool::get_module_label('core_course');
         $this->assertEquals($output, 'Course');
 
@@ -101,7 +101,7 @@ EOF;
         $this->assertEquals($output, 'Book');
     }
 
-    public function test_toplevel_arguments() {
+    public function test_toplevel_arguments(): void {
         $this->resetAfterTest();
         $category = $this->getDataGenerator()->create_category();
         $filter = new filter(1, $category->id, 'tab', 3, 4);
@@ -154,14 +154,14 @@ EOF;
      * @param string $content
      * @param bool $expectation
      */
-    public function test_base64_img_detected(string $content, bool $expectation) {
+    public function test_base64_img_detected(string $content, bool $expectation): void {
         $this->assertEquals(
             $expectation,
             tool::base64_img_detected($content)
         );
     }
 
-    public function test_truncate_base64() {
+    public function test_truncate_base64(): void {
         $truncated = tool::truncate_base64($this->base64img);
         $this->assertStringContainsString('<img src="data:image/gif;base64..."', $truncated);
     }

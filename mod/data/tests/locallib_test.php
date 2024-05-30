@@ -35,7 +35,7 @@ class locallib_test extends \advanced_testcase {
      * Confirms that search is working
      * @covers ::data_search_entries
      */
-    public function test_data_search_entries() {
+    public function test_data_search_entries(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();

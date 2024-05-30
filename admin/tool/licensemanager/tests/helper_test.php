@@ -34,7 +34,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 class helper_test extends advanced_testcase {
 
-    public function test_convert_version_to_epoch() {
+    public function test_convert_version_to_epoch(): void {
 
         $version = '2020010100';
         $expected = strtotime(20200101);

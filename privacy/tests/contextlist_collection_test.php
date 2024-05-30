@@ -44,7 +44,7 @@ class contextlist_collection_test extends advanced_testcase {
      *
      * @covers ::add_contextlist
      */
-    public function test_supports_contextlist() {
+    public function test_supports_contextlist(): void {
         $uit = new contextlist_collection(1);
         $contextlist = new contextlist();
         $contextlist->set_component('core_privacy');
@@ -58,7 +58,7 @@ class contextlist_collection_test extends advanced_testcase {
      *
      * @covers ::add_contextlist
      */
-    public function test_supports_approved_contextlist() {
+    public function test_supports_approved_contextlist(): void {
         $uit = new contextlist_collection(1);
         $testuser = \core_user::get_user_by_username('admin');
         $contextids = [3, 2, 1];
@@ -72,7 +72,7 @@ class contextlist_collection_test extends advanced_testcase {
      *
      * @covers ::get_contextlist_for_component
      */
-    public function test_get_contextlist_for_component() {
+    public function test_get_contextlist_for_component(): void {
         $uit = new contextlist_collection(1);
         $coretests = new contextlist();
         $coretests->set_component('core_tests');
@@ -93,7 +93,7 @@ class contextlist_collection_test extends advanced_testcase {
      *
      * @covers ::get_contextlist_for_component
      */
-    public function test_get_contextlist_for_component_not_found() {
+    public function test_get_contextlist_for_component_not_found(): void {
         $uit = new contextlist_collection(1);
 
         $this->assertNull($uit->get_contextlist_for_component('core_tests'));
@@ -104,7 +104,7 @@ class contextlist_collection_test extends advanced_testcase {
      *
      * @covers ::add_contextlist
      */
-    public function test_duplicate_addition_throws() {
+    public function test_duplicate_addition_throws(): void {
         $uit = new contextlist_collection(1);
 
         $coretests = new contextlist();
@@ -120,7 +120,7 @@ class contextlist_collection_test extends advanced_testcase {
      *
      * @covers ::count
      */
-    public function test_countable() {
+    public function test_countable(): void {
         $uit = new contextlist_collection(1);
 
         $contextlist = new contextlist();
@@ -143,7 +143,7 @@ class contextlist_collection_test extends advanced_testcase {
      * @covers ::rewind
      * @covers ::valid
      */
-    public function test_iteration() {
+    public function test_iteration(): void {
         $uit = new contextlist_collection(1);
 
         $testdata = [];
@@ -178,7 +178,7 @@ class contextlist_collection_test extends advanced_testcase {
      *
      * @covers ::get_userid
      */
-    public function test_get_userid() {
+    public function test_get_userid(): void {
         $uit = new contextlist_collection(1);
 
         $this->assertEquals(1, $uit->get_userid());
@@ -187,7 +187,7 @@ class contextlist_collection_test extends advanced_testcase {
     /**
      * Test that an exception is thrown if a contextlist does not contain a component.
      */
-    public function test_add_without_component() {
+    public function test_add_without_component(): void {
         $uit = new contextlist_collection(1);
 
         $this->expectException(moodle_exception::class);

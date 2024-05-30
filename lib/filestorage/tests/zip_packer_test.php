@@ -65,7 +65,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
         );
     }
 
-    public function test_get_packer() {
+    public function test_get_packer(): void {
         $this->resetAfterTest(false);
         $packer = get_file_packer();
         $this->assertInstanceOf('zip_packer', $packer);
@@ -77,7 +77,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_get_packer
      */
-    public function test_list_files() {
+    public function test_list_files(): void {
         $this->resetAfterTest(false);
 
         $files = array(
@@ -140,7 +140,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_list_files
      */
-    public function test_archive_to_pathname() {
+    public function test_archive_to_pathname(): void {
         global $CFG;
 
         $this->resetAfterTest(false);
@@ -198,7 +198,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_archive_to_pathname
      */
-    public function test_archive_to_storage() {
+    public function test_archive_to_storage(): void {
         $this->resetAfterTest(false);
 
         $packer = get_file_packer('application/zip');
@@ -221,7 +221,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_archive_to_storage
      */
-    public function test_extract_to_pathname() {
+    public function test_extract_to_pathname(): void {
         global $CFG;
 
         $this->resetAfterTest(false);
@@ -264,7 +264,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
      *
      * @link https://bugs.php.net/bug.php?id=77214
      */
-    public function test_zip_entry_path_having_folder_ending_with_dot() {
+    public function test_zip_entry_path_having_folder_ending_with_dot(): void {
         global $CFG;
 
         $this->resetAfterTest(false);
@@ -335,7 +335,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_archive_to_storage
      */
-    public function test_extract_to_pathname_onlyfiles() {
+    public function test_extract_to_pathname_onlyfiles(): void {
         global $CFG;
 
         $this->resetAfterTest(false);
@@ -375,7 +375,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_archive_to_storage
      */
-    public function test_extract_to_pathname_returnvalue_successful() {
+    public function test_extract_to_pathname_returnvalue_successful(): void {
         global $CFG;
 
         $this->resetAfterTest(false);
@@ -393,7 +393,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_archive_to_storage
      */
-    public function test_extract_to_pathname_returnvalue_failure() {
+    public function test_extract_to_pathname_returnvalue_failure(): void {
         global $CFG;
 
         $this->resetAfterTest(false);
@@ -410,7 +410,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_archive_to_storage
      */
-    public function test_extract_to_storage() {
+    public function test_extract_to_storage(): void {
         global $CFG;
 
         $this->resetAfterTest(false);
@@ -450,7 +450,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_extract_to_storage
      */
-    public function test_add_files() {
+    public function test_add_files(): void {
         global $CFG;
 
         $this->resetAfterTest(false);
@@ -489,7 +489,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
         unlink($archive);
     }
 
-    public function test_close_archive() {
+    public function test_close_archive(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -559,7 +559,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * @depends test_add_files
      */
-    public function test_open_archive() {
+    public function test_open_archive(): void {
         global $CFG;
 
         $this->resetAfterTest(true);
@@ -606,7 +606,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Test opening an encrypted archive
      */
-    public function test_open_encrypted_archive() {
+    public function test_open_encrypted_archive(): void {
         $this->resetAfterTest();
 
         // The archive contains a single encrypted "hello.txt" file.
@@ -624,7 +624,7 @@ class zip_packer_test extends \advanced_testcase implements file_progress {
     /**
      * Tests the progress reporting.
      */
-    public function test_file_progress() {
+    public function test_file_progress(): void {
         global $CFG;
 
         // Set up.

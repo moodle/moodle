@@ -105,7 +105,7 @@ class prediction_actions_test extends \advanced_testcase {
     /**
      * test_get_predictions
      */
-    public function test_action_executed() {
+    public function test_action_executed(): void {
         global $DB;
 
         $this->assertEquals(0, $DB->count_records('analytics_prediction_actions'));
@@ -196,7 +196,7 @@ class prediction_actions_test extends \advanced_testcase {
      *
      * @covers \core_analytics\prediction::get_executed_actions
      */
-    public function test_get_executed_actions(array $actionstoexecute, array $actionnamefilter, int $returned) {
+    public function test_get_executed_actions(array $actionstoexecute, array $actionnamefilter, int $returned): void {
 
         $this->setUser($this->teacher2);
         list($ignored, $predictions) = $this->model->get_predictions($this->context, true);
@@ -213,7 +213,7 @@ class prediction_actions_test extends \advanced_testcase {
     /**
      * test_get_predictions
      */
-    public function test_get_predictions() {
+    public function test_get_predictions(): void {
         global $DB;
 
         // Already logged in as admin.

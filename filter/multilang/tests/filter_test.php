@@ -135,7 +135,7 @@ class filter_test extends \advanced_testcase {
      * @param string $targetlang the laguage to set as the current languge .
      * @param array $parentlangs Array child lang => parent lang. E.g. ['es_co' => 'es', 'es_mx' => 'es'].
      */
-    public function test_filtering($expectedoutput, $input, $targetlang, $parentlangs = []) {
+    public function test_filtering($expectedoutput, $input, $targetlang, $parentlangs = []): void {
         global $SESSION;
         $SESSION->forcelang = $targetlang;
 

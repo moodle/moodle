@@ -38,7 +38,7 @@ class file_node_test extends \repository_googledocs_testcase {
      * @param array $configsettings The googledoc repository config settings that should be set
      * @param array|null $expected The expected repository file node array
      */
-    public function test_create_node_array(\stdClass $gdfile, array $configsettings, ?array $expected) {
+    public function test_create_node_array(\stdClass $gdfile, array $configsettings, ?array $expected): void {
         $this->resetAfterTest();
         // Set the required config settings.
         array_walk($configsettings, function($value, $name) {

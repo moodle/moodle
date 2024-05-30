@@ -31,7 +31,7 @@ class message_test extends \advanced_testcase {
     /**
      * Test the method get_eventobject_for_processor().
      */
-    public function test_get_eventobject_for_processor() {
+    public function test_get_eventobject_for_processor(): void {
         global $USER;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -121,7 +121,7 @@ class message_test extends \advanced_testcase {
     /**
      * Test sending messages as email works with the new class.
      */
-    public function test_send_message() {
+    public function test_send_message(): void {
         global $DB, $CFG;
         $this->preventResetByRollback();
         $this->resetAfterTest();
@@ -217,7 +217,7 @@ class message_test extends \advanced_testcase {
         $sink->close();
     }
 
-    public function test_send_message_with_prefix() {
+    public function test_send_message_with_prefix(): void {
         global $DB, $CFG;
         $this->preventResetByRollback();
         $this->resetAfterTest();

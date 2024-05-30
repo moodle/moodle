@@ -46,7 +46,7 @@ class search_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_attach_files() {
+    public function test_attach_files(): void {
         global $USER;
 
         $this->resetAfterTest(true);

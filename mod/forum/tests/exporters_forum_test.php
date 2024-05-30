@@ -30,7 +30,7 @@ class exporters_forum_test extends \advanced_testcase {
     /**
      * Test the export function returns expected values.
      */
-    public function test_export() {
+    public function test_export(): void {
         global $PAGE;
         $this->resetAfterTest();
 

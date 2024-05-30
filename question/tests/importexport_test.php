@@ -56,7 +56,7 @@ class testable_qformat extends qformat_default {
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class importexport_test extends \advanced_testcase {
-    public function test_assemble_category_path() {
+    public function test_assemble_category_path(): void {
         $format = new testable_qformat();
         $pathsections = [
             '$course$',
@@ -70,7 +70,7 @@ class importexport_test extends \advanced_testcase {
                 $format->assemble_category_path($pathsections));
     }
 
-    public function test_split_category_path() {
+    public function test_split_category_path(): void {
         $format = new testable_qformat();
         $path = '$course$/Tim\'s questions/Tricky things like // //// and so on/Category name ending in // / // and one that starts with one/<span lang="en" class="multilang">Matematically<//span> <span lang="sv" class="multilang">Matematiskt (svenska)<//span>';
         $this->assertEquals([
@@ -83,13 +83,13 @@ class importexport_test extends \advanced_testcase {
                 ], $format->split_category_path($path));
     }
 
-    public function test_split_category_path_cleans() {
+    public function test_split_category_path_cleans(): void {
         $format = new testable_qformat();
         $path = '<evil>Nasty <virus //> thing<//evil>';
         $this->assertEquals(['Nasty  thing'], $format->split_category_path($path));
     }
 
-    public function test_clean_question_name() {
+    public function test_clean_question_name(): void {
         $format = new testable_qformat();
 
         $name = 'Nice simple name';
@@ -121,7 +121,7 @@ class importexport_test extends \advanced_testcase {
         $this->assertEquals(shorten_text($name, 1), $format->clean_question_name($name));
     }
 
-    public function test_create_default_question_name() {
+    public function test_create_default_question_name(): void {
         $format = new testable_qformat();
 
         $text = 'Nice simple name';

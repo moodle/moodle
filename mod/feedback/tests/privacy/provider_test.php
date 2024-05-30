@@ -55,7 +55,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the contexts for a user.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $fg = $dg->get_plugin_generator('mod_feedback');
@@ -120,7 +120,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the users in a context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $fg = $dg->get_plugin_generator('mod_feedback');
@@ -197,7 +197,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deleting user data.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $fg = $dg->get_plugin_generator('mod_feedback');
@@ -251,7 +251,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deleting data within a context for an approved userlist.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $fg = $dg->get_plugin_generator('mod_feedback');
@@ -311,7 +311,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deleting a whole context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $fg = $dg->get_plugin_generator('mod_feedback');
@@ -350,7 +350,7 @@ class provider_test extends provider_testcase {
     /**
      * Test exporting data.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         global $DB;
         $dg = $this->getDataGenerator();
         $fg = $dg->get_plugin_generator('mod_feedback');

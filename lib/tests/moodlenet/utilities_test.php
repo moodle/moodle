@@ -57,7 +57,7 @@ class utilities_test extends \advanced_testcase {
      * @covers ::is_valid_instance
      * @return void
      */
-    public function test_is_valid_instance() {
+    public function test_is_valid_instance(): void {
         global $CFG;
         $this->setAdminUser();
 
@@ -97,7 +97,7 @@ class utilities_test extends \advanced_testcase {
      * @covers ::can_user_share
      * @return void
      */
-    public function test_can_user_share() {
+    public function test_can_user_share(): void {
         global $DB;
 
         // Generate data.
@@ -157,7 +157,7 @@ class utilities_test extends \advanced_testcase {
      * @covers ::does_user_have_capability_in_any_course
      * @return void
      */
-    public function test_does_user_have_capability_in_any_course() {
+    public function test_does_user_have_capability_in_any_course(): void {
         global $DB;
 
         // Prepare data.

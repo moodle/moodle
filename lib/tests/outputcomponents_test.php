@@ -47,7 +47,7 @@ class outputcomponents_test extends \advanced_testcase {
      *
      * @deprecated since Moodle 3.11 MDL-45242
      */
-    public function test_fields_aliasing() {
+    public function test_fields_aliasing(): void {
         $fields = user_picture::fields();
         $fields = array_map('trim', explode(',', $fields));
         $this->assertTrue(in_array('id', $fields));
@@ -82,7 +82,7 @@ class outputcomponents_test extends \advanced_testcase {
     /**
      * Tests user_picture::unalias.
      */
-    public function test_fields_unaliasing() {
+    public function test_fields_unaliasing(): void {
         $fields = implode(',', \core_user\fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
@@ -109,7 +109,7 @@ class outputcomponents_test extends \advanced_testcase {
     /**
      * Tests user_picture::unalias with null values.
      */
-    public function test_fields_unaliasing_null() {
+    public function test_fields_unaliasing_null(): void {
         $fields = implode(',', \core_user\fields::get_picture_fields());
         $fields = array_map('trim', explode(',', $fields));
 
@@ -135,7 +135,7 @@ class outputcomponents_test extends \advanced_testcase {
         $this->assertSame('Value of custom1', $returned->custom1);
     }
 
-    public function test_get_url() {
+    public function test_get_url(): void {
         global $DB, $CFG, $USER;
 
         $this->resetAfterTest();
@@ -321,13 +321,13 @@ class outputcomponents_test extends \advanced_testcase {
         $this->assertSame($CFG->wwwroot.'/theme/image.php?theme=classic&component=core&rev=1&image=u%2Ff2', $up3->get_url($page, $renderer)->out(false));
     }
 
-    public function test_empty_menu() {
+    public function test_empty_menu(): void {
         $emptymenu = new custom_menu();
         $this->assertInstanceOf(custom_menu::class, $emptymenu);
         $this->assertFalse($emptymenu->has_children());
     }
 
-    public function test_basic_syntax() {
+    public function test_basic_syntax(): void {
         $definition = <<<EOF
 Moodle community|http://moodle.org
 -Moodle free support|http://moodle.org/support
@@ -372,7 +372,7 @@ EOF;
         $this->assertSame('Commercial hosting', $subitem->get_title());
     }
 
-    public function test_custommenu_mulitlang() {
+    public function test_custommenu_mulitlang(): void {
         $definition = <<<EOF
 Start|http://school.info
 Info
@@ -449,7 +449,7 @@ EOF;
         return $str;
     }
 
-    public function test_prepare() {
+    public function test_prepare(): void {
         $expecteda = array('<span class="current-page">1</span>',
             '<a href="index.php?page=1">2</a>',
             '<a href="index.php?page=2">3</a>',
@@ -478,7 +478,7 @@ EOF;
         $this->assertEquals($expectedb, $pbarb->pagelinks);
     }
 
-    public function test_pix_icon() {
+    public function test_pix_icon(): void {
         $this->resetAfterTest();
 
         $page = new \moodle_page();
@@ -510,7 +510,7 @@ EOF;
     /**
      * Test for checking the template context data for the single_select element.
      */
-    public function test_single_select() {
+    public function test_single_select(): void {
         global $PAGE;
 
         $fakename = 'fakename';
@@ -590,7 +590,7 @@ EOF;
      * Test for checking the template context data for the single_select element.
      * @covers \single_button
      */
-    public function test_single_button() {
+    public function test_single_button(): void {
         global $PAGE;
         $url = new \moodle_url('/');
         $realname = 'realname';
@@ -622,7 +622,7 @@ EOF;
      * Test for checking the template context data for the single_select element legacy API.
      * @covers \single_button
      */
-    public function test_single_button_deprecated() {
+    public function test_single_button_deprecated(): void {
         global $PAGE;
         $url = new \moodle_url('/');
         $realname = 'realname';
@@ -669,7 +669,7 @@ EOF;
     /**
      * Test for checking the template context data for the url_select element.
      */
-    public function test_url_select() {
+    public function test_url_select(): void {
         global $PAGE;
 
         $fakename = 'fakename';
@@ -771,7 +771,7 @@ EOF;
      * @param mixed $value Value for the data-block attribute
      * @param boolean $expected The expected result
      */
-    public function test_block_contents_is_fake($value, $expected) {
+    public function test_block_contents_is_fake($value, $expected): void {
         $bc = new block_contents(array());
         if ($value !== false) {
             $bc->attributes['data-block'] = $value;

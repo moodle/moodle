@@ -36,7 +36,7 @@ class events_test extends badgeslib_test {
     /**
      * Test badge awarded event.
      */
-    public function test_badge_awarded() {
+    public function test_badge_awarded(): void {
 
         $systemcontext = context_system::instance();
 
@@ -62,7 +62,7 @@ class events_test extends badgeslib_test {
      * There is no external API for creating a badge, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_badge_created() {
+    public function test_badge_created(): void {
 
         $badge = new badge($this->badgeid);
         // Trigger an event: badge created.
@@ -92,7 +92,7 @@ class events_test extends badgeslib_test {
      * Test the badge archived event.
      *
      */
-    public function test_badge_archived() {
+    public function test_badge_archived(): void {
         $badge = new badge($this->badgeid);
         $sink = $this->redirectEvents();
 
@@ -115,7 +115,7 @@ class events_test extends badgeslib_test {
      * Test the badge updated event.
      *
      */
-    public function test_badge_updated() {
+    public function test_badge_updated(): void {
         $badge = new badge($this->badgeid);
         $sink = $this->redirectEvents();
 
@@ -135,7 +135,7 @@ class events_test extends badgeslib_test {
     /**
      * Test the badge deleted event.
      */
-    public function test_badge_deleted() {
+    public function test_badge_deleted(): void {
         $badge = new badge($this->badgeid);
         $sink = $this->redirectEvents();
 
@@ -157,7 +157,7 @@ class events_test extends badgeslib_test {
      * Test the badge duplicated event.
      *
      */
-    public function test_badge_duplicated() {
+    public function test_badge_duplicated(): void {
         $badge = new badge($this->badgeid);
         $sink = $this->redirectEvents();
 
@@ -179,7 +179,7 @@ class events_test extends badgeslib_test {
      * Test the badge disabled event.
      *
      */
-    public function test_badge_disabled() {
+    public function test_badge_disabled(): void {
         $badge = new badge($this->badgeid);
         $sink = $this->redirectEvents();
 
@@ -202,7 +202,7 @@ class events_test extends badgeslib_test {
      * Test the badge enabled event.
      *
      */
-    public function test_badge_enabled() {
+    public function test_badge_enabled(): void {
         $badge = new badge($this->badgeid);
         $sink = $this->redirectEvents();
 
@@ -227,7 +227,7 @@ class events_test extends badgeslib_test {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_badge_criteria_created() {
+    public function test_badge_criteria_created(): void {
 
         $badge = new badge($this->badgeid);
 
@@ -257,7 +257,7 @@ class events_test extends badgeslib_test {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_badge_criteria_updated() {
+    public function test_badge_criteria_updated(): void {
 
         $criteriaoverall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $this->badgeid));
         $criteriaoverall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL));
@@ -290,7 +290,7 @@ class events_test extends badgeslib_test {
      * There is no external API for this, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_badge_criteria_deleted() {
+    public function test_badge_criteria_deleted(): void {
 
         $criteriaoverall = award_criteria::build(array('criteriatype' => BADGE_CRITERIA_TYPE_OVERALL, 'badgeid' => $this->badgeid));
         $criteriaoverall->save(array('agg' => BADGE_CRITERIA_AGGREGATION_ALL));
@@ -317,7 +317,7 @@ class events_test extends badgeslib_test {
      * There is no external API for viewing a badge, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_badge_viewed() {
+    public function test_badge_viewed(): void {
 
         $badge = new badge($this->badgeid);
         // Trigger an event: badge viewed.
@@ -349,7 +349,7 @@ class events_test extends badgeslib_test {
      * There is no external API for viewing a badge, so the unit test will simply
      * create and trigger the event and ensure data is returned as expected.
      */
-    public function test_badge_listing_viewed() {
+    public function test_badge_listing_viewed(): void {
 
         // Trigger an event: badge listing viewed.
         $context = context_system::instance();

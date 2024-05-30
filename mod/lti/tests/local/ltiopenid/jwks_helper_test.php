@@ -54,7 +54,7 @@ class jwks_helper_test extends \basic_testcase {
      * @param array $expected the expected outputs/exceptions.
      * @return void
      */
-    public function test_fix_jwks_alg(array $jwks, string $jwt, array $expected) {
+    public function test_fix_jwks_alg(array $jwks, string $jwt, array $expected): void {
         if (isset($expected['exception'])) {
             $this->expectException($expected['exception']);
         }

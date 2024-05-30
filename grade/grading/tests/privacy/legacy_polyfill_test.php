@@ -30,7 +30,7 @@ class legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test that the core_grading\privacy\legacy_polyfill works and that the static _export_gradingform_instance_data can be called.
      */
-    public function test_export_gradingform_instance_data() {
+    public function test_export_gradingform_instance_data(): void {
         $context = \context_system::instance();
 
         $mock = $this->createMock(test_gradingform_legacy_polyfill_mock_wrapper::class);
@@ -45,7 +45,7 @@ class legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test for _get_metadata shim.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('core_gradingform');
         $this->assertSame($collection, test_legacy_polyfill_gradingform_provider::get_metadata($collection));
     }
@@ -53,7 +53,7 @@ class legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test the _delete_gradingform_for_instances shim.
      */
-    public function test_delete_gradingform_for_instances() {
+    public function test_delete_gradingform_for_instances(): void {
         $context = \context_system::instance();
 
         $mock = $this->createMock(test_gradingform_legacy_polyfill_mock_wrapper::class);

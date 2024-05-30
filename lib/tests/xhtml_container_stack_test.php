@@ -34,7 +34,7 @@ require_once($CFG->libdir . '/outputlib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class xhtml_container_stack_test extends \advanced_testcase {
-    public function test_push_then_pop() {
+    public function test_push_then_pop(): void {
         // Set up.
         $stack = new xhtml_container_stack();
         // Exercise SUT.
@@ -45,7 +45,7 @@ class xhtml_container_stack_test extends \advanced_testcase {
         $this->assertDebuggingNotCalled();
     }
 
-    public function test_mismatched_pop_prints_warning() {
+    public function test_mismatched_pop_prints_warning(): void {
         // Set up.
         $stack = new xhtml_container_stack();
         $stack->push('testtype', '</div>');
@@ -56,7 +56,7 @@ class xhtml_container_stack_test extends \advanced_testcase {
         $this->assertDebuggingCalled();
     }
 
-    public function test_pop_when_empty_prints_warning() {
+    public function test_pop_when_empty_prints_warning(): void {
         // Set up.
         $stack = new xhtml_container_stack();
         // Exercise SUT.
@@ -66,7 +66,7 @@ class xhtml_container_stack_test extends \advanced_testcase {
         $this->assertDebuggingCalled();
     }
 
-    public function test_correct_nesting() {
+    public function test_correct_nesting(): void {
         // Set up.
         $stack = new xhtml_container_stack();
         // Exercise SUT.
@@ -80,7 +80,7 @@ class xhtml_container_stack_test extends \advanced_testcase {
         $this->assertDebuggingNotCalled();
     }
 
-    public function test_pop_all_but_last() {
+    public function test_pop_all_but_last(): void {
         // Set up.
         $stack = new xhtml_container_stack();
         $stack->push('test1', '</h1>');
@@ -95,7 +95,7 @@ class xhtml_container_stack_test extends \advanced_testcase {
         $stack->discard();
     }
 
-    public function test_pop_all_but_last_only_one() {
+    public function test_pop_all_but_last_only_one(): void {
         // Set up.
         $stack = new xhtml_container_stack();
         $stack->push('test1', '</h1>');
@@ -108,7 +108,7 @@ class xhtml_container_stack_test extends \advanced_testcase {
         $stack->discard();
     }
 
-    public function test_pop_all_but_last_empty() {
+    public function test_pop_all_but_last_empty(): void {
         // Set up.
         $stack = new xhtml_container_stack();
         // Exercise SUT.
@@ -118,7 +118,7 @@ class xhtml_container_stack_test extends \advanced_testcase {
         $this->assertDebuggingNotCalled();
     }
 
-    public function test_discard() {
+    public function test_discard(): void {
         // Set up.
         $stack = new xhtml_container_stack();
         $stack->push('test1', '</somethingdistinctive>');

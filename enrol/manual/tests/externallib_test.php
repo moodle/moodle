@@ -40,7 +40,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_enrolled_users
      */
-    public function test_enrol_users() {
+    public function test_enrol_users(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -129,7 +129,7 @@ class externallib_test extends externallib_advanced_testcase {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      */
-    public function test_unenrol_user_single() {
+    public function test_unenrol_user_single(): void {
         global $CFG, $DB;
         require_once($CFG->libdir . '/enrollib.php');
         $this->resetAfterTest(true);
@@ -163,7 +163,7 @@ class externallib_test extends externallib_advanced_testcase {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      */
-    public function test_unenrol_user_multiple() {
+    public function test_unenrol_user_multiple(): void {
         global $CFG, $DB;
         require_once($CFG->libdir . '/enrollib.php');
         $this->resetAfterTest(true);
@@ -202,7 +202,7 @@ class externallib_test extends externallib_advanced_testcase {
      * @throws invalid_parameter_exception
      * @throws moodle_exception
      */
-    public function test_unenrol_user_error_no_capability() {
+    public function test_unenrol_user_error_no_capability(): void {
         global $CFG, $DB;
         require_once($CFG->libdir . '/enrollib.php');
         $this->resetAfterTest(true);
@@ -249,7 +249,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test for unenrol if user does not exist.
      * @throws coding_exception
      */
-    public function test_unenrol_user_error_not_exist() {
+    public function test_unenrol_user_error_not_exist(): void {
         global $CFG, $DB;
         require_once($CFG->libdir . '/enrollib.php');
         $this->resetAfterTest(true);

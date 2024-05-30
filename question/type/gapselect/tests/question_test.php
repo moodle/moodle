@@ -39,21 +39,21 @@ require_once($CFG->dirroot . '/question/type/gapselect/tests/helper.php');
  */
 class question_test extends \basic_testcase {
 
-    public function test_get_question_summary() {
+    public function test_get_question_summary(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $this->assertEquals('The [[1]] brown [[2]] jumped over the [[3]] dog.; ' .
                 '[[1]] -> {quick / slow}; [[2]] -> {fox / dog}; [[3]] -> {lazy / assiduous}',
                 $gapselect->get_question_summary());
     }
 
-    public function test_get_question_summary_maths() {
+    public function test_get_question_summary_maths(): void {
         $gapselect = \test_question_maker::make_question('gapselect', 'maths');
         $this->assertEquals('Fill in the operators to make this equation work: ' .
                 '7 [[1]] 11 [[2]] 13 [[1]] 17 [[2]] 19 = 3; [[1]] -> {+ / - / * / /}',
                 $gapselect->get_question_summary());
     }
 
-    public function test_summarise_response() {
+    public function test_summarise_response(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -62,7 +62,7 @@ class question_test extends \basic_testcase {
                 $gapselect->summarise_response(array('p1' => '1', 'p2' => '1', 'p3' => '1')));
     }
 
-    public function test_summarise_response_maths() {
+    public function test_summarise_response_maths(): void {
         $gapselect = \test_question_maker::make_question('gapselect', 'maths');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -71,17 +71,17 @@ class question_test extends \basic_testcase {
                 array('p1' => '1', 'p2' => '2', 'p3' => '1', 'p4' => '2')));
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $this->assertEquals(0.5, $gapselect->get_random_guess_score());
     }
 
-    public function test_get_random_guess_score_maths() {
+    public function test_get_random_guess_score_maths(): void {
         $gapselect = \test_question_maker::make_question('gapselect', 'maths');
         $this->assertEquals(0.25, $gapselect->get_random_guess_score());
     }
 
-    public function test_get_right_choice_for() {
+    public function test_get_right_choice_for(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -90,7 +90,7 @@ class question_test extends \basic_testcase {
         $this->assertEquals(1, $gapselect->get_right_choice_for(2));
     }
 
-    public function test_get_right_choice_for_maths() {
+    public function test_get_right_choice_for_maths(): void {
         $gapselect = \test_question_maker::make_question('gapselect', 'maths');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -99,7 +99,7 @@ class question_test extends \basic_testcase {
         $this->assertEquals(2, $gapselect->get_right_choice_for(2));
     }
 
-    public function test_clear_wrong_from_response() {
+    public function test_clear_wrong_from_response(): void {
         $gapselect = \test_question_maker::make_question('gapselect', 'maths');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -109,7 +109,7 @@ class question_test extends \basic_testcase {
                 $gapselect->clear_wrong_from_response($initialresponse));
     }
 
-    public function test_get_num_parts_right() {
+    public function test_get_num_parts_right(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -120,7 +120,7 @@ class question_test extends \basic_testcase {
                 $gapselect->get_num_parts_right(array('p1' => '1', 'p2' => '1', 'p3' => '1')));
     }
 
-    public function test_get_num_parts_right_maths() {
+    public function test_get_num_parts_right_maths(): void {
         $gapselect = \test_question_maker::make_question('gapselect', 'maths');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -129,7 +129,7 @@ class question_test extends \basic_testcase {
                 array('p1' => '1', 'p2' => '1', 'p3' => '1', 'p4' => '1')));
     }
 
-    public function test_get_expected_data() {
+    public function test_get_expected_data(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
@@ -137,7 +137,7 @@ class question_test extends \basic_testcase {
                 $gapselect->get_expected_data());
     }
 
-    public function test_get_correct_response() {
+    public function test_get_correct_response(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -146,7 +146,7 @@ class question_test extends \basic_testcase {
                 $gapselect->get_correct_response());
     }
 
-    public function test_get_correct_response_maths() {
+    public function test_get_correct_response_maths(): void {
         $gapselect = \test_question_maker::make_question('gapselect', 'maths');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -155,7 +155,7 @@ class question_test extends \basic_testcase {
                 $gapselect->get_correct_response());
     }
 
-    public function test_is_same_response() {
+    public function test_is_same_response(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
@@ -179,7 +179,7 @@ class question_test extends \basic_testcase {
                 array('p1' => '1', 'p2' => '2', 'p3' => '3'),
                 array('p1' => '1', 'p2' => '2', 'p3' => '2')));
     }
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
@@ -191,7 +191,7 @@ class question_test extends \basic_testcase {
                 array('p1' => '1', 'p2' => '1', 'p3' => '1')));
     }
 
-    public function test_is_gradable_response() {
+    public function test_is_gradable_response(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->start_attempt(new question_attempt_step(), 1);
 
@@ -205,7 +205,7 @@ class question_test extends \basic_testcase {
                 array('p1' => '1', 'p2' => '1', 'p3' => '1')));
     }
 
-    public function test_grading() {
+    public function test_grading(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -218,7 +218,7 @@ class question_test extends \basic_testcase {
                 $gapselect->grade_response(array('p1' => '2', 'p2' => '2', 'p3' => '2')));
     }
 
-    public function test_grading_maths() {
+    public function test_grading_maths(): void {
         $gapselect = \test_question_maker::make_question('gapselect', 'maths');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -231,7 +231,7 @@ class question_test extends \basic_testcase {
                 array('p1' => '0', 'p2' => '1', 'p3' => '2', 'p4' => '1')));
     }
 
-    public function test_classify_response() {
+    public function test_classify_response(): void {
         $gapselect = \test_question_maker::make_question('gapselect');
         $gapselect->shufflechoices = false;
         $gapselect->start_attempt(new question_attempt_step(), 1);
@@ -251,7 +251,7 @@ class question_test extends \basic_testcase {
     /**
      * test_get_question_definition_for_external_rendering
      */
-    public function test_get_question_definition_for_external_rendering() {
+    public function test_get_question_definition_for_external_rendering(): void {
         $question = \test_question_maker::make_question('gapselect', 'maths');
         $question->start_attempt(new question_attempt_step(), 1);
         $qa = \test_question_maker::get_a_qa($question);
@@ -261,7 +261,7 @@ class question_test extends \basic_testcase {
         $this->assertEquals(1, $options['shufflechoices']);
     }
 
-    public function test_validate_can_regrade_with_other_version_ok() {
+    public function test_validate_can_regrade_with_other_version_ok(): void {
         $question = \test_question_maker::make_question('gapselect');
 
         $newquestion = clone($question);
@@ -269,7 +269,7 @@ class question_test extends \basic_testcase {
         $this->assertNull($newquestion->validate_can_regrade_with_other_version($question));
     }
 
-    public function test_validate_can_regrade_with_other_version_bad_groups() {
+    public function test_validate_can_regrade_with_other_version_bad_groups(): void {
         $question = \test_question_maker::make_question('gapselect');
 
         $newquestion = clone($question);
@@ -279,7 +279,7 @@ class question_test extends \basic_testcase {
                 $newquestion->validate_can_regrade_with_other_version($question));
     }
 
-    public function test_validate_can_regrade_with_other_version_bad_choices() {
+    public function test_validate_can_regrade_with_other_version_bad_choices(): void {
         $question = \test_question_maker::make_question('gapselect');
 
         $newquestion = clone($question);

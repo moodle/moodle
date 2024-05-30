@@ -58,7 +58,7 @@ class config_writer_test extends \advanced_testcase {
     /**
      * Test getting an instance. Pretty basic.
      */
-    public function test_instance() {
+    public function test_instance(): void {
         $config = cache_config_writer::instance();
         $this->assertInstanceOf('cache_config_writer', $config);
     }
@@ -66,7 +66,7 @@ class config_writer_test extends \advanced_testcase {
     /**
      * Test the default configuration.
      */
-    public function test_default_configuration() {
+    public function test_default_configuration(): void {
         $config = cache_config_writer::instance();
 
         // First check stores.
@@ -149,7 +149,7 @@ class config_writer_test extends \advanced_testcase {
     /**
      * Test updating the definitions.
      */
-    public function test_update_definitions() {
+    public function test_update_definitions(): void {
         $config = cache_config_writer::instance();
         // Remove the definition.
         $config->phpunit_remove_definition('core/string');
@@ -166,7 +166,7 @@ class config_writer_test extends \advanced_testcase {
     /**
      * Test adding/editing/deleting store instances.
      */
-    public function test_add_edit_delete_plugin_instance() {
+    public function test_add_edit_delete_plugin_instance(): void {
         $config = cache_config_writer::instance();
         $this->assertArrayNotHasKey('addplugintest', $config->get_all_stores());
         $this->assertArrayNotHasKey('addplugintestwlock', $config->get_all_stores());
@@ -236,7 +236,7 @@ class config_writer_test extends \advanced_testcase {
     /**
      * Test setting some mode mappings.
      */
-    public function test_set_mode_mappings() {
+    public function test_set_mode_mappings(): void {
         $config = cache_config_writer::instance();
         $this->assertTrue($config->add_store_instance('setmodetest', 'file'));
         $this->assertTrue($config->set_mode_mappings(array(
@@ -257,7 +257,7 @@ class config_writer_test extends \advanced_testcase {
     /**
      * Test setting some definition mappings.
      */
-    public function test_set_definition_mappings() {
+    public function test_set_definition_mappings(): void {
         $config = cache_config_testing::instance(true);
         $config->phpunit_add_definition('phpunit/testdefinition', array(
             'mode' => cache_store::MODE_APPLICATION,

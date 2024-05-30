@@ -37,7 +37,7 @@ require_once($CFG->libdir.'/portfolio/formats.php');
  */
 class portfoliolib_test extends advanced_testcase {
 
-    public function test_portfolio_rewrite_pluginfile_urls() {
+    public function test_portfolio_rewrite_pluginfile_urls(): void {
         $this->resetAfterTest();
 
         // File info.

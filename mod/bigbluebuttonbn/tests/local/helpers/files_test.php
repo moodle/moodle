@@ -55,7 +55,7 @@ class files_test extends \advanced_testcase {
     /**
      * Plugin valid test case
      */
-    public function test_pluginfile_valid() {
+    public function test_pluginfile_valid(): void {
         $this->resetAfterTest();
         $this->assertFalse(files::pluginfile_valid(context_course::instance($this->get_course()->id), 'presentation'));
         $this->assertTrue(files::pluginfile_valid(context_system::instance(), 'presentation'));
@@ -65,7 +65,7 @@ class files_test extends \advanced_testcase {
     /**
      * Plugin file test case
      */
-    public function test_pluginfile_file() {
+    public function test_pluginfile_file(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -84,7 +84,7 @@ class files_test extends \advanced_testcase {
     /**
      * Get presentation file
      */
-    public function test_default_presentation_get_file() {
+    public function test_default_presentation_get_file(): void {
         $this->resetAfterTest();
 
         list($user, $bbactivity) = $this->create_user_and_activity();
@@ -101,7 +101,7 @@ class files_test extends \advanced_testcase {
     /**
      * Test that file is accessible only once.
      */
-    public function test_presentation_file_accessible_twice() {
+    public function test_presentation_file_accessible_twice(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -130,7 +130,7 @@ class files_test extends \advanced_testcase {
     /**
      * Test that file is accessible only once.
      */
-    public function test_presentation_file_not_accessible_externally() {
+    public function test_presentation_file_not_accessible_externally(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -155,7 +155,7 @@ class files_test extends \advanced_testcase {
     /**
      * Get filename test
      */
-    public function test_pluginfile_filename() {
+    public function test_pluginfile_filename(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -175,7 +175,7 @@ class files_test extends \advanced_testcase {
     /**
      * Get media files
      */
-    public function test_get_media_file() {
+    public function test_get_media_file(): void {
         $this->resetAfterTest();
 
         list($user, $bbactivity) = $this->create_user_and_activity();

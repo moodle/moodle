@@ -68,20 +68,20 @@ class question_first_matching_answer_grading_strategy_test extends \advanced_tes
     protected function tearDown(): void {
     }
 
-    public function test_no_answers_gives_null() {
+    public function test_no_answers_gives_null(): void {
         $question = new test_response_answer_comparer(array());
         $strategy = new question_first_matching_answer_grading_strategy($question);
         $this->assertNull($strategy->grade(array()));
     }
 
-    public function test_matching_answer_returned1() {
+    public function test_matching_answer_returned1(): void {
         $answer = new question_answer(0, 'frog', 1, '', FORMAT_HTML);
         $question = new test_response_answer_comparer(array($answer));
         $strategy = new question_first_matching_answer_grading_strategy($question);
         $this->assertSame($answer, $strategy->grade(array('answer' => 'frog')));
     }
 
-    public function test_matching_answer_returned2() {
+    public function test_matching_answer_returned2(): void {
         $answer = new question_answer(0, 'frog', 1, '', FORMAT_HTML);
         $answer2 = new question_answer(0, 'frog', 0.5, '', FORMAT_HTML);
         $question = new test_response_answer_comparer(array($answer, $answer2));
@@ -89,7 +89,7 @@ class question_first_matching_answer_grading_strategy_test extends \advanced_tes
         $this->assertSame($answer, $strategy->grade(array('answer' => 'frog')));
     }
 
-    public function test_no_matching_answer_gives_null() {
+    public function test_no_matching_answer_gives_null(): void {
         $answer = new question_answer(0, 'frog', 1, '', FORMAT_HTML);
         $answer2 = new question_answer(0, 'frog', 0.5, '', FORMAT_HTML);
         $question = new test_response_answer_comparer(array($answer, $answer2));

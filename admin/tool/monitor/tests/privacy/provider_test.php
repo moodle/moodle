@@ -84,7 +84,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that a collection with data is returned when calling this function.
      */
-    public function test_get_metadata() {
+    public function test_get_metadata(): void {
         $collection = new \core_privacy\local\metadata\collection('tool_monitor');
         $collection = provider::get_metadata($collection);
         $this->assertNotEmpty($collection);
@@ -93,7 +93,7 @@ class provider_test extends provider_testcase {
     /**
      * Check that a user context is returned if there is any user data for this user.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
         $user = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $usercontext = \context_user::instance($user->id);
@@ -134,7 +134,7 @@ class provider_test extends provider_testcase {
     /**
      * Check that the correct userlist is returned if there is any user data for this context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         $component = 'tool_monitor';
         $user = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
@@ -183,7 +183,7 @@ class provider_test extends provider_testcase {
     /**
      * Test that user data is exported correctly.
      */
-    public function test_export_user_data() {
+    public function test_export_user_data(): void {
         $user = $this->getDataGenerator()->create_user();
         $usercontext = \context_user::instance($user->id);
         $monitorgenerator = $this->getDataGenerator()->get_plugin_generator('tool_monitor');
@@ -218,7 +218,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deleting all user data for a specific context.
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         global $DB;
 
         $user = $this->getDataGenerator()->create_user();
@@ -285,7 +285,7 @@ class provider_test extends provider_testcase {
     /**
      * This should work identical to the above test.
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $user = $this->getDataGenerator()->create_user();
@@ -342,7 +342,7 @@ class provider_test extends provider_testcase {
     /**
      * Test deleting user data for an approved userlist in a context.
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $component = 'tool_monitor';

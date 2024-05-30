@@ -87,7 +87,7 @@ class mail_group_test extends \advanced_testcase {
      * Ensure that posts written in a forum marked for separate groups includes notifications for the members of that
      * group, and any user with accessallgroups.
      */
-    public function test_separate_group() {
+    public function test_separate_group(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);
@@ -166,7 +166,7 @@ class mail_group_test extends \advanced_testcase {
      * Ensure that posts written in a forum marked for visible groups includes notifications for the members of that
      * group, and any user with accessallgroups.
      */
-    public function test_visible_group() {
+    public function test_visible_group(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);

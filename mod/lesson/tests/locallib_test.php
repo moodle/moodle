@@ -45,7 +45,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test duplicating a lesson page element.
      */
-    public function test_duplicate_page() {
+    public function test_duplicate_page(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -83,7 +83,7 @@ class locallib_test extends \advanced_testcase {
     /**
      * Test test_lesson_get_user_deadline().
      */
-    public function test_lesson_get_user_deadline() {
+    public function test_lesson_get_user_deadline(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -220,7 +220,7 @@ class locallib_test extends \advanced_testcase {
         $this->assertEquals($comparearray, lesson_get_user_deadline($course->id));
     }
 
-    public function test_is_participant() {
+    public function test_is_participant(): void {
         global $USER, $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -278,7 +278,7 @@ class locallib_test extends \advanced_testcase {
      * @param array $attempts The list of student attempts.
      * @param object $expected Expected result.
      */
-    public function test_get_last_attempt($maxattempts, $attempts, $expected) {
+    public function test_get_last_attempt($maxattempts, $attempts, $expected): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $course = $this->getDataGenerator()->create_course();

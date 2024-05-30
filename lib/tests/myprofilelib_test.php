@@ -63,7 +63,7 @@ class myprofilelib_test extends \advanced_testcase {
     /**
      * Tests the core_myprofile_navigation() function as an admin viewing a user's course profile.
      */
-    public function test_core_myprofile_navigation_as_admin() {
+    public function test_core_myprofile_navigation_as_admin(): void {
         $this->setAdminUser();
         $iscurrentuser = false;
 
@@ -87,7 +87,7 @@ class myprofilelib_test extends \advanced_testcase {
      * Tests the core_myprofile_navigation() function as a user without permission to view the full
      * profile of another another user.
      */
-    public function test_core_myprofile_navigation_course_without_permission() {
+    public function test_core_myprofile_navigation_course_without_permission(): void {
         // User without permission.
         $this->setUser($this->getDataGenerator()->create_user());
         $iscurrentuser = false;
@@ -101,7 +101,7 @@ class myprofilelib_test extends \advanced_testcase {
     /**
      * Tests the core_myprofile_navigation() function as the currently logged in user.
      */
-    public function test_core_myprofile_navigation_profile_link_as_current_user() {
+    public function test_core_myprofile_navigation_profile_link_as_current_user(): void {
         $this->setUser($this->user);
         $iscurrentuser = true;
 
@@ -114,7 +114,7 @@ class myprofilelib_test extends \advanced_testcase {
     /**
      * Tests the core_myprofile_navigation() function as the admin viewing another user.
      */
-    public function test_core_myprofile_navigation_profile_link_as_admin() {
+    public function test_core_myprofile_navigation_profile_link_as_admin(): void {
         $this->setAdminUser();
         $iscurrentuser = false;
 
@@ -127,7 +127,7 @@ class myprofilelib_test extends \advanced_testcase {
     /**
      * Tests the core_myprofile_navigation() function when viewing the preference page as an admin.
      */
-    public function test_core_myprofile_navigation_preference_as_admin() {
+    public function test_core_myprofile_navigation_preference_as_admin(): void {
         $this->setAdminUser();
         $iscurrentuser = false;
 
@@ -142,7 +142,7 @@ class myprofilelib_test extends \advanced_testcase {
      * Tests the core_myprofile_navigation() function when viewing the preference
      * page as another user without the ability to use the 'loginas' functionality.
      */
-    public function test_core_myprofile_navigation_preference_without_permission() {
+    public function test_core_myprofile_navigation_preference_without_permission(): void {
         // Login as link for a user who doesn't have the capability to login as.
         $this->setUser($this->getDataGenerator()->create_user());
         $iscurrentuser = false;
@@ -156,7 +156,7 @@ class myprofilelib_test extends \advanced_testcase {
     /**
      * Tests the core_myprofile_navigation() function as an admin viewing another user's contact details.
      */
-    public function test_core_myprofile_navigation_contact_fields_as_admin() {
+    public function test_core_myprofile_navigation_contact_fields_as_admin(): void {
         global $CFG;
 
         // User contact fields.
@@ -199,7 +199,7 @@ class myprofilelib_test extends \advanced_testcase {
      * Tests the core_myprofile_navigation() function as a user viewing another user's profile
      * ensuring that the contact details are not shown.
      */
-    public function test_core_myprofile_navigation_contact_field_without_permission() {
+    public function test_core_myprofile_navigation_contact_field_without_permission(): void {
         global $CFG;
 
         $iscurrentuser = false;
@@ -273,7 +273,7 @@ class myprofilelib_test extends \advanced_testcase {
      * Tests the core_myprofile_navigation() function as an admin viewing another user's
      * profile ensuring the login activity links are shown.
      */
-    public function test_core_myprofile_navigation_login_activity() {
+    public function test_core_myprofile_navigation_login_activity(): void {
         // First access, last access, last ip.
         $this->setAdminUser();
         $iscurrentuser = false;
@@ -290,7 +290,7 @@ class myprofilelib_test extends \advanced_testcase {
      * Tests the core_myprofile_navigation() function as a user viewing another user's profile
      * ensuring the login activity links are not shown.
      */
-    public function test_core_myprofile_navigationn_login_activity_without_permission() {
+    public function test_core_myprofile_navigationn_login_activity_without_permission(): void {
         // User without permission.
         set_config("hiddenuserfields", "firstaccess,lastaccess,lastip");
         $this->setUser($this->getDataGenerator()->create_user());

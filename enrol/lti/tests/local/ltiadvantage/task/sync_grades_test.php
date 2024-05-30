@@ -40,7 +40,7 @@ class sync_grades_test extends \lti_advantage_testcase {
      *
      * @covers ::get_name
      */
-    public function test_get_name() {
+    public function test_get_name(): void {
         $this->assertEquals(get_string('tasksyncgrades', 'enrol_lti'), (new sync_grades())->get_name());
     }
 
@@ -49,7 +49,7 @@ class sync_grades_test extends \lti_advantage_testcase {
      *
      * @covers ::execute
      */
-    public function test_sync_grades_gradesync_disabled() {
+    public function test_sync_grades_gradesync_disabled(): void {
         $this->resetAfterTest();
         [$course, $resource] = $this->create_test_environment(true, true, true, helper::MEMBER_SYNC_ENROL_AND_UNENROL,
             false);
@@ -70,7 +70,7 @@ class sync_grades_test extends \lti_advantage_testcase {
      *
      * @covers ::execute
      */
-    public function test_sync_grades_auth_plugin_disabled() {
+    public function test_sync_grades_auth_plugin_disabled(): void {
         $this->resetAfterTest();
         [$course, $resource] = $this->create_test_environment(false);
         $launchservice = $this->get_tool_launch_service();
@@ -91,7 +91,7 @@ class sync_grades_test extends \lti_advantage_testcase {
      *
      * @covers ::execute
      */
-    public function test_sync_grades_enrol_plugin_disabled() {
+    public function test_sync_grades_enrol_plugin_disabled(): void {
         $this->resetAfterTest();
         [$course, $resource] = $this->create_test_environment(true, false);
         $launchservice = $this->get_tool_launch_service();

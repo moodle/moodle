@@ -99,7 +99,7 @@ class mustache_template_finder_test extends \advanced_testcase {
     /**
      * Tests for get_template_directories_for_component when dealing with an invalid component.
      */
-    public function test_invalid_component_get_template_directories_for_component() {
+    public function test_invalid_component_get_template_directories_for_component(): void {
         // Test something invalid.
         $this->expectException(\coding_exception::class);
         mustache_template_finder::get_template_directories_for_component('octopus', 'classic');
@@ -177,7 +177,7 @@ class mustache_template_finder_test extends \advanced_testcase {
      * @param   string $theme
      * @param   string $location
      */
-    public function test_get_template_filepath(string $template, string $theme, string $location) {
+    public function test_get_template_filepath(string $template, string $theme, string $location): void {
         global $CFG;
 
         $filename = mustache_template_finder::get_template_filepath($template, $theme);
@@ -187,7 +187,7 @@ class mustache_template_finder_test extends \advanced_testcase {
     /**
      * Tests for get_template_filepath when dealing with an invalid component.
      */
-    public function test_invalid_component_get_template_filepath() {
+    public function test_invalid_component_get_template_filepath(): void {
         $this->expectException(\moodle_exception::class);
         mustache_template_finder::get_template_filepath('core/octopus', 'classic');
     }

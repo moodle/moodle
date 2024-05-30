@@ -29,7 +29,7 @@ class action_factory_test extends \advanced_testcase {
     /**
      * Test action factory.
      */
-    public function test_action_factory() {
+    public function test_action_factory(): void {
         $factory = new action_factory();
         $instance = $factory->create_instance(
             'test',

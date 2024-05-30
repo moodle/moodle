@@ -63,7 +63,7 @@ class template_test extends \advanced_testcase {
         bool $enableratings = false,
         array $options = [],
         bool $otherauthor = false
-    ) {
+    ): void {
         global $DB, $PAGE;
         // Comments, tags, approval, user role.
         $this->resetAfterTest();
@@ -852,7 +852,7 @@ class template_test extends \advanced_testcase {
         string $templatecontent,
         string $expected,
         bool $newentry = false
-    ) {
+    ): void {
         global $DB, $PAGE;
         // Comments, tags, approval, user role.
         $this->resetAfterTest();

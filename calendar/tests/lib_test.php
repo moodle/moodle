@@ -44,7 +44,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test that the get_events() function only returns activity events that are enabled.
      */
-    public function test_get_events_with_disabled_module() {
+    public function test_get_events_with_disabled_module(): void {
         global $DB;
         $this->setAdminUser();
         $generator = $this->getDataGenerator();
@@ -106,7 +106,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals('assign', $event->modulename);
     }
 
-    public function test_get_course_cached() {
+    public function test_get_course_cached(): void {
         // Setup some test courses.
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -141,7 +141,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test the update_subscription() function.
      */
-    public function test_update_subscription() {
+    public function test_update_subscription(): void {
         $this->resetAfterTest(true);
 
         $subscription = new \stdClass();
@@ -169,7 +169,7 @@ class lib_test extends \advanced_testcase {
         calendar_update_subscription($subscription);
     }
 
-    public function test_add_subscription() {
+    public function test_add_subscription(): void {
         global $DB, $CFG;
 
         require_once($CFG->dirroot . '/lib/bennu/bennu.inc.php');
@@ -253,7 +253,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test for calendar_get_legacy_events() when there are user and group overrides.
      */
-    public function test_get_legacy_events_with_overrides() {
+    public function test_get_legacy_events_with_overrides(): void {
         $generator = $this->getDataGenerator();
 
         $course = $generator->create_course();
@@ -439,7 +439,7 @@ class lib_test extends \advanced_testcase {
         $this->assertCount(3, $events);
     }
 
-    public function test_calendar_get_default_courses() {
+    public function test_calendar_get_default_courses(): void {
         global $USER, $CFG;
 
         $this->resetAfterTest(true);
@@ -519,7 +519,7 @@ class lib_test extends \advanced_testcase {
      * Confirm that the skip events flag causes the calendar_get_view function
      * to avoid querying for the calendar events.
      */
-    public function test_calendar_get_view_skip_events() {
+    public function test_calendar_get_view_skip_events(): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -544,7 +544,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($event->id, $data->events[0]->id);
     }
 
-    public function test_calendar_get_allowed_event_types_course() {
+    public function test_calendar_get_allowed_event_types_course(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course1 = $generator->create_course(); // Has capability.
@@ -595,7 +595,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($types['course']);
     }
 
-    public function test_calendar_get_allowed_event_types_group_no_acces_to_diff_groups() {
+    public function test_calendar_get_allowed_event_types_group_no_acces_to_diff_groups(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
@@ -622,7 +622,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($types['group']);
     }
 
-    public function test_calendar_get_allowed_event_types_group_no_groups() {
+    public function test_calendar_get_allowed_event_types_group_no_groups(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
@@ -644,7 +644,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($types['group']);
     }
 
-    public function test_calendar_get_allowed_event_types_group_access_all_groups() {
+    public function test_calendar_get_allowed_event_types_group_access_all_groups(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course1 = $generator->create_course();
@@ -673,7 +673,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($types['group']);
     }
 
-    public function test_calendar_get_allowed_event_types_group_no_access_all_groups() {
+    public function test_calendar_get_allowed_event_types_group_no_access_all_groups(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
@@ -706,7 +706,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($types['group']);
     }
 
-    public function test_calendar_get_allowed_event_types_group_cap_no_groups() {
+    public function test_calendar_get_allowed_event_types_group_cap_no_groups(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
@@ -728,7 +728,7 @@ class lib_test extends \advanced_testcase {
         $this->assertFalse($types['group']);
     }
 
-    public function test_calendar_get_allowed_event_types_group_cap_has_group() {
+    public function test_calendar_get_allowed_event_types_group_cap_has_group(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
@@ -751,7 +751,7 @@ class lib_test extends \advanced_testcase {
         $this->assertTrue($types['group']);
     }
 
-    public function test_calendar_get_allowed_event_types_group_cap_access_all_groups() {
+    public function test_calendar_get_allowed_event_types_group_cap_access_all_groups(): void {
         $generator = $this->getDataGenerator();
         $user = $generator->create_user();
         $course = $generator->create_course();
@@ -822,7 +822,7 @@ class lib_test extends \advanced_testcase {
     /**
      * This function tests calendar_set_filters for the case when user is not logged in.
      */
-    public function test_calendar_set_filters_not_logged_in() {
+    public function test_calendar_set_filters_not_logged_in(): void {
         $this->resetAfterTest();
 
         list($users, $courses, $coursegroups) = $this->setup_test_calendar_set_filters();
@@ -840,7 +840,7 @@ class lib_test extends \advanced_testcase {
     /**
      * This function tests calendar_set_filters for the case when no one is logged in, but a user id is provided.
      */
-    public function test_calendar_set_filters_not_logged_in_with_user() {
+    public function test_calendar_set_filters_not_logged_in_with_user(): void {
         $this->resetAfterTest();
 
         list($users, $courses, $coursegroups) = $this->setup_test_calendar_set_filters();
@@ -866,7 +866,7 @@ class lib_test extends \advanced_testcase {
     /**
      * This function tests calendar_set_filters for the case when user is logged in, but no user id is provided.
      */
-    public function test_calendar_set_filters_logged_in_no_user() {
+    public function test_calendar_set_filters_logged_in_no_user(): void {
         $this->resetAfterTest();
 
         list($users, $courses, $coursegroups) = $this->setup_test_calendar_set_filters();
@@ -882,7 +882,7 @@ class lib_test extends \advanced_testcase {
     /**
      * This function tests calendar_set_filters for the case when a user is logged in, but another user id is provided.
      */
-    public function test_calendar_set_filters_logged_in_another_user() {
+    public function test_calendar_set_filters_logged_in_another_user(): void {
         $this->resetAfterTest();
 
         list($users, $courses, $coursegroups) = $this->setup_test_calendar_set_filters();
@@ -899,7 +899,7 @@ class lib_test extends \advanced_testcase {
     /**
      *  Test for calendar_view_event_allowed for course event types.
      */
-    public function test_calendar_view_event_allowed_course_event() {
+    public function test_calendar_view_event_allowed_course_event(): void {
         global $USER;
 
         $this->setAdminUser();
@@ -967,7 +967,7 @@ class lib_test extends \advanced_testcase {
     /**
      *  Test for calendar_get_export_token for current user.
      */
-    public function test_calendar_get_export_token_for_current_user() {
+    public function test_calendar_get_export_token_for_current_user(): void {
         global $USER, $DB, $CFG;
 
         $this->setAdminUser();
@@ -982,7 +982,7 @@ class lib_test extends \advanced_testcase {
     /**
      *  Test for calendar_get_export_token for another user.
      */
-    public function test_calendar_get_export_token_for_another_user() {
+    public function test_calendar_get_export_token_for_another_user(): void {
         global $CFG;
 
         // Get any user token.
@@ -1001,7 +1001,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers ::calendar_can_manage_user_event
      */
-    public function test_calendar_can_manage_user_event() {
+    public function test_calendar_can_manage_user_event(): void {
         global $DB, $USER;
         $generator = $this->getDataGenerator();
         $sitecontext = \context_system::instance();

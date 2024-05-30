@@ -32,7 +32,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test node::__construct().
      */
-    public function test_node__construct() {
+    public function test_node__construct(): void {
         $node = new \core_user\output\myprofile\node('parentcat', 'nodename',
                 'nodetitle', 'after', 'www.google.com', 'description', new \pix_icon('i/course', ''), 'class1 class2');
         $this->assertSame('parentcat', $node->parentcat);
@@ -48,7 +48,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test category::node_add().
      */
-    public function test_add_node() {
+    public function test_add_node(): void {
         $tree = new \core_user\output\myprofile\tree();
         $category = new \core_user\output\myprofile\category('category', 'categorytitle');
 
@@ -73,7 +73,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test category::__construct().
      */
-    public function test_category__construct() {
+    public function test_category__construct(): void {
         $category = new \core_user\output\myprofile\category('categoryname', 'title', 'after', 'class1 class2');
         $this->assertSame('categoryname', $category->name);
         $this->assertSame('title', $category->title);
@@ -81,7 +81,7 @@ class myprofile_test extends \advanced_testcase {
         $this->assertSame('class1 class2', $category->classes);
     }
 
-    public function test_validate_after_order1() {
+    public function test_validate_after_order1(): void {
         $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
 
         // Create nodes.
@@ -98,7 +98,7 @@ class myprofile_test extends \advanced_testcase {
 
     }
 
-    public function test_validate_after_order2() {
+    public function test_validate_after_order2(): void {
         $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
 
         // Create nodes.
@@ -118,7 +118,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test category::find_nodes_after().
      */
-    public function test_find_nodes_after() {
+    public function test_find_nodes_after(): void {
         $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
 
         // Create nodes.
@@ -161,7 +161,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test category::sort_nodes().
      */
-    public function test_sort_nodes1() {
+    public function test_sort_nodes1(): void {
         $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
 
         // Create nodes.
@@ -213,7 +213,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test category::sort_nodes() with a mix of content and non content nodes.
      */
-    public function test_sort_nodes2() {
+    public function test_sort_nodes2(): void {
         $category = new \phpunit_fixture_myprofile_category('category', 'title', null);
 
         // Create nodes.
@@ -253,7 +253,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test tree::add_node().
      */
-    public function test_tree_add_node() {
+    public function test_tree_add_node(): void {
         $tree = new \phpunit_fixture_myprofile_tree();
         $node1 = new \core_user\output\myprofile\node('category', 'node1', 'nodetitle');
         $tree->add_node($node1);
@@ -269,7 +269,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test tree::add_category().
      */
-    public function test_tree_add_category() {
+    public function test_tree_add_category(): void {
         $tree = new \phpunit_fixture_myprofile_tree();
         $category1 = new \core_user\output\myprofile\category('category', 'title');
         $tree->add_category($category1);
@@ -285,7 +285,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test tree::find_categories_after().
      */
-    public function test_find_categories_after() {
+    public function test_find_categories_after(): void {
         $tree = new \phpunit_fixture_myprofile_tree('category', 'title', null);
 
         // Create categories.
@@ -328,7 +328,7 @@ class myprofile_test extends \advanced_testcase {
     /**
      * Test tree::sort_categories().
      */
-    public function test_sort_categories() {
+    public function test_sort_categories(): void {
         $tree = new \phpunit_fixture_myprofile_tree('category', 'title', null);
 
         // Create categories.

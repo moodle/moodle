@@ -25,7 +25,7 @@ namespace core;
  * @author    Petr Skoda <petr.skoda@totaralms.com>
  */
 class date_legacy_test extends \advanced_testcase {
-    public function test_settings() {
+    public function test_settings(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -37,7 +37,7 @@ class date_legacy_test extends \advanced_testcase {
         $this->assertSame('99', $user->timezone);
     }
 
-    public function test_get_user_timezone() {
+    public function test_get_user_timezone(): void {
         global $CFG, $USER;
 
         $this->resetAfterTest();
@@ -110,7 +110,7 @@ class date_legacy_test extends \advanced_testcase {
         $this->assertSame('Europe/Berlin', $tz);
     }
 
-    public function test_dst_offset_on() {
+    public function test_dst_offset_on(): void {
         $time = gmmktime(1, 1, 1, 3, 1, 2015);
         $this->assertSame(3600, dst_offset_on($time, 'Pacific/Auckland'));
         $this->assertSame(0, dst_offset_on($time, 'Australia/Perth'));
@@ -126,7 +126,7 @@ class date_legacy_test extends \advanced_testcase {
         $this->assertSame(3600, dst_offset_on($time, 'America/New_York'));
     }
 
-    public function test_make_timestamp() {
+    public function test_make_timestamp(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -171,7 +171,7 @@ class date_legacy_test extends \advanced_testcase {
         }
     }
 
-    public function test_usergetdate() {
+    public function test_usergetdate(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -242,7 +242,7 @@ class date_legacy_test extends \advanced_testcase {
         }
     }
 
-    public function test_userdate() {
+    public function test_userdate(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -284,7 +284,7 @@ class date_legacy_test extends \advanced_testcase {
         }
     }
 
-    public function test_usertime() {
+    public function test_usertime(): void {
         // This is a useless bad hack, it needs to be completely eliminated.
 
         $time = gmmktime(1, 1, 1, 3, 1, 2015);
@@ -304,7 +304,7 @@ class date_legacy_test extends \advanced_testcase {
         $this->assertSame($time - (60 * 60 * -5), usertime($time, 'America/New_York'));
     }
 
-    public function test_usertimezone() {
+    public function test_usertimezone(): void {
         global $USER;
         $this->resetAfterTest();
 

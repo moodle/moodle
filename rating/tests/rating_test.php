@@ -52,7 +52,7 @@ class rating_test extends \advanced_testcase {
     /**
      * Test the current get_ratings method main sql
      */
-    public function test_get_ratings_sql() {
+    public function test_get_ratings_sql(): void {
         global $DB;
 
         // We load 3 items. Each is rated twice. For simplicity itemid == user id of the item owner.
@@ -345,7 +345,7 @@ class rating_test extends \advanced_testcase {
      *
      * @dataProvider get_aggregate_string_provider
      */
-    public function test_get_aggregate_string($method, $aggregate, $isnumeric, $scaleitems, $expectation) {
+    public function test_get_aggregate_string($method, $aggregate, $isnumeric, $scaleitems, $expectation): void {
         $options = new \stdClass();
         $options->aggregate = $aggregate;
         $options->context = null;

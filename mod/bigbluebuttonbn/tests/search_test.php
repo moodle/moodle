@@ -53,7 +53,7 @@ class search_test extends advanced_testcase {
      *
      * @return void
      */
-    public function test_indexing() {
+    public function test_indexing(): void {
         $this->resetAfterTest();
 
         // Setup test data.

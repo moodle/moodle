@@ -108,7 +108,7 @@ class file_system_test extends \advanced_testcase {
      * Ensure that the file system is not clonable.
      *
      */
-    public function test_not_cloneable() {
+    public function test_not_cloneable(): void {
         $reflection = new \ReflectionClass('file_system');
         $this->assertFalse($reflection->isCloneable());
     }
@@ -117,7 +117,7 @@ class file_system_test extends \advanced_testcase {
      * Ensure that the filedir file_system extension is used by default.
      *
      */
-    public function test_default_class() {
+    public function test_default_class(): void {
         $this->resetAfterTest();
 
         // Ensure that the alternative_file_system_class is null.
@@ -134,7 +134,7 @@ class file_system_test extends \advanced_testcase {
      * Ensure that the specified file_system extension class is used.
      *
      */
-    public function test_supplied_class() {
+    public function test_supplied_class(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -156,7 +156,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::readfile
      */
-    public function test_readfile_remote() {
+    public function test_readfile_remote(): void {
         global $CFG;
 
         // Mock the filesystem.
@@ -189,7 +189,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::readfile
      */
-    public function test_readfile_local() {
+    public function test_readfile_local(): void {
         global $CFG;
 
         // Mock the filesystem.
@@ -227,7 +227,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_local_path_from_storedfile
      */
-    public function test_get_local_path_from_storedfile($args, $fetch) {
+    public function test_get_local_path_from_storedfile($args, $fetch): void {
         $filepath = '/path/to/file';
         $filecontent = 'example content';
 
@@ -254,7 +254,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_remote_path_from_storedfile
      */
-    public function test_get_remote_path_from_storedfile() {
+    public function test_get_remote_path_from_storedfile(): void {
         $filepath = '/path/to/file';
         $filecontent = 'example content';
 
@@ -284,7 +284,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_locally_by_hash
      */
-    public function test_is_file_readable_locally_by_hash() {
+    public function test_is_file_readable_locally_by_hash(): void {
         $filecontent = 'example content';
         $contenthash = \file_storage::hash_from_string($filecontent);
         $filepath = __FILE__;
@@ -305,7 +305,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_locally_by_hash
      */
-    public function test_is_file_readable_locally_by_hash_empty() {
+    public function test_is_file_readable_locally_by_hash_empty(): void {
         $filecontent = '';
         $contenthash = \file_storage::hash_from_string($filecontent);
 
@@ -324,7 +324,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_remotely_by_hash
      */
-    public function test_is_file_readable_remotely_by_hash() {
+    public function test_is_file_readable_remotely_by_hash(): void {
         $filecontent = 'example content';
         $contenthash = \file_storage::hash_from_string($filecontent);
 
@@ -344,7 +344,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_remotely_by_hash
      */
-    public function test_is_file_readable_remotely_by_hash_empty() {
+    public function test_is_file_readable_remotely_by_hash_empty(): void {
         $filecontent = '';
         $contenthash = \file_storage::hash_from_string($filecontent);
 
@@ -363,7 +363,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_remotely_by_hash
      */
-    public function test_is_file_readable_remotely_by_hash_not_found() {
+    public function test_is_file_readable_remotely_by_hash_not_found(): void {
         $filecontent = 'example content';
         $contenthash = \file_storage::hash_from_string($filecontent);
 
@@ -383,7 +383,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_remotely_by_storedfile
      */
-    public function test_is_file_readable_remotely_by_storedfile() {
+    public function test_is_file_readable_remotely_by_storedfile(): void {
         $file = $this->get_stored_file('example content');
 
         $fs = $this->get_testable_mock([
@@ -401,7 +401,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_remotely_by_storedfile
      */
-    public function test_is_file_readable_remotely_by_storedfile_empty() {
+    public function test_is_file_readable_remotely_by_storedfile_empty(): void {
         $fs = $this->get_testable_mock([
             'get_remote_path_from_storedfile',
         ]);
@@ -418,7 +418,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_locally_by_storedfile
      */
-    public function test_is_file_readable_locally_by_storedfile_empty() {
+    public function test_is_file_readable_locally_by_storedfile_empty(): void {
         $fs = $this->get_testable_mock([
             'get_local_path_from_storedfile',
         ]);
@@ -435,7 +435,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_locally_by_storedfile
      */
-    public function test_is_file_readable_remotely_by_storedfile_not_found() {
+    public function test_is_file_readable_remotely_by_storedfile_not_found(): void {
         $file = $this->get_stored_file('example content');
 
         $fs = $this->get_testable_mock([
@@ -453,7 +453,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_locally_by_storedfile
      */
-    public function test_is_file_readable_locally_by_storedfile_unreadable() {
+    public function test_is_file_readable_locally_by_storedfile_unreadable(): void {
         $fs = $this->get_testable_mock([
             'get_local_path_from_storedfile',
         ]);
@@ -471,7 +471,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_readable_locally_by_storedfile
      */
-    public function test_is_file_readable_locally_by_storedfile_passes_fetch() {
+    public function test_is_file_readable_locally_by_storedfile_passes_fetch(): void {
         $fs = $this->get_testable_mock([
             'get_local_path_from_storedfile',
         ]);
@@ -489,7 +489,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_removable
      */
-    public function test_is_file_removable_empty() {
+    public function test_is_file_removable_empty(): void {
         $filecontent = '';
         $contenthash = \file_storage::hash_from_string($filecontent);
 
@@ -503,7 +503,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_removable
      */
-    public function test_is_file_removable_in_use() {
+    public function test_is_file_removable_in_use(): void {
         $this->resetAfterTest();
         global $DB;
 
@@ -526,7 +526,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_file_removable
      */
-    public function test_is_file_removable_not_in_use() {
+    public function test_is_file_removable_not_in_use(): void {
         $this->resetAfterTest();
         global $DB;
 
@@ -549,7 +549,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_content
      */
-    public function test_get_content() {
+    public function test_get_content(): void {
         global $CFG;
 
         // Mock the filesystem.
@@ -574,7 +574,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_content
      */
-    public function test_get_content_empty() {
+    public function test_get_content_empty(): void {
         global $CFG;
 
         $filecontent = '';
@@ -597,7 +597,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::list_files
      */
-    public function test_list_files() {
+    public function test_list_files(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
         $filepath = __FILE__;
@@ -629,7 +629,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::extract_to_pathname
      */
-    public function test_extract_to_pathname() {
+    public function test_extract_to_pathname(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
         $filepath = __FILE__;
@@ -662,7 +662,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::extract_to_storage
      */
-    public function test_extract_to_storage() {
+    public function test_extract_to_storage(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
         $filepath = __FILE__;
@@ -703,7 +703,7 @@ class file_system_test extends \advanced_testcase {
      * file, and passes the path to the archive.
      *
      */
-    public function test_add_storedfile_to_archive_directory() {
+    public function test_add_storedfile_to_archive_directory(): void {
         $file = $this->get_stored_file('', '.');
         $archivepath = 'example';
         $expectedresult = (object) [];
@@ -739,7 +739,7 @@ class file_system_test extends \advanced_testcase {
      * file, and passes the path to the archive.
      *
      */
-    public function test_add_storedfile_to_archive_file() {
+    public function test_add_storedfile_to_archive_file(): void {
         $file = $this->get_stored_file('example content');
         $filepath = __LINE__;
         $archivepath = 'example';
@@ -780,7 +780,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::add_to_curl_request
      */
-    public function test_add_to_curl_request() {
+    public function test_add_to_curl_request(): void {
         $file = $this->get_stored_file('example content');
         $filepath = __FILE__;
         $archivepath = 'example';
@@ -804,7 +804,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_imageinfo
      */
-    public function test_get_imageinfo_not_image() {
+    public function test_get_imageinfo_not_image(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
 
@@ -825,7 +825,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_imageinfo
      */
-    public function test_get_imageinfo() {
+    public function test_get_imageinfo(): void {
         $filepath = '/path/to/file';
         $filecontent = 'example content';
         $expectedresult = (object) [];
@@ -861,7 +861,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::is_image_from_storedfile
      */
-    public function test_is_image_empty_filesize() {
+    public function test_is_image_empty_filesize(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent, null, ['get_filesize']);
 
@@ -882,7 +882,7 @@ class file_system_test extends \advanced_testcase {
      * @param   bool    $isimage Whether this mimetype should be detected as an image
      * @covers ::is_image_from_storedfile
      */
-    public function test_is_image_from_storedfile_mimetype($mimetype, $isimage) {
+    public function test_is_image_from_storedfile_mimetype($mimetype, $isimage): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent, null, ['get_mimetype']);
 
@@ -900,7 +900,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_imageinfo_from_path
      */
-    public function test_get_imageinfo_from_path() {
+    public function test_get_imageinfo_from_path(): void {
         $filepath = __DIR__ . "/fixtures/testimage.jpg";
 
         // Get the filesystem mock.
@@ -921,7 +921,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_imageinfo_from_path
      */
-    public function test_get_imageinfo_from_path_no_image() {
+    public function test_get_imageinfo_from_path_no_image(): void {
         $filepath = __FILE__;
 
         // Get the filesystem mock.
@@ -937,7 +937,7 @@ class file_system_test extends \advanced_testcase {
      * Test that get_imageinfo_from_path returns an appropriate response
      * for an svg image with viewbox attribute.
      */
-    public function test_get_imageinfo_from_path_svg_viewbox() {
+    public function test_get_imageinfo_from_path_svg_viewbox(): void {
         $filepath = __DIR__ . '/fixtures/testimage_viewbox.svg';
 
         // Get the filesystem mock.
@@ -958,7 +958,7 @@ class file_system_test extends \advanced_testcase {
      * Test that get_imageinfo_from_path returns an appropriate response
      * for an svg image with width and height attributes.
      */
-    public function test_get_imageinfo_from_path_svg_with_width_height() {
+    public function test_get_imageinfo_from_path_svg_with_width_height(): void {
         $filepath = __DIR__ . '/fixtures/testimage_width_height.svg';
 
         // Get the filesystem mock.
@@ -979,7 +979,7 @@ class file_system_test extends \advanced_testcase {
      * Test that get_imageinfo_from_path returns an appropriate response
      * for an svg image without attributes.
      */
-    public function test_get_imageinfo_from_path_svg_without_attribute() {
+    public function test_get_imageinfo_from_path_svg_without_attribute(): void {
         $filepath = __DIR__ . '/fixtures/testimage.svg';
 
         // Get the filesystem mock.
@@ -1000,7 +1000,7 @@ class file_system_test extends \advanced_testcase {
      * Test that get_imageinfo_from_path returns an appropriate response
      * for a file which is not an correct svg.
      */
-    public function test_get_imageinfo_from_path_svg_invalid() {
+    public function test_get_imageinfo_from_path_svg_invalid(): void {
         $filepath = __DIR__ . '/fixtures/testimage_error.svg';
 
         // Get the filesystem mock.
@@ -1017,7 +1017,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_content_file_handle
      */
-    public function test_get_content_file_handle_default() {
+    public function test_get_content_file_handle_default(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
 
@@ -1037,7 +1037,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_content_file_handle
      */
-    public function test_get_content_file_handle_gz() {
+    public function test_get_content_file_handle_gz(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
 
@@ -1056,7 +1056,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::get_content_file_handle
      */
-    public function test_get_content_file_handle_invalid() {
+    public function test_get_content_file_handle_invalid(): void {
         $filecontent = 'example content';
         $file = $this->get_stored_file($filecontent);
 
@@ -1093,7 +1093,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::mimetype_from_hash
      */
-    public function test_mimetype_from_hash_using_filename() {
+    public function test_mimetype_from_hash_using_filename(): void {
         $filepath = '/path/to/file/not/currently/on/disk';
         $filecontent = 'example content';
         $filename = 'test.jpg';
@@ -1112,7 +1112,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::mimetype_from_hash
      */
-    public function test_mimetype_from_hash_using_file_content() {
+    public function test_mimetype_from_hash_using_file_content(): void {
         $filecontent = 'example content';
         $contenthash = \file_storage::hash_from_string($filecontent);
         $filename = 'example';
@@ -1131,7 +1131,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::mimetype_from_hash
      */
-    public function test_mimetype_from_hash_using_file_content_remote() {
+    public function test_mimetype_from_hash_using_file_content_remote(): void {
         $filepath = '/path/to/file/not/currently/on/disk';
         $filecontent = 'example content';
         $contenthash = \file_storage::hash_from_string($filecontent);
@@ -1159,7 +1159,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::mimetype_from_storedfile
      */
-    public function test_mimetype_from_storedfile_empty() {
+    public function test_mimetype_from_storedfile_empty(): void {
         $file = $this->get_stored_file('');
 
         $fs = $this->get_testable_mock();
@@ -1173,7 +1173,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::mimetype_from_storedfile
      */
-    public function test_mimetype_from_storedfile_using_filename() {
+    public function test_mimetype_from_storedfile_using_filename(): void {
         $filepath = '/path/to/file/not/currently/on/disk';
         $fs = $this->get_testable_mock(['get_remote_path_from_storedfile']);
         $fs->method('get_remote_path_from_storedfile')->willReturn($filepath);
@@ -1190,7 +1190,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::mimetype_from_storedfile
      */
-    public function test_mimetype_from_storedfile_using_file_content() {
+    public function test_mimetype_from_storedfile_using_file_content(): void {
         $filepath = __DIR__ . "/fixtures/testimage.jpg";
         $fs = $this->get_testable_mock(['get_local_path_from_hash']);
         $fs->method('get_local_path_from_hash')->willReturn($filepath);
@@ -1207,7 +1207,7 @@ class file_system_test extends \advanced_testcase {
      *
      * @covers ::mimetype_from_storedfile
      */
-    public function test_mimetype_from_storedfile_using_file_content_remote() {
+    public function test_mimetype_from_storedfile_using_file_content_remote(): void {
         $filepath = __DIR__ . "/fixtures/testimage.jpg";
 
         $fs = $this->get_testable_mock([

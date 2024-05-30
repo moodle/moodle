@@ -81,7 +81,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test create_groups
      */
-    public function test_create_groups() {
+    public function test_create_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -171,7 +171,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test create_groups with custom fields.
      */
-    public function test_create_groups_with_customfields() {
+    public function test_create_groups_with_customfields(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -233,7 +233,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_groups
      */
-    public function test_update_groups() {
+    public function test_update_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -317,7 +317,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_groups with custom fields.
      */
-    public function test_update_groups_with_customfields() {
+    public function test_update_groups_with_customfields(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -443,7 +443,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_groups
      */
-    public function test_get_groups() {
+    public function test_get_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -517,7 +517,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_groups with customfields.
      */
-    public function test_get_groups_with_customfields() {
+    public function test_get_groups_with_customfields(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -544,7 +544,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_groups
      */
-    public function test_delete_groups() {
+    public function test_delete_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -594,7 +594,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test create and update groupings.
      * @return void
      */
-    public function test_create_update_groupings() {
+    public function test_create_update_groupings(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -652,7 +652,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test create_groupings with custom fields.
      */
-    public function test_create_groupings_with_customfields() {
+    public function test_create_groupings_with_customfields(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -689,7 +689,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_groups with custom fields.
      */
-    public function test_update_groupings_with_customfields() {
+    public function test_update_groupings_with_customfields(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -719,7 +719,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_groupings
      */
-    public function test_get_groupings() {
+    public function test_get_groupings(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -796,7 +796,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_groupings with customfields.
      */
-    public function test_get_groupings_with_customfields() {
+    public function test_get_groupings_with_customfields(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -846,7 +846,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_groupings.
      */
-    public function test_delete_groupings() {
+    public function test_delete_groupings(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -899,7 +899,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_groups
      */
-    public function test_get_course_user_groups() {
+    public function test_get_course_user_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1039,7 +1039,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_activity_allowed_groups
      */
-    public function test_get_activity_allowed_groups() {
+    public function test_get_activity_allowed_groups(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1139,7 +1139,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_activity_groupmode
      */
-    public function test_get_activity_groupmode() {
+    public function test_get_activity_groupmode(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1185,7 +1185,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_group_members.
      */
-    public function test_add_group_members() {
+    public function test_add_group_members(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -1244,7 +1244,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_group_members.
      */
-    public function test_delete_group_members() {
+    public function test_delete_group_members(): void {
         global $DB;
 
         $this->resetAfterTest(true);

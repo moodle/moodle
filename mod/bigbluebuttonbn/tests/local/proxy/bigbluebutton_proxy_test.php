@@ -36,7 +36,7 @@ class bigbluebutton_proxy_test extends \advanced_testcase {
      * @covers  \mod_bigbluebuttonbn\local\proxy\bigbluebutton_proxy::get_poll_interval
      * @return void
      */
-    public function test_get_poll_interval() {
+    public function test_get_poll_interval(): void {
         global $CFG;
         $this->resetAfterTest();
         $CFG->bigbluebuttonbn['poll_interval'] = 15;

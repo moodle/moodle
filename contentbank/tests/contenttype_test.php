@@ -66,7 +66,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::get_contenttype_name
      */
-    public function test_get_contenttype_name() {
+    public function test_get_contenttype_name(): void {
         $this->resetAfterTest();
 
         $systemcontext = \context_system::instance();
@@ -80,7 +80,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::get_plugin_name
      */
-    public function test_get_plugin_name() {
+    public function test_get_plugin_name(): void {
         $this->resetAfterTest();
 
         $systemcontext = \context_system::instance();
@@ -94,7 +94,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::get_icon
      */
-    public function test_get_icon() {
+    public function test_get_icon(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -115,7 +115,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::is_feature_supported
      */
-    public function test_is_feature_supported() {
+    public function test_is_feature_supported(): void {
         $this->resetAfterTest();
 
         $systemcontext = \context_system::instance();
@@ -130,7 +130,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::can_upload
      */
-    public function test_no_upload_feature_supported() {
+    public function test_no_upload_feature_supported(): void {
         $this->resetAfterTest();
 
         $systemcontext = \context_system::instance();
@@ -146,7 +146,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::create_content
      */
-    public function test_create_empty_content() {
+    public function test_create_empty_content(): void {
         $this->resetAfterTest();
 
         // Create empty content.
@@ -164,7 +164,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::create_content
      */
-    public function test_create_content() {
+    public function test_create_content(): void {
         $this->resetAfterTest();
 
         // Create content.
@@ -366,7 +366,7 @@ class contenttype_test extends \advanced_testcase {
     /**
      * Test the behaviour of can_delete().
      */
-    public function test_can_delete() {
+    public function test_can_delete(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -401,7 +401,7 @@ class contenttype_test extends \advanced_testcase {
     /**
      * Test the behaviour of delete_content().
      */
-    public function test_delete_content() {
+    public function test_delete_content(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -473,7 +473,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::rename_content
      */
-    public function test_rename_content(string $newname, string $expected, bool $result) {
+    public function test_rename_content(string $newname, string $expected, bool $result): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -502,7 +502,7 @@ class contenttype_test extends \advanced_testcase {
     /**
      * Test the behaviour of move_content().
      */
-    public function test_move_content() {
+    public function test_move_content(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -544,7 +544,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::can_manage
      */
-    public function test_can_manage() {
+    public function test_can_manage(): void {
         global $DB, $USER;
 
         $this->resetAfterTest();
@@ -593,7 +593,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::can_download
      */
-    public function test_can_download() {
+    public function test_can_download(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -627,7 +627,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::get_download_url
      */
-    public function test_get_download_url() {
+    public function test_get_download_url(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -659,7 +659,7 @@ class contenttype_test extends \advanced_testcase {
      *
      * @covers ::pluginfile
      */
-    public function test_pluginfile() {
+    public function test_pluginfile(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $systemcontext = context_system::instance();

@@ -51,7 +51,7 @@ class vaults_discussion_list_test extends \advanced_testcase {
     /**
      * Test get_from_id.
      */
-    public function test_get_from_id() {
+    public function test_get_from_id(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -72,7 +72,7 @@ class vaults_discussion_list_test extends \advanced_testcase {
     /**
      * Test get_from_forum_id.
      */
-    public function test_get_from_forum_id() {
+    public function test_get_from_forum_id(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -246,7 +246,7 @@ class vaults_discussion_list_test extends \advanced_testcase {
     /**
      * Test get_from_forum_id_and_group_id.
      */
-    public function test_get_from_forum_id_and_group_id() {
+    public function test_get_from_forum_id_and_group_id(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -455,7 +455,7 @@ class vaults_discussion_list_test extends \advanced_testcase {
     /**
      * Test get_total_discussion_count_from_forum_id.
      */
-    public function test_get_total_discussion_count_from_forum_id() {
+    public function test_get_total_discussion_count_from_forum_id(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();
@@ -483,7 +483,7 @@ class vaults_discussion_list_test extends \advanced_testcase {
     /**
      * Test get_total_discussion_count_from_forum_id_and_group_id.
      */
-    public function test_get_total_discussion_count_from_forum_id_and_group_id() {
+    public function test_get_total_discussion_count_from_forum_id_and_group_id(): void {
         $this->resetAfterTest();
 
         $datagenerator = $this->getDataGenerator();

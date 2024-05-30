@@ -44,7 +44,7 @@ class profile_field_test extends \advanced_testcase {
     /**
      * Test that triggering the user_info_category_created event works as expected.
      */
-    public function test_user_info_category_created_event() {
+    public function test_user_info_category_created_event(): void {
         // Create a new profile category.
         $cat1 = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Example category']);
 
@@ -67,7 +67,7 @@ class profile_field_test extends \advanced_testcase {
     /**
      * Test that moving a user info category triggers an updated event.
      */
-    public function test_user_info_category_updated_event() {
+    public function test_user_info_category_updated_event(): void {
         global $DB;
 
         // Create new profile categories.
@@ -98,7 +98,7 @@ class profile_field_test extends \advanced_testcase {
     /**
      * Test that deleting a user info category triggers a delete event.
      */
-    public function test_user_info_category_deleted_event() {
+    public function test_user_info_category_deleted_event(): void {
         // Create new profile categories.
         $cat1 = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Example category']);
         $cat2 = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Example category 2']);
@@ -122,7 +122,7 @@ class profile_field_test extends \advanced_testcase {
     /**
      * Test that creating a user info field triggers a create event.
      */
-    public function test_user_info_field_created_event() {
+    public function test_user_info_field_created_event(): void {
         global $DB;
 
         // Create a new profile category.
@@ -166,7 +166,7 @@ class profile_field_test extends \advanced_testcase {
     /**
      * Test that updating a user info field triggers an update event.
      */
-    public function test_user_info_field_updated_event() {
+    public function test_user_info_field_updated_event(): void {
         // Create a new profile category.
         $cat1 = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Example category']);
 
@@ -201,7 +201,7 @@ class profile_field_test extends \advanced_testcase {
     /**
      * Test that moving a field triggers update events.
      */
-    public function test_user_info_field_updated_event_move_field() {
+    public function test_user_info_field_updated_event_move_field(): void {
         // Create a new profile category.
         $cat1 = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Example category']);
 
@@ -251,7 +251,7 @@ class profile_field_test extends \advanced_testcase {
      * Test that when we delete a category that contains a field, that the field being moved to
      * another category triggers an update event.
      */
-    public function test_user_info_field_updated_event_delete_category() {
+    public function test_user_info_field_updated_event_delete_category(): void {
         // Create profile categories.
         $cat1 = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Example category']);
         $cat2 = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Example category']);
@@ -286,7 +286,7 @@ class profile_field_test extends \advanced_testcase {
     /**
      * Test that deleting a user info field triggers a delete event.
      */
-    public function test_user_info_field_deleted_event() {
+    public function test_user_info_field_deleted_event(): void {
         // Create a new profile category.
         $cat1 = $this->getDataGenerator()->create_custom_profile_field_category(['name' => 'Example category']);
 

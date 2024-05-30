@@ -164,7 +164,7 @@ class published_resource_repository_test extends \advanced_testcase {
      *
      * @covers ::find_all_for_user
      */
-    public function test_find_all_for_user_no_permissions() {
+    public function test_find_all_for_user_no_permissions(): void {
         $this->resetAfterTest();
         global $DB;
         [$user, $user2, $user3, $course, $course2, $mod, $mod2, $mod3, $mod4, $coursetool, $modtool, $mod2tool]

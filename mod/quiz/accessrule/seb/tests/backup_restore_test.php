@@ -150,7 +150,7 @@ class backup_restore_test extends \advanced_testcase {
     /**
      * Test backup and restore when no seb.
      */
-    public function test_backup_restore_no_seb() {
+    public function test_backup_restore_no_seb(): void {
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_NO);
         $this->assertEquals(0, seb_quiz_settings::count_records());
 
@@ -161,7 +161,7 @@ class backup_restore_test extends \advanced_testcase {
     /**
      * Test backup and restore when manually configured.
      */
-    public function test_backup_restore_manual_config() {
+    public function test_backup_restore_manual_config(): void {
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
 
         $expected = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
@@ -178,7 +178,7 @@ class backup_restore_test extends \advanced_testcase {
     /**
      * Test backup and restore when using template.
      */
-    public function test_backup_restore_template_config() {
+    public function test_backup_restore_template_config(): void {
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
 
         $expected = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
@@ -196,7 +196,7 @@ class backup_restore_test extends \advanced_testcase {
     /**
      * Test backup and restore when using uploaded file.
      */
-    public function test_backup_restore_uploaded_config() {
+    public function test_backup_restore_uploaded_config(): void {
         $this->quiz = $this->create_test_quiz($this->course, settings_provider::USE_SEB_CONFIG_MANUALLY);
 
         $expected = seb_quiz_settings::get_record(['quizid' => $this->quiz->id]);
@@ -220,7 +220,7 @@ class backup_restore_test extends \advanced_testcase {
      * No new template should be restored if restoring to a different site,
      * but the template with  the same name and content exists..
      */
-    public function test_restore_template_to_a_different_site_when_the_same_template_exists() {
+    public function test_restore_template_to_a_different_site_when_the_same_template_exists(): void {
         $this->create_quiz_with_template();
         $backupid = $this->backup_quiz();
 
@@ -239,7 +239,7 @@ class backup_restore_test extends \advanced_testcase {
      * A new template should be restored if restoring to a different site, but existing template
      * has the same content, but different name.
      */
-    public function test_restore_template_to_a_different_site_when_the_same_content_but_different_name() {
+    public function test_restore_template_to_a_different_site_when_the_same_content_but_different_name(): void {
         $this->create_quiz_with_template();
         $backupid = $this->backup_quiz();
 
@@ -261,7 +261,7 @@ class backup_restore_test extends \advanced_testcase {
      * A new template should be restored if restoring to a different site, but existing template
      * has the same name, but different content.
      */
-    public function test_restore_template_to_a_different_site_when_the_same_name_but_different_content() {
+    public function test_restore_template_to_a_different_site_when_the_same_name_but_different_content(): void {
         global $CFG;
 
         $this->create_quiz_with_template();

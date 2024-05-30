@@ -244,7 +244,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the contexts for a user.
      */
-    public function test_get_contexts_for_userid() {
+    public function test_get_contexts_for_userid(): void {
 
         // Get contexts for the first user.
         $contextids = provider::get_contexts_for_userid($this->users[1]->id)->get_contextids();
@@ -273,7 +273,7 @@ class provider_test extends provider_testcase {
     /**
      * Test getting the users within a context.
      */
-    public function test_get_users_in_context() {
+    public function test_get_users_in_context(): void {
         global $DB;
         $component = 'mod_wiki';
 
@@ -560,7 +560,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for delete_data_for_all_users_in_context().
      */
-    public function test_delete_data_for_all_users_in_context() {
+    public function test_delete_data_for_all_users_in_context(): void {
         provider::delete_data_for_all_users_in_context($this->contexts[1]);
 
         $appctx = new approved_contextlist($this->users[1], 'mod_wiki',
@@ -583,7 +583,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         $appctx = new approved_contextlist($this->users[1], 'mod_wiki',
             [$this->contexts[1]->id, $this->contexts[1]->id]);
         provider::delete_data_for_user($appctx);
@@ -596,7 +596,7 @@ class provider_test extends provider_testcase {
     /**
      * Test for delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         $component = 'mod_wiki';
 
         // Ensure data exists within context 2 - individual wikis.

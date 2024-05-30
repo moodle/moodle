@@ -72,7 +72,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
     /**
      * @dataProvider get_timestamp_min_limit_test_cases()
      */
-    public function test_get_timestamp_min_limit($starttime, $min, $expected) {
+    public function test_get_timestamp_min_limit($starttime, $min, $expected): void {
         $class = calendar_event_exporter::class;
         $mock = $this->getMockBuilder($class)
             ->disableOriginalConstructor()
@@ -128,7 +128,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
     /**
      * @dataProvider get_timestamp_max_limit_test_cases()
      */
-    public function test_get_timestamp_max_limit($starttime, $max, $expected) {
+    public function test_get_timestamp_max_limit($starttime, $max, $expected): void {
         $class = calendar_event_exporter::class;
         $mock = $this->getMockBuilder($class)
             ->disableOriginalConstructor()
@@ -145,7 +145,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
     /**
      * Exporting a course event should generate the course URL.
      */
-    public function test_calendar_event_exporter_course_url_course_event() {
+    public function test_calendar_event_exporter_course_url_course_event(): void {
         global $CFG, $PAGE;
         require_once($CFG->dirroot . '/course/lib.php');
 
@@ -185,7 +185,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
     /**
      * Exporting a user event should generate the site course URL.
      */
-    public function test_calendar_event_exporter_course_url_user_event() {
+    public function test_calendar_event_exporter_course_url_user_event(): void {
         global $CFG, $PAGE;
         require_once($CFG->dirroot . '/course/lib.php');
 
@@ -224,7 +224,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
     /**
      * Popup name respects filters for course shortname.
      */
-    public function test_calendar_event_exporter_popupname_course_shortname_strips_links() {
+    public function test_calendar_event_exporter_popupname_course_shortname_strips_links(): void {
         global $CFG, $PAGE;
 
         $this->resetAfterTest(true);
@@ -262,7 +262,7 @@ class calendar_event_exporter_test extends \advanced_testcase {
     /**
      * Exported event contains the exported course.
      */
-    public function test_calendar_event_exporter_exports_course() {
+    public function test_calendar_event_exporter_exports_course(): void {
         global $CFG, $PAGE;
 
         $this->resetAfterTest(true);

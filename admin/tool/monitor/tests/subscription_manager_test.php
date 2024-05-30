@@ -29,7 +29,7 @@ class subscription_manager_test extends \advanced_testcase {
     /**
      * Test count_rule_subscriptions method.
      */
-    public function test_count_rule_subscriptions() {
+    public function test_count_rule_subscriptions(): void {
 
         $this->setAdminUser();
         $this->resetAfterTest(true);

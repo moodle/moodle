@@ -120,7 +120,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test test_mod_feedback_get_feedbacks_by_courses
      */
-    public function test_mod_feedback_get_feedbacks_by_courses() {
+    public function test_mod_feedback_get_feedbacks_by_courses(): void {
 
         // Create additional course.
         $course2 = self::getDataGenerator()->create_course();
@@ -236,7 +236,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_feedback_access_information function with basic defaults for student.
      */
-    public function test_get_feedback_access_information_student() {
+    public function test_get_feedback_access_information_student(): void {
 
         self::setUser($this->student);
         $result = mod_feedback_external::get_feedback_access_information($this->feedback->id);
@@ -257,7 +257,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_feedback_access_information function with basic defaults for teacher.
      */
-    public function test_get_feedback_access_information_teacher() {
+    public function test_get_feedback_access_information_teacher(): void {
 
         self::setUser($this->teacher);
         $result = mod_feedback_external::get_feedback_access_information($this->feedback->id);
@@ -284,7 +284,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test view_feedback invalid id.
      */
-    public function test_view_feedback_invalid_id() {
+    public function test_view_feedback_invalid_id(): void {
         // Test invalid instance id.
         $this->expectException(moodle_exception::class);
         mod_feedback_external::view_feedback(0);
@@ -292,7 +292,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test view_feedback not enrolled user.
      */
-    public function test_view_feedback_not_enrolled_user() {
+    public function test_view_feedback_not_enrolled_user(): void {
         $usernotenrolled = self::getDataGenerator()->create_user();
         $this->setUser($usernotenrolled);
         $this->expectException(moodle_exception::class);
@@ -301,7 +301,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test view_feedback no capabilities.
      */
-    public function test_view_feedback_no_capabilities() {
+    public function test_view_feedback_no_capabilities(): void {
         // Test user with no capabilities.
         // We need a explicit prohibit since this capability is allowed for students by default.
         assign_capability('mod/feedback:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
@@ -312,7 +312,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test view_feedback.
      */
-    public function test_view_feedback() {
+    public function test_view_feedback(): void {
         // Test user with full capabilities.
         $this->setUser($this->student);
         // Trigger and capture the event.
@@ -334,7 +334,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_current_completed_tmp.
      */
-    public function test_get_current_completed_tmp() {
+    public function test_get_current_completed_tmp(): void {
         global $DB;
 
         // Force non anonymous.
@@ -362,7 +362,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_items.
      */
-    public function test_get_items() {
+    public function test_get_items(): void {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
@@ -517,7 +517,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test launch_feedback.
      */
-    public function test_launch_feedback() {
+    public function test_launch_feedback(): void {
         global $DB;
 
         // Test user with full capabilities.
@@ -572,7 +572,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_page_items.
      */
-    public function test_get_page_items() {
+    public function test_get_page_items(): void {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
@@ -661,7 +661,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test process_page.
      */
-    public function test_process_page() {
+    public function test_process_page(): void {
         global $DB;
 
         // Test user with full capabilities.
@@ -765,7 +765,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test process_page for a site feedback.
      */
-    public function test_process_page_site_feedback() {
+    public function test_process_page_site_feedback(): void {
         global $DB;
         $pagecontents = 'You finished it!';
         $this->feedback = $this->getDataGenerator()->create_module('feedback',
@@ -842,7 +842,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_analysis.
      */
-    public function test_get_analysis() {
+    public function test_get_analysis(): void {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
@@ -901,7 +901,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_unfinished_responses.
      */
-    public function test_get_unfinished_responses() {
+    public function test_get_unfinished_responses(): void {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
@@ -939,7 +939,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_finished_responses.
      */
-    public function test_get_finished_responses() {
+    public function test_get_finished_responses(): void {
         // Test user with full capabilities.
         $this->setUser($this->student);
 
@@ -975,7 +975,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_non_respondents (student trying to get this information).
      */
-    public function test_get_non_respondents_no_permissions() {
+    public function test_get_non_respondents_no_permissions(): void {
         $this->setUser($this->student);
         $this->expectException(moodle_exception::class);
         mod_feedback_external::get_non_respondents($this->feedback->id);
@@ -984,7 +984,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_non_respondents from an anonymous feedback.
      */
-    public function test_get_non_respondents_from_anonymous_feedback() {
+    public function test_get_non_respondents_from_anonymous_feedback(): void {
         $this->setUser($this->student);
         $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage(get_string('anonymous', 'feedback'));
@@ -994,7 +994,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_non_respondents.
      */
-    public function test_get_non_respondents() {
+    public function test_get_non_respondents(): void {
         global $DB;
 
         // Force non anonymous.
@@ -1117,7 +1117,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_responses_analysis for anonymous feedback.
      */
-    public function test_get_responses_analysis_anonymous() {
+    public function test_get_responses_analysis_anonymous(): void {
         self::complete_basic_feedback();
 
         // Retrieve the responses analysis.
@@ -1136,7 +1136,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_responses_analysis for non-anonymous feedback.
      */
-    public function test_get_responses_analysis_non_anonymous() {
+    public function test_get_responses_analysis_non_anonymous(): void {
         global $DB;
 
         // Force non anonymous.
@@ -1159,7 +1159,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_last_completed for feedback anonymous not completed.
      */
-    public function test_get_last_completed_anonymous_not_completed() {
+    public function test_get_last_completed_anonymous_not_completed(): void {
         global $DB;
 
         // Force anonymous.
@@ -1176,7 +1176,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_last_completed for feedback anonymous and completed.
      */
-    public function test_get_last_completed_anonymous_completed() {
+    public function test_get_last_completed_anonymous_completed(): void {
         global $DB;
 
         // Force anonymous.
@@ -1203,7 +1203,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_last_completed for feedback not anonymous and completed.
      */
-    public function test_get_last_completed_not_anonymous_completed() {
+    public function test_get_last_completed_not_anonymous_completed(): void {
         global $DB;
 
         // Force non anonymous.
@@ -1229,7 +1229,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_last_completed for feedback not anonymous and not completed.
      */
-    public function test_get_last_completed_not_anonymous_not_completed() {
+    public function test_get_last_completed_not_anonymous_not_completed(): void {
         global $DB;
 
         // Force anonymous.
@@ -1246,7 +1246,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_feedback_access_information for site feedback.
      */
-    public function test_get_feedback_access_information_for_site_feedback() {
+    public function test_get_feedback_access_information_for_site_feedback(): void {
 
         $sitefeedback = $this->getDataGenerator()->create_module('feedback', array('course' => SITEID));
         $this->setUser($this->student);
@@ -1272,7 +1272,7 @@ class external_test extends externallib_advanced_testcase {
     /**
      * Test get_feedback_access_information for site feedback mapped.
      */
-    public function test_get_feedback_access_information_for_site_feedback_mapped() {
+    public function test_get_feedback_access_information_for_site_feedback_mapped(): void {
         global $DB;
 
         $sitefeedback = $this->getDataGenerator()->create_module('feedback', array('course' => SITEID));

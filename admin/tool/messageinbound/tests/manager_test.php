@@ -43,7 +43,7 @@ class manager_test extends provider_testcase {
         $CFG->messageinbound_domain = 'example.com';
     }
 
-    public function test_tidy_old_verification_failures() {
+    public function test_tidy_old_verification_failures(): void {
         global $DB;
 
         $now = time();

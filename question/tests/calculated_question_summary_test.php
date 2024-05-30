@@ -94,7 +94,7 @@ class calculated_question_summary_test extends \advanced_testcase {
      *
      * @dataProvider get_min_max_provider
      */
-    public function test_get_min_max_of($subqstats, $expected) {
+    public function test_get_min_max_of($subqstats, $expected): void {
         $calculatedsummary = new calculated_question_summary(null, null, $subqstats);
         $res = $calculatedsummary->get_min_max_of('index');
         $this->assertEquals($expected, $res);
@@ -154,7 +154,7 @@ class calculated_question_summary_test extends \advanced_testcase {
      *
      * @dataProvider get_sd_min_max_provider
      */
-    public function test_get_min_max_of_sd($subqstats, $expected) {
+    public function test_get_min_max_of_sd($subqstats, $expected): void {
         $calculatedsummary = new calculated_question_summary(null, null, $subqstats);
         $res = $calculatedsummary->get_min_max_of('sd');
         $this->assertEquals($expected, $res);

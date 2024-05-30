@@ -79,49 +79,49 @@ class ajaxlib_test extends \advanced_testcase {
         }
     }
 
-    public function test_output_capture_normal_debug_none() {
+    public function test_output_capture_normal_debug_none(): void {
         // In normal conditions, and with DEBUG_NONE set, we should not receive any output or throw any exceptions.
         set_debugging(DEBUG_NONE);
         $this->helper_test_clean_output();
     }
 
-    public function test_output_capture_normal_debug_normal() {
+    public function test_output_capture_normal_debug_normal(): void {
         // In normal conditions, and with DEBUG_NORMAL set, we should not receive any output or throw any exceptions.
         set_debugging(DEBUG_NORMAL);
         $this->helper_test_clean_output();
     }
 
-    public function test_output_capture_normal_debug_all() {
+    public function test_output_capture_normal_debug_all(): void {
         // In normal conditions, and with DEBUG_ALL set, we should not receive any output or throw any exceptions.
         set_debugging(DEBUG_ALL);
         $this->helper_test_clean_output();
     }
 
-    public function test_output_capture_normal_debugdeveloper() {
+    public function test_output_capture_normal_debugdeveloper(): void {
         // In normal conditions, and with DEBUG_DEVELOPER set, we should not receive any output or throw any exceptions.
         set_debugging(DEBUG_DEVELOPER);
         $this->helper_test_clean_output();
     }
 
-    public function test_output_capture_error_debug_none() {
+    public function test_output_capture_error_debug_none(): void {
         // With DEBUG_NONE set, we should not throw any exception, but the output will be returned.
         set_debugging(DEBUG_NONE);
         $this->helper_test_dirty_output();
     }
 
-    public function test_output_capture_error_debug_normal() {
+    public function test_output_capture_error_debug_normal(): void {
         // With DEBUG_NORMAL set, we should not throw any exception, but the output will be returned.
         set_debugging(DEBUG_NORMAL);
         $this->helper_test_dirty_output();
     }
 
-    public function test_output_capture_error_debug_all() {
+    public function test_output_capture_error_debug_all(): void {
         // In error conditions, and with DEBUG_ALL set, we should not receive any output or throw any exceptions.
         set_debugging(DEBUG_ALL);
         $this->helper_test_dirty_output();
     }
 
-    public function test_output_capture_error_debugdeveloper() {
+    public function test_output_capture_error_debugdeveloper(): void {
         // With DEBUG_DEVELOPER set, we should throw an exception.
         set_debugging(DEBUG_DEVELOPER);
         $this->helper_test_dirty_output(true);

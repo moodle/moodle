@@ -34,7 +34,7 @@ class deployment_test extends \advanced_testcase {
      * @param array $expectations various expectations for the test cases.
      * @covers ::create
      */
-    public function test_creation(array $args, array $expectations) {
+    public function test_creation(array $args, array $expectations): void {
         if (!$expectations['valid']) {
             $this->expectException($expectations['exception']);
             $this->expectExceptionMessage($expectations['exceptionmessage']);
@@ -141,7 +141,7 @@ class deployment_test extends \advanced_testcase {
      *
      * @covers ::add_context
      */
-    public function test_add_context() {
+    public function test_add_context(): void {
         $deploymentwithid = deployment::create(123, 'deploymentid123', 'Global tool deployment', 55);
         $context = $deploymentwithid->add_context('context-id-123', ['CourseSection']);
         $this->assertInstanceOf(context::class, $context);
@@ -158,7 +158,7 @@ class deployment_test extends \advanced_testcase {
      *
      * @covers ::add_resource_link
      */
-    public function test_add_resource_link() {
+    public function test_add_resource_link(): void {
         $deploymentwithid = deployment::create(123, 'deploymentid123', 'Global tool deployment', 55);
         $resourcelink = $deploymentwithid->add_resource_link('res-link-id-123', 45);
         $this->assertInstanceOf(resource_link::class, $resourcelink);
@@ -178,7 +178,7 @@ class deployment_test extends \advanced_testcase {
      *
      * @covers ::set_legacy_consumer_key
      */
-    public function test_set_legacy_consumer_key() {
+    public function test_set_legacy_consumer_key(): void {
         $deployment = deployment::create(12, 'deploy-id-123', 'Global tool deployment');
         $deployment->set_legacy_consumer_key(str_repeat('a', 255));
         $this->assertEquals(str_repeat('a', 255), $deployment->get_legacy_consumer_key());

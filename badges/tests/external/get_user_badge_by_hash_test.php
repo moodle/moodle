@@ -177,7 +177,7 @@ class get_user_badge_by_hash_test extends externallib_advanced_testcase {
      * These are a basic tests since the badges_get_my_user_badges used by the external function already has unit tests.
      * @covers ::execute
      */
-    public function test_get_user_badge_by_hash() {
+    public function test_get_user_badge_by_hash(): void {
         $data = $this->prepare_test_data();
         $this->setUser($data['student1']);
 
@@ -205,7 +205,7 @@ class get_user_badge_by_hash_test extends externallib_advanced_testcase {
      * Test get user badge by hash with restrictions.
      * @covers ::execute
      */
-    public function test_get_user_badge_by_hash_with_restrictions() {
+    public function test_get_user_badge_by_hash_with_restrictions(): void {
         $data = $this->prepare_test_data();
         $this->setUser($data['student2']);
 

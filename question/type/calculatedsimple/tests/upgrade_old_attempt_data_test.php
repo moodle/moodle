@@ -30,7 +30,7 @@ require_once($CFG->dirroot . '/question/engine/upgrade/tests/helper.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base {
-    public function test_calculatedsimple_adaptive_qsession95() {
+    public function test_calculatedsimple_adaptive_qsession95(): void {
         $quiz = (object) array(
             'id' => '4',
             'course' => '2',
@@ -215,7 +215,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_calculatedsimple_adaptive_qsession98() {
+    public function test_calculatedsimple_adaptive_qsession98(): void {
         $quiz = (object) array(
             'id' => '4',
             'course' => '2',
@@ -440,7 +440,7 @@ class upgrade_old_attempt_data_test extends \question_attempt_upgrader_test_base
         $this->compare_qas($expectedqa, $qa);
     }
 
-    public function test_calculatedsimple_adaptive_qsession101() {
+    public function test_calculatedsimple_adaptive_qsession101(): void {
         $quiz = (object) array(
             'id' => '4',
             'course' => '2',

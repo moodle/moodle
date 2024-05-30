@@ -134,7 +134,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get databases by courses
      */
-    public function test_mod_data_get_databases_by_courses() {
+    public function test_mod_data_get_databases_by_courses(): void {
         global $DB;
 
         $this->resetAfterTest(true);
@@ -278,7 +278,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_database invalid id.
      */
-    public function test_view_database_invalid_id() {
+    public function test_view_database_invalid_id(): void {
 
         // Test invalid instance id.
         $this->expectException('moodle_exception');
@@ -288,7 +288,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_database not enrolled user.
      */
-    public function test_view_database_not_enrolled_user() {
+    public function test_view_database_not_enrolled_user(): void {
 
         $usernotenrolled = self::getDataGenerator()->create_user();
         $this->setUser($usernotenrolled);
@@ -300,7 +300,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_database no capabilities.
      */
-    public function test_view_database_no_capabilities() {
+    public function test_view_database_no_capabilities(): void {
         // Test user with no capabilities.
         // We need a explicit prohibit since this capability is allowed for students by default.
         assign_capability('mod/data:view', CAP_PROHIBIT, $this->studentrole->id, $this->context->id);
@@ -313,7 +313,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test view_database.
      */
-    public function test_view_database() {
+    public function test_view_database(): void {
 
         // Test user with full capabilities.
         $this->setUser($this->student1);
@@ -340,7 +340,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_data_access_information for student.
      */
-    public function test_get_data_access_information_student() {
+    public function test_get_data_access_information_student(): void {
         global $DB;
 
         // Add a field to database to let users add new entries.
@@ -373,7 +373,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_data_access_information for teacher.
      */
-    public function test_get_data_access_information_teacher() {
+    public function test_get_data_access_information_teacher(): void {
         global $DB;
 
         // Add a field to database to let users add new entries.
@@ -406,7 +406,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_data_access_information with groups.
      */
-    public function test_get_data_access_information_groups() {
+    public function test_get_data_access_information_groups(): void {
         global $DB;
 
         // Add a field to database to let users add new entries.
@@ -513,7 +513,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_entries
      */
-    public function test_get_entries() {
+    public function test_get_entries(): void {
         global $DB;
 
         // Check the behaviour when the database has no entries.
@@ -645,7 +645,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_entry_visible_groups.
      */
-    public function test_get_entry_visible_groups() {
+    public function test_get_entry_visible_groups(): void {
         global $DB;
 
         $DB->set_field('course', 'groupmode', VISIBLEGROUPS, ['id' => $this->course->id]);
@@ -670,7 +670,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_entry_separated_groups.
      */
-    public function test_get_entry_separated_groups() {
+    public function test_get_entry_separated_groups(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
@@ -738,7 +738,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_entry from other group in separated groups.
      */
-    public function test_get_entry_other_group_separated_groups() {
+    public function test_get_entry_other_group_separated_groups(): void {
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         // We should not be able to view other gropu entries (in separated groups).
@@ -750,7 +750,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_fields.
      */
-    public function test_get_fields() {
+    public function test_get_fields(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
@@ -768,7 +768,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_fields_database_without_fields.
      */
-    public function test_get_fields_database_without_fields() {
+    public function test_get_fields_database_without_fields(): void {
 
         $this->setUser($this->student1);
         $result = mod_data_external::get_fields($this->database->id);
@@ -780,7 +780,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test search_entries.
      */
-    public function test_search_entries() {
+    public function test_search_entries(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
@@ -892,7 +892,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test approve_entry.
      */
-    public function test_approve_entry() {
+    public function test_approve_entry(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
@@ -906,7 +906,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test unapprove_entry.
      */
-    public function test_unapprove_entry() {
+    public function test_unapprove_entry(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
@@ -920,7 +920,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test approve_entry missing permissions.
      */
-    public function test_approve_entry_missing_permissions() {
+    public function test_approve_entry_missing_permissions(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
@@ -932,7 +932,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_entry as teacher. Check I can delete any entry.
      */
-    public function test_delete_entry_as_teacher() {
+    public function test_delete_entry_as_teacher(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
@@ -950,7 +950,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_entry as student. Check I can delete my own entries.
      */
-    public function test_delete_entry_as_student() {
+    public function test_delete_entry_as_student(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
@@ -963,7 +963,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_entry as student in read only mode period. Check I cannot delete my own entries in that period.
      */
-    public function test_delete_entry_as_student_in_read_only_period() {
+    public function test_delete_entry_as_student_in_read_only_period(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         // Set a time period.
@@ -979,7 +979,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test delete_entry with an user missing permissions.
      */
-    public function test_delete_entry_missing_permissions() {
+    public function test_delete_entry_missing_permissions(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
@@ -991,7 +991,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_entry.
      */
-    public function test_add_entry() {
+    public function test_add_entry(): void {
         global $DB;
         // First create the record structure and add some entries.
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
@@ -1131,7 +1131,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_entry empty_form.
      */
-    public function test_add_entry_empty_form() {
+    public function test_add_entry_empty_form(): void {
 
         // Add a field to database to let users add new entries.
         $this->add_test_field();
@@ -1147,7 +1147,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_entry read_only_period.
      */
-    public function test_add_entry_read_only_period() {
+    public function test_add_entry_read_only_period(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         // Set a time period.
@@ -1164,7 +1164,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_entry max_num_entries.
      */
-    public function test_add_entry_max_num_entries() {
+    public function test_add_entry_max_num_entries(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         // Set a time period.
@@ -1180,7 +1180,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test add_entry invalid group.
      */
-    public function test_add_entry_invalid_group() {
+    public function test_add_entry_invalid_group(): void {
 
         // Add a field to database to let users add new entries.
         $this->add_test_field();
@@ -1196,7 +1196,7 @@ class externallib_test extends externallib_advanced_testcase {
      *
      * @covers ::add_entry
      */
-    public function test_add_entry_empty_database() {
+    public function test_add_entry_empty_database(): void {
         $this->expectException('moodle_exception');
         mod_data_external::add_entry($this->database->id, 0, []);
     }
@@ -1204,7 +1204,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_entry.
      */
-    public function test_update_entry() {
+    public function test_update_entry(): void {
         global $DB;
         // First create the record structure and add some entries.
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
@@ -1346,7 +1346,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_entry sending empty data.
      */
-    public function test_update_entry_empty_data() {
+    public function test_update_entry_empty_data(): void {
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
 
         $this->setUser($this->student1);
@@ -1361,7 +1361,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_entry in read only period.
      */
-    public function test_update_entry_read_only_period() {
+    public function test_update_entry_read_only_period(): void {
         global $DB;
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         // Set a time period.
@@ -1378,7 +1378,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test update_entry other_user.
      */
-    public function test_update_entry_other_user() {
+    public function test_update_entry_other_user(): void {
         // Try to update other user entry.
         list($entry11, $entry12, $entry13, $entry14, $entry21) = self::populate_database_with_entries();
         $this->setUser($this->student2);
@@ -1390,7 +1390,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_entry_rating_information.
      */
-    public function test_get_entry_rating_information() {
+    public function test_get_entry_rating_information(): void {
         global $DB, $CFG;
         require_once($CFG->dirroot . '/rating/lib.php');
 

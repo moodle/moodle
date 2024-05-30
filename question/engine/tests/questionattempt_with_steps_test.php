@@ -55,110 +55,110 @@ class questionattempt_with_steps_test extends \advanced_testcase {
         $this->qa = null;
     }
 
-    public function test_get_step_before_start() {
+    public function test_get_step_before_start(): void {
         $this->expectException(\moodle_exception::class);
         $step = $this->qa->get_step(-1);
     }
 
-    public function test_get_step_at_start() {
+    public function test_get_step_at_start(): void {
         $step = $this->qa->get_step(0);
         $this->assertEquals(0, $step->get_qt_var('i'));
     }
 
-    public function test_get_step_at_end() {
+    public function test_get_step_at_end(): void {
         $step = $this->qa->get_step(2);
         $this->assertEquals(2, $step->get_qt_var('i'));
     }
 
-    public function test_get_step_past_end() {
+    public function test_get_step_past_end(): void {
         $this->expectException(\moodle_exception::class);
         $step = $this->qa->get_step(3);
     }
 
-    public function test_get_num_steps() {
+    public function test_get_num_steps(): void {
         $this->assertEquals(3, $this->qa->get_num_steps());
     }
 
-    public function test_get_last_step() {
+    public function test_get_last_step(): void {
         $step = $this->qa->get_last_step();
         $this->assertEquals(2, $step->get_qt_var('i'));
     }
 
-    public function test_get_last_qt_var_there1() {
+    public function test_get_last_qt_var_there1(): void {
         $this->assertEquals(2, $this->qa->get_last_qt_var('i'));
     }
 
-    public function test_get_last_qt_var_there2() {
+    public function test_get_last_qt_var_there2(): void {
         $this->qa->get_step(0)->set_qt_var('_x', 'a value');
         $this->assertEquals('a value', $this->qa->get_last_qt_var('_x'));
     }
 
-    public function test_get_last_qt_var_missing() {
+    public function test_get_last_qt_var_missing(): void {
         $this->assertNull($this->qa->get_last_qt_var('notthere'));
     }
 
-    public function test_get_last_qt_var_missing_default() {
+    public function test_get_last_qt_var_missing_default(): void {
         $this->assertEquals('default', $this->qa->get_last_qt_var('notthere', 'default'));
     }
 
-    public function test_get_last_behaviour_var_missing() {
+    public function test_get_last_behaviour_var_missing(): void {
         $this->assertNull($this->qa->get_last_qt_var('notthere'));
     }
 
-    public function test_get_last_behaviour_var_there() {
+    public function test_get_last_behaviour_var_there(): void {
         $this->qa->get_step(1)->set_behaviour_var('_x', 'a value');
         $this->assertEquals('a value', '' . $this->qa->get_last_behaviour_var('_x'));
     }
 
-    public function test_get_state_gets_state_of_last() {
+    public function test_get_state_gets_state_of_last(): void {
         $this->qa->get_step(2)->set_state(question_state::$gradedright);
         $this->qa->get_step(1)->set_state(question_state::$gradedwrong);
         $this->assertEquals(question_state::$gradedright, $this->qa->get_state());
     }
 
-    public function test_get_mark_gets_mark_of_last() {
+    public function test_get_mark_gets_mark_of_last(): void {
         $this->assertEquals(2, $this->qa->get_max_mark());
         $this->qa->get_step(2)->set_fraction(0.5);
         $this->qa->get_step(1)->set_fraction(0.1);
         $this->assertEquals(1, $this->qa->get_mark());
     }
 
-    public function test_get_fraction_gets_fraction_of_last() {
+    public function test_get_fraction_gets_fraction_of_last(): void {
         $this->qa->get_step(2)->set_fraction(0.5);
         $this->qa->get_step(1)->set_fraction(0.1);
         $this->assertEquals(0.5, $this->qa->get_fraction());
     }
 
-    public function test_get_fraction_returns_null_if_none() {
+    public function test_get_fraction_returns_null_if_none(): void {
         $this->assertNull($this->qa->get_fraction());
     }
 
-    public function test_format_mark() {
+    public function test_format_mark(): void {
         $this->qa->get_step(2)->set_fraction(0.5);
         $this->assertEquals('1.00', $this->qa->format_mark(2));
     }
 
-    public function test_format_max_mark() {
+    public function test_format_max_mark(): void {
         $this->assertEquals('2.0000000', $this->qa->format_max_mark(7));
     }
 
-    public function test_get_min_fraction() {
+    public function test_get_min_fraction(): void {
         $this->qa->set_min_fraction(-1);
         $this->assertEquals(-1, $this->qa->get_min_fraction());
     }
 
-    public function test_cannot_get_min_fraction_before_start() {
+    public function test_cannot_get_min_fraction_before_start(): void {
         $qa = new question_attempt($this->question, 0);
         $this->expectException('moodle_exception');
         $qa->get_min_fraction();
     }
 
-    public function test_get_max_fraction() {
+    public function test_get_max_fraction(): void {
         $this->qa->set_max_fraction(2);
         $this->assertEquals(2, $this->qa->get_max_fraction());
     }
 
-    public function test_cannot_get_max_fraction_before_start() {
+    public function test_cannot_get_max_fraction_before_start(): void {
         $qa = new question_attempt($this->question, 0);
         $this->expectException('moodle_exception');
         $qa->get_max_fraction();
@@ -199,7 +199,7 @@ class questionattempt_with_steps_test extends \advanced_testcase {
      * @param string $expectederror expected error, if any.
      */
     public function test_validate_manual_mark(float $minfraction, float $maxfraction,
-            float $maxmark, ?string $currentmark, string $expectederror) {
+            float $maxmark, ?string $currentmark, string $expectederror): void {
         $this->qa->set_min_fraction($minfraction);
         $this->qa->set_max_fraction($maxfraction);
         $this->qa->set_max_mark($maxmark);

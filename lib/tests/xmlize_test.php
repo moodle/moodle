@@ -36,7 +36,7 @@ class xmlize_test extends \basic_testcase {
      * The test expected file was generated using the original xmlize
      * implentation found at https://github.com/rmccue/XMLize/blob/master/xmlize-php5.inc.
      */
-    public function test_xmlimport_of_proper_file() {
+    public function test_xmlimport_of_proper_file(): void {
         $xml = file_get_contents(__DIR__ . '/sample_questions.xml');
         $serialised = file_get_contents(__DIR__ . '/sample_questions.ser');
         $this->assertEquals(unserialize($serialised), xmlize($xml));
@@ -45,7 +45,7 @@ class xmlize_test extends \basic_testcase {
     /**
      * Test an XML import using invalid XML.
      */
-    public function test_xmlimport_of_wrong_file() {
+    public function test_xmlimport_of_wrong_file(): void {
         $xml = file_get_contents(__DIR__ . '/sample_questions_wrong.xml');
         $this->expectException('xml_format_exception');
         $this->expectExceptionMessage('Error parsing XML: Mismatched tag at line 18, char 23');
@@ -55,7 +55,7 @@ class xmlize_test extends \basic_testcase {
     /**
      * Test an XML import using legacy question data with old image tag.
      */
-    public function test_xmlimport_of_sample_question_with_old_image_tag() {
+    public function test_xmlimport_of_sample_question_with_old_image_tag(): void {
         $xml = file_get_contents(__DIR__ . '/sample_questions_with_old_image_tag.xml');
         $serialised = file_get_contents(__DIR__ . '/sample_questions_with_old_image_tag.ser');
 

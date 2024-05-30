@@ -26,7 +26,7 @@ namespace core;
  */
 class messagelib_test extends \advanced_testcase {
 
-    public function test_message_provider_disabled() {
+    public function test_message_provider_disabled(): void {
         $this->resetAfterTest();
         $this->preventResetByRollback();
 
@@ -66,7 +66,7 @@ class messagelib_test extends \advanced_testcase {
         $email = reset($emails);
         $this->assertEquals(get_string('unreadnewmessage', 'message', fullname(get_admin())), $email->subject);
     }
-    public function test_message_get_providers_for_user() {
+    public function test_message_get_providers_for_user(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest();
@@ -119,7 +119,7 @@ class messagelib_test extends \advanced_testcase {
         $this->assertFalse($this->message_type_present('mod_quiz', 'submission', $providers));
     }
 
-    public function test_message_get_providers_for_user_more() {
+    public function test_message_get_providers_for_user_more(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -180,7 +180,7 @@ class messagelib_test extends \advanced_testcase {
         // $this->assertFalse($this->message_type_present('moodle', 'backup', $providers));
     }
 
-    public function test_send_message_redirection() {
+    public function test_send_message_redirection(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -392,7 +392,7 @@ class messagelib_test extends \advanced_testcase {
         $user2->emailstop = '0';
     }
 
-    public function test_send_message() {
+    public function test_send_message(): void {
         global $DB, $CFG;
         $this->preventResetByRollback();
         $this->resetAfterTest();
@@ -750,7 +750,7 @@ class messagelib_test extends \advanced_testcase {
      * processors and events code is called. We need to test this code here, as we generally redirect messages elsewhere and we
      * need to be sure this is covered.
      */
-    public function test_message_send_to_conversation_individual() {
+    public function test_message_send_to_conversation_individual(): void {
         global $DB;
         $this->preventResetByRollback();
         $this->resetAfterTest();
@@ -837,7 +837,7 @@ class messagelib_test extends \advanced_testcase {
      * processors and events code is called. We need to test this code here, as we generally redirect messages elsewhere and we
      * need to be sure this is covered.
      */
-    public function test_message_send_to_self_conversation() {
+    public function test_message_send_to_self_conversation(): void {
         global $DB;
         $this->preventResetByRollback();
         $this->resetAfterTest();
@@ -890,7 +890,7 @@ class messagelib_test extends \advanced_testcase {
      * processors and events code is called. We need to test this code here, as we generally redirect messages elsewhere and we
      * need to be sure this is covered.
      */
-    public function test_message_send_to_conversation_group() {
+    public function test_message_send_to_conversation_group(): void {
         global $DB;
         $this->preventResetByRollback();
         $this->resetAfterTest();
@@ -976,7 +976,7 @@ class messagelib_test extends \advanced_testcase {
      *
      * This should defer all processor calls (for 2 members in this case), and event creation (1 event).
      */
-    public function test_send_message_to_conversation_group_with_buffering() {
+    public function test_send_message_to_conversation_group_with_buffering(): void {
         global $DB, $CFG;
         $this->preventResetByRollback();
         $this->resetAfterTest();
@@ -1051,7 +1051,7 @@ class messagelib_test extends \advanced_testcase {
         $this->assertInstanceOf('\core\event\group_message_sent', $events[0]);
     }
 
-    public function test_rollback() {
+    public function test_rollback(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1113,7 +1113,7 @@ class messagelib_test extends \advanced_testcase {
         $this->assertEquals(1, $mailsink->count());
     }
 
-    public function test_forced_rollback() {
+    public function test_forced_rollback(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1157,7 +1157,7 @@ class messagelib_test extends \advanced_testcase {
         $this->assertDebuggingCalled('Not sending email due to $CFG->noemailever config setting');
     }
 
-    public function test_message_attachment_send() {
+    public function test_message_attachment_send(): void {
         global $CFG;
         $this->preventResetByRollback();
         $this->resetAfterTest();
@@ -1212,7 +1212,7 @@ class messagelib_test extends \advanced_testcase {
         $this->assertTrue($storedfileexists);
     }
 
-    public function test_send_message_when_muted() {
+    public function test_send_message_when_muted(): void {
         $this->preventResetByRollback();
         $this->resetAfterTest();
 

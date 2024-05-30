@@ -31,7 +31,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new login notification.
      */
-    public function test_login_notification() {
+    public function test_login_notification(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -62,7 +62,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new login notification is skipped because of same IP from last login.
      */
-    public function test_login_notification_skip_same_ip() {
+    public function test_login_notification_skip_same_ip(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -90,7 +90,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new login notification is skipped because of same browser from last login.
      */
-    public function test_login_notification_skip_same_browser() {
+    public function test_login_notification_skip_same_browser(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -119,7 +119,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new login notification is skipped because of auto-login from the mobile app (skip duplicated notifications).
      */
-    public function test_login_notification_skip_mobileapp() {
+    public function test_login_notification_skip_mobileapp(): void {
         global $SESSION;
 
         $this->resetAfterTest();
@@ -182,7 +182,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new mobile app login notification.
      */
-    public function test_mobile_app_login_notification() {
+    public function test_mobile_app_login_notification(): void {
         global $USER, $DB, $SESSION;
 
         $this->resetAfterTest();
@@ -232,7 +232,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new mobile app login notification skipped becase of same last ip.
      */
-    public function test_mobile_app_login_notification_skip_same_ip() {
+    public function test_mobile_app_login_notification_skip_same_ip(): void {
         global $USER, $DB, $SESSION;
 
         $this->resetAfterTest();
@@ -279,7 +279,7 @@ class send_login_notifications_test extends \advanced_testcase {
     /**
      * Test new mobile app login notification skipped becase of same device.
      */
-    public function test_mobile_app_login_notification_skip_same_device() {
+    public function test_mobile_app_login_notification_skip_same_device(): void {
         global $USER, $DB, $SESSION;
 
         $this->resetAfterTest();

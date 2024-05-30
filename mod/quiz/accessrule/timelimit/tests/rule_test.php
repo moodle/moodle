@@ -33,7 +33,7 @@ require_once($CFG->dirroot . '/mod/quiz/accessrule/timelimit/rule.php');
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class rule_test extends \basic_testcase {
-    public function test_time_limit_access_rule() {
+    public function test_time_limit_access_rule(): void {
         $quiz = new \stdClass();
         $quiz->timeclose = 0;
         $quiz->timelimit = 3600;
@@ -80,7 +80,7 @@ class rule_test extends \basic_testcase {
      * @param int $actuallimit  The actual limit that is being applied
      * @dataProvider time_limit_access_rule_with_time_close_provider
      */
-    public function test_time_limit_access_rule_with_time_close($timetoclose, $timelimit, $displaylimit, $actuallimit) {
+    public function test_time_limit_access_rule_with_time_close($timetoclose, $timelimit, $displaylimit, $actuallimit): void {
         $timenow = 10000;
 
         $quiz = new \stdClass();

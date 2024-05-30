@@ -147,7 +147,7 @@ class structure_test extends \advanced_testcase {
     /**
      * Backup structures tests (construction, definition and execution)
      */
-    function test_backup_structure_construct() {
+    function test_backup_structure_construct(): void {
         global $DB;
 
         $backupid = 'Testing Backup ID'; // Official backupid for these tests
@@ -471,7 +471,7 @@ class structure_test extends \advanced_testcase {
     /**
      * Backup structures wrong tests (trying to do things the wrong way)
      */
-    function test_backup_structure_wrong() {
+    function test_backup_structure_wrong(): void {
 
         // Instantiate the backup processor
         $processor = new backup_structure_processor(new xml_writer(new memory_xml_output()));

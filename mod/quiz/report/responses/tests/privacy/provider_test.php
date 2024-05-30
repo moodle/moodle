@@ -44,7 +44,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * When no preference exists, there should be no export.
      */
-    public function test_preference_unset() {
+    public function test_preference_unset(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -58,7 +58,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Preference does exist.
      */
-    public function test_preference_bool_true() {
+    public function test_preference_bool_true(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -88,7 +88,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Preference does exist.
      */
-    public function test_preference_bool_false() {
+    public function test_preference_bool_false(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -118,7 +118,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Preference does exist.
      */
-    public function test_preference_bool_which_first() {
+    public function test_preference_bool_which_first(): void {
         global $USER;
 
         $this->resetAfterTest();

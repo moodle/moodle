@@ -47,7 +47,7 @@ class completion_test extends \advanced_testcase {
     /**
      * Completion with no rules: the completion is completed as soons as we view the course.
      */
-    public function test_get_completion_state_no_rules() {
+    public function test_get_completion_state_no_rules(): void {
         $this->resetAfterTest();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
 
@@ -63,7 +63,7 @@ class completion_test extends \advanced_testcase {
     /**
      * Completion with no rules and join meeting
      */
-    public function test_get_completion_state_no_rules_and_join_meeting() {
+    public function test_get_completion_state_no_rules_and_join_meeting(): void {
         $this->resetAfterTest();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
 
@@ -82,7 +82,7 @@ class completion_test extends \advanced_testcase {
     /**
      * With state incomplete
      */
-    public function test_get_completion_state_incomplete() {
+    public function test_get_completion_state_incomplete(): void {
         $this->resetAfterTest();
 
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance();
@@ -103,7 +103,7 @@ class completion_test extends \advanced_testcase {
     /**
      * With state complete
      */
-    public function test_get_completion_state_complete() {
+    public function test_get_completion_state_complete(): void {
         $this->resetAfterTest();
 
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance(
@@ -151,7 +151,7 @@ class completion_test extends \advanced_testcase {
     /**
      * No rule description but active
      */
-    public function test_mod_bigbluebuttonbn_get_completion_active_rule_descriptions() {
+    public function test_mod_bigbluebuttonbn_get_completion_active_rule_descriptions(): void {
         $this->resetAfterTest();
         $user = $this->getDataGenerator()->create_user();
         $this->setUser($user);
@@ -195,7 +195,7 @@ class completion_test extends \advanced_testcase {
     /**
      * Completion View
      */
-    public function test_view() {
+    public function test_view(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance(
@@ -241,7 +241,7 @@ class completion_test extends \advanced_testcase {
      * @param int $expectedstate
      * @dataProvider custom_completion_data_provider
      */
-    public function test_get_completion_with_events(array $customcompletionrules, array $events, int $expectedstate) {
+    public function test_get_completion_with_events(array $customcompletionrules, array $events, int $expectedstate): void {
         $this->resetAfterTest();
         list($bbactivitycontext, $bbactivitycm, $bbactivity) = $this->create_instance(
             $this->get_course(),

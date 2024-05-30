@@ -34,7 +34,7 @@ class message_helper_test extends \base_testcase {
      * @param bool $expected the expected return of is_instructor_launch() given the JWT data.
      * @covers ::is_instructor_launch
      */
-    public function test_is_instructor_launch(array $jwtdata, bool $expected) {
+    public function test_is_instructor_launch(array $jwtdata, bool $expected): void {
         $this->assertEquals($expected, message_helper::is_instructor_launch($jwtdata));
     }
 

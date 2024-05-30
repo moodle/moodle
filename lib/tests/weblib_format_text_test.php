@@ -29,7 +29,7 @@ namespace core;
  */
 class weblib_format_text_test extends \advanced_testcase {
 
-    public function test_format_text_format_html() {
+    public function test_format_text_format_html(): void {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertMatchesRegularExpression('~^<p><img class="icon emoticon" alt="smile" title="smile" ' .
@@ -37,14 +37,14 @@ class weblib_format_text_test extends \advanced_testcase {
                 format_text('<p>:-)</p>', FORMAT_HTML));
     }
 
-    public function test_format_text_format_html_no_filters() {
+    public function test_format_text_format_html_no_filters(): void {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals('<p>:-)</p>',
                 format_text('<p>:-)</p>', FORMAT_HTML, array('filter' => false)));
     }
 
-    public function test_format_text_format_plain() {
+    public function test_format_text_format_plain(): void {
         // Note FORMAT_PLAIN does not filter ever, no matter we ask for filtering.
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
@@ -52,14 +52,14 @@ class weblib_format_text_test extends \advanced_testcase {
                 format_text(':-)', FORMAT_PLAIN));
     }
 
-    public function test_format_text_format_plain_no_filters() {
+    public function test_format_text_format_plain_no_filters(): void {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals(':-)',
                 format_text(':-)', FORMAT_PLAIN, array('filter' => false)));
     }
 
-    public function test_format_text_format_markdown() {
+    public function test_format_text_format_markdown(): void {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertMatchesRegularExpression('~^<p><em><img class="icon emoticon" alt="smile" title="smile" ' .
@@ -68,14 +68,14 @@ class weblib_format_text_test extends \advanced_testcase {
                 format_text('*:-)*', FORMAT_MARKDOWN));
     }
 
-    public function test_format_text_format_markdown_nofilter() {
+    public function test_format_text_format_markdown_nofilter(): void {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals("<p><em>:-)</em></p>\n",
                 format_text('*:-)*', FORMAT_MARKDOWN, array('filter' => false)));
     }
 
-    public function test_format_text_format_moodle() {
+    public function test_format_text_format_moodle(): void {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertMatchesRegularExpression('~^<div class="text_to_html"><p>' .
@@ -84,7 +84,7 @@ class weblib_format_text_test extends \advanced_testcase {
                 format_text('<p>:-)</p>', FORMAT_MOODLE));
     }
 
-    public function test_format_text_format_moodle_no_filters() {
+    public function test_format_text_format_moodle_no_filters(): void {
         $this->resetAfterTest();
         filter_set_global_state('emoticon', TEXTFILTER_ON);
         $this->assertEquals('<div class="text_to_html"><p>:-)</p></div>',
@@ -94,7 +94,7 @@ class weblib_format_text_test extends \advanced_testcase {
     /**
      * Make sure that nolink tags and spans prevent linking in filters that support it.
      */
-    public function test_format_text_nolink() {
+    public function test_format_text_nolink(): void {
         global $CFG;
         $this->resetAfterTest();
         filter_set_global_state('activitynames', TEXTFILTER_ON);
@@ -127,7 +127,7 @@ class weblib_format_text_test extends \advanced_testcase {
             format_text('<p><span class="nolink">Read Test 1.</span></p>', FORMAT_HTML, ['context' => $context]));
     }
 
-    public function test_format_text_overflowdiv() {
+    public function test_format_text_overflowdiv(): void {
         $this->assertEquals('<div class="no-overflow"><p>Hello world</p></div>',
                 format_text('<p>Hello world</p>', FORMAT_HTML, array('overflowdiv' => true)));
     }
@@ -139,7 +139,7 @@ class weblib_format_text_test extends \advanced_testcase {
      * @param string $link The link to add target="_blank" to
      * @param string $expected The expected filter value
      */
-    public function test_format_text_blanktarget($link, $expected) {
+    public function test_format_text_blanktarget($link, $expected): void {
         $actual = format_text($link, FORMAT_MOODLE, array('blanktarget' => true, 'filter' => false, 'noclean' => true));
         $this->assertEquals($expected, $actual);
     }
@@ -204,7 +204,7 @@ class weblib_format_text_test extends \advanced_testcase {
      * @param string $nocleaned Expected output of format_text() with noclean=true
      * @param string $cleaned Expected output of format_text() with noclean=false
      */
-    public function test_format_text_cleaning($input, $nocleaned, $cleaned) {
+    public function test_format_text_cleaning($input, $nocleaned, $cleaned): void {
         global $CFG;
         $this->resetAfterTest();
 

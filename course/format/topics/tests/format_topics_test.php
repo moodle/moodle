@@ -38,7 +38,7 @@ class format_topics_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_get_section_name() {
+    public function test_get_section_name(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -64,7 +64,7 @@ class format_topics_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_get_section_name_customised() {
+    public function test_get_section_name_customised(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -98,7 +98,7 @@ class format_topics_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_get_default_section_name() {
+    public function test_get_default_section_name(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -129,7 +129,7 @@ class format_topics_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_update_inplace_editable() {
+    public function test_update_inplace_editable(): void {
         global $CFG, $DB, $PAGE;
         require_once($CFG->dirroot . '/lib/external/externallib.php');
 
@@ -164,7 +164,7 @@ class format_topics_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_inplace_editable() {
+    public function test_inplace_editable(): void {
         global $DB, $PAGE;
 
         $this->resetAfterTest();
@@ -198,7 +198,7 @@ class format_topics_test extends \advanced_testcase {
      *
      * @return void
      */
-    public function test_default_course_enddate() {
+    public function test_default_course_enddate(): void {
         global $CFG, $DB;
 
         $this->resetAfterTest(true);

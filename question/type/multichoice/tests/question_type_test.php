@@ -47,7 +47,7 @@ class question_type_test extends \advanced_testcase {
         $this->qtype = null;
     }
 
-    public function test_name() {
+    public function test_name(): void {
         $this->assertEquals($this->qtype->name(), 'multichoice');
     }
 
@@ -64,28 +64,28 @@ class question_type_test extends \advanced_testcase {
         return $q;
     }
 
-    public function test_can_analyse_responses() {
+    public function test_can_analyse_responses(): void {
         $this->assertTrue($this->qtype->can_analyse_responses());
     }
 
-    public function test_get_random_guess_score() {
+    public function test_get_random_guess_score(): void {
         $q = $this->get_test_question_data();
         $this->assertEquals(0.5, $this->qtype->get_random_guess_score($q));
     }
 
-    public function test_get_random_guess_score_broken_question() {
+    public function test_get_random_guess_score_broken_question(): void {
         $q = $this->get_test_question_data();
         $q->options->answers = [];
         $this->assertNull($this->qtype->get_random_guess_score($q));
     }
 
-    public function test_get_random_guess_score_multi() {
+    public function test_get_random_guess_score_multi(): void {
         $q = $this->get_test_question_data();
         $q->options->single = false;
         $this->assertNull($this->qtype->get_random_guess_score($q));
     }
 
-    public function test_get_possible_responses_single() {
+    public function test_get_possible_responses_single(): void {
         $q = $this->get_test_question_data();
         $responses = $this->qtype->get_possible_responses($q);
 
@@ -97,7 +97,7 @@ class question_type_test extends \advanced_testcase {
             )), $this->qtype->get_possible_responses($q));
     }
 
-    public function test_get_possible_responses_multi() {
+    public function test_get_possible_responses_multi(): void {
         $q = $this->get_test_question_data();
         $q->options->single = false;
 
@@ -114,7 +114,7 @@ class question_type_test extends \advanced_testcase {
     /**
      * @dataProvider get_question_saving_which
      */
-    public function test_question_saving_two_of_four($which) {
+    public function test_question_saving_two_of_four($which): void {
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
@@ -173,7 +173,7 @@ class question_type_test extends \advanced_testcase {
     /**
      * Test to make sure that loading of question options works, including in an error case.
      */
-    public function test_get_question_options() {
+    public function test_get_question_options(): void {
         global $DB;
 
         $this->resetAfterTest(true);

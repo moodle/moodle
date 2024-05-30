@@ -25,7 +25,7 @@ namespace core_competency;
  */
 class plan_test extends \advanced_testcase {
 
-    public function test_can_manage_user() {
+    public function test_can_manage_user(): void {
         $this->resetAfterTest(true);
 
         $manage = create_role('Manage', 'manage', 'Plan manager');
@@ -64,7 +64,7 @@ class plan_test extends \advanced_testcase {
         $this->assertFalse(plan::can_manage_user($u3->id));
     }
 
-    public function test_can_manage_user_draft() {
+    public function test_can_manage_user_draft(): void {
         $this->resetAfterTest(true);
 
         $manage = create_role('Manage', 'manage', 'Plan manager');
@@ -133,7 +133,7 @@ class plan_test extends \advanced_testcase {
         $this->assertTrue(plan::can_manage_user_draft($u5->id));
     }
 
-    public function test_can_read_user() {
+    public function test_can_read_user(): void {
         $this->resetAfterTest(true);
 
         $read = create_role('Read', 'read', 'Plan reader');
@@ -172,7 +172,7 @@ class plan_test extends \advanced_testcase {
         $this->assertTrue(plan::can_read_user($u3->id));    // Due to the default capability.
     }
 
-    public function test_can_read_user_draft() {
+    public function test_can_read_user_draft(): void {
         $this->resetAfterTest(true);
 
         $read = create_role('Read', 'read', 'Plan readr');
@@ -242,7 +242,7 @@ class plan_test extends \advanced_testcase {
         $this->assertTrue(plan::can_read_user_draft($u5->id));
     }
 
-    public function test_validate_duedate() {
+    public function test_validate_duedate(): void {
         global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();
@@ -430,7 +430,7 @@ class plan_test extends \advanced_testcase {
         $this->assertEquals($duedate, $plan->get('duedate'));
     }
 
-    public function test_get_by_user_and_competency() {
+    public function test_get_by_user_and_competency(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -514,7 +514,7 @@ class plan_test extends \advanced_testcase {
         $this->assertCount(0, $plans);
     }
 
-    public function test_get_competency() {
+    public function test_get_competency(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

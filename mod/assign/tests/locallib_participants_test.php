@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/mod/assign/tests/generator.php');
 class locallib_participants_test extends \advanced_testcase {
     use mod_assign_test_generator;
 
-    public function test_list_participants_blind_marking() {
+    public function test_list_participants_blind_marking(): void {
         global $DB;
         $this->resetAfterTest(true);
 
@@ -126,7 +126,7 @@ class locallib_participants_test extends \advanced_testcase {
     /**
      * Tests that users who have a submission, but can no longer submit are listed.
      */
-    public function test_list_participants_can_no_longer_submit() {
+    public function test_list_participants_can_no_longer_submit(): void {
         global $DB;
         $this->resetAfterTest(true);
         // Create a role that will prevent users submitting.

@@ -27,7 +27,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::s
      */
-    public function test_s() {
+    public function test_s(): void {
         // Special cases.
         $this->assertSame('0', s(0));
         $this->assertSame('0', s('0'));
@@ -187,7 +187,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::format_text_email
      */
-    public function test_format_text_email() {
+    public function test_format_text_email(): void {
         $this->assertSame("This is a TEST\n",
             format_text_email('<p>This is a <strong>test</strong></p>', FORMAT_HTML));
         $this->assertSame("This is a TEST\n",
@@ -203,7 +203,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::obfuscate_email
      */
-    public function test_obfuscate_email() {
+    public function test_obfuscate_email(): void {
         $email = 'some.user@example.com';
         $obfuscated = obfuscate_email($email);
         $this->assertNotSame($email, $obfuscated);
@@ -214,7 +214,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::obfuscate_text
      */
-    public function test_obfuscate_text() {
+    public function test_obfuscate_text(): void {
         $text = 'Žluťoučký koníček 32131';
         $obfuscated = obfuscate_text($text);
         $this->assertNotSame($text, $obfuscated);
@@ -225,7 +225,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::highlight
      */
-    public function test_highlight() {
+    public function test_highlight(): void {
         $this->assertSame('This is <span class="highlight">good</span>',
                 highlight('good', 'This is good'));
 
@@ -266,7 +266,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::replace_ampersands_not_followed_by_entity
      */
-    public function test_replace_ampersands() {
+    public function test_replace_ampersands(): void {
         $this->assertSame("This &amp; that &nbsp;", replace_ampersands_not_followed_by_entity("This & that &nbsp;"));
         $this->assertSame("This &amp;nbsp that &nbsp;", replace_ampersands_not_followed_by_entity("This &nbsp that &nbsp;"));
     }
@@ -274,21 +274,21 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::strip_links
      */
-    public function test_strip_links() {
+    public function test_strip_links(): void {
         $this->assertSame('this is a link', strip_links('this is a <a href="http://someaddress.com/query">link</a>'));
     }
 
     /**
      * @covers ::wikify_links
      */
-    public function test_wikify_links() {
+    public function test_wikify_links(): void {
         $this->assertSame('this is a link [ http://someaddress.com/query ]', wikify_links('this is a <a href="http://someaddress.com/query">link</a>'));
     }
 
     /**
      * @covers ::clean_text
      */
-    public function test_clean_text() {
+    public function test_clean_text(): void {
         $text = "lala <applet>xx</applet>";
         $this->assertSame($text, clean_text($text, FORMAT_PLAIN));
         $this->assertSame('lala xx', clean_text($text, FORMAT_MARKDOWN));
@@ -301,7 +301,7 @@ class weblib_test extends advanced_testcase {
      *
      * @covers ::trusttext_active
      */
-    public function test_trusttext_active() {
+    public function test_trusttext_active(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -315,7 +315,7 @@ class weblib_test extends advanced_testcase {
      *
      * @covers ::trusttext_trusted
      */
-    public function test_trusttext_trusted() {
+    public function test_trusttext_trusted(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -397,7 +397,7 @@ class weblib_test extends advanced_testcase {
      * @param int $trust
      */
     public function test_trusttext_pre_edit(bool $expectedsanitised, int $enabled, string $rolename,
-                                            string $format, int $trust) {
+                                            string $format, int $trust): void {
         global $CFG, $DB;
         $this->resetAfterTest();
 
@@ -433,7 +433,7 @@ class weblib_test extends advanced_testcase {
      * Test removal of legacy trusttext flag.
      * @covers ::trusttext_strip
      */
-    public function test_trusttext_strip() {
+    public function test_trusttext_strip(): void {
         $this->assertSame('abc', trusttext_strip('abc'));
         $this->assertSame('abc', trusttext_strip('ab#####TRUSTTEXT#####c'));
     }
@@ -442,7 +442,7 @@ class weblib_test extends advanced_testcase {
      * Test trust option of format_text().
      * @covers ::format_text
      */
-    public function test_format_text_trusted() {
+    public function test_format_text_trusted(): void {
         global $CFG;
         $this->resetAfterTest();
 
@@ -497,7 +497,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::qualified_me
      */
-    public function test_qualified_me() {
+    public function test_qualified_me(): void {
         global $PAGE, $FULLME, $CFG;
         $this->resetAfterTest();
 
@@ -513,7 +513,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers \null_progress_trace
      */
-    public function test_null_progress_trace() {
+    public function test_null_progress_trace(): void {
         $this->resetAfterTest(false);
 
         $trace = new null_progress_trace();
@@ -529,7 +529,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers \null_progress_trace
      */
-    public function test_text_progress_trace() {
+    public function test_text_progress_trace(): void {
         $this->resetAfterTest(false);
 
         $trace = new text_progress_trace();
@@ -543,7 +543,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers \html_progress_trace
      */
-    public function test_html_progress_trace() {
+    public function test_html_progress_trace(): void {
         $this->resetAfterTest(false);
 
         $trace = new html_progress_trace();
@@ -557,7 +557,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers \html_list_progress_trace
      */
-    public function test_html_list_progress_trace() {
+    public function test_html_list_progress_trace(): void {
         $this->resetAfterTest(false);
 
         $trace = new html_list_progress_trace();
@@ -571,7 +571,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers \progress_trace_buffer
      */
-    public function test_progress_trace_buffer() {
+    public function test_progress_trace_buffer(): void {
         $this->resetAfterTest(false);
 
         $trace = new progress_trace_buffer(new html_progress_trace());
@@ -600,7 +600,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers \combined_progress_trace
      */
-    public function test_combined_progress_trace() {
+    public function test_combined_progress_trace(): void {
         $this->resetAfterTest(false);
 
         $trace1 = new progress_trace_buffer(new html_progress_trace(), false);
@@ -619,7 +619,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::set_debugging
      */
-    public function test_set_debugging() {
+    public function test_set_debugging(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -662,7 +662,7 @@ class weblib_test extends advanced_testcase {
     /**
      * @covers ::strip_pluginfile_content
      */
-    public function test_strip_pluginfile_content() {
+    public function test_strip_pluginfile_content(): void {
         $source = <<<SOURCE
 Hello!
 
@@ -703,7 +703,7 @@ EXPECTED;
     /**
      * @covers \purify_html
      */
-    public function test_purify_html_ruby() {
+    public function test_purify_html_ruby(): void {
 
         $this->resetAfterTest();
 
@@ -727,7 +727,7 @@ EXPECTED;
      * @dataProvider provider_content_to_text
      * @covers ::content_to_text
      */
-    public function test_content_to_text($content, $format, $expected) {
+    public function test_content_to_text($content, $format, $expected): void {
         $content = content_to_text($content, $format);
         $this->assertEquals($expected, $content);
     }
@@ -918,7 +918,7 @@ EXPECTED;
      * @dataProvider    data_validate_email
      * @covers ::validate_email
      */
-    public function test_validate_email($email, $result) {
+    public function test_validate_email($email, $result): void {
         if ($result) {
             $this->assertTrue(validate_email($email));
         } else {
@@ -1043,7 +1043,7 @@ EXPECTED;
      * @dataProvider provider_get_file_argument
      * @covers ::get_file_argument
      */
-    public function test_get_file_argument($server, $cfgslasharguments, $expected) {
+    public function test_get_file_argument($server, $cfgslasharguments, $expected): void {
         global $CFG;
 
         // Overwrite the related settings.
@@ -1089,7 +1089,7 @@ EXPECTED;
      *
      * @covers ::extract_draft_file_urls_from_text
      */
-    public function test_extract_draft_file_urls_from_text() {
+    public function test_extract_draft_file_urls_from_text(): void {
         global $CFG;
 
         $url1 = "{$CFG->wwwroot}/draftfile.php/5/user/draft/99999999/test1.jpg";
@@ -1137,7 +1137,7 @@ EXPECTED;
     /**
      * @covers ::print_password_policy
      */
-    public function test_print_password_policy() {
+    public function test_print_password_policy(): void {
         $this->resetAfterTest(true);
         global $CFG;
 
@@ -1209,7 +1209,7 @@ EXPECTED;
      * @covers \moodle_url::out_as_local_url
      * @dataProvider out_as_local_url_coding_exception_provider
      */
-    public function test_out_as_local_url_coding_exception(\moodle_url $url, string $exmessage) {
+    public function test_out_as_local_url_coding_exception(\moodle_url $url, string $exmessage): void {
         $this->expectException(\coding_exception::class);
         $this->expectExceptionMessage($exmessage);
         $localurl = $url->out_as_local_url();
@@ -1246,7 +1246,7 @@ EXPECTED;
      * @covers \moodle_url::out_as_local_url
      * @dataProvider out_as_local_url_provider
      */
-    public function test_out_as_local_url(\moodle_url $url, string $expected) {
+    public function test_out_as_local_url(\moodle_url $url, string $expected): void {
         $this->assertEquals($expected, $url->out_as_local_url(false));
     }
 
@@ -1287,7 +1287,7 @@ EXPECTED;
      * @covers \moodle_url::is_local_url
      * @dataProvider is_local_url_provider
      */
-    public function test_is_local_url(\moodle_url $url, bool $expected) {
+    public function test_is_local_url(\moodle_url $url, bool $expected): void {
         $this->assertEquals($expected, $url->is_local_url(), "'{$url}' is not a local URL!");
     }
 

@@ -128,7 +128,7 @@ class mustache_helper_collection_test extends \advanced_testcase {
      * @param string $input The input string for the helper
      * @param string $expected The expected output of the string after disallowed strip
      */
-    public function test_strip_disallowed_helpers($disallowed, $input, $expected) {
+    public function test_strip_disallowed_helpers($disallowed, $input, $expected): void {
         $collection = new mustache_helper_collection(null, $disallowed);
         $this->assertEquals($expected, $collection->strip_disallowed_helpers($disallowed, $input));
     }

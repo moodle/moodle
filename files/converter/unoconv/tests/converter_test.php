@@ -55,7 +55,7 @@ class converter_test extends \advanced_testcase {
     /**
      * Tests for the start_document_conversion function.
      */
-    public function test_start_document_conversion() {
+    public function test_start_document_conversion(): void {
         $this->resetAfterTest();
 
         $this->require_unoconv();
@@ -95,7 +95,7 @@ class converter_test extends \advanced_testcase {
      * @param   string $path The path to test
      * @param   int $status The expected status
      */
-    public function test_test_unoconv_path($path, $status) {
+    public function test_test_unoconv_path($path, $status): void {
         global $CFG;
 
         $this->resetAfterTest();

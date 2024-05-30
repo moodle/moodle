@@ -74,7 +74,7 @@ class rename_content_test extends \externallib_advanced_testcase {
      *
      * @covers ::execute
      */
-    public function test_rename_content_with_permission(string $newname, string $expectedname, bool $expectedresult) {
+    public function test_rename_content_with_permission(string $newname, string $expectedname, bool $expectedresult): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -111,7 +111,7 @@ class rename_content_test extends \externallib_advanced_testcase {
      *
      * @covers ::execute
      */
-    public function test_rename_content_without_permission() {
+    public function test_rename_content_without_permission(): void {
         global $DB;
         $this->resetAfterTest();
 

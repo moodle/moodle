@@ -43,7 +43,7 @@ class externallib_test extends \advanced_testcase {
      * Test core_files_external::upload().
      */
 
-    public function test_upload() {
+    public function test_upload(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -109,7 +109,7 @@ class externallib_test extends \advanced_testcase {
     /*
      * Make sure only user component is allowed in  core_files_external::upload().
      */
-    public function test_upload_param_component() {
+    public function test_upload_param_component(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -134,7 +134,7 @@ class externallib_test extends \advanced_testcase {
     /*
      * Make sure only draft areas are allowed in  core_files_external::upload().
      */
-    public function test_upload_param_area() {
+    public function test_upload_param_area(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -162,7 +162,7 @@ class externallib_test extends \advanced_testcase {
     /**
      * Test getting a list of files with and without a context ID.
      */
-    public function test_get_files() {
+    public function test_get_files(): void {
         global $USER, $DB;
 
         $this->resetAfterTest();
@@ -303,7 +303,7 @@ class externallib_test extends \advanced_testcase {
     /**
      * Test delete draft files
      */
-    public function test_delete_draft_files() {
+    public function test_delete_draft_files(): void {
         global $USER;
 
         $this->resetAfterTest();
@@ -356,7 +356,7 @@ class externallib_test extends \advanced_testcase {
     /**
      * Test get_unused_draft_itemid.
      */
-    public function test_get_unused_draft_itemid() {
+    public function test_get_unused_draft_itemid(): void {
         global $USER;
 
         $this->resetAfterTest();

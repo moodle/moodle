@@ -70,7 +70,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that the get_sql_join function returns valid SQL which returns the correct list of rated itemids.
      */
-    public function test_get_sql_join() {
+    public function test_get_sql_join(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -158,7 +158,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
      * Ensure that the get_sql_join function returns valid SQL which returns the correct list of rated itemids.
      * This makes use of the optional inner join argument.
      */
-    public function test_get_sql_join_inner() {
+    public function test_get_sql_join_inner(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -245,7 +245,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Ensure that export_area_ratings exports all ratings that a user has made, and all ratings for a users own content.
      */
-    public function test_export_area_ratings() {
+    public function test_export_area_ratings(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -343,7 +343,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test delete_ratings() method.
      */
-    public function test_delete_ratings() {
+    public function test_delete_ratings(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -390,7 +390,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test delete_ratings_select() method.
      */
-    public function test_delete_ratings_select() {
+    public function test_delete_ratings_select(): void {
         global $DB;
         $this->resetAfterTest();
 

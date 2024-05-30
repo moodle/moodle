@@ -95,7 +95,7 @@ class observer_test extends \advanced_testcase {
      *
      * When items events are triggered they are stored in the block_recentlyaccesseditems table.
      */
-    public function test_item_view_recorded_testcase() {
+    public function test_item_view_recorded_testcase(): void {
         global $DB;
 
         // Empty table at the beggining.
@@ -140,7 +140,7 @@ class observer_test extends \advanced_testcase {
      *
      * When a course module is removed, the records associated in the block_recentlyaccesseditems table are deleted.
      */
-    public function test_item_delete_record_testcase() {
+    public function test_item_delete_record_testcase(): void {
         global $DB;
 
         // Empty table at the beggining.

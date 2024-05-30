@@ -42,7 +42,7 @@ class questiontext_test extends area_test_base {
     /**
      * Test find course areas.
      */
-    public function test_find_course_areas() {
+    public function test_find_course_areas(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -126,7 +126,7 @@ class questiontext_test extends area_test_base {
     /**
      * Test find relevant areas.
      */
-    public function test_find_relevant_areas() {
+    public function test_find_relevant_areas(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -156,7 +156,7 @@ class questiontext_test extends area_test_base {
     /**
      * Test find system areas.
      */
-    public function test_find_system_areas() {
+    public function test_find_system_areas(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -197,7 +197,7 @@ class questiontext_test extends area_test_base {
      *
      * @covers ::get_course_and_category
      */
-    public function test_get_course_and_category() {
+    public function test_get_course_and_category(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

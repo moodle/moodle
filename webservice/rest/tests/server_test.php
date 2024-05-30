@@ -205,7 +205,7 @@ class server_test extends \advanced_testcase {
      * @param mixed $value The value to xmlise.
      * @param mixed $expected The expected output.
      */
-    public function test_xmlize($description, $value, $expected) {
+    public function test_xmlize($description, $value, $expected): void {
         $method = new \ReflectionMethod('webservice_rest_server', 'xmlize_result');
         $this->assertEquals($expected, $method->invoke(null, $value, $description));
     }

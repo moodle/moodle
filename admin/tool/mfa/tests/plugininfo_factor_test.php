@@ -36,7 +36,7 @@ class plugininfo_factor_test extends \advanced_testcase {
      * @covers ::has_setup
      * @covers ::get_active_user_factor_types
      */
-    public function test_get_next_user_login_factor() {
+    public function test_get_next_user_login_factor(): void {
 
         $this->resetAfterTest(true);
 

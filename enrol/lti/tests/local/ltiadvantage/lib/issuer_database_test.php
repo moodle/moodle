@@ -37,7 +37,7 @@ class issuer_database_test extends \advanced_testcase {
      *
      * @covers ::findRegistrationByIssuer
      */
-    public function test_find_registration_by_issuer() {
+    public function test_find_registration_by_issuer(): void {
         $this->resetAfterTest();
         $appregrepo = new application_registration_repository();
         $appreg = application_registration::create(
@@ -72,7 +72,7 @@ class issuer_database_test extends \advanced_testcase {
      *
      * @covers ::findDeployment
      */
-    public function test_find_deployment() {
+    public function test_find_deployment(): void {
         $this->resetAfterTest();
         $appregrepo = new application_registration_repository();
         $appreg = application_registration::create(

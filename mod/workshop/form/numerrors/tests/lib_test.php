@@ -65,7 +65,7 @@ class lib_test extends \advanced_testcase {
         parent::tearDown();
     }
 
-    public function test_calculate_peer_grade_null_grade() {
+    public function test_calculate_peer_grade_null_grade(): void {
         // fixture set-up
         $this->strategy->dimensions   = array();
         $this->strategy->mappings     = array();
@@ -76,7 +76,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($suggested);
     }
 
-    public function test_calculate_peer_grade_no_error() {
+    public function test_calculate_peer_grade_no_error(): void {
         // fixture set-up
         $this->strategy->dimensions      = array();
         $this->strategy->dimensions[108] = (object)array('weight' => '1');
@@ -93,7 +93,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($suggested, 100.00000);
     }
 
-    public function test_calculate_peer_grade_one_error() {
+    public function test_calculate_peer_grade_one_error(): void {
         // fixture set-up
         $this->strategy->dimensions      = array();
         $this->strategy->dimensions[108] = (object)array('weight' => '1');
@@ -116,7 +116,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($suggested, 80.00000);
     }
 
-    public function test_calculate_peer_grade_three_errors_same_weight_a() {
+    public function test_calculate_peer_grade_three_errors_same_weight_a(): void {
         // fixture set-up
         $this->strategy->dimensions      = array();
         $this->strategy->dimensions[108] = (object)array('weight' => '1.00000');
@@ -140,7 +140,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($suggested, 10.00000);
     }
 
-    public function test_calculate_peer_grade_three_errors_same_weight_b() {
+    public function test_calculate_peer_grade_three_errors_same_weight_b(): void {
         // fixture set-up
         $this->strategy->dimensions      = array();
         $this->strategy->dimensions[108] = (object)array('weight' => '1.00000');
@@ -164,7 +164,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($suggested, 0.00000);
     }
 
-    public function test_calculate_peer_grade_one_error_weighted() {
+    public function test_calculate_peer_grade_one_error_weighted(): void {
         // fixture set-up
         $this->strategy->dimensions      = array();
         $this->strategy->dimensions[108] = (object)array('weight' => '1');
@@ -188,7 +188,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($suggested, 33.00000);
     }
 
-    public function test_calculate_peer_grade_zero_weight() {
+    public function test_calculate_peer_grade_zero_weight(): void {
         // fixture set-up
         $this->strategy->dimensions      = array();
         $this->strategy->dimensions[108] = (object)array('weight' => '1');
@@ -212,7 +212,7 @@ class lib_test extends \advanced_testcase {
         $this->assertEquals($suggested, 100.00000);
     }
 
-    public function test_calculate_peer_grade_sum_weight() {
+    public function test_calculate_peer_grade_sum_weight(): void {
         // fixture set-up
         $this->strategy->dimensions      = array();
         $this->strategy->dimensions[108] = (object)array('weight' => '1');

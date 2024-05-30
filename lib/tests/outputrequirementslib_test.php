@@ -31,7 +31,7 @@ require_once($CFG->libdir . '/outputrequirementslib.php');
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class outputrequirementslib_test extends \advanced_testcase {
-    public function test_string_for_js() {
+    public function test_string_for_js(): void {
         $this->resetAfterTest();
 
         $page = new \moodle_page();
@@ -44,20 +44,20 @@ class outputrequirementslib_test extends \advanced_testcase {
         //       it would be nice to test that the strings are actually fetched in the footer.
     }
 
-    public function test_one_time_output_normal_case() {
+    public function test_one_time_output_normal_case(): void {
         $page = new \moodle_page();
         $this->assertTrue($page->requires->should_create_one_time_item_now('test_item'));
         $this->assertFalse($page->requires->should_create_one_time_item_now('test_item'));
     }
 
-    public function test_one_time_output_repeat_output_throws() {
+    public function test_one_time_output_repeat_output_throws(): void {
         $page = new \moodle_page();
         $page->requires->set_one_time_item_created('test_item');
         $this->expectException('coding_exception');
         $page->requires->set_one_time_item_created('test_item');
     }
 
-    public function test_one_time_output_different_pages_independent() {
+    public function test_one_time_output_different_pages_independent(): void {
         $firstpage = new \moodle_page();
         $secondpage = new \moodle_page();
         $this->assertTrue($firstpage->requires->should_create_one_time_item_now('test_item'));
@@ -69,7 +69,7 @@ class outputrequirementslib_test extends \advanced_testcase {
      *
      * Test to make sure that backslashes are not generated with either slasharguments set to on or off.
      */
-    public function test_jquery_plugin() {
+    public function test_jquery_plugin(): void {
         global $CFG, $PAGE;
 
         $this->resetAfterTest();
@@ -107,7 +107,7 @@ class outputrequirementslib_test extends \advanced_testcase {
     /**
      * Test AMD modules loading.
      */
-    public function test_js_call_amd() {
+    public function test_js_call_amd(): void {
 
         $page = new \moodle_page();
 
@@ -148,7 +148,7 @@ class outputrequirementslib_test extends \advanced_testcase {
      * @covers \page_requirements_manager::js_fix_url
      * @dataProvider js_fix_url_moodle_url_provider
      */
-    public function test_js_fix_url_moodle_url(\moodle_url $moodleurl, int $cfgslashargs, string $expected) {
+    public function test_js_fix_url_moodle_url(\moodle_url $moodleurl, int $cfgslashargs, string $expected): void {
         global $CFG;
         $defaultslashargs = $CFG->slasharguments;
 
@@ -231,7 +231,7 @@ class outputrequirementslib_test extends \advanced_testcase {
      * @covers \page_requirements_manager::js_fix_url
      * @dataProvider js_fix_url_plain_string_provider
      */
-    public function test_js_fix_url_plain_string(string $url, int $cfgslashargs, string $expected) {
+    public function test_js_fix_url_plain_string(string $url, int $cfgslashargs, string $expected): void {
         global $CFG;
         $defaultslashargs = $CFG->slasharguments;
 
@@ -311,7 +311,7 @@ class outputrequirementslib_test extends \advanced_testcase {
      * @covers \page_requirements_manager::js_fix_url
      * @dataProvider js_fix_url_coding_exception_provider
      */
-    public function test_js_fix_url_coding_exception($url, string $exmessage) {
+    public function test_js_fix_url_coding_exception($url, string $exmessage): void {
         $rc = new \ReflectionClass(\page_requirements_manager::class);
         $rcm = $rc->getMethod('js_fix_url');
         $requires = new \page_requirements_manager();

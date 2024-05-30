@@ -37,7 +37,7 @@ class cron_task_test extends \advanced_testcase {
     /**
      * Test that the phase is automatically switched after the submissions deadline.
      */
-    public function test_phase_switching() {
+    public function test_phase_switching(): void {
         global $DB;
 
         $this->resetAfterTest();

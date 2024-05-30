@@ -40,7 +40,7 @@ class baseattribute_test extends \basic_testcase {
     /**
      * Correct base_attribute tests
      */
-    function test_base_attribute() {
+    function test_base_attribute(): void {
         $name_with_all_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_';
         $value_to_test = 'Some <value> to test';
 

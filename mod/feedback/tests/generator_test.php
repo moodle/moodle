@@ -25,7 +25,7 @@ namespace mod_feedback;
  */
 class generator_test extends \advanced_testcase {
 
-    public function test_create_instance() {
+    public function test_create_instance(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -45,7 +45,7 @@ class generator_test extends \advanced_testcase {
                 array('id' => $feedback->id)));
     }
 
-    public function test_create_item_info() {
+    public function test_create_item_info(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -64,7 +64,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('info', $records[$item1->id]->typ);
     }
 
-    public function test_create_item_label() {
+    public function test_create_item_label(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -89,7 +89,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('label', $records[$item1->id]->typ);
     }
 
-    public function test_create_item_multichoice() {
+    public function test_create_item_multichoice(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -109,7 +109,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('multichoice', $records[$item1->id]->typ);
     }
 
-    public function test_create_item_multichoicerated() {
+    public function test_create_item_multichoicerated(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -130,7 +130,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('multichoicerated', $records[$item1->id]->typ);
     }
 
-    public function test_create_item_numeric() {
+    public function test_create_item_numeric(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -150,7 +150,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('numeric', $records[$item1->id]->typ);
     }
 
-    public function test_create_item_textarea() {
+    public function test_create_item_textarea(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -170,7 +170,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('textarea', $records[$item1->id]->typ);
     }
 
-    public function test_create_item_textfield() {
+    public function test_create_item_textfield(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();
@@ -190,7 +190,7 @@ class generator_test extends \advanced_testcase {
         $this->assertEquals('textfield', $records[$item1->id]->typ);
     }
 
-    public function test_create_item_pagebreak() {
+    public function test_create_item_pagebreak(): void {
         global $DB;
         $this->resetAfterTest();
         $this->setAdminUser();

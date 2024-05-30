@@ -44,7 +44,7 @@ class events_test extends \advanced_testcase {
     /**
      * Test the report viewed event.
      */
-    public function test_report_viewed() {
+    public function test_report_viewed(): void {
         $requestedqtype = 'all';
         $event = \report_questioninstances\event\report_viewed::create(array('other' => array('requestedqtype' => $requestedqtype)));
 

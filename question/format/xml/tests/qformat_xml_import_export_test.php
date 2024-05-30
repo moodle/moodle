@@ -145,7 +145,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Simple check for importing a category with a description.
      */
-    public function test_import_category() {
+    public function test_import_category(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
@@ -160,7 +160,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Check importing nested categories.
      */
-    public function test_import_nested_categories() {
+    public function test_import_nested_categories(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
@@ -178,7 +178,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Check importing nested categories contain the right questions.
      */
-    public function test_import_nested_categories_with_questions() {
+    public function test_import_nested_categories_with_questions(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
@@ -202,7 +202,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Check import of an old file (without format), for backward compatability.
      */
-    public function test_import_old_format() {
+    public function test_import_old_format(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
@@ -220,7 +220,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Check the import of an xml file where the child category exists before the parent category.
      */
-    public function test_import_categories_in_reverse_order() {
+    public function test_import_categories_in_reverse_order(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $this->setAdminUser();
@@ -263,7 +263,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Simple check for exporting a category.
      */
-    public function test_export_category() {
+    public function test_export_category(): void {
         global $SITE;
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -301,7 +301,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Check exporting nested categories.
      */
-    public function test_export_nested_categories() {
+    public function test_export_nested_categories(): void {
         global $SITE;
 
         $this->resetAfterTest();
@@ -355,7 +355,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Check exporting nested categories contain the right questions.
      */
-    public function test_export_nested_categories_with_questions() {
+    public function test_export_nested_categories_with_questions(): void {
         global $SITE;
 
         $this->resetAfterTest();
@@ -462,7 +462,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Simple check for exporting a category.
      */
-    public function test_export_category_with_special_chars() {
+    public function test_export_category_with_special_chars(): void {
         global $SITE;
 
         $generator = $this->getDataGenerator()->get_plugin_generator('core_question');
@@ -501,7 +501,7 @@ class qformat_xml_import_export_test extends advanced_testcase {
     /**
      * Test that bad multianswer questions are not imported.
      */
-    public function test_import_broken_multianswer_questions() {
+    public function test_import_broken_multianswer_questions(): void {
         $lines = file(__DIR__ . '/fixtures/broken_cloze_questions.xml');
         $importer = $qformat = new qformat_xml();
 

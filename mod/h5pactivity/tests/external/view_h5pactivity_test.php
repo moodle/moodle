@@ -50,7 +50,7 @@ class view_h5pactivity_test extends externallib_advanced_testcase {
     /**
      * Test test_view_h5pactivity invalid id.
      */
-    public function test_view_h5pactivity_invalid_id() {
+    public function test_view_h5pactivity_invalid_id(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -61,7 +61,7 @@ class view_h5pactivity_test extends externallib_advanced_testcase {
     /**
      * Test test_view_h5pactivity user not enrolled.
      */
-    public function test_view_h5pactivity_user_not_enrolled() {
+    public function test_view_h5pactivity_user_not_enrolled(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -78,7 +78,7 @@ class view_h5pactivity_test extends externallib_advanced_testcase {
     /**
      * Test test_view_h5pactivity user student.
      */
-    public function test_view_h5pactivity_user_student() {
+    public function test_view_h5pactivity_user_student(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -111,7 +111,7 @@ class view_h5pactivity_test extends externallib_advanced_testcase {
     /**
      * Test test_view_h5pactivity user missing capabilities.
      */
-    public function test_view_h5pactivity_user_missing_capabilities() {
+    public function test_view_h5pactivity_user_missing_capabilities(): void {
         global $DB;
 
         $this->resetAfterTest();

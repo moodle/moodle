@@ -38,7 +38,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event provide action open.
      */
-    public function test_workshop_core_calendar_provide_event_action_open() {
+    public function test_workshop_core_calendar_provide_event_action_open(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -61,7 +61,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event provide action open for a non user.
      */
-    public function test_workshop_core_calendar_provide_event_action_open_for_non_user() {
+    public function test_workshop_core_calendar_provide_event_action_open_for_non_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -87,7 +87,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event provide action open when user id is provided.
      */
-    public function test_workshop_core_calendar_provide_event_action_open_for_user() {
+    public function test_workshop_core_calendar_provide_event_action_open_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -117,7 +117,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event provide action closed.
      */
-    public function test_workshop_core_calendar_provide_event_action_closed() {
+    public function test_workshop_core_calendar_provide_event_action_closed(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -139,7 +139,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event provide action closed for a non user.
      */
-    public function test_workshop_core_calendar_provide_event_action_closed_for_non_user() {
+    public function test_workshop_core_calendar_provide_event_action_closed_for_non_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -164,7 +164,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event provide action closed when user id is provided.
      */
-    public function test_workshop_core_calendar_provide_event_action_closed_for_user() {
+    public function test_workshop_core_calendar_provide_event_action_closed_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -193,7 +193,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event action open in future.
      */
-    public function test_workshop_core_calendar_provide_event_action_open_in_future() {
+    public function test_workshop_core_calendar_provide_event_action_open_in_future(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -215,7 +215,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event action open in future for a non user.
      */
-    public function test_workshop_core_calendar_provide_event_action_open_in_future_for_non_user() {
+    public function test_workshop_core_calendar_provide_event_action_open_in_future_for_non_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -240,7 +240,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event action open in future when user id is provided.
      */
-    public function test_workshop_core_calendar_provide_event_action_open_in_future_for_user() {
+    public function test_workshop_core_calendar_provide_event_action_open_in_future_for_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -269,7 +269,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event with no time specified.
      */
-    public function test_workshop_core_calendar_provide_event_action_no_time_specified() {
+    public function test_workshop_core_calendar_provide_event_action_no_time_specified(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -290,7 +290,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test calendar event with no time specified for a non user.
      */
-    public function test_workshop_core_calendar_provide_event_action_no_time_specified_for_non_user() {
+    public function test_workshop_core_calendar_provide_event_action_no_time_specified_for_non_user(): void {
         global $CFG;
 
         $this->resetAfterTest();
@@ -311,7 +311,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_workshop_core_calendar_provide_event_action_already_completed() {
+    public function test_workshop_core_calendar_provide_event_action_already_completed(): void {
         $this->resetAfterTest();
         set_config('enablecompletion', 1);
         $this->setAdminUser();
@@ -342,7 +342,7 @@ class lib_test extends \advanced_testcase {
         $this->assertNull($actionevent);
     }
 
-    public function test_workshop_core_calendar_provide_event_action_already_completed_for_user() {
+    public function test_workshop_core_calendar_provide_event_action_already_completed_for_user(): void {
         $this->resetAfterTest();
         set_config('enablecompletion', 1);
         $this->setAdminUser();
@@ -400,7 +400,7 @@ class lib_test extends \advanced_testcase {
     /**
      * Test check_updates_since callback.
      */
-    public function test_check_updates_since() {
+    public function test_check_updates_since(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -496,7 +496,7 @@ class lib_test extends \advanced_testcase {
     /**
      * An unknown event type should not have any limits
      */
-    public function test_mod_workshop_core_calendar_get_valid_event_timestart_range_unknown_event() {
+    public function test_mod_workshop_core_calendar_get_valid_event_timestart_range_unknown_event(): void {
         global $CFG;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -601,7 +601,7 @@ class lib_test extends \advanced_testcase {
      * @param int|null $expectedmax The expected value for max of the valid event range
      */
     public function test_mod_workshop_core_calendar_get_valid_event_timestart_range($submissionstart, $submissionend,
-            $assessmentstart, $assessmentend, $eventtype, $expectedmin, $expectedmax) {
+            $assessmentstart, $assessmentend, $eventtype, $expectedmin, $expectedmax): void {
 
         global $CFG;
         require_once($CFG->dirroot . '/calendar/lib.php');
@@ -640,7 +640,7 @@ class lib_test extends \advanced_testcase {
     /**
      * An unknown event type should not change the workshop instance.
      */
-    public function test_mod_workshop_core_calendar_event_timestart_updated_unknown_event() {
+    public function test_mod_workshop_core_calendar_event_timestart_updated_unknown_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -725,7 +725,7 @@ class lib_test extends \advanced_testcase {
      * @param int $newtime          The new value for the $fieldtoupdate
      */
     public function test_mod_workshop_core_calendar_event_timestart_updated($submissionstart, $submissionend, $assessmentstart,
-            $assessmentend, $eventtype, $fieldtoupdate, $newtime) {
+            $assessmentend, $eventtype, $fieldtoupdate, $newtime): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 

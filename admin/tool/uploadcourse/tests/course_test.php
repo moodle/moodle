@@ -78,7 +78,7 @@ class course_test extends \advanced_testcase {
         $co->proceed();
     }
 
-    public function test_proceed_when_prepare_failed() {
+    public function test_proceed_when_prepare_failed(): void {
         $this->initialise_test();
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
@@ -89,7 +89,7 @@ class course_test extends \advanced_testcase {
         $co->proceed();
     }
 
-    public function test_proceed_when_already_started() {
+    public function test_proceed_when_already_started(): void {
         $this->initialise_test();
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
@@ -101,7 +101,7 @@ class course_test extends \advanced_testcase {
         $co->proceed();
     }
 
-    public function test_invalid_shortname() {
+    public function test_invalid_shortname(): void {
         $this->initialise_test();
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
@@ -111,7 +111,7 @@ class course_test extends \advanced_testcase {
         $this->assertArrayHasKey('invalidshortname', $co->get_errors());
     }
 
-    public function test_invalid_shortname_too_long() {
+    public function test_invalid_shortname_too_long(): void {
         $this->resetAfterTest();
 
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
@@ -127,7 +127,7 @@ class course_test extends \advanced_testcase {
         $this->assertArrayHasKey('invalidshortnametoolong', $upload->get_errors());
     }
 
-    public function test_invalid_fullname_too_long() {
+    public function test_invalid_fullname_too_long(): void {
         $this->initialise_test();
 
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
@@ -142,7 +142,7 @@ class course_test extends \advanced_testcase {
         $this->assertArrayHasKey('invalidfullnametoolong', $upload->get_errors());
     }
 
-    public function test_invalid_visibility() {
+    public function test_invalid_visibility(): void {
         $this->initialise_test();
         $mode = tool_uploadcourse_processor::MODE_CREATE_NEW;
         $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
@@ -273,7 +273,7 @@ class course_test extends \advanced_testcase {
         }
     }
 
-    public function test_create() {
+    public function test_create(): void {
         global $DB;
         $this->initialise_test();
 
@@ -322,7 +322,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals(1, course_get_format($course)->get_course()->coursedisplay);
     }
 
-    public function test_create_with_sections() {
+    public function test_create_with_sections(): void {
         global $DB;
         $this->initialise_test();
         $updatemode = tool_uploadcourse_processor::UPDATE_NOTHING;
@@ -352,7 +352,7 @@ class course_test extends \advanced_testcase {
             $DB->count_records('course_sections', ['course' => $courseid]));
     }
 
-    public function test_delete() {
+    public function test_delete(): void {
         global $DB;
         $this->initialise_test();
 
@@ -397,7 +397,7 @@ class course_test extends \advanced_testcase {
         $this->assertArrayHasKey('cannotdeletecoursenotexist', $co->get_errors());
     }
 
-    public function test_update() {
+    public function test_update(): void {
         global $DB;
         $this->initialise_test();
 
@@ -474,7 +474,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals(1, course_get_format($course)->get_course()->coursedisplay);
     }
 
-    public function test_data_saved() {
+    public function test_data_saved(): void {
         global $DB;
 
         $this->initialise_test();
@@ -692,7 +692,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals(ENROL_INSTANCE_ENABLED, $enroldata['self']->status);
     }
 
-    public function test_default_data_saved() {
+    public function test_default_data_saved(): void {
         global $DB;
 
         $this->initialise_test();
@@ -817,7 +817,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals($defaultdata['showactivitydates'], $course->showactivitydates);
     }
 
-    public function test_rename() {
+    public function test_rename(): void {
         global $DB;
         $this->initialise_test();
 
@@ -912,7 +912,7 @@ class course_test extends \advanced_testcase {
         $this->assertArrayHasKey('cannotrenameshortnamealreadyinuse', $co->get_errors());
     }
 
-    public function test_restore_course() {
+    public function test_restore_course(): void {
         global $DB;
         $this->initialise_test();
         $this->setAdminUser();
@@ -956,7 +956,7 @@ class course_test extends \advanced_testcase {
         $this->assertTrue($found);
     }
 
-    public function test_restore_file() {
+    public function test_restore_file(): void {
         global $DB;
         $this->initialise_test();
         $this->setAdminUser();
@@ -1008,7 +1008,7 @@ class course_test extends \advanced_testcase {
     /**
      * Test that specifying course template respects default restore settings
      */
-    public function test_restore_file_settings() {
+    public function test_restore_file_settings(): void {
         global $DB;
         $this->initialise_test();
         $this->setAdminUser();
@@ -1032,7 +1032,7 @@ class course_test extends \advanced_testcase {
         $this->assertEmpty($modinfo->get_instances_of('glossary'));
     }
 
-    public function test_restore_invalid_file() {
+    public function test_restore_invalid_file(): void {
         $this->initialise_test();
 
         // Restore from a non-existing file should not be allowed.
@@ -1059,7 +1059,7 @@ class course_test extends \advanced_testcase {
         $this->assertDebuggingCalled();
     }
 
-    public function test_restore_invalid_course() {
+    public function test_restore_invalid_course(): void {
         $this->initialise_test();
 
         // Restore from an invalid file should not be allowed.
@@ -1075,7 +1075,7 @@ class course_test extends \advanced_testcase {
     /**
      * Testing the reset on groups, group members and enrolments.
      */
-    public function test_reset() {
+    public function test_reset(): void {
         global $DB;
         $this->initialise_test();
 
@@ -1167,7 +1167,7 @@ class course_test extends \advanced_testcase {
         $this->assertFalse($DB->record_exists('groups', array('id' => $g1->id)));
     }
 
-    public function test_create_bad_category() {
+    public function test_create_bad_category(): void {
         global $DB;
         $this->initialise_test();
 
@@ -1222,7 +1222,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals($c1->category, $DB->get_field('course', 'category', array('id' => $c1->id)));
     }
 
-    public function test_enrolment_data() {
+    public function test_enrolment_data(): void {
         $this->initialise_test();
 
         // We need to set the current user as one with the capability to edit manual enrolment instances in the new course.
@@ -1374,7 +1374,7 @@ class course_test extends \advanced_testcase {
     /**
      * Test upload processing of course custom fields
      */
-    public function test_custom_fields_data() {
+    public function test_custom_fields_data(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -1410,7 +1410,7 @@ class course_test extends \advanced_testcase {
     /**
      * Test upload processing of course custom field that is required but empty
      */
-    public function test_custom_fields_data_required() {
+    public function test_custom_fields_data_required(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -1448,7 +1448,7 @@ class course_test extends \advanced_testcase {
     /**
      * Test upload processing of course custom field with an invalid select option
      */
-    public function test_custom_fields_data_invalid_select_option() {
+    public function test_custom_fields_data_invalid_select_option(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -1478,7 +1478,7 @@ class course_test extends \advanced_testcase {
     /**
      * Test upload processing of course custom field with an out of range date
      */
-    public function test_custom_fields_data_invalid_date() {
+    public function test_custom_fields_data_invalid_date(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -1501,7 +1501,7 @@ class course_test extends \advanced_testcase {
         $this->assertArrayHasKey('customfieldinvalid', $uploader->get_errors());
     }
 
-    public function test_idnumber_problems() {
+    public function test_idnumber_problems(): void {
         $this->initialise_test();
 
         $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'sntaken', 'idnumber' => 'taken'));
@@ -1552,7 +1552,7 @@ class course_test extends \advanced_testcase {
         $this->assertEquals('nottaken', $data['idnumber']);
     }
 
-    public function test_generate_shortname() {
+    public function test_generate_shortname(): void {
         $this->initialise_test();
 
         $c1 = $this->getDataGenerator()->create_course(array('shortname' => 'taken'));
@@ -1604,7 +1604,7 @@ class course_test extends \advanced_testcase {
         $this->assertArrayHasKey('courseshortnameincremented', $co->get_statuses());
     }
 
-    public function test_mess_with_frontpage() {
+    public function test_mess_with_frontpage(): void {
         global $SITE;
         $this->initialise_test();
 
@@ -1651,7 +1651,7 @@ class course_test extends \advanced_testcase {
      *
      * @covers \tool_uploadcourse_course::prepare
      */
-    public function test_role_not_exist() {
+    public function test_role_not_exist(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -1675,7 +1675,7 @@ class course_test extends \advanced_testcase {
      *
      * @covers \tool_uploadcourse_course::proceed
      */
-    public function test_role_not_allowed() {
+    public function test_role_not_allowed(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -1702,7 +1702,7 @@ class course_test extends \advanced_testcase {
      *
      * @covers \tool_uploadcourse_course::proceed
      */
-    public function test_role_allowed() {
+    public function test_role_allowed(): void {
         global $DB;
 
         $this->resetAfterTest();

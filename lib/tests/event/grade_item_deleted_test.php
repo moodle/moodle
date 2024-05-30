@@ -41,7 +41,7 @@ class grade_item_deleted_test extends \advanced_testcase {
      *
      * @covers ::create_from_grade_item
      */
-    public function test_grade_item_deleted() {
+    public function test_grade_item_deleted(): void {
         global $DB;
 
         $this->resetAfterTest();

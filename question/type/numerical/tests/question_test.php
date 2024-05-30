@@ -37,7 +37,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class question_test extends \advanced_testcase {
-    public function test_is_complete_response() {
+    public function test_is_complete_response(): void {
         $question = \test_question_maker::make_question('numerical');
 
         $this->assertFalse($question->is_complete_response(array()));
@@ -46,7 +46,7 @@ class question_test extends \advanced_testcase {
         $this->assertFalse($question->is_complete_response(array('answer' => 'test')));
     }
 
-    public function test_is_gradable_response() {
+    public function test_is_gradable_response(): void {
         $question = \test_question_maker::make_question('numerical');
 
         $this->assertFalse($question->is_gradable_response(array()));
@@ -55,7 +55,7 @@ class question_test extends \advanced_testcase {
         $this->assertTrue($question->is_gradable_response(array('answer' => 'test')));
     }
 
-    public function test_grading() {
+    public function test_grading(): void {
         $question = \test_question_maker::make_question('numerical');
 
         $this->assertEquals(array(0, question_state::$gradedwrong),
@@ -64,7 +64,7 @@ class question_test extends \advanced_testcase {
                 $question->grade_response(array('answer' => '3.14')));
     }
 
-    public function test_grading_with_units() {
+    public function test_grading_with_units(): void {
         $question = \test_question_maker::make_question('numerical');
         $question->unitgradingtype = qtype_numerical::UNITOPTIONAL;
         $question->ap = new qtype_numerical_answer_processor(
@@ -82,7 +82,7 @@ class question_test extends \advanced_testcase {
                 $question->grade_response(array('answer' => '314000000x10^-8m')));
     }
 
-    public function test_grading_with_units_graded() {
+    public function test_grading_with_units_graded(): void {
         $question = \test_question_maker::make_question('numerical');
         $question->unitgradingtype = qtype_numerical::UNITGRADED;
         $question->ap = new qtype_numerical_answer_processor(
@@ -104,7 +104,7 @@ class question_test extends \advanced_testcase {
                 $question->grade_response(array('answer' => '314 m')));
     }
 
-    public function test_grading_unit() {
+    public function test_grading_unit(): void {
         $question = \test_question_maker::make_question('numerical', 'unit');
 
         $this->assertEquals(array(0, question_state::$gradedwrong),
@@ -129,7 +129,7 @@ class question_test extends \advanced_testcase {
                 $question->grade_response(array('answer' => '1.23', 'unit' => '')));
     }
 
-    public function test_grading_currency() {
+    public function test_grading_currency(): void {
         $question = \test_question_maker::make_question('numerical', 'currency');
 
         $this->assertEquals(array(1, question_state::$gradedright),
@@ -150,51 +150,51 @@ class question_test extends \advanced_testcase {
                 $question->grade_response(array('answer' => '$1')));
     }
 
-    public function test_get_correct_response() {
+    public function test_get_correct_response(): void {
         $question = \test_question_maker::make_question('numerical');
 
         $this->assertEquals(array('answer' => '3.14'),
                 $question->get_correct_response());
     }
 
-    public function test_get_correct_response_units() {
+    public function test_get_correct_response_units(): void {
         $question = \test_question_maker::make_question('numerical', 'unit');
 
         $this->assertEquals(array('answer' => '1.25', 'unit' => 'm'),
                 $question->get_correct_response());
     }
 
-    public function test_get_correct_response_currency() {
+    public function test_get_correct_response_currency(): void {
         $question = \test_question_maker::make_question('numerical', 'currency');
 
         $this->assertEquals(array('answer' => '$ 1332'),
                 $question->get_correct_response());
     }
 
-    public function test_get_question_summary() {
+    public function test_get_question_summary(): void {
         $num = \test_question_maker::make_question('numerical');
         $qsummary = $num->get_question_summary();
         $this->assertEquals('What is pi to two d.p.?', $qsummary);
     }
 
-    public function test_summarise_response() {
+    public function test_summarise_response(): void {
         $num = \test_question_maker::make_question('numerical');
         $this->assertEquals('3.1', $num->summarise_response(array('answer' => '3.1')));
     }
 
-    public function test_summarise_response_zero() {
+    public function test_summarise_response_zero(): void {
         $num = \test_question_maker::make_question('numerical');
         $this->assertEquals('0', $num->summarise_response(array('answer' => '0')));
     }
 
-    public function test_summarise_response_unit() {
+    public function test_summarise_response_unit(): void {
         $num = \test_question_maker::make_question('numerical', 'unit');
         $this->assertEquals('3.1', $num->summarise_response(array('answer' => '3.1')));
         $this->assertEquals('3.1m', $num->summarise_response(array('answer' => '3.1m')));
         $this->assertEquals('3.1 cm', $num->summarise_response(array('answer' => '3.1 cm')));
     }
 
-    public function test_summarise_response_currency() {
+    public function test_summarise_response_currency(): void {
         $num = \test_question_maker::make_question('numerical', 'currency');
         $this->assertEquals('100', $num->summarise_response(array('answer' => '100')));
         $this->assertEquals('$100', $num->summarise_response(array('answer' => '$100')));
@@ -202,7 +202,7 @@ class question_test extends \advanced_testcase {
         $this->assertEquals('100 frogs', $num->summarise_response(array('answer' => '100 frogs')));
     }
 
-    public function test_classify_response() {
+    public function test_classify_response(): void {
         $num = \test_question_maker::make_question('numerical');
         $num->start_attempt(new question_attempt_step(), 1);
 
@@ -221,7 +221,7 @@ class question_test extends \advanced_testcase {
                 $num->classify_response(array('answer' => 'abc')));
     }
 
-    public function test_classify_response_no_star() {
+    public function test_classify_response_no_star(): void {
         $num = \test_question_maker::make_question('numerical');
         unset($num->answers[17]);
         $num->start_attempt(new question_attempt_step(), 1);
@@ -238,7 +238,7 @@ class question_test extends \advanced_testcase {
                 $num->classify_response(array('answer' => 'abc')));
     }
 
-    public function test_classify_response_unit() {
+    public function test_classify_response_unit(): void {
         $num = \test_question_maker::make_question('numerical', 'unit');
         $num->start_attempt(new question_attempt_step(), 1);
 
@@ -269,7 +269,7 @@ class question_test extends \advanced_testcase {
                 $num->classify_response(array('answer' => 'abc', 'unit' => 'm')));
     }
 
-    public function test_classify_response_unit_no_star() {
+    public function test_classify_response_unit_no_star(): void {
         $num = \test_question_maker::make_question('numerical', 'unit');
         unset($num->answers[17]);
         $num->start_attempt(new question_attempt_step(), 1);
@@ -292,7 +292,7 @@ class question_test extends \advanced_testcase {
                             $num->classify_response(array('answer' => 'abc', 'unit' => 'm')));
     }
 
-    public function test_classify_response_currency() {
+    public function test_classify_response_currency(): void {
         $num = \test_question_maker::make_question('numerical', 'currency');
         $num->start_attempt(new question_attempt_step(), 1);
 
@@ -311,7 +311,7 @@ class question_test extends \advanced_testcase {
     /**
      * test_get_question_definition_for_external_rendering
      */
-    public function test_get_question_definition_for_external_rendering() {
+    public function test_get_question_definition_for_external_rendering(): void {
         $this->resetAfterTest();
 
         $question = \test_question_maker::make_question('numerical', 'unit');

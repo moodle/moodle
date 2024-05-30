@@ -43,7 +43,7 @@ class contextlist_test extends advanced_testcase {
      *
      * @covers ::add_from_sql
      */
-    public function test_add_from_sql() {
+    public function test_add_from_sql(): void {
         global $DB;
 
         $sql = "SELECT c.id FROM {context} c";
@@ -61,7 +61,7 @@ class contextlist_test extends advanced_testcase {
      *
      * @covers ::add_system_context
      */
-    public function test_add_system_context() {
+    public function test_add_system_context(): void {
         $cl = new contextlist();
         $cl->add_system_context();
 
@@ -77,7 +77,7 @@ class contextlist_test extends advanced_testcase {
      *
      * @covers ::add_user_context
      */
-    public function test_add_user_context() {
+    public function test_add_user_context(): void {
         $this->resetAfterTest();
 
         $user = $this->getDataGenerator()->create_user();
@@ -98,7 +98,7 @@ class contextlist_test extends advanced_testcase {
      *
      * @covers ::add_user_contexts
      */
-    public function test_add_user_contexts() {
+    public function test_add_user_contexts(): void {
         $this->resetAfterTest();
 
         $user1 = $this->getDataGenerator()->create_user();
@@ -123,7 +123,7 @@ class contextlist_test extends advanced_testcase {
      * @param string $expected Expected detected value.
      * @covers ::guess_id_field_from_sql
      */
-    public function test_guess_id_field_from_sql($sql, $expected) {
+    public function test_guess_id_field_from_sql($sql, $expected): void {
 
         $rc = new \ReflectionClass(contextlist::class);
         $rcm = $rc->getMethod('guess_id_field_from_sql');

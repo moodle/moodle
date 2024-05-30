@@ -35,7 +35,7 @@ require_once($CFG->dirroot . '/filter/mediaplugin/filter.php'); // Include the c
 
 class filter_test extends \advanced_testcase {
 
-    function test_filter_mediaplugin_link() {
+    function test_filter_mediaplugin_link(): void {
         $this->resetAfterTest(true);
 
         // We need to enable the media plugins.

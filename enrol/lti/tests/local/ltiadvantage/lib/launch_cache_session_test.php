@@ -33,7 +33,7 @@ class launch_cache_session_test extends \advanced_testcase {
      *
      * @covers ::cacheLaunchData
      */
-    public function test_cache_launch_data() {
+    public function test_cache_launch_data(): void {
         $lcs = new launch_cache_session();
         $lcs->cacheLaunchData('TestKey', ['JWT body' => 'xxx']);
 
@@ -49,7 +49,7 @@ class launch_cache_session_test extends \advanced_testcase {
      *
      * @covers ::cacheNonce
      */
-    public function test_cache_and_check_nonce() {
+    public function test_cache_and_check_nonce(): void {
         $lcs = new launch_cache_session();
         $lcs->cacheNonce('my_nonce_123', 'my_state_234');
 
@@ -66,7 +66,7 @@ class launch_cache_session_test extends \advanced_testcase {
      *
      * @covers ::purge
      */
-    public function test_purge() {
+    public function test_purge(): void {
         $lcs = new launch_cache_session();
         $lcs->cacheLaunchData('TestKey', ['JWT body' => 'xxx']);
 

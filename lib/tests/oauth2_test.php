@@ -36,7 +36,7 @@ class oauth2_test extends \advanced_testcase {
     /**
      * Tests the crud operations on oauth2 issuers.
      */
-    public function test_create_and_delete_standard_issuers() {
+    public function test_create_and_delete_standard_issuers(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         api::create_standard_issuer('google');
@@ -72,7 +72,7 @@ class oauth2_test extends \advanced_testcase {
     /**
      * Tests the crud operations on oauth2 issuers.
      */
-    public function test_create_nextcloud_without_url() {
+    public function test_create_nextcloud_without_url(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -83,7 +83,7 @@ class oauth2_test extends \advanced_testcase {
     /**
      * Tests we can list and delete each of the persistents related to an issuer.
      */
-    public function test_getters() {
+    public function test_getters(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $issuer = api::create_standard_issuer('microsoft');
@@ -146,7 +146,7 @@ class oauth2_test extends \advanced_testcase {
      * @param \stdClass $responsedata The response data to be mocked.
      * @param int $expiresin The expected expiration time.
      */
-    public function test_get_system_oauth_client($responsedata, $expiresin) {
+    public function test_get_system_oauth_client($responsedata, $expiresin): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -185,7 +185,7 @@ class oauth2_test extends \advanced_testcase {
     /**
      * Tests we can enable and disable an issuer.
      */
-    public function test_enable_disable_issuer() {
+    public function test_enable_disable_issuer(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -213,7 +213,7 @@ class oauth2_test extends \advanced_testcase {
     /**
      * Test the alloweddomains for an issuer.
      */
-    public function test_issuer_alloweddomains() {
+    public function test_issuer_alloweddomains(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 
@@ -369,7 +369,7 @@ class oauth2_test extends \advanced_testcase {
     /**
      * Test for get all issuers.
      */
-    public function test_get_all_issuers() {
+    public function test_get_all_issuers(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $googleissuer = api::create_standard_issuer('google');
@@ -396,7 +396,7 @@ class oauth2_test extends \advanced_testcase {
     /**
      * Test for is available for login.
      */
-    public function test_is_available_for_login() {
+    public function test_is_available_for_login(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
         $googleissuer = api::create_standard_issuer('google');

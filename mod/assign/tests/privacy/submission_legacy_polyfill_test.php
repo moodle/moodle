@@ -58,7 +58,7 @@ class submission_legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test the get_context_for_userid_within_submission shim.
      */
-    public function test_get_context_for_userid_within_submission() {
+    public function test_get_context_for_userid_within_submission(): void {
         $userid = 21;
         $contextlist = new \core_privacy\local\request\contextlist();
         $mock = $this->createMock(test_assignsubmission_legacy_polyfill_mock_wrapper::class);
@@ -72,7 +72,7 @@ class submission_legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test the get_student_user_ids shim.
      */
-    public function test_get_student_user_ids() {
+    public function test_get_student_user_ids(): void {
         $teacherid = 107;
         $assignid = 15;
         $useridlist = new \mod_assign\privacy\useridlist($teacherid, $assignid);
@@ -87,7 +87,7 @@ class submission_legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test the export_submission_user_data shim.
      */
-    public function test_export_submission_user_data() {
+    public function test_export_submission_user_data(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->create_instance(['course' => $course]);
@@ -105,7 +105,7 @@ class submission_legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test the delete_submission_for_context shim.
      */
-    public function test_delete_submission_for_context() {
+    public function test_delete_submission_for_context(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->create_instance(['course' => $course]);
@@ -123,7 +123,7 @@ class submission_legacy_polyfill_test extends \advanced_testcase {
     /**
      * Test the delete submission for grade shim.
      */
-    public function test_delete_submission_for_userid() {
+    public function test_delete_submission_for_userid(): void {
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $assign = $this->create_instance(['course' => $course]);

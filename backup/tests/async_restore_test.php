@@ -40,7 +40,7 @@ class async_restore_test extends \advanced_testcase {
     /**
      * Tests the asynchronous backup.
      */
-    public function test_async_restore() {
+    public function test_async_restore(): void {
         global $CFG, $USER, $DB;
 
         $this->resetAfterTest(true);
@@ -141,7 +141,7 @@ class async_restore_test extends \advanced_testcase {
     /**
      * Tests the asynchronous restore will resolve in duplicate cases where the controller is already removed.
      */
-    public function test_async_restore_missing_controller() {
+    public function test_async_restore_missing_controller(): void {
         global $CFG, $USER, $DB;
 
         $this->resetAfterTest(true);

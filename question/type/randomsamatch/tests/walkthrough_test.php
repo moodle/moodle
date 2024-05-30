@@ -34,7 +34,7 @@ require_once($CFG->dirroot . '/question/engine/tests/helpers.php');
  */
 class walkthrough_test extends \qbehaviour_walkthrough_test_base {
 
-    public function test_deferred_feedback_unanswered() {
+    public function test_deferred_feedback_unanswered(): void {
 
         // Create a randomsamatch question.
         $m = \test_question_maker::make_question('randomsamatch');
@@ -90,7 +90,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub3', $choices, null, false));
     }
 
-    public function test_deferred_feedback_partial_answer() {
+    public function test_deferred_feedback_partial_answer(): void {
 
         // Create a randomsamatching question.
         $m = \test_question_maker::make_question('randomsamatch');
@@ -147,7 +147,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub3', $choices, null, false));
     }
 
-    public function test_interactive_correct_no_submit() {
+    public function test_interactive_correct_no_submit(): void {
 
         // Create a randomsamatching question.
         $m = \test_question_maker::make_question('randomsamatch');
@@ -201,7 +201,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[13], false));
     }
 
-    public function test_interactive_partial_no_submit() {
+    public function test_interactive_partial_no_submit(): void {
 
         // Create a randomsamatching question.
         $m = \test_question_maker::make_question('randomsamatch');
@@ -255,7 +255,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub3', $choices, null, false));
     }
 
-    public function test_interactive_with_invalid() {
+    public function test_interactive_with_invalid(): void {
 
         // Create a randomsamatching question.
         $m = \test_question_maker::make_question('randomsamatch');
@@ -325,7 +325,7 @@ class walkthrough_test extends \qbehaviour_walkthrough_test_base {
                 $this->get_contains_select_expectation('sub3', $choices, $orderforchoice[13], false));
     }
 
-    public function test_randomsamatch_clear_wrong() {
+    public function test_randomsamatch_clear_wrong(): void {
 
         // Create a randomsamatching question.
         $m = \test_question_maker::make_question('randomsamatch');

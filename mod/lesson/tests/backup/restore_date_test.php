@@ -102,7 +102,7 @@ class restore_date_test extends \restore_date_testcase {
     /**
      * Test restore dates.
      */
-    public function test_restore_dates() {
+    public function test_restore_dates(): void {
         global $DB, $USER;
 
         // Create lesson data.
