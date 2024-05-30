@@ -150,36 +150,67 @@ class restore_section_task extends restore_task {
      * Define the common setting that any restore section will have
      */
     protected function define_settings() {
-
         // All the settings related to this activity will include this prefix
         $settingprefix = 'section_' . $this->info->sectionid . '_';
 
-        // All these are common settings to be shared by all sections
+        // All these are common settings to be shared by all sections.
+        $sectionincluded = $this->add_section_included_setting($settingprefix);
+        $this->add_section_userinfo_setting($settingprefix, $sectionincluded);
+    }
 
-        // Define section_included (to decide if the whole task must be really executed)
+    /**
+     * Add the section included setting to the task.
+     *
+     * @param string $settingprefix the identifier of the setting
+     * @return section_backup_setting the setting added
+     */
+    protected function add_section_included_setting(string $settingprefix): section_backup_setting {
+        global $DB;
+        // Define sectionincluded (to decide if the whole task must be really executed).
         $settingname = $settingprefix . 'included';
-        $section_included = new restore_section_included_setting($settingname, base_setting::IS_BOOLEAN, true);
+
+        $sectionincluded = new restore_section_included_setting($settingname, base_setting::IS_BOOLEAN, true);
+
         if (is_number($this->info->title)) {
             $label = get_string('includesection', 'backup', $this->info->title);
         } elseif (empty($this->info->title)) { // Don't throw error if title is empty, gracefully continue restore.
-            $this->log('Section title missing in backup for section id '.$this->info->sectionid, backup::LOG_WARNING, $this->name);
+            $this->log(
+                'Section title missing in backup for section id ' . $this->info->sectionid,
+                backup::LOG_WARNING,
+                $this->name
+            );
             $label = get_string('unnamedsection', 'backup');
         } else {
             $label = $this->info->title;
         }
-        $section_included->get_ui()->set_label($label);
-        $this->add_setting($section_included);
+        $sectionincluded->get_ui()->set_label($label);
+        $this->add_setting($sectionincluded);
 
-        // Define section_userinfo. Dependent of:
-        // - users root setting
-        // - section_included setting.
+        return $sectionincluded;
+    }
+
+    /**
+     * Add the section userinfo setting to the task.
+     *
+     * @param string $settingprefix the identifier of the setting
+     * @param section_backup_setting $includefield the section included setting
+     * @return section_backup_setting the setting added
+     */
+    protected function add_section_userinfo_setting(
+        string $settingprefix,
+        section_backup_setting $includefield
+    ): section_backup_setting {
+        // Define sectionuserinfo. Dependent of:
+        // - users root setting.
+        // - sectionincluded setting.
         $settingname = $settingprefix . 'userinfo';
         $defaultvalue = false;
         if (isset($this->info->settings[$settingname]) && $this->info->settings[$settingname]) { // Only enabled when available
             $defaultvalue = true;
         }
 
-        $section_userinfo = new restore_section_userinfo_setting($settingname, base_setting::IS_BOOLEAN, $defaultvalue);
+        $sectionuserinfo = new restore_section_userinfo_setting($settingname, base_setting::IS_BOOLEAN, $defaultvalue);
+
         if (!$defaultvalue) {
             // This is a bit hacky, but if there is no user data to restore, then
             // we replace the standard check-box with a select menu with the
@@ -189,19 +220,23 @@ class restore_section_task extends restore_task {
             // It would probably be better design to have a special UI class
             // setting_ui_checkbox_or_no, rather than this hack, but I am not
             // going to do that today.
-            $section_userinfo->set_ui(new backup_setting_ui_select($section_userinfo, get_string('includeuserinfo','backup'),
-                    array(0 => get_string('no'))));
+            $sectionuserinfo->set_ui(
+                new backup_setting_ui_select($sectionuserinfo,
+                    get_string('includeuserinfo', 'backup'), [0 => get_string('no')])
+            );
         } else {
-            $section_userinfo->get_ui()->set_label(get_string('includeuserinfo','backup'));
+            $sectionuserinfo->get_ui()->set_label(get_string('includeuserinfo', 'backup'));
         }
 
-        $this->add_setting($section_userinfo);
+        $this->add_setting($sectionuserinfo);
 
         // Look for "users" root setting.
         $users = $this->plan->get_setting('users');
-        $users->add_dependency($section_userinfo);
+        $users->add_dependency($sectionuserinfo);
 
-        // Look for "section_included" section setting.
-        $section_included->add_dependency($section_userinfo);
+        // Look for "section included" section setting.
+        $includefield->add_dependency($sectionuserinfo);
+
+        return $sectionuserinfo;
     }
 }
