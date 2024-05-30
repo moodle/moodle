@@ -383,7 +383,7 @@ class login_lib_test extends \advanced_testcase {
      *
      * Email addresses should be handled as case-insensitive but accent sensitive.
      */
-    public function test_core_login_process_password_reset_email_sensitivity() {
+    public function test_core_login_process_password_reset_email_sensitivity(): void {
         global $CFG;
         require_once($CFG->libdir.'/phpmailer/moodle_phpmailer.php');
 

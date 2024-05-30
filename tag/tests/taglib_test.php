@@ -325,7 +325,7 @@ class taglib_test extends \advanced_testcase {
     /**
      * Test for function compute_correlations() that is part of tag cron
      */
-    public function test_correlations() {
+    public function test_correlations(): void {
         global $DB;
         $task = new \core\task\tag_cron_task();
 
@@ -929,7 +929,7 @@ class taglib_test extends \advanced_testcase {
     /**
      * Testing function core_tag_tag::combine_tags() when related tags are present.
      */
-    public function test_combine_tags_with_related() {
+    public function test_combine_tags_with_related(): void {
         $collid = core_tag_collection::get_default();
         $context = \context_system::instance();
         core_tag_tag::set_item_tags('core', 'course', 10, $context, array('Cat', 'Cats', 'Dog'));
@@ -1014,7 +1014,7 @@ class taglib_test extends \advanced_testcase {
      * have instances in the given context even when there is only a single
      * instance.
      */
-    public function test_get_tags_by_area_in_contexts_single_tag_one_context() {
+    public function test_get_tags_by_area_in_contexts_single_tag_one_context(): void {
         $tagnames = ['foo'];
         $collid = core_tag_collection::get_default();
         $tags = core_tag_tag::create_if_missing($collid, $tagnames);
@@ -1043,7 +1043,7 @@ class taglib_test extends \advanced_testcase {
      * that have tag instances in for the area in the given context and
      * should ignore all tags that don't have an instance.
      */
-    public function test_get_tags_by_area_in_contexts_multiple_tags_one_context() {
+    public function test_get_tags_by_area_in_contexts_multiple_tags_one_context(): void {
         $tagnames = ['foo', 'bar', 'baz'];
         $collid = core_tag_collection::get_default();
         $tags = core_tag_tag::create_if_missing($collid, $tagnames);
@@ -1073,7 +1073,7 @@ class taglib_test extends \advanced_testcase {
      * Tags with tag instances in the same area with in difference contexts
      * should be ignored.
      */
-    public function test_get_tags_by_area_in_contexts_multiple_tags_multiple_contexts() {
+    public function test_get_tags_by_area_in_contexts_multiple_tags_multiple_contexts(): void {
         $tagnames = ['foo', 'bar', 'baz', 'bop', 'bam', 'bip'];
         $collid = core_tag_collection::get_default();
         $tags = core_tag_tag::create_if_missing($collid, $tagnames);
@@ -1191,7 +1191,7 @@ class taglib_test extends \advanced_testcase {
      *      3 => []
      * ]
      */
-    public function test_get_items_tags_missing_itemids() {
+    public function test_get_items_tags_missing_itemids(): void {
         $user1 = $this->getDataGenerator()->create_user();
         $user2 = $this->getDataGenerator()->create_user();
         $user3 = $this->getDataGenerator()->create_user();
@@ -1232,7 +1232,7 @@ class taglib_test extends \advanced_testcase {
      * set_item_tags should remove any tags that aren't in the given list and should
      * add any instances that are missing.
      */
-    public function test_set_item_tags_no_multiple_context_add_remove_instances() {
+    public function test_set_item_tags_no_multiple_context_add_remove_instances(): void {
         $tagnames = ['foo', 'bar', 'baz', 'bop'];
         $collid = core_tag_collection::get_default();
         $tags = core_tag_tag::create_if_missing($collid, $tagnames);
@@ -1312,7 +1312,7 @@ class taglib_test extends \advanced_testcase {
      * the new set of tags, regardless of the context that the tag instance
      * is in.
      */
-    public function test_set_item_tags_no_multiple_contex_deletes_old_instancest() {
+    public function test_set_item_tags_no_multiple_contex_deletes_old_instancest(): void {
         $tagnames = ['foo', 'bar', 'baz', 'bop'];
         $collid = core_tag_collection::get_default();
         $tags = core_tag_tag::create_if_missing($collid, $tagnames);
@@ -1361,7 +1361,7 @@ class taglib_test extends \advanced_testcase {
      * set_item_tags should not change tag instances in a different context to the one
      * it's opertating on if the tag area allows instances from multiple contexts.
      */
-    public function test_set_item_tags_allow_multiple_context_doesnt_update_context() {
+    public function test_set_item_tags_allow_multiple_context_doesnt_update_context(): void {
         global $DB;
         $tagnames = ['foo', 'bar', 'bop'];
         $collid = core_tag_collection::get_default();
@@ -1414,7 +1414,7 @@ class taglib_test extends \advanced_testcase {
      * the new set of tags only in the same context if the tag area allows
      * multiple contexts.
      */
-    public function test_set_item_tags_allow_multiple_context_deletes_instances_in_same_context() {
+    public function test_set_item_tags_allow_multiple_context_deletes_instances_in_same_context(): void {
         $tagnames = ['foo', 'bar', 'baz', 'bop'];
         $collid = core_tag_collection::get_default();
         $tags = core_tag_tag::create_if_missing($collid, $tagnames);
@@ -1458,7 +1458,7 @@ class taglib_test extends \advanced_testcase {
      * set_item_tags should allow multiple instances of the same tag in different
      * contexts if the tag area allows multiple contexts.
      */
-    public function test_set_item_tags_allow_multiple_context_same_tag_multiple_contexts() {
+    public function test_set_item_tags_allow_multiple_context_same_tag_multiple_contexts(): void {
         $tagnames = ['foo'];
         $collid = core_tag_collection::get_default();
         $tags = core_tag_tag::create_if_missing($collid, $tagnames);
@@ -1788,7 +1788,7 @@ class taglib_test extends \advanced_testcase {
      * delete_instances should delete all tag instances for a component, item type
      * and context if given the component, itemtype, and context id as parameters.
      */
-    public function test_delete_instances_with_component_and_itemtype_and_context() {
+    public function test_delete_instances_with_component_and_itemtype_and_context(): void {
         global $DB;
 
         $tagnames = ['foo', 'bar', 'baz'];

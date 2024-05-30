@@ -4582,7 +4582,7 @@ class courselib_test extends advanced_testcase {
      * @param array $coursesdata Courses to create
      * @param array $expected Expected test results.
      */
-    public function test_course_classify_courses_for_timeline($coursesdata, $expected) {
+    public function test_course_classify_courses_for_timeline($coursesdata, $expected): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
 
@@ -4723,7 +4723,7 @@ class courselib_test extends advanced_testcase {
         $offset,
         $expecteddbqueries,
         $expectedresult
-    ) {
+    ): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -4908,7 +4908,7 @@ class courselib_test extends advanced_testcase {
     /**
      * Test the course_get_enrolled_courses_for_logged_in_user_from_search function.
      */
-    public function test_course_get_enrolled_courses_for_logged_in_user_from_search() {
+    public function test_course_get_enrolled_courses_for_logged_in_user_from_search(): void {
         global $DB;
 
         // Set up.
@@ -5021,7 +5021,7 @@ class courselib_test extends advanced_testcase {
         $offset,
         $expectedcourses,
         $expectedprocessedcount
-    ) {
+    ): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
 
@@ -5242,7 +5242,7 @@ class courselib_test extends advanced_testcase {
         $offset,
         $expectedcourses,
         $expectedprocessedcount
-    ) {
+    ): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
 
@@ -5487,7 +5487,7 @@ class courselib_test extends advanced_testcase {
         $expectedcourses,
         $expectedprocessedcount,
         $hiddencourse
-    ) {
+    ): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $student = $generator->create_user();
@@ -6983,7 +6983,7 @@ class courselib_test extends advanced_testcase {
         $enrolmentmethods,
         $enrolled,
         $expected
-    ) {
+    ): void {
         global $DB;
         $this->resetAfterTest();
 

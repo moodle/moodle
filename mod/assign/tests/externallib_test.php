@@ -332,7 +332,7 @@ class externallib_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test get_assignments with submissionstatement.
      */
-    public function test_get_assignments_with_submissionstatement() {
+    public function test_get_assignments_with_submissionstatement(): void {
         global $DB, $USER, $CFG;
 
         $this->resetAfterTest(true);

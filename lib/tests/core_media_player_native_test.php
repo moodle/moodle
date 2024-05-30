@@ -58,7 +58,7 @@ class core_media_player_native_test extends \advanced_testcase {
     /**
      * Test method list_supported_urls
      */
-    public function test_list_supported_urls() {
+    public function test_list_supported_urls(): void {
         global $CFG;
         require_once($CFG->libdir . '/filelib.php');
         $nativeextensions = file_get_typegroup('extension', ['html_video', 'html_audio']);

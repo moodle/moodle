@@ -1425,7 +1425,7 @@ class externallib_test extends externallib_advanced_testcase {
      * Test that get_action_events_by_courses will return a list of events for each
      * course you provided as long as the user is enrolled in the course.
      */
-    public function test_get_action_events_by_courses() {
+    public function test_get_action_events_by_courses(): void {
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();
         $course2 = $this->getDataGenerator()->create_course();
@@ -1558,7 +1558,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test get_action_events_by_courses with search feature
      */
-    public function test_get_action_events_by_courses_with_search() {
+    public function test_get_action_events_by_courses_with_search(): void {
         // Generate data.
         $user = $this->getDataGenerator()->create_user();
         $course1 = $this->getDataGenerator()->create_course();

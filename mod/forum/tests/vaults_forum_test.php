@@ -85,7 +85,7 @@ class vaults_forum_test extends \advanced_testcase {
      *
      * @covers ::get_from_course_module_ids
      */
-    public function test_get_from_course_module_ids() {
+    public function test_get_from_course_module_ids(): void {
         $this->resetAfterTest();
 
         $vaultfactory = \mod_forum\local\container::get_vault_factory();

@@ -30,7 +30,7 @@ class maketestcourse_test extends \advanced_testcase {
     /**
      * Creates a small test course and checks all the components have been put in place.
      */
-    public function test_make_xs_course() {
+    public function test_make_xs_course(): void {
         global $DB;
 
         $this->resetAfterTest();

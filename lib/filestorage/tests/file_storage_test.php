@@ -540,7 +540,7 @@ class file_storage_test extends \advanced_testcase {
      *
      * @covers ::get_area_files
      */
-    public function test_get_area_files() {
+    public function test_get_area_files(): void {
         $user = $this->setup_three_private_files();
         $fs = get_file_storage();
 

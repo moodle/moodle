@@ -771,7 +771,7 @@ class phpunit_dataset_test extends advanced_testcase {
      * @dataProvider to_database_provider
      * @covers ::to_database
      */
-    public function test_to_database(array $files, ?array $filter, ?string $exception, array $columns, array $rows) {
+    public function test_to_database(array $files, ?array $filter, ?string $exception, array $columns, array $rows): void {
         global $DB;
 
         $this->resetAfterTest();

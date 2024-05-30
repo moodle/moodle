@@ -1076,7 +1076,7 @@ class lib_test extends \advanced_testcase {
      * The activity should update if a teacher modifies the calendar
      * event.
      */
-    public function test_teacher_role_can_update_time_close_event() {
+    public function test_teacher_role_can_update_time_close_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/calendar/lib.php');
 

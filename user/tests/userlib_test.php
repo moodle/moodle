@@ -984,7 +984,7 @@ class userlib_test extends \advanced_testcase {
      * Test user_get_user_details_groups.
      * @covers ::user_get_user_details
      */
-    public function test_user_get_user_details_groups() {
+    public function test_user_get_user_details_groups(): void {
         $this->resetAfterTest();
 
         // Create user and modify user profile.

@@ -69,7 +69,7 @@ class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test start_submission if assignment cut off date has elapsed.
      */
-    public function test_start_submission_when_assignment_past_due_date() {
+    public function test_start_submission_when_assignment_past_due_date(): void {
         $fiveminago = time() - 300;
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status(
                 false, ['cutoffdate' => $fiveminago]);
@@ -87,7 +87,7 @@ class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test start_submission if time limit is disabled.
      */
-    public function test_start_submission_when_time_limit_disabled() {
+    public function test_start_submission_when_time_limit_disabled(): void {
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status();
         $result = start_submission::execute($instance->id);
         $filteredwarnings = array_filter($result['warnings'], function($warning) {
@@ -103,7 +103,7 @@ class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test start_submission if time limit is not set for assignment.
      */
-    public function test_start_submission_when_time_limit_not_set() {
+    public function test_start_submission_when_time_limit_not_set(): void {
         set_config('enabletimelimit', '1', 'assign');
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status();
         $result = start_submission::execute($instance->id);
@@ -120,7 +120,7 @@ class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test start_submission if user already has open submission.
      */
-    public function test_start_submission_when_submission_already_open() {
+    public function test_start_submission_when_submission_already_open(): void {
         global $DB;
         set_config('enabletimelimit', '1', 'assign');
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status(
@@ -142,7 +142,7 @@ class start_submission_test extends \mod_assign\externallib_advanced_testcase {
     /**
      * Test start_submission if user has already submitted with no additional attempts available.
      */
-    public function test_start_submission_with_no_attempts_available() {
+    public function test_start_submission_with_no_attempts_available(): void {
         global $DB;
         set_config('enabletimelimit', '1', 'assign');
         list($assign, $instance, $student1, $student2, $teacher, $g1, $g2) = $this->create_submission_for_testing_status(

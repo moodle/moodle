@@ -273,7 +273,7 @@ class filetypes_util_test extends advanced_testcase {
     /**
      * Test populating the tree for the browser.
      */
-    public function test_data_for_browser() {
+    public function test_data_for_browser(): void {
 
         $this->resetAfterTest(true);
         $util = new filetypes_util();

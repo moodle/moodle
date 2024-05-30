@@ -1277,7 +1277,7 @@ class api_test extends messagelib_test {
     /**
      * Test verifying get_conversations identifies if a conversation is muted or not.
      */
-    public function test_get_conversations_some_muted() {
+    public function test_get_conversations_some_muted(): void {
         // Create some users.
         $user1 = self::getDataGenerator()->create_user();
         $user2 = self::getDataGenerator()->create_user();
@@ -5749,7 +5749,7 @@ class api_test extends messagelib_test {
         $expectedcounts,
         $expectedunreadcounts,
         $deletedusers
-    ) {
+    ): void {
         $generator = $this->getDataGenerator();
         $users = [
             $generator->create_user(),
@@ -5872,7 +5872,7 @@ class api_test extends messagelib_test {
         $expectedcounts,
         $expectedunreadcounts,
         $deletedusers
-    ) {
+    ): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $users = [

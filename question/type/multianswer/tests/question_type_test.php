@@ -148,7 +148,7 @@ class question_type_test extends \advanced_testcase {
         $this->assertNull($this->qtype->get_random_guess_score($questiondata));
     }
 
-    public function test_load_question() {
+    public function test_load_question(): void {
         $this->resetAfterTest();
 
         $syscontext = \context_system::instance();

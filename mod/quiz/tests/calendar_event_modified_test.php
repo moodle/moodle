@@ -273,7 +273,7 @@ class calendar_event_modified_test extends \advanced_testcase {
      * able to update the quiz activity dates by changing the calendar
      * event.
      */
-    public function test_teacher_role_can_update_quiz_activity() {
+    public function test_teacher_role_can_update_quiz_activity(): void {
         global $DB;
 
         $this->resetAfterTest();

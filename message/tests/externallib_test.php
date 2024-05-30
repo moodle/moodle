@@ -2032,7 +2032,7 @@ class externallib_test extends externallib_advanced_testcase {
      * If checks this by placing some users in the same course, where default caps would permit a user to view another user's
      * profile.
      */
-    public function test_message_search_users_messagingallusers_disabled() {
+    public function test_message_search_users_messagingallusers_disabled(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -2128,7 +2128,7 @@ class externallib_test extends externallib_advanced_testcase {
      * This test verifies that any contacts are returned, as well as any non-contacts, regardless of whether the searching user
      * can view their respective profile.
      */
-    public function test_message_search_users_messagingallusers_enabled() {
+    public function test_message_search_users_messagingallusers_enabled(): void {
         global $DB;
         $this->resetAfterTest();
 
@@ -4395,7 +4395,7 @@ class externallib_test extends externallib_advanced_testcase {
     /**
      * Test verifying get_conversations identifies if a conversation is muted or not.
      */
-    public function test_get_conversations_some_muted() {
+    public function test_get_conversations_some_muted(): void {
         $this->resetAfterTest();
 
         // Create some users.
@@ -5518,7 +5518,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedcounts,
         $expectedunreadcounts,
         $deletedusers
-    ) {
+    ): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $users = [
@@ -5615,7 +5615,7 @@ class externallib_test extends externallib_advanced_testcase {
         $expectedcounts,
         $expectedunreadcounts,
         $deletedusers
-    ) {
+    ): void {
         $this->resetAfterTest();
         $generator = $this->getDataGenerator();
         $users = [

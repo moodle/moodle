@@ -448,7 +448,7 @@ class authlib_test extends \advanced_testcase {
     /**
      * Test the {@link signup_validate_data()} duplicate email validation.
      */
-    public function test_signup_validate_data_same_email() {
+    public function test_signup_validate_data_same_email(): void {
         global $CFG;
         require_once($CFG->libdir . '/authlib.php');
         require_once($CFG->libdir . '/phpmailer/moodle_phpmailer.php');

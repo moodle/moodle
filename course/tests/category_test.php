@@ -751,7 +751,7 @@ class category_test extends \advanced_testcase {
         $CFG->coursecontact = $oldcoursecontact;
     }
 
-    public function test_course_contacts_with_duplicates() {
+    public function test_course_contacts_with_duplicates(): void {
         global $DB, $CFG;
 
         set_config('coursecontactduplicates', true);

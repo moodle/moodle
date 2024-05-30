@@ -140,7 +140,7 @@ class mustache_helper_collection_test extends \advanced_testcase {
      * Any allowed helper should still be available to call during the
      * execution of a helper.
      */
-    public function test_disallowed_helpers_disabled_during_execution() {
+    public function test_disallowed_helpers_disabled_during_execution(): void {
         $engine = new \Mustache_Engine();
         $context = new \Mustache_Context();
         $lambdahelper = new \Mustache_LambdaHelper($engine, $context);

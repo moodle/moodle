@@ -379,7 +379,7 @@ class get_recordings_test extends \externallib_advanced_testcase {
      * @covers   \mod_bigbluebuttonbn\external\get_recordings::execute
      * @dataProvider recording_group_test_data
      */
-    public function test_get_recordings_groups($type, $groups, $users, $recordingsdata, $test, $coursemode) {
+    public function test_get_recordings_groups($type, $groups, $users, $recordingsdata, $test, $coursemode): void {
         $this->resetAfterTest();
         $dataset = compact('type', 'groups', 'users', 'recordingsdata', 'test', 'coursemode');
         $activityid = $this->create_from_dataset($dataset);

@@ -827,7 +827,7 @@ class lib_test extends \advanced_testcase {
     /**
      * A LESSON_EVENT_TYPE_OPEN event should update the available property of the lesson activity.
      */
-    public function test_mod_lesson_core_calendar_event_timestart_updated_open_event() {
+    public function test_mod_lesson_core_calendar_event_timestart_updated_open_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
 
@@ -887,7 +887,7 @@ class lib_test extends \advanced_testcase {
     /**
      * A LESSON_EVENT_TYPE_CLOSE event should update the deadline property of the lesson activity.
      */
-    public function test_mod_lesson_core_calendar_event_timestart_updated_close_event() {
+    public function test_mod_lesson_core_calendar_event_timestart_updated_close_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . "/calendar/lib.php");
         $this->resetAfterTest(true);

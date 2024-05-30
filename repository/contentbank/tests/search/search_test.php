@@ -47,7 +47,7 @@ class search_test extends \advanced_testcase {
      * @param string $search The search string
      * @param array $expected The array containing the expected content names that should be returned by the search
      */
-    public function test_get_search_contents(array $contentnames, string $search, array $expected) {
+    public function test_get_search_contents(array $contentnames, string $search, array $expected): void {
         $this->resetAfterTest();
 
         $admin = get_admin();

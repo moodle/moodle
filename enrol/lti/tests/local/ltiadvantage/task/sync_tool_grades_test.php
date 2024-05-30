@@ -743,7 +743,7 @@ class sync_tool_grades_test extends \lti_advantage_testcase {
      *
      * @covers ::execute
      */
-    public function test_sync_grades_coupled_lineitem() {
+    public function test_sync_grades_coupled_lineitem(): void {
         $this->resetAfterTest();
 
         [$course, $resource] = $this->create_test_environment();
@@ -817,7 +817,7 @@ class sync_tool_grades_test extends \lti_advantage_testcase {
      *
      * @covers ::execute
      */
-    public function test_sync_grades_none_or_many_lineitems_activity_context() {
+    public function test_sync_grades_none_or_many_lineitems_activity_context(): void {
         $this->resetAfterTest();
 
         [$course, $resource] = $this->create_test_environment();
@@ -894,7 +894,7 @@ class sync_tool_grades_test extends \lti_advantage_testcase {
      *
      * @covers ::execute
      */
-    public function test_sync_grades_none_or_many_lineitems_course_context() {
+    public function test_sync_grades_none_or_many_lineitems_course_context(): void {
         $this->resetAfterTest();
 
         [$course, $tool1, $tool2, $resource] = $this->create_test_environment();

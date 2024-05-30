@@ -250,7 +250,7 @@ class provider_test extends provider_testcase {
         $this->assertEquals(0, $DB->count_records('tag_instance', []));
     }
 
-    public function test_export_data_for_user() {
+    public function test_export_data_for_user(): void {
         global $DB;
         list($user1, $user2) = $this->set_up_tags();
         $context = \context_system::instance();

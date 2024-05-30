@@ -533,7 +533,7 @@ EOD;
      *
      * @covers ::add_sql_debugging
      */
-    public function test_sql_debugging_anon_class() {
+    public function test_sql_debugging_anon_class(): void {
         global $CFG;
         $CFG->debugsqltrace = 100;
 

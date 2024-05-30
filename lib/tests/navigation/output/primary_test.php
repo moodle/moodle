@@ -54,7 +54,7 @@ class primary_test extends \advanced_testcase {
      *                             otherwise consider the user as non-logged in
      * @param array $expecteditems An array of nodes expected with content in them.
      */
-    public function test_primary_export(bool $withcustom, bool $withlang, string $userloggedin, array $expecteditems) {
+    public function test_primary_export(bool $withcustom, bool $withlang, string $userloggedin, array $expecteditems): void {
         global $PAGE, $CFG;
         if ($withcustom) {
             $CFG->custommenuitems = "Course search|/course/search.php

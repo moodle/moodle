@@ -130,7 +130,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers ::bigbluebuttonbn_delete_instance
      */
-    public function test_bigbluebuttonbn_delete_instance_with_running_group_meetings() {
+    public function test_bigbluebuttonbn_delete_instance_with_running_group_meetings(): void {
         $this->resetAfterTest();
         $this->initialise_mock_server();
         $datagenerator = $this->getDataGenerator();
@@ -224,7 +224,7 @@ class lib_test extends \advanced_testcase {
      *
      * @covers ::bigbluebuttonbn_get_recent_mod_activity
      */
-    public function test_bigbluebuttonbn_get_recent_mod_activity() {
+    public function test_bigbluebuttonbn_get_recent_mod_activity(): void {
         $this->initialise_mock_server();
         $this->resetAfterTest();
 

@@ -193,7 +193,7 @@ class api_test extends \advanced_testcase {
     /**
      * Test that list of policies can be filtered by audience
      */
-    public function test_list_policies_audience() {
+    public function test_list_policies_audience(): void {
         $this->resetAfterTest();
         $this->setAdminUser();
 

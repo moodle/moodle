@@ -339,7 +339,7 @@ class api_test extends \advanced_testcase {
     /**
      * Some Dropbox endpoints require that the POSTFIELDS be set to null exactly.
      */
-    public function test_fetch_dropbox_data_postfields_null() {
+    public function test_fetch_dropbox_data_postfields_null(): void {
         $mock = $this->getMockBuilder(\repository_dropbox\dropbox::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
@@ -365,7 +365,7 @@ class api_test extends \advanced_testcase {
     /**
      * When data is specified, it should be json_encoded in POSTFIELDS.
      */
-    public function test_fetch_dropbox_data_postfields_data() {
+    public function test_fetch_dropbox_data_postfields_data(): void {
         $mock = $this->getMockBuilder(\repository_dropbox\dropbox::class)
             ->disableOriginalConstructor()
             ->onlyMethods([
@@ -442,7 +442,7 @@ class api_test extends \advanced_testcase {
     /**
      * Base tests for the fetch_dropbox_content function.
      */
-    public function test_fetch_dropbox_content() {
+    public function test_fetch_dropbox_content(): void {
         $mock = $this->getMockBuilder(\repository_dropbox\dropbox::class)
             ->disableOriginalConstructor()
             ->onlyMethods([

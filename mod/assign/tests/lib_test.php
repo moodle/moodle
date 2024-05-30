@@ -1377,7 +1377,7 @@ class lib_test extends \advanced_testcase {
      * able to update the assignment due date by changing the due date calendar
      * event.
      */
-    public function test_teacher_role_can_update_due_event() {
+    public function test_teacher_role_can_update_due_event(): void {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/calendar/lib.php');
 

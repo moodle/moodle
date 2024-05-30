@@ -2050,7 +2050,7 @@ class grouplib_test extends \advanced_testcase {
      *
      * @covers \groups_get_my_groups()
      */
-    public function test_get_my_groups_with_visibility() {
+    public function test_get_my_groups_with_visibility(): void {
         list($users, $groups) = $this->create_groups_with_visibilty();
 
         // Assign users to groups.

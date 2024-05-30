@@ -37,7 +37,7 @@ class curl_security_helper_test extends \advanced_testcase {
      * @param bool $expected the expected result.
      * @dataProvider curl_security_url_data_provider
      */
-    public function test_curl_security_helper_url_is_blocked($dns, $url, $blockedhosts, $allowedports, $expected) {
+    public function test_curl_security_helper_url_is_blocked($dns, $url, $blockedhosts, $allowedports, $expected): void {
         $this->resetAfterTest(true);
         $helper = $this->getMockBuilder('\core\files\curl_security_helper')
             ->onlyMethods(['get_host_list_by_name'])

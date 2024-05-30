@@ -1048,7 +1048,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_user().
      */
-    public function test_delete_data_for_user() {
+    public function test_delete_data_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1382,7 +1382,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_data_for_users().
      */
-    public function test_delete_data_for_users() {
+    public function test_delete_data_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -1866,7 +1866,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_conversations_for_all_users().
      */
-    public function test_delete_conversations_for_all_users() {
+    public function test_delete_conversations_for_all_users(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -2391,7 +2391,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_conversations_for_user().
      */
-    public function test_delete_conversations_for_user() {
+    public function test_delete_conversations_for_user(): void {
         global $DB;
 
         $this->resetAfterTest();
@@ -2589,7 +2589,7 @@ class provider_test extends \core_privacy\tests\provider_testcase {
     /**
      * Test for provider::delete_conversations_for_users().
      */
-    public function test_delete_conversations_for_users() {
+    public function test_delete_conversations_for_users(): void {
         global $DB;
 
         $this->resetAfterTest();
