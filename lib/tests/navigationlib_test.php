@@ -358,7 +358,7 @@ class navigationlib_test extends \advanced_testcase {
         $this->assertFalse($node->exposed_module_extends_navigation('test1'));
     }
 
-    public function test_navbar_prepend_and_add() {
+    public function test_navbar_prepend_and_add(): \moodle_page {
         global $PAGE;
         // Unfortunate hack needed because people use global $PAGE around the place.
         $PAGE->set_url('/');
@@ -452,7 +452,7 @@ class navigationlib_test extends \advanced_testcase {
         $this->assertEquals($cache->software, 'Moodle');
     }
 
-    public function test_setting___construct() {
+    public function test_setting___construct(): settings_navigation {
         global $PAGE, $SITE;
 
         $this->resetAfterTest(false);
@@ -470,7 +470,7 @@ class navigationlib_test extends \advanced_testcase {
      * @param mixed $node
      * @return mixed
      */
-    public function test_setting__initialise($node) {
+    public function test_setting__initialise($node): settings_navigation {
         $this->resetAfterTest(false);
 
         $node->initialise();

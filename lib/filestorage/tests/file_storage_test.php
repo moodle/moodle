@@ -209,7 +209,7 @@ class file_storage_test extends \advanced_testcase {
      *
      * @covers ::get_file
      */
-    public function test_get_file() {
+    public function test_get_file(): stored_file {
         global $CFG;
 
         $this->resetAfterTest(false);

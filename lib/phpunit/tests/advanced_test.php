@@ -422,7 +422,7 @@ class advanced_test extends \advanced_testcase {
         $this->assertEquals(count($processors1) + 1, count($processors3));
     }
 
-    public function test_message_redirection() {
+    public function test_message_redirection(): \phpunit_message_sink {
         $this->preventResetByRollback(); // Messaging is not compatible with transactions...
         $this->resetAfterTest(false);
 
@@ -544,7 +544,7 @@ class advanced_test extends \advanced_testcase {
     /**
      * @depends test_message_redirection
      */
-    public function test_message_redirection_noreset($sink): void {
+    public function test_message_redirection_noreset(\phpunit_message_sink $sink): void {
         if ($this->isInIsolation()) {
             $this->markTestSkipped('State cannot be carried over between tests in isolated tests');
         }
