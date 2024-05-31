@@ -1,0 +1,8 @@
+issueNumber: MDL-81850
+notes:
+  availability:
+    - message: >-
+        The base class `info::get_groups` method has a `$userid` parameter to
+        specify for which user you want to retrieve course groups (defaults to
+        current user)
+      type: changed
