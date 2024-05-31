@@ -187,14 +187,9 @@ class user extends tablelike implements selectable_items {
         $itemicon = html_writer::div($this->format_icon($item), 'mr-1');
         $itemtype = \html_writer::span($this->structure->get_element_type_string($gradetreeitem),
             'd-block text-uppercase small dimmed_text');
-        // If a behat test site is running avoid outputting the information about the type of the grade item.
-        // This additional information currently causes issues in behat particularly with the existing xpath used to
-        // interact with table elements.
-        if (!defined('BEHAT_SITE_RUNNING')) {
-            $itemcontent = html_writer::div($itemtype . $itemname);
-        } else {
-            $itemcontent = html_writer::div($itemname);
-        }
+
+        $itemtitle = html_writer::div($itemname, 'rowtitle');
+        $itemcontent = html_writer::div($itemtype . $itemtitle);
 
         $line = [
             html_writer::div($itemicon . $itemcontent .  $lockicon, "{$type} d-flex align-items-center"),
