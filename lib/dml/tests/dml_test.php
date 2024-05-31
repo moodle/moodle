@@ -4674,7 +4674,7 @@ EOD;
     }
 
     /**
-     * Test that the SQL_MAX_INT constant can be used for all insert, update, select and delete queries
+     * Test that the SQL_INT_MAX constant can be used for all insert, update, select and delete queries
      */
     public function test_sql_max_int(): void {
         $DB = $this->tdb;
