@@ -835,16 +835,8 @@ class grade_edit_tree_column_name extends grade_edit_tree_column {
 
         $itemicon = \html_writer::div($params['icon'], 'mr-1');
         $itemtype = \html_writer::span($params['type'], 'd-block text-uppercase small dimmed_text');
-
-        // Generate the content for a cell that represents a grade item.
-        // If a behat test site is running avoid outputting the information about the type of the grade item.
-        // This additional information causes issues in behat particularly with the existing xpath used to
-        // interact with table elements.
-        if (!defined('BEHAT_SITE_RUNNING')) {
-            $content = \html_writer::div($itemtype . $params['name']);
-        } else {
-            $content = \html_writer::div($params['name']);
-        }
+        $itemtitle = html_writer::div($params['name'], 'rowtitle');
+        $content = \html_writer::div($itemtype . $itemtitle);
 
         $moveaction = isset($params['moveaction']) ? $params['moveaction'] : '';
 
