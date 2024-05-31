@@ -26,8 +26,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
- use core\output\local\action_menu\subpanel;
- use core\output\named_templatable;
+use core\output\local\action_menu\subpanel;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -4110,7 +4109,7 @@ class tabobject implements renderable, templatable {
  * @copyright 2015 Adrian Greeve <adrian@moodle.com>
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class context_header implements renderable, named_templatable {
+class context_header implements renderable, templatable {
 
     /**
      * @var string $heading Main heading.
@@ -4231,16 +4230,6 @@ class context_header implements renderable, named_templatable {
             'hasadditionalbuttons' => !empty($additionalbuttons),
             'additionalbuttons' => $additionalbuttons ?? [],
         ];
-    }
-
-    /**
-     * Get the template name.
-     *
-     * @param renderer_base $renderer Renderer.
-     * @return string
-     */
-    public function get_template_name(renderer_base $renderer): string {
-        return 'core/contextheader';
     }
 }
 

@@ -1,12 +1,14 @@
 This files describes API changes in /theme/* themes,
 information provided here is intended especially for theme designer.
 
+=== 4.4.1 ===
+* New `core/context_header` mustache template has been added. This template can be overridden by themes to modify the context header.
+
 === 4.4 ===
 * Theme selection is now performed using cards and modals.
 * The 'choosereadme' string for each theme is expected to be plain text. HTML content will not render when displayed in the modal.
 * Theme selector page has been moved to admin/themeselector.php (previously theme/index.php)
 * Moodleforms no longer use tag 'fieldset' for groups without labels (legends). Avoid targeting tag 'fieldset' in the theme CSS.
-* New `core/contextheader` mustache template has been added. This template can be overridden by themes to modify the context header.
 
 === 4.3 ===
 * The core_renderer::htmllize_file_tree method has been deprecated. This was missed before Moodle 2.0.
