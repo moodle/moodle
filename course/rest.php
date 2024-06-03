@@ -78,7 +78,6 @@ if ($class === 'section' && $field === 'move') {
 
     if ($beforeid > 0) {
         $beforemod = get_coursemodule_from_id('', $beforeid, $course->id);
-        $beforemod = $DB->get_record('course_modules', array('id' => $beforeid));
     } else {
         $beforemod = null;
     }
