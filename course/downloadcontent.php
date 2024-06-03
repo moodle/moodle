@@ -46,7 +46,7 @@ $filename = str_replace('/', '', str_replace(' ', '_', $courseinfo->shortname)) 
 
 // If download confirmed, prepare and start the zipstream of the course download content.
 if ($isdownload) {
-    confirm_sesskey();
+    require_sesskey();
 
     $exportoptions = null;
 
