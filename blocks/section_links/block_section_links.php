@@ -47,8 +47,8 @@ class block_section_links extends block_base {
         return [
             'course-view-weeks' => true,
             'course-view-topics' => true,
-            'section-view-weeks' => true,
-            'section-view-topics' => true,
+            'course-view-section-weeks' => true,
+            'course-view-section-topics' => true,
         ];
     }
 

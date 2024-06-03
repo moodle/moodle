@@ -85,7 +85,7 @@ if (!$sectioninfo->uservisible) {
     }
 }
 
-$PAGE->set_pagetype('section-view-' . $course->format);
+$PAGE->set_pagetype('course-view-section-' . $course->format);
 $PAGE->set_other_editing_capability('moodle/course:update');
 $PAGE->set_other_editing_capability('moodle/course:manageactivities');
 $PAGE->set_other_editing_capability('moodle/course:activityvisibility');
