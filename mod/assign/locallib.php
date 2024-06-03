@@ -9500,20 +9500,22 @@ class assign {
         $confirm = optional_param('confirm', 0, PARAM_BOOL);
 
         if ($confirm) {
-            confirm_sesskey();
-
-            // Fix the grades.
-            $this->fix_null_grades();
-            unset_config('has_rescaled_null_grades_' . $instance->id, 'assign');
-
-            // Display the notice.
-            $o .= $this->get_renderer()->notification(get_string('fixrescalednullgradesdone', 'assign'), 'notifysuccess');
+            if (confirm_sesskey()) {
+                // Fix the grades.
+                $this->fix_null_grades();
+                unset_config('has_rescaled_null_grades_' . $instance->id, 'assign');
+                // Display the success notice.
+                $o .= $this->get_renderer()->notification(get_string('fixrescalednullgradesdone', 'assign'), 'notifysuccess');
+            } else {
+                // If the sesskey is not valid, then display the error notice.
+                $o .= $this->get_renderer()->notification(get_string('invalidsesskey', 'error'), 'notifyerror');
+            }
             $url = new moodle_url(
                 '/mod/assign/view.php',
-                array(
+                [
                     'id' => $this->get_course_module()->id,
-                    'action' => 'grading'
-                )
+                    'action' => 'grading',
+                ],
             );
             $o .= $this->get_renderer()->continue_button($url);
         } else {
