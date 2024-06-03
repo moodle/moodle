@@ -39,8 +39,7 @@ require_once(__DIR__.'/lib.php');
 global $CFG, $DB, $PAGE, $USER;
 require_once($CFG->libdir . '/filelib.php');
 require_login(null, false);
-
-confirm_sesskey();
+require_sesskey();
 $launchid = required_param('launchid', PARAM_TEXT);
 $modules = optional_param_array('modules', [], PARAM_INT);
 $grades = optional_param_array('grades', [], PARAM_INT);
