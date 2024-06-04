@@ -154,6 +154,173 @@ class hook_listener_test extends \advanced_testcase {
     }
 
     /**
+     * Test inactive users are not included when being mapped to a new communication instance.
+     */
+    public function test_inactive_users_are_not_mapped_to_new_communication(): void {
+        // Create a course without a communication provider set.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Enrol some users that are both active and inactive (suspended).
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user1->id,
+            courseid: $course->id,
+            roleidorshortname: 'teacher',
+        );
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user2->id,
+            courseid: $course->id,
+            roleidorshortname: 'student',
+        );
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user3->id,
+            courseid: $course->id,
+            roleidorshortname: 'teacher',
+            status: ENROL_USER_SUSPENDED,
+        );
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user4->id,
+            courseid: $course->id,
+            roleidorshortname: 'student',
+            status: ENROL_USER_SUSPENDED,
+        );
+
+        // Set Matrix as the communication provider and update.
+        $course->selectedcommunication = 'communication_matrix';
+        $course->communication_matrixroomname = 'testroom';
+        update_course($course);
+
+        helper::update_course_communication_instance(
+            course: $course,
+            changesincoursecat: false,
+        );
+
+        // Load the communication instance and check that only the 2 active users are returned.
+        $communication = helper::load_by_course(
+            courseid: $course->id,
+            context: \context_course::instance($course->id),
+        );
+
+        $userids = $communication->get_processor()->get_all_userids_for_instance();
+
+        $this->assertEquals(
+            expected: 2,
+            actual: count($userids),
+        );
+
+        $this->assertContains(
+            needle: $user1->id,
+            haystack: $userids,
+        );
+
+        $this->assertContains(
+            needle: $user2->id,
+            haystack: $userids,
+        );
+    }
+
+    /**
+     * Test inactive users are not included when being mapped to a new communication instance using groups.
+     */
+    public function test_inactive_users_are_not_mapped_to_new_group_communication(): void {
+        // Create a course without a communication provider set.
+        $course = $this->getDataGenerator()->create_course(
+            options: ['groupmode' => SEPARATEGROUPS],
+        );
+
+        // Enrol some users that are both active and inactive (suspended).
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user1->id,
+            courseid: $course->id,
+            roleidorshortname: 'teacher',
+        );
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user2->id,
+            courseid: $course->id,
+            roleidorshortname: 'student',
+        );
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user3->id,
+            courseid: $course->id,
+            roleidorshortname: 'teacher',
+            status: ENROL_USER_SUSPENDED,
+        );
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user4->id,
+            courseid: $course->id,
+            roleidorshortname: 'student',
+            status: ENROL_USER_SUSPENDED,
+        );
+
+        // Create a group and add all users to it.
+        $group = $this->getDataGenerator()->create_group(['courseid' => $course->id]);
+        groups_add_member(
+            grouporid: $group,
+            userorid: $user1,
+        );
+        groups_add_member(
+            grouporid: $group,
+            userorid: $user2,
+        );
+        groups_add_member(
+            grouporid: $group,
+            userorid: $user3,
+        );
+        groups_add_member(
+            grouporid: $group,
+            userorid: $user4,
+        );
+
+        // Set Matrix as the communication provider and update.
+        $course->selectedcommunication = 'communication_matrix';
+        $course->communication_matrixroomname = 'testroom';
+        update_course($course);
+
+        helper::update_group_communication_instances_for_course(
+            course: $course,
+            provider: 'communication_matrix',
+        );
+
+        // Load the communication instance and check that only the 2 active users are returned.
+        $communication = helper::load_by_group(
+            groupid: $group->id,
+            context: \context_course::instance($course->id),
+        );
+
+        $userids = $communication->get_processor()->get_all_userids_for_instance();
+
+        $this->assertEquals(
+            expected: 2,
+            actual: count($userids),
+        );
+
+        $this->assertContains(
+            needle: $user1->id,
+            haystack: $userids,
+        );
+
+        $this->assertContains(
+            needle: $user2->id,
+            haystack: $userids,
+        );
+    }
+
+    /**
      * Test add_members_to_group_room.
      */
     public function test_add_members_to_group_room(): void {

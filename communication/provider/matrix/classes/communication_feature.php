@@ -629,8 +629,9 @@ class communication_feature implements
         if (!empty($forceremoval)) {
             // Remove the users from the power levels if they are not admins.
             foreach ($forceremoval as $userid) {
-                if ($newuserpowerlevels < matrix_constants::POWER_LEVEL_MAXIMUM) {
-                    unset($newuserpowerlevels[$userid]);
+                $muid = matrix_user_manager::get_matrixid_from_moodle($userid);
+                if (isset($newuserpowerlevels[$muid]) && $newuserpowerlevels[$muid] < matrix_constants::POWER_LEVEL_MAXIMUM) {
+                    unset($newuserpowerlevels[$muid]);
                 }
             }
         }
@@ -639,7 +640,6 @@ class communication_feature implements
             // No changes to make.
             return;
         }
-
 
         // Update the power levels for the room.
         $this->matrixapi->update_room_power_levels(

@@ -1,0 +1,7 @@
+issueNumber: MDL-81951
+notes:
+  core_communication:
+    - message: >-
+        The get_enrolled_users_for_course() method now accepts an additional
+        argument that can filter only active enrolments.
+      type: changed
