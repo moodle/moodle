@@ -32930,9 +32930,6 @@ body.path-question-type .mform fieldset.hidden {
   margin-bottom: 4px;
 }
 
-.mform .d-flex textarea.form-control {
-  width: 100%;
-}
 .mform .d-flex .fitem {
   margin: 0.1rem 0.25rem 0.1rem 0 !important; /* stylelint-disable-line declaration-no-important */
 }
@@ -32945,6 +32942,9 @@ body.path-question-type .mform fieldset.hidden {
 .d-flex > .form-control {
   width: auto;
   max-width: 100%;
+}
+.d-flex > textarea.form-control {
+  width: 100%;
 }
 
 .custom-select {
