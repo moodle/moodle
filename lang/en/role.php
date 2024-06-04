@@ -180,6 +180,7 @@ $string['course:changesummary'] = 'Change course summary';
 $string['course:configurecustomfields'] = 'Configure course custom fields';
 $string['course:configuredownloadcontent'] = 'Configure download course content';
 $string['course:downloadcoursecontent'] = 'Download course content';
+$string['course:editcoursewelcomemessage'] = 'Edit course welcome message';
 $string['course:enrolconfig'] = 'Configure enrol instances in courses';
 $string['course:enrolreview'] = 'Review course enrolments';
 $string['course:setforcedlanguage'] = 'Force course or activity language';
