@@ -4403,7 +4403,7 @@ class company {
 
         if ($CFG->commerce_enable_external && !empty($CFG->commerce_externalshop_url)) {
             if (!empty($companyid)) {
-                $company = new company();
+                $company = new company($companyid);
                 if (empty($CFG->commerce_admin_enableall) && empty($company->companyrecord->ecommerce)) {
                     return true;
                 }
