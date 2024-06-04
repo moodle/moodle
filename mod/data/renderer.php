@@ -167,8 +167,13 @@ class mod_data_renderer extends plugin_renderer_base {
      *
      * @param manager $manager the instance manager
      * @return string The HTML output
+     *
+     * @deprecated since Moodle 4.5 - please do not use this function anymore
      */
+    #[\core\attribute\deprecated(null, reason: 'It is no longer used', since: '4.5')]
     public function render_fields_footer(manager $manager): string {
+        \core\deprecation::emit_deprecation_if_present([self::class, __FUNCTION__]);
+
         $cm = $manager->get_coursemodule();
         $pageurl = new moodle_url('/mod/data/templates.php', ['id' => $cm->id]);
         return $this->render_from_template('mod_data/fields_footer', [
