@@ -396,6 +396,7 @@ class feedback_test extends \advanced_testcase {
      * and false when not modified.
      */
     public function test_is_feedback_modified() {
+        $this->require_ghostscript();
         $this->resetAfterTest();
         $course = $this->getDataGenerator()->create_course();
         $teacher = $this->getDataGenerator()->create_and_enrol($course, 'teacher');
