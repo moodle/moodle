@@ -2562,6 +2562,12 @@ function update_course($data, $editoroptions = NULL) {
         // Newly created providers complete the user mapping but do not queue the task
         // (it will be handled by the room creation task).
         if ($addusersrequired) {
+            // Ensure only active users are added to the room.
+            $activeusers = array_column(
+                enrol_get_course_users(courseid: $data->id, onlyactive: true),
+                'id',
+            );
+            $enrolledusers = array_intersect($activeusers, $enrolledusers);
             $communication->add_members_to_room($enrolledusers, $instanceexists);
         }
     }

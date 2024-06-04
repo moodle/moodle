@@ -568,4 +568,73 @@ class communication_feature_test extends \advanced_testcase {
         unset_config('matrixaccesstoken', 'communication_matrix');
         $this->assertFalse($communicationprocessor->get_room_provider()->is_configured());
     }
+
+    /**
+     * Test inactive users are not included when being mapped to a new communication instance.
+     */
+    public function test_inactive_users_are_not_mapped_to_new_communication(): void {
+        // Create a course without a communication provider set.
+        $course = $this->getDataGenerator()->create_course();
+
+        // Enrol some users that are both active and inactive (suspended).
+        $user1 = $this->getDataGenerator()->create_user();
+        $user2 = $this->getDataGenerator()->create_user();
+        $user3 = $this->getDataGenerator()->create_user();
+        $user4 = $this->getDataGenerator()->create_user();
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user1->id,
+            courseid: $course->id,
+            roleidorshortname: 'teacher',
+        );
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user2->id,
+            courseid: $course->id,
+            roleidorshortname: 'student',
+        );
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user3->id,
+            courseid: $course->id,
+            roleidorshortname: 'teacher',
+            status: ENROL_USER_SUSPENDED,
+        );
+
+        $this->getDataGenerator()->enrol_user(
+            userid: $user4->id,
+            courseid: $course->id,
+            roleidorshortname: 'student',
+            status: ENROL_USER_SUSPENDED,
+        );
+
+        // Set Matrix as the communication provider and update.
+        $course->selectedcommunication = 'communication_matrix';
+        $course->communication_matrixroomname = 'testroom';
+        update_course($course);
+
+        $communicationprocessor = processor::load_by_instance(
+            context: \core\context\course::instance($course->id),
+            component: 'core_course',
+            instancetype: 'coursecommunication',
+            instanceid: $course->id
+        );
+
+        $userids = $communicationprocessor->get_all_userids_for_instance();
+
+        $this->assertEquals(
+            expected: 2,
+            actual: count($userids),
+        );
+
+        $this->assertContains(
+            needle: $user1->id,
+            haystack: $userids,
+        );
+
+        $this->assertContains(
+            needle: $user2->id,
+            haystack: $userids,
+        );
+    }
 }
