@@ -99,4 +99,6 @@ $string['videorecordmenutitle'] = 'Video record menu';
 $string['videotimelimit'] = 'Video time limit';
 $string['videotimelimit_desc'] = 'Maximum recording length for video clips.';
 $string['videotitle'] = 'Record video';
+
+// Deprecated since Moodle 4.5.
 $string['helplinktext'] = 'RecordRTC';

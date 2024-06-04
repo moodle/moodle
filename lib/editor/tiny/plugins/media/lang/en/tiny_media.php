@@ -63,7 +63,6 @@ $string['enterurlor'] = 'Or add via URL';
 $string['filemanager'] = 'File manager';
 $string['hasmissingfiles'] = 'Warning! The following files that are referenced in the text area appear to be missing:';
 $string['height'] = 'Height';
-$string['helplinktext'] = 'Media helper';
 $string['imagebuttontitle'] = 'Image';
 $string['imagedetails'] = 'Image details';
 $string['imageproperties'] = 'Image properties';
@@ -120,3 +119,6 @@ $string['alignment_left'] = 'Left';
 $string['alignment_middle'] = 'Middle';
 $string['alignment_right'] = 'Right';
 $string['alignment_top'] = 'Top';
+
+// Deprecated since Moodle 4.5.
+$string['helplinktext'] = 'Media helper';

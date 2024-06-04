@@ -25,6 +25,8 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['helplinktext'] = 'HTML format helper';
 $string['pluginname'] = 'Tiny HTML formatter';
 $string['privacy:metadata'] = 'The HTML formatter plugin for TinyMCE does not store any personal data.';
+
+// Deprecated since Moodle 4.5.
+$string['helplinktext'] = 'HTML format helper';

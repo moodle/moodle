@@ -35,4 +35,6 @@ $string['tablesmissingheaders'] = 'Tables should use row and/or column headers.'
 $string['tableswithmergedcells'] = 'Tables should not contain merged cells, as screen readers may not support them.';
 $string['privacy:metadata'] = 'The accessibility checker for TinyMCE does not store any personal data.';
 $string['viewissue'] = 'View';
+
+// Deprecated since Moodle 4.5.
 $string['helplinktext'] = 'Accessibility helper';
