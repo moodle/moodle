@@ -262,6 +262,7 @@ $string['changesmadereallygoaway'] = 'You have made changes. Are you sure you wa
 $string['city'] = 'City/town';
 $string['cleaningtempdata'] = 'Cleaning temp data';
 $string['clear'] = 'Clear';
+$string['clearall'] = 'Clear all';
 $string['clearfilterrow'] = 'Remove filter row';
 $string['clearfilters'] = 'Clear filters';
 $string['clearsearch'] = 'Clear search input';

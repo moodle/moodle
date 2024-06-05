@@ -38442,6 +38442,12 @@ div.editor_atto_toolbar button .icon {
   font-size: 1.4rem;
   font-weight: bold;
 }
+.tertiary-navigation h2 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 0;
+  align-self: center;
+}
 .tertiary-navigation .navitem:not(:last-child),
 .tertiary-navigation .navitem-divider:not(:last-child) {
   margin-right: 20px;

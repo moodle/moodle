@@ -23,16 +23,34 @@
     * none
 
     Context variables required for this template:
-    * see mod/lesson/classes/output/grading_actionmenu.php
+    * groupselector - (optional) HTML that outputs the group selector
 
     Example context (json):
     {
+        "groupselector": "<div class='group-selector'></div>",
+        "pagereset": "http://moodle.local/mod/assign/view.php?id=2&action=grading&group=0",
         "downloadall": "https://moodle.org"
     }
 
 }}
-<div class="container-fluid tertiary-navigation">
+<div class="container-fluid tertiary-navigation full-width-bottom-border">
     <div class="row">
+        <div class="navitem">
+            <h2>{{#str}}gradeitem:submissions, mod_assign{{/str}}</h2>
+        </div>
+        <div class="navitem-divider d-none d-sm-flex"></div>
+        {{#groupselector}}
+            <div class="navitem">
+                {{{.}}}
+            </div>
+            <div class="navitem-divider d-none d-sm-flex"></div>
+        {{/groupselector}}
+        {{#pagereset}}
+            <div class="navitem align-self-center">
+                <a href="{{{.}}}" class="btn btn-link">{{#str}}clearall, core{{/str}}</a>
+            </div>
+            <div class="navitem-divider"></div>
+        {{/pagereset}}
         {{#downloadall}}
         <div class="navitem ml-sm-auto">
             <a class="btn btn-secondary" href="{{downloadall}}">{{#str}}downloadall, mod_assign{{/str}}</a>

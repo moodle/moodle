@@ -66,12 +66,31 @@ class grading_actionmenu implements templatable, renderable {
      * @return array Data to render.
      */
     public function export_for_template(\renderer_base $output): array {
-        $downloadall = '';
+        global $PAGE;
+
+        $course = $PAGE->course;
+        $data = [];
+
         if ($this->submissionpluginenabled && $this->submissioncount) {
-            $downloadall = (new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'downloadall']))->out(false);
+            $data['downloadall'] = (
+                new moodle_url('/mod/assign/view.php', ['id' => $this->cmid, 'action' => 'downloadall'])
+            )->out(false);
         }
-        return [
-            'downloadall' => $downloadall
-        ];
+
+        if ($course->groupmode) {
+            $actionbarrenderer = $PAGE->get_renderer('core_course', 'actionbar');
+            $data['groupselector'] = $actionbarrenderer->render(new \core_course\output\actionbar\group_selector($course));
+        }
+
+        if (groups_get_course_group($course)) {
+            $reset = new moodle_url('/mod/assign/view.php', [
+                'id' => $this->cmid,
+                'action' => 'grading',
+                'group' => 0,
+            ]);
+            $data['pagereset'] = $reset->out(false);
+        }
+
+        return $data;
     }
 }
