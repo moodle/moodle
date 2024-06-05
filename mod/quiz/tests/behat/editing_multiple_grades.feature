@@ -168,7 +168,7 @@ Feature: Setup multiple grades for a quiz
       | Listening | 3         | 0       |
 
     When I am on the "Quiz 1" "mod_quiz > multiple grades setup" page logged in as teacher
-    And I press "Setup a grade for each section"
+    And I press "Set up a grade for each section"
 
     Then "Reading" "table_row" should exist in the "mod_quiz-grade-item-list" "table"
     And "Listening" "table_row" should exist in the "mod_quiz-grade-item-list" "table"

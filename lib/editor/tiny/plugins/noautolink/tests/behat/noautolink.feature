@@ -6,7 +6,7 @@ Feature: Tiny noautolink
   Scenario: Insert a link, add and remove the auto-link prevention
     Given I log in as "admin"
     And I navigate to "Plugins > Text editors > TinyMCE editor > General settings" in site administration
-    And I click on "Enable Tiny no auto-link" "link"
+    And I click on "Enable No auto-link" "link"
     When I open my profile in edit mode
     And I set the field "Description" to "<p>https://moodle.org</p>"
 

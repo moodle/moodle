@@ -25,7 +25,7 @@
 $string['modaltitle'] = 'Insert H5P content';
 $string['buttontitle'] = 'Configure H5P content';
 $string['insert'] = 'Insert H5P content';
-$string['pluginname'] = 'Tiny insert H5P';
+$string['pluginname'] = 'Insert H5P';
 $string['browserepositories'] = 'Browse repositories...';
 $string['copyrightbutton'] = 'Copyright button';
 $string['downloadbutton'] = 'Allow download';
