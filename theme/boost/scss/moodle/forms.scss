@@ -23,9 +23,6 @@
 }
 
 .mform .d-flex {
-    textarea.form-control {
-        width: 100%;
-    }
     .fitem {
         margin: 0.1rem 0.25rem 0.1rem 0 !important; /* stylelint-disable-line declaration-no-important */
     }
@@ -37,9 +34,14 @@
 }
 
 // Override the default bootstrap form-control width.
-.d-flex > .form-control {
-    width: auto;
-    max-width: 100%;
+.d-flex {
+    & > .form-control {
+        width: auto;
+        max-width: 100%;
+    }
+    & > textarea.form-control {
+        width: 100%;
+    }
 }
 
 // Override the default bootstrap custom-select width.
