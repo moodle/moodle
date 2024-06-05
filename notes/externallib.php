@@ -63,7 +63,7 @@ class core_notes_external extends external_api {
                             'publishstate' => new external_value(PARAM_ALPHA, '\'personal\', \'course\' or \'site\''),
                             'courseid' => new external_value(PARAM_INT, 'course id of the note (in Moodle a note can only be created into a course, even for site and personal notes)'),
                             'text' => new external_value(PARAM_RAW, 'the text of the message - text or HTML'),
-                            'format' => new external_format_value('text', VALUE_DEFAULT),
+                            'format' => new external_format_value('text', VALUE_DEFAULT, FORMAT_MOODLE),
                             'clientnoteid' => new external_value(PARAM_ALPHANUMEXT, 'your own client id for the note. If this id is provided, the fail message id will be returned to you', VALUE_OPTIONAL),
                         )
                     )
@@ -146,6 +146,7 @@ class core_notes_external extends external_api {
                         break;
                     case 'text':
                         $textformat = FORMAT_PLAIN;
+                        break;
                     default:
                         $textformat = util::validate_format($note['format']);
                         break;
