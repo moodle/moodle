@@ -130,15 +130,15 @@ Feature: Basic use of the Manual grading report
     And I click on "update grades" "link" in the "Short answer 001" "table_row"
     When I set the following fields to these values:
       | Questions per page | 0 |
-    Then I should see "You must enter a number that is greater than 0."
+    Then I should see "You must enter a whole number that is greater than 0."
     And I set the following fields to these values:
       | Questions per page | -1 |
     And I press "Change options"
-    And I should see "You must enter a number that is greater than 0."
+    And I should see "You must enter a whole number that is greater than 0."
     And I set the following fields to these values:
       | Questions per page | abc |
     And I press "Change options"
-    And I should see "You must enter a number that is greater than 0."
+    And I should see "You must enter a whole number that is greater than 0."
     And I set the following fields to these values:
       | Questions per page | 1 |
     And I press "Change options"
@@ -152,7 +152,7 @@ Feature: Basic use of the Manual grading report
     And I follow "Also show questions that have been graded automatically"
     And I click on "update grades" "link" in the "Short answer 001" "table_row"
     Then I should see "Attempt number 1 for S1 Student1 (student1, S1000, student1@example.com, little yellow frog)"
-    And I should not see "You must enter a number that is greater than 0."
+    And I should not see "You must enter a whole number that is greater than 0."
 
   Scenario: A marker cannot access the report in separate group
     Given user "student1" has attempted "Quiz 1" with responses:
