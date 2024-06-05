@@ -26,7 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['apikey'] = 'API key';
-$string['apikey_desc'] = 'Your API key is available on your <a target="_blank" href="https://www.tiny.cloud">Tiny Cloud</a> account page if you have purchased a subscription, or if you are on a free trial.';
+$string['apikey_desc'] = 'Your API key is available on your <a href="https://www.tiny.cloud">Tiny Cloud</a> account page if you have purchased a subscription, or if you are on a free trial.';
 $string['emptyapikeywarning'] = 'Enabled TinyMCE Premium plugins will not be available until an API key is added.';
 $string['helplinktext'] = 'Premium plugins';
 $string['pluginname'] = 'TinyMCE Premium';
@@ -48,5 +48,5 @@ $string['premiumplugin:tableofcontents'] = 'Table of Contents';
 $string['premiumplugin:tinymcespellchecker'] = 'Spell Checker Pro';
 $string['premiumplugin:typography'] = 'Advanced Typography';
 $string['premiumplugins'] = 'Premium plugins';
-$string['premiumplugins_desc'] = 'Access to TinyMCE Premium plugins requires an API key. Not all listed plugins may be available with your TinyMCE Premium subscription. You can check available plugins on your <a target="_blank" href="https://www.tiny.cloud/my-account/integrate/">Tiny Cloud</a> account page.';
+$string['premiumplugins_desc'] = 'Access to TinyMCE Premium plugins requires an API key. Not all listed plugins may be available with your TinyMCE Premium subscription. You can check available plugins on your <a href="https://www.tiny.cloud">Tiny Cloud</a> account page.';
 $string['privacy:metadata'] = 'The Tiny premium plugin for TinyMCE does not store any personal data.';

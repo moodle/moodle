@@ -41,9 +41,7 @@ $string['editingordering'] = 'Editing ordering question';
 
 $string['gradedetails'] = 'Grade details';
 $string['gradingtype'] = 'Grading type';
-$string['gradingtype_help'] = 'Choose the type of grading calculation.
-
-**All or nothing**
+$string['gradingtype_help'] = '**All or nothing**
 &nbsp; If all items are in the correct position, then full marks are awarded. Otherwise, the score is zero.
 
 **Absolute position**
@@ -104,12 +102,12 @@ $string['pluginnameadding'] = 'Adding an Ordering question';
 $string['pluginnameediting'] = 'Editing an Ordering question';
 $string['pluginnamesummary'] = 'Put jumbled items into a meaningful order.';
 $string['positionx'] = 'Position {$a}';
-$string['privacy:preference:gradingtype'] = 'gradingtype.';
-$string['privacy:preference:layouttype'] = 'layouttype.';
-$string['privacy:preference:numberingstyle'] = 'numberingstyle.';
-$string['privacy:preference:selectcount'] = 'selectcount.';
-$string['privacy:preference:selecttype'] = 'selecttype.';
-$string['privacy:preference:showgrading'] = 'showgrading.';
+$string['privacy:preference:gradingtype'] = 'The grading type.';
+$string['privacy:preference:layouttype'] = 'The layout of items.';
+$string['privacy:preference:numberingstyle'] = 'The numbering style of the choices.';
+$string['privacy:preference:selectcount'] = 'The select count.';
+$string['privacy:preference:selecttype'] = 'The item selection type.';
+$string['privacy:preference:showgrading'] = 'Whether to show grading details.';
 
 $string['regradeissuenumitemschanged'] = 'The number of draggable items has changed.';
 $string['relativeallpreviousandnext'] = 'Relative to ALL the previous and next items';
