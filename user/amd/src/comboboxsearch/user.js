@@ -157,7 +157,11 @@ export default class UserSearch extends search_combobox {
                             `<span class="font-weight-bold">${searchTerm.replace(/</g, '&lt;')}</span>`
                         );
 
-                        user.matchingField = `${escapedMatchingField} (${user.email})`;
+                        if (user.email) {
+                            user.matchingField = `${escapedMatchingField} (${user.email})`;
+                        } else {
+                            user.matchingField = escapedMatchingField;
+                        }
                         user.link = this.selectOneLink(user.id);
                         break;
                     }
