@@ -876,6 +876,7 @@ class completionlib_test extends advanced_testcase {
      * @covers ::get_completion_data
      */
     public function test_get_completion_data() {
+        $this->setAdminUser();
         $this->setup_data();
         $choicegenerator = $this->getDataGenerator()->get_plugin_generator('mod_choice');
         $choice = $choicegenerator->create_instance([
@@ -904,6 +905,11 @@ class completionlib_test extends advanced_testcase {
         $this->assertTrue(array_key_exists('coursemoduleid', $completiondatabeforeview));
         $this->assertEquals(0, $completiondatabeforeview['viewed']);
         $this->assertEquals($cm->id, $completiondatabeforeview['coursemoduleid']);
+
+        // Mark as completed before viewing it.
+        $completioninfo->update_state($cm, COMPLETION_COMPLETE, $this->user->id, true);
+        $completiondatabeforeview = $completioninfo->get_completion_data($cm->id, $this->user->id, $defaultdata);
+        $this->assertEquals(0, $completiondatabeforeview['viewed']);
 
         // Set viewed.
         $completioninfo->set_module_viewed($cm, $this->user->id);
