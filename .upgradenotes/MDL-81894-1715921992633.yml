@@ -1,0 +1,7 @@
+issueNumber: MDL-81894
+notes:
+  core:
+    - message: >-
+        Use server timezone when constructing `\DateTimeImmutable` for the
+        system `\core\clock` implementation.
+      type: fixed
