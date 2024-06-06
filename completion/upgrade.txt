@@ -1,6 +1,10 @@
 This file describes API changes in /completion/* - completion,
 information provided here is intended especially for developers.
 
+=== 4.3.5 ===
+* get_overall_completion_state() function could also return COMPLETION_COMPLETE_FAIL and not only COMPLETION_COMPLETE
+  and COMPLETION_INCOMPLETE
+
 === 4.3.1 ===
 * A new method, cm_completion_details::is_overall_complete() has been added to calculate whether a module should be considered or
   not completed, based on their completion options and the current value for the overall complete state.
