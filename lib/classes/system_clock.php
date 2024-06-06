@@ -24,10 +24,15 @@ namespace core;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class system_clock implements clock {
+    #[\Override]
     public function now(): \DateTimeImmutable {
-        return new \DateTimeImmutable();
+        return new \DateTimeImmutable(
+            datetime: "now",
+            timezone: \core_date::get_server_timezone_object(),
+        );
     }
 
+    #[\Override]
     public function time(): int {
         return $this->now()->getTimestamp();
     }
