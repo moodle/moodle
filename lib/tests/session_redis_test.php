@@ -69,13 +69,14 @@ class session_redis_test extends \advanced_testcase {
 
         $this->keyprefix = 'phpunit'.rand(1, 100000);
 
-        $CFG->session_redis_host = TEST_SESSION_REDIS_HOST;
         if (strpos(TEST_SESSION_REDIS_HOST, ':')) {
             list($server, $port) = explode(':', TEST_SESSION_REDIS_HOST);
         } else {
             $server = TEST_SESSION_REDIS_HOST;
             $port = 6379;
         }
+        $CFG->session_redis_host = $server;
+        $CFG->session_redis_port = $port;
 
         $opts = [];
         if (defined('TEST_SESSION_REDIS_ENCRYPT') && TEST_SESSION_REDIS_ENCRYPT) {
@@ -344,10 +345,10 @@ class session_redis_test extends \advanced_testcase {
             $actual = $e->getMessage();
         }
 
-        $host = TEST_SESSION_REDIS_HOST;
-        if ($this->encrypted) {
-            $host = "tls://$host";
-        }
+        // The Redis session test config allows the user to put the port number inside the host. e.g. 127.0.0.1:6380.
+        // Therefore, to get the host, we need to explode it.
+        list($host, ) = explode(':', TEST_SESSION_REDIS_HOST);
+
         $expected = "Failed to connect (try 5 out of 5) to Redis at $host:111111";
         $this->assertDebuggingCalledCount(5);
         $this->assertStringContainsString($expected, $actual);
@@ -367,7 +368,8 @@ class session_redis_test extends \advanced_testcase {
 
         $sess = new \core\session\redis();
 
-        $prop = new \ReflectionProperty(\core\session\redis::class, 'host');
-        $this->assertEquals('tls://' . TEST_SESSION_REDIS_HOST, $prop->getValue($sess)[0]);
+        $prop = new \ReflectionProperty(\core\session\redis::class, 'sslopts');
+
+        $this->assertEquals($CFG->session_redis_encrypt, $prop->getValue($sess));
     }
 }
