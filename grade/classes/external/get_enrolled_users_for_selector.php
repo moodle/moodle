@@ -25,6 +25,7 @@ use core_external\external_value;
 use core_external\external_warnings;
 use core_external\restricted_context_exception;
 use core_user;
+use user_picture;
 
 defined('MOODLE_INTERNAL') || die;
 
@@ -94,17 +95,23 @@ class get_enrolled_users_for_selector extends external_api {
 
         $users = [];
 
-        while ($userdata = $gui->next_user()) {
-            $guiuser = $userdata->user;
-            $user = new \stdClass();
-            $user->fullname = fullname($guiuser);
-            $user->id = $guiuser->id;
-            $userpicture = new \user_picture($guiuser);
-            $userpicture->size = 1;
-            $user->profileimage = $userpicture->get_url($PAGE)->out(false);
-            $user->email = $guiuser->email;
+        $userfieldsapi = \core_user\fields::for_identity($coursecontext, false)->with_userpic();
+        $extrauserfields = $userfieldsapi->get_required_fields([\core_user\fields::PURPOSE_IDENTITY]);
 
-            $users[] = $user;
+        while ($userdata = $gui->next_user()) {
+            $userforselector = new \stdClass();
+            $userforselector->id = $userdata->user->id;
+            $userforselector->fullname = fullname($userdata->user);
+            $userpicture = new user_picture($userdata->user);
+            $userpicture->size = 1;
+            $userforselector->profileimageurl = $userpicture->get_url($PAGE)->out(false);
+            $userpicture->size = 0; // Size f2.
+            $userforselector->profileimageurlsmall = $userpicture->get_url($PAGE)->out(false);
+            foreach ($extrauserfields as $field) {
+                $userforselector->$field = $userdata->user->$field ?? null;
+            }
+
+            $users[] = $userforselector;
         }
         $gui->close();
 

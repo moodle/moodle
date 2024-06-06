@@ -28,3 +28,22 @@ Feature: Within the User report, a teacher can search for users.
     And I confirm "Student 2" in "user" search within the gradebook widget exists
     And I confirm "Student 32" in "user" search within the gradebook widget exists
     And I confirm "Student 1" in "user" search within the gradebook widget does not exist
+
+  Scenario: A teacher can only search for fields that he allowed to see
+    Given the following "permission overrides" exist:
+      | capability                         | permission | role             | contextlevel | reference |
+      | moodle/course:viewhiddenuserfields | Prohibit   | editingteacher   | System       |           |
+    And the following config values are set as admin:
+      | hiddenuserfields | email |
+    And I am on the "Course 1" "grades > User report > View" page logged in as "teacher1"
+    When I click on ".search-widget[data-searchtype='user']" "css_element"
+    And I set the field "Search users" to "Student"
+    And I confirm "Student 1" in "user" search within the gradebook widget exists
+    And I confirm "Student 2" in "user" search within the gradebook widget exists
+    And I confirm "Student 32" in "user" search within the gradebook widget exists
+    # Email is not shown in results.
+    And I confirm "Student" in "user" search within the gradebook widget exists
+    And I confirm "example.com" in "user" search within the gradebook widget does not exist
+    # Email is not searchable.
+    And I set the field "Search users" to "student5@example.com"
+    And I confirm "0 results found" in "user" search within the gradebook widget exists
