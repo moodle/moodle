@@ -9,4 +9,3 @@
   - `get_non_core_event_list()`
 
   For more information see [MDL-72786](https://tracker.moodle.org/browse/MDL-72786)
-

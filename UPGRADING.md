@@ -42,6 +42,21 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81903](https://tracker.moodle.org/browse/MDL-81903)
 
+#### Fixed
+
+- Use server timezone when constructing `\DateTimeImmutable` for the system `\core\clock` implementation.
+
+  For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)
+
+#### Deprecated
+
+- The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
+  - `rc4encrypt`
+  - `rc4decrypt`
+  - `endecrypt`
+
+  For more information see [MDL-81940](https://tracker.moodle.org/browse/MDL-81940)
+
 ### mod_assign
 
 #### Added
@@ -147,6 +162,20 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
   For more information see [MDL-81274](https://tracker.moodle.org/browse/MDL-81274)
 
+#### Deprecated
+
+- The `mod_data_renderer::render_fields_footer` method has been deprecated as it's no longer used
+
+  For more information see [MDL-81321](https://tracker.moodle.org/browse/MDL-81321)
+
+### editor_tiny
+
+#### Changed
+
+- The `helplinktext` language string is no longer required by editor plugins, instead the `pluginname` will be used in the help dialogue
+
+  For more information see [MDL-81572](https://tracker.moodle.org/browse/MDL-81572)
+
 ### output
 
 #### Added
@@ -159,7 +188,7 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
 
 #### Added
 
-- New `core/contextheader` mustache template has been added. This template can be overridden by themes to modify the context header
+- New `core/context_header` mustache template has been added. This template can be overridden by themes to modify the context header
 
   For more information see [MDL-81597](https://tracker.moodle.org/browse/MDL-81597)
 
@@ -171,6 +200,22 @@ The format of this change log follows the advice given at [Keep a CHANGELOG](htt
   If `istrackeduser` is pre-computed for the course module's course, it can be provided here to avoid an additional function call.
 
   For more information see [MDL-81610](https://tracker.moodle.org/browse/MDL-81610)
+
+### core_completion
+
+#### Changed
+
+- get_overall_completion_state() function could also return COMPLETION_COMPLETE_FAIL and not only COMPLETION_COMPLETE and COMPLETION_INCOMPLETE
+
+  For more information see [MDL-81749](https://tracker.moodle.org/browse/MDL-81749)
+
+### availability
+
+#### Changed
+
+- The base class `info::get_groups` method has a `$userid` parameter to specify for which user you want to retrieve course groups (defaults to current user)
+
+  For more information see [MDL-81850](https://tracker.moodle.org/browse/MDL-81850)
 
 ### core_course
 

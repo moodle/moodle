@@ -10,4 +10,3 @@
   - Review all the strings used in the reset page to remove the "Delete" or "Remove" words from them.
 
   For more information see [MDL-81872](https://tracker.moodle.org/browse/MDL-81872)
-

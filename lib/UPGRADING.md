@@ -33,3 +33,18 @@
 - Added an `exception` L2 Namespace to APIs
 
   For more information see [MDL-81903](https://tracker.moodle.org/browse/MDL-81903)
+
+### Fixed
+
+- Use server timezone when constructing `\DateTimeImmutable` for the system `\core\clock` implementation.
+
+  For more information see [MDL-81894](https://tracker.moodle.org/browse/MDL-81894)
+
+### Deprecated
+
+- The following methods have been deprecated, existing usage should switch to secure `\core\encryption` library:
+  - `rc4encrypt`
+  - `rc4decrypt`
+  - `endecrypt`
+
+  For more information see [MDL-81940](https://tracker.moodle.org/browse/MDL-81940)
