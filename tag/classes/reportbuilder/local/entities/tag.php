@@ -45,6 +45,7 @@ class tag extends base {
     protected function get_default_tables(): array {
         return [
             'tag',
+            'tag_instance',
         ];
     }
 
@@ -268,5 +269,17 @@ class tag extends base {
             ]);
 
         return $filters;
+    }
+
+    /**
+     * Return joins necessary for retrieving tags
+     *
+     * @param string $component
+     * @param string $itemtype
+     * @param string $itemidfield
+     * @return string[]
+     */
+    public function get_tag_joins(string $component, string $itemtype, string $itemidfield): array {
+        return $this->get_tag_joins_for_entity($component, $itemtype, $itemidfield);
     }
 }

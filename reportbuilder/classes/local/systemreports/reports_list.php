@@ -39,6 +39,7 @@ use core_reportbuilder\local\report\filter;
 use core_reportbuilder\output\report_name_editable;
 use core_reportbuilder\local\models\report;
 use core_reportbuilder\permission;
+use core_tag\reportbuilder\local\entities\tag;
 use core_tag_tag;
 
 /**
@@ -76,9 +77,14 @@ class reports_list extends system_report {
         // Join user entity for "User modified" column.
         $entityuser = new user();
         $entityuseralias = $entityuser->get_table_alias('user');
-
         $this->add_entity($entityuser
             ->add_join("JOIN {user} {$entityuseralias} ON {$entityuseralias}.id = rb.usermodified")
+        );
+
+        // Join tag entity.
+        $entitytag = new tag();
+        $this->add_entity($entitytag
+            ->add_joins($entitytag->get_tag_joins('core_reportbuilder', 'reportbuilder_report', 'rb.id'))
         );
 
         // Define our internal entity for report elements.
@@ -115,8 +121,6 @@ class reports_list extends system_report {
      * Add columns to report
      */
     protected function add_columns(): void {
-        global $DB;
-
         $tablealias = $this->get_main_table_alias();
 
         // Report name column.
@@ -162,36 +166,11 @@ class reports_list extends system_report {
             })
         );
 
-        // Tags column. TODO: Reuse tag entity column when MDL-76392 is integrated.
-        $tagfieldconcatsql = $DB->sql_group_concat(
-            field: $DB->sql_concat_join("'|'", ['t.name', 't.rawname']),
-            sort: 't.name',
-        );
-        $this->add_column((new column(
-            'tags',
-            new lang_string('tags'),
-            $this->get_report_entity_name(),
-        ))
-            ->set_type(column::TYPE_TEXT)
-            ->add_field("(
-                SELECT {$tagfieldconcatsql}
-                  FROM {tag_instance} ti
-                  JOIN {tag} t ON t.id = ti.tagid
-                 WHERE ti.component = 'core_reportbuilder' AND ti.itemtype = 'reportbuilder_report'
-                   AND ti.itemid = {$tablealias}.id
-            )", 'tags')
-            ->set_is_sortable(true)
-            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report') === true)
-            ->add_callback(static function(?string $tags): string {
-                return implode(', ', array_map(static function(string $tag): string {
-                    [$name, $rawname] = explode('|', $tag);
-                    return core_tag_tag::make_display_name((object) [
-                        'name' => $name,
-                        'rawname' => $rawname,
-                    ]);
-                }, preg_split('/, /', (string) $tags, -1, PREG_SPLIT_NO_EMPTY)));
-            })
-        );
+        // Tags column.
+        $this->add_column_from_entity('tag:name')
+            ->set_title(new lang_string('tags'))
+            ->set_aggregation('groupconcat')
+            ->set_is_available(core_tag_tag::is_enabled('core_reportbuilder', 'reportbuilder_report') === true);
 
         // Time created column.
         $this->add_column((new column(

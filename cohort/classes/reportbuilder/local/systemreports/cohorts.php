@@ -19,7 +19,7 @@ namespace core_cohort\reportbuilder\local\systemreports;
 use context;
 use context_coursecat;
 use context_system;
-use core_cohort\reportbuilder\local\entities\cohort;
+use core_cohort\reportbuilder\local\entities\{cohort, cohort_member};
 use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\action;
 use core_reportbuilder\local\report\column;
@@ -50,6 +50,13 @@ class cohorts extends system_report {
         $this->set_main_table('cohort', $entitymainalias);
         $this->add_entity($cohortentity);
 
+        // Join cohort member entity.
+        $cohortmemberentity = new cohort_member();
+        $cohortmemberalias = $cohortmemberentity->get_table_alias('cohort_members');
+        $this->add_entity($cohortmemberentity
+            ->add_join("LEFT JOIN {cohort_members} {$cohortmemberalias} ON {$cohortmemberalias}.cohortid = {$entitymainalias}.id")
+        );
+
         // Any columns required by actions should be defined here to ensure they're always available.
         $this->add_base_fields("{$entitymainalias}.id, {$entitymainalias}.contextid, {$entitymainalias}.visible, " .
             "{$entitymainalias}.component");
@@ -63,7 +70,7 @@ class cohorts extends system_report {
         }
 
         // Now we can call our helper methods to add the content we want to include in the report.
-        $this->add_columns($cohortentity);
+        $this->add_columns();
         $this->add_filters();
         $this->add_actions();
 
@@ -92,12 +99,11 @@ class cohorts extends system_report {
      *
      * They are provided by the entities we previously added in the {@see initialise} method, referencing each by their
      * unique identifier. If custom columns are needed just for this report, they can be defined here.
-     *
-     * @param cohort $cohortentity
      */
-    public function add_columns(cohort $cohortentity): void {
-
+    protected function add_columns(): void {
+        $cohortentity = $this->get_entity('cohort');
         $entitymainalias = $cohortentity->get_table_alias('cohort');
+
         $showall = $this->get_parameter('showall', false, PARAM_BOOL);
 
         // Category column. An extra callback is appended in order to extend the current column formatting.
@@ -151,19 +157,10 @@ class cohorts extends system_report {
         // Description column.
         $this->add_column_from_entity('cohort:description');
 
-        // Cohort size column using a custom SQL query to count cohort members.
-        $cm = database::generate_param_name();
-        $sql = "(SELECT count($cm.id) as memberscount
-                FROM {cohort_members} $cm
-                WHERE $cm.cohortid = {$entitymainalias}.id)";
-        $this->add_column(new column(
-            'memberscount',
-            new lang_string('memberscount', 'cohort'),
-            $cohortentity->get_entity_name()
-        ))
-            ->set_type(column::TYPE_INTEGER)
-            ->set_is_sortable(true)
-            ->add_field($sql, 'memberscount');
+        // Member count.
+        $this->add_column_from_entity('cohort_member:timeadded')
+            ->set_title(new lang_string('memberscount', 'cohort'))
+            ->set_aggregation('count');
 
         // Component column. Override the display name of a column.
         $this->add_column_from_entity('cohort:component')
