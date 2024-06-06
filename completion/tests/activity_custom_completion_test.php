@@ -56,25 +56,37 @@ class activity_custom_completion_test extends advanced_testcase {
                 ['completionsubmit', 'completioncreate'],
                 [COMPLETION_INCOMPLETE, COMPLETION_COMPLETE],
                 1,
-                COMPLETION_INCOMPLETE
+                COMPLETION_INCOMPLETE,
             ],
             'First complete, second incomplete' => [
                 ['completionsubmit', 'completioncreate'],
                 [COMPLETION_COMPLETE, COMPLETION_INCOMPLETE],
                 2,
-                COMPLETION_INCOMPLETE
+                COMPLETION_INCOMPLETE,
+            ],
+            'First complete, second failed' => [
+                ['completionsubmit', 'completioncreate'],
+                [COMPLETION_COMPLETE, COMPLETION_COMPLETE_FAIL],
+                2,
+                COMPLETION_COMPLETE_FAIL,
+            ],
+            'First complete, second incomplete, third failed' => [
+                ['completionsubmit', 'completioncreate'],
+                [COMPLETION_COMPLETE, COMPLETION_INCOMPLETE, COMPLETION_COMPLETE_FAIL],
+                2,
+                COMPLETION_INCOMPLETE,
             ],
             'All complete' => [
                 ['completionsubmit', 'completioncreate'],
                 [COMPLETION_COMPLETE, COMPLETION_COMPLETE],
                 2,
-                COMPLETION_COMPLETE
+                COMPLETION_COMPLETE,
             ],
             'No rules' => [
                 [],
                 [],
                 0,
-                COMPLETION_COMPLETE
+                COMPLETION_COMPLETE,
             ],
         ];
     }

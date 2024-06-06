@@ -114,16 +114,25 @@ abstract class activity_custom_completion {
     /**
      * Fetches the overall completion status of this activity instance for a user based on its available custom completion rules.
      *
-     * @return int The completion state (e.g. COMPLETION_COMPLETE, COMPLETION_INCOMPLETE).
+     * @return int The completion state (e.g. COMPLETION_COMPLETE, COMPLETION_INCOMPLETE, COMPLETION_COMPLETE_FAIL).
      */
     public function get_overall_completion_state(): int {
+        $iscompletefail = false;
         foreach ($this->get_available_custom_rules() as $rule) {
             $state = $this->get_state($rule);
             // Return early if one of the custom completion rules is not yet complete.
             if ($state == COMPLETION_INCOMPLETE) {
                 return $state;
             }
+            if (!$iscompletefail) {
+                $iscompletefail = ($state === COMPLETION_COMPLETE_FAIL || $state === COMPLETION_COMPLETE_FAIL_HIDDEN);
+            }
         }
+
+        if ($iscompletefail) {
+            return COMPLETION_COMPLETE_FAIL;
+        }
+
         // If this was reached, then all custom rules have been marked complete.
         return COMPLETION_COMPLETE;
     }
