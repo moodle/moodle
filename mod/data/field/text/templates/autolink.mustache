@@ -15,9 +15,9 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template datafield_text/text
+    @template datafield_text/autolink
 
-    The purpose of this template is to enable the user to define a text field.
+    The purpose of this template is to enable the user to define the 'auto link' field.
 
     Classes required for JS:
     * none
@@ -28,20 +28,19 @@
     Context variables required for this template:
     * name string The field's name.
     * description string The field's description.
-    * required bool The field's requiredness.
-    * param1 string The field's auto link value.
 
     Example context (json):
     {
-        "name": "A name",
-        "description": "A description",
-        "required": true,
-        "param1": 1
+        "param1": false
     }
 }}
-
-<fieldset>
-    {{> mod_data/fields/basicfields }}
-    {{> mod_data/fields/requiredfield }}
-    {{> datafield_text/autolink }}
-</fieldset>
+<div class="form-group row fitem">
+    <div class="col-md-3 d-flex pb-0 pr-md-0">
+        <label for="param1" class="mb-0">{{#str}}fieldallowautolink, data{{/str}}</label>
+    </div>
+    <div class="col-md-9 form-inline align-items-start felement">
+        <input class="form-check-input" type="checkbox" name="param1" id="param1"
+            {{#param1}}checked="checked"{{/param1}}
+            value="1">
+    </div>
+</div>
