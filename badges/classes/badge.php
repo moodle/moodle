@@ -1008,7 +1008,7 @@ class badge {
         $fordb->id = null;
         $fordb->courseid = $courseid;
         $fordb->type = $courseid ? BADGE_TYPE_COURSE : BADGE_TYPE_SITE;
-        $fordb->name = $data->name;
+        $fordb->name = trim($data->name);
         $fordb->version = $data->version;
         $fordb->language = $data->language;
         $fordb->description = $data->description;
@@ -1078,7 +1078,7 @@ class badge {
     public function update(stdClass $data): bool {
         global $USER;
 
-        $this->name = $data->name;
+        $this->name = trim($data->name);
         $this->version = trim($data->version);
         $this->language = $data->language;
         $this->description = $data->description;

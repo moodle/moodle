@@ -43,6 +43,15 @@ class badge extends moodleform {
         $mform = $this->_form;
         $badge = (isset($this->_customdata['badge'])) ? $this->_customdata['badge'] : false;
         $action = $this->_customdata['action'];
+        if (array_key_exists('courseid', $this->_customdata)) {
+            $courseid = $this->_customdata['courseid'];
+        } else if (array_key_exists('badge', $this->_customdata)) {
+            $courseid = $this->_customdata['badge']->courseid;
+        }
+        if (!empty($courseid)) {
+            $mform->addElement('hidden', 'courseid', $courseid);
+            $mform->setType('courseid', PARAM_INT);
+        }
 
         $mform->addElement('header', 'badgedetails', get_string('badgedetails', 'badges'));
         $mform->addElement('text', 'name', get_string('name'), ['size' => '70']);
@@ -180,6 +189,11 @@ class badge extends moodleform {
             $defaultvalues['expiry'] = 2;
             $defaultvalues['expireperiod'] = $badge->expireperiod;
         }
+
+        if (!empty($badge->name)) {
+            $defaultvalues['name'] = trim($badge->name);
+        }
+
         $defaultvalues['tags'] = \core_tag_tag::get_item_tags_array('core_badges', 'badge', $badge->id);
         $defaultvalues['currentimage'] = print_badge_image($badge, $badge->get_context(), 'large');
 
@@ -190,7 +204,11 @@ class badge extends moodleform {
      * Validates form data
      */
     public function validation($data, $files) {
-        global $DB;
+        global $DB, $SITE;
+
+        // Trim badge name (to guarantee no badges are created with the same name but some extra spaces).
+        $data['name'] = trim($data['name']);
+
         $errors = parent::validation($data, $files);
 
         if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
@@ -209,25 +227,6 @@ class badge extends moodleform {
 
         if ($data['imageauthoremail'] && !validate_email($data['imageauthoremail'])) {
             $errors['imageauthoremail'] = get_string('invalidemail');
-        }
-
-        // Check for duplicate badge names.
-        if ($data['action'] == 'new') {
-            $duplicate = $DB->record_exists_select(
-                'badge',
-                'name = :name AND status != :deleted',
-                ['name' => $data['name'], 'deleted' => BADGE_STATUS_ARCHIVED],
-            );
-        } else {
-            $duplicate = $DB->record_exists_select(
-                'badge',
-                'name = :name AND id != :badgeid AND status != :deleted',
-                ['name' => $data['name'], 'badgeid' => $data['id'], 'deleted' => BADGE_STATUS_ARCHIVED],
-            );
-        }
-
-        if ($duplicate) {
-            $errors['name'] = get_string('error:duplicatename', 'badges');
         }
 
         if ($data['imageauthorurl'] && !preg_match('@^https?://.+@', $data['imageauthorurl'])) {
