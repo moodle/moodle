@@ -14,16 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Form classes for editing badges
- *
- * @package    core
- * @subpackage badges
- * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
- */
-
 namespace core_badges\form;
 
 defined('MOODLE_INTERNAL') || die();
@@ -35,8 +25,12 @@ require_once($CFG->libdir . '/filelib.php');
 use moodleform;
 
 /**
- * Form to edit badge details.
+ * Form classes for editing badges
  *
+ * @package    core_badges
+ * @copyright  2012 onwards Totara Learning Solutions Ltd {@link http://www.totaralms.com/}
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @author     Yuliya Bozhko <yuliya.bozhko@totaralms.com>
  */
 class badge extends moodleform {
 
@@ -51,13 +45,13 @@ class badge extends moodleform {
         $action = $this->_customdata['action'];
 
         $mform->addElement('header', 'badgedetails', get_string('badgedetails', 'badges'));
-        $mform->addElement('text', 'name', get_string('name'), array('size' => '70'));
+        $mform->addElement('text', 'name', get_string('name'), ['size' => '70']);
         // When downloading badge, it will be necessary to clean the name as PARAM_FILE.
         $mform->setType('name', PARAM_TEXT);
         $mform->addRule('name', null, 'required');
         $mform->addRule('name', get_string('maximumchars', '', 255), 'maxlength', 255, 'client');
 
-        $mform->addElement('text', 'version', get_string('version', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'version', get_string('version', 'badges'), ['size' => '70']);
         $mform->setType('version', PARAM_TEXT);
         $mform->addHelpButton('version', 'version', 'badges');
 
@@ -70,7 +64,7 @@ class badge extends moodleform {
         $mform->addRule('description', null, 'required');
 
         $str = $action == 'new' ? get_string('badgeimage', 'badges') : get_string('newimage', 'badges');
-        $imageoptions = array('maxbytes' => 262144, 'accepted_types' => array('optimised_image'));
+        $imageoptions = ['maxbytes' => 262144, 'accepted_types' => ['optimised_image']];
         $mform->addElement('filepicker', 'image', $str, null, $imageoptions);
 
         if ($action == 'new') {
@@ -80,16 +74,16 @@ class badge extends moodleform {
             $mform->insertElementBefore($currentimage, 'image');
         }
         $mform->addHelpButton('image', 'badgeimage', 'badges');
-        $mform->addElement('text', 'imageauthorname', get_string('imageauthorname', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'imageauthorname', get_string('imageauthorname', 'badges'), ['size' => '70']);
         $mform->setType('imageauthorname', PARAM_TEXT);
         $mform->addHelpButton('imageauthorname', 'imageauthorname', 'badges');
-        $mform->addElement('text', 'imageauthoremail', get_string('imageauthoremail', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'imageauthoremail', get_string('imageauthoremail', 'badges'), ['size' => '70']);
         $mform->setType('imageauthoremail', PARAM_TEXT);
         $mform->addHelpButton('imageauthoremail', 'imageauthoremail', 'badges');
-        $mform->addElement('text', 'imageauthorurl', get_string('imageauthorurl', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'imageauthorurl', get_string('imageauthorurl', 'badges'), ['size' => '70']);
         $mform->setType('imageauthorurl', PARAM_URL);
         $mform->addHelpButton('imageauthorurl', 'imageauthorurl', 'badges');
-        $mform->addElement('text', 'imagecaption', get_string('imagecaption', 'badges'), array('size' => '70'));
+        $mform->addElement('text', 'imagecaption', get_string('imagecaption', 'badges'), ['size' => '70']);
         $mform->setType('imagecaption', PARAM_TEXT);
         $mform->addHelpButton('imagecaption', 'imagecaption', 'badges');
         $mform->addElement('tags', 'tags', get_string('tags', 'badges'), ['itemtype' => 'badge', 'component' => 'core_badges']);
@@ -97,7 +91,7 @@ class badge extends moodleform {
         if (badges_open_badges_backpack_api() == OPEN_BADGES_V1) {
             $mform->addElement('header', 'issuerdetails', get_string('issuerdetails', 'badges'));
 
-            $mform->addElement('text', 'issuername', get_string('name'), array('size' => '70'));
+            $mform->addElement('text', 'issuername', get_string('name'), ['size' => '70']);
             $mform->setType('issuername', PARAM_NOTAGS);
             $mform->addRule('issuername', null, 'required');
             if (isset($CFG->badges_defaultissuername)) {
@@ -105,7 +99,7 @@ class badge extends moodleform {
             }
             $mform->addHelpButton('issuername', 'issuername', 'badges');
 
-            $mform->addElement('text', 'issuercontact', get_string('contact', 'badges'), array('size' => '70'));
+            $mform->addElement('text', 'issuercontact', get_string('contact', 'badges'), ['size' => '70']);
             if (isset($CFG->badges_defaultissuercontact)) {
                 $mform->setDefault('issuercontact', $CFG->badges_defaultissuercontact);
             }
@@ -120,17 +114,17 @@ class badge extends moodleform {
 
         $mform->addElement('header', 'issuancedetails', get_string('issuancedetails', 'badges'));
 
-        $issuancedetails = array();
-        $issuancedetails[] =& $mform->createElement('radio', 'expiry', '', get_string('never', 'badges'), 0);
-        $issuancedetails[] =& $mform->createElement('static', 'none_break', null, '<br/>');
-        $issuancedetails[] =& $mform->createElement('radio', 'expiry', '', get_string('fixed', 'badges'), 1);
-        $issuancedetails[] =& $mform->createElement('date_selector', 'expiredate', '');
-        $issuancedetails[] =& $mform->createElement('static', 'expirydate_break', null, '<br/>');
-        $issuancedetails[] =& $mform->createElement('radio', 'expiry', '', get_string('relative', 'badges'), 2);
-        $issuancedetails[] =& $mform->createElement('duration', 'expireperiod', '', array('defaultunit' => 86400, 'optional' => false));
-        $issuancedetails[] =& $mform->createElement('static', 'expiryperiods_break', null, get_string('after', 'badges'));
+        $issuancedetails = [];
+        $issuancedetails[] = $mform->createElement('radio', 'expiry', '', get_string('never', 'badges'), 0);
+        $issuancedetails[] = $mform->createElement('static', 'none_break', null, '<br/>');
+        $issuancedetails[] = $mform->createElement('radio', 'expiry', '', get_string('fixed', 'badges'), 1);
+        $issuancedetails[] = $mform->createElement('date_selector', 'expiredate', '');
+        $issuancedetails[] = $mform->createElement('static', 'expirydate_break', null, '<br/>');
+        $issuancedetails[] = $mform->createElement('radio', 'expiry', '', get_string('relative', 'badges'), 2);
+        $issuancedetails[] = $mform->createElement('duration', 'expireperiod', '', ['defaultunit' => 86400, 'optional' => false]);
+        $issuancedetails[] = $mform->createElement('static', 'expiryperiods_break', null, get_string('after', 'badges'));
 
-        $mform->addGroup($issuancedetails, 'expirydategr', get_string('expirydate', 'badges'), array(' '), false);
+        $mform->addGroup($issuancedetails, 'expirydategr', get_string('expirydate', 'badges'), [' '], false);
         $mform->addHelpButton('expirydategr', 'expirydate', 'badges');
         $mform->setDefault('expiry', 0);
         $mform->setDefault('expiredate', strtotime('+1 year'));
@@ -165,7 +159,7 @@ class badge extends moodleform {
 
             // Freeze all elements if badge is active or locked.
             if ($badge->is_active() || $badge->is_locked()) {
-                $mform->hardFreezeAllVisibleExcept(array());
+                $mform->hardFreezeAllVisibleExcept([]);
             }
         }
     }
@@ -173,11 +167,11 @@ class badge extends moodleform {
     /**
      * Load in existing data as form defaults
      *
-     * @param stdClass|array $badge object or array of default values
+     * @param \core_badges\badge $badge object or array of default values
      */
     public function set_data($badge) {
         $defaultvalues = [];
-        parent::set_data($badge);
+        parent::set_data((object) $badge);
 
         if (!empty($badge->expiredate)) {
             $defaultvalues['expiry'] = 1;
@@ -219,11 +213,17 @@ class badge extends moodleform {
 
         // Check for duplicate badge names.
         if ($data['action'] == 'new') {
-            $duplicate = $DB->record_exists_select('badge', 'name = :name AND status != :deleted',
-                array('name' => $data['name'], 'deleted' => BADGE_STATUS_ARCHIVED));
+            $duplicate = $DB->record_exists_select(
+                'badge',
+                'name = :name AND status != :deleted',
+                ['name' => $data['name'], 'deleted' => BADGE_STATUS_ARCHIVED],
+            );
         } else {
-            $duplicate = $DB->record_exists_select('badge', 'name = :name AND id != :badgeid AND status != :deleted',
-                array('name' => $data['name'], 'badgeid' => $data['id'], 'deleted' => BADGE_STATUS_ARCHIVED));
+            $duplicate = $DB->record_exists_select(
+                'badge',
+                'name = :name AND id != :badgeid AND status != :deleted',
+                ['name' => $data['name'], 'badgeid' => $data['id'], 'deleted' => BADGE_STATUS_ARCHIVED],
+            );
         }
 
         if ($duplicate) {
@@ -237,4 +237,3 @@ class badge extends moodleform {
         return $errors;
     }
 }
-
