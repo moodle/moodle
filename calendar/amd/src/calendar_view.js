@@ -83,11 +83,11 @@ function(
         };
 
         return {
-            init: function(root, type) {
+            init: function(root, type, isCalendarBlock = false) {
                 root = $(root);
 
-                CalendarViewManager.init(root, type);
-                registerEventListeners(root, type);
+                CalendarViewManager.init(root, type, isCalendarBlock);
+                registerEventListeners(root, type, isCalendarBlock);
             }
         };
     });

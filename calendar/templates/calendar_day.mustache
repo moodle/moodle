@@ -29,6 +29,7 @@
 
     Example context (json):
     {
+        "iscalendarblock": false
     }
 }}
 <div id="calendar-day-{{uniqid}}" data-template="core_calendar/day_detailed">
@@ -37,6 +38,7 @@
 </div>
 {{#js}}
 require(['jquery', 'core_calendar/calendar_view'], function($, CalendarView) {
-    CalendarView.init($("#calendar-day-{{uniqid}}"), 'day');
+    const isCalendarBlock = {{#iscalendarblock}}true{{/iscalendarblock}}{{^iscalendarblock}}false{{/iscalendarblock}};
+    CalendarView.init($("#calendar-day-{{uniqid}}"), 'day', isCalendarBlock);
 });
 {{/js}}
