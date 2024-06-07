@@ -54,7 +54,8 @@ const showPopover = target => {
                     content.html(temptContent.html());
                 }
                 return content.html();
-            }
+            },
+            'animation': false,
         });
 
         isPopoverConfigured.set(dateContainer, true);
@@ -64,6 +65,8 @@ const showPopover = target => {
         jQuery(target).popover('show');
         target.addEventListener('mouseleave', hidePopover);
         target.addEventListener('focusout', hidePopover);
+        // Set up the hide function to the click event type.
+        target.addEventListener('click', hidePopover);
     }
 };
 
@@ -76,10 +79,23 @@ const hidePopover = e => {
     if (isPopoverConfigured.has(dateContainer)) {
         const isTargetActive = target.contains(document.activeElement);
         const isTargetHover = target.matches(':hover');
+
+        // Checks if a target element is clicked or pressed.
+        const isTargetClicked = document.activeElement.contains(target);
+
+        let removeListener = true;
         if (!isTargetActive && !isTargetHover) {
             jQuery(target).popover('hide');
+        } else if (isTargetClicked) {
+            jQuery(document.activeElement).popover('hide');
+        } else {
+            removeListener = false;
+        }
+
+        if (removeListener) {
             target.removeEventListener('mouseleave', hidePopover);
             target.removeEventListener('focusout', hidePopover);
+            target.removeEventListener('click', hidePopover);
         }
     }
 };
