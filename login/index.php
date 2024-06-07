@@ -88,6 +88,7 @@ $infomsg = '';
 $errorcode = 0;
 
 // IOMAD - Set the theme if the server hostname matches one of ours.
+$postfix = "";
 if ($DB->get_manager()->table_exists('company') &&
     $company = $DB->get_record('company', array('hostname' => $_SERVER["SERVER_NAME"]))) {
     $hascompanybyurl = true;
@@ -98,8 +99,10 @@ if ($DB->get_manager()->table_exists('company') &&
     $SESSION->company = $company;
     $wantedcompanyid = $company->id;
     $wantedcompanyshort = $company->shortname;
+    $postfix = "_" . $wantedcompanyid;
 } else {
     $hascompanybyurl = false;
+    $postfix = "_" . $wantedcompanyid;
 }
 
 // login page requested session test
@@ -399,8 +402,9 @@ if (empty($SESSION->wantsurl)) {
 }
 
 /// Redirect to alternative login URL if needed
-if (!empty($CFG->alternateloginurl)) {
-    $loginurl = new moodle_url($CFG->alternateloginurl);
+$alternateloginurl = "alternateloginurl" . $postfix;
+if (!empty($CFG->$alternateloginurl)) {
+    $loginurl = new moodle_url($CFG->$alternateloginurl);
 
     $loginurlstr = $loginurl->out(false);
 
@@ -435,7 +439,8 @@ if (empty($frm->username) && $authsequence[0] != 'shibboleth') {  // See bug 518
 }
 
 // IOMAD - changes to display the instructions.
-if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->auth_instructions)) {
+$auth_instructions = "auth_instructions" . $postfix;
+if (!empty($CFG->registerauth) or is_enabled_auth('none') or !empty($CFG->$auth_instructions)) {
     if (!empty($CFG->local_iomad_signup_showinstructions)) {
         $show_instructions = true;
     } else {

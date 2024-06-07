@@ -31,6 +31,7 @@ use renderable;
 use renderer_base;
 use stdClass;
 use templatable;
+use iomad;
 
 /**
  * Login renderable class.
@@ -85,6 +86,15 @@ class login implements renderable, templatable {
     public function __construct(array $authsequence, $username = '') {
         global $CFG, $OUTPUT, $PAGE;
 
+        // IOMAD
+        require_once($CFG->dirroot . '/local/iomad/lib/company.php');
+        $companyid = iomad::get_my_companyid(context_system::instance(), false);
+        if (!empty($companyid)) {
+            $postfix = "_$companyid";
+        } else {
+            $postfix = "";
+        }
+
         $this->username = $username;
 
         $languagedata = new \core\output\language_menu($PAGE);
@@ -106,7 +116,11 @@ class login implements renderable, templatable {
         $this->signupurl = new moodle_url('/login/signup.php');
 
         // Authentication instructions.
-        $this->instructions = $CFG->auth_instructions;
+        $auth_instructions = "auth_instructions" . $postfix;
+        if (empty($CFG->$auth_instructions)) {
+            $CFG->$auth_instructions = $CFG->auth_instructions;
+        }
+        $this->instructions = $CFG->$auth_instructions;
         if (is_enabled_auth('none')) {
             $this->instructions = get_string('loginstepsnone');
         } else if ($CFG->registerauth == 'email' && empty($this->instructions)) {
