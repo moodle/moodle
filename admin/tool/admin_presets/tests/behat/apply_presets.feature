@@ -14,11 +14,11 @@ Feature: I can apply presets
   Scenario: Applying Starter Moodle preset changes status and settings
 #   Checking the settings before applying Full Moodle preset (we're only testing one of each type).
     Given I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And "Disable Database" "icon" should exist in the "Database" "table_row"
+    And I should see "Disable Database"
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    And "Disable Logged in user" "icon" should exist in the "Logged in user" "table_row"
+    And I should see "Disable Logged in user"
     And I navigate to "Plugins > Course formats > Manage course formats" in site administration
     And "Disable" "icon" should exist in the "Social" "table_row"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration
@@ -109,11 +109,11 @@ Feature: I can apply presets
     And the field "Enable badges" matches value "0"
     And the field "Enable competencies" matches value "0"
     And I navigate to "Plugins > Activity modules > Manage activities" in site administration
-    And "Disable Database" "icon" should not exist in the "Database" "table_row"
+    And I should see "Enable Database"
     And I navigate to "Plugins > Availability restrictions > Manage restrictions" in site administration
     And "Hide" "icon" should not exist in the "Restriction by grouping" "table_row"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    And "Disable Logged in user" "icon" should not exist in the "Logged in user" "table_row"
+    And I should see "Enable Logged in user"
     And I navigate to "Plugins > Course formats > Manage course formats" in site administration
     And "Disable" "icon" should not exist in the "Social" "table_row"
     And I navigate to "Plugins > Question behaviours > Manage question behaviours" in site administration

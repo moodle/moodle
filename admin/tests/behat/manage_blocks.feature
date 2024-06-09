@@ -8,26 +8,14 @@ Feature: An administrator can manage Block plugins
   Scenario: An administrator can control the enabled state of block plugins using JavaScript
     Given I am logged in as "admin"
     And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    When I click on "Disable Latest badges" "link"
-    Then I should see "Latest badges disabled."
-    And "Disable Latest badges" "link" should not exist
-    But "Enable Latest badges" "link" should exist
-    When I click on "Enable Latest badges" "link"
-    Then I should see "Latest badges enabled."
-    And "Enable Latest badges" "link" should not exist
-    But "Disable Latest badges" "link" should exist
-
-  Scenario: An administrator can control the enabled state of block plugins without JavaScript
-    Given I am logged in as "admin"
-    And I navigate to "Plugins > Blocks > Manage blocks" in site administration
-    When I click on "Disable Latest badges" "link"
-    Then I should see "Latest badges disabled."
-    And "Disable Latest badges" "link" should not exist
-    But "Enable Latest badges" "link" should exist
-    When I click on "Enable Latest badges" "link"
-    Then I should see "Latest badges enabled."
-    And "Enable Latest badges" "link" should not exist
-    But "Disable Latest badges" "link" should exist
+    When I toggle the "Disable Latest badges" admin switch "off"
+    And I should see "Latest badges disabled."
+    And I reload the page
+    Then I should see "Enable Latest badges"
+    And I toggle the "Enable Latest badges" admin switch "on"
+    And I should see "Latest badges enabled."
+    And I reload the page
+    Then I should see "Disable Latest badges"
 
   @javascript
   Scenario: An administrator can control the protected state of block plugins using JavaScript

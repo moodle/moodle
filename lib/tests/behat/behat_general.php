@@ -2401,4 +2401,33 @@ EOF;
             );
         }
     }
+
+    /**
+     * Toggles the specified admin switch.
+     *
+     * @When /^I toggle the "(?P<element_string>(?:[^"]|\\")*)" admin switch "(?P<state_string>on|off)"$/
+     * @param string $element Element we look for
+     * @param string $state The state of the switch
+     * @throws ElementNotFoundException Thrown by behat_base::find
+     */
+    public function i_toggle_admin_switch($element, $state) {
+        // First check we are running Javascript, otherwise explode.
+        if (!$this->running_javascript()) {
+            throw new \Behat\Mink\Exception\DriverException('Switches are only available with JavaScript enabled');
+        }
+
+        // Next check that the node is available.
+        $node = $this->get_selected_node('checkbox', $element);
+        $this->ensure_node_is_visible($node);
+
+        // Update the state of the switch.
+        $field = $node->getAttribute('id');
+        if ($state == "on") {
+            $this->execute('behat_forms::i_set_the_field_to', [$field, 1]);
+        } else if ($state == "off") {
+            $this->execute('behat_forms::i_set_the_field_to', [$field, 0]);
+        } else {
+            throw new \Behat\Mink\Exception\ExpectationException('Invalid state for switch: ' . $state, $this->getSession());
+        }
+    }
 }
