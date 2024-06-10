@@ -29,12 +29,8 @@ use GuzzleHttp\Psr7\Uri;
  * @category   test
  * @copyright  2022 Safat Shahin <safat.shahin@moodle.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
  * @coversDefaultClass \core\http_client
- * @coversDefaultClass \core\local\guzzle\redirect_middleware
- * @coversDefaultClass \core\local\guzzle\check_request
- * @coversDefaultClass \core\local\guzzle\cache_item
- * @coversDefaultClass \core\local\guzzle\cache_handler
- * @coversDefaultClass \core\local\guzzle\cache_storage
  */
 class http_client_test extends \advanced_testcase {
 
