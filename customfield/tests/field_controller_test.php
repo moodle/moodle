@@ -233,7 +233,7 @@ final class field_controller_test extends \advanced_testcase {
         $category = $lpg->create_category();
         $configdata = ['a' => 'b', 'c' => ['d', 'e']];
         $field = field_controller::create(0, (object)['type' => 'text',
-            'configdata' => json_encode($configdata), 'shortname' => 'a', 'name' => 'a', ], $category);
+            'configdata' => json_encode($configdata), 'shortname' => 'a', 'name' => 'a'], $category);
         $field->save();
 
         // Retrieve field and check configdata.

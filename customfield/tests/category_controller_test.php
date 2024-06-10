@@ -197,7 +197,7 @@ final class category_controller_test extends \advanced_testcase {
 
         // Create the category.
         $params = ['component' => 'core_course', 'area' => 'course', 'itemid' => 0, 'name' => 'Cat1',
-            'contextid' => \context_system::instance()->id, ];
+            'contextid' => \context_system::instance()->id];
         $c1 = category_controller::create(0, (object)$params);
         $c1->save();
         $this->assertNotEmpty($c1->get('id'));

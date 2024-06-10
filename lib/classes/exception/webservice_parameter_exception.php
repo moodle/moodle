@@ -23,7 +23,7 @@ namespace core\exception;
  * The error string is gotten from webservice.php
  * @package    core
  * @subpackage exception
- * @copyright  Jerome Mounerac
+ * @copyright  Jerome Mouneyrac
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class webservice_parameter_exception extends moodle_exception {

@@ -130,7 +130,7 @@ final class data_controller_test extends \advanced_testcase {
         $field = $this->get_generator()->create_field(['categoryid' => $category->get('id')]);
         $course = $this->getDataGenerator()->create_course();
         $data = data_controller::create(0, (object)['instanceid' => $course->id,
-            'contextid' => \context_course::instance($course->id)->id, ], $field);
+            'contextid' => \context_course::instance($course->id)->id], $field);
         $data->save();
 
         $datarecord = $DB->get_record(\core_customfield\data::TABLE, ['id' => $data->get('id')], '*', MUST_EXIST);
