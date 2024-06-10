@@ -172,11 +172,21 @@ $CFG->debugdeveloper       = true;
 $parts = explode('/', str_replace('\\', '/', dirname(__DIR__)));
 $CFG->admin                = array_pop($parts);
 
-//point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
-//the problem is that we need specific version of quickforms and hacked excel files :-(
+// Point pear include path to moodles lib/pear so that includes and requires will search there for files before anywhere else
+// the problem is that we need specific version of quickforms and hacked excel files :-(.
 ini_set('include_path', $CFG->libdir.'/pear' . PATH_SEPARATOR . ini_get('include_path'));
 
+// The core_component class can be used in any scripts, it does not need anything else.
 require_once($CFG->libdir.'/classes/component.php');
+
+// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
+// Required because the database checks below lead to session interaction which is going to lead us to requiring autoloaded classes.
+if (defined('COMPONENT_CLASSLOADER')) {
+    spl_autoload_register(COMPONENT_CLASSLOADER);
+} else {
+    spl_autoload_register('core_component::classloader');
+}
+
 require_once($CFG->libdir.'/classes/text.php');
 require_once($CFG->libdir.'/classes/string_manager.php');
 require_once($CFG->libdir.'/classes/string_manager_install.php');
@@ -191,14 +201,6 @@ require_once($CFG->libdir.'/deprecatedlib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/componentlib.class.php');
 require_once($CFG->dirroot.'/cache/lib.php');
-
-// Register our classloader, in theory somebody might want to replace it to load other hacked core classes.
-// Required because the database checks below lead to session interaction which is going to lead us to requiring autoloaded classes.
-if (defined('COMPONENT_CLASSLOADER')) {
-    spl_autoload_register(COMPONENT_CLASSLOADER);
-} else {
-    spl_autoload_register('core_component::classloader');
-}
 
 require($CFG->dirroot.'/version.php');
 $CFG->target_release = $release;

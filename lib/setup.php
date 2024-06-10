@@ -434,7 +434,7 @@ if (!defined('MOODLE_INTERNAL')) { // Necessary because cli installer has to def
     define('MOODLE_INTERNAL', true);
 }
 
-// core_component can be used in any scripts, it does not need anything else.
+// The core_component class can be used in any scripts, it does not need anything else.
 require_once($CFG->libdir .'/classes/component.php');
 
 // Early profiling start, based exclusively on config.php $CFG settings
