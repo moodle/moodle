@@ -53,11 +53,20 @@ class gradereport_singleview_renderer extends plugin_renderer_base {
         // If a particular user option is selected (not in zero state).
         if ($userid) { // A single user selected.
             $user = core_user::get_user($userid);
+
+            $context = context_course::instance($course->id);
+            $hiddenuserfields = explode(',', get_config('core', 'hiddenuserfields'));
+
+            // Determine whether the user's email can be displayed.
+            $isemailvisible = !in_array('email', $hiddenuserfields) ||
+                has_capability('moodle/course:viewhiddenuserfields', $context);
+
             $data['selectedoption'] = [
                 'image' => $this->user_picture($user, ['size' => 40, 'link' => false]),
                 'text' => fullname($user),
-                'additionaltext' => $user->email,
+                'additionaltext' => $isemailvisible ? $user->email : '',
             ];
+            $data['userid'] = $userid;
         }
 
         $this->page->requires->js_call_amd('gradereport_singleview/user', 'init');
