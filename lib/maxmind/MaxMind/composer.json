@@ -21,7 +21,7 @@
         "ext-maxminddb": "A C-based database decoder that provides significantly faster lookups"
     },
     "conflict": {
-        "ext-maxminddb": "<1.10.1,>=2.0.0"
+        "ext-maxminddb": "<1.11.1,>=2.0.0"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "3.*",

@@ -10,54 +10,45 @@ namespace GeoIp2\Model;
  *
  * See https://dev.maxmind.com/geoip/docs/web-services?lang=en for more
  * details.
- *
- * @property-read \GeoIp2\Record\City $city City data for the requested IP
- * address.
- * @property-read \GeoIp2\Record\Location $location Location data for the
- * requested IP address.
- * @property-read \GeoIp2\Record\Postal $postal Postal data for the
- * requested IP address.
- * @property-read array $subdivisions An array \GeoIp2\Record\Subdivision
- * objects representing the country subdivisions for the requested IP
- * address. The number and type of subdivisions varies by country, but a
- * subdivision is typically a state, province, county, etc. Subdivisions
- * are ordered from most general (largest) to most specific (smallest).
- * If the response did not contain any subdivisions, this method returns
- * an empty array.
- * @property-read \GeoIp2\Record\Subdivision $mostSpecificSubdivision An object
- * representing the most specific subdivision returned. If the response
- * did not contain any subdivisions, this method returns an empty
- * \GeoIp2\Record\Subdivision object.
  */
 class City extends Country
 {
     /**
-     * @ignore
-     *
-     * @var \GeoIp2\Record\City
+     * @var \GeoIp2\Record\City city data for the requested IP
+     *                          address
      */
-    protected $city;
+    public readonly \GeoIp2\Record\City $city;
 
     /**
-     * @ignore
-     *
-     * @var \GeoIp2\Record\Location
+     * @var \GeoIp2\Record\Location location data for the
+     *                              requested IP address
      */
-    protected $location;
+    public readonly \GeoIp2\Record\Location $location;
 
     /**
-     * @ignore
-     *
-     * @var \GeoIp2\Record\Postal
+     * @var \GeoIp2\Record\Subdivision An object
+     *                                 representing the most specific subdivision returned. If the response
+     *                                 did not contain any subdivisions, this method returns an empty
+     *                                 \GeoIp2\Record\Subdivision object.
      */
-    protected $postal;
+    public readonly \GeoIp2\Record\Subdivision $mostSpecificSubdivision;
 
     /**
-     * @ignore
-     *
-     * @var array<\GeoIp2\Record\Subdivision>
+     * @var \GeoIp2\Record\Postal postal data for the
+     *                            requested IP address
      */
-    protected $subdivisions = [];
+    public readonly \GeoIp2\Record\Postal $postal;
+
+    /**
+     * @var array<\GeoIp2\Record\Subdivision> An array of \GeoIp2\Record\Subdivision
+     *                                        objects representing the country subdivisions for the requested IP
+     *                                        address. The number and type of subdivisions varies by country, but a
+     *                                        subdivision is typically a state, province, county, etc. Subdivisions
+     *                                        are ordered from most general (largest) to most specific (smallest).
+     *                                        If the response did not contain any subdivisions, this method returns
+     *                                        an empty array.
+     */
+    public readonly array $subdivisions;
 
     /**
      * @ignore
@@ -66,58 +57,59 @@ class City extends Country
     {
         parent::__construct($raw, $locales);
 
-        $this->city = new \GeoIp2\Record\City($this->get('city'), $locales);
-        $this->location = new \GeoIp2\Record\Location($this->get('location'));
-        $this->postal = new \GeoIp2\Record\Postal($this->get('postal'));
+        $this->city = new \GeoIp2\Record\City($raw['city'] ?? [], $locales);
+        $this->location = new \GeoIp2\Record\Location($raw['location'] ?? []);
+        $this->postal = new \GeoIp2\Record\Postal($raw['postal'] ?? []);
 
-        $this->createSubdivisions($raw, $locales);
-    }
-
-    private function createSubdivisions(array $raw, array $locales): void
-    {
         if (!isset($raw['subdivisions'])) {
+            $this->subdivisions = [];
+            $this->mostSpecificSubdivision =
+                    new \GeoIp2\Record\Subdivision([], $locales);
+
             return;
         }
 
+        $subdivisions = [];
         foreach ($raw['subdivisions'] as $sub) {
-            $this->subdivisions[] =
+            $subdivisions[] =
                 new \GeoIp2\Record\Subdivision($sub, $locales)
             ;
         }
+
+        // Not using end as we don't want to modify internal pointer.
+        $this->mostSpecificSubdivision =
+            $subdivisions[\count($subdivisions) - 1];
+        $this->subdivisions = $subdivisions;
     }
 
-    /**
-     * @ignore
-     *
-     * @return mixed
-     */
-    public function __get(string $attr)
+    public function jsonSerialize(): ?array
     {
-        if ($attr === 'mostSpecificSubdivision') {
-            return $this->{$attr}();
+        $js = parent::jsonSerialize();
+
+        $city = $this->city->jsonSerialize();
+        if (!empty($city)) {
+            $js['city'] = $city;
         }
 
-        return parent::__get($attr);
-    }
-
-    /**
-     * @ignore
-     */
-    public function __isset(string $attr): bool
-    {
-        if ($attr === 'mostSpecificSubdivision') {
-            // We always return a mostSpecificSubdivision, even if it is the
-            // empty subdivision
-            return true;
+        $location = $this->location->jsonSerialize();
+        if (!empty($location)) {
+            $js['location'] = $location;
         }
 
-        return parent::__isset($attr);
-    }
+        $postal =
+         $this->postal->jsonSerialize();
+        if (!empty($postal)) {
+            $js['postal'] = $postal;
+        }
 
-    private function mostSpecificSubdivision(): \GeoIp2\Record\Subdivision
-    {
-        return empty($this->subdivisions) ?
-            new \GeoIp2\Record\Subdivision([], $this->locales) :
-            end($this->subdivisions);
+        $subdivisions = [];
+        foreach ($this->subdivisions as $sub) {
+            $subdivisions[] = $sub->jsonSerialize();
+        }
+        if (!empty($subdivisions)) {
+            $js['subdivisions'] = $subdivisions;
+        }
+
+        return $js;
     }
 }
