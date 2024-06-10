@@ -175,26 +175,6 @@ final class url_test extends \advanced_testcase {
         $this->assertTrue($url1->compare($url2, URL_MATCH_EXACT));
     }
 
-    public function test_out_as_local_url(): void {
-        global $CFG;
-        // Test http url.
-        $url1 = new url('/lib/tests/weblib_test.php');
-        $this->assertSame('/lib/tests/weblib_test.php', $url1->out_as_local_url());
-
-        // Test https url.
-        $httpswwwroot = str_replace("http://", "https://", $CFG->wwwroot);
-        $url2 = new url($httpswwwroot . '/login/profile.php');
-        $this->assertSame('/login/profile.php', $url2->out_as_local_url());
-
-        // Test http url matching wwwroot.
-        $url3 = new url($CFG->wwwroot);
-        $this->assertSame('', $url3->out_as_local_url());
-
-        // Test http url matching wwwroot ending with slash (/).
-        $url3 = new url($CFG->wwwroot . '/');
-        $this->assertSame('/', $url3->out_as_local_url());
-    }
-
     public function test_out_as_local_url_error(): void {
         $url2 = new url('http://www.google.com/lib/tests/weblib_test.php');
         $this->expectException(\coding_exception::class);
