@@ -503,4 +503,190 @@ final class url_test extends \advanced_testcase {
             'Quotes become encoded' => ['test with "quotes"', 'test%20with%20%22quotes%22'],
         ];
     }
+
+    /**
+     * Test the coding exceptions when returning URL as relative path from $CFG->wwwroot.
+     *
+     * @param url $url The URL pointing to a web resource.
+     * @param string $exmessage The expected output URL.
+     * @dataProvider out_as_local_url_coding_exception_provider
+     */
+    public function test_out_as_local_url_coding_exception(url $url, string $exmessage): void {
+        $this->expectException(\coding_exception::class);
+        $this->expectExceptionMessage($exmessage);
+        $localurl = $url->out_as_local_url();
+    }
+
+    /**
+     * Data provider for throwing coding exceptions in <u>url::out_as_local_url()</u>.
+     *
+     * @return array
+     */
+    public static function out_as_local_url_coding_exception_provider(): array {
+        return [
+            'Google Maps CDN (HTTPS)' => [
+                new url('https://maps.googleapis.com/maps/api/js', ['key' => 'googlemapkey3', 'sensor' => 'false']),
+                'Coding error detected, it must be fixed by a programmer: out_as_local_url called on a non-local URL',
+            ],
+            'Google Maps CDN (HTTP)' => [
+                new url('http://maps.googleapis.com/maps/api/js', ['key' => 'googlemapkey3', 'sensor' => 'false']),
+                'Coding error detected, it must be fixed by a programmer: out_as_local_url called on a non-local URL',
+            ],
+        ];
+    }
+
+    /**
+     * Test URL as relative path from $CFG->wwwroot.
+     *
+     * @param url $url The URL pointing to a web resource.
+     * @param string $expected The expected local URL.
+     * @param string|null $wwwroot
+     * @dataProvider out_as_local_url_provider
+     */
+    public function test_out_as_local_url(
+        url $url,
+        string $expected,
+        ?string $wwwroot = null,
+    ): void {
+        global $CFG;
+
+        if ($wwwroot !== null) {
+            $CFG->wwwroot = $wwwroot;
+            $this->resetAfterTest(true);
+        }
+        $this->assertEquals($expected, $url->out_as_local_url(false));
+    }
+
+    /**
+     * Data provider for returning local paths via <u>url::out_as_local_url()</u>.
+     *
+     * @return array
+     */
+    public static function out_as_local_url_provider(): array {
+        global $CFG;
+        $wwwroot = rtrim($CFG->wwwroot, '/');
+        $httpswwwroot = str_replace('https://', 'http://', $CFG->wwwroot);
+
+        return [
+            'HTTP URL' => [
+                new url("{$wwwroot}/lib/tests/weblib_test.php"),
+                '/lib/tests/weblib_test.php',
+                $wwwroot,
+            ],
+            'HTTPS URL' => [
+                new url("{$httpswwwroot}/lib/tests/weblib_test.php"),
+                '/lib/tests/weblib_test.php',
+                $httpswwwroot,
+            ],
+            'Plain wwwroot' => [
+                new url($CFG->wwwroot),
+                '',
+            ],
+            'wwwroot With trailing /' => [
+                new url($CFG->wwwroot . '/'),
+                '/',
+            ],
+            'Environment XML file' => [
+                new url('/admin/environment.xml'),
+                '/admin/environment.xml',
+            ],
+            'H5P JS internal resource' => [
+                new url('/h5p/js/embed.js'),
+                '/h5p/js/embed.js',
+            ],
+            'A Moodle JS resource using the full path including the proper JS Handler' => [
+                new url($wwwroot . '/lib/javascript.php/1/lib/editor/tiny/js/tinymce/tinymce.js'),
+                '/lib/javascript.php/1/lib/editor/tiny/js/tinymce/tinymce.js',
+            ],
+        ];
+    }
+
+    /**
+     * Test URL as relative path from $CFG->wwwroot.
+     *
+     * @param url $url The URL pointing to a web resource.
+     * @param bool $expected The expected result.
+     * @dataProvider is_local_url_provider
+     */
+    public function test_is_local_url(url $url, bool $expected): void {
+        $this->assertEquals($expected, $url->is_local_url(), "'{$url}' is not a local URL!");
+    }
+
+    /**
+     * Data provider for testing <u>url::is_local_url()</u>.
+     *
+     * @return array
+     */
+    public static function is_local_url_provider(): array {
+        global $CFG;
+        $wwwroot = rtrim($CFG->wwwroot, '/');
+
+        return [
+            'Google Maps CDN (HTTPS)' => [
+                new url('https://maps.googleapis.com/maps/api/js', ['key' => 'googlemapkey3', 'sensor' => 'false']),
+                false,
+            ],
+            'Google Maps CDN (HTTP)' => [
+                new url('http://maps.googleapis.com/maps/api/js', ['key' => 'googlemapkey3', 'sensor' => 'false']),
+                false,
+            ],
+            'wwwroot' => [
+                new url($wwwroot),
+                true,
+            ],
+            'wwwroot/' => [
+                new url($wwwroot . '/'),
+                true,
+            ],
+            'Environment XML file' => [
+                new url('/admin/environment.xml'),
+                true,
+            ],
+            'H5P JS internal resource' => [
+                new url('/h5p/js/embed.js'),
+                true,
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider remove_params_provider
+     */
+    public function test_remove_params($params, $remove, $expected): void {
+        $url = new url('/index.php', $params);
+        if ($remove !== null) {
+            $url->remove_params(...$remove);
+        }
+        $this->assertSame($expected, $url->params());
+    }
+
+    public static function remove_params_provider(): array {
+        return [
+            [
+                ['id' => 1, 'cid' => 2, 'sid' => 3],
+                null,
+                ['id' => '1', 'cid' => '2', 'sid' => '3'],
+            ],
+            [
+                ['id' => 1, 'cid' => 2, 'sid' => 3],
+                [],
+                ['id' => '1', 'cid' => '2', 'sid' => '3'],
+            ],
+            [
+                ['id' => 1, 'cid' => 2, 'sid' => 3],
+                ['other'],
+                ['id' => '1', 'cid' => '2', 'sid' => '3'],
+            ],
+            [
+                ['id' => 1, 'cid' => 2, 'sid' => 3],
+                ['id', 'sid'],
+                ['cid' => '2'],
+            ],
+            [
+                ['id' => 1, 'cid' => 2, 'sid' => 3],
+                [['id', 'sid']],
+                ['cid' => '2'],
+            ],
+        ];
+    }
 }
