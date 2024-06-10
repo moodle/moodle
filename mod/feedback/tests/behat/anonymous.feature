@@ -29,7 +29,7 @@ Feature: Anonymous feedback
     When I log in as "manager"
     And I am on site homepage
     And I follow "Site feedback"
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like our site?              |
       | Label                          | multichoice2                       |
@@ -156,7 +156,7 @@ Feature: Anonymous feedback
   Scenario: Anonymous feedback in a course
     # Teacher can not
     When I am on the "Course feedback" "feedback activity" page logged in as teacher
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Multiple choice" question to the feedback with:
       | Question                       | Do you like this course?           |
       | Label                          | multichoice1                       |

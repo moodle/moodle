@@ -23,7 +23,7 @@ Feature: Test creating different types of feedback questions for non-anonymous f
       | activity   | name                | course | idnumber    | anonymous |
       | feedback   | Learning experience | C1     | feedback0   | 2         |
     When I am on the "Learning experience" "feedback activity" page logged in as teacher1
-    And I click on "Edit questions" "link" in the "[role=main]" "css_element"
+    And I navigate to "Questions" in current page administration
     And I add a "Information" question to the feedback with:
       | Question         | this is an information question |
       | Label            | info                            |
