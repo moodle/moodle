@@ -68,6 +68,7 @@ class boostnavbar implements \renderable {
             }
         }
         if ($this->page->context->contextlevel == CONTEXT_COURSE) {
+            $removesections = course_get_format($this->page->course)->can_sections_be_removed_from_navigation();
             // Remove any duplicate navbar nodes.
             $this->remove_duplicate_items();
             // Remove 'My courses' and 'Courses' if we are in the course context.

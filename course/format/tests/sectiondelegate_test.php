@@ -100,13 +100,13 @@ class sectiondelegate_test extends \advanced_testcase {
 
         $sectioninfo = formatactions::section($course)->create_delegated('test_component', 1);
 
-        /** @var testsectiondelegate */
+        /** @var testsectiondelegate $delegated */
         $delegated = $sectioninfo->get_component_instance();
 
         $format = course_get_format($course);
 
         $outputclass = $format->get_output_classname('content\\section\\controlmenu');
-        /** @var \core_courseformat\output\local\content\section\controlmenu */
+        /** @var \core_courseformat\output\local\content\section\controlmenu $controlmenu */
         $controlmenu = new $outputclass($format, $sectioninfo);
         $renderer = $PAGE->get_renderer('format_' . $course->format);
         $sectionmenu = $controlmenu->get_action_menu($renderer);
@@ -140,5 +140,22 @@ class sectiondelegate_test extends \advanced_testcase {
         $delegated->set_section_action_menu(null);
         $result = $delegated->get_section_action_menu($format, $controlmenu, $renderer);
         $this->assertNull($result);
+    }
+
+    /**
+     * Test get_parent_section().
+     *
+     * @covers ::get_parent_section
+     */
+    public function test_get_parent_section(): void {
+        $this->resetAfterTest();
+
+        $course = $this->getDataGenerator()->create_course(['format' => 'topics', 'numsections' => 1]);
+        $sectioninfo = formatactions::section($course)->create_delegated('test_component', 1);
+
+        /** @var testsectiondelegate $delegated */
+        $delegated = $sectioninfo->get_component_instance();
+
+        $this->assertNull($delegated->get_parent_section());
     }
 }
