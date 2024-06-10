@@ -116,3 +116,37 @@ Feature: Set default question bank column order and size
     Then "Last used" "table_row" should exist
     And "Question" "table_row" should appear before "Comments" "table_row"
     And the field "Width of 'Question' in pixels" matches value ""
+
+  Scenario: Deleting a custom field which is removed from the Column sort order
+    Given the following "custom field categories" exist:
+      | name              | component          | area     | itemid |
+      | Category for test | qbank_customfields | question | 0      |
+    And the following "custom fields" exist:
+      | name    | category          | type | shortname | configdata         |
+      | Field 1 | Category for test | text | f1        | {"visibility":"2"} |
+      | Field 2 | Category for test | text | f2        | {"visibility":"2"} |
+    And I change the window size to "large"
+    When I log in as "admin"
+    And I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
+    And "Field 1" "table_row" should exist
+    And "Field 2" "table_row" should exist
+    And I click on "Actions menu" "link" in the "Field 1" "table_row"
+    And I choose "Remove" in the open action menu
+
+    # Delete a question custom field.
+    And I navigate to "Plugins > Question bank plugins > Question custom fields" in site administration
+    And I click on "Delete" "link" in the "Field 1" "table_row"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
+    And I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
+    Then I should see "Column sort order"
+    And "Field 2" "table_row" should exist
+    And I click on "Actions menu" "link" in the "Field 2" "table_row"
+    And I choose "Remove" in the open action menu
+
+    # Delete the question custom category.
+    And I navigate to "Plugins > Question bank plugins > Question custom fields" in site administration
+    And I click on "[data-role='deletecategory']" "css_element"
+    And I click on "Yes" "button" in the "Confirm" "dialogue"
+    And I should not see "Category for test" in the "#customfield_catlist" "css_element"
+    And I navigate to "Plugins > Question bank plugins > Column sort order" in site administration
+    And I should see "Column sort order"

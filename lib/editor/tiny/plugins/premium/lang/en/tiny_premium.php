@@ -25,7 +25,28 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'Tiny premium';
 $string['apikey'] = 'API key';
-$string['apikey_desc'] = 'Your Tiny premium API key requires a paid subscription. You can find your key on your Tiny Cloud account page.';
-$string['privacy:metadata'] = 'The TinyMCE Premium plugin does not store any personal data.';
+$string['apikey_desc'] = 'Your API key is available on your <a target="_blank" href="https://www.tiny.cloud">Tiny Cloud</a> account page if you have purchased a subscription, or if you are on a free trial.';
+$string['emptyapikeywarning'] = 'Enabled TinyMCE Premium plugins will not be available until an API key is added.';
+$string['helplinktext'] = 'Premium plugins';
+$string['pluginname'] = 'TinyMCE Premium';
+$string['pluginnotfound'] = 'Tiny Premium plugin {$a} not found.';
+$string['premium:accesspremium'] = 'Access TinyMCE Premium features';
+$string['premiumplugin:advtable'] = 'Advanced Table';
+$string['premiumplugin:autocorrect'] = 'Spelling Autocorrect';
+$string['premiumplugin:casechange'] = 'Case Change';
+$string['premiumplugin:checklist'] = 'Checklist';
+$string['premiumplugin:editimage'] = 'Enhanced Image Editing';
+$string['premiumplugin:export'] = 'Export';
+$string['premiumplugin:footnotes'] = 'Footnotes';
+$string['premiumplugin:formatpainter'] = 'Format Painter';
+$string['premiumplugin:linkchecker'] = 'Link Checker';
+$string['premiumplugin:pageembed'] = 'Page Embed';
+$string['premiumplugin:permanentpen'] = 'Permanent Pen';
+$string['premiumplugin:powerpaste'] = 'Powerpaste';
+$string['premiumplugin:tableofcontents'] = 'Table of Contents';
+$string['premiumplugin:tinymcespellchecker'] = 'Spell Checker Pro';
+$string['premiumplugin:typography'] = 'Advanced Typography';
+$string['premiumplugins'] = 'Premium plugins';
+$string['premiumplugins_desc'] = 'Access to TinyMCE Premium plugins requires an API key. Not all listed plugins may be available with your TinyMCE Premium subscription. You can check available plugins on your <a href="https://www.tiny.cloud">Tiny Cloud</a> account page.';
+$string['privacy:metadata'] = 'The Tiny premium plugin for TinyMCE does not store any personal data.';

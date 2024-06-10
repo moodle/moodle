@@ -273,8 +273,16 @@ class core extends H5PCore {
 
         $librarykey = static::libraryToString($library);
 
+        if (is_null($factory->get_storage()->h5pC->librariesJsonData)) {
+            // There was an error fetching the content type.
+            debugging('Error fetching content type: ' . $librarykey);
+            return null;
+        }
+
         $libraryjson = $factory->get_storage()->h5pC->librariesJsonData[$librarykey];
-        if (!array_key_exists('libraryId', $libraryjson)) {
+        if (is_null($libraryjson) || !array_key_exists('libraryId', $libraryjson)) {
+            // There was an error fetching the content type.
+            debugging('Error fetching content type: ' . $librarykey);
             return null;
         }
 

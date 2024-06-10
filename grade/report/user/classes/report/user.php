@@ -551,14 +551,8 @@ class user extends grade_report {
                 }
 
                 // Generate the content for a cell that represents a grade item.
-                // If a behat test site is running avoid outputting the information about the type of the grade item.
-                // This additional information causes issues in behat particularly with the existing xpath used to
-                // interact with table elements.
-                if (!defined('BEHAT_SITE_RUNNING')) {
-                    $content = \html_writer::div($itemtype . $fullname);
-                } else {
-                    $content = \html_writer::div($fullname);
-                }
+                $itemtitle = \html_writer::div($fullname, 'rowtitle');
+                $content = \html_writer::div($itemtype . $itemtitle);
 
                 // Name.
                 $data['itemname']['content'] = \html_writer::div($itemicon . $content, "{$type} d-flex align-items-center");
@@ -666,7 +660,7 @@ class user extends grade_report {
                         $gradestatusclass = '';
                         $gradepassicon = '';
                         $ispassinggrade = $gradegrade->is_passed($gradegrade->grade_item);
-                        if (!is_null($ispassinggrade)) {
+                        if (!is_null($gradeval) && !is_null($ispassinggrade)) {
                             $gradestatusclass = $ispassinggrade ? 'gradepass' : 'gradefail';
                             if ($ispassinggrade) {
                                 $gradepassicon = $OUTPUT->pix_icon(

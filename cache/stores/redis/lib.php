@@ -447,7 +447,7 @@ class cachestore_redis extends cache_store implements cache_is_key_aware, cache_
                 $ttlparams[] = $key;
             }
         }
-        if ($usettl) {
+        if ($usettl && count($ttlparams) > 0) {
             // Store all the key values with current time.
             $this->redis->zAdd($this->hash . self::TTL_SUFFIX, [], ...$ttlparams);
             // The return value to the zAdd function never indicates whether the operation succeeded

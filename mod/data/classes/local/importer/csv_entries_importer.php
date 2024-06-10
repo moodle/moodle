@@ -133,7 +133,15 @@ class csv_entries_importer extends entries_importer {
                         $authorid = $author->id;
                     }
                 }
-                if ($recordid = data_add_record($data, 0, $authorid)) {  // Add instance to data_record.
+
+                // Determine presence of "approved" field within the record to import.
+                $approved = true;
+                if (array_key_exists(get_string('approved', 'data'), $fieldnames)) {
+                    $approvedindex = $fieldnames[get_string('approved', 'data')];
+                    $approved = !empty($record[$approvedindex]);
+                }
+
+                if ($recordid = data_add_record($data, 0, $authorid, $approved)) { // Add instance to data_record.
                     foreach ($fields as $field) {
                         $fieldid = $fieldnames[$field->field->name];
                         if (isset($record[$fieldid])) {

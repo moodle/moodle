@@ -63,9 +63,7 @@ abstract class section_renderer extends core_course_renderer {
     /**
      * Constructor method, calls the parent constructor.
      *
-     * @deprecated since 4.0
-     *
-     * Note: this method exists only for compatibilitiy with legacy course formats. Legacy formats
+     * Note: this method also helps for compatibilitiy with legacy course formats. Legacy formats
      * depends on $this->courserenderer to access the course renderer methods. Since Moodle 4.0
      * core_courseformat\output\section_renderer extends core_course_renderer and all metdhos can be used directly from $this.
      *
@@ -75,6 +73,13 @@ abstract class section_renderer extends core_course_renderer {
     public function __construct(moodle_page $page, $target) {
         parent::__construct($page, $target);
         $this->courserenderer = $this->page->get_renderer('core', 'course');
+
+        // Ensure capabilities for section editing controls match those defined in course/view.php to ensure that they work
+        // when called via an AJAX request.
+        if (course_get_format($page->course)->uses_sections()) {
+            $page->set_other_editing_capability('moodle/course:sectionvisibility');
+            $page->set_other_editing_capability('moodle/course:movesections');
+        }
     }
 
     /**

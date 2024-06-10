@@ -55,6 +55,8 @@ class get_join_url extends external_api {
      * @param int $cmid the bigbluebuttonbn course module id
      * @param null|int $groupid
      * @return array (empty array for now)
+     *
+     * @throws restricted_context_exception
      */
     public static function execute(
         int $cmid,
@@ -81,7 +83,11 @@ class get_join_url extends external_api {
         }
         $instance->set_group_id($groupid);
 
+        // Validate that the user has access to this activity and to join the meeting.
         self::validate_context($instance->get_context());
+        if (!$instance->can_join()) {
+            throw new restricted_context_exception();
+        }
 
         try {
             $result['join_url'] = meeting::join_meeting($instance);

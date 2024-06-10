@@ -3513,7 +3513,6 @@ class curl {
         if (empty($this->header)) {
             $this->setHeader(array(
                 'User-Agent: ' . $useragent,
-                'Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7',
                 'Connection: keep-alive'
                 ));
         } else if (!in_array('User-Agent: ' . $useragent, $this->header)) {
@@ -3840,6 +3839,7 @@ class curl {
 
                 $redirects++;
 
+                $currenturl = $redirecturl ?? $url;
                 $redirecturl = null;
                 if (isset($this->info['redirect_url'])) {
                     if (preg_match('|^https?://|i', $this->info['redirect_url'])) {
@@ -3898,6 +3898,12 @@ class curl {
                 }
 
                 curl_setopt($curl, CURLOPT_URL, $redirecturl);
+
+                if (parse_url($currenturl)['host'] !== parse_url($redirecturl)['host']) {
+                    curl_setopt($curl, CURLOPT_HTTPAUTH, null);
+                    curl_setopt($curl, CURLOPT_USERPWD, null);
+                }
+
                 $ret = curl_exec($curl);
 
                 $this->info  = curl_getinfo($curl);

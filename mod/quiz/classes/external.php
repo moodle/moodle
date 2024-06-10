@@ -1449,6 +1449,10 @@ class mod_quiz_external extends external_api {
             $page = 'all';
         }
 
+        // Make sure all users associated to the attempt steps are loaded. Otherwise, this will
+        // trigger a debugging message.
+        $attemptobj->preload_all_attempt_step_users();
+
         // Prepare the output.
         $result = [];
         $result['attempt'] = $attemptobj->get_attempt();

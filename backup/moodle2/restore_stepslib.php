@@ -1235,7 +1235,7 @@ class restore_groups_structure_step extends restore_structure_step {
      */
     public function process_groupcustomfield($data) {
         $newgroup = $this->get_mapping('group', $data['groupid']);
-        $data['groupid'] = $newgroup->newitemid;
+        $data['groupid'] = $newgroup->newitemid ?? $data['groupid'];
         $handler = \core_group\customfield\group_handler::create();
         $handler->restore_instance_data_from_backup($this->task, $data);
     }
@@ -1292,7 +1292,7 @@ class restore_groups_structure_step extends restore_structure_step {
      */
     public function process_groupingcustomfield($data) {
         $newgroup = $this->get_mapping('grouping', $data['groupingid']);
-        $data['groupingid'] = $newgroup->newitemid;
+        $data['groupingid'] = $newgroup->newitemid ?? $data['groupingid'];
         $handler = \core_group\customfield\grouping_handler::create();
         $handler->restore_instance_data_from_backup($this->task, $data);
     }

@@ -49,6 +49,7 @@
             .arrow {
                 transform: rotate(180deg);
                 left: subtract(-$popover-arrow-height, $popover-border-width);
+                right: auto;
             }
         }
         &.bs-popover-left,
@@ -57,6 +58,7 @@
             margin-left: 0;
             .arrow {
                 transform: rotate(180deg);
+                left: auto;
                 right: subtract(-$popover-arrow-height, $popover-border-width);
             }
         }

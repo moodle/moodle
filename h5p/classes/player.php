@@ -154,7 +154,7 @@ class player {
      * Get the encoded URL for embeding this H5P content.
      *
      * @param string $url Local URL of the H5P file to display.
-     * @param stdClass $config Configuration for H5P buttons.
+     * @param \stdClass $config Configuration for H5P buttons.
      * @param bool $preventredirect Set to true in scripts that can not redirect (CLI, RSS feeds, etc.), throws exceptions
      * @param string $component optional moodle component to sent xAPI tracking
      * @param bool $displayedit Whether the edit button should be displayed below the H5P content.
@@ -187,7 +187,7 @@ class player {
             if ($originalfile) {
                 // Check if the user can edit this content.
                 if (api::can_edit_content($originalfile)) {
-                    $template->editurl = $CFG->wwwroot . '/h5p/edit.php?url=' . $url;
+                    $template->editurl = (new \moodle_url('/h5p/edit.php', ['url' => $url]))->out(false);
                 }
             }
         }

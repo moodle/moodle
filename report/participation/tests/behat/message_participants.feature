@@ -1,5 +1,5 @@
-@report @report_participation @javascript
-Feature: Use the particiaption report to message groups of students
+@report @report_participation
+Feature: Use the participation report to message groups of students
   In order to engage with students based on participation
   As a teacher
   I need to be able to message students who have not participated in an activity
@@ -28,6 +28,7 @@ Feature: Use the particiaption report to message groups of students
       | idnumber    | book1          |
     And I am on the "Test book name" "book activity" page logged in as student1
 
+  @javascript
   Scenario: Message all students from the participation report
     Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Reports" in current page administration
@@ -42,6 +43,7 @@ Feature: Use the particiaption report to message groups of students
     And I press "Send message to 3 people"
     And I should see "Message sent to 3 people"
 
+  @javascript
   Scenario: Message students who have not participated in book
     Given I am on the "Course 1" course page logged in as teacher1
     And I navigate to "Reports" in current page administration
@@ -59,7 +61,7 @@ Feature: Use the particiaption report to message groups of students
     And I press "Send message to 2 people"
     And I should see "Message sent to 2 people"
 
-  Scenario: Ensure no message options when messaging is disabled
+  Scenario: When messaging is disabled no message options should be displayed
     Given the following config values are set as admin:
       | messaging | 0 |
     And I am on the "Course 1" course page logged in as teacher1

@@ -20,6 +20,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot.'/user/lib.php');
+require_once($CFG->dirroot.'/lib/authlib.php');
 
 /**
  * Unit tests for user lib api.

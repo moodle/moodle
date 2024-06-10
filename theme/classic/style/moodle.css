@@ -22888,6 +22888,7 @@ a.text-dark:hover, a.text-dark:focus {
 .dir-rtl .popover.bs-popover-right .arrow, .dir-rtl .popover.bs-popover-auto[x-placement^=right] .arrow {
   transform: rotate(180deg);
   left: calc(-0.5rem - 1px);
+  right: auto;
 }
 .dir-rtl .popover.bs-popover-left, .dir-rtl .popover.bs-popover-auto[x-placement^=left] {
   margin-right: 0.5rem;
@@ -22895,6 +22896,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 .dir-rtl .popover.bs-popover-left .arrow, .dir-rtl .popover.bs-popover-auto[x-placement^=left] .arrow {
   transform: rotate(180deg);
+  left: auto;
   right: calc(-0.5rem - 1px);
 }
 
@@ -23202,12 +23204,8 @@ a.autolink.glossary:hover {
   display: none;
 }
 
-.visibleifjs {
+body:not(.jsenabled) .visibleifjs {
   display: none;
-}
-
-.jsenabled .visibleifjs {
-  display: inline;
 }
 
 .jsenabled .collapsibleregion {
@@ -25158,6 +25156,8 @@ h3.sectionname .inplaceeditable.inplaceeditingon .editinstructions {
 .footer-dark a {
   color: #fff;
   text-decoration: underline;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 .footer-dark a .icon {
   color: #fff;
@@ -32104,11 +32104,7 @@ table.question-bank-table {
   table-layout: fixed;
   overflow-x: scroll;
   width: min-content;
-}
-table.question-bank-table td,
-table.question-bank-table th {
-  max-width: 40vw;
-  width: max-content;
+  max-width: 100%;
 }
 table.question-bank-table th {
   text-align: left;
@@ -32658,12 +32654,6 @@ body.path-question-type .mform fieldset.hidden {
   }
   .que .content {
     margin: 0;
-  }
-}
-@media (max-width: 991.98px) {
-  .question-bank-table td,
-  .question-bank-table th {
-    max-width: 75vw;
   }
 }
 /* user.less */

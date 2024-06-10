@@ -1,5 +1,5 @@
 @editor @editor_tiny @tiny_equation
-Feature: Tiny equation editor
+Feature: Equation editor
   To teach maths to students, I need to write equations
 
   @javascript

@@ -735,12 +735,15 @@ class plugin_test extends \advanced_testcase {
      * Test that a new group with the name of the course is created.
      */
     public function test_enrol_meta_create_new_group() {
-        global $DB;
+        global $DB, $CFG;
         $this->resetAfterTest();
         // Create two courses.
         $course = $this->getDataGenerator()->create_course(array('fullname' => 'Mathematics'));
         $course2 = $this->getDataGenerator()->create_course(array('fullname' => 'Physics'));
         $metacourse = $this->getDataGenerator()->create_course(array('fullname' => 'All sciences'));
+
+        require_once($CFG->dirroot.'/enrol/meta/locallib.php');
+
         // Run the function.
         $groupid = enrol_meta_create_new_group($metacourse->id, $course->id);
         // Check the results.

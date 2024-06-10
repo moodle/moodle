@@ -27,6 +27,14 @@ use backup;
  * @covers \restore_module_structure_step
  */
 class backup_restore_activity_test extends \advanced_testcase {
+    /**
+     * Load the backup and restore classes.
+     */
+    public static function setUpBeforeClass(): void {
+        global $CFG;
+        require_once($CFG->dirroot . '/backup/util/includes/restore_includes.php');
+        require_once($CFG->dirroot . '/backup/util/includes/backup_includes.php');
+    }
 
     /**
      * Test that duplicating a page preserves the lang setting.

@@ -73,9 +73,10 @@ class verification_field extends \MoodleQuickForm_text {
         return parent::__construct($elementname, $elementlabel, $attributes);
     }
 
-    // @codingStandardsIgnoreStart
     /**
      * Returns HTML for this form element.
+     *
+     * phpcs:disable moodle.NamingConventions.ValidFunctionName.LowercaseMethod
      *
      * @return string
      */
@@ -98,7 +99,6 @@ class verification_field extends \MoodleQuickForm_text {
         }
         return $result;
     }
-    // @codingStandardsIgnoreEnd
 
     /**
      * Setup and return the script for autosubmission while inside the secure layout.

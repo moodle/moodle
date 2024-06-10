@@ -1691,7 +1691,8 @@ class completionlib_test extends advanced_testcase {
      * @covers \aggregate_completions
      */
     public function test_aggregate_completions() {
-        global $DB;
+        global $DB, $CFG;
+        require_once($CFG->dirroot.'/completion/criteria/completion_criteria_activity.php');
         $this->resetAfterTest(true);
         $time = time();
 

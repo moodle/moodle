@@ -5570,7 +5570,7 @@ class core_renderer_cli extends core_renderer {
 
         $ascii .= str_repeat('#', $delta);
         if ($percent >= 100 && $delta > 0) {
-            $ascii .= sprintf("] %3.1f%%\n$msg\n", $percent);
+            $ascii .= sprintf("] %3.1f%%", $percent) . "\n$msg\n";
         }
         $this->progressmaximums[$id] += $delta;
         return $ascii;

@@ -214,15 +214,12 @@ class column_manager extends column_manager_base {
      * @return array
      */
     public function get_disabled_columns(): array {
+        $result = $this->create_column_objects(array_keys($this->disabledcolumns));
         $disabled = [];
-        if ($this->disabledcolumns) {
-            foreach (array_keys($this->disabledcolumns) as $column) {
-                [$classname, $columnname] = explode(column_base::ID_SEPARATOR, $column, 2);
-                $columnobject = $classname::from_column_name($this->get_questionbank(), $columnname);
-                $disabled[$column] = (object) [
-                    'disabledname' => $columnobject->get_title(),
-                ];
-            }
+        foreach ($result as $column => $columnobject) {
+            $disabled[$column] = (object) [
+                'disabledname' => $columnobject->get_title(),
+            ];
         }
         return $disabled;
     }
@@ -368,11 +365,32 @@ class column_manager extends column_manager_base {
      * @return array
      */
     public function get_hidden_columns(): array {
-        return array_reduce($this->hiddencolumns, function($result, $hiddencolumn) {
-            [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $hiddencolumn, 2);
-            $result[$hiddencolumn] = $columnclass::from_column_name($this->get_questionbank(), $columnname)->get_title();
-            return $result;
-        }, []);
+        $result = $this->create_column_objects($this->hiddencolumns);
+        $hidden = [];
+        foreach ($result as $column => $columnobject) {
+            $hidden[$column] = $columnobject->get_title();
+        }
+        return $hidden;
+    }
+
+    /**
+     * Returns an array of column objects.
+     *
+     * @param array $columnsnames Array of columns.
+     * @return column_base[] Array of $columnsname => $columnobject
+     */
+    public function create_column_objects(array $columnsnames): array {
+        $result = [];
+        foreach ($columnsnames as $column) {
+            [$columnclass, $columnname] = explode(column_base::ID_SEPARATOR, $column, 2);
+            if (class_exists($columnclass)) {
+                $columnobject = $columnclass::from_column_name($this->get_questionbank(), $columnname, true);
+                if ($columnobject != null) {
+                    $result[$column] = $columnobject;
+                }
+            }
+        }
+        return $result;
     }
 
     public function get_column_width(column_base $column): string {

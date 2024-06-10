@@ -269,8 +269,6 @@ class question_test extends \advanced_testcase {
 
         $this->resetAfterTest();
 
-        $qtype = new qtype_calculated();
-
         // Create a question.
         $q = \test_question_maker::get_question_data('calculated', 'mult');
         $q->id = 99;
@@ -284,6 +282,7 @@ class question_test extends \advanced_testcase {
         $units[] = $unit;
         $DB->insert_records("question_numerical_units", $units);
 
+        $qtype = new qtype_calculated();
         $qtypeobj = question_bank::get_qtype($qtype->name());
         $fakedata = ["a" => "5.7", "b" => "3.3"];
 

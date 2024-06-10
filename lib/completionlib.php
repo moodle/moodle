@@ -714,16 +714,15 @@ class completion_info {
         $completionstate = $this->get_core_completion_state($cminfo, $userid);
 
         if (plugin_supports('mod', $cminfo->modname, FEATURE_COMPLETION_HAS_RULES)) {
-            $response = true;
             $cmcompletionclass = activity_custom_completion::get_cm_completion_class($cminfo->modname);
             if ($cmcompletionclass) {
                 /** @var activity_custom_completion $cmcompletion */
                 $cmcompletion = new $cmcompletionclass($cminfo, $userid, $completionstate);
-                $response = $cmcompletion->get_overall_completion_state() != COMPLETION_INCOMPLETE;
-            }
-
-            if (!$response) {
-                return COMPLETION_INCOMPLETE;
+                $customstate = $cmcompletion->get_overall_completion_state();
+                if ($customstate == COMPLETION_INCOMPLETE) {
+                    return $customstate;
+                }
+                $completionstate[] = $customstate;
             }
         }
 

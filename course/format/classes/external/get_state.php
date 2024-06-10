@@ -60,7 +60,7 @@ class get_state extends external_api {
      * @return string Course state in JSON
      */
     public static function execute(int $courseid): string {
-        global $PAGE, $CFG;
+        global $PAGE, $CFG, $USER;
 
         require_once($CFG->dirroot.'/course/lib.php');
 
@@ -73,6 +73,8 @@ class get_state extends external_api {
 
         $courseformat = course_get_format($courseid);
         $modinfo = $courseformat->get_modinfo();
+        $completioninfo = new \completion_info(get_course($courseid));
+        $istrackeduser = $completioninfo->is_tracked_user($USER->id);
 
         // Get the proper renderer.
         $renderer = $courseformat->get_renderer($PAGE);
@@ -106,7 +108,7 @@ class get_state extends external_api {
             if ($cm->is_visible_on_course_page()) {
                 // Only return this course module data if it's visible by current user on the course page.
                 $section = $sections[$cm->sectionnum];
-                $cmstate = new $cmclass($courseformat, $section, $cm);
+                $cmstate = new $cmclass($courseformat, $section, $cm, istrackeduser: $istrackeduser);
                 $result->cm[] = $cmstate->export_for_template($renderer);
             }
         }

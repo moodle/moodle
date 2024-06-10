@@ -1921,7 +1921,8 @@ class grade_report_grader extends grade_report {
 
         foreach ($extrafields as $field) {
             $attributes = [
-                'data-collapse' => 'content'
+                'data-collapse' => 'content',
+                'class' => 'py-1',
             ];
             // With additional user profile fields, we can't grab the name via WS, so conditionally add it to rip out of the DOM.
             if (preg_match(\core_user\fields::PROFILE_FIELD_REGEX, $field)) {

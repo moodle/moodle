@@ -1707,7 +1707,7 @@ class external_test extends externallib_advanced_testcase {
         $this->assertEquals('gradedright', $result['questions'][0]['state']);
         $this->assertEquals(1, $result['questions'][0]['slot']);
 
-         $this->assertCount(1, $result['additionaldata']);
+        $this->assertCount(1, $result['additionaldata']);
         $this->assertEquals('feedback', $result['additionaldata'][0]['id']);
         $this->assertEquals('Feedback', $result['additionaldata'][0]['title']);
         $this->assertEquals('Feedback text 1', $result['additionaldata'][0]['content']);

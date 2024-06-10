@@ -103,7 +103,7 @@ export default class CopyModal {
             });
             modal.getRoot().on('click', '#id_cancel', (e) => {
                 e.preventDefault();
-                modal.hide();
+                modal.destroy();
             });
             modal.getRoot().on('click', '#id_submitdisplay', (e) => {
                 e.formredirect = true;
@@ -129,7 +129,7 @@ export default class CopyModal {
             return;
         }
 
-        modal.hide();
+        modal.destroy();
 
         // Submit form via ajax.
         this.submitBackupRequest(formjson)

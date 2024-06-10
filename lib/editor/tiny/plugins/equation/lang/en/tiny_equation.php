@@ -37,6 +37,6 @@ $string['librarygroup4_desc'] = 'TeX commands listed on the advanced tab.';
 $string['modaltitle'] = 'Equation editor';
 $string['saveequation'] = 'Save equation';
 $string['settings'] = 'Equation editor settings';
-$string['pluginname'] = 'Tiny equation editor';
+$string['pluginname'] = 'Equation editor';
 $string['preview'] = 'Equation preview';
 $string['privacy:metadata'] = 'The equation editor for TinyMCE does not store any personal data.';

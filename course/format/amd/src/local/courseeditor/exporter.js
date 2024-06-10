@@ -195,7 +195,10 @@ export default class {
         if (cminfo.completionstate !== undefined) {
             data.state = cminfo.completionstate;
             data.hasstate = true;
-            const statename = this.COMPLETIONS[cminfo.completionstate] ?? 'NaN';
+            let statename = this.COMPLETIONS[cminfo.completionstate] ?? 'NaN';
+            if (cminfo.isoverallcomplete !== undefined && cminfo.isoverallcomplete === true) {
+                statename = 'complete';
+            }
             data[`is${statename}`] = true;
         }
         return data;

@@ -163,7 +163,13 @@ class mod_lesson_mod_form extends moodleform_mod {
                 if ($module = get_coursemodule_from_instance($mod->modname, $mod->instance, $COURSE->id)) {
                     // Exclude this lesson, if it's already been saved.
                     if (!isset($this->_cm->id) || $this->_cm->id != $mod->id) {
-                        $modinstances[$mod->id] = $mod->modname.' - '.$module->name;
+                        $modinstances[$mod->id] = get_string('pluginname', $mod->modname) . ' - ' . format_string(
+                            $module->name,
+                            true,
+                            [
+                                'context' => $this->context,
+                            ],
+                        );
                     }
                 }
             }
