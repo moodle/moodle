@@ -1,0 +1,13 @@
+issueNumber: MDL-82041
+notes:
+  core_reportbuilder:
+    - message: >-
+        All time related code has been updated to the PSR-20 Clock interface, as
+        such the following methods no longer accept a `$timenow` parameter
+        (instead please use `\core\clock` dependency injection):
+
+        - `core_reportbuilder_generator::create_schedule`
+
+        -
+        `core_reportbuilder\local\helpers\schedule::[create_schedule|calculate_next_send_time]`
+      type: changed

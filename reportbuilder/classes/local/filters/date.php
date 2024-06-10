@@ -18,10 +18,10 @@ declare(strict_types=1);
 
 namespace core_reportbuilder\local\filters;
 
-use DateTimeImmutable;
+use core\{clock, di};
+use core_reportbuilder\local\helpers\database;
 use lang_string;
 use MoodleQuickForm;
-use core_reportbuilder\local\helpers\database;
 
 /**
  * Date report filter
@@ -246,12 +246,12 @@ class date extends base {
             case self::DATE_PAST:
                 $param = database::generate_param_name();
                 $sql = "{$fieldsql} < :{$param}";
-                $params[$param] = time();
+                $params[$param] = di::get(clock::class)->time();
                 break;
             case self::DATE_FUTURE:
                 $param = database::generate_param_name();
                 $sql = "{$fieldsql} > :{$param}";
-                $params[$param] = time();
+                $params[$param] = di::get(clock::class)->time();
                 break;
             default:
                 // Invalid or inactive filter.
@@ -271,7 +271,7 @@ class date extends base {
      */
     private static function get_relative_timeframe(int $operator, int $dateunitvalue, int $dateunit): array {
         // Initialise start/end time to now.
-        $datestart = $dateend = new DateTimeImmutable();
+        $datestart = $dateend = di::get(clock::class)->now();
 
         switch ($dateunit) {
             case self::DATE_UNIT_HOUR:
