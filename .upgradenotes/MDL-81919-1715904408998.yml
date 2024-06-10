@@ -1,0 +1,8 @@
+issueNumber: MDL-81919
+notes:
+  core:
+    - message: >
+        Added a mechanism to support autoloading of legacy class files.
+
+        This will help to reduce the number of require_once calls in the codebase, and move away from the use of monolithic libraries.
+      type: improved
