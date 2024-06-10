@@ -27,13 +27,15 @@ import ajax from 'core/ajax';
  *
  * @method activityModules
  * @param {Number} courseid What course to fetch the modules for
+ * @param {Number} sectionnum What course section to fetch the modules for
  * @return {object} jQuery promise
  */
-export const activityModules = (courseid) => {
+export const activityModules = (courseid, sectionnum) => {
     const request = {
         methodname: 'core_course_get_course_content_items',
         args: {
             courseid: courseid,
+            sectionnum: sectionnum,
         },
     };
     return ajax.call([request])[0];

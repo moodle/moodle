@@ -1,0 +1,11 @@
+issueNumber: MDL-81675
+notes:
+  core_course:
+    - message: >-
+        - New optional sectionNum parameter has been added to activitychooser
+        AMD module initializer.
+        - New option sectionnum parameter has been added to
+        get_course_content_items() external function.
+        - New optional sectionnum parameter has been added to
+        get_content_items_for_user_in_course() function.
+      type: improved

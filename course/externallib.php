@@ -4488,6 +4488,7 @@ class core_course_external extends external_api {
     public static function get_course_content_items_parameters() {
         return new external_function_parameters([
             'courseid' => new external_value(PARAM_INT, 'ID of the course', VALUE_REQUIRED),
+            'sectionnum' => new external_value(PARAM_INT, 'Number of the section', VALUE_DEFAULT),
         ]);
     }
 
@@ -4495,24 +4496,29 @@ class core_course_external extends external_api {
      * Given a course ID fetch all accessible modules for that course
      *
      * @param int $courseid The course we want to fetch the modules for
+     * @param int|null $sectionnum The section we want to fetch the modules for
      * @return array Contains array of modules and their metadata
      */
-    public static function get_course_content_items(int $courseid) {
+    public static function get_course_content_items(int $courseid, ?int $sectionnum = null) {
         global $USER;
 
         [
             'courseid' => $courseid,
+            'sectionnum' => $sectionnum,
         ] = self::validate_parameters(self::get_course_content_items_parameters(), [
             'courseid' => $courseid,
+            'sectionnum' => $sectionnum,
         ]);
 
         $coursecontext = context_course::instance($courseid);
         self::validate_context($coursecontext);
         $course = get_course($courseid);
+        // Get section_info object with all delegation information.
+        $sectioninfo = get_fast_modinfo($course)->get_section_info($sectionnum);
 
         $contentitemservice = \core_course\local\factory\content_item_service_factory::get_content_item_service();
 
-        $contentitems = $contentitemservice->get_content_items_for_user_in_course($USER, $course);
+        $contentitems = $contentitemservice->get_content_items_for_user_in_course($USER, $course, [], $sectioninfo);
         return ['content_items' => $contentitems];
     }
 
