@@ -14,6 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core;
+
+use core\context\user as context_user;
+use core\exception\coding_exception;
+use core\exception\moodle_exception;
 use Psr\Http\Message\UriInterface;
 
 /**
@@ -92,8 +97,8 @@ class url {
     /**
      * Create new instance of url.
      *
-     * @param url|string $url - url means make a copy of another
-     *      url and change parameters, string means full url or shortened
+     * @param self|string $url - moodle_url means make a copy of another
+     *      moodle_url and change parameters, string means full url or shortened
      *      form (ex.: '/course/view.php'). It is strongly encouraged to not include
      *      query string because it may result in double encoded values. Use the
      *      $params instead. For admin URLs, just use /admin/script.php, this
@@ -105,7 +110,7 @@ class url {
     public function __construct($url, array $params = null, $anchor = null) {
         global $CFG;
 
-        if ($url instanceof url) {
+        if ($url instanceof self) {
             $this->scheme = $url->scheme;
             $this->host = $url->host;
             $this->port = $url->port;
@@ -480,11 +485,11 @@ class url {
      *
      * See documentation of constants for an explanation of the comparison flags.
      *
-     * @param url $url The url object to compare
+     * @param self $url The moodle_url object to compare
      * @param int $matchtype The type of comparison (URL_MATCH_BASE, URL_MATCH_PARAMS, URL_MATCH_EXACT)
      * @return bool
      */
-    public function compare(url $url, $matchtype = URL_MATCH_EXACT) {
+    public function compare(self $url, $matchtype = URL_MATCH_EXACT) {
 
         $baseself = $this->out_omit_querystring();
         $baseother = $url->out_omit_querystring();
@@ -619,14 +624,14 @@ class url {
      * @param string $urlbase the script serving the file
      * @param string $path
      * @param bool $forcedownload
-     * @return url
+     * @return self
      */
     public static function make_file_url($urlbase, $path, $forcedownload = false) {
         $params = array();
         if ($forcedownload) {
             $params['forcedownload'] = 1;
         }
-        $url = new url($urlbase, $params);
+        $url = new self($urlbase, $params);
         $url->set_slashargument($path);
         return $url;
     }
@@ -845,4 +850,7 @@ class url {
     }
 }
 
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
 class_alias(url::class, \moodle_url::class);

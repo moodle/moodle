@@ -1,0 +1,7 @@
+issueNumber: MDL-81960
+notes:
+  core:
+    - message: >-
+        The `\moodle_url` class has been renamed to `\core\url` and now supports
+        autoloading. Existing uses are currently unaffected.
+      type: improved
