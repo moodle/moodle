@@ -130,6 +130,8 @@ export default class extends Reactive {
         }
 
         this._loadFileHandlers();
+
+        this._pageAnchorCmInfo = this._scanPageAnchorCmInfo();
     }
 
     /**
@@ -362,5 +364,27 @@ export default class extends Reactive {
             // Force unlock all elements.
             super.dispatch('unlockAll');
         }
+    }
+
+    /**
+     * Calculate the cm info from the current page anchor.
+     *
+     * @returns {Object|null} the cm info or null if not found.
+     */
+    _scanPageAnchorCmInfo() {
+        const anchor = new URL(window.location.href).hash;
+        if (!anchor.startsWith('#module-')) {
+            return null;
+        }
+        // The anchor is always #module-CMID.
+        const cmid = anchor.split('-')[1];
+        return this.stateManager.get('cm', parseInt(cmid));
+    }
+
+    /**
+     * Return the current page anchor cm info.
+     */
+    getPageAnchorCmInfo() {
+        return this._pageAnchorCmInfo;
     }
 }
