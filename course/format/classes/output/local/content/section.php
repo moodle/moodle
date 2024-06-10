@@ -146,7 +146,7 @@ class section implements named_templatable, renderable {
         $data = (object)[
             'num' => $section->section ?? '0',
             'id' => $section->id,
-            'sectionreturnid' => $format->get_sectionnum(),
+            'sectionreturnnum' => $format->get_sectionnum(),
             'insertafter' => false,
             'summary' => $summary->export_for_template($output),
             'highlightedlabel' => $format->get_section_highlighted_name(),

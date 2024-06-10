@@ -34,8 +34,8 @@
     {{$content}}
         <button class="btn add-content section-modchooser section-modchooser-link d-flex justify-content-center align-items-center py-1 px-2"
             data-action="open-chooser"
-            data-sectionid="{{sectionid}}"
-            {{#sectionreturn}}data-sectionreturnid="{{.}}"{{/sectionreturn}}
+            data-sectionnum="{{sectionnum}}"
+            {{#sectionreturn}}data-sectionreturnnum="{{.}}"{{/sectionreturn}}
         >
             {{#pix}} t/add, core {{/pix}}
             <span class="activity-add-text pr-1">{{#str}}addresourceoractivity, core{{/str}}</span>

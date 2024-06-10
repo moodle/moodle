@@ -226,7 +226,7 @@ class core_course_renderer extends plugin_renderer_base {
         }
 
         $data = [
-            'sectionid' => $section,
+            'sectionnum' => $section,
             'sectionreturn' => $sectionreturn
         ];
         $ajaxcontrol = $this->render_from_template('course/activitychooserbutton', $data);
