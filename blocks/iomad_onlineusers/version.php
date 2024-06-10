@@ -24,7 +24,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->release  = '4.3.4 (Build: 20240422)'; // Human-friendly version name
+$plugin->release  = '4.3.5 (Build: 20240610)'; // Human-friendly version name
 $plugin->version   = 2022112800;        // The current plugin version (Date: YYYYMMDDXX).
 $plugin->requires  = 2022111800;        // Requires this Moodle version.
 $plugin->component = 'block_iomad_onlineusers'; // Full name of the plugin (used for diagnostics)
