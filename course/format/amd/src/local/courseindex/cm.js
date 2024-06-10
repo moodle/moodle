@@ -92,7 +92,6 @@ export default class Component extends DndCmItem {
         if (window.location.href == cm.url
             || (window.location.href.includes(course.baseurl) && anchor == cm.anchor)
         ) {
-            this.reactive.dispatch('setPageItem', 'cm', this.id);
             this.element.scrollIntoView({block: "center"});
         }
         // Check if this we are displaying this activity page.
