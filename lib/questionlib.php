@@ -711,7 +711,7 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
     $sql = "SELECT qv.id as versionid,
                    qbe.id as entryid,
                    qc.id as category,
-                   qc.contextid as contextid,
+                   ctx.id as contextid,
                    q.id,
                    q.qtype,
                    qbe.idnumber
@@ -719,6 +719,7 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
               JOIN {question_versions} qv ON qv.questionid = q.id
               JOIN {question_bank_entries} qbe ON qbe.id = qv.questionbankentryid
               JOIN {question_categories} qc ON qc.id = qbe.questioncategoryid
+              LEFT JOIN {context} ctx ON ctx.id = qc.contextid
              WHERE q.id $questionidcondition
                    OR (q.parent <> 0 AND q.parent $questionidcondition)";
 
@@ -754,6 +755,16 @@ function question_move_questions_to_category($questionids, $newcategoryid): bool
         $entry->id = $question->entryid;
         $entry->questioncategoryid = $newcategorydata->id;
         $DB->update_record('question_bank_entries', $entry);
+
+        // This sometimes happens in old sites with bad data.
+        if (!$question->contextid) {
+            debugging('Deleting question ' . $question->id . ' which is no longer linked to a context. ' .
+                'Assuming system context to avoid errors, but this may mean that some data like files, ' .
+                'tags, are not cleaned up.');
+            $question->contextid = context_system::instance()->id;
+            $question->categoryid = 0;
+        }
+
 
         // Log this question move.
         $event = \core\event\question_moved::create_from_question_instance($question, context::instance_by_id($question->contextid),
