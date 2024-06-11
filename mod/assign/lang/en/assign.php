@@ -126,7 +126,7 @@ $string['batchsetallocatedmarker'] = 'Set allocated marker for {$a} selected use
 $string['batchsetmarkingworkflowstateforusers'] = 'Set marking workflow state for {$a} selected user(s).';
 $string['beginassignment'] = 'Begin assignment';
 $string['blindmarking'] = 'Anonymous submissions';
-$string['blindmarkingenabledwarning'] = 'Anonymous submissions are enabled for this activity. Grades will not be added to the gradebook until student identities are revealed via the grading action menu.';
+$string['blindmarkingenabledwarning'] = 'Anonymous submissions are enabled for this activity. Grades will not be added to the gradebook until student identities are revealed via the "Actions" menu.';
 $string['blindmarking_help'] = 'Anonymous submissions hide the identity of students from markers. Anonymous submission settings will be locked once a submission or grade has been made in relation to this assignment.';
 $string['cachedef_overrides'] = 'User and group override information';
 $string['calendardue'] = '{$a} is due';
@@ -134,7 +134,6 @@ $string['calendargradingdue'] = '{$a} is due to be graded';
 $string['caneditsubmission'] = 'You can edit your submission and submit it after the time limit has expired, but it will be marked as late.';
 $string['changeuser'] = 'Change user';
 $string['changefilters'] = 'Change filters';
-$string['choosegradingaction'] = 'Grading action';
 $string['choosemarker'] = 'Choose...';
 $string['chooseoperation'] = 'Choose operation';
 $string['clickexpandreviewpanel'] = 'Click to expand review panel';
@@ -681,5 +680,6 @@ $string['xofy'] = '{$a->x} of {$a->y}';
 
 // Deprecated since Moodle 4.5.
 $string['attemptreopenmethod_none'] = 'Never';
+$string['choosegradingaction'] = 'Grading action';
 $string['groupoverridesdeleted'] = 'Group overrides deleted';
 $string['useroverridesdeleted'] = 'User overrides deleted';

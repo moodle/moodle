@@ -25,17 +25,18 @@
     Context variables required for this template:
     * userselector - HTML that outputs the user selector
     * groupselector - (optional) HTML that outputs the group selector
+    * actions - (optional) HTML that outputs the bulk action menu
 
     Example context (json):
     {
         "userselector": "<div class='user-search'></div>",
         "groupselector": "<div class='group-selector'></div>",
         "pagereset": "http://moodle.local/mod/assign/view.php?id=2&action=grading&group=0",
-        "downloadall": "https://moodle.org"
+        "actions": "<div class='action-menu'></div>"
     }
 
 }}
-<div class="container-fluid tertiary-navigation full-width-bottom-border">
+<div class="container-fluid tertiary-navigation full-width-bottom-border mb-2">
     <div class="row">
         <div class="navitem">
             <h2>{{#str}}gradeitem:submissions, mod_assign{{/str}}</h2>
@@ -59,10 +60,10 @@
             </div>
             <div class="navitem-divider"></div>
         {{/pagereset}}
-        {{#downloadall}}
-        <div class="navitem ml-sm-auto">
-            <a class="btn btn-secondary" href="{{downloadall}}">{{#str}}downloadall, mod_assign{{/str}}</a>
-        </div>
-        {{/downloadall}}
     </div>
+</div>
+<div class="row">
+{{#actions}}
+    <div class="d-flex ml-auto mr-3">{{{actions}}}</div>
+{{/actions}}
 </div>

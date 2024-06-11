@@ -84,7 +84,7 @@ Feature: Bulk released grades should not be sent to gradebook while submissions 
     And I should not see "Great job!"
     And I am on the "Test assignment name" "assign activity" page logged in as "teacher1"
     And I follow "View all submissions"
-    And I set the field "Grading action" to "Reveal student identities"
+    And I choose the "Reveal student identities" item in the "Actions" action menu
     And I press "Continue"
     Then I should see "Released" in the "Student 1" "table_row"
     And I should see "Released" in the "Student 2" "table_row"
@@ -97,7 +97,7 @@ Feature: Bulk released grades should not be sent to gradebook while submissions 
 
   @javascript @_alert
   Scenario: Grades are released in bulk after student identities are revealed.
-    When I set the field "Grading action" to "Reveal student identities"
+    When I choose the "Reveal student identities" item in the "Actions" action menu
     And I press "Continue"
     When I set the field "selectall" to "1"
     And I set the field "operation" to "Set marking workflow state"

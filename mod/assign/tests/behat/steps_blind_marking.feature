@@ -58,7 +58,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I press "Save changes"
     And I follow "View all submissions"
     And I should see "Released" in the "I'm the student's first submission" "table_row"
-    And I set the field "Grading action" to "Reveal student identities"
+    And I choose the "Reveal student identities" item in the "Actions" action menu
     And I press "Continue"
     And I am on the "Course 1" "grades > User report > View" page logged in as "student1"
     Then I should see "50"
@@ -72,7 +72,7 @@ Feature: Assignments correctly add feedback to the grade report when workflow an
     And I press "Save changes"
     And I follow "View all submissions"
     And I should see "Ready for release" in the "I'm the student's first submission" "table_row"
-    And I set the field "Grading action" to "Reveal student identities"
+    And I choose the "Reveal student identities" item in the "Actions" action menu
     And I press "Continue"
     And I change window size to "large"
     And I click on "Grade" "link" in the "Student 1" "table_row"
