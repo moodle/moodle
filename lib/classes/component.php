@@ -383,6 +383,24 @@ class core_component {
             return false;
         }
 
+        // Check for key classes which block access to the upgrade in some way.
+        // Note: This list should be kept _extremely_ minimal and generally
+        // when adding a newly discovered classes older ones should be removed.
+        // Always keep moodle_exception in place.
+        $keyclasses = [
+            \core\exception\moodle_exception::class,
+            \core\output\bootstrap_renderer::class,
+        ];
+        foreach ($keyclasses as $classname) {
+            if (!array_key_exists($classname, $cache['classmap'])) {
+                // The cache is missing some key classes. This is likely before the upgrade has run.
+                error_log(
+                    "The '{$classname}' class was not found in the component class cache. Resetting the classmap.",
+                );
+                return false;
+            }
+        }
+
         return true;
     }
 
