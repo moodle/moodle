@@ -27,9 +27,9 @@ Feature: Apply content type to a tour
     And the "Content type" select box should contain "Manual"
     And I select "Language string ID" from the "Content type" singleselect
     And I should see " Language string ID"
-    And "#fgroup_id_contenthtmlgrp" "css_element" should not be visible
+    And I should not see "Content" in the "#fitem_id_content" "css_element"
     And I select "Manual" from the "Content type" singleselect
-    And "#fgroup_id_contenthtmlgrp" "css_element" should be visible
+    And I should see "Content" in the "#fitem_id_content" "css_element"
     And I should not see "Language string ID" in the "#fitem_id_contentlangstring" "css_element"
 
   @javascript
