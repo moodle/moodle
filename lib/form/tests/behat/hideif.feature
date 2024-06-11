@@ -27,3 +27,9 @@ Feature: hideIf functionality in forms
     Then I should not see "Require group to make submission"
     And I should not see "Require all group members to submit"
     And I should not see "Grouping for student groups"
+
+  Scenario: The editor is hidden when 'eq' hideIf conditions are met
+    Given I am on fixture page "/lib/form/tests/behat/fixtures/editor_hideif_disabledif_form.php"
+    And I should see "My test editor"
+    When I click on "Hide" "radio"
+    Then I should not see "My test editor"
