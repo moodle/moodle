@@ -15,21 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The core cache API.
- *
- * Pretty much just includes the mandatory classes and contains the misc classes that arn't worth separating into individual files.
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
+ * A cache exception class. Just allows people to catch cache exceptions.
  *
  * @package    core
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-// Include the required classes.
-require_once($CFG->dirroot.'/cache/classes/store.php');
-require_once($CFG->dirroot.'/cache/classes/definition.php');
+class cache_exception extends moodle_exception {
+    /**
+     * Constructs a new exception
+     *
+     * @param string $errorcode
+     * @param string $module
+     * @param string $link
+     * @param mixed $a
+     * @param mixed $debuginfo
+     */
+    public function __construct($errorcode, $module = 'cache', $link = '', $a = null, $debuginfo = null) {
+        // This may appear like a useless override but you will notice that we have set a MUCH more useful default for $module.
+        parent::__construct($errorcode, $module, $link, $a, $debuginfo);
+    }
+}

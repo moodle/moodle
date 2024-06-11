@@ -15,21 +15,25 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The core cache API.
+ * Cache store feature: keys are searchable.
  *
- * Pretty much just includes the mandatory classes and contains the misc classes that arn't worth separating into individual files.
+ * Cache stores can choose to implement this interface.
+ * In order for a store to be usable as a session cache it must implement this interface.
  *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * @since Moodle 2.4.4
  */
+interface cache_is_searchable {
+    /**
+     * Finds all of the keys being used by the cache store.
+     *
+     * @return array.
+     */
+    public function find_all();
 
-defined('MOODLE_INTERNAL') || die();
-
-// Include the required classes.
-require_once($CFG->dirroot.'/cache/classes/store.php');
-require_once($CFG->dirroot.'/cache/classes/definition.php');
+    /**
+     * Finds all of the keys whose keys start with the given prefix.
+     *
+     * @param string $prefix
+     */
+    public function find_by_prefix($prefix);
+}

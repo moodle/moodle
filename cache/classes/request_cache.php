@@ -15,21 +15,21 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * The core cache API.
+ * An request cache.
  *
- * Pretty much just includes the mandatory classes and contains the misc classes that arn't worth separating into individual files.
+ * This class is used for request caches returned by the cache::make methods.
  *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
+ * This cache class should never be interacted with directly. Instead you should always use the cache::make methods.
+ * It is technically possible to call those methods through this class however there is no guarantee that you will get an
+ * instance of this class back again.
+ *
+ * @internal don't use me directly.
  *
  * @package    core
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-defined('MOODLE_INTERNAL') || die();
-
-// Include the required classes.
-require_once($CFG->dirroot.'/cache/classes/store.php');
-require_once($CFG->dirroot.'/cache/classes/definition.php');
+class cache_request extends cache {
+    // This comment appeases code pre-checker ;) !
+}

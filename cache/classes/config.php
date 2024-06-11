@@ -15,20 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Cache configuration reader
- *
- * This file is part of Moodle's cache API, affectionately called MUC.
- * It contains the components that are requried in order to use caching.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-/**
  * Cache configuration reader.
  *
  * This class is used to interact with the cache's configuration.
@@ -478,10 +464,10 @@ class cache_config {
     /**
      * Gets all of the stores that are to be used for the given definition.
      *
-     * @param cache_definition $definition
-     * @return array
+     * @param definition $definition
+     * @return array<store>
      */
-    public function get_stores_for_definition(cache_definition $definition) {
+    public function get_stores_for_definition(definition $definition) {
         // Check if MUC has been disabled.
         $factory = cache_factory::instance();
         if ($factory->stores_disabled()) {
