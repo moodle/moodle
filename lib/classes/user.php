@@ -1415,17 +1415,9 @@ class core_user {
         // Params to be passed to the user view page.
         $params = ['id' => $user->id];
 
-        // Get courseid if provided.
-        if (isset($options['courseid'])) {
-            $params['courseid'] = $options['courseid'];
-        }
-
         // Get courseid from context if provided.
-        if ($context) {
-            $coursecontext = $context->get_course_context(false);
-            if ($coursecontext) {
-                $params['courseid'] = $coursecontext->instanceid;
-            }
+        if ($context && $coursecontext = $context->get_course_context(false)) {
+            $params['courseid'] = $coursecontext->instanceid;
         }
 
         // If courseid is not set or is set to site id, then return profile page, otherwise return view page.
