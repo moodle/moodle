@@ -158,6 +158,10 @@ Feature: Manage custom reports
       | My courses | core_course\reportbuilder\datasource\courses |          |
     And I log in as "admin"
     When I navigate to "Reports > Report builder > Custom reports" in site administration
+    And the following should exist in the "Reports list" table:
+      | Name       | Tags     | Report source |
+      | My users   | Cat, Dog | Users         |
+      | My courses |          | Courses       |
     And I click on "Filters" "button"
     And I set the following fields in the "<filter>" "core_reportbuilder > Filter" to these values:
       | <filter> operator | Is equal to |

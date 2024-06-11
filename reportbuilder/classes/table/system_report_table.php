@@ -26,6 +26,7 @@ use moodle_exception;
 use stdClass;
 use core_reportbuilder\{manager, system_report};
 use core_reportbuilder\local\models\report;
+use core_reportbuilder\local\report\column;
 
 /**
  * System report dynamic table class
@@ -81,6 +82,7 @@ class system_report_table extends base_report_table {
         $PAGE->set_context($this->persistent->get_context());
 
         $fields = $this->report->get_base_fields();
+        $groupby = [];
         $maintable = $this->report->get_main_table();
         $maintablealias = $this->report->get_main_table_alias();
         $joins = $this->report->get_joins();
@@ -100,6 +102,16 @@ class system_report_table extends base_report_table {
                 array_flip($this->report->get_exclude_columns_for_download()));
         }
 
+        // If we are aggregating any columns, we should group by the remaining ones.
+        $aggregatedcolumns = array_filter($columns, static function(column $column): bool {
+            return !empty($column->get_aggregation());
+        });
+
+        $hasaggregatedcolumns = !empty($aggregatedcolumns);
+        if ($hasaggregatedcolumns) {
+            $groupby = $fields;
+        }
+
         $columnheaders = $columnsattributes = [];
 
         // Check whether report has checkbox toggle defined, note that select all is excluded during download.
@@ -117,6 +129,11 @@ class system_report_table extends base_report_table {
             // Specify whether column should behave as a user fullname column unless the column has a custom title set.
             if (preg_match('/^user:fullname.*$/', $column->get_unique_identifier()) && !$column->has_custom_title()) {
                 $this->userfullnamecolumns[] = $column->get_column_alias();
+            }
+
+            // We need to determine for each column whether we should group by its fields, to support aggregation.
+            if ($hasaggregatedcolumns && empty($column->get_aggregation())) {
+                $groupby = array_merge($groupby, $column->get_groupby_sql());
             }
 
             // Add each columns fields, joins and params to our report.
@@ -160,7 +177,7 @@ class system_report_table extends base_report_table {
 
         // Initialise table SQL properties.
         $fieldsql = implode(', ', $fields);
-        $this->init_sql($fieldsql, "{{$maintable}} {$maintablealias}", $joins, $where, $params);
+        $this->init_sql($fieldsql, "{{$maintable}} {$maintablealias}", $joins, $where, $params, $groupby);
     }
 
     /**

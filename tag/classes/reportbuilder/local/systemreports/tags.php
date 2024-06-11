@@ -23,7 +23,7 @@ use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\report\{action, column};
 use core_reportbuilder\system_report;
 use core_tag\output\{tagflag, tagisstandard, tagname};
-use core_tag\reportbuilder\local\entities\tag;
+use core_tag\reportbuilder\local\entities\{instance, tag};
 use lang_string;
 use moodle_url;
 use pix_icon;
@@ -57,12 +57,19 @@ class tags extends system_report {
         // Limit tags to current collection.
         $this->add_base_condition_simple("{$tagalias}.tagcollid", $this->get_parameter('collection', 0, PARAM_INT));
 
+        // Join the instance entity to tag.
+        $instance = new instance();
+        $instancealias = $instance->get_table_alias('tag_instance');
+        $this->add_entity($instance
+            ->add_join("LEFT JOIN {tag_instance} {$instancealias} ON {$instancealias}.tagid = {$tagalias}.id")
+        );
+
         // Join the user entity to represent the tag author.
         $user = new user();
         $useralias = $user->get_table_alias('user');
         $this->add_entity($user->add_join("LEFT JOIN {user} {$useralias} ON {$useralias}.id = {$tagalias}.userid"));
 
-        $this->add_columns($tag);
+        $this->add_columns();
         $this->add_filters();
         $this->add_actions();
 
@@ -82,18 +89,18 @@ class tags extends system_report {
 
     /**
      * Report columns
-     *
-     * @param tag $tag
      */
-    public function add_columns(tag $tag): void {
-        $tagentity = $tag->get_entity_name();
+    protected function add_columns(): void {
+        $tag = $this->get_entity('tag');
+
+        $tagentityname = $tag->get_entity_name();
         $tagalias = $tag->get_table_alias('tag');
 
         // Name (editable).
         $this->add_column((new column(
             'nameeditable',
             new lang_string('name', 'core_tag'),
-            $tagentity,
+            $tagentityname,
         ))
             ->add_fields("{$tagalias}.name, {$tagalias}.rawname, {$tagalias}.tagcollid, {$tagalias}.id")
             ->set_type(column::TYPE_TEXT)
@@ -108,22 +115,16 @@ class tags extends system_report {
         // User.
         $this->add_column_from_entity('user:fullnamewithlink');
 
-        // Count (TODO MDL-76392 use native entity aggregation).
-        $this->add_column((new column(
-            'instancecount',
-            new lang_string('count', 'core_tag'),
-            $tagentity,
-        ))
-            ->add_field("(SELECT COUNT(*) FROM {tag_instance} WHERE tagid = {$tagalias}.id)", 'instancecount')
-            ->set_type(column::TYPE_INTEGER)
-            ->set_is_sortable(true)
-        );
+        // Instance count.
+        $this->add_column_from_entity('instance:component')
+            ->set_title(new lang_string('count', 'core_tag'))
+            ->set_aggregation('count');
 
         // Flag (editable).
         $this->add_column((new column(
             'flageditable',
             new lang_string('flag', 'core_tag'),
-            $tagentity,
+            $tagentityname,
         ))
             ->add_fields("{$tagalias}.flag, {$tagalias}.id")
             ->set_type(column::TYPE_BOOLEAN)
@@ -143,7 +144,7 @@ class tags extends system_report {
         $this->add_column((new column(
             'standardeditable',
             new lang_string('standardtag', 'core_tag'),
-            $tagentity,
+            $tagentityname,
         ))
             ->add_fields("{$tagalias}.isstandard, {$tagalias}.id")
             ->set_type(column::TYPE_BOOLEAN)

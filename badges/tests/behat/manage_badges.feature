@@ -107,3 +107,25 @@ Feature: Manage badges
     Then the following should exist in the "reportbuilder-table" table:
       | Name      | Badge status  | Recipients |
       | Badge #1  | Available     | 1          |
+
+  Scenario: View list of badges with recipients
+    Given the following "users" exist:
+      | username | firstname | lastname |
+      | user1    | User      | One      |
+      | user2    | User      | Two      |
+    And the following "core_badges > Badges" exist:
+      | name     | status |
+      | Badge #2 | 1      |
+      | Badge #3 | 1      |
+    And the following "core_badges > Issued badges" exist:
+      | badge    | user  |
+      | Badge #1 | user1 |
+      | Badge #1 | user2 |
+      | Badge #2 | user1 |
+    When I log in as "admin"
+    And I navigate to "Badges > Manage badges" in site administration
+    Then the following should exist in the "Badges" table:
+      | Name     | Badge status  | Recipients |
+      | Badge #1 | Not available | 2          |
+      | Badge #2 | Available     | 1          |
+      | Badge #3 | Available     | 0          |

@@ -20,6 +20,7 @@ namespace core_badges\reportbuilder\local\systemreports;
 
 use core\context\{course, system};
 use core_badges\reportbuilder\local\entities\badge;
+use core_reportbuilder\local\entities\user;
 use core_reportbuilder\local\helpers\database;
 use core_reportbuilder\local\report\{action, column};
 use core_reportbuilder\system_report;
@@ -53,6 +54,15 @@ class badges extends system_report {
         $this->set_main_table('badge', $entityalias);
         $this->add_entity($badgeentity);
 
+        // Join user entity.
+        $userentity = new user();
+        $useralias = $userentity->get_table_alias('user');
+        $badgeissuedalias = database::generate_alias();
+        $this->add_entity($userentity->add_joins([
+            "LEFT JOIN {badge_issued} {$badgeissuedalias} ON {$badgeissuedalias}.badgeid = {$entityalias}.id",
+            "LEFT JOIN {user} {$useralias} ON {$useralias}.id = {$badgeissuedalias}.userid AND {$useralias}.deleted = 0",
+        ]));
+
         $paramtype = database::generate_param_name();
         $context = $this->get_context();
         if ($context instanceof system) {
@@ -69,7 +79,7 @@ class badges extends system_report {
         $this->add_base_fields("{$entityalias}.id, {$entityalias}.type, {$entityalias}.courseid, {$entityalias}.status");
 
         // Now we can call our helper methods to add the content we want to include in the report.
-        $this->add_columns($badgeentity);
+        $this->add_columns();
         $this->add_filters();
         $this->add_actions();
 
@@ -101,37 +111,21 @@ class badges extends system_report {
      *
      * They are provided by the entities we previously added in the {@see initialise} method, referencing each by their
      * unique identifier. If custom columns are needed just for this report, they can be defined here.
-     *
-     * @param badge $badgeentity
      */
-    public function add_columns(badge $badgeentity): void {
-        $columns = [
+    protected function add_columns(): void {
+        $this->add_columns_from_entities([
             'badge:image',
             'badge:namewithlink',
             'badge:version',
             'badge:status',
             'badge:criteria',
-        ];
-
-        $this->add_columns_from_entities($columns);
+            'user:username',
+        ]);
 
         // Issued badges column.
-        // TODO: Move this column to the entity when MDL-76392 is integrated.
-        $tempbadgealias = database::generate_alias();
-        $badgeentityalias = $badgeentity->get_table_alias('badge');
-        $this->add_column((new column(
-            'issued',
-            new lang_string('awards', 'core_badges'),
-            $badgeentity->get_entity_name()
-        ))
-            ->add_joins($this->get_joins())
-            ->set_type(column::TYPE_INTEGER)
-            ->add_field("(SELECT COUNT({$tempbadgealias}.userid)
-                            FROM {badge_issued} {$tempbadgealias}
-                      INNER JOIN {user} u
-                              ON {$tempbadgealias}.userid = u.id
-                           WHERE {$tempbadgealias}.badgeid = {$badgeentityalias}.id AND u.deleted = 0)", 'issued')
-            ->set_is_sortable(true));
+        $this->get_column('user:username')
+            ->set_title(new lang_string('awards', 'core_badges'))
+            ->set_aggregation('count');
 
         // Remove title from image column.
         $this->get_column('badge:image')->set_title(null);
