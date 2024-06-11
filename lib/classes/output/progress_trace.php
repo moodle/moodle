@@ -29,9 +29,12 @@ abstract class progress_trace {
      * Output an progress message in whatever format.
      *
      * @param string $message the message to output.
-     * @param integer $depth indent depth for this message.
+     * @param int $depth indent depth for this message.
      */
-    abstract public function output($message, $depth = 0);
+    abstract public function output(
+        string $message,
+        int $depth = 0,
+    );
 
     /**
      * Called when the processing is finished.

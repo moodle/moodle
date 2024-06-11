@@ -22,25 +22,22 @@
  * @package core
  */
 class error_log_progress_trace extends progress_trace {
-    /** @var string log prefix */
-    protected $prefix;
-
     /**
      * Constructor.
      * @param string $prefix optional log prefix
      */
-    public function __construct($prefix = '') {
-        $this->prefix = $prefix;
+    public function __construct(
+        /** @var string The prefix to use in the error_log messages */
+        protected string $prefix = '',
+    ) {
     }
 
-    /**
-     * Output the trace message.
-     *
-     * @param string $message
-     * @param int $depth
-     * @return void Output is sent to error log.
-     */
-    public function output($message, $depth = 0) {
+    #[\Override]
+    public function output(
+        string $message,
+        int $depth = 0,
+    ): void {
+        // phpcs:ignore moodle.PHP.ForbiddenFunctions.FoundWithAlternative
         error_log($this->prefix . str_repeat('  ', $depth) . $message);
     }
 }

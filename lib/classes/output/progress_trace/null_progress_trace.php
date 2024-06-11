@@ -22,13 +22,10 @@
  * @package core
  */
 class null_progress_trace extends progress_trace {
-    /**
-     * Does Nothing
-     *
-     * @param string $message
-     * @param int $depth
-     * @return void Does Nothing
-     */
-    public function output($message, $depth = 0) {
+    #[\Override]
+    public function output(
+        string $message,
+        int $depth = 0,
+    ): void {
     }
 }

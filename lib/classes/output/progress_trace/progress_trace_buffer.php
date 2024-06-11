@@ -22,12 +22,8 @@
  * @package core
  */
 class progress_trace_buffer extends progress_trace {
-    /** @var progress_trace */
-    protected $trace;
-    /** @var bool do we pass output out */
-    protected $passthrough;
     /** @var string output buffer */
-    protected $buffer;
+    protected string $buffer = '';
 
     /**
      * Constructor.
@@ -35,20 +31,20 @@ class progress_trace_buffer extends progress_trace {
      * @param progress_trace $trace
      * @param bool $passthrough true means output and buffer, false means just buffer and no output
      */
-    public function __construct(progress_trace $trace, $passthrough = true) {
-        $this->trace       = $trace;
-        $this->passthrough = $passthrough;
+    public function __construct(
+        /** @var progress_trace The progress_trace to pass content to */
+        protected progress_trace $trace,
+        /** @var bool Whether we pass output out */
+        protected bool $passthrough = true,
+    ) {
         $this->buffer      = '';
     }
 
-    /**
-     * Output the trace message.
-     *
-     * @param string $message the message to output.
-     * @param int $depth indent depth for this message.
-     * @return void output stored in buffer
-     */
-    public function output($message, $depth = 0) {
+    #[\Override]
+    public function output(
+        string $message,
+        int $depth = 0,
+    ): void {
         ob_start();
         $this->trace->output($message, $depth);
         $this->buffer .= ob_get_contents();
@@ -59,10 +55,8 @@ class progress_trace_buffer extends progress_trace {
         }
     }
 
-    /**
-     * Called when the processing is finished.
-     */
-    public function finished() {
+    #[\Override]
+    public function finished(): void {
         ob_start();
         $this->trace->finished();
         $this->buffer .= ob_get_contents();
@@ -74,17 +68,18 @@ class progress_trace_buffer extends progress_trace {
     }
 
     /**
-     * Reset internal text buffer.
+     * Reset the internal text buffer.
      */
-    public function reset_buffer() {
+    public function reset_buffer(): void {
         $this->buffer = '';
     }
 
     /**
-     * Return internal text buffer.
+     * Return the internal text buffer.
+     *
      * @return string buffered plain text
      */
-    public function get_buffer() {
+    public function get_buffer(): string {
         return $this->buffer;
     }
 }

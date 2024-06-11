@@ -22,17 +22,14 @@
  * @package core
  */
 class html_list_progress_trace extends progress_trace {
-    /** @var int */
-    protected $currentdepth = -1;
+    /** @var int The current depth of the trace*/
+    protected int $currentdepth = -1;
 
-    /**
-     * Echo out the list
-     *
-     * @param string $message The message to display
-     * @param int $depth
-     * @return void Output is echoed
-     */
-    public function output($message, $depth = 0) {
+    #[\Override]
+    public function output(
+        string $message,
+        int $depth = 0,
+    ): void {
         $samedepth = true;
         while ($this->currentdepth > $depth) {
             echo "</li>\n</ul>\n";
@@ -54,10 +51,8 @@ class html_list_progress_trace extends progress_trace {
         flush();
     }
 
-    /**
-     * Called when the processing is finished.
-     */
-    public function finished() {
+    #[\Override]
+    public function finished(): void {
         while ($this->currentdepth >= 0) {
             echo "</li>\n</ul>\n";
             $this->currentdepth -= 1;

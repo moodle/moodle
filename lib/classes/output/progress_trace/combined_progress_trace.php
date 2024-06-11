@@ -22,38 +22,29 @@
  * @package core
  */
 class combined_progress_trace extends progress_trace {
-
-    /**
-     * An array of traces.
-     * @var array
-     */
-    protected $traces;
-
     /**
      * Constructs a new instance.
      *
      * @param array $traces multiple traces
      */
-    public function __construct(array $traces) {
-        $this->traces = $traces;
+    public function __construct(
+        /** @var array The list of traces */
+        protected array $traces,
+    ) {
     }
 
-    /**
-     * Output an progress message in whatever format.
-     *
-     * @param string $message the message to output.
-     * @param integer $depth indent depth for this message.
-     */
-    public function output($message, $depth = 0) {
+    #[\Override]
+    public function output(
+        string $message,
+        int $depth = 0,
+    ): void {
         foreach ($this->traces as $trace) {
             $trace->output($message, $depth);
         }
     }
 
-    /**
-     * Called when the processing is finished.
-     */
-    public function finished() {
+    #[\Override]
+    public function finished(): void {
         foreach ($this->traces as $trace) {
             $trace->finished();
         }

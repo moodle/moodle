@@ -22,14 +22,11 @@
  * @package core
  */
 class text_progress_trace extends progress_trace {
-    /**
-     * Output the trace message.
-     *
-     * @param string $message
-     * @param int $depth
-     * @return void Output is echo'd
-     */
-    public function output($message, $depth = 0) {
+    #[\Override]
+    public function output(
+        string $message,
+        int $depth = 0,
+    ): void {
         mtrace(str_repeat('  ', $depth) . $message);
     }
 }
