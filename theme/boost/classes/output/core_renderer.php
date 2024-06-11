@@ -129,9 +129,42 @@ class core_renderer extends \core_renderer {
 
                     if ($USER->id != $user->id) {
                         $iscontact = \core_message\api::is_contact($USER->id, $user->id);
-                        $contacttitle = $iscontact ? 'removefromyourcontacts' : 'addtoyourcontacts';
-                        $contacturlaction = $iscontact ? 'removecontact' : 'addcontact';
-                        $contactimage = $iscontact ? 'removecontact' : 'addcontact';
+                        $isrequested = \core_message\api::get_contact_requests_between_users($USER->id, $user->id);
+                        $contacturlaction = '';
+                        $linkattributes = \core_message\helper::togglecontact_link_params(
+                            $user,
+                            $iscontact,
+                            true,
+                            !empty($isrequested),
+                        );
+                        // If the user is not a contact.
+                        if (!$iscontact) {
+                            if ($isrequested) {
+                                // We just need the first request.
+                                $requests = array_shift($isrequested);
+                                if ($requests->userid == $USER->id) {
+                                    // If the user has requested to be a contact.
+                                    $contacttitle = 'contactrequestsent';
+                                } else {
+                                    // If the user has been requested to be a contact.
+                                    $contacttitle = 'waitingforcontactaccept';
+                                }
+                                $linkattributes = array_merge($linkattributes, [
+                                    'class' => 'disabled',
+                                    'tabindex' => '-1',
+                                ]);
+                            } else {
+                                // If the user is not a contact and has not requested to be a contact.
+                                $contacttitle = 'addtoyourcontacts';
+                                $contacturlaction = 'addcontact';
+                            }
+                            $contactimage = 'addcontact';
+                        } else {
+                            // If the user is a contact.
+                            $contacttitle = 'removefromyourcontacts';
+                            $contacturlaction = 'removecontact';
+                            $contactimage = 'removecontact';
+                        }
                         $userbuttons['togglecontact'] = array(
                                 'buttontype' => 'togglecontact',
                                 'title' => get_string($contacttitle, 'message'),
@@ -142,7 +175,7 @@ class core_renderer extends \core_renderer {
                                         'sesskey' => sesskey())
                                 ),
                                 'image' => $contactimage,
-                                'linkattributes' => \core_message\helper::togglecontact_link_params($user, $iscontact),
+                                'linkattributes' => $linkattributes,
                                 'page' => $this->page
                             );
                     }
