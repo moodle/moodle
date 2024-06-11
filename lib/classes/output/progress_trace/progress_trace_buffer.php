@@ -25,7 +25,7 @@ use core\output\progress_trace;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
  */
-class progress_trace_buffer extends \progress_trace {
+class progress_trace_buffer extends progress_trace {
     /** @var string output buffer */
     protected string $buffer = '';
 

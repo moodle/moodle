@@ -25,14 +25,14 @@ use core\output\progress_trace;
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
  */
-class combined_progress_trace extends \progress_trace {
+class combined_progress_trace extends progress_trace {
     /**
      * Constructs a new instance.
      *
      * @param array $traces multiple traces
      */
     public function __construct(
-        /** @var array The list of traces */
+        /** @var progress_trace[] The list of traces */
         protected array $traces,
     ) {
     }
