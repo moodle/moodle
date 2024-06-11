@@ -2851,50 +2851,6 @@ function navmenulist($course, $sections, $modinfo, $strsection, $strjumpto, $wid
 }
 
 /**
- * Prints a grade menu (as part of an existing form) with help showing all possible numerical grades and scales.
- *
- * @todo Finish documenting this function
- * @todo Deprecate: this is only used in a few contrib modules
- *
- * @param int $courseid The course ID
- * @param string $name
- * @param string $current
- * @param boolean $includenograde Include those with no grades
- * @param boolean $return If set to true returns rather than echo's
- * @return string|bool|null Depending on value of $return
- */
-function print_grade_menu($courseid, $name, $current, $includenograde=true, $return=false) {
-    global $OUTPUT;
-
-    $output = '';
-    $strscale = get_string('scale');
-    $strscales = get_string('scales');
-
-    $scales = get_scales_menu($courseid);
-    foreach ($scales as $i => $scalename) {
-        $grades[-$i] = $strscale .': '. $scalename;
-    }
-    if ($includenograde) {
-        $grades[0] = get_string('nograde');
-    }
-    for ($i=100; $i>=1; $i--) {
-        $grades[$i] = $i;
-    }
-    $output .= html_writer::select($grades, $name, $current, false);
-
-    $linkobject = '<span class="helplink">' . $OUTPUT->pix_icon('help', $strscales) . '</span>';
-    $link = new moodle_url('/course/scales.php', array('id' => $courseid, 'list' => 1));
-    $action = new popup_action('click', $link, 'ratingscales', array('height' => 400, 'width' => 500));
-    $output .= $OUTPUT->action_link($link, $linkobject, $action, array('title' => $strscales));
-
-    if ($return) {
-        return $output;
-    } else {
-        echo $output;
-    }
-}
-
-/**
  * Print an error to STDOUT and exit with a non-zero code. For commandline scripts.
  *
  * Default errorcode is 1.

@@ -1,0 +1,7 @@
+issueNumber: MDL-82157
+notes:
+  core:
+    - message: >-
+        The following method has been deprecated and should not be used any
+        longer: `print_grade_menu`.
+      type: deprecated
