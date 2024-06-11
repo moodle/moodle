@@ -148,7 +148,7 @@ export default class Component extends DndSection {
         if (!element.pageItem) {
             return;
         }
-        if (element.pageItem.sectionId !== this.id && this.isPageItem) {
+        if (element.pageItem.sectionId !== this.id && this.isPageItem || element.pageItem.type !== 'section') {
             this.pageItem = false;
             this.getElement(this.selectors.SECTION_ITEM).classList.remove(this.classes.PAGEITEM);
             return;
