@@ -49,7 +49,7 @@ if ($reportpersistent->get('type') === \core_reportbuilder\local\report\base::TY
         $reportpersistent->get('area'), $reportpersistent->get('itemid'), $parameters);
 
     if (!$systemreport->can_be_downloaded()) {
-        throw new \core_reportbuilder\report_access_exception();
+        throw new \core_reportbuilder\exception\report_access_exception();
     }
 
     // Combine original report parameters with 'download' parameter.

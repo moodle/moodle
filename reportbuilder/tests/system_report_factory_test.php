@@ -21,6 +21,7 @@ namespace core_reportbuilder;
 use advanced_testcase;
 use context_system;
 use stdClass;
+use core_reportbuilder\exception\{source_invalid_exception, source_unavailable_exception};
 
 /**
  * Unit tests for the system report factory class

@@ -49,4 +49,8 @@ $renamedclasses = [
     'core_question\\bank\\search\\condition' => 'core_question\\local\\bank\\condition',
     'core_question\\bank\\search\\category_condition' => 'qbank_managecategories\\category_condition',
     'core_question\\bank\\search\\hidden_condition' => 'qbank_deletequestion\\hidden_condition',
+    // Since Moodle 4.5.
+    'core_reportbuilder\\report_access_exception' => 'core_reportbuilder\\exception\\report_access_exception',
+    'core_reportbuilder\\source_invalid_exception' => 'core_reportbuilder\\exception\\source_invalid_exception',
+    'core_reportbuilder\\source_unavailable_exception' => 'core_reportbuilder\\exception\\source_unavailable_exception',
 ];

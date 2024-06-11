@@ -16,7 +16,7 @@
 
 declare(strict_types=1);
 
-namespace core_reportbuilder;
+namespace core_reportbuilder\exception;
 
 use moodle_exception;
 

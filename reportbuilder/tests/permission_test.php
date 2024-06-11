@@ -20,6 +20,7 @@ namespace core_reportbuilder;
 
 use advanced_testcase;
 use context_system;
+use core_reportbuilder\exception\report_access_exception;
 use core_reportbuilder_generator;
 use Throwable;
 use core_user\reportbuilder\datasource\users;

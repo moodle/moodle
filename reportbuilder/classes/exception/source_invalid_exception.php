@@ -16,25 +16,25 @@
 
 declare(strict_types=1);
 
-namespace core_reportbuilder;
+namespace core_reportbuilder\exception;
 
 use moodle_exception;
 
 /**
- * User cannot access report exception
+ * Invalid report source exception
  *
  * @package     core_reportbuilder
- * @copyright   2021 Paul Holden <paulh@moodle.com>
+ * @copyright   2020 Paul Holden <paulh@moodle.com>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class report_access_exception extends moodle_exception {
+class source_invalid_exception extends moodle_exception {
 
     /**
      * Constructor
      *
-     * @param string $errorcode
+     * @param string $source
      */
-    public function __construct(string $errorcode = 'errorreportview') {
-        parent::__construct($errorcode, 'reportbuilder');
+    public function __construct(string $source) {
+        parent::__construct('errorsourceinvalid', 'reportbuilder', '', null, $source);
     }
 }

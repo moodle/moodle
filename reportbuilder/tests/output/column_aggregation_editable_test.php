@@ -20,7 +20,7 @@ namespace core_reportbuilder\output;
 
 use advanced_testcase;
 use core_reportbuilder_generator;
-use core_reportbuilder\report_access_exception;
+use core_reportbuilder\exception\report_access_exception;
 use core_user\reportbuilder\datasource\users;
 
 /**
