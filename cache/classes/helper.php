@@ -637,9 +637,6 @@ class cache_helper {
      * @param bool $coreonly If set to true only core definitions will be updated.
      */
     public static function update_definitions($coreonly = false) {
-        global $CFG;
-        // Include locallib.
-        require_once($CFG->dirroot.'/cache/locallib.php');
         // First update definitions
         cache_config_writer::update_definitions($coreonly);
         // Second reset anything we have already initialised to ensure we're all up to date.
@@ -653,9 +650,6 @@ class cache_helper {
      * @return string The new site identifier.
      */
     public static function update_site_identifier($siteidentifier) {
-        global $CFG;
-        // Include locallib.
-        require_once($CFG->dirroot.'/cache/locallib.php');
         $factory = cache_factory::instance();
         $factory->updating_started();
         $config = $factory->create_config_instance(true);
@@ -843,9 +837,8 @@ class cache_helper {
      * @return string[]
      */
     public static function warnings(array $stores = null) {
-        global $CFG;
         if ($stores === null) {
-            require_once($CFG->dirroot.'/cache/locallib.php');
+
             $stores = core_cache\administration_helper::get_store_instance_summaries();
         }
         $warnings = array();

@@ -355,7 +355,6 @@ class cache_factory {
 
         // Check if this is a PHPUnit test and redirect to the phpunit config classes if it is.
         if ($testing) {
-            require_once($CFG->dirroot.'/cache/locallib.php');
             require_once($CFG->dirroot.'/cache/tests/fixtures/lib.php');
             // We have just a single class for PHP unit tests. We don't care enough about its
             // performance to do otherwise and having a single method allows us to inject things into it
@@ -367,7 +366,6 @@ class cache_factory {
         $needtocreate = !$class::config_file_exists();
 
         if ($writer || $needtocreate) {
-            require_once($CFG->dirroot.'/cache/locallib.php');
             if (!$testing) {
                 $class .= '_writer';
             }

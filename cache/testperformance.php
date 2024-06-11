@@ -25,7 +25,6 @@
 
 require_once('../config.php');
 require_once($CFG->dirroot.'/lib/adminlib.php');
-require_once($CFG->dirroot.'/cache/locallib.php');
 
 $count = optional_param('count', 100, PARAM_INT);
 $count = min($count, 100000);

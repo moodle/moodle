@@ -28,8 +28,6 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-require_once($CFG->dirroot.'/cache/locallib.php');
-
 /**
  * Override the default cache configuration for our own maniacal purposes.
  *

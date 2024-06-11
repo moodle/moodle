@@ -219,7 +219,6 @@ require_once($CFG->libdir.'/deprecatedlib.php');
 require_once($CFG->libdir.'/adminlib.php');
 require_once($CFG->libdir.'/environmentlib.php');
 require_once($CFG->libdir.'/componentlib.class.php');
-require_once($CFG->dirroot.'/cache/lib.php');
 
 require('version.php');
 $CFG->target_release = $release;
