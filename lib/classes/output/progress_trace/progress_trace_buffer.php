@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\progress_trace;
+
+use core\output\progress_trace;
+
 /**
  * Special type of trace that can be used for catching of output of other traces.
  *
@@ -21,7 +25,7 @@
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @package core
  */
-class progress_trace_buffer extends progress_trace {
+class progress_trace_buffer extends \progress_trace {
     /** @var string output buffer */
     protected string $buffer = '';
 
@@ -83,3 +87,8 @@ class progress_trace_buffer extends progress_trace {
         return $this->buffer;
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(progress_trace_buffer::class, \progress_trace_buffer::class);

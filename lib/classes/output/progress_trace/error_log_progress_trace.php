@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\progress_trace;
+
+use core\output\progress_trace;
+
 /**
  * This subclass of progress_trace outputs to error log.
  *
@@ -41,3 +45,8 @@ class error_log_progress_trace extends progress_trace {
         error_log($this->prefix . str_repeat('  ', $depth) . $message);
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(error_log_progress_trace::class, \error_log_progress_trace::class);

@@ -14,6 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
+namespace core\output\progress_trace;
+
+use core\output\progress_trace;
+
 /**
  * This subclass of progress_trace does not ouput anything.
  *
@@ -29,3 +33,8 @@ class null_progress_trace extends progress_trace {
     ): void {
     }
 }
+
+// Alias this class to the old name.
+// This file will be autoloaded by the legacyclasses autoload system.
+// In future all uses of this class will be corrected and the legacy references will be removed.
+class_alias(null_progress_trace::class, \null_progress_trace::class);
