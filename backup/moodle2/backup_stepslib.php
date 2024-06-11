@@ -914,14 +914,6 @@ class backup_comments_structure_step extends backup_structure_step {
  */
 class backup_badges_structure_step extends backup_structure_step {
 
-    protected function execute_condition() {
-        // Check that all activities have been included.
-        if ($this->task->is_excluding_activities()) {
-            return false;
-        }
-        return true;
-    }
-
     protected function define_structure() {
         global $CFG;
 
@@ -965,10 +957,16 @@ class backup_badges_structure_step extends backup_structure_step {
         // Build the tree.
 
         $badges->add_child($badge);
-        $badge->add_child($criteria);
-        $criteria->add_child($criterion);
-        $criterion->add_child($parameters);
-        $parameters->add_child($parameter);
+
+        // Have the activities been included? Only if that's the case, the criteria will be included too.
+        $activitiesincluded = !$this->task->is_excluding_activities();
+        if ($activitiesincluded) {
+            $badge->add_child($criteria);
+            $criteria->add_child($criterion);
+            $criterion->add_child($parameters);
+            $parameters->add_child($parameter);
+        }
+
         $badge->add_child($endorsement);
         $badge->add_child($alignments);
         $alignments->add_child($alignment);
@@ -990,18 +988,19 @@ class backup_badges_structure_step extends backup_structure_step {
             'courseid' => backup::VAR_COURSEID
         ];
         $badge->set_source_sql($parametersql, $parameterparams);
-        $criterion->set_source_table('badge_criteria', array('badgeid' => backup::VAR_PARENTID));
+        if ($activitiesincluded) {
+            $criterion->set_source_table('badge_criteria', ['badgeid' => backup::VAR_PARENTID]);
+            $parametersql = 'SELECT cp.*, c.criteriatype
+                               FROM {badge_criteria_param} cp JOIN {badge_criteria} c
+                                 ON cp.critid = c.id
+                              WHERE critid = :critid';
+            $parameterparams = ['critid' => backup::VAR_PARENTID];
+            $parameter->set_source_sql($parametersql, $parameterparams);
+        }
         $endorsement->set_source_table('badge_endorsement', array('badgeid' => backup::VAR_PARENTID));
 
         $alignment->set_source_table('badge_alignment', array('badgeid' => backup::VAR_PARENTID));
         $relatedbadge->set_source_table('badge_related', array('badgeid' => backup::VAR_PARENTID));
-
-        $parametersql = 'SELECT cp.*, c.criteriatype
-                             FROM {badge_criteria_param} cp JOIN {badge_criteria} c
-                                 ON cp.critid = c.id
-                             WHERE critid = :critid';
-        $parameterparams = array('critid' => backup::VAR_PARENTID);
-        $parameter->set_source_sql($parametersql, $parameterparams);
 
         $manual_award->set_source_table('badge_manual_award', array('badgeid' => backup::VAR_PARENTID));
 
@@ -1015,8 +1014,10 @@ class backup_badges_structure_step extends backup_structure_step {
 
         $badge->annotate_ids('user', 'usercreated');
         $badge->annotate_ids('user', 'usermodified');
-        $criterion->annotate_ids('badge', 'badgeid');
-        $parameter->annotate_ids('criterion', 'critid');
+        if ($activitiesincluded) {
+            $criterion->annotate_ids('badge', 'badgeid');
+            $parameter->annotate_ids('criterion', 'critid');
+        }
         $endorsement->annotate_ids('badge', 'badgeid');
         $alignment->annotate_ids('badge', 'badgeid');
         $relatedbadge->annotate_ids('badge', 'badgeid');
