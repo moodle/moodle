@@ -116,11 +116,9 @@ class editstep extends \moodleform {
             'changeformat' => 1,
             'trusttext' => true,
         ];
-        $objs = $mform->createElement('editor', 'content', get_string('content', 'tool_usertours'), null, $editoroptions);
-        // TODO: MDL-68540 We need to add the editor to a group element because editor element will not work with hideIf.
-        $mform->addElement('group', 'contenthtmlgrp', get_string('content', 'tool_usertours'), [$objs], ' ', false);
-        $mform->addHelpButton('contenthtmlgrp', 'content', 'tool_usertours');
-        $mform->hideIf('contenthtmlgrp', 'contenttype', 'eq', static::CONTENTTYPE_LANGSTRING);
+        $mform->addElement('editor', 'content', get_string('content', 'tool_usertours'), null, $editoroptions);
+        $mform->addHelpButton('content', 'content', 'tool_usertours');
+        $mform->hideIf('content', 'contenttype', 'eq', static::CONTENTTYPE_LANGSTRING);
 
         // Add the step configuration.
         $mform->addElement('header', 'heading_options', get_string('options_heading', 'tool_usertours'));
