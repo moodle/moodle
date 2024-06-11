@@ -92,12 +92,12 @@ export default class extends DndSection {
             return;
         }
         await this.reactive.dispatch('sectionContentCollapsed', [this.id], false);
-        const pendingScroll = new Pending(`courseformat/section:openSectionIfNecessary`);
+        const pendingOpen = new Pending(`courseformat/section:openSectionIfNecessary`);
+        this.element.scrollIntoView({block: "center"});
         setTimeout(() => {
             this.reactive.dispatch('setPageItem', 'cm', pageCmInfo.id);
-            this.element.scrollIntoView({block: "center"});
-            pendingScroll.resolve();
-        }, 50);
+            pendingOpen.resolve();
+        }, 250);
     }
 
     /**
