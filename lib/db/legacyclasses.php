@@ -43,4 +43,14 @@ $legacyclasses = [
     \require_login_session_timeout_exception::class => 'exception/require_login_session_timeout_exception.php',
     \required_capability_exception::class => 'exception/required_capability_exception.php',
     \webservice_parameter_exception::class => 'exception/webservice_parameter_exception.php',
+
+    // The progress_trace classes.
+    \combined_progress_trace::class => 'output/progress_trace/combined_progress_trace.php',
+    \error_log_progress_trace::class => 'output/progress_trace/error_log_progress_trace.php',
+    \html_list_progress_trace::class => 'output/progress_trace/html_list_progress_trace.php',
+    \html_progress_trace::class => 'output/progress_trace/html_progress_trace.php',
+    \null_progress_trace::class => 'output/progress_trace/null_progress_trace.php',
+    \progress_trace::class => 'output/progress_trace.php',
+    \progress_trace_buffer::class => 'output/progress_trace/progress_trace_buffer.php',
+    \text_progress_trace::class => 'output/progress_trace/text_progress_trace.php',
 ];
