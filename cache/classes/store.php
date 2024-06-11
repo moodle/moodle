@@ -26,68 +26,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
-/**
- * Cache store interface.
- *
- * This interface defines the static methods that must be implemented by every cache store plugin.
- * To ensure plugins implement this class the abstract cache_store class implements this interface.
- *
- * @package    core
- * @category   cache
- * @copyright  2012 Sam Hemelryk
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-interface cache_store_interface {
-    /**
-     * Static method to check if the store requirements are met.
-     *
-     * @return bool True if the stores software/hardware requirements have been met and it can be used. False otherwise.
-     */
-    public static function are_requirements_met();
-
-    /**
-     * Static method to check if a store is usable with the given mode.
-     *
-     * @param int $mode One of cache_store::MODE_*
-     */
-    public static function is_supported_mode($mode);
-
-    /**
-     * Returns the supported features as a binary flag.
-     *
-     * @param array $configuration The configuration of a store to consider specifically.
-     * @return int The supported features.
-     */
-    public static function get_supported_features(array $configuration = array());
-
-    /**
-     * Returns the supported modes as a binary flag.
-     *
-     * @param array $configuration The configuration of a store to consider specifically.
-     * @return int The supported modes.
-     */
-    public static function get_supported_modes(array $configuration = array());
-
-    /**
-     * Generates an instance of the cache store that can be used for testing.
-     *
-     * Returns an instance of the cache store, or false if one cannot be created.
-     *
-     * @param cache_definition $definition
-     * @return cache_store|false
-     */
-    public static function initialise_test_instance(cache_definition $definition);
-
-    /**
-     * Generates the appropriate configuration required for unit testing.
-     *
-     * @return array Array of unit test configuration data to be used by initialise().
-     */
-    public static function unit_test_configuration();
-}
-
 /**
  * Abstract cache store class.
  *

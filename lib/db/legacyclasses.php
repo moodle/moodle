@@ -70,8 +70,8 @@ $legacyclasses = [
     \cache_loader_with_locking::class => 'loader_with_locking_interface.php',
     \cache_lock_interface::class => 'cache_lock_interface.php',
     \cache_store::class => 'store.php',
-    \cache_ttl_wrapper::class => 'ttl_wrapper.php',
     \cache_store_interface::class => 'store_interface.php',
+    \cache_ttl_wrapper::class => 'ttl_wrapper.php',
     \cacheable_object::class => 'cacheable_object_interface.php',
     \cacheable_object_array::class => 'cacheable_object_array.php',
 
