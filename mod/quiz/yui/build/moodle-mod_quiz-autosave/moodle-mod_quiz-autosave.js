@@ -416,12 +416,17 @@ M.mod_quiz.autosave = {
      */
     update_saved_time_display: function() {
         // We fetch the current language's preferred time format from the language pack.
-        var timeFormat = M.util.get_string('strftimedatetimeshortaccurate', 'langconfig');
-        var message = M.util.get_string('lastautosave', 'quiz', Y.Date.format(new Date(), {'format': timeFormat}));
-
-        var infoDiv = Y.one('#mod_quiz_navblock .othernav .autosave_info');
-        infoDiv.set('text', message);
-        infoDiv.show();
+        require(['core/user_date', 'core/notification'], function(UserDate, Notification) {
+            UserDate.get([{
+                timestamp: Math.floor(Date.now() / 1000),
+                format: M.util.get_string('strftimedatetimeshortaccurate', 'langconfig'),
+            }]).then(function(dateStrs) {
+                var infoDiv = Y.one('#mod_quiz_navblock .othernav .autosave_info');
+                infoDiv.set('text', M.util.get_string('lastautosave', 'quiz', dateStrs[0]));
+                infoDiv.show();
+                return;
+            }).catch(Notification.exception);
+        });
     },
 
     is_time_nearly_over: function() {
