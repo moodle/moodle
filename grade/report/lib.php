@@ -485,106 +485,13 @@ abstract class grade_report {
 
         // A user wants to return a subset of learners that match their search criteria.
         if ($this->usersearch !== '' && $this->userid === -1) {
-            // Get the fields for all contexts because there is a special case later where it allows
-            // matches of fields you can't access if they are on your own account.
-            $userfields = fields::for_identity(null, false)->with_userpic();
-            ['mappings' => $mappings]  = (array)$userfields->get_sql('u', true);
             [
                 'where' => $keywordswhere,
                 'params' => $keywordsparams,
-            ] = $this->get_users_search_sql($mappings, $userfields->get_required_fields());
+            ] = \core_user::get_users_search_sql($this->context, $this->usersearch);
             $this->userwheresql .= " AND $keywordswhere";
             $this->userwheresql_params = array_merge($this->userwheresql_params, $keywordsparams);
         }
-    }
-
-    /**
-     * Prepare SQL where clause and associated parameters for any user searching being performed.
-     * This mostly came from core_user\table\participants_search with some slight modifications four our use case.
-     *
-     * @param array $mappings Array of field mappings (fieldname => SQL code for the value)
-     * @param array $userfields An array that we cast from user profile fields to search within.
-     * @return array SQL query data in the format ['where' => '', 'params' => []].
-     */
-    protected function get_users_search_sql(array $mappings, array $userfields): array {
-        global $DB, $USER;
-
-        $canviewfullnames = has_capability('moodle/site:viewfullnames', $this->context);
-
-        $params = [];
-        $searchkey1 = 'search01';
-        $searchkey2 = 'search02';
-        $searchkey3 = 'search03';
-
-        $conditions = [];
-
-        // Search by fullname.
-        [$fullname, $fullnameparams] = fields::get_sql_fullname('u', $canviewfullnames);
-        $conditions[] = $DB->sql_like($fullname, ':' . $searchkey1, false, false);
-        $params = array_merge($params, $fullnameparams);
-
-        // Search by email.
-        $email = $DB->sql_like('email', ':' . $searchkey2, false, false);
-
-        if (!in_array('email', $userfields)) {
-            $maildisplay = 'maildisplay0';
-            $userid1 = 'userid01';
-            // Prevent users who hide their email address from being found by others
-            // who aren't allowed to see hidden email addresses.
-            $email = "(". $email ." AND (" .
-                "u.maildisplay <> :$maildisplay " .
-                "OR u.id = :$userid1". // Users can always find themselves.
-                "))";
-            $params[$maildisplay] = core_user::MAILDISPLAY_HIDE;
-            $params[$userid1] = $USER->id;
-        }
-
-        $conditions[] = $email;
-
-        // Search by idnumber.
-        $idnumber = $DB->sql_like('idnumber', ':' . $searchkey3, false, false);
-
-        if (!in_array('idnumber', $userfields)) {
-            $userid2 = 'userid02';
-            // Users who aren't allowed to see idnumbers should at most find themselves
-            // when searching for an idnumber.
-            $idnumber = "(". $idnumber . " AND u.id = :$userid2)";
-            $params[$userid2] = $USER->id;
-        }
-
-        $conditions[] = $idnumber;
-
-        // Search all user identify fields.
-        $extrasearchfields = fields::get_identity_fields(null, false);
-        foreach ($extrasearchfields as $fieldindex => $extrasearchfield) {
-            if (in_array($extrasearchfield, ['email', 'idnumber', 'country'])) {
-                // Already covered above.
-                continue;
-            }
-            // The param must be short (max 32 characters) so don't include field name.
-            $param = $searchkey3 . '_ident' . $fieldindex;
-            $fieldsql = $mappings[$extrasearchfield];
-            $condition = $DB->sql_like($fieldsql, ':' . $param, false, false);
-            $params[$param] = "%$this->usersearch%";
-
-            if (!in_array($extrasearchfield, $userfields)) {
-                // User cannot see this field, but allow match if their own account.
-                $userid3 = 'userid03_ident' . $fieldindex;
-                $condition = "(". $condition . " AND u.id = :$userid3)";
-                $params[$userid3] = $USER->id;
-            }
-            $conditions[] = $condition;
-        }
-
-        $where = "(". implode(" OR ", $conditions) .") ";
-        $params[$searchkey1] = "%$this->usersearch%";
-        $params[$searchkey2] = "%$this->usersearch%";
-        $params[$searchkey3] = "%$this->usersearch%";
-
-        return [
-            'where' => $where,
-            'params' => $params,
-        ];
     }
 
     /**

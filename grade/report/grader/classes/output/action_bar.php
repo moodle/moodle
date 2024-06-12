@@ -117,7 +117,13 @@ class action_bar extends \core_grades\output\action_bar {
             }
 
             $resetlink = new moodle_url('/grade/report/grader/index.php', ['id' => $courseid]);
-            $userselectorrenderer = new \core_course\output\actionbar\user_selector($course, $resetlink, $this->userid, 0, $this->usersearch);
+            $userselectorrenderer = new \core_course\output\actionbar\user_selector(
+                course: $course,
+                resetlink: $resetlink,
+                userid: $this->userid,
+                groupid: 0,
+                usersearch: $this->usersearch
+            );
             $data['searchdropdown'] = $userselectorrenderer->export_for_template($output);
             // The collapsed column dialog is aligned to the edge of the screen, we need to place it such that it also aligns.
             $collapsemenudirection = right_to_left() ? 'dropdown-menu-left' : 'dropdown-menu-right';

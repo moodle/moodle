@@ -23,10 +23,12 @@
     * none
 
     Context variables required for this template:
+    * userselector - HTML that outputs the user selector
     * groupselector - (optional) HTML that outputs the group selector
 
     Example context (json):
     {
+        "userselector": "<div class='user-search'></div>",
         "groupselector": "<div class='group-selector'></div>",
         "pagereset": "http://moodle.local/mod/assign/view.php?id=2&action=grading&group=0",
         "downloadall": "https://moodle.org"
@@ -39,6 +41,12 @@
             <h2>{{#str}}gradeitem:submissions, mod_assign{{/str}}</h2>
         </div>
         <div class="navitem-divider d-none d-sm-flex"></div>
+        {{#userselector}}
+            <div class="navitem">
+                {{{.}}}
+            </div>
+            <div class="navitem-divider d-none d-sm-flex"></div>
+        {{/userselector}}
         {{#groupselector}}
             <div class="navitem">
                 {{{.}}}

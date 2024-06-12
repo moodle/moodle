@@ -208,6 +208,9 @@ class assign {
     /** @var float grade value. */
     public $grade;
 
+    /** @var array $usersearch The content that the current user is looking for. */
+    protected array $usersearch = [];
+
     /**
      * Constructor for the base assign class.
      *
@@ -335,6 +338,21 @@ class assign {
      */
     public function set_course(stdClass $course) {
         $this->course = $course;
+    }
+
+    /**
+     * Set usersearch to limit results when getting list of participants.
+     *
+     * @param int|null $userid User id to search for.
+     * @param int|null $groupid Group id to limit resuts to specific group.
+     * @param string $usersearch Search string to limit results.
+     */
+    public function set_usersearch(?int $userid, ?int $groupid, string $usersearch = ''): void {
+        $usersearcharray = [];
+        $usersearcharray['userid'] = $userid;
+        $usersearcharray['groupid'] = $groupid;
+        $usersearcharray['usersearch'] = $usersearch;
+        $this->usersearch = $usersearcharray;
     }
 
     /**
@@ -2318,6 +2336,21 @@ class assign {
 
                 $additionalfilters .= ' AND uf.allocatedmarker = :markerid';
                 $params['markerid'] = $USER->id;
+            }
+
+            // A user wants to view a particular user rather than a set of users.
+            if ($this->usersearch) {
+                if (isset($this->usersearch['userid'])) {
+                    $additionalfilters .= " AND u.id = :uid";
+                    $params['uid'] = $this->usersearch['userid'];
+                } else if ($this->usersearch['usersearch'] !== '') { // A user wants to view a subset of learners that match the search criteria.
+                    [
+                        'where' => $keywordswhere,
+                        'params' => $keywordsparams,
+                    ] = \core_user::get_users_search_sql($this->context, $this->usersearch['usersearch']);
+                    $additionalfilters .= " AND $keywordswhere";
+                    $params = array_merge($params, $keywordsparams);
+                }
             }
 
             $sql = "SELECT $fields
@@ -4569,6 +4602,8 @@ class assign {
         $actionformtext = $this->get_renderer()->render($buttons);
         $currenturl = new moodle_url('/mod/assign/view.php', ['id' => $this->get_course_module()->id, 'action' => 'grading']);
         $PAGE->activityheader->set_attrs(['hidecompletion' => true]);
+
+        $PAGE->requires->js_call_amd('mod_assign/user', 'init', [$currenturl->out(false)]);
 
         // Conditionally add the group JS if we have groups enabled.
         if ($this->get_course()->groupmode) {
