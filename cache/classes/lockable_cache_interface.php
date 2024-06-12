@@ -22,7 +22,7 @@ namespace core_cache;
  * This is a feature that cache stores can implement if they wish to support locking themselves rather
  * than having the cache loader handle it for them.
  *
- * Can be implemented by classes already implementing cache_store.
+ * Can be implemented by classes already implementing store.
  * @package core_cache
  * @copyright Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

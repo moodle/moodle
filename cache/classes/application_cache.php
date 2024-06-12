@@ -67,7 +67,7 @@ class application_cache extends cache implements loader_with_locking_interface {
 
     /**
      * Gets set to a store to use for locking if the caches primary store doesn't support locking natively.
-     * @var cache_lock_interface
+     * @var lockable_cache_interface
      */
     protected $cachelockinstance;
 
@@ -110,7 +110,7 @@ class application_cache extends cache implements loader_with_locking_interface {
                 $this->get_definition()->generate_definition_hash() .
                 sesskey() .
                 $instances++ .
-                'cache_application'
+                application_cache::class,
             );
         }
         return $this->lockidentifier;

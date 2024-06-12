@@ -13,3 +13,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+
+// This file is intentionally empty.
+// It will be changed to emit debugging in MDL-82836 for Moodle 5.0.

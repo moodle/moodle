@@ -20,7 +20,7 @@ namespace core_cache;
  * Cache store interface.
  *
  * This interface defines the static methods that must be implemented by every cache store plugin.
- * To ensure plugins implement this class the abstract cache_store class implements this interface.
+ * To ensure plugins implement this class the abstract store class implements this interface.
  *
  * @package    core_cache
  * @category   cache
@@ -38,7 +38,7 @@ interface store_interface {
     /**
      * Static method to check if a store is usable with the given mode.
      *
-     * @param int $mode One of cache_store::MODE_*
+     * @param int $mode One of store::MODE_*
      */
     public static function is_supported_mode($mode);
 

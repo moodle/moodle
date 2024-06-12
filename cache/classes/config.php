@@ -17,9 +17,6 @@
 namespace core_cache;
 
 use core_cache\exception\cache_exception;
-use cache_factory as factory;
-use cache_helper as helper;
-use cache_store as store;
 
 /**
  * Cache configuration reader.
@@ -70,7 +67,7 @@ class config {
     protected $siteidentifier = null;
 
     /**
-     * Please use cache_config::instance to get an instance of the cache config that is ready to be used.
+     * Please use config::instance to get an instance of the cache config that is ready to be used.
      */
     public function __construct() {
         // Nothing to do here but look pretty.
@@ -218,26 +215,26 @@ class config {
                 continue;
             }
             $conf['mode'] = (int)$conf['mode'];
-            if ($conf['mode'] < cache_store::MODE_APPLICATION || $conf['mode'] > cache_store::MODE_REQUEST) {
+            if ($conf['mode'] < store::MODE_APPLICATION || $conf['mode'] > store::MODE_REQUEST) {
                 // Invalid cache mode used for the definition.
                 continue;
             }
-            if ($conf['mode'] === cache_store::MODE_SESSION || $conf['mode'] === cache_store::MODE_REQUEST) {
+            if ($conf['mode'] === store::MODE_SESSION || $conf['mode'] === store::MODE_REQUEST) {
                 // We force this for session and request caches.
                 // They are only allowed to use the default as we don't want people changing them.
-                $conf['sharingoptions'] = cache_definition::SHARING_DEFAULT;
-                $conf['selectedsharingoption'] = cache_definition::SHARING_DEFAULT;
+                $conf['sharingoptions'] = definition::SHARING_DEFAULT;
+                $conf['selectedsharingoption'] = definition::SHARING_DEFAULT;
                 $conf['userinputsharingkey'] = '';
             } else {
                 // Default the sharing option as it was added for 2.5.
                 // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
                 if (!isset($conf['sharingoptions'])) {
-                    $conf['sharingoptions'] = cache_definition::SHARING_DEFAULTOPTIONS;
+                    $conf['sharingoptions'] = definition::SHARING_DEFAULTOPTIONS;
                 }
                 // Default the selected sharing option as it was added for 2.5.
                 // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
                 if (!isset($conf['selectedsharingoption'])) {
-                    $conf['selectedsharingoption'] = cache_definition::SHARING_DEFAULT;
+                    $conf['selectedsharingoption'] = definition::SHARING_DEFAULT;
                 }
                 // Default the user input sharing key as it was added for 2.5.
                 // This can be removed sometime after 2.5 is the minimum version someone can upgrade from.
@@ -399,7 +396,7 @@ class config {
         // It was converted to an instance method but to be backwards compatible
         // we must step around this in code.
         if (!isset($this)) {
-            $config = cache_config::instance();
+            $config = self::instance();
         } else {
             $config = $this;
         }
@@ -452,7 +449,7 @@ class config {
     /**
      * Returns all of the stores that are suitable for the given mode and requirements.
      *
-     * @param int $mode One of cache_store::MODE_*
+     * @param int $mode One of store::MODE_*
      * @param int $requirements The requirements of the cache as a binary flag
      * @return array An array of suitable stores.
      */

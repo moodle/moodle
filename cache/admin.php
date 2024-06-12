@@ -19,14 +19,17 @@
  *
  * This file is part of Moodle's cache API, affectionately called MUC.
  *
- * @package    core_cache
+ * @package    core
  * @category   cache
  * @copyright  2012 Sam Hemelryk
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use core_cache\factory as cache_factory;
+use core_cache\helper as cache_helper;
+
 require_once('../config.php');
-require_once($CFG->dirroot . '/lib/adminlib.php');
+require_once($CFG->dirroot.'/lib/adminlib.php');
 
 // The first time the user visits this page we are going to reparse the definitions.
 // Just ensures that everything is up to date.
@@ -42,7 +45,7 @@ $action = optional_param('action', null, PARAM_ALPHA);
 admin_externalpage_setup('cacheconfig');
 $adminhelper = cache_factory::instance()->get_administration_display_helper();
 
-$notifications = [];
+$notifications = array();
 // Empty array to hold any form information returned from actions.
 $forminfo = [];
 
@@ -57,7 +60,7 @@ if (!empty($action)) {
 // Add cache store warnings to the list of notifications.
 // Obviously as these are warnings they are show as failures.
 foreach (cache_helper::warnings(core_cache\administration_helper::get_store_instance_summaries()) as $warning) {
-    $notifications[] = [$warning, false];
+    $notifications[] = array($warning, false);
 }
 
 // Decide on display mode based on returned forminfo.

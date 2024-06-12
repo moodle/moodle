@@ -16,8 +16,9 @@
 
 namespace cachestore_redis;
 
-use cache_definition;
-use cache_store;
+use core_cache\definition;
+use core_cache\helper;
+use core_cache\store;
 use cachestore_redis;
 
 defined('MOODLE_INTERNAL') || die();
@@ -53,8 +54,8 @@ class cachestore_cluster_redis_test extends \advanced_testcase {
     public function create_store(?string $seed = null): cachestore_redis {
         global $DB;
 
-        $definition = cache_definition::load_adhoc(
-            mode: cache_store::MODE_APPLICATION,
+        $definition = definition::load_adhoc(
+            mode: store::MODE_APPLICATION,
             component: 'cachestore_redis',
             area: 'phpunit_test',
         );
@@ -91,7 +92,7 @@ class cachestore_cluster_redis_test extends \advanced_testcase {
         parent::setUp();
         if (!cachestore_redis::are_requirements_met()) {
             $this->markTestSkipped('Could not test cachestore_redis with cluster, missing requirements.');
-        } else if (!\cache_helper::is_cluster_available()) {
+        } else if (!helper::is_cluster_available()) {
             $this->markTestSkipped('Could not test cachestore_redis with cluster, class RedisCluster is not available.');
         } else if (!defined('TEST_CACHESTORE_REDIS_SERVERSCLUSTER')) {
             $this->markTestSkipped('Could not test cachestore_redis with cluster, missing configuration. ' .

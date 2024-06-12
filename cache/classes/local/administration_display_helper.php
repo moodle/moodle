@@ -30,20 +30,20 @@
 
 namespace core_cache\local;
 
-use cache_store as store;
-use cache_config_writer as config_writer;
-use cache_factory as factory;
-use cache_helper;
 use core_cache\cache;
 use core_cache\config;
+use core_cache\config_writer;
 use core_cache\configurable_cache_interface;
 use core_cache\exception\cache_exception;
+use core_cache\factory;
 use core_cache\form\cache_lock_form;
 use core_cache\form\cache_mode_mappings_form;
 use core_cache\form\cache_definition_sharing_form;
 use core_cache\form\cache_definition_mappings_form;
 use core_cache\form\cachestore_addinstance_form;
+use core_cache\helper as cache_helper;
 use core_cache\lockable_cache_interface;
+use core_cache\store;
 use core_component;
 use core\context;
 use core\context\system as context_system;
@@ -350,12 +350,14 @@ class administration_display_helper extends \core_cache\administration_helper {
             throw new coding_exception('Invalid cache lock plugin requested when trying to create a form.');
         }
         $plugindir = $plugins[$plugin];
-        $class = 'cache_lock_form';
-        if (file_exists($plugindir . '/addinstanceform.php') && in_array(configurable_cache_interface::class, class_implements($class))) {
+        $class = cache_lock_form::class;
+        $hasaddinstanceform = file_exists($plugindir . '/addinstanceform.php');
+        $hasaddinstanceform = $hasaddinstanceform && in_array(configurable_cache_interface::class, class_implements($class));
+        if ($hasaddinstanceform) {
             require_once($plugindir . '/addinstanceform.php');
             if (class_exists('cachelock_' . $plugin . '_addinstance_form')) {
                 $class = 'cachelock_' . $plugin . '_addinstance_form';
-                if (!array_key_exists(cache_lock_form::class, class_parents($class))) {
+                if (!is_a($class, cache_lock_form::class, true)) {
                     throw new coding_exception('Cache lock plugin add instance forms must extend cache_lock_form');
                 }
             }
@@ -371,7 +373,7 @@ class administration_display_helper extends \core_cache\administration_helper {
      * @return array
      * @throws coding_exception
      */
-    public function get_lock_configuration_from_data(string $plugin, stClass $data): array {
+    public function get_lock_configuration_from_data(string $plugin, stdClass $data): array {
         global $CFG;
         $file = $CFG->dirroot . '/cache/locks/' . $plugin . '/lib.php';
         if (!file_exists($file)) {

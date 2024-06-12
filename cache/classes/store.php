@@ -274,7 +274,7 @@ abstract class store implements store_interface {
      * @return bool
      */
     public function is_searchable() {
-        return in_array(searchable_cache_interface::class, class_implements($this));
+        return ($this instanceof searchable_cache_interface);
     }
 
     /**

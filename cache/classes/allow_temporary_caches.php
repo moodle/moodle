@@ -19,7 +19,7 @@ namespace core_cache;
 /**
  * Create and keep an instance of this class to allow temporary caches when caches are disabled.
  *
- * This class works together with code in {@see cache_factory_disabled}.
+ * This class works together with code in {@see disabled_factory}.
  *
  * The intention is that temporary cache should be short-lived (not for the entire install process),
  * which avoids two problems: first, that we might run out of memory for the caches, and second,
@@ -62,7 +62,7 @@ class allow_temporary_caches {
     public function __destruct() {
         self::$references--;
         if (self::$references === 0) {
-            \cache_factory_disabled::clear_temporary_caches();
+            disabled_factory::clear_temporary_caches();
         }
     }
 

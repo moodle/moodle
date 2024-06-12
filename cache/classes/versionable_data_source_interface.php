@@ -26,7 +26,7 @@ namespace core_cache;
  * @copyright Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-interface versionable_data_source_interface extends cache_data_source {
+interface versionable_data_source_interface extends data_source_interface {
     /**
      * Loads the data for the key provided ready formatted for caching.
      *

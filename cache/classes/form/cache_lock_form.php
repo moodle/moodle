@@ -16,7 +16,7 @@
 
 namespace core_cache\form;
 
-use cache_config;
+use core_cache\config as cache_config;
 use moodleform;
 
 /**

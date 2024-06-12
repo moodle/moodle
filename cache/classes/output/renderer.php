@@ -16,9 +16,9 @@
 
 namespace core_cache\output;
 
-use cache_factory;
-use cache_store;
 use context;
+use core_cache\factory as cache_factory;
+use core_cache\store as cache_store;
 use core_collator;
 use html_table;
 use html_table_cell;
@@ -416,7 +416,7 @@ class renderer extends \plugin_renderer_base {
     /**
      * Creates the two tables which display on the usage page.
      *
-     * @param array $usage Usage information (from cache_helper::usage)
+     * @param array $usage Usage information (from \core_cache\helper::usage)
      * @return array Array of 2 tables (main and summary table)
      * @throws \coding_exception
      */

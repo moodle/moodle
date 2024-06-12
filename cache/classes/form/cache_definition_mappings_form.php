@@ -17,7 +17,7 @@
 namespace core_cache\form;
 
 use core_cache\administration_helper;
-use cache_store as store;
+use core_cache\store;
 use html_writer;
 use moodleform;
 

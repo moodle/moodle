@@ -16,7 +16,7 @@
 
 namespace core_cache\form;
 
-use cache_store as store;
+use core_cache\store;
 use moodleform;
 
 /**

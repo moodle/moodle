@@ -149,7 +149,7 @@ class helper {
     }
 
     /**
-     * Returns a cache_lock instance suitable for use with the store.
+     * Returns a locakable_cache_interface instance suitable for use with the store.
      *
      * @param store $store
      * @return lockable_cache_interface

@@ -17,6 +17,7 @@
 namespace core_cache;
 
 use moodleform;
+use stdClass;
 
 /**
  * Cache store feature: configurable.
@@ -26,7 +27,7 @@ use moodleform;
  * store instance, and then the reverse converting configuration data into an array that can be used to set the
  * data for the edit form.
  *
- * Can be implemented by classes already implementing cache_store.
+ * Can be implemented by classes already implementing store.
  * @package core_cache
  * @copyright Sam Hemelryk
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later

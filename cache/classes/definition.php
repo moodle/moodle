@@ -17,8 +17,6 @@
 namespace core_cache;
 
 use core\exception\coding_exception;
-use cache_helper as helper;
-use cache_store as store;
 use lang_string;
 
 /**
@@ -54,14 +52,14 @@ use lang_string;
  *     + overrideclass
  *          [string] A class to use as the loader for this cache. This is an advanced setting and will allow the developer of the
  *          definition to take 100% control of the caching solution.
- *          Any class used here must inherit the cache_loader interface and must extend default cache loader for the mode they are
+ *          Any class used here must inherit the cache loader_interface and must extend default cache loader for the mode they are
  *          using.
  *     + overrideclassfile
  *          [string] Suplements the above setting indicated the file containing the class to be used. This file is included when
  *          required.
  *     + datasource
  *          [string] A class to use as the data loader for this definition.
- *          Any class used here must inherit the cache_data_loader interface.
+ *          Any class used here must inherit the \core_cache\data_source_interface interface.
  *     + datasourcefile
  *          [string] Supplements the above setting indicating the file containing the class to be used. This file is included when
  *          required.
@@ -497,8 +495,8 @@ class definition {
             if (!class_exists($datasource)) {
                 throw new coding_exception('The data source class does not exist.');
             }
-            if (!array_key_exists('cache_data_source', class_implements($datasource))) {
-                throw new coding_exception('Cache data source classes must implement the cache_data_source interface');
+            if (!is_a($datasource, data_source_interface::class, true)) {
+                throw new coding_exception('Cache data source classes must implement the data_source_interface interface');
             }
         }
 
@@ -816,14 +814,14 @@ class definition {
     }
 
     /**
-     * Please call {@link cache_definition::use_static_acceleration()} instead.
+     * Please call {@link definition::use_static_acceleration()} instead.
      *
      * @see definition::use_static_acceleration()
      * @deprecated since 2.6
      */
     public function should_be_persistent() {
         throw new coding_exception('definition::should_be_persistent() can not be used anymore.' .
-            ' Please use cache_definition::use_static_acceleration() instead.');
+            ' Please use definition::use_static_acceleration() instead.');
     }
 
     /**
@@ -843,14 +841,14 @@ class definition {
     }
 
     /**
-     * Please call {@link cache_definition::get_static_acceleration_size()} instead.
+     * Please call {@link definition::get_static_acceleration_size()} instead.
      *
-     * @see cache_definition::get_static_acceleration_size()
+     * @see definition::get_static_acceleration_size()
      * @deprecated since 2.6
      */
     public function get_persistent_max_size() {
-        throw new coding_exception('cache_definition::get_persistent_max_size() can not be used anymore.' .
-            ' Please use cache_definition::get_static_acceleration_size() instead.');
+        throw new coding_exception('definition::get_persistent_max_size() can not be used anymore.' .
+            ' Please use definition::get_static_acceleration_size() instead.');
     }
 
     /**

@@ -93,7 +93,6 @@ final class cache_test extends \advanced_testcase {
      */
     protected function get_expected_application_store(): string {
         global $CFG;
-        $expected = 'cachestore_file';
         $expected = cachestore_file::class;
 
         // Verify if we are using any of the available ways to use a different application store within tests.
@@ -1477,7 +1476,7 @@ final class cache_test extends \advanced_testcase {
 
         $factory = factory::instance(true);
         $config = $factory->create_config_instance();
-        $this->assertEquals('cache_config_testing', get_class($config));
+        $this->assertInstanceOf(cache_config_testing::class, $config);
     }
 
     /**
@@ -1770,7 +1769,7 @@ final class cache_test extends \advanced_testcase {
             // compare, so check it ignoring the time field.
             $this->assertEquals(3, $localvalue->version);
             $ttldata = $localvalue->data;
-            $this->assertInstanceOf('cache_ttl_wrapper', $ttldata);
+            $this->assertInstanceOf(ttl_wrapper::class, $ttldata);
             $this->assertEquals('British Bulldog', $ttldata->data);
         } else {
             $this->assertEquals(new \core_cache\version_wrapper('British Bulldog', 3), $localvalue);

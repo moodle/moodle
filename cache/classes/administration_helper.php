@@ -70,9 +70,9 @@ abstract class administration_helper extends helper {
                     'multipleidentifiers' => $store ? $store->supports_multiple_identifiers() : false,
                     'dataguarantee' => $store ? $store->supports_data_guarantee() : false,
                     'nativettl' => $store ? $store->supports_native_ttl() : false,
-                    'nativelocking' => ($store instanceof \cache_is_lockable),
-                    'keyawareness' => ($store instanceof \cache_is_key_aware),
-                    'searchable' => ($store instanceof \cache_is_searchable),
+                    'nativelocking' => ($store instanceof lockable_cache_interface),
+                    'keyawareness' => ($store instanceof key_aware_cache_interface),
+                    'searchable' => ($store instanceof searchable_cache_interface),
                 ],
                 'warnings' => $store ? $store->get_warnings() : [],
             ];

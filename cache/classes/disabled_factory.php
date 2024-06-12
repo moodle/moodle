@@ -16,11 +16,6 @@
 
 namespace core_cache;
 
-use cache_factory as factory;
-use cache_store as store;
-use core_cache\definition;
-use cache_application as application_cache;
-use cache_session as session_cache;
 use cachestore_static;
 use core\exception\coding_exception;
 
@@ -36,7 +31,7 @@ class disabled_factory extends factory {
     protected static $tempcaches = [];
 
     /**
-     * Returns an instance of the cache_factor method.
+     * Returns an instance of the factory method.
      *
      * @param bool $forcereload Unused.
      * @return factory
@@ -100,8 +95,8 @@ class disabled_factory extends factory {
                 $store = new cachestore_static('TEMP:' . $component . '/' . $area);
                 $store->initialise($definition);
                 // We need to use a cache loader wrapper rather than directly returning the store,
-                // or it wouldn't have support for versioning. The cache_application class is used
-                // (rather than cache_request which might make more sense logically) because it
+                // or it wouldn't have support for versioning. The application_cache class is used
+                // (rather than request_cache which might make more sense logically) because it
                 // includes support for locking, which might be necessary for some caches.
                 $cache = new application_cache($definition, $store);
                 self::$tempcaches[$key] = $cache;
@@ -170,18 +165,18 @@ class disabled_factory extends factory {
      * @return disabled_config|config_writer
      */
     public function create_config_instance($writer = false) {
-        // We are always going to use the cache_config_disabled class for all regular request.
+        // We are always going to use the disabled_config class for all regular request.
         // However if the code has requested the writer then likely something is changing and
         // we're going to need to interact with the config.php file.
-        // In this case we will still use the cache_config_writer.
-        $class = 'cache_config_disabled';
+        // In this case we will still use the config_writer.
+        $class = disabled_config::class;
         if ($writer) {
             // If the writer was requested then something is changing.
-            $class = 'cache_config_writer';
+            $class = config_writer::class;
         }
         if (!array_key_exists($class, $this->configs)) {
             self::set_state(factory::STATE_INITIALISING);
-            if ($class === 'cache_config_disabled') {
+            if ($class === disabled_config::class) {
                 $configuration = $class::create_default_configuration();
                 $this->configs[$class] = new $class();
             } else {

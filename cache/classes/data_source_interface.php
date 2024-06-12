@@ -38,10 +38,10 @@ interface data_source_interface {
      * Returns an instance of the data source class that the cache can use for loading data using the other methods
      * specified by this interface.
      *
-     * @param cache_definition $definition
+     * @param definition $definition
      * @return object
      */
-    public static function get_instance_for_cache(cache_definition $definition);
+    public static function get_instance_for_cache(definition $definition);
 
     /**
      * Loads the data for the key provided ready formatted for caching.

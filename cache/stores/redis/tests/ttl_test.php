@@ -16,6 +16,8 @@
 
 namespace cachestore_redis;
 
+use core_cache\definition;
+
 /**
  * TTL support test for Redis cache.
  *
@@ -41,7 +43,7 @@ final class ttl_test extends \advanced_testcase {
         }
 
         // Set up a Redis store with a fake definition that has TTL set to 10 seconds.
-        $definition = \cache_definition::load('core/wibble', [
+        $definition = definition::load('core/wibble', [
                 'mode' => 1,
                 'simplekeys' => true,
                 'simpledata' => true,

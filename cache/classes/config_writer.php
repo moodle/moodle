@@ -27,7 +27,7 @@ use ReflectionClass;
 /**
  * Cache configuration writer.
  *
- * This class should only be used when you need to write to the config, all read operations exist within the cache_config.
+ * This class should only be used when you need to write to the config, all read operations exist within the cache config.
  *
  * @package    core_cache
  * @category   cache
