@@ -17,27 +17,12 @@
 /**
  * Unit tests for the html_writer class.
  *
- * @package   core
- * @category  phpunit
- * @copyright 2010 Tim Hunt
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/outputcomponents.php');
-
-/**
- * Unit tests for the html_writer class.
- *
  * @copyright 2010 Tim Hunt
  * @license http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  * @covers \html_writer
  * @coversDefaultClass \html_writer
  */
-class html_writer_test extends basic_testcase {
-
+final class html_writer_test extends basic_testcase {
     /**
      * @covers ::start_tag
      */

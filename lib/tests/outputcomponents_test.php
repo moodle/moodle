@@ -27,11 +27,6 @@ use theme_config;
 use url_select;
 use user_picture;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/outputcomponents.php');
-
 /**
  * Unit tests for lib/outputcomponents.php.
  *
@@ -40,8 +35,7 @@ require_once($CFG->libdir . '/outputcomponents.php');
  * @copyright 2011 David Mudrak <david@moodle.com>
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class outputcomponents_test extends \advanced_testcase {
-
+final class outputcomponents_test extends \advanced_testcase {
     /**
      * Tests user_picture::fields.
      *

@@ -16,12 +16,6 @@
 
 namespace core;
 
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/outputrequirementslib.php');
-
-
 /**
  * Unit tests for lib/outputrequirementslibphp.
  *
@@ -30,7 +24,7 @@ require_once($CFG->libdir . '/outputrequirementslib.php');
  * @copyright 2012 Petr Škoda
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class outputrequirementslib_test extends \advanced_testcase {
+final class outputrequirementslib_test extends \advanced_testcase {
     public function test_string_for_js(): void {
         $this->resetAfterTest();
 

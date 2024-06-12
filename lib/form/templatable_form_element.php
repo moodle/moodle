@@ -21,18 +21,6 @@
  * @copyright 2016 Damyon Wiese
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-defined('MOODLE_INTERNAL') || die();
-
-// Some form elements are used before $CFG is created - do not rely on it here.
-require_once(__DIR__ . '/../outputcomponents.php');
-
-/**
- * templatable_form_element trait.
- *
- * @package   core_form
- * @copyright 2016 Damyon Wiese
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 trait templatable_form_element {
 
     /**

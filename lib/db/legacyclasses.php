@@ -30,6 +30,7 @@ defined('MOODLE_INTERNAL') || die();
 // The old class name is the key, the path to the file containing the class is the vlaue.
 // The array must be called $legacyclasses.
 $legacyclasses = [
+    // Exception API.
     \bootstrap_renderer::class => 'output/bootstrap_renderer.php',
     \coding_exception::class => 'exception/coding_exception.php',
     \file_serving_exception::class => 'exception/file_serving_exception.php',
@@ -42,4 +43,86 @@ $legacyclasses = [
     \require_login_session_timeout_exception::class => 'exception/require_login_session_timeout_exception.php',
     \required_capability_exception::class => 'exception/required_capability_exception.php',
     \webservice_parameter_exception::class => 'exception/webservice_parameter_exception.php',
+
+    // Output API.
+    \theme_config::class => 'output/theme_config.php',
+    \xhtml_container_stack::class => 'output/xhtml_container_stack.php',
+
+    \renderable::class => 'output/renderable.php',
+    \templatable::class => 'output/templatable.php',
+
+    // Output API: Renderer Factories.
+    \renderer_factory::class => 'output/renderer_factory/renderer_factory_interface.php',
+    \renderer_factory_base::class => 'output/renderer_factory/renderer_factory_base.php',
+    \standard_renderer_factory::class => 'output/renderer_factory/standard_renderer_factory.php',
+    \theme_overridden_renderer_factory::class => 'output/renderer_factory/theme_overridden_renderer_factory.php',
+
+    // Output API: Renderers.
+    \renderer_base::class => 'output/renderer_base.php',
+    \plugin_renderer_base::class => 'output/plugin_renderer_base.php',
+    \core_renderer::class => 'output/core_renderer.php',
+    \core_renderer_cli::class => 'output/core_renderer_cli.php',
+    \core_renderer_ajax::class => 'output/core_renderer_ajax.php',
+    \core_renderer_maintenance::class => 'output/core_renderer_maintenance.php',
+    \page_requirements_manager::class => 'output/requirements/page_requirements_manager.php',
+    \YUI_config::class => 'output/requirements/yui.php',
+    \fragment_requirements_manager::class => 'output/requirements/fragment_requirements_manager.php',
+
+    // Output API: components.
+    \file_picker::class => 'output/file_picker.php',
+    \user_picture::class => 'output/user_picture.php',
+    \help_icon::class => 'output/help_icon.php',
+    \pix_icon_font::class => 'output/pix_icon_font.php',
+    \pix_icon_fontawesome::class => 'output/pix_icon_fontawesome.php',
+    \pix_icon::class => 'output/pix_icon.php',
+    \image_icon::class => 'output/image_icon.php',
+    \pix_emoticon::class => 'output/pix_emoticon.php',
+    \single_button::class => 'output/single_button.php',
+    \single_select::class => 'output/single_select.php',
+    \url_select::class => 'output/url_select.php',
+    \action_link::class => 'output/action_link.php',
+    \html_writer::class => 'output/html_writer.php',
+    \js_writer::class => 'output/js_writer.php',
+    \paging_bar::class => 'output/paging_bar.php',
+    \initials_bar::class => 'output/initials_bar.php',
+    \custom_menu_item::class => 'output/custom_menu_item.php',
+    \custom_menu::class => 'output/custom_menu.php',
+    \tabobject::class => 'output/tabobject.php',
+    \context_header::class => 'output/context_header.php',
+    \tabtree::class => 'output/tabtree.php',
+    \action_menu::class => 'output/action_menu.php',
+    \action_menu_filler::class => 'output/action_menu/filler.php',
+    \action_menu_link::class => 'output/action_menu/link.php',
+    \action_menu_link_primary::class => 'output/action_menu/link_primary.php',
+    \action_menu_link_secondary::class => 'output/action_menu/link_secondary.php',
+    \preferences_groups::class => 'output/preferences_groups.php',
+    \preferences_group::class => 'output/preferences_group.php',
+    \progress_bar::class => 'output/progress_bar.php',
+    \component_action::class => 'output/actions/component_action.php',
+    \confirm_action::class => 'output/actions/confirm_action.php',
+    \popup_action::class => 'output/actions/popup_action.php',
+
+    // Block Subsystem.
+    \block_contents::class => [
+        'core_block',
+        'output/block_contents.php',
+    ],
+    \block_move_target::class => [
+        'core_block',
+        'output/block_move_target.php',
+    ],
+
+    // Table Subsystem.
+    \html_table::class => [
+        'core_table',
+        'output/html_table.php',
+    ],
+    \html_table_row::class => [
+        'core_table',
+        'output/html_table_row.php',
+    ],
+    \html_table_cell::class => [
+        'core_table',
+        'output/html_table_cell.php',
+    ],
 ];

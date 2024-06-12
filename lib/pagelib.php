@@ -1034,9 +1034,6 @@ class moodle_page {
      * by the get_fragment() web service and not for use elsewhere.
      */
     public function start_collecting_javascript_requirements() {
-        global $CFG;
-        require_once($CFG->libdir.'/outputfragmentrequirementslib.php');
-
         // Check that the requirements manager has not already been switched.
         if (get_class($this->_requires) == 'fragment_requirements_manager') {
             throw new coding_exception('JavaScript collection has already been started.');

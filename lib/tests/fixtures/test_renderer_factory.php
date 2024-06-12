@@ -15,20 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Test factory for lib/outputfactories.php.
- *
- * @package   core
- * @category  phpunit
- * @copyright 2014 Damyon Wiese
- * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
-defined('MOODLE_INTERNAL') || die();
-
-global $CFG;
-require_once($CFG->libdir . '/outputfactories.php');
-
-/**
  * This is renderer factory testing of the classname autoloading.
  *
  * @copyright 2014 Damyon Wiese
